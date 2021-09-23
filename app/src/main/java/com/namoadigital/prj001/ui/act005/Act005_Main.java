@@ -100,7 +100,7 @@ import com.namoadigital.prj001.ui.act068.Act068_Main;
 import com.namoadigital.prj001.ui.act069.Act069_Main;
 import com.namoadigital.prj001.ui.act083.Act083_Main;
 import com.namoadigital.prj001.ui.act084.Act084Main;
-import com.namoadigital.prj001.ui.act085.Act085Main;
+import com.namoadigital.prj001.ui.act087.Act087Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -1637,8 +1637,22 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     }
 
     private void callAct085() {
-        Intent mIntent = new Intent(context, Act085Main.class);
+        //TODO APGAR APOS TESTES
+        Intent mIntent = new Intent(context, Act087Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtras(
+            Act087Main.getBundleInstance(
+                    "1",
+                "71",
+                "1",
+                "53",
+                "S1",
+                "1",
+                "-1",
+                "-1",
+                "-1"
+            )
+        );
         startActivity(mIntent);
         finish();
     }

@@ -5,18 +5,17 @@ class GeOs(
     val custom_form_type: Int,
     val custom_form_code: Int,
     val custom_form_version: Int,
-    val custom_form_data: Int,
-    val order_type_code: Int,
-    val order_type_id: String,
-    val order_type_desc: String,
-    val backup_product_code: Int?,
-    val backup_serial_code: Int?,
-    val measure_tp_code: Int,
-    val measure_tp_id: String,
-    val measure_tp_desc: String,
-    val measure_value: Int?,
-    val measure_cycle_value: Int?,
-    val last_measure_value: Float?,
-    val last_measure_date: String?
-) {
-}
+    var custom_form_data: Int,
+    var order_type_code: Int,
+    var order_type_id: String,
+    var order_type_desc: String,
+    var backup_product_code: Int?,
+    var backup_serial_code: Int?,
+    var measure_tp_code: Int,
+    var measure_tp_id: String,
+    var measure_tp_desc: String,
+    var measure_value: Int?,
+    var measure_cycle_value: Int?,
+    var last_measure_value: Float?,
+    var last_measure_date: String?
+)

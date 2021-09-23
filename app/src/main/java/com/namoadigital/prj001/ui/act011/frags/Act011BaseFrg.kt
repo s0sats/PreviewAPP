@@ -326,7 +326,7 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
         if(context is Act011BaseFrgInteractionNavegation ){
             _mNavListener = context as Act011BaseFrgInteractionNavegation
         } else {
-            throw RuntimeException("${context.toString()} must implement Act011FooterListener")
+            throw RuntimeException("${context.toString()} must implement Act011BaseFrgInteractionNavegation")
         }
     }
 
