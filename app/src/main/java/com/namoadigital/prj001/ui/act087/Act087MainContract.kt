@@ -2,9 +2,7 @@ package com.namoadigital.prj001.ui.act087
 
 import android.graphics.Bitmap
 import com.namoa_digital.namoa_library.util.HMAux
-import com.namoadigital.prj001.model.GeOs
-import com.namoadigital.prj001.model.MD_Product_Serial
-import com.namoadigital.prj001.model.MdOrderType
+import com.namoadigital.prj001.model.*
 import java.util.ArrayList
 
 interface Act087MainContract {
@@ -20,5 +18,7 @@ interface Act087MainContract {
         fun getOsHeaderObj(): GeOs
         fun validateBundleParams(): Boolean
         fun getOrderTypeList(orderTypeCode: Int): ArrayList<MdOrderType>
+        fun getProductInfo(productCode: Int): MD_Product?
+        fun getMeasure(measureCode: Int): MeMeasureTp?
     }
 }

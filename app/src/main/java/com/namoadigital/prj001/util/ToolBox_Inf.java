@@ -8872,4 +8872,17 @@ public class ToolBox_Inf {
                 return null;
         }
     }
+
+    /**
+     * Metodo que retorna se data passa esta no futuro.
+     * @param date - Data no formato yyyy-MM-dd HH:mm:ss Z
+     * @return true - Se millisegundos da data maior que millisegundos atual.
+     */
+    public static boolean isFutureDate(String date){
+        long currentMilliseconds = Calendar.getInstance().getTimeInMillis();
+        long dateMilliseconds = dateToMilliseconds(date);
+        //
+        return dateMilliseconds > currentMilliseconds;
+        //return dateToMilliseconds(date) > Calendar.getInstance().getTimeInMillis();
+    }
 }

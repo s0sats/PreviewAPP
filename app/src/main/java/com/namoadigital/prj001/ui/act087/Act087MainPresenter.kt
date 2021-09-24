@@ -92,7 +92,7 @@ class Act087MainPresenter(
         return null
     }
 
-    private fun getProductInfo(productCode: Int) = productDao.getByString(
+    override fun getProductInfo(productCode: Int) : MD_Product? = productDao.getByString(
         MD_Product_Sql_001(
             ToolBox_Con.getPreference_Customer_Code(context),
             productCode.toLong()
@@ -122,7 +122,10 @@ class Act087MainPresenter(
             order_type_id = orderType?.orderTypeId?:"",
             order_type_desc = orderType?.orderTypeDesc?:"",
             backup_product_code = null,
+            backup_product_id = null,
+            backup_product_desc = null,
             backup_serial_code = null,
+            backup_serial_id = null,
             measure_tp_code = measureTp?.measureTpCode,
             measure_tp_id = measureTp?.measureTpId,
             measure_tp_desc = measureTp?.measureTpDesc,
@@ -179,5 +182,9 @@ class Act087MainPresenter(
             }
         //
         return orderTypeDao.query(orderTypeQuery) as ArrayList<MdOrderType>
+    }
+
+    override fun getMeasure(measureCode: Int): MeMeasureTp? {
+        return getMeasureTp(ToolBox_Con.getPreference_Customer_Code(context),measureCode)
     }
 }

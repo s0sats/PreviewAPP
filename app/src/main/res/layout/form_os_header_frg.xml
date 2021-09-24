@@ -49,29 +49,43 @@
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="1. Tipo de Order de serviço" />
 
-                <ImageView
-                    android:id="@+id/iv_sp_dropdown"
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/sp_os_type"
-                    app:layout_constraintEnd_toEndOf="@+id/sp_os_type"
-                    app:layout_constraintTop_toTopOf="@+id/sp_os_type"
-                    app:srcCompat="@drawable/ic_arrow_drop_down_24px"
-                    android:layout_marginEnd="4dp"
-                    />
+<!--                <ImageView-->
+<!--                    android:id="@+id/iv_sp_dropdown"-->
+<!--                    android:layout_width="18dp"-->
+<!--                    android:layout_height="18dp"-->
+<!--                    app:layout_constraintBottom_toBottomOf="@+id/sp_os_type"-->
+<!--                    app:layout_constraintEnd_toEndOf="@+id/sp_os_type"-->
+<!--                    app:layout_constraintTop_toTopOf="@+id/sp_os_type"-->
+<!--                    app:srcCompat="@drawable/ic_arrow_drop_down_24px"-->
+<!--                    android:layout_marginEnd="4dp"-->
+<!--                    />-->
 
-                <androidx.appcompat.widget.AppCompatSpinner
-                    android:id="@+id/sp_os_type"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_spinner"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:background="@drawable/bg_namoa_spinner"
                     android:minHeight="36dp"
-                    android:paddingEnd="22dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_os_type_lbl"
-                    />
+                    android:background="@drawable/bg_namoa_spinner"
+                    >
+
+                    <androidx.appcompat.widget.AppCompatSpinner
+                        android:id="@+id/sp_os_type"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:minHeight="36dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cl_machine_edit"
@@ -80,7 +94,7 @@
                     android:layout_marginTop="24dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/sp_os_type">
+                    app:layout_constraintTop_toBottomOf="@id/cl_spinner">
 
                     <TextView
                         android:id="@+id/tv_os_machine_lbl"

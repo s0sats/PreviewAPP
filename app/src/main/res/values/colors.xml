@@ -192,7 +192,8 @@
     <color name="namoa_os_form_tab_pending">#FFEBCD</color>
 
     <color name="namoa_color_light_green5_filled_a20">#20A3C853</color>
-    <color name="namoa_color_dark_blue_filled_a20">#500F4D61</color>
+    <color name="namoa_color_dark_blue_filled_a20">#440F4D61</color>
+    <color name="namoa_font_color_black222">#222222</color>
 
     <!--Cores OS form -->
 </resources>

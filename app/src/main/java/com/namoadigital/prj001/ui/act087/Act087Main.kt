@@ -5,22 +5,20 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.WindowManager
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.databinding.Act087MainBinding
 import com.namoadigital.prj001.databinding.Act087MainContentBinding
 import com.namoadigital.prj001.extensions.setFrag
-import com.namoadigital.prj001.model.GeOs
-import com.namoadigital.prj001.model.MD_Product_Serial
-import com.namoadigital.prj001.model.MdOrderType
+import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.ui.act005.Act005_Main
 import com.namoadigital.prj001.ui.act011.frags.Act011BaseFrgInteractionNavegation
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
-import com.namoadigital.prj001.view.act.product_selection.Act_Product_Selection
 
 class Act087Main : Base_Activity_Frag(),
     Act011BaseFrgInteractionNavegation,
@@ -201,28 +199,29 @@ class Act087Main : Base_Activity_Frag(),
         return mPresenter.getOrderTypeList(orderTypeCode)
     }
 
-    override fun callProductSelection() {
-        callProductSelctionAct()
-    }
-
-
-
     override fun searchSerialClick() {
         //
     }
 
-    override fun createOsHeader(formOsHeader: GeOs) {
-
+    override fun getDefaultBkpMachineProduct(): MD_Product? {
+        return mPresenter.getProductInfo(productCode)
     }
 
-    fun callProductSelctionAct() {
-        val mIntent = Intent(context, Act_Product_Selection::class.java)
-        val bundle = Bundle()
-        //
-        bundle.putBoolean(Act_Product_Selection.IS_ADD_PRODUCT_LIST, false)
-        mIntent.putExtras(bundle)
-        //
-        startActivityForResult(mIntent, ConstantBaseApp.ACT_PRODUCT_SELECTION_REQUEST_CODE)
+    override fun getFormSerialId() = serialId
+
+    override fun delegateControlSta(control_sta: ArrayList<MKEditTextNM>, addAction: Boolean) {
+        controls_sta.clear()
+        if(addAction) {
+            controls_sta.addAll(control_sta)
+        }
+    }
+
+    override fun getMeasure(measureCode: Int): MeMeasureTp? {
+        return mPresenter.getMeasure(measureCode)
+    }
+
+    override fun createOsHeader(formOsHeader: GeOs) {
+
     }
 
     /**

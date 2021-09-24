@@ -5,6 +5,7 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteException
 import androidx.core.database.getIntOrNull
+import androidx.core.database.getStringOrNull
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
@@ -33,7 +34,10 @@ class GeOsDao(
         const val ORDER_TYPE_ID = "order_type_id"
         const val ORDER_TYPE_DESC = "order_type_desc"
         const val BACKUP_PRODUCT_CODE = "backup_product_code"
+        const val BACKUP_PRODUCT_ID = "backup_product_id"
+        const val BACKUP_PRODUCT_DESC = "backup_product_desc"
         const val BACKUP_SERIAL_CODE = "backup_serial_code"
+        const val BACKUP_SERIAL_ID = "backup_serial_id"
         const val MEASURE_TP_CODE = "measure_tp_code"
         const val MEASURE_TP_ID = "measure_tp_id"
         const val MEASURE_TP_DESC = "measure_tp_desc"
@@ -285,7 +289,10 @@ class GeOsDao(
                         order_type_id = getString(getColumnIndex(ORDER_TYPE_ID)),
                         order_type_desc = getString(getColumnIndex(ORDER_TYPE_DESC)),
                         backup_product_code = getInt(getColumnIndex(BACKUP_PRODUCT_CODE)),
+                        backup_product_id = getStringOrNull(getColumnIndex(BACKUP_PRODUCT_ID)),
+                        backup_product_desc = getStringOrNull(getColumnIndex(BACKUP_PRODUCT_DESC)),
                         backup_serial_code = getInt(getColumnIndex(BACKUP_SERIAL_CODE)),
+                        backup_serial_id = getStringOrNull(getColumnIndex(BACKUP_SERIAL_ID)),
                         measure_tp_code = getInt(getColumnIndex(MEASURE_TP_CODE)),
                         measure_tp_id = getString(getColumnIndex(MEASURE_TP_ID)),
                         measure_tp_desc = getString(getColumnIndex(MEASURE_TP_DESC)),
@@ -327,8 +334,11 @@ class GeOsDao(
                     put(ORDER_TYPE_ID, it.order_type_id)
                     //
                     put(BACKUP_PRODUCT_CODE, it.backup_product_code)
+                    put(BACKUP_PRODUCT_ID, it.backup_product_id)
+                    put(BACKUP_PRODUCT_DESC, it.backup_product_desc)
                     //
                     put(BACKUP_SERIAL_CODE, it.backup_serial_code)
+                    put(BACKUP_SERIAL_ID, it.backup_serial_id)
                     //
                     put(MEASURE_TP_CODE, it.measure_tp_code)
                     //
