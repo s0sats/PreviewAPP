@@ -1,12 +1,11 @@
 package com.namoadigital.prj001.ui.act087
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
-import android.net.IpPrefix
 import android.os.Bundle
 import android.view.WindowManager
-import com.google.android.datatransport.runtime.scheduling.jobscheduling.SchedulerConfig
-import com.namoa_digital.namoa_library.view.Base_Activity
+import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.databinding.Act087MainBinding
@@ -21,6 +20,7 @@ import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
+import com.namoadigital.prj001.view.act.product_selection.Act_Product_Selection
 
 class Act087Main : Base_Activity_Frag(),
     Act011BaseFrgInteractionNavegation,
@@ -37,6 +37,11 @@ class Act087Main : Base_Activity_Frag(),
             this,
             mModule_Code,
             mResource_Code,
+            customFormType,
+            customFormCode,
+            customFormVersion,
+            productCode,
+            serialId,
             MD_ProductDao(
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
@@ -88,6 +93,7 @@ class Act087Main : Base_Activity_Frag(),
         setSupportActionBar(mainBinding.toolbar)
         //
         iniSetup()
+        recoverIntentsInfo()
         iniTrans()
         initVars()
         initActions()
@@ -111,9 +117,23 @@ class Act087Main : Base_Activity_Frag(),
     }
 
     private fun initVars() {
-        recoverIntentsInfo()
-        //
-        setFormOsHeaderFrg()
+        if(mPresenter.validateBundleParams()) {
+            setFormOsHeaderFrg()
+        }else{
+            paramErrorFlow()
+        }
+    }
+
+    private fun paramErrorFlow() {
+        ToolBox.alertMSG(
+            context,
+            hmAux_Trans["alert_form_parameter_error_ttl"],
+            hmAux_Trans["alert_form_parameter_error_msg"],
+            DialogInterface.OnClickListener { _, _ ->
+                onBackPressed()
+            },
+            0
+        )
     }
 
     private fun setFormOsHeaderFrg() {
@@ -122,9 +142,7 @@ class Act087Main : Base_Activity_Frag(),
             formStatus = ConstantBaseApp.SYS_STATUS_PENDING,
             scheduleDesc = null,
             scheduleComments = null,
-            formOsHeader = mPresenter.getOsHeaderObj(
-                customFormCode, customFormType, customFormVersion, productCode, serialId
-            ),
+            formOsHeader = mPresenter.getOsHeaderObj(),
             isOsCreation = true
         )
         //
@@ -172,15 +190,46 @@ class Act087Main : Base_Activity_Frag(),
     }
 
     override fun getSerialInfo(): MD_Product_Serial {
-        return mPresenter.getSerialInfo(productCode=1,serialId="s1",serialCode=1)
+        return mPresenter.getSerialInfo()
     }
 
     override fun getProductIconBmp(): Bitmap? {
-        return mPresenter.getProductIcon(productCode= 1)
+        return mPresenter.getProductIcon()
     }
 
-    override fun getOrderTypeList(): ArrayList<MdOrderType> {
-        return emptyList<MdOrderType>() as ArrayList<MdOrderType>
+    override fun getOrderTypeList(orderTypeCode: Int): ArrayList<MdOrderType> {
+        return mPresenter.getOrderTypeList(orderTypeCode)
+    }
+
+    override fun callProductSelection() {
+        callProductSelctionAct()
+    }
+
+
+
+    override fun searchSerialClick() {
+        //
+    }
+
+    override fun createOsHeader(formOsHeader: GeOs) {
+
+    }
+
+    fun callProductSelctionAct() {
+        val mIntent = Intent(context, Act_Product_Selection::class.java)
+        val bundle = Bundle()
+        //
+        bundle.putBoolean(Act_Product_Selection.IS_ADD_PRODUCT_LIST, false)
+        mIntent.putExtras(bundle)
+        //
+        startActivityForResult(mIntent, ConstantBaseApp.ACT_PRODUCT_SELECTION_REQUEST_CODE)
+    }
+
+    /**
+     * Fun necesaria e somente com a chamada do super, pois o super chamara o mesmo metodo no frag.
+     */
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
     }
 
     private fun iniUIFooter() {
@@ -207,7 +256,6 @@ class Act087Main : Base_Activity_Frag(),
     override fun onBackPressed() {
         //super.onBackPressed()
         callAct005()
-
     }
 
     private fun callAct005() {

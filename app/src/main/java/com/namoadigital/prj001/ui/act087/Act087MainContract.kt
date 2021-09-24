@@ -4,6 +4,8 @@ import android.graphics.Bitmap
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.model.GeOs
 import com.namoadigital.prj001.model.MD_Product_Serial
+import com.namoadigital.prj001.model.MdOrderType
+import java.util.ArrayList
 
 interface Act087MainContract {
 
@@ -12,15 +14,11 @@ interface Act087MainContract {
     }
 
     interface I_Presenter{
-        fun getSerialInfo(productCode: Int, serialId: String, serialCode: Int = 0): MD_Product_Serial
-        fun getProductIcon(productCode: Int): Bitmap?
+        fun getSerialInfo(): MD_Product_Serial
+        fun getProductIcon(): Bitmap?
         fun getTranslation(): HMAux
-        fun getOsHeaderObj(
-            customFormCode: Int,
-            customFormType: Int,
-            customFormVersion: Int,
-            productCode: Int,
-            serialId: String
-        ): GeOs
+        fun getOsHeaderObj(): GeOs
+        fun validateBundleParams(): Boolean
+        fun getOrderTypeList(orderTypeCode: Int): ArrayList<MdOrderType>
     }
 }

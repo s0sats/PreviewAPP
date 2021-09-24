@@ -10,12 +10,18 @@ class GeOs(
     var order_type_id: String,
     var order_type_desc: String,
     var backup_product_code: Int?,
+    var backup_product_id: String?,
+    var backup_product_desc: String?,
     var backup_serial_code: Int?,
-    var measure_tp_code: Int,
-    var measure_tp_id: String,
-    var measure_tp_desc: String,
-    var measure_value: Int?,
+    var backup_serial_id: String?,
+    var measure_tp_code: Int?,
+    var measure_tp_id: String?,
+    var measure_tp_desc: String?,
+    var measure_value: Float?,
     var measure_cycle_value: Int?,
     var last_measure_value: Float?,
-    var last_measure_date: String?
+    var last_measure_date: String?,
+    val so_edit_start_end: Int,
+    val so_order_type_code_default: Int?,
+    val so_allow_change_order_type: Int
 )

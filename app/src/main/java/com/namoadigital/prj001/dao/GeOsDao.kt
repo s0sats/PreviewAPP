@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteException
+import androidx.core.database.getIntOrNull
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
@@ -40,6 +41,9 @@ class GeOsDao(
         const val MEASURE_CYCLE_VALUE = "measure_cycle_value"
         const val LAST_MEASURE_VALUE = "last_measure_value"
         const val LAST_MEASURE_DATE = "last_measure_date"
+        const val SO_EDIT_START_END = "so_edit_start_end"
+        const val SO_ORDER_TYPE_CODE_DEFAULT = "so_order_type_code_default"
+        const val SO_ALLOW_CHANGE_ORDER_TYPE = "so_allow_change_order_type"
     }
 
     private val toGeOsMapper: Mapper<Cursor, GeOs>
@@ -285,10 +289,13 @@ class GeOsDao(
                         measure_tp_code = getInt(getColumnIndex(MEASURE_TP_CODE)),
                         measure_tp_id = getString(getColumnIndex(MEASURE_TP_ID)),
                         measure_tp_desc = getString(getColumnIndex(MEASURE_TP_DESC)),
-                        measure_value = getInt(getColumnIndex(MEASURE_VALUE)),
+                        measure_value = getFloat(getColumnIndex(MEASURE_VALUE)),
                         measure_cycle_value = getInt(getColumnIndex(MEASURE_CYCLE_VALUE)),
                         last_measure_value = getFloat(getColumnIndex(LAST_MEASURE_VALUE)),
-                        last_measure_date = getString(getColumnIndex(LAST_MEASURE_DATE))
+                        last_measure_date = getString(getColumnIndex(LAST_MEASURE_DATE)),
+                        so_edit_start_end = getInt(getColumnIndex(SO_EDIT_START_END)),
+                        so_order_type_code_default = getIntOrNull(getColumnIndex(LAST_MEASURE_DATE)),
+                        so_allow_change_order_type = getInt(getColumnIndex(SO_ALLOW_CHANGE_ORDER_TYPE))
                     )
                 }
             }
@@ -337,6 +344,11 @@ class GeOsDao(
                     //
                     put(LAST_MEASURE_DATE, it.last_measure_date)
                     //
+                    put(SO_EDIT_START_END, it.so_edit_start_end)
+                    //
+                    put(SO_ORDER_TYPE_CODE_DEFAULT, it.so_order_type_code_default)
+                    //
+                    put(SO_ALLOW_CHANGE_ORDER_TYPE, it.so_allow_change_order_type)
                 }
             }
             return contentValues

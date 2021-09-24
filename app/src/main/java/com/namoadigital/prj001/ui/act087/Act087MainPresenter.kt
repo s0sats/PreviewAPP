@@ -11,12 +11,18 @@ import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.io.File
+import java.util.ArrayList
 
 class Act087MainPresenter(
     private val context: Context,
     private val mView: Act087MainContract.I_View,
     private val mModule_Code: String,
     private val mResource_Code: String,
+    private val customFormType: Int,
+    private val customFormCode: Int,
+    private val customFormVersion: Int,
+    private val productCode: Int,
+    private val serialId: String,
     private val productDao: MD_ProductDao,
     private val serialDao: MD_Product_SerialDao,
     private val formDao: GE_Custom_FormDao,
@@ -29,8 +35,9 @@ class Act087MainPresenter(
         loadTranslation()
     }
 
-    private lateinit var serialObj : MD_Product_Serial
-
+    private val serialObj : MD_Product_Serial by lazy{
+        getSerialObj(productCode, serialId)
+    }
 
     private fun loadTranslation(): HMAux {
         val transList: MutableList<String> = mutableListOf(
@@ -51,25 +58,27 @@ class Act087MainPresenter(
         return hmAuxTrans
     }
 
-    override fun getSerialInfo(
-        productCode: Int,
-        serialId: String,
-        serialCode: Int
-    ): MD_Product_Serial {
-        if(!::serialObj.isInitialized){
-            serialObj = serialDao.getByString(
-                MD_Product_Serial_Sql_002(
-                   ToolBox_Con.getPreference_Customer_Code(context),
-                    productCode.toLong(),
-                    serialId
-                ).toSqlQuery()
-            )
+    override fun validateBundleParams(): Boolean {
+        if(customFormType > -1 && customFormCode > -1 && customFormVersion > -1 && productCode > -1 && serialId.isNotEmpty()){
+            return true
         }
-        return serialObj
-
+        return false
     }
 
-    override fun getProductIcon(productCode: Int): Bitmap? {
+    override fun getSerialInfo() = serialObj
+
+    private fun getSerialObj(productCode: Int, serialId: String) : MD_Product_Serial{
+        return serialDao.getByString(
+            MD_Product_Serial_Sql_002(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                productCode.toLong(),
+                serialId
+            ).toSqlQuery()
+        )
+    }
+
+
+    override fun getProductIcon(): Bitmap? {
         getProductInfo(productCode)?.let {
             if (!it.product_icon_name.isNullOrEmpty()) {
                 if (ToolBox_Inf.verifyDownloadFileInf(it.product_icon_name, Constant.CACHE_PATH)) {
@@ -90,42 +99,40 @@ class Act087MainPresenter(
         ).toSqlQuery()
     )
 
-    override fun getOsHeaderObj(
-        customFormCode: Int,
-        customFormType: Int,
-        customFormVersion: Int,
-        productCode: Int,
-        serialId: String
-    ): GeOs {
+    override fun getOsHeaderObj(): GeOs {
         var orderType : MdOrderType? = null
         var measureTp : MeMeasureTp? = null
+        //
         val form: GE_Custom_Form = getForm(customFormCode,customFormType,customFormVersion)
         form.so_order_type_code_default?.let {
             orderType = getOrderType(form.customer_code,form.so_order_type_code_default)
         }
-        getSerialInfo(productCode,serialId)
+        getSerialInfo()
         serialObj.measure_tp_code?.let {
             measureTp = getMeasureTp(serialObj.customer_code,serialObj.measure_tp_code)
         }
         //
         return GeOs(
-            form.customer_code,
-            form.custom_form_type,
-            form.custom_form_code,
-            form.custom_form_version,
-            0,
-            form.so_order_type_code_default?:-1,
-            orderType?.orderTypeId?:"",
-            orderType?.orderTypeDesc?:"",
-            null,
-            null,
-            measureTp?.measureTpCode?:-1,
-            measureTp?.measureTpId?:"",
-            measureTp?.measureTpDesc?:"",
-            null,
-            serialObj.last_cycle_value,
-            serialObj.last_measure_value?.toFloat(),
-            serialObj.last_measure_date
+            customer_code = form.customer_code,
+            custom_form_type = form.custom_form_type,
+            custom_form_code = form.custom_form_code,
+            custom_form_version = form.custom_form_version,
+            custom_form_data = 0,
+            order_type_code = orderType?.orderTypeCode?:-1,
+            order_type_id = orderType?.orderTypeId?:"",
+            order_type_desc = orderType?.orderTypeDesc?:"",
+            backup_product_code = null,
+            backup_serial_code = null,
+            measure_tp_code = measureTp?.measureTpCode,
+            measure_tp_id = measureTp?.measureTpId,
+            measure_tp_desc = measureTp?.measureTpDesc,
+            measure_value = null,
+            measure_cycle_value = serialObj.last_cycle_value,
+            last_measure_value = serialObj.last_measure_value?.toFloat(),
+            last_measure_date = serialObj.last_measure_date,
+            so_edit_start_end = form.so_edit_start_end,
+            so_order_type_code_default = form.so_order_type_code_default,
+            so_allow_change_order_type = form.so_allow_change_order_type
         )
     }
 
@@ -156,5 +163,21 @@ class Act087MainPresenter(
                 customFormVersion.toString()
             ).toSqlQuery()
         )
+    }
+
+    override fun getOrderTypeList(orderTypeCode: Int): ArrayList<MdOrderType> {
+        val orderTypeQuery =
+            if(orderTypeCode == -1){
+                MdOrderTypeSql_002(
+                    ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+            } else{
+                MdOrderTypeSql_001(
+                    ToolBox_Con.getPreference_Customer_Code(context),
+                    orderTypeCode
+                ).toSqlQuery()
+            }
+        //
+        return orderTypeDao.query(orderTypeQuery) as ArrayList<MdOrderType>
     }
 }
