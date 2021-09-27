@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act087
 
 import android.content.Context
 import android.content.Intent
+
 import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
@@ -26,6 +27,10 @@ import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
 import com.namoadigital.prj001.view.act.product_selection.Act_Product_Selection
+import java.math.BigDecimal
+import java.math.RoundingMode
+import java.util.*
+import kotlin.collections.ArrayList
 
 class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>() {
 
@@ -323,7 +328,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>() {
                     bkpMachineEmpty= isMachineEmpty,
                     bkpMachineEquals = isMachineTheSame,
                     startDateInvalid = isStartDateInvalid,
-                    lastCycleInvalid = true,
+                    lastCycleInvalid = measureInvalid,
                     currentCycleVal = 1000,
                     lastCycleVal = 950
                 )
@@ -333,23 +338,71 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>() {
         }
     }
 
-    //TODO CONTINUAR DAQUI
     private fun isMeasureRestrictionInvalid(): Boolean {
         mainMeasureTp?.let{
-            val typedMeasure = binding.mketMachineSerialEdit.text.toString().toInt()
-            when(it.restrictionType){
-                "VALUE"-> return isMeasureRestrictionValueInvalid(typedMeasure,it)
-                "VALUE_BY_DAY" -> return false
-                "MIN_MAX" -> return isMeasureRestrictionMinMaxInvalid(typedMeasure,it)
-
-                else-> return false
+            if(!binding.mketOsMainMeasureVal.text.isNullOrEmpty()){
+                val typedMeasure = binding.mketOsMainMeasureVal.text.toString().toFloat()
+                when(it.restrictionType){
+                    MeMeasureTp.RESTRICTION_TYPE_VALUE -> return isMeasureRestrictionValueInvalid(typedMeasure,it)
+                    MeMeasureTp.RESTRICTION_TYPE_VALUE_BY_DAY -> return isMeasureRestrictionValueByDayInvalid(typedMeasure,it)
+                    MeMeasureTp.RESTRICTION_TYPE_MIN_MAX  -> return isMeasureRestrictionMinMaxInvalid(typedMeasure,it)
+                    else-> return false
+                }
+            }else{
+                return true
             }
         }
         return false
     }
 
+    private fun isMeasureRestrictionValueByDayInvalid(
+        typedMeasure: Float,
+        measureTp: MeMeasureTp
+    ): Boolean {
+        if(formOsHeader.last_measure_value != null && formOsHeader.last_measure_date != null) {
+            val valPerDay = getDiffBetweenDatesInFloatDays(formOsHeader.last_measure_date!!)
+            val minConsider : Float? = measureTp.restrictionMin?.let { min->
+                    formOsHeader.last_measure_value!! - (min * valPerDay)
+            }
+            val maxConsider : Float? = measureTp.restrictionMax?.let { max->
+                formOsHeader.last_measure_value!! + (max * valPerDay)
+            }
+            //
+            if(minConsider != null && maxConsider != null){
+                return minConsider > typedMeasure && typedMeasure <= maxConsider
+            }else if (minConsider != null || maxConsider != null ){
+                return if(minConsider != null){
+                    typedMeasure > minConsider
+                }else{
+                    typedMeasure <= maxConsider!!
+                }
+            }
+        }
+        return false
+    }
+
+    /**
+     * Calcula a diferença de dias entre 2 datas como float
+     */
+    private fun getDiffBetweenDatesInFloatDays(lastMeasureDate: String): Float {
+        //Qtd de ms em um dias
+        val ONE_DAY_IN_MILLISECOND = 86400000
+        //Data passada em MS
+        val lastMeasureDateMs = ToolBox_Inf.dateToMilliseconds(lastMeasureDate)
+        //Data atual em MS
+        val nowInMs = Calendar.getInstance().timeInMillis
+        //Diferença entre das data em MS
+        val diffInMs = nowInMs - lastMeasureDateMs
+        //Calc dias inteiros
+        val calcDay = diffInMs / ONE_DAY_IN_MILLISECOND
+        //Calc perc de dias...
+        val modDay = (diffInMs % ONE_DAY_IN_MILLISECOND.toDouble()) / ONE_DAY_IN_MILLISECOND.toDouble()
+        //Soma e devolve float com 2 casas.
+        return BigDecimal(calcDay + modDay).setScale(2,RoundingMode.HALF_DOWN).toFloat()
+    }
+
     private fun isMeasureRestrictionValueInvalid(
-        typedMeasure: Int,
+        typedMeasure: Float,
         measureTp: MeMeasureTp,
     ): Boolean {
         formOsHeader.last_measure_value?.let { lastMeasure->
@@ -380,7 +433,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>() {
     }
 
     private fun isMeasureRestrictionMinMaxInvalid(
-        typedMeasure: Int,
+        typedMeasure: Float,
         it: MeMeasureTp,
     ): Boolean {
         return if (it.restrictionMin != null && it.restrictionMax != null) {
