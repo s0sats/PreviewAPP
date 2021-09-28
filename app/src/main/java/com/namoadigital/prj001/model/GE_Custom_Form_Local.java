@@ -75,6 +75,10 @@ public class GE_Custom_Form_Local {
     private int tag_operational_code;
     private String tag_operational_id;
     private String tag_operational_desc;
+    private int is_so;
+    private int so_edit_start_end;
+    private Integer so_order_type_default;
+    private int so_allow_change_order_type;
 
     public long getCustomer_code() {
         return customer_code;
@@ -506,6 +510,38 @@ public class GE_Custom_Form_Local {
 
     public void setTag_operational_desc(String tag_operational_desc) {
         this.tag_operational_desc = tag_operational_desc;
+    }
+
+    public int getIs_so() {
+        return is_so;
+    }
+
+    public void setIs_so(int is_so) {
+        this.is_so = is_so;
+    }
+
+    public int getSo_edit_start_end() {
+        return so_edit_start_end;
+    }
+
+    public void setSo_edit_start_end(int so_edit_start_end) {
+        this.so_edit_start_end = so_edit_start_end;
+    }
+
+    public Integer getSo_order_type_default() {
+        return so_order_type_default;
+    }
+
+    public void setSo_order_type_default(Integer so_order_type_default) {
+        this.so_order_type_default = so_order_type_default;
+    }
+
+    public int getSo_allow_change_order_type() {
+        return so_allow_change_order_type;
+    }
+
+    public void setSo_allow_change_order_type(int so_allow_change_order_type) {
+        this.so_allow_change_order_type = so_allow_change_order_type;
     }
 
     public static MyActions toMyActionsObj(Context context, HMAux hmAux, @Nullable String lastFormSelectedPk){
