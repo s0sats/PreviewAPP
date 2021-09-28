@@ -87,6 +87,11 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
     public static final String TAG_OPERATIONAL_CODE = "tag_operational_code";
     public static final String TAG_OPERATIONAL_ID = "tag_operational_id";
     public static final String TAG_OPERATIONAL_DESC = "tag_operational_desc";
+    public static final String IS_SO = "is_so";
+    public static final String SO_EDIT_START_END = "so_edit_start_end";
+    public static final String SO_ORDER_TYPE_DEFAULT = "so_order_type_default";
+    public static final String SO_ALLOW_CHANGE_ORDER_TYPE = "so_allow_change_order_type";
+
 
     public GE_Custom_Form_LocalDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -757,7 +762,10 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             custom_form_local.setTag_operational_code(cursor.getInt(cursor.getColumnIndex(TAG_OPERATIONAL_CODE)));
             custom_form_local.setTag_operational_id(cursor.getString(cursor.getColumnIndex(TAG_OPERATIONAL_ID)));
             custom_form_local.setTag_operational_desc(cursor.getString(cursor.getColumnIndex(TAG_OPERATIONAL_DESC)));
-
+            custom_form_local.setIs_so(cursor.getInt(cursor.getColumnIndex(IS_SO)));
+            custom_form_local.setSo_edit_start_end(cursor.getInt(cursor.getColumnIndex(SO_EDIT_START_END)));
+            custom_form_local.setSo_order_type_default(cursor.getInt(cursor.getColumnIndex(SO_ORDER_TYPE_DEFAULT)));
+            custom_form_local.setSo_allow_change_order_type(cursor.getInt(cursor.getColumnIndex(SO_ALLOW_CHANGE_ORDER_TYPE)));
             return custom_form_local;
         }
     }
@@ -917,6 +925,18 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             }
             if(custom_form_local.getTag_operational_desc() != null){
                 contentValues.put(TAG_OPERATIONAL_DESC, custom_form_local.getTag_operational_desc());
+            }
+            if (custom_form_local.getIs_so() > -1) {
+                contentValues.put(IS_SO, custom_form_local.getIs_so());
+            }
+            if (custom_form_local.getSo_edit_start_end() > -1) {
+                contentValues.put(SO_EDIT_START_END, custom_form_local.getSo_edit_start_end());
+            }
+
+            contentValues.put(SO_ORDER_TYPE_DEFAULT , custom_form_local.getSo_order_type_default());
+
+            if (custom_form_local.getSo_allow_change_order_type() > -1) {
+                contentValues.put(SO_ALLOW_CHANGE_ORDER_TYPE, custom_form_local.getSo_allow_change_order_type());
             }
             //
             return contentValues;
