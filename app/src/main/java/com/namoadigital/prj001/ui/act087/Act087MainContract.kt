@@ -20,5 +20,6 @@ interface Act087MainContract {
         fun getOrderTypeList(orderTypeCode: Int): ArrayList<MdOrderType>
         fun getProductInfo(productCode: Int): MD_Product?
         fun getMeasure(measureCode: Int): MeMeasureTp?
+        fun createOsHeader(formOsHeader: GeOs)
     }
 }

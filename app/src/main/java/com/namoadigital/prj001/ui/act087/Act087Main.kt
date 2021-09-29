@@ -69,6 +69,36 @@ class Act087Main : Base_Activity_Frag(),
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
+            ),
+            MD_Product_Serial_Tp_DeviceDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+            ),
+            MD_Product_Serial_Tp_Device_ItemDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+            ),
+            MD_Product_Serial_Tp_Device_Item_HistDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+            ),
+            GeOsDeviceDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+            ),
+            GeOsDeviceItemDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+            ),
+            GeOsDeviceItemHistDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
             )
         )
     }
@@ -221,7 +251,7 @@ class Act087Main : Base_Activity_Frag(),
     }
 
     override fun createOsHeader(formOsHeader: GeOs) {
-
+        mPresenter.createOsHeader(formOsHeader)
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act087
 
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 
 import android.os.Bundle
@@ -31,6 +32,7 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.math.ceil
 
 class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>() {
 
@@ -55,7 +57,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>() {
     private val controlsSta = arrayListOf<MKEditTextNM>()
     private var formSerialId: String? = null
     private var mainMeasureTp: MeMeasureTp? = null
-    private var calculatedExecMeasureValue: Int = -1
+    private var calculatedExecMeasureValue: Float = -1f
     private var calculatedExecCycle: Int = -1
 
     companion object{
@@ -89,6 +91,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>() {
                     putString(GE_Custom_Form_Field_LocalDao.COMMENT,scheduleComments)
                 }
             }
+
+        val mResource_Name = "form_os_header"
 
         fun getFragTranslationsVars() : List<String>{
             return listOf(
@@ -203,20 +207,28 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>() {
 
     private fun iniBkpMachine() {
         with(binding) {
-            swMachine.isChecked = (formOsHeader.backup_product_code != null)
-            updateBkpMachineVisibility()
-            if(isOsCreation){
-                mCreationListener?.let {
-                    defaultBkpMachineProduct = it.getDefaultBkpMachineProduct()
-                    tvMachineProdEditLbl.text = defaultBkpMachineProduct?.product_desc?.toUpperCase()
+            //Se permite maquina reserva exibe, caso contrario some tudo.
+            if(formOsHeader.so_allow_backup == 1) {
+                swMachine.isChecked = (formOsHeader.backup_product_code != null)
+                updateBkpMachineVisibility()
+                if (isOsCreation) {
+                    mCreationListener?.let {
+                        defaultBkpMachineProduct = it.getDefaultBkpMachineProduct()
+                        tvMachineProdEditLbl.text =
+                            defaultBkpMachineProduct?.product_desc?.toUpperCase()
+                    }
+                } else {
+                    formOsHeader.backup_product_code?.let {
+                        tvMachineProdEditLbl.text = formOsHeader.backup_product_desc
+                    }
+                    formOsHeader.backup_serial_code?.let {
+                        mketMachineSerialEdit.setText(formOsHeader.backup_serial_id)
+                    }
+                    swMachine.isEnabled = false
                 }
             }else{
-                formOsHeader.backup_product_code?.let {
-                    tvMachineProdEditLbl.text = formOsHeader.backup_product_desc
-                }
-                formOsHeader.backup_serial_code?.let {
-                    mketMachineSerialEdit.setText(formOsHeader.backup_serial_id)
-                }
+                clMachineEdit.visibility = View.GONE
+                tvOsMachineLbl.visibility = View.GONE
                 swMachine.isEnabled = false
             }
         }
@@ -224,7 +236,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>() {
 
     private fun updateBkpMachineVisibility() {
         with(binding){
-            gpBkpMachine.visibility = if (swMachine.isChecked) View.VISIBLE else View.GONE
+            gpBkpMachineVal.visibility = if (swMachine.isChecked) View.VISIBLE else View.GONE
         }
     }
 
@@ -315,19 +327,19 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>() {
             val isOrderTypeInvalid = (spOsType.selectedItemPosition > orderTypeList.lastIndex || orderTypeList[spOsType.selectedItemPosition].orderTypeCode <= 0)
             val isMachineEmpty =  swMachine.isChecked && (selectedBkpMachineProduct == null || selectedBkpMachineSerialCode == null)
             val isMachineTheSame = (swMachine.isChecked && !isMachineEmpty && defaultBkpMachineProduct?.product_code == selectedBkpMachineProduct?.product_code && selectedBkpMachineSerialId == formSerialId)
-            val isStartDateInvalid = !( mkdtStartDate.isValid
+            val isStartDateInvalid = ( mkdtStartDate.isValid
                                        && !ToolBox_Inf.isFutureDate(mkdtStartDate.getmValue())
                                        && ( formOsHeader.last_measure_date == null
                                             || ToolBox_Inf.dateToMilliseconds(formOsHeader.last_measure_date) <= ToolBox_Inf.dateToMilliseconds(mkdtStartDate.getmValue())
                                        )
-                                    )
+                                    ).not()
             clMachineEdit.background = if (isMachineEmpty || isMachineTheSame) {
                 ContextCompat.getDrawable(requireContext(), R.drawable.shape_error)
             } else {
                 ContextCompat.getDrawable(requireContext(), R.drawable.shape_ok)
             }
             val measureInvalid = isMeasureRestrictionInvalid()
-            val preventiveCycleInvalid = isPreventiveCycleInvalid(isOrderTypeInvalid)
+            val preventiveCycleInvalid = isPreventiveCycleValid(isOrderTypeInvalid).not()
             //
             if(isOrderTypeInvalid || isMachineEmpty || isMachineTheSame || isStartDateInvalid || measureInvalid || preventiveCycleInvalid ){
                 showSaveErroDialog(
@@ -337,34 +349,90 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>() {
                     startDateInvalid = isStartDateInvalid,
                     measureInvalid = measureInvalid,
                     lastCycleInvalid = preventiveCycleInvalid,
-                    currentCycleVal = calculatedExecCycle,
-                    lastCycleVal = formOsHeader.last_cycle_value?:0
+                    calculatedCycle = calculatedExecCycle,
+                    lastCycleVal = formOsHeader.last_cycle_value?:0,
+                    measureSufix = mainMeasureTp?.valueSufix?:""
                 )
             }else{
-                mCreationListener?.createOsHeader(formOsHeader)
+                ToolBox.alertMSG(
+                    requireContext(),
+                    hmAuxTrans["alert_form_os_creation_ttl"],
+                    hmAuxTrans["alert_form_os_creation_confirm"],
+                    DialogInterface.OnClickListener { _, _ ->
+                       setDataIntoFormOsObj()
+                       mCreationListener?.createOsHeader(formOsHeader)
+                   },
+                    0
+                )
+
             }
         }
     }
 
-    private fun isPreventiveCycleInvalid(isOrderTypeInvalid: Boolean): Boolean {
+    private fun setDataIntoFormOsObj() {
+        val orderType = orderTypeList[binding.spOsType.selectedItemPosition]
+        formOsHeader.apply {
+            order_type_code = orderType.orderTypeCode
+            order_type_id = orderType.orderTypeId
+            order_type_desc = orderType.orderTypeDesc
+            selectedBkpMachineProduct?.let{ product ->
+                backup_product_code = product.product_code.toInt()
+                backup_product_id = product.product_id
+                backup_product_desc = product.product_desc
+            }
+            backup_serial_code = selectedBkpMachineSerialCode
+            backup_serial_id = selectedBkpMachineSerialId
+            mainMeasureTp?.let{ measure ->
+                measure_tp_code = measure.measureTpCode
+                measure_tp_id = measure.measureTpId
+                measure_tp_desc = measure.measureTpDesc
+                measure_value = binding.mketOsMainMeasureVal.text.toString().toFloat()
+                measure_cycle_value = calculatedExecCycle
+
+            }
+            start_date = binding.mkdtStartDate.getmValue()
+        }
+    }
+
+    private fun isPreventiveCycleValid(isOrderTypeInvalid: Boolean): Boolean {
         //Se orderType invalida, não tem como validar
         if(isOrderTypeInvalid){
-            return false
-        }
-        val mdOrderType = orderTypeList[binding.spOsType.selectedItemPosition]
-        if(mdOrderType.processType == MdOrderType.ProcessType.PREVENTIVE) {
-//            mainMeasureTp?.let { measure ->
-//                return if (!binding.mketOsMainMeasureVal.text.isNullOrEmpty()) {
-//
-//
-//                } else {
-//                    true
-//                }
-//            }
             return true
         }
-        return false
+        val mdOrderType = orderTypeList[binding.spOsType.selectedItemPosition]
+        if( mdOrderType.processType == MdOrderType.ProcessType.PREVENTIVE
+            && mainMeasureTp != null
+            && mainMeasureTp?.cycleTolerance != null
+            && mainMeasureTp?.valueCycleSize != null
+        ) {
+            if (binding.mketOsMainMeasureVal.text.isNullOrEmpty()) {
+                return false
+            }else{
+                var lastCycle = formOsHeader.last_cycle_value?:0
+                //Valor inserido
+                calculatedExecMeasureValue = binding.mketOsMainMeasureVal.text.toString().toFloat()
+                //divide valor atual pelo tam do ciclo e arredonda pra cima, pra identificar o fator
+                //de multiplicação do proxmo ciclo
+                var tamDoCiclo = mainMeasureTp!!.valueCycleSize!!
+                var cycleTolerance = mainMeasureTp?.cycleTolerance!!
 
+                var fatorNextCycle = ceil(calculatedExecMeasureValue.div(tamDoCiclo)).toInt()
+                //Calcula a tolerancia para ver se o valor digitado será aceito para ela
+                var realTolerance = tamDoCiclo * (cycleTolerance / 100f)
+                //Calcula o proximo ciclo
+                calculatedExecCycle = fatorNextCycle * tamDoCiclo
+                //Calcula valor com a tolerancia (proximo ciclo - tolerancia)
+                var valWithTolerance = calculatedExecCycle - realTolerance
+                //Se o valor digitado for
+                if(calculatedExecMeasureValue.compareTo(valWithTolerance) < 0){
+                    calculatedExecCycle -= tamDoCiclo
+                }
+                //
+                return calculatedExecCycle > lastCycle
+            }
+        }
+        //
+        return true
     }
 
     private fun isMeasureRestrictionInvalid(): Boolean {
@@ -390,8 +458,14 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>() {
     ): Boolean {
         if(formOsHeader.last_measure_value != null && formOsHeader.last_measure_date != null) {
             val valPerDay = getDiffBetweenDatesInFloatDays(formOsHeader.last_measure_date!!)
+            //Se o valor for menor do que 0, considerar 0
             val minConsider : Float? = measureTp.restrictionMin?.let { min->
-                    formOsHeader.last_measure_value!! - (min * valPerDay)
+                    val minToConsider = formOsHeader.last_measure_value!! - (min * valPerDay)
+                    if(minToConsider >= 0f){
+                        minToConsider
+                    } else {
+                        0f
+                    }
             }
             val maxConsider : Float? = measureTp.restrictionMax?.let { max->
                 formOsHeader.last_measure_value!! + (max * valPerDay)
@@ -593,15 +667,15 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>() {
     }
 
     fun showSaveErroDialog(
-       osTypeInvalid: Boolean = false,
-       bkpMachineEmpty: Boolean = false,
-       bkpMachineEquals: Boolean = false,
-       startDateInvalid: Boolean = false,
-       measureInvalid: Boolean = false,
-       lastCycleInvalid: Boolean = false,
-       currentCycleVal: Int = 0,
-       lastCycleVal: Int = 0,
-       measureSufix: String = ""
+        osTypeInvalid: Boolean = false,
+        bkpMachineEmpty: Boolean = false,
+        bkpMachineEquals: Boolean = false,
+        startDateInvalid: Boolean = false,
+        measureInvalid: Boolean = false,
+        lastCycleInvalid: Boolean = false,
+        calculatedCycle: Int = 0,
+        lastCycleVal: Int = 0,
+        measureSufix: String = ""
     ){
         val builder = AlertDialog.Builder(requireContext())
         val dialogBinding = FormOsHeaderFrgErrorDialogBinding.inflate(layoutInflater)
@@ -638,19 +712,19 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>() {
             }
             tvLastCycleLbl.apply {
                 visibility = if(lastCycleInvalid) View.VISIBLE else View.GONE
-                text = hmAuxTrans["alert_last_cycle_lbl"]
+                text = hmAuxTrans["alert_last_cycle_lbl"].plus(" :")
             }
             tvLastCycleVal.apply {
                 visibility = if(lastCycleInvalid) View.VISIBLE else View.GONE
-                text = lastCycleVal.toString()
+                text = "$lastCycleVal $measureSufix"
             }
             tvCurrentCycleLb.apply {
                 visibility = if(lastCycleInvalid) View.VISIBLE else View.GONE
-                text = hmAuxTrans["alert_current_cycle_lbl"]
+                text = hmAuxTrans["alert_current_cycle_lbl"].plus(" :")
             }
             tvCurrentCycleVal.apply {
                 visibility = if(lastCycleInvalid) View.VISIBLE else View.GONE
-                text = currentCycleVal.toString()
+                text = "$calculatedCycle $measureSufix"
             }
         }
         //
@@ -661,6 +735,10 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>() {
                 hmAuxTrans["sys_alert_btn_ok"],
                 null
             )
-        }.create().show()
+        }.setOnDismissListener {
+            calculatedExecCycle = 0
+            calculatedExecMeasureValue = -1f
+        }.create()
+        .show()
     }
 }
