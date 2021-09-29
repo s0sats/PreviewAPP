@@ -45,9 +45,12 @@ class GeOsDao(
         const val MEASURE_CYCLE_VALUE = "measure_cycle_value"
         const val LAST_MEASURE_VALUE = "last_measure_value"
         const val LAST_MEASURE_DATE = "last_measure_date"
+        const val LAST_CYCLE_VALUE = "last_cycle_value"
         const val SO_EDIT_START_END = "so_edit_start_end"
         const val SO_ORDER_TYPE_CODE_DEFAULT = "so_order_type_code_default"
         const val SO_ALLOW_CHANGE_ORDER_TYPE = "so_allow_change_order_type"
+        const val SO_ALLOW_BACKUP = "so_allow_backup"
+        const val DEVICE_TP_CODE_MAIN = "device_tp_code_main"
     }
 
     private val toGeOsMapper: Mapper<Cursor, GeOs>
@@ -300,9 +303,12 @@ class GeOsDao(
                         measure_cycle_value = getInt(getColumnIndex(MEASURE_CYCLE_VALUE)),
                         last_measure_value = getFloat(getColumnIndex(LAST_MEASURE_VALUE)),
                         last_measure_date = getString(getColumnIndex(LAST_MEASURE_DATE)),
+                        last_cycle_value = getIntOrNull(getColumnIndex(LAST_CYCLE_VALUE)),
                         so_edit_start_end = getInt(getColumnIndex(SO_EDIT_START_END)),
-                        so_order_type_code_default = getIntOrNull(getColumnIndex(LAST_MEASURE_DATE)),
-                        so_allow_change_order_type = getInt(getColumnIndex(SO_ALLOW_CHANGE_ORDER_TYPE))
+                        so_order_type_code_default = getIntOrNull(getColumnIndex(SO_ORDER_TYPE_CODE_DEFAULT)),
+                        so_allow_change_order_type = getInt(getColumnIndex(SO_ALLOW_CHANGE_ORDER_TYPE)),
+                        so_allow_backup = getInt(getColumnIndex(SO_ALLOW_BACKUP)),
+                        device_tp_code_main = getIntOrNull(getColumnIndex(DEVICE_TP_CODE_MAIN))
                     )
                 }
             }
@@ -354,11 +360,17 @@ class GeOsDao(
                     //
                     put(LAST_MEASURE_DATE, it.last_measure_date)
                     //
+                    put(LAST_CYCLE_VALUE, it.last_cycle_value)
+                    //
                     put(SO_EDIT_START_END, it.so_edit_start_end)
                     //
                     put(SO_ORDER_TYPE_CODE_DEFAULT, it.so_order_type_code_default)
                     //
                     put(SO_ALLOW_CHANGE_ORDER_TYPE, it.so_allow_change_order_type)
+                    //
+                    put(SO_ALLOW_BACKUP, it.so_allow_backup)
+                    //
+                    put(DEVICE_TP_CODE_MAIN, it.device_tp_code_main)
                 }
             }
             return contentValues

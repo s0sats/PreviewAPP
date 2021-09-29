@@ -21,7 +21,10 @@ class GeOs(
     var measure_cycle_value: Int?,
     var last_measure_value: Float?,
     var last_measure_date: String?,
+    var last_cycle_value: Int?,
     val so_edit_start_end: Int,
     val so_order_type_code_default: Int?,
-    val so_allow_change_order_type: Int
+    val so_allow_change_order_type: Int,
+    val so_allow_backup: Int,
+    val device_tp_code_main: Int?
 )

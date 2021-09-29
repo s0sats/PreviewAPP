@@ -55,6 +55,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>() {
     private val controlsSta = arrayListOf<MKEditTextNM>()
     private var formSerialId: String? = null
     private var mainMeasureTp: MeMeasureTp? = null
+    private var calculatedExecMeasureValue: Int = -1
+    private var calculatedExecCycle: Int = -1
 
     companion object{
         @JvmStatic
@@ -251,6 +253,11 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>() {
                 formOsHeader.measure_tp_code?.let{
                     mainMeasureTp = mCreationListener?.getMeasure(it)
                 }
+                mainMeasureTp?.let { measure->
+                    measure.restrictionDecimal?.let{ decimal ->
+                        mketOsMainMeasureVal.setmDecimal(decimal)
+                    }
+                }
             }
     }
 
@@ -320,21 +327,44 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>() {
                 ContextCompat.getDrawable(requireContext(), R.drawable.shape_ok)
             }
             val measureInvalid = isMeasureRestrictionInvalid()
+            val preventiveCycleInvalid = isPreventiveCycleInvalid(isOrderTypeInvalid)
             //
-            if(isOrderTypeInvalid || isMachineEmpty || isMachineTheSame || isStartDateInvalid || measureInvalid ){
+            if(isOrderTypeInvalid || isMachineEmpty || isMachineTheSame || isStartDateInvalid || measureInvalid || preventiveCycleInvalid ){
                 showSaveErroDialog(
                     osTypeInvalid = isOrderTypeInvalid,
                     bkpMachineEmpty= isMachineEmpty,
                     bkpMachineEquals = isMachineTheSame,
                     startDateInvalid = isStartDateInvalid,
-                    lastCycleInvalid = measureInvalid,
-                    currentCycleVal = 1000,
-                    lastCycleVal = 950
+                    measureInvalid = measureInvalid,
+                    lastCycleInvalid = preventiveCycleInvalid,
+                    currentCycleVal = calculatedExecCycle,
+                    lastCycleVal = formOsHeader.last_cycle_value?:0
                 )
             }else{
                 mCreationListener?.createOsHeader(formOsHeader)
             }
         }
+    }
+
+    private fun isPreventiveCycleInvalid(isOrderTypeInvalid: Boolean): Boolean {
+        //Se orderType invalida, não tem como validar
+        if(isOrderTypeInvalid){
+            return false
+        }
+        val mdOrderType = orderTypeList[binding.spOsType.selectedItemPosition]
+        if(mdOrderType.processType == MdOrderType.ProcessType.PREVENTIVE) {
+//            mainMeasureTp?.let { measure ->
+//                return if (!binding.mketOsMainMeasureVal.text.isNullOrEmpty()) {
+//
+//
+//                } else {
+//                    true
+//                }
+//            }
+            return true
+        }
+        return false
+
     }
 
     private fun isMeasureRestrictionInvalid(): Boolean {

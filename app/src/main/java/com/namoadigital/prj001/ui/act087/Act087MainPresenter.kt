@@ -131,11 +131,14 @@ class Act087MainPresenter(
             measure_tp_desc = measureTp?.measureTpDesc,
             measure_value = null,
             measure_cycle_value = serialObj.last_cycle_value,
+            last_cycle_value = serialObj.last_cycle_value,
             last_measure_value = serialObj.last_measure_value?.toFloat(),
             last_measure_date = serialObj.last_measure_date,
             so_edit_start_end = form.so_edit_start_end,
             so_order_type_code_default = form.so_order_type_code_default,
-            so_allow_change_order_type = form.so_allow_change_order_type
+            so_allow_change_order_type = form.so_allow_change_order_type,
+            device_tp_code_main = serialObj.device_tp_code_main,
+            so_allow_backup =  form.so_allow_backup
         )
     }
 

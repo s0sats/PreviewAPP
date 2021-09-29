@@ -105,6 +105,7 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
     public static final String HAS_ITEM_CHECK = "has_item_check";
     public static final String SCN_ITEM_CHECK = "scn_item_check";
     public static final String MEASURE_TP_CODE = "measure_tp_code";
+    public static final String DEVICE_TP_CODE_MAIN = "device_tp_code_main";
     public static final String LAST_MEASURE_VALUE = "last_measure_value";
     public static final String LAST_MEASURE_DATE = "last_measure_date";
     public static final String LAST_CYCLE_VALUE = "last_cycle_value";
@@ -1096,6 +1097,11 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             }else{
                 md_product_serial.setMeasure_tp_code(cursor.getInt(cursor.getColumnIndex(MEASURE_TP_CODE)));
             }
+            if(cursor.isNull(cursor.getColumnIndex(DEVICE_TP_CODE_MAIN))){
+                md_product_serial.setDevice_tp_code_main(null);
+            }else{
+                md_product_serial.setDevice_tp_code_main(cursor.getInt(cursor.getColumnIndex(DEVICE_TP_CODE_MAIN)));
+            }
             if(cursor.isNull(cursor.getColumnIndex(LAST_MEASURE_VALUE))){
                 md_product_serial.setLast_measure_value(null);
             }else{
@@ -1223,6 +1229,7 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             }
             contentValues.put(SCN_ITEM_CHECK, md_product_serial.getScn_item_check());
             contentValues.put(MEASURE_TP_CODE, md_product_serial.getMeasure_tp_code());
+            contentValues.put(DEVICE_TP_CODE_MAIN, md_product_serial.getDevice_tp_code_main());
             contentValues.put(LAST_CYCLE_VALUE, md_product_serial.getLast_cycle_value());
             contentValues.put(LAST_MEASURE_VALUE, md_product_serial.getLast_measure_value());
             contentValues.put(LAST_MEASURE_DATE, md_product_serial.getLast_measure_date());
