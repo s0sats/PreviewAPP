@@ -79,6 +79,7 @@ public class GE_Custom_Form_Local {
     private int so_edit_start_end;
     private Integer so_order_type_default;
     private int so_allow_change_order_type;
+    private int so_allow_backup;
 
     public long getCustomer_code() {
         return customer_code;
@@ -542,6 +543,14 @@ public class GE_Custom_Form_Local {
 
     public void setSo_allow_change_order_type(int so_allow_change_order_type) {
         this.so_allow_change_order_type = so_allow_change_order_type;
+    }
+
+    public int getSo_allow_backup() {
+        return so_allow_backup;
+    }
+
+    public void setSo_allow_backup(int so_allow_backup) {
+        this.so_allow_backup = so_allow_backup;
     }
 
     public static MyActions toMyActionsObj(Context context, HMAux hmAux, @Nullable String lastFormSelectedPk){
