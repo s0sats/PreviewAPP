@@ -4,6 +4,8 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteException
+import androidx.core.database.getIntOrNull
+import androidx.core.database.getStringOrNull
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
@@ -32,7 +34,10 @@ class GeOsDao(
         const val ORDER_TYPE_ID = "order_type_id"
         const val ORDER_TYPE_DESC = "order_type_desc"
         const val BACKUP_PRODUCT_CODE = "backup_product_code"
+        const val BACKUP_PRODUCT_ID = "backup_product_id"
+        const val BACKUP_PRODUCT_DESC = "backup_product_desc"
         const val BACKUP_SERIAL_CODE = "backup_serial_code"
+        const val BACKUP_SERIAL_ID = "backup_serial_id"
         const val MEASURE_TP_CODE = "measure_tp_code"
         const val MEASURE_TP_ID = "measure_tp_id"
         const val MEASURE_TP_DESC = "measure_tp_desc"
@@ -40,6 +45,12 @@ class GeOsDao(
         const val MEASURE_CYCLE_VALUE = "measure_cycle_value"
         const val LAST_MEASURE_VALUE = "last_measure_value"
         const val LAST_MEASURE_DATE = "last_measure_date"
+        const val LAST_CYCLE_VALUE = "last_cycle_value"
+        const val SO_EDIT_START_END = "so_edit_start_end"
+        const val SO_ORDER_TYPE_CODE_DEFAULT = "so_order_type_code_default"
+        const val SO_ALLOW_CHANGE_ORDER_TYPE = "so_allow_change_order_type"
+        const val SO_ALLOW_BACKUP = "so_allow_backup"
+        const val DEVICE_TP_CODE_MAIN = "device_tp_code_main"
     }
 
     private val toGeOsMapper: Mapper<Cursor, GeOs>
@@ -281,14 +292,23 @@ class GeOsDao(
                         order_type_id = getString(getColumnIndex(ORDER_TYPE_ID)),
                         order_type_desc = getString(getColumnIndex(ORDER_TYPE_DESC)),
                         backup_product_code = getInt(getColumnIndex(BACKUP_PRODUCT_CODE)),
+                        backup_product_id = getStringOrNull(getColumnIndex(BACKUP_PRODUCT_ID)),
+                        backup_product_desc = getStringOrNull(getColumnIndex(BACKUP_PRODUCT_DESC)),
                         backup_serial_code = getInt(getColumnIndex(BACKUP_SERIAL_CODE)),
+                        backup_serial_id = getStringOrNull(getColumnIndex(BACKUP_SERIAL_ID)),
                         measure_tp_code = getInt(getColumnIndex(MEASURE_TP_CODE)),
                         measure_tp_id = getString(getColumnIndex(MEASURE_TP_ID)),
                         measure_tp_desc = getString(getColumnIndex(MEASURE_TP_DESC)),
-                        measure_value = getInt(getColumnIndex(MEASURE_VALUE)),
+                        measure_value = getFloat(getColumnIndex(MEASURE_VALUE)),
                         measure_cycle_value = getInt(getColumnIndex(MEASURE_CYCLE_VALUE)),
                         last_measure_value = getFloat(getColumnIndex(LAST_MEASURE_VALUE)),
-                        last_measure_date = getString(getColumnIndex(LAST_MEASURE_DATE))
+                        last_measure_date = getString(getColumnIndex(LAST_MEASURE_DATE)),
+                        last_cycle_value = getIntOrNull(getColumnIndex(LAST_CYCLE_VALUE)),
+                        so_edit_start_end = getInt(getColumnIndex(SO_EDIT_START_END)),
+                        so_order_type_code_default = getIntOrNull(getColumnIndex(SO_ORDER_TYPE_CODE_DEFAULT)),
+                        so_allow_change_order_type = getInt(getColumnIndex(SO_ALLOW_CHANGE_ORDER_TYPE)),
+                        so_allow_backup = getInt(getColumnIndex(SO_ALLOW_BACKUP)),
+                        device_tp_code_main = getIntOrNull(getColumnIndex(DEVICE_TP_CODE_MAIN))
                     )
                 }
             }
@@ -320,8 +340,11 @@ class GeOsDao(
                     put(ORDER_TYPE_ID, it.order_type_id)
                     //
                     put(BACKUP_PRODUCT_CODE, it.backup_product_code)
+                    put(BACKUP_PRODUCT_ID, it.backup_product_id)
+                    put(BACKUP_PRODUCT_DESC, it.backup_product_desc)
                     //
                     put(BACKUP_SERIAL_CODE, it.backup_serial_code)
+                    put(BACKUP_SERIAL_ID, it.backup_serial_id)
                     //
                     put(MEASURE_TP_CODE, it.measure_tp_code)
                     //
@@ -337,6 +360,17 @@ class GeOsDao(
                     //
                     put(LAST_MEASURE_DATE, it.last_measure_date)
                     //
+                    put(LAST_CYCLE_VALUE, it.last_cycle_value)
+                    //
+                    put(SO_EDIT_START_END, it.so_edit_start_end)
+                    //
+                    put(SO_ORDER_TYPE_CODE_DEFAULT, it.so_order_type_code_default)
+                    //
+                    put(SO_ALLOW_CHANGE_ORDER_TYPE, it.so_allow_change_order_type)
+                    //
+                    put(SO_ALLOW_BACKUP, it.so_allow_backup)
+                    //
+                    put(DEVICE_TP_CODE_MAIN, it.device_tp_code_main)
                 }
             }
             return contentValues

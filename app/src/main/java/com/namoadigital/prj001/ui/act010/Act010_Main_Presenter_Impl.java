@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act010;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
@@ -10,12 +11,21 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_DeviceDao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
+import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_004;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_Device_Sql_002;
 import com.namoadigital.prj001.sql.Sql_Act010_001;
+import com.namoadigital.prj001.ui.act087.Act087Main;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,8 +44,10 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
     private String so_code;
     private String site_code_form_param;
     private HMAux hmAux_Trans = new HMAux();
+    private MD_Product_SerialDao serialDao;
+    private MD_Product_Serial_Tp_DeviceDao serialTpDeviceDao;
 
-    public Act010_Main_Presenter_Impl(Context context, Act010_Main_View mView, GE_Custom_FormDao custom_formDao, GE_Custom_Form_DataDao customFormDataDao, long product_code, String serial_id, String so_prefix, String so_code, String site_code_form_param, HMAux hmAux_Trans) {
+    public Act010_Main_Presenter_Impl(Context context, Act010_Main_View mView, GE_Custom_FormDao custom_formDao, GE_Custom_Form_DataDao customFormDataDao, long product_code, String serial_id, String so_prefix, String so_code, String site_code_form_param, HMAux hmAux_Trans, MD_Product_SerialDao serialDao, MD_Product_Serial_Tp_DeviceDao serial_tp_deviceDao) {
         this.context = context;
         this.mView = mView;
         this.custom_formDao = custom_formDao;
@@ -46,6 +58,8 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
         this.so_code = so_code;
         this.site_code_form_param = site_code_form_param;
         this.hmAux_Trans = hmAux_Trans;
+        this.serialDao = serialDao;
+        this.serialTpDeviceDao = serial_tp_deviceDao;
     }
 
     @Override
@@ -89,13 +103,97 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
                         && !ToolBox_Con.hasGPSResourceActive(context)){
                     mView.alertActiveGPSResource(item);
                 }else {
-                    setAct011Call(item);
+                    if(isOsForm(item)) {
+                        if(serialHasStructure()) {
+                            prepareOsFormCreatation(item);
+                        }else{
+                            mView.showAlertMsg(
+                                hmAux_Trans.get("alert_os_form_ttl"),
+                                hmAux_Trans.get("alert_serial_undefined_or_without_structure_msg")
+                            );
+                        }
+                    }else{
+                        setAct011Call(item);
+                    }
                 }
             }
-
         } else {
             mView.alertFormNotReady();
         }
+    }
+
+    /**
+     * Valida se serial existe e possui estrutura
+     * @return
+     */
+    private boolean serialHasStructure() {
+        if(serial_id != null && !serial_id.isEmpty()){
+            MD_Product_Serial serial = getMd_product_serial();
+            //
+            if(serial != null && serial.getHas_item_check() == 1){
+                ArrayList<MD_Product_Serial_Tp_Device> serialTpDevices = (ArrayList<MD_Product_Serial_Tp_Device>)
+                    serialTpDeviceDao.query(
+                        new MD_Product_Serial_Tp_Device_Sql_002(
+                            serial.getCustomer_code(),
+                            serial.getProduct_code(),
+                            serial.getSerial_code()
+                        ).toSqlQuery()
+                    );
+                //
+                return serialTpDevices != null && serialTpDevices.size() > 0;
+            }
+        }
+        //
+        return false;
+    }
+
+    /**
+     * Pega obj serial
+     * @return
+     */
+    private MD_Product_Serial getMd_product_serial() {
+        MD_Product_Serial serial = serialDao.getByString(
+            new MD_Product_Serial_Sql_002(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                product_code,
+                serial_id
+            ).toSqlQuery()
+        );
+        return serial;
+    }
+
+    /**
+     * Prepara abertura da tela de cabeçalho da o.s
+     * @param item
+     */
+    private void prepareOsFormCreatation(HMAux item) {
+        mView.addFormInfoToBundle(item);
+        MD_Product_Serial md_product_serial = getMd_product_serial();
+        Bundle bundle = mView.getBundle();
+        bundle.putAll(
+            Act087Main.getBundleInstance(
+                item.get(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE),
+                item.get(GE_Custom_FormDao.CUSTOM_FORM_CODE),
+                item.get(GE_Custom_FormDao.CUSTOM_FORM_VERSION),
+                String.valueOf(product_code),
+                serial_id,
+                String.valueOf(md_product_serial.getSerial_code()),
+                "-1",
+                "-1",
+                "-1"
+            )
+        );
+        mView.callAct087();
+    }
+
+    /**
+     * Valida se form é tipo o.s
+     * @param item
+     * @return
+     */
+    private boolean isOsForm(HMAux item) {
+        return  item.hasConsistentValue(GE_Custom_FormDao.IS_SO)
+                && "1".equals(item.get(GE_Custom_FormDao.IS_SO));
     }
 
     private void setAct011Call(HMAux item) {

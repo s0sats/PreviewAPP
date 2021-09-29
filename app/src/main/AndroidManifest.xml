@@ -562,6 +562,13 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
             android:theme="@style/AppTheme.NoActionBar"/>
 
         <activity
+            android:name=".ui.act087.Act087Main"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
+        <activity
             android:name=".view.act.product_selection.Act_Product_Selection"
             android:label="@string/app_name"
             android:launchMode="singleTask"
@@ -576,7 +583,9 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
             android:name=".view.act.test2.Teste2"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" /> <!-- Receivers -->
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <!-- Receivers -->
         <receiver android:name=".receiver.WBR_GetCustomer" />
 
         <service android:name=".service.WS_GetCustomer" />

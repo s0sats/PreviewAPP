@@ -14,4 +14,12 @@ class MeMeasureTp(
     @SerializedName("restriction_decimal") val restrictionDecimal: Int?,
     @SerializedName("value_cycle_size") val valueCycleSize: Int?,
     @SerializedName("cycle_tolerance") val cycleTolerance: Int?
-)
+){
+
+    companion object{
+        const val RESTRICTION_TYPE_VALUE = "VALUE"
+        const val RESTRICTION_TYPE_VALUE_BY_DAY = "VALUE_BY_DAY"
+        const val RESTRICTION_TYPE_MIN_MAX = "MIN_MAX"
+
+    }
+}

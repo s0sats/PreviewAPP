@@ -11,14 +11,14 @@ class MD_Product_Serial_Tp_Device(
         private set
     var serial_code: Long = -1
         private set
-    var items : MutableList<MD_Product_Serial_Tp_Device_Item> =  mutableListOf()
+    var item : MutableList<MD_Product_Serial_Tp_Device_Item> =  mutableListOf()
 
     /**
      * QUANDO OBJ GERADO VIA GSON NÃO PASSA NO INIT E LISTA NASCE NULL
      */
 
     init {
-        items = mutableListOf()
+        item = mutableListOf()
     }
 
     //Construto quando carregado via banco
@@ -39,6 +39,10 @@ class MD_Product_Serial_Tp_Device(
         this.customer_code = serial.customer_code
         this.product_code = serial.product_code
         this.serial_code = serial.serial_code
+        //
+        item.forEach {
+            it.setPk(this)
+        }
     }
 
 }

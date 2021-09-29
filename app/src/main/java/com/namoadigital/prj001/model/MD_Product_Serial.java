@@ -112,7 +112,7 @@ public class MD_Product_Serial implements Serializable {
     @Nullable
     private String last_measure_date;
     private Integer last_cycle_value;
-
+    private Integer device_tp_code_main;
 
     /*
     * Add contrutor com inicialização de -1 no serial temp para diferenciar dos seriais criados
@@ -662,6 +662,14 @@ public class MD_Product_Serial implements Serializable {
 
     public void setMeasure_tp_code(Integer measure_tp_code) {
         this.measure_tp_code = measure_tp_code;
+    }
+
+    public Integer getDevice_tp_code_main() {
+        return device_tp_code_main;
+    }
+
+    public void setDevice_tp_code_main(Integer device_tp_code_main) {
+        this.device_tp_code_main = device_tp_code_main;
     }
 
     public Double getLast_measure_value() {

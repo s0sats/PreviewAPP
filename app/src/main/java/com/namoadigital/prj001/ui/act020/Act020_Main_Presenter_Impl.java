@@ -487,6 +487,9 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
 
     @Override
     public void callWsSerialStructure(MD_Product_Serial productSerial) {
+        //Insere serial antes da busca para que o serial exista ao baixa estrutura
+        insertSerial(productSerial);
+        //
         if (ToolBox_Con.isOnline(context)) {
             //
             mView.setWs_process(WS_Product_Serial_Structure.class.getName());
@@ -509,6 +512,10 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
         } else {
             defineFlow(productSerial, false);
         }
+    }
+
+    private void insertSerial(MD_Product_Serial productSerial) {
+        serialDao.addUpdateTmp(productSerial);
     }
 
     @Override

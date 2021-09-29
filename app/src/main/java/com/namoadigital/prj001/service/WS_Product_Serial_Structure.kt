@@ -27,6 +27,7 @@ class WS_Product_Serial_Structure : IntentService("WS_Product_Serial_Structure")
         transList.add("generic_processing_data")
         transList.add("generic_process_finalized_msg")
         transList.add("msg_error_on_serial_structure")
+        transList.add("msg_error_serial_not_found")
 
         mResource_Code = ToolBox_Inf.getResourceCode(
             applicationContext,
@@ -173,15 +174,39 @@ class WS_Product_Serial_Structure : IntentService("WS_Product_Serial_Structure")
     private fun processSerialStructureReturn(structures: List<MD_Product_Serial_Structure>) {
 
         for (serialStructure in structures) {
-            //
-            val daoObjReturn = tpDeviceDao.addUpdate(serialStructure.device_tp, true)
-            //
-            if(!daoObjReturn.hasError()){
-                val serialUpdateInfo = serialUpdateInfo(serialStructure)
-                val result = gson.toJson(serialUpdateInfo)
-                ToolBox.sendBCStatus(applicationContext, "CLOSE_ACT", hmAux_Trans["generic_process_finalized_msg"], result, "0")
+            val serialUpdateInfo = serialUpdateInfo(serialStructure)
+            if(serialUpdateInfo != null) {
+                serialStructure.device_tp.forEach {
+                    it.setPk(serialUpdateInfo)
+                }
+                val daoObjReturn = tpDeviceDao.addUpdate(serialStructure.device_tp, true)
+                //
+                if (!daoObjReturn.hasError()) {
+                    val result = gson.toJson(serialUpdateInfo)
+                    ToolBox.sendBCStatus(
+                        applicationContext,
+                        "CLOSE_ACT",
+                        hmAux_Trans["generic_process_finalized_msg"],
+                        result,
+                        "0"
+                    )
+                } else {
+                    ToolBox.sendBCStatus(
+                        applicationContext,
+                        "ERROR_1",
+                        hmAux_Trans["msg_error_on_serial_structure"],
+                        "",
+                        "0"
+                    )
+                }
             }else{
-                ToolBox.sendBCStatus(applicationContext, "ERROR_1", hmAux_Trans["msg_error_on_serial_structure"], "", "0")
+                ToolBox.sendBCStatus(
+                    applicationContext,
+                    "ERROR_1",
+                    hmAux_Trans["msg_error_serial_not_found"],
+                    "",
+                    "0"
+                )
             }
         }
 
@@ -196,17 +221,17 @@ class WS_Product_Serial_Structure : IntentService("WS_Product_Serial_Structure")
             ).toSqlQuery()
         )
         //
-        serial.has_item_check = serialStructure.has_item_check
-        serial.scn_item_check = serialStructure.scn_item_check
-        serial.measure_tp_code = serialStructure.measure_tp_code
-        serial.last_measure_value = serialStructure.last_measure_value
-        serial.last_measure_date = serialStructure.last_measure_date
-        serial.last_cycle_value = serialStructure.last_cycle_value
-        //
-        serialDao.addUpdate(serial)
+        serial?.let{
+            it.has_item_check = serialStructure.has_item_check
+            it.scn_item_check = serialStructure.scn_item_check
+            it.measure_tp_code = serialStructure.measure_tp_code
+            it.last_measure_value = serialStructure.last_measure_value
+            it.last_measure_date = serialStructure.last_measure_date
+            it.last_cycle_value = serialStructure.last_cycle_value
+            //
+            serialDao.addUpdate(it)
+        }
         //
         return serial
     }
-
-
 }

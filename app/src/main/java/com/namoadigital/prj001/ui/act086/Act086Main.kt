@@ -79,7 +79,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
         mResource_Code = ToolBox_Inf.getResourceCode(
             context,
             mModule_Code,
-            ConstantBaseApp.ACT085
+            ConstantBaseApp.ACT086
         )
         //10/06/2021 - Add recolhimento do teclado
         window.setSoftInputMode(
@@ -200,8 +200,8 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
         iniFooter()
         //
         mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context)
-        mAct_Info = Constant.ACT085
-        mAct_Title = "${Constant.ACT085}${ConstantBaseApp.title_lbl}"
+        mAct_Info = Constant.ACT086
+        mAct_Title = "${Constant.ACT086}${ConstantBaseApp.title_lbl}"
         //
         val mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context)
         mSite_Value = mFooter[Constant.FOOTER_SITE]

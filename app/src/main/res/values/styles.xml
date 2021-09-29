@@ -76,4 +76,22 @@
         <item name="android:paddingBottom">4dp</item>
     </style>
 
+    <style name="ImageViewButtonStd">
+        <item name="android:padding">15dp</item>
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="tint">@color/namoa_dark_blue</item>
+        <item name="android:background">@drawable/namoa_icon_bg_states</item>
+    </style>
+
+    <style name="TextInputLayoutHelperTextColorRequired" parent="Widget.Design.TextInputLayout">
+        <item name="android:textColor">@color/font_required</item>
+    </style>
+
+    <style name="NamoaSaveButtonDarkBlue" parent="@android:style/Widget.Button">
+        <item name="android:textColor">@color/padrao_WHITE</item>
+        <item name="android:background">@drawable/btn_namoa_main_4_states</item>
+        <item name="textAllCaps">true</item>
+    </style>
+
 </resources>

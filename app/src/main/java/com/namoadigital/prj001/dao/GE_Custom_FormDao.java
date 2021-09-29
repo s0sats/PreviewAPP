@@ -37,7 +37,7 @@ public class GE_Custom_FormDao extends BaseDao implements Dao<GE_Custom_Form> {
     public static final String TAG_OPERATIONAL_CODE = "tag_operational_code";
     public static final String IS_SO = "is_so";
     public static final String SO_EDIT_START_END = "so_edit_start_end";
-    public static final String SO_ORDER_TYPE_DEFAULT = "so_order_type_default";
+    public static final String SO_ORDER_TYPE_CODE_DEFAULT = "so_order_type_code_default";
     public static final String SO_ALLOW_CHANGE_ORDER_TYPE = "so_allow_change_order_type";
     public static final String SO_ALLOW_BACKUP = "so_allow_backup";
     public static final String BLOCK_SPONTANEOUS = "block_spontaneous";
@@ -263,7 +263,7 @@ public class GE_Custom_FormDao extends BaseDao implements Dao<GE_Custom_Form> {
             custom_form.setTag_operational_code(cursor.getInt(cursor.getColumnIndex(TAG_OPERATIONAL_CODE)));
             custom_form.setIs_so(cursor.getInt(cursor.getColumnIndex(IS_SO)));
             custom_form.setSo_edit_start_end(cursor.getInt(cursor.getColumnIndex(SO_EDIT_START_END)));
-            custom_form.setSo_order_type_default(cursor.getInt(cursor.getColumnIndex(SO_ORDER_TYPE_DEFAULT)));
+            custom_form.setSo_order_type_code_default(cursor.getInt(cursor.getColumnIndex(SO_ORDER_TYPE_CODE_DEFAULT)));
             custom_form.setSo_allow_change_order_type(cursor.getInt(cursor.getColumnIndex(SO_ALLOW_CHANGE_ORDER_TYPE)));
             custom_form.setSo_allow_backup(cursor.getInt(cursor.getColumnIndex(SO_ALLOW_BACKUP)));
             custom_form.setBlock_spontaneous(cursor.getInt(cursor.getColumnIndex(BLOCK_SPONTANEOUS)));
@@ -320,11 +320,12 @@ public class GE_Custom_FormDao extends BaseDao implements Dao<GE_Custom_Form> {
                 contentValues.put(SO_EDIT_START_END, custom_form.getSo_edit_start_end());
             }
 
-            contentValues.put(SO_ORDER_TYPE_DEFAULT , custom_form.getSo_order_type_default());
+            contentValues.put(SO_ORDER_TYPE_CODE_DEFAULT, custom_form.getSo_order_type_code_default());
 
             if (custom_form.getSo_allow_change_order_type() > -1) {
                 contentValues.put(SO_ALLOW_CHANGE_ORDER_TYPE, custom_form.getSo_allow_change_order_type());
             }
+
             if (custom_form.getSo_allow_backup() > -1) {
                 contentValues.put(SO_ALLOW_BACKUP, custom_form.getSo_allow_backup());
             }
