@@ -77,7 +77,7 @@ public class GE_Custom_Form_Local {
     private String tag_operational_desc;
     private int is_so;
     private int so_edit_start_end;
-    private Integer so_order_type_default;
+    private Integer so_order_type_code_default;
     private int so_allow_change_order_type;
     private int so_allow_backup;
 
@@ -529,12 +529,12 @@ public class GE_Custom_Form_Local {
         this.so_edit_start_end = so_edit_start_end;
     }
 
-    public Integer getSo_order_type_default() {
-        return so_order_type_default;
+    public Integer getSo_order_type_code_default() {
+        return so_order_type_code_default;
     }
 
-    public void setSo_order_type_default(Integer so_order_type_default) {
-        this.so_order_type_default = so_order_type_default;
+    public void setSo_order_type_code_default(Integer so_order_type_code_default) {
+        this.so_order_type_code_default = so_order_type_code_default;
     }
 
     public int getSo_allow_change_order_type() {
