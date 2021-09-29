@@ -84,8 +84,8 @@ class MD_Product_Serial_Tp_DeviceDao(
                  * o valor setado e null. Isso acontece pois é feito via reflections no Gson e que não tem
                  * suporte a essa features do Kotlin
                  */
-                if(it.items != null && it.items.isNotEmpty()) {
-                    daoObjReturn = tryAddUpdateItems(it.items, db)
+                if(it.item != null && it.item.isNotEmpty()) {
+                    daoObjReturn = tryAddUpdateItems(it.item, db)
                     //Se erro durante insert, dispara exception abortando o processamento.
                     if (daoObjReturn.hasError()) {
                         throw java.lang.Exception(daoObjReturn.rawMessage)
@@ -153,8 +153,8 @@ class MD_Product_Serial_Tp_DeviceDao(
                      * o valor setado e null. Isso acontece pois é feito via reflections no Gson e que não tem
                      * suporte a essa features do Kotlin
                      */
-                    if(mdProductSerialTpDevice.items != null &&  mdProductSerialTpDevice.items.isNotEmpty()) {
-                        daoObjReturn = tryAddUpdateItems(it.items, db)
+                    if(mdProductSerialTpDevice.item != null &&  mdProductSerialTpDevice.item.isNotEmpty()) {
+                        daoObjReturn = tryAddUpdateItems(it.item, db)
                         //Se erro durante insert, dispara exception abortando o processamento.
                         if (daoObjReturn.hasError()) {
                             throw java.lang.Exception(daoObjReturn.rawMessage)
@@ -308,7 +308,7 @@ class MD_Product_Serial_Tp_DeviceDao(
     private fun getDeviceItems(mdProductSerialTpDevice: MD_Product_Serial_Tp_Device) {
         val itemDao = getDeviceItemDao()
         //
-        mdProductSerialTpDevice.items = itemDao.query(
+        mdProductSerialTpDevice.item = itemDao.query(
             MD_Product_Serial_Tp_DeviceDao_Sql_001(
                 mdProductSerialTpDevice.customer_code,
                 mdProductSerialTpDevice.product_code,

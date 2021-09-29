@@ -1641,13 +1641,24 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         Intent mIntent = new Intent(context, Act087Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mIntent.putExtras(
+//            Act087Main.getBundleInstance(
+//                    "1",
+//                "71",
+//                "1",
+//                "100",
+//                "SL01",
+//                "1",
+//                "-1",
+//                "-1",
+//                "-1"
+//            )
             Act087Main.getBundleInstance(
-                    "1",
-                "71",
                 "1",
-                "100",
-                "SL01",
                 "1",
+                "1",
+                "2",
+                "TST002",
+                "2",
                 "-1",
                 "-1",
                 "-1"

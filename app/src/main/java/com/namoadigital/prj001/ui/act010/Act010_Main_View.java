@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act010;
 
 import android.content.Context;
+import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 
@@ -27,4 +28,8 @@ public interface Act010_Main_View {
     void alertActiveGPSResource(HMAux item);
 
     boolean isHas_tk_ticket_is_form_off_hand();
+
+    Bundle getBundle();
+
+    void callAct087();
 }

@@ -24,6 +24,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_DeviceDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.MdTagDao;
 import com.namoadigital.prj001.dao.SM_SODao;
@@ -34,6 +35,7 @@ import com.namoadigital.prj001.databinding.Act010MainContentBinding;
 import com.namoadigital.prj001.sql.Sql_Act010_001;
 import com.namoadigital.prj001.ui.act009.Act009_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
+import com.namoadigital.prj001.ui.act087.Act087Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -114,6 +116,9 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
         transList.add("tag_lbl");
         transList.add("form_selection_lbl");
         //
+        transList.add("alert_os_form_ttl");
+        transList.add("alert_serial_undefined_or_without_structure_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -136,8 +141,10 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
                 so_prefix,
                 so_code,
                 site_code_form_param,
-                hmAux_Trans
-        );
+                hmAux_Trans,
+                new MD_Product_SerialDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
+                new MD_Product_Serial_Tp_DeviceDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
+            );
         //
         setLabels();
         //
@@ -368,5 +375,19 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
     @Override
     public boolean isHas_tk_ticket_is_form_off_hand() {
         return has_tk_ticket_is_form_off_hand;
+    }
+
+    @Override
+    public Bundle getBundle() {
+        return bundle;
+    }
+
+    @Override
+    public void callAct087() {
+        Intent mIntent = new Intent(context, Act087Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
     }
 }

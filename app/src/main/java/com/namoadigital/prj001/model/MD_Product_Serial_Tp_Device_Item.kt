@@ -79,6 +79,10 @@ class MD_Product_Serial_Tp_Device_Item(
         this.product_code = device.product_code
         this.serial_code = device.serial_code
         this.device_tp_code = device.device_tp_code
+        //
+        this.hist.forEach {
+            it.setPk(this)
+        }
     }
 
 }

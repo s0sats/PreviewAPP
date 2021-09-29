@@ -269,8 +269,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>() {
             return "$lastMeasureValue - ${
                 ToolBox_Inf.millisecondsToString(
                     ToolBox_Inf.dateToMilliseconds(
-                        lastMeasureDate,
-                        ConstantBaseApp.DATE_TO_MILLISECOND_TYPE_IGNORE_SECOND
+                        lastMeasureDate
                     ),
                     ToolBox_Inf.nlsDateFormat(requireContext()) + " HH:mm"
                 )}"
@@ -322,7 +321,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>() {
             }
             val measureInvalid = isMeasureRestrictionInvalid()
             //
-            if(isOrderTypeInvalid || isMachineEmpty || isMachineTheSame || isStartDateInvalid ){
+            if(isOrderTypeInvalid || isMachineEmpty || isMachineTheSame || isStartDateInvalid || measureInvalid ){
                 showSaveErroDialog(
                     osTypeInvalid = isOrderTypeInvalid,
                     bkpMachineEmpty= isMachineEmpty,
@@ -340,22 +339,22 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>() {
 
     private fun isMeasureRestrictionInvalid(): Boolean {
         mainMeasureTp?.let{
-            if(!binding.mketOsMainMeasureVal.text.isNullOrEmpty()){
+            return if(!binding.mketOsMainMeasureVal.text.isNullOrEmpty()){
                 val typedMeasure = binding.mketOsMainMeasureVal.text.toString().toFloat()
                 when(it.restrictionType){
-                    MeMeasureTp.RESTRICTION_TYPE_VALUE -> return isMeasureRestrictionValueInvalid(typedMeasure,it)
-                    MeMeasureTp.RESTRICTION_TYPE_VALUE_BY_DAY -> return isMeasureRestrictionValueByDayInvalid(typedMeasure,it)
-                    MeMeasureTp.RESTRICTION_TYPE_MIN_MAX  -> return isMeasureRestrictionMinMaxInvalid(typedMeasure,it)
-                    else-> return false
+                    MeMeasureTp.RESTRICTION_TYPE_VALUE -> isMeasureRestrictionValueValid(typedMeasure,it).not()
+                    MeMeasureTp.RESTRICTION_TYPE_VALUE_BY_DAY -> isMeasureRestrictionValueByDayValid(typedMeasure,it).not()
+                    MeMeasureTp.RESTRICTION_TYPE_MIN_MAX  -> isMeasureRestrictionMinMaxValid(typedMeasure,it).not()
+                    else-> false
                 }
             }else{
-                return true
+                true
             }
         }
         return false
     }
 
-    private fun isMeasureRestrictionValueByDayInvalid(
+    private fun isMeasureRestrictionValueByDayValid(
         typedMeasure: Float,
         measureTp: MeMeasureTp
     ): Boolean {
@@ -369,16 +368,16 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>() {
             }
             //
             if(minConsider != null && maxConsider != null){
-                return minConsider > typedMeasure && typedMeasure <= maxConsider
+                return minConsider.compareTo(typedMeasure) <= 0 && maxConsider.compareTo(typedMeasure) >= 0
             }else if (minConsider != null || maxConsider != null ){
                 return if(minConsider != null){
-                    typedMeasure > minConsider
+                    minConsider.compareTo(typedMeasure) <= 0
                 }else{
-                    typedMeasure <= maxConsider!!
+                    maxConsider!!.compareTo(typedMeasure) >= 0
                 }
             }
         }
-        return false
+        return true
     }
 
     /**
@@ -401,7 +400,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>() {
         return BigDecimal(calcDay + modDay).setScale(2,RoundingMode.HALF_DOWN).toFloat()
     }
 
-    private fun isMeasureRestrictionValueInvalid(
+    private fun isMeasureRestrictionValueValid(
         typedMeasure: Float,
         measureTp: MeMeasureTp,
     ): Boolean {
@@ -419,33 +418,33 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>() {
             }
             //
             if(minConsider != null && maxConsider != null ){
-                return minConsider.compareTo(typedMeasure) > 0 && maxConsider.compareTo(typedMeasure) <= 0
+                return minConsider.compareTo(typedMeasure) <= 0 && maxConsider.compareTo(typedMeasure) >= 0
             }else if (minConsider != null || maxConsider != null ){
                 return if(minConsider != null){
-                    minConsider.compareTo(typedMeasure) > 0
+                    minConsider.compareTo(typedMeasure) <= 0
                 }else{
-                    maxConsider!!.compareTo(typedMeasure) <= 0
+                    maxConsider!!.compareTo(typedMeasure) >= 0
                 }
             }
         }
         //
-        return false
+        return true
     }
 
-    private fun isMeasureRestrictionMinMaxInvalid(
+    private fun isMeasureRestrictionMinMaxValid(
         typedMeasure: Float,
         it: MeMeasureTp,
     ): Boolean {
         return if (it.restrictionMin != null && it.restrictionMax != null) {
-            it.restrictionMin < typedMeasure && typedMeasure <= it.restrictionMax
+            it.restrictionMin <= typedMeasure && typedMeasure <= it.restrictionMax
         } else if (it.restrictionMin != null || it.restrictionMax != null) {
             if (it.restrictionMin != null) {
-                it.restrictionMin < typedMeasure
+                it.restrictionMin <= typedMeasure
             } else {
                 typedMeasure <= it.restrictionMax!!
             }
         } else {
-            false
+            true
         }
     }
 
