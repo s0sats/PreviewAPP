@@ -29,7 +29,7 @@ private const val MAIN_HMAUX_TRANS_KEY = "MAIN_HMAUX_TRANS_KEY"
 class InspectionListFragment : Act011BaseFrg<Act011InspectionListFragmentBinding>() {
 
     private val mAdapter by lazy {
-        Act011InspectionFormAdapter(acessoryFormView.inspections, onInspectionSelected)
+        Act011InspectionFormAdapter(acessoryFormView.inspections, hmAuxTrans, onInspectionSelected)
     }
     private lateinit var acessoryFormView: AcessoryFormView
     var onInspectionSelected: (inspection: InspectionCell) -> Unit =
@@ -69,12 +69,6 @@ class InspectionListFragment : Act011BaseFrg<Act011InspectionListFragmentBinding
                             hideNonForecastCheckBoxFilter(true)
                         }
                     }else{
-                        hideNonForecastCheckBoxFilter(false)
-                    }
-
-                    s?.let {
-
-                    } ?: kotlin.run {
                         hideNonForecastCheckBoxFilter(false)
                     }
                 }

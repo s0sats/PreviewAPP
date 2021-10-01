@@ -7,6 +7,7 @@ import android.widget.Filter
 import android.widget.Filterable
 import androidx.core.graphics.drawable.DrawableCompat.setTint
 import androidx.recyclerview.widget.RecyclerView
+import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.Act011InspectionQuestionFormCellBinding
@@ -14,6 +15,7 @@ import com.namoadigital.prj001.model.InspectionCell
 
 class Act011InspectionFormAdapter(
     private val inspections: List<InspectionCell>,
+    private val hmAuxTrans: HMAux,
     private val myInspectionClickListener: (inspection: InspectionCell) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
 
@@ -41,16 +43,15 @@ class Act011InspectionFormAdapter(
         }
     }
 
-    fun applyNonForecastFilter(filterApplied: Boolean){
+    fun applyNonForecastFilter(filterApplied: Boolean) {
         inspectionsFiltered.clear()
-        if(filterApplied) {
+        if (filterApplied) {
             inspectionsFiltered.addAll(inspections.filter {
                 it.status == InspectionCell.NORMAL
             })
-        }else{
+        } else {
             inspectionsFiltered.addAll(inspections)
         }
-
     }
 
     override fun getItemCount(): Int {
@@ -101,34 +102,45 @@ class Act011InspectionFormAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun onBinding(inspection: InspectionCell) {
             inspection.apply {
-                if(isDone){
+                if (isDone) {
                     binding.llAnswerInfo.visibility = View.VISIBLE
                     binding.tvInspectAnswered.visibility = View.VISIBLE
                     binding.tvInspectionVerificationAction.visibility = View.GONE
                     binding.tvAutoSkipInspection.visibility = View.GONE
-                }else{
+                } else {
                     binding.llAnswerInfo.visibility = View.GONE
                     binding.tvInspectAnswered.visibility = View.GONE
                     binding.tvInspectionVerificationAction.visibility = View.VISIBLE
                     binding.tvAutoSkipInspection.visibility = View.VISIBLE
-                    binding.tvAutoSkipInspection.text  = autoSkipLbl
-                    binding.tvInspectionVerificationAction.text  = verificationActionLbl
+                    binding.tvAutoSkipInspection.text = autoSkipLbl
+                    binding.tvInspectionVerificationAction.text = verificationActionLbl
                 }
-
-
-
-                binding.tvInspectionDescription.text  = description
+                //
+                binding.tvInspectionDescription.text = description
                 binding.tvStatus.apply {
-                    text  = status
+                    text = status
                     val drawable = context.getDrawable(R.drawable.act011_inspection_cornered_bg)!!
                     setTint(drawable, context.resources.getColor(tagColor))
                     background = drawable
                 }
-                val tagDrawable = binding.root.context.getDrawable(R.drawable.act011_inspection_tag_bg)!!
+                val tagDrawable =
+                    binding.root.context.getDrawable(R.drawable.act011_inspection_tag_bg)!!
                 setTint(tagDrawable, binding.root.context.resources.getColor(tagColor))
                 binding.vCellColorTag.background = tagDrawable
-
-                binding.tvInspectAnswered.text  = answer
+                //
+                binding.tvInspectionVerificationAction.apply {
+                    if (answer != null) {
+                        if (isDone) {
+                            visibility = View.GONE
+                        } else {
+                            visibility = View.VISIBLE
+                            text = hmAuxTrans.get("inpection_ongoing_action_lbl")
+                        }
+                    }else{
+                        visibility = View.VISIBLE
+                        text = hmAuxTrans.get("inpection_verify_action_lbl")
+                    }
+                }
             }
         }
 
