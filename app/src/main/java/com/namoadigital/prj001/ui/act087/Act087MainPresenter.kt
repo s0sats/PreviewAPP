@@ -236,16 +236,16 @@ class Act087MainPresenter(
 
     private fun getAct011Bundle(formOsHeader: GeOs): Bundle {
         return Bundle().apply {
-//            putString(MD_ProductDao.PRODUCT_CODE, "");
-//            putString(MD_ProductDao.PRODUCT_DESC, "");
-//            putString(MD_ProductDao.PRODUCT_ID, "Sem Product ID");
-//            putString(MD_Product_SerialDao.SERIAL_ID, "");
-//            putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, "");
-//            putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, "");
-//            putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, "");
-//            putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, "");
-//            putString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT005);
+            putString(MD_ProductDao.PRODUCT_CODE, serialObj.product_code.toString());
+            putString(MD_ProductDao.PRODUCT_DESC, serialObj.product_desc);
+            putString(MD_ProductDao.PRODUCT_ID, serialObj.product_id);
+            putString(MD_Product_SerialDao.SERIAL_ID, serialObj.serial_id);
+            putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, formOsHeader.custom_form_type.toString());
+            putString(GE_Custom_FormDao.CUSTOM_FORM_CODE,formOsHeader.custom_form_code.toString());
+            putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, formOsHeader.custom_form_version.toString());
             putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, formOsHeader.custom_form_data.toString())
+            //putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, formOsHeader.custom_form_type.toString());
+            //putString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT005);
 
         }
     }

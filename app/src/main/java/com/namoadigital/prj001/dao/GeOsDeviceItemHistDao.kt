@@ -36,7 +36,7 @@ class GeOsDeviceItemHistDao(
         const val ITEM_CHECK_SEQ = "item_check_seq"
         const val SEQ = "seq"
         const val EXEC_TYPE = "exec_type"
-        const val EXEC_MEASURE = "exec_measure"
+        const val EXEC_VALUE = "exec_value"
         const val EXEC_DATE = "exec_date"
         const val EXEC_COMMENT = "exec_comment"
         const val EXEC_MATERIAL = "exec_material"
@@ -307,7 +307,7 @@ class GeOsDeviceItemHistDao(
                         item_check_seq = getInt(getColumnIndex(ITEM_CHECK_SEQ)),
                         seq = getInt(getColumnIndex(SEQ)),
                         exec_type = getString(getColumnIndex(EXEC_TYPE)),
-                        exec_measure = getFloat(getColumnIndex(EXEC_MEASURE)),
+                        exec_value = getFloat(getColumnIndex(EXEC_VALUE)),
                         exec_date = getString(getColumnIndex(EXEC_DATE)),
                         exec_comment = getString(getColumnIndex(EXEC_COMMENT)),
                         exec_material = getInt(getColumnIndex(EXEC_MATERIAL)),
@@ -341,7 +341,7 @@ class GeOsDeviceItemHistDao(
                     put(ITEM_CHECK_SEQ, it.item_check_seq)
                     put(SEQ, it.seq)
                     put(EXEC_TYPE, it.exec_type)
-                    put(EXEC_MEASURE, it.exec_measure)
+                    put(EXEC_VALUE, it.exec_value)
                     put(EXEC_DATE, it.exec_date)
                     put(EXEC_COMMENT, it.exec_comment)
                     put(EXEC_MATERIAL, it.exec_material)

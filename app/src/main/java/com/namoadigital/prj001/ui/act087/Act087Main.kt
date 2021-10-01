@@ -274,7 +274,17 @@ class Act087Main : Base_Activity_Frag(),
     }
 
     override fun callAct011(act011Bundle: Bundle) {
-        bundle.putAll(act011Bundle)
+        bundle.apply {
+            remove(GE_Custom_FormDao.CUSTOM_FORM_CODE)
+            remove(GE_Custom_FormDao.CUSTOM_FORM_TYPE)
+            remove(GE_Custom_FormDao.CUSTOM_FORM_VERSION)
+            remove(MD_Product_SerialDao.PRODUCT_CODE)
+            remove(MD_Product_SerialDao.SERIAL_CODE)
+            remove(MD_Schedule_ExecDao.SCHEDULE_PREFIX)
+            remove(MD_Schedule_ExecDao.SCHEDULE_CODE)
+            remove(MD_Schedule_ExecDao.SCHEDULE_EXEC)
+            putAll(act011Bundle)
+        }
         //
         startActivity(
             Intent().apply {

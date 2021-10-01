@@ -51,7 +51,7 @@ class MD_Product_Serial_Tp_Device_Item(
         next_cycle_measure_date: String?,
         next_cycle_limit_date: String?,
         item_check_status: String,
-        target_date : String
+        target_date : String?
     ) : this(
         item_check_code,
         item_check_seq,

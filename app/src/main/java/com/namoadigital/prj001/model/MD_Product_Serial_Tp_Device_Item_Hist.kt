@@ -3,12 +3,11 @@ package com.namoadigital.prj001.model
 class MD_Product_Serial_Tp_Device_Item_Hist(
     val seq: Int,
     val exec_type: String,
-    val exec_measure: Double,
+    val exec_value: Double,
     val exec_date: String,
     val exec_comment: String?,
     val exec_material: Int
 ) {
-
     var customer_code: Long = -1
         private set
     var product_code: Long = -1
@@ -31,14 +30,14 @@ class MD_Product_Serial_Tp_Device_Item_Hist(
         item_check_seq: Int,
         seq: Int,
         exec_type: String,
-        exec_measure: Double,
+        exec_value: Double,
         exec_date: String,
         exec_comment: String?,
         exec_material: Int
     ) : this(
         seq,
         exec_type,
-        exec_measure,
+        exec_value,
         exec_date,
         exec_comment,
         exec_material

@@ -31,12 +31,12 @@ class MD_Product_Serial_Tp_Device_Item_HistDao(
         const val DEVICE_TP_CODE = "device_tp_code"
         const val ITEM_CHECK_CODE = "item_check_code"
         const val ITEM_CHECK_SEQ = "item_check_seq"
-        const val SEQ = "SEQ"
-        const val EXEC_TYPE = "EXEC_TYPE"
-        const val EXEC_MEASURE = "EXEC_MEASURE"
-        const val EXEC_DATE = "EXEC_DATE"
-        const val EXEC_COMMENT = "EXEC_COMMENT"
-        const val EXEC_MATERIAL = "EXEC_MATERIAL"
+        const val SEQ = "seq"
+        const val EXEC_TYPE = "exec_type"
+        const val EXEC_VALUE = "exec_value"
+        const val EXEC_DATE = "exec_date"
+        const val EXEC_COMMENT = "exec_comment"
+        const val EXEC_MATERIAL = "exec_material"
     }
 
     private val toMD_Product_Serial_Tp_Device_Item_HistMapper: Mapper<Cursor,MD_Product_Serial_Tp_Device_Item_Hist>
@@ -358,7 +358,7 @@ class MD_Product_Serial_Tp_Device_Item_HistDao(
                         item_check_seq = getInt(getColumnIndex(ITEM_CHECK_SEQ)) ,
                         seq =  getInt(getColumnIndex(ITEM_CHECK_SEQ)) ,
                         exec_type = getString(getColumnIndex(EXEC_TYPE)) ,
-                        exec_measure = getDouble(getColumnIndex(EXEC_MEASURE)) ,
+                        exec_value = getDouble(getColumnIndex(EXEC_VALUE)) ,
                         exec_date = getString(getColumnIndex(EXEC_DATE)) ,
                         exec_comment = getString(getColumnIndex(EXEC_COMMENT)) ,
                         exec_material = getInt(getColumnIndex(EXEC_MATERIAL))
@@ -399,8 +399,8 @@ class MD_Product_Serial_Tp_Device_Item_HistDao(
                     if(mdProductSerialTpDeviceItemHist.exec_type != null){
                         put(EXEC_TYPE,mdProductSerialTpDeviceItemHist.exec_type)
                     }
-                    if(mdProductSerialTpDeviceItemHist.exec_measure > -1){
-                        put(EXEC_MEASURE,mdProductSerialTpDeviceItemHist.exec_measure)
+                    if(mdProductSerialTpDeviceItemHist.exec_value > -1){
+                        put(EXEC_VALUE,mdProductSerialTpDeviceItemHist.exec_value)
                     }
                     if(mdProductSerialTpDeviceItemHist.exec_date != null){
                         put(EXEC_DATE,mdProductSerialTpDeviceItemHist.exec_date)
