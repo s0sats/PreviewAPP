@@ -12,16 +12,17 @@ import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.Act011InspectionQuestionFormCellBinding
 import com.namoadigital.prj001.model.InspectionCell
 
-class InspectionFormAdapter(
+class Act011InspectionFormAdapter(
     private val inspections: List<InspectionCell>,
     private val myInspectionClickListener: (inspection: InspectionCell) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
 
-    private var inspectionsFiltered: List<InspectionCell>
+    private var inspectionsFiltered: MutableList<InspectionCell> = mutableListOf()
     val mFilter = InspectionFormFilter()
 
     init {
-        inspectionsFiltered = inspections as MutableList<InspectionCell>
+        inspectionsFiltered.clear()
+        inspectionsFiltered.addAll(inspections)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -38,6 +39,18 @@ class InspectionFormAdapter(
         with(holder as MyInspectionFormVH) {
             onBinding(inspectionsFiltered[position] as InspectionCell)
         }
+    }
+
+    fun applyNonForecastFilter(filterApplied: Boolean){
+        inspectionsFiltered.clear()
+        if(filterApplied) {
+            inspectionsFiltered.addAll(inspections.filter {
+                it.status == InspectionCell.NORMAL
+            })
+        }else{
+            inspectionsFiltered.addAll(inspections)
+        }
+
     }
 
     override fun getItemCount(): Int {
@@ -88,21 +101,22 @@ class InspectionFormAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun onBinding(inspection: InspectionCell) {
             inspection.apply {
-
-                answer?.let {
+                if(isDone){
                     binding.llAnswerInfo.visibility = View.VISIBLE
                     binding.tvInspectAnswered.visibility = View.VISIBLE
                     binding.tvInspectionVerificationAction.visibility = View.GONE
                     binding.tvAutoSkipInspection.visibility = View.GONE
-                } ?: run {
+                }else{
                     binding.llAnswerInfo.visibility = View.GONE
                     binding.tvInspectAnswered.visibility = View.GONE
                     binding.tvInspectionVerificationAction.visibility = View.VISIBLE
                     binding.tvAutoSkipInspection.visibility = View.VISIBLE
+                    binding.tvAutoSkipInspection.text  = autoSkipLbl
+                    binding.tvInspectionVerificationAction.text  = verificationActionLbl
                 }
 
-                binding.tvAutoSkipInspection.text  = autoSkipLbl
-                binding.tvInspectionVerificationAction.text  = verificationActionLbl
+
+
                 binding.tvInspectionDescription.text  = description
                 binding.tvStatus.apply {
                     text  = status

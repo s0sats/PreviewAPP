@@ -1,61 +1,182 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:fillViewport="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/tv_acesory_lbl"
-        android:layout_width="0dp"
-        android:layout_height="32dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="24dp"
-        android:gravity="center_vertical"
-        android:text="TextView"
-        android:textColor="@color/text_black"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/edt_inspection_filter"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:ems="10"
-        android:hint="Name"
-        android:inputType="textPersonName"
-        app:layout_constraintEnd_toStartOf="@+id/iv_filter"
-        app:layout_constraintStart_toStartOf="@+id/tv_acesory_lbl"
-        app:layout_constraintTop_toBottomOf="@+id/tv_acesory_lbl" />
+        <include
+            android:id="@+id/inc_header"
+            layout="@layout/act011_frg_include_header"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/iv_filter"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@+id/edt_inspection_filter"
-        app:layout_constraintEnd_toEndOf="@+id/tv_acesory_lbl"
-        app:layout_constraintTop_toTopOf="@+id/edt_inspection_filter"
-        app:srcCompat="@drawable/ic_filter_black_24px"
-        android:background="@color/emoticons_white"
-        android:elevation="8dp"
+        <TextView
+            android:id="@+id/tv_acesory_val"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="center_vertical"
+            android:text="TextView"
+            android:textColor="@color/text_black"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/inc_header" />
+
+        <TextView
+            android:id="@+id/tv_tracking_val"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="center_vertical"
+            android:text="Tracking"
+            android:textColor="@color/namoa_color_gray_8"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_acesory_val" />
+
+        <EditText
+            android:id="@+id/edt_inspection_filter"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:drawableLeft="@drawable/ic_baseline_search_24"
+            android:drawablePadding="19.51dp"
+            android:ems="10"
+            android:hint="Name"
+            android:inputType="textPersonName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/tv_tracking_val"
+            app:layout_constraintTop_toBottomOf="@+id/tv_tracking_val" />
+
+        <CheckBox
+            android:id="@+id/chk_non_forecast_item"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:textColor="@color/namoa_color_gray_9"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toStartOf="@+id/tv_non_forecast_count"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/edt_inspection_filter"
+            app:layout_constraintWidth_max="wrap"
+            tools:text="Ocultar itens não previtos" />
+
+        <TextView
+            android:id="@+id/tv_non_forecast_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/form_tab_circle_count"
+            android:backgroundTint="@color/namoa_color_gray_6"
+            android:gravity="center"
+            android:paddingHorizontal="5dp"
+            android:textColor="@color/namoa_color_gray_9"
+            app:layout_constraintBottom_toBottomOf="@+id/chk_non_forecast_item"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/chk_non_forecast_item"
+            app:layout_constraintTop_toTopOf="@+id/chk_non_forecast_item"
+            tools:text="1" />
 
 
-        android:padding="8dp"/>
+        <TextView
+            android:id="@+id/tv_placeholder"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="30dp"
+            android:textAlignment="center"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/chk_non_forecast_item"
+            tools:text="TESTESTEST" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_inspections"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="4dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edt_inspection_filter"
-        tools:listitem="@layout/act011_inspection_question_form_cell" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_inspections"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toTopOf="@+id/inc_navegation"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_placeholder"
+            app:layout_constraintVertical_bias="0.0"
+            tools:listitem="@layout/act011_inspection_question_form_cell" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_add_new_item_btn"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/namoa_button_light_blue_states"
+            android:paddingStart="8dp"
+            android:paddingTop="4dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="4dp"
+            app:layout_constraintBottom_toTopOf="@+id/inc_navegation"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rv_inspections">
+
+            <ImageView
+                android:id="@+id/iv_check_icon"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginEnd="8dp"
+                android:src="@drawable/ic_add_plus"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/tv_add_new_item_val"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/padrao_WHITE" />
+
+            <TextView
+                android:id="@+id/tv_add_new_item_val"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textAllCaps="true"
+                android:textColor="@color/padrao_WHITE"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/iv_check_icon"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_default="wrap"
+                tools:text="Adicionar item novo" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <include
+            android:id="@+id/inc_navegation"
+            layout="@layout/act011_frg_include_navegation"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

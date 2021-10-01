@@ -111,11 +111,13 @@ import com.namoadigital.prj001.ui.act011.frags.Act011BaseFrg;
 import com.namoadigital.prj001.ui.act011.frags.Act011BaseFrgInteractionNavegation;
 import com.namoadigital.prj001.ui.act011.frags.Act011FrgFF;
 import com.namoadigital.prj001.ui.act011.frags.Act011FrgFFInteraction;
+import com.namoadigital.prj001.ui.act011.frags.InspectionListFragmentInteraction;
 import com.namoadigital.prj001.ui.act022.Act022_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.ui.act083.Act083_Main;
 import com.namoadigital.prj001.ui.act084.Act084Main;
+import com.namoadigital.prj001.ui.act086.Act086Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -138,7 +140,8 @@ public class Act011_Main extends Base_Activity
     implements
     Act011_Main_View,
     Act011BaseFrgInteractionNavegation,
-    Act011FrgFFInteraction
+    Act011FrgFFInteraction,
+    InspectionListFragmentInteraction
 {
 
     public static final int SHOW_MSG_TYPE_FORM_LOCAL_INSERT_ERROR = 4;
@@ -1947,6 +1950,15 @@ public class Act011_Main extends Base_Activity
             tabs.add(screens.get(page).getTabObj(false));
         }
         return tabs;
+    }
+
+    @Override
+    public void onInspectionSelected(@NonNull Bundle bundle) {
+        Intent mIntent = new Intent(context, Act086Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
     }
 
     //TODO APAGAR APPOS TESTES FINAL
