@@ -73,6 +73,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
 import com.namoadigital.prj001.dao.GE_FileDao;
+import com.namoadigital.prj001.dao.GeOsDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
@@ -623,8 +624,8 @@ public class Act011_Main extends Base_Activity
                 new MD_Schedule_ExecDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
                 new TK_Ticket_StepDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
                 new MD_SiteDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
-                new MdTagDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
-        );
+                new MdTagDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
+                new GeOsDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM));
 
         recoverGetIntents();
         //

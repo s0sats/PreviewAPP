@@ -11,6 +11,11 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
 import com.namoadigital.prj001.model.DaoObjReturn
 import com.namoadigital.prj001.model.GeOs
+import com.namoadigital.prj001.model.MD_Product
+import com.namoadigital.prj001.model.MD_Product_Serial
+import com.namoadigital.prj001.sql.GeOsDeviceCreation_Sql_001
+import com.namoadigital.prj001.sql.GeOsDeviceItemCreation_Sql_001
+import com.namoadigital.prj001.sql.GeOsDeviceItemHistCreation_Sql_001
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -24,7 +29,7 @@ class GeOsDao(
 ), DaoWithReturn<GeOs> {
 
     companion object{
-        const val TABLE = "md_device_tp"
+        const val TABLE = "ge_os"
         const val CUSTOMER_CODE = "customer_code"
         const val CUSTOM_FORM_TYPE = "custom_form_type"
         const val CUSTOM_FORM_CODE = "custom_form_code"
@@ -43,7 +48,8 @@ class GeOsDao(
         const val MEASURE_TP_DESC = "measure_tp_desc"
         const val MEASURE_VALUE = "measure_value"
         const val MEASURE_CYCLE_VALUE = "measure_cycle_value"
-        const val START_DATE = "start_date"
+        const val DATE_START = "date_start"
+        const val DATE_END = "date_end"
         const val LAST_MEASURE_VALUE = "last_measure_value"
         const val LAST_MEASURE_DATE = "last_measure_date"
         const val LAST_CYCLE_VALUE = "last_cycle_value"
@@ -134,23 +140,23 @@ class GeOsDao(
         openDB()
 
         try {
-            daoObjReturn.table = MdItemCheckDao.TABLE
+            daoObjReturn.table = TABLE
             curAction = DaoObjReturn.UPDATE
 
             db.beginTransaction()
 
             if (status) {
-                db.delete(MdItemCheckDao.TABLE, null, null)
+                db.delete(TABLE, null, null)
             }
 
             items?.forEach { item ->
                 val sbWhere: StringBuilder = getWherePkClause(item)
                 //Tenta update e armazena retorno
-                addUpdateRet = db.update(MdItemCheckDao.TABLE, toContentValuesMapper.map(item), sbWhere.toString(), null).toLong()
+                addUpdateRet = db.update(TABLE, toContentValuesMapper.map(item), sbWhere.toString(), null).toLong()
                 //Se nenhuma linha afetada, tenta insert
                 if (addUpdateRet == 0L) {
                     curAction = DaoObjReturn.INSERT
-                    db.insertOrThrow(MdItemCheckDao.TABLE, null, toContentValuesMapper.map(item))
+                    db.insertOrThrow(TABLE, null, toContentValuesMapper.map(item))
                 }
             }
             //
@@ -302,7 +308,8 @@ class GeOsDao(
                         measure_tp_desc = getString(getColumnIndex(MEASURE_TP_DESC)),
                         measure_value = getFloat(getColumnIndex(MEASURE_VALUE)),
                         measure_cycle_value = getInt(getColumnIndex(MEASURE_CYCLE_VALUE)),
-                        start_date = getString(getColumnIndex(LAST_MEASURE_DATE)),
+                        date_start = getStringOrNull(getColumnIndex(DATE_START)),
+                        date_end = getStringOrNull(getColumnIndex(DATE_START)),
                         last_measure_value = getFloat(getColumnIndex(LAST_MEASURE_VALUE)),
                         last_measure_date = getString(getColumnIndex(LAST_MEASURE_DATE)),
                         last_cycle_value = getIntOrNull(getColumnIndex(LAST_CYCLE_VALUE)),
@@ -341,6 +348,8 @@ class GeOsDao(
                     //
                     put(ORDER_TYPE_ID, it.order_type_id)
                     //
+                    put(ORDER_TYPE_DESC, it.order_type_desc)
+                    //
                     put(BACKUP_PRODUCT_CODE, it.backup_product_code)
                     put(BACKUP_PRODUCT_ID, it.backup_product_id)
                     put(BACKUP_PRODUCT_DESC, it.backup_product_desc)
@@ -358,7 +367,9 @@ class GeOsDao(
                     //
                     put(MEASURE_CYCLE_VALUE, it.measure_cycle_value)
                     //
-                    put(START_DATE,it.start_date)
+                    put(DATE_START,it.date_start)
+                    //
+                    put(DATE_END,it.date_end)
                     //
                     put(LAST_MEASURE_VALUE, it.last_measure_value)
                     //
@@ -379,7 +390,96 @@ class GeOsDao(
             }
             return contentValues
         }
-
     }
 
+    fun createGeOsStructure(geOs: GeOs, mdSerial: MD_Product_Serial): DaoObjReturn {
+        var daoObjReturn = DaoObjReturn()
+        var addUpdateRet: Long = 0
+        var curAction = DaoObjReturn.INSERT_OR_UPDATE
+        //
+        val geOsDeviceDao = GeOsDeviceDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
+        val geOsDeviceItemDao = GeOsDeviceItemDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
+        val geOsDeviceItemHistDao = GeOsDeviceItemHistDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
+        //
+        val geOsDevices = geOsDeviceDao.query(
+            GeOsDeviceCreation_Sql_001(
+                geOs.customer_code,
+                geOs.custom_form_type,
+                geOs.custom_form_code,
+                geOs.custom_form_version,
+                geOs.custom_form_data,
+                mdSerial.product_code.toInt(),
+                mdSerial.serial_code.toInt()
+            ).toSqlQuery()
+        )
+        val geOsDeviceItens = geOsDeviceItemDao.query(
+            GeOsDeviceItemCreation_Sql_001(
+                geOs.customer_code,
+                geOs.custom_form_type,
+                geOs.custom_form_code,
+                geOs.custom_form_version,
+                geOs.custom_form_data,
+                mdSerial.product_code.toInt(),
+                mdSerial.serial_code.toInt()
+            ).toSqlQuery()
+        )
+        val geOsDeviceItemHist = geOsDeviceItemHistDao.query(
+            GeOsDeviceItemHistCreation_Sql_001(
+                geOs.customer_code,
+                geOs.custom_form_type,
+                geOs.custom_form_code,
+                geOs.custom_form_version,
+                geOs.custom_form_data,
+                mdSerial.product_code.toInt(),
+                mdSerial.serial_code.toInt()
+            ).toSqlQuery()
+        )
+        //
+        openDB()
+        try {
+            db.beginTransaction()
+            daoObjReturn = addUpdate(geOs)
+            if (daoObjReturn.hasError()) {
+                throw Exception(daoObjReturn.errorMsg)
+            }
+            daoObjReturn = geOsDeviceDao.addUpdate(geOsDevices,false,db)
+            if (daoObjReturn.hasError()) {
+                throw Exception(daoObjReturn.errorMsg)
+            }
+            daoObjReturn = geOsDeviceItemDao.addUpdate(geOsDeviceItens,false,db)
+            if (daoObjReturn.hasError()) {
+                throw Exception(daoObjReturn.errorMsg)
+            }
+            daoObjReturn =  geOsDeviceItemHistDao.addUpdate(geOsDeviceItemHist,false,db)
+            if (daoObjReturn.hasError()) {
+                throw Exception(daoObjReturn.errorMsg)
+            }
+            db.setTransactionSuccessful()
+        } catch (e: SQLiteException) {
+            //Chama metodo que baseado na exception gera obj de retorno setado como erro
+            //e contendo msg de erro tratada.
+            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.message)
+            //Gera arquivo de exception usando dados da exception e do obj de retorno
+            ToolBox_Inf.registerException(
+                javaClass.name,
+                Exception(
+                    """
+                ${e.message}
+                ${daoObjReturn.errorMsg}
+                """.trimIndent()
+                )
+            )
+        } catch (e: Exception) {
+            //Seta obj de retorno com flag de erro e gera arquivo de exception
+            daoObjReturn.setError(true)
+            ToolBox_Inf.registerException(javaClass.name, e)
+        } finally {
+            db.endTransaction()
+            daoObjReturn.action = curAction
+            daoObjReturn.actionReturn = addUpdateRet
+        }
+        //
+        closeDB()
+        return daoObjReturn
+    }
 }

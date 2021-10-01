@@ -14,6 +14,7 @@ import com.namoadigital.prj001.databinding.Act087MainContentBinding
 import com.namoadigital.prj001.extensions.setFrag
 import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.ui.act005.Act005_Main
+import com.namoadigital.prj001.ui.act011.Act011_Main
 import com.namoadigital.prj001.ui.act011.frags.Act011BaseFrgInteractionNavegation
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
@@ -112,6 +113,7 @@ class Act087Main : Base_Activity_Frag(),
     private var schedulePrefix: Int? = null
     private var scheduleCode: Int? = null
     private var scheduleExec: Int? = null
+    private lateinit var bundle: Bundle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -183,6 +185,8 @@ class Act087Main : Base_Activity_Frag(),
 
     private fun recoverIntentsInfo() {
         intent?.extras?.let { bundle->
+            this.bundle = bundle
+            //
             with(bundle){
                 customFormType = getInt(GE_Custom_FormDao.CUSTOM_FORM_CODE,-1)
                 customFormCode = getInt(GE_Custom_FormDao.CUSTOM_FORM_TYPE,-1)
@@ -194,7 +198,7 @@ class Act087Main : Base_Activity_Frag(),
                 scheduleCode = getInt(MD_Schedule_ExecDao.SCHEDULE_CODE)
                 scheduleExec = getInt(MD_Schedule_ExecDao.SCHEDULE_EXEC)
             }
-        }
+        }?:Bundle()
     }
 
     private fun initActions() {
@@ -252,6 +256,36 @@ class Act087Main : Base_Activity_Frag(),
 
     override fun createOsHeader(formOsHeader: GeOs) {
         mPresenter.createOsHeader(formOsHeader)
+    }
+
+    override fun showAlert(
+        ttl: String?,
+        msg: String?,
+        listener: DialogInterface.OnClickListener?,
+        negativeBtn: Int
+    ) {
+        ToolBox.alertMSG(
+            context,
+            ttl,
+            msg,
+            listener,
+            negativeBtn
+        )
+    }
+
+    override fun callAct011(act011Bundle: Bundle) {
+        bundle.putAll(act011Bundle)
+        //
+        startActivity(
+            Intent().apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                setClass(this@Act087Main, Act011_Main::class.java)
+                putExtras(bundle)
+            }
+        )
+        //
+        finish()
+
     }
 
     /**

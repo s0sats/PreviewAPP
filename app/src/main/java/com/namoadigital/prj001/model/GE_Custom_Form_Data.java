@@ -110,6 +110,32 @@ public class GE_Custom_Form_Data {
     private String ticket_checkin_date;
     @Expose
     private int tag_operational_code;
+    /*
+    * CAMPOS FORM O.S
+    */
+    //Esses campos sys_date.. agora receberam a mesma data de criação e finalização que eram setadas
+    //anteriormente em date_start e date_end,pois se o form for o.s,os campo date_start e date_end terão
+    //as datas definidas pelo frag de criação de form o.s e dialog de finalização.........
+    //Era mais facil chamar essas sys_date... de os_date... e não inverter as coisas....
+    // mas a vida tem dessas...
+    @Expose
+    private String sys_date_start;
+    @Expose
+    private String sys_date_end;
+    @Expose
+    private Integer order_type_code;
+    @Expose
+    private Integer backup_product_code;
+    @Expose
+    private Integer backup_serial_code;
+    @Expose
+    private Integer device_tp_code;
+    @Expose
+    private Integer measure_tp_code;
+    @Expose
+    private Float measure_value;
+    @Expose
+    private Integer measure_cycle_value;
 
     public GE_Custom_Form_Data() {
         this.customer_code = -1L;
@@ -150,6 +176,15 @@ public class GE_Custom_Form_Data {
         this.step_code=null;
         this.ticket_checkin_date = null;
         this.tag_operational_code = -1;
+        this.sys_date_start = this.date_start;
+        this.sys_date_end = this.date_end;
+        this.order_type_code = null;
+        this.backup_product_code = null;
+        this.backup_serial_code = null;
+        this.device_tp_code = null;
+        this.measure_tp_code = null;
+        this.measure_value = null;
+        this.measure_cycle_value = null;
     }
 
     public long getCustomer_code() {
@@ -454,5 +489,77 @@ public class GE_Custom_Form_Data {
 
     public void setTag_operational_code(int tag_operational_code) {
         this.tag_operational_code = tag_operational_code;
+    }
+
+    public String getSys_date_start() {
+        return sys_date_start;
+    }
+
+    public void setSys_date_start(String sys_date_start) {
+        this.sys_date_start = sys_date_start;
+    }
+
+    public String getSys_date_end() {
+        return sys_date_end;
+    }
+
+    public void setSys_date_end(String sys_date_end) {
+        this.sys_date_end = sys_date_end;
+    }
+
+    public Integer getOrder_type_code() {
+        return order_type_code;
+    }
+
+    public void setOrder_type_code(Integer order_type_code) {
+        this.order_type_code = order_type_code;
+    }
+
+    public Integer getBackup_product_code() {
+        return backup_product_code;
+    }
+
+    public void setBackup_product_code(Integer backup_product_code) {
+        this.backup_product_code = backup_product_code;
+    }
+
+    public Integer getBackup_serial_code() {
+        return backup_serial_code;
+    }
+
+    public void setBackup_serial_code(Integer backup_serial_code) {
+        this.backup_serial_code = backup_serial_code;
+    }
+
+    public Integer getDevice_tp_code() {
+        return device_tp_code;
+    }
+
+    public void setDevice_tp_code(Integer device_tp_code) {
+        this.device_tp_code = device_tp_code;
+    }
+
+    public Integer getMeasure_tp_code() {
+        return measure_tp_code;
+    }
+
+    public void setMeasure_tp_code(Integer measure_tp_code) {
+        this.measure_tp_code = measure_tp_code;
+    }
+
+    public Float getMeasure_value() {
+        return measure_value;
+    }
+
+    public void setMeasure_value(Float measure_value) {
+        this.measure_value = measure_value;
+    }
+
+    public Integer getMeasure_cycle_value() {
+        return measure_cycle_value;
+    }
+
+    public void setMeasure_cycle_value(Integer measure_cycle_value) {
+        this.measure_cycle_value = measure_cycle_value;
     }
 }

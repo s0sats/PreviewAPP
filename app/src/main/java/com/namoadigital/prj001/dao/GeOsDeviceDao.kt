@@ -3,6 +3,7 @@ package com.namoadigital.prj001.dao
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
+import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
@@ -21,7 +22,7 @@ class GeOsDeviceDao(
     context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI
 ), DaoWithReturn<GeOsDevice> {
     companion object{
-        const val TABLE = "md_device_tp"
+        const val TABLE = "ge_os_device"
         const val CUSTOMER_CODE = "customer_code"
         const val CUSTOM_FORM_TYPE = "custom_form_type"
         const val CUSTOM_FORM_CODE = "custom_form_code"
@@ -113,34 +114,48 @@ class GeOsDeviceDao(
     }
 
     override fun addUpdate(items: MutableList<GeOsDevice>?, status: Boolean): DaoObjReturn {
+        return addUpdate(items, status,null)
+    }
+
+    fun addUpdate(items: MutableList<GeOsDevice>?, status: Boolean, dbInstance: SQLiteDatabase?): DaoObjReturn {
         var daoObjReturn = DaoObjReturn()
         var addUpdateRet: Long = 0
         var curAction = DaoObjReturn.INSERT_OR_UPDATE
         //
-        openDB()
+        if (dbInstance == null) {
+            openDB()
+        } else {
+            db = dbInstance
+        }
 
         try {
-            daoObjReturn.table = MdItemCheckDao.TABLE
+            daoObjReturn.table = TABLE
             curAction = DaoObjReturn.UPDATE
 
-            db.beginTransaction()
+            //
+            if (dbInstance == null) {
+                db.beginTransaction()
+            }
 
             if (status) {
-                db.delete(MdItemCheckDao.TABLE, null, null)
+                db.delete(TABLE, null, null)
             }
 
             items?.forEach { item ->
                 val sbWhere: StringBuilder = getWherePkClause(item)
                 //Tenta update e armazena retorno
-                addUpdateRet = db.update(MdItemCheckDao.TABLE, toContentValuesMapper.map(item), sbWhere.toString(), null).toLong()
+                addUpdateRet = db.update(TABLE, toContentValuesMapper.map(item), sbWhere.toString(), null).toLong()
                 //Se nenhuma linha afetada, tenta insert
                 if (addUpdateRet == 0L) {
                     curAction = DaoObjReturn.INSERT
-                    db.insertOrThrow(MdItemCheckDao.TABLE, null, toContentValuesMapper.map(item))
+                    db.insertOrThrow(TABLE, null, toContentValuesMapper.map(item))
                 }
             }
             //
-            db.setTransactionSuccessful()
+            //Se db não foi passado, finaliza transaction com sucesso
+            if (dbInstance == null) {
+                db.setTransactionSuccessful()
+            }
 
         } catch (e: SQLiteException) {
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
@@ -163,12 +178,15 @@ class GeOsDeviceDao(
         } finally {
             //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
             //ou rowId do ultimo insert.
-            db.endTransaction()
+            if (dbInstance == null) {
+                db.endTransaction()
+            }
             daoObjReturn.action = curAction
             daoObjReturn.actionReturn = addUpdateRet
         }
-
-        closeDB()
+        if (dbInstance == null) {
+            closeDB()
+        }
         //
         return daoObjReturn
     }
@@ -321,7 +339,6 @@ class GeOsDeviceDao(
                     put(ORDER_SEQ, it.order_seq)
                     //
                     put(TRACKING_NUMBER, it.tracking_number)
-                    //
                 }
             }
             return contentValues

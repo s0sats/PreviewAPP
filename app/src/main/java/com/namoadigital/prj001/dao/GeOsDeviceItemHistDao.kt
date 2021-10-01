@@ -3,6 +3,7 @@ package com.namoadigital.prj001.dao
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
+import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
@@ -22,7 +23,7 @@ class GeOsDeviceItemHistDao(
 ), DaoWithReturn<GeOsDeviceItemHist> {
 
     companion object {
-        const val TABLE = "md_device_tp"
+        const val TABLE = "ge_os_device_item_hist"
         const val CUSTOMER_CODE = "customer_code"
         const val CUSTOM_FORM_TYPE = "custom_form_type"
         const val CUSTOM_FORM_CODE = "custom_form_code"
@@ -56,11 +57,17 @@ class GeOsDeviceItemHistDao(
             return java.lang.StringBuilder()
                 .append(
                     """
-                        ${CUSTOMER_CODE} = '${item.customer_code}'  
-                        AND ${CUSTOM_FORM_TYPE} = '${item.custom_form_type}'                           
-                        AND ${CUSTOM_FORM_CODE} = '${item.custom_form_code}'                           
-                        AND ${CUSTOM_FORM_VERSION} = '${item.custom_form_version}'                           
-                        AND ${CUSTOM_FORM_DATA} = '${item.custom_form_data}'                           
+                        $CUSTOMER_CODE = '${item.customer_code}'  
+                        AND $CUSTOM_FORM_TYPE = '${item.custom_form_type}'                           
+                        AND $CUSTOM_FORM_CODE = '${item.custom_form_code}'                           
+                        AND $CUSTOM_FORM_VERSION = '${item.custom_form_version}'                           
+                        AND $CUSTOM_FORM_DATA = '${item.custom_form_data}'                           
+                        AND $PRODUCT_CODE = '${item.product_code}'                           
+                        AND $SERIAL_CODE = '${item.serial_code}'                           
+                        AND $DEVICE_TP_CODE = '${item.device_tp_code}'                           
+                        AND $ITEM_CHECK_CODE = '${item.item_check_code}'                           
+                        AND $ITEM_CHECK_SEQ = '${item.item_check_seq}'                         
+                        AND $SEQ = '${item.seq}'                         
                         """.trimIndent()
                 )
         }
@@ -115,34 +122,46 @@ class GeOsDeviceItemHistDao(
     }
 
     override fun addUpdate(items: MutableList<GeOsDeviceItemHist>?, status: Boolean): DaoObjReturn {
+        return addUpdate(items, status, null)
+    }
+
+    fun addUpdate(items: MutableList<GeOsDeviceItemHist>?, status: Boolean, dbInstance: SQLiteDatabase?): DaoObjReturn {
         var daoObjReturn = DaoObjReturn()
         var addUpdateRet: Long = 0
         var curAction = DaoObjReturn.INSERT_OR_UPDATE
         //
-        openDB()
+        if (dbInstance == null) {
+            openDB()
+        } else {
+            db = dbInstance
+        }
 
         try {
-            daoObjReturn.table = MdItemCheckDao.TABLE
+            daoObjReturn.table = TABLE
             curAction = DaoObjReturn.UPDATE
 
-            db.beginTransaction()
+            if (dbInstance == null) {
+                db.beginTransaction()
+            }
 
             if (status) {
-                db.delete(MdItemCheckDao.TABLE, null, null)
+                db.delete(TABLE, null, null)
             }
 
             items?.forEach { item ->
                 val sbWhere: StringBuilder = getWherePkClause(item)
                 //Tenta update e armazena retorno
-                addUpdateRet = db.update(MdItemCheckDao.TABLE, toContentValuesMapper.map(item), sbWhere.toString(), null).toLong()
+                addUpdateRet = db.update(TABLE, toContentValuesMapper.map(item), sbWhere.toString(), null).toLong()
                 //Se nenhuma linha afetada, tenta insert
                 if (addUpdateRet == 0L) {
                     curAction = DaoObjReturn.INSERT
-                    db.insertOrThrow(MdItemCheckDao.TABLE, null, toContentValuesMapper.map(item))
+                    db.insertOrThrow(TABLE, null, toContentValuesMapper.map(item))
                 }
             }
             //
-            db.setTransactionSuccessful()
+            if (dbInstance == null) {
+                db.setTransactionSuccessful()
+            }
 
         } catch (e: SQLiteException) {
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
@@ -165,12 +184,16 @@ class GeOsDeviceItemHistDao(
         } finally {
             //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
             //ou rowId do ultimo insert.
-            db.endTransaction()
+            if (dbInstance == null) {
+                db.endTransaction()
+            }
             daoObjReturn.action = curAction
             daoObjReturn.actionReturn = addUpdateRet
         }
 
-        closeDB()
+        if (dbInstance == null) {
+            closeDB()
+        }
         //
         return daoObjReturn
     }
@@ -308,6 +331,7 @@ class GeOsDeviceItemHistDao(
                         put(CUSTOM_FORM_TYPE, it.custom_form_type)
                     }
                     //
+                    put(CUSTOM_FORM_CODE, it.custom_form_code)
                     put(CUSTOM_FORM_VERSION, it.custom_form_version)
                     put(CUSTOM_FORM_DATA, it.custom_form_data)
                     put(PRODUCT_CODE, it.product_code)

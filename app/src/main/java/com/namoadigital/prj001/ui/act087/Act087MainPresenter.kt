@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui.act087
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.os.Bundle
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.model.*
@@ -11,7 +12,7 @@ import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.io.File
-import java.util.ArrayList
+import java.util.*
 
 class Act087MainPresenter(
     private val context: Context,
@@ -48,7 +49,9 @@ class Act087MainPresenter(
 
     private fun loadTranslation(): HMAux {
         val transList: MutableList<String> = mutableListOf(
-            "act087_title"
+            "act087_title",
+            "alert_error_on_create_os_form_ttl",
+            "alert_error_on_create_os_form_msg",
         )
         //
         val actAuxTrans = ToolBox_Inf.setLanguage(
@@ -153,7 +156,7 @@ class Act087MainPresenter(
             measure_tp_desc = measureTp?.measureTpDesc,
             measure_value = null,
             measure_cycle_value = serialObj.last_cycle_value,
-            start_date = null,
+            date_start = null,
             last_cycle_value = serialObj.last_cycle_value,
             last_measure_value = serialObj.last_measure_value?.toFloat(),
             last_measure_date = serialObj.last_measure_date,
@@ -215,39 +218,42 @@ class Act087MainPresenter(
     }
 
     override fun createOsHeader(formOsHeader: GeOs) {
-        var daoObjReturn = geOsDao.addUpdate(
-            formOsHeader
-        )
-        //
-        val serialDeviceTp = serialDeviceTpDao.getByString(
-            MD_Product_Serial_Tp_Device_Sql_002(
-                serialObj.customer_code,
-                serialObj.product_code,
-                serialObj.serial_code
-            ).toSqlQuery()
-        )
-        //
-        val serialDeviceItem = serialDeviceItemDao.getByString(
-            MD_Product_Serial_Tp_Device_Item_Sql_002(
-                serialObj.customer_code,
-                serialObj.product_code,
-                serialObj.serial_code
-            ).toSqlQuery()
-        )
-        val serialDeviceItemHist = serialDeviceItemHistDao.getByString(
-            MD_Product_Serial_Tp_Device_Item_Hist_Sql_002(
-                serialObj.customer_code,
-                serialObj.product_code,
-                serialObj.serial_code
-            ).toSqlQuery()
-        )
-
-//        if(!daoObjReturn.hasError()){
-//            createFormLocal(formOsHeader)
-//        }
+        formOsHeader.custom_form_data = getNextFormData(formOsHeader)
+        val daoObjReturn = geOsDao.createGeOsStructure(formOsHeader, serialObj)
+        if(!daoObjReturn.hasError()){
+            mView.callAct011(
+                getAct011Bundle(
+                    formOsHeader
+                )
+            )
+        }else{
+            mView.showAlert(
+                ttl =hmAuxTrans["alert_error_on_create_os_form_ttl"],
+                msg= hmAuxTrans["alert_error_on_create_os_form_msg"]
+            )
+        }
     }
 
-   private fun createFormLocal(formOsHeader: GeOs) {
+    private fun getAct011Bundle(formOsHeader: GeOs): Bundle {
+        return Bundle().apply {
+//            putString(MD_ProductDao.PRODUCT_CODE, "");
+//            putString(MD_ProductDao.PRODUCT_DESC, "");
+//            putString(MD_ProductDao.PRODUCT_ID, "Sem Product ID");
+//            putString(MD_Product_SerialDao.SERIAL_ID, "");
+//            putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, "");
+//            putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, "");
+//            putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, "");
+//            putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, "");
+//            putString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT005);
+            putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, formOsHeader.custom_form_data.toString())
+
+        }
+    }
+    //todo apagar
+    private fun createFormLocal(formOsHeader: GeOs) {
+       formOsHeader.custom_form_data = getNextFormData(formOsHeader)
+       geOsDao.createGeOsStructure(formOsHeader,serialObj)
+       /*
 //        val geCustomForm = getForm(
 //            formOsHeader.custom_form_type,
 //            formOsHeader.custom_form_code,
@@ -321,18 +327,19 @@ class Act087MainPresenter(
 //            so_allow_change_order_type =
 //            so_allow_backup =
 //        }
+*/
     }
 
-    private fun getNextFormData(geCustomForm: GE_Custom_Form): Long {
+    private fun getNextFormData(geOs: GeOs): Int {
         val nextDataAux = formDao.getByStringHM(
             GE_Custom_Form_Local_Sql_002(
-                geCustomForm.customer_code.toString(),
-                geCustomForm.custom_form_type.toString(),
-                geCustomForm.custom_form_code.toString(),
-                geCustomForm.custom_form_version.toString()
+                geOs.customer_code.toString(),
+                geOs.custom_form_type.toString(),
+                geOs.custom_form_code.toString(),
+                geOs.custom_form_version.toString()
             ).toSqlQuery().toLowerCase()
         )
         //
-        return nextDataAux["id"]!!.toLong()
+        return nextDataAux["id"]!!.toInt()
     }
 }

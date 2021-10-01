@@ -112,7 +112,9 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>() {
                 "alert_invalid_measure_value_error_msg",
                 "alert_invalid_measure_cycle_error_msg",
                 "alert_last_cycle_lbl",
-                "alert_current_cycle_lbl"
+                "alert_current_cycle_lbl",
+                "alert_form_os_creation_ttl",
+                "alert_form_os_creation_confirm",
             )
         }
     }
@@ -390,7 +392,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>() {
                 measure_cycle_value = calculatedExecCycle
 
             }
-            start_date = binding.mkdtStartDate.getmValue()
+            date_start = binding.mkdtStartDate.getmValue()
         }
     }
 

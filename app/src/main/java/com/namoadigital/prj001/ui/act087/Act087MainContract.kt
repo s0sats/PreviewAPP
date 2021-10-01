@@ -1,6 +1,8 @@
 package com.namoadigital.prj001.ui.act087
 
+import android.content.DialogInterface
 import android.graphics.Bitmap
+import android.os.Bundle
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.model.*
 import java.util.ArrayList
@@ -8,6 +10,14 @@ import java.util.ArrayList
 interface Act087MainContract {
 
     interface I_View{
+        fun showAlert(
+            ttl: String?,
+            msg: String?,
+            listener: DialogInterface.OnClickListener? = null,
+            negativeBtn: Int = 0
+        )
+
+        fun callAct011(act011Bundle: Bundle)
 
     }
 

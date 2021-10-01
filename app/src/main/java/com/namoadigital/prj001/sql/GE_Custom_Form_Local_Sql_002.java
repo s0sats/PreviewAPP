@@ -7,6 +7,7 @@ import com.namoadigital.prj001.database.Specification;
  */
 
 public class GE_Custom_Form_Local_Sql_002 implements Specification {
+    public static final String ID = "id";
 
     private String s_customer_code;
     private String s_formtype_code;
@@ -26,10 +27,10 @@ public class GE_Custom_Form_Local_Sql_002 implements Specification {
 
         return sb
                 .append(
-                        " select " +
-                        "   ifnull(max(CFL.CUSTOM_FORM_DATA), 0) + 1 id " +
-                        " from  " +
-                        "     GE_Custom_Forms_Local CFL ")
+                        " select \n" +
+                        "   ifnull(max(CFL.CUSTOM_FORM_DATA), 0) + 1  " + ID +"\n" +
+                        " from  \n" +
+                        "     GE_Custom_Forms_Local CFL \n")
 //                        " where " +
 //                        " cfl.customer_code = '"+s_customer_code+"' " +
 //                        " and cfl.custom_form_type = '"+s_formtype_code+"' " +
