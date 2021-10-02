@@ -189,7 +189,8 @@
                         app:layout_constraintStart_toStartOf="@id/sw_machine"
                         app:layout_constraintTop_toTopOf="@id/til_mket_serial"
                         app:srcCompat="@drawable/ic_baseline_search_24"
-                        app:tint="@color/namoa_color_gray_8" />
+                        app:tint="@color/namoa_outlined_button_font_states"
+                        />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

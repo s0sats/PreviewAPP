@@ -1,18 +1,24 @@
 package com.namoadigital.prj001.ui.act087
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import com.google.gson.GsonBuilder
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.model.*
+import com.namoadigital.prj001.receiver.WBR_Product_Serial_Backup
+import com.namoadigital.prj001.service.SO_PRODUCT_CODE
+import com.namoadigital.prj001.service.SO_SERIAL_CODE
+import com.namoadigital.prj001.service.WS_Product_Serial_Backup
 import com.namoadigital.prj001.sql.*
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.io.File
-import java.util.*
+import kotlin.collections.ArrayList
 
 class Act087MainPresenter(
     private val context: Context,
@@ -215,6 +221,113 @@ class Act087MainPresenter(
 
     override fun getMeasure(measureCode: Int): MeMeasureTp? {
         return getMeasureTp(ToolBox_Con.getPreference_Customer_Code(context),measureCode)
+    }
+
+    override fun executeWsBkpMachine(bkpProductCode: Long, bkpSerialId: String) {
+        if(ToolBox_Con.isOnline(context)) {
+            mView.setWsProcess(WS_Product_Serial_Backup::class.java.name)
+            //
+            mView.showPD(
+                ttl = hmAuxTrans["dialog_bkp_machine_search_ttl"],
+                msg = hmAuxTrans["dialog_bkp_machine_search_start"]
+            )
+            //
+            val mIntent = Intent(context, WBR_Product_Serial_Backup::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                putExtras(
+                    Bundle().apply {
+                        putLong(SO_PRODUCT_CODE, serialObj.product_code)
+                        putLong(SO_SERIAL_CODE, serialObj.serial_code)
+                        putLong(MD_Product_SerialDao.PRODUCT_CODE, bkpProductCode)
+                        putString(MD_Product_SerialDao.SERIAL_ID, bkpSerialId)
+                        putInt(
+                            MD_Product_SerialDao.SITE_CODE,
+                            ToolBox_Con.getPreference_Site_Code(context).toInt()
+                        )
+                    }
+                )
+            }
+            //
+            context.sendBroadcast(mIntent)
+        }else{
+            searchBkpMachineInDb(bkpProductCode, bkpSerialId)
+        }
+    }
+
+    private fun searchBkpMachineInDb(bkpProductCode: Long, bkpSerialId: String) {
+        //TODO("Not yet implemented")
+    }
+
+    override fun processWsBkpMachineResult(mLink: String?) {
+        if (mLink != null && mLink.isNotEmpty()){
+            try{
+                val rec = GsonBuilder().serializeNulls().create().fromJson(
+                    mLink,
+                    T_MD_Product_Serial_Backup_Rec::class.java
+                )
+                //
+                if(rec.records != null && rec.records.isNotEmpty()){
+                    processSerialBkpMachine(rec.records,page = rec.record_page?:-1, foundQty= rec.record_count?:-1,true)
+                }else{
+                    mView.showAlert(
+                        hmAuxTrans["alert_bkp_serial_error_ttl"],
+                        hmAuxTrans["alert_no_bkp_serial_found_msg"],
+                    )
+                }
+            }catch (e: Exception){
+                ToolBox_Inf.registerException(javaClass.name,e)
+                mView.showAlert(
+                    hmAuxTrans["alert_bkp_serial_error_ttl"],
+                    hmAuxTrans["alert_error_on_open_bkp_list_msg"],
+                )
+            }
+        }else{
+            mView.showAlert(
+                hmAuxTrans["alert_bkp_serial_error_ttl"],
+                hmAuxTrans["alert_error_no_data_return_msg"],
+            )
+        }
+    }
+
+    private fun processSerialBkpMachine(
+        records: List<T_MD_Product_Serial_Backup_Record>,
+        page: Int,
+        foundQty: Int,
+        onlineSearch: Boolean
+    ) {
+        val bkpSerialItemList = mutableListOf<FormOsHeaderFrgSerialBkpItemAbs>()
+        records.forEach { bkp ->
+            if( (bkp.customerCode == serialObj.customer_code.toInt()
+                && bkp.productCode == serialObj.product_code.toInt()
+                && bkp.serialCode == serialObj.serial_code.toInt()).not()
+            ){
+                bkpSerialItemList.add(
+                    FormOsHeaderFrgSerialBkpItem(
+                        bkp.serialCode,
+                        bkp.serialId,
+                        bkp.siteCode,
+                        bkp.siteDesc
+                    )
+                )
+            }
+        }
+        //
+        if(foundQty > records.size ){
+            bkpSerialItemList.add(
+                FormOsHeaderFrgSerialBkpExceededItem(
+                    hmAuxTrans["alert_qty_records_exceeded_msg"]!!,
+                    hmAuxTrans["records_display_limit_lbl"]!!,
+                    page,
+                    hmAuxTrans["records_found_lbl"]!!,
+                    foundQty
+                )
+            )
+        }
+        //
+        mView.reportSerialBkpMachineToFrag(
+            serialBkpMachineList = bkpSerialItemList,
+            onlineSearch = onlineSearch
+        )
     }
 
     override fun createOsHeader(formOsHeader: GeOs) {

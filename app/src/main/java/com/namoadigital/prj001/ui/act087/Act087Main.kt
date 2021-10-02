@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.WindowManager
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
+import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag
 import com.namoadigital.prj001.dao.*
@@ -13,6 +14,7 @@ import com.namoadigital.prj001.databinding.Act087MainBinding
 import com.namoadigital.prj001.databinding.Act087MainContentBinding
 import com.namoadigital.prj001.extensions.setFrag
 import com.namoadigital.prj001.model.*
+import com.namoadigital.prj001.service.WS_Product_Serial_Backup
 import com.namoadigital.prj001.ui.act005.Act005_Main
 import com.namoadigital.prj001.ui.act011.Act011_Main
 import com.namoadigital.prj001.ui.act011.frags.Act011BaseFrgInteractionNavegation
@@ -29,6 +31,7 @@ class Act087Main : Base_Activity_Frag(),
 
     private lateinit var binding: Act087MainContentBinding
     private lateinit var formOsHeaderFrg: FormOsHeaderFrg
+    private var wsProcess: String = ""
 
     private val mPresenter: Act087MainContract.I_Presenter by lazy {
         Act087MainPresenter(
@@ -114,6 +117,9 @@ class Act087Main : Base_Activity_Frag(),
     private var scheduleCode: Int? = null
     private var scheduleExec: Int? = null
     private lateinit var bundle: Bundle
+    private val mFormHeaderFragListener: FormOsHeaderFrgInfr by lazy{
+        formOsHeaderFrg
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -233,8 +239,8 @@ class Act087Main : Base_Activity_Frag(),
         return mPresenter.getOrderTypeList(orderTypeCode)
     }
 
-    override fun searchSerialClick() {
-        //
+    override fun searchSerialClick(bkpProductCode: Long, bkpSerialId: String) {
+        return mPresenter.executeWsBkpMachine(bkpProductCode,bkpSerialId)
     }
 
     override fun getDefaultBkpMachineProduct(): MD_Product? {
@@ -273,6 +279,19 @@ class Act087Main : Base_Activity_Frag(),
         )
     }
 
+    override fun setWsProcess(wsProcess: String) {
+        this.wsProcess = wsProcess
+    }
+
+    override fun showPD(ttl: String?, msg: String?) {
+        enableProgressDialog(
+            ttl,
+            msg,
+            hmAux_Trans["sys_alert_btn_cancel"],
+            hmAux_Trans["sys_alert_btn_ok"]
+        )
+    }
+
     override fun callAct011(act011Bundle: Bundle) {
         bundle.apply {
             remove(GE_Custom_FormDao.CUSTOM_FORM_CODE)
@@ -295,7 +314,13 @@ class Act087Main : Base_Activity_Frag(),
         )
         //
         finish()
+    }
 
+    override fun reportSerialBkpMachineToFrag(
+        serialBkpMachineList: MutableList<FormOsHeaderFrgSerialBkpItemAbs>,
+        onlineSearch: Boolean
+    ) {
+        mFormHeaderFragListener.reportSerialBkpMachineToFrag(serialBkpMachineList,onlineSearch)
     }
 
     /**
@@ -324,6 +349,28 @@ class Act087Main : Base_Activity_Frag(),
 
     override fun footerCreateDialog() {
         ToolBox_Inf.buildFooterDialog(context)
+    }
+
+
+    override fun processCloseACT(mLink: String?, mRequired: String?) {
+        super.processCloseACT(mLink, mRequired)
+        processCloseACT(mLink,mRequired, HMAux())
+    }
+
+    override fun processCloseACT(mLink: String?, mRequired: String?, hmAux: HMAux?) {
+        super.processCloseACT(mLink, mRequired, hmAux)
+        when(wsProcess){
+            WS_Product_Serial_Backup::class.java.name ->{
+                resetWsResources()
+                mPresenter.processWsBkpMachineResult(mLink)
+            }
+            else -> resetWsResources()
+        }
+    }
+
+    private fun resetWsResources() {
+        wsProcess = ""
+        progressDialog?.dismiss()
     }
 
     override fun onBackPressed() {
