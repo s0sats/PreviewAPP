@@ -186,7 +186,7 @@
     <color name="namoa_os_form_verified_green">#29D930</color>
 <!--    <color name="namoa_os_form_critical_forecast_blue">#4292A8</color>-->
     <color name="namoa_os_form_critical_forecast_yellow">#E2D23C</color>
-    <color name="namoa_os_form_problem_red">#FE0B0B</color>
+    <color name="namoa_os_form_problem_red">#F54E4E</color>
     <color name="namoa_os_form_verify_later">#FFB3B3</color>
 
     <color name="namoa_os_form_tab_pending">#FFEBCD</color>
@@ -197,6 +197,9 @@
 
     <color name="namoa_color_so_form_add_new_item">#4292A8</color>
     <color name="namoa_color_so_form_add_new_item_pressed">#C2E5EE</color>
+
+    <color name="namoa_color_highlight_required_item">#FF9635</color>
+    <color name="namoa_color_cone_item">#074C61</color>
 
     <!--Cores OS form -->
 </resources>

@@ -74,41 +74,45 @@
                 android:id="@+id/tv_inspection_verification_action"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="12dp"
+                android:layout_marginTop="24dp"
+                android:paddingVertical="10dp"
+                android:paddingHorizontal="8dp"
                 android:drawableLeft="@drawable/ic_baseline_play_arrow_24dp"
                 android:drawableTint="#074C61"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@+id/tv_inspect_answered"
                 app:layout_constraintStart_toStartOf="@+id/tv_inspection_description"
                 app:layout_constraintTop_toBottomOf="@+id/tv_day_count"
-                tools:text="TextView" />
+                tools:text="TextView"
+                tools:visibility="gone" />
 
             <TextView
                 android:id="@+id/tv_auto_skip_inspection"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:drawablePadding="8dp"
                 android:drawableLeft="@drawable/ic_baseline_redo_24"
-                android:textColor="@color/namoa_os_form_verify_later"
-                android:textStyle="bold"
+                android:drawablePadding="8dp"
                 android:textAllCaps="true"
+                android:textColor="@color/namoa_os_form_verify_later"
+                android:textSize="16sp"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_inspection_verification_action"
                 app:layout_constraintEnd_toEndOf="@+id/tv_inspection_description"
                 app:layout_constraintTop_toTopOf="@+id/tv_inspection_verification_action"
-                tools:text="Não Verificar" />
+                tools:text="Não Verificar"
+                tools:visibility="gone" />
 
             <TextView
                 android:id="@+id/tv_inspect_answered"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:layout_marginBottom="12dp"
                 android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/ll_answer_info"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/tv_inspection_verification_action"
+                app:layout_constraintTop_toBottomOf="@+id/tv_inspection_verification_action"
                 tools:text="Já estava ok" />
 
             <LinearLayout
@@ -127,7 +131,8 @@
                     android:layout_height="match_parent"
                     android:src="@drawable/ic_baseline_notes_24"
                     android:layout_marginRight="8dp"
-                    android:gravity="center"/>
+                    app:tint="@color/namoa_color_cone_item"
+                    android:gravity="center" />
 
                 <ImageView
                     android:id="@+id/iv_photo"
@@ -136,7 +141,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:layout_marginRight="4dp"
-                    app:tint="#074C61" />
+                    app:tint="@color/namoa_color_cone_item" />
 
                 <TextView
                     android:id="@+id/tv_photo_count"
@@ -151,7 +156,7 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/ic_baseline_inventory_2_black_24"
-                    app:tint="#074C61"
+                    app:tint="@color/namoa_color_cone_item"
                     android:layout_marginRight="4dp"
                     android:gravity="center"/>
 

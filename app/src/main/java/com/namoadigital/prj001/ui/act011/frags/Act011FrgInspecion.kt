@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act011.frags
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -12,7 +13,6 @@ import com.namoadigital.prj001.databinding.Act011InspectionListFragmentBinding
 import com.namoadigital.prj001.model.AcessoryFormView
 import com.namoadigital.prj001.model.Act011FormTab
 import com.namoadigital.prj001.model.Act011FormTabStatus
-import com.namoadigital.prj001.model.InspectionCell
 import com.namoadigital.prj001.model.InspectionCell.Companion.CRITICAL_FORECAST
 import com.namoadigital.prj001.model.InspectionCell.Companion.FORECAST
 import com.namoadigital.prj001.model.InspectionCell.Companion.MANUAL_ALERT
@@ -29,12 +29,11 @@ private const val MAIN_HMAUX_TRANS_KEY = "MAIN_HMAUX_TRANS_KEY"
 class InspectionListFragment : Act011BaseFrg<Act011InspectionListFragmentBinding>() {
 
     private val mAdapter by lazy {
-        Act011InspectionFormAdapter(acessoryFormView.inspections, hmAuxTrans, onInspectionSelected)
+        Act011InspectionFormAdapter(acessoryFormView.inspections, hmAuxTrans, mFrgListener)
     }
     private lateinit var acessoryFormView: AcessoryFormView
-    var onInspectionSelected: (inspection: InspectionCell) -> Unit =
-        { inspection: InspectionCell -> }
-
+    private var _mFrgListener: InspectionListFragmentInteraction? = null
+    private val mFrgListener get() = _mFrgListener!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,34 +59,39 @@ class InspectionListFragment : Act011BaseFrg<Act011InspectionListFragmentBinding
 
     private fun setActions() {
         binding.apply {
-            edtInspectionFilter.addTextChangedListener( object : TextWatcher {
+            edtInspectionFilter.addTextChangedListener(object : TextWatcher {
                 override fun afterTextChanged(s: Editable?) {
-                    if(s != null){
-                        if(s.toString().isNullOrEmpty()){
+                    if (s != null) {
+                        if (s.toString().isNullOrEmpty()) {
                             hideNonForecastCheckBoxFilter(false)
-                        }else{
+                        } else {
                             hideNonForecastCheckBoxFilter(true)
                         }
-                    }else{
+                    } else {
                         hideNonForecastCheckBoxFilter(false)
                     }
                 }
 
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
                 }
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     mAdapter.filter.filter(s)
                 }
-            } )
+            })
         }
     }
 
     private fun hideNonForecastCheckBoxFilter(hideCheckbox: Boolean) {
-        if(hideCheckbox){
+        if (hideCheckbox) {
             binding.chkNonForecastItem.visibility = View.GONE
             binding.tvNonForecastCount.visibility = View.GONE
-        }else{
+        } else {
             binding.chkNonForecastItem.visibility = View.VISIBLE
             binding.tvNonForecastCount.visibility = View.VISIBLE
         }
@@ -233,4 +237,12 @@ class InspectionListFragment : Act011BaseFrg<Act011InspectionListFragmentBinding
 
     override fun getHeaderInclude(): Act011FrgIncludeHeaderBinding = binding.incHeader
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if(context is InspectionListFragmentInteraction){
+            _mFrgListener = context
+        }else{
+            throw RuntimeException("${context.toString()} must implement FrgFFInteraction")
+        }
+    }
 }

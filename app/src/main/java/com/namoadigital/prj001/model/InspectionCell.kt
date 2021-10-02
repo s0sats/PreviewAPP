@@ -14,9 +14,9 @@ data class InspectionCell(
     val hasComment: Boolean = false,
     val commentRequired: Boolean,
     var status: String,
-    val verificationActionLbl: String?,
     val autoSkipLbl: String?,
     val isCritical: Boolean,
+    val isNewItem: Boolean = false,
     val answer: String?,
     val itemPk: String
 ): Serializable {
@@ -67,8 +67,6 @@ data class InspectionCell(
                     .replace("null|","")
                     .replace("null","")
     }
-
-
     companion object{
         const val ANSWERED = "answered"
         const val NORMAL = "normal"
@@ -76,4 +74,8 @@ data class InspectionCell(
         const val FORECAST = "forecast"
         const val CRITICAL_FORECAST = "critical_forecast"
     }
+}
+
+enum class InspectionCellActions{
+    VERIFY , VERIFY_LATER
 }

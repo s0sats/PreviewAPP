@@ -11,15 +11,19 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.Act011InspectionQuestionFormCellBinding
+import com.namoadigital.prj001.extensions.applyTintColor
 import com.namoadigital.prj001.model.InspectionCell
+import com.namoadigital.prj001.model.InspectionCellActions
+import com.namoadigital.prj001.ui.act011.frags.InspectionListFragmentInteraction
 
 class Act011InspectionFormAdapter(
     private val inspections: List<InspectionCell>,
     private val hmAuxTrans: HMAux,
-    private val myInspectionClickListener: (inspection: InspectionCell) -> Unit
+    private val myInspectionClickListener: InspectionListFragmentInteraction
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
 
     private var inspectionsFiltered: MutableList<InspectionCell> = mutableListOf()
+    protected var textFilter:String = ""
     val mFilter = InspectionFormFilter()
 
     init {
@@ -40,6 +44,14 @@ class Act011InspectionFormAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         with(holder as MyInspectionFormVH) {
             onBinding(inspectionsFiltered[position] as InspectionCell)
+        }
+
+        holder.binding.tvAutoSkipInspection.setOnClickListener {
+            myInspectionClickListener.onInspectionSelected(inspectionsFiltered[position], InspectionCellActions.VERIFY_LATER, position, textFilter)
+        }
+
+        holder.binding.tvInspectionVerificationAction.setOnClickListener {
+            myInspectionClickListener.onInspectionSelected(inspectionsFiltered[position], InspectionCellActions.VERIFY, position, textFilter)
         }
     }
 
@@ -67,6 +79,7 @@ class Act011InspectionFormAdapter(
         override fun performFiltering(constraint: CharSequence?): FilterResults {
             var temp = mutableListOf<InspectionCell>()
             var charFilter = ToolBox.AccentMapper(constraint.toString().toLowerCase())
+            textFilter = charFilter
             if (charFilter.isNullOrEmpty()) {
                 temp = inspections as MutableList<InspectionCell>
             } else {
@@ -113,10 +126,10 @@ class Act011InspectionFormAdapter(
                     binding.tvInspectionVerificationAction.visibility = View.VISIBLE
                     binding.tvAutoSkipInspection.visibility = View.VISIBLE
                     binding.tvAutoSkipInspection.text = autoSkipLbl
-                    binding.tvInspectionVerificationAction.text = verificationActionLbl
                 }
                 //
                 binding.tvInspectionDescription.text = description
+                //
                 binding.tvStatus.apply {
                     text = status
                     val drawable = context.getDrawable(R.drawable.act011_inspection_cornered_bg)!!
@@ -136,11 +149,58 @@ class Act011InspectionFormAdapter(
                             visibility = View.VISIBLE
                             text = hmAuxTrans.get("inpection_ongoing_action_lbl")
                         }
-                    }else{
+                    } else {
                         visibility = View.VISIBLE
                         text = hmAuxTrans.get("inpection_verify_action_lbl")
                     }
                 }
+                //
+                if(isNewItem){
+                    binding.tvDayCount.visibility = View.GONE
+                }else {
+                    binding.tvDayCount.visibility = View.VISIBLE
+                    if (status.equals(InspectionCell.NORMAL)) {
+                        binding.tvDayCount.text =
+                            "${hmAuxTrans.get("inspection_missing_days")}: ${dayCount}"
+                        binding.tvDayCount.setTextColor(R.color.gray_colors_menu)
+                    } else {
+                        binding.tvDayCount.text =
+                            "${hmAuxTrans.get("inspection_alert_days")}: ${dayCount}"
+                        binding.tvDayCount.setTextColor(R.color.namoa_os_form_problem_red)
+                    }
+                }
+                //
+                if (hasComment) {
+                    binding.ivCommentary.applyTintColor(R.color.namoa_color_cone_item)
+                } else {
+                    if (commentRequired) {
+                        binding.ivCommentary.applyTintColor(R.color.namoa_color_highlight_required_item)
+                    } else {
+                        binding.ivCommentary.applyTintColor(R.color.namoa_color_gray_9)
+                    }
+                }
+                //
+                if (materialCount > 0) {
+                    binding.ivCommentary.applyTintColor(R.color.namoa_color_cone_item)
+                } else {
+                    if (materialRequired) {
+                        binding.ivCommentary.applyTintColor(R.color.namoa_color_highlight_required_item)
+                    } else {
+                        binding.ivCommentary.applyTintColor(R.color.namoa_color_gray_9)
+                    }
+
+                }
+                //
+                if (photoCount > 0) {
+                    binding.ivCommentary.applyTintColor(R.color.namoa_color_cone_item)
+                } else {
+                    if (photoRequired) {
+                        binding.ivCommentary.applyTintColor(R.color.namoa_color_highlight_required_item)
+                    } else {
+                        binding.ivCommentary.applyTintColor(R.color.namoa_color_gray_9)
+                    }
+                }
+                //
             }
         }
 

@@ -88,6 +88,8 @@ import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data_Field;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.GE_File;
+import com.namoadigital.prj001.model.InspectionCell;
+import com.namoadigital.prj001.model.InspectionCellActions;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
@@ -1953,7 +1955,7 @@ public class Act011_Main extends Base_Activity
     }
 
     @Override
-    public void onInspectionSelected(@NonNull Bundle bundle) {
+    public void onInspectionSelected(@NonNull InspectionCell inspection, @NonNull InspectionCellActions action, int position, @NonNull String textFilter) {
         Intent mIntent = new Intent(context, Act086Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mIntent.putExtras(bundle);

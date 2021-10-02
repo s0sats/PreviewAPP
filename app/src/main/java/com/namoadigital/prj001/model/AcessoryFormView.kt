@@ -7,6 +7,7 @@ class AcessoryFormView(
     val acessoryName: String,
     val acessoryTracking: String,
     val isReadOnly: Boolean,
+    val lastPositionSelected: Int = 0,
     val inspections: List<InspectionCell>
 ): Serializable {
     var filterVal: String = ""

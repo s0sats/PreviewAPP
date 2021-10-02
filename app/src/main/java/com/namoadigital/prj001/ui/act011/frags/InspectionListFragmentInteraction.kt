@@ -1,8 +1,13 @@
 package com.namoadigital.prj001.ui.act011.frags
 
-import android.os.Bundle
+import com.namoadigital.prj001.model.InspectionCell
+import com.namoadigital.prj001.model.InspectionCellActions
 
 interface InspectionListFragmentInteraction {
-    //fun scrollToSelectedView(position: Int)
-    fun onInspectionSelected(bundle: Bundle)
+    fun onInspectionSelected(
+        inspection: InspectionCell,
+        action: InspectionCellActions,
+        position: Int,
+        textFilter: String
+    )
 }
