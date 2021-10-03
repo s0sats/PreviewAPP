@@ -18,6 +18,9 @@ class T_MD_Product_Serial_Backup_Rec(
     val error_msg:String,
     @SerializedName("record")
     @Expose
-    val records: List<T_MD_Product_Serial_Backup_Record>?
-) {
-}
+    val records: List<T_MD_Product_Serial_Backup_Record>?,
+    @SerializedName("record_count")
+    val record_count: Int?,
+    @SerializedName("record_page")
+    val record_page: Int?
+)

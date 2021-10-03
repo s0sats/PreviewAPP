@@ -12,12 +12,15 @@ import com.namoadigital.prj001.dao.GE_Custom_FormDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
+import com.namoadigital.prj001.dao.GeOsDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_DeviceDao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
+import com.namoadigital.prj001.model.GeOs;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_004;
+import com.namoadigital.prj001.sql.GeOsSql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_Device_Sql_002;
 import com.namoadigital.prj001.sql.Sql_Act010_001;
@@ -46,8 +49,9 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
     private HMAux hmAux_Trans = new HMAux();
     private MD_Product_SerialDao serialDao;
     private MD_Product_Serial_Tp_DeviceDao serialTpDeviceDao;
+    private GeOsDao geOsDao;
 
-    public Act010_Main_Presenter_Impl(Context context, Act010_Main_View mView, GE_Custom_FormDao custom_formDao, GE_Custom_Form_DataDao customFormDataDao, long product_code, String serial_id, String so_prefix, String so_code, String site_code_form_param, HMAux hmAux_Trans, MD_Product_SerialDao serialDao, MD_Product_Serial_Tp_DeviceDao serial_tp_deviceDao) {
+    public Act010_Main_Presenter_Impl(Context context, Act010_Main_View mView, GE_Custom_FormDao custom_formDao, GE_Custom_Form_DataDao customFormDataDao, long product_code, String serial_id, String so_prefix, String so_code, String site_code_form_param, HMAux hmAux_Trans, MD_Product_SerialDao serialDao, MD_Product_Serial_Tp_DeviceDao serial_tp_deviceDao, GeOsDao geOsDao) {
         this.context = context;
         this.mView = mView;
         this.custom_formDao = custom_formDao;
@@ -60,6 +64,7 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
         this.hmAux_Trans = hmAux_Trans;
         this.serialDao = serialDao;
         this.serialTpDeviceDao = serial_tp_deviceDao;
+        this.geOsDao = geOsDao;
     }
 
     @Override
@@ -96,7 +101,6 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
                 Integer.parseInt(item.get(GE_Custom_FormDao.CUSTOM_FORM_VERSION))
                 )
         ) {
-
             if(validateFormSORestriction(item)) {
                 if(item.hasConsistentValue(GE_Custom_FormDao.REQUIRE_LOCATION)
                         && item.get(GE_Custom_FormDao.REQUIRE_LOCATION).equals("1")
@@ -104,13 +108,17 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
                     mView.alertActiveGPSResource(item);
                 }else {
                     if(isOsForm(item)) {
-                        if(serialHasStructure()) {
-                            prepareOsFormCreatation(item);
+                        if(osFormAlreadyExists(item)) {
+                            setAct011Call(item);
                         }else{
-                            mView.showAlertMsg(
-                                hmAux_Trans.get("alert_os_form_ttl"),
-                                hmAux_Trans.get("alert_serial_undefined_or_without_structure_msg")
-                            );
+                            if (serialHasStructure()) {
+                                prepareOsFormCreation(item);
+                            } else {
+                                mView.showAlertMsg(
+                                    hmAux_Trans.get("alert_os_form_ttl"),
+                                    hmAux_Trans.get("alert_serial_undefined_or_without_structure_msg")
+                                );
+                            }
                         }
                     }else{
                         setAct011Call(item);
@@ -120,6 +128,19 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
         } else {
             mView.alertFormNotReady();
         }
+    }
+
+    private boolean osFormAlreadyExists(HMAux item) {
+        GeOs geOs = geOsDao.getByString(
+            new GeOsSql_002(
+                item.get(GE_Custom_FormDao.CUSTOMER_CODE),
+                item.get(GE_Custom_FormDao.CUSTOM_FORM_TYPE),
+                item.get(GE_Custom_FormDao.CUSTOM_FORM_CODE),
+                item.get(GE_Custom_FormDao.CUSTOM_FORM_VERSION)
+            ).toSqlQuery()
+        );
+        //
+        return geOs != null && geOs.getCustom_form_data() > 0;
     }
 
     /**
@@ -166,7 +187,7 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
      * Prepara abertura da tela de cabeçalho da o.s
      * @param item
      */
-    private void prepareOsFormCreatation(HMAux item) {
+    private void prepareOsFormCreation(HMAux item) {
         mView.addFormInfoToBundle(item);
         MD_Product_Serial md_product_serial = getMd_product_serial();
         Bundle bundle = mView.getBundle();
@@ -183,6 +204,7 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
                 "-1"
             )
         );
+        //
         mView.callAct087();
     }
 

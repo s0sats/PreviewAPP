@@ -11,6 +11,7 @@ import com.namoadigital.prj001.database.Mapper
 import com.namoadigital.prj001.model.DaoObjReturn
 import com.namoadigital.prj001.model.GeOsDeviceItem
 import com.namoadigital.prj001.model.GeOsDeviceMaterial
+import com.namoadigital.prj001.sql.GeOsDeviceMaterialSql_002
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -23,7 +24,7 @@ class GeOsDeviceItemDao(
     context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI
 ), DaoWithReturn<GeOsDeviceItem> {
     companion object {
-        const val TABLE = "md_device_tp"
+        const val TABLE = "ge_os_device_item"
         const val CUSTOMER_CODE = "customer_code"
         const val CUSTOM_FORM_TYPE = "custom_form_type"
         const val CUSTOM_FORM_CODE = "custom_form_code"
@@ -56,7 +57,6 @@ class GeOsDeviceItemDao(
         const val EXEC_PHOTO3 = "exec_photo3"
         const val EXEC_PHOTO4 = "exec_photo4"
         const val STATUS_ANSWER = "status_answer"
-
     }
 
     private val toGeOsDeviceItemMapper: Mapper<Cursor, GeOsDeviceItem>
@@ -73,16 +73,16 @@ class GeOsDeviceItemDao(
             return java.lang.StringBuilder()
                 .append(
                     """
-                        ${CUSTOMER_CODE} = '${item.customer_code}'  
-                        AND ${CUSTOM_FORM_TYPE} = '${item.custom_form_type}'                           
-                        AND ${CUSTOM_FORM_CODE} = '${item.custom_form_code}'                           
-                        AND ${CUSTOM_FORM_VERSION} = '${item.custom_form_version}'                           
-                        AND ${CUSTOM_FORM_DATA} = '${item.custom_form_data}'                           
-                        AND ${PRODUCT_CODE} = '${item.product_code}'                           
-                        AND ${SERIAL_CODE} = '${item.serial_code}'                           
-                        AND ${DEVICE_TP_CODE} = '${item.device_tp_code}'                           
-                        AND ${ITEM_CHECK_CODE} = '${item.item_check_code}'                           
-                        AND ${ITEM_CHECK_SEQ} = '${item.item_check_seq}'                           
+                        $CUSTOMER_CODE = '${item.customer_code}'  
+                        AND $CUSTOM_FORM_TYPE = '${item.custom_form_type}'                           
+                        AND $CUSTOM_FORM_CODE = '${item.custom_form_code}'                           
+                        AND $CUSTOM_FORM_VERSION = '${item.custom_form_version}'                           
+                        AND $CUSTOM_FORM_DATA = '${item.custom_form_data}'                           
+                        AND $PRODUCT_CODE = '${item.product_code}'                           
+                        AND $SERIAL_CODE = '${item.serial_code}'                           
+                        AND $DEVICE_TP_CODE = '${item.device_tp_code}'                           
+                        AND $ITEM_CHECK_CODE = '${item.item_check_code}'                           
+                        AND $ITEM_CHECK_SEQ = '${item.item_check_seq}'                           
                         """.trimIndent()
                 )
         }
@@ -110,6 +110,14 @@ class GeOsDeviceItemDao(
             if (addUpdateRet == 0L) {
                 curAction = DaoObjReturn.INSERT
                 db.insertOrThrow(TABLE, null, toContentValuesMapper.map(item))
+            }
+            //
+            item?.materialList?.let {
+                daoObjReturn = tryAddUpdateMaterials(it, db)
+                //Se erro durante insert, dispara exception abortando o processamento.
+                if (daoObjReturn.hasError()) {
+                    throw java.lang.Exception(daoObjReturn.rawMessage)
+                }
             }
         } catch (e: SQLiteException) {
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
@@ -141,36 +149,52 @@ class GeOsDeviceItemDao(
 
 
     override fun addUpdate(items: MutableList<GeOsDeviceItem>?, status: Boolean): DaoObjReturn {
+        return addUpdate(items, status,null)
+    }
+
+    fun addUpdate(items: MutableList<GeOsDeviceItem>?, status: Boolean, dbInstance: SQLiteDatabase?): DaoObjReturn {
         var daoObjReturn = DaoObjReturn()
         var addUpdateRet: Long = 0
         var curAction = DaoObjReturn.INSERT_OR_UPDATE
         //
-        openDB()
+        if (dbInstance == null) {
+            openDB()
+        } else {
+            db = dbInstance
+        }
         //
         try {
-            daoObjReturn.table = MdItemCheckDao.TABLE
+            daoObjReturn.table = TABLE
             curAction = DaoObjReturn.UPDATE
-
-            db.beginTransaction()
+            //
+            if (dbInstance == null) {
+                db.beginTransaction()
+            }
 
             if (status) {
-                db.delete(MdItemCheckDao.TABLE, null, null)
+                db.delete(TABLE, null, null)
             }
 
             items?.forEach { item ->
                 val sbWhere: StringBuilder = getWherePkClause(item)
                 //Tenta update e armazena retorno
-                addUpdateRet = db.update(MdItemCheckDao.TABLE, toContentValuesMapper.map(item), sbWhere.toString(), null).toLong()
+                addUpdateRet = db.update(TABLE, toContentValuesMapper.map(item), sbWhere.toString(), null).toLong()
                 //Se nenhuma linha afetada, tenta insert
                 if (addUpdateRet == 0L) {
                     curAction = DaoObjReturn.INSERT
-                    db.insertOrThrow(MdItemCheckDao.TABLE, null, toContentValuesMapper.map(item))
+                    db.insertOrThrow(TABLE, null, toContentValuesMapper.map(item))
                 }
-                tryAddUpdateMaterials(item.materialList, db)
+                daoObjReturn = tryAddUpdateMaterials(item.materialList, db)
+                //Se erro durante insert, dispara exception abortando o processamento.
+                if (daoObjReturn.hasError()) {
+                    throw java.lang.Exception(daoObjReturn.rawMessage)
+                }
             }
             //
-            db.setTransactionSuccessful()
-
+            //Se db não foi passado, finaliza transaction com sucesso
+            if (dbInstance == null) {
+                db.setTransactionSuccessful()
+            }
         } catch (e: SQLiteException) {
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
             //e contendo msg de erro tratada.
@@ -192,24 +216,31 @@ class GeOsDeviceItemDao(
         } finally {
             //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
             //ou rowId do ultimo insert.
-            db.endTransaction()
+            if (dbInstance == null) {
+                db.endTransaction()
+            }
             daoObjReturn.action = curAction
             daoObjReturn.actionReturn = addUpdateRet
         }
-
-        closeDB()
-
+        //
+        if (dbInstance == null) {
+            closeDB()
+        }
         //
         return daoObjReturn
     }
     //
     fun tryAddUpdateMaterials(materials: MutableList<GeOsDeviceMaterial>, db: SQLiteDatabase): DaoObjReturn{
-        val geOsDeviceMaterialDao = GeOsDeviceMaterialDao(
+        val geOsDeviceMaterialDao = geOsDeviceMaterialDao()
+        return geOsDeviceMaterialDao.addUpdate(materials, false, db)
+    }
+
+    private fun geOsDeviceMaterialDao(): GeOsDeviceMaterialDao {
+        return GeOsDeviceMaterialDao(
             context,
             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
             Constant.DB_VERSION_CUSTOM
         )
-        return geOsDeviceMaterialDao.addUpdate(materials, false, db)
     }
     //
     override fun addUpdate(sQuery: String?) {
@@ -241,6 +272,9 @@ class GeOsDeviceItemDao(
             val cursor = db.rawQuery(sQuery, null)
             while (cursor.moveToNext()) {
                 item = toGeOsDeviceItemMapper.map(cursor)
+                item?.apply {
+                        getMaterialList(this)
+                }
             }
             //
             cursor.close()
@@ -250,6 +284,29 @@ class GeOsDeviceItemDao(
         }
         closeDB()
         return item
+    }
+
+    private fun getMaterialList(geOsDeviceItem: GeOsDeviceItem) {
+        val geOsDeviceMaterialDao = geOsDeviceMaterialDao()
+        geOsDeviceItem.materialList.clear()
+        //
+        geOsDeviceItem
+            .materialList
+            .addAll(geOsDeviceMaterialDao.query(
+                    GeOsDeviceMaterialSql_002(
+                        geOsDeviceItem.customer_code,
+                        geOsDeviceItem.custom_form_type,
+                        geOsDeviceItem.custom_form_code,
+                        geOsDeviceItem.custom_form_version,
+                        geOsDeviceItem.custom_form_data,
+                        geOsDeviceItem.product_code,
+                        geOsDeviceItem.serial_code,
+                        geOsDeviceItem.device_tp_code,
+                        geOsDeviceItem.item_check_code,
+                        geOsDeviceItem.item_check_seq
+                    ).toSqlQuery()
+                )
+        )
     }
 
     override fun getByStringHM(sQuery: String?): HMAux? {
@@ -276,7 +333,11 @@ class GeOsDeviceItemDao(
             val cursor = db.rawQuery(sQuery, null)
             while (cursor.moveToNext()) {
                 val uAux = toGeOsDeviceItemMapper.map(cursor)
+                uAux?.apply {
+                    getMaterialList(this)
+                }
                 items.add(uAux)
+
             }
             cursor.close()
         } catch (e: java.lang.Exception) {
@@ -368,8 +429,6 @@ class GeOsDeviceItemDao(
                     //
                     put(CUSTOM_FORM_DATA, it.custom_form_data)
                     //
-                    put(CUSTOM_FORM_DATA, it.custom_form_data)
-                    //
                     put(PRODUCT_CODE, it.product_code)
                     //
                     put(SERIAL_CODE, it.serial_code)
@@ -427,6 +486,5 @@ class GeOsDeviceItemDao(
             }
             return contentValues
         }
-
     }
 }

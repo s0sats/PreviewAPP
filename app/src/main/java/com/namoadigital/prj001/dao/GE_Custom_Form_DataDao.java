@@ -66,6 +66,15 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
     public static final String STEP_CODE = "step_code";
     public static final String TICKET_CHECKIN_DATE = "ticket_checkin_date";
     public static final String TAG_OPERATIONAL_CODE = "tag_operational_code";
+    public static final String SYS_DATE_START = "sys_date_start";
+    public static final String SYS_DATE_END = "sys_date_end";
+    public static final String ORDER_TYPE_CODE = "order_type_code";
+    public static final String BACKUP_PRODUCT_CODE = "backup_product_code";
+    public static final String BACKUP_SERIAL_CODE = "backup_serial_code";
+    public static final String DEVICE_TP_CODE = "device_tp_code";
+    public static final String MEASURE_TP_CODE = "measure_tp_code";
+    public static final String MEASURE_VALUE = "measure_value";
+    public static final String MEASURE_CYCLE_VALUE = "measure_cycle_value";
 
     //private String[] columns = {CUSTOMER_CODE, CUSTOM_FORM_TYPE, CUSTOM_FORM_CODE, CUSTOM_FORM_VERSION, CUSTOM_FORM_DATA, CUSTOM_FORM_STATUS, PRODUCT_CODE, SERIAL_ID, DATE_START, DATE_END, USER_CODE, SITE_CODE , OPERATION_CODE , SIGNAURE, TOKEN};
 
@@ -538,7 +547,44 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             }
 
             custom_form_data.setTag_operational_code(cursor.getInt(cursor.getColumnIndex(TAG_OPERATIONAL_CODE)));
+            custom_form_data.setSys_date_start(cursor.getString(cursor.getColumnIndex(SYS_DATE_START)));
+            custom_form_data.setSys_date_end(cursor.getString(cursor.getColumnIndex(SYS_DATE_END)));
 
+            if(cursor.isNull(cursor.getColumnIndex(ORDER_TYPE_CODE))){
+                custom_form_data.setOrder_type_code(null);
+            }else{
+                custom_form_data.setOrder_type_code(cursor.getInt(cursor.getColumnIndex(ORDER_TYPE_CODE)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(BACKUP_PRODUCT_CODE))){
+                custom_form_data.setBackup_product_code(null);
+            }else{
+                custom_form_data.setBackup_product_code(cursor.getInt(cursor.getColumnIndex(BACKUP_PRODUCT_CODE)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(BACKUP_SERIAL_CODE))){
+                custom_form_data.setBackup_serial_code(null);
+            }else{
+                custom_form_data.setBackup_serial_code(cursor.getInt(cursor.getColumnIndex(BACKUP_SERIAL_CODE)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(DEVICE_TP_CODE))){
+                custom_form_data.setDevice_tp_code(null);
+            }else{
+                custom_form_data.setDevice_tp_code(cursor.getInt(cursor.getColumnIndex(DEVICE_TP_CODE)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(MEASURE_TP_CODE))){
+                custom_form_data.setMeasure_tp_code(null);
+            }else{
+                custom_form_data.setMeasure_tp_code(cursor.getInt(cursor.getColumnIndex(MEASURE_TP_CODE)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(MEASURE_VALUE))){
+                custom_form_data.setMeasure_value(null);
+            }else{
+                custom_form_data.setMeasure_value(cursor.getFloat(cursor.getColumnIndex(MEASURE_VALUE)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(MEASURE_CYCLE_VALUE))){
+                custom_form_data.setMeasure_cycle_value(null);
+            }else{
+                custom_form_data.setMeasure_cycle_value(cursor.getInt(cursor.getColumnIndex(MEASURE_CYCLE_VALUE)));
+            }
             return custom_form_data;
         }
     }
@@ -643,6 +689,19 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             if (custom_form_data.getTag_operational_code() > -1) {
                 contentValues.put(TAG_OPERATIONAL_CODE, custom_form_data.getTag_operational_code());
             }
+            if (custom_form_data.getSys_date_start() != null) {
+                contentValues.put(SYS_DATE_START, custom_form_data.getSys_date_start());
+            }
+            if (custom_form_data.getSys_date_end() != null) {
+                contentValues.put(SYS_DATE_END, custom_form_data.getSys_date_end());
+            }
+            contentValues.put(ORDER_TYPE_CODE, custom_form_data.getOrder_type_code() );
+            contentValues.put(BACKUP_PRODUCT_CODE, custom_form_data.getBackup_product_code() );
+            contentValues.put(BACKUP_SERIAL_CODE, custom_form_data.getBackup_serial_code() );
+            contentValues.put(DEVICE_TP_CODE, custom_form_data.getDevice_tp_code() );
+            contentValues.put(MEASURE_TP_CODE, custom_form_data.getMeasure_tp_code());
+            contentValues.put(MEASURE_VALUE, custom_form_data.getMeasure_value() );
+            contentValues.put(MEASURE_CYCLE_VALUE, custom_form_data.getMeasure_cycle_value());
 
             return contentValues;
         }

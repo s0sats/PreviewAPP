@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="24dp"
+    android:layout_marginEnd="24dp"
+    android:layout_marginTop="4dp"
+    android:background="@drawable/namoa_icon_bg_states"
+    >
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gd_center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+
+        <TextView
+            android:id="@+id/tv_exceed_records_lbl"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Mesage de muitos registros encontrados"
+            android:textColor="@color/namoa_font_color_black222"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_counter_val"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="8dp"
+            android:text="Encontrados: 1000"
+            android:textAlignment="textEnd"
+            android:textColor="@color/namoa_color_gray_9"
+            android:textSize="@dimen/font_size_font_12"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/gd_center"
+            app:layout_constraintTop_toBottomOf="@+id/tv_exceed_records_lbl" />
+
+        <TextView
+            android:id="@+id/tv_page_val"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="4dp"
+            android:text="Limite: 100"
+            android:textColor="@color/namoa_color_gray_9"
+            android:textSize="@dimen/font_size_font_12"
+            app:layout_constraintEnd_toStartOf="@+id/gd_center"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_exceed_records_lbl" />
+</androidx.constraintlayout.widget.ConstraintLayout>

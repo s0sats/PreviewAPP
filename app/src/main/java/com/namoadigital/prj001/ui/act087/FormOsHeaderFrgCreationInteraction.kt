@@ -8,7 +8,7 @@ import com.namoadigital.prj001.model.MeMeasureTp
 
 interface FormOsHeaderFrgCreationInteraction {
     fun getOrderTypeList(orderTypeCode: Int = -1) : ArrayList<MdOrderType>
-    fun searchSerialClick()
+    fun searchSerialClick(bkpProductCode: Long,bkpSerialId: String)
     fun createOsHeader(formOsHeader: GeOs)
     fun getDefaultBkpMachineProduct() : MD_Product?
     fun getFormSerialId(): String

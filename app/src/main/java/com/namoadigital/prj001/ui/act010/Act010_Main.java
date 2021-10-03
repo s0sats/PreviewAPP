@@ -22,6 +22,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
+import com.namoadigital.prj001.dao.GeOsDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_DeviceDao;
@@ -143,8 +144,9 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
                 site_code_form_param,
                 hmAux_Trans,
                 new MD_Product_SerialDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
-                new MD_Product_Serial_Tp_DeviceDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
-            );
+                new MD_Product_Serial_Tp_DeviceDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
+                new GeOsDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
+        );
         //
         setLabels();
         //

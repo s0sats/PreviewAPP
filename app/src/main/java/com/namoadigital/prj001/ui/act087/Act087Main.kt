@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.WindowManager
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
+import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag
 import com.namoadigital.prj001.dao.*
@@ -13,7 +14,9 @@ import com.namoadigital.prj001.databinding.Act087MainBinding
 import com.namoadigital.prj001.databinding.Act087MainContentBinding
 import com.namoadigital.prj001.extensions.setFrag
 import com.namoadigital.prj001.model.*
+import com.namoadigital.prj001.service.WS_Product_Serial_Backup
 import com.namoadigital.prj001.ui.act005.Act005_Main
+import com.namoadigital.prj001.ui.act011.Act011_Main
 import com.namoadigital.prj001.ui.act011.frags.Act011BaseFrgInteractionNavegation
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
@@ -28,6 +31,7 @@ class Act087Main : Base_Activity_Frag(),
 
     private lateinit var binding: Act087MainContentBinding
     private lateinit var formOsHeaderFrg: FormOsHeaderFrg
+    private var wsProcess: String = ""
 
     private val mPresenter: Act087MainContract.I_Presenter by lazy {
         Act087MainPresenter(
@@ -69,6 +73,36 @@ class Act087Main : Base_Activity_Frag(),
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
+            ),
+            MD_Product_Serial_Tp_DeviceDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+            ),
+            MD_Product_Serial_Tp_Device_ItemDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+            ),
+            MD_Product_Serial_Tp_Device_Item_HistDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+            ),
+            GeOsDeviceDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+            ),
+            GeOsDeviceItemDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+            ),
+            GeOsDeviceItemHistDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
             )
         )
     }
@@ -82,6 +116,10 @@ class Act087Main : Base_Activity_Frag(),
     private var schedulePrefix: Int? = null
     private var scheduleCode: Int? = null
     private var scheduleExec: Int? = null
+    private lateinit var bundle: Bundle
+    private val mFormHeaderFragListener: FormOsHeaderFrgInfr by lazy{
+        formOsHeaderFrg
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -153,6 +191,8 @@ class Act087Main : Base_Activity_Frag(),
 
     private fun recoverIntentsInfo() {
         intent?.extras?.let { bundle->
+            this.bundle = bundle
+            //
             with(bundle){
                 customFormType = getInt(GE_Custom_FormDao.CUSTOM_FORM_CODE,-1)
                 customFormCode = getInt(GE_Custom_FormDao.CUSTOM_FORM_TYPE,-1)
@@ -164,7 +204,7 @@ class Act087Main : Base_Activity_Frag(),
                 scheduleCode = getInt(MD_Schedule_ExecDao.SCHEDULE_CODE)
                 scheduleExec = getInt(MD_Schedule_ExecDao.SCHEDULE_EXEC)
             }
-        }
+        }?:Bundle()
     }
 
     private fun initActions() {
@@ -199,8 +239,8 @@ class Act087Main : Base_Activity_Frag(),
         return mPresenter.getOrderTypeList(orderTypeCode)
     }
 
-    override fun searchSerialClick() {
-        //
+    override fun searchSerialClick(bkpProductCode: Long, bkpSerialId: String) {
+        return mPresenter.executeWsBkpMachine(bkpProductCode,bkpSerialId)
     }
 
     override fun getDefaultBkpMachineProduct(): MD_Product? {
@@ -221,7 +261,66 @@ class Act087Main : Base_Activity_Frag(),
     }
 
     override fun createOsHeader(formOsHeader: GeOs) {
+        mPresenter.createOsHeader(formOsHeader)
+    }
 
+    override fun showAlert(
+        ttl: String?,
+        msg: String?,
+        listener: DialogInterface.OnClickListener?,
+        negativeBtn: Int
+    ) {
+        ToolBox.alertMSG(
+            context,
+            ttl,
+            msg,
+            listener,
+            negativeBtn
+        )
+    }
+
+    override fun setWsProcess(wsProcess: String) {
+        this.wsProcess = wsProcess
+    }
+
+    override fun showPD(ttl: String?, msg: String?) {
+        enableProgressDialog(
+            ttl,
+            msg,
+            hmAux_Trans["sys_alert_btn_cancel"],
+            hmAux_Trans["sys_alert_btn_ok"]
+        )
+    }
+
+    override fun callAct011(act011Bundle: Bundle) {
+        bundle.apply {
+            remove(GE_Custom_FormDao.CUSTOM_FORM_CODE)
+            remove(GE_Custom_FormDao.CUSTOM_FORM_TYPE)
+            remove(GE_Custom_FormDao.CUSTOM_FORM_VERSION)
+            remove(MD_Product_SerialDao.PRODUCT_CODE)
+            remove(MD_Product_SerialDao.SERIAL_CODE)
+            remove(MD_Schedule_ExecDao.SCHEDULE_PREFIX)
+            remove(MD_Schedule_ExecDao.SCHEDULE_CODE)
+            remove(MD_Schedule_ExecDao.SCHEDULE_EXEC)
+            putAll(act011Bundle)
+        }
+        //
+        startActivity(
+            Intent().apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                setClass(this@Act087Main, Act011_Main::class.java)
+                putExtras(bundle)
+            }
+        )
+        //
+        finish()
+    }
+
+    override fun reportSerialBkpMachineToFrag(
+        serialBkpMachineList: MutableList<FormOsHeaderFrgSerialBkpItemAbs>,
+        onlineSearch: Boolean
+    ) {
+        mFormHeaderFragListener.reportSerialBkpMachineToFrag(serialBkpMachineList,onlineSearch)
     }
 
     /**
@@ -250,6 +349,28 @@ class Act087Main : Base_Activity_Frag(),
 
     override fun footerCreateDialog() {
         ToolBox_Inf.buildFooterDialog(context)
+    }
+
+
+    override fun processCloseACT(mLink: String?, mRequired: String?) {
+        super.processCloseACT(mLink, mRequired)
+        processCloseACT(mLink,mRequired, HMAux())
+    }
+
+    override fun processCloseACT(mLink: String?, mRequired: String?, hmAux: HMAux?) {
+        super.processCloseACT(mLink, mRequired, hmAux)
+        when(wsProcess){
+            WS_Product_Serial_Backup::class.java.name ->{
+                resetWsResources()
+                mPresenter.processWsBkpMachineResult(mLink)
+            }
+            else -> resetWsResources()
+        }
+    }
+
+    private fun resetWsResources() {
+        wsProcess = ""
+        progressDialog?.dismiss()
     }
 
     override fun onBackPressed() {

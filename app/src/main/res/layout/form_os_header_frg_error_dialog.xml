@@ -4,7 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="24dp"
+    android:paddingTop="12dp"
+    android:paddingStart="24dp"
+    android:paddingEnd="24dp"
+    android:paddingBottom="24dp"
     >
 
     <TextView
@@ -108,7 +111,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="left"
-        app:constraint_referenced_ids="tv_last_cycle_val"/>
+        app:constraint_referenced_ids="tv_last_cycle_val,tv_current_cycle_val"/>
 
     <TextView
         android:id="@+id/tv_last_cycle_lbl"

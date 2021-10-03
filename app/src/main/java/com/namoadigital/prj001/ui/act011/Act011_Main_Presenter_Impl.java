@@ -22,6 +22,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_FileDao;
+import com.namoadigital.prj001.dao.GeOsDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
@@ -31,6 +32,7 @@ import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.dao.TK_Ticket_FormDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
+import com.namoadigital.prj001.model.AcessoryFormView;
 import com.namoadigital.prj001.model.Act011FormTab;
 import com.namoadigital.prj001.model.Act011FormTabStatus;
 import com.namoadigital.prj001.model.DaoObjReturn;
@@ -38,6 +40,7 @@ import com.namoadigital.prj001.model.GE_Custom_Form;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.GE_File;
+import com.namoadigital.prj001.model.GeOs;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
@@ -72,6 +75,7 @@ import com.namoadigital.prj001.sql.TK_Ticket_Form_Sql_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Form_Sql_005;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Step_Sql_001;
+import com.namoadigital.prj001.sql.GeOsSql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -123,8 +127,9 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     private TK_Ticket_StepDao ticketStepDao;
     private Integer mTicketSeqTmp;
     private MD_SiteDao siteDao;
+    private GeOsDao geOsDao;
 
-    public Act011_Main_Presenter_Impl(Context context, Act011_Main_View mView, EV_Module_Res_Txt_TransDao module_res_txt_transDao, GE_Custom_FormDao custom_formDao, GE_Custom_Form_FieldDao custom_form_fieldDao, GE_Custom_Form_DataDao custom_form_dataDao, GE_Custom_Form_Data_FieldDao custom_form_data_fieldDao, GE_Custom_Form_LocalDao custom_form_LocalDao, GE_Custom_Form_Field_LocalDao custom_form_field_LocalDao, GE_Custom_Form_BlobDao custom_form_blobDao, GE_Custom_Form_Blob_LocalDao custom_form_blob_localDao, MD_Product_SerialDao md_product_serialDao, MD_ProductDao md_productDao, HMAux hmAux_Trans, MD_Schedule_ExecDao scheduleExecDao, TK_Ticket_StepDao ticketStepDao,MD_SiteDao siteDao, MdTagDao mdTagDao) {
+    public Act011_Main_Presenter_Impl(Context context, Act011_Main_View mView, EV_Module_Res_Txt_TransDao module_res_txt_transDao, GE_Custom_FormDao custom_formDao, GE_Custom_Form_FieldDao custom_form_fieldDao, GE_Custom_Form_DataDao custom_form_dataDao, GE_Custom_Form_Data_FieldDao custom_form_data_fieldDao, GE_Custom_Form_LocalDao custom_form_LocalDao, GE_Custom_Form_Field_LocalDao custom_form_field_LocalDao, GE_Custom_Form_BlobDao custom_form_blobDao, GE_Custom_Form_Blob_LocalDao custom_form_blob_localDao, MD_Product_SerialDao md_product_serialDao, MD_ProductDao md_productDao, HMAux hmAux_Trans, MD_Schedule_ExecDao scheduleExecDao, TK_Ticket_StepDao ticketStepDao, MD_SiteDao siteDao, MdTagDao mdTagDao, GeOsDao geOsDao) {
         this.context = context;
         this.mView = mView;
         this.module_res_txt_transDao = module_res_txt_transDao;
@@ -143,6 +148,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         this.ticketStepDao = ticketStepDao;
         this.siteDao = siteDao;
         this.mdTagDao = mdTagDao;
+        this.geOsDao = geOsDao;
     }
 
     @Override
@@ -156,6 +162,9 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         DaoObjReturn daoObjReturn = new DaoObjReturn();
         MD_Schedule_Exec scheduleExec = new MD_Schedule_Exec();
         GE_Custom_Form_Local customFormLocal;
+        //LUCHE - 30/09/2021
+        GeOs geOs = null;
+        //
         if(mTicket_prefix != null && mTicket_code != null &&  mTicket_seq!= null &&  mTicket_seq_tmp!= null &&  mStep_code!= null){
             customFormLocal = custom_form_LocalDao.getByString(
                     new GE_Custom_Form_Local_Sql_019(
@@ -251,7 +260,6 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             );
 
             GE_Custom_Form customForm = custom_formDao.getByString(
-
                 new GE_Custom_Form_Sql_001_TT(
                     String.valueOf(customer_code),
                     String.valueOf(formtype_code),
@@ -260,6 +268,21 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 ).toSqlQuery().toString().toLowerCase()
 
             );
+            //LUCHE - 30/09/2021
+            if(customForm.getIs_so() == 1){
+                geOs = getGeOs(
+                    customer_code,
+                    formtype_code,
+                    form_code,
+                    formversion_code,
+                    s_form_data
+                    );
+                //Atualiza formData com o da
+                if(geOs != null){
+                    ii.put(GE_Custom_Form_Local_Sql_002.ID,String.valueOf(geOs.getCustom_form_data()));
+                }
+            }
+            //
             MD_Product productInfo = getProduct(Integer.parseInt(product_code));
             //
             MdTag tagInfo = getTag(customForm.getTag_operational_code());
@@ -272,7 +295,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             customFormLocal.setCustom_form_type(customForm.getCustom_form_type());
             customFormLocal.setCustom_form_code(customForm.getCustom_form_code());
             customFormLocal.setCustom_form_version(customForm.getCustom_form_version());
-            customFormLocal.setCustom_form_data(Long.parseLong(ii.get("id")));
+            customFormLocal.setCustom_form_data(Long.parseLong(ii.get(GE_Custom_Form_Local_Sql_002.ID)));
             customFormLocal.setCustom_form_pre(ToolBox_Inf.getPrefix(context));
             customFormLocal.setCustom_form_status(Constant.SYS_STATUS_IN_PROCESSING);
             customFormLocal.setTag_operational_code(tagInfo != null ? tagInfo.getTag_code() : -1);
@@ -305,6 +328,12 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             customFormLocal.setSite_code(siteInfo != null ? ToolBox_Inf.convertStringToInt(siteInfo.getSite_code()) : 0);
             customFormLocal.setSite_id(siteInfo != null ? siteInfo.getSite_id() : "");
             customFormLocal.setSite_desc(siteInfo != null ? siteInfo.getSite_desc() : "");
+            //LUCHE - 30/09/2021
+            customFormLocal.setIs_so(customForm.getIs_so());
+            customFormLocal.setSo_edit_start_end(customForm.getSo_edit_start_end());
+            customFormLocal.setSo_order_type_code_default(customForm.getSo_order_type_code_default());
+            customFormLocal.setSo_allow_change_order_type(customForm.getSo_allow_change_order_type());
+            customFormLocal.setSo_allow_backup(customForm.getSo_allow_backup());
             //LUCHE -  14/03/2019
             //Alteração Dao de insert com exception NOVO METODO DAO
             //custom_form_LocalDao.addUpdate(customFormLocal);
@@ -380,12 +409,12 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                     so_code,
                     so_site_code,
                     so_operation_code,
-                    serial_id
+                    serial_id,
+                    geOs
                 );
                 //LUCHE - 24/08/2020
                 //Atualiza TicketCtrl se form for do ticket
                 if (isTicketProcess) {
-
                     if(bNew){
                         if(mView.isOffHandForm()){
                             createTicketCtrlObj(customFormLocal,
@@ -417,7 +446,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                             formData.getLocation_pendency());
                     }
 
-                    if(formData.getTicket_checkin_date() == null ||formData.getTicket_checkin_date().isEmpty()) {
+                    if(formData.getTicket_checkin_date() == null || formData.getTicket_checkin_date().isEmpty()) {
                         //Resgata Step para setar data de checkin no form.
                         TK_Ticket_Step ticketStep = getTicketStep(
                                 customFormLocal.getTicket_prefix(),
@@ -427,7 +456,6 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                         //Seta data de checkin no formData
                         formData.setTicket_checkin_date(ticketStep.getStep_start_date());
                     }
-
                 }
                 //if (bAgendado) {
                 if (isScheduleFirstTime) {
@@ -471,6 +499,12 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                         String.valueOf(customFormLocal.getCustom_form_version())
                     ).toSqlQuery().toString()
                 );
+                //LUCHE - 30/09/2021
+                ArrayList<AcessoryFormView> acessoryFormViews =
+                    getAcessoryFormView(
+                        geOs
+                    );
+                //
                 if (hasNformPending) {
                     mView.showMsg(
                             hmAux_Trans.get("alert_nform_already_started_ttl"),
@@ -482,12 +516,28 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                             0
                     );
                 }
+                //
                 mView.loadFragment_CF_Fields(cf_fields, bNew, customFormLocal, formData, customFormLocal.getCustom_form_pre(), pdfs, index, customFormLocal.getRequire_signature(), customFormLocal.getRequire_serial_done());
             }
         }
     }
 
+    private ArrayList<AcessoryFormView> getAcessoryFormView(GeOs geOs) {
+        ArrayList<AcessoryFormView> acessoryFormViews = new ArrayList<>();
+        return acessoryFormViews;
+    }
 
+    private GeOs getGeOs(String customer_code, String formtype_code, String form_code, String formversion_code, String s_form_data) {
+        return geOsDao.getByString(
+            new GeOsSql_001(
+                customer_code,
+                formtype_code,
+                form_code,
+                formversion_code,
+                s_form_data
+            ).toSqlQuery()
+        );
+    }
 
     @Deprecated
     private boolean ticketCtrlExist(GE_Custom_Form_Local customFormLocal, Integer mTicket_prefix, Integer mTicket_code, Integer mTicket_seq, Integer mTicket_seq_tmp, Integer mStep_code) {
@@ -649,7 +699,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         if( ConstantBaseApp.SYS_STATUS_PENDING.equalsIgnoreCase(ticketCtrl.getCtrl_status())
             && ticketCtrl.getCtrl_start_date() == null
         ){
-            ticketCtrl.setCtrl_start_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+            ticketCtrl.setCtrl_start_date(ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT));
             ticketCtrl.setCtrl_start_user(Integer.valueOf(ToolBox_Con.getPreference_User_Code(context)));
             ticketCtrl.setCtrl_start_user_name(ToolBox_Con.getPreference_User_Code_Nick(context));
             ticketCtrl.setCtrl_status(ConstantBaseApp.SYS_STATUS_PROCESS);
@@ -681,7 +731,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         if( ConstantBaseApp.SYS_STATUS_PROCESS.equalsIgnoreCase(tkTicketCtrl.getCtrl_status())
             && tkTicketCtrl.getCtrl_end_date() == null
         ){
-            tkTicketCtrl.setCtrl_end_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+            tkTicketCtrl.setCtrl_end_date(ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT));
             tkTicketCtrl.setCtrl_end_user(Integer.valueOf(ToolBox_Con.getPreference_User_Code(context)));
             tkTicketCtrl.setCtrl_end_user_name(ToolBox_Con.getPreference_User_Code_Nick(context));
             tkTicketCtrl.setCtrl_status(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
@@ -971,9 +1021,10 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
      * @param so_site_code - Site da O.S
      * @param so_operation_code - Operacao da O.S
      * @param serial_id - ID do Serial
+     * @param geOs
      * @return - Respostas form_data
      */
-    private GE_Custom_Form_Data loadAnswer(GE_Custom_Form_Local formLocal,Integer so_prefix, Integer so_code, String so_site_code, Integer so_operation_code, String serial_id){
+    private GE_Custom_Form_Data loadAnswer(GE_Custom_Form_Local formLocal, Integer so_prefix, Integer so_code, String so_site_code, Integer so_operation_code, String serial_id, GeOs geOs){
         GE_Custom_Form_Data form_data = custom_form_dataDao
             .getByString(
                 new GE_Custom_Form_Data_MULTI_UNIQUE_SqlSpecification(
@@ -1008,7 +1059,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             form_data.setCustom_form_status(Constant.SYS_STATUS_IN_PROCESSING);
             form_data.setProduct_code(formLocal.getCustom_product_code());
             form_data.setSerial_id("");
-            form_data.setDate_start(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+            form_data.setDate_start(ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT));
             form_data.setDate_end("1900-01-01 00:00:00 +00:00");
             form_data.setUser_code(Long.parseLong(ToolBox_Con.getPreference_User_Code(context)));
             //LUCHE - 14/02/2020
@@ -1046,13 +1097,25 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                     form_data.setLocal_code(null);
                 }
             }
-
             form_data.setOperation_code(so_operation_code != null ? so_operation_code : ToolBox_Con.getPreference_Operation_Code(context));
             form_data.setSignature("");
             form_data.setToken("");
             form_data.setSo_prefix(so_prefix);
             form_data.setSo_code(so_code);
             form_data.setTag_operational_code(formLocal.getTag_operational_code());
+            form_data.setSys_date_start(form_data.getDate_start());
+            form_data.setSys_date_end(form_data.getDate_end());
+            //LUCHE30/09/2021 - CAMPOS FORM OS
+            if(formLocal.getIs_so() == 1 && geOs != null){
+                form_data.setDate_start(geOs.getDate_start());
+                form_data.setOrder_type_code(geOs.getOrder_type_code());
+                form_data.setBackup_product_code(geOs.getBackup_product_code());
+                form_data.setBackup_serial_code(geOs.getBackup_serial_code());
+                form_data.setDevice_tp_code(geOs.getDevice_tp_code_main());
+                form_data.setMeasure_tp_code(geOs.getMeasure_tp_code());
+                form_data.setMeasure_value(geOs.getMeasure_value());
+                form_data.setMeasure_cycle_value(geOs.getMeasure_cycle_value());
+            }
             //
             if(isFreeExecutionControlSituation(so_prefix, so_code, form_data)){
                 updateAppExecutionCounter(form_data,true);
@@ -1182,7 +1245,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             form_data.setCustom_form_status(Constant.SYS_STATUS_IN_PROCESSING);
             form_data.setProduct_code(product_code);
             form_data.setSerial_id("");
-            form_data.setDate_start(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+            form_data.setDate_start(ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT));
             form_data.setDate_end("1900-01-01 00:00:00 +00:00");
             form_data.setUser_code(Long.parseLong(ToolBox_Con.getPreference_User_Code(context)));
 
@@ -1283,7 +1346,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             );
         }
         formData.setCustom_form_status(Constant.SYS_STATUS_WAITING_SYNC);
-        formData.setDate_end(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+        formData.setDate_end(ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT));
 
         custom_form_dataDao.addUpdate(formData);
         custom_form_data_fieldDao.addUpdate(formData.getDataFields(), false);
@@ -1358,7 +1421,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             } else {
 //                String dataRecorded = "\ncheckGpsFlow: " +
 //                        "\nGPS_VALID_INTERVAL: " + GPS_VALID_INTERVAL +
-//                        "\ngps_date_formatted: " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z").format(new Date(locationDate)) +
+//                        "\ngps_date_formatted: " + new SimpleDateFormat(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT).format(new Date(locationDate)) +
 //                        "\ndiff: " + diff;
 //                recordProcess(dataRecorded);
                 if (latitude != null && !latitude.isEmpty()
@@ -1367,7 +1430,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                     formData.setLocation_lat(latitude);
                     formData.setLocation_lng(longitude);
                     formData.setLocation_pendency(0);
-                    String gps_date_formatted = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z").format(new Date(locationDate));
+                    String gps_date_formatted = new SimpleDateFormat(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT).format(new Date(locationDate));
                     formData.setDate_gps(gps_date_formatted);
                 }else{
                     formData.setLocation_pendency(1);
@@ -1697,7 +1760,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 ticketCtrl.setPK(stepInfo);
                 //
                 ticketCtrl.setCtrl_start_date(
-                        ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")
+                        ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT)
                 );
                 ticketCtrl.setCtrl_start_user(ToolBox_Inf.convertStringToInt(ToolBox_Con.getPreference_User_Code(context)));
                 ticketCtrl.setCtrl_start_user_name(ToolBox_Con.getPreference_User_Code_Nick(context));

@@ -13,7 +13,7 @@ class GeOsDeviceItemHist(
     val item_check_seq: Int,
     val seq: Int,
     val exec_type: String,
-    val exec_measure: Float,
+    val exec_value: Float,
     val exec_date: String,
     val exec_comment: String?,
     val exec_material: Int
