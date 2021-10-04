@@ -38,6 +38,8 @@ class GeOsDao(
         const val ORDER_TYPE_CODE = "order_type_code"
         const val ORDER_TYPE_ID = "order_type_id"
         const val ORDER_TYPE_DESC = "order_type_desc"
+        const val PROCESS_TYPE = "process_type"
+        const val DISPLAY_OPTION = "display_option"
         const val BACKUP_PRODUCT_CODE = "backup_product_code"
         const val BACKUP_PRODUCT_ID = "backup_product_id"
         const val BACKUP_PRODUCT_DESC = "backup_product_desc"
@@ -298,6 +300,8 @@ class GeOsDao(
                         order_type_code = getInt(getColumnIndex(ORDER_TYPE_CODE)),
                         order_type_id = getString(getColumnIndex(ORDER_TYPE_ID)),
                         order_type_desc = getString(getColumnIndex(ORDER_TYPE_DESC)),
+                        process_type = getString(getColumnIndex(PROCESS_TYPE)),
+                        display_option = getString(getColumnIndex(DISPLAY_OPTION)),
                         backup_product_code = getInt(getColumnIndex(BACKUP_PRODUCT_CODE)),
                         backup_product_id = getStringOrNull(getColumnIndex(BACKUP_PRODUCT_ID)),
                         backup_product_desc = getStringOrNull(getColumnIndex(BACKUP_PRODUCT_DESC)),
@@ -349,6 +353,10 @@ class GeOsDao(
                     put(ORDER_TYPE_ID, it.order_type_id)
                     //
                     put(ORDER_TYPE_DESC, it.order_type_desc)
+                    //
+                    put(PROCESS_TYPE, it.process_type)
+                    //
+                    put(DISPLAY_OPTION , it.display_option)
                     //
                     put(BACKUP_PRODUCT_CODE, it.backup_product_code)
                     put(BACKUP_PRODUCT_ID, it.backup_product_id)

@@ -58,6 +58,13 @@ class Act087MainPresenter(
             "act087_title",
             "alert_error_on_create_os_form_ttl",
             "alert_error_on_create_os_form_msg",
+            "alert_bkp_serial_error_ttl",
+            "alert_no_bkp_serial_found_offline_msg",
+            "alert_no_bkp_serial_found_msg",
+            "alert_error_on_open_bkp_list_msg",
+            "alert_error_no_data_return_msg",
+            "dialog_bkp_machine_search_ttl",
+            "dialog_bkp_machine_search_start",
         )
         //
         val actAuxTrans = ToolBox_Inf.setLanguage(
@@ -152,6 +159,8 @@ class Act087MainPresenter(
             order_type_code = orderType?.orderTypeCode?:-1,
             order_type_id = orderType?.orderTypeId?:"",
             order_type_desc = orderType?.orderTypeDesc?:"",
+            process_type = orderType?.processType?:"",
+            display_option = orderType?.displayOption?:"",
             backup_product_code = null,
             backup_product_id = null,
             backup_product_desc = null,
@@ -255,7 +264,37 @@ class Act087MainPresenter(
     }
 
     private fun searchBkpMachineInDb(bkpProductCode: Long, bkpSerialId: String) {
-        //TODO("Not yet implemented")
+        //
+        val bkpSerialItemList: List<FormOsHeaderFrgSerialBkpItem>? = serialDao.query(
+            Act087Sql_001(
+                serialObj.customer_code,
+                serialObj.product_code,
+                serialObj.serial_id,
+                bkpProductCode,
+                bkpSerialId,
+                ToolBox_Con.getPreference_Site_Code(context).toInt()
+            ).toSqlQuery()
+        )?.map { bkpOffline ->
+                FormOsHeaderFrgSerialBkpItem(
+                    bkpOffline.product_code.toInt(),
+                    bkpOffline.serial_code.toInt(),
+                    bkpOffline.serial_id,
+                    bkpOffline.site_code,
+                    bkpOffline.site_desc
+                )
+        }
+        //
+        if(bkpSerialItemList.isNullOrEmpty()){
+            mView.showAlert(
+                hmAuxTrans["alert_bkp_serial_error_ttl"],
+                hmAuxTrans["alert_no_bkp_serial_found_offline_msg"],
+            )
+        } else{
+            mView.reportSerialBkpMachineToFrag(
+                serialBkpMachineList = bkpSerialItemList,
+                onlineSearch = false
+            )
+        }
     }
 
     override fun processWsBkpMachineResult(mLink: String?) {
@@ -295,22 +334,15 @@ class Act087MainPresenter(
         foundQty: Int,
         onlineSearch: Boolean
     ) {
-        val bkpSerialItemList = mutableListOf<FormOsHeaderFrgSerialBkpItemAbs>()
-        records.forEach { bkp ->
-            if( (bkp.customerCode == serialObj.customer_code.toInt()
-                && bkp.productCode == serialObj.product_code.toInt()
-                && bkp.serialCode == serialObj.serial_code.toInt()).not()
-            ){
-                bkpSerialItemList.add(
-                    FormOsHeaderFrgSerialBkpItem(
-                        bkp.serialCode,
-                        bkp.serialId,
-                        bkp.siteCode,
-                        bkp.siteDesc
-                    )
-                )
-            }
-        }
+        val bkpSerialItemList: MutableList<FormOsHeaderFrgSerialBkpItemAbs> = records.map { bkp ->
+            FormOsHeaderFrgSerialBkpItem(
+                bkp.productCode,
+                bkp.serialCode,
+                bkp.serialId,
+                bkp.siteCode,
+                bkp.siteDesc
+            )
+        }.toMutableList()
         //
         if(foundQty > records.size ){
             bkpSerialItemList.add(
@@ -325,7 +357,7 @@ class Act087MainPresenter(
         }
         //
         mView.reportSerialBkpMachineToFrag(
-            serialBkpMachineList = bkpSerialItemList,
+            serialBkpMachineList = bkpSerialItemList.toList(),
             onlineSearch = onlineSearch
         )
     }
@@ -349,15 +381,15 @@ class Act087MainPresenter(
 
     private fun getAct011Bundle(formOsHeader: GeOs): Bundle {
         return Bundle().apply {
-            putString(MD_ProductDao.PRODUCT_CODE, serialObj.product_code.toString());
-            putString(MD_ProductDao.PRODUCT_DESC, serialObj.product_desc);
-            putString(MD_ProductDao.PRODUCT_ID, serialObj.product_id);
-            putString(MD_Product_SerialDao.SERIAL_ID, serialObj.serial_id);
-            putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, formOsHeader.custom_form_type.toString());
-            putString(GE_Custom_FormDao.CUSTOM_FORM_CODE,formOsHeader.custom_form_code.toString());
-            putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, formOsHeader.custom_form_version.toString());
+            putString(MD_ProductDao.PRODUCT_CODE, serialObj.product_code.toString())
+            putString(MD_ProductDao.PRODUCT_DESC, serialObj.product_desc)
+            putString(MD_ProductDao.PRODUCT_ID, serialObj.product_id)
+            putString(MD_Product_SerialDao.SERIAL_ID, serialObj.serial_id)
+            putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, formOsHeader.custom_form_type.toString())
+            putString(GE_Custom_FormDao.CUSTOM_FORM_CODE,formOsHeader.custom_form_code.toString())
+            putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, formOsHeader.custom_form_version.toString())
             putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, formOsHeader.custom_form_data.toString())
-            //putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, formOsHeader.custom_form_type.toString());
+            //putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, formOsHeader.custom_form_type.toString())
             //putString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT005);
 
         }
@@ -453,6 +485,6 @@ class Act087MainPresenter(
             ).toSqlQuery().toLowerCase()
         )
         //
-        return nextDataAux["id"]!!.toInt()
+        return nextDataAux[GE_Custom_Form_Local_Sql_002.ID]!!.toInt()
     }
 }

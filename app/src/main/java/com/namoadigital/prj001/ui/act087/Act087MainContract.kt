@@ -20,7 +20,9 @@ interface Act087MainContract {
         fun callAct011(act011Bundle: Bundle)
         fun setWsProcess(name: String)
         fun showPD(ttl: String?, msg: String?)
-        fun reportSerialBkpMachineToFrag(serialBkpMachineList: MutableList<FormOsHeaderFrgSerialBkpItemAbs>,onlineSearch: Boolean)
+        fun reportSerialBkpMachineToFrag(
+            serialBkpMachineList: List<FormOsHeaderFrgSerialBkpItemAbs>,
+            onlineSearch: Boolean)
     }
 
     interface I_Presenter{

@@ -9,6 +9,8 @@ class GeOs(
     var order_type_code: Int,
     var order_type_id: String,
     var order_type_desc: String,
+    var process_type: String,
+    var display_option: String,
     var backup_product_code: Int?,
     var backup_product_id: String?,
     var backup_product_desc: String?,
