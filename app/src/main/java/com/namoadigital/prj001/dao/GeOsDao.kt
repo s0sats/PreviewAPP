@@ -50,6 +50,7 @@ class GeOsDao(
         const val MEASURE_TP_DESC = "measure_tp_desc"
         const val MEASURE_VALUE = "measure_value"
         const val MEASURE_CYCLE_VALUE = "measure_cycle_value"
+        const val VALUE_SUFIX = "value_sufix"
         const val DATE_START = "date_start"
         const val DATE_END = "date_end"
         const val LAST_MEASURE_VALUE = "last_measure_value"
@@ -312,6 +313,7 @@ class GeOsDao(
                         measure_tp_desc = getString(getColumnIndex(MEASURE_TP_DESC)),
                         measure_value = getFloat(getColumnIndex(MEASURE_VALUE)),
                         measure_cycle_value = getInt(getColumnIndex(MEASURE_CYCLE_VALUE)),
+                        value_sufix = getStringOrNull(getColumnIndex(VALUE_SUFIX)),
                         date_start = getStringOrNull(getColumnIndex(DATE_START)),
                         date_end = getStringOrNull(getColumnIndex(DATE_START)),
                         last_measure_value = getFloat(getColumnIndex(LAST_MEASURE_VALUE)),
@@ -374,6 +376,8 @@ class GeOsDao(
                     put(MEASURE_VALUE, it.measure_value)
                     //
                     put(MEASURE_CYCLE_VALUE, it.measure_cycle_value)
+                    //
+                    put(VALUE_SUFIX, it.value_sufix)
                     //
                     put(DATE_START,it.date_start)
                     //

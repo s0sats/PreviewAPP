@@ -171,6 +171,7 @@ class Act087MainPresenter(
             measure_tp_desc = measureTp?.measureTpDesc,
             measure_value = null,
             measure_cycle_value = serialObj.last_cycle_value,
+            value_sufix = measureTp?.valueSufix,
             date_start = null,
             last_cycle_value = serialObj.last_cycle_value,
             last_measure_value = serialObj.last_measure_value?.toFloat(),

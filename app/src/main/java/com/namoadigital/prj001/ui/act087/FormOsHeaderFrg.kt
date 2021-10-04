@@ -191,18 +191,34 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             mCreationListener?.let {
                 orderTypeList = it.getOrderTypeList()
             }
-            binding.spOsType.apply {
-                adapter = spinnerAdapter
-                //Se existe order default seta
+        }else{
+            orderTypeList = arrayListOf(
+                MdOrderType(
+                    formOsHeader.customer_code,
+                    formOsHeader.order_type_code,
+                    formOsHeader.order_type_id,
+                    formOsHeader.order_type_desc,
+                    formOsHeader.process_type,
+                    formOsHeader.display_option
+                )
+            )
+        }
+        //
+        binding.spOsType.apply {
+            adapter = spinnerAdapter
+            //Se existe order default seta
+            if(isOsCreation) {
                 formOsHeader.so_order_type_code_default?.let {
                     val orderTypeDefaultIdx = getOrderTypeIdx(it)
                     if(orderTypeDefaultIdx > -1) {
                         setSelection(orderTypeDefaultIdx)
                     }
                 }
-                //Se order não é permitido altera, desabilita.
-                isEnabled = formOsHeader.so_allow_change_order_type == 1
+            }else{
+                setSelection(0)
             }
+            //Se order permite alterar e é um criação , libera edição
+            isEnabled = formOsHeader.so_allow_change_order_type == 1 && isOsCreation
         }
     }
 
@@ -328,7 +344,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 if(isOsCreation){
                     setmValue(ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT))
                 }
-                setmEnabled(formOsHeader.so_edit_start_end == 1)
+                setmEnabled(formOsHeader.so_edit_start_end == 1 && isOsCreation)
             }
         }
     }
@@ -341,6 +357,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 }
                 formOsHeader.measure_value?.let {
                     mketOsMainMeasureVal.setText(it.toString())
+                    mketOsMainMeasureVal.isEnabled = isOsCreation
                 }
                 formOsHeader.measure_tp_code?.let{
                     mainMeasureTp = mCreationListener?.getMeasure(it)
@@ -364,8 +381,10 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         lastMeasureValue: Float?,
         lastMeasureDate: String?
     ): String {
+        val meSufix = " ${formOsHeader.value_sufix?:" "}"
         if(lastMeasureValue != null && lastMeasureDate != null){
-            return "$lastMeasureValue - ${
+            //O espaço esta na var meSufix
+            return "$lastMeasureValue$meSufix - ${
                 ToolBox_Inf.millisecondsToString(
                     ToolBox_Inf.dateToMilliseconds(
                         lastMeasureDate
@@ -375,7 +394,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         }else{
             var info = ""
             lastMeasureValue?.let{
-                info += it.toString()
+                //O espaço esta na var meSufix
+                info += "$it$meSufix"
             }
             lastMeasureDate?.let{
                 info += ToolBox_Inf.millisecondsToString(
