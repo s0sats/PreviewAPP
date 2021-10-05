@@ -173,12 +173,14 @@ class Act087Main : Base_Activity_Frag(),
     }
 
     private fun setFormOsHeaderFrg() {
+        val osHeaderObj = mPresenter.getOsHeaderObj()
+        //
         formOsHeaderFrg = FormOsHeaderFrg.newInstance(
             hmAuxTrans = mPresenter.getTranslation(),
             formStatus = ConstantBaseApp.SYS_STATUS_PENDING,
             scheduleDesc = null,
             scheduleComments = null,
-            formOsHeader = mPresenter.getOsHeaderObj(),
+            formOsHeader = osHeaderObj ,
             isOsCreation = true
         )
         //
@@ -317,7 +319,7 @@ class Act087Main : Base_Activity_Frag(),
     }
 
     override fun reportSerialBkpMachineToFrag(
-        serialBkpMachineList: MutableList<FormOsHeaderFrgSerialBkpItemAbs>,
+        serialBkpMachineList: List<FormOsHeaderFrgSerialBkpItemAbs>,
         onlineSearch: Boolean
     ) {
         mFormHeaderFragListener.reportSerialBkpMachineToFrag(serialBkpMachineList,onlineSearch)

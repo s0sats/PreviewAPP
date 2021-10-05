@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -64,6 +65,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     private var calculatedExecMeasureValue: Float = -1f
     private var calculatedExecCycle: Int = -1
     private var bkpMachineDialog: AlertDialog? = null
+    private var isBarcodeRead: Boolean = false
 
     companion object{
         @JvmStatic
@@ -121,6 +123,10 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 "alert_form_os_creation_ttl",
                 "alert_form_os_creation_confirm",
                 "alert_bkp_serial_ttl",
+                "toast_serial_auto_selected_msg",
+                "alert_qty_records_exceeded_msg",
+                "records_display_limit_lbl",
+                "records_found_lbl",
             )
         }
     }
@@ -185,18 +191,34 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             mCreationListener?.let {
                 orderTypeList = it.getOrderTypeList()
             }
-            binding.spOsType.apply {
-                adapter = spinnerAdapter
-                //Se existe order default seta
+        }else{
+            orderTypeList = arrayListOf(
+                MdOrderType(
+                    formOsHeader.customer_code,
+                    formOsHeader.order_type_code,
+                    formOsHeader.order_type_id,
+                    formOsHeader.order_type_desc,
+                    formOsHeader.process_type,
+                    formOsHeader.display_option
+                )
+            )
+        }
+        //
+        binding.spOsType.apply {
+            adapter = spinnerAdapter
+            //Se existe order default seta
+            if(isOsCreation) {
                 formOsHeader.so_order_type_code_default?.let {
                     val orderTypeDefaultIdx = getOrderTypeIdx(it)
                     if(orderTypeDefaultIdx > -1) {
                         setSelection(orderTypeDefaultIdx)
                     }
                 }
-                //Se order não é permitido altera, desabilita.
-                isEnabled = formOsHeader.so_allow_change_order_type == 1
+            }else{
+                setSelection(0)
             }
+            //Se order permite alterar e é um criação , libera edição
+            isEnabled = formOsHeader.so_allow_change_order_type == 1 && isOsCreation
         }
     }
 
@@ -253,22 +275,48 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     }
 
     override fun reportSerialBkpMachineToFrag(
-        serialBkpMachineList: MutableList<FormOsHeaderFrgSerialBkpItemAbs>,
+        serialBkpMachineList: List<FormOsHeaderFrgSerialBkpItemAbs>,
         onlineSearch: Boolean
     ) {
         if(serialBkpMachineList.size == 1){
             val serialBkp = serialBkpMachineList[0] as FormOsHeaderFrgSerialBkpItem
             if(serialBkp.serialId.equals(binding.mketMachineSerialEdit.text.toString(),true)){
-                setSelectedBkpMachineSerial(serialBkp)
+                setSelectedBkpMachineSerial(serialBkp, autoSelection = true)
             }else{
                 showBkpMachineDialog(serialBkpMachineList,onlineSearch)
             }
         }else{
-            showBkpMachineDialog(serialBkpMachineList,onlineSearch)
+            if(isBarcodeRead){
+                val idx = hasBarcodeSerialMatch(serialBkpMachineList, selectedBkpMachineProduct!!.product_code.toInt(),binding.mketMachineSerialEdit.text.toString().trim())
+                if(idx >- 1){
+                    setSelectedBkpMachineSerial(serialBkpMachineList[idx] as FormOsHeaderFrgSerialBkpItem,autoSelection = true)
+                }else{
+                    showBkpMachineDialog(serialBkpMachineList,onlineSearch)
+                }
+            }else{
+                showBkpMachineDialog(serialBkpMachineList,onlineSearch)
+            }
         }
+        //reseta var
+        isBarcodeRead = false
     }
 
-    private fun setSelectedBkpMachineSerial(serialBkp: FormOsHeaderFrgSerialBkpItem) {
+    private fun hasBarcodeSerialMatch(
+        serialBkpMachineList: List<FormOsHeaderFrgSerialBkpItemAbs>,
+        productCode: Int,
+        serialIdSearched: String
+    ): Int {
+        serialBkpMachineList.forEachIndexed{ idx, obj ->
+            if(obj is FormOsHeaderFrgSerialBkpItem){
+                if(obj.productCode == productCode && obj.serialId.equals(serialIdSearched,true)){
+                    return idx
+                }
+            }
+        }
+        return -1
+    }
+
+    private fun setSelectedBkpMachineSerial(serialBkp: FormOsHeaderFrgSerialBkpItem,autoSelection: Boolean = false) {
         selectedBkpMachineSerialCode = serialBkp.serialCode
         selectedBkpMachineSerialId = serialBkp.serialId
         with(binding){
@@ -278,6 +326,14 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         }
         //
         bkpMachineDialog?.dismiss()
+        //Se auto selecao, exibe toast
+        if(autoSelection){
+             Toast.makeText(
+                 requireContext(),
+                 hmAuxTrans["toast_serial_auto_selected_msg"],
+                 Toast.LENGTH_LONG
+             ).show()
+        }
     }
 
     private fun iniStartDate() {
@@ -288,7 +344,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 if(isOsCreation){
                     setmValue(ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT))
                 }
-                setmEnabled(formOsHeader.so_edit_start_end == 1)
+                setmEnabled(formOsHeader.so_edit_start_end == 1 && isOsCreation)
             }
         }
     }
@@ -301,6 +357,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 }
                 formOsHeader.measure_value?.let {
                     mketOsMainMeasureVal.setText(it.toString())
+                    mketOsMainMeasureVal.isEnabled = isOsCreation
                 }
                 formOsHeader.measure_tp_code?.let{
                     mainMeasureTp = mCreationListener?.getMeasure(it)
@@ -324,8 +381,10 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         lastMeasureValue: Float?,
         lastMeasureDate: String?
     ): String {
+        val meSufix = " ${formOsHeader.value_sufix?:" "}"
         if(lastMeasureValue != null && lastMeasureDate != null){
-            return "$lastMeasureValue - ${
+            //O espaço esta na var meSufix
+            return "$lastMeasureValue$meSufix - ${
                 ToolBox_Inf.millisecondsToString(
                     ToolBox_Inf.dateToMilliseconds(
                         lastMeasureDate
@@ -335,7 +394,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         }else{
             var info = ""
             lastMeasureValue?.let{
-                info += it.toString()
+                //O espaço esta na var meSufix
+                info += "$it$meSufix"
             }
             lastMeasureDate?.let{
                 info += ToolBox_Inf.millisecondsToString(
@@ -628,6 +688,15 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                     }
                 }
             )
+            mketMachineSerialEdit.setDelegateTextBySpecialist {
+                isBarcodeRead = true
+                ivSerialSearch.performClick()
+            }
+            mketOsMainMeasureVal.setDelegateTextBySpecialist {
+                if(!mketOsMainMeasureVal.isValid){
+                    mketOsMainMeasureVal.text = null
+                }
+            }
             //
             ivSerialSearch.setOnClickListener {
                 if(selectedBkpMachineProduct != null && mketMachineSerialEdit.text.toString().isNotEmpty()) {
@@ -722,8 +791,15 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             data?.let {
                 selectedBkpMachineProduct = it.getSerializableExtra(MD_Product::class.java.name) as MD_Product?
                 binding.tvMachineProdEditLbl.text = selectedBkpMachineProduct?.product_desc
+                resetBkpSerialInfo()
             }
         }
+    }
+
+    private fun resetBkpSerialInfo() {
+        binding.mketMachineSerialEdit.setText("")
+        selectedBkpMachineSerialCode = null
+        selectedBkpMachineSerialId = null
     }
 
     fun showSaveErroDialog(
@@ -802,7 +878,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         .show()
     }
 
-    fun showBkpMachineDialog(serialBkpMachineList: MutableList<FormOsHeaderFrgSerialBkpItemAbs>, onlineSearch: Boolean) {
+    fun showBkpMachineDialog(serialBkpMachineList: List<FormOsHeaderFrgSerialBkpItemAbs>, onlineSearch: Boolean) {
         val builder = AlertDialog.Builder(requireContext())
         val dialogBinding = FormOsHeaderFrgBackupMachineDialogBinding.inflate(layoutInflater)
         with(dialogBinding){
@@ -820,21 +896,25 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 }
             }
             //
-            rvBkpSerial.layoutManager = LinearLayoutManager(context)
-            rvBkpSerial.adapter = FormOsHeaderFrgSerialBkpAdapter(
-                serialBkpMachineList,
-                ToolBox_Con.getPreference_Site_Code(context).toInt(),
-                ::setSelectedBkpMachineSerial
-            )
+            rvBkpSerial.apply {
+                layoutManager = LinearLayoutManager(context)
+                adapter = FormOsHeaderFrgSerialBkpAdapter(
+                    serialBkpMachineList,
+                    ToolBox_Con.getPreference_Site_Code(context).toInt(),
+                    ::setSelectedBkpMachineSerial
+                )
+            }
+            btnCancel.apply {
+                text = hmAuxTrans["sys_alert_btn_cancel"]
+                setOnClickListener {
+                    bkpMachineDialog?.dismiss()
+                }
+            }
         }
         //
         bkpMachineDialog = builder.apply {
             setView(dialogBinding.root)
             setCancelable(false)
-            setNegativeButton(
-                hmAuxTrans["sys_alert_btn_cancel"],
-                null
-            )
         }.setOnDismissListener {
             bkpMachineDialog = null
         }.create()

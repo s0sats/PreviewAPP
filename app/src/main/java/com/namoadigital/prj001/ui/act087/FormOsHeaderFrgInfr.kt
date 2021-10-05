@@ -3,5 +3,5 @@ package com.namoadigital.prj001.ui.act087
 import com.namoadigital.prj001.model.FormOsHeaderFrgSerialBkpItemAbs
 
 interface FormOsHeaderFrgInfr {
-    fun reportSerialBkpMachineToFrag( serialBkpMachineList: MutableList<FormOsHeaderFrgSerialBkpItemAbs>, onlineSearch: Boolean)
+    fun reportSerialBkpMachineToFrag( serialBkpMachineList: List<FormOsHeaderFrgSerialBkpItemAbs>, onlineSearch: Boolean)
 }
