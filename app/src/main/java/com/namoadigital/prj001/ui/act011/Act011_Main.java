@@ -446,6 +446,8 @@ public class Act011_Main extends Base_Activity
         transList.add("alert_gps_never_ask_again_permission_ttl");
         transList.add("alert_gps_never_ask_again_permission_msg");
         //
+        transList.addAll(Act011FrgInspection.Companion.getFragTranslationsVars());
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -1339,11 +1341,12 @@ public class Act011_Main extends Base_Activity
                     screens.add(custom_form_ff);
                 }
                 //
+                int acessoryIndex = pages +1;
                 for(AcessoryFormView acessoryFormView: acessoryFormViews){
                     Act011FrgInspection act011FrgInspection = Act011FrgInspection.Companion
                             .newInstance(
                                     hmAux_Trans,
-                                    pages,
+                                    acessoryIndex ,
                                     pages + acessoryFormViews.size(),
                                     formLocal.getCustom_form_status(),
                                     "",
@@ -1352,6 +1355,7 @@ public class Act011_Main extends Base_Activity
                     act011FrgInspection.setViewObject(acessoryFormView);
                     tabs.add(act011FrgInspection.getTabObj(includeField));
                     screens.add(act011FrgInspection);
+                    acessoryIndex ++;
                 }
 
 

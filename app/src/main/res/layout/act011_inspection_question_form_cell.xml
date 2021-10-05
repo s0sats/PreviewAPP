@@ -72,23 +72,29 @@
 
             <TextView
                 android:id="@+id/tv_inspection_verification_action"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="24dp"
-                android:paddingVertical="10dp"
-                android:paddingHorizontal="8dp"
+                android:layout_marginEnd="8dp"
                 android:drawableLeft="@drawable/ic_baseline_play_arrow_24dp"
                 android:drawableTint="#074C61"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="10dp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="@+id/tv_inspection_description"
+                app:layout_constraintEnd_toStartOf="@+id/tv_auto_skip_inspection"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_chainStyle="spread_inside"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_day_count"
                 tools:text="TextView"
                 tools:visibility="gone" />
 
             <TextView
                 android:id="@+id/tv_auto_skip_inspection"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
                 android:drawableLeft="@drawable/ic_baseline_redo_24"
                 android:drawablePadding="8dp"
                 android:textAllCaps="true"
@@ -96,7 +102,9 @@
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_inspection_verification_action"
-                app:layout_constraintEnd_toEndOf="@+id/tv_inspection_description"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tv_inspection_verification_action"
                 app:layout_constraintTop_toTopOf="@+id/tv_inspection_verification_action"
                 tools:text="Não Verificar"
                 tools:visibility="gone" />
@@ -129,43 +137,43 @@
                     android:id="@+id/iv_commentary"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:src="@drawable/ic_baseline_notes_24"
                     android:layout_marginRight="8dp"
-                    app:tint="@color/namoa_color_cone_item"
-                    android:gravity="center" />
+                    android:gravity="center"
+                    android:src="@drawable/ic_baseline_notes_24"
+                    app:tint="@color/namoa_color_cone_item" />
 
                 <ImageView
                     android:id="@+id/iv_photo"
-                    android:src="@drawable/ic_baseline_photo_camera_24"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
                     android:layout_marginRight="4dp"
+                    android:gravity="center"
+                    android:src="@drawable/ic_baseline_photo_camera_24"
                     app:tint="@color/namoa_color_cone_item" />
 
                 <TextView
                     android:id="@+id/tv_photo_count"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:gravity="center"
                     android:layout_marginRight="8dp"
-                    tools:text="1"/>
+                    android:gravity="center"
+                    tools:text="1" />
 
                 <ImageView
                     android:id="@+id/iv_product_applied"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/ic_baseline_inventory_2_black_24"
-                    app:tint="@color/namoa_color_cone_item"
                     android:layout_marginRight="4dp"
-                    android:gravity="center"/>
+                    android:gravity="center"
+                    android:src="@drawable/ic_baseline_inventory_2_black_24"
+                    app:tint="@color/namoa_color_cone_item" />
 
                 <TextView
                     android:id="@+id/tv_product_applied_count"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    tools:text="10"/>
+                    tools:text="10" />
 
 
             </LinearLayout>

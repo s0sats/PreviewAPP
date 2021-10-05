@@ -608,9 +608,10 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     }
 
     private int getDayCount(String target_date) {
-        long lTagerDate = ToolBox_Inf.dateToMilliseconds(target_date);
+        long lTargetDate = ToolBox_Inf.dateToMilliseconds(target_date);
         long lCurrentDate = ToolBox_Inf.dateToMilliseconds(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
-        return (int) TimeUnit.MILLISECONDS.toDays(lTagerDate - lCurrentDate);
+        long l = TimeUnit.MILLISECONDS.toDays(lTargetDate - lCurrentDate);
+        return (int) l;
     }
 
     private List<GeOsDeviceItem> getDeviceItem(GeOsDevice device) {

@@ -88,12 +88,6 @@ class Act011FfOptionsAdapter(
                     tvProblemReportedCountVal.visibility = View.VISIBLE
                     tvProblemReportedCountVal.text = it.toString()
                 }
-
-                tvNonForecastCountVal.visibility = View.INVISIBLE
-                item.nonForecastCount?.let {
-                    tvNonForecastCountVal.visibility = View.VISIBLE
-                    tvNonForecastCountVal.text = it.toString()
-                }
             }
         }
     }

@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
-import androidx.core.graphics.drawable.DrawableCompat.setTint
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
@@ -141,16 +141,12 @@ class Act011InspectionFormAdapter(
                 //
                 binding.tvStatus.apply {
                     text = status
-                    val drawable = context.getDrawable(R.drawable.act011_inspection_cornered_bg)!!
-                    setTint(drawable, context.resources.getColor(tagColor))
-                    background = drawable
+                    background.setColorFilter(ContextCompat.getColor(context, tagColor), android.graphics.PorterDuff.Mode.SRC_ATOP)
                 }
-                val tagDrawable =
-                    binding.root.context.getDrawable(R.drawable.act011_inspection_tag_bg)!!
-                setTint(tagDrawable, binding.root.context.resources.getColor(tagColor))
-                binding.vCellColorTag.background = tagDrawable
+                binding.vCellColorTag.apply {
+                    background.setColorFilter(ContextCompat.getColor(context, tagColor), android.graphics.PorterDuff.Mode.SRC_ATOP)
+                }
                 //
-
                 if (answer != null) {
                     if (isDone) {
                         binding.tvInspectionVerificationAction.visibility = View.GONE
@@ -163,8 +159,6 @@ class Act011InspectionFormAdapter(
                     binding.tvInspectionVerificationAction.text = hmAuxTrans.get("inpection_verify_action_lbl")
                     binding.tvAutoSkipInspection.text =  hmAuxTrans.get("inpection_verify_action_lbl")
                 }
-
-
                 //
                 if (isNewItem) {
                     binding.tvDayCount.visibility = View.GONE

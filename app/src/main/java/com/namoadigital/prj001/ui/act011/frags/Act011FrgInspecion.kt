@@ -171,6 +171,10 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
         fun getFragTranslationsVars(): List<String> {
             return listOf(
                 "alert_filter_applied_msg",
+                "inspection_missing_days",
+                "inspection_alert_days",
+                "inpection_ongoing_action_lbl",
+                "inpection_verify_action_lbl",
                 "inspection_filter_list_hint"
             )
         }
