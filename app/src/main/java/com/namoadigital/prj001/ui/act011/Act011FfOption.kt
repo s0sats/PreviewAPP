@@ -105,7 +105,7 @@ class Act011FfOption : Fragment() {
         with(mObjectView) {
             binding.tvFormDesc.text = mObjectView.formDesc
 
-            if (isSOForm) {
+            if (isNServiceForm) {
                 binding.ibNserv.visibility = View.VISIBLE
             } else {
                 binding.ibNserv.visibility = View.GONE
@@ -190,7 +190,7 @@ class Act011FfOption : Fragment() {
     }
 
     fun updateTabList(tab: Act011FormTab, tabSelected: Int) {
-        val indexOld = tab.page - 1
+        val indexOld = if(mObjectView.isFormOs) tab.page else tab.page - 1
         mObjectView.tabs.set(indexOld, tab)
         mObjectView.tabSelected = tabSelected
         mAdapter.tabSelected = tabSelected

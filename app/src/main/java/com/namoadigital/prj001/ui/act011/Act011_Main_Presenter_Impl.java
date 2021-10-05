@@ -265,7 +265,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                         formtype_code,
                         form_code,
                         formversion_code,
-                        s_form_data
+                        String.valueOf(customFormLocal.getCustom_form_data())
                 );
             }
         } else {
@@ -545,7 +545,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                     );
                 }
                 //
-                mView.loadFragment_CF_Fields(cf_fields, bNew, customFormLocal, formData, customFormLocal.getCustom_form_pre(), pdfs, index, customFormLocal.getRequire_signature(), customFormLocal.getRequire_serial_done(), acessoryFormViews);
+                mView.loadFragment_CF_Fields(cf_fields, bNew, customFormLocal, formData, customFormLocal.getCustom_form_pre(), pdfs, index, customFormLocal.getRequire_signature(), customFormLocal.getRequire_serial_done(), acessoryFormViews, geOs);
             }
         }
     }
@@ -2052,6 +2052,26 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 }
                 //
                 DaoObjReturn daoObjReturn = scheduleExecDao.addUpdate(scheduleExec);
+                //Não tem o que fazer nesse ponto...
+                if(daoObjReturn.hasError()){
+                    ToolBox_Inf.registerException(getClass().getName(),new Exception(daoObjReturn.getErrorMsg()));
+                }
+            }
+        }
+    }
+
+    @Override
+    public void deleteGeOsFormIfNeeds(GE_Custom_Form_Local formLocal) {
+        if(formLocal.getIs_so() == 1){
+            GeOs geOs = getGeOs(
+                String.valueOf(formLocal.getCustomer_code()),
+                String.valueOf(formLocal.getCustom_form_type()),
+                String.valueOf(formLocal.getCustom_form_code()),
+                String.valueOf(formLocal.getCustom_form_version()),
+                String.valueOf(formLocal.getCustom_form_data())
+            );
+            if(geOs != null) {
+                DaoObjReturn daoObjReturn = geOsDao.removeFull(geOs);
                 //Não tem o que fazer nesse ponto...
                 if(daoObjReturn.hasError()){
                     ToolBox_Inf.registerException(getClass().getName(),new Exception(daoObjReturn.getErrorMsg()));

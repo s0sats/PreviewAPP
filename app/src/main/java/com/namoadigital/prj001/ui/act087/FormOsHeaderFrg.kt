@@ -20,6 +20,7 @@ import com.namoadigital.prj001.R
 import com.namoadigital.prj001.adapter.FormOsHeaderFrgSerialBkpAdapter
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao
 import com.namoadigital.prj001.databinding.FormOsHeaderFrgBackupMachineDialogBinding
 import com.namoadigital.prj001.databinding.FormOsHeaderFrgBinding
@@ -71,7 +72,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         @JvmStatic
         fun newInstance(
             hmAuxTrans: HMAux,
-            tabIndex: Int = 1,
+            tabIndex: Int = 0,
             tabLastIndex: Int = 1,
             formStatus: String,
             scheduleDesc: String?,
@@ -88,6 +89,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 this.scheduleComments = scheduleComments
                 this.formOsHeader = formOsHeader
                 this.isOsCreation = isOsCreation
+                this.isFormOs = true
                 //
                 arguments = Bundle().apply {
                     putSerializable(Constant.MAIN_HMAUX_TRANS_KEY, hmAuxTrans)
@@ -96,6 +98,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                     putInt(PARAM_LAST_INDEX,tabLastIndex)
                     putString(MD_Schedule_ExecDao.SCHEDULE_DESC,scheduleDesc)
                     putString(GE_Custom_Form_Field_LocalDao.COMMENT,scheduleComments)
+                    putBoolean(GE_Custom_Form_LocalDao.IS_SO,isFormOs)
                 }
             }
 
@@ -127,6 +130,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 "alert_qty_records_exceeded_msg",
                 "records_display_limit_lbl",
                 "records_found_lbl",
+                "form_os_header",
             )
         }
     }
@@ -256,9 +260,15 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                     formOsHeader.backup_serial_code?.let {
                         mketMachineSerialEdit.setText(formOsHeader.backup_serial_id)
                     }
+                    //
+                    swMachine.isChecked = formOsHeader.backup_serial_code != null
                     swMachine.isEnabled = false
-                    ivSwapMachine.visibility = View.INVISIBLE
-                    ivSerialSearch.visibility = View.INVISIBLE
+                    mketMachineSerialEdit.isEnabled = false
+                    mketMachineSerialEdit.setmBARCODE(false)
+                    tilMketSerial.isHelperTextEnabled = false
+                    ivSwapMachine.visibility = if(formOsHeader.backup_serial_code != null) View.INVISIBLE else View.GONE
+                    ivSerialSearch.visibility = if(formOsHeader.backup_serial_code != null) View.INVISIBLE else View.GONE
+
                 }
             }else{
                 clMachineEdit.visibility = View.GONE
@@ -343,6 +353,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 setmCanClean(false)
                 if(isOsCreation){
                     setmValue(ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT))
+                }else{
+                    setmValue(formOsHeader.date_start)
                 }
                 setmEnabled(formOsHeader.so_edit_start_end == 1 && isOsCreation)
             }
@@ -358,6 +370,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 formOsHeader.measure_value?.let {
                     mketOsMainMeasureVal.setText(it.toString())
                     mketOsMainMeasureVal.isEnabled = isOsCreation
+                    mketOsMainMeasureVal.setmBARCODE(isOsCreation)
+
                 }
                 formOsHeader.measure_tp_code?.let{
                     mainMeasureTp = mCreationListener?.getMeasure(it)
@@ -411,10 +425,10 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     }
 
     private fun iniSaveBtn() {
-        if(isOsCreation){
-            binding.btnSave.apply {
-                visibility = View.VISIBLE
-                text = hmAuxTrans["btn_save"]
+        binding.btnSave.apply {
+            visibility = if(isOsCreation) View.VISIBLE else View.GONE
+            text = hmAuxTrans["btn_save"]
+            if (isOsCreation) {
                 setOnClickListener {
                     validateSave()
                 }
@@ -733,6 +747,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     }
 
     override fun getTabErrorCount(): Int {
+        //Sem emodo edição, sem erros
         return 0
     }
 
@@ -741,25 +756,26 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     }
 
     override fun getTabObj(skipFieldValidation: Boolean): Act011FormTab {
-       return Act011FormTab(
-            0,
-            "",
-            "",
-            0,
-            null,
-            null,
-            null,
-            null,
-            Act011FormTabStatus.PENDING
+        return Act011FormTab(
+            page = tabIndex,
+            name = mTabName,
+            tracking = null,
+            mTabItemCount,
+            problemReportedCount = null,
+            forecastCount = null,
+            criticalForecastCount = null,
+            nonForecastCount = null,
+            status = if(skipFieldValidation) Act011FormTabStatus.PENDING else getTabStatus()
         )
+
     }
 
     override fun getTabStatus(): Act011FormTabStatus {
-        return Act011FormTabStatus.PENDING
+        return Act011FormTabStatus.OK
     }
 
     override fun getTabName(): String {
-        return ""
+        return hmAuxTrans["form_os_header"]?:"form_os_header - trad"
     }
 
     override fun applyAutoAnswer(): Int {

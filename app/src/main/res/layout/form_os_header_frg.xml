@@ -31,7 +31,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cl_os_content"
                 android:layout_width="match_parent"
-                android:paddingStart="12dp"
+                android:paddingStart="10dp"
                 android:paddingEnd="16dp"
                 android:paddingBottom="8dp"
                 android:layout_height="wrap_content"
@@ -41,25 +41,21 @@
                 app:layout_constraintBottom_toTopOf="@id/inc_navegation"
                 >
 
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/gd_start"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_begin="6dp" />
+
                 <TextView
                     android:id="@+id/tv_os_type_lbl"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/gd_start"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="1. Tipo de Order de serviço" />
-
-<!--                <ImageView-->
-<!--                    android:id="@+id/iv_sp_dropdown"-->
-<!--                    android:layout_width="18dp"-->
-<!--                    android:layout_height="18dp"-->
-<!--                    app:layout_constraintBottom_toBottomOf="@+id/sp_os_type"-->
-<!--                    app:layout_constraintEnd_toEndOf="@+id/sp_os_type"-->
-<!--                    app:layout_constraintTop_toTopOf="@+id/sp_os_type"-->
-<!--                    app:srcCompat="@drawable/ic_arrow_drop_down_24px"-->
-<!--                    android:layout_marginEnd="4dp"-->
-<!--                    />-->
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cl_spinner"
@@ -68,7 +64,7 @@
                     android:layout_marginTop="8dp"
                     android:minHeight="36dp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/gd_start"
                     app:layout_constraintTop_toBottomOf="@id/tv_os_type_lbl"
                     android:background="@drawable/bg_namoa_spinner"
                     >
@@ -95,7 +91,15 @@
                     android:layout_marginTop="24dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/cl_spinner">
+                    app:layout_constraintTop_toBottomOf="@id/cl_spinner"
+                    android:padding="2dp">
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/gd_bkp_machine_start"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_begin="4dp" />
 
                     <TextView
                         android:id="@+id/tv_os_machine_lbl"
@@ -105,7 +109,7 @@
                         android:layout_marginEnd="8dp"
                         android:gravity="center_vertical"
                         app:layout_constraintEnd_toStartOf="@id/br_switch"
-                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintStart_toStartOf="@id/gd_bkp_machine_start"
                         app:layout_constraintTop_toTopOf="parent"
                         tools:text="2. Usar maquina reserva" />
 
@@ -143,8 +147,9 @@
                         android:minHeight="48dp"
                         android:gravity="center_vertical"
                         android:text="Empilhadeira"
+                        android:paddingStart="4dp"
                         app:layout_constraintEnd_toEndOf="@id/tv_os_machine_lbl"
-                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintStart_toStartOf="@id/gd_bkp_machine_start"
                         app:layout_constraintTop_toBottomOf="@id/tv_os_machine_lbl" />
 
                     <ImageView
@@ -164,7 +169,7 @@
                         app:helperTextEnabled="false"
                         app:helperTextTextAppearance="@style/TextInputLayoutHelperTextColorRequired"
                         app:layout_constraintEnd_toEndOf="@id/tv_machine_prod_edit_lbl"
-                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintStart_toStartOf="@id/gd_bkp_machine_start"
                         app:layout_constraintTop_toBottomOf="@id/tv_machine_prod_edit_lbl"
                         app:hintEnabled="false"
                         >
@@ -200,7 +205,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/gd_start"
                     app:layout_constraintTop_toBottomOf="@id/cl_machine_edit"
                     tools:text="3. Date e horario de inicio" />
 
@@ -208,7 +213,7 @@
                     android:id="@+id/mkdt_start_date"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/gd_start"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_os_start_date_lbl"
                     />
@@ -218,7 +223,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/gd_start"
                     app:layout_constraintTop_toBottomOf="@id/mkdt_start_date"
                     >
 
@@ -252,7 +257,7 @@
                     android:id="@+id/cl_last_measure"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/gd_start"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/cl_main_measure">
 
@@ -283,9 +288,9 @@
 
                 <Button
                     android:id="@+id/btn_save"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/gd_start"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/cl_last_measure"
                     android:layout_marginTop="24dp"

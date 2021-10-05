@@ -4,15 +4,13 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteException
+import androidx.core.database.getFloatOrNull
 import androidx.core.database.getIntOrNull
 import androidx.core.database.getStringOrNull
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
-import com.namoadigital.prj001.model.DaoObjReturn
-import com.namoadigital.prj001.model.GeOs
-import com.namoadigital.prj001.model.MD_Product
-import com.namoadigital.prj001.model.MD_Product_Serial
+import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.sql.GeOsDeviceCreation_Sql_001
 import com.namoadigital.prj001.sql.GeOsDeviceItemCreation_Sql_001
 import com.namoadigital.prj001.sql.GeOsDeviceItemHistCreation_Sql_001
@@ -303,21 +301,21 @@ class GeOsDao(
                         order_type_desc = getString(getColumnIndex(ORDER_TYPE_DESC)),
                         process_type = getString(getColumnIndex(PROCESS_TYPE)),
                         display_option = getString(getColumnIndex(DISPLAY_OPTION)),
-                        backup_product_code = getInt(getColumnIndex(BACKUP_PRODUCT_CODE)),
+                        backup_product_code = getIntOrNull(getColumnIndex(BACKUP_PRODUCT_CODE)),
                         backup_product_id = getStringOrNull(getColumnIndex(BACKUP_PRODUCT_ID)),
                         backup_product_desc = getStringOrNull(getColumnIndex(BACKUP_PRODUCT_DESC)),
-                        backup_serial_code = getInt(getColumnIndex(BACKUP_SERIAL_CODE)),
+                        backup_serial_code = getIntOrNull(getColumnIndex(BACKUP_SERIAL_CODE)),
                         backup_serial_id = getStringOrNull(getColumnIndex(BACKUP_SERIAL_ID)),
-                        measure_tp_code = getInt(getColumnIndex(MEASURE_TP_CODE)),
-                        measure_tp_id = getString(getColumnIndex(MEASURE_TP_ID)),
-                        measure_tp_desc = getString(getColumnIndex(MEASURE_TP_DESC)),
-                        measure_value = getFloat(getColumnIndex(MEASURE_VALUE)),
-                        measure_cycle_value = getInt(getColumnIndex(MEASURE_CYCLE_VALUE)),
+                        measure_tp_code = getIntOrNull(getColumnIndex(MEASURE_TP_CODE)),
+                        measure_tp_id = getStringOrNull(getColumnIndex(MEASURE_TP_ID)),
+                        measure_tp_desc = getStringOrNull(getColumnIndex(MEASURE_TP_DESC)),
+                        measure_value = getFloatOrNull(getColumnIndex(MEASURE_VALUE)),
+                        measure_cycle_value = getIntOrNull(getColumnIndex(MEASURE_CYCLE_VALUE)),
                         value_sufix = getStringOrNull(getColumnIndex(VALUE_SUFIX)),
                         date_start = getStringOrNull(getColumnIndex(DATE_START)),
                         date_end = getStringOrNull(getColumnIndex(DATE_START)),
-                        last_measure_value = getFloat(getColumnIndex(LAST_MEASURE_VALUE)),
-                        last_measure_date = getString(getColumnIndex(LAST_MEASURE_DATE)),
+                        last_measure_value = getFloatOrNull(getColumnIndex(LAST_MEASURE_VALUE)),
+                        last_measure_date = getStringOrNull(getColumnIndex(LAST_MEASURE_DATE)),
                         last_cycle_value = getIntOrNull(getColumnIndex(LAST_CYCLE_VALUE)),
                         so_edit_start_end = getInt(getColumnIndex(SO_EDIT_START_END)),
                         so_order_type_code_default = getIntOrNull(getColumnIndex(SO_ORDER_TYPE_CODE_DEFAULT)),
@@ -466,6 +464,53 @@ class GeOsDao(
             if (daoObjReturn.hasError()) {
                 throw Exception(daoObjReturn.errorMsg)
             }
+            db.setTransactionSuccessful()
+        } catch (e: SQLiteException) {
+            //Chama metodo que baseado na exception gera obj de retorno setado como erro
+            //e contendo msg de erro tratada.
+            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.message)
+            //Gera arquivo de exception usando dados da exception e do obj de retorno
+            ToolBox_Inf.registerException(
+                javaClass.name,
+                Exception(
+                    """
+                ${e.message}
+                ${daoObjReturn.errorMsg}
+                """.trimIndent()
+                )
+            )
+        } catch (e: Exception) {
+            //Seta obj de retorno com flag de erro e gera arquivo de exception
+            daoObjReturn.setError(true)
+            ToolBox_Inf.registerException(javaClass.name, e)
+        } finally {
+            db.endTransaction()
+            daoObjReturn.action = curAction
+            daoObjReturn.actionReturn = addUpdateRet
+        }
+        //
+        closeDB()
+        return daoObjReturn
+    }
+
+    fun removeFull(geOs: GeOs): DaoObjReturn {
+        var daoObjReturn = DaoObjReturn()
+        var addUpdateRet: Long = 0
+        val curAction = DaoObjReturn.DELETE
+        daoObjReturn.table = TK_TicketDao.TABLE
+        //
+        val wherePkClause = getWherePkClause(geOs).toString()
+
+        openDB()
+        try {
+            db.beginTransaction()
+            //
+            addUpdateRet += db.delete(TABLE,wherePkClause,null)
+            addUpdateRet += db.delete(GeOsDeviceDao.TABLE,wherePkClause,null)
+            addUpdateRet += db.delete(GeOsDeviceItemDao.TABLE,wherePkClause,null)
+            addUpdateRet += db.delete(GeOsDeviceMaterialDao.TABLE,wherePkClause,null)
+            addUpdateRet += db.delete(GeOsDeviceItemHistDao.TABLE,wherePkClause,null)
+            //
             db.setTransactionSuccessful()
         } catch (e: SQLiteException) {
             //Chama metodo que baseado na exception gera obj de retorno setado como erro

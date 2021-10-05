@@ -92,6 +92,7 @@ import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data_Field;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.GE_File;
+import com.namoadigital.prj001.model.GeOs;
 import com.namoadigital.prj001.model.InspectionCell;
 import com.namoadigital.prj001.model.InspectionCellActions;
 import com.namoadigital.prj001.model.MD_Product;
@@ -125,6 +126,7 @@ import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.ui.act083.Act083_Main;
 import com.namoadigital.prj001.ui.act084.Act084Main;
 import com.namoadigital.prj001.ui.act086.Act086Main;
+import com.namoadigital.prj001.ui.act087.FormOsHeaderFrg;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -250,6 +252,7 @@ public class Act011_Main extends Base_Activity
     private String room_code;
     private CustomFF.ICustomFFDotsDialogDismiss onBackFocusEvent;
     private Bundle act083Bundle;
+    private boolean isFormOs = false;
 
     public void setWsSoProcess(String wsSoProcess) {
         this.wsSoProcess = wsSoProcess;
@@ -455,6 +458,20 @@ public class Act011_Main extends Base_Activity
                 ToolBox_Con.getPreference_Translate_Code(context),
                 transList
         );
+        //LUCHE - 05/10/2021
+        HMAux formOsFragTransient = ToolBox_Inf.setLanguage(
+            context,
+            mModule_Code,
+            ToolBox_Inf.getResourceCode(
+                context,
+                mModule_Code,
+                FormOsHeaderFrg.Companion.getMResource_Name()
+            ),
+            ToolBox_Con.getPreference_Translate_Code(context),
+            FormOsHeaderFrg.Companion.getFragTranslationsVars()
+        );
+        //
+        hmAux_Trans.putAll(formOsFragTransient);
     }
 
     /**
@@ -700,10 +717,11 @@ public class Act011_Main extends Base_Activity
      */
     private void updateTabStatusIntoDrawer(ArrayList<Act011FormTab> tabs) {
         if(tabs != null && tabs.size() > 0) {
+            int selectecTab = isFormOs && index >= 1 ? index -1 : index;
             if (tabs.size() == 1) {
-                act011FfOption.updateTabList(tabs.get(0), index);
+                act011FfOption.updateTabList(tabs.get(0), selectecTab);
             } else {
-                act011FfOption.updateTabList(tabs, index);
+                act011FfOption.updateTabList(tabs, selectecTab);
             }
         }
     }
@@ -1045,6 +1063,8 @@ public class Act011_Main extends Base_Activity
         //LUCHE - 17/09/2021 - Deleção de agendamento
         mPresenter.resetScheduleExecIfNeeds(formLocal);
         //
+        mPresenter.deleteGeOsFormIfNeeds(formLocal);
+        //
         mPresenter.checkAppExecutionDecrementUpdateNeeds(mSo_Prefix,mSo_Code, formData);
         //
         if(mPresenter.isaTicketFlowForm()){
@@ -1187,7 +1207,7 @@ public class Act011_Main extends Base_Activity
     }
 
     @Override
-    public void loadFragment_CF_Fields(List<HMAux> cf_fields, boolean bNew, GE_Custom_Form_Local formLocal, GE_Custom_Form_Data formData, String prefix, List<HMAux> pdfs, int indexF, int signature, int require_serial_done, ArrayList<AcessoryFormView> acessoryFormViews) {
+    public void loadFragment_CF_Fields(List<HMAux> cf_fields, boolean bNew, GE_Custom_Form_Local formLocal, GE_Custom_Form_Data formData, String prefix, List<HMAux> pdfs, int indexF, int signature, int require_serial_done, ArrayList<AcessoryFormView> acessoryFormViews, GeOs geOs) {
         this.prefix = prefix;
         this.bNew = bNew;
         this.formLocal = formLocal;
@@ -1202,6 +1222,7 @@ public class Act011_Main extends Base_Activity
         this.mSo_Code = formData.getSo_code();
         this.require_serial_done = require_serial_done;
         this.require_serial_done_ok = "";
+        this.isFormOs = geOs != null;
 
         if (!formData.getSerial_id().equalsIgnoreCase(serial_id) && !serial_id.isEmpty()) {
             formData.setSerial_id(serial_id);
@@ -1320,18 +1341,21 @@ public class Act011_Main extends Base_Activity
            //
             ArrayList<Act011FormTab> tabs = new ArrayList<>();
             //Loop de criação das tabs do form utilizando o novo fragment.
-            if(formLocal.getIs_so() ==1){
-                //
-                addOsHEaderFrag();
+            if(formLocal.getIs_so() == 1){
+                //Qtd total de tabs 1(header) + pages(customFF) + acessoryFormViews.size(Devices)
+                int fullTabQty = pages + acessoryFormViews.size();
+                addOsHeaderFrag(geOs,formData.getCustom_form_status(),tabs,fullTabQty,mdScheduleExec);
                 //
                 for (int i = 1; i <= pages; i++) {
                     Act011FrgFF custom_form_ff = Act011FrgFF.Companion.newInstance(
                             hmAux_Trans,
                             i,
-                            pages,
+                            fullTabQty,
                             formData.getCustom_form_status(),
                             mdScheduleExec != null ? mdScheduleExec.getSchedule_desc() : null,
-                            mdScheduleExec != null ? mdScheduleExec.getComments() : null
+                            mdScheduleExec != null ? mdScheduleExec.getComments() : null,
+                        formLocal.getIs_so() == 1
+
                     );
                     custom_form_ff.setCustomFF(customFFs);
                     //Substituido o param de bNew para includeField, pois ele identifica  aprimeira abertura.
@@ -1341,13 +1365,13 @@ public class Act011_Main extends Base_Activity
                     screens.add(custom_form_ff);
                 }
                 //
-                int acessoryIndex = pages +1;
+                int acessoryIndex = pages + 1;
                 for(AcessoryFormView acessoryFormView: acessoryFormViews){
                     Act011FrgInspection act011FrgInspection = Act011FrgInspection.Companion
                             .newInstance(
                                     hmAux_Trans,
                                     acessoryIndex ,
-                                    pages + acessoryFormViews.size(),
+                                    fullTabQty,
                                     formLocal.getCustom_form_status(),
                                     "",
                                     ""
@@ -1357,8 +1381,6 @@ public class Act011_Main extends Base_Activity
                     screens.add(act011FrgInspection);
                     acessoryIndex ++;
                 }
-
-
             }else {
                 for (int i = 1; i <= pages; i++) {
                     Act011FrgFF custom_form_ff = Act011FrgFF.Companion.newInstance(
@@ -1367,7 +1389,8 @@ public class Act011_Main extends Base_Activity
                             pages,
                             formData.getCustom_form_status(),
                             mdScheduleExec != null ? mdScheduleExec.getSchedule_desc() : null,
-                            mdScheduleExec != null ? mdScheduleExec.getComments() : null
+                            mdScheduleExec != null ? mdScheduleExec.getComments() : null,
+                        formLocal.getIs_so() == 1
                     );
                     custom_form_ff.setCustomFF(customFFs);
                     //Substituido o param de bNew para includeField, pois ele identifica  aprimeira abertura.
@@ -1417,13 +1440,14 @@ public class Act011_Main extends Base_Activity
                     new Act011FfOptionsViewObject(
                             form_desc,
                             tabs,
-                            1,
+                            isFormOs ? 0 : 1,
                             formData.getCustom_form_status(),
                             mSignature,
                             automatic,
                             (formData.getTicket_prefix() != null && formData.getTicket_prefix() > 0)
                                     && (formData.getTicket_code() != null && formData.getTicket_code() > 0 ),
-                            mSo_Prefix != null && mSo_Code != null
+                            mSo_Prefix != null && mSo_Code != null,
+                            isFormOs
                     ),
                     hmAux_Trans,
                     new Act011FfOption.ICustom_Form_FF_Options_ll() {
@@ -1504,7 +1528,9 @@ public class Act011_Main extends Base_Activity
 
                         @Override
                         public void onTabSelected(int page) {
-                            tabSelectedAction(page);
+                            //LUCHE - 05/10/2021 - ajuste para quando for form o.s funcione
+                            //corretamente.
+                            tabSelectedAction(isFormOs ? page + 1 : page);
                             //
                             mDrawerLayout.closeDrawer(GravityCompat.START);
                         }
@@ -1519,12 +1545,22 @@ public class Act011_Main extends Base_Activity
         //Caso GPS desligado e form dependa de GPS exibe dialog
         //
         mPresenter.validateGPSResource(formLocal);
-
-
     }
 
-    private void addOsHEaderFrag() {
-
+    private void addOsHeaderFrag(GeOs geOs, String custom_form_status, ArrayList<Act011FormTab> tabs, int tabQty, MD_Schedule_Exec mdScheduleExec) {
+        FormOsHeaderFrg formOsHeaderFrg = FormOsHeaderFrg.newInstance(
+            hmAux_Trans,
+            0,
+            tabQty,
+            custom_form_status,
+            mdScheduleExec != null ? mdScheduleExec.getSchedule_desc() : null,
+            mdScheduleExec != null ? mdScheduleExec.getComments() : null,
+            geOs,
+            false
+        );
+        //
+        tabs.add(formOsHeaderFrg.getTabObj(includeField));
+        screens.add(formOsHeaderFrg);
     }
 
     @Override
@@ -1998,9 +2034,7 @@ public class Act011_Main extends Base_Activity
         ArrayList<Act011FormTab> tabs = new ArrayList<>();
         if(page == -1){
             for (Act011BaseFrg baseFrg : screens) {
-                if(baseFrg instanceof Act011FrgFF) {
-                    tabs.add(baseFrg.getTabObj(false));
-                }
+                tabs.add(baseFrg.getTabObj(false));
             }
         }else if(page > 0){
             //Ajuste para pega o indice correto da tab no array de frags.

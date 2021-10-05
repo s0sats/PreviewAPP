@@ -11,6 +11,7 @@ import androidx.viewbinding.ViewBinding
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao
 import com.namoadigital.prj001.databinding.Act011FrgIncludeHeaderBinding
 import com.namoadigital.prj001.databinding.Act011FrgIncludeNavegationBinding
@@ -39,6 +40,7 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
     protected val mTabName: String by lazy {
         getTabName()
     }
+    protected var isFormOs: Boolean = false
 
     /**
      * Retona binding
@@ -116,14 +118,15 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
                 containsKey(GE_Custom_Form_Field_LocalDao.PAGE) &&
                 containsKey(PARAM_LAST_INDEX) &&
                 containsKey(GE_Custom_Form_Field_LocalDao.COMMENT) &&
-                containsKey(MD_Schedule_ExecDao.SCHEDULE_DESC)
+                containsKey(MD_Schedule_ExecDao.SCHEDULE_DESC) &&
+                containsKey(GE_Custom_Form_LocalDao.IS_SO)
             ) {
-
                 formStatus = getString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS, "")
                 tabIndex = getInt(GE_Custom_Form_Field_LocalDao.PAGE)
                 tabLastIndex = getInt(PARAM_LAST_INDEX)
                 scheduleComments = getString(GE_Custom_Form_Field_LocalDao.COMMENT, null)
                 scheduleDesc = getString(MD_Schedule_ExecDao.SCHEDULE_DESC, null)
+                isFormOs = getBoolean(GE_Custom_Form_LocalDao.IS_SO, false)
             }
         }
         return binding.root
@@ -149,7 +152,7 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
      * Verifica se é a primeira tab para exibir o card de produto e serial devem aparecer
      */
     private fun handleSerialCardInfos(headerInclude: Act011FrgIncludeHeaderBinding) {
-        if (tabIndex == 1) {
+        if (isFirstTab()) {
             headerInclude.incSerial.cvProductSerialCard.visibility = View.VISIBLE
             setSerialInfo(headerInclude.incSerial)
         } else {
@@ -162,7 +165,7 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
      */
     private fun handleScheduleInfos(headerInclude: Act011FrgIncludeHeaderBinding) {
         with(headerInclude){
-            if(tabIndex == 1) {
+            if(isFirstTab()) {
                 tvComments.apply {
                     text = scheduleComments ?: ""
                     visibility = if (scheduleComments.isNullOrEmpty()) View.GONE else View.VISIBLE
@@ -175,6 +178,14 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
                 tvComments.visibility = View.GONE
                 tvScheduleDesc.visibility = View.GONE
             }
+        }
+    }
+
+    private fun isFirstTab(): Boolean{
+        return  if(isFormOs){
+            tabIndex == 0
+        }else{
+            tabIndex == 1
         }
     }
 
@@ -266,7 +277,8 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
         with(navegationBinding) {
             tvDrawer.text = hmAuxTrans["btn_open_drawer"]
             //
-            val prevEnabled = (tabIndex > 1)
+            //val prevEnabled = (tabIndex > 1)
+            val prevEnabled = !isFirstTab()
             clPrev.apply {
                 isEnabled = prevEnabled
             }
@@ -350,6 +362,7 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
             putInt(PARAM_LAST_INDEX,tabLastIndex)
             putString(MD_Schedule_ExecDao.SCHEDULE_DESC,scheduleDesc)
             putString(GE_Custom_Form_Field_LocalDao.COMMENT,scheduleComments)
+            putBoolean(GE_Custom_Form_LocalDao.IS_SO,isFormOs)
         }
     }
 }
