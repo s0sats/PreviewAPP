@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.model.AcessoryFormView;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
@@ -17,7 +18,7 @@ import java.util.List;
 
 public interface Act011_Main_View {
 
-    void loadFragment_CF_Fields(List<HMAux> cf_fields, boolean bNew, GE_Custom_Form_Local formLocal, GE_Custom_Form_Data formData, String prefix, List<HMAux> pdfs, int indexF, int signature, int Require_serial_done);
+    void loadFragment_CF_Fields(List<HMAux> cf_fields, boolean bNew, GE_Custom_Form_Local formLocal, GE_Custom_Form_Data formData, String prefix, List<HMAux> pdfs, int indexF, int signature, int Require_serial_done, ArrayList<AcessoryFormView> acessoryFormViews);
 
     void showMsg(String title, String msg, int type);
 

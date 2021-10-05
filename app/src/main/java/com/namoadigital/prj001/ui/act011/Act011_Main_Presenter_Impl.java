@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act011;
 
+import static com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device_Item.APPLY_MATERIAL_REQUIRED;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -23,6 +25,8 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.GeOsDao;
+import com.namoadigital.prj001.dao.GeOsDeviceDao;
+import com.namoadigital.prj001.dao.GeOsDeviceItemDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
@@ -41,6 +45,9 @@ import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.GeOs;
+import com.namoadigital.prj001.model.GeOsDevice;
+import com.namoadigital.prj001.model.GeOsDeviceItem;
+import com.namoadigital.prj001.model.InspectionCell;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
@@ -63,6 +70,9 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_005;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_019;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_001_TT;
+import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_002;
+import com.namoadigital.prj001.sql.GeOsDeviceSql_002;
+import com.namoadigital.prj001.sql.GeOsSql_001;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_016;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
@@ -75,7 +85,6 @@ import com.namoadigital.prj001.sql.TK_Ticket_Form_Sql_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Form_Sql_005;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Step_Sql_001;
-import com.namoadigital.prj001.sql.GeOsSql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -87,6 +96,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -128,8 +138,10 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     private Integer mTicketSeqTmp;
     private MD_SiteDao siteDao;
     private GeOsDao geOsDao;
+    private GeOsDeviceDao geOsDeviceDao;
+    private GeOsDeviceItemDao geOsDeviceItemDao;
 
-    public Act011_Main_Presenter_Impl(Context context, Act011_Main_View mView, EV_Module_Res_Txt_TransDao module_res_txt_transDao, GE_Custom_FormDao custom_formDao, GE_Custom_Form_FieldDao custom_form_fieldDao, GE_Custom_Form_DataDao custom_form_dataDao, GE_Custom_Form_Data_FieldDao custom_form_data_fieldDao, GE_Custom_Form_LocalDao custom_form_LocalDao, GE_Custom_Form_Field_LocalDao custom_form_field_LocalDao, GE_Custom_Form_BlobDao custom_form_blobDao, GE_Custom_Form_Blob_LocalDao custom_form_blob_localDao, MD_Product_SerialDao md_product_serialDao, MD_ProductDao md_productDao, HMAux hmAux_Trans, MD_Schedule_ExecDao scheduleExecDao, TK_Ticket_StepDao ticketStepDao, MD_SiteDao siteDao, MdTagDao mdTagDao, GeOsDao geOsDao) {
+    public Act011_Main_Presenter_Impl(Context context, Act011_Main_View mView, EV_Module_Res_Txt_TransDao module_res_txt_transDao, GE_Custom_FormDao custom_formDao, GE_Custom_Form_FieldDao custom_form_fieldDao, GE_Custom_Form_DataDao custom_form_dataDao, GE_Custom_Form_Data_FieldDao custom_form_data_fieldDao, GE_Custom_Form_LocalDao custom_form_LocalDao, GE_Custom_Form_Field_LocalDao custom_form_field_LocalDao, GE_Custom_Form_BlobDao custom_form_blobDao, GE_Custom_Form_Blob_LocalDao custom_form_blob_localDao, MD_Product_SerialDao md_product_serialDao, MD_ProductDao md_productDao, HMAux hmAux_Trans, MD_Schedule_ExecDao scheduleExecDao, TK_Ticket_StepDao ticketStepDao, MD_SiteDao siteDao, MdTagDao mdTagDao, GeOsDao geOsDao,  GeOsDeviceDao geOsDeviceDao, GeOsDeviceItemDao geOsDeviceItemDao) {
         this.context = context;
         this.mView = mView;
         this.module_res_txt_transDao = module_res_txt_transDao;
@@ -149,6 +161,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         this.siteDao = siteDao;
         this.mdTagDao = mdTagDao;
         this.geOsDao = geOsDao;
+        this.geOsDeviceDao = geOsDeviceDao;
+        this.geOsDeviceItemDao = geOsDeviceItemDao;
     }
 
     @Override
@@ -244,6 +258,15 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                         hasNformPending = true;
                     }
                 }
+            }
+            if(customFormLocal.getIs_so() == 1){
+                geOs = getGeOs(
+                        customer_code,
+                        formtype_code,
+                        form_code,
+                        formversion_code,
+                        s_form_data
+                );
             }
         } else {
             bNew = true;
@@ -377,6 +400,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 );
             }
         }
+
         //LUCHE - 24/08/2020
         //isTicketProcess = isFormCreateByTicket(customFormLocal.getTicket_prefix(),customFormLocal.getTicket_code(),customFormLocal.getTicket_seq(),customFormLocal.getTicket_seq_tmp(),customFormLocal.getStep_code());
         isTicketProcess = isFormCreateByTicket(customFormLocal);
@@ -499,11 +523,15 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                         String.valueOf(customFormLocal.getCustom_form_version())
                     ).toSqlQuery().toString()
                 );
+                ArrayList<AcessoryFormView> acessoryFormViews = new ArrayList<>();
                 //LUCHE - 30/09/2021
-                ArrayList<AcessoryFormView> acessoryFormViews =
-                    getAcessoryFormView(
-                        geOs
-                    );
+                if(customFormLocal.getIs_so() == 1) {
+                    acessoryFormViews =
+                            getAcessoryFormView(
+                                    geOs,
+                                    customFormLocal
+                            );
+                }
                 //
                 if (hasNformPending) {
                     mView.showMsg(
@@ -517,14 +545,85 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                     );
                 }
                 //
-                mView.loadFragment_CF_Fields(cf_fields, bNew, customFormLocal, formData, customFormLocal.getCustom_form_pre(), pdfs, index, customFormLocal.getRequire_signature(), customFormLocal.getRequire_serial_done());
+                mView.loadFragment_CF_Fields(cf_fields, bNew, customFormLocal, formData, customFormLocal.getCustom_form_pre(), pdfs, index, customFormLocal.getRequire_signature(), customFormLocal.getRequire_serial_done(), acessoryFormViews);
             }
         }
     }
 
-    private ArrayList<AcessoryFormView> getAcessoryFormView(GeOs geOs) {
+    private ArrayList<AcessoryFormView> getAcessoryFormView(GeOs geOs, GE_Custom_Form_Local customFormLocal) {
         ArrayList<AcessoryFormView> acessoryFormViews = new ArrayList<>();
+//        GeOsDeviceItem
+        List<GeOsDevice> devices = geOsDeviceDao.query(
+            new GeOsDeviceSql_002(
+                    geOs.getCustomer_code(),
+                    geOs.getCustom_form_type(),
+                    geOs.getCustom_form_code(),
+                    geOs.getCustom_form_version(),
+                    geOs.getCustom_form_data()
+            ).toSqlQuery()
+        );
+        for(GeOsDevice device: devices){
+            AcessoryFormView acessoryFormView = new AcessoryFormView(
+                    device.getDevice_tp_desc(),
+                    device.getTracking_number(),
+                    isInProcessing(customFormLocal),
+                    0,
+                    new ArrayList<>()
+            );
+            List<InspectionCell> inspections = acessoryFormView.getInspections();
+            List<GeOsDeviceItem> deviceItem =  getDeviceItem(device);
+            for(GeOsDeviceItem item: deviceItem){
+                inspections.add(new InspectionCell(
+                    item.getItem_check_desc(),
+                    getDayCount(item.getTarget_date()),
+                    getPhotoCount(item),
+                    item.getMaterialList().size(),
+                    item.getApply_material().equals(APPLY_MATERIAL_REQUIRED),
+                    item.getExec_comment() != null && !item.getExec_comment().isEmpty(),
+                    item.getRequire_justify_problem() == 1,
+                        item.getItem_check_status(),
+                        item.getCritical_item() == 1,
+                        item.getStructure() == 0,
+                        item.getStatus_answer(),
+                        item.getGeOsDeviceItemPK()
+                    )
+                );
+            }
+            acessoryFormViews.add(acessoryFormView);
+        }
         return acessoryFormViews;
+    }
+
+
+
+    private int getPhotoCount(GeOsDeviceItem item) {
+        return getImageCount(item.getExec_photo1()) + getImageCount(item.getExec_photo2()) + getImageCount(item.getExec_photo3()) +getImageCount(item.getExec_photo4());
+    }
+
+    private int getImageCount(String photoPath) {
+        if (photoPath != null && !photoPath.isEmpty()) {
+            return 1;
+        }
+        return 0;
+    }
+
+    private int getDayCount(String target_date) {
+        long lTagerDate = ToolBox_Inf.dateToMilliseconds(target_date);
+        long lCurrentDate = ToolBox_Inf.dateToMilliseconds(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+        return (int) TimeUnit.MILLISECONDS.toDays(lTagerDate - lCurrentDate);
+    }
+
+    private List<GeOsDeviceItem> getDeviceItem(GeOsDevice device) {
+         return geOsDeviceItemDao.query(new GeOsDeviceItem_Sql_002(
+                device.getCustomer_code(),
+                device.getCustom_form_type(),
+                device.getCustom_form_code(),
+                device.getCustom_form_version(),
+                device.getCustom_form_data(),
+                device.getProduct_code(),
+                device.getSerial_code(),
+                device.getDevice_tp_code()
+        ).toSqlQuery());
     }
 
     private GeOs getGeOs(String customer_code, String formtype_code, String form_code, String formversion_code, String s_form_data) {

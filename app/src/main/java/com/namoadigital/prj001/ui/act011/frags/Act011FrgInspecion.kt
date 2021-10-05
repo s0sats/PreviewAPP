@@ -17,16 +17,13 @@ import com.namoadigital.prj001.model.InspectionCell.Companion.CRITICAL_FORECAST
 import com.namoadigital.prj001.model.InspectionCell.Companion.FORECAST
 import com.namoadigital.prj001.model.InspectionCell.Companion.MANUAL_ALERT
 import com.namoadigital.prj001.model.InspectionCell.Companion.NORMAL
-import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
-import com.namoadigital.prj001.view.frag.frg_main_home.FrgMainHome
-import java.util.*
 
 private const val ARG_VIEW_OBJECT = "ARG_VIEW_OBJECT"
 private const val MAIN_HMAUX_TRANS_KEY = "MAIN_HMAUX_TRANS_KEY"
 
-class InspectionListFragment : Act011BaseFrg<Act011InspectionListFragmentBinding>() {
+class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>() {
 
     private val mAdapter by lazy {
         Act011InspectionFormAdapter(acessoryFormView.inspections, hmAuxTrans, mFrgListener)
@@ -39,9 +36,7 @@ class InspectionListFragment : Act011BaseFrg<Act011InspectionListFragmentBinding
         super.onCreate(savedInstanceState)
 
         arguments?.let {
-            acessoryFormView = (it.getSerializable(ARG_VIEW_OBJECT) as AcessoryFormView?)!!
-            hmAuxTrans =
-                HMAux.getHmAuxFromHashMap(it.getSerializable(Constant.MAIN_HMAUX_TRANS_KEY) as HashMap<String?, String?>)
+
         }
     }
 
@@ -144,15 +139,32 @@ class InspectionListFragment : Act011BaseFrg<Act011InspectionListFragmentBinding
 
     private fun setLabels() {
         binding.edtInspectionFilter.hint = hmAuxTrans.get("inspection_filter_list_hint")
+        binding.tvAcesoryVal.text = acessoryFormView.acessoryName
+        if(acessoryFormView.acessoryTracking.isNullOrEmpty()) {
+            binding.tvTrackingVal.visibility = View.GONE
+        }else{
+            binding.tvTrackingVal.text = acessoryFormView.acessoryTracking
+            binding.tvTrackingVal.visibility = View.VISIBLE
+        }
     }
 
     companion object {
         @JvmStatic
-        fun newInstance(viewObject: AcessoryFormView, hmAux_Trans: HMAux?) =
-            FrgMainHome().apply {
+        fun newInstance(hmAux_Trans: HMAux,
+                        tabIndex: Int = 0,
+                        tabLastIndex: Int = 0,
+                        formStatus: String,
+                        scheduleDesc: String?,
+                        scheduleComments: String?) =
+            Act011FrgInspection().apply {
+                this.hmAuxTrans = hmAux_Trans
+                this.formStatus = formStatus
+                this.tabIndex = tabIndex
+                this.tabLastIndex = tabLastIndex
+                this.scheduleDesc = scheduleDesc
+                this.scheduleComments = scheduleComments
                 arguments = Bundle().apply {
-                    putSerializable(ARG_VIEW_OBJECT, viewObject)
-                    putSerializable(MAIN_HMAUX_TRANS_KEY, hmAux_Trans)
+
                 }
             }
 
@@ -162,6 +174,9 @@ class InspectionListFragment : Act011BaseFrg<Act011InspectionListFragmentBinding
                 "inspection_filter_list_hint"
             )
         }
+    }
+    fun setViewObject(viewObject: AcessoryFormView){
+        acessoryFormView = viewObject
     }
 
     override fun getViewBinding() = Act011InspectionListFragmentBinding.inflate(layoutInflater)
@@ -185,7 +200,7 @@ class InspectionListFragment : Act011BaseFrg<Act011InspectionListFragmentBinding
 
     override fun getTabCount(): Int {
         return acessoryFormView.inspections.count {
-            it.status == ""
+            it.status != NORMAL
         }
     }
 

@@ -47,11 +47,21 @@ class Act011InspectionFormAdapter(
         }
 
         holder.binding.tvAutoSkipInspection.setOnClickListener {
-            myInspectionClickListener.onInspectionSelected(inspectionsFiltered[position], InspectionCellActions.VERIFY_LATER, position, textFilter)
+            myInspectionClickListener.onInspectionSelected(
+                inspectionsFiltered[position],
+                InspectionCellActions.VERIFY_LATER,
+                position,
+                textFilter
+            )
         }
 
         holder.binding.tvInspectionVerificationAction.setOnClickListener {
-            myInspectionClickListener.onInspectionSelected(inspectionsFiltered[position], InspectionCellActions.VERIFY, position, textFilter)
+            myInspectionClickListener.onInspectionSelected(
+                inspectionsFiltered[position],
+                InspectionCellActions.VERIFY,
+                position,
+                textFilter
+            )
         }
     }
 
@@ -125,7 +135,6 @@ class Act011InspectionFormAdapter(
                     binding.tvInspectAnswered.visibility = View.GONE
                     binding.tvInspectionVerificationAction.visibility = View.VISIBLE
                     binding.tvAutoSkipInspection.visibility = View.VISIBLE
-                    binding.tvAutoSkipInspection.text = autoSkipLbl
                 }
                 //
                 binding.tvInspectionDescription.text = description
@@ -141,23 +150,25 @@ class Act011InspectionFormAdapter(
                 setTint(tagDrawable, binding.root.context.resources.getColor(tagColor))
                 binding.vCellColorTag.background = tagDrawable
                 //
-                binding.tvInspectionVerificationAction.apply {
-                    if (answer != null) {
-                        if (isDone) {
-                            visibility = View.GONE
-                        } else {
-                            visibility = View.VISIBLE
-                            text = hmAuxTrans.get("inpection_ongoing_action_lbl")
-                        }
+
+                if (answer != null) {
+                    if (isDone) {
+                        binding.tvInspectionVerificationAction.visibility = View.GONE
                     } else {
-                        visibility = View.VISIBLE
-                        text = hmAuxTrans.get("inpection_verify_action_lbl")
+                        binding.tvInspectionVerificationAction.visibility = View.VISIBLE
+                        binding.tvInspectionVerificationAction.text = hmAuxTrans.get("inpection_ongoing_action_lbl")
                     }
+                } else {
+                    binding.tvInspectionVerificationAction.visibility = View.VISIBLE
+                    binding.tvInspectionVerificationAction.text = hmAuxTrans.get("inpection_verify_action_lbl")
+                    binding.tvAutoSkipInspection.text =  hmAuxTrans.get("inpection_verify_action_lbl")
                 }
+
+
                 //
-                if(isNewItem){
+                if (isNewItem) {
                     binding.tvDayCount.visibility = View.GONE
-                }else {
+                } else {
                     binding.tvDayCount.visibility = View.VISIBLE
                     if (status.equals(InspectionCell.NORMAL)) {
                         binding.tvDayCount.text =
@@ -194,11 +205,7 @@ class Act011InspectionFormAdapter(
                 if (photoCount > 0) {
                     binding.ivCommentary.applyTintColor(R.color.namoa_color_cone_item)
                 } else {
-                    if (photoRequired) {
-                        binding.ivCommentary.applyTintColor(R.color.namoa_color_highlight_required_item)
-                    } else {
-                        binding.ivCommentary.applyTintColor(R.color.namoa_color_gray_9)
-                    }
+                    binding.ivCommentary.applyTintColor(R.color.namoa_color_gray_9)
                 }
                 //
             }

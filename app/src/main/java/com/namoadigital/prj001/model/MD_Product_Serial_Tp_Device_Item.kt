@@ -85,4 +85,9 @@ class MD_Product_Serial_Tp_Device_Item(
         }
     }
 
+    companion object {
+        const val APPLY_MATERIAL_NO = "NO"
+        const val APPLY_MATERIAL_REQUIRED = "REQUIRED"
+        const val APPLY_MATERIAL_OPTIONAL = "OPTIONAL"
+    }
 }

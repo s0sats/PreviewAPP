@@ -5,10 +5,10 @@ import java.io.Serializable
 
 class AcessoryFormView(
     val acessoryName: String,
-    val acessoryTracking: String,
+    val acessoryTracking: String?,
     val isReadOnly: Boolean,
-    val lastPositionSelected: Int = 0,
-    val inspections: List<InspectionCell>
+    var lastPositionSelected: Int = 0,
+    val inspections: MutableList<InspectionCell> = mutableListOf()
 ): Serializable {
     var filterVal: String = ""
     var nonForecastFilter: Boolean = false

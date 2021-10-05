@@ -74,6 +74,8 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
 import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.GeOsDao;
+import com.namoadigital.prj001.dao.GeOsDeviceDao;
+import com.namoadigital.prj001.dao.GeOsDeviceItemDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
@@ -83,6 +85,7 @@ import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
+import com.namoadigital.prj001.model.AcessoryFormView;
 import com.namoadigital.prj001.model.Act011FfOptionsViewObject;
 import com.namoadigital.prj001.model.Act011FormTab;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
@@ -114,6 +117,7 @@ import com.namoadigital.prj001.ui.act011.frags.Act011BaseFrg;
 import com.namoadigital.prj001.ui.act011.frags.Act011BaseFrgInteractionNavegation;
 import com.namoadigital.prj001.ui.act011.frags.Act011FrgFF;
 import com.namoadigital.prj001.ui.act011.frags.Act011FrgFFInteraction;
+import com.namoadigital.prj001.ui.act011.frags.Act011FrgInspection;
 import com.namoadigital.prj001.ui.act011.frags.InspectionListFragmentInteraction;
 import com.namoadigital.prj001.ui.act022.Act022_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
@@ -630,7 +634,10 @@ public class Act011_Main extends Base_Activity
                 new TK_Ticket_StepDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
                 new MD_SiteDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
                 new MdTagDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
-                new GeOsDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM));
+                new GeOsDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
+                new GeOsDeviceDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
+                new GeOsDeviceItemDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
+        );
 
         recoverGetIntents();
         //
@@ -1178,7 +1185,7 @@ public class Act011_Main extends Base_Activity
     }
 
     @Override
-    public void loadFragment_CF_Fields(List<HMAux> cf_fields, boolean bNew, GE_Custom_Form_Local formLocal, GE_Custom_Form_Data formData, String prefix, List<HMAux> pdfs, int indexF, int signature, int require_serial_done) {
+    public void loadFragment_CF_Fields(List<HMAux> cf_fields, boolean bNew, GE_Custom_Form_Local formLocal, GE_Custom_Form_Data formData, String prefix, List<HMAux> pdfs, int indexF, int signature, int require_serial_done, ArrayList<AcessoryFormView> acessoryFormViews) {
         this.prefix = prefix;
         this.bNew = bNew;
         this.formLocal = formLocal;
@@ -1311,21 +1318,60 @@ public class Act011_Main extends Base_Activity
            //
             ArrayList<Act011FormTab> tabs = new ArrayList<>();
             //Loop de criação das tabs do form utilizando o novo fragment.
-            for (int i = 1; i <= pages; i++) {
-                Act011FrgFF custom_form_ff = Act011FrgFF.Companion.newInstance(
-                    hmAux_Trans,
-                    i,
-                    pages,
-                    formData.getCustom_form_status(),
-                    mdScheduleExec != null ? mdScheduleExec.getSchedule_desc() : null,
-                    mdScheduleExec != null ? mdScheduleExec.getComments() : null
-                );
-                custom_form_ff.setCustomFF(customFFs);
-                //Substituido o param de bNew para includeField, pois ele identifica  aprimeira abertura.
-                //Ajuste necessario pois no caso do agendamento, o bNew era false na primera abertura,
-                //os campos estavam sendo validados e marcados como erro
-                tabs.add(custom_form_ff.getTabObj(includeField));
-                screens.add(custom_form_ff);
+            if(formLocal.getIs_so() ==1){
+                //
+                addOsHEaderFrag();
+                //
+                for (int i = 1; i <= pages; i++) {
+                    Act011FrgFF custom_form_ff = Act011FrgFF.Companion.newInstance(
+                            hmAux_Trans,
+                            i,
+                            pages,
+                            formData.getCustom_form_status(),
+                            mdScheduleExec != null ? mdScheduleExec.getSchedule_desc() : null,
+                            mdScheduleExec != null ? mdScheduleExec.getComments() : null
+                    );
+                    custom_form_ff.setCustomFF(customFFs);
+                    //Substituido o param de bNew para includeField, pois ele identifica  aprimeira abertura.
+                    //Ajuste necessario pois no caso do agendamento, o bNew era false na primera abertura,
+                    //os campos estavam sendo validados e marcados como erro
+                    tabs.add(custom_form_ff.getTabObj(includeField));
+                    screens.add(custom_form_ff);
+                }
+                //
+                for(AcessoryFormView acessoryFormView: acessoryFormViews){
+                    Act011FrgInspection act011FrgInspection = Act011FrgInspection.Companion
+                            .newInstance(
+                                    hmAux_Trans,
+                                    pages,
+                                    pages + acessoryFormViews.size(),
+                                    formLocal.getCustom_form_status(),
+                                    "",
+                                    ""
+                                    );
+                    act011FrgInspection.setViewObject(acessoryFormView);
+                    tabs.add(act011FrgInspection.getTabObj(includeField));
+                    screens.add(act011FrgInspection);
+                }
+
+
+            }else {
+                for (int i = 1; i <= pages; i++) {
+                    Act011FrgFF custom_form_ff = Act011FrgFF.Companion.newInstance(
+                            hmAux_Trans,
+                            i,
+                            pages,
+                            formData.getCustom_form_status(),
+                            mdScheduleExec != null ? mdScheduleExec.getSchedule_desc() : null,
+                            mdScheduleExec != null ? mdScheduleExec.getComments() : null
+                    );
+                    custom_form_ff.setCustomFF(customFFs);
+                    //Substituido o param de bNew para includeField, pois ele identifica  aprimeira abertura.
+                    //Ajuste necessario pois no caso do agendamento, o bNew era false na primera abertura,
+                    //os campos estavam sendo validados e marcados como erro
+                    tabs.add(custom_form_ff.getTabObj(includeField));
+                    screens.add(custom_form_ff);
+                }
             }
             //
             pager.setOffscreenPageLimit(screens.size());
@@ -1472,6 +1518,11 @@ public class Act011_Main extends Base_Activity
 
 
     }
+
+    private void addOsHEaderFrag() {
+
+    }
+
     @Override
     public void alertActiveGPSResource() {
         ToolBox.alertMSG(
