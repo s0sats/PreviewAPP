@@ -9,7 +9,6 @@ import android.view.WindowManager
 import androidx.fragment.app.Fragment
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag
-import com.namoadigital.prj001.dao.GeOsDeviceDao
 import com.namoadigital.prj001.databinding.Act086MainBinding
 import com.namoadigital.prj001.databinding.Act086MainContentBinding
 import com.namoadigital.prj001.extensions.setFrag
@@ -76,14 +75,14 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
         bundle = intent?.extras?:Bundle()
         prefixPhoto = bundle.getString(PARAM_PREFIX_PHOTO,"confer_photo_")
         isNewVerification = bundle.getBoolean(PARAM_NEW_VERIFICATION,false)
-        var deviceBundle = bundle.getBundle(DEVICE_BUNDLE)!!
-        deviceBundle.getString(GeOsDeviceDao.DEVICE_TP_DESC)
-        deviceBundle.getString(GeOsDeviceDao.TRACKING_NUMBER)
-        deviceBundle.getString(DEVICE_ITEM_PK)
-        deviceBundle.getInt(DEVICE_ITEM_TAB_INDEX)
-        deviceBundle.getInt(DEVICE_ITEM_LIST_INDEX)
-        deviceBundle.getString(DEVICE_ITEM_LIST_FILTER)
-        deviceBundle.getString(DEVICE_ITEM_LIST_ACTION)
+//        var deviceBundle = bundle.getBundle(DEVICE_BUNDLE)!!
+//        deviceBundle.getString(GeOsDeviceDao.DEVICE_TP_DESC)
+//        deviceBundle.getString(GeOsDeviceDao.TRACKING_NUMBER)
+//        deviceBundle.getString(DEVICE_ITEM_PK)
+//        deviceBundle.getInt(DEVICE_ITEM_TAB_INDEX)
+//        deviceBundle.getInt(DEVICE_ITEM_LIST_INDEX)
+//        deviceBundle.getString(DEVICE_ITEM_LIST_FILTER)
+//        deviceBundle.getString(DEVICE_ITEM_LIST_ACTION)
     }
 
     private fun iniSetup() {

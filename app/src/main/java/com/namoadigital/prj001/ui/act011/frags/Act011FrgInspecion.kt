@@ -18,6 +18,7 @@ import com.namoadigital.prj001.model.InspectionCell.Companion.CRITICAL_FORECAST
 import com.namoadigital.prj001.model.InspectionCell.Companion.FORECAST
 import com.namoadigital.prj001.model.InspectionCell.Companion.MANUAL_ALERT
 import com.namoadigital.prj001.model.InspectionCell.Companion.NORMAL
+import com.namoadigital.prj001.model.InspectionCellActions
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
 
@@ -82,6 +83,9 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
             chkNonForecastItem.setOnClickListener {
                 mAdapter.applyNonForecastFilter((it as CheckBox).isChecked)
                 handleAddNewProcessVisibility()
+            }
+            clAddNewItemBtn.setOnClickListener {
+                mFrgListener.onInspectionSelected(acessoryFormView, InspectionCellActions.ADD_NEW_ITEM, -1, edtInspectionFilter.text.toString())
             }
         }
     }
