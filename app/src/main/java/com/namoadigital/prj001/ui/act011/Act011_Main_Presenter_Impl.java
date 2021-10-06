@@ -265,7 +265,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                         formtype_code,
                         form_code,
                         formversion_code,
-                        s_form_data
+                        String.valueOf(customFormLocal.getCustom_form_data())
                 );
             }
         } else {
@@ -566,7 +566,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             AcessoryFormView acessoryFormView = new AcessoryFormView(
                     device.getDevice_tp_desc(),
                     device.getTracking_number(),
-                    isInProcessing(customFormLocal),
+                    !isInProcessing(customFormLocal),
                     0,
                     new ArrayList<>()
             );

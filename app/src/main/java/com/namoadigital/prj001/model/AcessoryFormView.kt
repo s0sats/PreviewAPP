@@ -12,4 +12,5 @@ class AcessoryFormView(
 ): Serializable {
     var filterVal: String = ""
     var nonForecastFilter: Boolean = false
+    var tabIndex: Int = 0
 }

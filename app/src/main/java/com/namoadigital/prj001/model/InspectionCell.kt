@@ -71,6 +71,6 @@ data class InspectionCell   (
     }
 }
 
-enum class InspectionCellActions{
-    VERIFY , VERIFY_LATER
+enum class InspectionCellActions(val action: String){
+    VERIFY("verify") , VERIFY_LATER("verify_later")
 }

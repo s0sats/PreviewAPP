@@ -18,6 +18,11 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String SCHEDULED_PROFILE_CHECK = "SCHEDULED_PROFILE_CHECK";
     public static final String GENERIC_CHANNEL_ID = "GENERIC_CHANNEL_ID";
     public static final String PENDENCY_CHANNEL_ID = "PENDENCY_CHANNEL_ID";
+    public static final String DEVICE_ITEM_PK = "DEVICE_ITEM_PK";
+    public static final String DEVICE_ITEM_TAB_INDEX = "DEVICE_ITEM_TAB_INDEX";
+    public static final String DEVICE_ITEM_LIST_INDEX = "DEVICE_ITEM_LIST_INDEX";
+    public static final String DEVICE_ITEM_LIST_ACTION = "DEVICE_ITEM_LIST_ACTION";
+    public static final String DEVICE_BUNDLE = "DEVICE_BUNDLE";
     //As 3 variaveis abaixo são preenchidas pela classe AppBase
     public static String PRJ001_VERSION = "";
     public static int PRJ001_VERSION_CODE = -1;
