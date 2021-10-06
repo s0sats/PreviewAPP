@@ -146,9 +146,11 @@ class Act011InspectionFormAdapter(
         fun onBinding(inspection: InspectionCell) {
             inspection.apply {
                 val context = binding.root.context
+                binding.tvInspectionOngoingAction.visibility = View.GONE
                 if (isDone) {
                     binding.llAnswerInfo.visibility = View.VISIBLE
                     binding.tvInspectAnswered.visibility = View.VISIBLE
+                    binding.tvInspectionOngoingAction.visibility = View.GONE
                     binding.tvInspectionVerificationAction.visibility = View.GONE
                     binding.tvAutoSkipInspection.visibility = View.GONE
                 } else {
@@ -180,12 +182,11 @@ class Act011InspectionFormAdapter(
                 if (answer != null) {
                     binding.tvInspectAnswered.text = answer
                     if (!isDone) {
-                        binding.tvInspectionVerificationAction.visibility = View.VISIBLE
-                        binding.tvInspectionVerificationAction.apply {
-                            text = hmAuxTrans.get("inpection_ongoing_action_lbl")
-                            setTextColor(ContextCompat.getColor(context, R.color.namoa_color_highlight_required_item))
-                        }
+                        binding.tvInspectionOngoingAction.text = hmAuxTrans.get("inpection_ongoing_action_lbl")
+                        binding.tvInspectionOngoingAction.visibility = View.VISIBLE
+                        binding.tvInspectionVerificationAction.visibility = View.GONE
                         binding.tvAutoSkipInspection.visibility = View.GONE
+                        binding.llAnswerInfo.visibility = View.VISIBLE
                     }
                 } else {
                     binding.tvInspectionVerificationAction.visibility = View.VISIBLE
@@ -200,11 +201,11 @@ class Act011InspectionFormAdapter(
                     if (status.equals(InspectionCell.NORMAL)) {
                         binding.tvDayCount.text =
                             "${hmAuxTrans.get("inspection_missing_days")}: ${dayCount}"
-                        binding.tvDayCount.setTextColor(R.color.gray_colors_menu)
+                        binding.tvDayCount.setTextColor(ContextCompat.getColor(context, R.color.gray_colors_menu))
                     } else {
                         binding.tvDayCount.text =
                             "${hmAuxTrans.get("inspection_alert_days")}: ${dayCount}"
-                        binding.tvDayCount.setTextColor(R.color.namoa_os_form_problem_red)
+                        binding.tvDayCount.setTextColor(ContextCompat.getColor(context, R.color.namoa_os_form_problem_red))
                     }
                 }
                 //
@@ -218,21 +219,28 @@ class Act011InspectionFormAdapter(
                     }
                 }
                 //
+                binding.tvProductAppliedCount.text = materialCount.toString()
                 if (materialCount > 0) {
                     binding.ivProductApplied.applyTintColor(R.color.namoa_color_cone_item)
+                    binding.tvProductAppliedCount.setTextColor(ContextCompat.getColor(context, R.color.namoa_color_cone_item))
                 } else {
                     if (materialRequired) {
                         binding.ivProductApplied.applyTintColor(R.color.namoa_color_highlight_required_item)
+                        binding.tvProductAppliedCount.setTextColor(ContextCompat.getColor(context, R.color.namoa_color_highlight_required_item))
                     } else {
                         binding.ivProductApplied.applyTintColor(R.color.namoa_color_gray_9)
+                        binding.tvProductAppliedCount.setTextColor(ContextCompat.getColor(context, R.color.namoa_color_gray_9))
                     }
                 }
                 //
                 if (photoCount > 0) {
                     binding.ivPhoto.applyTintColor(R.color.namoa_color_cone_item)
+                    binding.tvPhotoCount.setTextColor(ContextCompat.getColor(context, R.color.namoa_color_cone_item))
                 } else {
                     binding.ivPhoto.applyTintColor(R.color.namoa_color_gray_9)
+                    binding.tvPhotoCount.setTextColor(ContextCompat.getColor(context, R.color.namoa_color_gray_9))
                 }
+                binding.tvPhotoCount.text = photoCount.toString()
                 //
             }
         }
