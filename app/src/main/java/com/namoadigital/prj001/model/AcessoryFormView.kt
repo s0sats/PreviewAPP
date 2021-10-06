@@ -8,8 +8,10 @@ class AcessoryFormView(
     val acessoryTracking: String?,
     val isReadOnly: Boolean,
     var lastPositionSelected: Int = 0,
+    val devicePkPrefix: String,
     val inspections: MutableList<InspectionCell> = mutableListOf()
 ): Serializable {
     var filterVal: String = ""
     var nonForecastFilter: Boolean = false
+    var tabIndex: Int = 0
 }

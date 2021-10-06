@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.widget.CheckBox
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.adapter.Act011InspectionFormAdapter
@@ -17,6 +18,7 @@ import com.namoadigital.prj001.model.InspectionCell.Companion.CRITICAL_FORECAST
 import com.namoadigital.prj001.model.InspectionCell.Companion.FORECAST
 import com.namoadigital.prj001.model.InspectionCell.Companion.MANUAL_ALERT
 import com.namoadigital.prj001.model.InspectionCell.Companion.NORMAL
+import com.namoadigital.prj001.model.InspectionCellActions
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
 
@@ -26,7 +28,7 @@ private const val MAIN_HMAUX_TRANS_KEY = "MAIN_HMAUX_TRANS_KEY"
 class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>() {
 
     private val mAdapter by lazy {
-        Act011InspectionFormAdapter(acessoryFormView.inspections, hmAuxTrans, mFrgListener)
+        Act011InspectionFormAdapter(acessoryFormView, hmAuxTrans, mFrgListener)
     }
     private lateinit var acessoryFormView: AcessoryFormView
     private var _mFrgListener: InspectionListFragmentInteraction? = null
@@ -35,9 +37,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        arguments?.let {
 
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -79,6 +79,14 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
                     mAdapter.filter.filter(s)
                 }
             })
+
+            chkNonForecastItem.setOnClickListener {
+                mAdapter.applyNonForecastFilter((it as CheckBox).isChecked)
+                handleAddNewProcessVisibility()
+            }
+            clAddNewItemBtn.setOnClickListener {
+                mFrgListener.onInspectionSelected(acessoryFormView, InspectionCellActions.ADD_NEW_ITEM, -1, edtInspectionFilter.text.toString())
+            }
         }
     }
 
@@ -87,8 +95,10 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
             binding.chkNonForecastItem.visibility = View.GONE
             binding.tvNonForecastCount.visibility = View.GONE
         } else {
-            binding.chkNonForecastItem.visibility = View.VISIBLE
-            binding.tvNonForecastCount.visibility = View.VISIBLE
+            if (!acessoryFormView.isReadOnly) {
+                binding.chkNonForecastItem.visibility = View.VISIBLE
+                binding.tvNonForecastCount.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -97,17 +107,22 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
             if (acessoryFormView.isReadOnly) {
                 clAddNewItemBtn.visibility = View.GONE
                 chkNonForecastItem.visibility = View.GONE
+                tvNonForecastCount.visibility = View.GONE
             } else {
-                if (hideAddNewItem()) {
-                    clAddNewItemBtn.visibility = View.GONE
-                } else {
-                    tvAddNewItemVal.visibility = View.VISIBLE
-                }
+                handleAddNewProcessVisibility()
             }
         }
         //
         setListContentAndPlaceholder(acessoryFormView.inspections.isEmpty())
         //
+    }
+
+    private fun Act011InspectionListFragmentBinding.handleAddNewProcessVisibility() {
+        if (showAddNewItem()) {
+            clAddNewItemBtn.visibility = View.VISIBLE
+        } else {
+            clAddNewItemBtn.visibility = View.GONE
+        }
     }
 
     private fun setListContentAndPlaceholder(isEmptyList: Boolean) {
@@ -122,12 +137,12 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
         }
     }
 
-    private fun hideAddNewItem(): Boolean {
-        return !ToolBox_Inf.profileExists(
+    private fun showAddNewItem(): Boolean {
+        return ToolBox_Inf.profileExists(
             context,
             ConstantBaseApp.PROFILE_PRJ001_CHECKLIST,
             ConstantBaseApp.PROFILE_PRJ001_CHECKLIST_PARAM_DONE_NEW
-        ) || binding.chkNonForecastItem.isChecked
+        ) && !binding.chkNonForecastItem.isChecked
     }
 
     private fun setInspectionList() {
@@ -146,6 +161,10 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
             binding.tvTrackingVal.text = acessoryFormView.acessoryTracking
             binding.tvTrackingVal.visibility = View.VISIBLE
         }
+        binding.tvNonForecastCount.text =  acessoryFormView.inspections.count {
+            it.status == NORMAL
+        }.toString()
+        binding.tvAddNewItemVal.text = hmAuxTrans.get("inspection_add_new_process_btn")
     }
 
     companion object {
@@ -174,6 +193,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
                 "inspection_missing_days",
                 "inspection_alert_days",
                 "inpection_ongoing_action_lbl",
+                "inspection_add_new_process_btn",
                 "inpection_verify_action_lbl",
                 "inspection_filter_list_hint"
             )
@@ -181,6 +201,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
     }
     fun setViewObject(viewObject: AcessoryFormView){
         acessoryFormView = viewObject
+        acessoryFormView.tabIndex = this.tabIndex
     }
 
     override fun getViewBinding() = Act011InspectionListFragmentBinding.inflate(layoutInflater)

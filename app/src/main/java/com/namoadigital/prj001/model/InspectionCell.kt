@@ -16,7 +16,7 @@ data class InspectionCell   (
     val isCritical: Boolean,
     val isNewItem: Boolean = false,
     val answer: String?,
-    val itemPk: String
+    val itemCodeAndSeq: String,
 ): Serializable {
     var isDone: Boolean = false
     @ColorInt
@@ -71,6 +71,6 @@ data class InspectionCell   (
     }
 }
 
-enum class InspectionCellActions{
-    VERIFY , VERIFY_LATER
+enum class InspectionCellActions(val action: String){
+    VERIFY("verify") , VERIFY_LATER("verify_later"), ADD_NEW_ITEM("add_new_item")
 }

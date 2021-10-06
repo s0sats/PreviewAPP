@@ -566,8 +566,9 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             AcessoryFormView acessoryFormView = new AcessoryFormView(
                     device.getDevice_tp_desc(),
                     device.getTracking_number(),
-                    isInProcessing(customFormLocal),
+                    !isInProcessing(customFormLocal),
                     0,
+                    device.getGeOsDevicePkPrefix(),
                     new ArrayList<>()
             );
             List<InspectionCell> inspections = acessoryFormView.getInspections();
@@ -585,7 +586,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                         item.getCritical_item() == 1,
                         item.getStructure() == 0,
                         item.getStatus_answer(),
-                        item.getGeOsDeviceItemPK()
+                        item.getGeOsDeviceItemCodeAndSeq()
                     )
                 );
             }

@@ -12,16 +12,21 @@ import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.Act011InspectionQuestionFormCellBinding
 import com.namoadigital.prj001.extensions.applyTintColor
+import com.namoadigital.prj001.model.AcessoryFormView
 import com.namoadigital.prj001.model.InspectionCell
 import com.namoadigital.prj001.model.InspectionCellActions
 import com.namoadigital.prj001.ui.act011.frags.InspectionListFragmentInteraction
 
 class Act011InspectionFormAdapter(
-    private val inspections: List<InspectionCell>,
+    /*
+        Barrionuevo 05/10;2021
+        Objeto está aqui para facilitar a passagem de param do click listener.
+     */
+    private val acessoryFormView: AcessoryFormView,
     private val hmAuxTrans: HMAux,
     private val myInspectionClickListener: InspectionListFragmentInteraction
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
-
+    private val inspections: List<InspectionCell> = acessoryFormView.inspections
     private var inspectionsFiltered: MutableList<InspectionCell> = mutableListOf()
     protected var textFilter:String = ""
     val mFilter = InspectionFormFilter()
@@ -48,7 +53,7 @@ class Act011InspectionFormAdapter(
 
         holder.binding.tvAutoSkipInspection.setOnClickListener {
             myInspectionClickListener.onInspectionSelected(
-                inspectionsFiltered[position],
+                acessoryFormView,
                 InspectionCellActions.VERIFY_LATER,
                 position,
                 textFilter
@@ -57,7 +62,7 @@ class Act011InspectionFormAdapter(
 
         holder.binding.tvInspectionVerificationAction.setOnClickListener {
             myInspectionClickListener.onInspectionSelected(
-                inspectionsFiltered[position],
+                acessoryFormView,
                 InspectionCellActions.VERIFY,
                 position,
                 textFilter
@@ -69,11 +74,13 @@ class Act011InspectionFormAdapter(
         inspectionsFiltered.clear()
         if (filterApplied) {
             inspectionsFiltered.addAll(inspections.filter {
-                it.status == InspectionCell.NORMAL
+                it.status != InspectionCell.NORMAL
             })
         } else {
             inspectionsFiltered.addAll(inspections)
         }
+        //
+        notifyDataSetChanged()
     }
 
     override fun getItemCount(): Int {

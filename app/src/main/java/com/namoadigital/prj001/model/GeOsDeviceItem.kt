@@ -35,7 +35,7 @@ class GeOsDeviceItem(
     var status_answer :String?,
     val materialList: MutableList<GeOsDeviceMaterial>  = mutableListOf()
 ) {
-    fun getGeOsDeviceItemPK(): String{
-        return "${customer_code}.${custom_form_type}.${custom_form_code}.${custom_form_version}.${custom_form_data}.${product_code}.${serial_code}.${device_tp_code}"
+    fun getGeOsDeviceItemCodeAndSeq(): String{
+        return "${item_check_code}.${item_check_seq}"
     }
 }

@@ -81,6 +81,7 @@
                 android:drawableTint="#074C61"
                 android:paddingHorizontal="8dp"
                 android:paddingVertical="10dp"
+                android:textAllCaps="true"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@+id/tv_auto_skip_inspection"
                 app:layout_constraintHorizontal_bias="0.5"
