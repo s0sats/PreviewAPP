@@ -9,14 +9,17 @@ import android.view.WindowManager
 import androidx.fragment.app.Fragment
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag
+import com.namoadigital.prj001.dao.GeOsDeviceDao
 import com.namoadigital.prj001.databinding.Act086MainBinding
 import com.namoadigital.prj001.databinding.Act086MainContentBinding
 import com.namoadigital.prj001.extensions.setFrag
 import com.namoadigital.prj001.ui.act005.Act005_Main
+import com.namoadigital.prj001.ui.act011.Act011_Main
 import com.namoadigital.prj001.ui.act086.frg_historic.Act086HistoricFrg
 import com.namoadigital.prj001.ui.act086.frg_verification.Act086VerificationFrg
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
+import com.namoadigital.prj001.util.ConstantBaseApp.*
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 
@@ -73,6 +76,14 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
         bundle = intent?.extras?:Bundle()
         prefixPhoto = bundle.getString(PARAM_PREFIX_PHOTO,"confer_photo_")
         isNewVerification = bundle.getBoolean(PARAM_NEW_VERIFICATION,false)
+        var deviceBundle = bundle.getBundle(DEVICE_BUNDLE)!!
+        deviceBundle.getString(GeOsDeviceDao.DEVICE_TP_DESC)
+        deviceBundle.getString(GeOsDeviceDao.TRACKING_NUMBER)
+        deviceBundle.getString(DEVICE_ITEM_PK)
+        deviceBundle.getInt(DEVICE_ITEM_TAB_INDEX)
+        deviceBundle.getInt(DEVICE_ITEM_LIST_INDEX)
+        deviceBundle.getString(DEVICE_ITEM_LIST_FILTER)
+        deviceBundle.getString(DEVICE_ITEM_LIST_ACTION)
     }
 
     private fun iniSetup() {
@@ -219,7 +230,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
 
     override fun onBackPressed() {
         super.onBackPressed()
-        callAct005()
+        callAct011()
     }
 
     private fun callAct005() {
@@ -227,6 +238,18 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
             Intent().apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 setClass(this@Act086Main,Act005_Main::class.java)
+            }
+        )
+        //
+        finish()
+    }
+
+    private fun callAct011() {
+        startActivity(
+            Intent().apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                setClass(this@Act086Main, Act011_Main::class.java)
+                putExtras(bundle)
             }
         )
         //

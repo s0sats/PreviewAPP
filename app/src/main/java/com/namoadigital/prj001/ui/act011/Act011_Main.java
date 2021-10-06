@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui.act011;
 import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH_PHOTO;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DEVICE_BUNDLE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DEVICE_ITEM_LIST_ACTION;
+import static com.namoadigital.prj001.util.ConstantBaseApp.DEVICE_ITEM_LIST_FILTER;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DEVICE_ITEM_LIST_INDEX;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DEVICE_ITEM_PK;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DEVICE_ITEM_TAB_INDEX;
@@ -98,7 +99,6 @@ import com.namoadigital.prj001.model.GE_Custom_Form_Data_Field;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.GeOs;
-import com.namoadigital.prj001.model.InspectionCell;
 import com.namoadigital.prj001.model.InspectionCellActions;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
@@ -259,6 +259,11 @@ public class Act011_Main extends Base_Activity
     private CustomFF.ICustomFFDotsDialogDismiss onBackFocusEvent;
     private Bundle act083Bundle;
     private boolean isFormOs = false;
+
+    private int device_item_tab_index =-1;
+    private int device_item_list_index = -1;
+    private String device_item_list_filter;
+
 
     public void setWsSoProcess(String wsSoProcess) {
         this.wsSoProcess = wsSoProcess;
@@ -1148,6 +1153,12 @@ public class Act011_Main extends Base_Activity
                         bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,ConstantBaseApp.ACT005)
                 );
                 act083Bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM,ToolBox_Inf.getMyActionFilterParam(bundle));
+            }
+            if(bundle.containsKey(DEVICE_BUNDLE)) {
+                Bundle deviceBundle = bundle.getBundle(DEVICE_BUNDLE);
+                this.device_item_tab_index = deviceBundle.getInt(DEVICE_ITEM_TAB_INDEX);
+                this.device_item_list_index = deviceBundle.getInt(DEVICE_ITEM_LIST_INDEX);
+                this.device_item_list_filter = deviceBundle.getString(DEVICE_ITEM_LIST_FILTER);
             }
 
         } else {
@@ -2060,7 +2071,7 @@ public class Act011_Main extends Base_Activity
         deviceBundle.putString(DEVICE_ITEM_PK,acessoryFormView.getInspections().get(position).getItemPk());
         deviceBundle.putInt(DEVICE_ITEM_TAB_INDEX,acessoryFormView.getTabIndex());
         deviceBundle.putInt(DEVICE_ITEM_LIST_INDEX,position);
-        deviceBundle.putString(DEVICE_ITEM_LIST_INDEX,textFilter);
+        deviceBundle.putString(DEVICE_ITEM_LIST_FILTER,textFilter);
         deviceBundle.putString(DEVICE_ITEM_LIST_ACTION,action.getAction());
         bundle.putBundle(DEVICE_BUNDLE, deviceBundle);
         mIntent.putExtras(bundle);
