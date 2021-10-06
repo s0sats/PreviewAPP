@@ -133,15 +133,15 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
             setHistoricFrg()
         }
         //
-        binding.act086TvBack.setOnClickListener {
+        /*binding.act086TvBack.setOnClickListener {
             toggleHeaderNavegationIcons(it.id)
             initVerificationFrg()
-        }
+        }*/
 
     }
 
     private fun toggleHeaderNavegationIcons(viewId: Int) {
-        binding.act086TvBack.visibility = if(binding.act086TvBack.id == viewId) View.GONE else View.VISIBLE
+        //binding.act086TvBack.visibility = if(binding.act086TvBack.id == viewId) View.GONE else View.VISIBLE
         binding.act086TvConsult.visibility = if(binding.act086TvConsult.id == viewId) View.GONE else View.VISIBLE
     }
 

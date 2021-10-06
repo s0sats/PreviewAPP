@@ -12,7 +12,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:padding="5dp">
 
         <ImageView
             android:id="@+id/act086_product_item_iv_delete"
@@ -22,17 +23,16 @@
             android:scaleType="fitCenter"
             android:src="@drawable/ic_trash"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0"
-            app:tint="@color/namoa_color_danger_red" />
+            app:tint="@color/namoa_os_form_problem_red" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/act086_product_item_cl_product_info"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/act086_product_item_iv_delete"
+            app:layout_constraintEnd_toStartOf="@id/act086_product_item_iv_delete"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
@@ -41,7 +41,7 @@
                 android:layout_height="wrap_content"
                 android:padding="4dp"
                 android:text="18758 - Óleo Super Freio"
-                android:textColor="@color/namoa_color_gray_9"
+                android:textColor="@color/namoa_font_color_black222"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -52,7 +52,7 @@
                 android:layout_height="wrap_content"
                 android:padding="4dp"
                 android:text="2,1 L"
-                android:textColor="@color/namoa_color_gray_9"
+                android:textColor="@color/namoa_font_color_black222"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/act086_product_item_tv_product_desc" />

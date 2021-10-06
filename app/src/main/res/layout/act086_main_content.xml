@@ -57,23 +57,7 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
-                    android:id="@+id/act086_tv_back"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minWidth="40dp"
-                    android:minHeight="40dp"
-                    android:paddingStart="4dp"
-                    android:paddingEnd="4dp"
-                    android:text="Voltar"
-                    app:drawableTint="@color/namoa_dark_blue"
-                    app:drawableTopCompat="@drawable/ic_arrow_back_24dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/act086_tv_description"
-                    android:visibility="gone"
-                    />
-
-                <TextView
-                    android:id="@+id/act086_tv_description"
+                    android:id="@+id/act086_tv_instruction"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:layout_marginTop="8dp"
@@ -82,25 +66,35 @@
                     android:paddingStart="4dp"
                     android:paddingEnd="4dp"
                     android:text="Verificar articulações  e cabos do freio de estacionamento que vai ficar ainda maior pra pode"
+                    android:textColor="@color/namoa_font_color_black222"
+                    android:textSize="@dimen/font_size_title_dialog"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/act086_tv_consult"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHeight_default="wrap"
-                    app:layout_constraintStart_toEndOf="@+id/act086_tv_back"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/act086_tv_tracking_num" />
+
+                <TextView
+                    android:id="@+id/act086_tv_device_desc"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="Device description"
+                    android:textColor="@color/namoa_font_color_black222"
+                    android:textSize="@dimen/font_size_font_16"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/act086_tv_consult"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/act086_tv_tracking_num"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:minWidth="40dp"
-                    android:minHeight="40dp"
-                    android:paddingStart="4dp"
-                    android:paddingEnd="4dp"
-                    android:text="Consultar"
-                    app:drawableTint="@color/namoa_dark_blue"
-                    app:drawableTopCompat="@drawable/ic_baseline_info_24_black"
+                    android:text="TranckingNumber"
+                    android:textColor="@color/my_action_gray_font"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/act086_tv_description" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/act086_tv_device_desc" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -108,22 +102,65 @@
                 android:id="@+id/act086_tv_subttl"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginEnd="4dp"
+                android:padding="4dp"
                 android:text="Alerta Manual (5 dias)"
-                android:textColor="@color/namoa_color_danger_red"
-                app:layout_constraintEnd_toStartOf="@id/act086_gd_end"
+                android:textColor="@color/namoa_os_form_problem_red"
+                app:layout_constraintBottom_toBottomOf="@id/br_header"
+                app:layout_constraintEnd_toStartOf="@+id/gd_middle"
                 app:layout_constraintStart_toStartOf="@id/act086_gd_start"
                 app:layout_constraintTop_toBottomOf="@id/act086_cl_header" />
+
+            <TextView
+                android:id="@+id/act086_tv_consult"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"
+                android:drawablePadding="8dp"
+                android:gravity="center_vertical"
+                android:minHeight="40dp"
+                android:text="Consultar"
+                android:textAllCaps="true"
+                android:textStyle="bold"
+                app:drawableLeftCompat="@drawable/ic_baseline_info_24_black"
+                app:drawableTint="@color/namoa_dark_blue"
+                app:layout_constraintBottom_toBottomOf="@id/br_header"
+                app:layout_constraintEnd_toEndOf="@id/act086_gd_end"
+                app:layout_constraintHorizontal_bias="1"
+                app:layout_constraintStart_toEndOf="@id/gd_middle"
+                app:layout_constraintTop_toBottomOf="@id/act086_cl_header"
+                app:layout_constraintWidth_default="wrap"
+                android:visibility="visible"
+                />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/gd_middle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.5" />
+
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/br_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="bottom"
+                app:constraint_referenced_ids="act086_tv_subttl,act086_tv_consult"
+                />
+
 
             <FrameLayout
                 android:id="@+id/act086_frg_placeholder"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/act086_tv_subttl"
+                app:layout_constraintTop_toBottomOf="@id/br_header"
                 app:layout_constraintStart_toStartOf="@id/act086_gd_start"
                 app:layout_constraintEnd_toEndOf="@id/act086_gd_end"
                 app:layout_constraintBottom_toBottomOf="parent"
                 />
+
+
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

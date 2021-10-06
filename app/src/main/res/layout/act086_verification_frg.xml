@@ -26,8 +26,8 @@
                 android:id="@+id/act086_verification_frg_rdo_answer_done"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:buttonTint="@color/os_form_verify_text_color_states"
-                android:checked="false"
+                android:buttonTint="@color/namoa_dark_blue"
+                android:checked="true"
                 android:drawableStart="@drawable/ic_build_black_24dp"
                 android:drawablePadding="8dp"
                 android:minHeight="48dp"
@@ -35,14 +35,15 @@
                 android:text="Ação realizada"
                 android:textColor="@color/os_form_verify_text_color_states"
                 android:background="@drawable/os_form_verify_background_states"
-                app:drawableTint="@color/namoa_os_form_done_action_blue" />
+                app:drawableTint="@color/namoa_os_form_done_action_blue"
+                />
 
             <RadioButton
                 android:id="@+id/act086_verification_frg_rdo_answer_verified"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:buttonTint="@color/os_form_verify_text_color_states"
+                android:buttonTint="@color/namoa_dark_blue"
                 android:checked="false"
                 android:drawableStart="@drawable/ic_done_black_24dp"
                 android:drawablePadding="8dp"
@@ -59,7 +60,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:buttonTint="@color/os_form_verify_text_color_states"
+                android:buttonTint="@color/namoa_dark_blue"
                 android:checked="false"
                 android:drawableStart="@drawable/ic_outline_report_problem_24_black"
                 android:drawablePadding="8dp"
@@ -75,7 +76,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:buttonTint="@color/os_form_verify_text_color_states"
+                android:buttonTint="@color/namoa_dark_blue"
                 android:checked="false"
                 android:drawableStart="@drawable/ic_baseline_redo_24_black"
                 android:drawablePadding="8dp"
@@ -91,12 +92,13 @@
             android:id="@+id/act086_verification_frg_tv_other_data_ttl"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="32dp"
             android:text="Dados complementares"
             android:textAllCaps="true"
+            android:textColor="@color/namoa_color_gray_9"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/act086_verification_frg_rg_answers" />
+            app:layout_constraintTop_toBottomOf="@+id/act086_verification_frg_tv_require_fields" />
 
         <ImageView
             android:id="@+id/act086_verification_frg_iv_comment"
@@ -130,7 +132,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/act086_verification_frg_tv_product_ttl"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/act086_verification_frg_tv_product_ttl"
-            app:srcCompat="@drawable/ic_archive_material_black_24dp"
+            app:srcCompat="@drawable/ic_baseline_inventory_2_black_24"
             app:tint="@color/namoa_dark_blue" />
 
         <TextView
@@ -164,11 +166,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/act086_verification_frg_iv_add_product"
+            app:layout_constraintStart_toEndOf="@+id/act086_verification_frg_iv_spare"
             app:layout_constraintTop_toBottomOf="@id/act086_verification_frg_tv_product_ttl"
             tools:itemCount="2"
-            tools:listitem="@layout/act086_product_item"/>
+            tools:listitem="@layout/act086_product_item" />
 
         <TextView
             android:id="@+id/act086_verification_frg_tv_photo_ttl"
@@ -216,33 +218,40 @@
             app:layout_constraintTop_toBottomOf="@id/act086_verification_frg_tv_photo_ttl"
             app:spanCount="2"
             tools:itemCount="4"
-            tools:listitem="@layout/act086_photo_item" />
+            tools:listitem="@layout/act086_photo_item"
+            android:visibility="gone"
+            />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/act086_verification_frg_cl_delete_infos"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:padding="8dp"
+            android:minHeight="48dp"
+
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/act086_verification_frg_rv_photos">
 
             <ImageView
                 android:id="@+id/act086_verification_frg_iv_delete_infos"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:src="@drawable/ic_trash"
-                app:tint="@color/namoa_color_danger_red"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:srcCompat="@drawable/ic_eraser_24dp"
+                app:tint="@color/namoa_os_form_problem_red" />
 
             <TextView
+                android:id="@+id/act086_verification_frg_tv_delete_lbl"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="32dp"
+                android:layout_marginEnd="24dp"
                 android:gravity="center_vertical"
                 android:text="Descartar resposta e anexos"
-                android:textColor="@color/namoa_color_danger_red"
+                android:textColor="@color/namoa_os_form_problem_red"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/act086_verification_frg_iv_delete_infos"
@@ -251,10 +260,12 @@
 
         <Button
             android:id="@+id/act086_verification_frg_btn_ok"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
+            android:layout_marginStart="46dp"
+            android:layout_marginEnd="46dp"
             android:background="@drawable/namoa_cell_12_states"
             android:text="Ok"
             android:textColor="@color/padrao_WHITE"
@@ -262,7 +273,23 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/act086_verification_frg_cl_delete_infos"
-            app:layout_constraintWidth_percent="0.5" />
+            app:layout_constraintWidth_percent="0.5"
+            style="@style/NamoaSaveButtonDarkBlue"/>
+
+        <TextView
+            android:id="@+id/act086_verification_frg_tv_require_fields"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:text="Preencha abaixo os campos obrigatorios!"
+            android:textColor="@color/namoa_color_highlight_required_item"
+            app:layout_constraintBottom_toTopOf="@+id/act086_verification_frg_tv_other_data_ttl"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/act086_verification_frg_rg_answers"
+            android:visibility="gone"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
