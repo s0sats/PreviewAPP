@@ -68,4 +68,6 @@ public interface Act011_Main_Presenter {
     boolean hasAnyInvalidField(ArrayList<Act011FormTab> tabs);
 
     void resetScheduleExecIfNeeds(GE_Custom_Form_Local formLocal);
+
+    void deleteGeOsFormIfNeeds(GE_Custom_Form_Local formLocal);
 }

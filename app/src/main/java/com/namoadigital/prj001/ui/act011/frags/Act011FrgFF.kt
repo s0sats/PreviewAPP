@@ -7,6 +7,7 @@ import com.namoa_digital.namoa_library.ctls.CustomFF
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao
 import com.namoadigital.prj001.databinding.Act011FrgFfBinding
 import com.namoadigital.prj001.model.Act011FormTab
@@ -33,7 +34,8 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(),Act011FrgFFScroll {
             tabLastIndex: Int = 0,
             formStatus: String,
             scheduleDesc: String?,
-            scheduleComments: String?
+            scheduleComments: String?,
+            isFormOs: Boolean
         ) = Act011FrgFF()
             .apply{
                 this.hmAuxTrans = hmAuxTrans
@@ -42,6 +44,7 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(),Act011FrgFFScroll {
                 this.tabLastIndex = tabLastIndex
                 this.scheduleDesc = scheduleDesc
                 this.scheduleComments = scheduleComments
+                this.isFormOs = isFormOs
                 //
                 arguments = Bundle().apply {
                     putSerializable(Constant.MAIN_HMAUX_TRANS_KEY, hmAuxTrans)
@@ -50,6 +53,7 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(),Act011FrgFFScroll {
                     putInt(PARAM_LAST_INDEX,tabLastIndex)
                     putString(MD_Schedule_ExecDao.SCHEDULE_DESC,scheduleDesc)
                     putString(GE_Custom_Form_Field_LocalDao.COMMENT,scheduleComments)
+                    putBoolean(GE_Custom_Form_LocalDao.IS_SO,isFormOs)
                 }
             }
 
@@ -64,6 +68,7 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(),Act011FrgFFScroll {
             formStatus = it.getString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS,"")
             scheduleDesc = it.getString(MD_Schedule_ExecDao.SCHEDULE_DESC)
             scheduleComments = it.getString(GE_Custom_Form_Field_LocalDao.COMMENT)
+            isFormOs = it.getBoolean(GE_Custom_Form_LocalDao.IS_SO,false)
         }
     }
 

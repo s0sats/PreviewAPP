@@ -10,5 +10,6 @@ class Act011FfOptionsViewObject(
     val signature: String,
     val automatic: Boolean,
     val isTicketForm: Boolean,
-    val isSOForm: Boolean
+    val isNServiceForm: Boolean,
+    val isFormOs: Boolean
 ): Serializable
