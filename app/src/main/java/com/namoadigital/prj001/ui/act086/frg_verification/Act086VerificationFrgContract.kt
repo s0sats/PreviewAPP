@@ -4,6 +4,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import com.namoadigital.prj001.model.Act086MaterialItem
 import com.namoadigital.prj001.model.GeOsDeviceItem
+import com.namoadigital.prj001.model.GeOsDeviceMaterial
 
 interface Act086VerificationFrgContract {
     interface I_View{
@@ -29,8 +30,11 @@ interface Act086VerificationFrgContract {
             geOsDeviceItem: GeOsDeviceItem,
             materialFragList: MutableList<Act086MaterialItem>
         )
-
         fun updateDeviceItemIntoBd(geOsDeviceItem: GeOsDeviceItem)
+        fun buildAdapterMaterialFragList(
+            materialList: MutableList<GeOsDeviceMaterial>,
+            materialFragList: MutableList<Act086MaterialItem>
+        )
     }
 
 }

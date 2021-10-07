@@ -4,6 +4,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import androidx.fragment.app.Fragment
@@ -191,7 +192,8 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
 
     private fun initActions() {
         binding.act086TvConsult.setOnClickListener {
-            toggleHeaderNavegationIcons(it.id)
+            toggleTvConsultVisibility(false)
+            displayHomeAsUpEnabled(display = true)
             setHistoricFrg()
         }
         //
@@ -202,9 +204,12 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
 
     }
 
-    private fun toggleHeaderNavegationIcons(viewId: Int) {
-        //binding.act086TvBack.visibility = if(binding.act086TvBack.id == viewId) View.GONE else View.VISIBLE
-        binding.act086TvConsult.visibility = if(binding.act086TvConsult.id == viewId) View.GONE else View.VISIBLE
+    private fun displayHomeAsUpEnabled(display: Boolean) {
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+
+    private fun toggleTvConsultVisibility(visible: Boolean) {
+        binding.act086TvConsult.visibility = if(visible) View.VISIBLE else View.GONE
     }
 
     /**
@@ -309,11 +314,21 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
 
     override fun onDestroy() {
         super.onDestroy()
-        ToolBox_Inf.deleteFileListExceptionSafe(ConstantBaseApp.CACHE_PATH_PHOTO,prefixPhoto)
+        //ToolBox_Inf.deleteFileListExceptionSafe(ConstantBaseApp.CACHE_PATH_PHOTO,prefixPhoto)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if(item.itemId == android.R.id.home){
+            toggleTvConsultVisibility(true)
+            displayHomeAsUpEnabled(false)
+            updateScrollPosition(0)
+            initVerificationFrg()
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     companion object{

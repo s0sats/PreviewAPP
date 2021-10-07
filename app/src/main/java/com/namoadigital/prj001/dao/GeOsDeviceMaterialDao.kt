@@ -5,6 +5,7 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
+import androidx.core.database.getStringOrNull
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
@@ -38,6 +39,7 @@ class GeOsDeviceMaterialDao(
         const val MATERIAL_ID = "material_id"
         const val MATERIAL_DESC = "material_desc"
         const val MATERIAL_QTY = "material_qty"
+        const val MATERIAL_UNIT = "material_unit"
     }
 
     private val toGeOsDeviceMaterialMapper: Mapper<Cursor, GeOsDeviceMaterial>
@@ -316,7 +318,8 @@ class GeOsDeviceMaterialDao(
                         material_code = getInt(getColumnIndex(MATERIAL_CODE)),
                         material_id = getString(getColumnIndex(MATERIAL_ID)),
                         material_desc = getString(getColumnIndex(MATERIAL_DESC)),
-                        material_qty = getFloat(getColumnIndex(MATERIAL_QTY))
+                        material_qty = getFloat(getColumnIndex(MATERIAL_QTY)),
+                        material_unit = getStringOrNull(getColumnIndex(MATERIAL_UNIT))
                     )
                 }
             }
@@ -337,7 +340,7 @@ class GeOsDeviceMaterialDao(
                         put(CUSTOM_FORM_TYPE,it.custom_form_type)
                     }
                     //
-                    put(CUSTOM_FORM_CODE,it.custom_form_data)
+                    put(CUSTOM_FORM_CODE,it.custom_form_code)
                     put(CUSTOM_FORM_VERSION, it.custom_form_version)
                     put(CUSTOM_FORM_DATA, it.custom_form_data)
                     put(PRODUCT_CODE, it.product_code)
@@ -349,6 +352,7 @@ class GeOsDeviceMaterialDao(
                     put(MATERIAL_ID, it.material_id)
                     put(MATERIAL_DESC, it.material_desc)
                     put(MATERIAL_QTY, it.material_qty)
+                    put(MATERIAL_UNIT, it.material_unit)
                     //
                 }
             }

@@ -2,108 +2,104 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:animateLayoutChanges="true"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    >
 
     <View
-        android:layout_marginTop="4dp"
+        android:id="@+id/act086_product_edit_dialog_v_top"
         android:layout_width="50dp"
         android:layout_height="3dp"
         android:layout_gravity="center_horizontal"
-        android:background="@color/cardview_dark_background"
+        android:layout_marginTop="4dp"
         android:layout_marginBottom="4dp"
-        />
+        android:background="@color/cardview_dark_background" />
 
-    <androidx.cardview.widget.CardView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:padding="10dp">
+        android:layout_marginTop="8dp"
+        >
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/act086_product_edit_dialog_tv_product_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Oleo Super Freio"
+            android:textColor="@color/namoa_font_color_black222"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.501"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/act086_product_edit_dialog_tv_product_id" />
 
-            <TextView
-                android:id="@+id/act086_product_edit_dialog_tv_product_desc"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Oleo Super Freio"
-                android:textColor="@color/namoa_color_black"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.501"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/act086_product_edit_dialog_tv_product_id" />
+        <EditText
+            android:id="@+id/act086_product_edit_dialog_et_qty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="@color/namoa_color_green_2"
+            android:ems="2"
+            android:imeOptions="actionDone"
+            android:inputType="numberDecimal"
+            android:selectAllOnFocus="true"
+            android:text="2,1"
+            android:textSize="@dimen/font_size_font_16"
+            app:layout_constraintEnd_toEndOf="@+id/act086_product_edit_dialog_tv_product_desc"
+            app:layout_constraintStart_toStartOf="@+id/act086_product_edit_dialog_tv_product_desc"
+            app:layout_constraintTop_toBottomOf="@+id/act086_product_edit_dialog_tv_product_desc" />
 
-            <EditText
-                android:id="@+id/act086_product_edit_dialog_et_qty"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:ems="2"
-                android:imeOptions="actionDone"
-                android:inputType="numberDecimal"
-                android:selectAllOnFocus="true"
-                android:backgroundTint="@color/namoa_color_green_2"
-                android:text="2,1"
-                android:textSize="@dimen/font_size_font_16"
-                app:layout_constraintEnd_toEndOf="@+id/act086_product_edit_dialog_tv_product_desc"
-                app:layout_constraintStart_toStartOf="@+id/act086_product_edit_dialog_tv_product_desc"
-                app:layout_constraintTop_toBottomOf="@+id/act086_product_edit_dialog_tv_product_desc" />
-
-            <TextView
-                android:id="@+id/act086_product_edit_dialog_tv_unit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:text="L"
-                android:textSize="18sp"
-                app:layout_constraintBottom_toBottomOf="@+id/act086_product_edit_dialog_et_qty"
-                app:layout_constraintStart_toEndOf="@+id/act086_product_edit_dialog_et_qty"
-                app:layout_constraintTop_toTopOf="@+id/act086_product_edit_dialog_et_qty" />
+        <TextView
+            android:id="@+id/act086_product_edit_dialog_tv_unit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="L"
+            android:textColor="@color/namoa_font_color_black222"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@+id/act086_product_edit_dialog_et_qty"
+            app:layout_constraintStart_toEndOf="@+id/act086_product_edit_dialog_et_qty"
+            app:layout_constraintTop_toTopOf="@+id/act086_product_edit_dialog_et_qty" />
 
 
-            <Button
-                android:id="@+id/act086_product_edit_dialog_btn_cancel"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:text="Cancelar"
-                android:textStyle="bold"
-                android:textColor="@color/namoa_color_green_2"
-                app:layout_constraintEnd_toStartOf="@+id/act086_product_edit_dialog_btn_apply"
-                app:layout_constraintTop_toTopOf="@+id/act086_product_edit_dialog_btn_apply" />
+        <Button
+            android:id="@+id/act086_product_edit_dialog_btn_cancel"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:text="Cancelar"
+            android:textColor="@color/namoa_dark_blue"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/act086_product_edit_dialog_btn_apply"
+            app:layout_constraintTop_toTopOf="@+id/act086_product_edit_dialog_btn_apply" />
 
-            <Button
-                android:id="@+id/act086_product_edit_dialog_btn_apply"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="Adicionar"
-                android:textStyle="bold"
-                android:textColor="@color/namoa_color_green_2"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/act086_product_edit_dialog_et_qty" />
+        <Button
+            android:id="@+id/act086_product_edit_dialog_btn_apply"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Adicionar"
+            android:textColor="@color/namoa_dark_blue"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/act086_product_edit_dialog_et_qty" />
 
-            <TextView
-                android:id="@+id/act086_product_edit_dialog_tv_product_id"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="18758"
-                android:textColor="@color/namoa_color_black"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/act086_product_edit_dialog_tv_product_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="18758"
+            android:textColor="@color/namoa_font_color_black222"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </androidx.cardview.widget.CardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

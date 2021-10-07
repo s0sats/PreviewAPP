@@ -23,7 +23,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <RadioButton
-                android:id="@+id/act086_verification_frg_rdo_answer_done"
+                android:id="@+id/act086_verification_frg_rdo_answer_fixed"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:buttonTint="@color/namoa_dark_blue"
@@ -39,7 +39,7 @@
                 />
 
             <RadioButton
-                android:id="@+id/act086_verification_frg_rdo_answer_verified"
+                android:id="@+id/act086_verification_frg_rdo_answer_already_done"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -56,7 +56,7 @@
                 />
 
             <RadioButton
-                android:id="@+id/act086_verification_frg_rdo_answer_problem"
+                android:id="@+id/act086_verification_frg_rdo_answer_alert"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -108,7 +108,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/act086_verification_frg_mket_comment"
             app:srcCompat="@drawable/ic_baseline_notes_24"
-            app:tint="@color/os_form_verify_item_label_text_color_states"
+            app:tint="@color/namoa_pipeline_header_icon"
+            android:enabled="false"
             />
 
         <com.namoa_digital.namoa_library.ctls.MKEditTextNM
@@ -132,6 +133,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/act086_verification_frg_mket_comment"
+            android:background="@drawable/namoa_icon_bg_states"
             >
 
             <ImageView
@@ -142,7 +144,8 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:srcCompat="@drawable/ic_baseline_inventory_2_black_24"
-                app:tint="@color/os_form_verify_item_label_text_color_states" />
+                app:tint="@color/namoa_pipeline_header_icon"
+                android:enabled="false"/>
 
             <TextView
                 android:id="@+id/act086_verification_frg_tv_material_ttl"
@@ -158,6 +161,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 android:textColor="@color/os_form_verify_item_label_text_color_states"
+                android:enabled="false"
                 />
 
             <ImageView
@@ -168,8 +172,9 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:srcCompat="@drawable/ic_add_black_24px"
-                app:tint="@color/os_form_verify_item_label_text_color_states"
-                android:background="@drawable/namoa_icon_bg_states"
+                app:tint="@color/namoa_pipeline_header_icon"
+                android:enabled="false"
+                android:clickable="false"
                 />
 
 
@@ -186,41 +191,60 @@
             tools:itemCount="2"
             tools:listitem="@layout/act086_product_item" />
 
-        <TextView
-            android:id="@+id/act086_verification_frg_tv_photo_ttl"
-            android:layout_width="0dp"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/act086_verification_frg_cl_photo"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:text="Photo"
-            android:textColor="@color/os_form_verify_item_label_text_color_states"
-            app:layout_constraintEnd_toStartOf="@+id/act086_verification_frg_iv_add_photo"
-            app:layout_constraintStart_toEndOf="@+id/act086_verification_frg_iv_photo"
-            app:layout_constraintTop_toBottomOf="@+id/act086_verification_frg_rv_material" />
-
-        <ImageView
-            android:id="@+id/act086_verification_frg_iv_photo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:tint="@color/os_form_verify_item_label_text_color_states"
-            app:layout_constraintBottom_toBottomOf="@+id/act086_verification_frg_tv_photo_ttl"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/act086_verification_frg_tv_photo_ttl"
-            app:srcCompat="@drawable/ic_baseline_photo_camera_24" />
-
-        <ImageView
-            android:id="@+id/act086_verification_frg_iv_add_photo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            app:layout_constraintBottom_toBottomOf="@+id/act086_verification_frg_tv_photo_ttl"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/act086_verification_frg_tv_photo_ttl"
-            app:srcCompat="@drawable/ic_add_black_24px"
-            app:tint="@color/os_form_verify_item_label_text_color_states"
+            app:layout_constraintTop_toBottomOf="@+id/act086_verification_frg_rv_material"
             android:background="@drawable/namoa_icon_bg_states"
-            />
+            >
+
+            <TextView
+                android:id="@+id/act086_verification_frg_tv_photo_ttl"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="20dp"
+                android:text="Photo"
+                android:textColor="@color/os_form_verify_item_label_text_color_states"
+                app:layout_constraintEnd_toStartOf="@+id/act086_verification_frg_iv_add_photo"
+                app:layout_constraintStart_toEndOf="@+id/act086_verification_frg_iv_photo"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:enabled="false"
+                />
+
+
+            <ImageView
+                android:id="@+id/act086_verification_frg_iv_photo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:tint="@color/namoa_pipeline_header_icon"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:srcCompat="@drawable/ic_baseline_photo_camera_24"
+                android:enabled="false"
+                />
+
+            <ImageView
+                android:id="@+id/act086_verification_frg_iv_add_photo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:srcCompat="@drawable/ic_add_black_24px"
+                app:tint="@color/namoa_pipeline_header_icon"
+                android:enabled="false"
+                />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/act086_verification_frg_rv_photos"
@@ -230,7 +254,7 @@
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/act086_verification_frg_tv_photo_ttl"
+            app:layout_constraintTop_toBottomOf="@id/act086_verification_frg_cl_photo"
             app:spanCount="2"
             tools:itemCount="4"
             tools:listitem="@layout/act086_photo_item"
@@ -241,10 +265,11 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:minHeight="48dp"
-
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/act086_verification_frg_rv_photos">
+            app:layout_constraintTop_toBottomOf="@id/act086_verification_frg_rv_photos"
+            android:background="@drawable/namoa_icon_bg_states"
+            >
 
             <ImageView
                 android:id="@+id/act086_verification_frg_iv_delete_infos"

@@ -2,7 +2,6 @@ package com.namoadigital.prj001.ui.act086.frg_verification
 
 import android.content.Context
 import android.content.Intent
-import android.widget.Toast
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.dao.GeOsDeviceItemDao
@@ -92,7 +91,8 @@ class Act086VerificationFrgPresenter(
                 it.productCode,
                 it.productId,
                 it.productDesc,
-                it.productQty.toFloat()
+                it.productQty.toFloat(),
+                it.productUnit
             )
         }
         //
@@ -107,6 +107,23 @@ class Act086VerificationFrgPresenter(
             ToolBox.toastMSG(
                 context,
                 hmAuxTrans["Erro ao salvar"]
+            )
+        }
+    }
+
+    override fun buildAdapterMaterialFragList(
+        materialList: MutableList<GeOsDeviceMaterial>,
+        materialFragList: MutableList<Act086MaterialItem>
+    ) {
+        materialList.forEach {
+            materialFragList.add(
+                Act086MaterialItem(
+                    it.material_code,
+                    it.material_id,
+                    it.material_desc,
+                    it.material_unit?:"",
+                    it.material_qty.toInt()
+                )
             )
         }
     }

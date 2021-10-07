@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.namoa_digital.namoa_library.util.HMAux
@@ -79,15 +81,25 @@ class Act086ProductEditDialog : BottomSheetDialogFragment() {
             }
             act086ProductEditDialogBtnApply.setOnClickListener {
                 materialItem.productQty = act086ProductEditDialogEtQty.text.toString().trim().toInt()
+                //esconde teclado ao selecionar item
+                ToolBox_Inf.hideSoftKeyboard(context,act086ProductEditDialogEtQty)
                 onApplyClick(productIdx,materialItem,isAddAction)
                 dismiss()
+            }
+            //Captura clique no btn done
+            act086ProductEditDialogEtQty.setOnEditorActionListener { v, actionId, event ->
+                if(actionId == EditorInfo.IME_ACTION_DONE){
+                    act086ProductEditDialogBtnApply.performClick()
+                    true
+                }else {
+                    false
+                }
             }
         }
     }
 
     override fun onResume() {
         super.onResume()
-
         (requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).toggleSoftInput(
             InputMethodManager.SHOW_FORCED,
             InputMethodManager.HIDE_IMPLICIT_ONLY
