@@ -3,15 +3,22 @@ package com.namoadigital.prj001.ui.act086
 import android.content.Context
 import android.os.Bundle
 import com.namoa_digital.namoa_library.util.HMAux
+import com.namoadigital.prj001.dao.GeOsDeviceItemDao
+import com.namoadigital.prj001.model.GeOsDeviceItem
+import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_001
+import com.namoadigital.prj001.ui.act086.frg_verification.Act086VerificationFrg
+import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
+import java.lang.Exception
 
 class Act086MainPresenter(
     private val context: Context,
     private val mView: Act086MainContract.I_View,
     private val bundle: Bundle,
     private val mModule_Code: String,
-    private val mResource_Code: String
+    private val mResource_Code: String,
+    private val geOsDeviceItemDao: GeOsDeviceItemDao
 ) : Act086MainContract.I_Presenter {
 
     private val hmAuxTrans: HMAux by lazy {
@@ -25,7 +32,11 @@ class Act086MainPresenter(
             "act086_title",
             "product_ttl",
             "btn_apply",
-            "alert_choose_an_answer_msg"
+            "alert_choose_an_answer_msg",
+            "query_lbl",
+        )
+        transList.addAll(
+            Act086VerificationFrg.getFragTranslationsVars()
         )
         //
         return ToolBox_Inf.setLanguage(
@@ -78,5 +89,72 @@ class Act086MainPresenter(
             //Faz o scroll
             mView.updateScrollPosition(newScrollTop)
         }
+    }
+
+    /**
+     * Fun que valida se pk esta "ok"
+     * Valida se item veio no bundle, se não é null, se tem "." e se seu split é igual a 10 elementos.
+     */
+    override fun validBundleParams(): Boolean {
+       if( bundle.containsKey(ConstantBaseApp.DEVICE_BUNDLE)
+           && bundle.getBundle(ConstantBaseApp.DEVICE_BUNDLE) != null
+           && bundle.getBundle(ConstantBaseApp.DEVICE_BUNDLE)!!.containsKey(ConstantBaseApp.DEVICE_ITEM_PK)
+       ){
+           val deviceItemRawPk = bundle.getBundle(ConstantBaseApp.DEVICE_BUNDLE)!!.getString(ConstantBaseApp.DEVICE_ITEM_PK)
+           deviceItemRawPk?.let {
+               //Se tiver
+               return try {
+                   //Se tiver "." e o split tiver 10 elementos
+                   it.contains(".")  && it.split(".").size == 10
+               }catch (e: Exception){
+                   ToolBox_Inf.registerException(javaClass.name,e)
+                   false
+               }
+
+           }
+       }
+       return false
+    }
+
+    override fun getDeviceItem(newVerification: Boolean): GeOsDeviceItem? {
+        val deviceItemRawPk = bundle.getBundle(ConstantBaseApp.DEVICE_BUNDLE)!!.getString(ConstantBaseApp.DEVICE_ITEM_PK)
+        deviceItemRawPk?.let {
+            try {
+                val splitedPK = it.split(".")
+               return geOsDeviceItemDao.getByString(
+                    GeOsDeviceItem_Sql_001(
+                        splitedPK[0],
+                        splitedPK[1],
+                        splitedPK[2],
+                        splitedPK[3],
+                        splitedPK[4],
+                        splitedPK[5],
+                        splitedPK[6],
+                        splitedPK[7],
+                        splitedPK[8],
+                        splitedPK[9]
+                    ).toSqlQuery()
+                )
+            }catch (e: Exception){
+                ToolBox_Inf.registerException(javaClass.name,e)
+            }
+        }
+        return null
+    }
+
+    override fun getPrefixPhoto(
+        deviceItem: GeOsDeviceItem
+    ): String {
+        return "${ConstantBaseApp.GE_OS_DEVICE_ITEM_PREX_IMG}" +
+                "${deviceItem.customer_code}_" +
+                "${deviceItem.custom_form_type}_" +
+                "${deviceItem.custom_form_code}_" +
+                "${deviceItem.custom_form_version}_" +
+                "${deviceItem.custom_form_data}_" +
+                "${deviceItem.product_code}_" +
+                "${deviceItem.serial_code}_" +
+                "${deviceItem.device_tp_code}_" +
+                "${deviceItem.item_check_code}_" +
+                "${deviceItem.item_check_seq}_"
     }
 }

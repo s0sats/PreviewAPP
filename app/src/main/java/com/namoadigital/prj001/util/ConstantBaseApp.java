@@ -937,4 +937,5 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String FORM_TAB_OK = "FORM_TAB_OK";
     public static final String FORM_TAB_ERROR = "FORM_TAB_ERROR";
     public static final String FORM_TAB_PENDING = "FORM_TAB_PENDING";
+    public static final String GE_OS_DEVICE_ITEM_PREX_IMG = "GE_OS_ITEM_";
 }

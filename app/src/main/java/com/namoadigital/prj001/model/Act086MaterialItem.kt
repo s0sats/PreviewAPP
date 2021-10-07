@@ -2,7 +2,7 @@ package com.namoadigital.prj001.model
 
 import java.io.Serializable
 
-class Act086ProductItem(
+class Act086MaterialItem(
     productCode: Int,
     productId: String,
     productDesc: String,

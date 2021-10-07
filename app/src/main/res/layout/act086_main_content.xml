@@ -57,7 +57,7 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
-                    android:id="@+id/act086_tv_instruction"
+                    android:id="@+id/act086_tv_item_check_desc"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:layout_marginTop="8dp"
@@ -65,7 +65,7 @@
                     android:minHeight="40dp"
                     android:paddingStart="4dp"
                     android:paddingEnd="4dp"
-                    android:text="Verificar articulações  e cabos do freio de estacionamento que vai ficar ainda maior pra pode"
+                    android:text="Verificar ronaldo"
                     android:textColor="@color/namoa_font_color_black222"
                     android:textSize="@dimen/font_size_title_dialog"
                     app:layout_constraintBottom_toBottomOf="parent"

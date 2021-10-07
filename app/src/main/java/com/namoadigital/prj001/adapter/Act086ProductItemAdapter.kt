@@ -4,15 +4,15 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.namoadigital.prj001.databinding.Act086ProductItemBinding
-import com.namoadigital.prj001.model.Act086ProductItem
+import com.namoadigital.prj001.model.Act086MaterialItem
 import com.namoadigital.prj001.model.VH_models.Act086ProductItemVH
 
 class Act086ProductItemAdapter(
-    private val onProductItemClick: (position: Int, productItem: Act086ProductItem) -> Unit,
+    private val onProductItemClick: (position: Int, materialItem: Act086MaterialItem) -> Unit,
     private val onDeleteIconClick: (position: Int) -> Unit
 ) : RecyclerView.Adapter<Act086ProductItemVH>() {
 
-    var sourceList = mutableListOf<Act086ProductItem>()
+    var sourceList = mutableListOf<Act086MaterialItem>()
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Act086ProductItemVH {

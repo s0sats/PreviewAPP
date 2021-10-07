@@ -2,10 +2,14 @@ package com.namoadigital.prj001.ui.act086.frg_verification
 
 import android.content.Context
 import android.content.Intent
+import android.widget.Toast
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
+import com.namoadigital.prj001.dao.GeOsDeviceItemDao
 import com.namoadigital.prj001.dao.MD_All_ProductDao
-import com.namoadigital.prj001.model.Act086ProductItem
+import com.namoadigital.prj001.model.Act086MaterialItem
+import com.namoadigital.prj001.model.GeOsDeviceItem
+import com.namoadigital.prj001.model.GeOsDeviceMaterial
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.io.File
@@ -13,7 +17,8 @@ import java.io.File
 class Act086VerificationFrgPresenter(
     private val context: Context,
     private val mView: Act086VerificationFrgContract.I_View,
-    private val hmAuxTrans : HMAux
+    private val hmAuxTrans: HMAux,
+    private val deviceItemDao: GeOsDeviceItemDao
 ): Act086VerificationFrgContract.I_Presenter {
 
     override fun handleAddPhoto(
@@ -35,7 +40,7 @@ class Act086VerificationFrgPresenter(
         return "$prefixPhoto${
             ToolBox.dateToMilliseconds(
             ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT)
-        )}"
+        )}.png"
     }
 
     override fun reviewPhotoExists(photoList: MutableList<String>) {
@@ -47,8 +52,8 @@ class Act086VerificationFrgPresenter(
         mView.updatePhotoListIntoAdapter()
     }
 
-    override fun prepareCallProductAct(productInputList: MutableList<Act086ProductItem>) {
-        val listOfProduct = productInputList.map {
+    override fun prepareCallProductAct(materialInputList: MutableList<Act086MaterialItem>) {
+        val listOfProduct = materialInputList.map {
             it.productCode
         } as ArrayList<Int>
         //
@@ -57,7 +62,7 @@ class Act086VerificationFrgPresenter(
 
     override fun processProductSelecionResult(data: Intent?) {
         data?.extras?.let{
-            val act086ProductItem = Act086ProductItem(
+            val act086ProductItem = Act086MaterialItem(
                 it.getInt(MD_All_ProductDao.PRODUCT_CODE),
                 it.getString(MD_All_ProductDao.PRODUCT_ID, ""),
                 it.getString(MD_All_ProductDao.PRODUCT_DESC, ""),
@@ -65,6 +70,44 @@ class Act086VerificationFrgPresenter(
             )
             //
             mView.addProductToListAndShowDialog(act086ProductItem)
+        }
+    }
+
+    override fun getGeOsDeviceMaterialList(
+        geOsDeviceItem: GeOsDeviceItem,
+        materialFragList: MutableList<Act086MaterialItem>
+    ) {
+        val newMaterialItemList = materialFragList.map {
+            GeOsDeviceMaterial(
+                geOsDeviceItem.customer_code,
+                geOsDeviceItem.custom_form_type,
+                geOsDeviceItem.custom_form_code,
+                geOsDeviceItem.custom_form_version,
+                geOsDeviceItem.custom_form_data,
+                geOsDeviceItem.product_code,
+                geOsDeviceItem.serial_code,
+                geOsDeviceItem.device_tp_code,
+                geOsDeviceItem.item_check_code,
+                geOsDeviceItem.item_check_seq,
+                it.productCode,
+                it.productId,
+                it.productDesc,
+                it.productQty.toFloat()
+            )
+        }
+        //
+        geOsDeviceItem.materialList.clear()
+        geOsDeviceItem.materialList.addAll(newMaterialItemList)
+    }
+
+    override fun updateDeviceItemIntoBd(geOsDeviceItem: GeOsDeviceItem) {
+        val daoObjReturn = deviceItemDao.addUpdate(geOsDeviceItem)
+        if(daoObjReturn.hasError()){
+            //O QUE FAZER?
+            ToolBox.toastMSG(
+                context,
+                hmAuxTrans["Erro ao salvar"]
+            )
         }
     }
 
