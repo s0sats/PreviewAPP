@@ -468,7 +468,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                     measureSufix = mainMeasureTp?.valueSufix?:""
                 )
             }else{
-                ToolBox.alertMSG(
+                ToolBox.alertMSG_YES_NO(
                     requireContext(),
                     hmAuxTrans["alert_form_os_creation_ttl"],
                     hmAuxTrans["alert_form_os_creation_confirm"],
@@ -476,7 +476,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                        setDataIntoFormOsObj()
                        mCreationListener?.createOsHeader(formOsHeader)
                    },
-                    0
+                    1
                 )
 
             }

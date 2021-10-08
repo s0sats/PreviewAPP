@@ -2073,7 +2073,7 @@ public class Act011_Main extends Base_Activity
     public void onInspectionSelected(@NotNull AcessoryFormView acessoryFormView, @NotNull InspectionCellActions action, int position, @NotNull String textFilter) {
         String device_item_pk = acessoryFormView.getDevicePkPrefix();
         if(!action.equals(InspectionCellActions.ADD_NEW_ITEM)){
-            device_item_pk = acessoryFormView.getDevicePkPrefix() + acessoryFormView.getInspections().get(position).getItemCodeAndSeq();
+            device_item_pk = acessoryFormView.getDevicePkPrefix() +"."+acessoryFormView.getInspections().get(position).getItemCodeAndSeq();
         }
         Intent mIntent = new Intent(context, Act086Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act086
 
 import android.content.DialogInterface
 import com.namoa_digital.namoa_library.util.HMAux
+import com.namoadigital.prj001.model.GeOsDeviceItem
 
 interface Act086MainContract {
 
@@ -25,5 +26,11 @@ interface Act086MainContract {
             actionBarHeight: Int,
             footerHeight: Int
         )
+
+        fun getPrefixPhoto(
+            deviceItem: GeOsDeviceItem
+        ): String
+        fun validBundleParams(): Boolean
+        fun getDeviceItem(newVerification: Boolean): GeOsDeviceItem?
     }
 }

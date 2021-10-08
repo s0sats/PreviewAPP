@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model
 
+import java.io.Serializable
+
 class GeOsDeviceMaterial(
     val customer_code: Long,
     val custom_form_type: Int,
@@ -14,6 +16,6 @@ class GeOsDeviceMaterial(
     val material_code: Int,
     val material_id: String,
     val material_desc: String,
-    val material_qty: Float
-) {
-}
+    val material_qty: Float,
+    val material_unit: String?
+): Serializable

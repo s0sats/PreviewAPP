@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model
 
+import java.io.Serializable
+
 class GeOsDeviceItem(
     val customer_code :Long,
     val custom_form_type :Int,
@@ -34,8 +36,27 @@ class GeOsDeviceItem(
     var exec_photo4 :String?,
     var status_answer :String?,
     val materialList: MutableList<GeOsDeviceMaterial>  = mutableListOf()
-) {
+):Serializable {
     fun getGeOsDeviceItemCodeAndSeq(): String{
         return "${item_check_code}.${item_check_seq}"
     }
+
+    companion object{
+        const val ITEM_CHECK_STATUS_NO_CYCLE = "NO_CYCLE"
+        const val ITEM_CHECK_STATUS_NORMAL = "NORMAL"
+        const val ITEM_CHECK_STATUS_LIMIT_DATE_REACHED = "LIMIT_DATE_REACHED"
+        const val ITEM_CHECK_STATUS_PROJECTED_DATE_REACHED = "PROJECTED_DATE_REACHED"
+        const val ITEM_CHECK_STATUS_MEASURE_ALERT = "MEASURE_ALERT"
+        const val ITEM_CHECK_STATUS_MANUAL_ALERT = "MANUAL_ALERT"
+        //
+        const val APPLY_MATERIAL_NO = "NO"
+        const val APPLY_MATERIAL_OPTIONAL = "OPTIONAL"
+        const val APPLY_MATERIAL_REQUIRED = "REQUIRED"
+
+        const val EXEC_TYPE_FIXED = "FIXED"
+        const val EXEC_TYPE_ALERT = "ALERT"
+        const val EXEC_TYPE_ALREADY_OK = "ALREADY_OK"
+        const val EXEC_TYPE_NOT_VERIFIED = "NOT_VERIFIED"
+    }
+
 }

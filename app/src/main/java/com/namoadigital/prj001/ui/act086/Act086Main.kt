@@ -4,14 +4,18 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import androidx.fragment.app.Fragment
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag
+import com.namoadigital.prj001.dao.GeOsDeviceDao
+import com.namoadigital.prj001.dao.GeOsDeviceItemDao
 import com.namoadigital.prj001.databinding.Act086MainBinding
 import com.namoadigital.prj001.databinding.Act086MainContentBinding
 import com.namoadigital.prj001.extensions.setFrag
+import com.namoadigital.prj001.model.GeOsDeviceItem
 import com.namoadigital.prj001.ui.act005.Act005_Main
 import com.namoadigital.prj001.ui.act011.Act011_Main
 import com.namoadigital.prj001.ui.act086.frg_historic.Act086HistoricFrg
@@ -25,21 +29,28 @@ import com.namoadigital.prj001.util.ToolBox_Inf
 class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
     private lateinit var binding: Act086MainContentBinding
     private var bundle: Bundle = Bundle()
+    private var bundleDevice: Bundle = Bundle()
     private val mPresenter: Act086MainContract.I_Presenter by lazy{
         Act086MainPresenter(
             context,
             this,
             bundle,
             mModule_Code,
-            mResource_Code
+            mResource_Code,
+            GeOsDeviceItemDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
         )
     }
-    private lateinit var prefixPhoto: String
+    private val prefixPhoto: String by lazy{
+        mPresenter.getPrefixPhoto(
+            deviceItem
+        )
+    }
     private val verificationFrg: Act086VerificationFrg by lazy{
         Act086VerificationFrg.newInstance(
             hmAux_Trans,
             prefixPhoto,
-            isNewVerification
+            isNewVerification,
+            deviceItem
         )
     }
     private val historicFrg: Act086HistoricFrg by lazy{
@@ -48,6 +59,11 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
         )
     }
     private var isNewVerification = false
+    private var _deviceItem: GeOsDeviceItem? = null
+    private val deviceItem get() =_deviceItem!!
+
+    private var deviceDesc: String = ""
+    private var trackingNumber: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,13 +75,6 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
         recoverIntentsInfo()
         iniSetup()
         iniTrans()
-        /**
-         *
-         *
-         * APAGAR APOS TESTAR
-         * @todo
-         */
-       // mPresenter.deleteOldPhoto(prefixPhoto)
         initVars()
         initActions()
         iniUIFooter()
@@ -73,16 +82,15 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
 
     private fun recoverIntentsInfo() {
         bundle = intent?.extras?:Bundle()
-        prefixPhoto = bundle.getString(PARAM_PREFIX_PHOTO,"confer_photo_")
         isNewVerification = bundle.getBoolean(PARAM_NEW_VERIFICATION,false)
-//        var deviceBundle = bundle.getBundle(DEVICE_BUNDLE)!!
-//        deviceBundle.getString(GeOsDeviceDao.DEVICE_TP_DESC)
-//        deviceBundle.getString(GeOsDeviceDao.TRACKING_NUMBER)
-//        deviceBundle.getString(DEVICE_ITEM_PK)
-//        deviceBundle.getInt(DEVICE_ITEM_TAB_INDEX)
-//        deviceBundle.getInt(DEVICE_ITEM_LIST_INDEX)
-//        deviceBundle.getString(DEVICE_ITEM_LIST_FILTER)
-//        deviceBundle.getString(DEVICE_ITEM_LIST_ACTION)
+        bundleDevice = bundle.getBundle(DEVICE_BUNDLE)!!
+        deviceDesc  = bundleDevice.getString(GeOsDeviceDao.DEVICE_TP_DESC,"")
+        trackingNumber = bundleDevice.getString(GeOsDeviceDao.TRACKING_NUMBER)
+//        bundleDevice.getString(DEVICE_ITEM_PK)
+//        bundleDevice.getInt(DEVICE_ITEM_TAB_INDEX)
+//        bundleDevice.getInt(DEVICE_ITEM_LIST_INDEX)
+//        bundleDevice.getString(DEVICE_ITEM_LIST_FILTER)
+//        bundleDevice.getString(DEVICE_ITEM_LIST_ACTION)
     }
 
     private fun iniSetup() {
@@ -102,9 +110,51 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
     }
 
     private fun initVars() {
-        setLabels()
-        applyNewVerificationConfig()
-        initVerificationFrg()
+        if(mPresenter.validBundleParams()) {
+            getDeviceItem()
+            if(_deviceItem !=null) {
+                setLabels()
+                setHeaderInfo()
+                applyNewVerificationConfig()
+                initVerificationFrg()
+            }else{
+                paramErrorFlow()
+            }
+        }else{
+            paramErrorFlow()
+        }
+    }
+
+    private fun setHeaderInfo() {
+        with(binding) {
+            act086TvDeviceDesc.text = deviceDesc
+            act086TvTrackingNum.apply {
+                text = trackingNumber
+                visibility = if(trackingNumber.isNullOrEmpty()){
+                    View.GONE
+                }else {
+                    View.VISIBLE
+                }
+            }
+            act086TvItemCheckDesc.text = deviceItem.item_check_desc
+            act086TvConsult
+        }
+    }
+
+    private fun paramErrorFlow() {
+        ToolBox.alertMSG(
+            context,
+            hmAux_Trans["alert_form_parameter_error_ttl"],
+            hmAux_Trans["alert_form_parameter_error_msg"],
+            DialogInterface.OnClickListener { _, _ ->
+                onBackPressed()
+            },
+            0
+        )
+    }
+
+    private fun getDeviceItem() {
+        _deviceItem = mPresenter.getDeviceItem(isNewVerification)
     }
 
     private fun applyNewVerificationConfig() {
@@ -134,25 +184,32 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
     }
 
     private fun setLabels() {
+        with(binding){
+            act086TvConsult.text = hmAux_Trans["query_lbl"]
+        }
 
     }
 
     private fun initActions() {
         binding.act086TvConsult.setOnClickListener {
-            toggleHeaderNavegationIcons(it.id)
+            toggleTvConsultVisibility(false)
+            displayHomeAsUpEnabled(display = true)
             setHistoricFrg()
         }
         //
-        binding.act086TvBack.setOnClickListener {
+        /*binding.act086TvBack.setOnClickListener {
             toggleHeaderNavegationIcons(it.id)
             initVerificationFrg()
-        }
+        }*/
 
     }
 
-    private fun toggleHeaderNavegationIcons(viewId: Int) {
-        binding.act086TvBack.visibility = if(binding.act086TvBack.id == viewId) View.GONE else View.VISIBLE
-        binding.act086TvConsult.visibility = if(binding.act086TvConsult.id == viewId) View.GONE else View.VISIBLE
+    private fun displayHomeAsUpEnabled(display: Boolean) {
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+
+    private fun toggleTvConsultVisibility(visible: Boolean) {
+        binding.act086TvConsult.visibility = if(visible) View.VISIBLE else View.GONE
     }
 
     /**
@@ -257,11 +314,21 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
 
     override fun onDestroy() {
         super.onDestroy()
-        ToolBox_Inf.deleteFileListExceptionSafe(ConstantBaseApp.CACHE_PATH_PHOTO,prefixPhoto)
+        //ToolBox_Inf.deleteFileListExceptionSafe(ConstantBaseApp.CACHE_PATH_PHOTO,prefixPhoto)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if(item.itemId == android.R.id.home){
+            toggleTvConsultVisibility(true)
+            displayHomeAsUpEnabled(false)
+            updateScrollPosition(0)
+            initVerificationFrg()
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     companion object{

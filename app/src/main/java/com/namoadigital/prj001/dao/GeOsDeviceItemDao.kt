@@ -112,13 +112,16 @@ class GeOsDeviceItemDao(
                 db.insertOrThrow(TABLE, null, toContentValuesMapper.map(item))
             }
             //
-            item?.materialList?.let {
-                daoObjReturn = tryAddUpdateMaterials(it, db)
+            item?.materialList.let {
+                daoObjReturn = tryAddUpdateMaterials(it?: mutableListOf<GeOsDeviceMaterial>(), db)
                 //Se erro durante insert, dispara exception abortando o processamento.
                 if (daoObjReturn.hasError()) {
                     throw java.lang.Exception(daoObjReturn.rawMessage)
                 }
             }
+            //
+            db.setTransactionSuccessful()
+
         } catch (e: SQLiteException) {
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
             //e contendo msg de erro tratada.
@@ -138,6 +141,7 @@ class GeOsDeviceItemDao(
             daoObjReturn.setError(true)
             ToolBox_Inf.registerException(javaClass.name, e)
         } finally {
+            db.endTransaction()
             daoObjReturn.action = curAction
             daoObjReturn.actionReturn = addUpdateRet
         }
@@ -230,9 +234,9 @@ class GeOsDeviceItemDao(
         return daoObjReturn
     }
     //
-    fun tryAddUpdateMaterials(materials: MutableList<GeOsDeviceMaterial>, db: SQLiteDatabase): DaoObjReturn{
+    private fun tryAddUpdateMaterials(materials: MutableList<GeOsDeviceMaterial>, db: SQLiteDatabase): DaoObjReturn{
         val geOsDeviceMaterialDao = geOsDeviceMaterialDao()
-        return geOsDeviceMaterialDao.addUpdate(materials, false, db)
+        return geOsDeviceMaterialDao.addUpdate(materials, true, db)
     }
 
     private fun geOsDeviceMaterialDao(): GeOsDeviceMaterialDao {
