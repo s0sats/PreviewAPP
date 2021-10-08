@@ -231,6 +231,50 @@ class GeOsDeviceMaterialDao(
         closeDB()
     }
 
+    fun removeAllForGeOsDeviceItem(deleteByGeOsDeviceItemWhereClause: String, dbInstance: SQLiteDatabase?): DaoObjReturn{
+        var daoObjReturn = DaoObjReturn()
+        var deleteRet: Long = 0
+        val curAction = DaoObjReturn.DELETE
+        //
+        if(dbInstance == null) {
+            openDB()
+        }else{
+            this.db = dbInstance
+        }
+        try {
+            daoObjReturn.table = TABLE
+            //Tenta update e armazena retorno
+            deleteRet = db.delete(TABLE,deleteByGeOsDeviceItemWhereClause,null ).toLong()
+        } catch (e: SQLiteException) {
+            //Chama metodo que baseado na exception gera obj de retorno setado como erro
+            //e contendo msg de erro tratada.
+            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.message)
+            //Gera arquivo de exception usando dados da exception e do obj de retorno
+            ToolBox_Inf.registerException(
+                javaClass.name,
+                Exception(
+                    """
+                ${e.message}
+                ${daoObjReturn.errorMsg}
+                """.trimIndent()
+                )
+            )
+        } catch (e: Exception) {
+            //Seta obj de retorno com flag de erro e gera arquivo de exception
+            daoObjReturn.setError(true)
+            ToolBox_Inf.registerException(javaClass.name, e)
+        } finally {
+            daoObjReturn.action = curAction
+            daoObjReturn.actionReturn = deleteRet
+        }
+        //
+        if(dbInstance == null) {
+            closeDB()
+        }
+        //
+        return daoObjReturn
+    }
+
     override fun getByString(sQuery: String?): GeOsDeviceMaterial? {
         var item: GeOsDeviceMaterial? = null
         openDB()

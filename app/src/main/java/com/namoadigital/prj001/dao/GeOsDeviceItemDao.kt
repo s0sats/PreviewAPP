@@ -113,7 +113,7 @@ class GeOsDeviceItemDao(
             }
             //
             item?.materialList.let {
-                daoObjReturn = tryAddUpdateMaterials(it?: mutableListOf<GeOsDeviceMaterial>(), db)
+                daoObjReturn = tryAddUpdateMaterials(item!!,it?: mutableListOf<GeOsDeviceMaterial>(), db)
                 //Se erro durante insert, dispara exception abortando o processamento.
                 if (daoObjReturn.hasError()) {
                     throw java.lang.Exception(daoObjReturn.rawMessage)
@@ -188,7 +188,7 @@ class GeOsDeviceItemDao(
                     curAction = DaoObjReturn.INSERT
                     db.insertOrThrow(TABLE, null, toContentValuesMapper.map(item))
                 }
-                daoObjReturn = tryAddUpdateMaterials(item.materialList, db)
+                daoObjReturn = tryAddUpdateMaterials(item!!, item.materialList, db)
                 //Se erro durante insert, dispara exception abortando o processamento.
                 if (daoObjReturn.hasError()) {
                     throw java.lang.Exception(daoObjReturn.rawMessage)
@@ -234,10 +234,25 @@ class GeOsDeviceItemDao(
         return daoObjReturn
     }
     //
-    private fun tryAddUpdateMaterials(materials: MutableList<GeOsDeviceMaterial>, db: SQLiteDatabase): DaoObjReturn{
+    private fun tryAddUpdateMaterials(
+        geOsDeviceItem: GeOsDeviceItem,
+        materials: MutableList<GeOsDeviceMaterial>,
+        db: SQLiteDatabase
+    ): DaoObjReturn{
         val geOsDeviceMaterialDao = geOsDeviceMaterialDao()
-        return geOsDeviceMaterialDao.addUpdate(materials, true, db)
+        //Tenta remover a lista atual
+        val daoObjReturn = geOsDeviceMaterialDao.removeAllForGeOsDeviceItem(
+            getWherePkClause(geOsDeviceItem).toString(),
+            db
+        )
+        //Se erro, reporta
+        if(daoObjReturn.hasError()){
+            return daoObjReturn
+        }
+        //Senão tem erro, atualiza.
+        return geOsDeviceMaterialDao.addUpdate(materials, false, db)
     }
+
 
     private fun geOsDeviceMaterialDao(): GeOsDeviceMaterialDao {
         return GeOsDeviceMaterialDao(
