@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
@@ -71,6 +72,7 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_019;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_001_TT;
 import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_002;
+import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_003;
 import com.namoadigital.prj001.sql.GeOsDeviceSql_002;
 import com.namoadigital.prj001.sql.GeOsSql_001;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
@@ -2071,6 +2073,79 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 //Não tem o que fazer nesse ponto...
                 if(daoObjReturn.hasError()){
                     ToolBox_Inf.registerException(getClass().getName(),new Exception(daoObjReturn.getErrorMsg()));
+                }
+            }
+        }
+    }
+
+    /**
+     * Add fotos dos item se houver
+     * @param formLocal
+     * @param geFiles
+     * @param sDate
+     */
+    @Override
+    public void addGeOsDeviceItemPhotosIntoFiles(GE_Custom_Form_Local formLocal, ArrayList<GE_File> geFiles, String sDate) {
+        if(formLocal.getIs_so() == 1){
+            List<GeOsDeviceItem> deviceItemList = geOsDeviceItemDao.query(
+                new GeOsDeviceItem_Sql_003(
+                    String.valueOf(formLocal.getCustomer_code()),
+                    String.valueOf(formLocal.getCustom_form_type()),
+                    String.valueOf(formLocal.getCustom_form_code()),
+                    String.valueOf(formLocal.getCustom_form_version()),
+                    String.valueOf(formLocal.getCustom_form_data())
+                ).toSqlQuery()
+            );
+            //
+            if(deviceItemList != null && deviceItemList.size() > 0) {
+                for (GeOsDeviceItem deviceItem : deviceItemList) {
+                    if(deviceItem.getExec_photo1() != null){
+                        File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + deviceItem.getExec_photo1());
+                        if (sFile.exists()) {
+                            GE_File geFile = new GE_File();
+                            geFile.setFile_code(deviceItem.getExec_photo1().replace(Act011_Main.PNG_EXTENSION, ""));
+                            geFile.setFile_path(deviceItem.getExec_photo1());
+                            geFile.setFile_status(GE_File.OPENED);
+                            geFile.setFile_date(sDate);
+                            geFiles.add(geFile);
+                        }
+                    }
+                    //
+                    if(deviceItem.getExec_photo2() != null){
+                        File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + deviceItem.getExec_photo2());
+                        if (sFile.exists()) {
+                            GE_File geFile = new GE_File();
+                            geFile.setFile_code(deviceItem.getExec_photo2().replace(Act011_Main.PNG_EXTENSION, ""));
+                            geFile.setFile_path(deviceItem.getExec_photo2());
+                            geFile.setFile_status(GE_File.OPENED);
+                            geFile.setFile_date(sDate);
+                            geFiles.add(geFile);
+                        }
+                    }
+                    //
+                    if(deviceItem.getExec_photo3() != null){
+                        File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + deviceItem.getExec_photo3());
+                        if (sFile.exists()) {
+                            GE_File geFile = new GE_File();
+                            geFile.setFile_code(deviceItem.getExec_photo3().replace(Act011_Main.PNG_EXTENSION, ""));
+                            geFile.setFile_path(deviceItem.getExec_photo3());
+                            geFile.setFile_status(GE_File.OPENED);
+                            geFile.setFile_date(sDate);
+                            geFiles.add(geFile);
+                        }
+                    }
+                    //
+                    if(deviceItem.getExec_photo4() != null){
+                        File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + deviceItem.getExec_photo4());
+                        if (sFile.exists()) {
+                            GE_File geFile = new GE_File();
+                            geFile.setFile_code(deviceItem.getExec_photo4().replace(Act011_Main.PNG_EXTENSION, ""));
+                            geFile.setFile_path(deviceItem.getExec_photo4());
+                            geFile.setFile_status(GE_File.OPENED);
+                            geFile.setFile_date(sDate);
+                            geFiles.add(geFile);
+                        }
+                    }
                 }
             }
         }

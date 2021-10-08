@@ -1,13 +1,11 @@
 package com.namoadigital.prj001.ui.act086.frg_verification
 
-import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -23,7 +21,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity_Frag
 import com.namoa_digital.namoa_library.view.Camera_Activity
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.adapter.Act086PhotoAdapter
-import com.namoadigital.prj001.adapter.Act086ProductItemAdapter
+import com.namoadigital.prj001.adapter.Act086MaterialItemAdapter
 import com.namoadigital.prj001.dao.GeOsDeviceItemDao
 import com.namoadigital.prj001.databinding.Act086VerificationFrgBinding
 import com.namoadigital.prj001.extensions.applyTintColor
@@ -44,6 +42,7 @@ import java.util.*
  * create an instance of this fragment.
  */
 class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_View {
+    private val IN_READONLY = "IN_READONLY"
 
     private val binding : Act086VerificationFrgBinding by lazy{
         Act086VerificationFrgBinding.inflate(layoutInflater)
@@ -64,10 +63,11 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         Act086PhotoAdapter(::onPhotoItemClick)
     }
     private val materialFragList = mutableListOf<Act086MaterialItem>()
-    private val materialFragAdapter: Act086ProductItemAdapter by lazy{
-        Act086ProductItemAdapter(
+    private val materialFragAdapter: Act086MaterialItemAdapter by lazy{
+        Act086MaterialItemAdapter(
             ::onProductItemClick,
-            ::onDeleteIconClick
+            ::onDeleteIconClick,
+            inReadOnly
         )
     }
     private var isNewVerification: Boolean = false
@@ -81,6 +81,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     lateinit var checkScrollNeeds: (materialBottom: Int, heightToAdd: Int) -> Unit
     private lateinit var geOsDeviceItem: GeOsDeviceItem
     private var lastSelectedRdoId = -1
+    private var inReadOnly : Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,6 +90,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             prefixPhoto = it.getString(Act086Main.PARAM_PREFIX_PHOTO,"")
             isNewVerification = it.getBoolean(Act086Main.PARAM_NEW_VERIFICATION,false)
             geOsDeviceItem = it.getSerializable(GeOsDeviceItem::javaClass.name) as GeOsDeviceItem
+            inReadOnly = it.getBoolean(IN_READONLY,true)
         }
     }
 
@@ -109,6 +111,29 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         initVars()
         initActions()
         setAnswerFromDb()
+        applyReadonlyUi()
+    }
+
+    private fun applyReadonlyUi() {
+        if(inReadOnly) {
+            with(binding) {
+                act086VerificationFrgRgAnswers.forEach {
+                    it.isEnabled = false
+                    it.isClickable = false
+                }
+                act086VerificationFrgClMaterial.isEnabled = false
+                act086VerificationFrgClPhoto.isEnabled = false
+                act086VerificationFrgMketComment.isEnabled = false
+                act086VerificationFrgClDeleteInfos.apply {
+                    isEnabled = false
+                    visibility = View.GONE
+                }
+                act086VerificationFrgBtnOk.apply {
+                    isEnabled = false
+                    visibility = View.GONE
+                }
+            }
+        }
     }
 
     private fun resetMaterialAndPhotoList() {
@@ -153,6 +178,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         if (geOsDeviceItem.materialList.isNotEmpty()) {
             mPresenter.buildAdapterMaterialFragList(geOsDeviceItem.materialList, materialFragList)
             materialFragAdapter.notifyDataSetChanged()
+            updateMaterialLabelCount()
         }
     }
 
@@ -413,7 +439,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             with(binding){
                 if( lastSelectedRdoId != -1 && lastSelectedRdoId != checkedId
                     && (checkedId == act086VerificationFrgRdoAnswerAlreadyDone.id  || checkedId == act086VerificationFrgRdoAnswerNotVerified.id)
-                    && (photoList.isNotEmpty() || materialFragList.isNotEmpty())
+                    && materialFragList.isNotEmpty()
                 ){
                     showConfirmAlert(
                         hmAux_Trans["alert_material_not_enabled_for_answer_ttl"],
@@ -704,7 +730,8 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                 putExtra(ConstantBase.PTYPE, 1)
                 putExtra(ConstantBase.PPATH, photoName)
                 putExtra(ConstantBase.PEDIT, newPhoto)
-                putExtra(ConstantBase.PENABLED, newPhoto)
+                //Se for readonly bloqueia edição se não libera
+                putExtra(ConstantBase.PENABLED, !inReadOnly)
                 putExtra(ConstantBase.P_ALLOW_GALLERY, false)//pode galeria
                 putExtra(ConstantBase.P_ALLOW_HIGH_RESOLUTION, false)//pode highResolution
                 putExtra(ConstantBase.FILE_AUTHORITIES, ConstantBase.AUTHORITIES_FOR_PROVIDER)
@@ -723,7 +750,9 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
 
     override fun onPause() {
         super.onPause()
-        saveData()
+        if(!inReadOnly) {
+            saveData()
+        }
     }
 
     override fun updatePhotoListIntoAdapter() {
@@ -776,7 +805,8 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             hmAux_Trans: HMAux,
             prefixPhoto: String,
             isNewVerification: Boolean,
-            deviceItem: GeOsDeviceItem
+            deviceItem: GeOsDeviceItem,
+            readOnly: Boolean
         ) =
             Act086VerificationFrg().apply {
                 arguments = Bundle().apply {
@@ -784,6 +814,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                     putString(Act086Main.PARAM_PREFIX_PHOTO, prefixPhoto)
                     putBoolean(Act086Main.PARAM_NEW_VERIFICATION, isNewVerification)
                     putSerializable(GeOsDeviceItem::javaClass.name, deviceItem)
+                    putBoolean(IN_READONLY, readOnly)
                 }
             }
 

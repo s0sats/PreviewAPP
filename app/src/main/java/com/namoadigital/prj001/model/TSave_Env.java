@@ -20,6 +20,9 @@ public class TSave_Env extends Main_Header_Env {
     private List<GE_Custom_Form_Data> form_datas;
     @Expose
     private List<GE_Custom_Form_Data_Field> form_data_fields;
+    //LISTA DE ITEM DA O.S
+    @Expose
+    private List<GeOsDeviceItem> form_items;
 
 
     public String getSite_code() {
@@ -60,5 +63,13 @@ public class TSave_Env extends Main_Header_Env {
 
     public void setForm_data_fields(List<GE_Custom_Form_Data_Field> form_data_fields) {
         this.form_data_fields = form_data_fields;
+    }
+
+    public List<GeOsDeviceItem> getForm_items() {
+        return form_items;
+    }
+
+    public void setForm_items(List<GeOsDeviceItem> form_items) {
+        this.form_items = form_items;
     }
 }

@@ -191,7 +191,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/act086_verification_frg_cl_material"
             tools:itemCount="2"
-            tools:listitem="@layout/act086_product_item" />
+            tools:listitem="@layout/act086_material_item" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/act086_verification_frg_cl_photo"

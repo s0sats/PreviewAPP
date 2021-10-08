@@ -12,12 +12,15 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Data_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.dao.GeOsDao;
+import com.namoadigital.prj001.dao.GeOsDeviceItemDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data_Field;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
+import com.namoadigital.prj001.model.GeOsDeviceItem;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
@@ -29,6 +32,7 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Field_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_003;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
+import com.namoadigital.prj001.sql.Sql_WS_Save_Device_Item_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Step_Sql_001;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -50,10 +54,14 @@ public class WS_Save extends IntentService {
     private GE_Custom_Form_LocalDao formLocalDao;
     private MD_Schedule_ExecDao scheduleExecDao;
     private TK_Ticket_StepDao ticketStepDao;
+    private MD_SiteDao siteDao;
+    private GeOsDeviceItemDao deviceItemDao;
+    private GeOsDao geOsDao;
     //
     private String token;
     private List<GE_Custom_Form_Data> form_datas;
     private List<GE_Custom_Form_Data_Field> form_data_fields;
+    private List<GeOsDeviceItem> form_items;
     //
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
@@ -62,7 +70,7 @@ public class WS_Save extends IntentService {
     private String mSEND = "";
     private boolean mResend = false;
     private ArrayList<TSave_Rec.Error_Process> errorProcessList = new ArrayList<>();
-    private MD_SiteDao siteDao;
+
 
     public WS_Save() {
         super("WS_Save");
@@ -111,9 +119,22 @@ public class WS_Save extends IntentService {
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
                 Constant.DB_VERSION_CUSTOM
             );
+            //todo remover pois nao sera usado
+            geOsDao= new GeOsDao(
+                getApplicationContext(),
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                Constant.DB_VERSION_CUSTOM
+            );
+            //
+            deviceItemDao = new GeOsDeviceItemDao(
+                getApplicationContext(),
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                Constant.DB_VERSION_CUSTOM
+            );
             //
             form_datas = new ArrayList<>() ;
             form_data_fields = new ArrayList<>();
+            form_items = new ArrayList<>();
             //
             int jumpValidation = bundle.getInt(Constant.GC_STATUS_JUMP);
             int jumpOD = bundle.getInt(Constant.GC_STATUS);
@@ -176,6 +197,7 @@ public class WS_Save extends IntentService {
         env.setOperation_code(ToolBox_Con.getPreference_Operation_Code(getApplicationContext()));
         env.setForm_datas(form_datas);
         env.setForm_data_fields(form_data_fields);
+        env.setForm_items(form_items);
         env.setToken(token);
         env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
         //
@@ -253,7 +275,12 @@ public class WS_Save extends IntentService {
                                     ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
                             ).toSqlQuery()
                     );
-
+            //LUCHE - 08/10/2021 ADD ITEMS DA O.S
+            form_items = deviceItemDao.query(
+                    new Sql_WS_Save_Device_Item_001(
+                        ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                    ).toSqlQuery()
+            );
             //Atualiza token para o que esta pendente de envio
             token = form_datas.get(0).getToken();
         }
@@ -285,10 +312,15 @@ public class WS_Save extends IntentService {
                             ).toSqlQuery()
                     );
 
+            //LUCHE - 08/10/2021 ADD ITEMS DA O.S
+            form_items = deviceItemDao.query(
+                new Sql_WS_Save_Device_Item_001(
+                    ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                ).toSqlQuery()
+            );
         }
-
+        //
         return form_datas.size();
-
     }
 
     private boolean checkSaveReturn(Gson gson, String save, String error_msg, ArrayList<TSave_Rec.Error_Process> error_process, int jumpValidation, int jumpOD) throws Exception{

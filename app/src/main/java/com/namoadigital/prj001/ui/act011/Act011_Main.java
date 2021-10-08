@@ -1034,6 +1034,8 @@ public class Act011_Main extends Base_Activity
             }
         }
 
+        mPresenter.addGeOsDeviceItemPhotosIntoFiles(formLocal, geFiles,sDate);
+
         formData.setSignature(mSignature);
 
         mPresenter.checkSignature(formData, signature, 0, geFiles, require_serial_done, require_serial_done_ok, formLocal.getRequire_location());
@@ -2090,6 +2092,7 @@ public class Act011_Main extends Base_Activity
         deviceBundle.putInt(DEVICE_ITEM_LIST_INDEX,position);
         deviceBundle.putString(DEVICE_ITEM_LIST_FILTER,textFilter);
         deviceBundle.putBoolean(DEVICE_ITEM_NEW_ACTION,isNewItem);
+        deviceBundle.putString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS,formData.getCustom_form_status());
         bundle.putBundle(DEVICE_BUNDLE, deviceBundle);
         mIntent.putExtras(bundle);
         startActivity(mIntent);

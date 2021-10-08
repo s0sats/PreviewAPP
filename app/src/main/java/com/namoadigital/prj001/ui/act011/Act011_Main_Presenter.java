@@ -70,4 +70,6 @@ public interface Act011_Main_Presenter {
     void resetScheduleExecIfNeeds(GE_Custom_Form_Local formLocal);
 
     void deleteGeOsFormIfNeeds(GE_Custom_Form_Local formLocal);
+
+    void addGeOsDeviceItemPhotosIntoFiles(GE_Custom_Form_Local formLocal, ArrayList<GE_File> geFiles, String sDate);
 }

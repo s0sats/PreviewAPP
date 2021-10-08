@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.model
 
+import com.google.gson.annotations.Expose
 import java.io.Serializable
 
 class GeOsDeviceMaterial(
@@ -13,9 +14,11 @@ class GeOsDeviceMaterial(
     val device_tp_code: Int,
     val item_check_code: Int,
     val item_check_seq: Int,
+    @Expose
     val material_code: Int,
     val material_id: String,
     val material_desc: String,
+    @Expose
     val material_qty: Float,
     val material_unit: String?,
     val creation_ms: Long

@@ -36,6 +36,8 @@ class Act086MainPresenter(
             "query_lbl",
             "alert_form_parameter_error_ttl",
             "alert_form_parameter_error_msg",
+            "inspection_missing_lbl",
+            "inspection_alert_days_lbl"
         )
         transList.addAll(
             Act086VerificationFrg.getFragTranslationsVars()
