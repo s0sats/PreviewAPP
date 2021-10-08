@@ -210,15 +210,15 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
 
     override fun getTabErrorCount(): Int {
         val problemReportedCount = acessoryFormView.inspections.count {
-            it.status == MANUAL_ALERT
+            it.status == MANUAL_ALERT && !it.answerStatus.equals(ConstantBaseApp.SYS_STATUS_DONE)
         }
         //
         val criticalForecastCount = acessoryFormView.inspections.count {
-            it.status == CRITICAL_FORECAST
+            it.status == CRITICAL_FORECAST && !it.answerStatus.equals(ConstantBaseApp.SYS_STATUS_DONE)
         }
         //
         val forecastCount = acessoryFormView.inspections.count {
-            it.status == FORECAST
+            it.status == FORECAST && !it.answerStatus.equals(ConstantBaseApp.SYS_STATUS_DONE)
         }
         return problemReportedCount + criticalForecastCount + forecastCount
     }

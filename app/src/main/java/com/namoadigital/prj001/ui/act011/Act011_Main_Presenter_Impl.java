@@ -96,7 +96,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -576,7 +575,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             for(GeOsDeviceItem item: deviceItem){
                 inspections.add(new InspectionCell(
                     item.getItem_check_desc(),
-                    getDayCount(item.getTarget_date()),
+                    ToolBox_Inf.getDateDiferenceInDays(item.getTarget_date()),
                     getPhotoCount(item),
                     item.getMaterialList().size(),
                     item.getApply_material().equals(APPLY_MATERIAL_REQUIRED),
@@ -586,6 +585,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                         item.getCritical_item() == 1,
                         item.getStructure() == 0,
                         item.getStatus_answer(),
+                        item.getExec_type(),
                         item.getGeOsDeviceItemCodeAndSeq()
                     )
                 );
@@ -608,12 +608,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         return 0;
     }
 
-    private int getDayCount(String target_date) {
-        long lTargetDate = ToolBox_Inf.dateToMilliseconds(target_date);
-        long lCurrentDate = ToolBox_Inf.dateToMilliseconds(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
-        long l = TimeUnit.MILLISECONDS.toDays(lTargetDate - lCurrentDate);
-        return (int) l;
-    }
+
 
     private List<GeOsDeviceItem> getDeviceItem(GeOsDevice device) {
          return geOsDeviceItemDao.query(new GeOsDeviceItem_Sql_002(
