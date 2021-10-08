@@ -40,6 +40,7 @@ class GeOsDeviceMaterialDao(
         const val MATERIAL_DESC = "material_desc"
         const val MATERIAL_QTY = "material_qty"
         const val MATERIAL_UNIT = "material_unit"
+        const val CREATION_MS = "creation_ms"
     }
 
     private val toGeOsDeviceMaterialMapper: Mapper<Cursor, GeOsDeviceMaterial>
@@ -319,7 +320,8 @@ class GeOsDeviceMaterialDao(
                         material_id = getString(getColumnIndex(MATERIAL_ID)),
                         material_desc = getString(getColumnIndex(MATERIAL_DESC)),
                         material_qty = getFloat(getColumnIndex(MATERIAL_QTY)),
-                        material_unit = getStringOrNull(getColumnIndex(MATERIAL_UNIT))
+                        material_unit = getStringOrNull(getColumnIndex(MATERIAL_UNIT)),
+                        creation_ms = getLong(getColumnIndex(CREATION_MS))
                     )
                 }
             }
@@ -353,6 +355,7 @@ class GeOsDeviceMaterialDao(
                     put(MATERIAL_DESC, it.material_desc)
                     put(MATERIAL_QTY, it.material_qty)
                     put(MATERIAL_UNIT, it.material_unit)
+                    put(CREATION_MS, it.creation_ms)
                     //
                 }
             }

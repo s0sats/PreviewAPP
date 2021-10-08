@@ -7,7 +7,8 @@ class Act086MaterialItem(
     productId: String,
     productDesc: String,
     productUnit: String,
-    productQty: Int = 0
+    productQty: Int = 0,
+    creationMs: Long = 0
 ):Serializable{
     var productCode: Int = -1
     private set
@@ -19,12 +20,16 @@ class Act086MaterialItem(
         private set
     var productQty: Int = 0
 
+    var creationMs: Long = 0
+        private set
+
     init {
         this.productCode = productCode
         this.productId = productId
         this.productDesc = productDesc
         this.productUnit = productUnit
         this.productQty = productQty
+        this.creationMs = creationMs
     }
 
     fun getFormttedQty() = if(productQty > 0) "$productQty $productUnit" else ""

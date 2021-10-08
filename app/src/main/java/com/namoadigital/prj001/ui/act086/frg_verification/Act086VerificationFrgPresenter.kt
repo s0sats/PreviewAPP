@@ -12,6 +12,8 @@ import com.namoadigital.prj001.model.GeOsDeviceMaterial
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.io.File
+import java.util.*
+import kotlin.collections.ArrayList
 
 class Act086VerificationFrgPresenter(
     private val context: Context,
@@ -65,7 +67,8 @@ class Act086VerificationFrgPresenter(
                 it.getInt(MD_All_ProductDao.PRODUCT_CODE),
                 it.getString(MD_All_ProductDao.PRODUCT_ID, ""),
                 it.getString(MD_All_ProductDao.PRODUCT_DESC, ""),
-                it.getString(MD_All_ProductDao.UN, "")
+                it.getString(MD_All_ProductDao.UN, ""),
+                creationMs = Calendar.getInstance().timeInMillis
             )
             //
             mView.addProductToListAndShowDialog(act086ProductItem)
@@ -92,7 +95,8 @@ class Act086VerificationFrgPresenter(
                 it.productId,
                 it.productDesc,
                 it.productQty.toFloat(),
-                it.productUnit
+                it.productUnit,
+                it.creationMs
             )
         }
         //
@@ -122,7 +126,8 @@ class Act086VerificationFrgPresenter(
                     it.material_id,
                     it.material_desc,
                     it.material_unit?:"",
-                    it.material_qty.toInt()
+                    it.material_qty.toInt(),
+                    it.creation_ms
                 )
             )
         }

@@ -342,6 +342,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         }
         with(binding) {
             act086VerificationFrgClMaterial.isClickable = materialEnabled
+            act086VerificationFrgClMaterial.isEnabled = materialEnabled
             act086VerificationFrgClMaterial.forEach {
                 when (it) {
                     is ImageView -> {
@@ -375,6 +376,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                                 R.color.namoa_pipeline_header_icon
                              }
             act086VerificationFrgClPhoto.isClickable = photoEnabled
+            act086VerificationFrgClPhoto.isEnabled = photoEnabled
             act086VerificationFrgClPhoto.forEach {
                 when (it) {
                     is ImageView -> {

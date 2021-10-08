@@ -17,5 +17,6 @@ class GeOsDeviceMaterial(
     val material_id: String,
     val material_desc: String,
     val material_qty: Float,
-    val material_unit: String?
+    val material_unit: String?,
+    val creation_ms: Long
 ): Serializable

@@ -40,7 +40,8 @@ class GeOsDeviceMaterialSql_002(
                         ${GeOsDeviceMaterialDao.DEVICE_TP_CODE} ,
                         ${GeOsDeviceMaterialDao.ITEM_CHECK_CODE},
                         ${GeOsDeviceMaterialDao.ITEM_CHECK_SEQ},
-                        ${GeOsDeviceMaterialDao.MATERIAL_CODE} 
+                        --${GeOsDeviceMaterialDao.MATERIAL_CODE} 
+                        ${GeOsDeviceMaterialDao.CREATION_MS} 
                                                                                                                           
         """.trimMargin()
         return s
