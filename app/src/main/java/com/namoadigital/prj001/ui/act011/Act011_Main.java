@@ -2,9 +2,9 @@ package com.namoadigital.prj001.ui.act011;
 
 import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH_PHOTO;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DEVICE_BUNDLE;
-import static com.namoadigital.prj001.util.ConstantBaseApp.DEVICE_ITEM_NEW_ACTION;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DEVICE_ITEM_LIST_FILTER;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DEVICE_ITEM_LIST_INDEX;
+import static com.namoadigital.prj001.util.ConstantBaseApp.DEVICE_ITEM_NEW_ACTION;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DEVICE_ITEM_PK;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DEVICE_ITEM_TAB_INDEX;
 
@@ -99,7 +99,6 @@ import com.namoadigital.prj001.model.GE_Custom_Form_Data_Field;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.GeOs;
-import com.namoadigital.prj001.model.InspectionCellActions;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
@@ -2076,9 +2075,9 @@ public class Act011_Main extends Base_Activity
     }
 
     @Override
-    public void onInspectionSelected(@NotNull AcessoryFormView acessoryFormView, @NotNull InspectionCellActions action, int position, @NotNull String textFilter) {
+    public void onInspectionSelected(@NotNull AcessoryFormView acessoryFormView, boolean isNewItem, int position, @NotNull String textFilter) {
         String device_item_pk = acessoryFormView.getDevicePkPrefix();
-        if(!action.equals(InspectionCellActions.ADD_NEW_ITEM)){
+        if(!isNewItem){
             device_item_pk = acessoryFormView.getDevicePkPrefix() +"."+acessoryFormView.getInspections().get(position).getItemCodeAndSeq();
         }
         Intent mIntent = new Intent(context, Act086Main.class);
@@ -2090,7 +2089,7 @@ public class Act011_Main extends Base_Activity
         deviceBundle.putInt(DEVICE_ITEM_TAB_INDEX,acessoryFormView.getTabIndex());
         deviceBundle.putInt(DEVICE_ITEM_LIST_INDEX,position);
         deviceBundle.putString(DEVICE_ITEM_LIST_FILTER,textFilter);
-        deviceBundle.putString(DEVICE_ITEM_NEW_ACTION,action.getAction());
+        deviceBundle.putBoolean(DEVICE_ITEM_NEW_ACTION,isNewItem);
         bundle.putBundle(DEVICE_BUNDLE, deviceBundle);
         mIntent.putExtras(bundle);
         startActivity(mIntent);

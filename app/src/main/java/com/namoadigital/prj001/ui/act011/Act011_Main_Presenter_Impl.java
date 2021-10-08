@@ -575,7 +575,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             for(GeOsDeviceItem item: deviceItem){
                 inspections.add(new InspectionCell(
                     item.getItem_check_desc(),
-                    ToolBox_Inf.getDateDiferenceInDays(item.getTarget_date()),
+                    ToolBox_Inf.getDateDiferenceInDays(item.getTarget_date(),ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")),
                     getPhotoCount(item),
                     item.getMaterialList().size(),
                     item.getApply_material().equals(APPLY_MATERIAL_REQUIRED),

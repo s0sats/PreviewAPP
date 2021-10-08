@@ -8902,8 +8902,8 @@ public class ToolBox_Inf {
     }
 
 
-    public static int getDateDiferenceInDays(String target_date) {
-        int l = (int) TimeUnit.MILLISECONDS.toDays(getDateDiferenceInMilliseconds(target_date, ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")));
+    public static int getDateDiferenceInDays(String firstDate, String secoundDate) {
+        int l = (int) TimeUnit.MILLISECONDS.toDays(getDateDiferenceInMilliseconds(firstDate, secoundDate));
         return l;
     }
 }
