@@ -531,7 +531,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         //
         geOsDeviceItem.apply {
             exec_type = getExecTypeForAnswer()
-            exec_date = exec_date?: ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT)
+            exec_date = getExecDate()
             exec_comment = binding.act086VerificationFrgMketComment.text.toString()
             exec_photo1 = photoArray[0]
             exec_photo2 = photoArray[1]
@@ -539,6 +539,14 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             exec_photo4 = photoArray[3]
             status_answer = getCheckStatusAnswer()
             mPresenter.getGeOsDeviceMaterialList(this,materialFragList)
+        }
+    }
+
+    private fun getExecDate(): String? {
+        return if(binding.act086VerificationFrgRgAnswers.checkedRadioButtonId == -1){
+            null
+        } else{
+            geOsDeviceItem.exec_date?: ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT)
         }
     }
 
@@ -556,13 +564,14 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         return ConstantBaseApp.SYS_STATUS_DONE
     }
 
-    private fun getExecTypeForAnswer(): String {
+    private fun getExecTypeForAnswer(): String? {
         with(binding) {
             return when (act086VerificationFrgRgAnswers.checkedRadioButtonId) {
                         act086VerificationFrgRdoAnswerFixed.id -> GeOsDeviceItem.EXEC_TYPE_FIXED
                         act086VerificationFrgRdoAnswerAlreadyDone.id-> GeOsDeviceItem.EXEC_TYPE_ALREADY_OK
                         act086VerificationFrgRdoAnswerAlert.id-> GeOsDeviceItem.EXEC_TYPE_ALERT
-                        else -> GeOsDeviceItem.EXEC_TYPE_NOT_VERIFIED
+                        act086VerificationFrgRdoAnswerNotVerified.id -> GeOsDeviceItem.EXEC_TYPE_NOT_VERIFIED
+                        else -> null
                     }
         }
     }

@@ -2,7 +2,7 @@ package com.namoadigital.prj001.ui.act011;
 
 import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH_PHOTO;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DEVICE_BUNDLE;
-import static com.namoadigital.prj001.util.ConstantBaseApp.DEVICE_ITEM_LIST_ACTION;
+import static com.namoadigital.prj001.util.ConstantBaseApp.DEVICE_ITEM_NEW_ACTION;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DEVICE_ITEM_LIST_FILTER;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DEVICE_ITEM_LIST_INDEX;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DEVICE_ITEM_PK;
@@ -2090,7 +2090,7 @@ public class Act011_Main extends Base_Activity
         deviceBundle.putInt(DEVICE_ITEM_TAB_INDEX,acessoryFormView.getTabIndex());
         deviceBundle.putInt(DEVICE_ITEM_LIST_INDEX,position);
         deviceBundle.putString(DEVICE_ITEM_LIST_FILTER,textFilter);
-        deviceBundle.putString(DEVICE_ITEM_LIST_ACTION,action.getAction());
+        deviceBundle.putString(DEVICE_ITEM_NEW_ACTION,action.getAction());
         bundle.putBundle(DEVICE_BUNDLE, deviceBundle);
         mIntent.putExtras(bundle);
         startActivity(mIntent);

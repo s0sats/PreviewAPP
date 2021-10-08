@@ -25,6 +25,7 @@ import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ConstantBaseApp.*
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
+import java.util.concurrent.TimeUnit
 
 class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
     private lateinit var binding: Act086MainContentBinding
@@ -86,6 +87,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
         bundleDevice = bundle.getBundle(DEVICE_BUNDLE)!!
         deviceDesc  = bundleDevice.getString(GeOsDeviceDao.DEVICE_TP_DESC,"")
         trackingNumber = bundleDevice.getString(GeOsDeviceDao.TRACKING_NUMBER)
+        isNewVerification = bundleDevice.getBoolean(DEVICE_ITEM_NEW_ACTION)
 //        bundleDevice.getString(DEVICE_ITEM_PK)
 //        bundleDevice.getInt(DEVICE_ITEM_TAB_INDEX)
 //        bundleDevice.getInt(DEVICE_ITEM_LIST_INDEX)
@@ -137,8 +139,40 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
                 }
             }
             act086TvItemCheckDesc.text = deviceItem.item_check_desc
-            act086TvConsult
+            setAlertDateInfo()
         }
+    }
+
+    private fun setAlertDateInfo() {
+        with(binding){
+            act086TvAlertDate.apply{
+                if(deviceItem.target_date.isNullOrEmpty()){
+                    visibility = View.GONE
+                    text = null
+                }else{
+                    visibility = View.VISIBLE
+                    text = getAlertDateLbl(deviceItem.target_date!!)
+                }
+            }
+        }
+    }
+
+    private fun getAlertDateLbl(targetDate: String): String {
+       val label = if(deviceItem.item_check_status.equals(GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL,true)){
+            hmAux_Trans["future_date_lbl"]
+        }else{
+            hmAux_Trans["late_date_lbl"]
+        }
+        //
+        val day = TimeUnit.MILLISECONDS.toHours(ToolBox_Inf.getDateDiferenceInMilliseconds(targetDate,ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT))).let{
+            if(it < 0 ){
+                it *-1
+            }else{
+                it
+            }
+        }
+        //
+        return "$label: $day"
     }
 
     private fun paramErrorFlow() {
@@ -205,7 +239,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
     }
 
     private fun displayHomeAsUpEnabled(display: Boolean) {
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(display)
     }
 
     private fun toggleTvConsultVisibility(visible: Boolean) {
