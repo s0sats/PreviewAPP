@@ -50,8 +50,7 @@ class Act011InspectionFormAdapter(
         with(holder as MyInspectionFormVH) {
             val inspectionCell = inspectionsFiltered[position]
             onBinding(inspectionCell)
-            if(inspectionCell.isDone
-                && inspectionCell.answer != null) {
+            if(inspectionCell.answer != null) {
                 binding.root.setOnClickListener {
                     myInspectionClickListener.onInspectionSelected(
                         acessoryFormView,
@@ -81,6 +80,7 @@ class Act011InspectionFormAdapter(
                 textFilter
             )
         }
+
     }
 
     fun applyNonForecastFilter(filterApplied: Boolean) {

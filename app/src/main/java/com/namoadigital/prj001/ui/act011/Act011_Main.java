@@ -33,8 +33,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -91,6 +89,7 @@ import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
+import com.namoadigital.prj001.databinding.Act011CheckDialogBinding;
 import com.namoadigital.prj001.model.AcessoryFormView;
 import com.namoadigital.prj001.model.Act011FfOptionsViewObject;
 import com.namoadigital.prj001.model.Act011FormTab;
@@ -459,6 +458,12 @@ public class Act011_Main extends Base_Activity
         transList.add("alert_gps_denied_permission_msg");
         transList.add("alert_gps_never_ask_again_permission_ttl");
         transList.add("alert_gps_never_ask_again_permission_msg");
+        //
+        transList.add("dialog_finalize_os_form_lbl");
+        transList.add("dialog_finalize_form_lbl");
+        transList.add("dialog_finalize_os_form_missing_answer_count_lbl");
+        transList.add("dialog_finalize_os_form_elapsed_time_lbl");
+        transList.add("dialog_finalize_os_form_justify_missing_answer_lbl");
         //
         transList.addAll(Act011FrgInspection.Companion.getFragTranslationsVars());
         //
@@ -872,7 +877,8 @@ public class Act011_Main extends Base_Activity
                 0
             );
         } else {
-            if(showFinalizeOpt && allowFinalizeWithNewBtn()){
+            if(showFinalizeOpt && allowFinalizeWithNewBtn()
+            || isFormOs){
                 showFinalizeDialogOpt();
             }else {
                 // Mudar Aqui
@@ -3200,29 +3206,15 @@ public class Act011_Main extends Base_Activity
     private void showFinalizeDialogOpt(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         //
-        View view = LayoutInflater.from(context).inflate(R.layout.act011_dialog_finalize_option,null);
-        final RadioGroup rdgFinalize = view.findViewById(R.id.act011_dialog_finalize_option_rg);
-        RadioButton rdoFinalize = view.findViewById(R.id.act011_dialog_finalize_option_rdo_finalize);
-        RadioButton rdoFinalizeNew = view.findViewById(R.id.act011_dialog_finalize_option_rdo_finalize_new);
+        Act011CheckDialogBinding binding = Act011CheckDialogBinding.inflate(getLayoutInflater());
         //
-        rdoFinalize.setText(hmAux_Trans.get("dialog_finalize_option_finalize_lbl"));
-        rdoFinalizeNew.setText(hmAux_Trans.get("dialog_finalize_option_finalize_new_lbl"));
+        setDialogVisibilityAndLabels(binding);
         //
-        rdgFinalize.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId){
-                    case R.id.act011_dialog_finalize_option_rdo_finalize:
-                        break;
-                    case R.id.act011_dialog_finalize_option_rdo_finalize_new:
-                        break;
-                }
-            }
-        });
+        setDialogAction(binding);
         //
-        builder.
-                setTitle(hmAux_Trans.get("dialog_finalize_option_ttl"))
-                .setView(view)
+        builder
+//                .setTitle(hmAux_Trans.get("dialog_finalize_option_ttl"))
+                .setView(binding.getRoot())
                 .setCancelable(false)
                 .setPositiveButton(
                         hmAux_Trans.get("sys_alert_btn_ok"),
@@ -3230,7 +3222,7 @@ public class Act011_Main extends Base_Activity
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 //Seta valor var que controla se fluxo é finaliza ou finaliza mais novo.
-                                finalizeNewFlow = rdgFinalize.getCheckedRadioButtonId() == R.id.act011_dialog_finalize_option_rdo_finalize_new;
+                                finalizeNewFlow = binding.act011DialogCheckOptionRg.getCheckedRadioButtonId() == R.id.act011_dialog_finalize_option_rdo_finalize_new;
                                 //
                                 startCheckIN();
 //                                checkGpsFlow();
@@ -3243,6 +3235,61 @@ public class Act011_Main extends Base_Activity
         //
         builder.create().show();
 
+    }
+
+    private void setDialogAction(Act011CheckDialogBinding binding) {
+
+    }
+
+    private void setDialogVisibilityAndLabels(Act011CheckDialogBinding binding) {
+        binding.act011DialogCheckTtl.setText(hmAux_Trans.get("dialog_finalize_option_ttl"));
+        //
+        if(isFormOs){
+            setFormOsViewVisibility(binding, View.VISIBLE);
+            int missingAnswersAmount = missingAnswersCounter();
+            if(missingAnswersAmount == 0){
+                binding.act011DialogCheckClMissingAnswers.setVisibility(View.GONE);
+            }
+            binding.act011DialogCheckTvMissingAnswerVal.setText(String.valueOf(missingAnswersAmount));
+            binding.act011DialogCheckTvElapsedTimeVal.setText(getFormElapsedTimeFormatted(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")));
+            binding.act011DialogCheckMkdateFormStart.setmCanClean(false);
+            binding.act011DialogCheckMkdateFormStart.setmLabel("");
+            binding.act011DialogCheckMkdateFormEnd.setmCanClean(false);
+            binding.act011DialogCheckMkdateFormEnd.setmLabel("");
+            binding.act011DialogCheckMkdateFormStart.setmValue(formData.getDate_start());
+            binding.act011DialogCheckMkdateFormEnd.setmValue(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+            binding.act011DialogFinalizeLbl.setText(hmAux_Trans.get("dialog_finalize_os_form_lbl"));
+            binding.act011DialogCheckTvMissingAnswerLbl.setText(hmAux_Trans.get("dialog_finalize_os_form_missing_answer_count_lbl"));
+            binding.act011DialogCheckTvElapsedTimeLbl.setText(hmAux_Trans.get("dialog_finalize_os_form_missing_answer_count_lbl"));
+            binding.act011DialogCheckTvJustifyMissingAnswerLbl.setText(hmAux_Trans.get("dialog_finalize_os_form_justify_missing_answer_lbl"));
+        }else{
+            setFormOsViewVisibility(binding, View.GONE);
+            binding.act011DialogFinalizeLbl.setText(hmAux_Trans.get("dialog_finalize_form_lbl"));
+        }
+        //
+        binding.act011DialogCheckOptionRg.setVisibility(View.GONE);
+        //
+        if (allowFinalizeWithNewBtn()) {
+            binding.act011DialogCheckOptionRg.setVisibility(View.VISIBLE);
+            binding.act011DialogCheckOptionRdoFinalize.setText(hmAux_Trans.get("dialog_finalize_option_finalize_lbl"));
+            binding.act011DialogCheckOptionRdoFinalizeNew.setText(hmAux_Trans.get("dialog_finalize_option_finalize_new_lbl"));
+        }
+    }
+
+    private String getFormElapsedTimeFormatted(String endDate) {
+        return ToolBox_Inf.getDateDiferenceInHHMM(endDate, formData.getDate_start());
+    }
+
+    private int missingAnswersCounter() {
+        return 0;
+    }
+
+    private void setFormOsViewVisibility(Act011CheckDialogBinding binding, int visibility) {
+        binding.act011DialogCheckClMissingAnswers.setVisibility(visibility);
+        binding.act011DialogCheckTvElapsedTimeLbl.setVisibility(visibility);
+        binding.act011DialogCheckTvElapsedTimeVal.setVisibility(visibility);
+        binding.act011DialogCheckMkdateFormStart.setVisibility(visibility);
+        binding.act011DialogCheckMkdateFormEnd.setVisibility(visibility);
     }
 
     private void hideKeyBoard() {

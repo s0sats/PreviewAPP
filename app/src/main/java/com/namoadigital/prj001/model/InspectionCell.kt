@@ -46,9 +46,12 @@ data class InspectionCell   (
                     tagColor = R.color.namoa_os_form_problem_red
                 }
                 else -> {
-                    tagColor = R.color.namoa_color_pipeline_origin_icon
                     if(isCritical){
+                        this.status = CRITICAL_FORECAST
                         tagColor = R.color.namoa_os_form_critical_forecast_yellow
+                    }else{
+                        this.status = FORECAST
+                        tagColor = R.color.namoa_color_pipeline_origin_icon
                     }
                 }
             }

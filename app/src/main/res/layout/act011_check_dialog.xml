@@ -1,260 +1,263 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/act011_dialog_check_ttl"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="24dp"
+        android:layout_marginHorizontal="24dp"
+        android:textColor="@color/text_black"
+        android:textSize="20sp"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Finalizar OS" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/act011_gdl_start"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_begin="24dp" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/act011_gdl_end"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_end="24dp" />
-
-        <TextView
-            android:id="@+id/act011_check_ttl"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:textColor="@color/text_black"
-            android:textSize="20sp"
-            app:layout_constraintEnd_toStartOf="@+id/act011_gdl_end"
-            app:layout_constraintStart_toStartOf="@+id/act011_gdl_start"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Finalizar OS" />
-
-        <View
-            android:id="@+id/act011_check_top_divider"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="24dp"
-            android:background="@color/namoa_color_gray_6"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/act011_check_ttl" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/act011_check_cl_missing_answers"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            app:layout_constraintEnd_toStartOf="@+id/act011_gdl_end"
-            app:layout_constraintStart_toStartOf="@+id/act011_gdl_start"
-            app:layout_constraintTop_toBottomOf="@+id/act011_check_top_divider">
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/act011_check_tv_missing_answer_lbl"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:textColor="@color/text_black"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@+id/act011_check_tv_missing_answer_val"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="Itens não respondidos:" />
-
-            <TextView
-                android:id="@+id/act011_check_tv_missing_answer_val"
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/act011_gdl_start"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:textColor="@color/text_black"
-                android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="10" />
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="24dp" />
 
-            <TextView
-                android:id="@+id/act011_check_tv_justify_missing_answer_lbl"
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/act011_gdl_end"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_end="24dp" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/act011_dialog_check_cl_missing_answers"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:layout_marginEnd="8dp"
-                android:textColor="@color/text_black"
-                android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/act011_check_tv_missing_answer_lbl"
-                app:layout_constraintTop_toBottomOf="@+id/act011_check_tv_missing_answer_lbl"
-                tools:text="Para finalizar, informe uma justificativa para marcá-los como “Não verificado”*" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/act011_gdl_end"
+                app:layout_constraintStart_toStartOf="@+id/act011_gdl_start">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/act011_check_til_justify_missing_answer_val"
+                <TextView
+                    android:id="@+id/act011_dialog_check_tv_missing_answer_lbl"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:textColor="@color/text_black"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@+id/act011_dialog_check_tv_missing_answer_val"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Itens não respondidos:" />
+
+                <TextView
+                    android:id="@+id/act011_dialog_check_tv_missing_answer_val"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:textColor="@color/text_black"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="10" />
+
+                <TextView
+                    android:id="@+id/act011_dialog_check_tv_justify_missing_answer_lbl"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="8dp"
+                    android:textColor="@color/text_black"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/act011_dialog_check_tv_missing_answer_lbl"
+                    app:layout_constraintTop_toBottomOf="@+id/act011_dialog_check_tv_missing_answer_lbl"
+                    tools:text="Para finalizar, informe uma justificativa para marcá-los como “Não verificado”*" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/act011_dialog_check_til_justify_missing_answer_val"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:counterEnabled="true"
+                    app:counterMaxLength="500"
+                    app:layout_constraintEnd_toEndOf="@+id/act011_dialog_check_tv_justify_missing_answer_lbl"
+                    app:layout_constraintStart_toStartOf="@+id/act011_dialog_check_tv_justify_missing_answer_lbl"
+                    app:layout_constraintTop_toBottomOf="@+id/act011_dialog_check_tv_justify_missing_answer_lbl">
+
+                    <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                        android:id="@+id/act011_dialog_check_mkedt_justify_missing_answer_val"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:inputType="textMultiLine"
+                        android:maxLength="500"
+                        app:mBARCODE="false"
+                        app:mNFC="false"
+                        app:mOCR="false"
+                        app:mOCRVin="false"
+                        tools:hint="Inserir justificativa..." />
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/act011_dialog_check_tv_elapsed_time_lbl"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:counterEnabled="true"
-                app:counterMaxLength="500"
-                app:layout_constraintEnd_toEndOf="@+id/act011_check_tv_justify_missing_answer_lbl"
-                app:layout_constraintStart_toStartOf="@+id/act011_check_tv_justify_missing_answer_lbl"
-                app:layout_constraintTop_toBottomOf="@+id/act011_check_tv_justify_missing_answer_lbl">
+                android:textColor="@color/text_black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/act011_dialog_check_tv_elapsed_time_val"
+                app:layout_constraintStart_toStartOf="@+id/act011_gdl_start"
+                app:layout_constraintTop_toBottomOf="@+id/act011_dialog_check_cl_missing_answers"
+                tools:text="Tempo total:" />
 
-                <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-                    android:id="@+id/act011_check_mkedt_justify_missing_answer_val"
+            <TextView
+                android:id="@+id/act011_dialog_check_tv_elapsed_time_val"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:textColor="@color/text_black"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@id/act011_dialog_check_tv_elapsed_time_lbl"
+                app:layout_constraintEnd_toStartOf="@id/act011_gdl_end"
+                app:layout_constraintStart_toEndOf="@id/act011_dialog_check_tv_elapsed_time_lbl"
+                app:layout_constraintTop_toTopOf="@id/act011_dialog_check_tv_elapsed_time_lbl"
+                tools:text="00:33" />
+
+            <com.namoa_digital.namoa_library.ctls.MkDateTime
+                android:id="@+id/act011_dialog_check_mkdate_form_start"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toStartOf="@+id/act011_gdl_end"
+                app:layout_constraintStart_toStartOf="@+id/act011_gdl_start"
+                app:layout_constraintTop_toBottomOf="@id/act011_dialog_check_tv_elapsed_time_lbl"
+                app:mConfigType="DATE_HOUR" />
+
+            <com.namoa_digital.namoa_library.ctls.MkDateTime
+                android:id="@+id/act011_dialog_check_mkdate_form_end"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toStartOf="@+id/act011_gdl_end"
+                app:layout_constraintStart_toStartOf="@+id/act011_gdl_start"
+                app:layout_constraintTop_toBottomOf="@id/act011_dialog_check_mkdate_form_start"
+                app:mConfigType="DATE_HOUR" />
+
+            <TextView
+                android:id="@+id/act011_dialog_finalize_lbl"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_black"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="@id/act011_gdl_end"
+                app:layout_constraintStart_toStartOf="@id/act011_gdl_start"
+                app:layout_constraintTop_toBottomOf="@id/act011_dialog_check_mkdate_form_end"
+                tools:text="Para finalizar a OS, confirme abaixo." />
+
+            <RadioGroup
+                android:id="@+id/act011_dialog_check_option_rg"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/act011_gdl_end"
+                app:layout_constraintStart_toStartOf="@id/act011_gdl_start"
+                app:layout_constraintTop_toBottomOf="@id/act011_dialog_finalize_lbl">
+
+                <!--<android.support.constraint.ConstraintLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent">-->
+
+                <RadioButton
+                    android:id="@+id/act011_dialog_check_option_rdo_finalize"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:inputType="textMultiLine"
-                    android:maxLength="500"
-                    app:mBARCODE="false"
-                    app:mNFC="false"
-                    app:mOCR="false"
-                    app:mOCRVin="false"
-                    tools:hint="Inserir justificativa..." />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_marginBottom="8dp"
+                    android:checked="true"
+                    android:text="RadioButton"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <RadioButton
+                    android:id="@+id/act011_dialog_check_option_rdo_finalize_new"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="RadioButton"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/act011_dialog_finalize_option_rdo_finalize"
+                    tools:layout_marginBottom="8dp" />
+
+
+                <!--</android.support.constraint.ConstraintLayout>-->
+
+            </RadioGroup>
+
+            <View
+                android:id="@+id/act011_dialog_check_bottom_divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="24dp"
+                android:background="@color/namoa_color_gray_6"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/act011_dialog_check_option_rg" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 
-        <TextView
-            android:id="@+id/act011_check_tv_elapsed_time_lbl"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textColor="@color/text_black"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/act011_check_tv_elapsed_time_val"
-            app:layout_constraintStart_toStartOf="@+id/act011_gdl_start"
-            app:layout_constraintTop_toBottomOf="@+id/act011_check_cl_missing_answers"
-            tools:text="Tempo total:" />
-
-        <TextView
-            android:id="@+id/act011_check_tv_elapsed_time_val"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:textColor="@color/text_black"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="@id/act011_check_tv_elapsed_time_lbl"
-            app:layout_constraintEnd_toStartOf="@id/act011_gdl_end"
-            app:layout_constraintStart_toEndOf="@id/act011_check_tv_elapsed_time_lbl"
-            app:layout_constraintTop_toTopOf="@id/act011_check_tv_elapsed_time_lbl"
-            tools:text="00:33" />
-
-        <com.namoa_digital.namoa_library.ctls.MkDateTime
-            android:id="@+id/act011_check_mkdate_form_start"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:layout_constraintEnd_toStartOf="@+id/act011_gdl_end"
-            app:layout_constraintStart_toStartOf="@+id/act011_gdl_start"
-            app:layout_constraintTop_toBottomOf="@id/act011_check_tv_elapsed_time_lbl"
-            app:mConfigType="DATE_HOUR" />
-
-        <com.namoa_digital.namoa_library.ctls.MkDateTime
-            android:id="@+id/act011_check_mkdate_form_end"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:layout_constraintEnd_toStartOf="@+id/act011_gdl_end"
-            app:layout_constraintStart_toStartOf="@+id/act011_gdl_start"
-            app:layout_constraintTop_toBottomOf="@id/act011_check_mkdate_form_start"
-            app:mConfigType="DATE_HOUR" />
-
-        <TextView
-            android:id="@+id/act011_dialog_finalize_lbl"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textColor="@color/text_black"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="@id/act011_gdl_end"
-            app:layout_constraintStart_toStartOf="@id/act011_gdl_start"
-            app:layout_constraintTop_toBottomOf="@id/act011_check_mkdate_form_end"
-            tools:text="Para finalizar a OS, confirme abaixo." />
-
-        <RadioGroup
-            android:id="@+id/act011_check_option_rg"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@id/act011_gdl_end"
-            app:layout_constraintStart_toStartOf="@id/act011_gdl_start"
-            app:layout_constraintTop_toBottomOf="@id/act011_dialog_finalize_lbl">
-
-            <!--<android.support.constraint.ConstraintLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent">-->
-
-            <RadioButton
-                android:id="@+id/act011_dialog_finalize_option_rdo_finalize"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:checked="true"
-                android:text="RadioButton"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <RadioButton
-                android:id="@+id/act011_dialog_finalize_option_rdo_finalize_new"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="RadioButton"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/act011_dialog_finalize_option_rdo_finalize"
-                tools:layout_marginBottom="8dp" />
-
-
-            <!--</android.support.constraint.ConstraintLayout>-->
-
-        </RadioGroup>
-
-        <View
-            android:id="@+id/act011_check_bottom_divider"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="24dp"
-            android:background="@color/namoa_color_gray_6"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/act011_check_option_rg" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <Button
-            android:id="@+id/act011_check_btn_cancel"
-            style="@style/MyFormOSCheckDialogButton"
+            android:id="@+id/act011_dialog_check_btn_cancel"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAllCaps="true"
+            android:drawableTint="@drawable/namoa_btn_states"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/act011_check_btn_ok"
-            app:layout_constraintTop_toBottomOf="@id/act011_check_bottom_divider"
+            app:layout_constraintEnd_toStartOf="@+id/act011_dialog_check_btn_ok"
+            app:layout_constraintTop_toTopOf="parent"
             tools:text="Cancelar" />
 
         <Button
-            android:id="@+id/act011_check_btn_ok"
-            style="@style/MyFormOSCheckDialogButton"
+            android:id="@+id/act011_dialog_check_btn_ok"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:drawableTint="@drawable/namoa_btn_states"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:enabled="false"
             android:textAllCaps="true"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/act011_gdl_end"
-            app:layout_constraintTop_toBottomOf="@id/act011_check_bottom_divider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             tools:text="OK" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-</ScrollView>
+</LinearLayout>

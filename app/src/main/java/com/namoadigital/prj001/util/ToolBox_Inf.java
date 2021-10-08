@@ -8885,4 +8885,25 @@ public class ToolBox_Inf {
         return dateMilliseconds > currentMilliseconds;
         //return dateToMilliseconds(date) > Calendar.getInstance().getTimeInMillis();
     }
+
+
+    public static String getDateDiferenceInHHMM(String firstDate, String secoundDate) {
+        long diference =  getDateDiferenceInMilliseconds(firstDate, secoundDate);
+        long hour = TimeUnit.MILLISECONDS.toHours(diference);
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(diference) - TimeUnit.HOURS.toMinutes(hour);
+
+        return String.format("%02d:%02d",hour, minutes);
+    }
+
+    public static long getDateDiferenceInMilliseconds(String firstDate, String secoundDate) {
+        long lTargetDate = ToolBox_Inf.dateToMilliseconds(firstDate);
+        long lCurrentDate = ToolBox_Inf.dateToMilliseconds(secoundDate);
+        return lTargetDate - lCurrentDate;
+    }
+
+
+    public static int getDateDiferenceInDays(String target_date) {
+        int l = (int) TimeUnit.MILLISECONDS.toDays(getDateDiferenceInMilliseconds(target_date, ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")));
+        return l;
+    }
 }
