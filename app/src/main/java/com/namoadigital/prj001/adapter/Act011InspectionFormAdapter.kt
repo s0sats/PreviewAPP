@@ -18,9 +18,7 @@ import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.EXEC_TYPE_ALREADY_
 import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.EXEC_TYPE_FIXED
 import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.EXEC_TYPE_NOT_VERIFIED
 import com.namoadigital.prj001.model.InspectionCell
-import com.namoadigital.prj001.model.InspectionCellActions
 import com.namoadigital.prj001.ui.act011.frags.InspectionListFragmentInteraction
-import com.namoadigital.prj001.util.ConstantBaseApp
 import java.util.*
 
 class Act011InspectionFormAdapter(
@@ -56,38 +54,24 @@ class Act011InspectionFormAdapter(
         with(holder as MyInspectionFormVH) {
             val inspectionCell = inspectionsFiltered[position]
             onBinding(inspectionCell)
-            if(inspectionCell.answerStatus != null
-                && inspectionCell.answerStatus.equals(ConstantBaseApp.SYS_STATUS_DONE)) {
-                binding.root.setOnClickListener {
-                    myInspectionClickListener.onInspectionSelected(
-                        acessoryFormView,
-                        InspectionCellActions.VERIFY,
-                        position,
-                        textFilter
-                    )
-                }
+            binding.root.setOnClickListener {
+                myInspectionClickListener.onInspectionSelected(
+                    acessoryFormView,
+                    false,
+                    position,
+                    textFilter
+                )
             }
         }
-
 
         holder.binding.tvAutoSkipInspection.setOnClickListener {
             myInspectionClickListener.onInspectionSelected(
                 acessoryFormView,
-                InspectionCellActions.VERIFY_LATER,
+                false,
                 position,
                 textFilter
             )
         }
-
-        holder.binding.tvInspectionVerificationAction.setOnClickListener {
-            myInspectionClickListener.onInspectionSelected(
-                acessoryFormView,
-                InspectionCellActions.VERIFY,
-                position,
-                textFilter
-            )
-        }
-
     }
 
     fun applyNonForecastFilter(filterApplied: Boolean) {
@@ -165,15 +149,6 @@ class Act011InspectionFormAdapter(
                     binding.tvInspectAnswered.visibility = View.GONE
                     binding.tvInspectionVerificationAction.visibility = View.VISIBLE
                     binding.tvAutoSkipInspection.visibility = View.VISIBLE
-                    binding.tvAutoSkipInspection.setOnClickListener {
-                        myInspectionClickListener.onInspectionSelected(
-                            acessoryFormView,
-                            InspectionCellActions.VERIFY_LATER,
-                            position,
-                            textFilter
-                        )
-                    }
-
                 }
                 //
                 binding.tvInspectionDescription.text = description
