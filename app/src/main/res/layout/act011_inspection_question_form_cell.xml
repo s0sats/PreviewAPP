@@ -130,18 +130,29 @@
                 tools:text="Não Verificar"
                 tools:visibility="gone" />
 
+            <ImageView
+                android:id="@+id/iv_inspect_answered"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:src="@drawable/ic_build_black_24dp"
+                android:layout_marginStart="16dp"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_inspect_answered"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tv_inspect_answered"
+                app:tint="@color/namoa_color_cone_item" />
+
             <TextView
                 android:id="@+id/tv_inspect_answered"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="4dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="12dp"
                 android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/ll_answer_info"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/tv_inspection_verification_action"
+                app:layout_constraintStart_toEndOf="@+id/iv_inspect_answered"
                 app:layout_constraintTop_toBottomOf="@+id/tv_inspection_verification_action"
                 tools:text="Já estava ok" />
 

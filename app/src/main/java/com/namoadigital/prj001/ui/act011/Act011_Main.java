@@ -52,6 +52,7 @@ import com.namoa_digital.namoa_library.ctls.CheckBoxFF;
 import com.namoa_digital.namoa_library.ctls.ComboBoxFF;
 import com.namoa_digital.namoa_library.ctls.CustomFF;
 import com.namoa_digital.namoa_library.ctls.LabelFF;
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNMFF;
 import com.namoa_digital.namoa_library.ctls.PhotoFF;
 import com.namoa_digital.namoa_library.ctls.PictureFF;
@@ -458,6 +459,11 @@ public class Act011_Main extends Base_Activity
         transList.add("alert_gps_denied_permission_msg");
         transList.add("alert_gps_never_ask_again_permission_ttl");
         transList.add("alert_gps_never_ask_again_permission_msg");
+        //
+        transList.add("inpection_answer_fixed_lbl");
+        transList.add("inpection_answer_alert_lbl");
+        transList.add("inpection_answer_already_ok_lbl");
+        transList.add("inpection_answer_not_verify_lbl");
         //
         transList.add("dialog_finalize_os_form_lbl");
         transList.add("dialog_finalize_form_lbl");
@@ -3216,20 +3222,6 @@ public class Act011_Main extends Base_Activity
 //                .setTitle(hmAux_Trans.get("dialog_finalize_option_ttl"))
                 .setView(binding.getRoot())
                 .setCancelable(false)
-                .setPositiveButton(
-                        hmAux_Trans.get("sys_alert_btn_ok"),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                //Seta valor var que controla se fluxo é finaliza ou finaliza mais novo.
-                                finalizeNewFlow = binding.act011DialogCheckOptionRg.getCheckedRadioButtonId() == R.id.act011_dialog_finalize_option_rdo_finalize_new;
-                                //
-                                startCheckIN();
-//                                checkGpsFlow();
-                            }
-                        }
-
-                )
                 .setNegativeButton(hmAux_Trans.get("sys_alert_btn_cancel"),null)
         ;
         //
@@ -3238,7 +3230,30 @@ public class Act011_Main extends Base_Activity
     }
 
     private void setDialogAction(Act011CheckDialogBinding binding) {
+        binding.act011DialogCheckMkedtJustifyMissingAnswerVal.setOnReportTextChangeListner(
+                new MKEditTextNM.IMKEditTextChangeText() {
+                    @Override
+                    public void reportTextChange(String s) {
 
+                        binding.act011DialogCheckBtnOk.setEnabled(s != null && !s.isEmpty());
+
+                    }
+
+                    @Override
+                    public void reportTextChange(String s, boolean b) {
+
+                    }
+                }
+        );
+        binding.act011DialogCheckBtnOk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Seta valor var que controla se fluxo é finaliza ou finaliza mais novo.
+                finalizeNewFlow = binding.act011DialogCheckOptionRg.getCheckedRadioButtonId() == R.id.act011_dialog_finalize_option_rdo_finalize_new;
+                //
+                startCheckIN();
+            }
+        });
     }
 
     private void setDialogVisibilityAndLabels(Act011CheckDialogBinding binding) {
@@ -3249,7 +3264,11 @@ public class Act011_Main extends Base_Activity
             int missingAnswersAmount = missingAnswersCounter();
             if(missingAnswersAmount == 0){
                 binding.act011DialogCheckClMissingAnswers.setVisibility(View.GONE);
+                binding.act011DialogCheckBtnOk.setEnabled(true);
+            }else{
+                binding.act011DialogCheckBtnOk.setEnabled(false);
             }
+            binding.act011DialogCheckBtnOk.setText(hmAux_Trans.get("sys_alert_btn_ok"));
             binding.act011DialogCheckTvMissingAnswerVal.setText(String.valueOf(missingAnswersAmount));
             binding.act011DialogCheckTvElapsedTimeVal.setText(getFormElapsedTimeFormatted(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")));
             binding.act011DialogCheckMkdateFormStart.setmCanClean(false);
@@ -3270,9 +3289,13 @@ public class Act011_Main extends Base_Activity
         binding.act011DialogCheckOptionRg.setVisibility(View.GONE);
         //
         if (allowFinalizeWithNewBtn()) {
+            binding.act011DialogFinalizeLbl.setVisibility(View.VISIBLE);
             binding.act011DialogCheckOptionRg.setVisibility(View.VISIBLE);
             binding.act011DialogCheckOptionRdoFinalize.setText(hmAux_Trans.get("dialog_finalize_option_finalize_lbl"));
             binding.act011DialogCheckOptionRdoFinalizeNew.setText(hmAux_Trans.get("dialog_finalize_option_finalize_new_lbl"));
+        }else{
+            binding.act011DialogFinalizeLbl.setVisibility(View.GONE);
+            binding.act011DialogCheckOptionRg.setVisibility(View.GONE);
         }
     }
 

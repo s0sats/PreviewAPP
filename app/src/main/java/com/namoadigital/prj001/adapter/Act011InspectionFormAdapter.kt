@@ -13,9 +13,14 @@ import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.Act011InspectionQuestionFormCellBinding
 import com.namoadigital.prj001.extensions.applyTintColor
 import com.namoadigital.prj001.model.AcessoryFormView
+import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.EXEC_TYPE_ALERT
+import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.EXEC_TYPE_ALREADY_OK
+import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.EXEC_TYPE_FIXED
+import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.EXEC_TYPE_NOT_VERIFIED
 import com.namoadigital.prj001.model.InspectionCell
 import com.namoadigital.prj001.model.InspectionCellActions
 import com.namoadigital.prj001.ui.act011.frags.InspectionListFragmentInteraction
+import java.util.*
 
 class Act011InspectionFormAdapter(
     /*
@@ -180,7 +185,34 @@ class Act011InspectionFormAdapter(
                 }
                 //
                 if (answer != null) {
-                    binding.tvInspectAnswered.text = answer
+
+                    when(answer){
+                        EXEC_TYPE_FIXED -> {
+                            binding.tvInspectAnswered.text = hmAuxTrans.get("inpection_answer_fixed_lbl")
+                            binding.ivInspectAnswered.setImageDrawable(
+                                ContextCompat.getDrawable(Objects.requireNonNull(context), R.drawable.ic_build_black_24dp)
+                            )
+                        }
+                        EXEC_TYPE_ALERT ->{
+                            binding.tvInspectAnswered.text = hmAuxTrans.get("inpection_answer_alert_lbl")
+                            binding.ivInspectAnswered.setImageDrawable(
+                                ContextCompat.getDrawable(Objects.requireNonNull(context), R.drawable.ic_outline_report_problem_24_black)
+                            )
+                        }
+                        EXEC_TYPE_ALREADY_OK -> {
+                            binding.tvInspectAnswered.text = hmAuxTrans.get("inpection_answer_already_ok_lbl")
+                            binding.ivInspectAnswered.setImageDrawable(
+                                ContextCompat.getDrawable(Objects.requireNonNull(context), R.drawable.ic_done_black_24dp)
+                            )
+                        }
+                        EXEC_TYPE_NOT_VERIFIED -> {
+                            binding.tvInspectAnswered.text = hmAuxTrans.get("inpection_answer_not_verify_lbl")
+                            binding.ivInspectAnswered.setImageDrawable(
+                                ContextCompat.getDrawable(Objects.requireNonNull(context), R.drawable.ic_baseline_redo_24_black)
+                            )
+                        }
+                    }
+
                     if (!isDone) {
                         binding.tvInspectionOngoingAction.text = hmAuxTrans.get("inpection_ongoing_action_lbl")
                         binding.tvInspectionOngoingAction.visibility = View.VISIBLE
