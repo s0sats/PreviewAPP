@@ -2,6 +2,7 @@ package com.namoadigital.prj001.model
 
 import androidx.annotation.ColorInt
 import com.namoadigital.prj001.R
+import com.namoadigital.prj001.util.ConstantBaseApp
 import java.io.Serializable
 
 data class InspectionCell   (
@@ -15,7 +16,8 @@ data class InspectionCell   (
     var status: String,
     val isCritical: Boolean,
     val isNewItem: Boolean = false,
-    val answer: String?,
+    val answerStatus: String?,
+    val execType: String?,
     val itemCodeAndSeq: String,
 ): Serializable {
     var isDone: Boolean = false
@@ -23,14 +25,8 @@ data class InspectionCell   (
      var tagColor: Int
 
     init{
-        answer?.let {
-            isDone = true
-            if(materialRequired && materialCount == 0){
-                isDone = false
-            }
-            if(commentRequired && !hasComment){
-                isDone = false
-            }
+        answerStatus?.let {
+            isDone = !it.equals(ConstantBaseApp.SYS_STATUS_PROCESS)
         }
         //
         if(isDone){
@@ -60,7 +56,7 @@ data class InspectionCell   (
 
     fun getAllFieldForFilter() : String{
         return  "$description|" +
-                "$answer|" +
+                "$execType|" +
                 "$status|"
                     .replace("null|","")
                     .replace("null","")

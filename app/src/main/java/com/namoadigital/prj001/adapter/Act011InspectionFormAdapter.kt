@@ -20,6 +20,7 @@ import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.EXEC_TYPE_NOT_VERI
 import com.namoadigital.prj001.model.InspectionCell
 import com.namoadigital.prj001.model.InspectionCellActions
 import com.namoadigital.prj001.ui.act011.frags.InspectionListFragmentInteraction
+import com.namoadigital.prj001.util.ConstantBaseApp
 import java.util.*
 
 class Act011InspectionFormAdapter(
@@ -55,7 +56,8 @@ class Act011InspectionFormAdapter(
         with(holder as MyInspectionFormVH) {
             val inspectionCell = inspectionsFiltered[position]
             onBinding(inspectionCell)
-            if(inspectionCell.answer != null) {
+            if(inspectionCell.answerStatus != null
+                && inspectionCell.answerStatus.equals(ConstantBaseApp.SYS_STATUS_DONE)) {
                 binding.root.setOnClickListener {
                     myInspectionClickListener.onInspectionSelected(
                         acessoryFormView,
@@ -184,9 +186,9 @@ class Act011InspectionFormAdapter(
                     background.setColorFilter(ContextCompat.getColor(context, tagColor), android.graphics.PorterDuff.Mode.SRC_ATOP)
                 }
                 //
-                if (answer != null) {
+                if (answerStatus != null) {
 
-                    when(answer){
+                    when(execType){
                         EXEC_TYPE_FIXED -> {
                             binding.tvInspectAnswered.text = hmAuxTrans.get("inpection_answer_fixed_lbl")
                             binding.ivInspectAnswered.setImageDrawable(

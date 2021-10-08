@@ -584,6 +584,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                         item.getItem_check_status(),
                         item.getCritical_item() == 1,
                         item.getStructure() == 0,
+                        item.getStatus_answer(),
                         item.getExec_type(),
                         item.getGeOsDeviceItemCodeAndSeq()
                     )
