@@ -8,6 +8,9 @@ import com.namoadigital.prj001.util.Constant
 /**
  * Created by DANIEL.LUCHE on 08/10/2021
  * Query que seleciona os device item da os relacionada ao form
+ * LUCHE - 11/10/2021
+ * O requisito escrito a tinta invisivel dizia que os itens não planejados e sem reposta não devem
+ * ser enviados. Add clausula ${GeOsDeviceItemDao.EXEC_TYPE} IS NOT NULL
  */
 class Sql_WS_Save_Device_Item_001(
     private val s_customer_code: Long
@@ -27,9 +30,10 @@ class Sql_WS_Save_Device_Item_001(
                         AND d.${GE_Custom_Form_DataDao.CUSTOM_FORM_VERSION} = i.${GeOsDeviceItemDao.CUSTOM_FORM_VERSION}
                         AND d.${GE_Custom_Form_DataDao.CUSTOM_FORM_DATA} = i.${GeOsDeviceItemDao.CUSTOM_FORM_DATA}
                         
-                        and d.${GE_Custom_Form_DataDao.CUSTOMER_CODE} = '$s_customer_code'
-                        and d.${GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS} = '${Constant.SYS_STATUS_WAITING_SYNC}' 
+                        AND d.${GE_Custom_Form_DataDao.CUSTOMER_CODE} = '$s_customer_code'
+                        AND d.${GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS} = '${Constant.SYS_STATUS_WAITING_SYNC}' 
                         AND d.${GE_Custom_Form_DataDao.TOKEN} != ''
+                        AND i.${GeOsDeviceItemDao.EXEC_TYPE} IS NOT NULL
                     ORDER BY
                         i.${GeOsDeviceItemDao.CUSTOMER_CODE},
                         i.${GeOsDeviceItemDao.CUSTOM_FORM_TYPE},
