@@ -75,6 +75,8 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
         binding = mainBinding.act086MainContent
         setContentView(mainBinding.root)
         setSupportActionBar(mainBinding.toolbar)
+        //LUCHE - Seta volta no local do btn do drawer
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         //
         recoverIntentsInfo()
         iniSetup()
@@ -238,13 +240,8 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
     private fun initActions() {
         binding.act086TvConsult.setOnClickListener {
             toggleTvConsultVisibility(false)
-            displayHomeAsUpEnabled(display = true)
             setHistoricFrg()
         }
-    }
-
-    private fun displayHomeAsUpEnabled(display: Boolean) {
-        supportActionBar?.setDisplayHomeAsUpEnabled(display)
     }
 
     private fun toggleTvConsultVisibility(visible: Boolean) {
@@ -302,6 +299,12 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
         }
     }
 
+    override fun popToVerificationFrag() {
+        toggleTvConsultVisibility(true)
+        updateScrollPosition(0)
+        initVerificationFrg()
+    }
+
     private fun iniUIFooter() {
         iniFooter()
         //
@@ -324,22 +327,10 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
-        callAct011()
+        mPresenter.onBackPressedClicked(supportFragmentManager)
     }
 
-    private fun callAct005() {
-        startActivity(
-            Intent().apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                setClass(this@Act086Main,Act005_Main::class.java)
-            }
-        )
-        //
-        finish()
-    }
-
-    private fun callAct011() {
+    override fun callAct011() {
         startActivity(
             Intent().apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -362,10 +353,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if(item.itemId == android.R.id.home){
-            toggleTvConsultVisibility(true)
-            displayHomeAsUpEnabled(false)
-            updateScrollPosition(0)
-            initVerificationFrg()
+            mPresenter.onBackPressedClicked(supportFragmentManager)
         }
         return super.onOptionsItemSelected(item)
     }

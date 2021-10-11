@@ -1308,10 +1308,11 @@ public class Act011_Main extends Base_Activity
                     formData.getDataFields().add(form_data_field);
                 }
 
-                if(cf.hasConsistentValue(GE_Custom_Form_Field_LocalDao.AUTOMATIC)){
+                if( !automatic
+                    && cf.hasConsistentValue(GE_Custom_Form_Field_LocalDao.AUTOMATIC)
+                ){
                     automatic = !cf.get(GE_Custom_Form_Field_LocalDao.AUTOMATIC).isEmpty();
                 }
-
                 /*
                  * LUCHE - 14/09/2021
                  * Movido os sets do loop que existia posterior a esse para dentro do loop.
