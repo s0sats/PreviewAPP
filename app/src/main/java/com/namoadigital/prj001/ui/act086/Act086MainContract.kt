@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act086
 
 import android.content.DialogInterface
+import androidx.fragment.app.FragmentManager
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.model.GeOsDeviceItem
 
@@ -15,6 +16,8 @@ interface Act086MainContract {
         )
 
         fun updateScrollPosition(newScrollTop: Int)
+        fun callAct011()
+        fun popToVerificationFrag()
     }
 
     interface I_Presenter{
@@ -32,5 +35,6 @@ interface Act086MainContract {
         ): String
         fun validBundleParams(): Boolean
         fun getDeviceItem(newVerification: Boolean): GeOsDeviceItem?
+        fun onBackPressedClicked(supportFragmentManager: FragmentManager)
     }
 }

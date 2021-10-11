@@ -2,10 +2,12 @@ package com.namoadigital.prj001.ui.act086
 
 import android.content.Context
 import android.os.Bundle
+import androidx.fragment.app.FragmentManager
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.dao.GeOsDeviceItemDao
 import com.namoadigital.prj001.model.GeOsDeviceItem
 import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_001
+import com.namoadigital.prj001.ui.act086.frg_historic.Act086HistoricFrg
 import com.namoadigital.prj001.ui.act086.frg_verification.Act086VerificationFrg
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -160,5 +162,18 @@ class Act086MainPresenter(
                 "${deviceItem.device_tp_code}_" +
                 "${deviceItem.item_check_code}_" +
                 "${deviceItem.item_check_seq}_"
+    }
+
+    override fun onBackPressedClicked(frgManager: FragmentManager) {
+        val currentFrag = frgManager.fragments.find {
+            it.isVisible
+        }
+        //
+        when(currentFrag){
+            is Act086HistoricFrg ->{
+                mView.popToVerificationFrag()
+            }
+            else -> mView.callAct011()
+        }
     }
 }
