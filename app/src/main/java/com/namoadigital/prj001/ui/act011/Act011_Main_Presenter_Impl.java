@@ -53,6 +53,7 @@ import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.MD_Site;
+import com.namoadigital.prj001.model.MdOrderType;
 import com.namoadigital.prj001.model.MdTag;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
@@ -1212,7 +1213,9 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 form_data.setDevice_tp_code(geOs.getDevice_tp_code_main());
                 form_data.setMeasure_tp_code(geOs.getMeasure_tp_code());
                 form_data.setMeasure_value(geOs.getMeasure_value());
-                form_data.setMeasure_cycle_value(geOs.getMeasure_cycle_value());
+                if(geOs.getProcess_type().equalsIgnoreCase(MdOrderType.PREVENTIVE)) {
+                    form_data.setMeasure_cycle_value(geOs.getMeasure_cycle_value());
+                }
             }
             //
             if(isFreeExecutionControlSituation(so_prefix, so_code, form_data)){
