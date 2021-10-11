@@ -1,5 +1,9 @@
 package com.namoadigital.prj001.ui.act075;
 
+import static com.namoadigital.prj001.ui.act070.Act070_Main.IS_OPERATIONAL_PROCESS;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TK_PIPELINE_PRODUCT_STATUS_NO_CONTROL;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TK_PIPELINE_PRODUCT_STATUS_PENDING;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -58,10 +62,6 @@ import com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.namoadigital.prj001.ui.act070.Act070_Main.IS_OPERATIONAL_PROCESS;
-import static com.namoadigital.prj001.util.ConstantBaseApp.TK_PIPELINE_PRODUCT_STATUS_NO_CONTROL;
-import static com.namoadigital.prj001.util.ConstantBaseApp.TK_PIPELINE_PRODUCT_STATUS_PENDING;
 
 public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contract.I_View, Act075_Product_List_Adapter.OnProductInteract, Act075_Product_List_Adapter.OnApproveInteract {
     public static final String PRODUCT_LIST = "PRODUCT_LIST";
@@ -1000,7 +1000,10 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                     0
             );
         } else {
-            callAct_Product_Selection(context, (ArrayList<TK_Ticket_Product>) mAdapter.getmValues());
+            //LUCHE - 11/10/2021
+            //Para adequar a seleção de insumo ao novo metodo mais generico, foi substituido a lista
+            //de tk_ticket_product por uma lista de productCode
+            callAct_Product_Selection(context, mPresenter.getProductCodeList(mAdapter.getmValues()));
         }
     }
 
@@ -1087,13 +1090,13 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
     }
 
 
-    public void callAct_Product_Selection(Context context, ArrayList<TK_Ticket_Product> tk_ticket_products) {
+    public void callAct_Product_Selection(Context context, ArrayList<Integer> productCodeList) {
         Intent mIntent = new Intent(context, Act_Product_Selection.class);
         //
         Bundle bundle = new Bundle();
         //
         bundle.putBoolean(IS_ADD_PRODUCT_LIST, true);
-        bundle.putSerializable(PRODUCT_LIST, tk_ticket_products);
+        bundle.putSerializable(PRODUCT_LIST, productCodeList);
         mIntent.putExtras(bundle);
         //
         startActivityForResult(mIntent, 20);

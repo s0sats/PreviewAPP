@@ -364,6 +364,9 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     private fun iniMainMeasure() {
             with(binding){
                 clMainMeasure.visibility = if(formOsHeader.measure_tp_code != null) View.VISIBLE else View.GONE
+                formOsHeader.measure_tp_code?.let{
+                    mainMeasureTp = mCreationListener?.getMeasure(it)
+                }
                 formOsHeader.measure_tp_desc?.let{
                     tvOsMainMeasureLbl.text = it
                 }
@@ -373,9 +376,6 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                     mketOsMainMeasureVal.isEnabled = isOsCreation
                     mketOsMainMeasureVal.setmBARCODE(isOsCreation)
 
-                }
-                formOsHeader.measure_tp_code?.let{
-                    mainMeasureTp = mCreationListener?.getMeasure(it)
                 }
                 mainMeasureTp?.let { measure->
                     measure.restrictionDecimal?.let{ decimal ->
@@ -501,12 +501,16 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 measure_tp_code = measure.measureTpCode
                 measure_tp_id = measure.measureTpId
                 measure_tp_desc = measure.measureTpDesc
-                measure_value = binding.mketOsMainMeasureVal.text.toString().toFloat()
+                measure_value = getFormattedMeasureValue()
                 measure_cycle_value = calculatedExecCycle
 
             }
             date_start = binding.mkdtStartDate.getmValue()
         }
+    }
+
+    private fun getFormattedMeasureValue(): Float {
+        return BigDecimal(binding.mketOsMainMeasureVal.text.toString()).setScale( mainMeasureTp?.restrictionDecimal?:2,RoundingMode.HALF_DOWN).toFloat()
     }
 
     private fun isPreventiveCycleValid(isOrderTypeInvalid: Boolean): Boolean {
@@ -616,7 +620,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         //Calc perc de dias...
         val modDay = (diffInMs % ONE_DAY_IN_MILLISECOND.toDouble()) / ONE_DAY_IN_MILLISECOND.toDouble()
         //Soma e devolve float com 2 casas.
-        return BigDecimal(calcDay + modDay).setScale(2,RoundingMode.HALF_DOWN).toFloat()
+        return BigDecimal(calcDay + modDay).setScale( 2,RoundingMode.HALF_DOWN).toFloat()
     }
 
     private fun isMeasureRestrictionValueValid(

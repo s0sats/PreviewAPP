@@ -1,9 +1,14 @@
 package com.namoadigital.prj001.ui.act075;
 
+import static com.namoadigital.prj001.dao.TK_Ticket_ApprovalDao.APPROVAL_GET_MATERIAL;
+import static com.namoadigital.prj001.dao.TK_Ticket_ApprovalDao.APPROVAL_OPERATIONAL;
+import static com.namoadigital.prj001.dao.TK_Ticket_ApprovalDao.APPROVAL_RETURN_MATERIAL;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.core.content.ContextCompat;
 
 import com.google.gson.Gson;
@@ -59,10 +64,6 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import static com.namoadigital.prj001.dao.TK_Ticket_ApprovalDao.APPROVAL_GET_MATERIAL;
-import static com.namoadigital.prj001.dao.TK_Ticket_ApprovalDao.APPROVAL_OPERATIONAL;
-import static com.namoadigital.prj001.dao.TK_Ticket_ApprovalDao.APPROVAL_RETURN_MATERIAL;
 
 public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
     private final TK_Ticket_StepDao ticketStepDao;
@@ -945,4 +946,13 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
         return md_product;
     }
 
+    @Override
+    public ArrayList<Integer> getProductCodeList(List<TK_Ticket_Product> tkTicketProducts) {
+        ArrayList<Integer> productCodeList = new ArrayList<>();
+        //
+        for (TK_Ticket_Product tkTicketProduct : tkTicketProducts) {
+            productCodeList.add(tkTicketProduct.getProduct_code());
+        }
+        return productCodeList;
+    }
 }

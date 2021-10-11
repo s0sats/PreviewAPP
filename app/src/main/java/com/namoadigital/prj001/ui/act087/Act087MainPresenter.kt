@@ -65,6 +65,8 @@ class Act087MainPresenter(
             "alert_error_no_data_return_msg",
             "dialog_bkp_machine_search_ttl",
             "dialog_bkp_machine_search_start",
+            "alert_form_parameter_error_ttl",
+            "alert_form_parameter_error_msg",
         )
         //
         val actAuxTrans = ToolBox_Inf.setLanguage(

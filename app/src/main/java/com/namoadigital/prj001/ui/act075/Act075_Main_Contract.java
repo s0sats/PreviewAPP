@@ -93,5 +93,7 @@ public interface Act075_Main_Contract {
         void processWsSerialSavelReturn(HMAux hmAux);
 
         boolean isEditable(String status);
+
+        ArrayList<Integer> getProductCodeList(List<TK_Ticket_Product> tkTicketProducts);
     }
 }
