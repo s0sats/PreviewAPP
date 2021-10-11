@@ -80,7 +80,7 @@ class Act086ProductEditDialog : BottomSheetDialogFragment() {
                 dismiss()
             }
             act086ProductEditDialogBtnApply.setOnClickListener {
-                materialItem.productQty = act086ProductEditDialogEtQty.text.toString().trim().toInt()
+                materialItem.productQty = act086ProductEditDialogEtQty.text.toString().trim().toFloat()
                 //esconde teclado ao selecionar item
                 ToolBox_Inf.hideSoftKeyboard(context,act086ProductEditDialogEtQty)
                 onApplyClick(productIdx,materialItem,isAddAction)

@@ -10,6 +10,7 @@ import android.view.WindowManager
 import androidx.fragment.app.Fragment
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag
+import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
 import com.namoadigital.prj001.dao.GeOsDeviceDao
 import com.namoadigital.prj001.dao.GeOsDeviceItemDao
 import com.namoadigital.prj001.databinding.Act086MainBinding
@@ -25,6 +26,7 @@ import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ConstantBaseApp.*
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
+import java.util.concurrent.TimeUnit
 
 class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
     private lateinit var binding: Act086MainContentBinding
@@ -50,7 +52,8 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
             hmAux_Trans,
             prefixPhoto,
             isNewVerification,
-            deviceItem
+            deviceItem,
+            readOnly
         )
     }
     private val historicFrg: Act086HistoricFrg by lazy{
@@ -61,9 +64,10 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
     private var isNewVerification = false
     private var _deviceItem: GeOsDeviceItem? = null
     private val deviceItem get() =_deviceItem!!
-
     private var deviceDesc: String = ""
     private var trackingNumber: String? = null
+    private var readOnly: Boolean = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,11 +90,20 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
         bundleDevice = bundle.getBundle(DEVICE_BUNDLE)!!
         deviceDesc  = bundleDevice.getString(GeOsDeviceDao.DEVICE_TP_DESC,"")
         trackingNumber = bundleDevice.getString(GeOsDeviceDao.TRACKING_NUMBER)
+        isNewVerification = bundleDevice.getBoolean(DEVICE_ITEM_NEW_ACTION)
+        readOnly = defineReadOnlyByStatus(bundleDevice.getString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS))
 //        bundleDevice.getString(DEVICE_ITEM_PK)
 //        bundleDevice.getInt(DEVICE_ITEM_TAB_INDEX)
 //        bundleDevice.getInt(DEVICE_ITEM_LIST_INDEX)
 //        bundleDevice.getString(DEVICE_ITEM_LIST_FILTER)
 //        bundleDevice.getString(DEVICE_ITEM_LIST_ACTION)
+    }
+
+    private fun defineReadOnlyByStatus(formStatus: String?): Boolean {
+        if(formStatus == null || formStatus.equals(ConstantBaseApp.SYS_STATUS_DONE) || formStatus.equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)){
+            return true
+        }
+        return false
     }
 
     private fun iniSetup() {
@@ -137,8 +150,40 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
                 }
             }
             act086TvItemCheckDesc.text = deviceItem.item_check_desc
-            act086TvConsult
+            setAlertDateInfo()
         }
+    }
+
+    private fun setAlertDateInfo() {
+        with(binding){
+            act086TvAlertDate.apply{
+                if(deviceItem.target_date.isNullOrEmpty()){
+                    visibility = View.GONE
+                    text = null
+                }else{
+                    visibility = View.VISIBLE
+                    text = getAlertDateLbl(deviceItem.target_date!!)
+                }
+            }
+        }
+    }
+
+    private fun getAlertDateLbl(targetDate: String): String {
+       val label = if(deviceItem.item_check_status.equals(GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL,true)){
+            hmAux_Trans["inspection_missing_lbl"]
+        }else{
+            hmAux_Trans["inspection_alert_days_lbl"]
+        }
+        //
+        val day = TimeUnit.MILLISECONDS.toDays(ToolBox_Inf.getDateDiferenceInMilliseconds(targetDate,ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT))).let{
+            if(it < 0 ){
+                it *-1
+            }else{
+                it
+            }
+        }
+        //
+        return "$label: $day"
     }
 
     private fun paramErrorFlow() {
@@ -196,16 +241,10 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
             displayHomeAsUpEnabled(display = true)
             setHistoricFrg()
         }
-        //
-        /*binding.act086TvBack.setOnClickListener {
-            toggleHeaderNavegationIcons(it.id)
-            initVerificationFrg()
-        }*/
-
     }
 
     private fun displayHomeAsUpEnabled(display: Boolean) {
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(display)
     }
 
     private fun toggleTvConsultVisibility(visible: Boolean) {

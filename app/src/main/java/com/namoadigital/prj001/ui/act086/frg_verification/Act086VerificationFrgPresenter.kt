@@ -126,7 +126,7 @@ class Act086VerificationFrgPresenter(
                     it.material_id,
                     it.material_desc,
                     it.material_unit?:"",
-                    it.material_qty.toInt(),
+                    it.material_qty,
                     it.creation_ms
                 )
             )

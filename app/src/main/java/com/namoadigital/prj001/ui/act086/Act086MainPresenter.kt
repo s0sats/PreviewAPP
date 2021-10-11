@@ -34,6 +34,10 @@ class Act086MainPresenter(
             "btn_apply",
             "alert_choose_an_answer_msg",
             "query_lbl",
+            "alert_form_parameter_error_ttl",
+            "alert_form_parameter_error_msg",
+            "inspection_missing_lbl",
+            "inspection_alert_days_lbl"
         )
         transList.addAll(
             Act086VerificationFrg.getFragTranslationsVars()

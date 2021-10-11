@@ -1,17 +1,27 @@
 package com.namoadigital.prj001.model
 
+import com.google.gson.annotations.Expose
+import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 class GeOsDeviceItem(
+    @Expose
     val customer_code :Long,
+    @Expose
     val custom_form_type :Int,
+    @Expose
     val custom_form_code :Int,
+    @Expose
     val custom_form_version :Int,
+    @Expose
     val custom_form_data :Int,
     val product_code :Int,
     val serial_code :Int,
+    @Expose
     val device_tp_code :Int,
+    @Expose
     val item_check_code :Int,
+    @Expose
     val item_check_seq :Int,
     val item_check_id :String,
     val item_check_desc :String,
@@ -20,21 +30,32 @@ class GeOsDeviceItem(
     val require_justify_problem :Int,
     val critical_item :Int,
     val order_seq :Int,
+    @Expose
     val structure :Int,
+    @Expose
     val manual_desc :String?,
     val next_cycle_measure :Float?,
     val next_cycle_measure_date :String?,
     val next_cycle_limit_date :String?,
     var item_check_status :String,
     var target_date :String?,
+    @Expose
     var exec_type :String?,
+    @Expose
     var exec_date :String?,
+    @Expose
     var exec_comment :String?,
+    @Expose
     var exec_photo1 :String?,
+    @Expose
     var exec_photo2 :String?,
+    @Expose
     var exec_photo3 :String?,
+    @Expose
     var exec_photo4 :String?,
     var status_answer :String?,
+    @Expose
+    @SerializedName("material")
     val materialList: MutableList<GeOsDeviceMaterial>  = mutableListOf()
 ):Serializable {
     fun getGeOsDeviceItemCodeAndSeq(): String{
