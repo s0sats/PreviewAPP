@@ -72,7 +72,7 @@ public interface Act011_Main_Presenter {
 
     void deleteGeOsFormIfNeeds(GE_Custom_Form_Local formLocal);
 
-    void updateGeOsItems(GeOs geOs, String comments, String dateStart, String dateEnd);
+    void updateGeOsItems(GeOs geOs, int missingJustifyCounter, String comments, String dateStart, String dateEnd);
 
     void addGeOsDeviceItemPhotosIntoFiles(GE_Custom_Form_Local formLocal, ArrayList<GE_File> geFiles, String sDate);
 }

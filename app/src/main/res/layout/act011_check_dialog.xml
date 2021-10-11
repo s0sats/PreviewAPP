@@ -253,7 +253,6 @@
             android:layout_height="wrap_content"
             android:background="@color/customff_background_error_transparent"
             android:textColor="@color/os_form_verify_item_label_text_color_states"
-            android:enabled="false"
             android:textAllCaps="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

@@ -3251,12 +3251,15 @@ public class Act011_Main extends Base_Activity
             @Override
             public void onClick(View v) {
                 if(validEndDate(binding)) {
-                    mPresenter.updateGeOsItems(
-                            geOs,
-                            binding.act011DialogCheckTilJustifyMissingAnswerVal.toString(),
-                            binding.act011DialogCheckMkdateFormStart.getmValue(),
-                            binding.act011DialogCheckMkdateFormEnd.getmValue()
-                    );
+                    if(isFormOs) {
+                        mPresenter.updateGeOsItems(
+                                geOs,
+                                missingAnswersCounter(),
+                                binding.act011DialogCheckTilJustifyMissingAnswerVal.toString(),
+                                binding.act011DialogCheckMkdateFormStart.getmValue(),
+                                binding.act011DialogCheckMkdateFormEnd.getmValue()
+                        );
+                    }
                     //Seta valor var que controla se fluxo é finaliza ou finaliza mais novo.
                     finalizeNewFlow = binding.act011DialogCheckOptionRg.getCheckedRadioButtonId() == R.id.act011_dialog_finalize_option_rdo_finalize_new;
                     //
@@ -3300,8 +3303,6 @@ public class Act011_Main extends Base_Activity
             }else{
                 binding.act011DialogCheckBtnOk.setEnabled(false);
             }
-            binding.act011DialogCheckBtnOk.setText(hmAux_Trans.get("sys_alert_btn_ok"));
-            binding.act011DialogCheckBtnCancel.setText(hmAux_Trans.get("sys_alert_btn_cancel"));
             binding.act011DialogCheckTvMissingAnswerVal.setText(String.valueOf(missingAnswersAmount));
             binding.act011DialogCheckTvElapsedTimeVal.setText(getFormElapsedTimeFormatted(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")));
             binding.act011DialogCheckMkdateFormStart.setClickable(false);
@@ -3330,6 +3331,8 @@ public class Act011_Main extends Base_Activity
             setFormOsViewVisibility(binding, View.GONE);
             binding.act011DialogFinalizeLbl.setText(hmAux_Trans.get("dialog_finalize_form_lbl"));
         }
+        binding.act011DialogCheckBtnOk.setText(hmAux_Trans.get("sys_alert_btn_ok"));
+        binding.act011DialogCheckBtnCancel.setText(hmAux_Trans.get("sys_alert_btn_cancel"));
         //
         binding.act011DialogCheckOptionRg.setVisibility(View.GONE);
         //
