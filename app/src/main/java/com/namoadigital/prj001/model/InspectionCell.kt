@@ -31,7 +31,7 @@ data class InspectionCell   (
         //
         if(isDone){
             this.status = ANSWERED
-            tagColor = R.color.namoa_os_form_verified_green
+            tagColor = R.color.namoa_color_light_green5
         }else{
             this.status = status
             when(status){
