@@ -3262,7 +3262,7 @@ public class Act011_Main extends Base_Activity
                         );
                     }
                     //Seta valor var que controla se fluxo é finaliza ou finaliza mais novo.
-                    finalizeNewFlow = binding.act011DialogCheckOptionRg.getCheckedRadioButtonId() == R.id.act011_dialog_finalize_option_rdo_finalize_new;
+                    finalizeNewFlow = binding.act011DialogCheckOptionRg.getCheckedRadioButtonId() == R.id.act011_dialog_check_option_rdo_finalize_new;
                     //
                     startCheckIN();
                 }else{
