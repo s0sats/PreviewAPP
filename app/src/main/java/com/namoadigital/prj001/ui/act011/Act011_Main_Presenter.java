@@ -8,6 +8,7 @@ import com.namoadigital.prj001.model.Act011FormTab;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.GE_File;
+import com.namoadigital.prj001.model.GeOs;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 
@@ -23,13 +24,13 @@ public interface Act011_Main_Presenter {
 
     void saveData(GE_Custom_Form_Data formData, boolean bMsg);
 
-    void checkData(GE_Custom_Form_Data formData, ArrayList<GE_File> geFiles, int require_serial_done, String require_serial_done_ok, int require_location);
+    void checkData(GE_Custom_Form_Data formData, GeOs geOs, ArrayList<GE_File> geFiles, int require_serial_done, String require_serial_done_ok, int require_location);
 
     boolean isaTicketFlowForm();
 
     MD_Schedule_Exec getMdScheduleExec(Integer schedule_prefix, Integer schedule_code, Integer schedule_exec);
 
-    void checkSignature(GE_Custom_Form_Data formData, int signature, int opc, ArrayList<GE_File> geFiles, int require_serial_done, String require_serial_done_ok, int require_location);
+    void checkSignature(GE_Custom_Form_Data formData, GeOs geOs, int signature, int opc, ArrayList<GE_File> geFiles, int require_serial_done, String require_serial_done_ok, int require_location);
 
     void onBackPressedClicked();
 
@@ -70,4 +71,6 @@ public interface Act011_Main_Presenter {
     void resetScheduleExecIfNeeds(GE_Custom_Form_Local formLocal);
 
     void deleteGeOsFormIfNeeds(GE_Custom_Form_Local formLocal);
+
+    void updateGeOsItems(GeOs geOs, String comments, String dateStart, String dateEnd);
 }

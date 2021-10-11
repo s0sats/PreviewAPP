@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
@@ -71,6 +72,7 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_019;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_001_TT;
 import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_002;
+import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_003;
 import com.namoadigital.prj001.sql.GeOsDeviceSql_002;
 import com.namoadigital.prj001.sql.GeOsSql_001;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
@@ -552,15 +554,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     private ArrayList<AcessoryFormView> getAcessoryFormView(GeOs geOs, GE_Custom_Form_Local customFormLocal) {
         ArrayList<AcessoryFormView> acessoryFormViews = new ArrayList<>();
 //        GeOsDeviceItem
-        List<GeOsDevice> devices = geOsDeviceDao.query(
-            new GeOsDeviceSql_002(
-                    geOs.getCustomer_code(),
-                    geOs.getCustom_form_type(),
-                    geOs.getCustom_form_code(),
-                    geOs.getCustom_form_version(),
-                    geOs.getCustom_form_data()
-            ).toSqlQuery()
-        );
+        List<GeOsDevice> devices = getDeviceList(geOs);
         for(GeOsDevice device: devices){
             AcessoryFormView acessoryFormView = new AcessoryFormView(
                     device.getDevice_tp_desc(),
@@ -595,6 +589,18 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         return acessoryFormViews;
     }
 
+    @NonNull
+    private List<GeOsDevice> getDeviceList(GeOs geOs) {
+        return geOsDeviceDao.query(
+                new GeOsDeviceSql_002(
+                        geOs.getCustomer_code(),
+                        geOs.getCustom_form_type(),
+                        geOs.getCustom_form_code(),
+                        geOs.getCustom_form_version(),
+                        geOs.getCustom_form_data()
+                ).toSqlQuery()
+        );
+    }
 
 
     private int getPhotoCount(GeOsDeviceItem item) {
@@ -1394,7 +1400,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     }
 
     @Override
-    public void checkData(GE_Custom_Form_Data formData, ArrayList<GE_File> geFiles, int require_serial_done, String require_serial_done_ok, int require_location) {
+    public void checkData(GE_Custom_Form_Data formData, GeOs geOs, ArrayList<GE_File> geFiles, int require_serial_done, String require_serial_done_ok, int require_location) {
         if (require_serial_done == 1 && !require_serial_done_ok.equalsIgnoreCase("OK")){
             mView.callNFCResults();
             //
@@ -1442,7 +1448,13 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             );
         }
         formData.setCustom_form_status(Constant.SYS_STATUS_WAITING_SYNC);
-        formData.setDate_end(ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT));
+        if(geOs != null){
+            formData.setDate_end(geOs.getDate_end());
+            formData.setDate_start(geOs.getDate_start());
+        }else {
+            formData.setDate_end(ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT));
+        }
+        formData.setSys_date_end(ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT));
 
         custom_form_dataDao.addUpdate(formData);
         custom_form_data_fieldDao.addUpdate(formData.getDataFields(), false);
@@ -1573,12 +1585,12 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     }
 
     @Override
-    public void checkSignature(GE_Custom_Form_Data formData, int signature, int opc, ArrayList<GE_File> geFiles, int require_serial_done, String require_serial_done_ok, int require_location) {
+    public void checkSignature(GE_Custom_Form_Data formData, GeOs geOs, int signature, int opc, ArrayList<GE_File> geFiles, int require_serial_done, String require_serial_done_ok, int require_location) {
 
         switch (signature) {
             case 1:
                 if (ToolBox.validationCheckFile(Constant.CACHE_PATH_PHOTO + "/" + formData.getSignature()) && formData.getSignature_name() != null && !formData.getSignature_name().isEmpty()) {
-                    checkData(formData, geFiles, require_serial_done, require_serial_done_ok, require_location);
+                    checkData(formData, geOs, geFiles, require_serial_done, require_serial_done_ok, require_location);
                 } else {
 //                    mView.showMsg(
 //                            hmAux_Trans.get("alert_finalize_title"),//"Finalizar Registro",
@@ -1592,7 +1604,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 formData.setSignature("");
                 formData.setSignature_name("");
                 //
-                checkData(formData, geFiles, require_serial_done, require_serial_done_ok, require_location);
+                checkData(formData, geOs, geFiles, require_serial_done, require_serial_done_ok, require_location);
 
 //                if (opc == 1) {
 //                    checkData(formData, geFiles);
@@ -2074,5 +2086,29 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 }
             }
         }
+    }
+
+    @Override
+    public void updateGeOsItems(GeOs geOs, String comments, String dateStart, String dateEnd) {
+
+        geOs.setDate_end(dateEnd);
+
+        List<GeOsDevice> devices = getDeviceList(geOs);
+        for(GeOsDevice device: devices){
+            geOsDeviceItemDao.addUpdate(
+                    new GeOsDeviceItem_Sql_003(
+                            device.getCustomer_code(),
+                            device.getCustom_form_type(),
+                            device.getCustom_form_code(),
+                            device.getCustom_form_version(),
+                            device.getCustom_form_data(),
+                            device.getProduct_code(),
+                            device.getSerial_code(),
+                            comments
+                    ).toSqlQuery()
+            );
+        }
+
+        geOsDao.addUpdate(geOs);
     }
 }

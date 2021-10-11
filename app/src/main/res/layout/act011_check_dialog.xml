@@ -10,10 +10,10 @@
         android:id="@+id/act011_dialog_check_ttl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="24dp"
-        android:layout_marginHorizontal="24dp"
+        android:layout_weight="1"
         android:textColor="@color/text_black"
         android:textSize="20sp"
         app:layout_constraintTop_toTopOf="parent"
@@ -47,9 +47,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/act011_gdl_end"
-                app:layout_constraintStart_toStartOf="@+id/act011_gdl_start">
+                app:layout_constraintStart_toStartOf="@+id/act011_gdl_start"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
                     android:id="@+id/act011_dialog_check_tv_missing_answer_lbl"
@@ -180,7 +180,6 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@id/act011_gdl_end"
                 app:layout_constraintStart_toStartOf="@id/act011_gdl_start"
                 app:layout_constraintTop_toBottomOf="@id/act011_dialog_finalize_lbl">
@@ -237,11 +236,12 @@
 
         <Button
             android:id="@+id/act011_dialog_check_btn_cancel"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAllCaps="true"
             android:drawableTint="@drawable/namoa_btn_states"
+            android:background="@color/customff_background_error_transparent"
+            android:textColor="@color/os_form_verify_item_label_text_color_states"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/act011_dialog_check_btn_ok"
             app:layout_constraintTop_toTopOf="parent"
@@ -249,10 +249,10 @@
 
         <Button
             android:id="@+id/act011_dialog_check_btn_ok"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:drawableTint="@drawable/namoa_btn_states"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@color/customff_background_error_transparent"
+            android:textColor="@color/os_form_verify_item_label_text_color_states"
             android:enabled="false"
             android:textAllCaps="true"
             app:layout_constraintBottom_toBottomOf="parent"

@@ -10,7 +10,9 @@ import androidx.core.database.getStringOrNull
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
-import com.namoadigital.prj001.model.*
+import com.namoadigital.prj001.model.DaoObjReturn
+import com.namoadigital.prj001.model.GeOs
+import com.namoadigital.prj001.model.MD_Product_Serial
 import com.namoadigital.prj001.sql.GeOsDeviceCreation_Sql_001
 import com.namoadigital.prj001.sql.GeOsDeviceItemCreation_Sql_001
 import com.namoadigital.prj001.sql.GeOsDeviceItemHistCreation_Sql_001
@@ -313,7 +315,7 @@ class GeOsDao(
                         measure_cycle_value = getIntOrNull(getColumnIndex(MEASURE_CYCLE_VALUE)),
                         value_sufix = getStringOrNull(getColumnIndex(VALUE_SUFIX)),
                         date_start = getStringOrNull(getColumnIndex(DATE_START)),
-                        date_end = getStringOrNull(getColumnIndex(DATE_START)),
+                        date_end = getStringOrNull(getColumnIndex(DATE_END)),
                         last_measure_value = getFloatOrNull(getColumnIndex(LAST_MEASURE_VALUE)),
                         last_measure_date = getStringOrNull(getColumnIndex(LAST_MEASURE_DATE)),
                         last_cycle_value = getIntOrNull(getColumnIndex(LAST_CYCLE_VALUE)),

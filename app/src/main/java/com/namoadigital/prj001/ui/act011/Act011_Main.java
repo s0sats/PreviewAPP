@@ -262,6 +262,7 @@ public class Act011_Main extends Base_Activity
     private int device_item_tab_index =-1;
     private int device_item_list_index = -1;
     private String device_item_list_filter;
+    private GeOs geOs;
 
 
     public void setWsSoProcess(String wsSoProcess) {
@@ -469,6 +470,8 @@ public class Act011_Main extends Base_Activity
         transList.add("dialog_finalize_os_form_missing_answer_count_lbl");
         transList.add("dialog_finalize_os_form_elapsed_time_lbl");
         transList.add("dialog_finalize_os_form_justify_missing_answer_lbl");
+        transList.add("dialog_finalize_os_form_start_date_lbl");
+        transList.add("dialog_finalize_os_form_end_date_lbl");
         //
         transList.addAll(Act011FrgInspection.Companion.getFragTranslationsVars());
         //
@@ -1036,7 +1039,7 @@ public class Act011_Main extends Base_Activity
 
         formData.setSignature(mSignature);
 
-        mPresenter.checkSignature(formData, signature, 0, geFiles, require_serial_done, require_serial_done_ok, formLocal.getRequire_location());
+        mPresenter.checkSignature(formData, geOs, signature, 0, geFiles, require_serial_done, require_serial_done_ok, formLocal.getRequire_location());
     }
 
     private void deleteFormLocal() {
@@ -1253,6 +1256,7 @@ public class Act011_Main extends Base_Activity
         this.require_serial_done = require_serial_done;
         this.require_serial_done_ok = "";
         this.isFormOs = geOs != null;
+        this.geOs = geOs;
 
         if (!formData.getSerial_id().equalsIgnoreCase(serial_id) && !serial_id.isEmpty()) {
             formData.setSerial_id(serial_id);
@@ -2327,7 +2331,7 @@ public class Act011_Main extends Base_Activity
                                 formData.setSignature("");
                                 formData.setSignature_name("");
 
-                                mPresenter.checkData(formData, geFiles, require_serial_done, require_serial_done_ok, formLocal.getRequire_location());
+                                mPresenter.checkData(formData, geOs, geFiles, require_serial_done, require_serial_done_ok, formLocal.getRequire_location());
                                 bNew = false;
                             }
                         }
@@ -2731,7 +2735,7 @@ public class Act011_Main extends Base_Activity
                 geFiles.add(geFile);
                 //
 
-                mPresenter.checkData(formData, geFiles, require_serial_done, require_serial_done_ok, formLocal.getRequire_location());
+                mPresenter.checkData(formData, geOs, geFiles, require_serial_done, require_serial_done_ok, formLocal.getRequire_location());
                 bNew = false;
             } else {
                 formData.setSignature_name("");
@@ -2789,7 +2793,7 @@ public class Act011_Main extends Base_Activity
         if (sResults.trim().length() != 0 && sResults.equalsIgnoreCase(ConstantBaseApp.MAIN_RESULT_OK)) {
             require_serial_done_ok = ConstantBaseApp.MAIN_RESULT_OK;
             formData.setDate_end(ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT));
-            mPresenter.checkData(formData, geFiles, require_serial_done, require_serial_done_ok, formLocal.getRequire_location());
+            mPresenter.checkData(formData, geOs, geFiles, require_serial_done, require_serial_done_ok, formLocal.getRequire_location());
             //
             bNew = false;
         } else {
@@ -3215,27 +3219,20 @@ public class Act011_Main extends Base_Activity
         //
         setDialogVisibilityAndLabels(binding);
         //
-        setDialogAction(binding);
+        builder.setView(binding.getRoot()).setCancelable(false);
         //
-        builder
-//                .setTitle(hmAux_Trans.get("dialog_finalize_option_ttl"))
-                .setView(binding.getRoot())
-                .setCancelable(false)
-                .setNegativeButton(hmAux_Trans.get("sys_alert_btn_cancel"),null)
-        ;
+        final AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+        setDialogAction(binding, alertDialog);
         //
-        builder.create().show();
-
     }
 
-    private void setDialogAction(Act011CheckDialogBinding binding) {
+    private void setDialogAction(Act011CheckDialogBinding binding, AlertDialog alertDialog) {
         binding.act011DialogCheckMkedtJustifyMissingAnswerVal.setOnReportTextChangeListner(
                 new MKEditTextNM.IMKEditTextChangeText() {
                     @Override
                     public void reportTextChange(String s) {
-
                         binding.act011DialogCheckBtnOk.setEnabled(s != null && !s.isEmpty());
-
                     }
 
                     @Override
@@ -3247,12 +3244,42 @@ public class Act011_Main extends Base_Activity
         binding.act011DialogCheckBtnOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Seta valor var que controla se fluxo é finaliza ou finaliza mais novo.
-                finalizeNewFlow = binding.act011DialogCheckOptionRg.getCheckedRadioButtonId() == R.id.act011_dialog_finalize_option_rdo_finalize_new;
-                //
-                startCheckIN();
+                if(validEndDate(binding)) {
+                    mPresenter.updateGeOsItems(
+                            geOs,
+                            binding.act011DialogCheckTilJustifyMissingAnswerVal.toString(),
+                            binding.act011DialogCheckMkdateFormStart.getmValue(),
+                            binding.act011DialogCheckMkdateFormEnd.getmValue()
+                    );
+                    //Seta valor var que controla se fluxo é finaliza ou finaliza mais novo.
+                    finalizeNewFlow = binding.act011DialogCheckOptionRg.getCheckedRadioButtonId() == R.id.act011_dialog_finalize_option_rdo_finalize_new;
+                    //
+                    startCheckIN();
+                }else{
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get(""),
+                            hmAux_Trans.get(""),
+                            null,
+                            0
+                    );
+                }
             }
         });
+        binding.act011DialogCheckBtnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+
+    }
+
+    private boolean validEndDate(Act011CheckDialogBinding binding) {
+        String startDate = binding.act011DialogCheckMkdateFormStart.getmValue();
+        String endDate = binding.act011DialogCheckMkdateFormEnd.getmValue();
+
+        return ToolBox_Inf.getDateDiferenceInDays(startDate, endDate) <= 0;
     }
 
     private void setDialogVisibilityAndLabels(Act011CheckDialogBinding binding) {
@@ -3268,18 +3295,30 @@ public class Act011_Main extends Base_Activity
                 binding.act011DialogCheckBtnOk.setEnabled(false);
             }
             binding.act011DialogCheckBtnOk.setText(hmAux_Trans.get("sys_alert_btn_ok"));
+            binding.act011DialogCheckBtnCancel.setText(hmAux_Trans.get("sys_alert_btn_cancel"));
             binding.act011DialogCheckTvMissingAnswerVal.setText(String.valueOf(missingAnswersAmount));
             binding.act011DialogCheckTvElapsedTimeVal.setText(getFormElapsedTimeFormatted(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")));
+            binding.act011DialogCheckMkdateFormStart.setClickable(false);
             binding.act011DialogCheckMkdateFormStart.setmCanClean(false);
-            binding.act011DialogCheckMkdateFormStart.setmLabel("");
-            binding.act011DialogCheckMkdateFormEnd.setmCanClean(false);
-            binding.act011DialogCheckMkdateFormEnd.setmLabel("");
+            binding.act011DialogCheckMkdateFormStart.setmEnabled(false);
+            binding.act011DialogCheckMkdateFormStart.setmLabel(hmAux_Trans.get("dialog_finalize_os_form_start_date_lbl"));
             binding.act011DialogCheckMkdateFormStart.setmValue(formData.getDate_start());
-            binding.act011DialogCheckMkdateFormEnd.setmValue(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+            binding.act011DialogCheckMkdateFormEnd.setmCanClean(false);
+            binding.act011DialogCheckMkdateFormEnd.setmLabel(ToolBox_Inf.addHighlightForRequiredFields(context, hmAux_Trans.get("dialog_finalize_os_form_end_date_lbl")).toString());
+            if(geOs.getSo_edit_start_end() == 0) {
+                binding.act011DialogCheckMkdateFormEnd.setEnabled(false);
+                binding.act011DialogCheckMkdateFormEnd.setClickable(false);
+            }
+            if(geOs.getDate_end() == null
+            || geOs.getDate_end().isEmpty()) {
+                binding.act011DialogCheckMkdateFormEnd.setmValue(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+            }else{
+                binding.act011DialogCheckMkdateFormEnd.setmValue(geOs.getDate_end());
+            }
             binding.act011DialogFinalizeLbl.setText(hmAux_Trans.get("dialog_finalize_os_form_lbl"));
             binding.act011DialogCheckTvMissingAnswerLbl.setText(hmAux_Trans.get("dialog_finalize_os_form_missing_answer_count_lbl"));
-            binding.act011DialogCheckTvElapsedTimeLbl.setText(hmAux_Trans.get("dialog_finalize_os_form_missing_answer_count_lbl"));
-            binding.act011DialogCheckTvJustifyMissingAnswerLbl.setText(hmAux_Trans.get("dialog_finalize_os_form_justify_missing_answer_lbl"));
+            binding.act011DialogCheckTvElapsedTimeLbl.setText(hmAux_Trans.get("dialog_finalize_os_form_elapsed_time_lbl"));
+            binding.act011DialogCheckTvJustifyMissingAnswerLbl.setText(ToolBox_Inf.addHighlightForRequiredFields(context, hmAux_Trans.get("dialog_finalize_os_form_justify_missing_answer_lbl")));
         }else{
             setFormOsViewVisibility(binding, View.GONE);
             binding.act011DialogFinalizeLbl.setText(hmAux_Trans.get("dialog_finalize_form_lbl"));
