@@ -136,7 +136,9 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
                 item.get(GE_Custom_FormDao.CUSTOMER_CODE),
                 item.get(GE_Custom_FormDao.CUSTOM_FORM_TYPE),
                 item.get(GE_Custom_FormDao.CUSTOM_FORM_CODE),
-                item.get(GE_Custom_FormDao.CUSTOM_FORM_VERSION)
+                item.get(GE_Custom_FormDao.CUSTOM_FORM_VERSION),
+                product_code,
+                serial_id
             ).toSqlQuery()
         );
         //

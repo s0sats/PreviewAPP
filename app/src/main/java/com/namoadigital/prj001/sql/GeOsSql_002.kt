@@ -8,13 +8,17 @@ import com.namoadigital.prj001.util.ConstantBaseApp
 /**
  * LUCHE - 30/09/2021
  * Query que verifica se existe o GeOs e GE_Custom_Form_Data
+ * LUCHE - 11/10/2021
+ * Corrigido query add productCode e SerialId para identificar corretamente se ja existe form o.s aberto para o form + prod + serial
  */
 
 class GeOsSql_002(
     private val customerCode: String,
     private val customFormType: String,
     private val customFormCode: String,
-    private val customFormVersion: String
+    private val customFormVersion: String,
+    private val productCode: Long,
+    private val serialId: String
 ) :Specification {
     override fun toSqlQuery(): String {
         val s = """
@@ -34,7 +38,9 @@ class GeOsSql_002(
                                          AND d.${GE_Custom_Form_DataDao.CUSTOM_FORM_CODE} = o.${GeOsDao.CUSTOM_FORM_CODE}
                                          AND d.${GE_Custom_Form_DataDao.CUSTOM_FORM_VERSION} = o.${GeOsDao.CUSTOM_FORM_VERSION}
                                          AND d.${GE_Custom_Form_DataDao.CUSTOM_FORM_DATA} = o.${GeOsDao.CUSTOM_FORM_DATA}
-                                         AND d.${GE_Custom_Form_DataDao.DATE_START} = o.${GeOsDao.DATE_START}                                                                                               
+                                         AND d.${GE_Custom_Form_DataDao.PRODUCT_CODE} = $productCode    
+                                         AND d.${GE_Custom_Form_DataDao.SERIAL_ID} = '$serialId'  
+                                         AND d.${GE_Custom_Form_DataDao.DATE_START} = o.${GeOsDao.DATE_START}                                                                                                                                        
                                          AND d.${GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS} IN ('${ConstantBaseApp.SYS_STATUS_IN_PROCESSING}',
                                                                                                 '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'
                                                                                                 )                                                                                               
