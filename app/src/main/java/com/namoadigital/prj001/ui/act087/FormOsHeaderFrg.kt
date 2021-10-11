@@ -367,8 +367,9 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 formOsHeader.measure_tp_desc?.let{
                     tvOsMainMeasureLbl.text = it
                 }
+                //todo rever o save do float no obj
                 formOsHeader.measure_value?.let {
-                    mketOsMainMeasureVal.setText(it.toString())
+                    mketOsMainMeasureVal.setText(BigDecimal(it.toDouble()).setScale(mainMeasureTp?.restrictionDecimal?:2,RoundingMode.HALF_DOWN).toString())
                     mketOsMainMeasureVal.isEnabled = isOsCreation
                     mketOsMainMeasureVal.setmBARCODE(isOsCreation)
 
