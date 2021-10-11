@@ -148,7 +148,11 @@ class Act011InspectionFormAdapter(
                     binding.llAnswerInfo.visibility = View.GONE
                     binding.tvInspectAnswered.visibility = View.GONE
                     binding.tvInspectionVerificationAction.visibility = View.VISIBLE
-                    binding.tvAutoSkipInspection.visibility = View.VISIBLE
+                    if(!InspectionCell.NORMAL.equals(inspection.status)) {
+                        binding.tvAutoSkipInspection.visibility = View.VISIBLE
+                    }else{
+                        binding.tvAutoSkipInspection.visibility = View.GONE
+                    }
                 }
                 //
                 binding.tvInspectionDescription.text = description

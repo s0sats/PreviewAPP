@@ -473,6 +473,9 @@ public class Act011_Main extends Base_Activity
         transList.add("dialog_finalize_os_form_start_date_lbl");
         transList.add("dialog_finalize_os_form_end_date_lbl");
         //
+        transList.add("dialog_finalize_os_form_invalid_end_date_ttl");
+        transList.add("dialog_finalize_os_form_invalid_end_date_end");
+        //
         transList.addAll(Act011FrgInspection.Companion.getFragTranslationsVars());
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
@@ -3261,8 +3264,8 @@ public class Act011_Main extends Base_Activity
                 }else{
                     ToolBox.alertMSG(
                             context,
-                            hmAux_Trans.get(""),
-                            hmAux_Trans.get(""),
+                            hmAux_Trans.get("dialog_finalize_os_form_invalid_end_date_ttl"),
+                            hmAux_Trans.get("dialog_finalize_os_form_invalid_end_date_end"),
                             null,
                             0
                     );
@@ -3281,7 +3284,7 @@ public class Act011_Main extends Base_Activity
     private boolean validEndDate(Act011CheckDialogBinding binding) {
         String startDate = binding.act011DialogCheckMkdateFormStart.getmValue();
         String endDate = binding.act011DialogCheckMkdateFormEnd.getmValue();
-
+        //todo colocar valida com data atual apos tratar fluxo de assinatura.
         return ToolBox_Inf.getDateDiferenceInDays(startDate, endDate) <= 0;
     }
 
@@ -3311,6 +3314,7 @@ public class Act011_Main extends Base_Activity
             if(geOs.getSo_edit_start_end() == 0) {
                 binding.act011DialogCheckMkdateFormEnd.setEnabled(false);
                 binding.act011DialogCheckMkdateFormEnd.setClickable(false);
+                binding.act011DialogCheckMkdateFormEnd.setmEnabled(false);
             }
             if(geOs.getDate_end() == null
             || geOs.getDate_end().isEmpty()) {
