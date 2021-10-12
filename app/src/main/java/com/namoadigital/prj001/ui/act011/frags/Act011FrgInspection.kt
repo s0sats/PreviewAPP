@@ -226,7 +226,11 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
         val forecastCount = acessoryFormView.inspections.count {
             it.status == FORECAST && !it.answerStatus.equals(ConstantBaseApp.SYS_STATUS_DONE)
         }
-        return problemReportedCount + criticalForecastCount + forecastCount
+        val onGoingCount = acessoryFormView.inspections.count {
+            ConstantBaseApp.SYS_STATUS_PROCESS.equals(it.answerStatus) && it.status == NORMAL
+        }
+
+        return problemReportedCount + criticalForecastCount + forecastCount + onGoingCount
     }
 
     override fun getTabCount(): Int {

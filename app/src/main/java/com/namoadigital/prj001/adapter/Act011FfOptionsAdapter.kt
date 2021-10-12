@@ -72,21 +72,24 @@ class Act011FfOptionsAdapter(
                 }
 
                 tvForecastCountVal.visibility = View.INVISIBLE
-                item.forecastCount?.let {
+                if(item.forecastCount != null
+                    && item.forecastCount > 0)  {
                     tvForecastCountVal.visibility = View.VISIBLE
-                    tvForecastCountVal.text = it.toString()
+                    tvForecastCountVal.text = item.forecastCount .toString()
                 }
 
                 tvCriticalForecastCountVal.visibility = View.INVISIBLE
-                item.criticalForecastCount?.let {
+                if(item.criticalForecastCount != null
+                    && item.criticalForecastCount > 0)  {
                     tvCriticalForecastCountVal.visibility = View.VISIBLE
-                    tvCriticalForecastCountVal.text = it.toString()
+                    tvCriticalForecastCountVal.text = item.criticalForecastCount.toString()
                 }
 
                 tvProblemReportedCountVal.visibility = View.INVISIBLE
-                item.problemReportedCount?.let {
+                if(item.problemReportedCount != null
+                    && item.problemReportedCount > 0)  {
                     tvProblemReportedCountVal.visibility = View.VISIBLE
-                    tvProblemReportedCountVal.text = it.toString()
+                    tvProblemReportedCountVal.text = item.problemReportedCount.toString()
                 }
             }
         }
