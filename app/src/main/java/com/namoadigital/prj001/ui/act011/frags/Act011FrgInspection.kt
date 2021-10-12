@@ -194,7 +194,14 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
                 "inpection_ongoing_action_lbl",
                 "inspection_add_new_process_btn",
                 "inpection_verify_action_lbl",
-                "inspection_filter_list_hint"
+                "inspection_filter_list_hint",
+                "inpection_status_answered_item_lbl",
+                "inpection_status_non_forecast_item_lbl",
+                "inpection_status_manual_alert_item_lbl",
+                "inpection_status_critical_forecast_item_lbl",
+                "inpection_status_forecast_item_lbl",
+                "inpection_not_verify_action_lbl"
+
             )
         }
     }

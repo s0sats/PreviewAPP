@@ -158,7 +158,23 @@ class Act011InspectionFormAdapter(
                 binding.tvInspectionDescription.text = description
                 //
                 binding.tvStatus.apply {
-                    text = status
+                    when(status){
+                        InspectionCell.ANSWERED -> {
+                            text = hmAuxTrans["inpection_status_answered_item_lbl"]
+                        }
+                         InspectionCell.NORMAL -> {
+                            text = hmAuxTrans["inpection_status_non_forecast_item_lbl"]
+                        }
+                        InspectionCell.MANUAL_ALERT -> {
+                            text = hmAuxTrans["inpection_status_manual_alert_item_lbl"]
+                        }
+                        InspectionCell.CRITICAL_FORECAST ->  {
+                            text = hmAuxTrans["inpection_status_critical_forecast_item_lbl"]
+                        }
+                        else -> {
+                            text = hmAuxTrans["inpection_status_forecast_item_lbl"]
+                        }
+                    }
                     background.setColorFilter(ContextCompat.getColor(context, tagColor), android.graphics.PorterDuff.Mode.SRC_ATOP)
                 }
                 binding.vCellColorTag.apply {
@@ -204,7 +220,7 @@ class Act011InspectionFormAdapter(
                 } else {
                     binding.tvInspectionVerificationAction.visibility = View.VISIBLE
                     binding.tvInspectionVerificationAction.text = hmAuxTrans.get("inpection_verify_action_lbl")
-                    binding.tvAutoSkipInspection.text =  hmAuxTrans.get("inpection_verify_action_lbl")
+                    binding.tvAutoSkipInspection.text =  hmAuxTrans.get("inpection_not_verify_action_lbl")
                 }
                 //
                 if (isNewItem) {
@@ -225,7 +241,7 @@ class Act011InspectionFormAdapter(
                 if (hasComment) {
                     binding.ivCommentary.applyTintColor(R.color.namoa_color_cone_item)
                 } else {
-                    if (commentRequired) {
+                    if (commentRequired && EXEC_TYPE_FIXED.equals(execType)) {
                         binding.ivCommentary.applyTintColor(R.color.namoa_color_highlight_required_item)
                     } else {
                         binding.ivCommentary.applyTintColor(R.color.namoa_color_gray_9)
@@ -237,7 +253,7 @@ class Act011InspectionFormAdapter(
                     binding.ivProductApplied.applyTintColor(R.color.namoa_color_cone_item)
                     binding.tvProductAppliedCount.setTextColor(ContextCompat.getColor(context, R.color.namoa_color_cone_item))
                 } else {
-                    if (materialRequired) {
+                    if (materialRequired && EXEC_TYPE_FIXED.equals(execType)) {
                         binding.ivProductApplied.applyTintColor(R.color.namoa_color_highlight_required_item)
                         binding.tvProductAppliedCount.setTextColor(ContextCompat.getColor(context, R.color.namoa_color_highlight_required_item))
                     } else {
