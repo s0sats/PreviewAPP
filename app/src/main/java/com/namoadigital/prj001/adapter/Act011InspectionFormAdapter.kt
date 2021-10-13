@@ -158,21 +158,22 @@ class Act011InspectionFormAdapter(
                 binding.tvInspectionDescription.text = description
                 //
                 binding.tvStatus.apply {
-                    when(status){
-                        InspectionCell.ANSWERED -> {
-                            text = hmAuxTrans["inpection_status_answered_item_lbl"]
-                        }
-                         InspectionCell.NORMAL -> {
-                            text = hmAuxTrans["inpection_status_non_forecast_item_lbl"]
-                        }
-                        InspectionCell.MANUAL_ALERT -> {
-                            text = hmAuxTrans["inpection_status_manual_alert_item_lbl"]
-                        }
-                        InspectionCell.CRITICAL_FORECAST ->  {
-                            text = hmAuxTrans["inpection_status_critical_forecast_item_lbl"]
-                        }
-                        else -> {
-                            text = hmAuxTrans["inpection_status_forecast_item_lbl"]
+                    if(isDone){
+                        text = hmAuxTrans["inpection_status_answered_item_lbl"]
+                    } else {
+                        when (status) {
+                            InspectionCell.NORMAL -> {
+                                text = hmAuxTrans["inpection_status_non_forecast_item_lbl"]
+                            }
+                            InspectionCell.MANUAL_ALERT -> {
+                                text = hmAuxTrans["inpection_status_manual_alert_item_lbl"]
+                            }
+                            InspectionCell.CRITICAL_FORECAST -> {
+                                text = hmAuxTrans["inpection_status_critical_forecast_item_lbl"]
+                            }
+                            else -> {
+                                text = hmAuxTrans["inpection_status_forecast_item_lbl"]
+                            }
                         }
                     }
                     background.setColorFilter(ContextCompat.getColor(context, tagColor), android.graphics.PorterDuff.Mode.SRC_ATOP)

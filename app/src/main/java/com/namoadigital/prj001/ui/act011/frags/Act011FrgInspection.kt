@@ -164,6 +164,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
             it.status == NORMAL
         }.toString()
         binding.tvAddNewItemVal.text = hmAuxTrans.get("inspection_add_new_process_btn")
+        binding.chkNonForecastItem.text = hmAuxTrans.get("inpection_hide_non_forecast_item_chk")
     }
 
     companion object {
@@ -200,7 +201,8 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
                 "inpection_status_manual_alert_item_lbl",
                 "inpection_status_critical_forecast_item_lbl",
                 "inpection_status_forecast_item_lbl",
-                "inpection_not_verify_action_lbl"
+                "inpection_not_verify_action_lbl",
+                "inpection_hide_non_forecast_item_chk"
 
             )
         }
