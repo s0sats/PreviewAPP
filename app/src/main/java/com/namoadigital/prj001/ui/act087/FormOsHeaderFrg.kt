@@ -130,7 +130,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 "alert_qty_records_exceeded_msg",
                 "records_display_limit_lbl",
                 "records_found_lbl",
-                "form_os_header",
+                "form_os_header_lbl",
             )
         }
     }
@@ -780,7 +780,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     }
 
     override fun getTabName(): String {
-        return hmAuxTrans["form_os_header"]?:"form_os_header - trad"
+        return hmAuxTrans["form_os_header_lbl"]?:"form_os_header - trad"
     }
 
     override fun applyAutoAnswer(): Int {
