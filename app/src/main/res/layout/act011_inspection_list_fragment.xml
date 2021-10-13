@@ -81,7 +81,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/edt_inspection_filter"
             app:layout_constraintWidth_max="wrap"
-            android:text="Ocultar itens não previtos-trad"
+            tools:text="Ocultar itens não previtos-trad"
             />
 
         <TextView

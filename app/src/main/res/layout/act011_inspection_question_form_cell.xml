@@ -43,7 +43,7 @@
 
             <TextView
                 android:id="@+id/tv_status"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/act011_inspection_cornered_bg"

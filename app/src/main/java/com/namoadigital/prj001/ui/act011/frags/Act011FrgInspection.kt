@@ -164,6 +164,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
             it.status == NORMAL
         }.toString()
         binding.tvAddNewItemVal.text = hmAuxTrans.get("inspection_add_new_process_btn")
+        binding.chkNonForecastItem.text = hmAuxTrans.get("inpection_hide_non_forecast_item_chk")
     }
 
     companion object {
@@ -194,7 +195,15 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
                 "inpection_ongoing_action_lbl",
                 "inspection_add_new_process_btn",
                 "inpection_verify_action_lbl",
-                "inspection_filter_list_hint"
+                "inspection_filter_list_hint",
+                "inpection_status_answered_item_lbl",
+                "inpection_status_non_forecast_item_lbl",
+                "inpection_status_manual_alert_item_lbl",
+                "inpection_status_critical_forecast_item_lbl",
+                "inpection_status_forecast_item_lbl",
+                "inpection_not_verify_action_lbl",
+                "inpection_hide_non_forecast_item_chk"
+
             )
         }
     }
@@ -219,7 +228,11 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
         val forecastCount = acessoryFormView.inspections.count {
             it.status == FORECAST && !it.answerStatus.equals(ConstantBaseApp.SYS_STATUS_DONE)
         }
-        return problemReportedCount + criticalForecastCount + forecastCount
+        val onGoingCount = acessoryFormView.inspections.count {
+            ConstantBaseApp.SYS_STATUS_PROCESS.equals(it.answerStatus) && it.status == NORMAL
+        }
+
+        return problemReportedCount + criticalForecastCount + forecastCount + onGoingCount
     }
 
     override fun getTabCount(): Int {
