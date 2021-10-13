@@ -75,11 +75,17 @@ class Act086VerificationFrgPresenter(
         }
     }
 
+    /**
+     * Fun que transforma lista de materal da tela, para lista de obj do banco.
+     * Add filtro para que os itens, com valor 0 nao sejam incluidos.
+     */
     override fun getGeOsDeviceMaterialList(
         geOsDeviceItem: GeOsDeviceItem,
         materialFragList: MutableList<Act086MaterialItem>
     ) {
-        val newMaterialItemList = materialFragList.map {
+        val newMaterialItemList = materialFragList.filter {
+            it.productQty > 0f
+        }.map {
             GeOsDeviceMaterial(
                 geOsDeviceItem.customer_code,
                 geOsDeviceItem.custom_form_type,

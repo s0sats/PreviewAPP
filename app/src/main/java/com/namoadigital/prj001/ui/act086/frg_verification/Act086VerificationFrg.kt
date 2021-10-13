@@ -32,7 +32,6 @@ import com.namoadigital.prj001.ui.act086.Act086ProductEditDialog
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
-import com.namoadigital.prj001.util.ToolBox_Inf
 import com.namoadigital.prj001.view.act.product_selection.Act_Product_Selection
 import java.util.*
 
@@ -178,7 +177,6 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         if (geOsDeviceItem.materialList.isNotEmpty()) {
             mPresenter.buildAdapterMaterialFragList(geOsDeviceItem.materialList, materialFragList)
             materialFragAdapter.notifyDataSetChanged()
-            updateMaterialLabelCount()
         }
     }
 
@@ -249,7 +247,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         with(binding){
             act086VerificationFrgRdoAnswerFixed.text = hmAux_Trans["action_done_lbl"]
             act086VerificationFrgRdoAnswerAlreadyDone.text = hmAux_Trans["already_checked_lbl"]
-            act086VerificationFrgRdoAnswerAlert.text = hmAux_Trans["has_problem_lbl"]
+            act086VerificationFrgRdoAnswerAlert.text = getAlertAnswerLbl()
             act086VerificationFrgRdoAnswerNotVerified.text = hmAux_Trans["not_verified_lbl"]
             act086VerificationFrgTvRequireFields.text  = hmAux_Trans["fill_below_fields_lbl"]
             act086VerificationFrgTvSupplementaryDataTtl.text  = hmAux_Trans["supplementary_data_lbl"]
@@ -259,6 +257,19 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             act086VerificationFrgTvDeleteLbl.text  = hmAux_Trans["erase_all_data_lbl"]
         }
 
+    }
+
+    /**
+     * Define label da resposta alert baseado no item_check_status.
+     * Se o item for alerta manual, então o label será continua com problema
+     * e nao esta com problemas....
+     */
+    private fun getAlertAnswerLbl() : String? {
+       return  if(geOsDeviceItem.item_check_status.equals(GeOsDeviceItem.ITEM_CHECK_STATUS_MANUAL_ALERT ,true)) {
+            hmAux_Trans["still_with_problem_lbl"]
+        }else{
+            hmAux_Trans["has_problem_lbl"]
+        }
     }
 
     private fun initRecyclers() {
@@ -423,11 +434,13 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
 
     private fun initActions() {
         binding.act086VerificationFrgClMaterial.setOnClickListener {
+            binding.act086VerificationFrgMketComment.clearFocus()
             mPresenter.prepareCallProductAct(materialFragList)
         }
         //
         binding.act086VerificationFrgClPhoto.apply {
             setOnClickListener {_->
+                binding.act086VerificationFrgMketComment.clearFocus()
                 mPresenter.handleAddPhoto(prefixPhoto,photoList,photoLimit)
             }
         }
@@ -501,7 +514,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     private fun commitRdoChange(checkedId: Int) {
         lastSelectedRdoId = checkedId
         applyEnableStateToMoreInfoViews()
-        updateMaterialLabelCount()
+        updateMaterialLabel()
         //saveData()
     }
 
@@ -539,7 +552,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             materialFragList.clear()
             photoAdapter.notifyDataSetChanged()
             materialFragAdapter.notifyDataSetChanged()
-            updateMaterialLabelCount()
+            updateMaterialLabel()
             act086VerificationFrgTvRequireFields.visibility = View.GONE
             act086VerificationFrgClDeleteInfos.visibility = View.GONE
             mPresenter.deleteOldPhoto(prefixPhoto)
@@ -653,33 +666,20 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     }
 
     fun onApplyProductClick(productIndex: Int, materialItem: Act086MaterialItem, isAddProcess: Boolean ){
-        //Recolhe Teclado
-        //todo apagar pois aparentemente funcion pq mexi no dialo
-        binding.root.focusedChild?.let {
-            ToolBox_Inf.hideSoftKeyboard(requireActivity(),it)
-        }
-        requireActivity().currentFocus?.let {
-            ToolBox_Inf.hideSoftKeyboard(requireActivity(),it)
-        }
-        binding.root.focusedChild?.let {
-            ToolBox_Inf.hideSoftKeyboard(requireActivity(),it)
-        }
-
         if(productIndex > -1){
             //Atualiza item na lista
             materialFragList[productIndex] = materialItem
             //Informa adapter qual posição atualizar
             materialFragAdapter.notifyItemChanged(productIndex)
-            //Atualiza titulo com qtd
-            updateMaterialLabelCount()
             //
             handleViewScrollNeeds(productIndex)
+            //
+            binding.act086VerificationFrgRvMaterial.requestFocus()
         }
     }
 
-    private fun updateMaterialLabelCount() {
-        binding.act086VerificationFrgTvMaterialTtl.text =
-            "${getMaterialLbl()}: ${materialFragList.size}"
+    private fun updateMaterialLabel() {
+        binding.act086VerificationFrgTvMaterialTtl.text = getMaterialLbl()
     }
 
     private fun getMaterialLbl() : String {
@@ -841,6 +841,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                 "alert_manual_item_delete_confirm",
                 "alert_clear_item_data_ttl",
                 "alert_clear_item_data_confirm",
+                "still_with_problem_lbl",
             )
         }
     }

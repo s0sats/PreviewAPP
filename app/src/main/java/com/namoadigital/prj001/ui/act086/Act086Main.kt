@@ -7,9 +7,11 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag
+import com.namoadigital.prj001.R
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
 import com.namoadigital.prj001.dao.GeOsDeviceDao
 import com.namoadigital.prj001.dao.GeOsDeviceItemDao
@@ -17,7 +19,6 @@ import com.namoadigital.prj001.databinding.Act086MainBinding
 import com.namoadigital.prj001.databinding.Act086MainContentBinding
 import com.namoadigital.prj001.extensions.setFrag
 import com.namoadigital.prj001.model.GeOsDeviceItem
-import com.namoadigital.prj001.ui.act005.Act005_Main
 import com.namoadigital.prj001.ui.act011.Act011_Main
 import com.namoadigital.prj001.ui.act086.frg_historic.Act086HistoricFrg
 import com.namoadigital.prj001.ui.act086.frg_verification.Act086VerificationFrg
@@ -165,17 +166,21 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
                 }else{
                     visibility = View.VISIBLE
                     text = getAlertDateLbl(deviceItem.target_date!!)
+                    setTextColor(getAlertDateTextColor())
                 }
             }
         }
     }
 
-    private fun getAlertDateLbl(targetDate: String): String {
-       val label = if(deviceItem.item_check_status.equals(GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL,true)){
-            hmAux_Trans["inspection_missing_lbl"]
-        }else{
-            hmAux_Trans["inspection_alert_days_lbl"]
+    private fun getAlertDateTextColor() =
+        if (deviceItem.item_check_status.equals(GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL, true)) {
+            ContextCompat.getColor(context, R.color.namoa_pipeline_header_icon)
+        } else {
+            ContextCompat.getColor(context, R.color.namoa_os_form_problem_red)
         }
+
+    private fun getAlertDateLbl(targetDate: String): String {
+       val label = getAlertDateLblByItemCheckStatus()
         //
         val day = TimeUnit.MILLISECONDS.toDays(ToolBox_Inf.getDateDiferenceInMilliseconds(targetDate,ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT))).let{
             if(it < 0 ){
@@ -187,6 +192,13 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
         //
         return "$label: $day"
     }
+
+    private fun getAlertDateLblByItemCheckStatus() =
+        if (deviceItem.item_check_status.equals(GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL, true)) {
+            hmAux_Trans["inspection_missing_lbl"]
+        } else {
+            hmAux_Trans["inspection_alert_days_lbl"]
+        }
 
     private fun paramErrorFlow() {
         ToolBox.alertMSG(

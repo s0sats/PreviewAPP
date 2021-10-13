@@ -10,8 +10,10 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.namoa_digital.namoa_library.util.HMAux
+import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.databinding.Act086ProductEditDialogBinding
 import com.namoadigital.prj001.model.Act086MaterialItem
 import com.namoadigital.prj001.util.Constant
@@ -80,11 +82,20 @@ class Act086ProductEditDialog : BottomSheetDialogFragment() {
                 dismiss()
             }
             act086ProductEditDialogBtnApply.setOnClickListener {
-                materialItem.productQty = act086ProductEditDialogEtQty.text.toString().trim().toFloat()
-                //esconde teclado ao selecionar item
-                ToolBox_Inf.hideSoftKeyboard(context,act086ProductEditDialogEtQty)
-                onApplyClick(productIdx,materialItem,isAddAction)
-                dismiss()
+                val typedQty = act086ProductEditDialogEtQty.text.toString().trim()
+                if(isValidQty(typedQty)) {
+                    materialItem.productQty = typedQty.toFloat()
+                    //esconde teclado ao selecionar item
+                    ToolBox_Inf.hideSoftKeyboard(context, act086ProductEditDialogEtQty)
+                    onApplyClick(productIdx, materialItem, isAddAction)
+                    dismiss()
+                }else{
+                    Toast.makeText(
+                        context,
+                        hmAuxTrans["alert_invalid_material_qty_msg"],
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
             //Captura clique no btn done
             act086ProductEditDialogEtQty.setOnEditorActionListener { v, actionId, event ->
@@ -98,6 +109,18 @@ class Act086ProductEditDialog : BottomSheetDialogFragment() {
         }
     }
 
+    /**
+     * Se valor digitado não for vazio e for maior que 0 é valido
+     */
+    private fun isValidQty(typedQty: String): Boolean {
+        return try {
+            typedQty.isNotEmpty() && typedQty.toFloat() > 0f
+       }catch (e: Exception){
+           ToolBox_Inf.registerException(javaClass.name,e)
+            false
+       }
+    }
+
     override fun onResume() {
         super.onResume()
         (requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).toggleSoftInput(
@@ -107,7 +130,15 @@ class Act086ProductEditDialog : BottomSheetDialogFragment() {
         binding.act086ProductEditDialogEtQty.requestFocus()
     }
 
+    /**
+     * Como dialog é cancelavel, no dismiss, caso o valor seja invalido, chama metodo de cancelmento
+     * removendo o item ja inserido no adapter de material.
+     */
     override fun onDismiss(dialog: DialogInterface) {
+        val typedQty = binding. act086ProductEditDialogEtQty.text.toString().trim()
+        if(!isValidQty(typedQty)) {
+            onCancelClick(productIdx,isAddAction)
+        }
         super.onDismiss(dialog)
     }
 
@@ -133,7 +164,8 @@ class Act086ProductEditDialog : BottomSheetDialogFragment() {
 
         fun getFragTranslationsVars(): List<String> {
             return listOf(
-                "btn_apply"
+                "btn_apply",
+                "alert_invalid_material_qty_msg",
             )
         }
     }
