@@ -177,10 +177,10 @@ class Act086HistoricFrg : BaseFragment() {
     }
 
     private fun getFormattedMeasureInfo(): String {
-        return "$nextCycleMeasure $measureValueSufix ${ToolBox_Inf.millisecondsToString(
+        return "$nextCycleMeasure $measureValueSufix (${ToolBox_Inf.millisecondsToString(
                                                         ToolBox_Inf.dateToMilliseconds(nextCycleMeasureDate),
                                                         ToolBox_Inf.nlsDateFormat(context)
-                                                    )}"
+                                                    )})"
     }
 
     private fun getFormattedLimitDate(nextCycleLimitDate: String): String {
@@ -267,11 +267,14 @@ class Act086HistoricFrg : BaseFragment() {
                 comment = hist.exec_comment
             )
         }
-        //Seta label esta com problema apenas no primeiro item.
-        toAlertList[0].alertLbl = hmAux_Trans["has_problem_lbl"]!!
-        //add itens na lista
-        alertList.addAll(toAlertList)
-
+        if(toAlertList.isNotEmpty()) {
+            //Seta label esta com problema apenas no primeiro item.
+            toAlertList[0].alertLbl = hmAux_Trans["has_problem_lbl"]!!
+            //add itens na lista
+            alertList.addAll(toAlertList)
+        }else{
+            binding.act086HistoricFrgClAlertHistoric.visibility = View.GONE
+        }
     }
 
     companion object {

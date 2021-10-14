@@ -239,7 +239,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
 
     private fun applyNewVerificationConfig() {
         if(isNewVerification){
-            binding.act086TvConsult.visibility = View.GONE
+            binding.act086TvConsult.visibility = View.INVISIBLE
         }
     }
 
@@ -278,7 +278,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
     }
 
     private fun toggleTvConsultVisibility(visible: Boolean) {
-        binding.act086TvConsult.visibility = if(visible) View.VISIBLE else View.GONE
+        binding.act086TvConsult.visibility = if(visible) View.VISIBLE else View.INVISIBLE
     }
 
     /**

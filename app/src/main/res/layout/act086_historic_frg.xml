@@ -8,7 +8,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:paddingBottom="32dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/act086_historic_frg_cl_alert_type"
@@ -16,7 +17,9 @@
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="32dp"
+            >
 
             <TextView
                 android:id="@+id/act086_historic_frg_tv_alert_type_ttl"
@@ -354,9 +357,8 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/act086_historic_frg_tv_alert_historic_ttl"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:itemCount="4"
+                tools:itemCount="1"
                 tools:listitem="@layout/act086_historic_frg_alert_item"
-
                 />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
