@@ -526,6 +526,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String MAIN_RESULT_UPDATE_REQUIRED_WARNING = "UPDATE_REQUIRED_WARNING";
     public static final String CONST_NONCONFORMITY_INSTR_SEARCH = "\",\"AP\":1,\"";
     public static final String FULL_TIMESTAMP_TZ_FORMAT = "yyyy-MM-dd HH:mm:ss Z";
+    public static final long ONE_DAY_IN_MILLISECOND = 86400000;
 
     //Parametros de Permissões - EV_USER_CUSTOMER_PARAMETERS
     public static final String PARAM_SCHEDULE_CHECKLIST = "SCHEDULE_CHECKLIST";

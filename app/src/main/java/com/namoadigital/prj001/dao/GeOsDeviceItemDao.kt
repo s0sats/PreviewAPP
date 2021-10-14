@@ -410,21 +410,21 @@ class GeOsDeviceItemDao(
                         critical_item = getInt(getColumnIndex(CRITICAL_ITEM)),
                         order_seq = getInt(getColumnIndex(ORDER_SEQ)),
                         structure = getInt(getColumnIndex(STRUCTURE)),
-                        manual_desc = getString(getColumnIndex(MANUAL_DESC)),
+                        manual_desc = getStringOrNull(getColumnIndex(MANUAL_DESC)),
                         next_cycle_measure = getFloatOrNull(getColumnIndex(NEXT_CYCLE_MEASURE)),
                         next_cycle_measure_date = getStringOrNull(getColumnIndex(NEXT_CYCLE_MEASURE_DATE)),
                         next_cycle_limit_date = getStringOrNull(getColumnIndex(NEXT_CYCLE_LIMIT_DATE)),
                         value_sufix = getStringOrNull(getColumnIndex(VALUE_SUFIX)),
                         item_check_status = getString(getColumnIndex(ITEM_CHECK_STATUS)),
                         target_date = getString(getColumnIndex(TARGET_DATE)),
-                        exec_type = getString(getColumnIndex(EXEC_TYPE)),
-                        exec_date = getString(getColumnIndex(EXEC_DATE)),
-                        exec_comment = getString(getColumnIndex(EXEC_COMMENT)),
-                        exec_photo1 = getString(getColumnIndex(EXEC_PHOTO1)),
-                        exec_photo2 = getString(getColumnIndex(EXEC_PHOTO2)),
-                        exec_photo3 = getString(getColumnIndex(EXEC_PHOTO3)),
-                        exec_photo4 = getString(getColumnIndex(EXEC_PHOTO4)),
-                        status_answer = getString(getColumnIndex(STATUS_ANSWER))
+                        exec_type = getStringOrNull(getColumnIndex(EXEC_TYPE)),
+                        exec_date = getStringOrNull(getColumnIndex(EXEC_DATE)),
+                        exec_comment = getStringOrNull(getColumnIndex(EXEC_COMMENT)),
+                        exec_photo1 = getStringOrNull(getColumnIndex(EXEC_PHOTO1)),
+                        exec_photo2 = getStringOrNull(getColumnIndex(EXEC_PHOTO2)),
+                        exec_photo3 = getStringOrNull(getColumnIndex(EXEC_PHOTO3)),
+                        exec_photo4 = getStringOrNull(getColumnIndex(EXEC_PHOTO4)),
+                        status_answer = getStringOrNull(getColumnIndex(STATUS_ANSWER))
                     )
                 }
             }

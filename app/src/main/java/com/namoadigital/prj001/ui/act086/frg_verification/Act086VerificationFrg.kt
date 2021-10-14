@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act086.frg_verification
 
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
@@ -13,6 +14,7 @@ import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.ConstantBase
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
@@ -33,6 +35,7 @@ import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.view.act.product_selection.Act_Product_Selection
+import kotlinx.coroutines.*
 import java.util.*
 
 /**
@@ -81,6 +84,15 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     private lateinit var geOsDeviceItem: GeOsDeviceItem
     private var lastSelectedRdoId = -1
     private var inReadOnly : Boolean = false
+    private var mListener: Act086VerificationFrgInteraction? = null
+    private var isMketCommentTypeTriggered: Boolean = false
+
+    /**
+     * Interface para o click do btn ok, que deve salvar e fecha a tela.
+     */
+    interface Act086VerificationFrgInteraction{
+        fun onButtonOkClick()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -111,6 +123,16 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         initActions()
         setAnswerFromDb()
         applyReadonlyUi()
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if(context is Act086VerificationFrgInteraction){
+            mListener = context
+        }else{
+            //Se criação e interface não definida, solta exception
+            throw RuntimeException("${context.toString()} must implement Act086VerificationFrgInteraction")
+        }
     }
 
     private fun applyReadonlyUi() {
@@ -354,7 +376,9 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     }
 
     private fun isCommentRequired() = (binding.act086VerificationFrgRdoAnswerAlert.isChecked
-            && geOsDeviceItem.require_justify_problem == 1)
+            && geOsDeviceItem.require_justify_problem == 1
+            && binding.act086VerificationFrgMketComment.text.toString().trim().isEmpty()
+            )
 
     private fun applyRequiredLayoutIntoMaterial() {
         val answerId = binding.act086VerificationFrgRgAnswers.checkedRadioButtonId
@@ -398,10 +422,9 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     }
 
     private fun isMaterialRequired() = (binding.act086VerificationFrgRdoAnswerFixed.isChecked
-            && geOsDeviceItem.apply_material.equals(
-        GeOsDeviceItem.APPLY_MATERIAL_REQUIRED,
-        true
-    ))
+            && geOsDeviceItem.apply_material.equals(GeOsDeviceItem.APPLY_MATERIAL_REQUIRED,true)
+            && materialFragList.isEmpty()
+    )
 
     private fun applyRequiredLayoutIntoPhoto() {
 
@@ -446,8 +469,10 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         }
 
         binding.act086VerificationFrgBtnOk.setOnClickListener{
-            saveData()
+            //saveData()
+            mListener?.onButtonOkClick()
         }
+
         binding.act086VerificationFrgRgAnswers.setOnCheckedChangeListener { _, checkedId ->
             with(binding){
                 if( lastSelectedRdoId != -1 && lastSelectedRdoId != checkedId
@@ -477,7 +502,6 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                     commitRdoChange(checkedId)
                 }
             }
-
         }
 
         binding.act086VerificationFrgClDeleteInfos.setOnClickListener {
@@ -489,14 +513,14 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                 true ->{
                     ttl = hmAux_Trans["alert_manual_item_delete_ttl"]
                     msg = hmAux_Trans["alert_manual_item_delete_confirm"]
-                    listener = DialogInterface.OnClickListener{ _, _, ->
+                    listener = DialogInterface.OnClickListener{ _, _ ->
                         deleteManualItem()
                     }
                 }
                 else->{
                     ttl = hmAux_Trans["alert_clear_item_data_ttl"]
                     msg = hmAux_Trans["alert_clear_item_data_confirm"]
-                    listener = DialogInterface.OnClickListener{ _, _, ->
+                    listener = DialogInterface.OnClickListener{ _, _ ->
                         clearData()
                     }
                 }
@@ -504,6 +528,70 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             //
             showConfirmAlert(ttl, msg, listener)
         }
+
+        binding.act086VerificationFrgMketComment.setOnReportTextChangeListner(object : MKEditTextNM.IMKEditTextChangeText{
+            //EXEMPLO DO CODIGO EM JAVA QUE ENGASGAVA
+            /*val handler = Handler()
+            var isRunnableRunning = false
+            val runnable: Runnable = object : Runnable {
+                override fun run() {
+                    try {
+                        if(isMketCommentTypeTriggered){
+                            isRunnableRunning = true
+                            isMketCommentTypeTriggered = false
+                            Thread.sleep(200)
+                            handler.post(this)
+                        }else{
+                            isRunnableRunning = false
+                            applyRequiredLayoutIntoSupplementaryData()
+                        }
+                    } catch (e: InterruptedException) {
+                        ToolBox_Inf.registerException(javaClass.name, e)
+                    }
+                }
+            }*/
+            //Var que receberá a coroutine
+            var launch : Job? = null
+
+            override fun reportTextChange(text: String?) {
+                //
+            }
+
+            /**
+             *  Descrição: Ao começar a digitar, a var de controle isMketCommentTypeTriggered é setada para verdadeiro e dispara coroutine em thread separada, resetando a var de controle isMketCommentTypeTriggered para false e aguarda 200 ms. Após os 200 ml, verifica se isMketCommentTypeTriggered ainda é falso e caso seja, roda validação.
+             *  A cada digitação se houver uma coroutine rodando, ele cancela e seta outra, dando efeito de "loop" enquanto isMketCommentTypeTriggered for true.
+             */
+            override fun reportTextChange(text: String?, isEmpty: Boolean) {
+                //Seta var de controle para true.
+                isMketCommentTypeTriggered = true
+                /*
+                //Chamada do handler em java apenas pra deixar comentado
+                if(!isRunnableRunning){
+                    handler.post(runnable)
+                }*/
+                //Se coroutine existe e ativa, cancela antes de inicia-la novamente.
+                launch?.let {
+                    if(it.isActive){
+                        it.cancel()
+                    }
+                }
+                //Inicia coroutine rodando fora da thread principal.
+                //Muda o valor do controle para false e espera 200 ms. Se apos isso var continuar falsa,
+                //roda a validação, se não não faz nada.
+                //Como a cada digitação digitação ele cancela a coroutine antiga, é garantido que ao
+                // parar de digitar a validação rodará
+                launch = CoroutineScope(Dispatchers.Default).launch {
+                    isMketCommentTypeTriggered = false
+                    delay(200)
+                    if(!isMketCommentTypeTriggered){
+                        withContext(Dispatchers.Main) {
+                            //todo add save
+                            applyRequiredLayoutIntoSupplementaryData()
+                        }
+                    }
+                }
+            }
+        })
     }
 
     private fun clearMaterialList() {
@@ -571,7 +659,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         geOsDeviceItem.apply {
             exec_type = getExecTypeForAnswer()
             exec_date = getExecDate()
-            exec_comment = binding.act086VerificationFrgMketComment.text.toString()
+            exec_comment = getCommentToSaveObj()
             exec_photo1 = photoArray[0]
             exec_photo2 = photoArray[1]
             exec_photo3 = photoArray[2]
@@ -579,6 +667,15 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             status_answer = getCheckStatusAnswer()
             mPresenter.getGeOsDeviceMaterialList(this,materialFragList)
         }
+    }
+
+    private fun getCommentToSaveObj() : String?{
+        val mketCommentText = binding.act086VerificationFrgMketComment.text.toString()
+        return  if(mketCommentText.isNotEmpty() && mketCommentText.isNotBlank()){
+                    mketCommentText
+                }else{
+                    null
+                }
     }
 
     private fun getExecDate(): String? {
@@ -633,6 +730,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             (DialogInterface.OnClickListener { dialog, which ->
                 materialFragList.removeAt(position)
                 materialFragAdapter.notifyItemRemoved(position)
+                applyRequiredLayoutIntoSupplementaryData()
             }),
             1
         )
@@ -675,6 +773,8 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             handleViewScrollNeeds(productIndex)
             //
             binding.act086VerificationFrgRvMaterial.requestFocus()
+            //
+            applyRequiredLayoutIntoSupplementaryData()
         }
     }
 
@@ -717,10 +817,10 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             if(isAddProcess && materialFragList.indices.contains(productIndex) ){
                 materialFragList.removeAt(productIndex)
                 materialFragAdapter.notifyItemRemoved(productIndex)
+                applyRequiredLayoutIntoSupplementaryData()
             }
         }
     }
-
 
     override fun callCameraAct(photoName: String, newPhoto: Boolean) {
         startActivity(
@@ -786,8 +886,8 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     }
 
     override fun onDetach() {
+        mListener = null
         super.onDetach()
-        //mPresenter.deleteOldPhoto(prefixPhoto)
     }
 
     companion object {

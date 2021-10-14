@@ -29,9 +29,12 @@ import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ConstantBaseApp.*
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.collections.ArrayList
 
-class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
+class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, Act086VerificationFrg.Act086VerificationFrgInteraction{
     private lateinit var binding: Act086MainContentBinding
     private var bundle: Bundle = Bundle()
     private var bundleDevice: Bundle = Bundle()
@@ -163,9 +166,17 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
                     View.VISIBLE
                 }
             }
-            act086TvItemCheckDesc.text = deviceItem.item_check_desc
+            act086TvItemCheckDesc.text = getItemCheckDesc()
             setAlertDateInfo()
         }
+    }
+
+    private fun getItemCheckDesc() : String?{
+       return if(deviceItem.structure == 3){
+                   deviceItem.manual_desc
+               }else{
+                   deviceItem.item_check_desc
+               }
     }
 
     private fun setAlertDateInfo() {
@@ -192,8 +203,14 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
 
     private fun getAlertDateLbl(targetDate: String): String {
        val label = getAlertDateLblByItemCheckStatus()
-        //
-        val day = TimeUnit.MILLISECONDS.toDays(ToolBox_Inf.getDateDiferenceInMilliseconds(targetDate,ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT))).let{
+        //TODO REVER APOS ANDRE DEFINIR A REGRA
+        var todayLastSecond = getTodayLastSecond()
+        val dateDiferenceInMilliseconds = ToolBox_Inf.getDateDiferenceInMilliseconds(
+            targetDate,
+            todayLastSecond
+        )
+        val rawDay = dateDiferenceInMilliseconds / ConstantBaseApp.ONE_DAY_IN_MILLISECOND.toFloat()
+        val day = TimeUnit.MILLISECONDS.toDays(dateDiferenceInMilliseconds).let{
             if(it < 0 ){
                 it *-1
             }else{
@@ -202,6 +219,17 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
         }
         //
         return "$label: $day"
+    }
+
+    private fun getTodayLastSecond(): String {
+        val cDate = Calendar.getInstance()
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd")
+        return try {
+            "${dateFormat.format(cDate.time)} 23:59:59 ${ToolBox.getDeviceGMT(false)}"
+        }catch (e: Exception){
+            ToolBox_Inf.registerException(javaClass.name,e)
+            "1900-01-01 00:00:00 +00:00"
+        }
     }
 
     private fun getAlertDateLblByItemCheckStatus() =
@@ -236,7 +264,6 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
         }
     }
 
-
     private fun applyNewVerificationConfig() {
         if(isNewVerification){
             binding.act086TvConsult.visibility = View.INVISIBLE
@@ -251,6 +278,10 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
             replaceEvenCreated = true,
             addToBackStack = false
         )
+    }
+
+    override fun onButtonOkClick() {
+        onBackPressed()
     }
 
     private fun setHistoricFrg(){
