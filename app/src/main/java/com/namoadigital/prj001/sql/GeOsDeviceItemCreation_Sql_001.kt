@@ -6,6 +6,7 @@ import com.namoadigital.prj001.database.Specification
 /**
  * LUCHE - 30/09/2021
  * Query que retorna dados para registrod a table GeOsDeviceItem
+ * Add param value_sufix no construtor e que será replicado como retorno da select para que o campo seja setado no obj.
  */
 
 class GeOsDeviceItemCreation_Sql_001(
@@ -15,7 +16,8 @@ class GeOsDeviceItemCreation_Sql_001(
     private val customFormVersion: Int,
     private val customFormData: Int,
     private val productCode: Int,
-    private val serialCode: Int
+    private val serialCode: Int,
+    private val valueSufix: String?
 ) : Specification {
     override fun toSqlQuery(): String {
 /*
@@ -33,6 +35,7 @@ class GeOsDeviceItemCreation_Sql_001(
 //        --                        i.${MdItemCheckDao.ITEM_CHECK_DESC},
 //        --                        sd.${MD_Product_Serial_Tp_Device_ItemDao.ORDER_SEQ},
 */
+        val sufix = if(valueSufix == null) null else "'$valueSufix'"
         val s = """ SELECT           
                         si.*,
                         $customFormType ${GeOsDeviceItemDao.CUSTOM_FORM_TYPE} ,
@@ -40,7 +43,8 @@ class GeOsDeviceItemCreation_Sql_001(
                         $customFormVersion  ${GeOsDeviceItemDao.CUSTOM_FORM_VERSION} ,
                         $customFormData  ${GeOsDeviceItemDao.CUSTOM_FORM_DATA} ,
                         i.${MdItemCheckDao.ITEM_CHECK_ID},
-                        i.${MdItemCheckDao.ITEM_CHECK_DESC},                               
+                        i.${MdItemCheckDao.ITEM_CHECK_DESC},
+                        $sufix ${GeOsDeviceItemDao.VALUE_SUFIX},                                 
                         null ${GeOsDeviceItemDao.EXEC_TYPE},
                         null ${GeOsDeviceItemDao.EXEC_DATE},
                         null ${GeOsDeviceItemDao.EXEC_COMMENT},

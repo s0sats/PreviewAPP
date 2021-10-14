@@ -5,6 +5,8 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
+import androidx.core.database.getFloatOrNull
+import androidx.core.database.getStringOrNull
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
@@ -47,6 +49,7 @@ class GeOsDeviceItemDao(
         const val NEXT_CYCLE_MEASURE = "next_cycle_measure"
         const val NEXT_CYCLE_MEASURE_DATE = "next_cycle_measure_date"
         const val NEXT_CYCLE_LIMIT_DATE = "next_cycle_limit_date"
+        const val VALUE_SUFIX = "value_sufix"
         const val ITEM_CHECK_STATUS = "item_check_status"
         const val TARGET_DATE = "target_date"
         const val EXEC_TYPE = "exec_type"
@@ -408,9 +411,10 @@ class GeOsDeviceItemDao(
                         order_seq = getInt(getColumnIndex(ORDER_SEQ)),
                         structure = getInt(getColumnIndex(STRUCTURE)),
                         manual_desc = getString(getColumnIndex(MANUAL_DESC)),
-                        next_cycle_measure = getFloat(getColumnIndex(NEXT_CYCLE_MEASURE)),
-                        next_cycle_measure_date = getString(getColumnIndex(NEXT_CYCLE_MEASURE_DATE)),
-                        next_cycle_limit_date = getString(getColumnIndex(NEXT_CYCLE_LIMIT_DATE)),
+                        next_cycle_measure = getFloatOrNull(getColumnIndex(NEXT_CYCLE_MEASURE)),
+                        next_cycle_measure_date = getStringOrNull(getColumnIndex(NEXT_CYCLE_MEASURE_DATE)),
+                        next_cycle_limit_date = getStringOrNull(getColumnIndex(NEXT_CYCLE_LIMIT_DATE)),
+                        value_sufix = getStringOrNull(getColumnIndex(VALUE_SUFIX)),
                         item_check_status = getString(getColumnIndex(ITEM_CHECK_STATUS)),
                         target_date = getString(getColumnIndex(TARGET_DATE)),
                         exec_type = getString(getColumnIndex(EXEC_TYPE)),
@@ -481,6 +485,8 @@ class GeOsDeviceItemDao(
                     put(NEXT_CYCLE_MEASURE_DATE, it.next_cycle_measure_date)
                     //
                     put(NEXT_CYCLE_LIMIT_DATE, it.next_cycle_limit_date)
+                    //
+                    put(VALUE_SUFIX, it.value_sufix)
                     //
                     put(ITEM_CHECK_STATUS, it.item_check_status)
                     //

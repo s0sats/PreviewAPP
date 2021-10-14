@@ -432,7 +432,8 @@ class GeOsDao(
                 geOs.custom_form_version,
                 geOs.custom_form_data,
                 mdSerial.product_code.toInt(),
-                mdSerial.serial_code.toInt()
+                mdSerial.serial_code.toInt(),
+                geOs.value_sufix
             ).toSqlQuery()
         )
         val geOsDeviceItemHist = geOsDeviceItemHistDao.query(

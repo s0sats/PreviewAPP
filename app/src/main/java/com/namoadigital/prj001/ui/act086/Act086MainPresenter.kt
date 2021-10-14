@@ -5,7 +5,10 @@ import android.os.Bundle
 import androidx.fragment.app.FragmentManager
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.dao.GeOsDeviceItemDao
+import com.namoadigital.prj001.dao.GeOsDeviceItemHistDao
 import com.namoadigital.prj001.model.GeOsDeviceItem
+import com.namoadigital.prj001.model.GeOsDeviceItemHist
+import com.namoadigital.prj001.sql.GeOsDeviceItemHistSql_002
 import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_001
 import com.namoadigital.prj001.ui.act086.frg_historic.Act086HistoricFrg
 import com.namoadigital.prj001.ui.act086.frg_verification.Act086VerificationFrg
@@ -20,7 +23,8 @@ class Act086MainPresenter(
     private val bundle: Bundle,
     private val mModule_Code: String,
     private val mResource_Code: String,
-    private val geOsDeviceItemDao: GeOsDeviceItemDao
+    private val geOsDeviceItemDao: GeOsDeviceItemDao,
+    private val geOsDeviceItemHistDao: GeOsDeviceItemHistDao
 ) : Act086MainContract.I_Presenter {
 
     private val hmAuxTrans: HMAux by lazy {
@@ -43,6 +47,9 @@ class Act086MainPresenter(
         )
         transList.addAll(
             Act086VerificationFrg.getFragTranslationsVars()
+        )
+        transList.addAll(
+            Act086HistoricFrg.getFragTranslationsVars()
         )
         //
         return ToolBox_Inf.setLanguage(
@@ -126,7 +133,7 @@ class Act086MainPresenter(
         val deviceItemRawPk = bundle.getBundle(ConstantBaseApp.DEVICE_BUNDLE)!!.getString(ConstantBaseApp.DEVICE_ITEM_PK)
         deviceItemRawPk?.let {
             try {
-                val splitedPK = it.split(".")
+               val splitedPK = it.split(".")
                return geOsDeviceItemDao.getByString(
                     GeOsDeviceItem_Sql_001(
                         splitedPK[0],
@@ -162,6 +169,32 @@ class Act086MainPresenter(
                 "${deviceItem.device_tp_code}_" +
                 "${deviceItem.item_check_code}_" +
                 "${deviceItem.item_check_seq}_"
+    }
+
+    override fun getDeviceItemHist(): ArrayList<GeOsDeviceItemHist>? {
+        val deviceItemRawPk = bundle.getBundle(ConstantBaseApp.DEVICE_BUNDLE)!!.getString(ConstantBaseApp.DEVICE_ITEM_PK)
+        deviceItemRawPk?.let {
+            try {
+                val splitedPK = it.split(".")
+                return geOsDeviceItemHistDao.query(
+                    GeOsDeviceItemHistSql_002(
+                        splitedPK[0],
+                        splitedPK[1],
+                        splitedPK[2],
+                        splitedPK[3],
+                        splitedPK[4],
+                        splitedPK[5],
+                        splitedPK[6],
+                        splitedPK[7],
+                        splitedPK[8],
+                        splitedPK[9]
+                    ).toSqlQuery()
+                ) as ArrayList
+            }catch (e: Exception){
+                ToolBox_Inf.registerException(javaClass.name,e)
+            }
+        }
+        return null
     }
 
     override fun onBackPressedClicked(frgManager: FragmentManager) {

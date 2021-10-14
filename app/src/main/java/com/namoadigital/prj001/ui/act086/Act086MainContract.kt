@@ -4,6 +4,7 @@ import android.content.DialogInterface
 import androidx.fragment.app.FragmentManager
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.model.GeOsDeviceItem
+import com.namoadigital.prj001.model.GeOsDeviceItemHist
 
 interface Act086MainContract {
 
@@ -36,5 +37,6 @@ interface Act086MainContract {
         fun validBundleParams(): Boolean
         fun getDeviceItem(newVerification: Boolean): GeOsDeviceItem?
         fun onBackPressedClicked(supportFragmentManager: FragmentManager)
+        fun getDeviceItemHist():  ArrayList<GeOsDeviceItemHist>?
     }
 }

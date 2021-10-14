@@ -6,21 +6,47 @@ import com.namoadigital.prj001.database.Specification
 /**
  * LUCHE - 30/09/2021
  * Query que seleciona todos historico de um item
+ * - Add segundo construtor com os parametros do construtor original que agora tem todos datatype como string
  */
 
 class GeOsDeviceItemHistSql_002(
-    private val customerCode: Long,
-    private val customFormType: Int,
-    private val customFormCode: Int,
-    private val customFormVersion: Int,
-    private val customFormData: Int,
-    private val productCode: Int,
-    private val serialCode: Int,
-    private val deviceTpCode: Int,
-    private val itemCheckCode: Int,
-    private val itemCheckSeq: Int
+    private val customerCode: String,
+    private val customFormType: String,
+    private val customFormCode: String,
+    private val customFormVersion: String,
+    private val customFormData: String,
+    private val productCode: String,
+    private val serialCode: String,
+    private val deviceTpCode: String,
+    private val itemCheckCode: String,
+    private val itemCheckSeq: String
 ) : Specification {
+    constructor(customerCode: Long,
+                customFormType: Int,
+                customFormCode: Int,
+                customFormVersion: Int,
+                customFormData: Int,
+                productCode: Long,
+                serialCode: Long,
+                deviceTpCode: Int,
+                itemCheckCode: Int,
+                itemCheckSeq: Int
+                ):
+            this(
+                customerCode.toString(),
+                customFormType.toString(),
+                customFormCode.toString(),
+                customFormVersion.toString(),
+                customFormData.toString(),
+                productCode.toString(),
+                serialCode.toString(),
+                deviceTpCode.toString(),
+                itemCheckCode.toString(),
+                itemCheckSeq.toString()
+            )
+
     override fun toSqlQuery(): String {
+
         val s = """ SELECT
                         h.*
                     FROM
@@ -35,9 +61,9 @@ class GeOsDeviceItemHistSql_002(
                         AND ${GeOsDeviceItemHistDao.SERIAL_CODE} = '$serialCode'                           
                         AND ${GeOsDeviceItemHistDao.DEVICE_TP_CODE} = '$deviceTpCode'                           
                         AND ${GeOsDeviceItemHistDao.ITEM_CHECK_CODE} = '$itemCheckCode'                           
-                        AND ${GeOsDeviceItemHistDao.ITEM_CHECK_SEQ} = '$itemCheckSeq',
+                        AND ${GeOsDeviceItemHistDao.ITEM_CHECK_SEQ} = '$itemCheckSeq'
                     ORDER BY
-                        ${GeOsDeviceItemHistDao.DEVICE_TP_CODE} ,
+                        ${GeOsDeviceItemHistDao.DEVICE_TP_CODE},
                         ${GeOsDeviceItemHistDao.ITEM_CHECK_CODE},
                         ${GeOsDeviceItemHistDao.ITEM_CHECK_SEQ},                                                                                                                                
                         ${GeOsDeviceItemHistDao.SEQ}                                                                                                                               

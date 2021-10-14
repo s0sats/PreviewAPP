@@ -11,51 +11,55 @@
         android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/act086_historic_frg_cl_instruction"
-            android:layout_width="match_parent"
+            android:id="@+id/act086_historic_frg_cl_alert_type"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
-                android:id="@+id/act086_historic_frg_tv_instruction_lbl"
+                android:id="@+id/act086_historic_frg_tv_alert_type_ttl"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                style="@style/TextViewGray9Padding"
-                android:text="Instrucao"
+                android:text="Tipo de Alerta"
+                android:textAllCaps="true"
+                android:textColor="@color/namoa_color_gray_9"
+                android:textSize="@dimen/font_size_font_12"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/act086_historic_frg_tv_instruction_val"
+                android:id="@+id/act086_historic_frg_tv_alert_type_val"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Ao Realizar esta inspeção utilizar EPI: Luva de algodao resistencia CA 37946"
+                android:text="Alerta Manual"
+                android:textColor="@color/namoa_font_color_black222"
+                android:textSize="@dimen/font_size_font_16"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/act086_historic_frg_tv_instruction_lbl" />
+                app:layout_constraintTop_toBottomOf="@+id/act086_historic_frg_tv_alert_type_ttl" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constraintLayout"
+            android:id="@+id/act086_historic_frg_cl_next_cycle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/act086_historic_frg_cl_instruction">
+            app:layout_constraintTop_toBottomOf="@id/act086_historic_frg_cl_alert_type">
 
             <TextView
                 android:id="@+id/act086_historic_frg_tv_next_verify_ttl"
+                style="@style/TextViewGray9Padding"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                style="@style/TextViewGray9Padding"
+                android:layout_marginTop="32dp"
                 android:text="Proxima Verificacao"
+                android:textAllCaps="true"
+                android:textSize="@dimen/font_size_font_12"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -67,6 +71,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="4dp"
                 android:text="Medição"
+                android:textColor="@color/namoa_font_color_black222"
                 android:textSize="@dimen/font_size_font_16"
                 app:layout_constraintBottom_toBottomOf="@id/act086_historic_frg_br_measure"
                 app:layout_constraintEnd_toStartOf="@+id/act086_historic_frg_tv_measure_val"
@@ -80,17 +85,18 @@
                 android:id="@+id/act086_historic_frg_tv_measure_val"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintWidth_default="wrap"
                 android:layout_marginTop="8dp"
                 android:gravity="end|top"
                 android:text="2000h (28/08/2021)"
+                android:textColor="@color/namoa_font_color_black222"
                 android:textSize="@dimen/font_size_font_16"
                 app:layout_constraintBottom_toBottomOf="@id/act086_historic_frg_br_measure"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/act086_historic_frg_tv_measure_lbl"
                 app:layout_constraintTop_toBottomOf="@+id/act086_historic_frg_tv_next_verify_ttl"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintVertical_bias="0.0"
+                app:layout_constraintWidth_default="wrap" />
 
             <androidx.constraintlayout.widget.Barrier
                 android:id="@+id/act086_historic_frg_br_measure"
@@ -105,6 +111,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="4dp"
                 android:text="Data Limite"
+                android:textColor="@color/namoa_font_color_black222"
                 android:textSize="@dimen/font_size_font_16"
                 app:layout_constraintEnd_toStartOf="@+id/act086_historic_frg_tv_deadline_val"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -116,26 +123,62 @@
                 android:id="@+id/act086_historic_frg_tv_deadline_val"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintWidth_default="wrap"
                 android:layout_marginTop="8dp"
                 android:gravity="end|top"
                 android:text="31/08/2021"
+                android:textColor="@color/namoa_font_color_black222"
                 android:textSize="@dimen/font_size_font_16"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/act086_historic_frg_tv_deadline_lbl"
-                app:layout_constraintTop_toBottomOf="@id/act086_historic_frg_br_measure" />
+                app:layout_constraintTop_toBottomOf="@id/act086_historic_frg_br_measure"
+                app:layout_constraintWidth_default="wrap" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/act086_historic_frg_cl_instruction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/act086_historic_frg_cl_next_cycle">
+
+            <TextView
+                android:id="@+id/act086_historic_frg_tv_instruction_ttl"
+                style="@style/TextViewGray9Padding"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="Instrucao"
+                android:textAllCaps="true"
+                android:textSize="@dimen/font_size_font_12"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/act086_historic_frg_tv_instruction_val"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Ao Realizar esta inspeção utilizar EPI: Luva de algodao resistencia CA 37946"
+                android:textColor="@color/namoa_font_color_black222"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/act086_historic_frg_tv_instruction_ttl" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/act086_historic_frg_cl_last_adjust"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="1dp"
+            android:layout_marginTop="32dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
+            app:layout_constraintTop_toBottomOf="@+id/act086_historic_frg_cl_instruction">
 
             <TextView
                 android:id="@+id/act086_historic_frg_tv_last_adjust_ttl"
@@ -144,6 +187,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="Ultimo ajuste realizado"
+                android:textAllCaps="true"
+                android:textSize="@dimen/font_size_font_12"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -162,8 +207,8 @@
                 android:id="@+id/act086_historic_frg_cl_last_adjust_data"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/act086_historic_frg_iv_last_adjust"
                 app:layout_constraintTop_toBottomOf="@+id/act086_historic_frg_tv_last_adjust_ttl">
@@ -175,6 +220,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
                     android:text="Ajuste realizado"
+                    android:textColor="@color/namoa_font_color_black222"
                     android:textSize="@dimen/font_size_font_16"
                     app:layout_constraintEnd_toStartOf="@+id/act086_historic_frg_tv_adjust_date"
                     app:layout_constraintStart_toStartOf="parent"
@@ -186,6 +232,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="end|top"
                     android:text="10/08/2021 14:25"
+                    android:textColor="@color/namoa_font_color_black222"
                     android:textSize="@dimen/font_size_font_16"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/act086_historic_frg_tv_adjust_lbl"
@@ -232,7 +279,7 @@
 
 
                 <TextView
-                    android:id="@+id/act086_historic_frg_tv_material_bl"
+                    android:id="@+id/act086_historic_frg_tv_material_lbl"
                     style="@style/TextViewGray9Padding"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -249,7 +296,7 @@
                     android:layout_marginStart="4dp"
                     android:text="Sim"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/act086_historic_frg_tv_material_bl"
+                    app:layout_constraintStart_toEndOf="@id/act086_historic_frg_tv_material_lbl"
                     app:layout_constraintTop_toBottomOf="@id/act086_historic_frg_br_h_measure"
                     app:layout_constraintWidth_default="wrap" />
 
@@ -258,7 +305,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:barrierDirection="bottom"
-                    app:constraint_referenced_ids="act086_historic_frg_tv_material_bl,act086_historic_frg_tv_material_val"
+                    app:constraint_referenced_ids="act086_historic_frg_tv_material_lbl,act086_historic_frg_tv_material_val"
                     tools:layout_editor_absoluteY="66dp" />
 
                 <TextView
@@ -294,6 +341,7 @@
                 android:layout_marginTop="8dp"
                 android:text="Alertas em Aberto"
                 android:textAllCaps="true"
+                android:textSize="@dimen/font_size_font_12"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

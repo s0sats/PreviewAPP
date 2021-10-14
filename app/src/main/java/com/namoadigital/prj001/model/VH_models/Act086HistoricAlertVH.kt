@@ -11,8 +11,12 @@ class Act086HistoricAlertVH(
 ) : RecyclerView.ViewHolder(binding.root) {
         fun bindData(item: Act086HistoricAlert){
                 with(binding){
-                        act086HistoricFrgAlertItemTvAdjustDate.text = item.date
+                        act086HistoricFrgAlertItemTvAdjustLbl.text = item.alertLbl
+                        act086HistoricFrgAlertItemTvAdjustDate.text = item.date.replace(" ","\n")
+                        act086HistoricFrgAlertItemTvLastMeasureLbl.text = item.measureLbl
                         act086HistoricFrgAlertItemTvLastMeasureVal.text = item.measure
+                        act086HistoricFrgAlertItemTvMaterialBl.text = item.materialLbl
+                        act086HistoricFrgAlertItemTvMaterialVal.text = item.material
                         act086HistoricFrgAlertItemTvComment.apply {
                                 text = item.comment
                                 visibility = if(text != null) View.VISIBLE else View.GONE

@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model
 
+import java.io.Serializable
+
 class GeOsDeviceItemHist(
     val customer_code: Long,
     val custom_form_type: Int,
@@ -17,5 +19,4 @@ class GeOsDeviceItemHist(
     val exec_date: String,
     val exec_comment: String?,
     val exec_material: Int
-) {
-}
+) : Serializable
