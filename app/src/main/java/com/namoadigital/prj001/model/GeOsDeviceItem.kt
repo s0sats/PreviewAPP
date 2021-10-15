@@ -33,7 +33,7 @@ class GeOsDeviceItem(
     @Expose
     val structure :Int,
     @Expose
-    val manual_desc :String?,
+    var manual_desc :String?,
     val next_cycle_measure :Float?,
     val next_cycle_measure_date :String?,
     val next_cycle_limit_date :String?,
@@ -70,6 +70,7 @@ class GeOsDeviceItem(
         const val ITEM_CHECK_STATUS_PROJECTED_DATE_REACHED = "PROJECTED_DATE_REACHED"
         const val ITEM_CHECK_STATUS_MEASURE_ALERT = "MEASURE_ALERT"
         const val ITEM_CHECK_STATUS_MANUAL_ALERT = "MANUAL_ALERT"
+        const val ITEM_CHECK_STATUS_MANUAL = "MANUAL"
         //
         const val APPLY_MATERIAL_NO = "NO"
         const val APPLY_MATERIAL_OPTIONAL = "OPTIONAL"

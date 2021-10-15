@@ -34,7 +34,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 
-class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, Act086VerificationFrg.Act086VerificationFrgInteraction{
+class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
     private lateinit var binding: Act086MainContentBinding
     private var bundle: Bundle = Bundle()
     private var bundleDevice: Bundle = Bundle()
@@ -58,11 +58,12 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, Act086Verifi
         Act086VerificationFrg.newInstance(
             hmAux_Trans,
             prefixPhoto,
-            isNewVerification,
+            isNewOrCreatedByApp(),
             deviceItem,
             readOnly
         )
     }
+
     private val historicFrg: Act086HistoricFrg by lazy{
         Act086HistoricFrg.newInstance(
             hmAux_Trans,
@@ -108,11 +109,6 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, Act086Verifi
         trackingNumber = bundleDevice.getString(GeOsDeviceDao.TRACKING_NUMBER)
         isNewVerification = bundleDevice.getBoolean(DEVICE_ITEM_NEW_ACTION)
         readOnly = defineReadOnlyByStatus(bundleDevice.getString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS))
-//        bundleDevice.getString(DEVICE_ITEM_PK)
-//        bundleDevice.getInt(DEVICE_ITEM_TAB_INDEX)
-//        bundleDevice.getInt(DEVICE_ITEM_LIST_INDEX)
-//        bundleDevice.getString(DEVICE_ITEM_LIST_FILTER)
-//        bundleDevice.getString(DEVICE_ITEM_LIST_ACTION)
     }
 
     private fun defineReadOnlyByStatus(formStatus: String?): Boolean {
@@ -139,9 +135,9 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, Act086Verifi
     }
 
     private fun initVars() {
-        if(mPresenter.validBundleParams()) {
+        if(mPresenter.validBundleParams(isNewVerification)) {
             getDeviceItem()
-            if(_deviceItem !=null) {
+            if(_deviceItem != null) {
                 setLabels()
                 setHeaderInfo()
                 applyNewVerificationConfig()
@@ -155,6 +151,11 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, Act086Verifi
         }
     }
 
+    /**
+     * Se structure 0, é um novo item
+     */
+    private fun isNewOrCreatedByApp() = deviceItem.structure == 0
+
     private fun setHeaderInfo() {
         with(binding) {
             act086TvDeviceDesc.text = deviceDesc
@@ -166,8 +167,24 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, Act086Verifi
                     View.VISIBLE
                 }
             }
-            act086TvItemCheckDesc.text = getItemCheckDesc()
+            setItemCheckDesc()
             setAlertDateInfo()
+        }
+    }
+
+    /**
+     * Seta texto na view e se for um novo item, a esconde
+     */
+    private fun setItemCheckDesc() {
+        with(binding){
+            act086TvItemCheckDesc.apply {
+                text = getItemCheckDesc()
+                visibility = if (isNewOrCreatedByApp()) {
+                    View.GONE
+                } else {
+                    View.VISIBLE
+                }
+            }
         }
     }
 
@@ -256,17 +273,12 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, Act086Verifi
     }
 
     private fun getItemHist() {
-        itemHist = mPresenter.getDeviceItemHist()
-        binding.act086TvConsult.apply {
-            visibility = itemHist?.let{
-                View.VISIBLE
-            }?: View.GONE
-        }
+        itemHist = mPresenter.getDeviceItemHist(isNewOrCreatedByApp())
     }
 
     private fun applyNewVerificationConfig() {
-        if(isNewVerification){
-            binding.act086TvConsult.visibility = View.INVISIBLE
+        if(isNewOrCreatedByApp()){
+            binding.act086TvConsult.visibility = View.GONE
         }
     }
 
@@ -278,10 +290,6 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, Act086Verifi
             replaceEvenCreated = true,
             addToBackStack = false
         )
-    }
-
-    override fun onButtonOkClick() {
-        onBackPressed()
     }
 
     private fun setHistoricFrg(){
@@ -325,6 +333,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, Act086Verifi
             is Act086VerificationFrg ->{
                 fragment.showAlert = ::showAlert
                 fragment.checkScrollNeeds = ::checkScrollNeeds
+                fragment.leaveItem = ::onBackPressed
             }
         }
     }
@@ -391,7 +400,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, Act086Verifi
     }
 
     override fun onBackPressed() {
-        mPresenter.onBackPressedClicked(supportFragmentManager)
+        mPresenter.onBackPressedClicked(supportFragmentManager,deviceItem)
     }
 
     override fun callAct011() {
@@ -417,7 +426,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, Act086Verifi
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if(item.itemId == android.R.id.home){
-            mPresenter.onBackPressedClicked(supportFragmentManager)
+            mPresenter.onBackPressedClicked(supportFragmentManager, deviceItem)
         }
         return super.onOptionsItemSelected(item)
     }

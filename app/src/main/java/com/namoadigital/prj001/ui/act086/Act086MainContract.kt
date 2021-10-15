@@ -34,9 +34,12 @@ interface Act086MainContract {
         fun getPrefixPhoto(
             deviceItem: GeOsDeviceItem
         ): String
-        fun validBundleParams(): Boolean
+        fun validBundleParams(isNewVerification: Boolean): Boolean
         fun getDeviceItem(newVerification: Boolean): GeOsDeviceItem?
-        fun onBackPressedClicked(supportFragmentManager: FragmentManager)
-        fun getDeviceItemHist():  ArrayList<GeOsDeviceItemHist>?
+        fun onBackPressedClicked(
+            supportFragmentManager: FragmentManager,
+            deviceItem: GeOsDeviceItem
+        )
+        fun getDeviceItemHist(isNewVerification: Boolean):  ArrayList<GeOsDeviceItemHist>?
     }
 }

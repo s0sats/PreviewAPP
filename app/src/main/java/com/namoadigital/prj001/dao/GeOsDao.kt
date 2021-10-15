@@ -500,7 +500,7 @@ class GeOsDao(
         var daoObjReturn = DaoObjReturn()
         var addUpdateRet: Long = 0
         val curAction = DaoObjReturn.DELETE
-        daoObjReturn.table = TK_TicketDao.TABLE
+        daoObjReturn.table = TABLE
         //
         val wherePkClause = getWherePkClause(geOs).toString()
 

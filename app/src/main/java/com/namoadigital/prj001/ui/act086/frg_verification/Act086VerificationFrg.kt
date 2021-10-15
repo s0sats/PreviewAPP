@@ -1,8 +1,8 @@
 package com.namoadigital.prj001.ui.act086.frg_verification
 
-import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -34,6 +34,7 @@ import com.namoadigital.prj001.ui.act086.Act086ProductEditDialog
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
+import com.namoadigital.prj001.util.ToolBox_Inf
 import com.namoadigital.prj001.view.act.product_selection.Act_Product_Selection
 import kotlinx.coroutines.*
 import java.util.*
@@ -84,15 +85,10 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     private lateinit var geOsDeviceItem: GeOsDeviceItem
     private var lastSelectedRdoId = -1
     private var inReadOnly : Boolean = false
-    private var mListener: Act086VerificationFrgInteraction? = null
     private var isMketCommentTypeTriggered: Boolean = false
-
-    /**
-     * Interface para o click do btn ok, que deve salvar e fecha a tela.
-     */
-    interface Act086VerificationFrgInteraction{
-        fun onButtonOkClick()
-    }
+    private var isManualDescInEdit = false
+    private var skipSave: Boolean = false
+    lateinit var leaveItem: () -> Unit
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -125,25 +121,20 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         applyReadonlyUi()
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if(context is Act086VerificationFrgInteraction){
-            mListener = context
-        }else{
-            //Se criação e interface não definida, solta exception
-            throw RuntimeException("${context.toString()} must implement Act086VerificationFrgInteraction")
-        }
-    }
-
     private fun applyReadonlyUi() {
         if(inReadOnly) {
             with(binding) {
-                act086VerificationFrgRgAnswers.forEach {
-                    it.isEnabled = false
-                    it.isClickable = false
-                }
+                act086VerificationFrgIvManualHandler.isEnabled = false
+                act086VerificationFrgIvManualHandler.isClickable = false
+                toogleRadioGroupEnabled(false)
                 act086VerificationFrgClMaterial.isEnabled = false
+                act086VerificationFrgClMaterial.isClickable = false
+                act086VerificationFrgClMaterial.setOnClickListener(null)
+                //
                 act086VerificationFrgClPhoto.isEnabled = false
+                act086VerificationFrgClPhoto.isClickable = false
+                act086VerificationFrgClPhoto.setOnClickListener(null)
+                //
                 act086VerificationFrgMketComment.isEnabled = false
                 act086VerificationFrgClDeleteInfos.apply {
                     isEnabled = false
@@ -157,6 +148,15 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         }
     }
 
+    private fun toogleRadioGroupEnabled(enabledState: Boolean) {
+        with(binding) {
+            act086VerificationFrgRgAnswers.forEach {
+                it.isEnabled = enabledState
+                it.isClickable = enabledState
+            }
+        }
+    }
+
     private fun resetMaterialAndPhotoList() {
         photoList.clear()
         materialFragList.clear()
@@ -164,8 +164,8 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
 
     private fun initVars() {
         setLabels()
-        applyAnswersUI()
         applyNewVerificationConfig()
+        applyAnswersUI()
         initRecyclers()
         applyEnableStateToMoreInfoViews()
     }
@@ -174,20 +174,23 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         lastSelectedRdoId = -1
         if(geOsDeviceItem.status_answer != null){
             with(binding){
+                loadMaterialListFromDb()
+                //
+                buildPhotoListFromDb()
+                //
+                geOsDeviceItem.exec_comment?.let{
+                    act086VerificationFrgMketComment.setText(it)
+                }
+                //
                 when(geOsDeviceItem.exec_type){
                     GeOsDeviceItem.EXEC_TYPE_FIXED -> act086VerificationFrgRdoAnswerFixed.isChecked = true
                     GeOsDeviceItem.EXEC_TYPE_ALREADY_OK -> act086VerificationFrgRdoAnswerAlreadyDone.isChecked = true
                     GeOsDeviceItem.EXEC_TYPE_ALERT -> act086VerificationFrgRdoAnswerAlert.isChecked = true
                     GeOsDeviceItem.EXEC_TYPE_NOT_VERIFIED -> act086VerificationFrgRdoAnswerNotVerified.isChecked = true
                 }
-                //
-                geOsDeviceItem.exec_comment?.let{
-                    act086VerificationFrgMketComment.setText(it)
-                }
-                loadMaterialListFromDb()
-                //
-                buildPhotoListFromDb()
-                //
+//                //Se tem reposta pode salvar no onpause.
+//                //Deve ficar abaixo da seleção do rdo, pois ao selecionar ele salva antes da
+//                skipSave = false
                 act086VerificationFrgClDeleteInfos.visibility = View.VISIBLE
                 act086VerificationFrgBtnOk.visibility = View.VISIBLE
                 applyRequiredFieldsLblVisibility()
@@ -216,6 +219,46 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             photoList.add(it)
         }
         updatePhotoListIntoAdapter()
+    }
+
+
+    private fun applyNewVerificationConfig() {
+        setManualDescIfNewItem()
+    }
+
+    private fun setManualDescIfNewItem() {
+        with(binding){
+            if(isNewVerification) {
+                val emptyAnswer = geOsDeviceItem.status_answer == null
+                //se não tem resposta, não pode salvar
+                skipSave = emptyAnswer
+                //
+                act086VerificationFrgClManualDesc.visibility = View.VISIBLE
+                act086VerificationFrgMketManualDesc.apply {
+                    //Se não tem reposta, é a primeir vez, traz aberto
+                    isEnabled = emptyAnswer
+                    isManualDescInEdit = isEnabled
+                    setText(geOsDeviceItem.manual_desc)
+                    tag = geOsDeviceItem.manual_desc
+                }
+                act086VerificationFrgIvManualHandler.apply {
+                    //Se resposta vazia, vai define icone como check
+                    setImageDrawable(getIvManualDescIcon(emptyAnswer))
+                }
+                //Se não tem resposta, é primeira entrada então inicia bloqueado
+                toogleRadioGroupEnabled(!emptyAnswer)
+            }else{
+                act086VerificationFrgClManualDesc.visibility = View.GONE
+            }
+        }
+    }
+
+    private fun getIvManualDescIcon(ivIsEnable: Boolean): Drawable?{
+        return if(ivIsEnable){
+            ContextCompat.getDrawable(requireContext(),R.drawable.ic_done_black_24dp)
+        }else{
+            ContextCompat.getDrawable(requireContext(),R.drawable.ic_edit_black_24dp)
+        }
     }
 
     private fun applyAnswersUI() {
@@ -249,22 +292,6 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
        }
     }
 
-    private fun applyNewVerificationConfig() {
-//        if(isNewVerification){
-//            with(binding){
-//                act086VerificationFrgRdoAnswerAlreadyDone.apply {
-//                    visibility = View.GONE
-//                    isEnabled = false
-//                }
-//                //
-//                act086VerificationFrgRdoAnswerNotVerified.apply {
-//                    visibility = View.GONE
-//                    isEnabled = false
-//                }
-//            }
-//        }
-    }
-
     private fun setLabels() {
         with(binding){
             act086VerificationFrgRdoAnswerFixed.text = hmAux_Trans["action_done_lbl"]
@@ -276,9 +303,16 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             act086VerificationFrgMketComment.hint  = hmAux_Trans["comment_hint"]
             act086VerificationFrgTvMaterialTtl.text  = getMaterialLbl()
             act086VerificationFrgTvPhotoTtl.text  = hmAux_Trans["photo_lbl"]
-            act086VerificationFrgTvDeleteLbl.text  = hmAux_Trans["erase_all_data_lbl"]
+            act086VerificationFrgTvDeleteLbl.text  = getDeleteLbl()
         }
+    }
 
+    private fun getDeleteLbl(): String? {
+        return if(!isNewVerification) {
+            hmAux_Trans["erase_all_data_lbl"]
+        }else{
+            hmAux_Trans["discard_item_lbl"]
+        }
     }
 
     /**
@@ -322,6 +356,18 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         //
         applyRequiredLayoutIntoSupplementaryData()
         applyVisibilityIntoDeleteBtn()
+        applyVisibilityOkBtn()
+    }
+
+    private fun applyVisibilityOkBtn() {
+        with(binding) {
+            act086VerificationFrgBtnOk.visibility =
+            if (isNewVerification && act086VerificationFrgRgAnswers.checkedRadioButtonId == -1) {
+                View.GONE
+            }else{
+                View.VISIBLE
+            }
+        }
     }
 
     private fun applyVisibilityIntoDeleteBtn() {
@@ -401,6 +447,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                 materialEnabled = true
             }
         }
+        materialEnabled = if(!inReadOnly) materialEnabled else false
         with(binding) {
             act086VerificationFrgClMaterial.isClickable = materialEnabled
             act086VerificationFrgClMaterial.isEnabled = materialEnabled
@@ -427,9 +474,8 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     )
 
     private fun applyRequiredLayoutIntoPhoto() {
-
         with(binding) {
-            val photoEnabled = act086VerificationFrgRgAnswers.checkedRadioButtonId != -1
+            val photoEnabled = act086VerificationFrgRgAnswers.checkedRadioButtonId != -1 && !inReadOnly
             val photoColor = if(act086VerificationFrgRgAnswers.checkedRadioButtonId != -1 ){
                                 R.color.namoa_dark_blue
                              }else{
@@ -469,8 +515,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         }
 
         binding.act086VerificationFrgBtnOk.setOnClickListener{
-            //saveData()
-            mListener?.onButtonOkClick()
+            leaveItem()
         }
 
         binding.act086VerificationFrgRgAnswers.setOnCheckedChangeListener { _, checkedId ->
@@ -592,6 +637,39 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                 }
             }
         })
+        /*
+        * Inicialmente ele fica habilitado com o icone de done, ao clicar, caso o valor seja valido,
+        *  ele altera var de controle de edição pra false, substitui o icone e altera a cor.
+        * O valor digitado é setado na tag pois, caso durante uma edição futura o usr sai sem validar
+        *  o item, o valor antigo é assumido, ja que ele não foi validado.
+        * */
+        binding.act086VerificationFrgIvManualHandler.setOnClickListener {
+            with(binding){
+                if(isManualDescInEdit){
+                    if(validateManualDescFilled()){
+                        isManualDescInEdit = false
+                        act086VerificationFrgIvManualHandler.setImageDrawable(getIvManualDescIcon(isManualDescInEdit))
+                        act086VerificationFrgMketManualDesc.apply {
+                            isEnabled = isManualDescInEdit
+                            tag = this.text.toString()
+                            setTextColor(ContextCompat.getColor(requireContext(),R.color.namoa_font_color_black222))
+                        }
+                        toogleRadioGroupEnabled(true)
+                    }
+                }else{
+                    isManualDescInEdit = true
+                    act086VerificationFrgIvManualHandler.setImageDrawable(getIvManualDescIcon(isManualDescInEdit))
+                    act086VerificationFrgMketManualDesc.apply{
+                        isEnabled = isManualDescInEdit
+                        setTextColor(ContextCompat.getColor(requireContext(),R.color.namoa_dark_blue))
+                    }
+                }
+            }
+        }
+    }
+
+    private fun validateManualDescFilled(): Boolean {
+        return binding.act086VerificationFrgMketManualDesc.text.toString().isNotEmpty()
     }
 
     private fun clearMaterialList() {
@@ -603,11 +681,13 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         lastSelectedRdoId = checkedId
         applyEnableStateToMoreInfoViews()
         updateMaterialLabel()
-        //saveData()
+        saveData()
+        //Uma vez respondido, não precisa mais pular o save.
+        skipSave = false
     }
 
     private fun deleteManualItem() {
-        TODO("Not yet implemented")
+        mPresenter.deleteManualItem(geOsDeviceItem)
     }
 
     private fun showConfirmAlert(
@@ -627,8 +707,10 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     }
 
     private fun saveData() {
-        setUiDateIntoDeviceItem()
-        mPresenter.updateDeviceItemIntoBd(geOsDeviceItem)
+        if(!inReadOnly) {
+            setUiDateIntoDeviceItem()
+            mPresenter.updateDeviceItemIntoBd(geOsDeviceItem)
+        }
     }
 
     private fun clearData() {
@@ -657,6 +739,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         }
         //
         geOsDeviceItem.apply {
+            manual_desc = getManualDesc(manual_desc)
             exec_type = getExecTypeForAnswer()
             exec_date = getExecDate()
             exec_comment = getCommentToSaveObj()
@@ -666,6 +749,21 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             exec_photo4 = photoArray[3]
             status_answer = getCheckStatusAnswer()
             mPresenter.getGeOsDeviceMaterialList(this,materialFragList)
+        }
+    }
+
+    /**
+     * TODO confirma essa regra, pois não esta clar a definição
+     * Fun que retorna o manual_desc
+     * Caso seja um novo item, criado no app, retorna o valor da tag do campo manual desc,
+     * pois esse é o ultimo valor que foi validado. Isso impede que se o usr clicar em voltar sem
+     * validar o novo valor digitado, o valor não validado seja salvo
+     */
+    private fun getManualDesc(manual_desc: String?): String? {
+        return if(isNewVerification){
+            binding.act086VerificationFrgMketManualDesc.tag.toString().trim()
+        }else{
+            manual_desc
         }
     }
 
@@ -745,6 +843,12 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         showAlert(
             ttl, msg, positeClickListener, negativeBtn
         )
+    }
+
+    override fun leaveWithoutSave() {
+        skipSave = true
+        mPresenter.deleteOldPhoto(prefixPhoto)
+        leaveItem()
     }
 
     private fun callProductEditDialog(
@@ -850,7 +954,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
 
     override fun onPause() {
         super.onPause()
-        if(!inReadOnly) {
+        if(!inReadOnly && !skipSave) {
             saveData()
         }
     }
@@ -886,7 +990,6 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     }
 
     override fun onDetach() {
-        mListener = null
         super.onDetach()
     }
 
@@ -942,6 +1045,9 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                 "alert_clear_item_data_ttl",
                 "alert_clear_item_data_confirm",
                 "still_with_problem_lbl",
+                "discard_item_lbl",
+                "alert_error_on_manual_item_delete_msg",
+                "alert_error_on_save_item_msg",
             )
         }
     }

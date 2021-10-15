@@ -18,6 +18,8 @@ interface Act086VerificationFrgContract {
             positeClickListener: DialogInterface.OnClickListener? = null,
             negativeBtn: Int = 0
         )
+
+        fun leaveWithoutSave()
     }
 
     interface I_Presenter{
@@ -35,6 +37,8 @@ interface Act086VerificationFrgContract {
             materialList: MutableList<GeOsDeviceMaterial>,
             materialFragList: MutableList<Act086MaterialItem>
         )
+
+        fun deleteManualItem(geOsDeviceItem: GeOsDeviceItem)
     }
 
 }

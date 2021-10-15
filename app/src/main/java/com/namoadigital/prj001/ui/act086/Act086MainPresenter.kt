@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act086
 
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import androidx.fragment.app.FragmentManager
 import com.namoa_digital.namoa_library.util.HMAux
@@ -10,11 +11,13 @@ import com.namoadigital.prj001.model.GeOsDeviceItem
 import com.namoadigital.prj001.model.GeOsDeviceItemHist
 import com.namoadigital.prj001.sql.GeOsDeviceItemHistSql_002
 import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_001
+import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_005
 import com.namoadigital.prj001.ui.act086.frg_historic.Act086HistoricFrg
 import com.namoadigital.prj001.ui.act086.frg_verification.Act086VerificationFrg
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
+import java.io.IOException
 import java.lang.Exception
 
 class Act086MainPresenter(
@@ -43,7 +46,9 @@ class Act086MainPresenter(
             "alert_form_parameter_error_ttl",
             "alert_form_parameter_error_msg",
             "inspection_missing_lbl",
-            "inspection_alert_days_lbl"
+            "inspection_alert_days_lbl",
+            "alert_unsaved_data_will_be_lost_ttl",
+            "alert_unsaved_data_will_be_lost_confirm",
         )
         transList.addAll(
             Act086VerificationFrg.getFragTranslationsVars()
@@ -108,7 +113,7 @@ class Act086MainPresenter(
      * Fun que valida se pk esta "ok"
      * Valida se item veio no bundle, se não é null, se tem "." e se seu split é igual a 10 elementos.
      */
-    override fun validBundleParams(): Boolean {
+    override fun validBundleParams(isNewVerification: Boolean): Boolean {
        if( bundle.containsKey(ConstantBaseApp.DEVICE_BUNDLE)
            && bundle.getBundle(ConstantBaseApp.DEVICE_BUNDLE) != null
            && bundle.getBundle(ConstantBaseApp.DEVICE_BUNDLE)!!.containsKey(ConstantBaseApp.DEVICE_ITEM_PK)
@@ -118,7 +123,7 @@ class Act086MainPresenter(
                //Se tiver
                return try {
                    //Se tiver "." e o split tiver 10 elementos
-                   it.contains(".")  && it.split(".").size == 10
+                   it.contains(".")  && validPkSize(isNewVerification, it)
                }catch (e: Exception){
                    ToolBox_Inf.registerException(javaClass.name,e)
                    false
@@ -129,29 +134,115 @@ class Act086MainPresenter(
        return false
     }
 
+    /**
+     * Valida se o split possui o tamanho esperado
+     *  - Novo item: 8
+     *  - Item Existente: 10
+     */
+    private fun validPkSize(isNewVerification: Boolean, it: String): Boolean {
+        return (
+                (!isNewVerification && it.split(".").size == 10)
+                || (isNewVerification && it.split(".").size == 8)
+                )
+    }
+
+    /**
+     * Fun que retorna o obj GeOsDeviceItem, resgatando do banco via pk, ou criando o no caso de novo
+     */
     override fun getDeviceItem(newVerification: Boolean): GeOsDeviceItem? {
         val deviceItemRawPk = bundle.getBundle(ConstantBaseApp.DEVICE_BUNDLE)!!.getString(ConstantBaseApp.DEVICE_ITEM_PK)
         deviceItemRawPk?.let {
             try {
-               val splitedPK = it.split(".")
-               return geOsDeviceItemDao.getByString(
-                    GeOsDeviceItem_Sql_001(
-                        splitedPK[0],
-                        splitedPK[1],
-                        splitedPK[2],
-                        splitedPK[3],
-                        splitedPK[4],
-                        splitedPK[5],
-                        splitedPK[6],
-                        splitedPK[7],
-                        splitedPK[8],
-                        splitedPK[9]
-                    ).toSqlQuery()
-                )
+                val splitedPK = it.split(".")
+                if(newVerification) {
+                    return createNewDeviceItem(splitedPK)
+                } else {
+                    return geOsDeviceItemDao.getByString(
+                        GeOsDeviceItem_Sql_001(
+                            splitedPK[0],
+                            splitedPK[1],
+                            splitedPK[2],
+                            splitedPK[3],
+                            splitedPK[4],
+                            splitedPK[5],
+                            splitedPK[6],
+                            splitedPK[7],
+                            splitedPK[8],
+                            splitedPK[9]
+                        ).toSqlQuery()
+                    )
+                }
             }catch (e: Exception){
                 ToolBox_Inf.registerException(javaClass.name,e)
             }
         }
+        return null
+    }
+
+
+    /**
+     * Fun que gera o obj GeOsDeviceItem para novos itens
+     * Busca no banco o proximo item_check_seq e depois controi o obj
+     *
+     */
+    @Throws(IOException::class)
+    private fun createNewDeviceItem(splitedPK: List<String>): GeOsDeviceItem? {
+        val nextItemCheckSeqAux = geOsDeviceItemDao.getByStringHM(
+            GeOsDeviceItem_Sql_005(
+                splitedPK[0],
+                splitedPK[1],
+                splitedPK[2],
+                splitedPK[3],
+                splitedPK[4],
+                splitedPK[5],
+                splitedPK[6],
+                splitedPK[7]
+            ).toSqlQuery()
+        )
+        //
+        if( nextItemCheckSeqAux != null
+            && nextItemCheckSeqAux.hasConsistentValue(GeOsDeviceItemDao.ITEM_CHECK_SEQ)
+            && nextItemCheckSeqAux[GeOsDeviceItemDao.ITEM_CHECK_SEQ] != null
+            && nextItemCheckSeqAux[GeOsDeviceItemDao.ITEM_CHECK_SEQ]!!.isNotEmpty()
+        ){
+            val nextItemCheckSeq = nextItemCheckSeqAux[GeOsDeviceItemDao.ITEM_CHECK_SEQ]!!.toInt()
+            return GeOsDeviceItem(
+                    customer_code =  splitedPK[0].toLong(),
+                    custom_form_type = splitedPK[1].toInt(),
+                    custom_form_code = splitedPK[2].toInt(),
+                    custom_form_version = splitedPK[3].toInt(),
+                    custom_form_data = splitedPK[4].toInt(),
+                    product_code = splitedPK[5].toInt(),
+                    serial_code = splitedPK[6].toInt(),
+                    device_tp_code = splitedPK[7].toInt(),
+                    item_check_code = 0,
+                    item_check_seq = nextItemCheckSeq,
+                    item_check_id = "0",
+                    item_check_desc = GeOsDeviceItem.ITEM_CHECK_STATUS_MANUAL,
+                    apply_material = GeOsDeviceItem.APPLY_MATERIAL_OPTIONAL  ,
+                    verification_instruction = null,
+                    require_justify_problem = 0,
+                    critical_item = 0,
+                    order_seq = nextItemCheckSeq ,
+                    structure = 0 ,
+                    manual_desc = null,
+                    next_cycle_measure = null ,
+                    next_cycle_measure_date = null ,
+                    next_cycle_limit_date = null,
+                    value_sufix = null,
+                    item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_MANUAL,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+            )
+        }
+        //
         return null
     }
 
@@ -171,33 +262,38 @@ class Act086MainPresenter(
                 "${deviceItem.item_check_seq}_"
     }
 
-    override fun getDeviceItemHist(): ArrayList<GeOsDeviceItemHist>? {
-        val deviceItemRawPk = bundle.getBundle(ConstantBaseApp.DEVICE_BUNDLE)!!.getString(ConstantBaseApp.DEVICE_ITEM_PK)
-        deviceItemRawPk?.let {
-            try {
-                val splitedPK = it.split(".")
-                return geOsDeviceItemHistDao.query(
-                    GeOsDeviceItemHistSql_002(
-                        splitedPK[0],
-                        splitedPK[1],
-                        splitedPK[2],
-                        splitedPK[3],
-                        splitedPK[4],
-                        splitedPK[5],
-                        splitedPK[6],
-                        splitedPK[7],
-                        splitedPK[8],
-                        splitedPK[9]
-                    ).toSqlQuery()
-                ) as ArrayList
-            }catch (e: Exception){
-                ToolBox_Inf.registerException(javaClass.name,e)
+    override fun getDeviceItemHist(isNewVerification: Boolean): ArrayList<GeOsDeviceItemHist>? {
+        //
+        if(!isNewVerification) {
+            val deviceItemRawPk = bundle.getBundle(ConstantBaseApp.DEVICE_BUNDLE)!!
+                .getString(ConstantBaseApp.DEVICE_ITEM_PK)
+            deviceItemRawPk?.let {
+                try {
+                    val splitedPK = it.split(".")
+                    return geOsDeviceItemHistDao.query(
+                        GeOsDeviceItemHistSql_002(
+                            splitedPK[0],
+                            splitedPK[1],
+                            splitedPK[2],
+                            splitedPK[3],
+                            splitedPK[4],
+                            splitedPK[5],
+                            splitedPK[6],
+                            splitedPK[7],
+                            splitedPK[8],
+                            splitedPK[9]
+                        ).toSqlQuery()
+                    ) as ArrayList
+                } catch (e: Exception) {
+                    ToolBox_Inf.registerException(javaClass.name, e)
+                }
             }
         }
+        //
         return null
     }
 
-    override fun onBackPressedClicked(frgManager: FragmentManager) {
+    override fun onBackPressedClicked(frgManager: FragmentManager, deviceItem: GeOsDeviceItem) {
         val currentFrag = frgManager.fragments.find {
             it.isVisible
         }
@@ -205,6 +301,22 @@ class Act086MainPresenter(
         when(currentFrag){
             is Act086HistoricFrg ->{
                 mView.popToVerificationFrag()
+            }
+            is Act086VerificationFrg->{
+                //Se é um item criado via app structure == 0 e não foi respondido, status_answer == null
+                //exibe msg de perda de dados ao sair
+                if(deviceItem.structure == 0 && deviceItem.status_answer == null){
+                    mView.showAlert(
+                        hmAuxTrans["alert_unsaved_data_will_be_lost_ttl"],
+                        hmAuxTrans["alert_unsaved_data_will_be_lost_confirm"],
+                        DialogInterface.OnClickListener { dialog, which ->
+                            mView.callAct011()
+                        },
+                        1
+                    )
+                }else{
+                    mView.callAct011()
+                }
             }
             else -> mView.callAct011()
         }

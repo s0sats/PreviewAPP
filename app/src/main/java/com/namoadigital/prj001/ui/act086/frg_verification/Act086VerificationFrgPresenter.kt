@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act086.frg_verification
 
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
@@ -114,9 +115,10 @@ class Act086VerificationFrgPresenter(
         val daoObjReturn = deviceItemDao.addUpdate(geOsDeviceItem)
         if(daoObjReturn.hasError()){
             //O QUE FAZER?
+            // TODO O QUE FAZER
             ToolBox.toastMSG(
                 context,
-                hmAuxTrans["Erro ao salvar"]
+                hmAuxTrans["alert_error_on_save_item_msg"]
             )
         }
     }
@@ -135,6 +137,21 @@ class Act086VerificationFrgPresenter(
                     it.material_qty,
                     it.creation_ms
                 )
+            )
+        }
+    }
+
+    override fun deleteManualItem(geOsDeviceItem: GeOsDeviceItem) {
+        val daoObjReturn = deviceItemDao.removeFull(geOsDeviceItem)
+        if(!daoObjReturn.hasError()){
+            mView.leaveWithoutSave()
+        }else{
+            mView.showAlertFrg(
+                hmAuxTrans["alert_manual_item_delete_ttl"],
+                hmAuxTrans["alert_error_on_manual_item_delete_msg"],
+                DialogInterface.OnClickListener { dialog, which ->
+                    mView.leaveWithoutSave()
+                }
             )
         }
     }
