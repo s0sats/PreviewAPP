@@ -22,6 +22,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String DEVICE_ITEM_TAB_INDEX = "DEVICE_ITEM_TAB_INDEX";
     public static final String DEVICE_ITEM_LIST_INDEX = "DEVICE_ITEM_LIST_INDEX";
     public static final String DEVICE_ITEM_LIST_FILTER = "DEVICE_ITEM_LIST_FILTER";
+    public static final String DEVICE_ITEM_LIST_CHECKBOX_STATUS = "DEVICE_ITEM_LIST_CHECKBOX_STATUS";
     public static final String DEVICE_ITEM_NEW_ACTION = "DEVICE_ITEM_NEW_ACTION";
     public static final String DEVICE_BUNDLE = "DEVICE_BUNDLE";
     //As 3 variaveis abaixo são preenchidas pela classe AppBase

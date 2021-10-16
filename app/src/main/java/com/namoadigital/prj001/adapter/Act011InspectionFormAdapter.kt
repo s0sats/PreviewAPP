@@ -18,7 +18,6 @@ import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.EXEC_TYPE_ALREADY_
 import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.EXEC_TYPE_FIXED
 import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.EXEC_TYPE_NOT_VERIFIED
 import com.namoadigital.prj001.model.InspectionCell
-import com.namoadigital.prj001.ui.act011.frags.InspectionListFragmentInteraction
 import java.util.*
 
 class Act011InspectionFormAdapter(
@@ -28,12 +27,15 @@ class Act011InspectionFormAdapter(
      */
     private val acessoryFormView: AcessoryFormView,
     private val hmAuxTrans: HMAux,
-    private val myInspectionClickListener: InspectionListFragmentInteraction
+    private val onItemSelected: (position: Int,
+                                 itemPk: String) -> Unit,
+    private val onNotVerifyItemSelected: (position: Int,
+                                          item: InspectionCell) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
     private val inspections: List<InspectionCell> = acessoryFormView.inspections
     private var inspectionsFiltered: MutableList<InspectionCell> = mutableListOf()
     protected var textFilter:String = ""
-    val mFilter = InspectionFormFilter()
+    var mFilter :InspectionFormFilter? = null
 
     init {
         inspectionsFiltered.clear()
@@ -55,22 +57,17 @@ class Act011InspectionFormAdapter(
             val inspectionCell = inspectionsFiltered[position]
             onBinding(inspectionCell)
             binding.root.setOnClickListener {
-                myInspectionClickListener.onInspectionSelected(
-                    acessoryFormView,
-                    false,
+                onItemSelected(
                     position,
-                    textFilter
+                    inspectionCell.itemCodeAndSeq
                 )
             }
-        }
-
-        holder.binding.tvAutoSkipInspection.setOnClickListener {
-            myInspectionClickListener.onInspectionSelected(
-                acessoryFormView,
-                false,
-                position,
-                textFilter
-            )
+            holder.binding.tvAutoSkipInspection.setOnClickListener {
+                onNotVerifyItemSelected(
+                    position,
+                    inspectionCell
+                )
+            }
         }
     }
 
@@ -92,7 +89,10 @@ class Act011InspectionFormAdapter(
     }
 
     override fun getFilter(): Filter {
-        return mFilter
+        if(mFilter == null){
+            mFilter = InspectionFormFilter()
+        }
+        return mFilter as InspectionFormFilter
     }
 
     inner class InspectionFormFilter : Filter() {
@@ -102,10 +102,10 @@ class Act011InspectionFormAdapter(
             var charFilter = ToolBox.AccentMapper(constraint.toString().toLowerCase())
             textFilter = charFilter
             if (charFilter.isNullOrEmpty()) {
-                temp = inspections as MutableList<InspectionCell>
+                temp = inspectionsFiltered as MutableList<InspectionCell>
             } else {
                 temp.addAll(
-                    inspections.filter {
+                    inspectionsFiltered.filter {
                         when (it) {
                             is InspectionCell -> {
                                 val allFields =

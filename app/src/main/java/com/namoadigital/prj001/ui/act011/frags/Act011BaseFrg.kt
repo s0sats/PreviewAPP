@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act011.frags
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -137,6 +138,21 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
         iniIncludeHeaderUI()
         iniBindingActions()
         iniIncludeNavegationUI()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.d("LIFECYCLE", "onStart: $tag")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("LIFECYCLE", "onResume: $tag")
+    }
+
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        Log.d("LIFECYCLE", "setUserVisibleHint: $tag isVisibleToUser? $isVisibleToUser")
     }
 
     /**

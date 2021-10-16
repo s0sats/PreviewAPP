@@ -4,8 +4,10 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.CheckBox
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.adapter.Act011InspectionFormAdapter
@@ -14,6 +16,7 @@ import com.namoadigital.prj001.databinding.Act011InspectionListFragmentBinding
 import com.namoadigital.prj001.model.AcessoryFormView
 import com.namoadigital.prj001.model.Act011FormTab
 import com.namoadigital.prj001.model.Act011FormTabStatus
+import com.namoadigital.prj001.model.InspectionCell
 import com.namoadigital.prj001.model.InspectionCell.Companion.CRITICAL_FORECAST
 import com.namoadigital.prj001.model.InspectionCell.Companion.FORECAST
 import com.namoadigital.prj001.model.InspectionCell.Companion.MANUAL_ALERT
@@ -26,21 +29,18 @@ private const val MAIN_HMAUX_TRANS_KEY = "MAIN_HMAUX_TRANS_KEY"
 
 class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>() {
 
+    private lateinit var mLayoutManager: LinearLayoutManager
+    private var tabItemSelectedIndex: Int = -1
     private val mAdapter by lazy {
-        Act011InspectionFormAdapter(acessoryFormView, hmAuxTrans, mFrgListener)
+        Act011InspectionFormAdapter(acessoryFormView, hmAuxTrans, ::onItemSelected, ::onNotVerifyItemSelected)
     }
     private lateinit var acessoryFormView: AcessoryFormView
     private var _mFrgListener: InspectionListFragmentInteraction? = null
     private val mFrgListener get() = _mFrgListener!!
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.d("LIFECYCLE", "onViewCreated: $tag")
         //
         setLabels()
         //
@@ -49,6 +49,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
         setVisibility()
         //
         setActions()
+        //
     }
 
     private fun setActions() {
@@ -84,10 +85,11 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
                 handleAddNewProcessVisibility()
             }
             clAddNewItemBtn.setOnClickListener {
-                mFrgListener.onInspectionSelected(acessoryFormView, true, -1, edtInspectionFilter.text.toString())
+                mFrgListener.onInspectionSelected(acessoryFormView, true, -1, edtInspectionFilter.text.toString(), chkNonForecastItem.isChecked, "")
             }
         }
     }
+
 
     private fun hideNonForecastCheckBoxFilter(hideCheckbox: Boolean) {
         if (hideCheckbox) {
@@ -127,11 +129,11 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
     private fun setListContentAndPlaceholder(isEmptyList: Boolean) {
         binding.apply {
             if (isEmptyList) {
-                rvInspections.visibility = View.GONE
                 tvPlaceholder.visibility = View.VISIBLE
+                rvInspections.visibility = View.GONE
             } else {
-                rvInspections.visibility = View.VISIBLE
                 tvPlaceholder.visibility = View.GONE
+                rvInspections.visibility = View.VISIBLE
             }
         }
     }
@@ -145,9 +147,19 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
     }
 
     private fun setInspectionList() {
+        mLayoutManager = LinearLayoutManager(context)
         binding.rvInspections.apply {
-            layoutManager = LinearLayoutManager(context)
+            layoutManager = mLayoutManager
             adapter = mAdapter
+            ViewCompat.hasNestedScrollingParent(this )
+            if(tabItemSelectedIndex >= 0) {
+                binding.nsvMain.post {
+                    //Calcula posicao inicial do Recycler + posicao final do item seleciona - o tamanho do item.
+                    val y: Float = this.getY() + this.getChildAt(tabItemSelectedIndex).getY() - this.getChildAt(tabItemSelectedIndex).measuredHeight
+                    binding.nsvMain.smoothScrollTo(0, y.toInt())
+                    binding.nsvMain.scrollTo(0, binding.rvInspections.getChildAt(tabItemSelectedIndex).height)
+                }
+            }
         }
     }
 
@@ -165,16 +177,33 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
         }.toString()
         binding.tvAddNewItemVal.text = hmAuxTrans.get("inspection_add_new_process_btn")
         binding.chkNonForecastItem.text = hmAuxTrans.get("inpection_hide_non_forecast_item_chk")
+        if(acessoryFormView.nonForecastFilter){
+            binding.chkNonForecastItem.apply {
+                post {
+                    performClick()
+                }
+            }
+        }
+        //
+        if(acessoryFormView.inspections.isEmpty()) {
+            binding.tvPlaceholder.text = hmAuxTrans.get("inpection_empty_list_placeholder")
+        }else{
+            binding.tvPlaceholder.text = hmAuxTrans.get("inpection_empty_list_filtered")
+        }
+
     }
+
 
     companion object {
         @JvmStatic
-        fun newInstance(hmAux_Trans: HMAux,
-                        tabIndex: Int = 0,
-                        tabLastIndex: Int = 0,
-                        formStatus: String,
-                        scheduleDesc: String?,
-                        scheduleComments: String?) =
+        fun newInstance(
+            hmAux_Trans: HMAux,
+            tabIndex: Int = 0,
+            tabLastIndex: Int = 0,
+            tabItemSelectedIndex: Int = -1,
+            formStatus: String,
+            scheduleDesc: String?
+        ) =
             Act011FrgInspection().apply {
                 this.hmAuxTrans = hmAux_Trans
                 this.formStatus = formStatus
@@ -202,18 +231,21 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
                 "inpection_status_critical_forecast_item_lbl",
                 "inpection_status_forecast_item_lbl",
                 "inpection_not_verify_action_lbl",
-                "inpection_hide_non_forecast_item_chk"
-
+                "inpection_hide_non_forecast_item_chk",
+                "inpection_empty_list_placeholder",
+                "inpection_empty_list_filtered"
             )
         }
     }
     fun setViewObject(viewObject: AcessoryFormView){
         acessoryFormView = viewObject
         acessoryFormView.tabIndex = this.tabIndex
+        this.tabItemSelectedIndex = viewObject.lastPositionSelected
     }
 
     override fun getViewBinding() = Act011InspectionListFragmentBinding.inflate(layoutInflater)
     override fun getNavegationInclude() = binding.incNavegation
+
 
 
     override fun getTabErrorCount(): Int {
@@ -296,5 +328,23 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
         }else{
             throw RuntimeException("${context.toString()} must implement FrgFFInteraction")
         }
+
     }
+    //
+    fun onItemSelected(position: Int,
+                       itemPk: String){
+        binding.apply {
+            mFrgListener.onInspectionSelected(acessoryFormView, false, position, edtInspectionFilter.text.toString(), chkNonForecastItem.isChecked, itemPk)
+        }
+    }
+    //
+    fun onNotVerifyItemSelected(position: Int,
+                                item: InspectionCell
+    ){
+        val onNotVerifyAction = mFrgListener.onNotVerifyAction(
+            position,
+            acessoryFormView.devicePkPrefix + item.itemCodeAndSeq
+        )
+    }
+    //
 }

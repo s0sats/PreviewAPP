@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act011;
 
 import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH_PHOTO;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DEVICE_BUNDLE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.DEVICE_ITEM_LIST_CHECKBOX_STATUS;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DEVICE_ITEM_LIST_FILTER;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DEVICE_ITEM_LIST_INDEX;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DEVICE_ITEM_NEW_ACTION;
@@ -99,6 +100,7 @@ import com.namoadigital.prj001.model.GE_Custom_Form_Data_Field;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.GeOs;
+import com.namoadigital.prj001.model.InspectionCell;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
@@ -136,7 +138,6 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -262,6 +263,7 @@ public class Act011_Main extends Base_Activity
     private int device_item_tab_index =-1;
     private int device_item_list_index = -1;
     private String device_item_list_filter;
+    private boolean device_item_list_checkbox_status;
     private GeOs geOs;
 
 
@@ -1179,6 +1181,7 @@ public class Act011_Main extends Base_Activity
                 this.device_item_tab_index = deviceBundle.getInt(DEVICE_ITEM_TAB_INDEX);
                 this.device_item_list_index = deviceBundle.getInt(DEVICE_ITEM_LIST_INDEX);
                 this.device_item_list_filter = deviceBundle.getString(DEVICE_ITEM_LIST_FILTER);
+                this.device_item_list_checkbox_status = deviceBundle.getBoolean(DEVICE_ITEM_LIST_CHECKBOX_STATUS, true);
                 bundle.remove(DEVICE_BUNDLE);
             }
 
@@ -1407,13 +1410,24 @@ public class Act011_Main extends Base_Activity
                 //
                 int acessoryIndex = pages + 1;
                 for(AcessoryFormView acessoryFormView: acessoryFormViews){
+                    int item_index = -1;
+                    if((acessoryIndex) == device_item_tab_index){
+                        item_index = device_item_list_index;
+                        acessoryFormView.setLastPositionSelected(device_item_list_index);
+                        acessoryFormView.setFilterVal(device_item_list_filter);
+                        acessoryFormView.setNonForecastFilter(device_item_list_checkbox_status);
+                    }else{
+                        acessoryFormView.setLastPositionSelected(-1);
+                        acessoryFormView.setFilterVal("");
+                        acessoryFormView.setNonForecastFilter(true);
+                    }
                     Act011FrgInspection act011FrgInspection = Act011FrgInspection.Companion
                             .newInstance(
                                     hmAux_Trans,
                                     acessoryIndex ,
                                     fullTabQty,
+                                    item_index,
                                     formLocal.getCustom_form_status(),
-                                    "",
                                     ""
                                     );
                     act011FrgInspection.setViewObject(acessoryFormView);
@@ -1468,11 +1482,11 @@ public class Act011_Main extends Base_Activity
                     updateTabStatusIntoDrawer(
                             returnValidateTabObj(index_old)
                         );
+
                 }
 
                 @Override
                 public void onPageScrollStateChanged(int state) {
-
                 }
             });
             //Seta dados no drawer
@@ -1579,6 +1593,9 @@ public class Act011_Main extends Base_Activity
             returnValidCheck(String.valueOf(index_old));
             if(bNew){
                 saveV2(false);
+            }
+            if(device_item_tab_index > -1){
+                tabSelectedAction(device_item_tab_index + 1);
             }
         }
         //LUCHE - 31/03/2020
@@ -2085,10 +2102,10 @@ public class Act011_Main extends Base_Activity
     }
 
     @Override
-    public void onInspectionSelected(@NotNull AcessoryFormView acessoryFormView, boolean isNewItem, int position, @NotNull String textFilter) {
+    public void onInspectionSelected(@NonNull AcessoryFormView acessoryFormView, boolean isNewItem, int position, @NonNull String searchFilterValue, boolean chkStatus, @NonNull String itemCodeAndSeqPk) {
         String device_item_pk = acessoryFormView.getDevicePkPrefix();
         if(!isNewItem){
-            device_item_pk = acessoryFormView.getDevicePkPrefix() +"."+acessoryFormView.getInspections().get(position).getItemCodeAndSeq();
+            device_item_pk = acessoryFormView.getDevicePkPrefix() +"."+itemCodeAndSeqPk;
         }
         Intent mIntent = new Intent(context, Act086Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -2098,13 +2115,21 @@ public class Act011_Main extends Base_Activity
         deviceBundle.putString(DEVICE_ITEM_PK,device_item_pk);
         deviceBundle.putInt(DEVICE_ITEM_TAB_INDEX,acessoryFormView.getTabIndex());
         deviceBundle.putInt(DEVICE_ITEM_LIST_INDEX,position);
-        deviceBundle.putString(DEVICE_ITEM_LIST_FILTER,textFilter);
+        deviceBundle.putString(DEVICE_ITEM_LIST_FILTER,searchFilterValue);
+        deviceBundle.putBoolean(DEVICE_ITEM_LIST_CHECKBOX_STATUS,isNewItem);
         deviceBundle.putBoolean(DEVICE_ITEM_NEW_ACTION,isNewItem);
         deviceBundle.putString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS,formData.getCustom_form_status());
         bundle.putBundle(DEVICE_BUNDLE, deviceBundle);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
+    }
+
+
+    @NonNull
+    @Override
+    public InspectionCell onNotVerifyAction(int position, @NonNull String itemPk) {
+        return null;
     }
 
     //TODO APAGAR APPOS TESTES FINAL

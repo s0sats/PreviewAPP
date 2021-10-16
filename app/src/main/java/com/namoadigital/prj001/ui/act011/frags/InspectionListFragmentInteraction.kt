@@ -1,12 +1,17 @@
 package com.namoadigital.prj001.ui.act011.frags
 
 import com.namoadigital.prj001.model.AcessoryFormView
+import com.namoadigital.prj001.model.InspectionCell
 
 interface InspectionListFragmentInteraction {
     fun onInspectionSelected(
-        inspection: AcessoryFormView,
+        acessoryFormView: AcessoryFormView,
         isNewItem: Boolean,
         position: Int,
-        textFilter: String
+        searchFilterValue: String,
+        chkStatus: Boolean,
+        itemCodeAndSeqPk: String
     )
+    //
+    fun onNotVerifyAction(position: Int, itemPk: String): InspectionCell
 }
