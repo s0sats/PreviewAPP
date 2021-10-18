@@ -94,4 +94,11 @@
         <item name="textAllCaps">true</item>
     </style>
 
+    <style name="NamoaFormOsRadioButton" parent="Widget.AppCompat.CompoundButton.RadioButton">
+        <item name="android:buttonTint">@color/os_form_verify_item_label_text_color_states</item>
+        <item name="android:background">@drawable/os_form_verify_background_states</item>
+        <item name="android:textColor">@color/os_form_verify_text_color_states</item>
+        <item name="android:textSize">@dimen/font_size_font_16</item>
+    </style>
+
 </resources>

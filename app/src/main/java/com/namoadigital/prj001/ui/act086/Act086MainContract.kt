@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act086
 
 import android.content.DialogInterface
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.model.GeOsDeviceItem
@@ -37,9 +38,15 @@ interface Act086MainContract {
         fun validBundleParams(isNewVerification: Boolean): Boolean
         fun getDeviceItem(newVerification: Boolean): GeOsDeviceItem?
         fun onBackPressedClicked(
-            supportFragmentManager: FragmentManager,
+            fragmentManager: FragmentManager,
             deviceItem: GeOsDeviceItem
         )
         fun getDeviceItemHist(isNewVerification: Boolean):  ArrayList<GeOsDeviceItemHist>?
+        fun hasAnyVisibleInfoIntoConsultFrag(
+            deviceItem: GeOsDeviceItem,
+            itemHist: java.util.ArrayList<GeOsDeviceItemHist>?
+        ): Boolean
+
+        fun getActionBarTitle(fragmentManager: Fragment, newOrCreatedByApp: Boolean): String?
     }
 }

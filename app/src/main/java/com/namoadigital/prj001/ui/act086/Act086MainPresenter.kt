@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui.act086
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.dao.GeOsDeviceItemDao
@@ -42,13 +43,16 @@ class Act086MainPresenter(
             "product_ttl",
             "btn_apply",
             "alert_choose_an_answer_msg",
-            "query_lbl",
+            "info_lbl",
             "alert_form_parameter_error_ttl",
             "alert_form_parameter_error_msg",
             "inspection_missing_lbl",
             "inspection_alert_days_lbl",
             "alert_unsaved_data_will_be_lost_ttl",
             "alert_unsaved_data_will_be_lost_confirm",
+            "info_ttl",
+            "new_check_item_ttl",
+            "check_item_ttl"
         )
         transList.addAll(
             Act086VerificationFrg.getFragTranslationsVars()
@@ -293,12 +297,61 @@ class Act086MainPresenter(
         return null
     }
 
-    override fun onBackPressedClicked(frgManager: FragmentManager, deviceItem: GeOsDeviceItem) {
-        val currentFrag = frgManager.fragments.find {
-            it.isVisible
+    /**
+     * Fun que verifica se há alguma dado visivel no frag de historico / consulta.
+     * Verifica o check status, next_cycle, intrução se lista de historico.
+     */
+    override fun hasAnyVisibleInfoIntoConsultFrag(
+        deviceItem: GeOsDeviceItem,
+        itemHist:ArrayList<GeOsDeviceItemHist>?
+    ): Boolean {
+        //Se for um dos "status de alerta", verdadeiro
+        when(deviceItem.item_check_status){
+            GeOsDeviceItem.ITEM_CHECK_STATUS_MANUAL_ALERT ,
+            GeOsDeviceItem.ITEM_CHECK_STATUS_MEASURE_ALERT ,
+            GeOsDeviceItem.ITEM_CHECK_STATUS_PROJECTED_DATE_REACHED ,
+            GeOsDeviceItem.ITEM_CHECK_STATUS_LIMIT_DATE_REACHED -> {
+                return true
+            }
+            else -> {
+                /*
+                 *  Se o alert não será exibido, verfica se existe algumas das infos abaixo
+                 *  - Historico
+                 *  - Proximo Ciclo
+                 *  - Instrucao
+                 */
+                if( (itemHist != null && itemHist.isNotEmpty())
+                    || deviceItem.next_cycle_measure != null
+                    || deviceItem.next_cycle_measure_date != null
+                    ||  deviceItem.next_cycle_limit_date != null
+                    ||  deviceItem.verification_instruction != null
+                ){
+                    return true
+                }
+            }
         }
+        //Se não, nenhuma info a exibir.
+        return false
+    }
+
+    override fun getActionBarTitle(currentFrag: Fragment, newOrCreatedByApp: Boolean): String? {
+        return when(currentFrag){
+                is Act086HistoricFrg -> {
+                    hmAuxTrans["info_ttl"]
+                }
+                else ->{
+                    if(newOrCreatedByApp){
+                        hmAuxTrans["new_check_item_ttl"]
+                    }else{
+                        hmAuxTrans["check_item_ttl"]
+                    }
+                }
+        }
+    }
+
+    override fun onBackPressedClicked(fragmentManager: FragmentManager, deviceItem: GeOsDeviceItem) {
         //
-        when(currentFrag){
+        when(getCurrentFrag(fragmentManager)){
             is Act086HistoricFrg ->{
                 mView.popToVerificationFrag()
             }
@@ -320,5 +373,12 @@ class Act086MainPresenter(
             }
             else -> mView.callAct011()
         }
+    }
+
+    private fun getCurrentFrag(frgManager: FragmentManager): Fragment? {
+        val currentFrag = frgManager.fragments.find {
+            it.isVisible
+        }
+        return currentFrag
     }
 }

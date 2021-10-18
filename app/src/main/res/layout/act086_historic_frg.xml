@@ -18,7 +18,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="0dp"
             >
 
             <TextView
@@ -167,6 +167,7 @@
                 android:layout_marginTop="8dp"
                 android:text="Ao Realizar esta inspeção utilizar EPI: Luva de algodao resistencia CA 37946"
                 android:textColor="@color/namoa_font_color_black222"
+                android:textSize="@dimen/font_size_font_16"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/act086_historic_frg_tv_instruction_ttl" />

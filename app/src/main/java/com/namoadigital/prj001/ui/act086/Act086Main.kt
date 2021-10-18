@@ -143,11 +143,18 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
                 applyNewVerificationConfig()
                 initVerificationFrg()
                 getItemHist()
+                applyTvConsultApplyStatus()
             }else{
                 paramErrorFlow()
             }
         }else{
             paramErrorFlow()
+        }
+    }
+
+    private fun applyTvConsultApplyStatus() {
+        binding.act086TvConsult.apply {
+            isEnabled = mPresenter.hasAnyVisibleInfoIntoConsultFrag(deviceItem,itemHist)
         }
     }
 
@@ -302,9 +309,15 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
         )
     }
 
+    private fun updateActionBarTitle(fragment: Fragment) {
+        supportActionBar?.let {
+            it.title = mPresenter.getActionBarTitle(fragment,isNewOrCreatedByApp())
+        }
+    }
+
     private fun setLabels() {
         with(binding){
-            act086TvConsult.text = hmAux_Trans["query_lbl"]
+            act086TvConsult.text = hmAux_Trans["info_lbl"]
         }
 
     }
@@ -336,6 +349,8 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
                 fragment.leaveItem = ::onBackPressed
             }
         }
+        //
+        updateActionBarTitle(fragment)
     }
 
     private fun checkScrollNeeds(viewBottomPosition: Int, heightToAdd: Int){

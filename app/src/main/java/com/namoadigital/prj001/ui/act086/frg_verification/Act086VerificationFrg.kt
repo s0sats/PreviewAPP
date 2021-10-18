@@ -34,7 +34,6 @@ import com.namoadigital.prj001.ui.act086.Act086ProductEditDialog
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
-import com.namoadigital.prj001.util.ToolBox_Inf
 import com.namoadigital.prj001.view.act.product_selection.Act_Product_Selection
 import kotlinx.coroutines.*
 import java.util.*
@@ -127,15 +126,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                 act086VerificationFrgIvManualHandler.isEnabled = false
                 act086VerificationFrgIvManualHandler.isClickable = false
                 toogleRadioGroupEnabled(false)
-                act086VerificationFrgClMaterial.isEnabled = false
-                act086VerificationFrgClMaterial.isClickable = false
-                act086VerificationFrgClMaterial.setOnClickListener(null)
-                //
-                act086VerificationFrgClPhoto.isEnabled = false
-                act086VerificationFrgClPhoto.isClickable = false
-                act086VerificationFrgClPhoto.setOnClickListener(null)
-                //
-                act086VerificationFrgMketComment.isEnabled = false
+                toogleSupplementViewsEnabledStatus(false)
                 act086VerificationFrgClDeleteInfos.apply {
                     isEnabled = false
                     visibility = View.GONE
@@ -145,6 +136,20 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                     visibility = View.GONE
                 }
             }
+        }
+    }
+
+    private fun toogleSupplementViewsEnabledStatus(enable: Boolean) {
+        with(binding) {
+            act086VerificationFrgClMaterial.isEnabled = enable
+            act086VerificationFrgClMaterial.isClickable = enable
+            //act086VerificationFrgClMaterial.setOnClickListener(null)
+            //
+            act086VerificationFrgClPhoto.isEnabled = enable
+            act086VerificationFrgClPhoto.isClickable = enable
+            //act086VerificationFrgClPhoto.setOnClickListener(null)
+            //
+            act086VerificationFrgMketComment.isEnabled = enable
         }
     }
 
@@ -655,9 +660,16 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                             setTextColor(ContextCompat.getColor(requireContext(),R.color.namoa_font_color_black222))
                         }
                         toogleRadioGroupEnabled(true)
+                        //Se ja tem resposta, então libera dados complementares, pois é uma nova edição
+                        //da descrição.
+                        if(geOsDeviceItem.status_answer != null){
+                            toogleSupplementViewsEnabledStatus(!isManualDescInEdit)
+                        }
                     }
                 }else{
                     isManualDescInEdit = true
+                    toogleRadioGroupEnabled(!isManualDescInEdit)
+                    toogleSupplementViewsEnabledStatus(!isManualDescInEdit)
                     act086VerificationFrgIvManualHandler.setImageDrawable(getIvManualDescIcon(isManualDescInEdit))
                     act086VerificationFrgMketManualDesc.apply{
                         isEnabled = isManualDescInEdit

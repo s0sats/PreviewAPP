@@ -42,7 +42,8 @@ class GeOsDeviceItem(
     var target_date :String?,
     @Expose
     var exec_type :String?,
-    @Expose
+    //Pediram para remover esse campo, mas desconfio que vai voltar, então fica no banco só não
+    //"expoe" no json de envio
     var exec_date :String?,
     @Expose
     var exec_comment :String?,

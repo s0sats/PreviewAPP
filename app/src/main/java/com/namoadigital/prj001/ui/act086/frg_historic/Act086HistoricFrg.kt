@@ -28,7 +28,7 @@ import kotlin.collections.ArrayList
  * Use the [Act086HistoricFrg.newInstance] factory method to
  * create an instance of this fragment.
  */
-class Act086HistoricFrg : BaseFragment() {
+class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
     private val binding: Act086HistoricFrgBinding by lazy{
         Act086HistoricFrgBinding.inflate(layoutInflater)
     }
@@ -43,6 +43,13 @@ class Act086HistoricFrg : BaseFragment() {
     private var nextCycleLimitDate: String? = null
     private var measureValueSufix: String? = null
     private var verificationInstruction: String? = null
+    private val mPresenter: Act086HistoricFrgContract.IPresenter by lazy{
+            Act086HistoricFrgPresenter(
+                requireContext(),
+                this,
+                hmAux_Trans
+            )
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,7 +77,6 @@ class Act086HistoricFrg : BaseFragment() {
         initVars()
         initRecycle()
     }
-
 
     private fun initVars() {
         setLabels()
@@ -101,11 +107,21 @@ class Act086HistoricFrg : BaseFragment() {
         with(binding){
             var visibility = View.GONE
             var textVal: String? = null
-            //
-            if(itemCheckStatus != null){
-                visibility = View.VISIBLE
-                textVal = hmAux_Trans[itemCheckStatus]
+            //Só exibir tipo de alerta itemCheckStatus for um "alerta"
+            when(itemCheckStatus){
+                GeOsDeviceItem.ITEM_CHECK_STATUS_MANUAL_ALERT ,
+                GeOsDeviceItem.ITEM_CHECK_STATUS_MEASURE_ALERT ,
+                GeOsDeviceItem.ITEM_CHECK_STATUS_PROJECTED_DATE_REACHED ,
+                GeOsDeviceItem.ITEM_CHECK_STATUS_LIMIT_DATE_REACHED -> {
+                    visibility = View.VISIBLE
+                    textVal = hmAux_Trans[itemCheckStatus]
+                }
+                else -> {
+                    visibility =  View.GONE
+                    textVal = null
+                }
             }
+            //
             act086HistoricFrgClAlertType.visibility = visibility
             act086HistoricFrgTvAlertTypeVal.text = textVal
         }
@@ -141,7 +157,6 @@ class Act086HistoricFrg : BaseFragment() {
             }
         }
     }
-
 
     private fun configLimitDateInfo() {
         with(binding) {
@@ -215,7 +230,7 @@ class Act086HistoricFrg : BaseFragment() {
                                                         ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
                                                     ).replace(" ", "\n")
 
-                act086HistoricFrgTvLastMeasureVal.text = getFormattedLastMeasureInfo(lastFixed,measureValueSufix)
+                act086HistoricFrgTvLastMeasureVal.text = mPresenter.getFormattedLastMeasureInfo(lastFixed,measureValueSufix)
                 act086HistoricFrgTvMaterialVal.text = if(lastFixed.exec_material == 1) hmAux_Trans["YES"] else hmAux_Trans["NO"]
                 act086HistoricFrgTvComment.apply {
                     visibility = if(lastFixed.exec_comment.isNullOrEmpty()) View.GONE else  View.VISIBLE
@@ -225,13 +240,6 @@ class Act086HistoricFrg : BaseFragment() {
                 act086HistoricFrgClLastAdjust.visibility = View.GONE
             }
         }
-    }
-
-    private fun getFormattedLastMeasureInfo(
-        lastFixed: GeOsDeviceItemHist,
-        measureValueSufix: String?
-    ): String {
-        return "${lastFixed.exec_value} ${measureValueSufix?:""}"
     }
 
     private fun initRecycle() {
@@ -244,33 +252,9 @@ class Act086HistoricFrg : BaseFragment() {
     private fun setAlertListInfo() {
         alertList.clear()
         //Filtra itens que são alerta
-        val toAlertList = itemHist.filter { hist ->
-            hist.exec_type.equals(GeOsDeviceItem.EXEC_TYPE_ALERT, true)
-        }.map { hist ->
-            //Convert para lista do adapter.
-            Act086HistoricAlert(
-                alertLbl = hmAux_Trans["still_with_problem_lbl"]!!,
-                date = ToolBox_Inf.millisecondsToString(
-                    ToolBox_Inf.dateToMilliseconds(
-                        hist.exec_date
-                    ),
-                    ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-                ),
-                measureLbl = hmAux_Trans["last_measure_lbl"]!!,
-                measure = getFormattedLastMeasureInfo(hist, measureValueSufix),
-                materialLbl = hmAux_Trans["material_requested_lbl"]!! ,
-                material = if(hist.exec_material == 1){
-                    hmAux_Trans["YES"]!!
-                }else{
-                    hmAux_Trans["NO"]!!
-                },
-                comment = hist.exec_comment
-            )
-        }
+        val toAlertList = mPresenter.getAlertList(itemHist,measureValueSufix)
+        //
         if(toAlertList.isNotEmpty()) {
-            //Seta label esta com problema apenas no primeiro item.
-            toAlertList[0].alertLbl = hmAux_Trans["has_problem_lbl"]!!
-            //add itens na lista
             alertList.addAll(toAlertList)
         }else{
             binding.act086HistoricFrgClAlertHistoric.visibility = View.GONE

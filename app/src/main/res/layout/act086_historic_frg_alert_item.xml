@@ -120,7 +120,7 @@
                     android:text="Sim"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/act086_historic_frg_alert_item_tv_material_bl"
-                    app:layout_constraintTop_toBottomOf="@id/act086_historic_frg_alert_item_br_h_measure"
+                    app:layout_constraintTop_toTopOf="@+id/act086_historic_frg_alert_item_tv_material_bl"
                     app:layout_constraintWidth_default="wrap" />
 
                 <androidx.constraintlayout.widget.Barrier

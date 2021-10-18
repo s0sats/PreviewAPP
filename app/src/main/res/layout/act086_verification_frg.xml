@@ -66,31 +66,28 @@
                 android:id="@+id/act086_verification_frg_rdo_answer_fixed"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/os_form_verify_background_states"
-                android:buttonTint="@color/namoa_dark_blue"
                 android:checked="false"
                 android:drawableStart="@drawable/ic_build_black_24dp"
                 android:drawablePadding="8dp"
                 android:minHeight="48dp"
                 android:paddingStart="8dp"
                 android:text="Ação realizada"
-                android:textColor="@color/os_form_verify_text_color_states"
-                app:drawableTint="@color/namoa_os_form_done_action_blue" />
+                style="@style/NamoaFormOsRadioButton"
+                app:drawableTint="@color/namoa_os_form_done_action_blue"
+                />
 
             <RadioButton
                 android:id="@+id/act086_verification_frg_rdo_answer_already_done"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:background="@drawable/os_form_verify_background_states"
-                android:buttonTint="@color/namoa_dark_blue"
+                style="@style/NamoaFormOsRadioButton"
                 android:checked="false"
                 android:drawableStart="@drawable/ic_done_black_24dp"
                 android:drawablePadding="8dp"
                 android:minHeight="48dp"
                 android:paddingStart="8dp"
                 android:text="Já estava ok"
-                android:textColor="@color/os_form_verify_text_color_states"
                 app:drawableTint="@color/namoa_os_form_verified_green" />
 
             <RadioButton
@@ -98,15 +95,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:background="@drawable/os_form_verify_background_states"
-                android:buttonTint="@color/namoa_dark_blue"
+                style="@style/NamoaFormOsRadioButton"
                 android:checked="false"
                 android:drawableStart="@drawable/ic_outline_report_problem_24_black"
                 android:drawablePadding="8dp"
                 android:minHeight="48dp"
                 android:paddingStart="8dp"
                 android:text="Continua com problema"
-                android:textColor="@color/os_form_verify_text_color_states"
                 app:drawableTint="@color/namoa_os_form_problem_red" />
 
             <RadioButton
@@ -114,15 +109,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:background="@drawable/os_form_verify_background_states"
-                android:buttonTint="@color/namoa_dark_blue"
+                style="@style/NamoaFormOsRadioButton"
                 android:checked="false"
                 android:drawableStart="@drawable/ic_baseline_redo_24_black"
                 android:drawablePadding="8dp"
                 android:minHeight="48dp"
                 android:paddingStart="8dp"
                 android:text="Não verificado"
-                android:textColor="@color/os_form_verify_text_color_states"
                 app:drawableTint="@color/namoa_status_not_executed" />
         </RadioGroup>
 
@@ -162,6 +155,7 @@
             app:mBARCODE="false"
             tools:hint="Inserir comentario"
             android:textColor="@color/os_form_verify_item_label_text_color_states"
+            android:textSize="@dimen/font_size_font_16"
             />
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -202,6 +196,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 android:textColor="@color/os_form_verify_item_label_text_color_states"
                 android:enabled="false"
+                android:textSize="@dimen/font_size_font_16"
                 />
 
             <ImageView
@@ -258,6 +253,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 android:enabled="false"
+                android:textSize="@dimen/font_size_font_16"
                 />
 
 
