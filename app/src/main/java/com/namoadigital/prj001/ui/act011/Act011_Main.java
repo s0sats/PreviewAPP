@@ -462,10 +462,10 @@ public class Act011_Main extends Base_Activity
         transList.add("alert_gps_never_ask_again_permission_ttl");
         transList.add("alert_gps_never_ask_again_permission_msg");
         //
-        transList.add("inpection_answer_fixed_lbl");
-        transList.add("inpection_answer_alert_lbl");
-        transList.add("inpection_answer_already_ok_lbl");
-        transList.add("inpection_answer_not_verify_lbl");
+        transList.add("inspection_answer_fixed_lbl");
+        transList.add("inspection_answer_alert_lbl");
+        transList.add("inspection_answer_already_ok_lbl");
+        transList.add("inspection_answer_not_verify_lbl");
         //
         transList.add("dialog_finalize_os_form_lbl");
         transList.add("dialog_finalize_form_lbl");

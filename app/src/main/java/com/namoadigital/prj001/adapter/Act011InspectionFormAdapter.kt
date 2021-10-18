@@ -175,7 +175,7 @@ class Act011InspectionFormAdapter(
                 //
                 binding.tvStatus.apply {
                     if(isDone){
-                        text = hmAuxTrans["inpection_status_answered_item_lbl"]
+                        text = hmAuxTrans["inspection_status_answered_item_lbl"]
                     } else {
                         text = statusTransalted
                     }
@@ -211,7 +211,7 @@ class Act011InspectionFormAdapter(
                     }
 
                     if (!isDone) {
-                        binding.tvInspectionOngoingAction.text = hmAuxTrans.get("inpection_ongoing_action_lbl")
+                        binding.tvInspectionOngoingAction.text = hmAuxTrans.get("inspection_ongoing_action_lbl")
                         binding.tvInspectionOngoingAction.visibility = View.VISIBLE
                         binding.tvInspectionVerificationAction.visibility = View.GONE
                         binding.tvAutoSkipInspection.visibility = View.GONE
@@ -219,8 +219,8 @@ class Act011InspectionFormAdapter(
                     }
                 } else {
                     binding.tvInspectionVerificationAction.visibility = View.VISIBLE
-                    binding.tvInspectionVerificationAction.text = hmAuxTrans.get("inpection_verify_action_lbl")
-                    binding.tvAutoSkipInspection.text =  hmAuxTrans.get("inpection_not_verify_action_lbl")
+                    binding.tvInspectionVerificationAction.text = hmAuxTrans.get("inspection_verify_action_lbl")
+                    binding.tvAutoSkipInspection.text =  hmAuxTrans.get("inspection_not_verify_action_lbl")
                 }
                 //
                 if (isNewItem) {

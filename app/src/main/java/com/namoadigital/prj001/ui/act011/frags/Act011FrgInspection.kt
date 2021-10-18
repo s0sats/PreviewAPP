@@ -173,7 +173,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
             it.status == NORMAL && !ConstantBaseApp.SYS_STATUS_DONE.equals(it.answerStatus)
         }.toString()
         binding.tvAddNewItemVal.text = hmAuxTrans.get("inspection_add_new_process_btn")
-        binding.chkNonForecastItem.text = hmAuxTrans.get("inpection_hide_non_forecast_item_chk")
+        binding.chkNonForecastItem.text = hmAuxTrans.get("inspection_hide_non_forecast_item_chk")
         if(acessoryFormView.nonForecastFilter){
             binding.chkNonForecastItem.apply {
                 post {
@@ -183,9 +183,9 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
         }
         //
         if(acessoryFormView.inspections.isEmpty()) {
-            binding.tvPlaceholder.text = hmAuxTrans.get("inpection_empty_list_placeholder")
+            binding.tvPlaceholder.text = hmAuxTrans.get("inspection_empty_list_placeholder")
         }else{
-            binding.tvPlaceholder.text = hmAuxTrans.get("inpection_empty_list_filtered")
+            binding.tvPlaceholder.text = hmAuxTrans.get("inspection_empty_list_filtered")
         }
 
     }
@@ -218,19 +218,19 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
                 "alert_filter_applied_msg",
                 "inspection_missing_days",
                 "inspection_alert_days",
-                "inpection_ongoing_action_lbl",
+                "inspection_ongoing_action_lbl",
                 "inspection_add_new_process_btn",
-                "inpection_verify_action_lbl",
+                "inspection_verify_action_lbl",
                 "inspection_filter_list_hint",
-                "inpection_status_answered_item_lbl",
-                "inpection_status_non_forecast_item_lbl",
-                "inpection_status_manual_alert_item_lbl",
-                "inpection_status_critical_forecast_item_lbl",
-                "inpection_status_forecast_item_lbl",
-                "inpection_not_verify_action_lbl",
-                "inpection_hide_non_forecast_item_chk",
-                "inpection_empty_list_placeholder",
-                "inpection_empty_list_filtered"
+                "inspection_status_answered_item_lbl",
+                "inspection_status_non_forecast_item_lbl",
+                "inspection_status_manual_alert_item_lbl",
+                "inspection_status_critical_forecast_item_lbl",
+                "inspection_status_forecast_item_lbl",
+                "inspection_not_verify_action_lbl",
+                "inspection_hide_non_forecast_item_chk",
+                "inspection_empty_list_placeholder",
+                "inspection_empty_list_filtered"
             )
         }
     }

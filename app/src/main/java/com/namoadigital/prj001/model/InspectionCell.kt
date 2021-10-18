@@ -34,27 +34,27 @@ data class InspectionCell   (
         //
         if(isDone){
             tagColor = R.color.namoa_color_light_green5
-            statusTransalted = hmAuxTrans["inpection_status_answered_item_lbl"]!!
+            statusTransalted = hmAuxTrans["inspection_status_answered_item_lbl"]!!
         }else{
             this.status = status
             when(status){
                 NORMAL -> {
                     tagColor = R.color.namoa_color_gray_6
-                    statusTransalted = hmAuxTrans["inpection_status_non_forecast_item_lbl"]!!
+                    statusTransalted = hmAuxTrans["inspection_status_non_forecast_item_lbl"]!!
                 }
                 MANUAL_ALERT -> {
                     tagColor = R.color.namoa_os_form_problem_red
-                    statusTransalted = hmAuxTrans["inpection_status_manual_alert_item_lbl"]!!
+                    statusTransalted = hmAuxTrans["inspection_status_manual_alert_item_lbl"]!!
                 }
                 else -> {
                     if(isCritical){
                         this.status = CRITICAL_FORECAST
                         tagColor = R.color.namoa_os_form_critical_forecast_yellow
-                        statusTransalted = hmAuxTrans["inpection_status_critical_forecast_item_lbl"]!!
+                        statusTransalted = hmAuxTrans["inspection_status_critical_forecast_item_lbl"]!!
                     }else{
                         this.status = FORECAST
                         tagColor = R.color.namoa_color_pipeline_origin_icon
-                        statusTransalted = hmAuxTrans["inpection_status_forecast_item_lbl"]!!
+                        statusTransalted = hmAuxTrans["inspection_status_forecast_item_lbl"]!!
                     }
                 }
             }
@@ -62,16 +62,16 @@ data class InspectionCell   (
 
         when(execType){
             GeOsDeviceItem.EXEC_TYPE_FIXED -> {
-                execTypeTranslated = hmAuxTrans["inpection_answer_fixed_lbl"]!!
+                execTypeTranslated = hmAuxTrans["inspection_answer_fixed_lbl"]!!
             }
             GeOsDeviceItem.EXEC_TYPE_ALERT ->{
-                execTypeTranslated = hmAuxTrans["inpection_answer_alert_lbl"]!!
+                execTypeTranslated = hmAuxTrans["inspection_answer_alert_lbl"]!!
             }
             GeOsDeviceItem.EXEC_TYPE_ALREADY_OK -> {
-                execTypeTranslated = hmAuxTrans["inpection_answer_already_ok_lbl"]!!
+                execTypeTranslated = hmAuxTrans["inspection_answer_already_ok_lbl"]!!
             }
             GeOsDeviceItem.EXEC_TYPE_NOT_VERIFIED -> {
-                execTypeTranslated = hmAuxTrans["inpection_answer_not_verify_lbl"]!!
+                execTypeTranslated = hmAuxTrans["inspection_answer_not_verify_lbl"]!!
             }
         }
     }
