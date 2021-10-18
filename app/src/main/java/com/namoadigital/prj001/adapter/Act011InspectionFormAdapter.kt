@@ -32,14 +32,15 @@ class Act011InspectionFormAdapter(
     private val onNotVerifyItemSelected: (position: Int,
                                           item: InspectionCell) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
-    private val inspections: List<InspectionCell> = acessoryFormView.inspections
-    private var inspectionsFiltered: MutableList<InspectionCell> = mutableListOf()
+    private var inspections: MutableList<InspectionCell>
+    private val inspectionsFiltered: MutableList<InspectionCell> = mutableListOf()
     protected var textFilter:String = ""
     var mFilter :InspectionFormFilter? = null
-
+    var filterApplied: Boolean = true
     init {
         inspectionsFiltered.clear()
-        inspectionsFiltered.addAll(inspections)
+        inspections = acessoryFormView.inspections
+        inspectionsFiltered.addAll(acessoryFormView.inspections)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -72,8 +73,9 @@ class Act011InspectionFormAdapter(
     }
 
     fun applyNonForecastFilter(filterApplied: Boolean) {
+        this.filterApplied = filterApplied
         inspectionsFiltered.clear()
-        if (filterApplied) {
+        if (this.filterApplied) {
             inspectionsFiltered.addAll(inspections.filter {
                 it.status != InspectionCell.NORMAL
             })
@@ -95,6 +97,11 @@ class Act011InspectionFormAdapter(
         return mFilter as InspectionFormFilter
     }
 
+    fun refreshList(position: Int, onNotVerifyActionItem: InspectionCell) {
+        inspectionsFiltered.set(position, onNotVerifyActionItem)
+        notifyItemChanged(position)
+    }
+
     inner class InspectionFormFilter : Filter() {
 
         override fun performFiltering(constraint: CharSequence?): FilterResults {
@@ -102,10 +109,14 @@ class Act011InspectionFormAdapter(
             var charFilter = ToolBox.AccentMapper(constraint.toString().toLowerCase())
             textFilter = charFilter
             if (charFilter.isNullOrEmpty()) {
-                temp = inspectionsFiltered as MutableList<InspectionCell>
+                if(filterApplied){
+                    temp.addAll(inspectionsFiltered)
+                }else {
+                    temp.addAll(inspections)
+                }
             } else {
                 temp.addAll(
-                    inspectionsFiltered.filter {
+                    inspections.filter {
                         when (it) {
                             is InspectionCell -> {
                                 val allFields =
@@ -126,7 +137,12 @@ class Act011InspectionFormAdapter(
 
         override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
             results?.let {
-                inspectionsFiltered = results.values as MutableList<InspectionCell>
+                inspectionsFiltered.clear()
+                //
+                results.values?.let{
+                    inspectionsFiltered.addAll(results.values as MutableList<InspectionCell>)
+                }
+                //
                 notifyDataSetChanged()
             }
         }
@@ -161,20 +177,7 @@ class Act011InspectionFormAdapter(
                     if(isDone){
                         text = hmAuxTrans["inpection_status_answered_item_lbl"]
                     } else {
-                        when (status) {
-                            InspectionCell.NORMAL -> {
-                                text = hmAuxTrans["inpection_status_non_forecast_item_lbl"]
-                            }
-                            InspectionCell.MANUAL_ALERT -> {
-                                text = hmAuxTrans["inpection_status_manual_alert_item_lbl"]
-                            }
-                            InspectionCell.CRITICAL_FORECAST -> {
-                                text = hmAuxTrans["inpection_status_critical_forecast_item_lbl"]
-                            }
-                            else -> {
-                                text = hmAuxTrans["inpection_status_forecast_item_lbl"]
-                            }
-                        }
+                        text = statusTransalted
                     }
                     background.setColorFilter(ContextCompat.getColor(context, tagColor), android.graphics.PorterDuff.Mode.SRC_ATOP)
                 }
@@ -183,28 +186,24 @@ class Act011InspectionFormAdapter(
                 }
                 //
                 if (answerStatus != null) {
-
+                    binding.tvInspectAnswered.text = execTypeTranslated
                     when(execType){
                         EXEC_TYPE_FIXED -> {
-                            binding.tvInspectAnswered.text = hmAuxTrans.get("inpection_answer_fixed_lbl")
                             binding.ivInspectAnswered.setImageDrawable(
                                 ContextCompat.getDrawable(Objects.requireNonNull(context), R.drawable.ic_build_black_24dp)
                             )
                         }
                         EXEC_TYPE_ALERT ->{
-                            binding.tvInspectAnswered.text = hmAuxTrans.get("inpection_answer_alert_lbl")
                             binding.ivInspectAnswered.setImageDrawable(
                                 ContextCompat.getDrawable(Objects.requireNonNull(context), R.drawable.ic_outline_report_problem_24_black)
                             )
                         }
                         EXEC_TYPE_ALREADY_OK -> {
-                            binding.tvInspectAnswered.text = hmAuxTrans.get("inpection_answer_already_ok_lbl")
                             binding.ivInspectAnswered.setImageDrawable(
                                 ContextCompat.getDrawable(Objects.requireNonNull(context), R.drawable.ic_done_black_24dp)
                             )
                         }
                         EXEC_TYPE_NOT_VERIFIED -> {
-                            binding.tvInspectAnswered.text = hmAuxTrans.get("inpection_answer_not_verify_lbl")
                             binding.ivInspectAnswered.setImageDrawable(
                                 ContextCompat.getDrawable(Objects.requireNonNull(context), R.drawable.ic_baseline_redo_24_black)
                             )
@@ -228,7 +227,7 @@ class Act011InspectionFormAdapter(
                     binding.tvDayCount.visibility = View.GONE
                 } else {
                     binding.tvDayCount.visibility = View.VISIBLE
-                    if (status.equals(InspectionCell.NORMAL)) {
+                    if (status.equals(InspectionCell.NORMAL) || isDone) {
                         binding.tvDayCount.text =
                             "${hmAuxTrans.get("inspection_missing_days")}: ${dayCount}"
                         binding.tvDayCount.setTextColor(ContextCompat.getColor(context, R.color.gray_colors_menu))

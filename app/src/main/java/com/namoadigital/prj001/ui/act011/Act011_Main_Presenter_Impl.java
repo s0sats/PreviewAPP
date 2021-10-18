@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act011;
 
+import static com.namoa_digital.namoa_library.util.ConstantBase.SYS_STATUS_DONE;
+import static com.namoa_digital.namoa_library.util.ConstantBase.SYS_STATUS_PROCESS;
 import static com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device_Item.APPLY_MATERIAL_REQUIRED;
 
 import android.content.Context;
@@ -73,9 +75,11 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_005;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_019;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_001_TT;
+import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_001;
 import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_002;
 import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_003;
 import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_004;
+import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_005;
 import com.namoadigital.prj001.sql.GeOsDeviceSql_002;
 import com.namoadigital.prj001.sql.GeOsSql_001;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
@@ -470,7 +474,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                             customFormLocal.getTicket_seq_tmp(),
                             customFormLocal.getStep_code(),
                             customFormLocal.getCustom_form_data(),
-                            ConstantBaseApp.SYS_STATUS_PROCESS,
+                            SYS_STATUS_PROCESS,
                             formData.getLocation_pendency());
                     }
 
@@ -570,20 +574,22 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             List<InspectionCell> inspections = acessoryFormView.getInspections();
             List<GeOsDeviceItem> deviceItem =  getDeviceItem(device);
             for(GeOsDeviceItem item: deviceItem){
-                inspections.add(new InspectionCell(
-                    item.getItem_check_desc(),
-                    ToolBox_Inf.getDateDiferenceInDays(item.getTarget_date(),ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")),
-                    getPhotoCount(item),
-                    item.getMaterialList().size(),
-                    item.getApply_material().equals(APPLY_MATERIAL_REQUIRED),
-                    item.getExec_comment() != null && !item.getExec_comment().isEmpty(),
-                    item.getRequire_justify_problem() == 1,
-                        item.getItem_check_status(),
-                        item.getCritical_item() == 1,
-                        item.getStructure() == 0,
-                        item.getStatus_answer(),
-                        item.getExec_type(),
-                        item.getGeOsDeviceItemCodeAndSeq()
+                inspections.add(
+                        new InspectionCell(
+                                item.getItem_check_desc(),
+                                Math.abs(ToolBox_Inf.getDateDiferenceInDays(item.getTarget_date(),ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"))),
+                                getPhotoCount(item),
+                                item.getMaterialList().size(),
+                                item.getApply_material().equals(APPLY_MATERIAL_REQUIRED),
+                                item.getExec_comment() != null && !item.getExec_comment().isEmpty(),
+                                item.getRequire_justify_problem() == 1,
+                                item.getItem_check_status(),
+                                item.getCritical_item() == 1,
+                                item.getStructure() == 0,
+                                item.getStatus_answer(),
+                                item.getExec_type(),
+                                item.getGeOsDeviceItemCodeAndSeq(),
+                                hmAux_Trans
                     )
                 );
             }
@@ -702,7 +708,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 if(ctrlIdx > -1){
                     TK_Ticket_Ctrl tkTicketCtrl = tkTicketStep.getCtrl().get(ctrlIdx);
                     switch (status){
-                        case ConstantBaseApp.SYS_STATUS_PROCESS:
+                        case SYS_STATUS_PROCESS:
                             setStartInfoIntoCtrl(tkTicketCtrl);
                             setCheckInIntoStepWhenOneTouchStep(tkTicketStep,tkTicketCtrl);
                             tkTicketCtrl.getForm().setCustom_form_data_tmp((int) custom_form_data);
@@ -807,7 +813,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             ticketCtrl.setCtrl_start_date(ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT));
             ticketCtrl.setCtrl_start_user(Integer.valueOf(ToolBox_Con.getPreference_User_Code(context)));
             ticketCtrl.setCtrl_start_user_name(ToolBox_Con.getPreference_User_Code_Nick(context));
-            ticketCtrl.setCtrl_status(ConstantBaseApp.SYS_STATUS_PROCESS);
+            ticketCtrl.setCtrl_status(SYS_STATUS_PROCESS);
             ticketCtrl.copyCtrlStatusForInnerProcess();
         }
     }
@@ -833,7 +839,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     }
 
     private void setCloseInfoIntoCtrl(TK_Ticket_Ctrl tkTicketCtrl) {
-        if( ConstantBaseApp.SYS_STATUS_PROCESS.equalsIgnoreCase(tkTicketCtrl.getCtrl_status())
+        if( SYS_STATUS_PROCESS.equalsIgnoreCase(tkTicketCtrl.getCtrl_status())
             && tkTicketCtrl.getCtrl_end_date() == null
         ){
             tkTicketCtrl.setCtrl_end_date(ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT));
@@ -1865,7 +1871,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                         customFormLocal.getCustom_product_desc(),
                         (int) serialInfo.getSerial_code(),
                         serialInfo.getSerial_id(),
-                        ConstantBaseApp.SYS_STATUS_PROCESS,
+                        SYS_STATUS_PROCESS,
                         stepInfo.getStep_order(),
                         0
                 );
@@ -2190,5 +2196,73 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 }
             }
         }
+    }
+
+    @Override
+    public InspectionCell setNotVerifyItem(String itemPk) {
+        String[] device_item_pk = itemPk.split("\\.");
+        GeOsDeviceItem deviceItem = geOsDeviceItemDao.getByString(
+                new GeOsDeviceItem_Sql_001(
+                        device_item_pk[0],
+                        device_item_pk[1],
+                        device_item_pk[2],
+                        device_item_pk[3],
+                        device_item_pk[4],
+                        device_item_pk[5],
+                        device_item_pk[6],
+                        device_item_pk[7],
+                        device_item_pk[8],
+                        device_item_pk[9]
+                ).toSqlQuery()
+        );
+        //
+        deviceItem.setExec_type(GeOsDeviceItem.EXEC_TYPE_NOT_VERIFIED);
+        deviceItem.setExec_date(ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT));
+        if(GeOsDeviceItem.APPLY_MATERIAL_REQUIRED.equals(deviceItem.getApply_material())
+        || deviceItem.getRequire_justify_problem() == 1 ){
+            deviceItem.setStatus_answer(SYS_STATUS_PROCESS);
+        }else{
+            deviceItem.setStatus_answer(SYS_STATUS_DONE);
+        }
+        geOsDeviceItemDao.addUpdate(deviceItem);
+        //
+        return new InspectionCell(
+                deviceItem.getItem_check_desc(),
+                Math.abs(ToolBox_Inf.getDateDiferenceInDays(deviceItem.getTarget_date(),ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"))),
+                getPhotoCount(deviceItem),
+                deviceItem.getMaterialList().size(),
+                deviceItem.getApply_material().equals(APPLY_MATERIAL_REQUIRED),
+                deviceItem.getExec_comment() != null && !deviceItem.getExec_comment().isEmpty(),
+                deviceItem.getRequire_justify_problem() == 1,
+                deviceItem.getItem_check_status(),
+                deviceItem.getCritical_item() == 1,
+                deviceItem.getStructure() == 0,
+                deviceItem.getStatus_answer(),
+                deviceItem.getExec_type(),
+                deviceItem.getGeOsDeviceItemCodeAndSeq(),
+                hmAux_Trans);
+    }
+
+    @Override
+    public int getMissingForecastAnsewrs(GeOs geOs) {
+        List<GeOsDevice> devices = getDeviceList(geOs);
+        int missingForecastAnsewrs = 0;
+        for (GeOsDevice device : devices) {
+            List<GeOsDeviceItem> deviceitems = geOsDeviceItemDao.query(
+                    new GeOsDeviceItem_Sql_005(
+                            device.getCustomer_code(),
+                            device.getCustom_form_type(),
+                            device.getCustom_form_code(),
+                            device.getCustom_form_version(),
+                            device.getCustom_form_data(),
+                            device.getProduct_code(),
+                            device.getSerial_code()
+                    ).toSqlQuery()
+            );
+            if(deviceitems != null) {
+                missingForecastAnsewrs += deviceitems.size();
+            }
+        }
+        return missingForecastAnsewrs;
     }
 }

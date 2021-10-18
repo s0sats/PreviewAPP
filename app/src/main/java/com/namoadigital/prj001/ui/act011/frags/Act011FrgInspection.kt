@@ -56,15 +56,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
         binding.apply {
             edtInspectionFilter.addTextChangedListener(object : TextWatcher {
                 override fun afterTextChanged(s: Editable?) {
-                    if (s != null) {
-                        if (s.toString().isNullOrEmpty()) {
-                            hideNonForecastCheckBoxFilter(false)
-                        } else {
-                            hideNonForecastCheckBoxFilter(true)
-                        }
-                    } else {
-                        hideNonForecastCheckBoxFilter(false)
-                    }
+
                 }
 
                 override fun beforeTextChanged(
@@ -76,11 +68,18 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
                 }
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    if (s.isNullOrEmpty()) {
+                        hideNonForecastCheckBoxFilter(false)
+                        mAdapter.applyNonForecastFilter(chkNonForecastItem.isChecked)
+                    } else {
+                        hideNonForecastCheckBoxFilter(true)
+                    }
                     mAdapter.filter.filter(s)
                 }
             })
 
             chkNonForecastItem.setOnClickListener {
+                acessoryFormView.nonForecastFilter = (it as CheckBox).isChecked
                 mAdapter.applyNonForecastFilter((it as CheckBox).isChecked)
                 handleAddNewProcessVisibility()
             }
@@ -173,7 +172,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
             binding.tvTrackingVal.visibility = View.VISIBLE
         }
         binding.tvNonForecastCount.text =  acessoryFormView.inspections.count {
-            it.status == NORMAL
+            it.status == NORMAL && !ConstantBaseApp.SYS_STATUS_DONE.equals(it.answerStatus)
         }.toString()
         binding.tvAddNewItemVal.text = hmAuxTrans.get("inspection_add_new_process_btn")
         binding.chkNonForecastItem.text = hmAuxTrans.get("inpection_hide_non_forecast_item_chk")
@@ -249,22 +248,23 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
 
 
     override fun getTabErrorCount(): Int {
-        val problemReportedCount = acessoryFormView.inspections.count {
-            it.status == MANUAL_ALERT && !it.answerStatus.equals(ConstantBaseApp.SYS_STATUS_DONE)
-        }
-        //
-        val criticalForecastCount = acessoryFormView.inspections.count {
-            it.status == CRITICAL_FORECAST && !it.answerStatus.equals(ConstantBaseApp.SYS_STATUS_DONE)
-        }
-        //
-        val forecastCount = acessoryFormView.inspections.count {
-            it.status == FORECAST && !it.answerStatus.equals(ConstantBaseApp.SYS_STATUS_DONE)
-        }
+//        val problemReportedCount = acessoryFormView.inspections.count {
+//            it.status == MANUAL_ALERT && !it.answerStatus.equals(ConstantBaseApp.SYS_STATUS_DONE)
+//        }
+//        //
+//        val criticalForecastCount = acessoryFormView.inspections.count {
+//            it.status == CRITICAL_FORECAST && !it.answerStatus.equals(ConstantBaseApp.SYS_STATUS_DONE)
+//        }
+//        //
+//        val forecastCount = acessoryFormView.inspections.count {
+//            it.status == FORECAST && !it.answerStatus.equals(ConstantBaseApp.SYS_STATUS_DONE)
+//        }
         val onGoingCount = acessoryFormView.inspections.count {
-            ConstantBaseApp.SYS_STATUS_PROCESS.equals(it.answerStatus) && it.status == NORMAL
+            ConstantBaseApp.SYS_STATUS_PROCESS.equals(it.answerStatus)
+//                    && it.status == NORMAL
         }
 
-        return problemReportedCount + criticalForecastCount + forecastCount + onGoingCount
+        return onGoingCount
     }
 
     override fun getTabCount(): Int {
@@ -341,10 +341,12 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
     fun onNotVerifyItemSelected(position: Int,
                                 item: InspectionCell
     ){
-        val onNotVerifyAction = mFrgListener.onNotVerifyAction(
+        val onNotVerifyActionItem = mFrgListener.onNotVerifyAction(
             position,
-            acessoryFormView.devicePkPrefix + item.itemCodeAndSeq
+            acessoryFormView.devicePkPrefix + "." + item.itemCodeAndSeq
         )
+        acessoryFormView.inspections.set(position, onNotVerifyActionItem)
+        mAdapter.refreshList(position, onNotVerifyActionItem)
     }
     //
 }

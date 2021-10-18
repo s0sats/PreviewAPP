@@ -2116,7 +2116,7 @@ public class Act011_Main extends Base_Activity
         deviceBundle.putInt(DEVICE_ITEM_TAB_INDEX,acessoryFormView.getTabIndex());
         deviceBundle.putInt(DEVICE_ITEM_LIST_INDEX,position);
         deviceBundle.putString(DEVICE_ITEM_LIST_FILTER,searchFilterValue);
-        deviceBundle.putBoolean(DEVICE_ITEM_LIST_CHECKBOX_STATUS,isNewItem);
+        deviceBundle.putBoolean(DEVICE_ITEM_LIST_CHECKBOX_STATUS,acessoryFormView.getNonForecastFilter());
         deviceBundle.putBoolean(DEVICE_ITEM_NEW_ACTION,isNewItem);
         deviceBundle.putString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS,formData.getCustom_form_status());
         bundle.putBundle(DEVICE_BUNDLE, deviceBundle);
@@ -2129,7 +2129,7 @@ public class Act011_Main extends Base_Activity
     @NonNull
     @Override
     public InspectionCell onNotVerifyAction(int position, @NonNull String itemPk) {
-        return null;
+        return mPresenter.setNotVerifyItem(itemPk);
     }
 
     //TODO APAGAR APPOS TESTES FINAL
@@ -3378,7 +3378,7 @@ public class Act011_Main extends Base_Activity
     }
 
     private int missingAnswersCounter() {
-        return 0;
+        return mPresenter.getMissingForecastAnsewrs(geOs);
     }
 
     private void setFormOsViewVisibility(Act011CheckDialogBinding binding, int visibility) {
