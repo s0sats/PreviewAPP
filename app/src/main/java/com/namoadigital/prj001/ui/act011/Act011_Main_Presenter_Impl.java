@@ -2218,12 +2218,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         //
         deviceItem.setExec_type(GeOsDeviceItem.EXEC_TYPE_NOT_VERIFIED);
         deviceItem.setExec_date(ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT));
-        if(GeOsDeviceItem.APPLY_MATERIAL_REQUIRED.equals(deviceItem.getApply_material())
-        || deviceItem.getRequire_justify_problem() == 1 ){
-            deviceItem.setStatus_answer(SYS_STATUS_PROCESS);
-        }else{
-            deviceItem.setStatus_answer(SYS_STATUS_DONE);
-        }
+        deviceItem.setStatus_answer(SYS_STATUS_DONE);
+
         geOsDeviceItemDao.addUpdate(deviceItem);
         //
         return new InspectionCell(

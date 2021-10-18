@@ -273,19 +273,19 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
 
     override fun getTabObj(skipFieldValidation: Boolean): Act011FormTab {
         val problemReportedCount = acessoryFormView.inspections.count {
-            it.status == MANUAL_ALERT
+            it.status == MANUAL_ALERT && !ConstantBaseApp.SYS_STATUS_DONE.equals(it.answerStatus)
         }
         //
         val criticalForecastCount = acessoryFormView.inspections.count {
-            it.status == CRITICAL_FORECAST
+            it.status == CRITICAL_FORECAST && !ConstantBaseApp.SYS_STATUS_DONE.equals(it.answerStatus)
         }
         //
         val forecastCount = acessoryFormView.inspections.count {
-            it.status == FORECAST
+            it.status == FORECAST && !ConstantBaseApp.SYS_STATUS_DONE.equals(it.answerStatus)
         }
         //
         val nonForecastCount = acessoryFormView.inspections.count {
-            it.status == NORMAL
+            it.status == NORMAL && !ConstantBaseApp.SYS_STATUS_DONE.equals(it.answerStatus)
         }
         //
         return Act011FormTab(
@@ -340,11 +340,18 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
                                 item: InspectionCell
     ){
         val onNotVerifyActionItem = mFrgListener.onNotVerifyAction(
-            position,
             acessoryFormView.devicePkPrefix + "." + item.itemCodeAndSeq
         )
-        acessoryFormView.inspections.set(position, onNotVerifyActionItem)
+
+        for(i in 0..acessoryFormView.inspections.size -1 ){
+            if(acessoryFormView.inspections[i].itemCodeAndSeq.equals(item.itemCodeAndSeq)){
+                acessoryFormView.inspections.set(i, onNotVerifyActionItem)
+                break
+            }
+        }
+
         mAdapter.refreshList(position, onNotVerifyActionItem)
+        mFrgListener.onRefreshTabCounter(acessoryFormView.tabIndex)
     }
     //
 }

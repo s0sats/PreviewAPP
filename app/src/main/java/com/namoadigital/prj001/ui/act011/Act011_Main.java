@@ -2128,8 +2128,13 @@ public class Act011_Main extends Base_Activity
 
     @NonNull
     @Override
-    public InspectionCell onNotVerifyAction(int position, @NonNull String itemPk) {
+    public InspectionCell onNotVerifyAction(@NonNull String itemPk) {
         return mPresenter.setNotVerifyItem(itemPk);
+    }
+
+    @Override
+    public void onRefreshTabCounter(int tabIndex) {
+        act011FfOption.updateTabList(screens.get(tabIndex).getTabObj(false),tabIndex);
     }
 
     //TODO APAGAR APPOS TESTES FINAL
