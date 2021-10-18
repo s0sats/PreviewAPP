@@ -79,7 +79,7 @@ import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_001;
 import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_002;
 import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_003;
 import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_004;
-import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_005;
+import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_006;
 import com.namoadigital.prj001.sql.GeOsDeviceSql_002;
 import com.namoadigital.prj001.sql.GeOsSql_001;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
@@ -2240,12 +2240,12 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     }
 
     @Override
-    public int getMissingForecastAnsewrs(GeOs geOs) {
+    public int getMissingForecastAnswers(GeOs geOs) {
         List<GeOsDevice> devices = getDeviceList(geOs);
         int missingForecastAnsewrs = 0;
         for (GeOsDevice device : devices) {
             List<GeOsDeviceItem> deviceitems = geOsDeviceItemDao.query(
-                    new GeOsDeviceItem_Sql_005(
+                    new GeOsDeviceItem_Sql_006(
                             device.getCustomer_code(),
                             device.getCustom_form_type(),
                             device.getCustom_form_code(),

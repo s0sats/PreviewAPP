@@ -3383,7 +3383,7 @@ public class Act011_Main extends Base_Activity
     }
 
     private int missingAnswersCounter() {
-        return mPresenter.getMissingForecastAnsewrs(geOs);
+        return mPresenter.getMissingForecastAnswers(geOs);
     }
 
     private void setFormOsViewVisibility(Act011CheckDialogBinding binding, int visibility) {

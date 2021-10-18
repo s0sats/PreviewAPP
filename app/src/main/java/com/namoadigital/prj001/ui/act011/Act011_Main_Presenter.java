@@ -79,5 +79,5 @@ public interface Act011_Main_Presenter {
 
     InspectionCell setNotVerifyItem(String itemPk);
 
-    int getMissingForecastAnsewrs(GeOs geOs);
+    int getMissingForecastAnswers(GeOs geOs);
 }
