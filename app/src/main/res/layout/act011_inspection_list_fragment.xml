@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nsv_main"
     android:fillViewport="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -31,6 +33,9 @@
             android:text="TextView"
             android:textColor="@color/text_black"
             android:textSize="24sp"
+            android:focusable="true"
+            android:focusedByDefault="true"
+            android:focusableInTouchMode="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/inc_header" />
@@ -121,7 +126,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
+            android:layout_marginBottom="30dp"
             android:visibility="visible"
+            android:nestedScrollingEnabled="true"
             app:layout_constraintBottom_toTopOf="@+id/cl_add_new_item_btn"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -139,9 +146,9 @@
             android:layout_marginEnd="16dp"
             android:background="@drawable/namoa_button_light_blue_states"
             android:paddingStart="8dp"
-            android:paddingTop="4dp"
+            android:paddingTop="10dp"
             android:paddingEnd="8dp"
-            android:paddingBottom="4dp"
+            android:paddingBottom="10dp"
             app:layout_constraintBottom_toTopOf="@+id/inc_navegation"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">

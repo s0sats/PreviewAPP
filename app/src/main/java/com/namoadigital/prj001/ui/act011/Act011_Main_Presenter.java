@@ -9,6 +9,7 @@ import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.GeOs;
+import com.namoadigital.prj001.model.InspectionCell;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 
@@ -75,4 +76,8 @@ public interface Act011_Main_Presenter {
     void updateGeOsItems(GeOs geOs, int missingJustifyCounter, String comments, String dateStart, String dateEnd);
 
     void addGeOsDeviceItemPhotosIntoFiles(GE_Custom_Form_Local formLocal, ArrayList<GE_File> geFiles, String sDate);
+
+    InspectionCell setNotVerifyItem(String itemPk);
+
+    int getMissingForecastAnsewrs(GeOs geOs);
 }
