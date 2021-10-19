@@ -48,7 +48,8 @@ class GeOsDeviceItem_Sql_002(
                        AND o.${GeOsDeviceItemDao.CUSTOM_FORM_DATA} = '$customFormData'                   
                        AND o.${GeOsDeviceItemDao.PRODUCT_CODE} = '$productCode'                   
                        AND o.${GeOsDeviceItemDao.SERIAL_CODE} = '$serialCode'                   
-                       AND o.${GeOsDeviceItemDao.DEVICE_TP_CODE} = '$deviceTpCode'                                    
+                       AND o.${GeOsDeviceItemDao.DEVICE_TP_CODE} = '$deviceTpCode'   
+                    ORDER BY o.${GeOsDeviceItemDao.ORDER_SEQ}   
                     """.trimIndent()
         return s
     }

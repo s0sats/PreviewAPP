@@ -38,7 +38,8 @@ class GeOsDeviceSql_002(
                        AND o.${GeOsDeviceDao.CUSTOM_FORM_TYPE} = '$customFormType'
                        AND o.${GeOsDeviceDao.CUSTOM_FORM_CODE} = '$customFormCode'
                        AND o.${GeOsDeviceDao.CUSTOM_FORM_VERSION} = '$customFormVersion'
-                       AND o.${GeOsDeviceDao.CUSTOM_FORM_DATA} = '$customFormData'                                 
+                       AND o.${GeOsDeviceDao.CUSTOM_FORM_DATA} = '$customFormData'      
+                    ORDER BY o.${GeOsDeviceDao.ORDER_SEQ}   
                     """.trimIndent()
         return s
     }
