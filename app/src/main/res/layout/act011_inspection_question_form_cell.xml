@@ -121,7 +121,6 @@
                 android:drawablePadding="8dp"
                 android:textAllCaps="true"
                 android:textColor="@color/namoa_os_form_verify_later"
-                android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_inspection_verification_action"
                 app:layout_constraintEnd_toEndOf="parent"

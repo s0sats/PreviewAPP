@@ -2116,7 +2116,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                                 device.getCustom_form_data(),
                                 device.getProduct_code(),
                                 device.getSerial_code(),
-                                comments
+                                comments,
+                                ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")
                         ).toSqlQuery()
                 );
             }
