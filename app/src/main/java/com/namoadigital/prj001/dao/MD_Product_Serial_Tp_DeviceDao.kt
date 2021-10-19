@@ -5,6 +5,7 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
+import androidx.core.database.getStringOrNull
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
@@ -339,7 +340,7 @@ class MD_Product_Serial_Tp_DeviceDao(
                         serial_code = getLong(getColumnIndex(SERIAL_CODE)),
                         device_tp_code = getInt(getColumnIndex(DEVICE_TP_CODE)),
                         order_seq = getInt(getColumnIndex(ORDER_SEQ)),
-                        tracking_number = getString(getColumnIndex(TRACKING_NUMBER))
+                        tracking_number = getStringOrNull(getColumnIndex(TRACKING_NUMBER))
                     )
                 }
             }

@@ -53,6 +53,7 @@ class GeOsDao(
         const val MEASURE_VALUE = "measure_value"
         const val MEASURE_CYCLE_VALUE = "measure_cycle_value"
         const val VALUE_SUFIX = "value_sufix"
+        const val RESTRICTION_DECIMAL = "restriction_decimal"
         const val DATE_START = "date_start"
         const val DATE_END = "date_end"
         const val LAST_MEASURE_VALUE = "last_measure_value"
@@ -316,6 +317,7 @@ class GeOsDao(
                         measure_value = getFloatOrNull(getColumnIndex(MEASURE_VALUE)),
                         measure_cycle_value = getIntOrNull(getColumnIndex(MEASURE_CYCLE_VALUE)),
                         value_sufix = getStringOrNull(getColumnIndex(VALUE_SUFIX)),
+                        restriction_decimal = getIntOrNull(getColumnIndex(RESTRICTION_DECIMAL)),
                         date_start = getStringOrNull(getColumnIndex(DATE_START)),
                         date_end = getStringOrNull(getColumnIndex(DATE_END)),
                         last_measure_value = getFloatOrNull(getColumnIndex(LAST_MEASURE_VALUE)),
@@ -380,6 +382,8 @@ class GeOsDao(
                     put(MEASURE_CYCLE_VALUE, it.measure_cycle_value)
                     //
                     put(VALUE_SUFIX, it.value_sufix)
+                    //
+                    put(RESTRICTION_DECIMAL, it.restriction_decimal)
                     //
                     put(DATE_START,it.date_start)
                     //

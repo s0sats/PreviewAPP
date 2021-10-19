@@ -502,8 +502,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 measure_tp_id = measure.measureTpId
                 measure_tp_desc = measure.measureTpDesc
                 measure_value = getFormattedMeasureValue()
-                measure_cycle_value = calculatedExecCycle
-
+                measure_cycle_value = getMeasureCycleValue(orderType)
             }
             date_start = binding.mkdtStartDate.getmValue()
         }
@@ -511,6 +510,18 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
 
     private fun getFormattedMeasureValue(): Float {
         return BigDecimal(binding.mketOsMainMeasureVal.text.toString()).setScale( mainMeasureTp?.restrictionDecimal?:2,RoundingMode.HALF_DOWN).toFloat()
+    }
+
+    /**
+     * Fun que retorno o valor de measeruCycleValue.
+     * Se orderType for preventiva, retorna o valor de calculatedExecCycle, se não -1
+     */
+    private fun getMeasureCycleValue(orderType: MdOrderType): Int{
+        return if(orderType.processType.equals(MdOrderType.PREVENTIVE,true)){
+            calculatedExecCycle
+        }else{
+            -1
+        }
     }
 
     private fun isPreventiveCycleValid(isOrderTypeInvalid: Boolean): Boolean {
@@ -893,7 +904,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 null
             )
         }.setOnDismissListener {
-            calculatedExecCycle = 0
+            calculatedExecCycle = -1
             calculatedExecMeasureValue = -1f
         }.create()
         .show()
