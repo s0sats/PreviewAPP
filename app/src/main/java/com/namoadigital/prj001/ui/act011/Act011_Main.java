@@ -3286,7 +3286,7 @@ public class Act011_Main extends Base_Activity
                         mPresenter.updateGeOsItems(
                                 geOs,
                                 missingAnswersCounter(),
-                                binding.act011DialogCheckTilJustifyMissingAnswerVal.toString(),
+                                binding.act011DialogCheckTilJustifyMissingAnswerVal.getEditText().getText().toString(),
                                 binding.act011DialogCheckMkdateFormStart.getmValue(),
                                 binding.act011DialogCheckMkdateFormEnd.getmValue()
                         );
