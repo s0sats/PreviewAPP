@@ -576,7 +576,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             for(GeOsDeviceItem item: deviceItem){
                 inspections.add(
                         new InspectionCell(
-                                item.getItem_check_desc(),
+                                item.getManual_desc() == null ? item.getItem_check_desc():item.getManual_desc(),
                                 Math.abs(ToolBox_Inf.getDateDiferenceInDays(item.getTarget_date(),ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"))),
                                 getPhotoCount(item),
                                 item.getMaterialList().size(),
@@ -2252,7 +2252,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                             device.getCustom_form_version(),
                             device.getCustom_form_data(),
                             device.getProduct_code(),
-                            device.getSerial_code()
+                            device.getSerial_code(),
+                            device.getDevice_tp_code()
                     ).toSqlQuery()
             );
             if(deviceitems != null) {

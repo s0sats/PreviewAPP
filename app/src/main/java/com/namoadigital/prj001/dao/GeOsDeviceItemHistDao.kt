@@ -5,6 +5,7 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
+import androidx.core.database.getStringOrNull
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
@@ -309,7 +310,7 @@ class GeOsDeviceItemHistDao(
                         exec_type = getString(getColumnIndex(EXEC_TYPE)),
                         exec_value = getFloat(getColumnIndex(EXEC_VALUE)),
                         exec_date = getString(getColumnIndex(EXEC_DATE)),
-                        exec_comment = getString(getColumnIndex(EXEC_COMMENT)),
+                        exec_comment = getStringOrNull(getColumnIndex(EXEC_COMMENT)),
                         exec_material = getInt(getColumnIndex(EXEC_MATERIAL)),
                     )
                 }
