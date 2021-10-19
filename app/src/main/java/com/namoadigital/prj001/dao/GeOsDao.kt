@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteException
+import android.util.Log
 import androidx.core.database.getFloatOrNull
 import androidx.core.database.getIntOrNull
 import androidx.core.database.getStringOrNull
@@ -12,6 +13,7 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
 import com.namoadigital.prj001.model.DaoObjReturn
 import com.namoadigital.prj001.model.GeOs
+import com.namoadigital.prj001.model.GeOsDeviceItem
 import com.namoadigital.prj001.model.MD_Product_Serial
 import com.namoadigital.prj001.sql.GeOsDeviceCreation_Sql_001
 import com.namoadigital.prj001.sql.GeOsDeviceItemCreation_Sql_001
@@ -447,6 +449,8 @@ class GeOsDao(
                 mdSerial.serial_code.toInt()
             ).toSqlQuery()
         )
+        //Chama fun que fará a primeira e segunda varredura.
+        checkScan(geOs, geOsDeviceItens)
         //
         openDB()
         try {
@@ -494,6 +498,37 @@ class GeOsDao(
         //
         closeDB()
         return daoObjReturn
+    }
+
+    private fun checkScan(
+        geOs: GeOs,
+        geOsDeviceItens: MutableList<GeOsDeviceItem>
+    ) {
+        //Primeira varredura
+        //Testa qual valor deve ser usado, measure_value ou measure_cycle_value(measure cycle só existe
+        //se for preventiva). Modificar no futuro?! replicar o measure_value no measure_cycle_value
+        // quando não for PREVENTIVE ?!
+        val measureConsider: Float =
+            if (geOs.measure_cycle_value != null && geOs.measure_cycle_value!! > -1) {
+                geOs.measure_cycle_value!!.toFloat()
+            } else {
+                geOs.measure_value ?: 0f
+            }
+        //Para a apresnetação, somente ITEM_CHECK_STATUS_NORMAL será avalaido e modificado.
+        geOsDeviceItens.forEach { item ->
+            when (item.item_check_status) {
+                GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL -> {
+                    if (item.next_cycle_measure != null
+                        && item.next_cycle_measure.compareTo(measureConsider) <= 0
+                    ) {
+                        item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_MEASURE_ALERT
+                    }
+                }
+                else ->{
+                    Log.d("Varredura", "Else")
+                }
+            }
+        }
     }
 
     fun removeFull(geOs: GeOs): DaoObjReturn {
