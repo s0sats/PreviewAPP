@@ -174,7 +174,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
         }.toString()
         binding.tvAddNewItemVal.text = hmAuxTrans.get("inspection_add_new_process_btn")
         binding.chkNonForecastItem.text = hmAuxTrans.get("inspection_hide_non_forecast_item_chk")
-        if(acessoryFormView.nonForecastFilter){
+        if(!acessoryFormView.nonForecastFilter){
             binding.chkNonForecastItem.apply {
                 post {
                     performClick()
@@ -189,7 +189,6 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
         }
 
     }
-
 
     companion object {
         @JvmStatic

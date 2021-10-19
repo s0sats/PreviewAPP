@@ -80,6 +80,7 @@
             android:layout_marginStart="24dp"
             android:textColor="@color/namoa_color_gray_9"
             android:textSize="16sp"
+            android:checked="true"
             app:layout_constraintEnd_toStartOf="@+id/tv_non_forecast_count"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintHorizontal_chainStyle="packed"

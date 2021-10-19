@@ -3319,7 +3319,7 @@ public class Act011_Main extends Base_Activity
         String startDate = binding.act011DialogCheckMkdateFormStart.getmValue();
         String endDate = binding.act011DialogCheckMkdateFormEnd.getmValue();
         //todo colocar valida com data atual apos tratar fluxo de assinatura.
-        return ToolBox_Inf.getDateDiferenceInDays(startDate, endDate) <= 0;
+        return ToolBox_Inf.getDateDiferenceInMilliseconds(startDate, endDate) <= 0;
     }
 
     private void setDialogVisibilityAndLabels(Act011CheckDialogBinding binding) {
