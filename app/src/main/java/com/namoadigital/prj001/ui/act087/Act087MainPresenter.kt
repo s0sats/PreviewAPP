@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act087
 
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -15,6 +16,7 @@ import com.namoadigital.prj001.service.SO_SERIAL_CODE
 import com.namoadigital.prj001.service.WS_Product_Serial_Backup
 import com.namoadigital.prj001.sql.*
 import com.namoadigital.prj001.util.Constant
+import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.io.File
@@ -67,6 +69,8 @@ class Act087MainPresenter(
             "dialog_bkp_machine_search_start",
             "alert_form_parameter_error_ttl",
             "alert_form_parameter_error_msg",
+            "alert_unsaved_data_will_be_lost_ttl",
+            "alert_unsaved_data_will_be_lost_confirm",
         )
         //
         val actAuxTrans = ToolBox_Inf.setLanguage(
@@ -393,90 +397,20 @@ class Act087MainPresenter(
             putString(GE_Custom_FormDao.CUSTOM_FORM_CODE,formOsHeader.custom_form_code.toString())
             putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, formOsHeader.custom_form_version.toString())
             putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, formOsHeader.custom_form_data.toString())
+            //Após finalizar a criação da O.S, além de navegar para a act011, o usr deve ser direcionado
+            //para a primeira aba depois do cabeçalho. O bundle abaixo tem os parametros para essa navegação.
+            putBundle(ConstantBaseApp.DEVICE_BUNDLE,
+                    Bundle().apply {
+                        putInt(ConstantBaseApp.DEVICE_ITEM_TAB_INDEX,1)
+                        putInt(ConstantBaseApp.DEVICE_ITEM_LIST_INDEX,-1)
+                        putString(ConstantBaseApp.DEVICE_ITEM_LIST_FILTER,"")
+                    }
+
+            )
             //putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, formOsHeader.custom_form_type.toString())
             //putString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT005);
 
         }
-    }
-    //todo apagar
-    private fun createFormLocal(formOsHeader: GeOs) {
-       formOsHeader.custom_form_data = getNextFormData(formOsHeader)
-       geOsDao.createGeOsStructure(formOsHeader,serialObj)
-       /*
-//        val geCustomForm = getForm(
-//            formOsHeader.custom_form_type,
-//            formOsHeader.custom_form_code,
-//            formOsHeader.custom_form_version,
-//        )
-//        val mdProduct = getProductInfo(
-//            productCode
-//        )
-//        //
-//        GE_Custom_Form_Local().apply {
-//            customer_code = formOsHeader.customer_code
-//            custom_form_type = formOsHeader.custom_form_type
-//            custom_form_code = formOsHeader.custom_form_code
-//            custom_form_version = formOsHeader.custom_form_version
-//            custom_form_data = getNextFormData(geCustomForm)
-//            custom_form_pre = ToolBox_Inf.getPrefix(context)
-//            custom_form_status = ConstantBaseApp.SYS_STATUS_IN_PROCESSING
-//            require_signature = geCustomForm.require_signature
-//            require_location = geCustomForm.require_location
-//            require_serial_done = geCustomForm.require_serial_done
-//            automatic_fill = geCustomForm.automatic_fill
-//            custom_product_code = mdProduct!!.product_code.toInt()
-//            custom_product_desc = mdProduct.product_desc
-//            custom_product_id = mdProduct.product_id
-//            custom_product_icon_name = mdProduct.product_icon_name
-//            custom_product_icon_url =  mdProduct.product_icon_url
-//            custom_product_icon_url_local =  mdProduct.product_icon_url_local
-//            custom_form_desc =
-//            serial_id =
-//            schedule_date_start_format =
-//            schedule_date_end_format =
-//            schedule_date_start_format_ms =
-//            schedule_date_end_format_ms =
-//            require_serial =
-//            allow_new_serial_cl =
-//            all_site =
-//            all_operation =
-//            all_product =
-//
-//            site_code =
-//            site_id =
-//            site_desc =
-//            io_control =
-//            inbound_auto_create =
-//            operation_code =
-//            operation_id =
-//            operation_desc =
-//            local_control =
-//            product_io_control =
-//            site_restriction =
-//            serial_rule =
-//            serial_min_length =
-//            serial_max_length =
-//            schedule_comments =
-//
-//            schedule_prefix =
-//            schedule_code =
-//            schedule_exec =
-//
-//            ticket_prefix =
-//            ticket_code =
-//            ticket_seq =
-//            ticket_seq_tmp =
-//            step_code =
-//            tag_operational_code =
-//            tag_operational_id =
-//            tag_operational_desc =
-//            is_so =
-//            so_edit_start_end =
-//            so_order_type_code_default =
-//            so_allow_change_order_type =
-//            so_allow_backup =
-//        }
-*/
     }
 
     private fun getNextFormData(geOs: GeOs): Int {
@@ -490,5 +424,24 @@ class Act087MainPresenter(
         )
         //
         return nextDataAux[GE_Custom_Form_Local_Sql_002.ID]!!.toInt()
+    }
+
+    override fun onBackPressedClicked(anyDataChanged: Boolean) {
+        when(anyDataChanged){
+            true ->{
+                mView.showAlert(
+                    hmAuxTrans["alert_unsaved_data_will_be_lost_ttl"],
+                    hmAuxTrans["alert_unsaved_data_will_be_lost_confirm"],
+                    DialogInterface.OnClickListener { _, _ ->
+                        mView.callAct083()
+                    },
+                    1
+                )
+            }
+            else ->{
+                    mView.callAct083()
+                }
+        }
+
     }
 }

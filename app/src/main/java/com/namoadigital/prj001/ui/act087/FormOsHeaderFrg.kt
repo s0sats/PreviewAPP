@@ -311,6 +311,10 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         isBarcodeRead = false
     }
 
+    override fun isAnyDataChanged(): Boolean {
+        return true
+    }
+
     private fun hasBarcodeSerialMatch(
         serialBkpMachineList: List<FormOsHeaderFrgSerialBkpItemAbs>,
         productCode: Int,
@@ -380,9 +384,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
 
                 }
                 mainMeasureTp?.let { measure->
-                    measure.restrictionDecimal?.let{ decimal ->
-                        mketOsMainMeasureVal.setmDecimal(decimal)
-                    }
+                    mketOsMainMeasureVal.setmDecimal(measure.restrictionDecimal?:4)
                 }
             }
     }
