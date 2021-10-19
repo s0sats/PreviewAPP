@@ -5,6 +5,8 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
+import androidx.core.database.getDoubleOrNull
+import androidx.core.database.getStringOrNull
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
@@ -454,17 +456,17 @@ class MD_Product_Serial_Tp_Device_ItemDao(
                         item_check_code = getInt(getColumnIndex(ITEM_CHECK_CODE)) ,
                         item_check_seq = getInt(getColumnIndex(ITEM_CHECK_SEQ)) ,
                         apply_material = getString(getColumnIndex(APPLY_MATERIAL)) ,
-                        verification_instruction = getString(getColumnIndex(VERIFICATION_INSTRUCTION)),
+                        verification_instruction = getStringOrNull(getColumnIndex(VERIFICATION_INSTRUCTION)),
                         require_justify_problem = getInt(getColumnIndex(REQUIRE_JUSTIFY_PROBLEM)) ,
                         critical_item = getInt(getColumnIndex(CRITICAL_ITEM)),
                         order_seq = getInt(getColumnIndex(ORDER_SEQ)),
                         structure = getInt(getColumnIndex(STRUCTURE)),
-                        manual_desc = getString(getColumnIndex(MANUAL_DESC)),
-                        next_cycle_measure = getDouble(getColumnIndex(NEXT_CYCLE_MEASURE)),
-                        next_cycle_measure_date = getString(getColumnIndex(NEXT_CYCLE_MEASURE_DATE)),
-                        next_cycle_limit_date = getString(getColumnIndex(NEXT_CYCLE_LIMIT_DATE)),
+                        manual_desc = getStringOrNull(getColumnIndex(MANUAL_DESC)),
+                        next_cycle_measure = getDoubleOrNull(getColumnIndex(NEXT_CYCLE_MEASURE)),
+                        next_cycle_measure_date = getStringOrNull(getColumnIndex(NEXT_CYCLE_MEASURE_DATE)),
+                        next_cycle_limit_date = getStringOrNull(getColumnIndex(NEXT_CYCLE_LIMIT_DATE)),
                         item_check_status = getString(getColumnIndex(ITEM_CHECK_STATUS)),
-                        target_date = getString(getColumnIndex(TARGET_DATE))
+                        target_date = getStringOrNull(getColumnIndex(TARGET_DATE))
                     )
                 }
             }

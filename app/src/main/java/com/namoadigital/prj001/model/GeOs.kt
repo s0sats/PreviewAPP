@@ -22,6 +22,7 @@ class GeOs(
     var measure_value: Float?,
     var measure_cycle_value: Int?,
     var value_sufix: String?, //MeMeasure
+    var restriction_decimal: Int?, //MeMeasure
     var date_start: String?,
     var date_end: String? = null,
     val last_measure_value: Float?,

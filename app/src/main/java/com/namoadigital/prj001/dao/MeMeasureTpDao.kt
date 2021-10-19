@@ -4,6 +4,8 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteException
+import androidx.core.database.getIntOrNull
+import androidx.core.database.getStringOrNull
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
@@ -294,13 +296,13 @@ class MeMeasureTpDao(
                         getInt(getColumnIndex(MEASURE_TP_CODE)),
                         getString(getColumnIndex(MEASURE_TP_ID)),
                         getString(getColumnIndex(MEASURE_TP_DESC)),
-                        getString(getColumnIndex(VALUE_SUFIX)),
-                        getString(getColumnIndex(RESTRICTION_TYPE)),
-                        getInt(getColumnIndex(RESTRICTION_MIN)),
-                        getInt(getColumnIndex(RESTRICTION_MAX)),
-                        getInt(getColumnIndex(RESTRICTION_DECIMAL)),
-                        getInt(getColumnIndex(VALUE_CYCLE_SIZE)),
-                        getInt(getColumnIndex(CYCLE_TOLERANCE))
+                        getStringOrNull(getColumnIndex(VALUE_SUFIX)),
+                        getStringOrNull(getColumnIndex(RESTRICTION_TYPE)),
+                        getIntOrNull(getColumnIndex(RESTRICTION_MIN)),
+                        getIntOrNull(getColumnIndex(RESTRICTION_MAX)),
+                        getIntOrNull(getColumnIndex(RESTRICTION_DECIMAL)),
+                        getIntOrNull(getColumnIndex(VALUE_CYCLE_SIZE)),
+                        getIntOrNull(getColumnIndex(CYCLE_TOLERANCE))
                     )
                 }
             }

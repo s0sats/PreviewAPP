@@ -311,6 +311,10 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         isBarcodeRead = false
     }
 
+    override fun isAnyDataChanged(): Boolean {
+        return true
+    }
+
     private fun hasBarcodeSerialMatch(
         serialBkpMachineList: List<FormOsHeaderFrgSerialBkpItemAbs>,
         productCode: Int,
@@ -372,15 +376,15 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 }
                 //todo rever o save do float no obj
                 formOsHeader.measure_value?.let {
-                    mketOsMainMeasureVal.setText(BigDecimal(it.toDouble()).setScale(mainMeasureTp?.restrictionDecimal?:2,RoundingMode.HALF_DOWN).toString())
+                    mketOsMainMeasureVal.setText(
+                        getFormattedLastMeasureValue(it)
+                    )
                     mketOsMainMeasureVal.isEnabled = isOsCreation
                     mketOsMainMeasureVal.setmBARCODE(isOsCreation)
 
                 }
                 mainMeasureTp?.let { measure->
-                    measure.restrictionDecimal?.let{ decimal ->
-                        mketOsMainMeasureVal.setmDecimal(decimal)
-                    }
+                    mketOsMainMeasureVal.setmDecimal(measure.restrictionDecimal?:4)
                 }
             }
     }
@@ -398,8 +402,9 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     ): String {
         val meSufix = " ${formOsHeader.value_sufix?:" "}"
         if(lastMeasureValue != null && lastMeasureDate != null){
+            val formattedLastMeasureValue = getFormattedLastMeasureValue(lastMeasureValue)
             //O espaço esta na var meSufix
-            return "$lastMeasureValue$meSufix - ${
+            return "$formattedLastMeasureValue$meSufix - ${
                 ToolBox_Inf.millisecondsToString(
                     ToolBox_Inf.dateToMilliseconds(
                         lastMeasureDate
@@ -409,8 +414,9 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         }else{
             var info = ""
             lastMeasureValue?.let{
+                val formattedLastMeasureValue = getFormattedLastMeasureValue(it)
                 //O espaço esta na var meSufix
-                info += "$it$meSufix"
+                info += "$formattedLastMeasureValue$meSufix"
             }
             lastMeasureDate?.let{
                 info += ToolBox_Inf.millisecondsToString(
@@ -423,6 +429,17 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             }
             return info
         }
+    }
+
+    /**
+     * Fun que retorna o valor da ultima medição formatada utilizando a qtd de casas decimais definida
+     * na medição
+     */
+    private fun getFormattedLastMeasureValue(lastMeasureValue: Float) : String{
+        return BigDecimal(lastMeasureValue.toDouble()).setScale(
+            formOsHeader.restriction_decimal ?: 4,
+            RoundingMode.HALF_DOWN
+        ).toString()
     }
 
     private fun iniSaveBtn() {
@@ -502,15 +519,26 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 measure_tp_id = measure.measureTpId
                 measure_tp_desc = measure.measureTpDesc
                 measure_value = getFormattedMeasureValue()
-                measure_cycle_value = calculatedExecCycle
-
+                measure_cycle_value = getMeasureCycleValue(orderType)
             }
             date_start = binding.mkdtStartDate.getmValue()
         }
     }
 
     private fun getFormattedMeasureValue(): Float {
-        return BigDecimal(binding.mketOsMainMeasureVal.text.toString()).setScale( mainMeasureTp?.restrictionDecimal?:2,RoundingMode.HALF_DOWN).toFloat()
+        return BigDecimal(binding.mketOsMainMeasureVal.text.toString()).setScale( mainMeasureTp?.restrictionDecimal?:4,RoundingMode.HALF_DOWN).toFloat()
+    }
+
+    /**
+     * Fun que retorno o valor de measeruCycleValue.
+     * Se orderType for preventiva, retorna o valor de calculatedExecCycle, se não -1
+     */
+    private fun getMeasureCycleValue(orderType: MdOrderType): Int{
+        return if(orderType.processType.equals(MdOrderType.PREVENTIVE,true)){
+            calculatedExecCycle
+        }else{
+            -1
+        }
     }
 
     private fun isPreventiveCycleValid(isOrderTypeInvalid: Boolean): Boolean {
@@ -893,7 +921,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 null
             )
         }.setOnDismissListener {
-            calculatedExecCycle = 0
+            calculatedExecCycle = -1
             calculatedExecMeasureValue = -1f
         }.create()
         .show()

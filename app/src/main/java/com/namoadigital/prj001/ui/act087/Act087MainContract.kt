@@ -23,6 +23,8 @@ interface Act087MainContract {
         fun reportSerialBkpMachineToFrag(
             serialBkpMachineList: List<FormOsHeaderFrgSerialBkpItemAbs>,
             onlineSearch: Boolean)
+
+        fun callAct083()
     }
 
     interface I_Presenter{
@@ -37,5 +39,6 @@ interface Act087MainContract {
         fun createOsHeader(formOsHeader: GeOs)
         fun executeWsBkpMachine(bkpProductCode: Long, bkpSerialId: String)
         fun processWsBkpMachineResult(mLink: String?)
+        fun onBackPressedClicked(anyDataChanged: Boolean)
     }
 }

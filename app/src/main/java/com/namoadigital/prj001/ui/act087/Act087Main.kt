@@ -4,20 +4,23 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.WindowManager
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag
+import com.namoadigital.prj001.R
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.databinding.Act087MainBinding
 import com.namoadigital.prj001.databinding.Act087MainContentBinding
 import com.namoadigital.prj001.extensions.setFrag
 import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.service.WS_Product_Serial_Backup
-import com.namoadigital.prj001.ui.act005.Act005_Main
 import com.namoadigital.prj001.ui.act011.Act011_Main
 import com.namoadigital.prj001.ui.act011.frags.Act011BaseFrgInteractionNavegation
+import com.namoadigital.prj001.ui.act083.Act083_Main
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -117,6 +120,7 @@ class Act087Main : Base_Activity_Frag(),
     private var scheduleCode: Int? = null
     private var scheduleExec: Int? = null
     private lateinit var bundle: Bundle
+    private var act083Bundle: Bundle? = null
     private val mFormHeaderFragListener: FormOsHeaderFrgInfr by lazy{
         formOsHeaderFrg
     }
@@ -205,6 +209,24 @@ class Act087Main : Base_Activity_Frag(),
                 schedulePrefix = getInt(MD_Schedule_ExecDao.SCHEDULE_PREFIX)
                 scheduleCode = getInt(MD_Schedule_ExecDao.SCHEDULE_CODE)
                 scheduleExec = getInt(MD_Schedule_ExecDao.SCHEDULE_EXEC)
+
+                //
+                if (bundle.containsKey(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW)
+                    || bundle.containsKey(MyActionFilterParam.MY_ACTION_FILTER_PARAM)
+                ) {
+                    act083Bundle = Bundle()
+                    act083Bundle?.putString(
+                        ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
+                        bundle.getString(
+                            ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
+                            ConstantBaseApp.ACT005
+                        )
+                    )
+                    act083Bundle?.putSerializable(
+                        MyActionFilterParam.MY_ACTION_FILTER_PARAM,
+                        ToolBox_Inf.getMyActionFilterParam(bundle)
+                    )
+                }
             }
         }?:Bundle()
     }
@@ -377,7 +399,33 @@ class Act087Main : Base_Activity_Frag(),
 
     override fun onBackPressed() {
         //super.onBackPressed()
-        callAct005()
+        //callAct005()
+        mPresenter.onBackPressedClicked(mFormHeaderFragListener.isAnyDataChanged())
+    }
+
+    override fun callAct083() {
+        val intent = Intent(context, Act083_Main::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        //
+        val mBundle = Bundle()
+        getMyActionsParam(mBundle)
+        intent.putExtras(mBundle)
+        //
+        startActivity(intent)
+        finish()
+    }
+
+    private fun getMyActionsParam(mBundle: Bundle) {
+        act083Bundle?.let{
+            mBundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT083)
+            val myActionFilterParam = ToolBox_Inf.getMyActionFilterParam(it)
+            it.putSerializable(
+                MyActionFilterParam.MY_ACTION_FILTER_PARAM,
+                myActionFilterParam
+            )
+            //
+            mBundle.putAll(act083Bundle)
+        }
     }
 
     private fun callAct005() {
@@ -415,5 +463,14 @@ class Act087Main : Base_Activity_Frag(),
                 putInt(MD_Schedule_ExecDao.SCHEDULE_EXEC,scheduleExec.toInt())
             }
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        //getMenuInflater().inflate(R.menu.act011_main_menu, menu);
+        menu.add(0, 1, Menu.NONE, resources.getString(R.string.app_name))
+        menu.getItem(0).icon = resources.getDrawable(R.mipmap.ic_namoa)
+        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+        return true
     }
 }
