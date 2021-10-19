@@ -180,6 +180,11 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
                     performClick()
                 }
             }
+        }else{
+            binding.apply {
+                mAdapter.applyNonForecastFilter(chkNonForecastItem.isChecked)
+                handleAddNewProcessVisibility()
+            }
         }
         //
         if(acessoryFormView.inspections.isEmpty()) {
