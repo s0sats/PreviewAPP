@@ -372,7 +372,9 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 }
                 //todo rever o save do float no obj
                 formOsHeader.measure_value?.let {
-                    mketOsMainMeasureVal.setText(BigDecimal(it.toDouble()).setScale(mainMeasureTp?.restrictionDecimal?:2,RoundingMode.HALF_DOWN).toString())
+                    mketOsMainMeasureVal.setText(
+                        getFormattedLastMeasureValue(it)
+                    )
                     mketOsMainMeasureVal.isEnabled = isOsCreation
                     mketOsMainMeasureVal.setmBARCODE(isOsCreation)
 
@@ -398,8 +400,9 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     ): String {
         val meSufix = " ${formOsHeader.value_sufix?:" "}"
         if(lastMeasureValue != null && lastMeasureDate != null){
+            val formattedLastMeasureValue = getFormattedLastMeasureValue(lastMeasureValue)
             //O espaço esta na var meSufix
-            return "$lastMeasureValue$meSufix - ${
+            return "$formattedLastMeasureValue$meSufix - ${
                 ToolBox_Inf.millisecondsToString(
                     ToolBox_Inf.dateToMilliseconds(
                         lastMeasureDate
@@ -409,8 +412,9 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         }else{
             var info = ""
             lastMeasureValue?.let{
+                val formattedLastMeasureValue = getFormattedLastMeasureValue(it)
                 //O espaço esta na var meSufix
-                info += "$it$meSufix"
+                info += "$formattedLastMeasureValue$meSufix"
             }
             lastMeasureDate?.let{
                 info += ToolBox_Inf.millisecondsToString(
@@ -423,6 +427,17 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             }
             return info
         }
+    }
+
+    /**
+     * Fun que retorna o valor da ultima medição formatada utilizando a qtd de casas decimais definida
+     * na medição
+     */
+    private fun getFormattedLastMeasureValue(lastMeasureValue: Float) : String{
+        return BigDecimal(lastMeasureValue.toDouble()).setScale(
+            formOsHeader.restriction_decimal ?: 4,
+            RoundingMode.HALF_DOWN
+        ).toString()
     }
 
     private fun iniSaveBtn() {
@@ -509,7 +524,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     }
 
     private fun getFormattedMeasureValue(): Float {
-        return BigDecimal(binding.mketOsMainMeasureVal.text.toString()).setScale( mainMeasureTp?.restrictionDecimal?:2,RoundingMode.HALF_DOWN).toFloat()
+        return BigDecimal(binding.mketOsMainMeasureVal.text.toString()).setScale( mainMeasureTp?.restrictionDecimal?:4,RoundingMode.HALF_DOWN).toFloat()
     }
 
     /**
