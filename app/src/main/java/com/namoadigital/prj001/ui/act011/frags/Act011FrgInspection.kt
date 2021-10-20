@@ -10,6 +10,10 @@ import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.adapter.Act011InspectionFormAdapter
+import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
+import com.namoadigital.prj001.dao.MD_Schedule_ExecDao
 import com.namoadigital.prj001.databinding.Act011FrgIncludeHeaderBinding
 import com.namoadigital.prj001.databinding.Act011InspectionListFragmentBinding
 import com.namoadigital.prj001.model.AcessoryFormView
@@ -20,8 +24,10 @@ import com.namoadigital.prj001.model.InspectionCell.Companion.CRITICAL_FORECAST
 import com.namoadigital.prj001.model.InspectionCell.Companion.FORECAST
 import com.namoadigital.prj001.model.InspectionCell.Companion.MANUAL_ALERT
 import com.namoadigital.prj001.model.InspectionCell.Companion.NORMAL
+import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
+import java.util.*
 
 private const val ARG_VIEW_OBJECT = "ARG_VIEW_OBJECT"
 private const val MAIN_HMAUX_TRANS_KEY = "MAIN_HMAUX_TRANS_KEY"
@@ -36,6 +42,21 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
     private lateinit var acessoryFormView: AcessoryFormView
     private var _mFrgListener: InspectionListFragmentInteraction? = null
     private val mFrgListener get() = _mFrgListener!!
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let{
+            hmAuxTrans = HMAux.getHmAuxFromHashMap(it.getSerializable(Constant.MAIN_HMAUX_TRANS_KEY) as HashMap<String?, String?>)
+            tabIndex = it.getInt(GE_Custom_Form_Field_LocalDao.PAGE)
+            tabLastIndex = it.getInt(PARAM_LAST_INDEX)
+            formStatus = it.getString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS,"")
+            scheduleDesc = it.getString(MD_Schedule_ExecDao.SCHEDULE_DESC)
+            scheduleComments = it.getString(GE_Custom_Form_Field_LocalDao.COMMENT)
+            isFormOs = it.getBoolean(GE_Custom_Form_LocalDao.IS_SO,false)
+            acessoryFormView = it.getSerializable(ARG_VIEW_OBJECT) as AcessoryFormView
+        }
+    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -213,7 +234,12 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
                 this.scheduleDesc = scheduleDesc
                 this.scheduleComments = scheduleComments
                 arguments = Bundle().apply {
-
+                    putSerializable(Constant.MAIN_HMAUX_TRANS_KEY, hmAuxTrans)
+                    putString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS,formStatus)
+                    putInt(GE_Custom_Form_Field_LocalDao.PAGE,tabIndex)
+                    putInt(PARAM_LAST_INDEX,tabLastIndex)
+                    putString(MD_Schedule_ExecDao.SCHEDULE_DESC,scheduleDesc)
+                    putString(GE_Custom_Form_Field_LocalDao.COMMENT,scheduleComments)
                 }
             }
 
@@ -242,6 +268,9 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
         acessoryFormView = viewObject
         acessoryFormView.tabIndex = this.tabIndex
         this.tabItemSelectedIndex = viewObject.lastPositionSelected
+        arguments?.apply {
+            putSerializable(ARG_VIEW_OBJECT, acessoryFormView)
+        }
     }
 
     override fun getViewBinding() = Act011InspectionListFragmentBinding.inflate(layoutInflater)
