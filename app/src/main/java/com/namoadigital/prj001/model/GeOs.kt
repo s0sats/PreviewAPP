@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model
 
+import java.io.Serializable
+
 class GeOs(
     val customer_code: Long,
     val custom_form_type: Int,
@@ -33,4 +35,4 @@ class GeOs(
     val so_allow_change_order_type: Int,
     val so_allow_backup: Int,
     val device_tp_code_main: Int?
-)
+):Serializable

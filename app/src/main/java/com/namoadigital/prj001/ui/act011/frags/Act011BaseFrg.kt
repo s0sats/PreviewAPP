@@ -18,8 +18,10 @@ import com.namoadigital.prj001.databinding.Act011FrgIncludeNavegationBinding
 import com.namoadigital.prj001.databinding.CvProductSerialWithIconBinding
 import com.namoadigital.prj001.model.Act011FormTab
 import com.namoadigital.prj001.model.Act011FormTabStatus
+import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
+import java.util.HashMap
 
 abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFrgValidation{
     protected val PARAM_LAST_INDEX = "LAST_INDEX"
@@ -114,6 +116,7 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
          */
         with(savedInstanceState) {
             if (this != null &&
+                containsKey(Constant.MAIN_HMAUX_TRANS_KEY) &&
                 containsKey(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS) &&
                 containsKey(GE_Custom_Form_Field_LocalDao.PAGE) &&
                 containsKey(PARAM_LAST_INDEX) &&
@@ -121,6 +124,7 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
                 containsKey(MD_Schedule_ExecDao.SCHEDULE_DESC) &&
                 containsKey(GE_Custom_Form_LocalDao.IS_SO)
             ) {
+                hmAuxTrans = HMAux.getHmAuxFromHashMap(this.getSerializable(Constant.MAIN_HMAUX_TRANS_KEY) as HashMap<String?, String?>)
                 formStatus = getString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS, "")
                 tabIndex = getInt(GE_Custom_Form_Field_LocalDao.PAGE)
                 tabLastIndex = getInt(PARAM_LAST_INDEX)
@@ -357,6 +361,7 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.apply {
+            putSerializable(Constant.MAIN_HMAUX_TRANS_KEY, hmAuxTrans)
             putString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS,formStatus)
             putInt(GE_Custom_Form_Field_LocalDao.PAGE,tabIndex)
             putInt(PARAM_LAST_INDEX,tabLastIndex)
