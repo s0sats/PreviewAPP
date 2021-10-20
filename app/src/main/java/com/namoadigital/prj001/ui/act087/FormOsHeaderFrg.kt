@@ -194,7 +194,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
      * Se não houver order type default, add item em branco
      */
     private fun getSpinnerOrderStringList() : List<String>{
-        if(formOsHeader.so_order_type_code_default == null) {
+        if(formOsHeader.so_order_type_code_default == null && isOsCreation) {
             orderTypeList.add(
                 0,
                 MdOrderType(
@@ -529,6 +529,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             order_type_code = orderType.orderTypeCode
             order_type_id = orderType.orderTypeId
             order_type_desc = orderType.orderTypeDesc
+            process_type = orderType.processType
+            display_option = orderType.displayOption
             selectedBkpMachineProduct?.let{ product ->
                 backup_product_code = product.product_code.toInt()
                 backup_product_id = product.product_id
