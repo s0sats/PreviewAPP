@@ -8907,10 +8907,4 @@ public class ToolBox_Inf {
         return l;
     }
 
-    public static SpannableString addHighlightForRequiredFields(Context context, String text) {
-        text += "*";
-        SpannableString  spannableString = new SpannableString(text);
-        spannableString.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.namoa_amount_pipeline_background_btn)), text.indexOf("*"), text.length(), 0);
-        return spannableString;
-    }
 }

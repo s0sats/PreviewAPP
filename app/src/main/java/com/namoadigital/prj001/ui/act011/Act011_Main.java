@@ -92,6 +92,7 @@ import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.databinding.Act011CheckDialogBinding;
+import com.namoadigital.prj001.extensions.TextViewKt;
 import com.namoadigital.prj001.model.AcessoryFormView;
 import com.namoadigital.prj001.model.Act011FfOptionsViewObject;
 import com.namoadigital.prj001.model.Act011FormTab;
@@ -3342,7 +3343,7 @@ public class Act011_Main extends Base_Activity
             binding.act011DialogCheckMkdateFormStart.setmLabel(hmAux_Trans.get("dialog_finalize_os_form_start_date_lbl"));
             binding.act011DialogCheckMkdateFormStart.setmValue(formData.getDate_start());
             binding.act011DialogCheckMkdateFormEnd.setmCanClean(false);
-            binding.act011DialogCheckMkdateFormEnd.setmLabel(ToolBox_Inf.addHighlightForRequiredFields(context, hmAux_Trans.get("dialog_finalize_os_form_end_date_lbl")).toString());
+            binding.act011DialogCheckMkdateFormEnd.setmLabel(hmAux_Trans.get("dialog_finalize_os_form_end_date_lbl"));
             if(geOs.getSo_edit_start_end() == 0) {
                 binding.act011DialogCheckMkdateFormEnd.setEnabled(false);
                 binding.act011DialogCheckMkdateFormEnd.setClickable(false);
@@ -3357,7 +3358,8 @@ public class Act011_Main extends Base_Activity
             binding.act011DialogFinalizeLbl.setText(hmAux_Trans.get("dialog_finalize_os_form_lbl"));
             binding.act011DialogCheckTvMissingAnswerLbl.setText(hmAux_Trans.get("dialog_finalize_os_form_missing_answer_count_lbl"));
             binding.act011DialogCheckTvElapsedTimeLbl.setText(hmAux_Trans.get("dialog_finalize_os_form_elapsed_time_lbl"));
-            binding.act011DialogCheckTvJustifyMissingAnswerLbl.setText(ToolBox_Inf.addHighlightForRequiredFields(context, hmAux_Trans.get("dialog_finalize_os_form_justify_missing_answer_lbl")));
+            binding.act011DialogCheckTvJustifyMissingAnswerLbl.setText(hmAux_Trans.get("dialog_finalize_os_form_justify_missing_answer_lbl"));
+            TextViewKt.setAsRequired(binding.act011DialogCheckTvJustifyMissingAnswerLbl, true);
         }else{
             setFormOsViewVisibility(binding, View.GONE);
             binding.act011DialogFinalizeLbl.setText(hmAux_Trans.get("dialog_finalize_form_lbl"));
