@@ -42,6 +42,8 @@ import kotlin.math.ceil
 
 class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrgInfr {
 
+    private val PARAM_IS_CREATION_OS = "PARAM_IS_CREATION_OS"
+
     private var isOsCreation: Boolean = false
     private lateinit var formOsHeader: GeOs
     private var mCreationListener: FormOsHeaderFrgCreationInteraction? = null
@@ -97,6 +99,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                     putInt(PARAM_LAST_INDEX,tabLastIndex)
                     putString(MD_Schedule_ExecDao.SCHEDULE_DESC,scheduleDesc)
                     putString(GE_Custom_Form_Field_LocalDao.COMMENT,scheduleComments)
+                    putSerializable(GeOs::javaClass.name, formOsHeader)
+                    putBoolean(PARAM_IS_CREATION_OS,isOsCreation)
                     putBoolean(GE_Custom_Form_LocalDao.IS_SO,isFormOs)
                 }
             }
@@ -131,6 +135,21 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 "records_found_lbl",
                 "form_os_header_lbl",
             )
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let{
+            hmAuxTrans = HMAux.getHmAuxFromHashMap(it.getSerializable(Constant.MAIN_HMAUX_TRANS_KEY) as HashMap<String?, String?>)
+            tabIndex = it.getInt(GE_Custom_Form_Field_LocalDao.PAGE)
+            tabLastIndex = it.getInt(PARAM_LAST_INDEX)
+            formStatus = it.getString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS,"")
+            scheduleDesc = it.getString(MD_Schedule_ExecDao.SCHEDULE_DESC)
+            scheduleComments = it.getString(GE_Custom_Form_Field_LocalDao.COMMENT)
+            isOsCreation = it.getBoolean(PARAM_IS_CREATION_OS)
+            formOsHeader = it.getSerializable(GeOs::javaClass.name) as GeOs
+            isFormOs = it.getBoolean(GE_Custom_Form_LocalDao.IS_SO,false)
         }
     }
 
