@@ -38,6 +38,7 @@ class GeOsDeviceItem(
     val next_cycle_measure_date :String?,
     val next_cycle_limit_date :String?,
     val value_sufix :String?,
+    val restriction_decimal :Int?,
     var item_check_status :String,
     var target_date :String?,
     @Expose

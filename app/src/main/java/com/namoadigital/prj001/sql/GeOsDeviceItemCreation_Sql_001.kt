@@ -17,7 +17,8 @@ class GeOsDeviceItemCreation_Sql_001(
     private val customFormData: Int,
     private val productCode: Int,
     private val serialCode: Int,
-    private val valueSufix: String?
+    private val valueSufix: String?,
+    private val restrictionDecimal: Int?
 ) : Specification {
     override fun toSqlQuery(): String {
 /*
@@ -45,6 +46,7 @@ class GeOsDeviceItemCreation_Sql_001(
                         i.${MdItemCheckDao.ITEM_CHECK_ID},
                         i.${MdItemCheckDao.ITEM_CHECK_DESC},
                         $sufix ${GeOsDeviceItemDao.VALUE_SUFIX},                                 
+                        $restrictionDecimal ${GeOsDeviceItemDao.RESTRICTION_DECIMAL},                                 
                         null ${GeOsDeviceItemDao.EXEC_TYPE},
                         null ${GeOsDeviceItemDao.EXEC_DATE},
                         null ${GeOsDeviceItemDao.EXEC_COMMENT},
