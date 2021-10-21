@@ -28,7 +28,7 @@ class GeOsDeviceItem(
     val apply_material :String,
     val verification_instruction :String?,
     val require_justify_problem :Int,
-    val critical_item :Int,
+    var critical_item :Int,//Pode ser modificado pela segunda varredura
     val order_seq :Int,
     @Expose
     val structure :Int,
@@ -73,6 +73,7 @@ class GeOsDeviceItem(
         const val ITEM_CHECK_STATUS_MEASURE_ALERT = "MEASURE_ALERT"
         const val ITEM_CHECK_STATUS_MANUAL_ALERT = "MANUAL_ALERT"
         const val ITEM_CHECK_STATUS_MANUAL = "MANUAL"
+        const val ITEM_CHECK_STATUS_FORCED = "FORCED"
         //
         const val APPLY_MATERIAL_NO = "NO"
         const val APPLY_MATERIAL_OPTIONAL = "OPTIONAL"

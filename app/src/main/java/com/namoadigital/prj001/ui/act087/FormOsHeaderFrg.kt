@@ -36,7 +36,6 @@ import com.namoadigital.prj001.util.ToolBox_Inf
 import com.namoadigital.prj001.view.act.product_selection.Act_Product_Selection
 import java.math.BigDecimal
 import java.math.RoundingMode
-import java.text.DecimalFormatSymbols
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.ceil
@@ -600,7 +599,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
      * medição com ciclo.
      */
     private fun isPreventiveCycledOs(orderType: MdOrderType) =
-        (orderType.processType.equals(MdOrderType.PREVENTIVE, true)
+        (orderType.processType.equals(MdOrderType.PROCESS_TYPE_PREVENTIVE, true)
                 && mainMeasureTp != null
                 && mainMeasureTp?.cycleTolerance != null
                 && mainMeasureTp?.valueCycleSize != null)
