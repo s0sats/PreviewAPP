@@ -1,9 +1,9 @@
 package com.namoadigital.prj001.worker;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
@@ -15,12 +15,14 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_Data_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_FileDao;
+import com.namoadigital.prj001.dao.GeOsDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
+import com.namoadigital.prj001.model.GeOs;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.TK_Ticket;
@@ -33,6 +35,7 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_004;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_007;
 import com.namoadigital.prj001.sql.GE_File_Sql_005;
+import com.namoadigital.prj001.sql.GeOsSql_001;
 import com.namoadigital.prj001.sql.WS_Cleaning_Sql_001;
 import com.namoadigital.prj001.sql.WS_Cleaning_Sql_002;
 import com.namoadigital.prj001.sql.WS_Cleaning_Sql_003;
@@ -284,7 +287,12 @@ public class Work_Cleanning_Data extends Worker {
                 ToolBox_Con.customDBPath(customer_code),
                 Constant.DB_VERSION_CUSTOM
             );
-
+        GeOsDao geOsDao =
+            new GeOsDao(
+                getApplicationContext(),
+                ToolBox_Con.customDBPath(customer_code),
+                Constant.DB_VERSION_CUSTOM
+            );
 
         ArrayList<HMAux> hmAuxs = (ArrayList<HMAux>) formDataDao.query_HM(
             new WS_Cleaning_Sql_001(
@@ -349,6 +357,26 @@ public class Work_Cleanning_Data extends Worker {
                     hmAux.get("custom_form_data")
                 ).toSqlQuery()
             );
+            try {
+                GeOs geOs = geOsDao.getByString(
+                    new GeOsSql_001(
+                        hmAux.get("customer_code"),
+                        hmAux.get("custom_form_type"),
+                        hmAux.get("custom_form_code"),
+                        hmAux.get("custom_form_version"),
+                        hmAux.get("custom_form_data")
+                    ).toSqlQuery()
+                );
+                //
+                if (geOs != null) {
+                    DaoObjReturn objReturn = geOsDao.removeFull(geOs);
+                    if (objReturn.hasError()) {
+                        throw new Exception(objReturn.getErrorMsg());
+                    }
+                }
+            }catch (Exception e){
+                ToolBox_Inf.registerException(getClass().getName(),e);
+            }
         }
 
         StringBuilder sbFiles = new StringBuilder();
