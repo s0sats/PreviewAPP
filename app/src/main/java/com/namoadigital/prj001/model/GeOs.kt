@@ -22,14 +22,16 @@ class GeOs(
     var measure_tp_id: String?,
     var measure_tp_desc: String?,
     var measure_value: Float?,
-    var measure_cycle_value: Int?,
+    var measure_cycle_value: Float?,
     var value_sufix: String?, //MeMeasure
     var restriction_decimal: Int?, //MeMeasure
+    var value_cycle_size: Float?,//MeMeasure
+    var cycle_tolerance: Int?,//MeMeasure
     var date_start: String?,
     var date_end: String? = null,
     val last_measure_value: Float?,
     val last_measure_date: String?,
-    val last_cycle_value: Int?,
+    val last_cycle_value: Float?,
     val so_edit_start_end: Int,
     val so_order_type_code_default: Int?,
     val so_allow_change_order_type: Int,

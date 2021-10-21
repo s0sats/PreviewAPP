@@ -111,7 +111,7 @@ public class MD_Product_Serial implements Serializable {
     private Double last_measure_value;
     @Nullable
     private String last_measure_date;
-    private Integer last_cycle_value;
+    private Float last_cycle_value;
     private Integer device_tp_code_main;
 
     /*
@@ -689,11 +689,11 @@ public class MD_Product_Serial implements Serializable {
         this.last_measure_date = last_measure_date;
     }
 
-    public Integer getLast_cycle_value() {
+    public Float getLast_cycle_value() {
         return last_cycle_value;
     }
 
-    public void setLast_cycle_value(Integer last_cycle_value) {
+    public void setLast_cycle_value(Float last_cycle_value) {
         this.last_cycle_value = last_cycle_value;
     }
 

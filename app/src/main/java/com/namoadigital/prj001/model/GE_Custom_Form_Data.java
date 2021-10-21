@@ -135,7 +135,7 @@ public class GE_Custom_Form_Data {
     @Expose
     private Float measure_value;
     @Expose
-    private Integer measure_cycle_value;
+    private Float measure_cycle_value;
 
     public GE_Custom_Form_Data() {
         this.customer_code = -1L;
@@ -555,11 +555,11 @@ public class GE_Custom_Form_Data {
         this.measure_value = measure_value;
     }
 
-    public Integer getMeasure_cycle_value() {
+    public Float getMeasure_cycle_value() {
         return measure_cycle_value;
     }
 
-    public void setMeasure_cycle_value(Integer measure_cycle_value) {
+    public void setMeasure_cycle_value(Float measure_cycle_value) {
         this.measure_cycle_value = measure_cycle_value;
     }
 }

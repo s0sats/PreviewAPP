@@ -1225,7 +1225,11 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 form_data.setDevice_tp_code(geOs.getDevice_tp_code_main());
                 form_data.setMeasure_tp_code(geOs.getMeasure_tp_code());
                 form_data.setMeasure_value(geOs.getMeasure_value());
-                if(geOs.getProcess_type().equalsIgnoreCase(MdOrderType.PREVENTIVE)) {
+                //Se o tipo da o.s for preventiva ciclica seta o valor do cycle
+                if( geOs.getProcess_type().equalsIgnoreCase(MdOrderType.PREVENTIVE)
+                    && geOs.getValue_cycle_size() != null
+                    && geOs.getCycle_tolerance() != null
+                ) {
                     form_data.setMeasure_cycle_value(geOs.getMeasure_cycle_value());
                 }
             }

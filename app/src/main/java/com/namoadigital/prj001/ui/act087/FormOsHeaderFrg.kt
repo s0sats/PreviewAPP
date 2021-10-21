@@ -66,7 +66,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     private var formSerialId: String? = null
     private var mainMeasureTp: MeMeasureTp? = null
     private var calculatedExecMeasureValue: Float = -1f
-    private var calculatedExecCycle: Int = -1
+    private var calculatedExecCycle: Float = -1f
     private var bkpMachineDialog: AlertDialog? = null
     private var isBarcodeRead: Boolean = false
 
@@ -531,7 +531,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                     measureInvalid = measureInvalid,
                     lastCycleInvalid = preventiveCycleInvalid,
                     calculatedCycle = calculatedExecCycle,
-                    lastCycleVal = formOsHeader.last_cycle_value?:0,
+                    lastCycleVal = formOsHeader.last_cycle_value?:0f,
                     measureSufix = mainMeasureTp?.valueSufix?:""
                 )
             }else{
@@ -582,15 +582,28 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
 
     /**
      * Fun que retorno o valor de measeruCycleValue.
-     * Se orderType for preventiva, retorna o valor de calculatedExecCycle, se não -1
+     * Se orderType for preventiva ciclica, retorna o valor de calculatedExecCycle,
+     * se não retorna o valor de measure_value.
+     * É importante retornar o valor de measure_value no else, pois essa var calculatedExecCycle
+     * é usada nas varreduras na criação das tabelas de geOs.
      */
-    private fun getMeasureCycleValue(orderType: MdOrderType): Int{
-        return if(orderType.processType.equals(MdOrderType.PREVENTIVE,true)){
+    private fun getMeasureCycleValue(orderType: MdOrderType): Float{
+        return if(isPreventiveCycledOs(orderType)){
             calculatedExecCycle
         }else{
-            -1
+            getFormattedMeasureValue()
         }
     }
+
+    /**
+     * Verifica se é uma preventiva ciclicada, baseada no tipo de order preventiva e
+     * medição com ciclo.
+     */
+    private fun isPreventiveCycledOs(orderType: MdOrderType) =
+        (orderType.processType.equals(MdOrderType.PREVENTIVE, true)
+                && mainMeasureTp != null
+                && mainMeasureTp?.cycleTolerance != null
+                && mainMeasureTp?.valueCycleSize != null)
 
     private fun isPreventiveCycleValid(isOrderTypeInvalid: Boolean): Boolean {
         //Se orderType invalida, não tem como validar
@@ -598,23 +611,19 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             return true
         }
         val mdOrderType = orderTypeList[binding.spOsType.selectedItemPosition]
-        if( mdOrderType.processType == MdOrderType.ProcessType.PREVENTIVE
-            && mainMeasureTp != null
-            && mainMeasureTp?.cycleTolerance != null
-            && mainMeasureTp?.valueCycleSize != null
-        ) {
+        if( isPreventiveCycledOs(mdOrderType)) {
             if (binding.mketOsMainMeasureVal.text.isNullOrEmpty()) {
                 return false
             }else{
-                var lastCycle = formOsHeader.last_cycle_value?:0
+                var lastCycle = formOsHeader.last_cycle_value?:0f
                 //Valor inserido
                 calculatedExecMeasureValue = binding.mketOsMainMeasureVal.text.toString().toFloat()
                 //divide valor atual pelo tam do ciclo e arredonda pra cima, pra identificar o fator
                 //de multiplicação do proxmo ciclo
                 var tamDoCiclo = mainMeasureTp!!.valueCycleSize!!
-                var cycleTolerance = mainMeasureTp?.cycleTolerance!!
+                var cycleTolerance = mainMeasureTp!!.cycleTolerance!!
 
-                var fatorNextCycle = ceil(calculatedExecMeasureValue.div(tamDoCiclo)).toInt()
+                var fatorNextCycle = ceil(calculatedExecMeasureValue.div(tamDoCiclo))
                 //Calcula a tolerancia para ver se o valor digitado será aceito para ela
                 var realTolerance = tamDoCiclo * (cycleTolerance / 100f)
                 //Calcula o proximo ciclo
@@ -909,8 +918,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         startDateInvalid: Boolean = false,
         measureInvalid: Boolean = false,
         lastCycleInvalid: Boolean = false,
-        calculatedCycle: Int = 0,
-        lastCycleVal: Int = 0,
+        calculatedCycle: Float = 0f,
+        lastCycleVal: Float = 0f,
         measureSufix: String = ""
     ){
         val builder = AlertDialog.Builder(requireContext())
@@ -972,7 +981,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 null
             )
         }.setOnDismissListener {
-            calculatedExecCycle = -1
+            calculatedExecCycle = -1f
             calculatedExecMeasureValue = -1f
         }.create()
         .show()

@@ -12,7 +12,7 @@ class MeMeasureTp(
     @SerializedName("restriction_min") val restrictionMin: Int?,
     @SerializedName("restriction_max") val restrictionMax: Int?,
     @SerializedName("restriction_decimal") val restrictionDecimal: Int? = 4,
-    @SerializedName("value_cycle_size") val valueCycleSize: Int?,
+    @SerializedName("value_cycle_size") val valueCycleSize: Float?,
     @SerializedName("cycle_tolerance") val cycleTolerance: Int?
 ){
 

@@ -1115,7 +1115,7 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             if(cursor.isNull(cursor.getColumnIndex(LAST_CYCLE_VALUE))){
                 md_product_serial.setLast_cycle_value(null);
             }else{
-                md_product_serial.setLast_cycle_value(cursor.getInt(cursor.getColumnIndex(LAST_CYCLE_VALUE)));
+                md_product_serial.setLast_cycle_value(cursor.getFloat(cursor.getColumnIndex(LAST_CYCLE_VALUE)));
             }
 
             //
