@@ -18,7 +18,7 @@ class T_MD_Product_Serial_Backup_Record(
     @SerializedName("site_code")
     val siteCode:Int?,
     @SerializedName("site_id")
-    val siteId:Int?,
+    val siteId:String?,
     @SerializedName("site_desc")
     val siteDesc:String?
 )

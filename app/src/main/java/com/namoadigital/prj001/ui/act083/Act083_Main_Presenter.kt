@@ -139,13 +139,16 @@ class Act083_Main_Presenter(private val context: Context,
         transList.add("sys_main_menu_search_lbl")
         //
         transList.add("new_form_lbl")
-        transList.add("alert_no_form_lbl");
-        transList.add("alert_no_form_for_product_msg");
-        transList.add("alert_no_form_for_operation_msg");
-        transList.add("alert_no_form_for_site_msg");
-        transList.add("alert_no_form_ttl");
-        transList.add("alert_product_or_serial_not_found_ttl");
-        transList.add("alert_product_or_serial_not_found_msg");
+        transList.add("alert_no_form_lbl")
+        transList.add("alert_no_form_for_product_msg")
+        transList.add("alert_no_form_for_operation_msg")
+        transList.add("alert_no_form_for_site_msg")
+        transList.add("alert_no_form_ttl")
+        transList.add("alert_product_or_serial_not_found_ttl")
+        transList.add("alert_product_or_serial_not_found_msg")
+        //
+        transList.add("alert_form_os_requires_serial_ttl")
+        transList.add("alert_form_os_requires_serial_msg")
         //
         return ToolBox_Inf.setLanguage(
                 context,
@@ -521,15 +524,25 @@ class Act083_Main_Presenter(private val context: Context,
                         //LUCHE - 09/06/2021
                         //Como esse metodo só é chamado quando o usr prosegue SEM SERIAL,serial id
                         //será mudado de null para ""
-                        scheduleExec.serial_id = scheduleExec.serial_id?:""
-                        if (createFormLocalForSchedule(action, scheduleExec)) {
-                            //Atualiza fomr_data no item
-                            action.scheduleCustomFormData =
+                        if(scheduleExec.is_so == 0) {
+                            scheduleExec.serial_id = scheduleExec.serial_id ?: ""
+                            if (createFormLocalForSchedule(action, scheduleExec)) {
+                                //Atualiza fomr_data no item
+                                action.scheduleCustomFormData =
                                     bundle.getString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, "0")
-                            //
-                            prepareOpenForm(action, scheduleExec)
-                        } else {
-                            mView.showMsg(Act083_Main.MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR, action)
+                                //
+                                prepareOpenForm(action, scheduleExec)
+                            } else {
+                                mView.showMsg(
+                                    Act083_Main.MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR,
+                                    action
+                                )
+                            }
+                        }else{
+                            mView.showAlertMsg(
+                                hmAux_Trans?.get("alert_form_os_requires_serial_ttl")!!,
+                                hmAux_Trans?.get("alert_form_os_requires_serial_msg")!!
+                            )
                         }
                     }
 
@@ -566,21 +579,17 @@ class Act083_Main_Presenter(private val context: Context,
         if (scheduleFormLocalExists(scheduleExec, action)) {
             creationOk = true
         } else {
-            if(scheduleExec.is_so == 0) {
-                ScheduleFormFatory().buildInitialScheduleFormLocal(
-                    context = context,
-                    scheduleExec = scheduleExec,
-                    custom_formDao = custom_formDao,
-                    custom_form_fieldDao = custom_form_fieldDao,
-                    custom_form_field_LocalDao = custom_form_field_LocalDao,
-                    custom_form_blob_localDao = custom_form_blob_localDao,
-                    formLocalDao = formLocalDao
-                )?.let {
-                    action.scheduleCustomFormData = it.custom_form_data.toString()
-                    creationOk = true
-                }
-            }else{
-                //TODO FAZER AQUI
+            ScheduleFormFatory().buildInitialScheduleFormLocal(
+                context = context,
+                scheduleExec = scheduleExec,
+                custom_formDao = custom_formDao,
+                custom_form_fieldDao = custom_form_fieldDao,
+                custom_form_field_LocalDao = custom_form_field_LocalDao,
+                custom_form_blob_localDao = custom_form_blob_localDao,
+                formLocalDao = formLocalDao
+            )?.let {
+                action.scheduleCustomFormData = it.custom_form_data.toString()
+                creationOk = true
             }
         }
         //

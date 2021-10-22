@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act006;
 
+import static com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search.PRODUCT_ID;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -38,8 +40,6 @@ import com.namoadigital.prj001.view.frag.frg_serial_search.On_Frg_Serial_Search;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search.PRODUCT_ID;
-
 /**
  * Created by neomatrix on 23/01/17.
  */
@@ -77,6 +77,7 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
     private String customFormVersion;
     private String customFormCodeDesc;
     private boolean blockedByExecutionLimitReach =false;
+    private int isSoForm;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -318,6 +319,7 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
             customFormCode = bundle.getString(GE_Custom_FormDao.CUSTOM_FORM_CODE, "");
             customFormVersion = bundle.getString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, "");
             customFormCodeDesc = bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, "");
+            isSoForm = bundle.getInt(GE_Custom_FormDao.IS_SO, 0);
 
         } else {
             fragProduct_ID = "";
@@ -333,6 +335,7 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
             customFormCode = "";
             customFormVersion = "";
             customFormCodeDesc = "";
+            isSoForm = 0;
         }
     }
 
@@ -417,6 +420,7 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         customFormCode = "";
         customFormVersion = "";
         customFormCodeDesc = "";
+        isSoForm = 0;
         mPresenter.getMD_Products();
     }
 
@@ -517,6 +521,7 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, customFormCode);
         bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION,customFormVersion);
         bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, customFormCodeDesc);
+        bundle.putInt(GE_Custom_FormDao.IS_SO, isSoForm);
     }
 
     @Override

@@ -21,20 +21,29 @@ class ScheduleFormFatory {
         custom_form_fieldDao: GE_Custom_Form_FieldDao,
         custom_form_field_LocalDao: GE_Custom_Form_Field_LocalDao,
         custom_form_blob_localDao: GE_Custom_Form_Blob_LocalDao,
-        formLocalDao: GE_Custom_Form_LocalDao
+        formLocalDao: GE_Custom_Form_LocalDao,
+        formData: Long = -1L
     ): GE_Custom_Form_Local? {
         //region Implementação2
         var daoObjReturn = DaoObjReturn()
-        val nextFormData = custom_formDao.getByStringHM(
-            GE_Custom_Form_Local_Sql_002(
-                scheduleExec.customer_code.toString(),
-                scheduleExec.custom_form_type.toString(),
-                scheduleExec.custom_form_code.toString(),
-                scheduleExec.custom_form_version.toString()
-            ).toSqlQuery().toLowerCase()
-        )
+        var nextFormData = formData
         //
-        if (nextFormData != null && nextFormData.size > 0 && nextFormData.hasConsistentValue("id")) {
+        if(nextFormData < 1L){
+            custom_formDao.getByStringHM(
+                GE_Custom_Form_Local_Sql_002(
+                    scheduleExec.customer_code.toString(),
+                    scheduleExec.custom_form_type.toString(),
+                    scheduleExec.custom_form_code.toString(),
+                    scheduleExec.custom_form_version.toString()
+                ).toSqlQuery().toLowerCase()
+            )?.let{
+                 if(it.size > 0 && it.hasConsistentValue("id")){
+                     nextFormData = it["id"]!!.toLong()
+                 }
+            }
+       }
+        //
+        if (nextFormData > 0) {
             val customerGMT = ToolBox_Con.getPreference_Customer_TMZ(context)
             val customForm = custom_formDao.getByString(
                 GE_Custom_Form_Sql_001_TT(
@@ -53,7 +62,7 @@ class ScheduleFormFatory {
             customFormLocal.custom_form_type = customForm.custom_form_type
             customFormLocal.custom_form_code = customForm.custom_form_code
             customFormLocal.custom_form_version = customForm.custom_form_version
-            customFormLocal.custom_form_data = nextFormData["id"]!!.toLong()
+            customFormLocal.custom_form_data = nextFormData
             customFormLocal.custom_form_pre = ToolBox_Inf.getPrefix(context)
             customFormLocal.custom_form_status = ConstantBaseApp.SYS_STATUS_SCHEDULE
             customFormLocal.custom_product_code = scheduleExec.product_code
@@ -98,6 +107,12 @@ class ScheduleFormFatory {
             customFormLocal.tag_operational_code = scheduleExec.tag_operational_code
             customFormLocal.tag_operational_id = scheduleExec.tag_operational_id
             customFormLocal.tag_operational_desc = scheduleExec.tag_operational_desc
+            //LUCHE - 22/10/2021 - Add infos do form O.S
+            customFormLocal.is_so = customForm.is_so
+            customFormLocal.so_edit_start_end = customForm.so_edit_start_end
+            customFormLocal.so_order_type_code_default = customForm.so_order_type_code_default
+            customFormLocal.so_allow_change_order_type = customForm.so_allow_change_order_type
+            customFormLocal.so_allow_backup = customForm.so_allow_backup
             //
             //LUCHE -  14/03/2019
             //Alteração Dao de insert com exception NOVO METODO DAO

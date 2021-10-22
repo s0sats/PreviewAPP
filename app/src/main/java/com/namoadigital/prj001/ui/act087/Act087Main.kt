@@ -78,32 +78,10 @@ class Act087Main : Base_Activity_Frag(),
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
             ),
-            MD_Product_Serial_Tp_DeviceDao(
-                context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                Constant.DB_VERSION_CUSTOM
-            ),
-            MD_Product_Serial_Tp_Device_ItemDao(
-                context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                Constant.DB_VERSION_CUSTOM
-            ),
-            MD_Product_Serial_Tp_Device_Item_HistDao(
-                context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                Constant.DB_VERSION_CUSTOM
-            ),
-            GeOsDeviceDao(
-                context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                Constant.DB_VERSION_CUSTOM
-            ),
-            GeOsDeviceItemDao(
-                context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                Constant.DB_VERSION_CUSTOM
-            ),
-            GeOsDeviceItemHistDao(
+            schedulePrefix,
+            scheduleCode,
+            scheduleExec,
+            MD_Schedule_ExecDao(
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
@@ -125,6 +103,7 @@ class Act087Main : Base_Activity_Frag(),
     private val mFormHeaderFragListener: FormOsHeaderFrgInfr by lazy{
         formOsHeaderFrg
     }
+    private var mScheduleObj : MD_Schedule_Exec? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -159,7 +138,23 @@ class Act087Main : Base_Activity_Frag(),
 
     private fun initVars() {
         if(mPresenter.validateBundleParams()) {
-            setFormOsHeaderFrg()
+            if(mPresenter.isSchedule()) {
+                mScheduleObj = mPresenter.getScheduleExecObj()
+                if(mScheduleObj == null){
+                   showAlert(
+                       hmAux_Trans["alert_schedule_not_found_ttl"],
+                       hmAux_Trans["alert_schedule_not_found_msg"],
+                       DialogInterface.OnClickListener { _, _ ->
+                           onBackPressed()
+                       },
+                       0
+                   )
+                }else{
+                    setFormOsHeaderFrg()
+                }
+            }else {
+                setFormOsHeaderFrg()
+            }
         }else{
             paramErrorFlow()
         }
@@ -183,8 +178,8 @@ class Act087Main : Base_Activity_Frag(),
         formOsHeaderFrg = FormOsHeaderFrg.newInstance(
             hmAuxTrans = mPresenter.getTranslation(),
             formStatus = ConstantBaseApp.SYS_STATUS_PENDING,
-            scheduleDesc = null,
-            scheduleComments = null,
+            scheduleDesc = mScheduleObj?.schedule_desc,
+            scheduleComments =  mScheduleObj?.comments,
             formOsHeader = osHeaderObj ,
             isOsCreation = true
         )
@@ -210,7 +205,6 @@ class Act087Main : Base_Activity_Frag(),
                 schedulePrefix = getInt(MD_Schedule_ExecDao.SCHEDULE_PREFIX)
                 scheduleCode = getInt(MD_Schedule_ExecDao.SCHEDULE_CODE)
                 scheduleExec = getInt(MD_Schedule_ExecDao.SCHEDULE_EXEC)
-
                 //
                 if (bundle.containsKey(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW)
                     || bundle.containsKey(MyActionFilterParam.MY_ACTION_FILTER_PARAM)
@@ -473,5 +467,33 @@ class Act087Main : Base_Activity_Frag(),
         menu.getItem(0).icon = resources.getDrawable(R.mipmap.ic_namoa)
         menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
         return true
+    }
+
+    //TRATA MSG SESSION NOT FOUND
+    override fun processLogin() {
+        super.processLogin()
+        //
+        ToolBox_Con.cleanPreferences(context)
+        //
+        ToolBox_Inf.call_Act001_Main(context)
+        //
+        finish()
+    }
+
+    //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED OU VERSÃO INVALIDA
+    override fun processUpdateSoftware(mLink: String?, mRequired: String?) {
+        super.processUpdateSoftware(mLink, mRequired)
+        ToolBox_Inf.executeUpdSW(context, mLink, mRequired)
+    }
+
+
+    override fun processError_1(mLink: String?, mRequired: String?) {
+        super.processError_1(mLink, mRequired)
+        progressDialog.dismiss()
+    }
+
+    override fun processCustom_error(mLink: String?, mRequired: String?) {
+        super.processCustom_error(mLink, mRequired)
+        progressDialog.dismiss()
     }
 }

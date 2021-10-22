@@ -15,10 +15,7 @@ import com.namoadigital.prj001.service.SO_PRODUCT_CODE
 import com.namoadigital.prj001.service.SO_SERIAL_CODE
 import com.namoadigital.prj001.service.WS_Product_Serial_Backup
 import com.namoadigital.prj001.sql.*
-import com.namoadigital.prj001.util.Constant
-import com.namoadigital.prj001.util.ConstantBaseApp
-import com.namoadigital.prj001.util.ToolBox_Con
-import com.namoadigital.prj001.util.ToolBox_Inf
+import com.namoadigital.prj001.util.*
 import java.io.File
 import kotlin.collections.ArrayList
 
@@ -38,13 +35,10 @@ class Act087MainPresenter(
     private val geOsDao: GeOsDao,
     private val orderTypeDao: MdOrderTypeDao,
     private val measureTpDao: MeMeasureTpDao,
-    private val serialDeviceTpDao: MD_Product_Serial_Tp_DeviceDao,
-    private val serialDeviceItemDao: MD_Product_Serial_Tp_Device_ItemDao,
-    private val serialDeviceItemHistDao: MD_Product_Serial_Tp_Device_Item_HistDao,
-    private val osDeviceDao: GeOsDeviceDao,
-    private val osDeviceItemDao: GeOsDeviceItemDao,
-    private val osDeviceItemHistDao: GeOsDeviceItemHistDao
-
+    private val schedulePrefix: Int?,
+    private val scheduleCode: Int?,
+    private val scheduleExec: Int?,
+    private val scheduleDao: MD_Schedule_ExecDao
 ): Act087MainContract.I_Presenter {
 
     private val hmAuxTrans: HMAux by lazy {
@@ -54,6 +48,8 @@ class Act087MainPresenter(
     private val serialObj : MD_Product_Serial by lazy{
         getSerialObj(productCode, serialId)
     }
+
+    private var mScheduleObj : MD_Schedule_Exec? = null
 
     private fun loadTranslation(): HMAux {
         val transList: MutableList<String> = mutableListOf(
@@ -71,6 +67,10 @@ class Act087MainPresenter(
             "alert_form_parameter_error_msg",
             "alert_unsaved_data_will_be_lost_ttl",
             "alert_unsaved_data_will_be_lost_confirm",
+            "alert_schedule_not_found_ttl",
+            "alert_schedule_not_found_msg",
+            "alert_error_on_create_schedule_ttl",
+            "alert_error_on_create_schedule_msg",
         )
         //
         val actAuxTrans = ToolBox_Inf.setLanguage(
@@ -107,6 +107,27 @@ class Act087MainPresenter(
             return true
         }
         return false
+    }
+
+    override fun isSchedule(): Boolean {
+        return  schedulePrefix?:-1 > 0
+                && scheduleCode?:-1 > 0
+                && scheduleExec?:-1 > 0
+    }
+
+    override fun getScheduleExecObj(): MD_Schedule_Exec? {
+        if(mScheduleObj == null){
+            mScheduleObj = scheduleDao.getByString(
+                MD_Schedule_Exec_Sql_001(
+                    ToolBox_Con.getPreference_Customer_Code(context),
+                    schedulePrefix!!,
+                    scheduleCode!!,
+                    scheduleExec!!
+                ).toSqlQuery()
+            )
+        }
+        //
+        return mScheduleObj
     }
 
     override fun getSerialInfo() = serialObj
@@ -376,11 +397,27 @@ class Act087MainPresenter(
         formOsHeader.custom_form_data = getNextFormData(formOsHeader)
         val daoObjReturn = geOsDao.createGeOsStructure(formOsHeader, serialObj)
         if(!daoObjReturn.hasError()){
-            mView.callAct011(
-                getAct011Bundle(
-                    formOsHeader
+            if(!isSchedule()){
+                mView.callAct011(
+                    getAct011Bundle(
+                        formOsHeader
+                    )
                 )
-            )
+            }else{
+                if(mScheduleObj != null){
+                    if (tryCreateScheduleCustomFormLocal(formOsHeader.custom_form_data) != null) {
+                        mView.callAct011(
+                            getAct011Bundle(
+                                formOsHeader
+                            )
+                        )
+                    } else {
+                        removeGeOsAndReportScheduleError(formOsHeader)
+                    }
+                }else{
+                    removeGeOsAndReportScheduleError(formOsHeader)
+                }
+            }
         }else{
             mView.showAlert(
                 ttl =hmAuxTrans["alert_error_on_create_os_form_ttl"],
@@ -388,6 +425,60 @@ class Act087MainPresenter(
             )
         }
     }
+
+    /**
+     * Apaga as tabelas geOs* criadas e exibe msg de erro
+     */
+    private fun removeGeOsAndReportScheduleError(formOsHeader: GeOs) {
+        //Remove do banco o formOsInserido em caso de erro
+        geOsDao.removeFull(formOsHeader)
+        //
+        mView.showAlert(
+            ttl = hmAuxTrans["alert_error_on_create_schedule_ttl"],
+            msg = hmAuxTrans["alert_error_on_create_schedule_msg"]
+        )
+    }
+
+    private fun tryCreateScheduleCustomFormLocal(customFormData: Int): GE_Custom_Form_Local? {
+        val custom_formDao = GE_Custom_FormDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        )
+        val custom_form_LocalDao = GE_Custom_Form_LocalDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        )
+        val custom_form_field_LocalDao = GE_Custom_Form_Field_LocalDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        )
+        val custom_form_fieldDao = GE_Custom_Form_FieldDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        )
+        val custom_form_blob_localDao = GE_Custom_Form_Blob_LocalDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        )
+        //
+
+        return ScheduleFormFatory().buildInitialScheduleFormLocal(
+                context = context,
+                scheduleExec = mScheduleObj!!,
+                custom_formDao = custom_formDao,
+                custom_form_fieldDao = custom_form_fieldDao,
+                custom_form_field_LocalDao = custom_form_field_LocalDao,
+                custom_form_blob_localDao = custom_form_blob_localDao,
+                formLocalDao = custom_form_LocalDao,
+                formData = customFormData.toLong()
+            )
+    }
+
 
     private fun getAct011Bundle(formOsHeader: GeOs): Bundle {
         return Bundle().apply {

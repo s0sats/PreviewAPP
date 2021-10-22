@@ -790,8 +790,8 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
                             prepareOsFormCall();
                         } else {
                             mView.showAlertDialog(
-                                hmAux_Trans.get("alert_os_form_ttl"),
-                                hmAux_Trans.get("alert_serial_undefined_or_without_structure_msg")
+                                hmAux_Trans.get("alert_form_os_ttl"),
+                                hmAux_Trans.get("alert_serial_without_structure_msg")
                             );
                         }
                     }else{

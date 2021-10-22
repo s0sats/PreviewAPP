@@ -350,6 +350,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
                 bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, bundleForNFormFinishPlusNew.getString(GE_Custom_FormDao.CUSTOM_FORM_CODE));
                 bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, bundleForNFormFinishPlusNew.getString(GE_Custom_FormDao.CUSTOM_FORM_VERSION));
                 bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, bundleForNFormFinishPlusNew.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC));
+                bundle.putInt(GE_Custom_FormDao.IS_SO, bundleForNFormFinishPlusNew.getInt(GE_Custom_FormDao.IS_SO));
             }
         }
         //LUCHE - 08/06/2021 - Caso o usr tenha buscado somente pelo serial, atualiza informações.

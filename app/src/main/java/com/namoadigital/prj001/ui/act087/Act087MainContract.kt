@@ -40,5 +40,7 @@ interface Act087MainContract {
         fun executeWsBkpMachine(bkpProductCode: Long, bkpSerialId: String)
         fun processWsBkpMachineResult(mLink: String?)
         fun onBackPressedClicked(anyDataChanged: Boolean)
+        fun isSchedule(): Boolean
+        fun getScheduleExecObj(): MD_Schedule_Exec?
     }
 }

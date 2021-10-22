@@ -2612,6 +2612,7 @@ public class Act011_Main extends Base_Activity
             bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, String.valueOf(formLocal.getCustom_form_code()));
             bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, String.valueOf(formLocal.getCustom_form_version()));
             bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, formLocal.getCustom_form_desc());
+            bundle.putInt(GE_Custom_FormDao.IS_SO, formLocal.getIs_so());
         }
         //LUCHE - 18/06/2021 comentado else de finalizeNewFlow  que passava via bundle as infos de produto e serial para serem usadas na act006. Segundo jhon isso foi definido erroneamente na documentação
         // else{

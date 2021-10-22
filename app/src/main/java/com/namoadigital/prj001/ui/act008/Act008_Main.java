@@ -220,8 +220,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         //
         transList.add("alert_form_os_schedule_pk_not_found_ttl");
         transList.add("alert_form_os_schedule_pk_not_found_msg");
-        transList.add("alert_os_form_ttl");
-        transList.add("alert_serial_undefined_or_without_structure_msg");
+        transList.add("alert_form_os_ttl");
+        transList.add("alert_serial_without_structure_msg");
         //
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
