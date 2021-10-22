@@ -44,7 +44,6 @@ public interface Act008_Main_View {
 
     void callAct083(Context context);
 
-
     void reApplySerialIdToFrag();
 
     void applyReceivedSerialToFrag(MD_Product_Serial serial_returned);
@@ -68,4 +67,10 @@ public interface Act008_Main_View {
     boolean isNewSerial();
 
     MyActionFilterParam getActionParamFlows();
+
+    MD_Product_Serial getMdProductSerial();
+
+    void callAct087(String schedulePrefix, String scheduleCode, String scheduleExec);
+
+    Bundle getBundle();
 }

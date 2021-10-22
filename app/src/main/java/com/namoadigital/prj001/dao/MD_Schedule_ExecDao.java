@@ -87,6 +87,7 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
     public static final String TAG_OPERATIONAL_ID = "tag_operational_id";
     public static final String TAG_OPERATIONAL_DESC = "tag_operational_desc";
     public static final String SERIAL_DEFINED_BY_SERVER = "serial_defined_by_server";
+    public static final String IS_SO = "is_so";
 
     //NÃO SÃO CAMPOS DA TABELA, mas são usados em queries
     public static final String SCHEDULE_DATE_START_FORMAT = "schedule_date_start_format";
@@ -448,6 +449,8 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
                         scheduleExec.setSite_desc(dbSchedule.getSite_desc());
                         scheduleExec.setOperation_id(dbSchedule.getOperation_id());
                         scheduleExec.setOperation_desc(dbSchedule.getOperation_desc());
+                        //LUCHE - 21/10/2021 -Resgata flag que indica se o serial veio definido do servidor.
+                        scheduleExec.setSerial_defined_by_server(dbSchedule.getSerial_defined_by_server());
                         //Seta informações especifica por tipo
                         String scheduleType = scheduleExec.getSchedule_type();
                         switch (scheduleType){
@@ -1230,6 +1233,7 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
             }
             //
             md_schedule_exec.setSerial_defined_by_server(cursor.getInt(cursor.getColumnIndex(SERIAL_DEFINED_BY_SERVER)));
+            md_schedule_exec.setIs_so(cursor.getInt(cursor.getColumnIndex(IS_SO)));
             //
             return md_schedule_exec;
         }
@@ -1346,6 +1350,9 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
             //
             if(md_schedule_exec.getSerial_defined_by_server() > -1){
                 contentValues.put(SERIAL_DEFINED_BY_SERVER,md_schedule_exec.getSerial_defined_by_server());
+            }
+            if(md_schedule_exec.getIs_so() > -1){
+                contentValues.put(IS_SO,md_schedule_exec.getIs_so());
             }
             //
             return contentValues;

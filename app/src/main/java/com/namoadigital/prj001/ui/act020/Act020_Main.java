@@ -446,6 +446,10 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                         bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,ConstantBaseApp.ACT005)
                 );
                 act083Bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM,ToolBox_Inf.getMyActionFilterParam(bundle));
+                act083Bundle.putInt(
+                    GE_Custom_FormDao.IS_SO,
+                    bundle.getInt(GE_Custom_FormDao.IS_SO,0)
+                );
             }
         }
     }

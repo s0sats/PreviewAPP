@@ -566,17 +566,21 @@ class Act083_Main_Presenter(private val context: Context,
         if (scheduleFormLocalExists(scheduleExec, action)) {
             creationOk = true
         } else {
-            ScheduleFormFatory().buildInitialScheduleFormLocal(
-                context = context,
-                scheduleExec = scheduleExec,
-                custom_formDao = custom_formDao,
-                custom_form_fieldDao = custom_form_fieldDao,
-                custom_form_field_LocalDao = custom_form_field_LocalDao,
-                custom_form_blob_localDao = custom_form_blob_localDao,
-                formLocalDao = formLocalDao
-            )?.let {
-                action.scheduleCustomFormData = it.custom_form_data.toString()
-                creationOk = true
+            if(scheduleExec.is_so == 0) {
+                ScheduleFormFatory().buildInitialScheduleFormLocal(
+                    context = context,
+                    scheduleExec = scheduleExec,
+                    custom_formDao = custom_formDao,
+                    custom_form_fieldDao = custom_form_fieldDao,
+                    custom_form_field_LocalDao = custom_form_field_LocalDao,
+                    custom_form_blob_localDao = custom_form_blob_localDao,
+                    formLocalDao = formLocalDao
+                )?.let {
+                    action.scheduleCustomFormData = it.custom_form_data.toString()
+                    creationOk = true
+                }
+            }else{
+                //TODO FAZER AQUI
             }
         }
         //
@@ -1275,26 +1279,40 @@ class Act083_Main_Presenter(private val context: Context,
             bundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK, ToolBox_Inf.formatSchedulePk(scheduleExec.schedule_prefix, scheduleExec.schedule_code, scheduleExec.schedule_exec))
             bundle.putString(Constant.ACT017_SCHEDULED_SITE, scheduleExec.site_code.toString())
             //
-            //
-            if (createFormLocalForSchedule(actionSelected!!, scheduleExec)) {
-                /*
-                 * BARRIONUEVO 13-04-2020
-                 * Mudanca de ultima hora: adicionar flag para dar bypass em restricoes de serial.
-                 */
-
-                //Seta form data no bundle que será enviado para as proximas acts
-                bundle.putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, actionSelected!!.scheduleCustomFormData.toString())
-                bundle.putBoolean(ConstantBaseApp.SCHEDULED_PROFILE_CHECK, false)
-                //
-                setSeletedActionInfosIntoFilterParam(MyActions.MY_ACTION_TYPE_SCHEDULE, actionSelected!!.processPk)
-                bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
-                bundle.putSerializable(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, originFlow)
-                //
-                mView.callAct020(bundle)
-            } else {
-                mView.showMsg(Act083_Main.MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR, actionSelected!!)
+            if(scheduleExec.is_so == 0){
+                if (createFormLocalForSchedule(actionSelected!!, scheduleExec)) {
+                    prepareAct020(bundle,scheduleExec)
+                } else {
+                    mView.showMsg(Act083_Main.MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR, actionSelected!!)
+                }
+            }else{
+                prepareAct020(bundle,scheduleExec)
             }
+
         }
+    }
+
+    private fun prepareAct020(bundle: Bundle, scheduleExec: MD_Schedule_Exec) {
+        /*
+         * BARRIONUEVO 13-04-2020
+         * Mudanca de ultima hora: adicionar flag para dar bypass em restricoes de serial.
+         */
+        //Seta form data no bundle que será enviado para as proximas acts
+        bundle.putString(
+            GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA,
+            actionSelected!!.scheduleCustomFormData.toString()
+        )
+        bundle.putBoolean(ConstantBaseApp.SCHEDULED_PROFILE_CHECK, false)
+        bundle.putInt(GE_Custom_FormDao.IS_SO,scheduleExec.is_so)
+        //
+        setSeletedActionInfosIntoFilterParam(
+            MyActions.MY_ACTION_TYPE_SCHEDULE,
+            actionSelected!!.processPk
+        )
+        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
+        bundle.putSerializable(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, originFlow)
+        //
+        mView.callAct020(bundle)
     }
 
     /**

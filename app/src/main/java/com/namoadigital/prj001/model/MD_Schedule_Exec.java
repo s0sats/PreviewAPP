@@ -84,6 +84,7 @@ public class MD_Schedule_Exec {
     private Integer has_Nc;
     //LUCHE - 17/09/2021 - Flag que indica se originalmente o agendamento tinha um serial
     private int serial_defined_by_server;
+    private int is_so;//indica se o form é tipo o.s
 
     /**
      * LUCHE - 14/02/2020
@@ -525,6 +526,14 @@ public class MD_Schedule_Exec {
 
     public void setSerial_defined_by_server(int serial_defined_by_server) {
         this.serial_defined_by_server = serial_defined_by_server;
+    }
+
+    public int getIs_so() {
+        return is_so;
+    }
+
+    public void setIs_so(int is_so) {
+        this.is_so = is_so;
     }
 
     public MyActions toMyActionsObj(Context context, @Nullable String lastScheduleSelected) {
