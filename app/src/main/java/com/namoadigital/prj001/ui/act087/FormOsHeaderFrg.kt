@@ -68,6 +68,10 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     private var calculatedExecCycle: Float = -1f
     private var bkpMachineDialog: AlertDialog? = null
     private var isBarcodeRead: Boolean = false
+    //Var usada somente na criação, se isso mudar, deve ser revisto sua inicialização.
+    private val formRequiresGPS: Boolean by lazy{
+        mCreationListener?.getFormRequiresGPS()?:false
+    }
 
     companion object{
         @JvmStatic
@@ -134,6 +138,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 "records_display_limit_lbl",
                 "records_found_lbl",
                 "form_os_header_lbl",
+                "alert_form_turn_gps_on_title",
+                "alert_form_turn_gps_on_msg",
             )
         }
     }
@@ -534,19 +540,41 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                     measureSufix = mainMeasureTp?.valueSufix?:""
                 )
             }else{
-                ToolBox.alertMSG_YES_NO(
-                    requireContext(),
-                    hmAuxTrans["alert_form_os_creation_ttl"],
-                    hmAuxTrans["alert_form_os_creation_confirm"],
-                    DialogInterface.OnClickListener { _, _ ->
-                       setDataIntoFormOsObj()
-                       mCreationListener?.createOsHeader(formOsHeader)
-                   },
-                    1
-                )
-
+                if(isLocationRequiredAndEnabled()) {
+                    ToolBox.alertMSG_YES_NO(
+                        requireContext(),
+                        hmAuxTrans["alert_form_os_creation_ttl"],
+                        hmAuxTrans["alert_form_os_creation_confirm"],
+                        DialogInterface.OnClickListener { _, _ ->
+                            setDataIntoFormOsObj()
+                            mCreationListener?.createOsHeader(formOsHeader)
+                        },
+                        1
+                    )
+                }else{
+                    showActiveGPSAlert()
+                }
             }
         }
+    }
+
+    private fun showActiveGPSAlert() {
+        ToolBox.alertMSG(
+            requireContext(),
+            hmAuxTrans["alert_form_turn_gps_on_title"],
+            hmAuxTrans["alert_form_turn_gps_on_msg"],
+            { dialog, which -> validateSave() },
+            1
+        )
+    }
+
+    /**
+     * Fun que verifica se gps é requerido e se esta ligado.
+     */
+    private fun isLocationRequiredAndEnabled(): Boolean {
+        return  !formRequiresGPS
+                || (formRequiresGPS && ToolBox_Con.hasGPSResourceActive(context))
+
     }
 
     private fun setDataIntoFormOsObj() {

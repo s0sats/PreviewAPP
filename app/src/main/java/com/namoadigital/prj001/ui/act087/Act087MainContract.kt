@@ -42,5 +42,6 @@ interface Act087MainContract {
         fun onBackPressedClicked(anyDataChanged: Boolean)
         fun isSchedule(): Boolean
         fun getScheduleExecObj(): MD_Schedule_Exec?
+        fun getFormRequiresGPSInfo(): Boolean
     }
 }

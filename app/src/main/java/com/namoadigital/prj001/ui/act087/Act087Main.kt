@@ -283,6 +283,10 @@ class Act087Main : Base_Activity_Frag(),
         mPresenter.createOsHeader(formOsHeader)
     }
 
+    override fun getFormRequiresGPS(): Boolean {
+        return mPresenter.getFormRequiresGPSInfo()
+    }
+
     override fun showAlert(
         ttl: String?,
         msg: String?,
@@ -395,7 +399,16 @@ class Act087Main : Base_Activity_Frag(),
     override fun onBackPressed() {
         //super.onBackPressed()
         //callAct005()
-        mPresenter.onBackPressedClicked(mFormHeaderFragListener.isAnyDataChanged())
+        //LUCHE - 25/10/2021
+        //Tratativa necessaria pois, caso de erro antes de formOsHeaderFrg ser inicializado,
+        //a interface mFormHeaderFragListener tb não será inicializada e causará crash.
+        //Nesse caso, o param anyDataChanged é setado como falso, exitando a chama do dialog de confirmação.
+        val anyDataChanged = if(!::formOsHeaderFrg.isInitialized){
+            false
+        }else{
+            mFormHeaderFragListener.isAnyDataChanged()
+        }
+        mPresenter.onBackPressedClicked(anyDataChanged)
     }
 
     override fun callAct083() {

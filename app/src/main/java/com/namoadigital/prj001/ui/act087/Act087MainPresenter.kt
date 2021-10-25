@@ -49,7 +49,16 @@ class Act087MainPresenter(
         getSerialObj(productCode, serialId)
     }
 
-    private var mScheduleObj : MD_Schedule_Exec? = null
+    private val mScheduleObj : MD_Schedule_Exec? by lazy{
+        scheduleDao.getByString(
+            MD_Schedule_Exec_Sql_001(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                schedulePrefix!!,
+                scheduleCode!!,
+                scheduleExec!!
+            ).toSqlQuery()
+        )
+    }
 
     private fun loadTranslation(): HMAux {
         val transList: MutableList<String> = mutableListOf(
@@ -116,18 +125,16 @@ class Act087MainPresenter(
     }
 
     override fun getScheduleExecObj(): MD_Schedule_Exec? {
-        if(mScheduleObj == null){
-            mScheduleObj = scheduleDao.getByString(
-                MD_Schedule_Exec_Sql_001(
-                    ToolBox_Con.getPreference_Customer_Code(context),
-                    schedulePrefix!!,
-                    scheduleCode!!,
-                    scheduleExec!!
-                ).toSqlQuery()
-            )
-        }
-        //
         return mScheduleObj
+    }
+
+    /**
+     * Fun que resgata do form se ele requer localização na finalização.
+     */
+    override fun getFormRequiresGPSInfo(): Boolean {
+        getForm(customFormCode,customFormType,customFormVersion).let {
+            return it.require_location == 1
+        }
     }
 
     override fun getSerialInfo() = serialObj
