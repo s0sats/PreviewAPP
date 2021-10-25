@@ -101,9 +101,30 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
                 acessoryFormView.nonForecastFilter = (it as CheckBox).isChecked
                 mAdapter.applyNonForecastFilter((it as CheckBox).isChecked)
                 handleAddNewProcessVisibility()
+                handleForecastEmptyList()
             }
             clAddNewItemBtn.setOnClickListener {
                 mFrgListener.onInspectionSelected(acessoryFormView, true, -1, edtInspectionFilter.text.toString(), chkNonForecastItem.isChecked, "")
+            }
+        }
+    }
+
+    private fun Act011InspectionListFragmentBinding.handleForecastEmptyList() {
+        val forecastItens = acessoryFormView.inspections.count {
+            it.status != NORMAL && !ConstantBaseApp.SYS_STATUS_DONE.equals(it.answerStatus)
+        }
+        if (acessoryFormView.nonForecastFilter) {
+            if (forecastItens == 0) {
+                rvInspections.visibility = View.INVISIBLE
+                tvPlaceholder.visibility = View.VISIBLE
+            } else {
+                rvInspections.visibility = View.VISIBLE
+                tvPlaceholder.visibility = View.GONE
+            }
+        }else{
+            if ((acessoryFormView.inspections.size - forecastItens) > 0) {
+                rvInspections.visibility = View.VISIBLE
+                tvPlaceholder.visibility = View.GONE
             }
         }
     }
@@ -136,11 +157,11 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
         //
     }
 
-    private fun Act011InspectionListFragmentBinding.handleAddNewProcessVisibility() {
+    private fun handleAddNewProcessVisibility() {
         if (showAddNewItem()) {
-            clAddNewItemBtn.visibility = View.VISIBLE
+            binding.clAddNewItemBtn.visibility = View.VISIBLE
         } else {
-            clAddNewItemBtn.visibility = View.GONE
+            binding.clAddNewItemBtn.visibility = View.GONE
         }
     }
 
@@ -153,6 +174,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
                 tvPlaceholder.visibility = View.GONE
                 rvInspections.visibility = View.VISIBLE
             }
+            handleForecastEmptyList()
         }
     }
 
@@ -160,7 +182,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
         return ToolBox_Inf.profileExists(
             context,
             ConstantBaseApp.PROFILE_PRJ001_CHECKLIST,
-            ConstantBaseApp.PROFILE_PRJ001_CHECKLIST_PARAM_DONE_NEW
+            ConstantBaseApp.PROFILE_PRJ001_CHECKLIST_PARAM_ITEM_CHECK_NEW
         ) && !binding.chkNonForecastItem.isChecked
     }
 
@@ -211,6 +233,22 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
         if(acessoryFormView.inspections.isEmpty()) {
             binding.tvPlaceholder.text = hmAuxTrans.get("inspection_empty_list_placeholder")
         }else{
+            if(acessoryFormView.inspections.count {
+                    it.status == NORMAL
+                } <=0 )
+                {
+                    binding.chkNonForecastItem.apply {
+                        if(isChecked) {
+                            post {
+                                performClick()
+                            }
+                        }
+                        isChecked = false
+                        mAdapter.applyNonForecastFilter(false)
+                        isEnabled = false
+                        invalidate()
+                    }
+                }
             binding.tvPlaceholder.text = hmAuxTrans.get("inspection_empty_list_filtered")
         }
 

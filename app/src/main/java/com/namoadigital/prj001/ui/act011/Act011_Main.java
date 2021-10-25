@@ -55,6 +55,7 @@ import com.namoa_digital.namoa_library.ctls.CustomFF;
 import com.namoa_digital.namoa_library.ctls.LabelFF;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNMFF;
+import com.namoa_digital.namoa_library.ctls.MkDateTime;
 import com.namoa_digital.namoa_library.ctls.PhotoFF;
 import com.namoa_digital.namoa_library.ctls.PictureFF;
 import com.namoa_digital.namoa_library.ctls.RatingBarFF;
@@ -3307,20 +3308,40 @@ public class Act011_Main extends Base_Activity
                 }
             }
         });
+        //
         binding.act011DialogCheckBtnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 alertDialog.dismiss();
             }
         });
-
+        //
+        binding.act011DialogCheckMkdateFormEnd.setOnSelectedValue(new MkDateTime.IMKDateTimeValueChange() {
+            @Override
+            public void onChangeValue(String s) {
+                if(ToolBox_Inf.getDateDiferenceInMilliseconds(binding.act011DialogCheckMkdateFormStart.getmValue(), s) <= 0){
+                    binding.act011DialogCheckTvElapsedTimeVal.setText(getFormElapsedTimeFormatted(s));
+                }else{
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("dialog_finalize_os_form_invalid_end_date_ttl"),
+                            hmAux_Trans.get("dialog_finalize_os_form_invalid_end_date_end"),
+                            null,
+                            0
+                    );
+                    binding.act011DialogCheckTvElapsedTimeVal.setText("--:--");
+                }
+            }
+        });
+        //
     }
 
     private boolean validEndDate(Act011CheckDialogBinding binding) {
         String startDate = binding.act011DialogCheckMkdateFormStart.getmValue();
         String endDate = binding.act011DialogCheckMkdateFormEnd.getmValue();
         //todo colocar valida com data atual apos tratar fluxo de assinatura.
-        return ToolBox_Inf.getDateDiferenceInMilliseconds(startDate, endDate) <= 0;
+        return ToolBox_Inf.getDateDiferenceInMilliseconds(startDate, endDate) <= 0
+                     && ToolBox_Inf.getDateDiferenceInMilliseconds(endDate, ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT)) <= 0;
     }
 
     private void setDialogVisibilityAndLabels(Act011CheckDialogBinding binding) {
@@ -3351,9 +3372,9 @@ public class Act011_Main extends Base_Activity
             }
             if(geOs.getDate_end() == null
             || geOs.getDate_end().isEmpty()) {
-                binding.act011DialogCheckMkdateFormEnd.setmValue(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+                binding.act011DialogCheckMkdateFormEnd.setmValue(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"), true);
             }else{
-                binding.act011DialogCheckMkdateFormEnd.setmValue(geOs.getDate_end());
+                binding.act011DialogCheckMkdateFormEnd.setmValue(geOs.getDate_end(), true);
             }
             binding.act011DialogFinalizeLbl.setText(hmAux_Trans.get("dialog_finalize_os_form_lbl"));
             binding.act011DialogCheckTvMissingAnswerLbl.setText(hmAux_Trans.get("dialog_finalize_os_form_missing_answer_count_lbl"));
