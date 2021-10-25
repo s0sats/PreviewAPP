@@ -107,26 +107,30 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
                         && !ToolBox_Con.hasGPSResourceActive(context)){
                     mView.alertActiveGPSResource(item);
                 }else {
-                    if(isOsForm(item)) {
-                        if(osFormAlreadyExists(item)) {
-                            setAct011Call(item);
-                        }else{
-                            if (serialHasStructure()) {
-                                prepareOsFormCreation(item);
-                            } else {
-                                mView.showAlertMsg(
-                                    hmAux_Trans.get("alert_os_form_ttl"),
-                                    hmAux_Trans.get("alert_serial_undefined_or_without_structure_msg")
-                                );
-                            }
-                        }
-                    }else{
-                        setAct011Call(item);
-                    }
+                    defineFormOrFormOsFlow(item);
                 }
             }
         } else {
             mView.alertFormNotReady();
+        }
+    }
+
+    private void defineFormOrFormOsFlow(HMAux item) {
+        if(isOsForm(item)) {
+            if(osFormAlreadyExists(item)) {
+                setAct011Call(item);
+            }else{
+                if (serialHasStructure()) {
+                    prepareOsFormCreation(item);
+                } else {
+                    mView.showAlertMsg(
+                        hmAux_Trans.get("alert_os_form_ttl"),
+                        hmAux_Trans.get("alert_serial_undefined_or_without_structure_msg")
+                    );
+                }
+            }
+        }else{
+            setAct011Call(item);
         }
     }
 
@@ -338,7 +342,10 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
     @Override
     public void validateGPSResource(HMAux item) {
             if (ToolBox_Con.hasGPSResourceActive(context)) {
-                setAct011Call(item);
+                //setAct011Call(item);
+                //LUCHE - 22/10/2021
+                //Substituido pelo defineFormOrFormOsFlow, para validar se é um form ou form tipo o.s
+                defineFormOrFormOsFlow(item);
             }else{
                 mView.alertActiveGPSResource(item);
             }

@@ -40,6 +40,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_DeviceDao;
 import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
@@ -62,6 +63,7 @@ import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.ui.act071.Act071_Main;
 import com.namoadigital.prj001.ui.act081.Act081_Main;
 import com.namoadigital.prj001.ui.act083.Act083_Main;
+import com.namoadigital.prj001.ui.act087.Act087Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -124,6 +126,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
      * Flag inserida para controlar se houve edicao de serial_id no fluxo de criacao de serial
      */
     private boolean isSerialExists = false;
+    private boolean isSoForm = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -214,7 +217,13 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
         transList.add("progress_unfocus_ticket_download_ttl");
         transList.add("progress_unfocus_ticket_download_msg");
-
+        //
+        transList.add("alert_form_os_schedule_pk_not_found_ttl");
+        transList.add("alert_form_os_schedule_pk_not_found_msg");
+        transList.add("alert_form_os_ttl");
+        transList.add("alert_serial_without_structure_msg");
+        //
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -265,11 +274,15 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                 requesting_process,
                 new MD_Product_SerialDao(context),
                 new MD_Product_Serial_TrackingDao(context),
+                new MD_Product_Serial_Tp_DeviceDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM),
                 isFinishPlusNew(),
                 mTkTicketPrefix,
                 mTkTicketCode,
-                mStepCode
-        );
+                mStepCode,
+                isSoForm);
         //
         mPresenter.getProductInfo(bundle);
         //
@@ -553,6 +566,9 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
             bundle_new_serial = bundle.getBoolean(Constant.MAIN_SERIAL_CREATION, false);
             requesting_process = bundle.getString(Constant.MAIN_REQUESTING_ACT, Constant.ACT005);
+            //LUCHE - 21/10/2021 - Para que indica que se o form é tipo O.S, Vira somente se agendamento
+            //ou finaliza mais novo de um tipo O.S
+            isSoForm = bundle.getInt(GE_Custom_FormDao.IS_SO,0) == 1;
             //
             if (bundle.containsKey(Constant.MAIN_MD_PRODUCT_SERIAL)) {
                 mdProductSerial = (MD_Product_Serial) bundle.getSerializable(Constant.MAIN_MD_PRODUCT_SERIAL);
@@ -713,7 +729,6 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
     @Override
     public void showAlertDialog(String title, String msg) {
-
         ToolBox.alertMSG(
                 Act008_Main.this,
                 title,
@@ -852,6 +867,17 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         if (frgSerialEdit != null) {
             frgSerialEdit.refreshUi();
         }
+    }
+
+
+    @Override
+    public MD_Product_Serial getMdProductSerial() {
+        return mdProductSerial;
+    }
+
+    @Override
+    public Bundle getBundle() {
+        return bundle;
     }
 
     //Trata retorno de serial OK
@@ -1065,6 +1091,31 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam);
         bundle.putString( act083Bundle.getString( ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW), ConstantBaseApp.ACT006);
         //
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct087(String schedulePrefix, String scheduleCode, String scheduleExec) {
+        Intent mIntent = new Intent(context, Act087Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        bundle.putString(MD_Product_SerialDao.SERIAL_ID, mdProductSerial.getSerial_id());
+        bundle.putAll(act083Bundle);
+        //
+        bundle.putAll(
+            Act087Main.getBundleInstance(
+                bundle.getString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE),
+                bundle.getString(GE_Custom_FormDao.CUSTOM_FORM_CODE),
+                bundle.getString(GE_Custom_FormDao.CUSTOM_FORM_VERSION),
+                String.valueOf(mdProductSerial.getProduct_code()),
+                mdProductSerial.getSerial_id(),
+                String.valueOf(mdProductSerial.getSerial_code()),
+                schedulePrefix,
+                scheduleCode,
+                scheduleExec
+            )
+        );
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();

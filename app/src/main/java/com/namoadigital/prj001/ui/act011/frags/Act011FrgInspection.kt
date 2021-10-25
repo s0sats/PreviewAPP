@@ -262,7 +262,9 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
             tabLastIndex: Int = 0,
             tabItemSelectedIndex: Int = -1,
             formStatus: String,
-            scheduleDesc: String?
+            scheduleDesc: String?,
+            scheduleComments: String?,
+            isFormOs: Boolean
         ) =
             Act011FrgInspection().apply {
                 this.hmAuxTrans = hmAux_Trans
@@ -271,6 +273,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
                 this.tabLastIndex = tabLastIndex
                 this.scheduleDesc = scheduleDesc
                 this.scheduleComments = scheduleComments
+                this.isFormOs = isFormOs
                 arguments = Bundle().apply {
                     putSerializable(Constant.MAIN_HMAUX_TRANS_KEY, hmAuxTrans)
                     putString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS,formStatus)

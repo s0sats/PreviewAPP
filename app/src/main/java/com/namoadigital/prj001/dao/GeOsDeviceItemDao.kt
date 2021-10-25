@@ -6,6 +6,7 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import androidx.core.database.getFloatOrNull
+import androidx.core.database.getIntOrNull
 import androidx.core.database.getStringOrNull
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
@@ -50,6 +51,7 @@ class GeOsDeviceItemDao(
         const val NEXT_CYCLE_MEASURE_DATE = "next_cycle_measure_date"
         const val NEXT_CYCLE_LIMIT_DATE = "next_cycle_limit_date"
         const val VALUE_SUFIX = "value_sufix"
+        const val RESTRICTION_DECIMAL = "restriction_decimal"
         const val ITEM_CHECK_STATUS = "item_check_status"
         const val TARGET_DATE = "target_date"
         const val EXEC_TYPE = "exec_type"
@@ -463,6 +465,7 @@ class GeOsDeviceItemDao(
                         next_cycle_measure_date = getStringOrNull(getColumnIndex(NEXT_CYCLE_MEASURE_DATE)),
                         next_cycle_limit_date = getStringOrNull(getColumnIndex(NEXT_CYCLE_LIMIT_DATE)),
                         value_sufix = getStringOrNull(getColumnIndex(VALUE_SUFIX)),
+                        restriction_decimal = getIntOrNull(getColumnIndex(RESTRICTION_DECIMAL)),
                         item_check_status = getString(getColumnIndex(ITEM_CHECK_STATUS)),
                         target_date = getStringOrNull(getColumnIndex(TARGET_DATE)),
                         exec_type = getStringOrNull(getColumnIndex(EXEC_TYPE)),
@@ -535,6 +538,8 @@ class GeOsDeviceItemDao(
                     put(NEXT_CYCLE_LIMIT_DATE, it.next_cycle_limit_date)
                     //
                     put(VALUE_SUFIX, it.value_sufix)
+                    //
+                    put(RESTRICTION_DECIMAL, it.restriction_decimal)
                     //
                     put(ITEM_CHECK_STATUS, it.item_check_status)
                     //

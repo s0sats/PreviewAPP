@@ -583,7 +583,7 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             if(cursor.isNull(cursor.getColumnIndex(MEASURE_CYCLE_VALUE))){
                 custom_form_data.setMeasure_cycle_value(null);
             }else{
-                custom_form_data.setMeasure_cycle_value(cursor.getInt(cursor.getColumnIndex(MEASURE_CYCLE_VALUE)));
+                custom_form_data.setMeasure_cycle_value(cursor.getFloat(cursor.getColumnIndex(MEASURE_CYCLE_VALUE)));
             }
             return custom_form_data;
         }

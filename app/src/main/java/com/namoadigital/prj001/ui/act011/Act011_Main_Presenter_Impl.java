@@ -178,6 +178,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         boolean hasNformPending = false;
         boolean bNew = false;
         boolean bAbortSchedule = false;
+        boolean bAbortGeOs = false;
         mTicketSeqTmp = mTicket_seq_tmp;
         bAgendado = false;
         //LUCHE - 14/03/2019
@@ -267,6 +268,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                     }
                 }
             }
+            //Se form tipo O.S, resgata obj geOs
             if(customFormLocal.getIs_so() == 1){
                 geOs = getGeOs(
                         customer_code,
@@ -275,6 +277,10 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                         formversion_code,
                         String.valueOf(customFormLocal.getCustom_form_data())
                 );
+                //Se não encontra, aborta abertura para evitar crash.
+                if(geOs == null){
+                    bAbortGeOs = true;
+                }
             }
         } else {
             bNew = true;
@@ -311,104 +317,121 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 //Atualiza formData com o da
                 if(geOs != null){
                     ii.put(GE_Custom_Form_Local_Sql_002.ID,String.valueOf(geOs.getCustom_form_data()));
+                }else{
+                    //Se não encontra, aborta abertura para evitar crash.
+                    bAbortGeOs = true;
                 }
             }
             //
-            MD_Product productInfo = getProduct(Integer.parseInt(product_code));
-            //
-            MdTag tagInfo = getTag(customForm.getTag_operational_code());
-            //Resgata dados do site. O site usado pode ser o logado ou do serial, caso existe e esteja alocado
-            MD_Site siteInfo = getSiteInfo(customForm.getCustomer_code(),Integer.parseInt(product_code),serial_id);
-            //
-            customFormLocal = new GE_Custom_Form_Local();
+            if(!bAbortGeOs) {
+                MD_Product productInfo = getProduct(Integer.parseInt(product_code));
+                //
+                MdTag tagInfo = getTag(customForm.getTag_operational_code());
+                //Resgata dados do site. O site usado pode ser o logado ou do serial, caso existe e esteja alocado
+                MD_Site siteInfo = getSiteInfo(customForm.getCustomer_code(),Integer.parseInt(product_code),serial_id);
+                //
+                customFormLocal = new GE_Custom_Form_Local();
 
-            customFormLocal.setCustomer_code(customForm.getCustomer_code());
-            customFormLocal.setCustom_form_type(customForm.getCustom_form_type());
-            customFormLocal.setCustom_form_code(customForm.getCustom_form_code());
-            customFormLocal.setCustom_form_version(customForm.getCustom_form_version());
-            customFormLocal.setCustom_form_data(Long.parseLong(ii.get(GE_Custom_Form_Local_Sql_002.ID)));
-            customFormLocal.setCustom_form_pre(ToolBox_Inf.getPrefix(context));
-            customFormLocal.setCustom_form_status(Constant.SYS_STATUS_IN_PROCESSING);
-            customFormLocal.setTag_operational_code(tagInfo != null ? tagInfo.getTag_code() : -1);
-            customFormLocal.setTag_operational_id(tagInfo != null ? tagInfo.getTag_id() : null);
-            customFormLocal.setTag_operational_desc(tagInfo != null ? tagInfo.getTag_desc() : null);
-            customFormLocal.setCustom_product_code(Integer.parseInt(product_code));
-            customFormLocal.setCustom_product_desc(product_desc);
-            customFormLocal.setCustom_product_id(product_id);
-            customFormLocal.setCustom_product_icon_name(productInfo.getProduct_icon_name());
-            customFormLocal.setCustom_product_icon_url(productInfo.getProduct_icon_url());
-            customFormLocal.setCustom_product_icon_url_local(productInfo.getProduct_icon_url_local());
-            customFormLocal.setCustom_form_desc(formcode_desc);
-            customFormLocal.setSerial_id(serial_id);
-            customFormLocal.setRequire_signature(customForm.getRequire_signature());
-            customFormLocal.setAutomatic_fill(customForm.getAutomatic_fill());
-            customFormLocal.setSchedule_date_start_format("1900-01-01 00:00:00 +00:00");
-            customFormLocal.setSchedule_date_end_format("1900-01-01 00:00:00 +00:00");
-            customFormLocal.setSchedule_date_start_format_ms(0);
-            customFormLocal.setSchedule_date_end_format_ms(0);
-            customFormLocal.setRequire_location(customForm.getRequire_location());
-            customFormLocal.setRequire_serial_done(customForm.getRequire_serial_done());
-            customFormLocal.setSchedule_comments("");
-            //LUCHE - 24/08/2020
-            customFormLocal.setTicket_prefix(mTicket_prefix);
-            customFormLocal.setTicket_code(mTicket_code);
-            customFormLocal.setTicket_seq(mTicket_seq);
-            customFormLocal.setTicket_seq_tmp(mTicket_seq_tmp);
-            customFormLocal.setStep_code(mStep_code);
-            //LUCHE - 25/05/2021
-            customFormLocal.setSite_code(siteInfo != null ? ToolBox_Inf.convertStringToInt(siteInfo.getSite_code()) : 0);
-            customFormLocal.setSite_id(siteInfo != null ? siteInfo.getSite_id() : "");
-            customFormLocal.setSite_desc(siteInfo != null ? siteInfo.getSite_desc() : "");
-            //LUCHE - 30/09/2021
-            customFormLocal.setIs_so(customForm.getIs_so());
-            customFormLocal.setSo_edit_start_end(customForm.getSo_edit_start_end());
-            customFormLocal.setSo_order_type_code_default(customForm.getSo_order_type_code_default());
-            customFormLocal.setSo_allow_change_order_type(customForm.getSo_allow_change_order_type());
-            customFormLocal.setSo_allow_backup(customForm.getSo_allow_backup());
-            //LUCHE -  14/03/2019
-            //Alteração Dao de insert com exception NOVO METODO DAO
-            //custom_form_LocalDao.addUpdate(customFormLocal);
-            daoObjReturn = custom_form_LocalDao.addUpdateThrowException(customFormLocal);
-            //
-            if (!daoObjReturn.hasError()) {
-                ArrayList<HMAux> items = (ArrayList<HMAux>) custom_form_fieldDao.query_HM(
-                    new Sql_Act011_002(
-                        String.valueOf(customFormLocal.getCustomer_code()),
-                        String.valueOf(customFormLocal.getCustom_form_type()),
-                        String.valueOf(customFormLocal.getCustom_form_code()),
-                        String.valueOf(customFormLocal.getCustom_form_version()),
-                        ToolBox_Con.getPreference_Translate_Code(context),
-                        String.valueOf(customFormLocal.getCustom_form_data())
-                    ).toSqlQuery().toString().toLowerCase()
-                );
-
-                custom_form_field_LocalDao.addUpdate(items);
-
-                cf_fields = (ArrayList<HMAux>) custom_form_field_LocalDao.query_HM(
-                    new GE_Custom_Form_Fields_Local_Sql_001(
-                        String.valueOf(customFormLocal.getCustomer_code()),
-                        String.valueOf(customFormLocal.getCustom_form_type()),
-                        String.valueOf(customFormLocal.getCustom_form_code()),
-                        String.valueOf(customFormLocal.getCustom_form_version()),
-                        String.valueOf(customFormLocal.getCustom_form_data())
-                    ).toSqlQuery().toString().toLowerCase()
-                );
-
-                custom_form_blob_localDao.addUpdate(
-                    custom_form_blob_localDao.query(
-                        new GE_Custom_Form_Blob_Sql_001(
+                customFormLocal.setCustomer_code(customForm.getCustomer_code());
+                customFormLocal.setCustom_form_type(customForm.getCustom_form_type());
+                customFormLocal.setCustom_form_code(customForm.getCustom_form_code());
+                customFormLocal.setCustom_form_version(customForm.getCustom_form_version());
+                customFormLocal.setCustom_form_data(Long.parseLong(ii.get(GE_Custom_Form_Local_Sql_002.ID)));
+                customFormLocal.setCustom_form_pre(ToolBox_Inf.getPrefix(context));
+                customFormLocal.setCustom_form_status(Constant.SYS_STATUS_IN_PROCESSING);
+                customFormLocal.setTag_operational_code(tagInfo != null ? tagInfo.getTag_code() : -1);
+                customFormLocal.setTag_operational_id(tagInfo != null ? tagInfo.getTag_id() : null);
+                customFormLocal.setTag_operational_desc(tagInfo != null ? tagInfo.getTag_desc() : null);
+                customFormLocal.setCustom_product_code(Integer.parseInt(product_code));
+                customFormLocal.setCustom_product_desc(product_desc);
+                customFormLocal.setCustom_product_id(product_id);
+                customFormLocal.setCustom_product_icon_name(productInfo.getProduct_icon_name());
+                customFormLocal.setCustom_product_icon_url(productInfo.getProduct_icon_url());
+                customFormLocal.setCustom_product_icon_url_local(productInfo.getProduct_icon_url_local());
+                customFormLocal.setCustom_form_desc(formcode_desc);
+                customFormLocal.setSerial_id(serial_id);
+                customFormLocal.setRequire_signature(customForm.getRequire_signature());
+                customFormLocal.setAutomatic_fill(customForm.getAutomatic_fill());
+                customFormLocal.setSchedule_date_start_format("1900-01-01 00:00:00 +00:00");
+                customFormLocal.setSchedule_date_end_format("1900-01-01 00:00:00 +00:00");
+                customFormLocal.setSchedule_date_start_format_ms(0);
+                customFormLocal.setSchedule_date_end_format_ms(0);
+                customFormLocal.setRequire_location(customForm.getRequire_location());
+                customFormLocal.setRequire_serial_done(customForm.getRequire_serial_done());
+                customFormLocal.setSchedule_comments("");
+                //LUCHE - 24/08/2020
+                customFormLocal.setTicket_prefix(mTicket_prefix);
+                customFormLocal.setTicket_code(mTicket_code);
+                customFormLocal.setTicket_seq(mTicket_seq);
+                customFormLocal.setTicket_seq_tmp(mTicket_seq_tmp);
+                customFormLocal.setStep_code(mStep_code);
+                //LUCHE - 25/05/2021
+                customFormLocal.setSite_code(siteInfo != null ? ToolBox_Inf.convertStringToInt(siteInfo.getSite_code()) : 0);
+                customFormLocal.setSite_id(siteInfo != null ? siteInfo.getSite_id() : "");
+                customFormLocal.setSite_desc(siteInfo != null ? siteInfo.getSite_desc() : "");
+                //LUCHE - 30/09/2021
+                customFormLocal.setIs_so(customForm.getIs_so());
+                customFormLocal.setSo_edit_start_end(customForm.getSo_edit_start_end());
+                customFormLocal.setSo_order_type_code_default(customForm.getSo_order_type_code_default());
+                customFormLocal.setSo_allow_change_order_type(customForm.getSo_allow_change_order_type());
+                customFormLocal.setSo_allow_backup(customForm.getSo_allow_backup());
+                //LUCHE -  14/03/2019
+                //Alteração Dao de insert com exception NOVO METODO DAO
+                //custom_form_LocalDao.addUpdate(customFormLocal);
+                daoObjReturn = custom_form_LocalDao.addUpdateThrowException(customFormLocal);
+                //
+                if (!daoObjReturn.hasError()) {
+                    ArrayList<HMAux> items = (ArrayList<HMAux>) custom_form_fieldDao.query_HM(
+                        new Sql_Act011_002(
                             String.valueOf(customFormLocal.getCustomer_code()),
                             String.valueOf(customFormLocal.getCustom_form_type()),
                             String.valueOf(customFormLocal.getCustom_form_code()),
-                            String.valueOf(customFormLocal.getCustom_form_version())
+                            String.valueOf(customFormLocal.getCustom_form_version()),
+                            ToolBox_Con.getPreference_Translate_Code(context),
+                            String.valueOf(customFormLocal.getCustom_form_data())
                         ).toSqlQuery().toString().toLowerCase()
-                    )
-                    ,
-                    false
-                );
+                    );
+
+                    custom_form_field_LocalDao.addUpdate(items);
+
+                    cf_fields = (ArrayList<HMAux>) custom_form_field_LocalDao.query_HM(
+                        new GE_Custom_Form_Fields_Local_Sql_001(
+                            String.valueOf(customFormLocal.getCustomer_code()),
+                            String.valueOf(customFormLocal.getCustom_form_type()),
+                            String.valueOf(customFormLocal.getCustom_form_code()),
+                            String.valueOf(customFormLocal.getCustom_form_version()),
+                            String.valueOf(customFormLocal.getCustom_form_data())
+                        ).toSqlQuery().toString().toLowerCase()
+                    );
+
+                    custom_form_blob_localDao.addUpdate(
+                        custom_form_blob_localDao.query(
+                            new GE_Custom_Form_Blob_Sql_001(
+                                String.valueOf(customFormLocal.getCustomer_code()),
+                                String.valueOf(customFormLocal.getCustom_form_type()),
+                                String.valueOf(customFormLocal.getCustom_form_code()),
+                                String.valueOf(customFormLocal.getCustom_form_version())
+                            ).toSqlQuery().toString().toLowerCase()
+                        )
+                        ,
+                        false
+                    );
+                }
             }
         }
-
+        //LUCHE - 25/10/2021
+        //Se form tipo o.s, mas geOs não encontrado, impede abertura do form.
+        //Isso é algo que não deve acontecer quando for lançado em produção, MAS ficará para evitar
+        //o crash. Em caso desse erro, será exibida msg e o clique no ok volta...se erro persistir...
+        //somente a limpeza de cash resolveria...
+        if(bAbortGeOs) {
+            mView.showMsg(
+                hmAux_Trans.get("alert_error_order_or_structure_not_found_ttl"),
+                hmAux_Trans.get("alert_error_order_or_structure_not_found_msg"),
+                Act011_Main.SHOW_MSG_TYPE_GE_OS_NOT_FOUND
+            );
+            return;
+        }
         //LUCHE - 24/08/2020
         //isTicketProcess = isFormCreateByTicket(customFormLocal.getTicket_prefix(),customFormLocal.getTicket_code(),customFormLocal.getTicket_seq(),customFormLocal.getTicket_seq_tmp(),customFormLocal.getStep_code());
         isTicketProcess = isFormCreateByTicket(customFormLocal);
@@ -1225,7 +1248,11 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 form_data.setDevice_tp_code(geOs.getDevice_tp_code_main());
                 form_data.setMeasure_tp_code(geOs.getMeasure_tp_code());
                 form_data.setMeasure_value(geOs.getMeasure_value());
-                if(geOs.getProcess_type().equalsIgnoreCase(MdOrderType.PREVENTIVE)) {
+                //Se o tipo da o.s for preventiva ciclica seta o valor do cycle
+                if( geOs.getProcess_type().equalsIgnoreCase(MdOrderType.PROCESS_TYPE_PREVENTIVE)
+                    && geOs.getValue_cycle_size() != null
+                    && geOs.getCycle_tolerance() != null
+                ) {
                     form_data.setMeasure_cycle_value(geOs.getMeasure_cycle_value());
                 }
             }

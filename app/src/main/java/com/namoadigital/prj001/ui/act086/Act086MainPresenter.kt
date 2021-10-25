@@ -234,6 +234,7 @@ class Act086MainPresenter(
                     next_cycle_measure_date = null ,
                     next_cycle_limit_date = null,
                     value_sufix = null,
+                    restriction_decimal = null,
                     item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_MANUAL,
                     null,
                     null,

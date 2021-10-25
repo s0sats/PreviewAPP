@@ -10,11 +10,15 @@ class MdOrderType(
     @SerializedName("process_type") val processType: String,
     @SerializedName("display_option") val displayOption: String
 ){
-   companion object ProcessType{
-        const val PREVENTIVE = "PREVENTIVE"
-        const val DAMAGE = "DAMAGE"
-        const val CORRECTIVE = "CORRECTIVE"
-        const val CORRECTIVE_PLANNED = "CORRECTIVE_PLANNED"
+   companion object {
+        //Valor para process_type
+        const val PROCESS_TYPE_PREVENTIVE = "PREVENTIVE"
+        const val PROCESS_TYPE_DAMAGE = "DAMAGE"
+        const val PROCESS_TYPE_CORRECTIVE = "CORRECTIVE"
+        const val PROCESS_TYPE_CORRECTIVE_PLANNED = "CORRECTIVE_PLANNED"
+
+        const val DISPLAY_OPTION_SHOW_ALL = "SHOW_ALL"
+        const val DISPLAY_OPTION_SHOW_ONLY_CRITICAL = "SHOW_ONLY_CRITICAL"
     }
 }
 

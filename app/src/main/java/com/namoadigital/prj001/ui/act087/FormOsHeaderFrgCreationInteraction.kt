@@ -14,4 +14,5 @@ interface FormOsHeaderFrgCreationInteraction {
     fun getFormSerialId(): String
     fun delegateControlSta(control_sta: ArrayList<MKEditTextNM>, addAction: Boolean)
     fun getMeasure(measureCode: Int) : MeMeasureTp?
+    fun getFormRequiresGPS(): Boolean
 }

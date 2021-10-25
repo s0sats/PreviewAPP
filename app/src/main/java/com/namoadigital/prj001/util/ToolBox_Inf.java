@@ -1,5 +1,28 @@
 package com.namoadigital.prj001.util;
 
+import static android.content.Context.NOTIFICATION_SERVICE;
+import static com.namoadigital.prj001.dao.EV_User_CustomerDao.LICENSE_CONTROL_TYPE_CONCURRENT_GLOBAL_LEVEL;
+import static com.namoadigital.prj001.service.SV_LocationTracker.LOCATION_BACKGROUND;
+import static com.namoadigital.prj001.ui.AppBase.NAMOA_NOTIF_INFO;
+import static com.namoadigital.prj001.ui.AppBase.NAMOA_PEND_INFO;
+import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE_ACTIVED;
+import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_CANCEL;
+import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_IMEI;
+import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_OK;
+import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_PRESENTED_BY_NAMOA;
+import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_USER_LEVEL_LBL;
+import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_VERSION_LBL;
+import static com.namoadigital.prj001.util.ConstantBaseApp.GENERIC_CHANNEL_ID;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_BARCODE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_FORM;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_FORM_NC;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_FORM_SCORE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_MANUAL;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_MEASURE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_SCHEDULE;
+import static com.namoadigital.prj001.util.ToolBox_Con.isHostAvailable;
+
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlarmManager;
@@ -255,6 +278,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -263,6 +288,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -278,29 +304,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
-
-import static android.content.Context.NOTIFICATION_SERVICE;
-import static com.namoadigital.prj001.dao.EV_User_CustomerDao.LICENSE_CONTROL_TYPE_CONCURRENT_GLOBAL_LEVEL;
-import static com.namoadigital.prj001.service.SV_LocationTracker.LOCATION_BACKGROUND;
-import static com.namoadigital.prj001.ui.AppBase.NAMOA_NOTIF_INFO;
-import static com.namoadigital.prj001.ui.AppBase.NAMOA_PEND_INFO;
-import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE;
-import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE_ACTIVED;
-import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_CANCEL;
-import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_IMEI;
-import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_OK;
-import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_PRESENTED_BY_NAMOA;
-import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_USER_LEVEL_LBL;
-import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_VERSION_LBL;
-import static com.namoadigital.prj001.util.ConstantBaseApp.GENERIC_CHANNEL_ID;
-import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_BARCODE;
-import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_FORM;
-import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_FORM_NC;
-import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_FORM_SCORE;
-import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_MANUAL;
-import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_MEASURE;
-import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_SCHEDULE;
-import static com.namoadigital.prj001.util.ToolBox_Con.isHostAvailable;
 
 /**
  * Created by neomatrix on 09/01/17.
@@ -8907,4 +8910,30 @@ public class ToolBox_Inf {
         return l;
     }
 
+    /**
+     * Metodo que recebe um valor com decimal e aplica o separados baseado no locale do usr.
+     * @param numberAsString
+     * @return
+     */
+    public static String applyDecimalSeparatorByUserLocale(String numberAsString){
+        char decimalSeparator = DecimalFormatSymbols.getInstance().getDecimalSeparator();
+        return numberAsString.replace('.',decimalSeparator);
+    }
+
+    /**
+     * Metodo que recebe valor float e o formata para String, aplicando qtd de casas decimais informada
+     * Se applyDecimalSeparatorByLocale verdadeira, usa o separado decimal  baseado no locale
+     * @param valor
+     * @param decimalScale
+     * @param applyDecimalSeparatorByLocale
+     * @return
+     */
+    public static String convertFloatToBigDecimalString(float valor, int decimalScale, boolean applyDecimalSeparatorByLocale){
+        String convertedValue = BigDecimal.valueOf((double) valor).setScale(decimalScale, RoundingMode.HALF_DOWN).toString();
+        if(applyDecimalSeparatorByLocale){
+           return  applyDecimalSeparatorByUserLocale(convertedValue);
+        }
+        //
+        return convertedValue;
+    }
 }

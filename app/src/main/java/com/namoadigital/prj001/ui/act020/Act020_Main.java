@@ -121,7 +121,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     private boolean mtk_ticket_is_form_off_hand;
     private Bundle act083Bundle = new Bundle();
     private String originFlow = null;
-
+    private int isSoForm = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -329,6 +329,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
             bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, customFormCode);
             bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION,customFormVersion);
             bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, customFormCodeDesc);
+            bundle.putInt(GE_Custom_FormDao.IS_SO, isSoForm);
         }
         return bundle;
     }
@@ -391,6 +392,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                 customFormCode = bundle.getString(GE_Custom_FormDao.CUSTOM_FORM_CODE, "");
                 customFormVersion = bundle.getString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, "");
                 customFormCodeDesc = bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, "");
+                isSoForm = bundle.getInt(GE_Custom_FormDao.IS_SO, 0);
             }else{
                 productCode = "";
                 productDesc = "";
@@ -446,6 +448,10 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                         bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,ConstantBaseApp.ACT005)
                 );
                 act083Bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM,ToolBox_Inf.getMyActionFilterParam(bundle));
+                act083Bundle.putInt(
+                    GE_Custom_FormDao.IS_SO,
+                    bundle.getInt(GE_Custom_FormDao.IS_SO,0)
+                );
             }
         }
     }
@@ -776,7 +782,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     public void callAct083(Context context) {
         Intent mIntent = new Intent(context, Act083_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        mIntent.getExtras().putAll(act083Bundle);
+        mIntent.putExtras(act083Bundle);
         startActivity(mIntent);
         finish();
     }

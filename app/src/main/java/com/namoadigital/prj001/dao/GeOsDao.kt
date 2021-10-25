@@ -11,10 +11,7 @@ import androidx.core.database.getStringOrNull
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
-import com.namoadigital.prj001.model.DaoObjReturn
-import com.namoadigital.prj001.model.GeOs
-import com.namoadigital.prj001.model.GeOsDeviceItem
-import com.namoadigital.prj001.model.MD_Product_Serial
+import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.sql.GeOsDeviceCreation_Sql_001
 import com.namoadigital.prj001.sql.GeOsDeviceItemCreation_Sql_001
 import com.namoadigital.prj001.sql.GeOsDeviceItemHistCreation_Sql_001
@@ -54,6 +51,8 @@ class GeOsDao(
         const val MEASURE_CYCLE_VALUE = "measure_cycle_value"
         const val VALUE_SUFIX = "value_sufix"
         const val RESTRICTION_DECIMAL = "restriction_decimal"
+        const val VALUE_CYCLE_SIZE = "value_cycle_size"
+        const val CYCLE_TOLERANCE = "cycle_tolerance"
         const val DATE_START = "date_start"
         const val DATE_END = "date_end"
         const val LAST_MEASURE_VALUE = "last_measure_value"
@@ -64,6 +63,7 @@ class GeOsDao(
         const val SO_ALLOW_CHANGE_ORDER_TYPE = "so_allow_change_order_type"
         const val SO_ALLOW_BACKUP = "so_allow_backup"
         const val DEVICE_TP_CODE_MAIN = "device_tp_code_main"
+
     }
 
     private val toGeOsMapper: Mapper<Cursor, GeOs>
@@ -315,14 +315,16 @@ class GeOsDao(
                         measure_tp_id = getStringOrNull(getColumnIndex(MEASURE_TP_ID)),
                         measure_tp_desc = getStringOrNull(getColumnIndex(MEASURE_TP_DESC)),
                         measure_value = getFloatOrNull(getColumnIndex(MEASURE_VALUE)),
-                        measure_cycle_value = getIntOrNull(getColumnIndex(MEASURE_CYCLE_VALUE)),
+                        measure_cycle_value = getFloatOrNull(getColumnIndex(MEASURE_CYCLE_VALUE)),
                         value_sufix = getStringOrNull(getColumnIndex(VALUE_SUFIX)),
                         restriction_decimal = getIntOrNull(getColumnIndex(RESTRICTION_DECIMAL)),
+                        value_cycle_size =  getFloatOrNull(getColumnIndex(VALUE_CYCLE_SIZE)),
+                        cycle_tolerance = getIntOrNull(getColumnIndex(CYCLE_TOLERANCE)),
                         date_start = getStringOrNull(getColumnIndex(DATE_START)),
                         date_end = getStringOrNull(getColumnIndex(DATE_END)),
                         last_measure_value = getFloatOrNull(getColumnIndex(LAST_MEASURE_VALUE)),
                         last_measure_date = getStringOrNull(getColumnIndex(LAST_MEASURE_DATE)),
-                        last_cycle_value = getIntOrNull(getColumnIndex(LAST_CYCLE_VALUE)),
+                        last_cycle_value = getFloatOrNull(getColumnIndex(LAST_CYCLE_VALUE)),
                         so_edit_start_end = getInt(getColumnIndex(SO_EDIT_START_END)),
                         so_order_type_code_default = getIntOrNull(getColumnIndex(SO_ORDER_TYPE_CODE_DEFAULT)),
                         so_allow_change_order_type = getInt(getColumnIndex(SO_ALLOW_CHANGE_ORDER_TYPE)),
@@ -385,6 +387,10 @@ class GeOsDao(
                     //
                     put(RESTRICTION_DECIMAL, it.restriction_decimal)
                     //
+                    put(VALUE_CYCLE_SIZE, it.value_cycle_size)
+                    //
+                    put(CYCLE_TOLERANCE, it.cycle_tolerance)
+                    //
                     put(DATE_START,it.date_start)
                     //
                     put(DATE_END,it.date_end)
@@ -439,7 +445,8 @@ class GeOsDao(
                 geOs.custom_form_data,
                 mdSerial.product_code.toInt(),
                 mdSerial.serial_code.toInt(),
-                geOs.value_sufix
+                geOs.value_sufix,
+                geOs.restriction_decimal
             ).toSqlQuery()
         )
         val geOsDeviceItemHist = geOsDeviceItemHistDao.query(
@@ -508,19 +515,32 @@ class GeOsDao(
         geOs: GeOs,
         geOsDeviceItens: MutableList<GeOsDeviceItem>
     ) {
+        //Chama primeira varredura que modifica o status baseado nas configuração do proximo ciclo
+        //programado.
+        firstScan(geOs, geOsDeviceItens)
+        //Chama segunda varredura que modifica o status baseado na propriedade display_option do
+        // tipo de O.S selecionada
+        secondScan(geOs, geOsDeviceItens)
+    }
+
+    private fun firstScan(
+        geOs: GeOs,
+        geOsDeviceItens: MutableList<GeOsDeviceItem>
+    ) {
         //Primeira varredura
         //Testa qual valor deve ser usado, measure_value ou measure_cycle_value(measure cycle só existe
         //se for preventiva). Modificar no futuro?! replicar o measure_value no measure_cycle_value
         // quando não for PREVENTIVE ?!
         val measureConsider: Float =
-            if (geOs.measure_cycle_value != null && geOs.measure_cycle_value!! > -1) {
-                geOs.measure_cycle_value!!.toFloat()
+            if (geOs.measure_cycle_value != null && geOs.measure_cycle_value!!.compareTo(-1f) > 0) {
+                geOs.measure_cycle_value!!
             } else {
-                geOs.measure_value ?: 0f
+                0f
             }
-        //Para a apresnetação, somente ITEM_CHECK_STATUS_NORMAL será avalaido e modificado.
+        //
         geOsDeviceItens.forEach { item ->
             when (item.item_check_status) {
+                //Se Status Normal, verifica se com a medição digitada, deve mudar o status para MEASURE_ALERT
                 GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL -> {
                     if (item.next_cycle_measure != null
                         && item.next_cycle_measure.compareTo(measureConsider) <= 0
@@ -528,12 +548,75 @@ class GeOsDao(
                         item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_MEASURE_ALERT
                     }
                 }
-                else ->{
-                    Log.d("Varredura", "Else")
+                //Se o status for data de projeção foi atingida, mas o valor da medição for inferior
+                // ao da proxima medição programada, muda o status para NORMAL
+                GeOsDeviceItem.ITEM_CHECK_STATUS_PROJECTED_DATE_REACHED -> {
+                    if (item.next_cycle_measure != null
+                        && item.next_cycle_measure.compareTo(measureConsider) > 0
+                    ) {
+                        item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL
+                    }
+                }
+                //Se o status for data limit do ciclo atingida, mas a data inserida pelo usr for
+                //menor que data da proxima medição programada, muda o status para normal
+                GeOsDeviceItem.ITEM_CHECK_STATUS_LIMIT_DATE_REACHED -> {
+                    if (item.next_cycle_limit_date != null && geOs.date_start != null
+                        && isNextCycleLimiteDateInFuture(
+                            item.next_cycle_limit_date,
+                            geOs.date_start!!
+                        )
+                    ) {
+                        item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL
+                    }
+                }
+                else -> {
                 }
             }
         }
     }
+
+    /**
+     * Fun que utiliza a propriedade DISPLAY_OPTION da MdOrderType selecionada para aplicar a visibilidade
+     * no itens
+     * Se SHOW_ALL:
+     *   Pega os itens com status NORMAL, modifica para FORCED e remove a criticiade do item.
+     * Se SHOW_ONLY_CRITICAL:
+     *   Pega os itens com status NO_CYCLE, MEASURE_ALERT ,PROJECTED_DATE_REACHED e LIMIT_DATE_REACHED
+     *   e rebaixa para o status NORMAL
+     *
+     */
+    private fun secondScan(geOs: GeOs, geOsDeviceItens: MutableList<GeOsDeviceItem>) {
+        geOsDeviceItens.forEach { item ->
+            when(geOs.display_option){
+                //Se show all, pega os itens em status normal e
+                MdOrderType.DISPLAY_OPTION_SHOW_ALL ->{
+                    if(item.item_check_status.equals(GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL ,true)){
+                        item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_FORCED
+                        item.critical_item = 0
+                    }
+
+                }
+                MdOrderType.DISPLAY_OPTION_SHOW_ONLY_CRITICAL ->{
+                    if(item.critical_item == 0
+                        && (    item.item_check_status.equals(GeOsDeviceItem.ITEM_CHECK_STATUS_NO_CYCLE ,true)
+                                || item.item_check_status.equals(GeOsDeviceItem.ITEM_CHECK_STATUS_MEASURE_ALERT ,true)
+                                || item.item_check_status.equals(GeOsDeviceItem.ITEM_CHECK_STATUS_PROJECTED_DATE_REACHED ,true)
+                                || item.item_check_status.equals(GeOsDeviceItem.ITEM_CHECK_STATUS_LIMIT_DATE_REACHED ,true)
+                        )
+                    ){
+                        item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL
+                    }
+                }
+                else ->{}
+            }
+
+        }
+    }
+
+    private fun isNextCycleLimiteDateInFuture(
+        next_cycle_limit_date: String,
+        date_start: String
+    ) = ToolBox_Inf.getDateDiferenceInMilliseconds(next_cycle_limit_date, date_start) > 0
 
     fun removeFull(geOs: GeOs): DaoObjReturn {
         var daoObjReturn = DaoObjReturn()

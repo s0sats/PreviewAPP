@@ -14,6 +14,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_DeviceDao;
 import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
@@ -24,6 +25,7 @@ import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.MyActionFilterParam;
 import com.namoadigital.prj001.model.Sync_Checklist;
@@ -40,6 +42,7 @@ import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Search_Not_Focus;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_Device_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
@@ -79,11 +82,13 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     private MD_Product_SerialDao serialDao;
     private MD_Product_Serial_TrackingDao trackingDao;
     private MD_Schedule_ExecDao scheduleExecDao;
+    private MD_Product_Serial_Tp_DeviceDao serialTpDeviceDao;
     private int mTkPrefix;
     private int mTkCode;
     private int mStepCode;
+    private boolean isSoForm;
 
-    public Act008_Main_Presenter_Impl(Context context, Act008_Main_View mView, Sync_ChecklistDao syncChecklistDao, MD_ProductDao mdProductDao, GE_Custom_Form_LocalDao geCustomFormLocalDao, Long product_code, HMAux hmAux_Trans, GE_Custom_Form_OperationDao formOperationDao, boolean isSchedule, String requesting_process, MD_Product_SerialDao serialDao, MD_Product_Serial_TrackingDao trackingDao, boolean isFinishPlusNew,int mTkPrefix, int mTkCode, int mStepCode) {
+    public Act008_Main_Presenter_Impl(Context context, Act008_Main_View mView, Sync_ChecklistDao syncChecklistDao, MD_ProductDao mdProductDao, GE_Custom_Form_LocalDao geCustomFormLocalDao, Long product_code, HMAux hmAux_Trans, GE_Custom_Form_OperationDao formOperationDao, boolean isSchedule, String requesting_process, MD_Product_SerialDao serialDao, MD_Product_Serial_TrackingDao trackingDao, MD_Product_Serial_Tp_DeviceDao serialTpDeviceDao, boolean isFinishPlusNew, int mTkPrefix, int mTkCode, int mStepCode, boolean isSoForm) {
         this.context = context;
         this.mView = mView;
         this.syncChecklistDao = syncChecklistDao;
@@ -96,6 +101,7 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         this.requesting_process = requesting_process;
         this.serialDao = serialDao;
         this.trackingDao = trackingDao;
+        this.serialTpDeviceDao = serialTpDeviceDao;
         this.isFinishPlusNew = isFinishPlusNew;
         this.scheduleExecDao = new MD_Schedule_ExecDao(
             context,
@@ -105,7 +111,7 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         this.mTkPrefix = mTkPrefix;
         this.mTkCode = mTkCode;
         this.mStepCode = mStepCode;
-
+        this.isSoForm = isSoForm;
     }
 
     @Override
@@ -778,7 +784,19 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
                             0
                     );
                 }else {
-                    mView.callAct011(context);
+                    //Se é um form tipo o.s
+                    if(isSoForm){
+                        if (serialHasStructure()) {
+                            prepareOsFormCall();
+                        } else {
+                            mView.showAlertDialog(
+                                hmAux_Trans.get("alert_form_os_ttl"),
+                                hmAux_Trans.get("alert_serial_without_structure_msg")
+                            );
+                        }
+                    }else{
+                        mView.callAct011(context);
+                    }
                 }
             } else {
                 if (mView.isHas_tk_ticket_is_form_off_hand()) {
@@ -808,6 +826,67 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
                     }
                 }
             }
+    }
+
+    private void prepareOsFormCall() {
+        if(isSchedule){
+            String[] splitedSchedulePk = getSplitedSchedulePk();
+            if(splitedSchedulePk != null){
+                mView.callAct087(
+                    splitedSchedulePk[0],
+                    splitedSchedulePk[1],
+                    splitedSchedulePk[2]
+                );
+            } else {
+                mView.showAlertDialog(
+                    hmAux_Trans.get("alert_form_os_schedule_pk_not_found_ttl"),
+                    hmAux_Trans.get("alert_form_os_schedule_pk_not_found_msg")
+                );
+            }
+        }else{
+            mView.callAct087("-1","-1","-1");
+        }
+    }
+
+    private String[] getSplitedSchedulePk() {
+        Bundle bundle = mView.getBundle();
+        if( bundle.containsKey(MD_Schedule_ExecDao.SCHEDULE_PK)
+            && bundle.getString(MD_Schedule_ExecDao.SCHEDULE_PK,"").contains(".")
+        ){
+            try {
+                String[] splitedPks = bundle.getString(MD_Schedule_ExecDao.SCHEDULE_PK).split("\\.");
+                if(splitedPks.length == 3){
+                    return splitedPks;
+                }
+            }catch (Exception e){
+                ToolBox_Inf.registerException(getClass().getName(),e);
+                return null;
+            }
+        }
+        //
+        return null;
+    }
+
+    /**
+     * Valida se serial existe e possui estrutura
+     * @return
+     */
+    private boolean serialHasStructure() {
+        MD_Product_Serial serial = mView.getMdProductSerial();
+        //
+        if(serial != null && serial.getHas_item_check() == 1){
+            ArrayList<MD_Product_Serial_Tp_Device> serialTpDevices = (ArrayList<MD_Product_Serial_Tp_Device>)
+                serialTpDeviceDao.query(
+                    new MD_Product_Serial_Tp_Device_Sql_002(
+                        serial.getCustomer_code(),
+                        serial.getProduct_code(),
+                        serial.getSerial_code()
+                    ).toSqlQuery()
+                );
+            //
+            return serialTpDevices != null && serialTpDevices.size() > 0;
+        }
+        return false;
     }
 
     /**

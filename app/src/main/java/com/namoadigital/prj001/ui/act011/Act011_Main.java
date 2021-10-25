@@ -166,6 +166,7 @@ public class Act011_Main extends Base_Activity
     public static final int SHOW_MSG_TYPE_SCHEDULE_EXEC_CANCEL_ERROR = 6;
     public static final int SHOW_MSG_TYPE_TICKET_STEP_OR_CTRL_ERROR = 7;
     public static final int SHOW_MSG_TYPE_TICKET_FORM_FINALIZED = 8;
+    public static final int SHOW_MSG_TYPE_GE_OS_NOT_FOUND = 9;
     public static final String PNG_EXTENSION = ".png";
     public static final String JPG_EXTENSION = ".jpg";
     public static final String PAGE = "page";
@@ -479,6 +480,9 @@ public class Act011_Main extends Base_Activity
         //
         transList.add("dialog_finalize_os_form_invalid_end_date_ttl");
         transList.add("dialog_finalize_os_form_invalid_end_date_end");
+        //
+        transList.add("alert_error_order_or_structure_not_found_ttl");
+        transList.add("alert_error_order_or_structure_not_found_msg");
         //
         transList.addAll(Act011FrgInspection.Companion.getFragTranslationsVars());
         //
@@ -1279,22 +1283,31 @@ public class Act011_Main extends Base_Activity
          * IN_PROCESSING
          */
         String signaturePath = Constant.CACHE_PATH_PHOTO + "/" + mSignature;
-        if(ToolBox.validationCheckFile(signaturePath)
-        && mPresenter.isInProcessing(formLocal)){
+        if (ToolBox.validationCheckFile(signaturePath)
+            && mPresenter.isInProcessing(formLocal)) {
             cleanSignatureFile(signaturePath);
         }
 
         includeField = formData.getDataFields().size() == 0 ? true : false;
 
         int pages = 0;
-        boolean automatic=false;
+        boolean automatic = false;
         canSave = mPresenter.isInProcessing(formLocal);
-
+        //LUCHE - 25/10/2021 - MOVIDO SCHEDULE pra fora do if de cf_fields, para ser acessado tb pelo
+        //form o.s sem custom ff
+        //Tenta resgatar dados do agendamento caso exista.
+        MD_Schedule_Exec mdScheduleExec = null;
+        if (formLocal.getSchedule_prefix() != null
+            && formLocal.getSchedule_code() != null
+            && formLocal.getSchedule_exec() != null) {
+            mdScheduleExec = mPresenter.getMdScheduleExec(formLocal.getSchedule_prefix(), formLocal.getSchedule_code(), formLocal.getSchedule_exec());
+        }
+        //LUCHE-25/10/2021
+        customFFs = new ArrayList<>();
+        screens = new ArrayList<>();
+        //
         if (cf_fields != null && cf_fields.size() > 0) {
             pages = Integer.parseInt(cf_fields.get(cf_fields.size() - 1).get(PAGE));
-            //
-            customFFs = new ArrayList<>();
-            screens = new ArrayList<>();
             //
             for (HMAux cf : cf_fields) {
 
@@ -1313,9 +1326,9 @@ public class Act011_Main extends Base_Activity
                     formData.getDataFields().add(form_data_field);
                 }
 
-                if( !automatic
+                if (!automatic
                     && cf.hasConsistentValue(GE_Custom_Form_Field_LocalDao.AUTOMATIC)
-                ){
+                ) {
                     automatic = !cf.get(GE_Custom_Form_Field_LocalDao.AUTOMATIC).isEmpty();
                 }
                 /*
@@ -1366,7 +1379,7 @@ public class Act011_Main extends Base_Activity
                         break;
                 }
                 //Se != de null, seta o listener e insere nas listas customFFs e controls_dyn
-                if(customField != null) {
+                if (customField != null) {
                     //Implments da interface que faz o scroll ao rodar o dismiss do dialog dos dots
                     customField.setOnDotsDialogDismiss(onBackFocusEvent);
                     //Add na lista de customFF
@@ -1375,94 +1388,81 @@ public class Act011_Main extends Base_Activity
                     controls_dyn.add(customField);
                 }
             }
-            //Tenta resgatar dados do agendamento caso exista.
-            MD_Schedule_Exec mdScheduleExec = null;
-            if(formLocal.getSchedule_prefix() != null
-                && formLocal.getSchedule_code() != null
-                && formLocal.getSchedule_exec() != null)
-            {
-                mdScheduleExec = mPresenter.getMdScheduleExec(formLocal.getSchedule_prefix(), formLocal.getSchedule_code(), formLocal.getSchedule_exec());
-            }
-           //
-            ArrayList<Act011FormTab> tabs = new ArrayList<>();
-            //Loop de criação das tabs do form utilizando o novo fragment.
-            if(formLocal.getIs_so() == 1){
-                //Qtd total de tabs 1(header) + pages(customFF) + acessoryFormViews.size(Devices)
-                int fullTabQty = pages + acessoryFormViews.size();
-                addOsHeaderFrag(geOs,formData.getCustom_form_status(),tabs,fullTabQty,mdScheduleExec);
-                //
-                for (int i = 1; i <= pages; i++) {
-                    Act011FrgFF custom_form_ff = Act011FrgFF.Companion.newInstance(
-                            hmAux_Trans,
-                            i,
-                            fullTabQty,
-                            formData.getCustom_form_status(),
-                            mdScheduleExec != null ? mdScheduleExec.getSchedule_desc() : null,
-                            mdScheduleExec != null ? mdScheduleExec.getComments() : null,
-                        formLocal.getIs_so() == 1
+        }
+        //
+        ArrayList<Act011FormTab> tabs = new ArrayList<>();
+        //Define fullTabQty com pages. Posteriormente, se tipo O.S, será redefinido
+        int fullTabQty = pages;
+        //
+        if (formLocal.getIs_so() == 1) {
+            //Qtd total de tabs 1(header) + pages(customFF) + acessoryFormViews.size(Devices)
+            fullTabQty = pages + acessoryFormViews.size();
+            addOsHeaderFrag(geOs, formData.getCustom_form_status(), tabs, fullTabQty, mdScheduleExec);
+        }
+        //Loop de criação das tabs do form utilizando o novo fragment.
+        if (customFFs != null && customFFs.size() > 0){
+            for (int i = 1; i <= pages; i++) {
+                Act011FrgFF custom_form_ff = Act011FrgFF.Companion.newInstance(
+                    hmAux_Trans,
+                    i,
+                    fullTabQty,
+                    formData.getCustom_form_status(),
+                    mdScheduleExec != null ? mdScheduleExec.getSchedule_desc() : null,
+                    mdScheduleExec != null ? mdScheduleExec.getComments() : null,
+                    formLocal.getIs_so() == 1
 
-                    );
-                    custom_form_ff.setCustomFF(customFFs);
-                    //Substituido o param de bNew para includeField, pois ele identifica  aprimeira abertura.
-                    //Ajuste necessario pois no caso do agendamento, o bNew era false na primera abertura,
-                    //os campos estavam sendo validados e marcados como erro
-                    tabs.add(custom_form_ff.getTabObj(includeField));
-                    screens.add(custom_form_ff);
-                }
-                //
-                int acessoryIndex = pages + 1;
-                for(AcessoryFormView acessoryFormView: acessoryFormViews){
-                    int item_index = -1;
-                    if((acessoryIndex) == device_item_tab_index){
-                        item_index = device_item_list_index;
-                        acessoryFormView.setLastPositionSelected(device_item_list_index);
-                        acessoryFormView.setFilterVal(device_item_list_filter);
-                        acessoryFormView.setNonForecastFilter(device_item_list_checkbox_status);
-                    }else{
-                        acessoryFormView.setLastPositionSelected(-1);
-                        acessoryFormView.setFilterVal("");
-                        acessoryFormView.setNonForecastFilter(true);
-                    }
-                    Act011FrgInspection act011FrgInspection = Act011FrgInspection.Companion
-                            .newInstance(
-                                    hmAux_Trans,
-                                    acessoryIndex ,
-                                    fullTabQty,
-                                    item_index,
-                                    formLocal.getCustom_form_status(),
-                                    ""
-                                    );
-                    act011FrgInspection.setViewObject(acessoryFormView);
-                    tabs.add(act011FrgInspection.getTabObj(includeField));
-                    screens.add(act011FrgInspection);
-                    acessoryIndex ++;
-                }
-            }else {
-                for (int i = 1; i <= pages; i++) {
-                    Act011FrgFF custom_form_ff = Act011FrgFF.Companion.newInstance(
-                            hmAux_Trans,
-                            i,
-                            pages,
-                            formData.getCustom_form_status(),
-                            mdScheduleExec != null ? mdScheduleExec.getSchedule_desc() : null,
-                            mdScheduleExec != null ? mdScheduleExec.getComments() : null,
-                        formLocal.getIs_so() == 1
-                    );
-                    custom_form_ff.setCustomFF(customFFs);
-                    //Substituido o param de bNew para includeField, pois ele identifica  aprimeira abertura.
-                    //Ajuste necessario pois no caso do agendamento, o bNew era false na primera abertura,
-                    //os campos estavam sendo validados e marcados como erro
-                    tabs.add(custom_form_ff.getTabObj(includeField));
-                    screens.add(custom_form_ff);
-                }
+                );
+                custom_form_ff.setCustomFF(customFFs);
+                //Substituido o param de bNew para includeField, pois ele identifica  aprimeira abertura.
+                //Ajuste necessario pois no caso do agendamento, o bNew era false na primera abertura,
+                //os campos estavam sendo validados e marcados como erro
+                tabs.add(custom_form_ff.getTabObj(includeField));
+                screens.add(custom_form_ff);
             }
+        }
+        //
+        if(formLocal.getIs_so() == 1) {
+            int acessoryIndex = pages + 1;
+            for(AcessoryFormView acessoryFormView: acessoryFormViews){
+                int item_index = -1;
+                if((acessoryIndex) == device_item_tab_index){
+                    item_index = device_item_list_index;
+                    acessoryFormView.setLastPositionSelected(device_item_list_index);
+                    acessoryFormView.setFilterVal(device_item_list_filter);
+                    acessoryFormView.setNonForecastFilter(device_item_list_checkbox_status);
+                }else{
+                    acessoryFormView.setLastPositionSelected(-1);
+                    acessoryFormView.setFilterVal("");
+                    acessoryFormView.setNonForecastFilter(true);
+                }
+                Act011FrgInspection act011FrgInspection = Act011FrgInspection.Companion
+                        .newInstance(
+                                hmAux_Trans,
+                                acessoryIndex ,
+                                fullTabQty,
+                                item_index,
+                                formLocal.getCustom_form_status(),
+                                mdScheduleExec != null ? mdScheduleExec.getSchedule_desc() : null,
+                                mdScheduleExec != null ? mdScheduleExec.getComments() : null,
+                                formLocal.getIs_so() == 1
+                                );
+                act011FrgInspection.setViewObject(acessoryFormView);
+                tabs.add(act011FrgInspection.getTabObj(includeField));
+                screens.add(act011FrgInspection);
+                acessoryIndex ++;
+            }
+        }
+        if( (customFFs!= null && customFFs.size() > 0)
+            || geOs != null
+            || (acessoryFormViews != null && acessoryFormViews.size() > 0))
+        {
             //
             pager.setOffscreenPageLimit(screens.size());
             pager.setAdapter(
-                    new ScreenAdapter(
-                            getSupportFragmentManager(),
-                            screens
-                    )
+                new ScreenAdapter(
+                    getSupportFragmentManager(),
+                    screens
+                )
             );
 
             pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -1482,8 +1482,8 @@ public class Act011_Main extends Base_Activity
                     setTitleLanguage("          (" + String.valueOf(index) + "/" + String.valueOf(pager.getAdapter().getCount()) + ")");
                     //
                     updateTabStatusIntoDrawer(
-                            returnValidateTabObj(index_old)
-                        );
+                        returnValidateTabObj(index_old)
+                    );
 
                 }
 
@@ -1493,104 +1493,104 @@ public class Act011_Main extends Base_Activity
             });
             //Seta dados no drawer
             act011FfOption.setFragmentsArgs(
-                    new Act011FfOptionsViewObject(
-                            form_desc,
-                            tabs,
-                            isFormOs ? 0 : 1,
-                            formData.getCustom_form_status(),
-                            mSignature,
-                            automatic,
-                            (formData.getTicket_prefix() != null && formData.getTicket_prefix() > 0)
-                                    && (formData.getTicket_code() != null && formData.getTicket_code() > 0 ),
-                            mSo_Prefix != null && mSo_Code != null,
-                            isFormOs
-                    ),
-                    hmAux_Trans,
-                    new Act011FfOption.ICustom_Form_FF_Options_ll() {
-                        @Override
-                        public void info() {
-                            mDrawerLayout.closeDrawer(GravityCompat.START);
+                new Act011FfOptionsViewObject(
+                    form_desc,
+                    tabs,
+                    isFormOs ? 0 : 1,
+                    formData.getCustom_form_status(),
+                    mSignature,
+                    automatic,
+                    (formData.getTicket_prefix() != null && formData.getTicket_prefix() > 0)
+                        && (formData.getTicket_code() != null && formData.getTicket_code() > 0 ),
+                    mSo_Prefix != null && mSo_Code != null,
+                    isFormOs
+                ),
+                hmAux_Trans,
+                new Act011FfOption.ICustom_Form_FF_Options_ll() {
+                    @Override
+                    public void info() {
+                        mDrawerLayout.closeDrawer(GravityCompat.START);
 
-                            showCustomDialog();
-                        }
+                        showCustomDialog();
+                    }
 
-                        @Override
-                        public void delete() {
-                            DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    showConfirmDeleteDialog();
-                                }
-                            };
-                            //
-                            ToolBox.alertMSG(
-                                    Act011_Main.this,
-                                    hmAux_Trans.get("dialog_delete_title"),
-                                    hmAux_Trans.get("dialog_delete_msg"),
-                                    listener,
-                                    1
-                            );
-                        }
+                    @Override
+                    public void delete() {
+                        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                showConfirmDeleteDialog();
+                            }
+                        };
+                        //
+                        ToolBox.alertMSG(
+                            Act011_Main.this,
+                            hmAux_Trans.get("dialog_delete_title"),
+                            hmAux_Trans.get("dialog_delete_msg"),
+                            listener,
+                            1
+                        );
+                    }
 
-                        @Override
-                        public void save() {
-                            saveV2(true);
-                        }
+                    @Override
+                    public void save() {
+                        saveV2(true);
+                    }
 
-                        @Override
-                        public void check() {
-                            checkAction(true);
-                        }
+                    @Override
+                    public void check() {
+                        checkAction(true);
+                    }
 
-                        @Override
-                        public void autograph() {
-                            mDrawerLayout.closeDrawer(GravityCompat.START);
+                    @Override
+                    public void autograph() {
+                        mDrawerLayout.closeDrawer(GravityCompat.START);
 
-                            showCustomDialogSignature();
-                        }
+                        showCustomDialogSignature();
+                    }
 
-                        @Override
-                        public void auto() {
-                            mDrawerLayout.closeDrawer(GravityCompat.START);
-                            int quantidade = 0;
-                            //
-                            for (Act011BaseFrg baseFrg : screens) {
-                                if(baseFrg instanceof Act011FrgFF) {
-                                    int itensAuto = baseFrg.applyAutoAnswer();
-                                    if (itensAuto > 0) {
-                                        updateTabStatusIntoDrawer(baseFrg.getTabObj(false));
-                                        quantidade += itensAuto;
-                                    }
+                    @Override
+                    public void auto() {
+                        mDrawerLayout.closeDrawer(GravityCompat.START);
+                        int quantidade = 0;
+                        //
+                        for (Act011BaseFrg baseFrg : screens) {
+                            if(baseFrg instanceof Act011FrgFF) {
+                                int itensAuto = baseFrg.applyAutoAnswer();
+                                if (itensAuto > 0) {
+                                    updateTabStatusIntoDrawer(baseFrg.getTabObj(false));
+                                    quantidade += itensAuto;
                                 }
                             }
-                            //
-                            Toast.makeText(
-                                    context,
-                                    hmAux_Trans.get("qty_automatic_answer_msg") + ": " + String.valueOf(quantidade),
-                                    Toast.LENGTH_SHORT
-                            ).show();
                         }
+                        //
+                        Toast.makeText(
+                            context,
+                            hmAux_Trans.get("qty_automatic_answer_msg") + ": " + String.valueOf(quantidade),
+                            Toast.LENGTH_SHORT
+                        ).show();
+                    }
 
-                        @Override
-                        public void nserv() {
-                            mDrawerLayout.closeDrawer(GravityCompat.START);
+                    @Override
+                    public void nserv() {
+                        mDrawerLayout.closeDrawer(GravityCompat.START);
 
-                            if (formData != null && formData.getCustom_form_status().equals(Constant.SYS_STATUS_IN_PROCESSING)) {
-                                exitAlertNServ();
-                            } else {
-                                nservCall();
-                            }
+                        if (formData != null && formData.getCustom_form_status().equals(Constant.SYS_STATUS_IN_PROCESSING)) {
+                            exitAlertNServ();
+                        } else {
+                            nservCall();
                         }
+                    }
 
-                        @Override
-                        public void onTabSelected(int page) {
-                            //LUCHE - 05/10/2021 - ajuste para quando for form o.s funcione
-                            //corretamente.
-                            tabSelectedAction(isFormOs ? page + 1 : page);
-                            //
-                            mDrawerLayout.closeDrawer(GravityCompat.START);
-                        }
-                    });
+                    @Override
+                    public void onTabSelected(int page) {
+                        //LUCHE - 05/10/2021 - ajuste para quando for form o.s funcione
+                        //corretamente.
+                        tabSelectedAction(isFormOs ? page + 1 : page);
+                        //
+                        mDrawerLayout.closeDrawer(GravityCompat.START);
+                    }
+                });
 
             returnValidCheck(String.valueOf(index_old));
             if(bNew){
@@ -2396,6 +2396,7 @@ public class Act011_Main extends Base_Activity
                 break;
             case SHOW_MSG_TYPE_SCHEDULE_EXEC_CANCEL_ERROR:
             case SHOW_MSG_TYPE_TICKET_STEP_OR_CTRL_ERROR:
+            case SHOW_MSG_TYPE_GE_OS_NOT_FOUND:
                 //TODO O QUE FAZER NO CASO DO TICKET
                 ToolBox.alertMSG(
                     context,
@@ -2425,7 +2426,6 @@ public class Act011_Main extends Base_Activity
                     false
                 );
                 break;
-
         }
     }
 
@@ -2613,6 +2613,7 @@ public class Act011_Main extends Base_Activity
             bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, String.valueOf(formLocal.getCustom_form_code()));
             bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, String.valueOf(formLocal.getCustom_form_version()));
             bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, formLocal.getCustom_form_desc());
+            bundle.putInt(GE_Custom_FormDao.IS_SO, formLocal.getIs_so());
         }
         //LUCHE - 18/06/2021 comentado else de finalizeNewFlow  que passava via bundle as infos de produto e serial para serem usadas na act006. Segundo jhon isso foi definido erroneamente na documentação
         // else{

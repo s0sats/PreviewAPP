@@ -139,13 +139,16 @@ class Act083_Main_Presenter(private val context: Context,
         transList.add("sys_main_menu_search_lbl")
         //
         transList.add("new_form_lbl")
-        transList.add("alert_no_form_lbl");
-        transList.add("alert_no_form_for_product_msg");
-        transList.add("alert_no_form_for_operation_msg");
-        transList.add("alert_no_form_for_site_msg");
-        transList.add("alert_no_form_ttl");
-        transList.add("alert_product_or_serial_not_found_ttl");
-        transList.add("alert_product_or_serial_not_found_msg");
+        transList.add("alert_no_form_lbl")
+        transList.add("alert_no_form_for_product_msg")
+        transList.add("alert_no_form_for_operation_msg")
+        transList.add("alert_no_form_for_site_msg")
+        transList.add("alert_no_form_ttl")
+        transList.add("alert_product_or_serial_not_found_ttl")
+        transList.add("alert_product_or_serial_not_found_msg")
+        //
+        transList.add("alert_form_os_requires_serial_ttl")
+        transList.add("alert_form_os_requires_serial_msg")
         //
         return ToolBox_Inf.setLanguage(
                 context,
@@ -521,15 +524,25 @@ class Act083_Main_Presenter(private val context: Context,
                         //LUCHE - 09/06/2021
                         //Como esse metodo só é chamado quando o usr prosegue SEM SERIAL,serial id
                         //será mudado de null para ""
-                        scheduleExec.serial_id = scheduleExec.serial_id?:""
-                        if (createFormLocalForSchedule(action, scheduleExec)) {
-                            //Atualiza fomr_data no item
-                            action.scheduleCustomFormData =
+                        if(scheduleExec.is_so == 0) {
+                            scheduleExec.serial_id = scheduleExec.serial_id ?: ""
+                            if (createFormLocalForSchedule(action, scheduleExec)) {
+                                //Atualiza fomr_data no item
+                                action.scheduleCustomFormData =
                                     bundle.getString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, "0")
-                            //
-                            prepareOpenForm(action, scheduleExec)
-                        } else {
-                            mView.showMsg(Act083_Main.MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR, action)
+                                //
+                                prepareOpenForm(action, scheduleExec)
+                            } else {
+                                mView.showMsg(
+                                    Act083_Main.MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR,
+                                    action
+                                )
+                            }
+                        }else{
+                            mView.showAlertMsg(
+                                hmAux_Trans?.get("alert_form_os_requires_serial_ttl")!!,
+                                hmAux_Trans?.get("alert_form_os_requires_serial_msg")!!
+                            )
                         }
                     }
 
@@ -1275,26 +1288,40 @@ class Act083_Main_Presenter(private val context: Context,
             bundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK, ToolBox_Inf.formatSchedulePk(scheduleExec.schedule_prefix, scheduleExec.schedule_code, scheduleExec.schedule_exec))
             bundle.putString(Constant.ACT017_SCHEDULED_SITE, scheduleExec.site_code.toString())
             //
-            //
-            if (createFormLocalForSchedule(actionSelected!!, scheduleExec)) {
-                /*
-                 * BARRIONUEVO 13-04-2020
-                 * Mudanca de ultima hora: adicionar flag para dar bypass em restricoes de serial.
-                 */
-
-                //Seta form data no bundle que será enviado para as proximas acts
-                bundle.putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, actionSelected!!.scheduleCustomFormData.toString())
-                bundle.putBoolean(ConstantBaseApp.SCHEDULED_PROFILE_CHECK, false)
-                //
-                setSeletedActionInfosIntoFilterParam(MyActions.MY_ACTION_TYPE_SCHEDULE, actionSelected!!.processPk)
-                bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
-                bundle.putSerializable(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, originFlow)
-                //
-                mView.callAct020(bundle)
-            } else {
-                mView.showMsg(Act083_Main.MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR, actionSelected!!)
+            if(scheduleExec.is_so == 0){
+                if (createFormLocalForSchedule(actionSelected!!, scheduleExec)) {
+                    prepareAct020(bundle,scheduleExec)
+                } else {
+                    mView.showMsg(Act083_Main.MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR, actionSelected!!)
+                }
+            }else{
+                prepareAct020(bundle,scheduleExec)
             }
+
         }
+    }
+
+    private fun prepareAct020(bundle: Bundle, scheduleExec: MD_Schedule_Exec) {
+        /*
+         * BARRIONUEVO 13-04-2020
+         * Mudanca de ultima hora: adicionar flag para dar bypass em restricoes de serial.
+         */
+        //Seta form data no bundle que será enviado para as proximas acts
+        bundle.putString(
+            GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA,
+            actionSelected!!.scheduleCustomFormData.toString()
+        )
+        bundle.putBoolean(ConstantBaseApp.SCHEDULED_PROFILE_CHECK, false)
+        bundle.putInt(GE_Custom_FormDao.IS_SO,scheduleExec.is_so)
+        //
+        setSeletedActionInfosIntoFilterParam(
+            MyActions.MY_ACTION_TYPE_SCHEDULE,
+            actionSelected!!.processPk
+        )
+        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
+        bundle.putSerializable(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, originFlow)
+        //
+        mView.callAct020(bundle)
     }
 
     /**

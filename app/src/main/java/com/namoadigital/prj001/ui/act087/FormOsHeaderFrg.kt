@@ -65,9 +65,13 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     private var formSerialId: String? = null
     private var mainMeasureTp: MeMeasureTp? = null
     private var calculatedExecMeasureValue: Float = -1f
-    private var calculatedExecCycle: Int = -1
+    private var calculatedExecCycle: Float = -1f
     private var bkpMachineDialog: AlertDialog? = null
     private var isBarcodeRead: Boolean = false
+    //Var usada somente na criação, se isso mudar, deve ser revisto sua inicialização.
+    private val formRequiresGPS: Boolean by lazy{
+        mCreationListener?.getFormRequiresGPS()?:false
+    }
 
     companion object{
         @JvmStatic
@@ -134,6 +138,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 "records_display_limit_lbl",
                 "records_found_lbl",
                 "form_os_header_lbl",
+                "alert_form_turn_gps_on_title",
+                "alert_form_turn_gps_on_msg",
             )
         }
     }
@@ -477,10 +483,17 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
      * na medição
      */
     private fun getFormattedLastMeasureValue(lastMeasureValue: Float) : String{
-        return BigDecimal(lastMeasureValue.toDouble()).setScale(
-            formOsHeader.restriction_decimal ?: 4,
-            RoundingMode.HALF_DOWN
-        ).toString()
+//        val decimalSeparator = DecimalFormatSymbols.getInstance().decimalSeparator
+//        BigDecimal(lastMeasureValue.toDouble()).setScale(
+//            formOsHeader.restriction_decimal ?: 4,
+//            RoundingMode.HALF_DOWN
+//        ).toString().replace('.',decimalSeparator)
+        return ToolBox_Inf.applyDecimalSeparatorByUserLocale(
+            BigDecimal(lastMeasureValue.toDouble()).setScale(
+                formOsHeader.restriction_decimal ?: 4,
+                RoundingMode.HALF_DOWN
+            ).toString()
+        )
     }
 
     private fun iniSaveBtn() {
@@ -523,23 +536,45 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                     measureInvalid = measureInvalid,
                     lastCycleInvalid = preventiveCycleInvalid,
                     calculatedCycle = calculatedExecCycle,
-                    lastCycleVal = formOsHeader.last_cycle_value?:0,
+                    lastCycleVal = formOsHeader.last_cycle_value?:0f,
                     measureSufix = mainMeasureTp?.valueSufix?:""
                 )
             }else{
-                ToolBox.alertMSG_YES_NO(
-                    requireContext(),
-                    hmAuxTrans["alert_form_os_creation_ttl"],
-                    hmAuxTrans["alert_form_os_creation_confirm"],
-                    DialogInterface.OnClickListener { _, _ ->
-                       setDataIntoFormOsObj()
-                       mCreationListener?.createOsHeader(formOsHeader)
-                   },
-                    1
-                )
-
+                if(isLocationRequiredAndEnabled()) {
+                    ToolBox.alertMSG_YES_NO(
+                        requireContext(),
+                        hmAuxTrans["alert_form_os_creation_ttl"],
+                        hmAuxTrans["alert_form_os_creation_confirm"],
+                        DialogInterface.OnClickListener { _, _ ->
+                            setDataIntoFormOsObj()
+                            mCreationListener?.createOsHeader(formOsHeader)
+                        },
+                        1
+                    )
+                }else{
+                    showActiveGPSAlert()
+                }
             }
         }
+    }
+
+    private fun showActiveGPSAlert() {
+        ToolBox.alertMSG(
+            requireContext(),
+            hmAuxTrans["alert_form_turn_gps_on_title"],
+            hmAuxTrans["alert_form_turn_gps_on_msg"],
+            { dialog, which -> validateSave() },
+            1
+        )
+    }
+
+    /**
+     * Fun que verifica se gps é requerido e se esta ligado.
+     */
+    private fun isLocationRequiredAndEnabled(): Boolean {
+        return  !formRequiresGPS
+                || (formRequiresGPS && ToolBox_Con.hasGPSResourceActive(context))
+
     }
 
     private fun setDataIntoFormOsObj() {
@@ -574,15 +609,28 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
 
     /**
      * Fun que retorno o valor de measeruCycleValue.
-     * Se orderType for preventiva, retorna o valor de calculatedExecCycle, se não -1
+     * Se orderType for preventiva ciclica, retorna o valor de calculatedExecCycle,
+     * se não retorna o valor de measure_value.
+     * É importante retornar o valor de measure_value no else, pois essa var calculatedExecCycle
+     * é usada nas varreduras na criação das tabelas de geOs.
      */
-    private fun getMeasureCycleValue(orderType: MdOrderType): Int{
-        return if(orderType.processType.equals(MdOrderType.PREVENTIVE,true)){
+    private fun getMeasureCycleValue(orderType: MdOrderType): Float{
+        return if(isPreventiveCycledOs(orderType)){
             calculatedExecCycle
         }else{
-            -1
+            getFormattedMeasureValue()
         }
     }
+
+    /**
+     * Verifica se é uma preventiva ciclicada, baseada no tipo de order preventiva e
+     * medição com ciclo.
+     */
+    private fun isPreventiveCycledOs(orderType: MdOrderType) =
+        (orderType.processType.equals(MdOrderType.PROCESS_TYPE_PREVENTIVE, true)
+                && mainMeasureTp != null
+                && mainMeasureTp?.cycleTolerance != null
+                && mainMeasureTp?.valueCycleSize != null)
 
     private fun isPreventiveCycleValid(isOrderTypeInvalid: Boolean): Boolean {
         //Se orderType invalida, não tem como validar
@@ -590,23 +638,19 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             return true
         }
         val mdOrderType = orderTypeList[binding.spOsType.selectedItemPosition]
-        if( mdOrderType.processType == MdOrderType.ProcessType.PREVENTIVE
-            && mainMeasureTp != null
-            && mainMeasureTp?.cycleTolerance != null
-            && mainMeasureTp?.valueCycleSize != null
-        ) {
+        if( isPreventiveCycledOs(mdOrderType)) {
             if (binding.mketOsMainMeasureVal.text.isNullOrEmpty()) {
                 return false
             }else{
-                var lastCycle = formOsHeader.last_cycle_value?:0
+                var lastCycle = formOsHeader.last_cycle_value?:0f
                 //Valor inserido
                 calculatedExecMeasureValue = binding.mketOsMainMeasureVal.text.toString().toFloat()
                 //divide valor atual pelo tam do ciclo e arredonda pra cima, pra identificar o fator
                 //de multiplicação do proxmo ciclo
                 var tamDoCiclo = mainMeasureTp!!.valueCycleSize!!
-                var cycleTolerance = mainMeasureTp?.cycleTolerance!!
+                var cycleTolerance = mainMeasureTp!!.cycleTolerance!!
 
-                var fatorNextCycle = ceil(calculatedExecMeasureValue.div(tamDoCiclo)).toInt()
+                var fatorNextCycle = ceil(calculatedExecMeasureValue.div(tamDoCiclo))
                 //Calcula a tolerancia para ver se o valor digitado será aceito para ela
                 var realTolerance = tamDoCiclo * (cycleTolerance / 100f)
                 //Calcula o proximo ciclo
@@ -901,8 +945,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         startDateInvalid: Boolean = false,
         measureInvalid: Boolean = false,
         lastCycleInvalid: Boolean = false,
-        calculatedCycle: Int = 0,
-        lastCycleVal: Int = 0,
+        calculatedCycle: Float = 0f,
+        lastCycleVal: Float = 0f,
         measureSufix: String = ""
     ){
         val builder = AlertDialog.Builder(requireContext())
@@ -964,7 +1008,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 null
             )
         }.setOnDismissListener {
-            calculatedExecCycle = -1
+            calculatedExecCycle = -1f
             calculatedExecMeasureValue = -1f
         }.create()
         .show()

@@ -73,6 +73,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
             deviceItem.next_cycle_limit_date,
             deviceItem.value_sufix,
             deviceItem.verification_instruction,
+            deviceItem.restriction_decimal,
             itemHist!!
         )
     }

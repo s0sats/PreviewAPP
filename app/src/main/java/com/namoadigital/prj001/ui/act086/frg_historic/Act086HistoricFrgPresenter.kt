@@ -14,7 +14,11 @@ class Act086HistoricFrgPresenter(
     private val hmAuxTrans: HMAux,
 ): Act086HistoricFrgContract.IPresenter {
 
-    override fun getAlertList(itemHist: ArrayList<GeOsDeviceItemHist>, measureValueSufix: String?): MutableList<Act086HistoricAlert> {
+    override fun getAlertList(
+        itemHist: ArrayList<GeOsDeviceItemHist>,
+        measureValueSufix: String?,
+        restrictionDecimal: Int?
+    ): MutableList<Act086HistoricAlert> {
         val toAlertList = itemHist.filter { hist ->
             hist.exec_type.equals(GeOsDeviceItem.EXEC_TYPE_ALERT, true)
         }.map { hist ->
@@ -28,7 +32,7 @@ class Act086HistoricFrgPresenter(
                     ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
                 ),
                 measureLbl = hmAuxTrans["last_measure_lbl"]!!,
-                measure = getFormattedLastMeasureInfo(hist, measureValueSufix),
+                measure = getFormattedLastMeasureInfo(hist, measureValueSufix,restrictionDecimal),
                 materialLbl = hmAuxTrans["material_requested_lbl"]!!,
                 material = if (hist.exec_material == 1) {
                     hmAuxTrans["YES"]!!
@@ -49,8 +53,13 @@ class Act086HistoricFrgPresenter(
 
     override fun getFormattedLastMeasureInfo(
         lastFixed: GeOsDeviceItemHist,
-        measureValueSufix: String?
+        measureValueSufix: String?,
+        restrictionDecimal: Int?
     ): String {
-        return "${lastFixed.exec_value} ${measureValueSufix?:""}"
+        return "${ToolBox_Inf.convertFloatToBigDecimalString(
+            lastFixed.exec_value,
+            restrictionDecimal ?: 4,
+            true
+        )} ${measureValueSufix?:""}"
     }
 }

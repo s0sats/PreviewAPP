@@ -43,6 +43,7 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
     private var nextCycleLimitDate: String? = null
     private var measureValueSufix: String? = null
     private var verificationInstruction: String? = null
+    private var restrictionDecimal: Int? = null
     private val mPresenter: Act086HistoricFrgContract.IPresenter by lazy{
             Act086HistoricFrgPresenter(
                 requireContext(),
@@ -62,6 +63,7 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
             nextCycleLimitDate =  it.getString(GeOsDeviceItemDao.NEXT_CYCLE_LIMIT_DATE)
             measureValueSufix = it.getString(GeOsDeviceItemDao.VALUE_SUFIX)
             verificationInstruction = it.getString(GeOsDeviceItemDao.VERIFICATION_INSTRUCTION)
+            restrictionDecimal = it.getInt(GeOsDeviceItemDao.RESTRICTION_DECIMAL)
         }
     }
 
@@ -230,7 +232,7 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
                                                         ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
                                                     ).replace(" ", "\n")
 
-                act086HistoricFrgTvLastMeasureVal.text = mPresenter.getFormattedLastMeasureInfo(lastFixed,measureValueSufix)
+                act086HistoricFrgTvLastMeasureVal.text = mPresenter.getFormattedLastMeasureInfo(lastFixed,measureValueSufix,restrictionDecimal)
                 act086HistoricFrgTvMaterialVal.text = if(lastFixed.exec_material == 1) hmAux_Trans["YES"] else hmAux_Trans["NO"]
                 act086HistoricFrgTvComment.apply {
                     visibility = if(lastFixed.exec_comment.isNullOrEmpty()) View.GONE else  View.VISIBLE
@@ -252,7 +254,7 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
     private fun setAlertListInfo() {
         alertList.clear()
         //Filtra itens que são alerta
-        val toAlertList = mPresenter.getAlertList(itemHist,measureValueSufix)
+        val toAlertList = mPresenter.getAlertList(itemHist,measureValueSufix,restrictionDecimal)
         //
         if(toAlertList.isNotEmpty()) {
             alertList.addAll(toAlertList)
@@ -278,6 +280,7 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
             next_cycle_limit_date: String? = null,
             measure_value_sufix: String? = null,
             verification_instruction: String? = null,
+            restriction_decimal: Int? = null,
             itemHist: ArrayList<GeOsDeviceItemHist>
         ) =
             Act086HistoricFrg().apply {
@@ -291,6 +294,9 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
                     putString(GeOsDeviceItemDao.NEXT_CYCLE_LIMIT_DATE,next_cycle_limit_date)
                     putString(GeOsDeviceItemDao.VALUE_SUFIX,measure_value_sufix)
                     putString(GeOsDeviceItemDao.VERIFICATION_INSTRUCTION,verification_instruction)
+                    restriction_decimal?.let{
+                        putInt(GeOsDeviceItemDao.RESTRICTION_DECIMAL, it)
+                    }
                     putSerializable(GeOsDeviceItemHist::javaClass.name, itemHist)
                 }
             }

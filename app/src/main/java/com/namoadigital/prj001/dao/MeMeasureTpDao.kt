@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteException
+import androidx.core.database.getFloatOrNull
 import androidx.core.database.getIntOrNull
 import androidx.core.database.getStringOrNull
 import com.namoa_digital.namoa_library.util.HMAux
@@ -301,7 +302,7 @@ class MeMeasureTpDao(
                         getIntOrNull(getColumnIndex(RESTRICTION_MIN)),
                         getIntOrNull(getColumnIndex(RESTRICTION_MAX)),
                         getIntOrNull(getColumnIndex(RESTRICTION_DECIMAL)),
-                        getIntOrNull(getColumnIndex(VALUE_CYCLE_SIZE)),
+                        getFloatOrNull(getColumnIndex(VALUE_CYCLE_SIZE)),
                         getIntOrNull(getColumnIndex(CYCLE_TOLERANCE))
                     )
                 }
