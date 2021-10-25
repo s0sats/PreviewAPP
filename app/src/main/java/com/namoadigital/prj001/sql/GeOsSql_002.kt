@@ -41,9 +41,7 @@ class GeOsSql_002(
                                          AND d.${GE_Custom_Form_DataDao.PRODUCT_CODE} = $productCode    
                                          AND d.${GE_Custom_Form_DataDao.SERIAL_ID} = '$serialId'  
                                          AND d.${GE_Custom_Form_DataDao.DATE_START} = o.${GeOsDao.DATE_START}                                                                                                                                        
-                                         AND d.${GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS} IN ('${ConstantBaseApp.SYS_STATUS_IN_PROCESSING}',
-                                                                                                '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'
-                                                                                                )                                                                                               
+                                         AND d.${GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS} ='${ConstantBaseApp.SYS_STATUS_IN_PROCESSING}'                                                      
                                    )                  
                     """.trimIndent()
         return s
