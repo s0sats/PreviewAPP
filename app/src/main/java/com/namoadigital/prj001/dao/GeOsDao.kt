@@ -460,8 +460,16 @@ class GeOsDao(
                 mdSerial.serial_code.toInt()
             ).toSqlQuery()
         )
-        //Chama fun que fará a primeira e segunda varredura.
-        checkScan(geOs, geOsDeviceItens)
+        try {
+            //Chama fun que fará a primeira e segunda varredura.
+            checkScan(geOs, geOsDeviceItens)
+        }catch (e: Exception){
+            ToolBox_Inf.registerException(javaClass.name,e)
+            return daoObjReturn.apply {
+                setError(true)
+                rawMessage = "Erro ao aplicar varreduras:\n ${e.message}"
+            }
+        }
         //
         openDB()
         try {
@@ -511,6 +519,7 @@ class GeOsDao(
         return daoObjReturn
     }
 
+    @Throws(java.lang.Exception::class)
     private fun checkScan(
         geOs: GeOs,
         geOsDeviceItens: MutableList<GeOsDeviceItem>
@@ -523,6 +532,7 @@ class GeOsDao(
         secondScan(geOs, geOsDeviceItens)
     }
 
+    @Throws(java.lang.Exception::class)
     private fun firstScan(
         geOs: GeOs,
         geOsDeviceItens: MutableList<GeOsDeviceItem>
@@ -537,16 +547,38 @@ class GeOsDao(
             } else {
                 0f
             }
+        //Seta data inseriada pelo usr com 23:59:59.
+        var dateStartLastMinute : String? = ToolBox_Inf.getDateLastMinute(geOs.date_start)
         //
         geOsDeviceItens.forEach { item ->
+            //TODO ALTERAR O WHEN POR IF, POIS A ALTERAÇÃO FEITA NA VALIDAÇÃO DE STATUS NORMAL, PODE SER DESFEITA NOS STATSU ABAIXO.
+
             when (item.item_check_status) {
                 //Se Status Normal, verifica se com a medição digitada, deve mudar o status para MEASURE_ALERT
                 GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL -> {
+                    var newCheckStatus = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL
+                    //Verifica se data projetada do proximo ciclo foi atingida
+                    if (item.next_cycle_measure_date != null
+                        && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_measure_date,dateStartLastMinute) < 0
+                    ) {
+                        newCheckStatus = GeOsDeviceItem.ITEM_CHECK_STATUS_PROJECTED_DATE_REACHED
+                    }
+
+                    //Verifica se data limite do proximo ciclo foi atingida
+                    if (item.next_cycle_limit_date != null
+                        && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_limit_date,dateStartLastMinute) < 0
+                    ) {
+                        newCheckStatus = GeOsDeviceItem.ITEM_CHECK_STATUS_LIMIT_DATE_REACHED
+                    }
+
+                    //Se valor medido, maior que o proximo ciclo,muda status.(Maior prioridade)
                     if (item.next_cycle_measure != null
                         && item.next_cycle_measure.compareTo(measureConsider) <= 0
                     ) {
-                        item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_MEASURE_ALERT
+                        newCheckStatus = GeOsDeviceItem.ITEM_CHECK_STATUS_MEASURE_ALERT
                     }
+
+                    item.item_check_status = newCheckStatus
                 }
                 //Se o status for data de projeção foi atingida, mas o valor da medição for inferior
                 // ao da proxima medição programada, muda o status para NORMAL
@@ -585,6 +617,7 @@ class GeOsDao(
      *   e rebaixa para o status NORMAL
      *
      */
+    @Throws(java.lang.Exception::class)
     private fun secondScan(geOs: GeOs, geOsDeviceItens: MutableList<GeOsDeviceItem>) {
         geOsDeviceItens.forEach { item ->
             when(geOs.display_option){
