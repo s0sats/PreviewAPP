@@ -551,57 +551,68 @@ class GeOsDao(
         var dateStartLastMinute : String? = ToolBox_Inf.getDateLastMinute(geOs.date_start)
         //
         geOsDeviceItens.forEach { item ->
-            //TODO ALTERAR O WHEN POR IF, POIS A ALTERAÇÃO FEITA NA VALIDAÇÃO DE STATUS NORMAL, PODE SER DESFEITA NOS STATSU ABAIXO.
-
-            when (item.item_check_status) {
-                //Se Status Normal, verifica se com a medição digitada, deve mudar o status para MEASURE_ALERT
-                GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL -> {
-                    var newCheckStatus = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL
-                    //Verifica se data projetada do proximo ciclo foi atingida
-                    if (item.next_cycle_measure_date != null
-                        && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_measure_date,dateStartLastMinute) < 0
-                    ) {
-                        newCheckStatus = GeOsDeviceItem.ITEM_CHECK_STATUS_PROJECTED_DATE_REACHED
-                    }
-
-                    //Verifica se data limite do proximo ciclo foi atingida
-                    if (item.next_cycle_limit_date != null
-                        && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_limit_date,dateStartLastMinute) < 0
-                    ) {
-                        newCheckStatus = GeOsDeviceItem.ITEM_CHECK_STATUS_LIMIT_DATE_REACHED
-                    }
-
-                    //Se valor medido, maior que o proximo ciclo,muda status.(Maior prioridade)
-                    if (item.next_cycle_measure != null
-                        && item.next_cycle_measure.compareTo(measureConsider) <= 0
-                    ) {
-                        newCheckStatus = GeOsDeviceItem.ITEM_CHECK_STATUS_MEASURE_ALERT
-                    }
-
-                    item.item_check_status = newCheckStatus
+            /*
+             * Se Status Normal, verifica se deve alterar o status para:
+             *   PROJECTED_DATE_REACHED:
+             *      - Se data prevista do proximo ciclo(next_cycle_measure_date) for menor que a
+             *      data de inicio até o ultimo minuto(dateStartLastMinute)
+             *   LIMIT_DATE_REACHED:
+             *      - Se data limite do proximo ciclo (next_cycle_limit_date) for menor que a
+             *      data de inicio até o ultimo minuto(dateStartLastMinute)
+             *   MEASURE_ALERT:
+             *      - Se o valor do proximo ciclo(next_cycle_measure) for menor ou igual ao valor
+             *      medido pelo usr measureConsider
+             */
+            if(GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL.equals(item.item_check_status,true)){
+                var newCheckStatus = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL
+                //Verifica se data projetada do proximo ciclo foi atingida
+                if (item.next_cycle_measure_date != null
+                    && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_measure_date,dateStartLastMinute) < 0
+                ) {
+                    newCheckStatus = GeOsDeviceItem.ITEM_CHECK_STATUS_PROJECTED_DATE_REACHED
                 }
-                //Se o status for data de projeção foi atingida, mas o valor da medição for inferior
-                // ao da proxima medição programada, muda o status para NORMAL
-                GeOsDeviceItem.ITEM_CHECK_STATUS_PROJECTED_DATE_REACHED -> {
-                    if (item.next_cycle_measure != null
-                        && item.next_cycle_measure.compareTo(measureConsider) > 0
-                    ) {
-                        item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL
-                    }
+
+                //Verifica se data limite do proximo ciclo foi atingida
+                if (item.next_cycle_limit_date != null
+                    && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_limit_date,dateStartLastMinute) < 0
+                ) {
+                    newCheckStatus = GeOsDeviceItem.ITEM_CHECK_STATUS_LIMIT_DATE_REACHED
                 }
-                //Se o status for data limit do ciclo atingida, mas a data inserida pelo usr for
-                //menor que data da proxima medição programada, muda o status para normal
-                GeOsDeviceItem.ITEM_CHECK_STATUS_LIMIT_DATE_REACHED -> {
-                    if (item.next_cycle_limit_date != null && geOs.date_start != null
-                        && isNextCycleLimiteDateInFuture(
-                            item.next_cycle_limit_date,
-                            geOs.date_start!!
-                        )
-                    ) {
-                        item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL
-                    }
+
+                //Se valor medido, maior que o proximo ciclo,muda status.(Maior prioridade)
+                if (item.next_cycle_measure != null
+                    && item.next_cycle_measure.compareTo(measureConsider) <= 0
+                ) {
+                    newCheckStatus = GeOsDeviceItem.ITEM_CHECK_STATUS_MEASURE_ALERT
                 }
-                else -> {
+
+                item.item_check_status = newCheckStatus
+            }
+            /*
+             * Se Status PROJECTED_DATE_REACHED, verifica se deve alterar o status para:
+             *   NORMAL:
+             *      - Se o data projetada foi alcançada, mas o valor da medido pelo usr, é inferior
+             *  ao proximo ciclo previsto(next_cycle_measure)
+             */
+            if(GeOsDeviceItem.ITEM_CHECK_STATUS_PROJECTED_DATE_REACHED.equals(item.item_check_status,true)){
+                if (item.next_cycle_measure != null
+                    && item.next_cycle_measure.compareTo(measureConsider) > 0
+                ) {
+                    item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL
+                }
+            }
+
+            /*
+           * Se Status LIMIT_DATE_REACHED, verifica se deve alterar o status para:
+           *   NORMAL:
+           *      - Se data de limite(next_cycle_limit_date) for maior que  data de inicio
+           *  até o ultimo minuto(dateStartLastMinute)
+           */
+            if(GeOsDeviceItem.ITEM_CHECK_STATUS_LIMIT_DATE_REACHED.equals(item.item_check_status,true)){
+                if (item.next_cycle_limit_date != null && geOs.date_start != null
+                    && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_limit_date,dateStartLastMinute) > 0
+                ) {
+                    item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL
                 }
             }
         }
