@@ -8936,4 +8936,18 @@ public class ToolBox_Inf {
         //
         return convertedValue;
     }
+
+
+    public static String getTodayLastSecond(Context context){
+        Calendar cDate = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String date = "";
+        try {
+            date = dateFormat.format(cDate.getTime()) +" 23:59:59" + ToolBox.getDeviceGMT(false);
+        }catch (Exception e){
+            ToolBox_Inf.registerException(context.getClass().getName(),e);
+            date = "1900-01-01 00:00:00 +00:00";
+        }
+        return date;
+    }
 }

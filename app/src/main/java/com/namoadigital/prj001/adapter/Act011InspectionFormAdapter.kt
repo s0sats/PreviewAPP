@@ -37,6 +37,7 @@ class Act011InspectionFormAdapter(
     protected var textFilter:String = ""
     var mFilter :InspectionFormFilter? = null
     var filterApplied: Boolean = true
+    var highlightedItemPosition = -1
     init {
         inspectionsFiltered.clear()
         inspections = acessoryFormView.inspections
@@ -57,6 +58,14 @@ class Act011InspectionFormAdapter(
         with(holder as MyInspectionFormVH) {
             val inspectionCell = inspectionsFiltered[position]
             onBinding(inspectionCell)
+            //
+            if(highlightedItemPosition > 0
+                && highlightedItemPosition == position) {
+                binding.clContainer.setBackgroundColor(binding.root.context.resources.getColor(R.color.namoa_myactions_blue_bg))
+            }else{
+                binding.clContainer.setBackgroundColor(binding.root.context.resources.getColor(R.color.namoa_color_gray_5))
+            }
+            //
             binding.root.setOnClickListener {
                 onItemSelected(
                     position,
@@ -223,7 +232,8 @@ class Act011InspectionFormAdapter(
                     binding.tvAutoSkipInspection.text =  hmAuxTrans.get("inspection_not_verify_action_lbl")
                 }
                 //
-                if (isNewItem) {
+                if (isNewItem
+                    || dayCount == null) {
                     binding.tvDayCount.visibility = View.GONE
                 } else {
                     binding.tvDayCount.visibility = View.VISIBLE

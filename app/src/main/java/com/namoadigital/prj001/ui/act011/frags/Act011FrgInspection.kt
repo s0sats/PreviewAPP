@@ -27,7 +27,6 @@ import com.namoadigital.prj001.model.InspectionCell.Companion.NORMAL
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
-import java.util.*
 
 private const val ARG_VIEW_OBJECT = "ARG_VIEW_OBJECT"
 private const val MAIN_HMAUX_TRANS_KEY = "MAIN_HMAUX_TRANS_KEY"
@@ -53,7 +52,10 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
             scheduleDesc = it.getString(MD_Schedule_ExecDao.SCHEDULE_DESC)
             scheduleComments = it.getString(GE_Custom_Form_Field_LocalDao.COMMENT)
             isFormOs = it.getBoolean(GE_Custom_Form_LocalDao.IS_SO,false)
-            acessoryFormView = it.getSerializable(ARG_VIEW_OBJECT) as AcessoryFormView
+//            acessoryFormView = it.getSerializable(ARG_VIEW_OBJECT) as AcessoryFormView
+            savedInstanceState?.let {
+                acessoryFormView = mFrgListener.getObjectView(tabIndex)
+            }
         }
     }
 
@@ -194,6 +196,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
             ViewCompat.hasNestedScrollingParent(this )
             if(tabItemSelectedIndex >= 0) {
                 binding.nsvMain.post {
+                    mAdapter.highlightedItemPosition = tabItemSelectedIndex
                     //Calcula posicao inicial do Recycler + posicao final do item seleciona - o tamanho do item.
                     val y: Float = this.getY() + this.getChildAt(tabItemSelectedIndex).getY() - this.getChildAt(tabItemSelectedIndex).measuredHeight
                     binding.nsvMain.smoothScrollTo(0, y.toInt())
@@ -264,7 +267,8 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
             formStatus: String,
             scheduleDesc: String?,
             scheduleComments: String?,
-            isFormOs: Boolean
+            isFormOs: Boolean,
+            acessoryFormView: AcessoryFormView
         ) =
             Act011FrgInspection().apply {
                 this.hmAuxTrans = hmAux_Trans
@@ -282,6 +286,8 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
                     putString(MD_Schedule_ExecDao.SCHEDULE_DESC,scheduleDesc)
                     putString(GE_Custom_Form_Field_LocalDao.COMMENT,scheduleComments)
                 }
+                this.acessoryFormView = acessoryFormView
+                this.tabItemSelectedIndex = acessoryFormView.lastPositionSelected
             }
 
         fun getFragTranslationsVars(): List<String> {
@@ -303,14 +309,6 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
                 "inspection_empty_list_placeholder",
                 "inspection_empty_list_filtered"
             )
-        }
-    }
-    fun setViewObject(viewObject: AcessoryFormView){
-        acessoryFormView = viewObject
-        acessoryFormView.tabIndex = this.tabIndex
-        this.tabItemSelectedIndex = viewObject.lastPositionSelected
-        arguments?.apply {
-            putSerializable(ARG_VIEW_OBJECT, acessoryFormView)
         }
     }
 
@@ -401,6 +399,19 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
             throw RuntimeException("${context.toString()} must implement FrgFFInteraction")
         }
 
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        _mFrgListener = null
+    }
+
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        if(!isVisibleToUser) {
+            mAdapter.highlightedItemPosition = -1
+            mAdapter.notifyDataSetChanged()
+        }
     }
     //
     fun onItemSelected(position: Int,

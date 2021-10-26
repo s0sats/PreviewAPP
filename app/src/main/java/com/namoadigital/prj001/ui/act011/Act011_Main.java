@@ -268,6 +268,7 @@ public class Act011_Main extends Base_Activity
     private String device_item_list_filter;
     private boolean device_item_list_checkbox_status;
     private GeOs geOs;
+    private ArrayList<AcessoryFormView> acessoryFormViews;
 
 
     public void setWsSoProcess(String wsSoProcess) {
@@ -1423,6 +1424,7 @@ public class Act011_Main extends Base_Activity
         //
         if(formLocal.getIs_so() == 1) {
             int acessoryIndex = pages + 1;
+            this.acessoryFormViews = acessoryFormViews;
             for(AcessoryFormView acessoryFormView: acessoryFormViews){
                 int item_index = -1;
                 if((acessoryIndex) == device_item_tab_index){
@@ -1435,18 +1437,19 @@ public class Act011_Main extends Base_Activity
                     acessoryFormView.setFilterVal("");
                     acessoryFormView.setNonForecastFilter(true);
                 }
-                Act011FrgInspection act011FrgInspection = Act011FrgInspection.Companion
+                acessoryFormView.setTabIndex(acessoryIndex);
+                        Act011FrgInspection act011FrgInspection = Act011FrgInspection.Companion
                         .newInstance(
                                 hmAux_Trans,
-                                acessoryIndex ,
+                                acessoryIndex,
                                 fullTabQty,
                                 item_index,
                                 formLocal.getCustom_form_status(),
                                 mdScheduleExec != null ? mdScheduleExec.getSchedule_desc() : null,
                                 mdScheduleExec != null ? mdScheduleExec.getComments() : null,
-                                formLocal.getIs_so() == 1
+                                formLocal.getIs_so() == 1,
+                                acessoryFormView
                                 );
-                act011FrgInspection.setViewObject(acessoryFormView);
                 tabs.add(act011FrgInspection.getTabObj(includeField));
                 screens.add(act011FrgInspection);
                 acessoryIndex ++;
@@ -2137,6 +2140,11 @@ public class Act011_Main extends Base_Activity
     @Override
     public void onRefreshTabCounter(int tabIndex) {
         act011FfOption.updateTabList(screens.get(tabIndex).getTabObj(false),tabIndex);
+    }
+
+    @Override
+    public AcessoryFormView getObjectView(int position) {
+        return acessoryFormViews.get(position);
     }
 
     //TODO APAGAR APPOS TESTES FINAL
