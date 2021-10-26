@@ -9,9 +9,7 @@ import androidx.core.database.getStringOrNull
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
-import com.namoadigital.prj001.model.DaoObjReturn
-import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device
-import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device_Item
+import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_DeviceDao_Sql_001
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -328,6 +326,58 @@ class MD_Product_Serial_Tp_DeviceDao(
             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
             Constant.DB_VERSION_CUSTOM
         )
+    }
+
+    //TODO MOVER PARA O DAO DO SERIAL?!
+    /**
+     * Remove toda a estrutura de um serial
+     */
+    fun removeFullStructure(mdProductSerial: MD_Product_Serial): DaoObjReturn {
+        var daoObjReturn = DaoObjReturn()
+        var addUpdateRet: Long = 0
+        val curAction = DaoObjReturn.DELETE
+        daoObjReturn.table = TABLE
+        //
+        val wherePkClause =
+            """ ${MD_Product_SerialDao.CUSTOMER_CODE} = '${mdProductSerial.customer_code}'
+                and ${MD_Product_SerialDao.PRODUCT_CODE} = '${mdProductSerial.product_code}'
+                and  ${MD_Product_SerialDao.SERIAL_CODE} = '${mdProductSerial.serial_code}'"""
+
+        openDB()
+        try {
+            db.beginTransaction()
+            //
+            addUpdateRet += db.delete(TABLE,wherePkClause,null)
+            addUpdateRet += db.delete(MD_Product_Serial_Tp_Device_ItemDao.TABLE,wherePkClause,null)
+            addUpdateRet += db.delete(MD_Product_Serial_Tp_Device_Item_HistDao.TABLE,wherePkClause,null)
+            //
+            db.setTransactionSuccessful()
+        } catch (e: SQLiteException) {
+            //Chama metodo que baseado na exception gera obj de retorno setado como erro
+            //e contendo msg de erro tratada.
+            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.message)
+            //Gera arquivo de exception usando dados da exception e do obj de retorno
+            ToolBox_Inf.registerException(
+                javaClass.name,
+                Exception(
+                    """
+                ${e.message}
+                ${daoObjReturn.errorMsg}
+                """.trimIndent()
+                )
+            )
+        } catch (e: Exception) {
+            //Seta obj de retorno com flag de erro e gera arquivo de exception
+            daoObjReturn.setError(true)
+            ToolBox_Inf.registerException(javaClass.name, e)
+        } finally {
+            db.endTransaction()
+            daoObjReturn.action = curAction
+            daoObjReturn.actionReturn = addUpdateRet
+        }
+        //
+        closeDB()
+        return daoObjReturn
     }
 
     private class CursorToMD_Product_Serial_Tp_DeviceMapper : Mapper<Cursor, MD_Product_Serial_Tp_Device> {

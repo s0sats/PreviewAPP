@@ -378,12 +378,12 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     }
 
     private fun setSelectedBkpMachineSerial(serialBkp: FormOsHeaderFrgSerialBkpItem,autoSelection: Boolean = false) {
-        selectedBkpMachineSerialCode = serialBkp.serialCode
-        selectedBkpMachineSerialId = serialBkp.serialId
         with(binding){
             mketMachineSerialEdit.setText(serialBkp.serialId)
             clMachineEdit.background = ContextCompat.getDrawable(requireContext(), R.drawable.shape_ok)
             tilMketSerial.isHelperTextEnabled = false
+            selectedBkpMachineSerialCode = serialBkp.serialCode
+            selectedBkpMachineSerialId = serialBkp.serialId
         }
         //
         bkpMachineDialog?.dismiss()
@@ -814,6 +814,11 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
 
                     override fun reportTextChange(text: String?, textNotEmpty: Boolean) {
                         with(binding){
+                            //Se existe um serial ja escolhido, reseta vars.
+                            if(selectedBkpMachineSerialCode != null || selectedBkpMachineSerialId != null){
+                                selectedBkpMachineSerialCode = null
+                                selectedBkpMachineSerialId = null
+                            }
                             tilMketSerial.isHelperTextEnabled = true
                             tilMketSerial.helperText = hmAuxTrans["backup_serial_help_lbl"]
                             clMachineEdit.background =  ContextCompat.getDrawable(requireContext(),R.drawable.shape_error)

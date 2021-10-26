@@ -172,14 +172,20 @@ class WS_Product_Serial_Structure : IntentService("WS_Product_Serial_Structure")
     }
 
     private fun processSerialStructureReturn(structures: List<MD_Product_Serial_Structure>) {
-
+        //Apesar de ser retornado uma lista, HOJE 26/10/2021, é retornado somente uma estrutura por vez
+        //Caso isso mude, é necessario rever a logica abaixo, para garantir que tudo ou nada seja inserido.
         for (serialStructure in structures) {
             val serialUpdateInfo = serialUpdateInfo(serialStructure)
             if(serialUpdateInfo != null) {
                 serialStructure.device_tp.forEach {
                     it.setPk(serialUpdateInfo)
                 }
-                val daoObjReturn = tpDeviceDao.addUpdate(serialStructure.device_tp, true)
+                //apaga a estrutura atual
+                var daoObjReturn = tpDeviceDao.removeFullStructure(serialUpdateInfo!!)
+                //Se não houve erro atualiza
+                if (!daoObjReturn.hasError()) {
+                    daoObjReturn = tpDeviceDao.addUpdate(serialStructure.device_tp, false)
+                }
                 //
                 if (!daoObjReturn.hasError()) {
                     val result = gson.toJson(serialUpdateInfo)
@@ -199,6 +205,7 @@ class WS_Product_Serial_Structure : IntentService("WS_Product_Serial_Structure")
                         "0"
                     )
                 }
+
             }else{
                 ToolBox.sendBCStatus(
                     applicationContext,
