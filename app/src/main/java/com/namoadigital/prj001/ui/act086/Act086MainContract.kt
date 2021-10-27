@@ -48,5 +48,6 @@ interface Act086MainContract {
         ): Boolean
 
         fun getActionBarTitle(fragmentManager: Fragment, newOrCreatedByApp: Boolean): String?
+        fun removeListItemIndexFromBundle()
     }
 }
