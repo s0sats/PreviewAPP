@@ -65,11 +65,11 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
         //
         setLabels()
         //
+        setActions()
+        //
         setInspectionList()
         //
         setVisibility()
-        //
-        setActions()
         //
     }
 
@@ -131,6 +131,11 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
         }
     }
 
+    fun resetTextFilter(){
+        acessoryFormView.filterVal = ""
+        binding.edtInspectionFilter.setText("")
+        binding.chkNonForecastItem.setText("")
+    }
 
     private fun hideNonForecastCheckBoxFilter(hideCheckbox: Boolean) {
         if (hideCheckbox) {
@@ -197,6 +202,9 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
             if(tabItemSelectedIndex >= 0) {
                 binding.nsvMain.post {
                     mAdapter.highlightedItemPosition = tabItemSelectedIndex
+                    if(!acessoryFormView.filterVal.isNullOrEmpty()) {
+                        binding.edtInspectionFilter.setText(acessoryFormView.filterVal)
+                    }
                     //Calcula posicao inicial do Recycler + posicao final do item seleciona - o tamanho do item.
                     val y: Float = this.getY() + this.getChildAt(tabItemSelectedIndex).getY() - this.getChildAt(tabItemSelectedIndex).measuredHeight
                     binding.nsvMain.smoothScrollTo(0, y.toInt())
@@ -408,9 +416,11 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
 
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
-        if(!isVisibleToUser) {
-            mAdapter.highlightedItemPosition = -1
-            mAdapter.notifyDataSetChanged()
+        if(!isVisibleToUser){
+            if(mAdapter.highlightedItemPosition > -1) {
+                mAdapter.highlightedItemPosition = -1
+                mAdapter.notifyDataSetChanged()
+            }
         }
     }
     //

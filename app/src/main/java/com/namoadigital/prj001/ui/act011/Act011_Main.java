@@ -1185,8 +1185,8 @@ public class Act011_Main extends Base_Activity
             //
             if(bundle.containsKey(DEVICE_BUNDLE)) {
                 Bundle deviceBundle = bundle.getBundle(DEVICE_BUNDLE);
-                this.device_item_tab_index = deviceBundle.getInt(DEVICE_ITEM_TAB_INDEX);
-                this.device_item_list_index = deviceBundle.getInt(DEVICE_ITEM_LIST_INDEX);
+                this.device_item_tab_index = deviceBundle.getInt(DEVICE_ITEM_TAB_INDEX, -1);
+                this.device_item_list_index = deviceBundle.getInt(DEVICE_ITEM_LIST_INDEX, -1);
                 this.device_item_list_filter = deviceBundle.getString(DEVICE_ITEM_LIST_FILTER);
                 this.device_item_list_checkbox_status = deviceBundle.getBoolean(DEVICE_ITEM_LIST_CHECKBOX_STATUS, true);
                 bundle.remove(DEVICE_BUNDLE);
@@ -1487,7 +1487,9 @@ public class Act011_Main extends Base_Activity
                     updateTabStatusIntoDrawer(
                         returnValidateTabObj(index_old)
                     );
-
+                    if(screens.get(index_old-1) instanceof Act011FrgInspection ){
+                        ((Act011FrgInspection) screens.get(index_old-1)).resetTextFilter();
+                    }
                 }
 
                 @Override

@@ -45,7 +45,7 @@
 
             <TextView
                 android:id="@+id/tv_status"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="24dp"
@@ -58,7 +58,7 @@
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/tv_inspection_description"
                 app:layout_constraintTop_toBottomOf="@+id/tv_inspection_description"
-                app:layout_constraintWidth_max="wrap"
+                app:layout_constrainedWidth="true"
                 tools:text="TextView" />
 
             <TextView
