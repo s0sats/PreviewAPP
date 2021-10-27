@@ -350,6 +350,15 @@ class Act086MainPresenter(
         }
     }
 
+    /**
+     * Fun que remove do bundle a chave DEVICE_ITEM_LIST_INDEX
+     */
+    override fun removeListItemIndexFromBundle() {
+        bundle.apply {
+            getBundle(ConstantBaseApp.DEVICE_BUNDLE)?.remove(ConstantBaseApp.DEVICE_ITEM_LIST_INDEX)
+        }
+    }
+
     override fun onBackPressedClicked(fragmentManager: FragmentManager, deviceItem: GeOsDeviceItem) {
         //
         when(getCurrentFrag(fragmentManager)){

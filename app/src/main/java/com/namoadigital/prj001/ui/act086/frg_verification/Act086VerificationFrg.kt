@@ -87,7 +87,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     private var isMketCommentTypeTriggered: Boolean = false
     private var isManualDescInEdit = false
     private var skipSave: Boolean = false
-    lateinit var leaveItem: () -> Unit
+    lateinit var leaveItem: (isManualItemDelete: Boolean) -> Unit
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -520,7 +520,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         }
 
         binding.act086VerificationFrgBtnOk.setOnClickListener{
-            leaveItem()
+            leaveItem(false)
         }
 
         binding.act086VerificationFrgRgAnswers.setOnCheckedChangeListener { _, checkedId ->
@@ -857,10 +857,13 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         )
     }
 
+    /**
+     * Fun chamada ao deletar item manual
+     */
     override fun leaveWithoutSave() {
         skipSave = true
         mPresenter.deleteOldPhoto(prefixPhoto)
-        leaveItem()
+        leaveItem(true)
     }
 
     private fun callProductEditDialog(
@@ -1060,6 +1063,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                 "discard_item_lbl",
                 "alert_error_on_manual_item_delete_msg",
                 "alert_error_on_save_item_msg",
+                "alert_invalid_material_qty_msg",
             )
         }
     }

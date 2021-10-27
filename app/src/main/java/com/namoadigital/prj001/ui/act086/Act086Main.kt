@@ -347,7 +347,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
             is Act086VerificationFrg ->{
                 fragment.showAlert = ::showAlert
                 fragment.checkScrollNeeds = ::checkScrollNeeds
-                fragment.leaveItem = ::onBackPressed
+                fragment.leaveItem = ::leaveItem
             }
         }
         //
@@ -362,6 +362,19 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
             actionBarHeight = supportActionBar?.let{it.height}?:0,
             footerHeight = binding.include.height
         )
+    }
+
+    /**
+     * Fun passada para o Act086VerificationFrg e executado no clique do botão OK
+     * ou no delete de item manual.
+     * Caso seja deleção de item manual, remove do bundle o DEVICE_ITEM_LIST_INDEX
+     * antes de chamar o backpress
+     */
+    private fun leaveItem(isManualItemDelete: Boolean = false){
+        if(isManualItemDelete) {
+            mPresenter.removeListItemIndexFromBundle()
+        }
+        onBackPressed()
     }
 
     override fun updateScrollPosition(newScrollTop: Int) {

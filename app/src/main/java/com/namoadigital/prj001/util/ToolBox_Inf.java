@@ -8937,17 +8937,29 @@ public class ToolBox_Inf {
         return convertedValue;
     }
 
-
-    public static String getTodayLastSecond(Context context){
-        Calendar cDate = Calendar.getInstance();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String date = "";
-        try {
-            date = dateFormat.format(cDate.getTime()) +" 23:59:59" + ToolBox.getDeviceGMT(false);
+    /**
+     * LUCHE - 25/10/2021
+     * Metodo que recebe um data no formato full timestamp tz e joga o horario
+     * para o ultimo minutos do dia.
+     * @param date
+     * @return
+     */
+    public static String getDateLastMinute(String date){
+        int fullTimeZoneFormat = "1900-01-01 00:00:00 +00:00".length();
+        try{
+            if(date.length() == fullTimeZoneFormat
+    && date.trim().indexOf(" ") == 10
+                && date.trim().lastIndexOf(" ") == 19
+            ){
+                String[] splitedDate = date.split(" ");
+                //
+                return splitedDate[0] +" 23:59:59 " + splitedDate[2];
+            }else{
+                return date;
+            }
         }catch (Exception e){
-            ToolBox_Inf.registerException(context.getClass().getName(),e);
-            date = "1900-01-01 00:00:00 +00:00";
+            ToolBox_Inf.registerException(CLASS_NAME,e);
+            return "1900-01-01 00:00:00 +00:00";
         }
-        return date;
     }
 }
