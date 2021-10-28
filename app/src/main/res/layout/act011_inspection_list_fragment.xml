@@ -169,7 +169,7 @@
 
             <TextView
                 android:id="@+id/tv_add_new_item_val"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAllCaps="true"
                 android:textColor="@color/padrao_WHITE"
@@ -178,7 +178,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/iv_check_icon"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintWidth_default="wrap"
+                app:layout_constrainedWidth="true"
                 tools:text="Adicionar item novo" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

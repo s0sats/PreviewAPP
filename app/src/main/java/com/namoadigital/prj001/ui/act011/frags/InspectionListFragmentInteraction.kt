@@ -15,4 +15,5 @@ interface InspectionListFragmentInteraction {
     //
     fun onNotVerifyAction(itemPk: String): InspectionCell
     fun onRefreshTabCounter(tabIndex: Int)
+    fun getObjectView(position: Int): AcessoryFormView
 }

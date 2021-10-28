@@ -8,7 +8,7 @@ import java.io.Serializable
 
 data class InspectionCell   (
     val description: String,
-    val dayCount: Int,
+    val dayCount: Int?,
     val photoCount: Int= 0,
     val materialCount: Int = 0,
     val materialRequired: Boolean,

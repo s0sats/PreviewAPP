@@ -55,6 +55,7 @@ import com.namoa_digital.namoa_library.ctls.CustomFF;
 import com.namoa_digital.namoa_library.ctls.LabelFF;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNMFF;
+import com.namoa_digital.namoa_library.ctls.MkDateTime;
 import com.namoa_digital.namoa_library.ctls.PhotoFF;
 import com.namoa_digital.namoa_library.ctls.PictureFF;
 import com.namoa_digital.namoa_library.ctls.RatingBarFF;
@@ -267,6 +268,7 @@ public class Act011_Main extends Base_Activity
     private String device_item_list_filter;
     private boolean device_item_list_checkbox_status;
     private GeOs geOs;
+    private ArrayList<AcessoryFormView> acessoryFormViews;
 
 
     public void setWsSoProcess(String wsSoProcess) {
@@ -1183,8 +1185,8 @@ public class Act011_Main extends Base_Activity
             //
             if(bundle.containsKey(DEVICE_BUNDLE)) {
                 Bundle deviceBundle = bundle.getBundle(DEVICE_BUNDLE);
-                this.device_item_tab_index = deviceBundle.getInt(DEVICE_ITEM_TAB_INDEX);
-                this.device_item_list_index = deviceBundle.getInt(DEVICE_ITEM_LIST_INDEX);
+                this.device_item_tab_index = deviceBundle.getInt(DEVICE_ITEM_TAB_INDEX, -1);
+                this.device_item_list_index = deviceBundle.getInt(DEVICE_ITEM_LIST_INDEX, -1);
                 this.device_item_list_filter = deviceBundle.getString(DEVICE_ITEM_LIST_FILTER);
                 this.device_item_list_checkbox_status = deviceBundle.getBoolean(DEVICE_ITEM_LIST_CHECKBOX_STATUS, true);
                 bundle.remove(DEVICE_BUNDLE);
@@ -1422,6 +1424,7 @@ public class Act011_Main extends Base_Activity
         //
         if(formLocal.getIs_so() == 1) {
             int acessoryIndex = pages + 1;
+            this.acessoryFormViews = acessoryFormViews;
             for(AcessoryFormView acessoryFormView: acessoryFormViews){
                 int item_index = -1;
                 if((acessoryIndex) == device_item_tab_index){
@@ -1434,18 +1437,19 @@ public class Act011_Main extends Base_Activity
                     acessoryFormView.setFilterVal("");
                     acessoryFormView.setNonForecastFilter(true);
                 }
-                Act011FrgInspection act011FrgInspection = Act011FrgInspection.Companion
+                acessoryFormView.setTabIndex(acessoryIndex);
+                        Act011FrgInspection act011FrgInspection = Act011FrgInspection.Companion
                         .newInstance(
                                 hmAux_Trans,
-                                acessoryIndex ,
+                                acessoryIndex,
                                 fullTabQty,
                                 item_index,
                                 formLocal.getCustom_form_status(),
                                 mdScheduleExec != null ? mdScheduleExec.getSchedule_desc() : null,
                                 mdScheduleExec != null ? mdScheduleExec.getComments() : null,
-                                formLocal.getIs_so() == 1
+                                formLocal.getIs_so() == 1,
+                                acessoryFormView
                                 );
-                act011FrgInspection.setViewObject(acessoryFormView);
                 tabs.add(act011FrgInspection.getTabObj(includeField));
                 screens.add(act011FrgInspection);
                 acessoryIndex ++;
@@ -1483,7 +1487,9 @@ public class Act011_Main extends Base_Activity
                     updateTabStatusIntoDrawer(
                         returnValidateTabObj(index_old)
                     );
-
+                    if(screens.get(index_old-1) instanceof Act011FrgInspection ){
+                        ((Act011FrgInspection) screens.get(index_old-1)).resetTextFilter();
+                    }
                 }
 
                 @Override
@@ -2136,6 +2142,11 @@ public class Act011_Main extends Base_Activity
     @Override
     public void onRefreshTabCounter(int tabIndex) {
         act011FfOption.updateTabList(screens.get(tabIndex).getTabObj(false),tabIndex);
+    }
+
+    @Override
+    public AcessoryFormView getObjectView(int position) {
+        return acessoryFormViews.get(position);
     }
 
     //TODO APAGAR APPOS TESTES FINAL
@@ -3308,20 +3319,40 @@ public class Act011_Main extends Base_Activity
                 }
             }
         });
+        //
         binding.act011DialogCheckBtnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 alertDialog.dismiss();
             }
         });
-
+        //
+        binding.act011DialogCheckMkdateFormEnd.setOnSelectedValue(new MkDateTime.IMKDateTimeValueChange() {
+            @Override
+            public void onChangeValue(String s) {
+                if(ToolBox_Inf.getDateDiferenceInMilliseconds(binding.act011DialogCheckMkdateFormStart.getmValue(), s) <= 0){
+                    binding.act011DialogCheckTvElapsedTimeVal.setText(getFormElapsedTimeFormatted(s));
+                }else{
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("dialog_finalize_os_form_invalid_end_date_ttl"),
+                            hmAux_Trans.get("dialog_finalize_os_form_invalid_end_date_end"),
+                            null,
+                            0
+                    );
+                    binding.act011DialogCheckTvElapsedTimeVal.setText("--:--");
+                }
+            }
+        });
+        //
     }
 
     private boolean validEndDate(Act011CheckDialogBinding binding) {
         String startDate = binding.act011DialogCheckMkdateFormStart.getmValue();
         String endDate = binding.act011DialogCheckMkdateFormEnd.getmValue();
         //todo colocar valida com data atual apos tratar fluxo de assinatura.
-        return ToolBox_Inf.getDateDiferenceInMilliseconds(startDate, endDate) <= 0;
+        return ToolBox_Inf.getDateDiferenceInMilliseconds(startDate, endDate) <= 0
+                     && ToolBox_Inf.getDateDiferenceInMilliseconds(endDate, ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT)) <= 0;
     }
 
     private void setDialogVisibilityAndLabels(Act011CheckDialogBinding binding) {
@@ -3352,9 +3383,9 @@ public class Act011_Main extends Base_Activity
             }
             if(geOs.getDate_end() == null
             || geOs.getDate_end().isEmpty()) {
-                binding.act011DialogCheckMkdateFormEnd.setmValue(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+                binding.act011DialogCheckMkdateFormEnd.setmValue(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"), true);
             }else{
-                binding.act011DialogCheckMkdateFormEnd.setmValue(geOs.getDate_end());
+                binding.act011DialogCheckMkdateFormEnd.setmValue(geOs.getDate_end(), true);
             }
             binding.act011DialogFinalizeLbl.setText(hmAux_Trans.get("dialog_finalize_os_form_lbl"));
             binding.act011DialogCheckTvMissingAnswerLbl.setText(hmAux_Trans.get("dialog_finalize_os_form_missing_answer_count_lbl"));
