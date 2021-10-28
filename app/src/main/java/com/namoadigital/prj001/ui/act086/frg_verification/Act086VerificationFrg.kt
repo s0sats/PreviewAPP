@@ -918,10 +918,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             //Tenta o calcular o tamanho do ajusta a altura da view.
             //Pega o maior entre a soma dos paddingTop e Bottom ou a conversão de 40px pra dp.
             //40dp foi o numero magico baseado em testes. A maior soma de paddings foi 36dp e não era suficiente.
-            val adjustHeight = maxOf(
-                (it.paddingTop + it.paddingBottom),
-                ToolBox.convertPixelsToDpIndeed(requireContext(), 40f).toInt()
-            )
+            val adjustHeight = ToolBox.convertPixelsToDpIndeed(requireContext(), 40f).toInt()
             //Soma altura do card  + ajutes calculado
             val finalHeight = it.height + adjustHeight
             //Pega bottom do recycle e tb adiciona o ajuste(Necessario pq nem tudo é tao preciso kkk)

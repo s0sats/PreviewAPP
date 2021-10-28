@@ -29,7 +29,8 @@ interface Act086MainContract {
             heightToAdd: Int,
             scrollTop: Int,
             actionBarHeight: Int,
-            footerHeight: Int
+            footerHeight: Int,
+            headerDataOffset: Int
         )
 
         fun getPrefixPhoto(
