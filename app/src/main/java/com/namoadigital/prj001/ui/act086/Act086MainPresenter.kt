@@ -19,7 +19,6 @@ import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.io.IOException
-import java.lang.Exception
 
 class Act086MainPresenter(
     private val context: Context,
@@ -353,9 +352,9 @@ class Act086MainPresenter(
     /**
      * Fun que remove do bundle a chave DEVICE_ITEM_LIST_INDEX
      */
-    override fun removeListItemIndexFromBundle() {
+    override fun putListItemIndexOnLastPositionFromBundle() {
         bundle.apply {
-            getBundle(ConstantBaseApp.DEVICE_BUNDLE)?.remove(ConstantBaseApp.DEVICE_ITEM_LIST_INDEX)
+            getBundle(ConstantBaseApp.DEVICE_BUNDLE)?.putInt(ConstantBaseApp.DEVICE_ITEM_LIST_INDEX, Int.MAX_VALUE)
         }
     }
 
@@ -373,6 +372,7 @@ class Act086MainPresenter(
                         hmAuxTrans["alert_unsaved_data_will_be_lost_ttl"],
                         hmAuxTrans["alert_unsaved_data_will_be_lost_confirm"],
                         DialogInterface.OnClickListener { dialog, which ->
+                            putListItemIndexOnLastPositionFromBundle()
                             mView.callAct011()
                         },
                         1

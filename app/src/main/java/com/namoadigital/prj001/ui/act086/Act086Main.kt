@@ -32,7 +32,6 @@ import com.namoadigital.prj001.util.ToolBox_Inf
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlin.collections.ArrayList
 
 class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
     private lateinit var binding: Act086MainContentBinding
@@ -372,7 +371,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
      */
     private fun leaveItem(isManualItemDelete: Boolean = false){
         if(isManualItemDelete) {
-            mPresenter.removeListItemIndexFromBundle()
+            mPresenter.putListItemIndexOnLastPositionFromBundle()
         }
         onBackPressed()
     }
