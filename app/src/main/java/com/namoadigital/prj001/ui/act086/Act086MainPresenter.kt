@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.namoa_digital.namoa_library.util.HMAux
+import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.dao.GeOsDeviceItemDao
 import com.namoadigital.prj001.dao.GeOsDeviceItemHistDao
 import com.namoadigital.prj001.model.GeOsDeviceItem
@@ -95,18 +96,28 @@ class Act086MainPresenter(
         heightToAdd: Int,
         scrollTop: Int,
         actionBarHeight: Int,
-        footerHeight: Int
+        footerHeight: Int,
+        headerDataOffset: Int
     ) {
+        //O pulo do gato esta aqui, faltava desconsiderar o topo da act, onde ficam as infos de
+        //header
+        val viewBottomPositionAdjuted = viewBottomPosition + headerDataOffset
         //Pega o tamanho da tela do device
         val screenMetricHeight = ToolBox_Inf.getScreenMetrics(context)[1]
+        //Tamanho da statusBar, baseado em relatos kkkk
+        val statusBars =  ToolBox.convertPixelsToDpIndeed(context, 25f).toInt()
         //Desconta do tamanho da tela a action bar e o footer. Teria ainda a statusBar mas muito treta
-        val calculatedVisibleArea = screenMetricHeight - (footerHeight  + actionBarHeight)
+        val calculatedVisibleArea = screenMetricHeight - (footerHeight  + actionBarHeight + statusBars)
         //Se o Top do scroll + area de visao disponivel for menor que a posicao Y do bottom do recycler
         //significa que item ficará escondido então tenta o scroll
         val calculatedScrollBottom = calculatedVisibleArea + scrollTop
-        if(calculatedScrollBottom < viewBottomPosition){
+        if(calculatedScrollBottom < viewBottomPositionAdjuted){
             //Soma o Top do scroll + a altura da celula ajustada
-            val newScrollTop = scrollTop + heightToAdd
+            //val newScrollTop = scrollTop + heightToAdd
+            // Calcula a diferença entre o fim da view e fim da area visivel.
+            val scrollNeeds = maxOf((viewBottomPositionAdjuted - calculatedScrollBottom),heightToAdd)
+            //Soma a necessidade ao scroll ja existente para saber a nova posicao
+            val newScrollTop = scrollTop + scrollNeeds
             //Faz o scroll
             mView.updateScrollPosition(newScrollTop)
         }

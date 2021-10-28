@@ -354,12 +354,16 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
     }
 
     private fun checkScrollNeeds(viewBottomPosition: Int, heightToAdd: Int){
+        //Calcula a var que faltava, o tamanho do layout dos dados que ficam na act, os dados de header
+        //Pega o top dfragPlaceholder e desconta os 32dp de margin top
+        var headerDataOffset = binding.act086FrgPlaceholder.top - ToolBox_Inf.convertDpToPixel(context,32f)
         mPresenter.checkViewPositionIsVisible(
             viewBottomPosition,
             heightToAdd,
             scrollTop = binding.act086NvMain.scrollY,
             actionBarHeight = supportActionBar?.let{it.height}?:0,
-            footerHeight = binding.include.height
+            footerHeight = binding.include.height,
+            headerDataOffset.toInt()
         )
     }
 
