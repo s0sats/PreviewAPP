@@ -14,6 +14,7 @@ import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.ConstantBase
 import com.namoa_digital.namoa_library.util.HMAux
@@ -88,6 +89,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     private var isManualDescInEdit = false
     private var skipSave: Boolean = false
     lateinit var leaveItem: (isManualItemDelete: Boolean) -> Unit
+    private var isPhotoAction = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -889,7 +891,8 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             //Informa adapter qual posição atualizar
             materialFragAdapter.notifyItemChanged(productIndex)
             //
-            handleViewScrollNeeds(productIndex)
+            //handleViewScrollNeeds(productIndex)
+            handleViewScrollNeeds(binding.act086VerificationFrgRvMaterial,productIndex)
             //
             binding.act086VerificationFrgRvMaterial.requestFocus()
             //
@@ -910,21 +913,42 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         }
     }
 
-    private fun handleViewScrollNeeds(productIndex: Int) {
-        val linearLayoutManager =
-            binding.act086VerificationFrgRvMaterial.layoutManager as LinearLayoutManager
-        //Tenta resgatar o item recem atualizado
-        linearLayoutManager.getChildAt(productIndex)?.let {
-            //Tenta o calcular o tamanho do ajusta a altura da view.
-            //Pega o maior entre a soma dos paddingTop e Bottom ou a conversão de 40px pra dp.
-            //40dp foi o numero magico baseado em testes. A maior soma de paddings foi 36dp e não era suficiente.
-            val adjustHeight = ToolBox.convertPixelsToDpIndeed(requireContext(), 40f).toInt()
-            //Soma altura do card  + ajutes calculado
-            val finalHeight = it.height + adjustHeight
-            //Pega bottom do recycle e tb adiciona o ajuste(Necessario pq nem tudo é tao preciso kkk)
-            val calculatedMaterialRecycleBottom = binding.act086VerificationFrgRvMaterial.bottom + finalHeight
-            //Chama metodo da act que tem controle do NestedScroll para verifica se precisa fazer o scroll
-            checkScrollNeeds(calculatedMaterialRecycleBottom, finalHeight)
+    /**
+     * Fun que inicia a magia do scroll.
+     * Recebe o recycler alvo e o indice do elemente que deve ser avaliado se cabe na tela e calcula
+     * qual deve ser o bottom do recycle após o insert da informação.
+     * No caso do recycle de foto, em alguns devices , ao tentar resgatar a view do ultimo item, era retornado null.
+     * Muito provavelement pois o recycle/ view ainda estava sendo atualizado então, para esses casos,
+     * Foi adicionado um delay de 200ms antes de tentar o resgate da view.
+     * No futuro pesquisar se existe uma maneira menos holistica de saber se o recycle / view ainda esta
+     * sendo atualizado para aguardar de maneira apropriada.
+     */
+    private fun handleViewScrollNeeds(recyclerView: RecyclerView, viewIndex: Int) {
+        val linearLayoutManager = if(recyclerView.id == binding.act086VerificationFrgRvMaterial.id){
+            recyclerView.layoutManager as LinearLayoutManager
+        }else{
+            recyclerView.layoutManager as GridLayoutManager
+        }
+
+        CoroutineScope(Dispatchers.Default).launch {
+            if(linearLayoutManager is GridLayoutManager ) {
+                delay(200)
+            }
+            withContext(Dispatchers.Main){
+                //Tenta resgatar o item recem atualizado
+                linearLayoutManager.getChildAt(viewIndex)?.let {
+                    //Tenta o calcular o tamanho do ajusta a altura da view.
+                    //Pega o maior entre a soma dos paddingTop e Bottom ou a conversão de 40px pra dp.
+                    //40dp foi o numero magico baseado em testes. A maior soma de paddings foi 36dp e não era suficiente.
+                    val adjustHeight = ToolBox.convertPixelsToDpIndeed(requireContext(), 40f).toInt()
+                    //Soma altura do card  + ajutes calculado
+                    val finalHeight = it.height + adjustHeight
+                    //Pega bottom do recycle e tb adiciona o ajuste(Necessario pq nem tudo é tao preciso kkk)
+                    val calculatedMaterialRecycleBottom = recyclerView.bottom + finalHeight
+                    //Chama metodo da act que tem controle do NestedScroll para verifica se precisa fazer o scroll
+                    checkScrollNeeds(calculatedMaterialRecycleBottom, finalHeight)
+                }
+            }
         }
     }
 
@@ -939,6 +963,9 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     }
 
     override fun callCameraAct(photoName: String, newPhoto: Boolean) {
+        //Seta var de controle que indica que o proximo onResume foi chamado pelo retorno da foto
+        isPhotoAction = true
+        //
         startActivity(
             Intent().apply {
                 setClass(requireContext(), Camera_Activity::class.java)
@@ -973,6 +1000,17 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
 
     override fun updatePhotoListIntoAdapter() {
         photoAdapter.notifyDataSetChanged()
+        if(isPhotoAction){
+            isPhotoAction = false
+            with(binding){
+                handleViewScrollNeeds(act086VerificationFrgRvPhotos ,photoList.lastIndex)
+                //Remove foco do comentario(Acontece no 8.1)
+                act086VerificationFrgMketComment.clearFocus()
+                //Seta foco no recycle
+                act086VerificationFrgRvPhotos.requestFocus()
+            }
+
+        }
     }
 
     override fun callProductAct(listOfProduct: ArrayList<Int>) {
