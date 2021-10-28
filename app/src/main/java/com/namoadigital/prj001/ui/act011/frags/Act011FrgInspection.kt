@@ -92,6 +92,10 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
                     handleForecastEmptyList()
                 }
             }
+        }else{
+            binding.chkNonForecastItem.isChecked = false
+            mAdapter.applyNonForecastFilter(binding.chkNonForecastItem.isChecked)
+            handleAddNewProcessVisibility()
         }
     }
 
@@ -141,7 +145,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
 
     private fun Act011InspectionListFragmentBinding.handleForecastEmptyList() {
         val forecastItens = acessoryFormView.inspections.count {
-            it.status != NORMAL && !ConstantBaseApp.SYS_STATUS_DONE.equals(it.answerStatus)
+            it.status != NORMAL || ConstantBaseApp.SYS_STATUS_DONE.equals(it.answerStatus)
         }
         if (acessoryFormView.nonForecastFilter) {
             if (forecastItens == 0) {
