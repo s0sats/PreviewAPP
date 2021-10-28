@@ -67,10 +67,32 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
         //
         setActions()
         //
+        setChkHideNonForecast()
+        //
         setInspectionList()
         //
         setVisibility()
         //
+    }
+
+    private fun setChkHideNonForecast() {
+        if (!hasNoneNonForecastItem()) {
+            if (!acessoryFormView.nonForecastFilter) {
+                binding.chkNonForecastItem.apply {
+                    post {
+                        performClick()
+                    }
+                }
+            } else {
+                binding.apply {
+                    acessoryFormView.nonForecastFilter = chkNonForecastItem.isChecked
+                    mAdapter.applyNonForecastFilter(chkNonForecastItem.isChecked)
+                    mAdapter.notifyDataSetChanged()
+                    handleAddNewProcessVisibility()
+                    handleForecastEmptyList()
+                }
+            }
+        }
     }
 
     private fun setActions() {
@@ -100,15 +122,21 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
             })
 
             chkNonForecastItem.setOnClickListener {
-                acessoryFormView.nonForecastFilter = (it as CheckBox).isChecked
-                mAdapter.applyNonForecastFilter((it as CheckBox).isChecked)
-                handleAddNewProcessVisibility()
-                handleForecastEmptyList()
+                handleCheckboxClick(it)
             }
             clAddNewItemBtn.setOnClickListener {
-                mFrgListener.onInspectionSelected(acessoryFormView, true, -1, edtInspectionFilter.text.toString(), chkNonForecastItem.isChecked, "")
+                mFrgListener.onInspectionSelected(acessoryFormView, true, acessoryFormView.inspections.size, edtInspectionFilter.text.toString(), chkNonForecastItem.isChecked, "")
             }
         }
+    }
+
+    private fun Act011InspectionListFragmentBinding.handleCheckboxClick(
+        it: View?
+    ) {
+        acessoryFormView.nonForecastFilter = (it as CheckBox).isChecked
+        mAdapter.applyNonForecastFilter((it as CheckBox).isChecked)
+        handleAddNewProcessVisibility()
+        handleForecastEmptyList()
     }
 
     private fun Act011InspectionListFragmentBinding.handleForecastEmptyList() {
@@ -134,7 +162,19 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
     fun resetTextFilter(){
         acessoryFormView.filterVal = ""
         binding.edtInspectionFilter.setText("")
-        binding.chkNonForecastItem.setText("")
+        if(hasNoneNonForecastItem()){
+            binding.apply {
+                chkNonForecastItem.isChecked = false
+                mAdapter.applyNonForecastFilter(chkNonForecastItem.isChecked)
+                handleAddNewProcessVisibility()
+            }
+        }else{
+            binding.apply {
+                chkNonForecastItem.isChecked = true
+                mAdapter.applyNonForecastFilter(chkNonForecastItem.isChecked)
+                handleAddNewProcessVisibility()
+            }
+        }
     }
 
     private fun hideNonForecastCheckBoxFilter(hideCheckbox: Boolean) {
@@ -201,14 +241,21 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
             ViewCompat.hasNestedScrollingParent(this )
             if(tabItemSelectedIndex >= 0) {
                 binding.nsvMain.post {
-                    mAdapter.highlightedItemPosition = tabItemSelectedIndex
-                    if(!acessoryFormView.filterVal.isNullOrEmpty()) {
-                        binding.edtInspectionFilter.setText(acessoryFormView.filterVal)
+                    when(tabItemSelectedIndex){
+                        Int.MAX_VALUE -> {
+                            binding.nsvMain.fullScroll(View.FOCUS_DOWN)
+                        }
+                        else ->{
+                            mAdapter.highlightedItemPosition = tabItemSelectedIndex
+                            if (!acessoryFormView.filterVal.isEmpty()) {
+                                binding.edtInspectionFilter.setText(acessoryFormView.filterVal)
+                            }
+                            //Calcula posicao inicial do Recycler + posicao final do item seleciona - o tamanho do item.
+                            val y: Float = this.getY() + this.getChildAt(tabItemSelectedIndex)
+                                .getY() - this.getChildAt(tabItemSelectedIndex).measuredHeight
+                            binding.nsvMain.scrollTo(0, y.toInt())
+                        }
                     }
-                    //Calcula posicao inicial do Recycler + posicao final do item seleciona - o tamanho do item.
-                    val y: Float = this.getY() + this.getChildAt(tabItemSelectedIndex).getY() - this.getChildAt(tabItemSelectedIndex).measuredHeight
-                    binding.nsvMain.smoothScrollTo(0, y.toInt())
-                    binding.nsvMain.scrollTo(0, binding.rvInspections.getChildAt(tabItemSelectedIndex).height)
                 }
             }
         }
@@ -228,42 +275,19 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
         }.toString()
         binding.tvAddNewItemVal.text = hmAuxTrans.get("inspection_add_new_process_btn")
         binding.chkNonForecastItem.text = hmAuxTrans.get("inspection_hide_non_forecast_item_chk")
-        if(!acessoryFormView.nonForecastFilter){
-            binding.chkNonForecastItem.apply {
-                post {
-                    performClick()
-                }
-            }
-        }else{
-            binding.apply {
-                mAdapter.applyNonForecastFilter(chkNonForecastItem.isChecked)
-                handleAddNewProcessVisibility()
-            }
-        }
+
         //
         if(acessoryFormView.inspections.isEmpty()) {
             binding.tvPlaceholder.text = hmAuxTrans.get("inspection_empty_list_placeholder")
         }else{
-            if(acessoryFormView.inspections.count {
-                    it.status == NORMAL
-                } <=0 )
-                {
-                    binding.chkNonForecastItem.apply {
-                        if(isChecked) {
-                            post {
-                                performClick()
-                            }
-                        }
-                        isChecked = false
-                        mAdapter.applyNonForecastFilter(false)
-                        isEnabled = false
-                        invalidate()
-                    }
-                }
             binding.tvPlaceholder.text = hmAuxTrans.get("inspection_empty_list_filtered")
         }
 
     }
+
+    private fun hasNoneNonForecastItem() = acessoryFormView.inspections.count {
+        it.status == NORMAL && !it.isDone
+    } <=0
 
     companion object {
         @JvmStatic
@@ -394,7 +418,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
     }
 
     override fun applyAutoAnswer(): Int {
-        TODO("Not yet implemented")
+        return -1;
     }
 
     override fun getHeaderInclude(): Act011FrgIncludeHeaderBinding = binding.incHeader
@@ -416,11 +440,22 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
 
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
-        if(!isVisibleToUser){
-            if(mAdapter.highlightedItemPosition > -1) {
-                mAdapter.highlightedItemPosition = -1
-                mAdapter.notifyDataSetChanged()
+        if(isAdded && isVisibleToUser) {
+            binding.chkNonForecastItem.apply {
+                if (hasNoneNonForecastItem()) {
+                    if (isChecked) {
+                        isChecked = false
+                        binding.handleCheckboxClick(this)
+                    }
+                    isEnabled = false
+                } else {
+                    if (!isChecked) {
+                        isChecked = true
+                    }
+                    binding.handleCheckboxClick(this)
+                }
             }
+            binding.edtInspectionFilter.text.clear()
         }
     }
     //

@@ -600,7 +600,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 inspections.add(
                         new InspectionCell(
                                 item.getManual_desc() == null ? item.getItem_check_desc():item.getManual_desc(),
-                                item.getTarget_date() != null? Math.abs(ToolBox_Inf.getDateDiferenceInDays(item.getTarget_date(),ToolBox_Inf.getTodayLastSecond(context))) : null,
+                                item.getTarget_date() != null? Math.abs(ToolBox_Inf.getDateDiferenceInDays(item.getTarget_date(),ToolBox_Inf.getDateLastMinute(ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT)))) : null,
                                 getPhotoCount(item),
                                 item.getMaterialList().size(),
                                 item.getApply_material().equals(APPLY_MATERIAL_REQUIRED),

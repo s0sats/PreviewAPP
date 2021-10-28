@@ -92,7 +92,7 @@ class Act011InspectionFormAdapter(
         inspectionsFiltered.clear()
         if (this.filterApplied) {
             inspectionsFiltered.addAll(inspections.filter {
-                it.status != InspectionCell.NORMAL
+                it.status != InspectionCell.NORMAL || it.isDone
             })
         } else {
             inspectionsFiltered.addAll(inspections)
