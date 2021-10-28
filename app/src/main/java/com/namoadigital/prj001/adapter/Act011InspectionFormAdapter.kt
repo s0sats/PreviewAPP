@@ -299,7 +299,7 @@ class Act011InspectionFormAdapter(
                 if (hasComment) {
                     binding.ivCommentary.applyTintColor(R.color.namoa_color_cone_item)
                 } else {
-                    if (commentRequired && EXEC_TYPE_FIXED.equals(execType)) {
+                    if (commentRequired && EXEC_TYPE_ALERT.equals(execType)) {
                         binding.ivCommentary.applyTintColor(R.color.namoa_color_highlight_required_item)
                     } else {
                         binding.ivCommentary.applyTintColor(R.color.namoa_color_gray_9)
