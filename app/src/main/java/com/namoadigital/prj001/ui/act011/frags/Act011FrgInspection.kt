@@ -254,6 +254,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
                             if (!acessoryFormView.filterVal.isEmpty()) {
                                 binding.edtInspectionFilter.setText(acessoryFormView.filterVal)
                             }
+                            mAdapter.notifyItemChanged(tabItemSelectedIndex)
                             //Calcula posicao inicial do Recycler + posicao final do item seleciona - o tamanho do item.
                             val y: Float = this.getY() + this.getChildAt(tabItemSelectedIndex)
                                 .getY() - this.getChildAt(tabItemSelectedIndex).measuredHeight
@@ -444,23 +445,29 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
 
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
-        if(isAdded && isVisibleToUser) {
-            binding.chkNonForecastItem.apply {
-                if (hasNoneNonForecastItem()) {
-                    if (isChecked) {
-                        isChecked = false
+        if(isAdded){
+            if(isVisibleToUser) {
+                binding.chkNonForecastItem.apply {
+                    if (hasNoneNonForecastItem()) {
+                        if (isChecked) {
+                            isChecked = false
+                            binding.handleCheckboxClick(this)
+                        }
+                        isEnabled = false
+                    } else {
+                        if (!isChecked) {
+                            isChecked = true
+                        }
                         binding.handleCheckboxClick(this)
                     }
-                    isEnabled = false
-                } else {
-                    if (!isChecked) {
-                        isChecked = true
-                    }
-                    binding.handleCheckboxClick(this)
                 }
+                binding.edtInspectionFilter.text.clear()
+            }else{
+                mAdapter.highlightedItemPosition = -1
+                binding.nsvMain.fullScroll(View.FOCUS_UP)
             }
-            binding.edtInspectionFilter.text.clear()
         }
+
     }
     //
     fun onItemSelected(position: Int,
