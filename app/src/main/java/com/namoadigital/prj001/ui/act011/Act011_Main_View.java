@@ -60,4 +60,6 @@ public interface Act011_Main_View {
     void flowControl();
 
     void defineFinalizeFlow();
+
+    boolean isNavegationFromGeOsFlow();
 }

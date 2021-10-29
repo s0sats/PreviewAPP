@@ -269,6 +269,9 @@ public class Act011_Main extends Base_Activity
     private boolean device_item_list_checkbox_status;
     private GeOs geOs;
     private ArrayList<AcessoryFormView> acessoryFormViews;
+    //LUCHE - 29/10/2021 - Var que indica que a abertura da act011 foi feita pela navegação de volta
+    //da act086
+    private boolean isNavegationFromGeOsFlow = false;
 
 
     public void setWsSoProcess(String wsSoProcess) {
@@ -787,6 +790,11 @@ public class Act011_Main extends Base_Activity
         return requestingAct;
     }
 
+    @Override
+    public boolean isNavegationFromGeOsFlow() {
+        return isNavegationFromGeOsFlow;
+    }
+
     private void showConfirmDeleteDialog() {
         final androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(context);
 
@@ -1184,6 +1192,8 @@ public class Act011_Main extends Base_Activity
             }
             //
             if(bundle.containsKey(DEVICE_BUNDLE)) {
+                //Se existe essa chave, é uma navegação de fluxo de Form Os
+                isNavegationFromGeOsFlow = true;
                 Bundle deviceBundle = bundle.getBundle(DEVICE_BUNDLE);
                 this.device_item_tab_index = deviceBundle.getInt(DEVICE_ITEM_TAB_INDEX, -1);
                 this.device_item_list_index = deviceBundle.getInt(DEVICE_ITEM_LIST_INDEX, -1);
@@ -1205,6 +1215,7 @@ public class Act011_Main extends Base_Activity
             mTicket_seq_tmp = null;
             mStep_code = null;
             requestingAct = ConstantBaseApp.ACT005;
+            isNavegationFromGeOsFlow = false;
         }
     }
 

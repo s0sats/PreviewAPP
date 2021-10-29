@@ -563,8 +563,11 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                                     customFormLocal
                             );
                 }
-                //
-                if (hasNformPending) {
+                //LUCHE - 29/10/2021
+                //Alterado validação, adicionando a condição de não ser um fluxo de navegação de form o.s
+                //pois, no caso da verificação de um item, o usr navega para outra act086 e ao voltar,
+                // não deve ver novamente a msg.
+                if (hasNformPending && !mView.isNavegationFromGeOsFlow()) {
                     mView.showMsg(
                             hmAux_Trans.get("alert_nform_already_started_ttl"),
                             hmAux_Trans.get("alert_nform_already_started_msg") + " " +
