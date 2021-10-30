@@ -34,6 +34,7 @@ public class TK_Ticket_Form implements Serializable {
     @Nullable
     private String score_perc;
     private int nc;
+    private int is_os;
     @Nullable
     private Integer custom_form_data_tmp;
     @Nullable
@@ -187,6 +188,14 @@ public class TK_Ticket_Form implements Serializable {
         this.nc = nc;
     }
 
+    public int getIs_os() {
+        return is_os;
+    }
+
+    public void setIs_os(int is_os) {
+        this.is_os = is_os;
+    }
+
     @Nullable
     public Integer getCustom_form_data_tmp() {
         return custom_form_data_tmp;
@@ -231,7 +240,7 @@ public class TK_Ticket_Form implements Serializable {
     public void setPdf_url_local(@Nullable String pdf_url_local) {
         this.pdf_url_local = pdf_url_local;
     }
-    
+
     public String getPdfUrlLocalName(boolean withExtension){
             return
                 ConstantBaseApp.N_FORM_PDF_PREFIX +

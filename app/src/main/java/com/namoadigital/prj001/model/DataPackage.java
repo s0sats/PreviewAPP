@@ -12,6 +12,7 @@ public class DataPackage {
     public static final String DATA_PACKAGE_SO = "SO";
     public static final String DATA_PACKAGE_SCHEDULE = "SCHEDULE";
     public static final String DATA_PACKAGE_AP = "AP";
+    public static final String DATA_PACKAGE_PRODUCT_SERIAL = "PRODUCT_SERIAL";
 
     private ArrayList<String> MAIN;
     private ArrayList<Long> CHECKLIST;
@@ -19,6 +20,7 @@ public class DataPackage {
     private ArrayList<String> SCHEDULE;
     private ArrayList<TSearch_Ap_Env.ObjAp> AP;
     private ArrayList<T_DataPackage_TK_Ticket_Env> TICKET;
+    private ArrayList<T_MD_Product_Serial_Structure> PRODUCT_SERIAL;
 
     public DataPackage() {
     }
@@ -69,5 +71,13 @@ public class DataPackage {
 
     public void setTICKET(ArrayList<T_DataPackage_TK_Ticket_Env> TICKET) {
         this.TICKET = TICKET;
+    }
+
+    public ArrayList<T_MD_Product_Serial_Structure> getPRODUCT_SERIAL() {
+        return PRODUCT_SERIAL;
+    }
+
+    public void setPRODUCT_SERIAL(ArrayList<T_MD_Product_Serial_Structure> PRODUCT_SERIAL) {
+        this.PRODUCT_SERIAL = PRODUCT_SERIAL;
     }
 }

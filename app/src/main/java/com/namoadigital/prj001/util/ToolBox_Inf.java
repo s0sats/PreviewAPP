@@ -3831,6 +3831,14 @@ public class ToolBox_Inf {
         dialogScheduleWarning.show();
     }
 
+    public static boolean hasFormProductOrSerialOutdate(Context context) {
+        return hasFormProductOutdate(context, -1, -1);
+    }
+
+    public static ArrayList<String> hasFormProductOrSerialOutdate(Context context, int ticketPrefix, int ticketCode) {
+        return new ArrayList<>();
+    }
+
     /**
      * Metodo responsavel por verificar se há necessidade de sincronizacao
      * de formularios no fluxo de ticket

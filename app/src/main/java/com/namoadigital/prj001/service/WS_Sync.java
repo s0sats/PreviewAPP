@@ -266,6 +266,7 @@ public class WS_Sync extends IntentService {
         SM_SODao soDao = new SM_SODao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
         TK_TicketDao ticketDao = new TK_TicketDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
         boolean mdTagAlreadyProcess = false;
+        boolean mdProductSerialStructureAlreadyProcess = false;
 
         Gson gson = new GsonBuilder().serializeNulls().create();
 
@@ -1060,6 +1061,65 @@ public class WS_Sync extends IntentService {
                 //Libera pro GB
                 files_tag = null;
                 mdTagAlreadyProcess = true;
+            }
+            //
+            if(!mdProductSerialStructureAlreadyProcess) {
+                /**
+                 * Processamento MD_PRODUCT_SERIAL_TP_DEVICE
+                 */
+                File[] files_serial_tp_device = ToolBox_Inf.getListOfFiles_v2("md_product_serial_tp_device-");
+
+                for (File _file : files_serial_tp_device) {
+                    ArrayList<MD_Product_Serial_Tp_Device> serialTpDevices = gson.fromJson(
+                            ToolBox.jsonFromOracle(
+                                    ToolBox_Inf.getContents(_file)
+                            ),
+                            new TypeToken<ArrayList<MD_Product_Serial_Tp_Device>>() {
+                            }.getType()
+                    );
+                    //
+                    serialTpDeviceDao.addUpdate(serialTpDevices, false);
+                }
+                //Libera pro GB
+                files_serial_tp_device = null;
+
+                /**
+                 * Processamento MD_PRODUCT_SERIAL_TP_DEVICE_ITEM
+                 */
+                File[] files_serial_tp_device_item = ToolBox_Inf.getListOfFiles_v2("md_product_serial_tp_device_item-");
+
+                for (File _file : files_serial_tp_device_item) {
+                    ArrayList<MD_Product_Serial_Tp_Device_Item> serialTpDeviceItems = gson.fromJson(
+                            ToolBox.jsonFromOracle(
+                                    ToolBox_Inf.getContents(_file)
+                            ),
+                            new TypeToken<ArrayList<MD_Product_Serial_Tp_Device_Item>>() {
+                            }.getType()
+                    );
+                    //
+                    serialTpDeviceItemDao.addUpdate(serialTpDeviceItems, false);
+                }
+                //Libera pro GB
+                files_serial_tp_device_item = null;
+                /**
+                 * Processamento MD_PRODUCT_SERIAL_TP_DEVICE_ITEM_Hist
+                 */
+                File[] files_serial_tp_device_item_hist = ToolBox_Inf.getListOfFiles_v2("md_product_serial_tp_device_item_hist-");
+
+                for (File _file : files_serial_tp_device_item_hist) {
+                    ArrayList<MD_Product_Serial_Tp_Device_Item_Hist> serialTpDeviceItemHists = gson.fromJson(
+                            ToolBox.jsonFromOracle(
+                                    ToolBox_Inf.getContents(_file)
+                            ),
+                            new TypeToken<ArrayList<MD_Product_Serial_Tp_Device_Item_Hist>>() {
+                            }.getType()
+                    );
+                    //
+                    serialTpDeviceItemHistDao.addUpdate(serialTpDeviceItemHists, false);
+                }
+                //Libera pro GB
+                files_serial_tp_device_item_hist = null;
+                mdProductSerialStructureAlreadyProcess = true;
             }
             //
             // Processamento Department
