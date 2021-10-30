@@ -1448,6 +1448,16 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             return;
         }
 
+        //LUCHE - 29/10/2021 - Valida se data fim(agora) é maior que data inicio
+        if(validateSysStartDateIsBiggerThanSysEndDate(formData.getSys_date_start())){
+            mView.showMsg(
+                hmAux_Trans.get("alert_invalid_sys_end_date_ttl"),
+                getFormattedInvalidSysEndDateMsg(formData.getSys_date_start()),
+                Act011_Main.SHOW_MSG_TYPE_INVALID_SYS_END_DATE
+            );
+            return;
+        }
+
         custom_form_LocalDao.addUpdate(
                 new GE_Custom_Form_Local_Sql_004(
                         String.valueOf(formData.getCustomer_code()),
@@ -1531,6 +1541,34 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         }else{
             mView.defineFinalizeFlow();
         }
+    }
+
+    /**
+     * Metodo que valida se data de inicio é maior que a data atual(data da finalização)
+     * @param sysDateStart
+     * @return
+     */
+    private boolean validateSysStartDateIsBiggerThanSysEndDate(String sysDateStart) {
+        return  ToolBox_Inf.getDateDiferenceInMilliseconds(
+                                sysDateStart,
+                                ToolBox.sDTFormat_Agora(
+                                    ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT
+                                )
+                ) > 0;
+    }
+
+    /**
+     * Metodo que formata msg de erro , exibindo tradução, nome do campo + data de inicio
+     * @param sysStartDate
+     * @return
+     */
+    private String getFormattedInvalidSysEndDateMsg(String sysStartDate){
+        return
+            hmAux_Trans.get("alert_invalid_sys_end_date_msg") +"\n"+
+            hmAux_Trans.get("form_sys_start_date_lbl") +": "+  ToolBox_Inf.millisecondsToString(
+                ToolBox_Inf.dateToMilliseconds(sysStartDate),
+                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+            );
     }
 
     private boolean isFromTicketActs() {

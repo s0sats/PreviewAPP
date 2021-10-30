@@ -167,6 +167,7 @@ public class Act011_Main extends Base_Activity
     public static final int SHOW_MSG_TYPE_TICKET_STEP_OR_CTRL_ERROR = 7;
     public static final int SHOW_MSG_TYPE_TICKET_FORM_FINALIZED = 8;
     public static final int SHOW_MSG_TYPE_GE_OS_NOT_FOUND = 9;
+    public static final int SHOW_MSG_TYPE_INVALID_SYS_END_DATE = 10;
     public static final String PNG_EXTENSION = ".png";
     public static final String JPG_EXTENSION = ".jpg";
     public static final String PAGE = "page";
@@ -487,6 +488,10 @@ public class Act011_Main extends Base_Activity
         //
         transList.add("alert_error_order_or_structure_not_found_ttl");
         transList.add("alert_error_order_or_structure_not_found_msg");
+        //
+        transList.add("alert_invalid_sys_end_date_ttl");
+        transList.add("alert_invalid_sys_end_date_msg");
+        transList.add("form_sys_start_date_lbl");
         //
         transList.addAll(Act011FrgInspection.Companion.getFragTranslationsVars());
         //
@@ -2447,6 +2452,16 @@ public class Act011_Main extends Base_Activity
                     false
                 );
                 break;
+            case SHOW_MSG_TYPE_INVALID_SYS_END_DATE:
+                ToolBox.alertMSG(
+                    context,
+                    title,
+                    msg,
+                    null,
+                    0,
+                    false
+                );
+                break;
         }
     }
 
@@ -3305,28 +3320,33 @@ public class Act011_Main extends Base_Activity
         binding.act011DialogCheckBtnOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(validEndDate(binding)) {
-                    if(isFormOs) {
+                if(isFormOs) {
+                    if(validEndDate(binding)) {
                         mPresenter.updateGeOsItems(
-                                geOs,
-                                missingAnswersCounter(),
-                                binding.act011DialogCheckTilJustifyMissingAnswerVal.getEditText().getText().toString(),
-                                binding.act011DialogCheckMkdateFormStart.getmValue(),
-                                binding.act011DialogCheckMkdateFormEnd.getmValue()
+                            geOs,
+                            missingAnswersCounter(),
+                            binding.act011DialogCheckTilJustifyMissingAnswerVal.getEditText().getText().toString(),
+                            binding.act011DialogCheckMkdateFormStart.getmValue(),
+                            binding.act011DialogCheckMkdateFormEnd.getmValue()
                         );
-                    }
-                    //Seta valor var que controla se fluxo é finaliza ou finaliza mais novo.
-                    finalizeNewFlow = binding.act011DialogCheckOptionRg.getCheckedRadioButtonId() == R.id.act011_dialog_check_option_rdo_finalize_new;
-                    //
-                    startCheckIN();
-                }else{
-                    ToolBox.alertMSG(
+                        //Seta valor var que controla se fluxo é finaliza ou finaliza mais novo.
+                        finalizeNewFlow = binding.act011DialogCheckOptionRg.getCheckedRadioButtonId() == R.id.act011_dialog_check_option_rdo_finalize_new;
+                        //
+                        startCheckIN();
+                    }else{
+                        ToolBox.alertMSG(
                             context,
                             hmAux_Trans.get("dialog_finalize_os_form_invalid_end_date_ttl"),
                             hmAux_Trans.get("dialog_finalize_os_form_invalid_end_date_end"),
                             null,
                             0
-                    );
+                        );
+                    }
+                }else{
+                    //Seta valor var que controla se fluxo é finaliza ou finaliza mais novo.
+                    finalizeNewFlow = binding.act011DialogCheckOptionRg.getCheckedRadioButtonId() == R.id.act011_dialog_check_option_rdo_finalize_new;
+                    //
+                    startCheckIN();
                 }
             }
         });
