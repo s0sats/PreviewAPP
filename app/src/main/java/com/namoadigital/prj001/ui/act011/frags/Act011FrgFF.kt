@@ -12,7 +12,6 @@ import com.namoadigital.prj001.dao.MD_Schedule_ExecDao
 import com.namoadigital.prj001.databinding.Act011FrgFfBinding
 import com.namoadigital.prj001.model.Act011FormTab
 import com.namoadigital.prj001.model.Act011FormTabStatus
-import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.util.*
 
@@ -47,7 +46,6 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(),Act011FrgFFScroll {
                 this.isFormOs = isFormOs
                 //
                 arguments = Bundle().apply {
-                    putSerializable(Constant.MAIN_HMAUX_TRANS_KEY, hmAuxTrans)
                     putString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS,formStatus)
                     putInt(GE_Custom_Form_Field_LocalDao.PAGE,tabIndex)
                     putInt(PARAM_LAST_INDEX,tabLastIndex)
@@ -62,7 +60,6 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(),Act011FrgFFScroll {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let{
-            hmAuxTrans = HMAux.getHmAuxFromHashMap(it.getSerializable(Constant.MAIN_HMAUX_TRANS_KEY) as HashMap<String?, String?>)
             tabIndex = it.getInt(GE_Custom_Form_Field_LocalDao.PAGE)
             tabLastIndex = it.getInt(PARAM_LAST_INDEX)
             formStatus = it.getString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS,"")

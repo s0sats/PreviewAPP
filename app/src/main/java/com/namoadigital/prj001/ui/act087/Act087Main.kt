@@ -20,6 +20,7 @@ import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.service.WS_Product_Serial_Backup
 import com.namoadigital.prj001.ui.act005.Act005_Main
 import com.namoadigital.prj001.ui.act011.Act011_Main
+import com.namoadigital.prj001.ui.act011.frags.Act011BaseFrgInteraction
 import com.namoadigital.prj001.ui.act011.frags.Act011BaseFrgInteractionNavegation
 import com.namoadigital.prj001.ui.act083.Act083_Main
 import com.namoadigital.prj001.util.Constant
@@ -29,6 +30,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf
 
 class Act087Main : Base_Activity_Frag(),
     Act011BaseFrgInteractionNavegation,
+    Act011BaseFrgInteraction,
     Act087MainContract.I_View,
     FormOsHeaderFrgCreationInteraction
 {
@@ -252,6 +254,10 @@ class Act087Main : Base_Activity_Frag(),
 
     override fun getProductIconBmp(): Bitmap? {
         return mPresenter.getProductIcon()
+    }
+
+    override fun recoverHmAuxTrans(): HMAux {
+        return hmAux_Trans
     }
 
     override fun getOrderTypeList(orderTypeCode: Int): ArrayList<MdOrderType> {

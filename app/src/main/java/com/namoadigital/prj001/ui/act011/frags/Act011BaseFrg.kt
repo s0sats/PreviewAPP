@@ -29,6 +29,8 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
     protected lateinit var binding: VBinding
     private var _mNavListener : Act011BaseFrgInteractionNavegation? = null
     protected val mNavListener get() = _mNavListener!!
+    private var _mInfraListener : Act011BaseFrgInteraction? = null
+    private val mInfraListener get() = _mInfraListener!!
 //
     protected lateinit var hmAuxTrans: HMAux
     protected var tabIndex: Int = 0
@@ -106,31 +108,17 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         /**
-         * LUCHE - 17/01/2019 - RotateBugFixed
-         *
-         * Recupera dados de pagina, status e comentario do bundle quando o fragmento for ser
-         * reconstruido.
-         *
+         * LUCHE - 02/11/2021
+         * Modificado o conceito de restore de infos.
+         * Como os frgs ja utilizam o conceito de arg na inicialização do frag, os dados
+         * ficaram salvos somente no bundle dos filhos.
+         * Como o HmAuxTrans estava pesando, caso seja um recuperação da act e frgs, chama interface
+         * que resgata traduções da act
          */
-        with(savedInstanceState) {
-            if (this != null &&
-                containsKey(Constant.MAIN_HMAUX_TRANS_KEY) &&
-                containsKey(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS) &&
-                containsKey(GE_Custom_Form_Field_LocalDao.PAGE) &&
-                containsKey(PARAM_LAST_INDEX) &&
-                containsKey(GE_Custom_Form_Field_LocalDao.COMMENT) &&
-                containsKey(MD_Schedule_ExecDao.SCHEDULE_DESC) &&
-                containsKey(GE_Custom_Form_LocalDao.IS_SO)
-            ) {
-                hmAuxTrans = HMAux.getHmAuxFromHashMap(this.getSerializable(Constant.MAIN_HMAUX_TRANS_KEY) as HashMap<String?, String?>)
-                formStatus = getString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS, "")
-                tabIndex = getInt(GE_Custom_Form_Field_LocalDao.PAGE)
-                tabLastIndex = getInt(PARAM_LAST_INDEX)
-                scheduleComments = getString(GE_Custom_Form_Field_LocalDao.COMMENT, null)
-                scheduleDesc = getString(MD_Schedule_ExecDao.SCHEDULE_DESC, null)
-                isFormOs = getBoolean(GE_Custom_Form_LocalDao.IS_SO, false)
+        savedInstanceState?.let{
+            if(!::hmAuxTrans.isInitialized){
+                hmAuxTrans =  mInfraListener.recoverHmAuxTrans()
             }
         }
         return binding.root
@@ -344,6 +332,11 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
         } else {
             throw RuntimeException("${context.toString()} must implement Act011BaseFrgInteractionNavegation")
         }
+        if(context is Act011BaseFrgInteraction ){
+            _mInfraListener = context as Act011BaseFrgInteraction
+        } else {
+            throw RuntimeException("${context.toString()} must implement Act011BaseFrgInteraction")
+        }
     }
 
     /**
@@ -352,22 +345,7 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
     override fun onDetach() {
         super.onDetach()
         _mNavListener = null
+        _mInfraListener = null
     }
     //endregion
-
-    /**
-     * Salva as infos no bundle
-     */
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.apply {
-            putSerializable(Constant.MAIN_HMAUX_TRANS_KEY, hmAuxTrans)
-            putString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS,formStatus)
-            putInt(GE_Custom_Form_Field_LocalDao.PAGE,tabIndex)
-            putInt(PARAM_LAST_INDEX,tabLastIndex)
-            putString(MD_Schedule_ExecDao.SCHEDULE_DESC,scheduleDesc)
-            putString(GE_Custom_Form_Field_LocalDao.COMMENT,scheduleComments)
-            putBoolean(GE_Custom_Form_LocalDao.IS_SO,isFormOs)
-        }
-    }
 }

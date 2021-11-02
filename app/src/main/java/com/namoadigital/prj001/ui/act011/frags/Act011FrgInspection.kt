@@ -24,12 +24,10 @@ import com.namoadigital.prj001.model.InspectionCell.Companion.CRITICAL_FORECAST
 import com.namoadigital.prj001.model.InspectionCell.Companion.FORECAST
 import com.namoadigital.prj001.model.InspectionCell.Companion.MANUAL_ALERT
 import com.namoadigital.prj001.model.InspectionCell.Companion.NORMAL
-import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
 
-private const val ARG_VIEW_OBJECT = "ARG_VIEW_OBJECT"
-private const val MAIN_HMAUX_TRANS_KEY = "MAIN_HMAUX_TRANS_KEY"
+private const val ARG_ACESSORY_FORM_VIEW_IDX = "ARG_ACESSORY_FORM_VIEW_IDX"
 
 class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>() {
 
@@ -38,6 +36,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
     private val mAdapter by lazy {
         Act011InspectionFormAdapter(acessoryFormView, hmAuxTrans, ::onItemSelected, ::onNotVerifyItemSelected)
     }
+    private var acessoryFormViewIdx = -1
     private lateinit var acessoryFormView: AcessoryFormView
     private var _mFrgListener: InspectionListFragmentInteraction? = null
     private val mFrgListener get() = _mFrgListener!!
@@ -45,23 +44,23 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let{
-            hmAuxTrans = HMAux.getHmAuxFromHashMap(it.getSerializable(Constant.MAIN_HMAUX_TRANS_KEY) as HashMap<String?, String?>)
             tabIndex = it.getInt(GE_Custom_Form_Field_LocalDao.PAGE)
             tabLastIndex = it.getInt(PARAM_LAST_INDEX)
             formStatus = it.getString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS,"")
             scheduleDesc = it.getString(MD_Schedule_ExecDao.SCHEDULE_DESC)
             scheduleComments = it.getString(GE_Custom_Form_Field_LocalDao.COMMENT)
             isFormOs = it.getBoolean(GE_Custom_Form_LocalDao.IS_SO,false)
-//            acessoryFormView = it.getSerializable(ARG_VIEW_OBJECT) as AcessoryFormView
-            savedInstanceState?.let {
-                acessoryFormView = mFrgListener.getObjectView(tabIndex)
-            }
+            acessoryFormViewIdx = it.getInt(ARG_ACESSORY_FORM_VIEW_IDX,-1)
         }
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        //Caso seja um recuperação do frg, chama interface que resgata acessoryFormView da act.
+        savedInstanceState?.let {
+            acessoryFormView = mFrgListener.getObjectView(acessoryFormViewIdx)
+        }
         //
         setLabels()
         //
@@ -305,7 +304,8 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
             scheduleDesc: String?,
             scheduleComments: String?,
             isFormOs: Boolean,
-            acessoryFormView: AcessoryFormView
+            acessoryFormView: AcessoryFormView,
+            acessoryFormViewIdx: Int
         ) =
             Act011FrgInspection().apply {
                 this.hmAuxTrans = hmAux_Trans
@@ -316,15 +316,16 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
                 this.scheduleComments = scheduleComments
                 this.isFormOs = isFormOs
                 arguments = Bundle().apply {
-                    putSerializable(Constant.MAIN_HMAUX_TRANS_KEY, hmAuxTrans)
                     putString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS,formStatus)
                     putInt(GE_Custom_Form_Field_LocalDao.PAGE,tabIndex)
                     putInt(PARAM_LAST_INDEX,tabLastIndex)
                     putString(MD_Schedule_ExecDao.SCHEDULE_DESC,scheduleDesc)
                     putString(GE_Custom_Form_Field_LocalDao.COMMENT,scheduleComments)
+                    putInt(ARG_ACESSORY_FORM_VIEW_IDX,acessoryFormViewIdx)
                 }
                 this.acessoryFormView = acessoryFormView
                 this.tabItemSelectedIndex = acessoryFormView.lastPositionSelected
+                this.acessoryFormViewIdx = acessoryFormViewIdx
             }
 
         fun getFragTranslationsVars(): List<String> {
@@ -465,6 +466,8 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
             }else{
                 mAdapter.highlightedItemPosition = -1
                 binding.nsvMain.fullScroll(View.FOCUS_UP)
+                //Limpa filtro texto ao sair.
+                resetTextFilter()
             }
         }
 

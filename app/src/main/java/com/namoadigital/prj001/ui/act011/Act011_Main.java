@@ -123,6 +123,7 @@ import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
 import com.namoadigital.prj001.ui.act011.frags.Act011BaseFrg;
+import com.namoadigital.prj001.ui.act011.frags.Act011BaseFrgInteraction;
 import com.namoadigital.prj001.ui.act011.frags.Act011BaseFrgInteractionNavegation;
 import com.namoadigital.prj001.ui.act011.frags.Act011FrgFF;
 import com.namoadigital.prj001.ui.act011.frags.Act011FrgFFInteraction;
@@ -158,9 +159,9 @@ public class Act011_Main extends Base_Activity
     Act011_Main_View,
     Act011BaseFrgInteractionNavegation,
     Act011FrgFFInteraction,
-    InspectionListFragmentInteraction
+    InspectionListFragmentInteraction,
+    Act011BaseFrgInteraction
 {
-
     public static final int SHOW_MSG_TYPE_FORM_LOCAL_INSERT_ERROR = 4;
     public static final int SHOW_MSG_TYPE_SCHEDULE_EXEC_UPDATE_ERROR = 5;
     public static final int SHOW_MSG_TYPE_SCHEDULE_EXEC_CANCEL_ERROR = 6;
@@ -629,6 +630,11 @@ public class Act011_Main extends Base_Activity
     @Override
     public Bitmap getProductIconBmp(){
         return mPresenter.getProductIconBitmap(formLocal.getCustom_product_icon_name());
+    }
+
+    @Override
+    public HMAux recoverHmAuxTrans() {
+        return hmAux_Trans;
     }
 
     @NonNull
@@ -1464,7 +1470,8 @@ public class Act011_Main extends Base_Activity
                                 mdScheduleExec != null ? mdScheduleExec.getSchedule_desc() : null,
                                 mdScheduleExec != null ? mdScheduleExec.getComments() : null,
                                 formLocal.getIs_so() == 1,
-                                acessoryFormView
+                                acessoryFormView,
+                                acessoryFormViews.indexOf(acessoryFormView)
                                 );
                 tabs.add(act011FrgInspection.getTabObj(includeField));
                 screens.add(act011FrgInspection);
@@ -1503,9 +1510,6 @@ public class Act011_Main extends Base_Activity
                     updateTabStatusIntoDrawer(
                         returnValidateTabObj(index_old)
                     );
-                    if(screens.get(index_old-1) instanceof Act011FrgInspection ){
-                        ((Act011FrgInspection) screens.get(index_old-1)).resetTextFilter();
-                    }
                 }
 
                 @Override

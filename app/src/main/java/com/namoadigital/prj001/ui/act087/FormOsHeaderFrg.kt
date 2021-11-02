@@ -97,7 +97,6 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 this.isFormOs = true
                 //
                 arguments = Bundle().apply {
-                    putSerializable(Constant.MAIN_HMAUX_TRANS_KEY, hmAuxTrans)
                     putString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS,formStatus)
                     putInt(GE_Custom_Form_Field_LocalDao.PAGE,tabIndex)
                     putInt(PARAM_LAST_INDEX,tabLastIndex)
@@ -147,7 +146,6 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let{
-            hmAuxTrans = HMAux.getHmAuxFromHashMap(it.getSerializable(Constant.MAIN_HMAUX_TRANS_KEY) as HashMap<String?, String?>)
             tabIndex = it.getInt(GE_Custom_Form_Field_LocalDao.PAGE)
             tabLastIndex = it.getInt(PARAM_LAST_INDEX)
             formStatus = it.getString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS,"")
@@ -313,9 +311,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                     mketMachineSerialEdit.isEnabled = false
                     mketMachineSerialEdit.setmBARCODE(false)
                     tilMketSerial.isHelperTextEnabled = false
-                    ivSwapMachine.visibility = if(formOsHeader.backup_serial_code != null) View.INVISIBLE else View.GONE
-                    ivSerialSearch.visibility = if(formOsHeader.backup_serial_code != null) View.INVISIBLE else View.GONE
-
+                    ivSwapMachine.visibility = if(formOsHeader.backup_serial_code != null) View.GONE else View.GONE
+                    ivSerialSearch.visibility = if(formOsHeader.backup_serial_code != null) View.GONE else View.GONE
                 }
             }else{
                 clMachineEdit.visibility = View.GONE
@@ -804,11 +801,12 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 resetBkpMachineProductSerial()
             }
             //
-            ivSwapMachine.setOnClickListener {
-                callProductSelection()
-            }
-            //
-            mketMachineSerialEdit.setOnReportTextChangeListner(object : MKEditTextNM.IMKEditTextChangeText{
+            if(isOsCreation){
+                ivSwapMachine.setOnClickListener {
+                    callProductSelection()
+                }
+                //
+                mketMachineSerialEdit.setOnReportTextChangeListner(object : MKEditTextNM.IMKEditTextChangeText{
                     override fun reportTextChange(text: String?) {
                     }
 
@@ -826,23 +824,24 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                         ivSerialSearch.isEnabled = textNotEmpty
                     }
                 }
-            )
-            mketMachineSerialEdit.setDelegateTextBySpecialist {
-                isBarcodeRead = true
-                ivSerialSearch.performClick()
-            }
-            mketOsMainMeasureVal.setDelegateTextBySpecialist {
-                if(!mketOsMainMeasureVal.isValid){
-                    mketOsMainMeasureVal.text = null
+                )
+                mketMachineSerialEdit.setDelegateTextBySpecialist {
+                    isBarcodeRead = true
+                    ivSerialSearch.performClick()
                 }
-            }
-            //
-            ivSerialSearch.setOnClickListener {
-                if(selectedBkpMachineProduct != null && mketMachineSerialEdit.text.toString().isNotEmpty()) {
-                    mCreationListener?.searchSerialClick(
-                        bkpProductCode = selectedBkpMachineProduct!!.product_code,
-                        bkpSerialId = mketMachineSerialEdit.text.toString()
-                    )
+                mketOsMainMeasureVal.setDelegateTextBySpecialist {
+                    if(!mketOsMainMeasureVal.isValid){
+                        mketOsMainMeasureVal.text = null
+                    }
+                }
+                //
+                ivSerialSearch.setOnClickListener {
+                    if(selectedBkpMachineProduct != null && mketMachineSerialEdit.text.toString().isNotEmpty()) {
+                        mCreationListener?.searchSerialClick(
+                            bkpProductCode = selectedBkpMachineProduct!!.product_code,
+                            bkpSerialId = mketMachineSerialEdit.text.toString()
+                        )
+                    }
                 }
             }
         }
