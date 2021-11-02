@@ -338,6 +338,10 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
      */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        //Graças ao não manter atividade, foi necessario no frag fazer a chamada da act_product usando
+        //requireAct e, nesse contexto, após rodar o super, chamar o activtyResult do frag.
+        //Dessa maneira funcionou com e sem manter act
+        verificationFrg.onActivityResult(requestCode, resultCode, data)
     }
 
     override fun onAttachFragment(fragment: Fragment) {

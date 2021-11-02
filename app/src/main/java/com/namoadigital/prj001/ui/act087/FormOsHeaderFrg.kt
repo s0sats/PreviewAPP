@@ -311,8 +311,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                     mketMachineSerialEdit.isEnabled = false
                     mketMachineSerialEdit.setmBARCODE(false)
                     tilMketSerial.isHelperTextEnabled = false
-                    ivSwapMachine.visibility = if(formOsHeader.backup_serial_code != null) View.GONE else View.GONE
-                    ivSerialSearch.visibility = if(formOsHeader.backup_serial_code != null) View.GONE else View.GONE
+                    ivSwapMachine.visibility = if(formOsHeader.backup_serial_code != null) View.INVISIBLE else View.GONE
+                    ivSerialSearch.visibility = if(formOsHeader.backup_serial_code != null) View.INVISIBLE else View.GONE
                 }
             }else{
                 clMachineEdit.visibility = View.GONE
