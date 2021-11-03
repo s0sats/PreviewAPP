@@ -87,6 +87,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
     public static final String INVENTORY_CONTROL = "inventory_control";
     public static final String VALID_STRUCTURE_STEP = "valid_structure_step";
     public static final String USER_FOCUS = "user_focus";
+    public static final String HAS_ITEM_CHECK = "has_item_check";
     public static final String ALLOW_STEP_APPROVAL = "allow_step_approval";
     public static final String SYNC_REQUIRED = "sync_required";
     public static final String UPDATE_REQUIRED = "update_required";
@@ -943,6 +944,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             tk_ticket.setValid_structure_step(cursor.getInt(cursor.getColumnIndex(VALID_STRUCTURE_STEP)));
             tk_ticket.setInventory_control(cursor.getInt(cursor.getColumnIndex(INVENTORY_CONTROL)));
             tk_ticket.setUser_focus(cursor.getInt(cursor.getColumnIndex(USER_FOCUS)));
+            tk_ticket.setHas_item_check(cursor.getInt(cursor.getColumnIndex(HAS_ITEM_CHECK)));
             tk_ticket.setAllow_step_approval(cursor.getInt(cursor.getColumnIndex(ALLOW_STEP_APPROVAL)));
             //
             tk_ticket.setSync_required(cursor.getInt(cursor.getColumnIndex(SYNC_REQUIRED)));
@@ -1180,11 +1182,14 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             if (tk_ticket.getValid_structure_step() > -1) {
                 contentValues.put(VALID_STRUCTURE_STEP, tk_ticket.getValid_structure_step());
             }
-            if (tk_ticket.getApproval_rejected() > -1) {
+            if (tk_ticket.getInventory_control() > -1) {
                 contentValues.put(INVENTORY_CONTROL, tk_ticket.getInventory_control());
             }
-            if (tk_ticket.getApproval_rejected() > -1) {
+            if (tk_ticket.getUser_focus() > -1) {
                 contentValues.put(USER_FOCUS, tk_ticket.getUser_focus());
+            }
+            if (tk_ticket.getHas_item_check() > -1) {
+                contentValues.put(HAS_ITEM_CHECK, tk_ticket.getHas_item_check());
             }
             if (tk_ticket.getApproval_rejected() > -1) {
                 contentValues.put(ALLOW_STEP_APPROVAL, tk_ticket.getAllow_step_approval());

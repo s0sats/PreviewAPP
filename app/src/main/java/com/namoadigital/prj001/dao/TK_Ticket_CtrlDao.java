@@ -49,6 +49,7 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
     public static final String PRODUCT_DESC  = "product_desc";
     public static final String SERIAL_CODE  = "serial_code";
     public static final String SERIAL_ID  = "serial_id";
+    public static final String HAS_ITEM_CHECK  = "has_item_check";
     public static final String CTRL_START_DATE  = "ctrl_start_date";
     public static final String CTRL_START_USER  = "ctrl_start_user";
     public static final String CTRL_START_USER_NAME  = "ctrl_start_user_name";
@@ -896,6 +897,11 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
             }else{
                 tk_ticket_ctrl.setSerial_id(cursor.getString(cursor.getColumnIndex(SERIAL_ID)));
             }
+            if(cursor.isNull(cursor.getColumnIndex(HAS_ITEM_CHECK))){
+                tk_ticket_ctrl.setHas_item_check(null);
+            }else{
+                tk_ticket_ctrl.setHas_item_check(cursor.getInt(cursor.getColumnIndex(HAS_ITEM_CHECK)));
+            }
             if(cursor.isNull(cursor.getColumnIndex(CTRL_START_DATE))){
                 tk_ticket_ctrl.setCtrl_start_date(null);
             }else {
@@ -988,6 +994,7 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
             contentValues.put(PRODUCT_DESC,tk_ticket_ctrl.getProduct_desc());
             contentValues.put(SERIAL_CODE,tk_ticket_ctrl.getSerial_code());
             contentValues.put(SERIAL_ID,tk_ticket_ctrl.getSerial_id());
+            contentValues.put(HAS_ITEM_CHECK,tk_ticket_ctrl.getHas_item_check());
             contentValues.put(CTRL_START_DATE,tk_ticket_ctrl.getCtrl_start_date());
             contentValues.put(CTRL_START_USER,tk_ticket_ctrl.getCtrl_start_user());
             contentValues.put(CTRL_START_USER_NAME,tk_ticket_ctrl.getCtrl_start_user_name());

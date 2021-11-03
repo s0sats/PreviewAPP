@@ -101,6 +101,7 @@ public class TK_Ticket implements Cloneable, Serializable {
     private int valid_structure_step;
     private int inventory_control;
     private int user_focus;
+    private int has_item_check;
     private int allow_step_approval;
     private int sync_required;
     private int update_required;
@@ -656,6 +657,14 @@ public class TK_Ticket implements Cloneable, Serializable {
 
     public void setUser_focus(int user_focus) {
         this.user_focus = user_focus;
+    }
+
+    public int getHas_item_check() {
+        return has_item_check;
+    }
+
+    public void setHas_item_check(int has_item_check) {
+        this.has_item_check = has_item_check;
     }
 
     public int getAllow_step_approval() {

@@ -45,6 +45,7 @@ public class TK_Ticket_Step implements Serializable {
     private String step_end_user_nick;
     private String step_status;
     private int user_focus;
+    private Integer has_item_check;
     @Nullable
     private Integer group_code;
     @Nullable
@@ -279,6 +280,14 @@ public class TK_Ticket_Step implements Serializable {
 
     public void setUser_focus(int user_focus) {
         this.user_focus = user_focus;
+    }
+
+    public Integer getHas_item_check() {
+        return has_item_check;
+    }
+
+    public void setHas_item_check(Integer has_item_check) {
+        this.has_item_check = has_item_check;
     }
 
     @Nullable

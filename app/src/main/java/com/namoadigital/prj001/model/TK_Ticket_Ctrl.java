@@ -33,6 +33,8 @@ public class TK_Ticket_Ctrl implements Serializable {
     @Nullable
     private String serial_id;
     @Expose
+    private Integer has_item_check;
+    @Expose
     @Nullable
     private String ctrl_start_date;
     @Expose
@@ -260,6 +262,14 @@ public class TK_Ticket_Ctrl implements Serializable {
 
     public void setSerial_id(@Nullable String serial_id) {
         this.serial_id = serial_id;
+    }
+
+    public Integer getHas_item_check() {
+        return has_item_check;
+    }
+
+    public void setHas_item_check(Integer has_item_check) {
+        this.has_item_check = has_item_check;
     }
 
     public String getCtrl_start_date() {

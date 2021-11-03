@@ -48,6 +48,7 @@ public class TK_Ticket_StepDao extends BaseDao implements DaoWithReturn<TK_Ticke
     public static final String STEP_END_USER_NICK = "step_end_user_nick";
     public static final String STEP_STATUS = "step_status";
     public static final String USER_FOCUS = "user_focus";
+    public static final String HAS_ITEM_CHECK = "has_item_check";
     public static final String GROUP_CODE = "group_code";
     public static final String GROUP_DESC = "group_desc";
     public static final String ZONE_SITE_GROUP_CODE = "zone_site_group_code";
@@ -550,6 +551,12 @@ public class TK_Ticket_StepDao extends BaseDao implements DaoWithReturn<TK_Ticke
             tk_ticket_step.setStep_status(cursor.getString(cursor.getColumnIndex(STEP_STATUS)));
             //
             tk_ticket_step.setUser_focus(cursor.getInt(cursor.getColumnIndex(USER_FOCUS)));
+            //
+            if (cursor.isNull(cursor.getColumnIndex(HAS_ITEM_CHECK))) {
+                tk_ticket_step.setHas_item_check(null);
+            } else {
+                tk_ticket_step.setHas_item_check(cursor.getInt(cursor.getColumnIndex(HAS_ITEM_CHECK)));
+            }
             if (cursor.isNull(cursor.getColumnIndex(GROUP_CODE))) {
                 tk_ticket_step.setGroup_code(null);
             } else {
@@ -654,6 +661,7 @@ public class TK_Ticket_StepDao extends BaseDao implements DaoWithReturn<TK_Ticke
             if (tk_ticket_step.getUser_focus() > -1) {
                 contentValues.put(USER_FOCUS, tk_ticket_step.getUser_focus());
             }
+            contentValues.put(HAS_ITEM_CHECK, tk_ticket_step.getHas_item_check());
             contentValues.put(GROUP_CODE, tk_ticket_step.getGroup_code());
             contentValues.put(GROUP_DESC, tk_ticket_step.getGroup_desc());
             contentValues.put(ZONE_SITE_GROUP_CODE, tk_ticket_step.getZone_site_group_code());
