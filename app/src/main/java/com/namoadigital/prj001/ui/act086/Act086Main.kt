@@ -32,6 +32,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.math.abs
 
 class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
     private lateinit var binding: Act086MainContentBinding
@@ -211,42 +212,31 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
                     text = null
                 }else{
                     visibility = View.VISIBLE
-                    text = getAlertDateLbl(deviceItem.target_date!!)
-                    setTextColor(getAlertDateTextColor())
+                    val daysDiff = getDaysBetweenTargetAndTodayLastSecond(deviceItem.target_date!!)
+                    text = getAlertDateLbl(daysDiff)
+                    setTextColor(getAlertDateTextColor(daysDiff))
                 }
             }
         }
     }
 
-    private fun getAlertDateTextColor() =
-        if (deviceItem.item_check_status.equals(GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL, true)) {
-            ContextCompat.getColor(context, R.color.namoa_pipeline_header_icon)
-        } else {
-            ContextCompat.getColor(context, R.color.namoa_os_form_problem_red)
-        }
-
-    private fun getAlertDateLbl(targetDate: String): String {
-        var label =  hmAux_Trans["inspection_missing_lbl"]
-        var textColor = ContextCompat.getColor(context, R.color.namoa_pipeline_header_icon)
+    /**
+     * Calcula diferencia de dia entra a data target e o final do dia de hoje
+     */
+    private fun getDaysBetweenTargetAndTodayLastSecond(targetDate: String): Long {
         //TODO REVER APOS ANDRE DEFINIR A REGRA
         var todayLastSecond = getTodayLastSecond()
         val dateDiferenceInMilliseconds = ToolBox_Inf.getDateDiferenceInMilliseconds(
             targetDate,
             todayLastSecond
         )
-        val rawDay = dateDiferenceInMilliseconds / ConstantBaseApp.ONE_DAY_IN_MILLISECOND.toFloat()
-        val day = TimeUnit.MILLISECONDS.toDays(dateDiferenceInMilliseconds).let{
-            label = getAlertDateLblByItemCheckStatus(it)
-            if(it < 0 ){
-                it *-1
-            }else{
-                it
-            }
-        }
-        //
-        return "$label: $day"
+        val rawDay = dateDiferenceInMilliseconds / ONE_DAY_IN_MILLISECOND.toFloat()
+        return TimeUnit.MILLISECONDS.toDays(dateDiferenceInMilliseconds)
     }
 
+    /**
+     * Fun que retorna a data atual, mas com 23:59:59
+     */
     private fun getTodayLastSecond(): String {
         val cDate = Calendar.getInstance()
         val dateFormat = SimpleDateFormat("yyyy-MM-dd")
@@ -258,11 +248,32 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
         }
     }
 
+    /**
+     * Retorna texto com lbl tratado e diferença em numero absoluto
+     */
+    private fun getAlertDateLbl(daysDiff: Long): String {
+        val label = getAlertDateLblByItemCheckStatus(daysDiff)
+        return "$label: ${abs(daysDiff)}"
+    }
+
+    /**
+     * Retorna o lbl correto baseado se a data esta atrasada ou no futuro
+     */
     private fun getAlertDateLblByItemCheckStatus(dateDiff: Long) =
         if (dateDiff < 0) {
             hmAux_Trans["inspection_alert_days_lbl"]
         } else {
             hmAux_Trans["inspection_missing_lbl"]
+        }
+
+    /**
+     * Retorna o cor baseado se a data esta atrasada ou no futuro
+     */
+    private fun getAlertDateTextColor(daysDiff: Long) =
+        if (daysDiff < 0) {
+            ContextCompat.getColor(context, R.color.namoa_os_form_problem_red)
+        } else {
+            ContextCompat.getColor(context, R.color.namoa_pipeline_header_icon)
         }
 
     private fun paramErrorFlow() {

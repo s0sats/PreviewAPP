@@ -19,6 +19,7 @@ import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.EXEC_TYPE_FIXED
 import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.EXEC_TYPE_NOT_VERIFIED
 import com.namoadigital.prj001.model.InspectionCell
 import java.util.*
+import kotlin.math.abs
 
 class Act011InspectionFormAdapter(
     /*
@@ -265,34 +266,22 @@ class Act011InspectionFormAdapter(
                 ) {
                     binding.tvDayCount.visibility = View.GONE
                 } else {
-                    binding.tvDayCount.visibility = View.VISIBLE
-                    if (status.equals(InspectionCell.NORMAL)) {
-                        binding.tvDayCount.text =
-                            "${hmAuxTrans.get("inspection_missing_days")}: ${dayCount}"
-                        binding.tvDayCount.setTextColor(
-                            ContextCompat.getColor(
-                                context,
-                                R.color.gray_colors_menu
-                            )
-                        )
-                    } else {
-                        binding.tvDayCount.text =
-                            "${hmAuxTrans.get("inspection_alert_days")}: ${dayCount}"
-                        if (isDone) {
-                            binding.tvDayCount.setTextColor(
-                                ContextCompat.getColor(
-                                    context,
-                                    R.color.gray_colors_menu
-                                )
-                            )
-                        } else {
-                            binding.tvDayCount.setTextColor(
-                                ContextCompat.getColor(
-                                    context,
-                                    R.color.namoa_os_form_problem_red
-                                )
-                            )
+                    //LUCHE - 04/11/2021 - Revisado definição de lbl e cor, pois deve se olhar apenas
+                    //se data maior ou menor que 0.
+                    binding.tvDayCount.apply {
+                        visibility = View.VISIBLE
+                        text = if(dayCount < 0){
+                            "${hmAuxTrans["inspection_alert_days"]}: ${abs(dayCount)}"
+                        }else{
+                            "${hmAuxTrans["inspection_missing_days"]}: ${abs(dayCount)}"
                         }
+                        setTextColor(
+                            if(dayCount < 0 && !isDone){
+                                ContextCompat.getColor(context,R.color.namoa_os_form_problem_red)
+                            } else{
+                                ContextCompat.getColor(context,R.color.gray_colors_menu)
+                            }
+                        )
                     }
                 }
                 //

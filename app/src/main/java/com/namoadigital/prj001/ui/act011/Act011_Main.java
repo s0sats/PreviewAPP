@@ -473,6 +473,7 @@ public class Act011_Main extends Base_Activity
         //
         transList.add("inspection_answer_fixed_lbl");
         transList.add("inspection_answer_alert_lbl");
+        transList.add("inspection_answer_still_in_alert_lbl");
         transList.add("inspection_answer_already_ok_lbl");
         transList.add("inspection_answer_not_verify_lbl");
         //

@@ -65,7 +65,11 @@ data class InspectionCell   (
                 execTypeTranslated = hmAuxTrans["inspection_answer_fixed_lbl"]!!
             }
             GeOsDeviceItem.EXEC_TYPE_ALERT ->{
-                execTypeTranslated = hmAuxTrans["inspection_answer_alert_lbl"]!!
+                execTypeTranslated = if(!GeOsDeviceItem.ITEM_CHECK_STATUS_MANUAL_ALERT.equals(status,true) ){
+                                        hmAuxTrans["inspection_answer_alert_lbl"]!!
+                                    } else{
+                                        hmAuxTrans["inspection_answer_still_in_alert_lbl"]!!
+                                    }
             }
             GeOsDeviceItem.EXEC_TYPE_ALREADY_OK -> {
                 execTypeTranslated = hmAuxTrans["inspection_answer_already_ok_lbl"]!!
