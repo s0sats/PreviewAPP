@@ -119,7 +119,8 @@
             <TextView
                 android:id="@+id/tv_auto_skip_inspection"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
+                app:layout_constrainedHeight="true"
                 android:layout_marginEnd="16dp"
                 android:drawableLeft="@drawable/ic_baseline_redo_24"
                 android:drawablePadding="8dp"
@@ -132,6 +133,7 @@
                 app:layout_constraintStart_toEndOf="@+id/tv_inspection_verification_action"
                 app:layout_constraintTop_toTopOf="@+id/tv_inspection_verification_action"
                 tools:text="Não Verificar"
+                android:gravity="center_vertical"
                 tools:visibility="gone" />
 
             <ImageView
