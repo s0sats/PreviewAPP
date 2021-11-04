@@ -226,7 +226,8 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
         }
 
     private fun getAlertDateLbl(targetDate: String): String {
-       val label = getAlertDateLblByItemCheckStatus()
+        var label =  hmAux_Trans["inspection_missing_lbl"]
+        var textColor = ContextCompat.getColor(context, R.color.namoa_pipeline_header_icon)
         //TODO REVER APOS ANDRE DEFINIR A REGRA
         var todayLastSecond = getTodayLastSecond()
         val dateDiferenceInMilliseconds = ToolBox_Inf.getDateDiferenceInMilliseconds(
@@ -235,6 +236,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
         )
         val rawDay = dateDiferenceInMilliseconds / ConstantBaseApp.ONE_DAY_IN_MILLISECOND.toFloat()
         val day = TimeUnit.MILLISECONDS.toDays(dateDiferenceInMilliseconds).let{
+            label = getAlertDateLblByItemCheckStatus(it)
             if(it < 0 ){
                 it *-1
             }else{
@@ -256,11 +258,11 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
         }
     }
 
-    private fun getAlertDateLblByItemCheckStatus() =
-        if (deviceItem.item_check_status.equals(GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL, true)) {
-            hmAux_Trans["inspection_missing_lbl"]
-        } else {
+    private fun getAlertDateLblByItemCheckStatus(dateDiff: Long) =
+        if (dateDiff < 0) {
             hmAux_Trans["inspection_alert_days_lbl"]
+        } else {
+            hmAux_Trans["inspection_missing_lbl"]
         }
 
     private fun paramErrorFlow() {
