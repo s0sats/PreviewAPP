@@ -89,6 +89,10 @@ class Act011InspectionFormAdapter(
     }
 
     fun applyNonForecastFilter(filterApplied: Boolean) {
+        //LUCHE - Ao filtrar, highlightedItem deve ser resetado, já que não faz mais sentido exibir
+        //vh em azul.
+        clearHighlightedItemPosition()
+        //
         this.filterApplied = filterApplied
         inspectionsFiltered.clear()
         if (this.filterApplied) {
@@ -125,9 +129,20 @@ class Act011InspectionFormAdapter(
         notifyItemChanged(position)
     }
 
+    /**
+     * Reseta valor de HighlightedItem
+     */
+    private fun clearHighlightedItemPosition() {
+        highlightedItemPosition = -1
+    }
+
     inner class InspectionFormFilter : Filter() {
 
         override fun performFiltering(constraint: CharSequence?): FilterResults {
+            //LUCHE - Ao filtrar, highlightedItem deve ser resetado, já que não faz mais sentido exibir
+            //vh em azul.
+            clearHighlightedItemPosition()
+            //
             var temp = mutableListOf<InspectionCell>()
             var charFilter = ToolBox.AccentMapper(constraint.toString().toLowerCase())
             textFilter = charFilter

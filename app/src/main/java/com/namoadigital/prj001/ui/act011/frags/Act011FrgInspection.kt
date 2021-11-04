@@ -249,10 +249,13 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
                             binding.nsvMain.fullScroll(View.FOCUS_DOWN)
                         }
                         else ->{
-                            mAdapter.highlightedItemPosition = tabItemSelectedIndex
+                            //LUCHE - 04/11/2021
+                            //Alterado a ordem das ações, colocando primeiro o set do filtro e depois
+                            //o set de highlightedItemPosition, pois o filtro reseta de highlightedItemPosition
                             if (!acessoryFormView.filterVal.isEmpty()) {
                                 binding.edtInspectionFilter.setText(acessoryFormView.filterVal)
                             }
+                            mAdapter.highlightedItemPosition = tabItemSelectedIndex
                             mAdapter.notifyItemChanged(tabItemSelectedIndex)
                             //Calcula posicao inicial do Recycler + posicao final do item seleciona - o tamanho do item.
                             //LUCHE - 04/11/2021 - Add tratativa de null, pois ao limpar reposta de um item e volta,
