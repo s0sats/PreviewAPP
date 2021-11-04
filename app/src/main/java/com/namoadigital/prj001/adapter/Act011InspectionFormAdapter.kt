@@ -114,7 +114,14 @@ class Act011InspectionFormAdapter(
     }
 
     fun refreshList(position: Int, onNotVerifyActionItem: InspectionCell) {
-        inspectionsFiltered.set(position, onNotVerifyActionItem)
+        //LUCHE - 04/11/2021 - Altera highlightedItemPosition para o item passado e notifica mudança
+        //no anterior caso exista.
+        val oldHighlight = highlightedItemPosition;
+        highlightedItemPosition = position
+        if(oldHighlight > -1) {
+            notifyItemChanged(oldHighlight)
+        }
+        inspectionsFiltered[position] = onNotVerifyActionItem
         notifyItemChanged(position)
     }
 

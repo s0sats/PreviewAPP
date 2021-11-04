@@ -255,8 +255,12 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
                             }
                             mAdapter.notifyItemChanged(tabItemSelectedIndex)
                             //Calcula posicao inicial do Recycler + posicao final do item seleciona - o tamanho do item.
-                            val y: Float = this.getY() + this.getChildAt(tabItemSelectedIndex)
-                                .getY() - this.getChildAt(tabItemSelectedIndex).measuredHeight
+                            //LUCHE - 04/11/2021 - Add tratativa de null, pois ao limpar reposta de um item e volta,
+                            //aconteceu um crash
+                            val childHeight = this.getChildAt(tabItemSelectedIndex)?.let {
+                                it.getY() - it.measuredHeight
+                            } ?: 0f
+                            val y: Float = this.getY() + childHeight
                             binding.nsvMain.scrollTo(0, y.toInt())
                         }
                     }
