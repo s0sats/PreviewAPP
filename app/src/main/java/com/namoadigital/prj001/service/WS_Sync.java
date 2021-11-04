@@ -664,7 +664,7 @@ public class WS_Sync extends IntentService {
                     for (MD_Operation operation : operations) {
                         if (ToolBox_Con.getPreference_Operation_Code(getApplicationContext())
                                 == operation.getOperation_code()
-                                ) {
+                        ) {
                             operationExist = true;
                             break;
                         }
@@ -714,7 +714,7 @@ public class WS_Sync extends IntentService {
                         if (ToolBox_Con
                                 .getPreference_Site_Code(getApplicationContext())
                                 .equals(String.valueOf(site.getSite_code()))
-                                ) {
+                        ) {
                             siteExist = true;
                             break;
                         }
@@ -724,9 +724,9 @@ public class WS_Sync extends IntentService {
                 //Conciliação de dados do site. Projeto de licenças por site.
                 for (MD_Site site : sites) {
                     //
-                    if(ToolBox_Inf.isConcurrentBySiteLicense(getApplicationContext())) {
-                        for(MD_Site backup: backupSites){
-                            if(backup.getSite_code().equals(site.getSite_code())){
+                    if (ToolBox_Inf.isConcurrentBySiteLicense(getApplicationContext())) {
+                        for (MD_Site backup : backupSites) {
+                            if (backup.getSite_code().equals(site.getSite_code())) {
                                 site.setApp_executions_count(backup.getApp_executions_count());
                                 break;
                             }
@@ -781,7 +781,7 @@ public class WS_Sync extends IntentService {
                                 if (
                                         sync_prod.getCustomer_code() == product.getCustomer_code()
                                                 && sync_prod.getProduct_code() == product.getProduct_code()
-                                        ) {
+                                ) {
                                     isProductInList = true;
                                     break;
                                 }
@@ -1044,16 +1044,16 @@ public class WS_Sync extends IntentService {
              */
             //O processamento MD_Tag pode acontecer em duas situações, foi adiciona var de controle
             //Se foi processada uma vez, não é necessario processar a segunda
-            if(!mdTagAlreadyProcess) {
+            if (!mdTagAlreadyProcess) {
                 mdTagDao.remove(new MdTagSqlTruncate().toSqlQuery());
                 File[] files_tag = ToolBox_Inf.getListOfFiles_v2("md_tag-");
                 for (File _file : files_tag) {
                     ArrayList<MdTag> tags = gson.fromJson(
-                        ToolBox.jsonFromOracle(
-                            ToolBox_Inf.getContents(_file)
-                        ),
-                        new TypeToken<ArrayList<MdTag>>() {
-                        }.getType()
+                            ToolBox.jsonFromOracle(
+                                    ToolBox_Inf.getContents(_file)
+                            ),
+                            new TypeToken<ArrayList<MdTag>>() {
+                            }.getType()
                     );
 
                     mdTagDao.addUpdate(tags, false);
@@ -1063,7 +1063,7 @@ public class WS_Sync extends IntentService {
                 mdTagAlreadyProcess = true;
             }
             //
-            if(!mdProductSerialStructureAlreadyProcess) {
+            if (!mdProductSerialStructureAlreadyProcess) {
                 /**
                  * Processamento MD_PRODUCT_SERIAL_TP_DEVICE
                  */
@@ -1279,7 +1279,7 @@ public class WS_Sync extends IntentService {
                                     ToolBox_Con
                                             .getPreference_Zone_Code(getApplicationContext())
                                             == zone.getZone_code()
-                                    ) {
+                            ) {
                                 zoneExist = true;
                                 break;
                             }
@@ -1509,11 +1509,11 @@ public class WS_Sync extends IntentService {
             for (File _file : files_partner) {
 
                 ArrayList<MD_Partner> mdPartners = gson.fromJson(
-                    ToolBox.jsonFromOracle(
-                        ToolBox_Inf.getContents(_file)
-                    ),
-                    new TypeToken<ArrayList<MD_Partner>>() {
-                    }.getType()
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Partner>>() {
+                        }.getType()
                 );
 
                 partnerDao.addUpdate(mdPartners, false);
@@ -1527,11 +1527,11 @@ public class WS_Sync extends IntentService {
 
             for (File _file : files_ticket_cache) {
                 ArrayList<TkTicketCache> ticketCaches = gson.fromJson(
-                    ToolBox.jsonFromOracle(
-                        ToolBox_Inf.getContents(_file)
-                    ),
-                    new TypeToken<ArrayList<TkTicketCache>>() {
-                    }.getType()
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<TkTicketCache>>() {
+                        }.getType()
                 );
                 //
                 tkTicketCacheDao.addUpdate(ticketCaches, false);
@@ -1546,11 +1546,11 @@ public class WS_Sync extends IntentService {
 
             for (File _file : files_device_tp) {
                 ArrayList<MdDeviceTp> deviceTps = gson.fromJson(
-                    ToolBox.jsonFromOracle(
-                        ToolBox_Inf.getContents(_file)
-                    ),
-                    new TypeToken<ArrayList<MdDeviceTp>>() {
-                    }.getType()
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MdDeviceTp>>() {
+                        }.getType()
                 );
                 //
                 deviceTpDao.addUpdate(deviceTps, false);
@@ -1565,11 +1565,11 @@ public class WS_Sync extends IntentService {
 
             for (File _file : files_order_type) {
                 ArrayList<MdOrderType> orderTypes = gson.fromJson(
-                    ToolBox.jsonFromOracle(
-                        ToolBox_Inf.getContents(_file)
-                    ),
-                    new TypeToken<ArrayList<MdOrderType>>() {
-                    }.getType()
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MdOrderType>>() {
+                        }.getType()
                 );
                 //
                 orderTypeDao.addUpdate(orderTypes, false);
@@ -1583,11 +1583,11 @@ public class WS_Sync extends IntentService {
 
             for (File _file : files_item_check) {
                 ArrayList<MdItemCheck> mdItemCheck = gson.fromJson(
-                    ToolBox.jsonFromOracle(
-                        ToolBox_Inf.getContents(_file)
-                    ),
-                    new TypeToken<ArrayList<MdItemCheck>>() {
-                    }.getType()
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MdItemCheck>>() {
+                        }.getType()
                 );
                 //
                 mdItemCheckDao.addUpdate(mdItemCheck, false);
@@ -1601,11 +1601,11 @@ public class WS_Sync extends IntentService {
 
             for (File _file : files_measure_tp) {
                 ArrayList<MeMeasureTp> meMeasureTp = gson.fromJson(
-                    ToolBox.jsonFromOracle(
-                        ToolBox_Inf.getContents(_file)
-                    ),
-                    new TypeToken<ArrayList<MeMeasureTp>>() {
-                    }.getType()
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MeMeasureTp>>() {
+                        }.getType()
                 );
                 //
                 meMeasureTpDao.addUpdate(meMeasureTp, false);
@@ -1616,58 +1616,61 @@ public class WS_Sync extends IntentService {
             /**
              * Processamento MD_PRODUCT_SERIAL_TP_DEVICE
              */
-            File[] files_serial_tp_device = ToolBox_Inf.getListOfFiles_v2("md_product_serial_tp_device-");
+            if (!mdProductSerialStructureAlreadyProcess) {
+                File[] files_serial_tp_device = ToolBox_Inf.getListOfFiles_v2("md_product_serial_tp_device-");
 
-            for (File _file : files_serial_tp_device) {
-                ArrayList<MD_Product_Serial_Tp_Device> serialTpDevices = gson.fromJson(
-                    ToolBox.jsonFromOracle(
-                        ToolBox_Inf.getContents(_file)
-                    ),
-                    new TypeToken<ArrayList<MD_Product_Serial_Tp_Device>>() {
-                    }.getType()
-                );
-                //
-                serialTpDeviceDao.addUpdate(serialTpDevices, false);
+                for (File _file : files_serial_tp_device) {
+                    ArrayList<MD_Product_Serial_Tp_Device> serialTpDevices = gson.fromJson(
+                            ToolBox.jsonFromOracle(
+                                    ToolBox_Inf.getContents(_file)
+                            ),
+                            new TypeToken<ArrayList<MD_Product_Serial_Tp_Device>>() {
+                            }.getType()
+                    );
+                    //
+                    serialTpDeviceDao.addUpdate(serialTpDevices, false);
+                }
+                //Libera pro GB
+                files_serial_tp_device = null;
+
+                /**
+                 * Processamento MD_PRODUCT_SERIAL_TP_DEVICE_ITEM
+                 */
+                File[] files_serial_tp_device_item = ToolBox_Inf.getListOfFiles_v2("md_product_serial_tp_device_item-");
+
+                for (File _file : files_serial_tp_device_item) {
+                    ArrayList<MD_Product_Serial_Tp_Device_Item> serialTpDeviceItems = gson.fromJson(
+                            ToolBox.jsonFromOracle(
+                                    ToolBox_Inf.getContents(_file)
+                            ),
+                            new TypeToken<ArrayList<MD_Product_Serial_Tp_Device_Item>>() {
+                            }.getType()
+                    );
+                    //
+                    serialTpDeviceItemDao.addUpdate(serialTpDeviceItems, false);
+                }
+                //Libera pro GB
+                files_serial_tp_device_item = null;
+                /**
+                 * Processamento MD_PRODUCT_SERIAL_TP_DEVICE_ITEM_Hist
+                 */
+                File[] files_serial_tp_device_item_hist = ToolBox_Inf.getListOfFiles_v2("md_product_serial_tp_device_item_hist-");
+
+                for (File _file : files_serial_tp_device_item_hist) {
+                    ArrayList<MD_Product_Serial_Tp_Device_Item_Hist> serialTpDeviceItemHists = gson.fromJson(
+                            ToolBox.jsonFromOracle(
+                                    ToolBox_Inf.getContents(_file)
+                            ),
+                            new TypeToken<ArrayList<MD_Product_Serial_Tp_Device_Item_Hist>>() {
+                            }.getType()
+                    );
+                    //
+                    serialTpDeviceItemHistDao.addUpdate(serialTpDeviceItemHists, false);
+                }
+                //Libera pro GB
+                files_serial_tp_device_item_hist = null;
+                mdProductSerialStructureAlreadyProcess = true;
             }
-            //Libera pro GB
-            files_serial_tp_device = null;
-
-            /**
-             * Processamento MD_PRODUCT_SERIAL_TP_DEVICE_ITEM
-             */
-            File[] files_serial_tp_device_item = ToolBox_Inf.getListOfFiles_v2("md_product_serial_tp_device_item-");
-
-            for (File _file : files_serial_tp_device_item) {
-                ArrayList<MD_Product_Serial_Tp_Device_Item> serialTpDeviceItems = gson.fromJson(
-                    ToolBox.jsonFromOracle(
-                        ToolBox_Inf.getContents(_file)
-                    ),
-                    new TypeToken<ArrayList<MD_Product_Serial_Tp_Device_Item>>() {
-                    }.getType()
-                );
-                //
-                serialTpDeviceItemDao.addUpdate(serialTpDeviceItems, false);
-            }
-            //Libera pro GB
-            files_serial_tp_device_item = null;
-            /**
-             * Processamento MD_PRODUCT_SERIAL_TP_DEVICE_ITEM_Hist
-             */
-            File[] files_serial_tp_device_item_hist = ToolBox_Inf.getListOfFiles_v2("md_product_serial_tp_device_item_hist-");
-
-            for (File _file : files_serial_tp_device_item_hist) {
-                ArrayList<MD_Product_Serial_Tp_Device_Item_Hist> serialTpDeviceItemHists = gson.fromJson(
-                    ToolBox.jsonFromOracle(
-                        ToolBox_Inf.getContents(_file)
-                    ),
-                    new TypeToken<ArrayList<MD_Product_Serial_Tp_Device_Item_Hist>>() {
-                    }.getType()
-                );
-                //
-                serialTpDeviceItemHistDao.addUpdate(serialTpDeviceItemHists, false);
-            }
-            //Libera pro GB
-            files_serial_tp_device_item_hist = null;
         }
 
         //endregion

@@ -34,7 +34,7 @@ public class TK_Ticket_Form implements Serializable {
     @Nullable
     private String score_perc;
     private int nc;
-    private int is_os;
+    private int is_so;
     @Nullable
     private Integer custom_form_data_tmp;
     @Nullable
@@ -188,12 +188,12 @@ public class TK_Ticket_Form implements Serializable {
         this.nc = nc;
     }
 
-    public int getIs_os() {
-        return is_os;
+    public int getIs_so() {
+        return is_so;
     }
 
-    public void setIs_os(int is_os) {
-        this.is_os = is_os;
+    public void setIs_so(int is_so) {
+        this.is_so = is_so;
     }
 
     @Nullable

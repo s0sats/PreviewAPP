@@ -47,7 +47,7 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
     public static final String SCORE_STATUS = "score_status";
     public static final String SCORE_PERC = "score_perc";
     public static final String NC = "nc";
-    public static final String IS_OS = "is_os";
+    public static final String IS_SO = "is_so";
 
     public static final String CUSTOM_FORM_DATA_TMP = "custom_form_data_tmp";
     public static final String PDF_CODE = "pdf_code";
@@ -645,7 +645,7 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
                 tk_ticket_form.setScore_perc(cursor.getString(cursor.getColumnIndex(SCORE_PERC)));
             }
             tk_ticket_form.setNc(cursor.getInt(cursor.getColumnIndex(NC)));
-            tk_ticket_form.setIs_os(cursor.getInt(cursor.getColumnIndex(IS_OS)));
+            tk_ticket_form.setIs_so(cursor.getInt(cursor.getColumnIndex(IS_SO)));
             if(cursor.isNull(cursor.getColumnIndex(CUSTOM_FORM_DATA_TMP))){
                 tk_ticket_form.setCustom_form_data_tmp(null);
             }else{
@@ -722,8 +722,8 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
             if (tk_ticket_form.getNc() > -1) {
                 contentValues.put(NC, tk_ticket_form.getNc());
             }
-            if (tk_ticket_form.getIs_os() > -1) {
-                contentValues.put(IS_OS, tk_ticket_form.getIs_os());
+            if (tk_ticket_form.getIs_so() > -1) {
+                contentValues.put(IS_SO, tk_ticket_form.getIs_so());
             }
             contentValues.put(CUSTOM_FORM_DATA_TMP,tk_ticket_form.getCustom_form_data_tmp());
             contentValues.put(PDF_CODE,tk_ticket_form.getPdf_code());
