@@ -244,17 +244,19 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
             ViewCompat.hasNestedScrollingParent(this )
             if(tabItemSelectedIndex >= 0) {
                 binding.nsvMain.post {
+                    //LUCHE - 05/11/2021
+                    //Movido a aplicação do filtro pra fora do when, pois deve ser aplicado em ambos
+                    //os casos.Correção de bug , pois no caso de desistencia da criação de form manual
+                    //Int.MAX_VALUE, não aplicava o filtro.
+                    if (!acessoryFormView.filterVal.isEmpty()) {
+                        binding.edtInspectionFilter.setText(acessoryFormView.filterVal)
+                    }
+                    //
                     when(tabItemSelectedIndex){
                         Int.MAX_VALUE -> {
                             binding.nsvMain.fullScroll(View.FOCUS_DOWN)
                         }
                         else ->{
-                            //LUCHE - 04/11/2021
-                            //Alterado a ordem das ações, colocando primeiro o set do filtro e depois
-                            //o set de highlightedItemPosition, pois o filtro reseta de highlightedItemPosition
-                            if (!acessoryFormView.filterVal.isEmpty()) {
-                                binding.edtInspectionFilter.setText(acessoryFormView.filterVal)
-                            }
                             mAdapter.highlightedItemPosition = tabItemSelectedIndex
                             mAdapter.notifyItemChanged(tabItemSelectedIndex)
                             //Calcula posicao inicial do Recycler + posicao final do item seleciona - o tamanho do item.
