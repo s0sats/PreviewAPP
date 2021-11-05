@@ -208,6 +208,7 @@ import com.namoadigital.prj001.sql.IO_Blind_Move_Sql_006;
 import com.namoadigital.prj001.sql.IO_Inbound_Sql_013;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_005;
 import com.namoadigital.prj001.sql.IO_Outbound_Sql_013;
+import com.namoadigital.prj001.sql.MDProductSerialSql017;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_002;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_003;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_SS;
@@ -3831,12 +3832,25 @@ public class ToolBox_Inf {
         dialogScheduleWarning.show();
     }
 
-    public static boolean hasFormProductOrSerialOutdate(Context context) {
-        return hasFormProductOutdate(context, -1, -1);
-    }
+    public static HMAux hasFormProductSerialWithoutStructure(Context context, int ticketPrefix, int ticketCode) {
+        long customerCode = ToolBox_Con.getPreference_Customer_Code(context);
+        if(ticketPrefix == -1 && ticketCode == -1) {
+            return null;
+        }
+        MD_Product_SerialDao md_product_serialDao = new MD_Product_SerialDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        HMAux productSerialOutdate = md_product_serialDao.getByStringHM(
+                new MDProductSerialSql017(
+                        customerCode,
+                        ticketPrefix,
+                        ticketCode
+                ).toSqlQuery()
+        );
 
-    public static ArrayList<String> hasFormProductOrSerialOutdate(Context context, int ticketPrefix, int ticketCode) {
-        return new ArrayList<>();
+        return productSerialOutdate;
     }
 
     /**

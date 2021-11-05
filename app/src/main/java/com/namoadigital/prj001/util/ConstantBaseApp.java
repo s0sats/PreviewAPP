@@ -326,6 +326,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String GS_DATA_PACKAGE = "datapackage";
     public static final String GS_PRODUCT_CODE = "product_code";
     public static final String GS_LOGIN_PROCESS = "login_process";
+    public static final String GS_TICKET_SERIAL_STRUCTURE_OBJ = "gs_ticket_serial_structure_obj";
     /**
      * Serial WS
      */

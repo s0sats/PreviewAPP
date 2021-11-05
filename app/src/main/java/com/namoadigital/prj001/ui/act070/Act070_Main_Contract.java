@@ -76,6 +76,8 @@ public interface Act070_Main_Contract {
         void callAct083();
 
         void callAct084();
+
+        void callAct087(Bundle act087Bundle);
     }
 
     interface I_Presenter{
@@ -158,5 +160,7 @@ public interface Act070_Main_Contract {
         void deleteWorkgroupEditionFileIfNeeds();
 
         void deleteHeaderEditionFiles();
+
+        boolean isFormSoConfigurationDone(TK_Ticket mTicket, StepForm stepForm);
     }
 }

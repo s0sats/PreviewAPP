@@ -11,5 +11,5 @@ class T_MD_Product_Serial_Structure_Env(
     @SerializedName("serial_code")
     val serialCode: Long,
     @SerializedName("scn_item_check")
-    val scnItemCheck: Int
+    val scnItemCheck: Int?
 ): Serializable

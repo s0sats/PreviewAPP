@@ -1,5 +1,9 @@
 package com.namoadigital.prj001.ui.act070;
 
+import static com.namoadigital.prj001.ui.act075.Act075_Main.APPROVAL_VIEW_ID;
+import static com.namoadigital.prj001.ui.act075.Act075_Main.PRODUCT_VIEW_ID;
+import static com.namoadigital.prj001.ui.act075.Act075_Main.VIEW_PROFILE;
+
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -72,6 +76,7 @@ import com.namoadigital.prj001.ui.act081.Act081_Main;
 import com.namoadigital.prj001.ui.act082.Act082_Main;
 import com.namoadigital.prj001.ui.act083.Act083_Main;
 import com.namoadigital.prj001.ui.act084.Act084Main;
+import com.namoadigital.prj001.ui.act087.Act087Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -80,10 +85,6 @@ import com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.namoadigital.prj001.ui.act075.Act075_Main.APPROVAL_VIEW_ID;
-import static com.namoadigital.prj001.ui.act075.Act075_Main.PRODUCT_VIEW_ID;
-import static com.namoadigital.prj001.ui.act075.Act075_Main.VIEW_PROFILE;
 
 public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contract.I_View, Frg_Pipeline_Header.OnPipelineFragmentInteractionListener, Frg_Pipeline_Header.OnPipelineFragmentOriginListener {
 
@@ -237,6 +238,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("alert_form_pdf_not_generated_msg");
         transList.add("alert_form_pdf_not_downloaded_ttl");
         transList.add("alert_form_pdf_not_downloaded_ttl");
+        transList.add("alert_form_without_serial_structure_ttl");
+        transList.add("alert_form_without_serial_structure_msg");
         transList.add("alert_form_master_data_not_found_ttl");
         transList.add("alert_form_master_data_not_found_msg");
         //
@@ -1308,6 +1311,20 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         finish();
     }
 
+    @Override
+    public void callAct087(Bundle act087Bundle) {
+        Intent intent = new Intent(context, Act087Main.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        act087Bundle.putString(
+                ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
+                requestingBundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,ConstantBaseApp.ACT005)
+        );
+        act087Bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM,ToolBox_Inf.getMyActionFilterParam(requestingBundle));
+        intent.putExtras(act087Bundle);
+        startActivity(intent);
+        finish();
+    }
+
     private void iniUIFooter() {
         iniFooter();
         //
@@ -1578,6 +1595,13 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             || save_return.isEmpty()) {
                 refreshUi();
                 StepForm stepForm = (StepForm) sources.get(lastPositionClicked);
+
+                if(!mPresenter.isFormSoConfigurationDone(mTicket, stepForm)){
+                    showAlert(
+                        hmAux_Trans.get("alert_form_without_serial_structure_ttl"),
+                        hmAux_Trans.get("alert_form_without_serial_structure_msg")
+                    );
+                }
                 mPresenter.defineFormFlow(mTicket,stepForm);
                 lastPositionClicked =-1;
             }else{

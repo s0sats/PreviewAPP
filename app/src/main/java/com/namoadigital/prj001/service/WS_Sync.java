@@ -124,6 +124,8 @@ import com.namoadigital.prj001.model.TSync_Env;
 import com.namoadigital.prj001.model.TSync_Rec;
 import com.namoadigital.prj001.model.T_DataPackage_SM_SO_Env;
 import com.namoadigital.prj001.model.T_DataPackage_TK_Ticket_Env;
+import com.namoadigital.prj001.model.T_MD_Product_Serial_Structure;
+import com.namoadigital.prj001.model.T_MD_Product_Serial_Structure_Env;
 import com.namoadigital.prj001.model.TkTicketCache;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.sql.EV_Profile_Sql_Truncate;
@@ -220,12 +222,18 @@ public class WS_Sync extends IntentService {
             //Essa chave só é passada pela Act008, tela de criação se formulario.
             Long product_code = bundle.getLong(Constant.GS_PRODUCT_CODE, -1L);
             boolean loginProcess = bundle.getBoolean(Constant.GS_LOGIN_PROCESS, false);
+            /**
+             * BARRIONUEVO - 04-11-2021
+             * Parametro adicionado para sincronismo de estrutura de serial no processo de ticket.
+             * Como foi uma situacao pega no meio do projeto nao tem mto o que fazer nesse caso.
+             */
+            T_MD_Product_Serial_Structure_Env ticketSerialWithoutStructure = (T_MD_Product_Serial_Structure_Env) bundle.getSerializable(Constant.GS_TICKET_SERIAL_STRUCTURE_OBJ);
             //LUCHE - 07/06/2019
             //Add param que redefine timeout da chamada.
             //Usada somente no sync full
             int connection_timeout = bundle.getInt(Constant.WS_CONNECTION_TIMEOUT, 60000);
 
-            processWS_Sync(session_app, dataPackageType, jumpValidation, jumpOD, product_code, loginProcess,connection_timeout);
+            processWS_Sync(session_app, dataPackageType, jumpValidation, jumpOD, product_code, loginProcess,connection_timeout, ticketSerialWithoutStructure);
 
             // Limpeza da Notificacao
             cleanNotification(getApplicationContext());
@@ -254,7 +262,7 @@ public class WS_Sync extends IntentService {
         ToolBox_Con.setPreference_SYNC_REQUIRED(getApplicationContext(), "");
     }
 
-    private void processWS_Sync(String session_app, ArrayList<String> dataPackageType, int jump_validation, int jump_od, Long product_code, boolean loginProcess, int connection_timeout) throws Exception {
+    private void processWS_Sync(String session_app, ArrayList<String> dataPackageType, int jump_validation, int jump_od, Long product_code, boolean loginProcess, int connection_timeout, T_MD_Product_Serial_Structure_Env ticketSerialWithoutStructure) throws Exception {
         EV_UserDao userDao = new EV_UserDao(getApplicationContext(), Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
         EV_Module_ResDao moduleResDao = new EV_Module_ResDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
         EV_Module_Res_TxtDao moduleResTxtDao = new EV_Module_Res_TxtDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
@@ -263,8 +271,12 @@ public class WS_Sync extends IntentService {
         EV_ProfileDao evProfileDao = new EV_ProfileDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
         GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(getApplicationContext());
         MdTagDao mdTagDao = new MdTagDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+        MD_Product_Serial_Tp_DeviceDao serialTpDeviceDao = new MD_Product_Serial_Tp_DeviceDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+        MD_Product_Serial_Tp_Device_ItemDao serialTpDeviceItemDao = new MD_Product_Serial_Tp_Device_ItemDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+        MD_Product_Serial_Tp_Device_Item_HistDao serialTpDeviceItemHistDao = new MD_Product_Serial_Tp_Device_Item_HistDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
         SM_SODao soDao = new SM_SODao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
         TK_TicketDao ticketDao = new TK_TicketDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+        MD_Product_SerialDao serialDao = new MD_Product_SerialDao(getApplicationContext());
         boolean mdTagAlreadyProcess = false;
         boolean mdProductSerialStructureAlreadyProcess = false;
 
@@ -375,6 +387,17 @@ public class WS_Sync extends IntentService {
         }
         //}
 
+        /**
+         *  BARRIONUEVO 04-11-2021
+         *  Implementação de sincronismo de estrutura de seriais.
+         */
+        if (dataPackageType.contains(DataPackage.DATA_PACKAGE_SERIAL)
+            && ticketSerialWithoutStructure != null) {
+            T_MD_Product_Serial_Structure PRODUCT_SERIAL = new T_MD_Product_Serial_Structure();
+            PRODUCT_SERIAL.getSearch().add(ticketSerialWithoutStructure);
+            dataPackage.setSERIAL(PRODUCT_SERIAL.getSearch());
+        }
+
         TSync_Env env = new TSync_Env();
 
         env.setApp_code(Constant.PRJ001_CODE);
@@ -466,7 +489,13 @@ public class WS_Sync extends IntentService {
         //Define metodo de delete das tabelas de tradução baseado se é sincronismos full ou de form.
         DaoObjReturn daoObjReturn;
         if(product_code == -1L){
-            daoObjReturn = moduleResDao.truncateModuleResTables();
+            /**
+             * BARRIONUEVO 04-11-2021
+             * Evita remover traducoes para caso o processamento seja apenas de DATA_PACKAGE_SERIAL.
+             */
+            if(!dataPackageType.contains(DataPackage.DATA_PACKAGE_SERIAL)) {
+                daoObjReturn = moduleResDao.truncateModuleResTables();
+            }
         }else{
             daoObjReturn = moduleResDao.deleteModuleTrans(ConstantBaseApp.EV_MODULE_CUST_FORM);
         }
@@ -576,7 +605,6 @@ public class WS_Sync extends IntentService {
             MD_ProductDao productDao = new MD_ProductDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             MD_Product_GroupDao productGroupDao = new MD_Product_GroupDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             MD_Product_Group_ProductDao productGroupProductDao = new MD_Product_Group_ProductDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
-            MD_Product_SerialDao serialDao = new MD_Product_SerialDao(getApplicationContext());
             MD_Product_Serial_TrackingDao trackingDao = new MD_Product_Serial_TrackingDao(getApplicationContext());
             MD_DepartmentDao departmentDao = new MD_DepartmentDao(getApplicationContext());
             MD_UserDao mdUserDao = new MD_UserDao(getApplicationContext());
@@ -602,9 +630,7 @@ public class WS_Sync extends IntentService {
             MdOrderTypeDao orderTypeDao = new MdOrderTypeDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             MdItemCheckDao mdItemCheckDao = new MdItemCheckDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             MeMeasureTpDao meMeasureTpDao = new MeMeasureTpDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
-            MD_Product_Serial_Tp_DeviceDao serialTpDeviceDao = new MD_Product_Serial_Tp_DeviceDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
-            MD_Product_Serial_Tp_Device_ItemDao serialTpDeviceItemDao = new MD_Product_Serial_Tp_Device_ItemDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
-            MD_Product_Serial_Tp_Device_Item_HistDao serialTpDeviceItemHistDao = new MD_Product_Serial_Tp_Device_Item_HistDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+
             //
             //Apaga dados das tabelas
             operationDao.remove(new MD_Operation_Sql_Truncate().toSqlQuery());
@@ -636,9 +662,6 @@ public class WS_Sync extends IntentService {
             orderTypeDao.remove(new MdOrderTypeSqlTruncate().toSqlQuery());
             mdItemCheckDao.remove(new MdItemCheckSqlTruncate().toSqlQuery());
             meMeasureTpDao.remove(new MeMeasureTpSqlTruncate().toSqlQuery());
-            serialTpDeviceDao.remove(new MD_Product_Serial_Tp_Device_Sql_Truncate().toSqlQuery());
-            serialTpDeviceItemDao.remove(new MD_Product_Serial_Tp_Device_Item_Sql_Truncate().toSqlQuery());
-            serialTpDeviceItemHistDao.remove(new MD_Product_Serial_Tp_Device_Item_Hist_Sql_Truncate().toSqlQuery());
             //
             // Processamento Operation
             //
@@ -1064,6 +1087,9 @@ public class WS_Sync extends IntentService {
             }
             //
             if (!mdProductSerialStructureAlreadyProcess) {
+                serialTpDeviceDao.remove(new MD_Product_Serial_Tp_Device_Sql_Truncate().toSqlQuery());
+                serialTpDeviceItemDao.remove(new MD_Product_Serial_Tp_Device_Item_Sql_Truncate().toSqlQuery());
+                serialTpDeviceItemHistDao.remove(new MD_Product_Serial_Tp_Device_Item_Hist_Sql_Truncate().toSqlQuery());
                 /**
                  * Processamento MD_PRODUCT_SERIAL_TP_DEVICE
                  */
@@ -1613,10 +1639,47 @@ public class WS_Sync extends IntentService {
             //Libera pro GB
             files_measure_tp = null;
 
+        }
+
+        if (dataPackageType.contains(DataPackage.DATA_PACKAGE_SERIAL)) {
+
+            File[] files_serial = ToolBox_Inf.getListOfFiles_v2("md_product_serial-");
+
+            for (File _file : files_serial) {
+
+                ArrayList<MD_Product_Serial> serialList = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Product_Serial>>() {
+                        }.getType()
+                );
+                /**
+                 * BARRIONUEVO 04-11-2021
+                 * Remove estrutura do serial.
+                 * serialList devera ter apenas 1
+                 *
+                 */
+                for (MD_Product_Serial serial: serialList){
+                    serialTpDeviceDao.removeFullStructure(serial);
+                }
+                /**
+                 * Chama novo metodo do DAO que processa o sincronismo dos seriais.
+                 * Vericar se o serial ja existe no banco local e :
+                 * SE EXISTIR:
+                 *      Atribui o tmp que ja existia no objeto, seta sync_process para 1
+                 *      e atualiza no banco.
+                 * SE NÃO EXISTIR:
+                 *     Seta sync_process para 1 e chama metodo de insert criando TMP
+                 */
+                serialDao.processSerialSync(serialList);
+            }
+
             /**
              * Processamento MD_PRODUCT_SERIAL_TP_DEVICE
              */
             if (!mdProductSerialStructureAlreadyProcess) {
+
                 File[] files_serial_tp_device = ToolBox_Inf.getListOfFiles_v2("md_product_serial_tp_device-");
 
                 for (File _file : files_serial_tp_device) {

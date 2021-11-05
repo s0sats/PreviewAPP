@@ -35,6 +35,7 @@ import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Form;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.model.TSave_Rec;
+import com.namoadigital.prj001.model.T_MD_Product_Serial_Structure_Env;
 import com.namoadigital.prj001.model.T_TK_Get_Workgroup_List_Rec;
 import com.namoadigital.prj001.model.T_TK_Header_N_Group_Save_WG_Env;
 import com.namoadigital.prj001.receiver.WBR_Save;
@@ -53,6 +54,7 @@ import com.namoadigital.prj001.service.WS_TK_Ticket_Checkin;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_002;
+import com.namoadigital.prj001.sql.MDProductSerialSql017;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.Sql_Act070_001;
 import com.namoadigital.prj001.sql.Sql_Act070_002;
@@ -74,6 +76,7 @@ import com.namoadigital.prj001.ui.act070.model.StepForm;
 import com.namoadigital.prj001.ui.act070.model.StepMain;
 import com.namoadigital.prj001.ui.act070.model.StepNone;
 import com.namoadigital.prj001.ui.act070.model.StepProcessBtn;
+import com.namoadigital.prj001.ui.act087.Act087Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -86,6 +89,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     private Context context;
@@ -96,6 +100,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     private TK_Ticket_CtrlDao ticketCtrlDao;
     private GE_Custom_FormDao geCustomFormDao;
     private GE_Custom_Form_DataDao formDataDao;
+    private MD_Product_SerialDao mdProductSerialDao;
     private ArrayList<HMAux> workgroupOptionList;
 
     public Act070_Main_Presenter(Context context, Act070_Main_Contract.I_View mView, HMAux hmAux_Trans) {
@@ -127,6 +132,11 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             context,
             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
             Constant.DB_VERSION_CUSTOM
+        );
+        this.mdProductSerialDao = new MD_Product_SerialDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
         );
     }
 
@@ -396,6 +406,23 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             mainUserListFile.delete();
         }
     }
+
+    @Override
+    public boolean isFormSoConfigurationDone(TK_Ticket mTicket, StepForm stepForm) {
+        TK_Ticket_Ctrl ticketCtrl = getSelectedCtrlFormFromDb(mTicket.getTicket_prefix(), mTicket.getTicket_code(), stepForm.getProcessTkSeq(), stepForm.getProcessTkSeqTmp(), stepForm.getStepCode());
+        TK_Ticket_Form form = ticketCtrl.getForm();
+        if(form != null) {
+            if(form.getIs_so() == 1) {
+                if(ToolBox_Inf.hasFormProductSerialWithoutStructure(context,mTicket.getTicket_prefix(), mTicket.getTicket_code()) != null){
+                    return false;
+                }
+                return true;
+            }
+            return true;
+        }
+        return false;
+    }
+
 
     private void callWsWgSave(T_TK_Header_N_Group_Save_WG_Env.T_TK_Header_N_Group_Save_WG_Ticket wgTicket) {
         if(ToolBox_Con.isOnline(context)){
@@ -1314,23 +1341,37 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                                     );
                                 }
                             } else {
-                                mView.showAlert(
-                                    hmAux_Trans.get("alert_form_master_data_not_found_ttl"),
-                                    hmAux_Trans.get("alert_form_master_data_not_found_msg"),
-                                    new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                if((ticketCtrl.getHas_item_check() == null || ticketCtrl.getHas_item_check() == 0)
+                                && ticketCtrl.getForm().getIs_so() == 1){
+                                    mView.showAlert(
+                                            hmAux_Trans.get("alert_form_without_serial_structure_ttl"),
+                                            hmAux_Trans.get("alert_form_without_serial_structure_msg"));
+                                }else {
+                                    mView.showAlert(
+                                            hmAux_Trans.get("alert_form_master_data_not_found_ttl"),
+                                            hmAux_Trans.get("alert_form_master_data_not_found_msg"),
+                                            new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
 
-                                            if(ToolBox_Con.isOnline(context)) {
-                                                ToolBox_Inf.hasFormProductOutdate(context, mTicket.getTicket_prefix(), mTicket.getTicket_code());
-                                                callWsSync();
-                                            }else{
-                                                ToolBox_Inf.showNoConnectionDialog(context);
-                                            }
-                                        }
-                                    },
-                                    false
-                                );
+                                                    if (ToolBox_Con.isOnline(context)) {
+                                                        ArrayList<String> dataPackages = new ArrayList<>();
+                                                        if (ToolBox_Inf.hasFormProductOutdate(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())) {
+                                                            dataPackages.add(DataPackage.DATA_PACKAGE_CHECKLIST);
+                                                        }
+                                                        HMAux serialStructureless = ToolBox_Inf.hasFormProductSerialWithoutStructure(context, mTicket.getTicket_prefix(), mTicket.getTicket_code());
+                                                        if (serialStructureless != null) {
+                                                            dataPackages.add(DataPackage.DATA_PACKAGE_SERIAL);
+                                                        }
+                                                        callWsSync(dataPackages, serialStructureless);
+                                                    } else {
+                                                        ToolBox_Inf.showNoConnectionDialog(context);
+                                                    }
+                                                }
+                                            },
+                                            false
+                                    );
+                                }
                             }
                         }else{
                             mView.showAlert(
@@ -1583,9 +1624,40 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
 //                }
                 tryOpenFormPDF(ticketCtrl.getForm());
             }else{
-                mView.callAct011(getAct011Bundle(ticketCtrl));
+                if(ticketCtrl.getForm().getIs_so() == 1){
+                    mView.callAct087(getAct087Bundle(ticketCtrl));
+                }else {
+                    mView.callAct011(getAct011Bundle(ticketCtrl));
+                }
             }
         }
+    }
+
+    private Bundle getAct087Bundle(TK_Ticket_Ctrl ticketCtrl) {
+        Integer productCode = ticketCtrl.getProduct_code();
+        if(productCode == null){
+            productCode = getTicketObj(ticketCtrl.getTicket_prefix(), ticketCtrl.getTicket_code()).getOpen_product_code();
+        }
+
+        Integer serialCode = ticketCtrl.getSerial_code();
+        if(serialCode == null){
+            serialCode = getTicketObj(ticketCtrl.getTicket_prefix(), ticketCtrl.getTicket_code()).getOpen_serial_code();
+        }
+        String serialId = ticketCtrl.getSerial_id();
+        if(serialId == null|| serialId.isEmpty()){
+            serialId = getTicketObj(ticketCtrl.getTicket_prefix(), ticketCtrl.getTicket_code()).getOpen_serial_id();
+        }
+        return Act087Main.getBundleInstance(
+                String.valueOf(ticketCtrl.getForm().getCustom_form_code()),
+                String.valueOf(ticketCtrl.getForm().getCustom_form_type()),
+                String.valueOf(ticketCtrl.getForm().getCustom_form_version()),
+                String.valueOf(productCode),
+                serialId,
+                String.valueOf(serialCode),
+                "-1",
+                "-1",
+                "-1");
+
     }
 
     private boolean userHasProductAccess(int open_product_code) {
@@ -1645,6 +1717,18 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 form.getCustom_form_code()
             ).toSqlQuery()
         );
+        //
+        if(form.getIs_so() == 1){
+            //Retorna serial sem estrutura.
+            HMAux productSerial =  mdProductSerialDao.getByStringHM(
+                    new MDProductSerialSql017(
+                            form.getCustomer_code(),
+                            form.getTicket_prefix(),
+                            form.getTicket_code()
+                    ).toSqlQuery()
+            );
+            return customForm != null && customForm.getCustomer_code() > 0 && productSerial == null ;
+        }
         //
         return customForm != null && customForm.getCustomer_code() > 0;
     }
@@ -2872,7 +2956,9 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     public boolean verifyProductForForm() {
         if(ToolBox_Inf.hasFormProductOutdate(context)){
             if (ToolBox_Con.isOnline(context)) {
-                callWsSync();
+                ArrayList<String> dataPackages = new ArrayList<>();
+                dataPackages.add(DataPackage.DATA_PACKAGE_CHECKLIST);
+                callWsSync(dataPackages);
                 return true;
             }
             return false;
@@ -2881,27 +2967,53 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         }
     }
 
-    private void callWsSync() {
+    private void callWsSync(ArrayList<String> data_package) {
+        callWsSync(data_package, null);
+    }
+
+    private void callWsSync(ArrayList<String> data_package, HMAux serialStructureless) {
         mView.setWsProcess(WS_Sync.class.getName());
         //
         mView.showPD(
                 hmAux_Trans.get("progress_sync_ttl"),
                 hmAux_Trans.get("progress_sync_msg")
         );
-        //
-        ArrayList<String> data_package = new ArrayList<>();
-        data_package.add(DataPackage.DATA_PACKAGE_CHECKLIST);
+        long gs_product_code = -1;
+        if(data_package.contains(DataPackage.DATA_PACKAGE_CHECKLIST)){
+            gs_product_code = 0;
+        }
         //
         Intent mIntent = new Intent(context, WBR_Sync.class);
         Bundle bundle = new Bundle();
         bundle.putString(Constant.GS_SESSION_APP, ToolBox_Con.getPreference_Session_App(context));
         bundle.putStringArrayList(Constant.GS_DATA_PACKAGE, data_package);
-        bundle.putLong(Constant.GS_PRODUCT_CODE, 0);
+        bundle.putLong(Constant.GS_PRODUCT_CODE, gs_product_code);
         bundle.putInt(Constant.GC_STATUS_JUMP, 1);
         bundle.putInt(Constant.GC_STATUS, 1);
+        if(data_package.contains(DataPackage.DATA_PACKAGE_SERIAL)
+        && serialStructureless != null){
+            T_MD_Product_Serial_Structure_Env ticketSerialWithoutStructure = getTicketSerialStructureless(serialStructureless);
+            bundle.putSerializable(Constant.GS_TICKET_SERIAL_STRUCTURE_OBJ, ticketSerialWithoutStructure);
+        }
         //
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
+    }
+
+    private T_MD_Product_Serial_Structure_Env getTicketSerialStructureless(HMAux serialStructureless) {
+
+        Integer scn_item_check = null;
+        if (serialStructureless.hasConsistentValue(MD_Product_SerialDao.SCN_ITEM_CHECK)
+        && !Objects.requireNonNull(serialStructureless.get(MD_Product_SerialDao.SCN_ITEM_CHECK)).isEmpty()) {
+            scn_item_check = Integer.valueOf(serialStructureless.get(MD_Product_SerialDao.SCN_ITEM_CHECK));
+        }
+
+        return new T_MD_Product_Serial_Structure_Env(
+                Integer.parseInt(serialStructureless.get(TK_Ticket_CtrlDao.CUSTOMER_CODE)),
+                Integer.parseInt(serialStructureless.get(TK_Ticket_CtrlDao.PRODUCT_CODE)),
+                Integer.parseInt(serialStructureless.get(TK_Ticket_CtrlDao.SERIAL_CODE)),
+                scn_item_check
+        );
     }
 }
