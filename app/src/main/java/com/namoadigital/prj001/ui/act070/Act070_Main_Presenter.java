@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -29,6 +30,7 @@ import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.GE_Custom_Form;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
+import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
@@ -54,6 +56,7 @@ import com.namoadigital.prj001.service.WS_TK_Ticket_Checkin;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_002;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_019;
 import com.namoadigital.prj001.sql.MDProductSerialSql017;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.Sql_Act070_001;
@@ -99,6 +102,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     private TK_Ticket_StepDao ticketStepDao;
     private TK_Ticket_CtrlDao ticketCtrlDao;
     private GE_Custom_FormDao geCustomFormDao;
+    private GE_Custom_Form_LocalDao geCustomFormLocalDao;
     private GE_Custom_Form_DataDao formDataDao;
     private MD_Product_SerialDao mdProductSerialDao;
     private ArrayList<HMAux> workgroupOptionList;
@@ -134,6 +138,11 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             Constant.DB_VERSION_CUSTOM
         );
         this.mdProductSerialDao = new MD_Product_SerialDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        this.geCustomFormLocalDao = new GE_Custom_Form_LocalDao(
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
@@ -1624,13 +1633,38 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
 //                }
                 tryOpenFormPDF(ticketCtrl.getForm());
             }else{
-                if(ticketCtrl.getForm().getIs_so() == 1){
-                    mView.callAct087(getAct087Bundle(ticketCtrl));
+                Bundle bundle = getAct011Bundle(ticketCtrl);
+                if(ticketCtrl.getForm().getIs_so() == 1
+                && !formExists(ticketCtrl)){
+                    bundle.putAll(getAct087Bundle(ticketCtrl));
+                    mView.callAct087(bundle);
                 }else {
-                    mView.callAct011(getAct011Bundle(ticketCtrl));
+                    mView.callAct011(bundle);
                 }
             }
         }
+    }
+
+    private boolean formExists(TK_Ticket_Ctrl ticketCtrl) {
+        String customFormData = ticketCtrl.getForm().getCustom_form_data_tmp() != null
+                ? String.valueOf(ticketCtrl.getForm().getCustom_form_data_tmp())
+                : "0";
+        GE_Custom_Form_Local customFormLocal = geCustomFormLocalDao.getByString(
+                new GE_Custom_Form_Local_Sql_019(
+                        String.valueOf(ticketCtrl.getCustomer_code()),
+                        String.valueOf(ticketCtrl.getForm().getCustom_form_type()),
+                        String.valueOf(ticketCtrl.getForm().getCustom_form_code()),
+                        String.valueOf(ticketCtrl.getForm().getCustom_form_version()),
+                        customFormData,
+                        String.valueOf(ticketCtrl.getProduct_code()),
+                        ticketCtrl.getSerial_id(),
+                        ticketCtrl.getTicket_prefix(),
+                        ticketCtrl.getTicket_code(),
+                        ticketCtrl.getTicket_seq(),
+                        ticketCtrl.getStep_code()
+                ).toSqlQuery().toString().toLowerCase()
+        );
+        return customFormLocal != null;
     }
 
     private Bundle getAct087Bundle(TK_Ticket_Ctrl ticketCtrl) {
@@ -1648,8 +1682,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             serialId = getTicketObj(ticketCtrl.getTicket_prefix(), ticketCtrl.getTicket_code()).getOpen_serial_id();
         }
         return Act087Main.getBundleInstance(
-                String.valueOf(ticketCtrl.getForm().getCustom_form_code()),
                 String.valueOf(ticketCtrl.getForm().getCustom_form_type()),
+                String.valueOf(ticketCtrl.getForm().getCustom_form_code()),
                 String.valueOf(ticketCtrl.getForm().getCustom_form_version()),
                 String.valueOf(productCode),
                 serialId,

@@ -17,7 +17,6 @@ import com.namoadigital.prj001.service.WS_Product_Serial_Backup
 import com.namoadigital.prj001.sql.*
 import com.namoadigital.prj001.util.*
 import java.io.File
-import kotlin.collections.ArrayList
 
 class Act087MainPresenter(
     private val context: Context,
@@ -533,15 +532,23 @@ class Act087MainPresenter(
                     hmAuxTrans["alert_unsaved_data_will_be_lost_ttl"],
                     hmAuxTrans["alert_unsaved_data_will_be_lost_confirm"],
                     DialogInterface.OnClickListener { _, _ ->
-                        mView.callAct083()
+                        checkBackFLow()
                     },
                     1
                 )
             }
             else ->{
-                    mView.callAct083()
+                checkBackFLow()
                 }
         }
 
+    }
+
+    private fun checkBackFLow() {
+        if (mView.isTicketBackFLow()) {
+            mView.callAct070()
+        } else {
+            mView.callAct083()
+        }
     }
 }

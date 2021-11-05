@@ -1315,11 +1315,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     public void callAct087(Bundle act087Bundle) {
         Intent intent = new Intent(context, Act087Main.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        act087Bundle.putString(
-                ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
-                requestingBundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,ConstantBaseApp.ACT005)
-        );
-        act087Bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM,ToolBox_Inf.getMyActionFilterParam(requestingBundle));
+        act087Bundle.putAll(requestingBundle);
         intent.putExtras(act087Bundle);
         startActivity(intent);
         finish();

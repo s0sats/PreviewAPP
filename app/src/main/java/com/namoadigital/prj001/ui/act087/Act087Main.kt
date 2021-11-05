@@ -21,6 +21,7 @@ import com.namoadigital.prj001.service.WS_Product_Serial_Backup
 import com.namoadigital.prj001.ui.act005.Act005_Main
 import com.namoadigital.prj001.ui.act011.Act011_Main
 import com.namoadigital.prj001.ui.act011.frags.Act011BaseFrgInteractionNavegation
+import com.namoadigital.prj001.ui.act070.Act070_Main
 import com.namoadigital.prj001.ui.act083.Act083_Main
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
@@ -196,8 +197,8 @@ class Act087Main : Base_Activity_Frag(),
             this.bundle = bundle
             //
             with(bundle){
-                customFormType = getInt(GE_Custom_FormDao.CUSTOM_FORM_CODE,-1)
-                customFormCode = getInt(GE_Custom_FormDao.CUSTOM_FORM_TYPE,-1)
+                customFormCode = getInt(GE_Custom_FormDao.CUSTOM_FORM_CODE,-1)
+                customFormType = getInt(GE_Custom_FormDao.CUSTOM_FORM_TYPE,-1)
                 customFormVersion = getInt(GE_Custom_FormDao.CUSTOM_FORM_VERSION,-1)
                 productCode = getInt(MD_Product_SerialDao.PRODUCT_CODE,-1)
                 serialCode = getInt(MD_Product_SerialDao.SERIAL_CODE,-1)
@@ -423,6 +424,31 @@ class Act087Main : Base_Activity_Frag(),
         finish()
     }
 
+    override fun callAct070() {
+        val intent = Intent(context, Act070_Main::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        //
+        bundle.apply {
+            remove(GE_Custom_FormDao.CUSTOM_FORM_CODE)
+            remove(GE_Custom_FormDao.CUSTOM_FORM_TYPE)
+            remove(GE_Custom_FormDao.CUSTOM_FORM_VERSION)
+            remove(MD_Product_SerialDao.PRODUCT_CODE)
+            remove(MD_Product_SerialDao.SERIAL_CODE)
+            remove(MD_Product_SerialDao.SERIAL_ID)
+            remove(MD_Schedule_ExecDao.SCHEDULE_PREFIX)
+            remove(MD_Schedule_ExecDao.SCHEDULE_CODE)
+            remove(MD_Schedule_ExecDao.SCHEDULE_EXEC)
+        }
+        intent.putExtras(bundle)
+        //
+        startActivity(intent)
+        finish()
+    }
+
+    override fun isTicketBackFLow(): Boolean {
+        return bundle.containsKey(TK_TicketDao.TICKET_PREFIX)
+    }
+
     private fun getMyActionsParam(mBundle: Bundle) {
         act083Bundle?.let{
             mBundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT083)
@@ -460,8 +486,8 @@ class Act087Main : Base_Activity_Frag(),
             scheduleExec: String = "-1"
         ): Bundle{
             return Bundle().apply {
-                putInt(GE_Custom_FormDao.CUSTOM_FORM_CODE,customFormType.toInt())
-                putInt(GE_Custom_FormDao.CUSTOM_FORM_TYPE,customFormCode.toInt())
+                putInt(GE_Custom_FormDao.CUSTOM_FORM_CODE,customFormCode.toInt())
+                putInt(GE_Custom_FormDao.CUSTOM_FORM_TYPE,customFormType.toInt())
                 putInt(GE_Custom_FormDao.CUSTOM_FORM_VERSION,customFormVersion.toInt())
                 putInt(MD_Product_SerialDao.PRODUCT_CODE,productCode.toInt())
                 putInt(MD_Product_SerialDao.SERIAL_CODE,serialCode.toInt())

@@ -5,7 +5,7 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.model.*
-import java.util.ArrayList
+import java.util.*
 
 interface Act087MainContract {
 
@@ -25,6 +25,8 @@ interface Act087MainContract {
             onlineSearch: Boolean)
 
         fun callAct083()
+        fun callAct070()
+        fun isTicketBackFLow(): Boolean
     }
 
     interface I_Presenter{
