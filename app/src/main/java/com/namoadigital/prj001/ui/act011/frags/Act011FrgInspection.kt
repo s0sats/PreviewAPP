@@ -16,6 +16,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao
 import com.namoadigital.prj001.databinding.Act011FrgIncludeHeaderBinding
 import com.namoadigital.prj001.databinding.Act011InspectionListFragmentBinding
+import com.namoadigital.prj001.extensions.setCheckedJumpingAnimation
 import com.namoadigital.prj001.model.AcessoryFormView
 import com.namoadigital.prj001.model.Act011FormTab
 import com.namoadigital.prj001.model.Act011FormTabStatus
@@ -76,23 +77,18 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
 
     private fun setChkHideNonForecast() {
         if (!hasNoneNonForecastItem()) {
-            if (!acessoryFormView.nonForecastFilter) {
-                binding.chkNonForecastItem.apply {
-                    post {
-                        performClick()
-                    }
-                }
-            } else {
                 binding.apply {
+                    chkNonForecastItem.setCheckedJumpingAnimation(acessoryFormView.nonForecastFilter)
                     acessoryFormView.nonForecastFilter = chkNonForecastItem.isChecked
                     mAdapter.applyNonForecastFilter(chkNonForecastItem.isChecked)
                     mAdapter.notifyDataSetChanged()
                     handleAddNewProcessVisibility()
                     handleForecastEmptyList()
                 }
-            }
+
         }else{
-            binding.chkNonForecastItem.isChecked = false
+            binding.chkNonForecastItem.setCheckedJumpingAnimation(false)
+            binding.chkNonForecastItem.isEnabled = false
             mAdapter.applyNonForecastFilter(binding.chkNonForecastItem.isChecked)
             handleAddNewProcessVisibility()
         }
@@ -167,13 +163,13 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
         binding.edtInspectionFilter.setText("")
         if(hasNoneNonForecastItem()){
             binding.apply {
-                chkNonForecastItem.isChecked = false
+                chkNonForecastItem.setCheckedJumpingAnimation(false)
                 mAdapter.applyNonForecastFilter(chkNonForecastItem.isChecked)
                 handleAddNewProcessVisibility()
             }
         }else{
             binding.apply {
-                chkNonForecastItem.isChecked = true
+                chkNonForecastItem.setCheckedJumpingAnimation(true)
                 mAdapter.applyNonForecastFilter(chkNonForecastItem.isChecked)
                 handleAddNewProcessVisibility()
             }
@@ -457,20 +453,6 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
         super.setUserVisibleHint(isVisibleToUser)
         if(isAdded){
             if(isVisibleToUser) {
-                binding.chkNonForecastItem.apply {
-                    if (hasNoneNonForecastItem()) {
-                        if (isChecked) {
-                            isChecked = false
-                            binding.handleCheckboxClick(this)
-                        }
-                        isEnabled = false
-                    } else {
-                        if (!isChecked) {
-                            isChecked = true
-                        }
-                        binding.handleCheckboxClick(this)
-                    }
-                }
                 binding.edtInspectionFilter.text.clear()
             }else{
                 mAdapter.highlightedItemPosition = -1
