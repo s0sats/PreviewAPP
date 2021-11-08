@@ -74,7 +74,7 @@
                 android:paddingStart="8dp"
                 android:text="Ação realizada"
                 style="@style/NamoaFormOsRadioButton"
-                app:drawableTint="@color/namoa_os_form_done_action_blue"
+                tools:drawableTint="@color/namoa_os_form_done_action_blue"
                 />
 
             <RadioButton
@@ -103,7 +103,7 @@
                 android:minHeight="48dp"
                 android:paddingStart="8dp"
                 android:text="Continua com problema"
-                app:drawableTint="@color/namoa_os_form_problem_red" />
+                tools:drawableTint="@color/namoa_os_form_problem_red" />
 
             <RadioButton
                 android:id="@+id/act086_verification_frg_rdo_answer_not_verified"
@@ -117,7 +117,7 @@
                 android:minHeight="48dp"
                 android:paddingStart="8dp"
                 android:text="Não verificado"
-                app:drawableTint="@color/namoa_status_not_executed" />
+                tools:drawableTint="@color/namoa_status_not_executed" />
         </RadioGroup>
 
         <TextView

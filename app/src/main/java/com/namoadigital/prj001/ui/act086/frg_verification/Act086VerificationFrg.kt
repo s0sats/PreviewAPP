@@ -160,8 +160,23 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     private fun toogleRadioGroupEnabled(enabledState: Boolean) {
         with(binding) {
             act086VerificationFrgRgAnswers.forEach {
+                //Se item novo e esta desabilitando, seta icones cinza
+                if(isNewVerification && !enabledState){
+                    if(it is RadioButton){
+                        applyDrawableStartColor(
+                            it,
+                            R.color.namoa_pipeline_header_icon
+                        )
+                    }
+                }
+                //
                 it.isEnabled = enabledState
                 it.isClickable = enabledState
+            }
+            //Se item novo e esta habilitando, seta as cores para da opção.
+            //Nesse caso fora do loop, pois a fun ja faz todos de uma vez
+            if(isNewVerification && enabledState){
+                configRdoStartDrawableColor()
             }
         }
     }
