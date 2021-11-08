@@ -1315,8 +1315,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     public void callAct087(Bundle act087Bundle) {
         Intent intent = new Intent(context, Act087Main.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        act087Bundle.putAll(requestingBundle);
-        intent.putExtras(act087Bundle);
+        requestingBundle.putAll(act087Bundle);
+        intent.putExtras(requestingBundle);
         startActivity(intent);
         finish();
     }

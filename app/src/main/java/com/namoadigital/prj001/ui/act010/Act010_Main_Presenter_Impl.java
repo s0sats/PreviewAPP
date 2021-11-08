@@ -117,7 +117,8 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
 
     private void defineFormOrFormOsFlow(HMAux item) {
         if(isOsForm(item)) {
-            if(osFormAlreadyExists(item)) {
+            if(osFormAlreadyExists(item)
+            && !mView.isHas_tk_ticket_is_form_off_hand()) {
                 setAct011Call(item);
             }else{
                 if (serialHasStructure()) {
