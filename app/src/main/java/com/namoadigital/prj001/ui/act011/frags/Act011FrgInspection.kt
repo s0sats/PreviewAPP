@@ -32,12 +32,23 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
     private lateinit var mLayoutManager: LinearLayoutManager
     private var tabItemSelectedIndex: Int = -1
     private val mAdapter by lazy {
-        Act011InspectionFormAdapter(acessoryFormView, hmAuxTrans, ::onItemSelected, ::onNotVerifyItemSelected)
+        Act011InspectionFormAdapter(acessoryFormView, hmAuxTrans, ::onItemSelected, ::onNotVerifyItemSelected, ::onAdapterFilterApplied)
     }
     private var acessoryFormViewIdx = -1
     private lateinit var acessoryFormView: AcessoryFormView
     private var _mFrgListener: InspectionListFragmentInteraction? = null
     private val mFrgListener get() = _mFrgListener!!
+    //LUCHE - 08/11/2021 - Var que identifica se existe não previstos.
+    //Já existe uma metodo que faz isso, porem, como checagem precisa ser feita a cada caracter filtrado,
+    //criei a variante val pra evitar processamento desnecessario ja que até hj esse valor e final
+    //uma vez que para responder um nao previsto, é necessairo navegar para tela de verificacao
+    private val hasNonForecast by lazy {
+        val find = acessoryFormView.inspections.find {
+            it.status == NORMAL && it.answerStatus == null
+        }
+        //Se encontrou um não previsto sem resposta
+        find != null
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -290,7 +301,6 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
         }else{
             binding.tvPlaceholder.text = hmAuxTrans.get("inspection_empty_list_filtered")
         }
-
     }
 
     private fun hasNoneNonForecastItem() = acessoryFormView.inspections.count {
@@ -485,6 +495,31 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
         mAdapter.refreshList(position, onNotVerifyActionItem)
         mFrgListener.onRefreshTabCounter(acessoryFormView.tabIndex)
     }
+
+    /**
+     * Fun disparada pelo adapter ao filtrar itens passadno a qtd de itens existentes no filtro.
+     * Define a visibilidade do recycler e visibilidade e lbl do placeholder
+     * Se qtyItensFiltered 0:
+     *  - Esconde o recycle e exibe o placeholder
+     * Se qtyItensFiltered 0 , não houver filtro texto e existem itens não previstos, então significa
+     * que o adapter é 0 , pois não existem previstos, mas existem não previstos oculto pelo filtro
+     * e por isso a msg é de que existem itens ocultos
+     */
+    fun onAdapterFilterApplied(qtyItensFiltered: Int){
+        with(binding){
+            rvInspections.visibility = if(qtyItensFiltered == 0){ View.GONE }else{ View.VISIBLE }
+            tvPlaceholder.visibility = if(qtyItensFiltered == 0){ View.VISIBLE }else{ View.GONE }
+            tvPlaceholder.text = if( qtyItensFiltered == 0
+                                     && edtInspectionFilter.text.toString().trim().isEmpty()
+                                     && hasNonForecast
+                                ){
+                                    hmAuxTrans["inspection_empty_list_filtered"]
+                                } else{
+                                    hmAuxTrans["inspection_empty_list_placeholder"]
+                                }
+        }
+    }
+
     //
     /**
      * Fun que pega somente os itens não previstos sem resposta e altera as propriedades necessarias

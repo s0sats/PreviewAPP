@@ -28,14 +28,9 @@ class Act011InspectionFormAdapter(
      */
     private val acessoryFormView: AcessoryFormView,
     private val hmAuxTrans: HMAux,
-    private val onItemSelected: (
-        position: Int,
-        itemPk: String
-    ) -> Unit,
-    private val onNotVerifyItemSelected: (
-        position: Int,
-        item: InspectionCell
-    ) -> Unit
+    private val onItemSelected: (position: Int, itemPk: String) -> Unit,
+    private val onNotVerifyItemSelected: (position: Int, item: InspectionCell) -> Unit,
+    private val onAdapterFilterApplied: (Int) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
     private var inspections: MutableList<InspectionCell>
     private val inspectionsFiltered: MutableList<InspectionCell> = mutableListOf()
@@ -180,6 +175,8 @@ class Act011InspectionFormAdapter(
                 results.values?.let {
                     inspectionsFiltered.addAll(results.values as MutableList<InspectionCell>)
                 }
+                //LUCHE - 08/11/2021 - Dispara HoF que reporta qtd de itens filtrados.
+                onAdapterFilterApplied(inspectionsFiltered.size)
                 //
                 notifyDataSetChanged()
             }
