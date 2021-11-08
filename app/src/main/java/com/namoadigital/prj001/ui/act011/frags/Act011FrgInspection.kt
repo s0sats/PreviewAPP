@@ -17,10 +17,7 @@ import com.namoadigital.prj001.dao.MD_Schedule_ExecDao
 import com.namoadigital.prj001.databinding.Act011FrgIncludeHeaderBinding
 import com.namoadigital.prj001.databinding.Act011InspectionListFragmentBinding
 import com.namoadigital.prj001.extensions.setCheckedJumpingAnimation
-import com.namoadigital.prj001.model.AcessoryFormView
-import com.namoadigital.prj001.model.Act011FormTab
-import com.namoadigital.prj001.model.Act011FormTabStatus
-import com.namoadigital.prj001.model.InspectionCell
+import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.model.InspectionCell.Companion.CRITICAL_FORECAST
 import com.namoadigital.prj001.model.InspectionCell.Companion.FORECAST
 import com.namoadigital.prj001.model.InspectionCell.Companion.MANUAL_ALERT
@@ -30,7 +27,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf
 
 private const val ARG_ACESSORY_FORM_VIEW_IDX = "ARG_ACESSORY_FORM_VIEW_IDX"
 
-class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>() {
+class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>() , Act011FrgInspectionNotifyAdapter {
 
     private lateinit var mLayoutManager: LinearLayoutManager
     private var tabItemSelectedIndex: Int = -1
@@ -358,8 +355,6 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
     override fun getViewBinding() = Act011InspectionListFragmentBinding.inflate(layoutInflater)
     override fun getNavegationInclude() = binding.incNavegation
 
-
-
     override fun getTabErrorCount(): Int {
 //        val problemReportedCount = acessoryFormView.inspections.count {
 //            it.status == MANUAL_ALERT && !it.answerStatus.equals(ConstantBaseApp.SYS_STATUS_DONE)
@@ -489,4 +484,27 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
         mFrgListener.onRefreshTabCounter(acessoryFormView.tabIndex)
     }
     //
+    /**
+     * Fun que pega somente os itens não previstos sem resposta e altera as propriedades necessarias
+     * que o layout seja atualizado via initViewVars. Possui faz de controle para chamar
+     * notifyDataSetChanged somente se houve alteração.
+     */
+    override fun notifyAdapterDataSetMayChanged() {
+        //Var de controle de se é necessario chamar notifyDataSetChanged
+        var hasAnyChange = false
+        acessoryFormView.inspections.filter { inspecell->
+          !inspecell.status.equals(GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL,true) && inspecell.answerStatus == null
+        }.forEach{ inspec ->
+            hasAnyChange = true
+            inspec.execType = GeOsDeviceItem.EXEC_TYPE_NOT_VERIFIED
+            inspec.answerStatus = ConstantBaseApp.SYS_STATUS_DONE
+            inspec.hasComment = true
+            //
+            inspec.initViewVars()
+        }
+        //Se algum item alterado, chama notifiy
+        if(hasAnyChange) {
+            mAdapter.notifyDataSetChanged()
+        }
+    }
 }

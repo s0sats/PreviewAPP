@@ -3327,17 +3327,30 @@ public class Act011_Main extends Base_Activity
             public void onClick(View v) {
                 if(isFormOs) {
                     if(validEndDate(binding)) {
+                        String missingAnswer = binding.act011DialogCheckTilJustifyMissingAnswerVal.getEditText().getText().toString();
+                        //LUCHE - 08/11/2021 - resgata contador antes para ser usado na validação
+                        //de refreshCurrentTabRecycle. Se não há mais não respondidos(segunda chama),
+                        //então evita loops desnecessarios
+                        int missingAnswersCounter = missingAnswersCounter();
+                        //
                         mPresenter.updateGeOsItems(
                             geOs,
-                            missingAnswersCounter(),
-                            binding.act011DialogCheckTilJustifyMissingAnswerVal.getEditText().getText().toString(),
+                            missingAnswersCounter,
+                            missingAnswer,
                             binding.act011DialogCheckMkdateFormStart.getmValue(),
                             binding.act011DialogCheckMkdateFormEnd.getmValue()
                         );
+                        //Somente chama atualização das listas dos recycles se houver itens precisando
+                        //ser alterados.
+                        if(missingAnswersCounter > 0) {
+                            refreshCurrentTabRecycle();
+                        }
                         //Seta valor var que controla se fluxo é finaliza ou finaliza mais novo.
                         finalizeNewFlow = binding.act011DialogCheckOptionRg.getCheckedRadioButtonId() == R.id.act011_dialog_check_option_rdo_finalize_new;
                         //
                         startCheckIN();
+                        //
+                        alertDialog.dismiss();
                     }else{
                         ToolBox.alertMSG(
                             context,
@@ -3352,7 +3365,10 @@ public class Act011_Main extends Base_Activity
                     finalizeNewFlow = binding.act011DialogCheckOptionRg.getCheckedRadioButtonId() == R.id.act011_dialog_check_option_rdo_finalize_new;
                     //
                     startCheckIN();
+                    //
+                    alertDialog.dismiss();
                 }
+
             }
         });
         //
@@ -3381,6 +3397,23 @@ public class Act011_Main extends Base_Activity
             }
         });
         //
+    }
+
+    /**
+     * Metodo rodado após finalização com itens não verificados. Varre todas as abas de acessorios
+     * e atualiza o item da lista com o status de repospondido, com nao verificado e comentario
+     */
+    private void refreshCurrentTabRecycle() {
+        for (Act011BaseFrg fragment : screens) {
+            if (fragment instanceof Act011FrgInspection) {
+                Act011FrgInspection frgInspection = (Act011FrgInspection) fragment;
+                frgInspection.notifyAdapterDataSetMayChanged();
+                //Após atualizar lista da tab, precisa atualizar lista do drawer
+                updateTabStatusIntoDrawer(
+                    frgInspection.getTabObj(false)
+                );
+            }
+        }
     }
 
     private boolean validEndDate(Act011CheckDialogBinding binding) {

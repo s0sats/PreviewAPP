@@ -12,32 +12,39 @@ data class InspectionCell   (
     val photoCount: Int= 0,
     val materialCount: Int = 0,
     val materialRequired: Boolean,
-    val hasComment: Boolean = false,
+    var hasComment: Boolean = false,
     val commentRequired: Boolean,
     var status: String,
     val isCritical: Boolean,
     val isNewItem: Boolean = false,
-    val answerStatus: String?,
-    val execType: String?,
+    var answerStatus: String?,
+    var execType: String?,
     val itemCodeAndSeq: String,
     val hmAuxTrans: HMAux
 ): Serializable {
     var isDone: Boolean = false
     @ColorInt
-    var tagColor: Int
+    var tagColor: Int = 0
     var statusTransalted: String = ""
     var execTypeTranslated: String = ""
     init{
+        initViewVars()
+    }
+
+    /**
+     * Fun que baseado nos dados do construtor, define vars de "visualização"
+     */
+    fun initViewVars() {
         answerStatus?.let {
             isDone = !it.equals(ConstantBaseApp.SYS_STATUS_PROCESS)
         }
         //
-        if(isDone){
+        if (isDone) {
             tagColor = R.color.namoa_color_light_green5
             statusTransalted = hmAuxTrans["inspection_status_answered_item_lbl"]!!
-        }else{
+        } else {
             this.status = status
-            when(status){
+            when (status) {
                 NORMAL -> {
                     tagColor = R.color.namoa_color_gray_6
                     statusTransalted = hmAuxTrans["inspection_status_non_forecast_item_lbl"]!!
@@ -47,11 +54,12 @@ data class InspectionCell   (
                     statusTransalted = hmAuxTrans["inspection_status_manual_alert_item_lbl"]!!
                 }
                 else -> {
-                    if(isCritical){
+                    if (isCritical) {
                         this.status = CRITICAL_FORECAST
                         tagColor = R.color.namoa_os_form_critical_forecast_yellow
-                        statusTransalted = hmAuxTrans["inspection_status_critical_forecast_item_lbl"]!!
-                    }else{
+                        statusTransalted =
+                            hmAuxTrans["inspection_status_critical_forecast_item_lbl"]!!
+                    } else {
                         this.status = FORECAST
                         tagColor = R.color.namoa_color_pipeline_origin_icon
                         statusTransalted = hmAuxTrans["inspection_status_forecast_item_lbl"]!!
@@ -60,16 +68,17 @@ data class InspectionCell   (
             }
         }
 
-        when(execType){
+        when (execType) {
             GeOsDeviceItem.EXEC_TYPE_FIXED -> {
                 execTypeTranslated = hmAuxTrans["inspection_answer_fixed_lbl"]!!
             }
-            GeOsDeviceItem.EXEC_TYPE_ALERT ->{
-                execTypeTranslated = if(!GeOsDeviceItem.ITEM_CHECK_STATUS_MANUAL_ALERT.equals(status,true) ){
-                                        hmAuxTrans["inspection_answer_alert_lbl"]!!
-                                    } else{
-                                        hmAuxTrans["inspection_answer_still_in_alert_lbl"]!!
-                                    }
+            GeOsDeviceItem.EXEC_TYPE_ALERT -> {
+                execTypeTranslated =
+                    if (!GeOsDeviceItem.ITEM_CHECK_STATUS_MANUAL_ALERT.equals(status, true)) {
+                        hmAuxTrans["inspection_answer_alert_lbl"]!!
+                    } else {
+                        hmAuxTrans["inspection_answer_still_in_alert_lbl"]!!
+                    }
             }
             GeOsDeviceItem.EXEC_TYPE_ALREADY_OK -> {
                 execTypeTranslated = hmAuxTrans["inspection_answer_already_ok_lbl"]!!
