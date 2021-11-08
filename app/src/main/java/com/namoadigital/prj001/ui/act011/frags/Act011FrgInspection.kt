@@ -113,6 +113,8 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
                     } else {
                         hideNonForecastCheckBoxFilter(true)
                     }
+                    //LUCHE - 08/11/2021 - Valida visibilidade do btn
+                    handleAddNewProcessVisibility()
                     mAdapter.filter.filter(s)
                 }
             })
@@ -226,7 +228,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
             context,
             ConstantBaseApp.PROFILE_PRJ001_CHECKLIST,
             ConstantBaseApp.PROFILE_PRJ001_CHECKLIST_PARAM_ITEM_CHECK_NEW
-        ) && !binding.chkNonForecastItem.isChecked
+        ) && (!binding.chkNonForecastItem.isChecked || binding.edtInspectionFilter.text.toString().trim().isNotEmpty())
     }
 
     private fun setInspectionList() {
