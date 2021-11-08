@@ -123,6 +123,7 @@ import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
 import com.namoadigital.prj001.ui.act011.frags.Act011BaseFrg;
+import com.namoadigital.prj001.ui.act011.frags.Act011BaseFrgInteraction;
 import com.namoadigital.prj001.ui.act011.frags.Act011BaseFrgInteractionNavegation;
 import com.namoadigital.prj001.ui.act011.frags.Act011FrgFF;
 import com.namoadigital.prj001.ui.act011.frags.Act011FrgFFInteraction;
@@ -158,15 +159,16 @@ public class Act011_Main extends Base_Activity
     Act011_Main_View,
     Act011BaseFrgInteractionNavegation,
     Act011FrgFFInteraction,
-    InspectionListFragmentInteraction
+    InspectionListFragmentInteraction,
+    Act011BaseFrgInteraction
 {
-
     public static final int SHOW_MSG_TYPE_FORM_LOCAL_INSERT_ERROR = 4;
     public static final int SHOW_MSG_TYPE_SCHEDULE_EXEC_UPDATE_ERROR = 5;
     public static final int SHOW_MSG_TYPE_SCHEDULE_EXEC_CANCEL_ERROR = 6;
     public static final int SHOW_MSG_TYPE_TICKET_STEP_OR_CTRL_ERROR = 7;
     public static final int SHOW_MSG_TYPE_TICKET_FORM_FINALIZED = 8;
     public static final int SHOW_MSG_TYPE_GE_OS_NOT_FOUND = 9;
+    public static final int SHOW_MSG_TYPE_INVALID_SYS_END_DATE = 10;
     public static final String PNG_EXTENSION = ".png";
     public static final String JPG_EXTENSION = ".jpg";
     public static final String PAGE = "page";
@@ -269,6 +271,9 @@ public class Act011_Main extends Base_Activity
     private boolean device_item_list_checkbox_status;
     private GeOs geOs;
     private ArrayList<AcessoryFormView> acessoryFormViews;
+    //LUCHE - 29/10/2021 - Var que indica que a abertura da act011 foi feita pela navegação de volta
+    //da act086
+    private boolean isNavegationFromGeOsFlow = false;
 
 
     public void setWsSoProcess(String wsSoProcess) {
@@ -468,6 +473,7 @@ public class Act011_Main extends Base_Activity
         //
         transList.add("inspection_answer_fixed_lbl");
         transList.add("inspection_answer_alert_lbl");
+        transList.add("inspection_answer_still_in_alert_lbl");
         transList.add("inspection_answer_already_ok_lbl");
         transList.add("inspection_answer_not_verify_lbl");
         //
@@ -484,6 +490,10 @@ public class Act011_Main extends Base_Activity
         //
         transList.add("alert_error_order_or_structure_not_found_ttl");
         transList.add("alert_error_order_or_structure_not_found_msg");
+        //
+        transList.add("alert_invalid_sys_end_date_ttl");
+        transList.add("alert_invalid_sys_end_date_msg");
+        transList.add("form_sys_start_date_lbl");
         //
         transList.addAll(Act011FrgInspection.Companion.getFragTranslationsVars());
         //
@@ -621,6 +631,11 @@ public class Act011_Main extends Base_Activity
     @Override
     public Bitmap getProductIconBmp(){
         return mPresenter.getProductIconBitmap(formLocal.getCustom_product_icon_name());
+    }
+
+    @Override
+    public HMAux recoverHmAuxTrans() {
+        return hmAux_Trans;
     }
 
     @NonNull
@@ -785,6 +800,11 @@ public class Act011_Main extends Base_Activity
     @Override
     public String getRequestingAct() {
         return requestingAct;
+    }
+
+    @Override
+    public boolean isNavegationFromGeOsFlow() {
+        return isNavegationFromGeOsFlow;
     }
 
     private void showConfirmDeleteDialog() {
@@ -1184,6 +1204,8 @@ public class Act011_Main extends Base_Activity
             }
             //
             if(bundle.containsKey(DEVICE_BUNDLE)) {
+                //Se existe essa chave, é uma navegação de fluxo de Form Os
+                isNavegationFromGeOsFlow = true;
                 Bundle deviceBundle = bundle.getBundle(DEVICE_BUNDLE);
                 this.device_item_tab_index = deviceBundle.getInt(DEVICE_ITEM_TAB_INDEX, -1);
                 this.device_item_list_index = deviceBundle.getInt(DEVICE_ITEM_LIST_INDEX, -1);
@@ -1205,6 +1227,7 @@ public class Act011_Main extends Base_Activity
             mTicket_seq_tmp = null;
             mStep_code = null;
             requestingAct = ConstantBaseApp.ACT005;
+            isNavegationFromGeOsFlow = false;
         }
     }
 
@@ -1448,7 +1471,8 @@ public class Act011_Main extends Base_Activity
                                 mdScheduleExec != null ? mdScheduleExec.getSchedule_desc() : null,
                                 mdScheduleExec != null ? mdScheduleExec.getComments() : null,
                                 formLocal.getIs_so() == 1,
-                                acessoryFormView
+                                acessoryFormView,
+                                acessoryFormViews.indexOf(acessoryFormView)
                                 );
                 tabs.add(act011FrgInspection.getTabObj(includeField));
                 screens.add(act011FrgInspection);
@@ -1487,9 +1511,6 @@ public class Act011_Main extends Base_Activity
                     updateTabStatusIntoDrawer(
                         returnValidateTabObj(index_old)
                     );
-                    if(screens.get(index_old-1) instanceof Act011FrgInspection ){
-                        ((Act011FrgInspection) screens.get(index_old-1)).resetTextFilter();
-                    }
                 }
 
                 @Override
@@ -2436,6 +2457,16 @@ public class Act011_Main extends Base_Activity
                     false
                 );
                 break;
+            case SHOW_MSG_TYPE_INVALID_SYS_END_DATE:
+                ToolBox.alertMSG(
+                    context,
+                    title,
+                    msg,
+                    null,
+                    0,
+                    false
+                );
+                break;
         }
     }
 
@@ -3294,29 +3325,50 @@ public class Act011_Main extends Base_Activity
         binding.act011DialogCheckBtnOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(validEndDate(binding)) {
-                    if(isFormOs) {
+                if(isFormOs) {
+                    if(validEndDate(binding)) {
+                        String missingAnswer = binding.act011DialogCheckTilJustifyMissingAnswerVal.getEditText().getText().toString();
+                        //LUCHE - 08/11/2021 - resgata contador antes para ser usado na validação
+                        //de refreshCurrentTabRecycle. Se não há mais não respondidos(segunda chama),
+                        //então evita loops desnecessarios
+                        int missingAnswersCounter = missingAnswersCounter();
+                        //
                         mPresenter.updateGeOsItems(
-                                geOs,
-                                missingAnswersCounter(),
-                                binding.act011DialogCheckTilJustifyMissingAnswerVal.getEditText().getText().toString(),
-                                binding.act011DialogCheckMkdateFormStart.getmValue(),
-                                binding.act011DialogCheckMkdateFormEnd.getmValue()
+                            geOs,
+                            missingAnswersCounter,
+                            missingAnswer,
+                            binding.act011DialogCheckMkdateFormStart.getmValue(),
+                            binding.act011DialogCheckMkdateFormEnd.getmValue()
                         );
-                    }
-                    //Seta valor var que controla se fluxo é finaliza ou finaliza mais novo.
-                    finalizeNewFlow = binding.act011DialogCheckOptionRg.getCheckedRadioButtonId() == R.id.act011_dialog_check_option_rdo_finalize_new;
-                    //
-                    startCheckIN();
-                }else{
-                    ToolBox.alertMSG(
+                        //Somente chama atualização das listas dos recycles se houver itens precisando
+                        //ser alterados.
+                        if(missingAnswersCounter > 0) {
+                            refreshCurrentTabRecycle();
+                        }
+                        //Seta valor var que controla se fluxo é finaliza ou finaliza mais novo.
+                        finalizeNewFlow = binding.act011DialogCheckOptionRg.getCheckedRadioButtonId() == R.id.act011_dialog_check_option_rdo_finalize_new;
+                        //
+                        startCheckIN();
+                        //
+                        alertDialog.dismiss();
+                    }else{
+                        ToolBox.alertMSG(
                             context,
                             hmAux_Trans.get("dialog_finalize_os_form_invalid_end_date_ttl"),
                             hmAux_Trans.get("dialog_finalize_os_form_invalid_end_date_end"),
                             null,
                             0
-                    );
+                        );
+                    }
+                }else{
+                    //Seta valor var que controla se fluxo é finaliza ou finaliza mais novo.
+                    finalizeNewFlow = binding.act011DialogCheckOptionRg.getCheckedRadioButtonId() == R.id.act011_dialog_check_option_rdo_finalize_new;
+                    //
+                    startCheckIN();
+                    //
+                    alertDialog.dismiss();
                 }
+
             }
         });
         //
@@ -3345,6 +3397,23 @@ public class Act011_Main extends Base_Activity
             }
         });
         //
+    }
+
+    /**
+     * Metodo rodado após finalização com itens não verificados. Varre todas as abas de acessorios
+     * e atualiza o item da lista com o status de repospondido, com nao verificado e comentario
+     */
+    private void refreshCurrentTabRecycle() {
+        for (Act011BaseFrg fragment : screens) {
+            if (fragment instanceof Act011FrgInspection) {
+                Act011FrgInspection frgInspection = (Act011FrgInspection) fragment;
+                frgInspection.notifyAdapterDataSetMayChanged();
+                //Após atualizar lista da tab, precisa atualizar lista do drawer
+                updateTabStatusIntoDrawer(
+                    frgInspection.getTabObj(false)
+                );
+            }
+        }
     }
 
     private boolean validEndDate(Act011CheckDialogBinding binding) {

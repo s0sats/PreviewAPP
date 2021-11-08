@@ -8,8 +8,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.RadioButton
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
@@ -171,10 +173,52 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
 
     private fun initVars() {
         setLabels()
+        configRdoStartDrawableColor()
         applyNewVerificationConfig()
         applyAnswersUI()
         initRecyclers()
         applyEnableStateToMoreInfoViews()
+    }
+
+    /**
+     * Fun que define a cor dos drawable de cada rdo.
+     * Fun necessario pois drawableTint no xml só funciona nas API 24 ou maior...
+     */
+    private fun configRdoStartDrawableColor() {
+        with(binding) {
+            applyDrawableStartColor(
+                act086VerificationFrgRdoAnswerFixed,
+                R.color.namoa_os_form_done_action_blue
+            )
+            applyDrawableStartColor(
+                act086VerificationFrgRdoAnswerAlreadyDone,
+                R.color.namoa_os_form_verified_green
+            )
+            applyDrawableStartColor(
+                act086VerificationFrgRdoAnswerAlert,
+                R.color.namoa_os_form_problem_red
+            )
+            applyDrawableStartColor(
+                act086VerificationFrgRdoAnswerNotVerified,
+                R.color.namoa_os_form_verify_later
+            )
+        }
+    }
+
+    /**
+     * Fun que aplica a cor do drawable do radio
+     */
+    private fun applyDrawableStartColor(
+        radioButton: RadioButton,
+        drawableTintColor: Int
+    ) {
+        radioButton.apply {
+            compoundDrawablesRelative.find {
+                it != null
+            }?.let{
+                DrawableCompat.setTint(it,ContextCompat.getColor(context, drawableTintColor))
+            }
+        }
     }
 
     private fun setAnswerFromDb() {
@@ -247,6 +291,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                     isManualDescInEdit = isEnabled
                     setText(geOsDeviceItem.manual_desc)
                     tag = geOsDeviceItem.manual_desc
+                    hint = hmAux_Trans["manual_desc_hint"]
                 }
                 act086VerificationFrgIvManualHandler.apply {
                     //Se resposta vazia, vai define icone como check
@@ -422,8 +467,8 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         with(binding) {
             act086VerificationFrgIvComment.applyTintColor(commentColor)
             act086VerificationFrgMketComment.apply {
-                setTextColor(ContextCompat.getColor(requireContext(), commentColor))
-                setHintTextColor(ContextCompat.getColor(requireContext(), commentColor))
+                setTextColor(ContextCompat.getColor(context, commentColor))
+                setHintTextColor(ContextCompat.getColor(context, commentColor))
             }
         }
     }
@@ -465,7 +510,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                         it.isEnabled = materialEnabled
                     }
                     is TextView -> {
-                        it.setTextColor(ContextCompat.getColor(requireContext(), materialColor))
+                        it.setTextColor(ContextCompat.getColor(it.context, materialColor))
                         it.isEnabled = materialEnabled
                     }
                     else -> {
@@ -497,7 +542,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                         it.isEnabled = photoEnabled
                     }
                     is TextView -> {
-                        it.setTextColor(ContextCompat.getColor(requireContext(), photoColor))
+                        it.setTextColor(ContextCompat.getColor(it.context, photoColor))
                         it.isEnabled = photoEnabled
                     }
                     else -> {
@@ -659,7 +704,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                         act086VerificationFrgMketManualDesc.apply {
                             isEnabled = isManualDescInEdit
                             tag = this.text.toString()
-                            setTextColor(ContextCompat.getColor(requireContext(),R.color.namoa_font_color_black222))
+                            setTextColor(ContextCompat.getColor(context,R.color.namoa_font_color_black222))
                         }
                         toogleRadioGroupEnabled(true)
                         //Se ja tem resposta, então libera dados complementares, pois é uma nova edição
@@ -675,7 +720,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                     act086VerificationFrgIvManualHandler.setImageDrawable(getIvManualDescIcon(isManualDescInEdit))
                     act086VerificationFrgMketManualDesc.apply{
                         isEnabled = isManualDescInEdit
-                        setTextColor(ContextCompat.getColor(requireContext(),R.color.namoa_dark_blue))
+                        setTextColor(ContextCompat.getColor(context,R.color.namoa_dark_blue))
                     }
                 }
             }
@@ -1020,8 +1065,9 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         bundle.putBoolean(Act_Product_Selection.IS_ADD_PRODUCT_LIST, true)
         bundle.putSerializable(Act_Product_Selection.PRODUCT_LIST, listOfProduct)
         mIntent.putExtras(bundle)
-        //
-        startActivityForResult(mIntent, ConstantBaseApp.ACT_PRODUCT_SELECTION_REQUEST_CODE)
+        //LUCHE - 02/11/2021 - Para funcionar no não manter act, foi necessario usar o contexto da act
+        //para a chamada todo avaliar se melhor criar interface para chamar via act....
+        requireActivity().startActivityForResult(mIntent, ConstantBaseApp.ACT_PRODUCT_SELECTION_REQUEST_CODE)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -1099,6 +1145,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                 "alert_error_on_manual_item_delete_msg",
                 "alert_error_on_save_item_msg",
                 "alert_invalid_material_qty_msg",
+                "manual_desc_hint",
             )
         }
     }

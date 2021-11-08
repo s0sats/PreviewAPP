@@ -29,7 +29,6 @@ import com.namoadigital.prj001.extensions.setAsRequired
 import com.namoadigital.prj001.extensions.setPrefix
 import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.ui.act011.frags.Act011BaseFrg
-import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -97,7 +96,6 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 this.isFormOs = true
                 //
                 arguments = Bundle().apply {
-                    putSerializable(Constant.MAIN_HMAUX_TRANS_KEY, hmAuxTrans)
                     putString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS,formStatus)
                     putInt(GE_Custom_Form_Field_LocalDao.PAGE,tabIndex)
                     putInt(PARAM_LAST_INDEX,tabLastIndex)
@@ -147,7 +145,6 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let{
-            hmAuxTrans = HMAux.getHmAuxFromHashMap(it.getSerializable(Constant.MAIN_HMAUX_TRANS_KEY) as HashMap<String?, String?>)
             tabIndex = it.getInt(GE_Custom_Form_Field_LocalDao.PAGE)
             tabLastIndex = it.getInt(PARAM_LAST_INDEX)
             formStatus = it.getString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS,"")
@@ -315,7 +312,6 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                     tilMketSerial.isHelperTextEnabled = false
                     ivSwapMachine.visibility = if(formOsHeader.backup_serial_code != null) View.INVISIBLE else View.GONE
                     ivSerialSearch.visibility = if(formOsHeader.backup_serial_code != null) View.INVISIBLE else View.GONE
-
                 }
             }else{
                 clMachineEdit.visibility = View.GONE
@@ -513,12 +509,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             val isOrderTypeInvalid = (spOsType.selectedItemPosition > orderTypeList.lastIndex || orderTypeList[spOsType.selectedItemPosition].orderTypeCode <= 0)
             val isMachineEmpty =  swMachine.isChecked && (selectedBkpMachineProduct == null || selectedBkpMachineSerialCode == null)
             val isMachineTheSame = (swMachine.isChecked && !isMachineEmpty && defaultBkpMachineProduct?.product_code == selectedBkpMachineProduct?.product_code && selectedBkpMachineSerialId == formSerialId)
-            val isStartDateInvalid = ( mkdtStartDate.isValid
-                                       && !ToolBox_Inf.isFutureDate(mkdtStartDate.getmValue())
-                                       && ( formOsHeader.last_measure_date == null
-                                            || ToolBox_Inf.dateToMilliseconds(formOsHeader.last_measure_date) <= ToolBox_Inf.dateToMilliseconds(mkdtStartDate.getmValue())
-                                       )
-                                    ).not()
+            val isStartDateInvalid = isValidStartDate().not()
             clMachineEdit.background = if (isMachineEmpty || isMachineTheSame) {
                 ContextCompat.getDrawable(requireContext(), R.drawable.shape_error)
             } else {
@@ -556,6 +547,20 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 }
             }
         }
+    }
+
+    /**
+     * Valida se data iniicio informada é valida, não é no futuro e é maior que a data da ultima medição.
+     */
+    private fun isValidStartDate() :Boolean {
+       return with(binding){
+           (mkdtStartDate.isValid
+           && !ToolBox_Inf.isFutureDate(mkdtStartDate.getmValue())
+           && (formOsHeader.last_measure_date == null
+               || ToolBox_Inf.dateToMilliseconds(formOsHeader.last_measure_date) <= ToolBox_Inf.dateToMilliseconds(mkdtStartDate.getmValue())
+              )
+          )
+       }
     }
 
     private fun showActiveGPSAlert() {
@@ -691,7 +696,11 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         measureTp: MeMeasureTp
     ): Boolean {
         if(formOsHeader.last_measure_value != null && formOsHeader.last_measure_date != null) {
-            val valPerDay = getDiffBetweenDatesInFloatDays(formOsHeader.last_measure_date!!)
+            //Como considera a data e inicio para calculo, se ela for invalida, o value by day tb será, pois não há como calcular.
+            if(!isValidStartDate()){
+                return false
+            }
+            val valPerDay = getDiffBetweenDatesInFloatDays(formOsHeader.last_measure_date!!, binding.mkdtStartDate.getmValue())
             //Se o valor for menor do que 0, considerar 0
             val minConsider : Float? = measureTp.restrictionMin?.let { min->
                     val minToConsider = formOsHeader.last_measure_value!! - (min * valPerDay)
@@ -721,15 +730,15 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     /**
      * Calcula a diferença de dias entre 2 datas como float
      */
-    private fun getDiffBetweenDatesInFloatDays(lastMeasureDate: String): Float {
+    private fun getDiffBetweenDatesInFloatDays(lastMeasureDate: String, startDate: String): Float {
         //Qtd de ms em um dias
         val ONE_DAY_IN_MILLISECOND = 86400000
         //Data passada em MS
         val lastMeasureDateMs = ToolBox_Inf.dateToMilliseconds(lastMeasureDate)
         //Data atual em MS
-        val nowInMs = Calendar.getInstance().timeInMillis
+        val startDateInMs = ToolBox_Inf.dateToMilliseconds(startDate)
         //Diferença entre das data em MS
-        val diffInMs = nowInMs - lastMeasureDateMs
+        val diffInMs = startDateInMs - lastMeasureDateMs
         //Calc dias inteiros
         val calcDay = diffInMs / ONE_DAY_IN_MILLISECOND
         //Calc perc de dias...
@@ -804,11 +813,12 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 resetBkpMachineProductSerial()
             }
             //
-            ivSwapMachine.setOnClickListener {
-                callProductSelection()
-            }
-            //
-            mketMachineSerialEdit.setOnReportTextChangeListner(object : MKEditTextNM.IMKEditTextChangeText{
+            if(isOsCreation){
+                ivSwapMachine.setOnClickListener {
+                    callProductSelection()
+                }
+                //
+                mketMachineSerialEdit.setOnReportTextChangeListner(object : MKEditTextNM.IMKEditTextChangeText{
                     override fun reportTextChange(text: String?) {
                     }
 
@@ -826,23 +836,24 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                         ivSerialSearch.isEnabled = textNotEmpty
                     }
                 }
-            )
-            mketMachineSerialEdit.setDelegateTextBySpecialist {
-                isBarcodeRead = true
-                ivSerialSearch.performClick()
-            }
-            mketOsMainMeasureVal.setDelegateTextBySpecialist {
-                if(!mketOsMainMeasureVal.isValid){
-                    mketOsMainMeasureVal.text = null
+                )
+                mketMachineSerialEdit.setDelegateTextBySpecialist {
+                    isBarcodeRead = true
+                    ivSerialSearch.performClick()
                 }
-            }
-            //
-            ivSerialSearch.setOnClickListener {
-                if(selectedBkpMachineProduct != null && mketMachineSerialEdit.text.toString().isNotEmpty()) {
-                    mCreationListener?.searchSerialClick(
-                        bkpProductCode = selectedBkpMachineProduct!!.product_code,
-                        bkpSerialId = mketMachineSerialEdit.text.toString()
-                    )
+                mketOsMainMeasureVal.setDelegateTextBySpecialist {
+                    if(!mketOsMainMeasureVal.isValid){
+                        mketOsMainMeasureVal.text = null
+                    }
+                }
+                //
+                ivSerialSearch.setOnClickListener {
+                    if(selectedBkpMachineProduct != null && mketMachineSerialEdit.text.toString().isNotEmpty()) {
+                        mCreationListener?.searchSerialClick(
+                            bkpProductCode = selectedBkpMachineProduct!!.product_code,
+                            bkpSerialId = mketMachineSerialEdit.text.toString()
+                        )
+                    }
                 }
             }
         }

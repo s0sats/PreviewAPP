@@ -16,52 +16,60 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao
 import com.namoadigital.prj001.databinding.Act011FrgIncludeHeaderBinding
 import com.namoadigital.prj001.databinding.Act011InspectionListFragmentBinding
-import com.namoadigital.prj001.model.AcessoryFormView
-import com.namoadigital.prj001.model.Act011FormTab
-import com.namoadigital.prj001.model.Act011FormTabStatus
-import com.namoadigital.prj001.model.InspectionCell
+import com.namoadigital.prj001.extensions.setCheckedJumpingAnimation
+import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.model.InspectionCell.Companion.CRITICAL_FORECAST
 import com.namoadigital.prj001.model.InspectionCell.Companion.FORECAST
 import com.namoadigital.prj001.model.InspectionCell.Companion.MANUAL_ALERT
 import com.namoadigital.prj001.model.InspectionCell.Companion.NORMAL
-import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
 
-private const val ARG_VIEW_OBJECT = "ARG_VIEW_OBJECT"
-private const val MAIN_HMAUX_TRANS_KEY = "MAIN_HMAUX_TRANS_KEY"
+private const val ARG_ACESSORY_FORM_VIEW_IDX = "ARG_ACESSORY_FORM_VIEW_IDX"
 
-class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>() {
+class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>() , Act011FrgInspectionNotifyAdapter {
 
     private lateinit var mLayoutManager: LinearLayoutManager
     private var tabItemSelectedIndex: Int = -1
     private val mAdapter by lazy {
-        Act011InspectionFormAdapter(acessoryFormView, hmAuxTrans, ::onItemSelected, ::onNotVerifyItemSelected)
+        Act011InspectionFormAdapter(acessoryFormView, hmAuxTrans, ::onItemSelected, ::onNotVerifyItemSelected, ::onAdapterFilterApplied)
     }
+    private var acessoryFormViewIdx = -1
     private lateinit var acessoryFormView: AcessoryFormView
     private var _mFrgListener: InspectionListFragmentInteraction? = null
     private val mFrgListener get() = _mFrgListener!!
+    //LUCHE - 08/11/2021 - Var que identifica se existe não previstos.
+    //Já existe uma metodo que faz isso, porem, como checagem precisa ser feita a cada caracter filtrado,
+    //criei a variante val pra evitar processamento desnecessario ja que até hj esse valor e final
+    //uma vez que para responder um nao previsto, é necessairo navegar para tela de verificacao
+    private val hasNonForecast by lazy {
+        val find = acessoryFormView.inspections.find {
+            it.status == NORMAL && it.answerStatus == null
+        }
+        //Se encontrou um não previsto sem resposta
+        find != null
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let{
-            hmAuxTrans = HMAux.getHmAuxFromHashMap(it.getSerializable(Constant.MAIN_HMAUX_TRANS_KEY) as HashMap<String?, String?>)
             tabIndex = it.getInt(GE_Custom_Form_Field_LocalDao.PAGE)
             tabLastIndex = it.getInt(PARAM_LAST_INDEX)
             formStatus = it.getString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS,"")
             scheduleDesc = it.getString(MD_Schedule_ExecDao.SCHEDULE_DESC)
             scheduleComments = it.getString(GE_Custom_Form_Field_LocalDao.COMMENT)
             isFormOs = it.getBoolean(GE_Custom_Form_LocalDao.IS_SO,false)
-//            acessoryFormView = it.getSerializable(ARG_VIEW_OBJECT) as AcessoryFormView
-            savedInstanceState?.let {
-                acessoryFormView = mFrgListener.getObjectView(tabIndex)
-            }
+            acessoryFormViewIdx = it.getInt(ARG_ACESSORY_FORM_VIEW_IDX,-1)
         }
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        //Caso seja um recuperação do frg, chama interface que resgata acessoryFormView da act.
+        savedInstanceState?.let {
+            acessoryFormView = mFrgListener.getObjectView(acessoryFormViewIdx)
+        }
         //
         setLabels()
         //
@@ -77,23 +85,18 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
 
     private fun setChkHideNonForecast() {
         if (!hasNoneNonForecastItem()) {
-            if (!acessoryFormView.nonForecastFilter) {
-                binding.chkNonForecastItem.apply {
-                    post {
-                        performClick()
-                    }
-                }
-            } else {
                 binding.apply {
+                    chkNonForecastItem.setCheckedJumpingAnimation(acessoryFormView.nonForecastFilter)
                     acessoryFormView.nonForecastFilter = chkNonForecastItem.isChecked
                     mAdapter.applyNonForecastFilter(chkNonForecastItem.isChecked)
                     mAdapter.notifyDataSetChanged()
                     handleAddNewProcessVisibility()
                     handleForecastEmptyList()
                 }
-            }
+
         }else{
-            binding.chkNonForecastItem.isChecked = false
+            binding.chkNonForecastItem.setCheckedJumpingAnimation(false)
+            binding.chkNonForecastItem.isEnabled = false
             mAdapter.applyNonForecastFilter(binding.chkNonForecastItem.isChecked)
             handleAddNewProcessVisibility()
         }
@@ -121,6 +124,8 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
                     } else {
                         hideNonForecastCheckBoxFilter(true)
                     }
+                    //LUCHE - 08/11/2021 - Valida visibilidade do btn
+                    handleAddNewProcessVisibility()
                     mAdapter.filter.filter(s)
                 }
             })
@@ -168,13 +173,13 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
         binding.edtInspectionFilter.setText("")
         if(hasNoneNonForecastItem()){
             binding.apply {
-                chkNonForecastItem.isChecked = false
+                chkNonForecastItem.setCheckedJumpingAnimation(false)
                 mAdapter.applyNonForecastFilter(chkNonForecastItem.isChecked)
                 handleAddNewProcessVisibility()
             }
         }else{
             binding.apply {
-                chkNonForecastItem.isChecked = true
+                chkNonForecastItem.setCheckedJumpingAnimation(true)
                 mAdapter.applyNonForecastFilter(chkNonForecastItem.isChecked)
                 handleAddNewProcessVisibility()
             }
@@ -234,7 +239,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
             context,
             ConstantBaseApp.PROFILE_PRJ001_CHECKLIST,
             ConstantBaseApp.PROFILE_PRJ001_CHECKLIST_PARAM_ITEM_CHECK_NEW
-        ) && !binding.chkNonForecastItem.isChecked
+        ) && (!binding.chkNonForecastItem.isChecked || binding.edtInspectionFilter.text.toString().trim().isNotEmpty())
     }
 
     private fun setInspectionList() {
@@ -245,19 +250,28 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
             ViewCompat.hasNestedScrollingParent(this )
             if(tabItemSelectedIndex >= 0) {
                 binding.nsvMain.post {
+                    //LUCHE - 05/11/2021
+                    //Movido a aplicação do filtro pra fora do when, pois deve ser aplicado em ambos
+                    //os casos.Correção de bug , pois no caso de desistencia da criação de form manual
+                    //Int.MAX_VALUE, não aplicava o filtro.
+                    if (!acessoryFormView.filterVal.isEmpty()) {
+                        binding.edtInspectionFilter.setText(acessoryFormView.filterVal)
+                    }
+                    //
                     when(tabItemSelectedIndex){
                         Int.MAX_VALUE -> {
                             binding.nsvMain.fullScroll(View.FOCUS_DOWN)
                         }
                         else ->{
                             mAdapter.highlightedItemPosition = tabItemSelectedIndex
-                            if (!acessoryFormView.filterVal.isEmpty()) {
-                                binding.edtInspectionFilter.setText(acessoryFormView.filterVal)
-                            }
                             mAdapter.notifyItemChanged(tabItemSelectedIndex)
                             //Calcula posicao inicial do Recycler + posicao final do item seleciona - o tamanho do item.
-                            val y: Float = this.getY() + this.getChildAt(tabItemSelectedIndex)
-                                .getY() - this.getChildAt(tabItemSelectedIndex).measuredHeight
+                            //LUCHE - 04/11/2021 - Add tratativa de null, pois ao limpar reposta de um item e volta,
+                            //aconteceu um crash
+                            val childHeight = this.getChildAt(tabItemSelectedIndex)?.let {
+                                it.getY() - it.measuredHeight
+                            } ?: 0f
+                            val y: Float = this.getY() + childHeight
                             binding.nsvMain.scrollTo(0, y.toInt())
                         }
                     }
@@ -287,7 +301,6 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
         }else{
             binding.tvPlaceholder.text = hmAuxTrans.get("inspection_empty_list_filtered")
         }
-
     }
 
     private fun hasNoneNonForecastItem() = acessoryFormView.inspections.count {
@@ -305,7 +318,8 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
             scheduleDesc: String?,
             scheduleComments: String?,
             isFormOs: Boolean,
-            acessoryFormView: AcessoryFormView
+            acessoryFormView: AcessoryFormView,
+            acessoryFormViewIdx: Int
         ) =
             Act011FrgInspection().apply {
                 this.hmAuxTrans = hmAux_Trans
@@ -316,15 +330,16 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
                 this.scheduleComments = scheduleComments
                 this.isFormOs = isFormOs
                 arguments = Bundle().apply {
-                    putSerializable(Constant.MAIN_HMAUX_TRANS_KEY, hmAuxTrans)
                     putString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS,formStatus)
                     putInt(GE_Custom_Form_Field_LocalDao.PAGE,tabIndex)
                     putInt(PARAM_LAST_INDEX,tabLastIndex)
                     putString(MD_Schedule_ExecDao.SCHEDULE_DESC,scheduleDesc)
                     putString(GE_Custom_Form_Field_LocalDao.COMMENT,scheduleComments)
+                    putInt(ARG_ACESSORY_FORM_VIEW_IDX,acessoryFormViewIdx)
                 }
                 this.acessoryFormView = acessoryFormView
                 this.tabItemSelectedIndex = acessoryFormView.lastPositionSelected
+                this.acessoryFormViewIdx = acessoryFormViewIdx
             }
 
         fun getFragTranslationsVars(): List<String> {
@@ -351,8 +366,6 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
 
     override fun getViewBinding() = Act011InspectionListFragmentBinding.inflate(layoutInflater)
     override fun getNavegationInclude() = binding.incNavegation
-
-
 
     override fun getTabErrorCount(): Int {
 //        val problemReportedCount = acessoryFormView.inspections.count {
@@ -447,24 +460,12 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
         super.setUserVisibleHint(isVisibleToUser)
         if(isAdded){
             if(isVisibleToUser) {
-                binding.chkNonForecastItem.apply {
-                    if (hasNoneNonForecastItem()) {
-                        if (isChecked) {
-                            isChecked = false
-                            binding.handleCheckboxClick(this)
-                        }
-                        isEnabled = false
-                    } else {
-                        if (!isChecked) {
-                            isChecked = true
-                        }
-                        binding.handleCheckboxClick(this)
-                    }
-                }
                 binding.edtInspectionFilter.text.clear()
             }else{
                 mAdapter.highlightedItemPosition = -1
                 binding.nsvMain.fullScroll(View.FOCUS_UP)
+                //Limpa filtro texto ao sair.
+                resetTextFilter()
             }
         }
 
@@ -494,5 +495,53 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
         mAdapter.refreshList(position, onNotVerifyActionItem)
         mFrgListener.onRefreshTabCounter(acessoryFormView.tabIndex)
     }
+
+    /**
+     * Fun disparada pelo adapter ao filtrar itens passadno a qtd de itens existentes no filtro.
+     * Define a visibilidade do recycler e visibilidade e lbl do placeholder
+     * Se qtyItensFiltered 0:
+     *  - Esconde o recycle e exibe o placeholder
+     * Se qtyItensFiltered 0 , não houver filtro texto e existem itens não previstos, então significa
+     * que o adapter é 0 , pois não existem previstos, mas existem não previstos oculto pelo filtro
+     * e por isso a msg é de que existem itens ocultos
+     */
+    fun onAdapterFilterApplied(qtyItensFiltered: Int){
+        with(binding){
+            rvInspections.visibility = if(qtyItensFiltered == 0){ View.GONE }else{ View.VISIBLE }
+            tvPlaceholder.visibility = if(qtyItensFiltered == 0){ View.VISIBLE }else{ View.GONE }
+            tvPlaceholder.text = if( qtyItensFiltered == 0
+                                     && edtInspectionFilter.text.toString().trim().isEmpty()
+                                     && hasNonForecast
+                                ){
+                                    hmAuxTrans["inspection_empty_list_filtered"]
+                                } else{
+                                    hmAuxTrans["inspection_empty_list_placeholder"]
+                                }
+        }
+    }
+
     //
+    /**
+     * Fun que pega somente os itens não previstos sem resposta e altera as propriedades necessarias
+     * que o layout seja atualizado via initViewVars. Possui faz de controle para chamar
+     * notifyDataSetChanged somente se houve alteração.
+     */
+    override fun notifyAdapterDataSetMayChanged() {
+        //Var de controle de se é necessario chamar notifyDataSetChanged
+        var hasAnyChange = false
+        acessoryFormView.inspections.filter { inspecell->
+          !inspecell.status.equals(GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL,true) && inspecell.answerStatus == null
+        }.forEach{ inspec ->
+            hasAnyChange = true
+            inspec.execType = GeOsDeviceItem.EXEC_TYPE_NOT_VERIFIED
+            inspec.answerStatus = ConstantBaseApp.SYS_STATUS_DONE
+            inspec.hasComment = true
+            //
+            inspec.initViewVars()
+        }
+        //Se algum item alterado, chama notifiy
+        if(hasAnyChange) {
+            mAdapter.notifyDataSetChanged()
+        }
+    }
 }

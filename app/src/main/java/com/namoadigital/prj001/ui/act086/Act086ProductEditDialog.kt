@@ -69,7 +69,11 @@ class Act086ProductEditDialog : BottomSheetDialogFragment() {
             act086ProductEditDialogTvProductDesc.text = materialItem.productDesc
             //
             act086ProductEditDialogEtQty.apply {
-                setText(materialItem.productQty.toString())
+                if(isAddAction) {
+                    setText("")
+                }else{
+                    setText(materialItem.productQty.toString())
+                }
             }
             act086ProductEditDialogTvUnit.text = materialItem.productUnit
         }

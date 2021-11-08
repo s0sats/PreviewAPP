@@ -19,6 +19,7 @@ import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.EXEC_TYPE_FIXED
 import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.EXEC_TYPE_NOT_VERIFIED
 import com.namoadigital.prj001.model.InspectionCell
 import java.util.*
+import kotlin.math.abs
 
 class Act011InspectionFormAdapter(
     /*
@@ -27,14 +28,9 @@ class Act011InspectionFormAdapter(
      */
     private val acessoryFormView: AcessoryFormView,
     private val hmAuxTrans: HMAux,
-    private val onItemSelected: (
-        position: Int,
-        itemPk: String
-    ) -> Unit,
-    private val onNotVerifyItemSelected: (
-        position: Int,
-        item: InspectionCell
-    ) -> Unit
+    private val onItemSelected: (position: Int, itemPk: String) -> Unit,
+    private val onNotVerifyItemSelected: (position: Int, item: InspectionCell) -> Unit,
+    private val onAdapterFilterApplied: (Int) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
     private var inspections: MutableList<InspectionCell>
     private val inspectionsFiltered: MutableList<InspectionCell> = mutableListOf()
@@ -88,6 +84,10 @@ class Act011InspectionFormAdapter(
     }
 
     fun applyNonForecastFilter(filterApplied: Boolean) {
+        //LUCHE - Ao filtrar, highlightedItem deve ser resetado, já que não faz mais sentido exibir
+        //vh em azul.
+        clearHighlightedItemPosition()
+        //
         this.filterApplied = filterApplied
         inspectionsFiltered.clear()
         if (this.filterApplied) {
@@ -113,13 +113,31 @@ class Act011InspectionFormAdapter(
     }
 
     fun refreshList(position: Int, onNotVerifyActionItem: InspectionCell) {
-        inspectionsFiltered.set(position, onNotVerifyActionItem)
+        //LUCHE - 04/11/2021 - Altera highlightedItemPosition para o item passado e notifica mudança
+        //no anterior caso exista.
+        val oldHighlight = highlightedItemPosition;
+        highlightedItemPosition = position
+        if(oldHighlight > -1) {
+            notifyItemChanged(oldHighlight)
+        }
+        inspectionsFiltered[position] = onNotVerifyActionItem
         notifyItemChanged(position)
+    }
+
+    /**
+     * Reseta valor de HighlightedItem
+     */
+    private fun clearHighlightedItemPosition() {
+        highlightedItemPosition = -1
     }
 
     inner class InspectionFormFilter : Filter() {
 
         override fun performFiltering(constraint: CharSequence?): FilterResults {
+            //LUCHE - Ao filtrar, highlightedItem deve ser resetado, já que não faz mais sentido exibir
+            //vh em azul.
+            clearHighlightedItemPosition()
+            //
             var temp = mutableListOf<InspectionCell>()
             var charFilter = ToolBox.AccentMapper(constraint.toString().toLowerCase())
             textFilter = charFilter
@@ -157,6 +175,8 @@ class Act011InspectionFormAdapter(
                 results.values?.let {
                     inspectionsFiltered.addAll(results.values as MutableList<InspectionCell>)
                 }
+                //LUCHE - 08/11/2021 - Dispara HoF que reporta qtd de itens filtrados.
+                onAdapterFilterApplied(inspectionsFiltered.size)
                 //
                 notifyDataSetChanged()
             }
@@ -265,34 +285,22 @@ class Act011InspectionFormAdapter(
                 ) {
                     binding.tvDayCount.visibility = View.GONE
                 } else {
-                    binding.tvDayCount.visibility = View.VISIBLE
-                    if (status.equals(InspectionCell.NORMAL)) {
-                        binding.tvDayCount.text =
-                            "${hmAuxTrans.get("inspection_missing_days")}: ${dayCount}"
-                        binding.tvDayCount.setTextColor(
-                            ContextCompat.getColor(
-                                context,
-                                R.color.gray_colors_menu
-                            )
-                        )
-                    } else {
-                        binding.tvDayCount.text =
-                            "${hmAuxTrans.get("inspection_alert_days")}: ${dayCount}"
-                        if (isDone) {
-                            binding.tvDayCount.setTextColor(
-                                ContextCompat.getColor(
-                                    context,
-                                    R.color.gray_colors_menu
-                                )
-                            )
-                        } else {
-                            binding.tvDayCount.setTextColor(
-                                ContextCompat.getColor(
-                                    context,
-                                    R.color.namoa_os_form_problem_red
-                                )
-                            )
+                    //LUCHE - 04/11/2021 - Revisado definição de lbl e cor, pois deve se olhar apenas
+                    //se data maior ou menor que 0.
+                    binding.tvDayCount.apply {
+                        visibility = View.VISIBLE
+                        text = if(dayCount < 0){
+                            "${hmAuxTrans["inspection_alert_days"]}: ${abs(dayCount)}"
+                        }else{
+                            "${hmAuxTrans["inspection_missing_days"]}: ${abs(dayCount)}"
                         }
+                        setTextColor(
+                            if(dayCount < 0 && !isDone){
+                                ContextCompat.getColor(context,R.color.namoa_os_form_problem_red)
+                            } else{
+                                ContextCompat.getColor(context,R.color.gray_colors_menu)
+                            }
+                        )
                     }
                 }
                 //

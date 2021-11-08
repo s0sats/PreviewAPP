@@ -551,6 +551,36 @@ class GeOsDao(
         var dateStartLastMinute : String? = ToolBox_Inf.getDateLastMinute(geOs.date_start)
         //
         geOsDeviceItens.forEach { item ->
+
+            /*
+             * Se Status PROJECTED_DATE_REACHED, verifica se deve alterar o status para:
+             *   NORMAL:
+             *      - Se o data projetada foi alcançada no servidor, mas a data de inicio informada
+             * menor que a data de projetada, volta para normal.
+             * Isso só acontece no app, pois o usr pode informar uma data anterior a atual.
+             */
+            if(GeOsDeviceItem.ITEM_CHECK_STATUS_PROJECTED_DATE_REACHED.equals(item.item_check_status,true)){
+                //Verifica se data projetada do proximo ciclo foi atingida
+                if (item.next_cycle_measure_date != null
+                    && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_measure_date,dateStartLastMinute) > 0
+                ) {
+                    item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL
+                }
+            }
+
+            /*
+             * Se Status LIMIT_DATE_REACHED, verifica se deve alterar o status para:
+             *   NORMAL:
+             *      - Se data de limite(next_cycle_limit_date) for maior que data de inicio
+             *  até o ultimo minuto(dateStartLastMinute)
+             */
+            if(GeOsDeviceItem.ITEM_CHECK_STATUS_LIMIT_DATE_REACHED.equals(item.item_check_status,true)){
+                if (item.next_cycle_limit_date != null && geOs.date_start != null
+                    && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_limit_date,dateStartLastMinute) > 0
+                ) {
+                    item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL
+                }
+            }
             /*
              * Se Status Normal, verifica se deve alterar o status para:
              *   PROJECTED_DATE_REACHED:
@@ -597,20 +627,6 @@ class GeOsDao(
             if(GeOsDeviceItem.ITEM_CHECK_STATUS_PROJECTED_DATE_REACHED.equals(item.item_check_status,true)){
                 if (item.next_cycle_measure != null
                     && item.next_cycle_measure.compareTo(measureConsider) > 0
-                ) {
-                    item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL
-                }
-            }
-
-            /*
-           * Se Status LIMIT_DATE_REACHED, verifica se deve alterar o status para:
-           *   NORMAL:
-           *      - Se data de limite(next_cycle_limit_date) for maior que  data de inicio
-           *  até o ultimo minuto(dateStartLastMinute)
-           */
-            if(GeOsDeviceItem.ITEM_CHECK_STATUS_LIMIT_DATE_REACHED.equals(item.item_check_status,true)){
-                if (item.next_cycle_limit_date != null && geOs.date_start != null
-                    && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_limit_date,dateStartLastMinute) > 0
                 ) {
                     item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL
                 }

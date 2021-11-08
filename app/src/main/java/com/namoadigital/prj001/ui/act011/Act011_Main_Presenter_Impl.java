@@ -563,8 +563,11 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                                     customFormLocal
                             );
                 }
-                //
-                if (hasNformPending) {
+                //LUCHE - 29/10/2021
+                //Alterado validação, adicionando a condição de não ser um fluxo de navegação de form o.s
+                //pois, no caso da verificação de um item, o usr navega para outra act086 e ao voltar,
+                // não deve ver novamente a msg.
+                if (hasNformPending && !mView.isNavegationFromGeOsFlow()) {
                     mView.showMsg(
                             hmAux_Trans.get("alert_nform_already_started_ttl"),
                             hmAux_Trans.get("alert_nform_already_started_msg") + " " +
@@ -600,7 +603,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 inspections.add(
                         new InspectionCell(
                                 item.getManual_desc() == null ? item.getItem_check_desc():item.getManual_desc(),
-                                item.getTarget_date() != null? Math.abs(ToolBox_Inf.getDateDiferenceInDays(item.getTarget_date(),ToolBox_Inf.getDateLastMinute(ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT)))) : null,
+                                item.getTarget_date() != null? ToolBox_Inf.getDateDiferenceInDays(item.getTarget_date(),ToolBox_Inf.getDateLastMinute(ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT))): null,
                                 getPhotoCount(item),
                                 item.getMaterialList().size(),
                                 item.getApply_material().equals(APPLY_MATERIAL_REQUIRED),
@@ -1445,6 +1448,16 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             return;
         }
 
+        //LUCHE - 29/10/2021 - Valida se data fim(agora) é maior que data inicio
+        if(validateSysStartDateIsBiggerThanSysEndDate(formData.getSys_date_start())){
+            mView.showMsg(
+                hmAux_Trans.get("alert_invalid_sys_end_date_ttl"),
+                getFormattedInvalidSysEndDateMsg(formData.getSys_date_start()),
+                Act011_Main.SHOW_MSG_TYPE_INVALID_SYS_END_DATE
+            );
+            return;
+        }
+
         custom_form_LocalDao.addUpdate(
                 new GE_Custom_Form_Local_Sql_004(
                         String.valueOf(formData.getCustomer_code()),
@@ -1528,6 +1541,34 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         }else{
             mView.defineFinalizeFlow();
         }
+    }
+
+    /**
+     * Metodo que valida se data de inicio é maior que a data atual(data da finalização)
+     * @param sysDateStart
+     * @return
+     */
+    private boolean validateSysStartDateIsBiggerThanSysEndDate(String sysDateStart) {
+        return  ToolBox_Inf.getDateDiferenceInMilliseconds(
+                                sysDateStart,
+                                ToolBox.sDTFormat_Agora(
+                                    ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT
+                                )
+                ) > 0;
+    }
+
+    /**
+     * Metodo que formata msg de erro , exibindo tradução, nome do campo + data de inicio
+     * @param sysStartDate
+     * @return
+     */
+    private String getFormattedInvalidSysEndDateMsg(String sysStartDate){
+        return
+            hmAux_Trans.get("alert_invalid_sys_end_date_msg") +"\n"+
+            hmAux_Trans.get("form_sys_start_date_lbl") +": "+  ToolBox_Inf.millisecondsToString(
+                ToolBox_Inf.dateToMilliseconds(sysStartDate),
+                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+            );
     }
 
     private boolean isFromTicketActs() {
@@ -2252,7 +2293,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         //
         return new InspectionCell(
                 deviceItem.getItem_check_desc(),
-                Math.abs(ToolBox_Inf.getDateDiferenceInDays(deviceItem.getTarget_date(),ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"))),
+                ToolBox_Inf.getDateDiferenceInDays(deviceItem.getTarget_date(),ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT)),
                 getPhotoCount(deviceItem),
                 deviceItem.getMaterialList().size(),
                 deviceItem.getApply_material().equals(APPLY_MATERIAL_REQUIRED),
