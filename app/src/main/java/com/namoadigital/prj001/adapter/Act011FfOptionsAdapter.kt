@@ -13,6 +13,7 @@ import com.namoadigital.prj001.ui.act011.Act011FfOption
 class Act011FfOptionsAdapter(
     val tabs: List<Act011FormTab>,
     var tabSelected:Int,
+    val isFormSO: Boolean,
     val mListener: Act011FfOption.ICustom_Form_FF_Options_ll
 ) : RecyclerView.Adapter<Act011FfOptionsAdapter.MyFormTabVH>() {
 
@@ -22,7 +23,7 @@ class Act011FfOptionsAdapter(
 
     override fun onBindViewHolder(holder: MyFormTabVH, position: Int) {
         val tab = tabs[position]
-        holder.onBinding(tab)
+        holder.onBinding(tab, position)
 
     }
 
@@ -32,8 +33,14 @@ class Act011FfOptionsAdapter(
 
 
     inner class MyFormTabVH(val binding: Act011FfOptionsCellBinding, val mListener: Act011FfOption.ICustom_Form_FF_Options_ll) : RecyclerView.ViewHolder(binding.root){
-        fun onBinding(item: Act011FormTab){
+        fun onBinding(item: Act011FormTab, position: Int){
             with(binding) {
+                if(isFormSO
+                    && position == 0){
+                    tvFormTabFieldsCount.visibility = View.INVISIBLE
+                }else{
+                    tvFormTabFieldsCount.visibility = View.VISIBLE
+                }
                 clTabItem.apply {
                     setOnClickListener {
                         mListener.onTabSelected(item.page)
