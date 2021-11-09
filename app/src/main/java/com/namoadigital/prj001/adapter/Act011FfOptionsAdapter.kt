@@ -70,7 +70,7 @@ class Act011FfOptionsAdapter(
                 }
 
                 tvFormTabName.text = item.name
-                tvFormTabOrder.text = "${item.page.toString()}."
+                tvFormTabOrder.text = getTabOrder(item)
                 tvFormTabFieldsCount.text = item.fieldCount.toString()
                 tvFormTabTracking.visibility = View.INVISIBLE
                 item.tracking?.let {
@@ -100,6 +100,13 @@ class Act011FfOptionsAdapter(
                 }
             }
         }
+
+        /**
+         * Fun que ajusta o indice caso seja um form O.S
+         * Nesses casos, o indice exibido é page + 1
+         */
+        private fun getTabOrder(item: Act011FormTab) =
+            "${ if(!isFormSO) item.page else item.page + 1 }."
     }
 
 }
