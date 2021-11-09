@@ -14,7 +14,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="4dp"
-        android:background="@color/cardview_dark_background" />
+        android:background="@color/namoa_dark_blue" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -30,13 +30,12 @@
             android:text="Oleo Super Freio"
             android:textColor="@color/namoa_font_color_black222"
             android:textSize="18sp"
-            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.501"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/act086_product_edit_dialog_tv_product_id" />
 
-        <EditText
+        <com.namoa_digital.namoa_library.ctls.MKEditTextNM
             android:id="@+id/act086_product_edit_dialog_et_qty"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -45,6 +44,12 @@
             android:ems="2"
             android:imeOptions="actionDone"
             android:inputType="numberDecimal"
+            app:mInputType="NUMBER"
+            app:mDecimal="4"
+            app:mBARCODE="false"
+            app:mNFC="false"
+            app:mOCRVin="false"
+            app:mOCR="false"
             android:selectAllOnFocus="true"
             android:text="2,1"
             android:textSize="@dimen/font_size_font_16"
