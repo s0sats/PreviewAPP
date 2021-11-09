@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.model
 
+import com.namoadigital.prj001.util.ToolBox_Inf
 import java.io.Serializable
 
 class Act086MaterialItem(
@@ -32,5 +33,5 @@ class Act086MaterialItem(
         this.creationMs = creationMs
     }
 
-    fun getFormttedQty() = if(productQty > 0f) "$productQty $productUnit" else ""
+    fun getFormttedQty() = if(productQty > 0f) "${ToolBox_Inf.convertFloatToBigDecimalString(productQty,4,true)} $productUnit" else ""
 }

@@ -3,7 +3,6 @@ package com.namoadigital.prj001.ui.act087
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-
 import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
@@ -35,8 +34,6 @@ import com.namoadigital.prj001.util.ToolBox_Inf
 import com.namoadigital.prj001.view.act.product_selection.Act_Product_Selection
 import java.math.BigDecimal
 import java.math.RoundingMode
-import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.math.ceil
 
 class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrgInfr {
@@ -479,16 +476,10 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
      * na medição
      */
     private fun getFormattedLastMeasureValue(lastMeasureValue: Float) : String{
-//        val decimalSeparator = DecimalFormatSymbols.getInstance().decimalSeparator
-//        BigDecimal(lastMeasureValue.toDouble()).setScale(
-//            formOsHeader.restriction_decimal ?: 4,
-//            RoundingMode.HALF_DOWN
-//        ).toString().replace('.',decimalSeparator)
-        return ToolBox_Inf.applyDecimalSeparatorByUserLocale(
-            BigDecimal(lastMeasureValue.toDouble()).setScale(
-                formOsHeader.restriction_decimal ?: 4,
-                RoundingMode.HALF_DOWN
-            ).toString()
+        return ToolBox_Inf.convertFloatToBigDecimalString(
+            lastMeasureValue,
+            formOsHeader.restriction_decimal ?: 4,
+            true
         )
     }
 

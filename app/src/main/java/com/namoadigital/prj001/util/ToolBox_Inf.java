@@ -8951,7 +8951,7 @@ public class ToolBox_Inf {
      * @return
      */
     public static String convertFloatToBigDecimalString(float valor, int decimalScale, boolean applyDecimalSeparatorByLocale){
-        String convertedValue = BigDecimal.valueOf((double) valor).setScale(decimalScale, RoundingMode.HALF_DOWN).toString();
+        String convertedValue =  new DecimalFormat("#.####").format(BigDecimal.valueOf((double) valor).setScale(decimalScale, RoundingMode.HALF_DOWN));
         if(applyDecimalSeparatorByLocale){
            return  applyDecimalSeparatorByUserLocale(convertedValue);
         }

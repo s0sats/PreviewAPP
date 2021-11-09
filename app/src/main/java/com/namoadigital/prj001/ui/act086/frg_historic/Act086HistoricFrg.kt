@@ -63,7 +63,9 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
             nextCycleLimitDate =  it.getString(GeOsDeviceItemDao.NEXT_CYCLE_LIMIT_DATE)
             measureValueSufix = it.getString(GeOsDeviceItemDao.VALUE_SUFIX)
             verificationInstruction = it.getString(GeOsDeviceItemDao.VERIFICATION_INSTRUCTION)
-            restrictionDecimal = it.getInt(GeOsDeviceItemDao.RESTRICTION_DECIMAL)
+            if(it.containsKey(GeOsDeviceItemDao.RESTRICTION_DECIMAL)) {
+                restrictionDecimal = it.getInt(GeOsDeviceItemDao.RESTRICTION_DECIMAL)
+            }
         }
     }
 
