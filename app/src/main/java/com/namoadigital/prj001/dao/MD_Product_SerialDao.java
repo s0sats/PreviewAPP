@@ -3,6 +3,7 @@ package com.namoadigital.prj001.dao;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
@@ -10,6 +11,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
+import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
@@ -597,6 +599,10 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             //LUCHE - 01/05/2019
             //Avaliando se esse serial tem vinculo com as seguintes tabelas:
             //SM_SO, IO_INBOUND_ITEM, IO_MOVE, IO_OUTBOUND_ITEM
+            /**
+             * BARRIONUEVO 09-11-2021
+             * Adicionado metodo que remove estrutura para seriais nao offline.
+             */
             for (MD_Product_Serial productSerial : serialDelCheck) {
                 HMAux auxExists = this.getByStringHM(
                         new MD_Product_Serial_Sql_012(
@@ -625,6 +631,8 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
                             ).toSqlQuery(),
                             db
                     );
+                    //
+                    this.removeFullStructure(productSerial, db);
                 }
             }
             //
@@ -829,6 +837,68 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
         closeDB();
         return md_product_serials;
     }
+
+
+    public DaoObjReturn removeFullStructure(MD_Product_Serial mdProductSerial) {
+        return removeFullStructure(mdProductSerial, null);
+    }
+
+    /**
+     * Remove toda a estrutura de um serial
+     */
+    public DaoObjReturn removeFullStructure(MD_Product_Serial mdProductSerial, SQLiteDatabase dbInstance) {
+        DaoObjReturn daoObjReturn = new DaoObjReturn();
+        Long addUpdateRet = 0l;
+        String curAction = DaoObjReturn.DELETE;
+        daoObjReturn.setTable(TABLE);
+        //
+        StringBuilder wherePkClause = new StringBuilder();
+        wherePkClause.append(CUSTOMER_CODE).append(" = '").append(mdProductSerial.getCustomer_code()).append("'");
+        wherePkClause.append(" and ");
+        wherePkClause.append(PRODUCT_CODE).append(" = '").append(mdProductSerial.getProduct_code()).append("'");
+        wherePkClause.append(" and ");
+        wherePkClause.append(SERIAL_CODE).append(" = '").append(mdProductSerial.getSerial_code()).append("'");
+        //
+        if(dbInstance == null){
+            openDB();
+        }else{
+            this.db = dbInstance;
+        }
+        //
+        try {
+            this.db.beginTransaction();
+            //
+            addUpdateRet += this.db.delete(TABLE,wherePkClause.toString(),null);
+            addUpdateRet += this.db.delete(MD_Product_Serial_Tp_Device_ItemDao.TABLE,wherePkClause.toString(),null);
+            addUpdateRet += this.db.delete(MD_Product_Serial_Tp_Device_Item_HistDao.TABLE,wherePkClause.toString(),null);
+            //
+            this.db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            //Chama metodo que baseado na exception gera obj de retorno setado como erro
+            //e contendo msg de erro tratada.
+            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage() );
+            //Gera arquivo de exception usando dados da exception e do obj de retorno
+            ToolBox_Inf.registerException(
+                    getClass().getName(),
+                    new Exception(e.getMessage() + daoObjReturn.getErrorMsg()
+                    )
+            );
+        } catch (Exception e) {
+            //Seta obj de retorno com flag de erro e gera arquivo de exception
+            daoObjReturn.setError(true);
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        } finally {
+            this.db.endTransaction();
+            daoObjReturn.setAction(curAction);
+            daoObjReturn.setActionReturn(addUpdateRet);
+        }
+        //
+        if(dbInstance == null){
+            closeDB();
+        }
+        return daoObjReturn;
+    }
+
 
     private class CursorMD_Product_SerialMapper implements Mapper<Cursor, MD_Product_Serial> {
         @Override

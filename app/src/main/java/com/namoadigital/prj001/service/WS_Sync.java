@@ -155,9 +155,6 @@ import com.namoadigital.prj001.sql.MD_Product_Group_Product_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Product_Group_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Product_Segment_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_010;
-import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_Device_Item_Hist_Sql_Truncate;
-import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_Device_Item_Sql_Truncate;
-import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_Device_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Product_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_004;
 import com.namoadigital.prj001.sql.MD_Segment_Sql_Truncate;
@@ -1087,9 +1084,7 @@ public class WS_Sync extends IntentService {
             }
             //
             if (!mdProductSerialStructureAlreadyProcess) {
-                serialTpDeviceDao.remove(new MD_Product_Serial_Tp_Device_Sql_Truncate().toSqlQuery());
-                serialTpDeviceItemDao.remove(new MD_Product_Serial_Tp_Device_Item_Sql_Truncate().toSqlQuery());
-                serialTpDeviceItemHistDao.remove(new MD_Product_Serial_Tp_Device_Item_Hist_Sql_Truncate().toSqlQuery());
+
                 /**
                  * Processamento MD_PRODUCT_SERIAL_TP_DEVICE
                  */
@@ -1661,7 +1656,7 @@ public class WS_Sync extends IntentService {
                  *
                  */
                 for (MD_Product_Serial serial: serialList){
-                    serialTpDeviceDao.removeFullStructure(serial);
+                    serialDao.removeFullStructure(serial);
                 }
                 /**
                  * Chama novo metodo do DAO que processa o sincronismo dos seriais.

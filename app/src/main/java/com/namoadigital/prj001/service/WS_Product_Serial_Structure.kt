@@ -181,7 +181,7 @@ class WS_Product_Serial_Structure : IntentService("WS_Product_Serial_Structure")
                     it.setPk(serialUpdateInfo)
                 }
                 //apaga a estrutura atual
-                var daoObjReturn = tpDeviceDao.removeFullStructure(serialUpdateInfo!!)
+                var daoObjReturn = serialDao.removeFullStructure(serialUpdateInfo!!)
                 //Se não houve erro atualiza
                 if (!daoObjReturn.hasError()) {
                     daoObjReturn = tpDeviceDao.addUpdate(serialStructure.device_tp, false)
