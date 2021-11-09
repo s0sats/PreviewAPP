@@ -19,7 +19,7 @@ import java.io.File
 
 class Act011FfOption : Fragment() {
     private val mAdapter by lazy {
-        Act011FfOptionsAdapter(mObjectView.tabs, mObjectView.tabSelected, mListener)
+        Act011FfOptionsAdapter(mObjectView.tabs, mObjectView.tabSelected, mObjectView.isFormOs, mListener)
     }
     private lateinit var mObjectView: Act011FfOptionsViewObject
     private lateinit var hmAux_Trans: HMAux

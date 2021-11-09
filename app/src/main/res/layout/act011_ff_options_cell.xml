@@ -30,7 +30,7 @@
         android:layout_weight="1"
         android:textSize="14sp"
         android:textStyle="normal"
-        app:layout_constraintEnd_toStartOf="@+id/tv_non_forecast_count_val"
+        app:layout_constraintEnd_toStartOf="@+id/tv_problem_reported_count_val"
         app:layout_constraintStart_toEndOf="@+id/tv_form_tab_order"
         app:layout_constraintTop_toTopOf="@+id/tv_form_tab_order"
         tools:text="Temperaturas"/>
