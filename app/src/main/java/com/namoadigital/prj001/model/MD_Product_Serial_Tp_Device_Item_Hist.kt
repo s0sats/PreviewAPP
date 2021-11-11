@@ -58,4 +58,15 @@ class MD_Product_Serial_Tp_Device_Item_Hist(
         this.item_check_code = item.item_check_code
         this.item_check_seq = item.item_check_seq
     }
+
+    companion object{
+        @JvmStatic
+        fun getSerialDeviceTpItemHistFromList(serial: MD_Product_Serial, deviceItemHistList: ArrayList<MD_Product_Serial_Tp_Device_Item_Hist>) : ArrayList<MD_Product_Serial_Tp_Device_Item_Hist> {
+            return deviceItemHistList.filter {
+                it.customer_code == serial.customer_code
+                        && it.product_code == serial.product_code
+                        && it.serial_code == serial.serial_code
+            } as ArrayList
+        }
+    }
 }

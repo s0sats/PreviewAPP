@@ -46,9 +46,6 @@ import com.namoadigital.prj001.dao.MD_Product_GroupDao;
 import com.namoadigital.prj001.dao.MD_Product_Group_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SegmentDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
-import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_DeviceDao;
-import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_ItemDao;
-import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_Item_HistDao;
 import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.MD_SegmentDao;
@@ -122,10 +119,9 @@ import com.namoadigital.prj001.model.Sync_Checklist;
 import com.namoadigital.prj001.model.TSearch_Ap_Env;
 import com.namoadigital.prj001.model.TSync_Env;
 import com.namoadigital.prj001.model.TSync_Rec;
+import com.namoadigital.prj001.model.T_DataPackage_MD_Product_Serial_Structure_Env;
 import com.namoadigital.prj001.model.T_DataPackage_SM_SO_Env;
 import com.namoadigital.prj001.model.T_DataPackage_TK_Ticket_Env;
-import com.namoadigital.prj001.model.T_MD_Product_Serial_Structure;
-import com.namoadigital.prj001.model.T_MD_Product_Serial_Structure_Env;
 import com.namoadigital.prj001.model.TkTicketCache;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.sql.EV_Profile_Sql_Truncate;
@@ -169,6 +165,7 @@ import com.namoadigital.prj001.sql.MdOrderTypeSqlTruncate;
 import com.namoadigital.prj001.sql.MdTagSqlTruncate;
 import com.namoadigital.prj001.sql.MeMeasureTpSqlTruncate;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Sql_Truncate;
+import com.namoadigital.prj001.sql.Sql_WS_Sync_Datapackage_Serial_001;
 import com.namoadigital.prj001.sql.Sql_WS_Sync_Datapackage_So_001;
 import com.namoadigital.prj001.sql.Sql_WS_Sync_Datapackage_Ticket_001;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_001;
@@ -219,18 +216,12 @@ public class WS_Sync extends IntentService {
             //Essa chave só é passada pela Act008, tela de criação se formulario.
             Long product_code = bundle.getLong(Constant.GS_PRODUCT_CODE, -1L);
             boolean loginProcess = bundle.getBoolean(Constant.GS_LOGIN_PROCESS, false);
-            /**
-             * BARRIONUEVO - 04-11-2021
-             * Parametro adicionado para sincronismo de estrutura de serial no processo de ticket.
-             * Como foi uma situacao pega no meio do projeto nao tem mto o que fazer nesse caso.
-             */
-            T_MD_Product_Serial_Structure_Env ticketSerialWithoutStructure = (T_MD_Product_Serial_Structure_Env) bundle.getSerializable(Constant.GS_TICKET_SERIAL_STRUCTURE_OBJ);
             //LUCHE - 07/06/2019
             //Add param que redefine timeout da chamada.
             //Usada somente no sync full
             int connection_timeout = bundle.getInt(Constant.WS_CONNECTION_TIMEOUT, 60000);
 
-            processWS_Sync(session_app, dataPackageType, jumpValidation, jumpOD, product_code, loginProcess,connection_timeout, ticketSerialWithoutStructure);
+            processWS_Sync(session_app, dataPackageType, jumpValidation, jumpOD, product_code, loginProcess,connection_timeout);
 
             // Limpeza da Notificacao
             cleanNotification(getApplicationContext());
@@ -259,7 +250,7 @@ public class WS_Sync extends IntentService {
         ToolBox_Con.setPreference_SYNC_REQUIRED(getApplicationContext(), "");
     }
 
-    private void processWS_Sync(String session_app, ArrayList<String> dataPackageType, int jump_validation, int jump_od, Long product_code, boolean loginProcess, int connection_timeout, T_MD_Product_Serial_Structure_Env ticketSerialWithoutStructure) throws Exception {
+    private void processWS_Sync(String session_app, ArrayList<String> dataPackageType, int jump_validation, int jump_od, Long product_code, boolean loginProcess, int connection_timeout) throws Exception {
         EV_UserDao userDao = new EV_UserDao(getApplicationContext(), Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
         EV_Module_ResDao moduleResDao = new EV_Module_ResDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
         EV_Module_Res_TxtDao moduleResTxtDao = new EV_Module_Res_TxtDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
@@ -268,14 +259,10 @@ public class WS_Sync extends IntentService {
         EV_ProfileDao evProfileDao = new EV_ProfileDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
         GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(getApplicationContext());
         MdTagDao mdTagDao = new MdTagDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
-        MD_Product_Serial_Tp_DeviceDao serialTpDeviceDao = new MD_Product_Serial_Tp_DeviceDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
-        MD_Product_Serial_Tp_Device_ItemDao serialTpDeviceItemDao = new MD_Product_Serial_Tp_Device_ItemDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
-        MD_Product_Serial_Tp_Device_Item_HistDao serialTpDeviceItemHistDao = new MD_Product_Serial_Tp_Device_Item_HistDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
         SM_SODao soDao = new SM_SODao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
         TK_TicketDao ticketDao = new TK_TicketDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
         MD_Product_SerialDao serialDao = new MD_Product_SerialDao(getApplicationContext());
         boolean mdTagAlreadyProcess = false;
-        boolean mdProductSerialStructureAlreadyProcess = false;
 
         Gson gson = new GsonBuilder().serializeNulls().create();
 
@@ -383,16 +370,10 @@ public class WS_Sync extends IntentService {
             dataPackage.setTICKET(TICKET);
         }
         //}
-
-        /**
-         *  BARRIONUEVO 04-11-2021
-         *  Implementação de sincronismo de estrutura de seriais.
-         */
-        if (dataPackageType.contains(DataPackage.DATA_PACKAGE_SERIAL)
-            && ticketSerialWithoutStructure != null) {
-            T_MD_Product_Serial_Structure PRODUCT_SERIAL = new T_MD_Product_Serial_Structure();
-            PRODUCT_SERIAL.getSearch().add(ticketSerialWithoutStructure);
-            dataPackage.setSERIAL(PRODUCT_SERIAL.getSearch());
+        //LUCHE - 10/11/2021 - Inventario do serial
+        if (dataPackageType.contains(DataPackage.DATA_PACKAGE_MAIN)) {
+            ArrayList<T_DataPackage_MD_Product_Serial_Structure_Env> SERIAL = getDatapackageSerialStructureObjList(serialDao); 
+            dataPackage.setSERIAL(SERIAL);
         }
 
         TSync_Env env = new TSync_Env();
@@ -486,13 +467,7 @@ public class WS_Sync extends IntentService {
         //Define metodo de delete das tabelas de tradução baseado se é sincronismos full ou de form.
         DaoObjReturn daoObjReturn;
         if(product_code == -1L){
-            /**
-             * BARRIONUEVO 04-11-2021
-             * Evita remover traducoes para caso o processamento seja apenas de DATA_PACKAGE_SERIAL.
-             */
-            if(!dataPackageType.contains(DataPackage.DATA_PACKAGE_SERIAL)) {
-                daoObjReturn = moduleResDao.truncateModuleResTables();
-            }
+            daoObjReturn = moduleResDao.truncateModuleResTables();
         }else{
             daoObjReturn = moduleResDao.deleteModuleTrans(ConstantBaseApp.EV_MODULE_CUST_FORM);
         }
@@ -627,7 +602,6 @@ public class WS_Sync extends IntentService {
             MdOrderTypeDao orderTypeDao = new MdOrderTypeDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             MdItemCheckDao mdItemCheckDao = new MdItemCheckDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             MeMeasureTpDao meMeasureTpDao = new MeMeasureTpDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
-
             //
             //Apaga dados das tabelas
             operationDao.remove(new MD_Operation_Sql_Truncate().toSqlQuery());
@@ -684,7 +658,7 @@ public class WS_Sync extends IntentService {
                     for (MD_Operation operation : operations) {
                         if (ToolBox_Con.getPreference_Operation_Code(getApplicationContext())
                                 == operation.getOperation_code()
-                        ) {
+                                ) {
                             operationExist = true;
                             break;
                         }
@@ -888,92 +862,68 @@ public class WS_Sync extends IntentService {
                             ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
                     ).toSqlQuery()
             );
-            //region OLD SERIAL PROCESS - SEM TRANSACTION COMPARTILHANDO DB INSTANCE
-//            File[] files_serial = ToolBox_Inf.getListOfFiles_v2("md_product_serial-");
-//
-//            for (File _file : files_serial) {
-//
-//                ArrayList<MD_Product_Serial> serialList = gson.fromJson(
-//                        ToolBox.jsonFromOracle(
-//                                ToolBox_Inf.getContents(_file)
-//                        ),
-//                        new TypeToken<ArrayList<MD_Product_Serial>>() {
-//                        }.getType()
-//                );
-//                //Analisa lista enviada pra atualizar ou inserir registros
-//                for (MD_Product_Serial serverSerial : serialList) {
-//                    MD_Product_Serial dbSerial = serialDao.getByString(
-//                            new MD_Product_Serial_Sql_009(
-//                                    serverSerial.getCustomer_code(),
-//                                    serverSerial.getProduct_code(),
-//                                    (int) serverSerial.getSerial_code()
-//                            ).toSqlQuery()
-//                    );
-//                    //Se encontrou no banco, seta o serial_tmp do banco no obj to server
-//                    //e o salva no banco.
-//                    //Se não existe, chama metodo que insere registro ja criando um tmp
-//                    //Em ambos os casos seta sync_process para 1
-//                    if (dbSerial != null && dbSerial.getSerial_code() > 0) {
-//                        serverSerial.setSerial_tmp(dbSerial.getSerial_tmp());
-//                        serverSerial.setSync_process(1);
-//                        //
-//                        serialDao.addUpdate(serverSerial);
-//                    } else {
-//                        serverSerial.setSync_process(1);
-//                        //
-//                        serialDao.addUpdateTmp(serverSerial);
-//                    }
-//                }
-//
-//            }
-//
-//            //Se não vier arquivo de serial, limpa todos que não tiverem vinculo com S.O
-//            //Seleciona todos os seriais que estão no banco e não foram atualizados
-//            //no loop de cima, ou seja não foi enviado pelo server
-//            ArrayList<MD_Product_Serial> serialDelCheck = (ArrayList<MD_Product_Serial>)
-//                    serialDao.query(
-//                            new MD_Product_Serial_Sql_011(
-//                                    ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
-//                            ).toSqlQuery()
-//                    );
-//            //Faz loop no seriais que não vieram via sincronismo
-//            //Avaliando se esse serial tem vinculo com algum S.O
-//            for (MD_Product_Serial productSerial : serialDelCheck) {
-//                HMAux auxExists = serialDao.getByStringHM(
-//                        new MD_Product_Serial_Sql_012(
-//                                productSerial.getCustomer_code(),
-//                                productSerial.getProduct_code(),
-//                                productSerial.getSerial_code()
-//                        ).toSqlQuery()
-//                );
-//                //Se não existir vinculo, apaga o serial e seus trackings
-//                if (auxExists == null || (auxExists != null && auxExists.get(MD_Product_Serial_Sql_012.EXISTS).equalsIgnoreCase("0"))) {
-//                    serialDao.removeFull(
-//                            new MD_Product_Serial_Sql_013(
-//                                    productSerial.getCustomer_code(),
-//                                    productSerial.getProduct_code(),
-//                                    productSerial.getSerial_code()
-//                            ).toSqlQuery()
-//                    );
-//                    //
-//                    trackingDao.removeFull(
-//                            new MD_Product_Serial_Tracking_Sql_004(
-//                                    productSerial.getCustomer_code(),
-//                                    productSerial.getProduct_code(),
-//                                    productSerial.getSerial_code()
-//                            ).toSqlQuery()
-//                    );
-//                }
-//            }
-            //endregion
+
             /**
              * Novo processo de sincronisa de serial usando transaction + dbInstance compartilhada
              *
+             * LUCHE - 10/11/2021
+             * Atualziação apos inventario de serial e estrutura de no serial
+             * monta lista com as estruturas e passa pra consiliação validar se precisa ou não atualiza a estrutura.
+             * Se scn_item_check do server =  ao db, não faz nada, se não, reconstroi estrutura.
              */
             File[] files_serial = ToolBox_Inf.getListOfFiles_v2("md_product_serial-");
+            File[] files_serial_tp_device = ToolBox_Inf.getListOfFiles_v2("md_product_serial_tp_device-");
+            File[] files_serial_tp_device_item = ToolBox_Inf.getListOfFiles_v2("md_product_serial_tp_device_item-");
+            File[] files_serial_tp_device_item_hist = ToolBox_Inf.getListOfFiles_v2("md_product_serial_tp_device_item_hist-");
+            ArrayList<MD_Product_Serial_Tp_Device> serialTpDevices = new ArrayList<>();
+            ArrayList<MD_Product_Serial_Tp_Device_Item> serialTpDeviceItems = new ArrayList<>();
+            ArrayList<MD_Product_Serial_Tp_Device_Item_Hist> serialTpDeviceItemHists = new ArrayList<>();
+            /**
+             * Carrega lista de MD_PRODUCT_SERIAL_TP_DEVICE
+             */
+            for (File _file : files_serial_tp_device) {
+               serialTpDevices.addAll(
+                   gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                            ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Product_Serial_Tp_Device>>() {
+                        }.getType()
+                    )
+               );
+            }
+
+            /**
+             * Carrega lista de MD_PRODUCT_SERIAL_TP_DEVICE_ITEM
+             */
+            for (File _file : files_serial_tp_device_item) {
+                serialTpDeviceItems.addAll(
+                    gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                            ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Product_Serial_Tp_Device_Item>>() {
+                        }.getType()
+                    )
+                );
+            }
+
+            /**
+             * Carrega lista de MD_PRODUCT_SERIAL_TP_DEVICE_ITEM_Hist
+             */
+            for (File _file : files_serial_tp_device_item_hist) {
+                serialTpDeviceItemHists.addAll(
+                    gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                            ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Product_Serial_Tp_Device_Item_Hist>>() {
+                        }.getType()
+                    )
+                );
+            }
 
             for (File _file : files_serial) {
-
                 ArrayList<MD_Product_Serial> serialList = gson.fromJson(
                         ToolBox.jsonFromOracle(
                                 ToolBox_Inf.getContents(_file)
@@ -990,11 +940,18 @@ public class WS_Sync extends IntentService {
                  * SE NÃO EXISTIR:
                  *     Seta sync_process para 1 e chama metodo de insert criando TMP
                  */
-                serialDao.processSerialSync(serialList);
-
+                serialDao.processSerialSync(
+                    serialList,
+                    serialTpDevices,
+                    serialTpDeviceItems,
+                    serialTpDeviceItemHists
+                );
             }
             //Libera pro GB
             files_serial = null;
+            files_serial_tp_device = null;
+            files_serial_tp_device_item = null;
+            files_serial_tp_device_item_hist = null;
             /**
              * Após inserir todos os seriais de todos os arquivos,
              * Seleciona todos os seriais que NÃO FORAM ATUALIZADOS PELO PROCESSO ACIMA,
@@ -1081,66 +1038,6 @@ public class WS_Sync extends IntentService {
                 //Libera pro GB
                 files_tag = null;
                 mdTagAlreadyProcess = true;
-            }
-            //
-            if (!mdProductSerialStructureAlreadyProcess) {
-
-                /**
-                 * Processamento MD_PRODUCT_SERIAL_TP_DEVICE
-                 */
-                File[] files_serial_tp_device = ToolBox_Inf.getListOfFiles_v2("md_product_serial_tp_device-");
-
-                for (File _file : files_serial_tp_device) {
-                    ArrayList<MD_Product_Serial_Tp_Device> serialTpDevices = gson.fromJson(
-                            ToolBox.jsonFromOracle(
-                                    ToolBox_Inf.getContents(_file)
-                            ),
-                            new TypeToken<ArrayList<MD_Product_Serial_Tp_Device>>() {
-                            }.getType()
-                    );
-                    //
-                    serialTpDeviceDao.addUpdate(serialTpDevices, false);
-                }
-                //Libera pro GB
-                files_serial_tp_device = null;
-
-                /**
-                 * Processamento MD_PRODUCT_SERIAL_TP_DEVICE_ITEM
-                 */
-                File[] files_serial_tp_device_item = ToolBox_Inf.getListOfFiles_v2("md_product_serial_tp_device_item-");
-
-                for (File _file : files_serial_tp_device_item) {
-                    ArrayList<MD_Product_Serial_Tp_Device_Item> serialTpDeviceItems = gson.fromJson(
-                            ToolBox.jsonFromOracle(
-                                    ToolBox_Inf.getContents(_file)
-                            ),
-                            new TypeToken<ArrayList<MD_Product_Serial_Tp_Device_Item>>() {
-                            }.getType()
-                    );
-                    //
-                    serialTpDeviceItemDao.addUpdate(serialTpDeviceItems, false);
-                }
-                //Libera pro GB
-                files_serial_tp_device_item = null;
-                /**
-                 * Processamento MD_PRODUCT_SERIAL_TP_DEVICE_ITEM_Hist
-                 */
-                File[] files_serial_tp_device_item_hist = ToolBox_Inf.getListOfFiles_v2("md_product_serial_tp_device_item_hist-");
-
-                for (File _file : files_serial_tp_device_item_hist) {
-                    ArrayList<MD_Product_Serial_Tp_Device_Item_Hist> serialTpDeviceItemHists = gson.fromJson(
-                            ToolBox.jsonFromOracle(
-                                    ToolBox_Inf.getContents(_file)
-                            ),
-                            new TypeToken<ArrayList<MD_Product_Serial_Tp_Device_Item_Hist>>() {
-                            }.getType()
-                    );
-                    //
-                    serialTpDeviceItemHistDao.addUpdate(serialTpDeviceItemHists, false);
-                }
-                //Libera pro GB
-                files_serial_tp_device_item_hist = null;
-                mdProductSerialStructureAlreadyProcess = true;
             }
             //
             // Processamento Department
@@ -1636,101 +1533,6 @@ public class WS_Sync extends IntentService {
 
         }
 
-        if (dataPackageType.contains(DataPackage.DATA_PACKAGE_SERIAL)) {
-
-            File[] files_serial = ToolBox_Inf.getListOfFiles_v2("md_product_serial-");
-
-            for (File _file : files_serial) {
-
-                ArrayList<MD_Product_Serial> serialList = gson.fromJson(
-                        ToolBox.jsonFromOracle(
-                                ToolBox_Inf.getContents(_file)
-                        ),
-                        new TypeToken<ArrayList<MD_Product_Serial>>() {
-                        }.getType()
-                );
-                /**
-                 * BARRIONUEVO 04-11-2021
-                 * Remove estrutura do serial.
-                 * serialList devera ter apenas 1
-                 *
-                 */
-                for (MD_Product_Serial serial: serialList){
-                    serialDao.removeFullStructure(serial);
-                }
-                /**
-                 * Chama novo metodo do DAO que processa o sincronismo dos seriais.
-                 * Vericar se o serial ja existe no banco local e :
-                 * SE EXISTIR:
-                 *      Atribui o tmp que ja existia no objeto, seta sync_process para 1
-                 *      e atualiza no banco.
-                 * SE NÃO EXISTIR:
-                 *     Seta sync_process para 1 e chama metodo de insert criando TMP
-                 */
-                serialDao.processSerialSync(serialList);
-            }
-
-            /**
-             * Processamento MD_PRODUCT_SERIAL_TP_DEVICE
-             */
-            if (!mdProductSerialStructureAlreadyProcess) {
-
-                File[] files_serial_tp_device = ToolBox_Inf.getListOfFiles_v2("md_product_serial_tp_device-");
-
-                for (File _file : files_serial_tp_device) {
-                    ArrayList<MD_Product_Serial_Tp_Device> serialTpDevices = gson.fromJson(
-                            ToolBox.jsonFromOracle(
-                                    ToolBox_Inf.getContents(_file)
-                            ),
-                            new TypeToken<ArrayList<MD_Product_Serial_Tp_Device>>() {
-                            }.getType()
-                    );
-                    //
-                    serialTpDeviceDao.addUpdate(serialTpDevices, false);
-                }
-                //Libera pro GB
-                files_serial_tp_device = null;
-
-                /**
-                 * Processamento MD_PRODUCT_SERIAL_TP_DEVICE_ITEM
-                 */
-                File[] files_serial_tp_device_item = ToolBox_Inf.getListOfFiles_v2("md_product_serial_tp_device_item-");
-
-                for (File _file : files_serial_tp_device_item) {
-                    ArrayList<MD_Product_Serial_Tp_Device_Item> serialTpDeviceItems = gson.fromJson(
-                            ToolBox.jsonFromOracle(
-                                    ToolBox_Inf.getContents(_file)
-                            ),
-                            new TypeToken<ArrayList<MD_Product_Serial_Tp_Device_Item>>() {
-                            }.getType()
-                    );
-                    //
-                    serialTpDeviceItemDao.addUpdate(serialTpDeviceItems, false);
-                }
-                //Libera pro GB
-                files_serial_tp_device_item = null;
-                /**
-                 * Processamento MD_PRODUCT_SERIAL_TP_DEVICE_ITEM_Hist
-                 */
-                File[] files_serial_tp_device_item_hist = ToolBox_Inf.getListOfFiles_v2("md_product_serial_tp_device_item_hist-");
-
-                for (File _file : files_serial_tp_device_item_hist) {
-                    ArrayList<MD_Product_Serial_Tp_Device_Item_Hist> serialTpDeviceItemHists = gson.fromJson(
-                            ToolBox.jsonFromOracle(
-                                    ToolBox_Inf.getContents(_file)
-                            ),
-                            new TypeToken<ArrayList<MD_Product_Serial_Tp_Device_Item_Hist>>() {
-                            }.getType()
-                    );
-                    //
-                    serialTpDeviceItemHistDao.addUpdate(serialTpDeviceItemHists, false);
-                }
-                //Libera pro GB
-                files_serial_tp_device_item_hist = null;
-                mdProductSerialStructureAlreadyProcess = true;
-            }
-        }
-
         //endregion
         //region Processamento das tabelas do Checklist
         //
@@ -2190,6 +1992,40 @@ public class WS_Sync extends IntentService {
         }
         //
         return ticketDataPkgList;
+    }
+
+    private ArrayList<T_DataPackage_MD_Product_Serial_Structure_Env> getDatapackageSerialStructureObjList(MD_Product_SerialDao serialDao) {
+        List<HMAux> serialPkAuxList = serialDao.query_HM(new Sql_WS_Sync_Datapackage_Serial_001(
+            ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+        ).toSqlQuery());
+        //
+        if(serialPkAuxList != null && serialPkAuxList.size() > 0){
+            return convertHmAuxSerialStructurePkToDataPkgSerial(serialPkAuxList);
+        }
+        //
+        return new ArrayList<>();
+    }
+
+    private ArrayList<T_DataPackage_MD_Product_Serial_Structure_Env> convertHmAuxSerialStructurePkToDataPkgSerial(@NotNull List<HMAux> serialPkAuxList) {
+        ArrayList<T_DataPackage_MD_Product_Serial_Structure_Env> serialDataPkgList = new ArrayList<>();
+        for (HMAux auxPk : serialPkAuxList) {
+            if(auxPk.hasConsistentValue(MD_Product_SerialDao.CUSTOMER_CODE)
+                && auxPk.hasConsistentValue(MD_Product_SerialDao.PRODUCT_CODE)
+                && auxPk.hasConsistentValue(MD_Product_SerialDao.SERIAL_CODE)
+                && auxPk.hasConsistentValue(MD_Product_SerialDao.SCN_ITEM_CHECK)
+            ){
+                T_DataPackage_MD_Product_Serial_Structure_Env dtPkSerial = new T_DataPackage_MD_Product_Serial_Structure_Env(
+                    auxPk.get(MD_Product_SerialDao.CUSTOMER_CODE),
+                    auxPk.get(MD_Product_SerialDao.PRODUCT_CODE),
+                    auxPk.get(MD_Product_SerialDao.SERIAL_CODE),
+                    auxPk.get(MD_Product_SerialDao.SCN_ITEM_CHECK)
+                );
+                //
+                serialDataPkgList.add(dtPkSerial);
+            }
+        }
+        //
+        return serialDataPkgList;
     }
 
 

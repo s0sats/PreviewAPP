@@ -89,5 +89,13 @@ class MD_Product_Serial_Tp_Device_Item(
         const val APPLY_MATERIAL_NO = "NO"
         const val APPLY_MATERIAL_REQUIRED = "REQUIRED"
         const val APPLY_MATERIAL_OPTIONAL = "OPTIONAL"
+        @JvmStatic
+        fun getSerialDeviceTpItemFromList(serial: MD_Product_Serial, deviceItemList: ArrayList<MD_Product_Serial_Tp_Device_Item>) : ArrayList<MD_Product_Serial_Tp_Device_Item> {
+            return deviceItemList.filter {
+                it.customer_code == serial.customer_code
+                        && it.product_code == serial.product_code
+                        && it.serial_code == serial.serial_code
+            } as ArrayList
+        }
     }
 }
