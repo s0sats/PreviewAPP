@@ -29,6 +29,7 @@ import com.namoadigital.prj001.extensions.setPrefix
 import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.ui.act011.frags.Act011BaseFrg
 import com.namoadigital.prj001.util.ConstantBaseApp
+import com.namoadigital.prj001.util.ConstantBaseApp.ONE_DAY_IN_MILLISECOND
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 import com.namoadigital.prj001.view.act.product_selection.Act_Product_Selection
@@ -440,7 +441,11 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         lastMeasureValue: Float?,
         lastMeasureDate: String?
     ): String {
-        val meSufix = " ${formOsHeader.value_sufix?:" "}"
+        val meSufix = if(formOsHeader.value_sufix != null){
+            " ${formOsHeader.value_sufix}"
+        }else{
+            ""
+        }
         if(lastMeasureValue != null && lastMeasureDate != null){
             val formattedLastMeasureValue = getFormattedLastMeasureValue(lastMeasureValue)
             //O espaço esta na var meSufix
@@ -635,7 +640,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         }
         val mdOrderType = orderTypeList[binding.spOsType.selectedItemPosition]
         if( isPreventiveCycledOs(mdOrderType)) {
-            if (binding.mketOsMainMeasureVal.text.isNullOrEmpty()) {
+            if (binding.mketOsMainMeasureVal.text.isNullOrEmpty() || !isMeasureValNumeric()) {
                 return false
             }else{
                 var lastCycle = formOsHeader.last_cycle_value?:0f
@@ -667,7 +672,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
 
     private fun isMeasureRestrictionInvalid(): Boolean {
         mainMeasureTp?.let{
-            return if(!binding.mketOsMainMeasureVal.text.isNullOrEmpty()){
+            return if(!binding.mketOsMainMeasureVal.text.isNullOrEmpty() && isMeasureValNumeric()){
                 val typedMeasure = binding.mketOsMainMeasureVal.text.toString().toFloat()
                 when(it.restrictionType){
                     MeMeasureTp.RESTRICTION_TYPE_VALUE -> isMeasureRestrictionValueValid(typedMeasure,it).not()
@@ -680,6 +685,18 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             }
         }
         return false
+    }
+
+    /**
+     * Valida se medição digita é um float ou não
+     */
+    private fun isMeasureValNumeric(): Boolean {
+        return try{
+            binding.mketOsMainMeasureVal.text.toString().toFloat()
+            true
+        }catch (e: Exception){
+            false
+        }
     }
 
     private fun isMeasureRestrictionValueByDayValid(
@@ -722,8 +739,6 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
      * Calcula a diferença de dias entre 2 datas como float
      */
     private fun getDiffBetweenDatesInFloatDays(lastMeasureDate: String, startDate: String): Float {
-        //Qtd de ms em um dias
-        val ONE_DAY_IN_MILLISECOND = 86400000
         //Data passada em MS
         val lastMeasureDateMs = ToolBox_Inf.dateToMilliseconds(lastMeasureDate)
         //Data atual em MS
@@ -734,8 +749,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         val calcDay = diffInMs / ONE_DAY_IN_MILLISECOND
         //Calc perc de dias...
         val modDay = (diffInMs % ONE_DAY_IN_MILLISECOND.toDouble()) / ONE_DAY_IN_MILLISECOND.toDouble()
-        //Soma e devolve float com 2 casas.
-        return BigDecimal(calcDay + modDay).setScale( 2,RoundingMode.HALF_DOWN).toFloat()
+        //Soma e devolve float com 4 casas.
+        return BigDecimal(calcDay + modDay).setScale( 4,RoundingMode.HALF_DOWN).toFloat()
     }
 
     private fun isMeasureRestrictionValueValid(

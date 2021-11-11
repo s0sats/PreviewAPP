@@ -196,7 +196,7 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
     }
 
     private fun getFormattedMeasureInfo(): String {
-        return "$nextCycleMeasure $measureValueSufix (${ToolBox_Inf.millisecondsToString(
+        return "${mPresenter.getFormattedLastMeasureInfo(nextCycleMeasure!!,measureValueSufix,restrictionDecimal)} (${ToolBox_Inf.millisecondsToString(
                                                         ToolBox_Inf.dateToMilliseconds(nextCycleMeasureDate),
                                                         ToolBox_Inf.nlsDateFormat(context)
                                                     )})"
@@ -234,7 +234,7 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
                                                         ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
                                                     ).replace(" ", "\n")
 
-                act086HistoricFrgTvLastMeasureVal.text = mPresenter.getFormattedLastMeasureInfo(lastFixed,measureValueSufix,restrictionDecimal)
+                act086HistoricFrgTvLastMeasureVal.text = mPresenter.getFormattedLastMeasureInfo(lastFixed.exec_value,measureValueSufix,restrictionDecimal)
                 act086HistoricFrgTvMaterialVal.text = if(lastFixed.exec_material == 1) hmAux_Trans["YES"] else hmAux_Trans["NO"]
                 act086HistoricFrgTvComment.apply {
                     visibility = if(lastFixed.exec_comment.isNullOrEmpty()) View.GONE else  View.VISIBLE

@@ -12,7 +12,9 @@ interface Act086HistoricFrgContract {
 
     interface IPresenter{
         fun getAlertList(itemHist: ArrayList<GeOsDeviceItemHist>, measureValueSufix: String?, restrictionDecimal: Int?) :MutableList<Act086HistoricAlert>
-        fun getFormattedLastMeasureInfo(lastFixed: GeOsDeviceItemHist, measureValueSufix: String?,restrictionDecimal: Int?): String
+        fun getFormattedLastMeasureInfo(
+            lastFixed: Float, measureValueSufix: String?,
+            restrictionDecimal: Int?): String
     }
 
 }

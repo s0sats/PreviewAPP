@@ -32,7 +32,7 @@ class Act086HistoricFrgPresenter(
                     ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
                 ),
                 measureLbl = hmAuxTrans["last_measure_lbl"]!!,
-                measure = getFormattedLastMeasureInfo(hist, measureValueSufix,restrictionDecimal),
+                measure = getFormattedLastMeasureInfo(hist.exec_value, measureValueSufix,restrictionDecimal),
                 materialLbl = hmAuxTrans["material_requested_lbl"]!!,
                 material = if (hist.exec_material == 1) {
                     hmAuxTrans["YES"]!!
@@ -52,14 +52,14 @@ class Act086HistoricFrgPresenter(
     }
 
     override fun getFormattedLastMeasureInfo(
-        lastFixed: GeOsDeviceItemHist,
+        lastFixed: Float,
         measureValueSufix: String?,
         restrictionDecimal: Int?
     ): String {
         return "${ToolBox_Inf.convertFloatToBigDecimalString(
-            lastFixed.exec_value,
+            lastFixed,
             restrictionDecimal ?: 4,
             true
-        )} ${measureValueSufix?:""}"
+        )}${if(measureValueSufix != null) " ".plus(measureValueSufix) else ""}"
     }
 }
