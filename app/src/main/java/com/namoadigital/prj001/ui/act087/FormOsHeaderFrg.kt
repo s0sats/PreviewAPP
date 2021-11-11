@@ -1018,7 +1018,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             }
             tvCurrentCycleVal.apply {
                 visibility = if(lastCycleInvalid) View.VISIBLE else View.GONE
-                text = "$calculatedCycle $measureSufix"
+                text = if(calculatedCycle > 0) "$calculatedCycle $measureSufix" else  "0.0 $measureSufix"
             }
         }
         //
