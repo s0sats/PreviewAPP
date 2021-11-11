@@ -122,17 +122,32 @@ class MD_Product_Serial_Tp_DeviceDao(
     }
 
     override fun addUpdate(mdProductSerialTpDevices: MutableList<MD_Product_Serial_Tp_Device>?, status: Boolean): DaoObjReturn {
+        return addUpdate(mdProductSerialTpDevices, status, null)
+    }
+
+    fun addUpdate(
+        mdProductSerialTpDevices: MutableList<MD_Product_Serial_Tp_Device>?,
+        status: Boolean,
+        dbInstance: SQLiteDatabase?
+    ): DaoObjReturn {
         var daoObjReturn = DaoObjReturn()
         var addUpdateRet: Long = 0
         var curAction = DaoObjReturn.INSERT_OR_UPDATE
         //
-        openDB()
+        if (dbInstance == null) {
+            openDB()
+        } else {
+            db = dbInstance
+        }
 
         try {
             daoObjReturn.table = TABLE
             curAction = DaoObjReturn.UPDATE
 
-            db.beginTransaction()
+            //Se db não foi passado, inicializa transaction
+            if (dbInstance == null) {
+                db.beginTransaction()
+            }
 
             if (status) {
                 db.delete(TABLE, null, null)
@@ -164,7 +179,9 @@ class MD_Product_Serial_Tp_DeviceDao(
                 }
             }
             //
-            db.setTransactionSuccessful()
+            if(dbInstance == null) {
+                db.setTransactionSuccessful()
+            }
 
         } catch (e: SQLiteException) {
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
@@ -187,12 +204,16 @@ class MD_Product_Serial_Tp_DeviceDao(
         } finally {
             //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
             //ou rowId do ultimo insert.
-            db.endTransaction()
+            if (dbInstance == null) {
+                db.endTransaction()
+            }
             daoObjReturn.action = curAction
             daoObjReturn.actionReturn = addUpdateRet
         }
-
-        closeDB()
+        //
+        if (dbInstance == null) {
+            closeDB()
+        }
         //
         return daoObjReturn
     }

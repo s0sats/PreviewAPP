@@ -20,7 +20,7 @@ public class DataPackage {
     private ArrayList<String> SCHEDULE;
     private ArrayList<TSearch_Ap_Env.ObjAp> AP;
     private ArrayList<T_DataPackage_TK_Ticket_Env> TICKET;
-    private ArrayList<T_MD_Product_Serial_Structure_Env> SERIAL;
+    private ArrayList<T_DataPackage_MD_Product_Serial_Structure_Env> SERIAL;
 
     public DataPackage() {
     }
@@ -73,11 +73,11 @@ public class DataPackage {
         this.TICKET = TICKET;
     }
 
-    public ArrayList<T_MD_Product_Serial_Structure_Env> getSERIAL() {
+    public ArrayList<T_DataPackage_MD_Product_Serial_Structure_Env> getSERIAL() {
         return SERIAL;
     }
 
-    public void setSERIAL(ArrayList<T_MD_Product_Serial_Structure_Env> SERIAL) {
+    public void setSERIAL(ArrayList<T_DataPackage_MD_Product_Serial_Structure_Env> SERIAL) {
         this.SERIAL = SERIAL;
     }
 }

@@ -13,6 +13,9 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device;
+import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device_Item;
+import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device_Item_Hist;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_005;
@@ -529,16 +532,18 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
      * Metodo especifico para sincronizar os dados do serial
      *
      * @param md_product_serials
+     * @param serialTpDevices
+     * @param serialTpDeviceItems
+     * @param serialTpDeviceItemHists
      * @return
      */
-    public boolean processSerialSync(Iterable<MD_Product_Serial> md_product_serials){
+    public boolean processSerialSync(Iterable<MD_Product_Serial> md_product_serials, ArrayList<MD_Product_Serial_Tp_Device> serialTpDevices, ArrayList<MD_Product_Serial_Tp_Device_Item> serialTpDeviceItems, ArrayList<MD_Product_Serial_Tp_Device_Item_Hist> serialTpDeviceItemHists){
         boolean processReturn = false;
 
         Log.d("SerialTransaction","processSerialSync - Inicio:  " + ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
         openDB();
 
         try {
-
             db.beginTransaction();
 
             boolean forceRollback = false;
@@ -556,10 +561,16 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
                     md_product_serial.setSync_process(1);
                     //
                     this.addUpdate(md_product_serial,db);
+                    //LUCHE - 10/11/2021 - Tratativa para seriais com estrutura
+                    handleLocalSerialStructureChanges(serialTpDevices, serialTpDeviceItems, serialTpDeviceItemHists, md_product_serial, dbSerial);
                 }else{
                     md_product_serial.setSync_process(1);
                     //
                     this.addUpdateTmp(md_product_serial,db);
+                    //Se é um novo serial e tem estrutura, insere.
+                    if(md_product_serial.getHas_item_check() == 1) {
+                        tryAddUpdateStructure(md_product_serial, serialTpDevices, serialTpDeviceItems, serialTpDeviceItemHists);
+                    }
                 }
 
             }
@@ -577,6 +588,98 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
         closeDB();
         Log.d("SerialTransaction","processSerialSync - Fim:  " + ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
         return processReturn ;
+    }
+
+    /**
+     * LUCHE - 10/11/2021
+     * Metodo que verifica a necessidade de inserir, atualizar ou deletar estrutura do serial JA EXISTENTE
+     * Esse metodo avalia o serial recebido do server como serial ja existente no device:
+     *      - Se o serial recebido tiver estrutura(has_item_check == 1):
+     *         - Caso Serial local NÃO POSSUA estrutura(has_item_check == 0), insere a nova estrutura.
+     *         - Caso Serial local POSSUA estrutura(has_item_check == 1) e scn_item_check FOR DIFERENTE do recebido, remove estrutura atual e recria.
+     *         - Caso Serial local POSSUA estrutura(has_item_check == 1) e scn_item_check FOR IGUAL do recebido, NÃO FAZ NADA.
+     *     -  Se o serial recebido NÃO tiver estrutura(has_item_check == 0):
+     *         - Caso Serial local POSSUA estrutura(has_item_check == 1), REMOVE a estrutura atual.
+     * @param serialTpDevices
+     * @param serialTpDeviceItems
+     * @param serialTpDeviceItemHists
+     * @param md_product_serial
+     * @param dbSerial
+     */
+    private void handleLocalSerialStructureChanges(ArrayList<MD_Product_Serial_Tp_Device> serialTpDevices, ArrayList<MD_Product_Serial_Tp_Device_Item> serialTpDeviceItems, ArrayList<MD_Product_Serial_Tp_Device_Item_Hist> serialTpDeviceItemHists, MD_Product_Serial md_product_serial, MD_Product_Serial dbSerial) {
+        //Verifica se serial vindo do servidor possui estrutura
+        if( md_product_serial.getHas_item_check() == 1) {
+            //Se serial do servidor tem estrutura, verifica se a estrutura local não existe ou tem scn_item_check diferente. Nesses casos, insere aestrutura recebida,
+            if( md_product_serial.getScn_item_check() != null
+                && (dbSerial.getHas_item_check() == 0 || dbSerial.getScn_item_check() == null || !dbSerial.getScn_item_check().equals(md_product_serial.getScn_item_check()))) {
+                removeFullStructure(md_product_serial);
+                tryAddUpdateStructure(md_product_serial, serialTpDevices, serialTpDeviceItems, serialTpDeviceItemHists);
+            }
+        }else{
+            //Se serial vindo do servidor não possi estrutura, verifica se o local tem.
+            //Caso tenha, significa que a estrutura foi removida e por isso deleta a estrutura local.
+            if(dbSerial.getHas_item_check() == 1){
+                removeFullStructure(md_product_serial);
+            }
+        }
+    }
+
+    /**
+     * LUCHE - 10/11/2021
+     * Metodo que recebe o serial como parametro e busca a sua estrutura nas listas de device, item e historico e inserir os registros nas tabelas.
+     * @param md_product_serial
+     * @param serialTpDevices
+     * @param serialTpDeviceItems
+     * @param serialTpDeviceItemHists
+     */
+    private void tryAddUpdateStructure(MD_Product_Serial md_product_serial, ArrayList<MD_Product_Serial_Tp_Device> serialTpDevices, ArrayList<MD_Product_Serial_Tp_Device_Item> serialTpDeviceItems, ArrayList<MD_Product_Serial_Tp_Device_Item_Hist> serialTpDeviceItemHists) {
+        getSerialTpDeviceDao().addUpdate(
+            MD_Product_Serial_Tp_Device.getSerialDeviceTpFromList(
+                md_product_serial,
+                serialTpDevices
+           ),
+           false,
+            db
+        );
+        //
+        getSerialTpDeviceItemDao().addUpdate(
+            MD_Product_Serial_Tp_Device_Item.getSerialDeviceTpItemFromList(
+                md_product_serial,
+                serialTpDeviceItems
+            ),
+            false,
+            db
+        );
+        //
+        getSerialTpDeviceItemHistDao().addUpdate(
+            MD_Product_Serial_Tp_Device_Item_Hist.getSerialDeviceTpItemHistFromList(
+                md_product_serial,
+                serialTpDeviceItemHists
+            ),
+            false,
+            db
+        );
+    }
+
+    private MD_Product_Serial_Tp_DeviceDao getSerialTpDeviceDao(){
+        return new MD_Product_Serial_Tp_DeviceDao(context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+                );
+    }
+
+    private MD_Product_Serial_Tp_Device_ItemDao getSerialTpDeviceItemDao(){
+        return new MD_Product_Serial_Tp_Device_ItemDao(context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+    }
+
+    private MD_Product_Serial_Tp_Device_Item_HistDao getSerialTpDeviceItemHistDao(){
+        return new MD_Product_Serial_Tp_Device_Item_HistDao(context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
     }
 
     public boolean processSerialConsiliation(){
@@ -866,13 +969,17 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
         }
         //
         try {
-            this.db.beginTransaction();
+            if(dbInstance == null) {
+                this.db.beginTransaction();
+            }
             //
-            addUpdateRet += this.db.delete(TABLE,wherePkClause.toString(),null);
+            addUpdateRet += this.db.delete(MD_Product_Serial_Tp_DeviceDao.TABLE,wherePkClause.toString(),null);
             addUpdateRet += this.db.delete(MD_Product_Serial_Tp_Device_ItemDao.TABLE,wherePkClause.toString(),null);
             addUpdateRet += this.db.delete(MD_Product_Serial_Tp_Device_Item_HistDao.TABLE,wherePkClause.toString(),null);
             //
-            this.db.setTransactionSuccessful();
+            if(dbInstance == null) {
+                this.db.setTransactionSuccessful();
+            }
         } catch (SQLException e) {
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
             //e contendo msg de erro tratada.
@@ -888,7 +995,9 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             daoObjReturn.setError(true);
             ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
-            this.db.endTransaction();
+            if(dbInstance == null) {
+                this.db.endTransaction();
+            }
             daoObjReturn.setAction(curAction);
             daoObjReturn.setActionReturn(addUpdateRet);
         }

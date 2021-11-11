@@ -4,14 +4,14 @@ class MD_Product_Serial_Tp_Device(
     val device_tp_code: Int,
     val order_seq: Int,
     val tracking_number: String? = null
-){
+) {
     var customer_code: Long = -1
         private set
     var product_code: Long = -1
         private set
     var serial_code: Long = -1
         private set
-    var item : MutableList<MD_Product_Serial_Tp_Device_Item> =  mutableListOf()
+    var item: MutableList<MD_Product_Serial_Tp_Device_Item> = mutableListOf()
 
     /**
      * QUANDO OBJ GERADO VIA GSON NÃO PASSA NO INIT E LISTA NASCE NULL
@@ -29,19 +29,33 @@ class MD_Product_Serial_Tp_Device(
         device_tp_code: Int,
         order_seq: Int,
         tracking_number: String? = null
-    ) : this(device_tp_code, order_seq, tracking_number){
+    ) : this(device_tp_code, order_seq, tracking_number) {
         this.customer_code = customer_code
         this.product_code = product_code
         this.serial_code = serial_code
     }
 
-    fun setPk(serial: MD_Product_Serial){
+    fun setPk(serial: MD_Product_Serial) {
         this.customer_code = serial.customer_code
         this.product_code = serial.product_code
         this.serial_code = serial.serial_code
         //
         item.forEach {
             it.setPk(this)
+        }
+    }
+
+    companion object {
+        @JvmStatic
+        fun getSerialDeviceTpFromList(
+            serial: MD_Product_Serial,
+            deviceList: ArrayList<MD_Product_Serial_Tp_Device>
+        ): ArrayList<MD_Product_Serial_Tp_Device> {
+            return deviceList.filter {
+                it.customer_code == serial.customer_code
+                        && it.product_code == serial.product_code
+                        && it.serial_code == serial.serial_code
+            } as ArrayList
         }
     }
 
