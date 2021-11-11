@@ -3,9 +3,11 @@ package com.namoadigital.prj001.model;
 import androidx.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by neomatrix on 8/9/16.
@@ -113,7 +115,9 @@ public class MD_Product_Serial implements Serializable {
     private String last_measure_date;
     private Float last_cycle_value;
     private Integer device_tp_code_main;
-
+    @SerializedName("structure")
+    @Expose
+    private List<MD_Product_Serial_Structure> structure = new ArrayList<>();
     /*
     * Add contrutor com inicialização de -1 no serial temp para diferenciar dos seriais criados
     * via app.
@@ -123,8 +127,20 @@ public class MD_Product_Serial implements Serializable {
     }
 
     public void setPk(){
-        for (int i = 0; i < tracking_list.size(); i++) {
-            tracking_list.get(i).setPk(this);
+        if(tracking_list != null) {
+            for (int i = 0; i < tracking_list.size(); i++) {
+                tracking_list.get(i).setPk(this);
+            }
+        }else{
+            tracking_list = new ArrayList<>();
+        }
+        //
+        if(structure != null) {
+            for (int i = 0; i < structure.size(); i++) {
+                structure.get(i).setPk(this);
+            }
+        }else{
+            structure = new ArrayList<>();
         }
     }
 
@@ -695,6 +711,14 @@ public class MD_Product_Serial implements Serializable {
 
     public void setLast_cycle_value(Float last_cycle_value) {
         this.last_cycle_value = last_cycle_value;
+    }
+
+    public List<MD_Product_Serial_Structure> getStructure() {
+        return structure;
+    }
+
+    public void setStructure(List<MD_Product_Serial_Structure> structure) {
+        this.structure = structure;
     }
 
     /**

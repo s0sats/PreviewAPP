@@ -13,6 +13,7 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.model.MD_Product_Serial_Structure;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device_Item;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device_Item_Hist;
@@ -1005,6 +1006,39 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
         if(dbInstance == null){
             closeDB();
         }
+        return daoObjReturn;
+    }
+
+    public DaoObjReturn addFullStructure(MD_Product_Serial md_product_serial) {
+        DaoObjReturn daoObjReturn = new DaoObjReturn();
+        daoObjReturn.setTable(TABLE);
+        //
+        openDB();
+        //
+        try {
+            addUpdateTmp(md_product_serial, db);
+            //remocao de structure
+            removeFullStructure(md_product_serial, db);
+            //adicao de structure
+            MD_Product_Serial_Tp_DeviceDao mdProductSerialTpDeviceDao =
+                    new MD_Product_Serial_Tp_DeviceDao(
+                            context,
+                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                            Constant.DB_VERSION_CUSTOM
+                    );
+            for (int i = 0; i < md_product_serial.getStructure().size(); i++) {
+                md_product_serial.getStructure().get(i).setPk(md_product_serial);
+            }
+            for (int i = 0; i < md_product_serial.getStructure().size(); i++) {
+                MD_Product_Serial_Structure md_product_serial_structure = md_product_serial.getStructure().get(i);
+                mdProductSerialTpDeviceDao.addUpdate(md_product_serial_structure.getDevice_tp(), false, db);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+        }
+        //
+        closeDB();
         return daoObjReturn;
     }
 

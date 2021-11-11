@@ -169,6 +169,8 @@ public class TK_Ticket implements Cloneable, Serializable {
     private ArrayList<TK_Ticket_Product> product = new ArrayList<>();
     @Expose
     private ArrayList<TkTicketOriginNc> nc = new ArrayList<>();
+    @Expose
+    private ArrayList<MD_Product_Serial> serial = new ArrayList<>();
 
     public void setPK() {
         for (int i = 0; i < step.size(); i++) {
@@ -180,6 +182,10 @@ public class TK_Ticket implements Cloneable, Serializable {
         for (int i = 0; i < nc.size(); i++) {
             nc.get(i).setPk(this);
         }
+        for (int i = 0; i < serial.size(); i++) {
+            serial.get(i).setPk();
+        }
+
     }
 
     public long getCustomer_code() {
@@ -965,6 +971,14 @@ public class TK_Ticket implements Cloneable, Serializable {
 
     public void setNc(ArrayList<TkTicketOriginNc> nc) {
         this.nc = nc;
+    }
+
+    public ArrayList<MD_Product_Serial> getSerial() {
+        return serial;
+    }
+
+    public void setSerial(ArrayList<MD_Product_Serial> serial) {
+        this.serial = serial;
     }
 
     //TODO - VERIFICAR SE METODO AINDA UTEIS E MOVER PARA STEP QE É QUE TEM LISTA DE CONTROLS AGORA.

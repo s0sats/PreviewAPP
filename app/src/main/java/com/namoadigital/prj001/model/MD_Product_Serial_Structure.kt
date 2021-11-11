@@ -11,4 +11,10 @@ class MD_Product_Serial_Structure(
     val last_measure_date: String?,
     val last_cycle_value: Float?,
     val device_tp: MutableList<MD_Product_Serial_Tp_Device> = mutableListOf()
-)
+){
+    fun setPk(md_product_serial: MD_Product_Serial) {
+        for (i in device_tp.indices) {
+            device_tp.get(i).setPk(md_product_serial)
+        }
+    }
+}
