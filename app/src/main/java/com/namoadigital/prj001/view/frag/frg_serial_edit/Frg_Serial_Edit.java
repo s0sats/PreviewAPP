@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.view.frag.frg_serial_edit;
 
+import static android.app.Activity.RESULT_OK;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -7,9 +9,6 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +19,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 
 import com.namoa_digital.namoa_library.ctls.FabMenu;
 import com.namoa_digital.namoa_library.ctls.FabMenuItem;
@@ -68,8 +71,6 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import static android.app.Activity.RESULT_OK;
 
 public class Frg_Serial_Edit extends BaseFragment {
     //ESSA CONSTANTE É USADA PELO SERVER NO SAVE
@@ -1336,7 +1337,7 @@ public class Frg_Serial_Edit extends BaseFragment {
             @Override
             public void onClick(View v) {
                 if (delegate != null) {
-                    String serial_id = mket_serial_id.getText().toString();
+                    String serial_id = mket_serial_id.getText().toString().toUpperCase();
                     mket_serial_id.setText(ToolBox_Inf.removeForbidenChars(serial_id));
                     if (mket_serial_id.isValid()) {
                         delegate.onCheckButtonClick(

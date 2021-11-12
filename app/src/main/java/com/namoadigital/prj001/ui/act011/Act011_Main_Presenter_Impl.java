@@ -197,12 +197,12 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                             formversion_code,
                             s_form_data,
                             product_code,
-                            serial_id,
+                            serial_id.toUpperCase(),
                             mTicket_prefix,
                             mTicket_code,
                             mTicket_seq,
                             mStep_code
-                    ).toSqlQuery().toString().toLowerCase()
+                    ).toSqlQuery()
             );
         }else{
             customFormLocal = custom_form_LocalDao.getByString(
@@ -213,8 +213,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                     formversion_code,
                     s_form_data,
                     product_code,
-                    serial_id
-                ).toSqlQuery().toString().toLowerCase()
+                    serial_id.toUpperCase()
+                ).toSqlQuery()
             );
         }
         List<HMAux> cf_fields = null;
