@@ -3382,7 +3382,7 @@ public class Act011_Main extends Base_Activity
         binding.act011DialogCheckMkdateFormEnd.setOnSelectedValue(new MkDateTime.IMKDateTimeValueChange() {
             @Override
             public void onChangeValue(String s) {
-                if(ToolBox_Inf.getDateDiferenceInMilliseconds(binding.act011DialogCheckMkdateFormStart.getmValue(), s) <= 0){
+                if(validEndDate(binding)){
                     binding.act011DialogCheckTvElapsedTimeVal.setText(getFormElapsedTimeFormatted(s));
                 }else{
                     ToolBox.alertMSG(
