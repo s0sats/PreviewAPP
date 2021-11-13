@@ -12,6 +12,7 @@ import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.BaseFragment
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.adapter.Act086HistoricAlertAdapter
+import com.namoadigital.prj001.dao.GeOsDao
 import com.namoadigital.prj001.dao.GeOsDeviceItemDao
 import com.namoadigital.prj001.databinding.Act086HistoricFrgBinding
 import com.namoadigital.prj001.model.Act086HistoricAlert
@@ -44,6 +45,8 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
     private var measureValueSufix: String? = null
     private var verificationInstruction: String? = null
     private var restrictionDecimal: Int? = null
+    private var dateStartUntilLastMinute: String? = null
+    //
     private val mPresenter: Act086HistoricFrgContract.IPresenter by lazy{
             Act086HistoricFrgPresenter(
                 requireContext(),
@@ -66,6 +69,7 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
             if(it.containsKey(GeOsDeviceItemDao.RESTRICTION_DECIMAL)) {
                 restrictionDecimal = it.getInt(GeOsDeviceItemDao.RESTRICTION_DECIMAL)
             }
+            dateStartUntilLastMinute = it.getString(GeOsDao.DATE_START)
         }
     }
 
@@ -184,7 +188,7 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
         date?.let {
            ToolBox_Inf.getDateDiferenceInMilliseconds(
                 it,
-                ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT)
+               dateStartUntilLastMinute?:ToolBox_Inf.getDateLastMinute(ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT))
             ).let { dateDiff ->
                if(dateDiff < 0){
                    textColor = R.color.namoa_os_form_problem_red
@@ -283,6 +287,7 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
             measure_value_sufix: String? = null,
             verification_instruction: String? = null,
             restriction_decimal: Int? = null,
+            dateStartUntilLastMinute: String,
             itemHist: ArrayList<GeOsDeviceItemHist>
         ) =
             Act086HistoricFrg().apply {
@@ -299,6 +304,7 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
                     restriction_decimal?.let{
                         putInt(GeOsDeviceItemDao.RESTRICTION_DECIMAL, it)
                     }
+                    putString(GeOsDao.DATE_START, dateStartUntilLastMinute)
                     putSerializable(GeOsDeviceItemHist::javaClass.name, itemHist)
                 }
             }

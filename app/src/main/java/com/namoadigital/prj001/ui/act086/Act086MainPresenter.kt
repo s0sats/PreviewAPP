@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
+import com.namoadigital.prj001.dao.GeOsDao
 import com.namoadigital.prj001.dao.GeOsDeviceItemDao
 import com.namoadigital.prj001.dao.GeOsDeviceItemHistDao
 import com.namoadigital.prj001.model.GeOsDeviceItem
@@ -366,6 +367,23 @@ class Act086MainPresenter(
     override fun putListItemIndexOnLastPositionFromBundle() {
         bundle.apply {
             getBundle(ConstantBaseApp.DEVICE_BUNDLE)?.putInt(ConstantBaseApp.DEVICE_ITEM_LIST_INDEX, Int.MAX_VALUE)
+        }
+    }
+
+    /**
+     * Fun que resgata data de inicio da o.s do bundle e a ajusta para o fim do dia
+     */
+    override fun getDateStartUntilLastMinute(): String {
+        bundle.apply {
+            val startDate = getBundle(ConstantBaseApp.DEVICE_BUNDLE)?.getString(GeOsDao.DATE_START)
+            //
+            return if(startDate != null){
+                ToolBox_Inf.getDateLastMinute(startDate)
+            }else{
+                ToolBox_Inf.getDateLastMinute(
+                    ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT)
+                )
+            }
         }
     }
 

@@ -2147,6 +2147,7 @@ public class Act011_Main extends Base_Activity
         deviceBundle.putBoolean(DEVICE_ITEM_LIST_CHECKBOX_STATUS,acessoryFormView.getNonForecastFilter());
         deviceBundle.putBoolean(DEVICE_ITEM_NEW_ACTION,isNewItem);
         deviceBundle.putString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS,formData.getCustom_form_status());
+        deviceBundle.putString(GeOsDao.DATE_START, geOs.getDate_start());
         bundle.putBundle(DEVICE_BUNDLE, deviceBundle);
         mIntent.putExtras(bundle);
         startActivity(mIntent);

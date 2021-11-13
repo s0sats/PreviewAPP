@@ -50,5 +50,6 @@ interface Act086MainContract {
 
         fun getActionBarTitle(fragmentManager: Fragment, newOrCreatedByApp: Boolean): String?
         fun putListItemIndexOnLastPositionFromBundle()
+        fun getDateStartUntilLastMinute() : String
     }
 }

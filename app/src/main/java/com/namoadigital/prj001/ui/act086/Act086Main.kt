@@ -74,6 +74,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
             deviceItem.value_sufix,
             deviceItem.verification_instruction,
             deviceItem.restriction_decimal,
+            dateStartUntilLastMinute,
             itemHist!!
         )
     }
@@ -84,6 +85,9 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
     private var trackingNumber: String? = null
     private var readOnly: Boolean = false
     private var itemHist: ArrayList<GeOsDeviceItemHist>? = null
+    private val dateStartUntilLastMinute :String by lazy{
+        mPresenter.getDateStartUntilLastMinute()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -212,7 +216,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
                     text = null
                 }else{
                     visibility = View.VISIBLE
-                    val daysDiff = getDaysBetweenTargetAndTodayLastSecond(deviceItem.target_date!!)
+                    val daysDiff = getDaysBetweenTargetAndOsDateStartLastSecond(deviceItem.target_date!!)
                     text = getAlertDateLbl(daysDiff)
                     setTextColor(getAlertDateTextColor(daysDiff))
                 }
@@ -222,13 +226,12 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
 
     /**
      * Calcula diferencia de dia entra a data target e o final do dia de hoje
+     * Alterado para comparar com a dateStart da OS até o fim do dia
      */
-    private fun getDaysBetweenTargetAndTodayLastSecond(targetDate: String): Long {
-        //TODO REVER APOS ANDRE DEFINIR A REGRA
-        var todayLastSecond = getTodayLastSecond()
+    private fun getDaysBetweenTargetAndOsDateStartLastSecond(targetDate: String): Long {
         val dateDiferenceInMilliseconds = ToolBox_Inf.getDateDiferenceInMilliseconds(
             targetDate,
-            todayLastSecond
+            dateStartUntilLastMinute
         )
         val rawDay = dateDiferenceInMilliseconds / ONE_DAY_IN_MILLISECOND.toFloat()
         return TimeUnit.MILLISECONDS.toDays(dateDiferenceInMilliseconds)
