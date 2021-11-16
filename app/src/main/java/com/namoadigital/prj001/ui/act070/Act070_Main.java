@@ -47,6 +47,7 @@ import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.model.MyActionFilterParam;
 import com.namoadigital.prj001.model.TK_Ticket;
+import com.namoadigital.prj001.service.WS_Product_Serial_Structure;
 import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Sync;
@@ -322,6 +323,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         //
         transList.add("alert_starting_pdf_not_supported_ttl");
         transList.add("alert_starting_pdf_not_supported_msg");
+        //
+        transList.add("progress_serial_structure_ttl");
+        transList.add("progress_serial_structure_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -1515,7 +1519,6 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         }
     }
 
-
     public void callOrigin() {
         Intent intent = ToolBox_Inf.getOriginIntent(context, mTicket.getOrigin_type());
         if(intent != null) {
@@ -1530,6 +1533,11 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             }
             //Não tem else pois se for false, será disparado msg dentro do metodo checkWorkgroupEditJsonFileCreation
         }
+    }
+
+    @Override
+    public void resetLastPositionClicked() {
+        lastPositionClicked =-1;
     }
 
     class FCMReceiver extends BroadcastReceiver {
@@ -1591,15 +1599,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             || save_return.isEmpty()) {
                 refreshUi();
                 StepForm stepForm = (StepForm) sources.get(lastPositionClicked);
-
-                if(!mPresenter.isFormSoConfigurationDone(mTicket, stepForm)){
-                    showAlert(
-                        hmAux_Trans.get("alert_form_without_serial_structure_ttl"),
-                        hmAux_Trans.get("alert_form_without_serial_structure_msg")
-                    );
-                }
-                mPresenter.defineFormFlow(mTicket,stepForm);
-                lastPositionClicked =-1;
+                mPresenter.defineAfterFormSyncProcess(mTicket, stepForm);
             }else{
                 mPresenter.processSaveReturn(mTicket.getTicket_prefix(), mTicket.getTicket_code(), save_return);
                 save_return = "";
@@ -1639,6 +1639,13 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             wsProcess = "";
             progressDialog.dismiss();
             mPresenter.processWorkGroupSaveReturn(mTicket.getTicket_prefix(), mTicket.getTicket_code(), mLink);
+        }else if(wsProcess.equals(WS_Product_Serial_Structure.class.getName())){
+            wsProcess = "";
+            progressDialog.dismiss();
+            refreshUi();
+            StepForm stepForm = (StepForm) sources.get(lastPositionClicked);
+            mPresenter.defineFormFlow(mTicket,stepForm);
+            lastPositionClicked =-1;
         }else{
             wsProcess = "";
             progressDialog.dismiss();
@@ -1656,6 +1663,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                     && !save_return.isEmpty()) {
                 mPresenter.processSaveReturn(mTicket.getTicket_prefix(), mTicket.getTicket_code(), save_return);
                 save_return = "";
+                resetLastPositionClicked();
             }
         }else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getName())) {
             //caso haja algo no extrato referente ao formulario forca a execucao do extrato.
@@ -1665,6 +1673,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         }else if (wsProcess.equalsIgnoreCase(WS_TK_Get_Workgroup_List.class.getName())) {
             //reseta var de modo edição.
             inWgEditMode = false;
+        }else if(wsProcess.equals(WS_Product_Serial_Structure.class.getName())){
+            resetLastPositionClicked();
         }else{
             wsResult.clear();
         }
@@ -1686,6 +1696,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                     && !save_return.isEmpty()) {
                 mPresenter.processSaveReturn(mTicket.getTicket_prefix(), mTicket.getTicket_code(), save_return);
                 save_return = "";
+                //
+                resetLastPositionClicked();
             }
         }else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getName())) {
             //caso haja algo no extrato referente ao formulario forca a execucao do extrato.
@@ -1695,6 +1707,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         }else if (wsProcess.equalsIgnoreCase(WS_TK_Get_Workgroup_List.class.getName())) {
             //reseta var de modo edição.
             inWgEditMode = false;
+        }else if(wsProcess.equals(WS_Product_Serial_Structure.class.getName())){
+            resetLastPositionClicked();
         }else{
             wsResult.clear();
         }

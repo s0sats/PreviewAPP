@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.TK_Ticket;
+import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.ui.act070.model.BaseStep;
 import com.namoadigital.prj001.ui.act070.model.StepAction;
 import com.namoadigital.prj001.ui.act070.model.StepApproval;
@@ -78,6 +79,8 @@ public interface Act070_Main_Contract {
         void callAct084();
 
         void callAct087(Bundle act087Bundle);
+
+        void resetLastPositionClicked();
     }
 
     interface I_Presenter{
@@ -161,6 +164,9 @@ public interface Act070_Main_Contract {
 
         void deleteHeaderEditionFiles();
 
-        boolean isFormSoConfigurationDone(TK_Ticket mTicket, StepForm stepForm);
+        boolean isFormSoConfigurationDone(TK_Ticket mTicket, TK_Ticket_Ctrl ticketCtrl);
+
+
+        void defineAfterFormSyncProcess(TK_Ticket mTicket, StepForm stepForm);
     }
 }

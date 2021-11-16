@@ -40,6 +40,7 @@ import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.model.T_MD_Product_Serial_Structure_Env;
 import com.namoadigital.prj001.model.T_TK_Get_Workgroup_List_Rec;
 import com.namoadigital.prj001.model.T_TK_Header_N_Group_Save_WG_Env;
+import com.namoadigital.prj001.receiver.WBR_Product_Serial_Structure;
 import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Sync;
@@ -47,6 +48,7 @@ import com.namoadigital.prj001.receiver.WBR_TK_Get_Workgroup_List;
 import com.namoadigital.prj001.receiver.WBR_TK_Header_N_Group_Save;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
+import com.namoadigital.prj001.service.WS_Product_Serial_Structure;
 import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Sync;
@@ -417,8 +419,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     }
 
     @Override
-    public boolean isFormSoConfigurationDone(TK_Ticket mTicket, StepForm stepForm) {
-        TK_Ticket_Ctrl ticketCtrl = getSelectedCtrlFormFromDb(mTicket.getTicket_prefix(), mTicket.getTicket_code(), stepForm.getProcessTkSeq(), stepForm.getProcessTkSeqTmp(), stepForm.getStepCode());
+    public boolean isFormSoConfigurationDone(TK_Ticket mTicket, TK_Ticket_Ctrl ticketCtrl) {
         TK_Ticket_Form form = ticketCtrl.getForm();
         if(form != null) {
             if(form.getIs_so() == 1) {
@@ -432,6 +433,22 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         return false;
     }
 
+    @Override
+    public void defineAfterFormSyncProcess(TK_Ticket mTicket, StepForm stepForm) {
+        TK_Ticket_Ctrl ticketCtrl = getSelectedCtrlFormFromDb(mTicket.getTicket_prefix(), mTicket.getTicket_code(), stepForm.getProcessTkSeq(), stepForm.getProcessTkSeqTmp(), stepForm.getStepCode());
+        //
+        if(!isFormSoConfigurationDone(mTicket, ticketCtrl)){
+            callWsSerialStructure(
+                ticketCtrl.getCustomer_code(),
+                ticketCtrl.getProduct_code() != null ? ticketCtrl.getProduct_code() : mTicket.getOpen_product_code() ,
+                ticketCtrl.getSerial_code() != null ? ticketCtrl.getSerial_code() : mTicket.getOpen_serial_code()
+            );
+        }else{
+            mView.resetLastPositionClicked();
+            //
+            defineFormFlow(mTicket,stepForm);
+        }
+    }
 
     private void callWsWgSave(T_TK_Header_N_Group_Save_WG_Env.T_TK_Header_N_Group_Save_WG_Ticket wgTicket) {
         if(ToolBox_Con.isOnline(context)){
@@ -1367,12 +1384,14 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                                                         ArrayList<String> dataPackages = new ArrayList<>();
                                                         if (ToolBox_Inf.hasFormProductOutdate(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())) {
                                                             dataPackages.add(DataPackage.DATA_PACKAGE_CHECKLIST);
+                                                            callWsSync(dataPackages);
+                                                        }else{
+                                                            callWsSerialStructure(
+                                                                ticketCtrl.getCustomer_code(),
+                                                                ticketCtrl.getProduct_code() != null ? ticketCtrl.getProduct_code() : mTicket.getOpen_product_code() ,
+                                                                ticketCtrl.getSerial_code() != null ? ticketCtrl.getSerial_code() : mTicket.getOpen_serial_code()
+                                                            );
                                                         }
-                                                        HMAux serialStructureless = ToolBox_Inf.hasFormProductSerialWithoutStructure(context, mTicket.getTicket_prefix(), mTicket.getTicket_code());
-                                                        if (serialStructureless != null) {
-                                                            dataPackages.add(DataPackage.DATA_PACKAGE_SERIAL);
-                                                        }
-                                                        callWsSync(dataPackages, serialStructureless);
                                                     } else {
                                                         ToolBox_Inf.showNoConnectionDialog(context);
                                                     }
@@ -1438,6 +1457,30 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 hmAux_Trans.get("alert_step_or_ctrl_not_found_ttl"),
                 hmAux_Trans.get("alert_step_or_ctrl_not_found_msg")
             );
+        }
+    }
+
+    private void callWsSerialStructure(long customerCode, int productCode, int serialCode) {
+        if (ToolBox_Con.isOnline(context)) {
+            //
+            mView.setWsProcess(WS_Product_Serial_Structure.class.getName());
+            //
+            mView.showPD(
+                hmAux_Trans.get("progress_serial_structure_ttl"),
+                hmAux_Trans.get("progress_serial_structure_msg")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_Product_Serial_Structure.class);
+            Bundle bundle = new Bundle();
+            bundle.putLong(MD_Product_SerialDao.CUSTOMER_CODE, customerCode);
+            bundle.putLong(MD_Product_SerialDao.PRODUCT_CODE, productCode);
+            bundle.putLong(MD_Product_SerialDao.SERIAL_CODE, serialCode);
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+            ToolBox_Inf.showNoConnectionDialog(context);
         }
     }
     //BARRIONUEVO -23/04/2021 - Metodo nãoé mais chamado e a chamada via WBR foi descontinuada.
@@ -3001,11 +3044,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         }
     }
 
-    private void callWsSync(ArrayList<String> data_package) {
-        callWsSync(data_package, null);
-    }
-
-    private void callWsSync(ArrayList<String> data_package, HMAux serialStructureless) {
+    private void callWsSync(ArrayList<String> data_package){
         mView.setWsProcess(WS_Sync.class.getName());
         //
         mView.showPD(
@@ -3024,11 +3063,6 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         bundle.putLong(Constant.GS_PRODUCT_CODE, gs_product_code);
         bundle.putInt(Constant.GC_STATUS_JUMP, 1);
         bundle.putInt(Constant.GC_STATUS, 1);
-        if(data_package.contains(DataPackage.DATA_PACKAGE_SERIAL)
-        && serialStructureless != null){
-            T_MD_Product_Serial_Structure_Env ticketSerialWithoutStructure = getTicketSerialStructureless(serialStructureless);
-            bundle.putSerializable(Constant.GS_TICKET_SERIAL_STRUCTURE_OBJ, ticketSerialWithoutStructure);
-        }
         //
         mIntent.putExtras(bundle);
         //
