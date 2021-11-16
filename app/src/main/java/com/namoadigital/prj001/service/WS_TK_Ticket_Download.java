@@ -11,15 +11,17 @@ import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
+import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.T_TK_Ticket_Download_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Download_PK_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Download_Rec;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
-import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Download_001;
 import com.namoadigital.prj001.sql.Sql_Act069_002;
+import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Download_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -39,6 +41,7 @@ public class WS_TK_Ticket_Download extends IntentService {
     private String mResource_Name = "ws_tk_ticket_download";
     private Gson gson;
     private TK_TicketDao ticketDao;
+    private MD_Product_SerialDao serialDao;
 
     public WS_TK_Ticket_Download() { super("WS_TK_Ticket_Download");}
 
@@ -48,6 +51,11 @@ public class WS_TK_Ticket_Download extends IntentService {
         StringBuilder sb = new StringBuilder();
         Bundle bundle = intent.getExtras();
         ticketDao = new TK_TicketDao(
+            getApplicationContext(),
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+            Constant.DB_VERSION_CUSTOM
+        );
+        serialDao = new MD_Product_SerialDao(
             getApplicationContext(),
             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
             Constant.DB_VERSION_CUSTOM
@@ -196,6 +204,17 @@ public class WS_TK_Ticket_Download extends IntentService {
                     }
                 }else{
                     tickets.add(tkTicket);
+                }
+                //tratativa para serial e sua estrutura.
+                if(!tkTicket.getSerial().isEmpty()){
+                    for(MD_Product_Serial serial: tkTicket.getSerial()){
+                        serialDao.addUpdateTmp(serial);
+                        if(!serial.getStructure().isEmpty()) {
+                            serialDao.addFullStructure(serial);
+                        }else{
+                            serialDao.removeFullStructure(serial);
+                        }
+                    }
                 }
                 //
             }

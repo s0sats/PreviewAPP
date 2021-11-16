@@ -23,6 +23,7 @@ import java.util.*
 
 public class WS_TK_Ticket_Search_Not_Focus : IntentService("WS_TK_Ticket_Search_Not_Focus") {
 
+
     val RETURNED_TICKET_QTY = "RETURNED_TICKET_QTY"
 
     private val hmAux_Trans by lazy{
@@ -65,6 +66,14 @@ public class WS_TK_Ticket_Search_Not_Focus : IntentService("WS_TK_Ticket_Search_
                 getApplicationContext(),
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
                 Constant.DB_VERSION_CUSTOM
+        )
+    }
+    //
+    private val serialDao by lazy{
+        MD_Product_SerialDao(
+            getApplicationContext(),
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+            Constant.DB_VERSION_CUSTOM
         )
     }
     //
@@ -238,6 +247,16 @@ public class WS_TK_Ticket_Search_Not_Focus : IntentService("WS_TK_Ticket_Search_
                             scheduleExecList.add(scheduleExec!!)
                         }
 
+                    }
+                    if (!tkTicket.getSerial().isEmpty()) {
+                        for (serial in tkTicket.getSerial()) {
+                            serialDao.addUpdateTmp(serial)
+                            if (!serial.structure.isEmpty()) {
+                                serialDao.addFullStructure(serial)
+                            } else {
+                                serialDao.removeFullStructure(serial)
+                            }
+                        }
                     }
                 }
                 //Se existe agendamento, tenta o insert
