@@ -123,6 +123,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 "alert_same_serial_bkp_machine_error_msg",
                 "alert_invalid_star_date_error_msg",
                 "alert_invalid_measure_value_error_msg",
+                "alert_invalid_measure_zero_cycle_error_msg",
                 "alert_invalid_measure_cycle_error_msg",
                 "alert_last_cycle_lbl",
                 "alert_current_cycle_lbl",
@@ -522,7 +523,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                     startDateInvalid = isStartDateInvalid,
                     measureInvalid = measureInvalid,
                     lastCycleInvalid = preventiveCycleInvalid,
-                    calculatedCycle = calculatedExecCycle,
+                    calculatedCycle = if(calculatedExecCycle >= 0) calculatedExecCycle else 0.0f,
                     lastCycleVal = formOsHeader.last_cycle_value?:0f,
                     measureSufix = mainMeasureTp?.valueSufix?:""
                 )
@@ -999,26 +1000,31 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 text = hmAuxTrans["alert_invalid_measure_value_error_msg"]
                 setPrefix(getString(R.string.unicode_bullet).plus(" "))
             }
+            tvMeasureInvalidZeroCycleMsg.apply {
+                visibility = if(lastCycleInvalid && calculatedCycle == 0f ) View.VISIBLE else View.GONE
+                text = hmAuxTrans["alert_invalid_measure_zero_cycle_error_msg"]
+                setPrefix(getString(R.string.unicode_bullet).plus(" "))
+            }
             tvMeasureInvalidCycleMsg.apply {
-                visibility = if(lastCycleInvalid) View.VISIBLE else View.GONE
+                visibility = if(lastCycleInvalid && calculatedCycle.compareTo(0) > 0) View.VISIBLE else View.GONE
                 text = hmAuxTrans["alert_invalid_measure_cycle_error_msg"]
                 setPrefix(getString(R.string.unicode_bullet).plus(" "))
             }
             tvLastCycleLbl.apply {
-                visibility = if(lastCycleInvalid) View.VISIBLE else View.GONE
+                visibility = if(lastCycleInvalid && calculatedCycle.compareTo(0) > 0) View.VISIBLE else View.GONE
                 text = hmAuxTrans["alert_last_cycle_lbl"].plus(" :")
             }
             tvLastCycleVal.apply {
-                visibility = if(lastCycleInvalid) View.VISIBLE else View.GONE
+                visibility = if(lastCycleInvalid && calculatedCycle.compareTo(0) > 0) View.VISIBLE else View.GONE
                 text = "$lastCycleVal $measureSufix"
             }
             tvCurrentCycleLb.apply {
-                visibility = if(lastCycleInvalid) View.VISIBLE else View.GONE
+                visibility = if(lastCycleInvalid && calculatedCycle.compareTo(0) > 0) View.VISIBLE else View.GONE
                 text = hmAuxTrans["alert_current_cycle_lbl"].plus(" :")
             }
             tvCurrentCycleVal.apply {
-                visibility = if(lastCycleInvalid) View.VISIBLE else View.GONE
-                text = if(calculatedCycle > 0) "$calculatedCycle $measureSufix" else  "0.0 $measureSufix"
+                visibility = if(lastCycleInvalid && calculatedCycle.compareTo(0) > 0) View.VISIBLE else View.GONE
+                text = "$calculatedCycle $measureSufix"
             }
         }
         //

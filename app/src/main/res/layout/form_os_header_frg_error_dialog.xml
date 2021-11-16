@@ -15,7 +15,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="TextView"
+        tools:text="Empty Bkp Machine"
         android:textColor="@color/namoa_font_color_black222"
         android:textSize="@dimen/font_size_font_16"
         app:layout_constraintEnd_toEndOf="parent"
@@ -26,7 +26,7 @@
         android:id="@+id/tv_os_type_invalid_msg"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="TextView"
+        tools:text="Os Type Invalid"
         android:textColor="@color/namoa_font_color_black222"
         android:textSize="@dimen/font_size_font_16"
         app:layout_constraintEnd_toEndOf="parent"
@@ -38,7 +38,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="TextView"
+        tools:text="Bkp Machine is the same of O.S"
         android:textColor="@color/namoa_font_color_black222"
         android:textSize="@dimen/font_size_font_16"
         app:layout_constraintEnd_toEndOf="parent"
@@ -50,7 +50,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="TextView"
+        tools:text="Invalid date start"
         android:textColor="@color/namoa_font_color_black222"
         android:textSize="@dimen/font_size_font_16"
         app:layout_constraintEnd_toEndOf="parent"
@@ -63,7 +63,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="TextView"
+        tools:text="Invalid Measuare val"
         android:textColor="@color/namoa_font_color_black222"
         android:textSize="@dimen/font_size_font_16"
         app:layout_constraintEnd_toEndOf="parent"
@@ -71,16 +71,28 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_star_date_invalid_msg" />
 
     <TextView
-        android:id="@+id/tv_measure_invalid_cycle_msg"
+        android:id="@+id/tv_measure_invalid_zero_cycle_msg"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="TextView"
+        tools:text="Cycle Zero"
         android:textColor="@color/namoa_font_color_black222"
         android:textSize="@dimen/font_size_font_16"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_measure_invalid_val_msg" />
+
+    <TextView
+        android:id="@+id/tv_measure_invalid_cycle_msg"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        tools:text="Invalid Cycle"
+        android:textColor="@color/namoa_font_color_black222"
+        android:textSize="@dimen/font_size_font_16"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_measure_invalid_zero_cycle_msg" />
 
     <TextView
         android:id="@+id/tv_last_cycle_val"
