@@ -603,7 +603,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 inspections.add(
                         new InspectionCell(
                                 item.getManual_desc() == null ? item.getItem_check_desc():item.getManual_desc(),
-                                item.getTarget_date() != null? ToolBox_Inf.getDateDiferenceInDays(item.getTarget_date(),ToolBox_Inf.getDateLastMinute(ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT))): null,
+                                item.getTarget_date() != null ? ToolBox_Inf.getDateDiferenceInDays(item.getTarget_date(),ToolBox_Inf.getDateLastMinute(geOs.getDate_start())): null,
                                 getPhotoCount(item),
                                 item.getMaterialList().size(),
                                 item.getApply_material().equals(APPLY_MATERIAL_REQUIRED),
@@ -2268,7 +2268,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     }
 
     @Override
-    public InspectionCell setNotVerifyItem(String itemPk) {
+    public InspectionCell setNotVerifyItem(String itemPk, String geOsDateStart) {
         String[] device_item_pk = itemPk.split("\\.");
         GeOsDeviceItem deviceItem = geOsDeviceItemDao.getByString(
                 new GeOsDeviceItem_Sql_001(
@@ -2293,7 +2293,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         //
         return new InspectionCell(
                 deviceItem.getItem_check_desc(),
-                ToolBox_Inf.getDateDiferenceInDays(deviceItem.getTarget_date(),ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT)),
+                deviceItem.getTarget_date() != null ? ToolBox_Inf.getDateDiferenceInDays(deviceItem.getTarget_date(),ToolBox_Inf.getDateLastMinute(geOsDateStart)): null,
                 getPhotoCount(deviceItem),
                 deviceItem.getMaterialList().size(),
                 deviceItem.getApply_material().equals(APPLY_MATERIAL_REQUIRED),

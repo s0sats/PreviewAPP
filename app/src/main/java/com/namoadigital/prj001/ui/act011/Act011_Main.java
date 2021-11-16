@@ -2158,7 +2158,7 @@ public class Act011_Main extends Base_Activity
     @NonNull
     @Override
     public InspectionCell onNotVerifyAction(@NonNull String itemPk) {
-        return mPresenter.setNotVerifyItem(itemPk);
+        return mPresenter.setNotVerifyItem(itemPk, geOs.getDate_start());
     }
 
     @Override
