@@ -239,7 +239,8 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
             context,
             ConstantBaseApp.PROFILE_PRJ001_CHECKLIST,
             ConstantBaseApp.PROFILE_PRJ001_CHECKLIST_PARAM_ITEM_CHECK_NEW
-        ) && (!binding.chkNonForecastItem.isChecked || binding.edtInspectionFilter.text.toString().trim().isNotEmpty())
+        ) && !acessoryFormView.isReadOnly
+          && (!binding.chkNonForecastItem.isChecked || binding.edtInspectionFilter.text.toString().trim().isNotEmpty())
     }
 
     private fun setInspectionList() {
