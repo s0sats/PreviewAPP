@@ -205,9 +205,10 @@ public class WS_TK_Ticket_Download extends IntentService {
                 }else{
                     tickets.add(tkTicket);
                 }
+                //tratativa para serial e sua estrutura.
                 if(!tkTicket.getSerial().isEmpty()){
                     for(MD_Product_Serial serial: tkTicket.getSerial()){
-                        serialDao.addUpdate(serial);
+                        serialDao.addUpdateTmp(serial);
                         if(!serial.getStructure().isEmpty()) {
                             serialDao.addFullStructure(serial);
                         }else{
