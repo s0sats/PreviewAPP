@@ -434,19 +434,28 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     }
 
     @Override
-    public void defineAfterFormSyncProcess(TK_Ticket mTicket, StepForm stepForm) {
+    public void defineAfterFormSyncProcess(TK_Ticket mTicket, StepForm stepForm, boolean callWsStructureIfNoneStructure) {
         TK_Ticket_Ctrl ticketCtrl = getSelectedCtrlFormFromDb(mTicket.getTicket_prefix(), mTicket.getTicket_code(), stepForm.getProcessTkSeq(), stepForm.getProcessTkSeqTmp(), stepForm.getStepCode());
         //
         if(!isFormSoConfigurationDone(mTicket, ticketCtrl)){
-            callWsSerialStructure(
-                ticketCtrl.getCustomer_code(),
-                ticketCtrl.getProduct_code() != null ? ticketCtrl.getProduct_code() : mTicket.getOpen_product_code() ,
-                ticketCtrl.getSerial_code() != null ? ticketCtrl.getSerial_code() : mTicket.getOpen_serial_code()
-            );
+            if(callWsStructureIfNoneStructure) {
+                callWsSerialStructure(
+                    ticketCtrl.getCustomer_code(),
+                    ticketCtrl.getProduct_code() != null ? ticketCtrl.getProduct_code() : mTicket.getOpen_product_code(),
+                    ticketCtrl.getSerial_code() != null ? ticketCtrl.getSerial_code() : mTicket.getOpen_serial_code()
+                );
+            }else{
+                mView.callRefreshUi();
+                //
+                mView.showAlert(
+                    hmAux_Trans.get("alert_form_without_serial_structure_ttl"),
+                    hmAux_Trans.get("alert_form_without_serial_structure_msg")
+                );
+            }
         }else{
             mView.resetLastPositionClicked();
             //
-            defineFormFlow(mTicket,stepForm);
+            startFormProcess(ticketCtrl);
         }
     }
 
@@ -1379,12 +1388,9 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                                             new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialogInterface, int i) {
-
                                                     if (ToolBox_Con.isOnline(context)) {
-                                                        ArrayList<String> dataPackages = new ArrayList<>();
                                                         if (ToolBox_Inf.hasFormProductOutdate(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())) {
-                                                            dataPackages.add(DataPackage.DATA_PACKAGE_CHECKLIST);
-                                                            callWsSync(dataPackages);
+                                                            callWsSync();
                                                         }else{
                                                             callWsSerialStructure(
                                                                 ticketCtrl.getCustomer_code(),
@@ -1409,7 +1415,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                         }
                     } else if (ConstantBaseApp.SYS_STATUS_PROCESS.equals(ticketCtrl.getCtrl_status())) {
                         if (formDataAlreadyExists(ticketCtrl.getForm())) {
-                            startFormProcess(mTicket, ticketStep, ticketCtrl);
+                            startFormProcess(ticketCtrl);
                         } else if(formCtrlCreatedBySameUsr(ticketCtrl)) {
                             showConfirmStartFormDialog(mTicket, ticketStep, ticketCtrl);
                         } else {
@@ -1573,8 +1579,6 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
 
     }
 
-
-
     private void showConfirmStartFormDialog(final TK_Ticket mTicket, final TK_Ticket_Step ticketStep, final TK_Ticket_Ctrl ticketCtrl) {
         mView.showAlert(
             hmAux_Trans.get("alert_start_process_ttl"),
@@ -1582,7 +1586,18 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    startFormProcess(mTicket, ticketStep, ticketCtrl);
+                    if( ticketCtrl.getForm() != null
+                        && ticketCtrl.getForm().getIs_so() == 1
+                        && ToolBox_Con.isOnline(context)
+                    ){
+                        callWsSerialStructure(
+                            ticketCtrl.getCustomer_code(),
+                            ticketCtrl.getProduct_code() != null ? ticketCtrl.getProduct_code() : mTicket.getOpen_product_code(),
+                            ticketCtrl.getSerial_code() != null ? ticketCtrl.getSerial_code() : mTicket.getOpen_serial_code()
+                        );
+                    }else{
+                        startFormProcess(ticketCtrl);
+                    }
                 }
             },
             true
@@ -1601,7 +1616,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     private void navegateToFormOrPDF(TK_Ticket mTicket, TK_Ticket_Step ticketStep, TK_Ticket_Ctrl ticketCtrl) {
         if(ticketCtrl.getForm() != null){
             if (formDataAlreadyExists(ticketCtrl.getForm())) {
-                startFormProcess(mTicket, ticketStep, ticketCtrl);
+                startFormProcess(ticketCtrl);
             } else {
                 tryOpenFormPDF(ticketCtrl.getForm());
             }
@@ -1663,8 +1678,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         }
     }
 
-    //todo VERIFICAR COM O CESINHA COMO VAI FICAR O MODELO DE CTRL COM FORM
-    private void startFormProcess(TK_Ticket mTicket, TK_Ticket_Step ticketStep, TK_Ticket_Ctrl ticketCtrl) {
+    private void startFormProcess(TK_Ticket_Ctrl ticketCtrl) {
         if(ticketCtrl.getForm() != null){
             if(ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(ticketCtrl.getForm().getForm_status())){
                 //LUCHE - 31/08/2020
@@ -3033,9 +3047,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     public boolean verifyProductForForm() {
         if(ToolBox_Inf.hasFormProductOutdate(context)){
             if (ToolBox_Con.isOnline(context)) {
-                ArrayList<String> dataPackages = new ArrayList<>();
-                dataPackages.add(DataPackage.DATA_PACKAGE_CHECKLIST);
-                callWsSync(dataPackages);
+                callWsSync();
                 return true;
             }
             return false;
@@ -3044,23 +3056,22 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         }
     }
 
-    private void callWsSync(ArrayList<String> data_package){
+    private void callWsSync(){
         mView.setWsProcess(WS_Sync.class.getName());
         //
         mView.showPD(
                 hmAux_Trans.get("progress_sync_ttl"),
                 hmAux_Trans.get("progress_sync_msg")
         );
-        long gs_product_code = -1;
-        if(data_package.contains(DataPackage.DATA_PACKAGE_CHECKLIST)){
-            gs_product_code = 0;
-        }
+        //
+        ArrayList<String> data_package = new ArrayList<>();
+        data_package.add(DataPackage.DATA_PACKAGE_CHECKLIST);
         //
         Intent mIntent = new Intent(context, WBR_Sync.class);
         Bundle bundle = new Bundle();
         bundle.putString(Constant.GS_SESSION_APP, ToolBox_Con.getPreference_Session_App(context));
         bundle.putStringArrayList(Constant.GS_DATA_PACKAGE, data_package);
-        bundle.putLong(Constant.GS_PRODUCT_CODE, gs_product_code);
+        bundle.putLong(Constant.GS_PRODUCT_CODE, 0);
         bundle.putInt(Constant.GC_STATUS_JUMP, 1);
         bundle.putInt(Constant.GC_STATUS, 1);
         //

@@ -1595,14 +1595,13 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         } else if (wsProcess.equalsIgnoreCase(WS_Sync.class.getName())) {
             wsProcess = "";
             progressDialog.dismiss();
-            if(save_return == null
-            || save_return.isEmpty()) {
-                refreshUi();
+            if(save_return == null || save_return.isEmpty()) {
                 StepForm stepForm = (StepForm) sources.get(lastPositionClicked);
-                mPresenter.defineAfterFormSyncProcess(mTicket, stepForm);
+                mPresenter.defineAfterFormSyncProcess(mTicket, stepForm, true);
             }else{
                 mPresenter.processSaveReturn(mTicket.getTicket_prefix(), mTicket.getTicket_code(), save_return);
                 save_return = "";
+                refreshUi();
             }
         } else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getName())) {
             wsProcess = "";
@@ -1642,9 +1641,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         }else if(wsProcess.equals(WS_Product_Serial_Structure.class.getName())){
             wsProcess = "";
             progressDialog.dismiss();
-            refreshUi();
             StepForm stepForm = (StepForm) sources.get(lastPositionClicked);
-            mPresenter.defineFormFlow(mTicket,stepForm);
+            mPresenter.defineAfterFormSyncProcess(mTicket, stepForm, false);
             lastPositionClicked =-1;
         }else{
             wsProcess = "";
