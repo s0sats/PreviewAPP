@@ -22,6 +22,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_DeviceDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_ActionDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
@@ -32,6 +33,7 @@ import com.namoadigital.prj001.model.GE_Custom_Form;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Form;
@@ -60,6 +62,7 @@ import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_019;
 import com.namoadigital.prj001.sql.MDProductSerialSql017;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_Device_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.Sql_Act070_001;
 import com.namoadigital.prj001.sql.Sql_Act070_002;
@@ -107,6 +110,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     private GE_Custom_Form_LocalDao geCustomFormLocalDao;
     private GE_Custom_Form_DataDao formDataDao;
     private MD_Product_SerialDao mdProductSerialDao;
+    private MD_Product_Serial_Tp_DeviceDao serialTpDeviceDao;
     private ArrayList<HMAux> workgroupOptionList;
 
     public Act070_Main_Presenter(Context context, Act070_Main_Contract.I_View mView, HMAux hmAux_Trans) {
@@ -148,6 +152,11 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
+        );
+        this.serialTpDeviceDao = new MD_Product_Serial_Tp_DeviceDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
         );
     }
 
@@ -1359,7 +1368,14 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                         if(userHasProductAccess(ticketCtrl.getProduct_code())) {
                             if (checkFormMasterDataExists(ticketCtrl.getForm())) {
                                 if(isFormReady(ticketCtrl.getForm())) {
-                                    showConfirmStartFormDialog(mTicket, ticketStep, ticketCtrl);
+                                    if(isNormalFormOrFormOsReady(ticketCtrl)) {
+                                        showConfirmStartFormDialog(mTicket, ticketStep, ticketCtrl);
+                                    }else{
+                                        mView.showAlert(
+                                            hmAux_Trans.get("alert_form_without_serial_structure_ttl"),
+                                            hmAux_Trans.get("alert_form_without_serial_structure_msg")
+                                        );
+                                    }
                                 }else{
                                     ToolBox.alertMSG(
                                         context,
@@ -1464,6 +1480,48 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 hmAux_Trans.get("alert_step_or_ctrl_not_found_msg")
             );
         }
+    }
+
+    /**
+     * Metodo que verifica se é um form normal, ou se é um form os que tem has_item_check = 1
+     * e se o serial possui estrutura local.
+     * @param ticketCtrl
+     * @return
+     */
+    private boolean isNormalFormOrFormOsReady(TK_Ticket_Ctrl ticketCtrl) {
+        //Se for um form comun, verdadeiro
+        if( ticketCtrl.getForm() != null
+            && ticketCtrl.getForm().getIs_so() == 0
+        ){
+            return true;
+        }
+
+        if( ticketCtrl.getForm() != null
+            && ticketCtrl.getForm().getIs_so() == 1
+            && ticketCtrl.getHas_item_check() != null
+            && ticketCtrl.getHas_item_check() == 1
+            && serialHasStructure(ticketCtrl)
+        ){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Metodo que verifica se o serial possui estrutura local.
+     * @param ticketCtrl
+     * @return
+     */
+    private boolean serialHasStructure(TK_Ticket_Ctrl ticketCtrl) {
+        List<MD_Product_Serial_Tp_Device> serialDevices = serialTpDeviceDao.query(
+            new MD_Product_Serial_Tp_Device_Sql_002(
+                ticketCtrl.getCustomer_code(),
+                ticketCtrl.getProduct_code(),
+                ticketCtrl.getSerial_code()
+            ).toSqlQuery()
+        );
+        //
+        return serialDevices != null && serialDevices.size() > 0;
     }
 
     private void callWsSerialStructure(long customerCode, int productCode, int serialCode) {
@@ -1692,9 +1750,19 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             }else{
                 Bundle bundle = getAct011Bundle(ticketCtrl);
                 if(ticketCtrl.getForm().getIs_so() == 1
-                && !formExists(ticketCtrl)){
-                    bundle.putAll(getAct087Bundle(ticketCtrl));
-                    mView.callAct087(bundle);
+                    && !formExists(ticketCtrl)
+                ){
+                    //Se form os e não existe form, verifica se tem estrutura.
+                    //Se tiver abre o form, caso contrario, exibe msg de serial sem estrutura.
+                    if(serialHasStructure(ticketCtrl)) {
+                        bundle.putAll(getAct087Bundle(ticketCtrl));
+                        mView.callAct087(bundle);
+                    }else{
+                        mView.showAlert(
+                            hmAux_Trans.get("alert_form_without_serial_structure_ttl"),
+                            hmAux_Trans.get("alert_form_without_serial_structure_msg")
+                        );
+                    }
                 }else {
                     mView.callAct011(bundle);
                 }
