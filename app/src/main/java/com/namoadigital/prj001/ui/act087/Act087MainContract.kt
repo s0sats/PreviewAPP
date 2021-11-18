@@ -45,5 +45,6 @@ interface Act087MainContract {
         fun isSchedule(): Boolean
         fun getScheduleExecObj(): MD_Schedule_Exec?
         fun getFormRequiresGPSInfo(): Boolean
+        fun checkFormExists(): Boolean
     }
 }

@@ -59,6 +59,12 @@ class Act087MainPresenter(
         )
     }
 
+    private val _mCustomForm : GE_Custom_Form? by lazy{
+        getForm(customFormCode,customFormType,customFormVersion)
+    }
+    //Retorna o form sem ser null. Como só chega aqui se ele for existir, evita tratativa de safe call
+    private val mCustomForm get() = _mCustomForm!!
+
     private fun loadTranslation(): HMAux {
         val transList: MutableList<String> = mutableListOf(
             "act087_title",
@@ -79,6 +85,8 @@ class Act087MainPresenter(
             "alert_schedule_not_found_msg",
             "alert_error_on_create_schedule_ttl",
             "alert_error_on_create_schedule_msg",
+            "alert_form_not_found_ttl",
+            "alert_form_not_found_msg",
         )
         //
         val actAuxTrans = ToolBox_Inf.setLanguage(
@@ -131,9 +139,13 @@ class Act087MainPresenter(
      * Fun que resgata do form se ele requer localização na finalização.
      */
     override fun getFormRequiresGPSInfo(): Boolean {
-        getForm(customFormCode,customFormType,customFormVersion).let {
+        mCustomForm.let {
             return it.require_location == 1
         }
+    }
+
+    override fun checkFormExists(): Boolean {
+        return _mCustomForm != null
     }
 
     override fun getSerialInfo() = serialObj
@@ -174,9 +186,8 @@ class Act087MainPresenter(
         var orderType : MdOrderType? = null
         var measureTp : MeMeasureTp? = null
         //
-        val form: GE_Custom_Form = getForm(customFormCode,customFormType,customFormVersion)
-        form.so_order_type_code_default?.let {
-            orderType = getOrderType(form.customer_code,form.so_order_type_code_default)
+        mCustomForm.so_order_type_code_default?.let {
+            orderType = getOrderType(mCustomForm.customer_code,mCustomForm.so_order_type_code_default)
         }
         getSerialInfo()
         serialObj.measure_tp_code?.let {
@@ -184,10 +195,10 @@ class Act087MainPresenter(
         }
         //
         return GeOs(
-            customer_code = form.customer_code,
-            custom_form_type = form.custom_form_type,
-            custom_form_code = form.custom_form_code,
-            custom_form_version = form.custom_form_version,
+            customer_code = mCustomForm.customer_code,
+            custom_form_type = mCustomForm.custom_form_type,
+            custom_form_code = mCustomForm.custom_form_code,
+            custom_form_version = mCustomForm.custom_form_version,
             custom_form_data = 0,
             order_type_code = orderType?.orderTypeCode?:-1,
             order_type_id = orderType?.orderTypeId?:"",
@@ -212,11 +223,11 @@ class Act087MainPresenter(
             last_cycle_value = serialObj.last_cycle_value,
             last_measure_value = serialObj.last_measure_value?.toFloat(),
             last_measure_date = serialObj.last_measure_date,
-            so_edit_start_end = form.so_edit_start_end,
-            so_order_type_code_default = form.so_order_type_code_default,
-            so_allow_change_order_type = form.so_allow_change_order_type,
+            so_edit_start_end = mCustomForm.so_edit_start_end,
+            so_order_type_code_default = mCustomForm.so_order_type_code_default,
+            so_allow_change_order_type = mCustomForm.so_allow_change_order_type,
             device_tp_code_main = serialObj.device_tp_code_main,
-            so_allow_backup =  form.so_allow_backup
+            so_allow_backup =  mCustomForm.so_allow_backup
         )
     }
 
@@ -238,7 +249,10 @@ class Act087MainPresenter(
         )
     }
 
-    private fun getForm(customFormCode: Int, customFormType: Int, customFormVersion: Int): GE_Custom_Form {
+    /**
+     * Fun que retorna o form ou null
+     */
+    private fun getForm(customFormCode: Int, customFormType: Int, customFormVersion: Int): GE_Custom_Form? {
         return formDao.getByString(
             GE_Custom_Form_Sql_001_TT(
                 ToolBox_Con.getPreference_Customer_Code(context).toString(),
@@ -249,6 +263,12 @@ class Act087MainPresenter(
         )
     }
 
+    /**
+     *
+     * Fun que retorna lista complete a de order type ou especifico caso seu code seja passado.
+     *
+     * @param orderTypeCode - Codigo do order type
+     */
     override fun getOrderTypeList(orderTypeCode: Int): ArrayList<MdOrderType> {
         val orderTypeQuery =
             if(orderTypeCode == -1){
@@ -265,10 +285,23 @@ class Act087MainPresenter(
         return orderTypeDao.query(orderTypeQuery) as ArrayList<MdOrderType>
     }
 
+    /**
+     * Fun que busca a medicao principal do serial.
+     *
+     * @param measureCode - Codigo da medição a ser buscada
+     * @return Medicao encontrada ou null.
+     */
     override fun getMeasure(measureCode: Int): MeMeasureTp? {
         return getMeasureTp(ToolBox_Con.getPreference_Customer_Code(context),measureCode)
     }
 
+    /**
+     * Fun que busca a maquina reserva no servidor.
+     * Se não tiver conexao, faz a busca no device.
+     *
+     * @param bkpProductCode Codigo do produto da maquina reserva
+     * @param bkpSerialId Id do serial digitado
+     */
     override fun executeWsBkpMachine(bkpProductCode: Long, bkpSerialId: String) {
         if(ToolBox_Con.isOnline(context)) {
             mView.setWsProcess(WS_Product_Serial_Backup::class.java.name)
@@ -300,6 +333,13 @@ class Act087MainPresenter(
         }
     }
 
+    /**
+     * Fun que busca no banco a maquina reserva.
+     * Exibe msg de não encontrado ou reporta para fragment lista de serial encontrados
+     *
+     * @param bkpProductCode Codigo do produto da maquina reserva
+     * @param bkpSerialId Id do serial digitado
+     */
     private fun searchBkpMachineInDb(bkpProductCode: Long, bkpSerialId: String) {
         //
         val bkpSerialItemList: List<FormOsHeaderFrgSerialBkpItem>? = serialDao.query(
@@ -334,6 +374,11 @@ class Act087MainPresenter(
         }
     }
 
+    /**
+     * Fun que extraid do json o retorno do Ws de consulta de maquina reserva
+     *
+     * @param mLink Json com dados recebidos pelo WS
+     */
     override fun processWsBkpMachineResult(mLink: String?) {
         if (mLink != null && mLink.isNotEmpty()){
             try{
@@ -365,6 +410,18 @@ class Act087MainPresenter(
         }
     }
 
+    /**
+     * Fun que efetivamente processa o retorno de maquina reserva.
+     * Transforma lista envia pelo server em lists de obj do adapter e define se adicionar card de
+     * qtd de itens encontradas maior que a paginação.
+     * Por fim, reporta lista ao fragment
+     *
+     * @param records Lista retornada
+     * @param page Qtd de itens por paginação
+     * @param foundQty Qtd de itens encontrado nos servidor
+     * @param onlineSearch Inforam se busca foi online ou não
+     *
+     */
     private fun processSerialBkpMachine(
         records: List<T_MD_Product_Serial_Backup_Record>,
         page: Int,
@@ -399,6 +456,11 @@ class Act087MainPresenter(
         )
     }
 
+    /**
+     * Fun que faz a criação das tabelas geOs e cria customFormLocal caso seja agendamento.
+     * Trata erro na criação exibindo msg de erro
+     * @param formOsHeader Obj GeOs ja validado com dados coletados da tela
+     */
     override fun createOsHeader(formOsHeader: GeOs) {
         formOsHeader.custom_form_data = getNextFormData(formOsHeader)
         val daoObjReturn = geOsDao.createGeOsStructure(formOsHeader, serialObj)
@@ -445,6 +507,13 @@ class Act087MainPresenter(
         )
     }
 
+    /**
+     * Fun que criar o customFormLocal para o agendamento.
+     *
+     * @param customFormData CustomFormData definido na criacao das tabelas GeOs.
+     * @return GE_Custom_Form_Local criado ou null em caso de erro
+     *
+     */
     private fun tryCreateScheduleCustomFormLocal(customFormData: Int): GE_Custom_Form_Local? {
         val custom_formDao = GE_Custom_FormDao(
             context,
@@ -485,7 +554,11 @@ class Act087MainPresenter(
             )
     }
 
-
+    /**
+     * Fun que gera o bunda para chamada da act011
+     *
+     * @param formOsHeader
+     */
     private fun getAct011Bundle(formOsHeader: GeOs): Bundle {
         return Bundle().apply {
             putString(MD_ProductDao.PRODUCT_CODE, serialObj.product_code.toString())
@@ -512,6 +585,12 @@ class Act087MainPresenter(
         }
     }
 
+    /**
+     * Fun que busca qual o proximo customFormData do banco
+     *
+     * @param geOs Obj com dados pra criacao da o.s e que tem a pk do form
+     * @return Proximo formData
+     */
     private fun getNextFormData(geOs: GeOs): Int {
         val nextDataAux = formDao.getByStringHM(
             GE_Custom_Form_Local_Sql_002(
@@ -525,6 +604,12 @@ class Act087MainPresenter(
         return nextDataAux[GE_Custom_Form_Local_Sql_002.ID]!!.toInt()
     }
 
+    /**
+     * Fun que trata o clique de voltar da tela. Se houve alteracao, pedi confirma para acao de voltar
+     *
+     * @param anyDataChanged Flag que indica se houve alteracao nas infos
+     *
+     */
     override fun onBackPressedClicked(anyDataChanged: Boolean) {
         when(anyDataChanged){
             true ->{
@@ -544,6 +629,9 @@ class Act087MainPresenter(
 
     }
 
+    /**
+     * Fun que valida qual o fluxo de volta e o executa
+     */
     private fun checkBackFLow() {
         if (mView.isTicketBackFLow()) {
             mView.callAct070()

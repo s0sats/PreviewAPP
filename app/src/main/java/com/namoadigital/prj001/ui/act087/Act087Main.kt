@@ -119,7 +119,6 @@ class Act087Main : Base_Activity_Frag(),
         recoverIntentsInfo()
         iniTrans()
         initVars()
-        initActions()
         iniUIFooter()
     }
 
@@ -141,22 +140,33 @@ class Act087Main : Base_Activity_Frag(),
 
     private fun initVars() {
         if(mPresenter.validateBundleParams()) {
-            if(mPresenter.isSchedule()) {
-                mScheduleObj = mPresenter.getScheduleExecObj()
-                if(mScheduleObj == null){
-                   showAlert(
-                       hmAux_Trans["alert_schedule_not_found_ttl"],
-                       hmAux_Trans["alert_schedule_not_found_msg"],
-                       DialogInterface.OnClickListener { _, _ ->
-                           onBackPressed()
-                       },
-                       0
-                   )
-                }else{
+            if(mPresenter.checkFormExists()) {
+                if (mPresenter.isSchedule()) {
+                    mScheduleObj = mPresenter.getScheduleExecObj()
+                    if (mScheduleObj == null) {
+                        showAlert(
+                            hmAux_Trans["alert_schedule_not_found_ttl"],
+                            hmAux_Trans["alert_schedule_not_found_msg"],
+                            DialogInterface.OnClickListener { _, _ ->
+                                onBackPressed()
+                            },
+                            0
+                        )
+                    } else {
+                        setFormOsHeaderFrg()
+                    }
+                } else {
                     setFormOsHeaderFrg()
                 }
-            }else {
-                setFormOsHeaderFrg()
+            }else{
+                showAlert(
+                    hmAux_Trans["alert_form_not_found_ttl"],
+                    hmAux_Trans["alert_form_not_found_msg"],
+                    DialogInterface.OnClickListener { _, _ ->
+                        onBackPressed()
+                    },
+                    0
+                )
             }
         }else{
             paramErrorFlow()
@@ -175,6 +185,9 @@ class Act087Main : Base_Activity_Frag(),
         )
     }
 
+    /**
+     * Fun que recebe o GeOs inicial e inicializa o frag FormOsHeaderFrg
+     */
     private fun setFormOsHeaderFrg() {
         val osHeaderObj = mPresenter.getOsHeaderObj()
         //
@@ -229,24 +242,20 @@ class Act087Main : Base_Activity_Frag(),
         }?:Bundle()
     }
 
-    private fun initActions() {
-        //
-    }
-
     override fun openDrawer() {
-        //TODO("Not yet implemented")
+        //FUN APENAS PARA QUANDO ESTIVER NA ACT011
     }
 
     override fun check() {
-        //TODO("Not yet implemented")
+        //FUN APENAS PARA QUANDO ESTIVER NA ACT011
     }
 
     override fun previosTab() {
-        //TODO("Not yet implemented")
+        //FUN APENAS PARA QUANDO ESTIVER NA ACT011
     }
 
     override fun nextTab() {
-        //TODO("Not yet implemented")
+        //FUN APENAS PARA QUANDO ESTIVER NA ACT011
     }
 
     override fun getSerialInfo(): MD_Product_Serial {
@@ -275,6 +284,15 @@ class Act087Main : Base_Activity_Frag(),
 
     override fun getFormSerialId() = serialId
 
+    /**
+     * Fun que passa os controles mket do frag para a lista da act para que sejam vistos pelo metodo
+     * da classe baseAct pai.
+     * Fun chamada no attach e dettach do frag
+     *
+     * @param control_sta Lista de Mket do frag
+     * @param addAction Se adiciona ou remove os controles da lista
+     *
+     */
     override fun delegateControlSta(control_sta: ArrayList<MKEditTextNM>, addAction: Boolean) {
         controls_sta.clear()
         if(addAction) {
