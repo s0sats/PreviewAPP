@@ -67,7 +67,6 @@ import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.Sql_Act070_001;
 import com.namoadigital.prj001.sql.Sql_Act070_002;
 import com.namoadigital.prj001.sql.Sql_Act070_003;
-import com.namoadigital.prj001.sql.Sql_Act070_004;
 import com.namoadigital.prj001.sql.Sql_Act070_006;
 import com.namoadigital.prj001.sql.Sql_Act070_007;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_001;
@@ -1398,29 +1397,41 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                                             hmAux_Trans.get("alert_form_without_serial_structure_ttl"),
                                             hmAux_Trans.get("alert_form_without_serial_structure_msg"));
                                 }else {
-                                    mView.showAlert(
-                                            hmAux_Trans.get("alert_form_master_data_not_found_ttl"),
-                                            hmAux_Trans.get("alert_form_master_data_not_found_msg"),
-                                            new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialogInterface, int i) {
-                                                    if (ToolBox_Con.isOnline(context)) {
-                                                        if (ToolBox_Inf.hasFormProductOutdate(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())) {
-                                                            callWsSync();
-                                                        }else{
-                                                            callWsSerialStructure(
-                                                                ticketCtrl.getCustomer_code(),
-                                                                ticketCtrl.getProduct_code() != null ? ticketCtrl.getProduct_code() : mTicket.getOpen_product_code() ,
-                                                                ticketCtrl.getSerial_code() != null ? ticketCtrl.getSerial_code() : mTicket.getOpen_serial_code()
-                                                            );
+                                 /*
+                                    BARRIONUEVO 18-11-2021
+                                    Deixado para encadear servico de sincronismo.
+                                 */
+                                    GE_Custom_Form customForm = getCustomFormFromCtrl(ticketCtrl.getForm());
+                                    //
+                                    if (ticketCtrl.getForm().getIs_so() != customForm.getIs_so()) {
+                                        mView.showAlert(
+                                                hmAux_Trans.get("alert_form_so_not_found_ttl"),
+                                                hmAux_Trans.get("alert_form_so_not_found_msg"));
+                                    } else {
+                                        mView.showAlert(
+                                                hmAux_Trans.get("alert_form_master_data_not_found_ttl"),
+                                                hmAux_Trans.get("alert_form_master_data_not_found_msg"),
+                                                new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                                        if (ToolBox_Con.isOnline(context)) {
+                                                            if (ToolBox_Inf.hasFormProductOutdate(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())) {
+                                                                callWsSync();
+                                                            }else{
+                                                                callWsSerialStructure(
+                                                                        ticketCtrl.getCustomer_code(),
+                                                                        ticketCtrl.getProduct_code() != null ? ticketCtrl.getProduct_code() : mTicket.getOpen_product_code() ,
+                                                                        ticketCtrl.getSerial_code() != null ? ticketCtrl.getSerial_code() : mTicket.getOpen_serial_code()
+                                                                );
+                                                            }
+                                                        } else {
+                                                            ToolBox_Inf.showNoConnectionDialog(context);
                                                         }
-                                                    } else {
-                                                        ToolBox_Inf.showNoConnectionDialog(context);
                                                     }
-                                                }
-                                            },
-                                            false
-                                    );
+                                                },
+                                                false
+                                        );
+                                    }
                                 }
                             }
                         }else{
@@ -1489,22 +1500,38 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
      * @return
      */
     private boolean isNormalFormOrFormOsReady(TK_Ticket_Ctrl ticketCtrl) {
+        GE_Custom_Form customFormFromCtrl = getCustomFormFromCtrl(ticketCtrl.getForm());
+
         //Se for um form comun, verdadeiro
-        if( ticketCtrl.getForm() != null
-            && ticketCtrl.getForm().getIs_so() == 0
+        if( customFormFromCtrl != null
+            && customFormFromCtrl.getIs_so() == 0
         ){
             return true;
         }
 
-        if( ticketCtrl.getForm() != null
-            && ticketCtrl.getForm().getIs_so() == 1
-            && ticketCtrl.getHas_item_check() != null
-            && ticketCtrl.getHas_item_check() == 1
-            && serialHasStructure(ticketCtrl)
+        if(customFormFromCtrl != null
+                && customFormFromCtrl.getIs_so() == 1
+                && ticketCtrl.getHas_item_check() != null
+                && ticketCtrl.getHas_item_check() == 1
+                && serialHasStructure(ticketCtrl)
         ){
             return true;
         }
         return false;
+    }
+
+    private GE_Custom_Form getCustomFormFromCtrl(TK_Ticket_Form tkForm) {
+        if(tkForm!= null){
+            GE_Custom_Form customForm = geCustomFormDao.getByString(
+                    new Sql_Act070_006(
+                            tkForm.getCustomer_code(),
+                            tkForm.getCustom_form_type(),
+                            tkForm.getCustom_form_code()
+                    ).toSqlQuery()
+            );
+            return customForm;
+        }
+        return null;
     }
 
     /**
@@ -1869,14 +1896,11 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     }
 
     private boolean checkFormMasterDataExists(TK_Ticket_Form form) {
-        GE_Custom_Form customForm = geCustomFormDao.getByString(
-            new Sql_Act070_004(
-                form.getCustomer_code(),
-                form.getCustom_form_type(),
-                form.getCustom_form_code()
-            ).toSqlQuery()
-        );
+        GE_Custom_Form customForm =  getCustomFormFromCtrl(form);
         //
+        if(form.getIs_so() != customForm.getIs_so()){
+            return false;
+        }
         if(form.getIs_so() == 1){
             //Retorna serial sem estrutura.
             HMAux productSerial =  mdProductSerialDao.getByStringHM(
