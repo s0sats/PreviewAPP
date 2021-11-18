@@ -327,6 +327,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("progress_serial_structure_ttl");
         transList.add("progress_serial_structure_msg");
         //
+        transList.add("alert_form_so_not_found_ttl");
+        transList.add("alert_form_so_not_found_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
             mModule_Code,
