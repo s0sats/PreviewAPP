@@ -254,7 +254,13 @@ public class WS_TK_Ticket_Search_Not_Focus : IntentService("WS_TK_Ticket_Search_
                             if (!serial.structure.isEmpty()) {
                                 serialDao.addFullStructure(serial)
                             } else {
-                                serialDao.removeFullStructure(serial)
+                                /**
+                                 * BARRIONUEVO 22-11-2021
+                                 * VErifica o has_item_check para apagar a structure do serial
+                                 */
+                                if (serial.has_item_check == 0) {
+                                    serialDao.removeFullStructure(serial)
+                                }
                             }
                         }
                     }

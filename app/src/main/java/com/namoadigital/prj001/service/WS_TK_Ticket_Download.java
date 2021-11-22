@@ -212,7 +212,13 @@ public class WS_TK_Ticket_Download extends IntentService {
                         if(!serial.getStructure().isEmpty()) {
                             serialDao.addFullStructure(serial);
                         }else{
-                            serialDao.removeFullStructure(serial);
+                            /**
+                             * BARRIONUEVO 22-11-2021
+                             * VErifica o has_item_check para apagar a structure do serial
+                             */
+                            if(serial.getHas_item_check() == 0) {
+                                serialDao.removeFullStructure(serial);
+                            }
                         }
                     }
                 }
