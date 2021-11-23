@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.forEach
@@ -25,18 +26,19 @@ import com.namoa_digital.namoa_library.view.BaseFragment
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag
 import com.namoa_digital.namoa_library.view.Camera_Activity
 import com.namoadigital.prj001.R
-import com.namoadigital.prj001.adapter.Act086PhotoAdapter
 import com.namoadigital.prj001.adapter.Act086MaterialItemAdapter
+import com.namoadigital.prj001.adapter.Act086PhotoAdapter
 import com.namoadigital.prj001.dao.GeOsDeviceItemDao
 import com.namoadigital.prj001.databinding.Act086VerificationFrgBinding
 import com.namoadigital.prj001.extensions.applyTintColor
+import com.namoadigital.prj001.extensions.hideKeyboard
 import com.namoadigital.prj001.model.Act086MaterialItem
 import com.namoadigital.prj001.model.GeOsDeviceItem
 import com.namoadigital.prj001.ui.act086.Act086Main
 import com.namoadigital.prj001.ui.act086.Act086ProductEditDialog
-import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
+import com.namoadigital.prj001.util.ToolBox_Inf
 import com.namoadigital.prj001.view.act.product_selection.Act_Product_Selection
 import kotlinx.coroutines.*
 import java.util.*
@@ -58,7 +60,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             requireContext(),
             this,
             hmAux_Trans,
-            GeOsDeviceItemDao(requireContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
+            GeOsDeviceItemDao(requireContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), ConstantBaseApp.DB_VERSION_CUSTOM)
         )
     }
     private lateinit var prefixPhoto: String
@@ -96,7 +98,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            hmAux_Trans = HMAux.getHmAuxFromHashMap(it.getSerializable(Constant.MAIN_HMAUX_TRANS_KEY) as HashMap<String?, String?>)
+            hmAux_Trans = HMAux.getHmAuxFromHashMap(it.getSerializable(ConstantBaseApp.MAIN_HMAUX_TRANS_KEY) as HashMap<String?, String?>)
             prefixPhoto = it.getString(Act086Main.PARAM_PREFIX_PHOTO,"")
             isNewVerification = it.getBoolean(Act086Main.PARAM_NEW_VERIFICATION,false)
             geOsDeviceItem = it.getSerializable(GeOsDeviceItem::javaClass.name) as GeOsDeviceItem
@@ -1017,8 +1019,17 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             if(isAddProcess && materialFragList.indices.contains(productIndex) ){
                 materialFragList.removeAt(productIndex)
                 materialFragAdapter.notifyItemRemoved(productIndex)
+                tryHideKeyboard()
                 applyRequiredLayoutIntoSupplementaryData()
             }
+        }
+    }
+
+    private fun tryHideKeyboard() {
+        try {
+            (requireActivity() as AppCompatActivity).hideKeyboard()
+        } catch (e: Exception) {
+            ToolBox_Inf.registerException(this.javaClass.name, e)
         }
     }
 

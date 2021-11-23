@@ -2,21 +2,18 @@ package com.namoadigital.prj001.ui.act086
 
 import android.content.Context
 import android.content.DialogInterface
-import android.inputmethodservice.InputMethodService
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.namoa_digital.namoa_library.util.HMAux
-import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.databinding.Act086ProductEditDialogBinding
 import com.namoadigital.prj001.model.Act086MaterialItem
-import com.namoadigital.prj001.util.Constant
+import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.util.*
 
@@ -34,7 +31,7 @@ class Act086ProductEditDialog : BottomSheetDialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let{
-            hmAuxTrans = HMAux.getHmAuxFromHashMap(it.getSerializable(Constant.MAIN_HMAUX_TRANS_KEY) as HashMap<String?, String?>)
+            hmAuxTrans = HMAux.getHmAuxFromHashMap(it.getSerializable(ConstantBaseApp.MAIN_HMAUX_TRANS_KEY) as HashMap<String?, String?>)
             materialItem = it.getSerializable(PRODUCT_ITEM) as Act086MaterialItem
             productIdx = it.getInt(PRODUCT_IDX)
             isAddAction = it.getBoolean(PRODUCT_ADD)
@@ -159,7 +156,7 @@ class Act086ProductEditDialog : BottomSheetDialogFragment() {
         ) =
             Act086ProductEditDialog().apply {
                 arguments = Bundle().apply {
-                    putSerializable(Constant.MAIN_HMAUX_TRANS_KEY, hmAuxTrans)
+                    putSerializable(ConstantBaseApp.MAIN_HMAUX_TRANS_KEY, hmAuxTrans)
                     putInt(PRODUCT_IDX,productIdx)
                     putSerializable(PRODUCT_ITEM, materialItem)
                     putBoolean(PRODUCT_ADD,isAddAction)
