@@ -19,14 +19,16 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        >
+        android:layout_marginTop="8dp">
 
         <TextView
             android:id="@+id/act086_product_edit_dialog_tv_product_desc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:layout_constrainedWidth="true"
             android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
             android:text="Oleo Super Freio"
             android:textColor="@color/namoa_font_color_black222"
             android:textSize="18sp"
@@ -38,24 +40,30 @@
         <com.namoa_digital.namoa_library.ctls.MKEditTextNM
             android:id="@+id/act086_product_edit_dialog_et_qty"
             android:layout_width="wrap_content"
+            app:layout_constraintWidth_percent="0.4"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:backgroundTint="@color/namoa_color_green_2"
             android:ems="2"
+            android:gravity="center"
             android:imeOptions="actionDone"
             android:inputType="numberDecimal"
-            app:mInputType="NUMBER"
-            app:mDecimal="4"
-            app:mBARCODE="false"
-            app:mNFC="false"
-            app:mOCRVin="false"
-            app:mOCR="false"
+            android:minWidth="100dp"
             android:selectAllOnFocus="true"
-            android:text="2,1"
+            android:text="2,100000000000"
             android:textSize="@dimen/font_size_font_16"
-            app:layout_constraintEnd_toEndOf="@+id/act086_product_edit_dialog_tv_product_desc"
-            app:layout_constraintStart_toStartOf="@+id/act086_product_edit_dialog_tv_product_desc"
-            app:layout_constraintTop_toBottomOf="@+id/act086_product_edit_dialog_tv_product_desc" />
+            app:layout_constrainedWidth="true"
+            app:layout_constraintEnd_toStartOf="@+id/act086_product_edit_dialog_tv_unit"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/act086_product_edit_dialog_tv_product_desc"
+            app:mBARCODE="false"
+            app:mDecimal="4"
+            app:mInputType="NUMBER"
+            app:mNFC="false"
+            app:mOCR="false"
+            app:mOCRVin="false" />
 
         <TextView
             android:id="@+id/act086_product_edit_dialog_tv_unit"
@@ -66,6 +74,8 @@
             android:textColor="@color/namoa_font_color_black222"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="@+id/act086_product_edit_dialog_et_qty"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/act086_product_edit_dialog_et_qty"
             app:layout_constraintTop_toTopOf="@+id/act086_product_edit_dialog_et_qty" />
 
