@@ -17,7 +17,7 @@ import android.widget.TextView;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -52,7 +52,7 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter implements Filterable {
     private String trans_lbl_id = "";
     private String trans_lbl_desc = "";
     //
-    private String mModule_Code = Constant.APP_MODULE;
+    private String mModule_Code = ConstantBaseApp.APP_MODULE;
     private String mResource_Name = "lib_custom_cell_adapter";
     private HMAux hmAux_Trans;
     private String iconType;
@@ -285,7 +285,7 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter implements Filterable {
             FilterResults results = new FilterResults();
             if (constraint != null && constraint.length() > 0) {
                 ArrayList<HMAux> filterList = new ArrayList<HMAux>();
-                constraint = ToolBox.AccentMapper(constraint.toString());
+                constraint = ToolBox.AccentMapper(constraint.toString().toLowerCase());
                 //
                 for (int i = 0; i < data.size(); i++) {
                     String mKey_ID = ToolBox.AccentMapper(data.get(i).get(key_id).toLowerCase());
