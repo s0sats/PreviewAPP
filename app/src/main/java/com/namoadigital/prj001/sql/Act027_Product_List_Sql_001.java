@@ -11,6 +11,9 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
  * Created by d.luche on 01/11/2017.
  * Retorna lista de eventos da S.O com informações de se te sketch preenchido
  * e qtd de fotos.
+ * LUCHE -24/11/2021
+ * Substituido like da query pro GLOB para buscar sem acentuação.
+ * Tratado filtro digitado com metodo getNoAccentStringForGlobSql
  */
 
 public class Act027_Product_List_Sql_001 implements Specification {
@@ -27,7 +30,7 @@ public class Act027_Product_List_Sql_001 implements Specification {
         this.customer_code = customer_code;
         this.so_prefix = so_prefix;
         this.so_code = so_code;
-        this.product_filter = product_filter.trim().equals("") ? "null" : product_filter.trim();
+        this.product_filter = product_filter.trim().equals("") ? "null" : ToolBox_Inf.getNoAccentStringForGlobSql(product_filter.trim());
     }
 
     @Override
@@ -71,8 +74,8 @@ public class Act027_Product_List_Sql_001 implements Specification {
                         "   and s.so_prefix = '"+so_prefix+"'\n" +
                         "   and s.so_code = '"+so_code+"'" +
                         "   and ('"+product_filter+"' is null \n " +
-                        "          or s.product_id like '%"+product_filter+"%' \n" +
-                        "          or s.product_desc like '%"+product_filter+"%' \n" +
+                        "          or lower(s.product_id) GLOB lower('*"+product_filter+"*') \n" +
+                        "          or lower(s.product_desc) GLOB lower('*"+product_filter+"*') \n" +
                         "        )\n" +
                         " ORDER BY \n" +
                         "   status_order,\n" +
@@ -81,6 +84,9 @@ public class Act027_Product_List_Sql_001 implements Specification {
                 .append(";")
                 //.append(HmAuxFields+"#"+SKETCH_SELECTED+"#"+FILE_QTY)
                 .toString()
-                .replace("'%null%'","null").replace("'null'","null");
+                .replace("'%null%'","null")
+                .replace("'*null*'","null")
+                .replace("'null'","null")
+            ;
     }
 }
