@@ -2483,6 +2483,9 @@ public class Act011_Main extends Base_Activity
 
             executeSerialSave();
         } else {
+            if(!mPresenter.isaTicketFlowForm()){
+                ToolBox.toastMSG(context, hmAux_Trans.get("alert_finalize_msg"));
+            }
             flowControl();
         }
     }
@@ -2541,6 +2544,7 @@ public class Act011_Main extends Base_Activity
             callAct070();
             return;
         }
+        //
         if(mSo_Prefix != null && mSo_Code != null){
             nservCall();
             return;
