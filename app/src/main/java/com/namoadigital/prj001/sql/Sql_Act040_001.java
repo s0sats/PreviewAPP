@@ -10,6 +10,8 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
  * Created by d.luche on 08/1082018.
  * <p>
  * Query da act040 que seleciona os seriais locais usando os parametros de product, serial e tracking
+ * LUCHE - 24/11/2021
+ * Substituido like pelo comando GLOB para efetuar buscas eliminando a acentuação do serial, tratando com getNoAccentStringForGlobSql O serial_id recebido
  */
 
 public class Sql_Act040_001 implements Specification {
@@ -27,7 +29,7 @@ public class Sql_Act040_001 implements Specification {
         this.customer_code = customer_code;
         this.site_code = site_code;
         this.product_code = product_code.trim().length() > 0 ? product_code : "null";
-        this.serial_id = serial_id.trim().length() > 0 ? serial_id : "null";
+        this.serial_id = serial_id.trim().length() > 0 ? ToolBox_Inf.getNoAccentStringForGlobSql(serial_id) : "null";
         this.tracking = tracking.trim().length() > 0 ? tracking : "null";
         //
         if (tracking != null && !tracking.isEmpty()) {
@@ -65,7 +67,7 @@ public class Sql_Act040_001 implements Specification {
                                 mOption_Site +
 
                                 "     and ( '" + product_code + "' is null or p.product_code = '" + product_code + "')\n" +
-                                "     and ( '" + serial_id + "' is null or s.serial_id like '%" + serial_id + "%')\n" +
+                                "     and ( '" + serial_id + "' is null or s.serial_id GLOB upper('*" + serial_id + "*'))\n" +
                                 "     and ( '" + tracking + "' is null  or t.tracking = '" + tracking + "')\n" +
                                 "     \n" +
                                 " ORDER BY\n" +
@@ -81,7 +83,9 @@ public class Sql_Act040_001 implements Specification {
                                 "     t.tracking\n" +
                                 ";"
                         ).toString()
-                        .replace("'%null%'", "null").replace("'null'", "null");
+                        .replace("'%null%'", "null")
+                        .replace("'*null*'", "null")
+                        .replace("'null'", "null");
 
     }
 }
