@@ -348,7 +348,7 @@ class Act087MainPresenter(
                 serialObj.product_code,
                 serialObj.serial_id,
                 bkpProductCode,
-                bkpSerialId,
+                ToolBox_Inf.getNoAccentStringForGlobSql(bkpSerialId),
                 ToolBox_Con.getPreference_Site_Code(context).toInt()
             ).toSqlQuery()
         )?.map { bkpOffline ->

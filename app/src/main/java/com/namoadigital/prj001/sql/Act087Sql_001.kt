@@ -6,6 +6,8 @@ import com.namoadigital.prj001.database.Specification
 /**
  * LUCHE - 04/10/2021
  * Query que busca a maquina reserva localmente. A query elimina do resultado, o produto serial usado na abertura da os
+ * LUCHE - 24/11/2021
+ * Substituido like pelo comando GLOB para efetuar buscas eliminando a acentuação do serial.
  */
 
 class Act087Sql_001(
@@ -24,7 +26,7 @@ class Act087Sql_001(
                     WHERE
                       s.${MD_Product_SerialDao.CUSTOMER_CODE} = $customerCode
                       and s.${MD_Product_SerialDao.PRODUCT_CODE} = $bkpProductCode
-                      and s.${MD_Product_SerialDao.SERIAL_ID} like '%$bkpSerialId%'
+                      and s.${MD_Product_SerialDao.SERIAL_ID} GLOB upper('*$bkpSerialId*')
                       and ( s.${MD_Product_SerialDao.CUSTOMER_CODE}||'.'||
                             s.${MD_Product_SerialDao.PRODUCT_CODE}||'.'||
                             s.${MD_Product_SerialDao.SERIAL_ID} != '$customerCode.$productCode.$serialId'
