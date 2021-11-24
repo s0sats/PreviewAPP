@@ -10,6 +10,8 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
  * Created by d.luche on 23/03/2018.
  * <p>
  * Query da act020 que seleciona os seriais localmente
+ * LUCHE - 24/11/2021
+ * Substituido like pelo comando GLOB para efetuar buscas eliminando a acentuação do serial, tratando com getNoAccentStringForGlobSql quando busca não exata
  */
 
 public class Sql_Act020_002 implements Specification {
@@ -48,7 +50,7 @@ public class Sql_Act020_002 implements Specification {
         this.customer_code = customer_code;
         this.site_code = site_code;
         this.product_id = product_id.trim().length() > 0 ? product_id : "null";
-        this.serial_id = serial_id.trim().length() > 0 ? serial_id : "null";
+        this.serial_id = serial_id.trim().length() > 0 ? serial_id: "null";
         this.tracking = tracking.trim().length() > 0 ? tracking : "null";
         //
         if (tracking != null && !tracking.isEmpty()) {
@@ -58,9 +60,9 @@ public class Sql_Act020_002 implements Specification {
         }
         //LUCHE - 16/03/2021 - Aplicação da busca exata por serial quando leitura vinda do barcode.
         if(forceExactSearch){
-            serialIdClause = "     and ( '" + serial_id + "' is null or s.serial_id = '" + serial_id + "')\n";
+            serialIdClause = "     and ( '" + this.serial_id + "' is null or s.serial_id = '" + this.serial_id + "')\n";
         }else{
-            serialIdClause = "     and ( '" + serial_id + "' is null or s.serial_id like '%" + serial_id + "%')\n";
+            serialIdClause = "     and ( '" + this.serial_id + "' is null or upper(s.serial_id) GLOB upper('*" + ToolBox_Inf.getNoAccentStringForGlobSql(this.serial_id)+ "*'))\n";
         }
     }
 
@@ -131,7 +133,6 @@ public class Sql_Act020_002 implements Specification {
                                 mOption_Site +
 
                                 "     and ( '" + product_id + "' is null or p.product_id = '" + product_id + "')\n" +
-                                //"     and ( '" + serial_id + "' is null or s.serial_id like '%" + serial_id + "%')\n" +
                                 serialIdClause +
                                 "     and ( '" + tracking + "' is null  or t.tracking = '" + tracking + "')\n" +
                                 "     \n" +
@@ -148,7 +149,9 @@ public class Sql_Act020_002 implements Specification {
                                 "     t.tracking\n" +
                                 ";"
                         ).toString()
-                        .replace("'%null%'", "null").replace("'null'", "null");
+                        .replace("'%null%'", "null")
+                        .replace("'*null*'", "null")
+                        .replace("'null'", "null");
 
     }
 }
