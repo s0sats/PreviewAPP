@@ -10,6 +10,10 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
  *
  * Query reponsavel por lista as out_confs offline
  *
+ * LUCHE - 24/11/2021
+ * Modulo I.O esta abandonado e não e usado, por isso nao foi aplicado a mudança do LIKE pelo GLOB,
+ * já que é dificil conseguir um cenario para teste
+ * Se um dia esse modulo ressurgir, rever.
  */
 
 public class Sql_Act051_001 implements Specification {
