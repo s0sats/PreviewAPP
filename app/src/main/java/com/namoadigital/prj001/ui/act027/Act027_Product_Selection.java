@@ -2,13 +2,14 @@ package com.namoadigital.prj001.ui.act027;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+
+import androidx.annotation.Nullable;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -249,7 +250,7 @@ public class Act027_Product_Selection extends BaseFragment {
                     new Sql_Act027_Product_Selection_002(
                             String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
                             String.valueOf(group_code),
-                            (filter.trim().equals("") ? "null" : filter),
+                            (filter.trim().equals("") ? "null" : ToolBox_Inf.getNoAccentStringForGlobSql(filter)),
                             (int) group_code
                     ).toSqlQuery()
             );

@@ -16,6 +16,7 @@ import com.namoadigital.prj001.sql.Sql_Act007_002;
 import com.namoadigital.prj001.sql.Sql_Act027_Product_Selection_001;
 import com.namoadigital.prj001.sql.Sql_Act027_Product_Selection_002;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 
@@ -48,7 +49,10 @@ public class Act_Product_Selection_Presenter implements Act_Product_Selection_Co
                 new Sql_Act007_002(
                         String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
                         String.valueOf(group_code),
-                        (filter.trim().equals("") ? "null" : filter),
+                        (filter.trim().equals("")
+                            ? "null"
+                            : ToolBox_Inf.getNoAccentStringForGlobSql(filter)
+                        ),
                         (int) group_code
                 ).toSqlQuery()
         );
@@ -128,7 +132,7 @@ public class Act_Product_Selection_Presenter implements Act_Product_Selection_Co
                 new Sql_Act027_Product_Selection_002(
                         String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
                         String.valueOf(group_code),
-                        (filter.trim().equals("") ? "null" : filter),
+                        (filter.trim().equals("") ? "null" : ToolBox_Inf.getNoAccentStringForGlobSql(filter)),
                         (int) group_code
                 ).toSqlQuery()
         );

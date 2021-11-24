@@ -5,6 +5,11 @@ import com.namoadigital.prj001.database.Specification;
 
 /**
  * Created by neomatrix on 09/01/17.
+ *
+ * 24/11/2021
+ * Alterado query para ao inves utilizar o like, usar GLOB.
+ * Alteração feita para que query ignore os caracteres com acentuação ao realizar busca.
+ * Como GLOB é case sensitive, é necessario fazer o lower case dos 2 lados.
  */
 
 public class Sql_Act007_002 implements Specification {
@@ -43,11 +48,14 @@ public class Sql_Act007_002 implements Specification {
                             " WHERE\n" +
                             "    p.customer_code= " + s_customer_code + " \n" +
                             "    and pgp.product_code is null and '" + s_filter + "' IS NULL  \n" +
-                            "    or ( '" + s_filter + "' IS NOT NULL and ( p.product_id like '%" + s_filter + "%' OR p.product_desc like '%" + s_filter + "%' ) )" +
+                            "    or ( '" + s_filter + "' IS NOT NULL and ( lower(p.product_id) GLOB lower('*" + s_filter + "*') OR lower(p.product_desc) GLOB lower('*" + s_filter + "*' )) )" +
                             "  ORDER BY \n" +
                             "     p.product_id;")
                     //.append("product_code#product_id#product_desc#full_product_desc#type")
-                    .toString().replace("'%null%'","null").replace("'null'","null");
+                    .toString()
+                    .replace("'%null%'","null")
+                    .replace("'null'","null")
+                    .replace("'*null*'","null");
         } else {
             return sb
                     .append("     SELECT\n" +
@@ -65,12 +73,15 @@ public class Sql_Act007_002 implements Specification {
                             "        pgp.customer_code= " + s_customer_code + "   \n" +
                             "        and pgp.group_code = " + s_group_code + " AND pgp.product_code IS NOT NULL AND '" + s_filter + "' IS NULL \n" +
                             "        OR( '" + s_filter + "' IS NOT NULL\n" +
-                            "              AND (p.product_id like '%" + s_filter + "%' OR p.product_desc like '%" + s_filter + "%')" +
+                            "              AND (lower(p.product_id) GLOB lower('*" + s_filter + "*') OR lower(p.product_desc) GLOB lower('*" + s_filter + "*'))" +
                             "           ) \n" +
                             "     ORDER BY\n" +
                             "        P.product_id;")
                     //.append("product_code#product_id#product_desc#full_product_desc#type")
-                    .toString().replace("'%null%'","null").replace("'null'","null");
+                    .toString()
+                    .replace("'%null%'","null")
+                    .replace("'null'","null")
+                    .replace("'*null*'","null");
         }
     }
 }

@@ -8984,4 +8984,106 @@ public class ToolBox_Inf {
             return "1900-01-01 00:00:00 +00:00";
         }
     }
+
+    /**
+     * LUCHE - 24/11/2021
+     * Metodo que recebe String e retorna os caracteres acentuado no padrão de busca entendido pelo
+     * comando GLOB do sqlite.
+     * Basicamente, para as letras que podem ter caracter especial, o caracter é substituido pela
+     * sequencia de caracteres que podem equivaler ao caracter originalmente digitado
+     * @param text
+     * @return
+     */
+    public static  String getNoAccentStringForGlobSql(String text){
+        if(text == null){
+            return text;
+        }
+        StringBuilder sbText = new StringBuilder(text);
+        StringBuilder noAccentText = new StringBuilder();
+
+        for (int i = 0; i < text.length(); i++) {
+            try {
+                //Pega o char na posição, transform em string , aplica lower e retorna como char de novo kkkk
+                String s = String.valueOf(sbText.charAt(i)).toLowerCase();
+                char c = s.charAt(0);
+                switch (c) {
+                    case 'a':
+                    case 'à':
+                    case 'á':
+                    case 'â':
+                    case 'ã':
+                    case 'ä':
+                    case 'å':
+                        noAccentText.append("[aàáâãäåAÀÁÂÃÄÅ]");
+                        break;
+                    case 'c':
+                    case 'ç':
+                    case 'č':
+                        noAccentText.append("[cçčCÇČ]");
+                        break;
+                    case 'e':
+                    case 'è':
+                    case 'é':
+                    case 'ê':
+                    case 'ë':
+                    case 'ě':
+                        noAccentText.append("[eèéêëěEÈÉÊËĚ]");
+                        break;
+                    case 'i':
+                    case 'ì':
+                    case 'í':
+                    case 'î':
+                    case 'ï':
+                        noAccentText.append("[iìíîïIÌÍÎÏ]");
+                        break;
+                    case 'n':
+                    case 'ñ':
+                        noAccentText.append("[nñNÑ]");
+                        break;
+                    case 'o':
+                    case 'ò':
+                    case 'ó':
+                    case 'ô':
+                    case 'õ':
+                    case 'ö':
+                    case 'ø':
+                        noAccentText.append("[oòóôõöøOÒÓÔÕÖØ]");
+                        break;
+                    case 's':
+                    case 'š':
+                    case 'ß':
+                        noAccentText.append("[sšSŠß]");
+                        break;
+                    case 't':
+                    case 'ť':
+                        noAccentText.append("[tťTŤ]");
+                        break;
+                    case 'u':
+                    case 'ù':
+                    case 'ú':
+                    case 'û':
+                    case 'ü':
+                    case 'ů':
+                        noAccentText.append("[uùúûüůUÙÚÛÜŮ]");
+                        break;
+                    case 'y':
+                    case 'ÿ':
+                    case 'ý':
+                        noAccentText.append("[yÿýYŸÝ]");
+                        break;
+                    case 'z':
+                    case 'ž':
+                        noAccentText.append("[zžZŽ]");
+                        break;
+
+                    default:
+                        noAccentText.append(sbText.charAt(i));
+                }
+            }catch (Exception e){
+                registerException(CLASS_NAME,e);
+            }
+        }
+        //
+        return noAccentText.toString();
+    }
 }
