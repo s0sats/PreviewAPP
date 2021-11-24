@@ -374,6 +374,7 @@ public class Act011_Main extends Base_Activity
 
         transList.add("alert_finalize_title");
         transList.add("alert_finalize_msg");
+        transList.add("toast_finalized_offline_msg");
 
         transList.add("alert_nform_expired_ttl");
         transList.add("alert_nform_expired_msg");
@@ -2484,7 +2485,7 @@ public class Act011_Main extends Base_Activity
             executeSerialSave();
         } else {
             if(!mPresenter.isaTicketFlowForm()){
-                ToolBox.toastMSG(context, hmAux_Trans.get("alert_finalize_msg"));
+                ToolBox.toastMSG(context, hmAux_Trans.get("toast_finalized_offline_msg"));
             }
             flowControl();
         }
