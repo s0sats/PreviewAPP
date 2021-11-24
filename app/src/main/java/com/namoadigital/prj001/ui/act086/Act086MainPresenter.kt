@@ -389,25 +389,32 @@ class Act086MainPresenter(
 
     override fun onBackPressedClicked(fragmentManager: FragmentManager, deviceItem: GeOsDeviceItem) {
         //
-        when(getCurrentFrag(fragmentManager)){
+        val currentFragment = getCurrentFrag(fragmentManager)
+        //
+        when(currentFragment){
             is Act086HistoricFrg ->{
                 mView.popToVerificationFrag()
             }
             is Act086VerificationFrg->{
-                //Se é um item criado via app structure == 0 e não foi respondido, status_answer == null
-                //exibe msg de perda de dados ao sair
-                if(deviceItem.structure == 0 && deviceItem.status_answer == null){
-                    mView.showAlert(
-                        hmAuxTrans["alert_unsaved_data_will_be_lost_ttl"],
-                        hmAuxTrans["alert_unsaved_data_will_be_lost_confirm"],
-                        DialogInterface.OnClickListener { dialog, which ->
-                            putListItemIndexOnLastPositionFromBundle()
-                            mView.callAct011()
-                        },
-                        1
-                    )
+
+                if(currentFragment.isItemDescriptionInEditMode()){
+                    currentFragment.resetItemDescription()
                 }else{
-                    mView.callAct011()
+                    //Se é um item criado via app structure == 0 e não foi respondido, status_answer == null
+                    //exibe msg de perda de dados ao sair
+                    if(deviceItem.structure == 0 && deviceItem.status_answer == null){
+                        mView.showAlert(
+                            hmAuxTrans["alert_unsaved_data_will_be_lost_ttl"],
+                            hmAuxTrans["alert_unsaved_data_will_be_lost_confirm"],
+                            DialogInterface.OnClickListener { dialog, which ->
+                                putListItemIndexOnLastPositionFromBundle()
+                                mView.callAct011()
+                            },
+                            1
+                        )
+                    }else{
+                        mView.callAct011()
+                    }
                 }
             }
             else -> mView.callAct011()

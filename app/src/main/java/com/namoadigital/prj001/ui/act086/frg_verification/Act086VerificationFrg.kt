@@ -25,8 +25,8 @@ import com.namoa_digital.namoa_library.view.BaseFragment
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag
 import com.namoa_digital.namoa_library.view.Camera_Activity
 import com.namoadigital.prj001.R
-import com.namoadigital.prj001.adapter.Act086PhotoAdapter
 import com.namoadigital.prj001.adapter.Act086MaterialItemAdapter
+import com.namoadigital.prj001.adapter.Act086PhotoAdapter
 import com.namoadigital.prj001.dao.GeOsDeviceItemDao
 import com.namoadigital.prj001.databinding.Act086VerificationFrgBinding
 import com.namoadigital.prj001.extensions.applyTintColor
@@ -269,6 +269,10 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             mPresenter.buildAdapterMaterialFragList(geOsDeviceItem.materialList, materialFragList)
             materialFragAdapter.notifyDataSetChanged()
         }
+    }
+
+    fun isItemDescriptionInEditMode() : Boolean {
+        return isManualDescInEdit && !binding.act086VerificationFrgMketManualDesc.text.toString().isNullOrEmpty();
     }
 
     private fun buildPhotoListFromDb() {
@@ -1102,6 +1106,15 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
 
     override fun onDetach() {
         super.onDetach()
+    }
+
+    fun resetItemDescription() {
+        binding.act086VerificationFrgMketManualDesc.apply {
+            geOsDeviceItem.manual_desc?.let {
+                this.setText(it)
+            } ?: this.setText("")
+        }
+        binding.act086VerificationFrgIvManualHandler.performClick()
     }
 
     companion object {
