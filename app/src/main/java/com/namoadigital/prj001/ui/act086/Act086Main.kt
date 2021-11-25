@@ -132,7 +132,8 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
         //10/06/2021 - Add recolhimento do teclado
         window.setSoftInputMode(
             WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN
-                    or WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+//                    or WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN
+        )
     }
 
     private fun iniTrans() {
