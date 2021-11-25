@@ -273,6 +273,10 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         }
     }
 
+    fun isItemDescriptionInEditMode() : Boolean {
+        return isManualDescInEdit && !binding.act086VerificationFrgMketManualDesc.text.toString().isNullOrEmpty();
+    }
+
     private fun buildPhotoListFromDb() {
         geOsDeviceItem.exec_photo1?.let {
             photoList.add(it)
@@ -1113,6 +1117,15 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
 
     override fun onDetach() {
         super.onDetach()
+    }
+
+    fun resetItemDescription() {
+        binding.act086VerificationFrgMketManualDesc.apply {
+            geOsDeviceItem.manual_desc?.let {
+                this.setText(it)
+            } ?: this.setText("")
+        }
+        binding.act086VerificationFrgIvManualHandler.performClick()
     }
 
     companion object {

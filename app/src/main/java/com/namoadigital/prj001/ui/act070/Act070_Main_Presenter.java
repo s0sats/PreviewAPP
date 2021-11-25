@@ -1776,13 +1776,14 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 tryOpenFormPDF(ticketCtrl.getForm());
             }else{
                 Bundle bundle = getAct011Bundle(ticketCtrl);
-                if(ticketCtrl.getForm().getIs_so() == 1
+                GE_Custom_Form customForm = getCustomFormFromCtrl(ticketCtrl.getForm());
+                if(customForm.getIs_so() == 1
                     && !formExists(ticketCtrl)
                 ){
                     //Se form os e não existe form, verifica se tem estrutura.
                     //Se tiver abre o form, caso contrario, exibe msg de serial sem estrutura.
                     if(serialHasStructure(ticketCtrl)) {
-                        bundle.putAll(getAct087Bundle(ticketCtrl));
+                        bundle.putAll(getAct087Bundle(ticketCtrl, customForm));
                         mView.callAct087(bundle);
                     }else{
                         mView.showAlert(
@@ -1798,15 +1799,16 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     }
 
     private boolean formExists(TK_Ticket_Ctrl ticketCtrl) {
+        GE_Custom_Form customForm = getCustomFormFromCtrl(ticketCtrl.getForm());
         String customFormData = ticketCtrl.getForm().getCustom_form_data_tmp() != null
                 ? String.valueOf(ticketCtrl.getForm().getCustom_form_data_tmp())
                 : "0";
         GE_Custom_Form_Local customFormLocal = geCustomFormLocalDao.getByString(
                 new GE_Custom_Form_Local_Sql_019(
-                        String.valueOf(ticketCtrl.getCustomer_code()),
-                        String.valueOf(ticketCtrl.getForm().getCustom_form_type()),
-                        String.valueOf(ticketCtrl.getForm().getCustom_form_code()),
-                        String.valueOf(ticketCtrl.getForm().getCustom_form_version()),
+                        String.valueOf(customForm.getCustomer_code()),
+                        String.valueOf(customForm.getCustom_form_type()),
+                        String.valueOf(customForm.getCustom_form_code()),
+                        String.valueOf(customForm.getCustom_form_version()),
                         customFormData,
                         String.valueOf(ticketCtrl.getProduct_code()),
                         ticketCtrl.getSerial_id(),
@@ -1819,7 +1821,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         return customFormLocal != null;
     }
 
-    private Bundle getAct087Bundle(TK_Ticket_Ctrl ticketCtrl) {
+    private Bundle getAct087Bundle(TK_Ticket_Ctrl ticketCtrl, GE_Custom_Form customForm) {
         Integer productCode = ticketCtrl.getProduct_code();
         if(productCode == null){
             productCode = getTicketObj(ticketCtrl.getTicket_prefix(), ticketCtrl.getTicket_code()).getOpen_product_code();
@@ -1834,9 +1836,9 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             serialId = getTicketObj(ticketCtrl.getTicket_prefix(), ticketCtrl.getTicket_code()).getOpen_serial_id();
         }
         return Act087Main.getBundleInstance(
-                String.valueOf(ticketCtrl.getForm().getCustom_form_type()),
-                String.valueOf(ticketCtrl.getForm().getCustom_form_code()),
-                String.valueOf(ticketCtrl.getForm().getCustom_form_version()),
+                String.valueOf(customForm.getCustom_form_type()),
+                String.valueOf(customForm.getCustom_form_code()),
+                String.valueOf(customForm.getCustom_form_version()),
                 String.valueOf(productCode),
                 serialId,
                 String.valueOf(serialCode),
