@@ -637,6 +637,10 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String SO_PARAM_AUTH_PASSWORD = "so_param_auth_password";
     public static final String SO_PARAM_AUTH_NFC = "so_param_auth_nfc";
 
+    public static final String MASK_VIEW_TYPE_HIDE = "HIDE";
+    public static final String MASK_VIEW_TYPE_OPTIONAL = "OPTIONAL";
+    public static final String MASK_VIEW_TYPE_REQUIRED = "REQUIRED";
+
 
     public static final String WS_EXCEPTION_HTTP_STATUS_ERROR = "HTTP_STATUS_ERROR";
     public static final String FROM_OFFLINE_SOURCE = "FROM_OFFLINE_SOURCE";
