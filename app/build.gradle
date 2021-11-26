@@ -73,7 +73,7 @@ repositories {
 }
 //Repo Microblink, OCR reader
 repositories {
-    maven { url 'http://maven.microblink.com' }
+    //maven { url 'http://maven.microblink.com' }
     maven { url 'https://jitpack.io' }
 }
 //Var com o nome do import da lib

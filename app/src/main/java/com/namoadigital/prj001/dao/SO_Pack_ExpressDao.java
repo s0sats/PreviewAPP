@@ -31,6 +31,12 @@ public class SO_Pack_ExpressDao extends BaseDao implements Dao<SO_Pack_Express> 
     public static final String PRODUCT_CODE = "product_code";
     public static final String EXPRESS_CODE = "express_code";
     public static final String PACK_DESC = "pack_desc";
+    public static final String BILLING_ADD_INF1_VIEW = "billing_add_inf1_view";
+    public static final String BILLING_ADD_INF1_TEXT = "billing_add_inf1_text";
+    public static final String BILLING_ADD_INF2_VIEW = "billing_add_inf2_view";
+    public static final String BILLING_ADD_INF2_TEXT = "billing_add_inf2_text";
+    public static final String BILLING_ADD_INF3_VIEW = "billing_add_inf3_view";
+    public static final String BILLING_ADD_INF3_TEXT = "billing_add_inf3_text";
 
     private String[] columns = {CUSTOMER_CODE, SITE_CODE, OPERATION_CODE, PRODUCT_CODE, EXPRESS_CODE, PACK_DESC};
 
@@ -246,6 +252,25 @@ public class SO_Pack_ExpressDao extends BaseDao implements Dao<SO_Pack_Express> 
             so_pack_express.setProduct_code(cursor.getLong(cursor.getColumnIndex(PRODUCT_CODE)));
             so_pack_express.setExpress_code(cursor.getString(cursor.getColumnIndex(EXPRESS_CODE)));
             so_pack_express.setPack_desc(cursor.getString(cursor.getColumnIndex(PACK_DESC)));
+            so_pack_express.setBilling_add_inf1_view(cursor.getString(cursor.getColumnIndex(BILLING_ADD_INF1_VIEW)));
+            if(cursor.isNull(cursor.getColumnIndex(BILLING_ADD_INF1_TEXT))){
+                so_pack_express.setBilling_add_inf1_text(null);
+            }else{
+                so_pack_express.setBilling_add_inf1_text(cursor.getString(cursor.getColumnIndex(BILLING_ADD_INF1_TEXT)));
+            }
+            so_pack_express.setBilling_add_inf2_view(cursor.getString(cursor.getColumnIndex(BILLING_ADD_INF2_VIEW)));
+            if(cursor.isNull(cursor.getColumnIndex(BILLING_ADD_INF2_TEXT))){
+                so_pack_express.setBilling_add_inf2_text(null);
+            }else{
+                so_pack_express.setBilling_add_inf2_text(cursor.getString(cursor.getColumnIndex(BILLING_ADD_INF2_TEXT)));
+            }
+            so_pack_express.setBilling_add_inf3_view(cursor.getString(cursor.getColumnIndex(BILLING_ADD_INF3_VIEW)));
+            if(cursor.isNull(cursor.getColumnIndex(BILLING_ADD_INF3_TEXT))){
+                so_pack_express.setBilling_add_inf3_text(null);
+            }else{
+                so_pack_express.setBilling_add_inf3_text(cursor.getString(cursor.getColumnIndex(BILLING_ADD_INF3_TEXT)));
+            }
+
             return so_pack_express;
         }
 
@@ -274,6 +299,18 @@ public class SO_Pack_ExpressDao extends BaseDao implements Dao<SO_Pack_Express> 
             if (so_pack_express.getPack_desc() != null) {
                 contentValues.put(PACK_DESC, so_pack_express.getPack_desc());
             }
+            if (so_pack_express.getBilling_add_inf1_view() != null) {
+                contentValues.put(BILLING_ADD_INF1_VIEW, so_pack_express.getBilling_add_inf1_view());
+            }
+            contentValues.put(BILLING_ADD_INF1_TEXT, so_pack_express.getBilling_add_inf1_text());
+            if (so_pack_express.getBilling_add_inf2_view() != null) {
+                contentValues.put(BILLING_ADD_INF2_VIEW, so_pack_express.getBilling_add_inf2_view());
+            }
+            contentValues.put(BILLING_ADD_INF2_TEXT, so_pack_express.getBilling_add_inf2_text());
+            if (so_pack_express.getBilling_add_inf3_view() != null) {
+                contentValues.put(BILLING_ADD_INF3_VIEW, so_pack_express.getBilling_add_inf3_view());
+            }
+            contentValues.put(BILLING_ADD_INF3_TEXT, so_pack_express.getBilling_add_inf3_text());
             //
             return contentValues;
         }

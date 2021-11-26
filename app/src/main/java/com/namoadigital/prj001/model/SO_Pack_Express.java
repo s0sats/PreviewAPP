@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
  * Created by neomatrix on 3/22/18.
  */
@@ -12,6 +14,16 @@ public class SO_Pack_Express {
     private long product_code;
     private String express_code;
     private String pack_desc;
+    private String billing_add_inf1_view;
+    @Nullable
+    private String billing_add_inf1_text;
+    private String billing_add_inf2_view;
+    @Nullable
+    private String billing_add_inf2_text;
+    private String billing_add_inf3_view;
+    @Nullable
+    private String billing_add_inf3_text;
+
 
     public long getCustomer_code() {
         return customer_code;
@@ -59,5 +71,56 @@ public class SO_Pack_Express {
 
     public void setPack_desc(String pack_desc) {
         this.pack_desc = pack_desc;
+    }
+
+    public String getBilling_add_inf1_view() {
+        return billing_add_inf1_view;
+    }
+
+    public void setBilling_add_inf1_view(String billing_add_inf1_view) {
+        this.billing_add_inf1_view = billing_add_inf1_view;
+    }
+
+    @Nullable
+    public String getBilling_add_inf1_text() {
+        return billing_add_inf1_text;
+    }
+
+    public void setBilling_add_inf1_text(@Nullable String billing_add_inf1_text) {
+        this.billing_add_inf1_text = billing_add_inf1_text;
+    }
+
+    public String getBilling_add_inf2_view() {
+        return billing_add_inf2_view;
+    }
+
+    public void setBilling_add_inf2_view(String billing_add_inf2_view) {
+        this.billing_add_inf2_view = billing_add_inf2_view;
+    }
+
+    @Nullable
+    public String getBilling_add_inf2_text() {
+        return billing_add_inf2_text;
+    }
+
+    public void setBilling_add_inf2_text(@Nullable String billing_add_inf2_text) {
+        this.billing_add_inf2_text = billing_add_inf2_text;
+    }
+
+    public String getBilling_add_inf3_view() {
+        return billing_add_inf3_view;
+    }
+
+    public void setBilling_add_inf3_view(String billing_add_inf3_view) {
+        this.billing_add_inf3_view = billing_add_inf3_view;
+    }
+
+    @Nullable
+    public String getBilling_add_inf3_text() {
+        return billing_add_inf3_text;
+    }
+
+    public void setBilling_add_inf3_text(@Nullable String billing_add_inf3_text) {
+        this.billing_add_inf3_text = billing_add_inf3_text;
     }
 }

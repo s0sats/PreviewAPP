@@ -38,6 +38,9 @@ public class SO_Pack_Express_Local {
     private Integer segment_code;
     private String segment_id;
     private String segment_desc;
+    private String billing_add_inf1_value;
+    private String billing_add_inf2_value;
+    private String billing_add_inf3_value;
     private String ret_code;
     private String ret_msg;
     private String status;
@@ -78,6 +81,9 @@ public class SO_Pack_Express_Local {
         this.segment_code = null;
         this.segment_id = null;
         this.segment_desc = null;
+        this.billing_add_inf1_value = null;
+        this.billing_add_inf2_value = null;
+        this.billing_add_inf3_value = null;
         this.ret_code = null;
         this.ret_msg = null;
         this.status = "NEW";
@@ -330,6 +336,30 @@ public class SO_Pack_Express_Local {
 
     public void setSegment_desc(String segment_desc) {
         this.segment_desc = segment_desc;
+    }
+
+    public String getBilling_add_inf1_value() {
+        return billing_add_inf1_value;
+    }
+
+    public void setBilling_add_inf1_value(String billing_add_inf1_value) {
+        this.billing_add_inf1_value = billing_add_inf1_value;
+    }
+
+    public String getBilling_add_inf2_value() {
+        return billing_add_inf2_value;
+    }
+
+    public void setBilling_add_inf2_value(String billing_add_inf2_value) {
+        this.billing_add_inf2_value = billing_add_inf2_value;
+    }
+
+    public String getBilling_add_inf3_value() {
+        return billing_add_inf3_value;
+    }
+
+    public void setBilling_add_inf3_value(String billing_add_inf3_value) {
+        this.billing_add_inf3_value = billing_add_inf3_value;
     }
 
     public String getRet_code() {
