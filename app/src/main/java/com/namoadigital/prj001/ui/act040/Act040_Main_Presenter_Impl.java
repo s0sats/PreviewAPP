@@ -42,6 +42,7 @@ import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_005;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_006;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_013;
+import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_014;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Sql_005;
 import com.namoadigital.prj001.sql.Sql_Act012_004;
 import com.namoadigital.prj001.sql.Sql_Act040_001;
@@ -167,6 +168,19 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
     }
 
     @Override
+    public void getLastExpressInfoInSiteOper() {
+        SO_Pack_Express_Local lastExpressInSiteOper = so_pack_express_localDao.getByString(
+            new SO_Pack_Express_Local_Sql_014(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                ToolBox_Con.getPreference_Site_Code(context),
+                ToolBox_Con.getPreference_Operation_Code(context)
+            ).toSqlQuery()
+        );
+        //
+        mView.setLastExpressInfo(lastExpressInSiteOper);
+    }
+
+    @Override
     public MD_Product getProdutctInfo(long product_code) {
         MD_Product md_product = null;
         //
@@ -278,8 +292,8 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
     }
 
     @Override
-    public boolean checkOrderAlreadyExists(long customer_code, String site_code, long operation_code, long product_code, String express_code, String serial_id) {
-        HMAux auxPack = so_pack_express_localDao.getByStringHM(
+    public SO_Pack_Express_Local checkOrderAlreadyExists(long customer_code, String site_code, long operation_code, long product_code, String express_code, String serial_id) {
+        SO_Pack_Express_Local auxPack = so_pack_express_localDao.getByString(
                 new SO_Pack_Express_Local_Sql_013(
                         customer_code,
                         site_code,
@@ -290,15 +304,7 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
                 ).toSqlQuery()
         );
         //
-        if (auxPack != null) {
-            boolean packExistis = (auxPack.containsKey(SO_Pack_Express_Local_Sql_013.ALREADY_NEW_EXPRESS_ORDER) && ToolBox_Inf.convertStringToInt(auxPack.get(SO_Pack_Express_Local_Sql_013.ALREADY_NEW_EXPRESS_ORDER)) > 0);
-            //
-            if (packExistis) {
-                return true;
-            }
-        }
-        //
-        return false;
+        return auxPack;
     }
 
     @Override
@@ -620,6 +626,48 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
             }
         }
     }
+
+
+    /**
+     * LUCHE - 07/11/2019
+     *
+     * Metodo gera a msg a ser exibida no textHelper do Serial
+     * Msg variavel baseado nos campos preenchidos.
+     * @param hmAux_Trans
+     * @param serial_rule - Regra do serial ou null se vazio
+     * @param min - Qtd min de caracteres do serial ou null se vazio
+     * @param max - Qtd max de caracteres do serial ou null se vazio
+     * @return - Msg formatada para exibição.
+     */
+    @Override
+    public String getFormattedRuleHelper(HMAux hmAux_Trans, String serial_rule, Integer min, Integer max) {
+        String sHelper = "";
+        String sMin ="";
+        String sMax ="";
+        //
+        if(serial_rule == null && min == null && max == null){
+            return null;
+        }
+        //
+        if(serial_rule != null && !serial_rule.trim().isEmpty()){
+            sHelper += hmAux_Trans.get("serial_rule_lbl") + " " + hmAux_Trans.get(serial_rule) + " ";
+        }
+        //
+        if(min != null && min > 0){
+            sMin = hmAux_Trans.get("serial_min_length_lbl") + min;
+        }
+        //
+        if(max != null && max > 0){
+            sMax = (min != null && min > 0 ?  hmAux_Trans.get("serial_min_max_separator_lbl") : "") + hmAux_Trans.get("serial_max_length_lbl") + max;
+        }
+        //
+        if(!sMin.isEmpty() || !sMax.isEmpty() ){
+            sHelper += "(" +sMin + sMax +")";
+        }
+        //
+        return sHelper;
+    }
+
 
     @Override
     public void onBackPressedClicked(Long product_code, String serial_id) {

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/namoa_color_ticket_process_highlight_pressed"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/tv_warning_lbl"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:text="Atenção ! Hoje esse pacote...."
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_dialog_ttl" />
+
+    <TextView
+        android:id="@+id/tv_serial_lbl"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Serial:"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_warning_lbl"
+        app:layout_constraintWidth_percent="0.25" />
+
+    <TextView
+        android:id="@+id/tv_serial_val"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="WABCBTT20211129001 "
+        android:textStyle="bold"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@+id/tv_serial_lbl"
+        app:layout_constraintTop_toBottomOf="@+id/tv_warning_lbl" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/br_serial"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="tv_serial_lbl,tv_serial_val" />
+
+    <TextView
+        android:id="@+id/tv_log_date_lbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:text="Última vez: "
+        app:layout_constrainedWidth="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/br_serial"
+        app:layout_constraintWidth_percent="0.25" />
+
+    <TextView
+        android:id="@+id/tv_log_date_val"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
+        android:text="28/10/2021 13:45 "
+        android:textStyle="bold"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@id/tv_log_date_lbl"
+        app:layout_constraintTop_toBottomOf="@id/br_serial" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/br_log_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="tv_log_date_lbl,tv_log_date_val" />
+
+    <TextView
+        android:id="@+id/tv_confirm_lbl"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="Apesar disso deseja...."
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/br_log_date" />
+
+    <Button
+        android:id="@+id/btn_confirm"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="16dp"
+        android:text="Confirmar"
+        android:textColor="@color/namoa_dark_blue"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/btn_cancel"
+        app:layout_constraintTop_toBottomOf="@id/tv_confirm_lbl" />
+
+    <Button
+        android:id="@+id/btn_cancel"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="16dp"
+        android:text="Cancel"
+        android:textColor="@color/namoa_dark_blue"
+        app:layout_constraintEnd_toStartOf="@+id/btn_confirm"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_confirm_lbl" />
+
+    <ImageView
+        android:id="@+id/iv_dialog_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_dialog_ttl"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_dialog_ttl"
+        app:srcCompat="@drawable/ic_warning_outline_24dp"
+        app:tint="@color/namoa_dark_blue" />
+
+    <TextView
+        android:id="@+id/tv_dialog_ttl"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:gravity="center_vertical"
+        android:minHeight="24dp"
+        android:text="Dupla criação de O.S Expressa"
+        android:textSize="@dimen/font_size_title_dialog"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_min="wrap"
+        app:layout_constraintStart_toEndOf="@+id/iv_dialog_icon"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

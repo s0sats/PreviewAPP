@@ -4,9 +4,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.fragment.app.FragmentManager;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,6 +12,10 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentManager;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -26,6 +27,7 @@ import com.namoadigital.prj001.dao.MD_PartnerDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
+import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.receiver.WBR_Logout;
@@ -365,6 +367,9 @@ public class Act049_Main extends Base_Activity_Frag implements Act049_Main_Contr
         mBundle.putString(Act040_Main.EXPRESS_PACK_CODE, bundle_express_pack_code);
         mBundle.putString(MD_PartnerDao.PARTNER_CODE, bundle_partner_code);
         mBundle.putString(Constant.MAIN_MD_PRODUCT_SERIAL_ID,mdProductSerial.getSerial_id());
+        mBundle.putString(SO_Pack_Express_LocalDao.BILLING_ADD_INF1_VALUE, bundle.getString(SO_Pack_Express_LocalDao.BILLING_ADD_INF1_VALUE));
+        mBundle.putString(SO_Pack_Express_LocalDao.BILLING_ADD_INF2_VALUE, bundle.getString(SO_Pack_Express_LocalDao.BILLING_ADD_INF2_VALUE));
+        mBundle.putString(SO_Pack_Express_LocalDao.BILLING_ADD_INF3_VALUE, bundle.getString(SO_Pack_Express_LocalDao.BILLING_ADD_INF3_VALUE));
         //
         mIntent.putExtras(mBundle);
         startActivity(mIntent);

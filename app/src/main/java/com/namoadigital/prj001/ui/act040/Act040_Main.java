@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 
 import com.google.android.material.textfield.TextInputLayout;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
@@ -36,9 +38,11 @@ import com.namoadigital.prj001.dao.SO_Pack_ExpressDao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.databinding.Act040MainBinding;
 import com.namoadigital.prj001.databinding.Act040MainContentBinding;
+import com.namoadigital.prj001.databinding.Act040MainDuplicatedDialogBinding;
 import com.namoadigital.prj001.model.MD_Partner;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.SO_Pack_Express;
+import com.namoadigital.prj001.model.SO_Pack_Express_Local;
 import com.namoadigital.prj001.service.WS_SO_Pack_Express_Local;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
@@ -75,10 +79,13 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     private String bundle_express_pack_code = "";
     private String bundle_partner_code = "-1";
     private String bundle_serial_id = "";
+    private String bundle_billing_info1 = "";
+    private String bundle_billing_info2 = "";
+    private String bundle_billing_info3 = "";
     private ArrayList<HMAux> wsAuxResult = new ArrayList<>();
     private boolean exitProcess = false;
     public static final String LABEL_TRANS_OS_EXPRESS= "lbl_type_service_order_express";
-    private int expressSoPendency=0;
+
     private Act040MainContentBinding binding;
 
     @Override
@@ -168,6 +175,13 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         transList.add("billing_add_info1_lbl");
         transList.add("billing_add_info2_lbl");
         transList.add("billing_add_info3_lbl");
+        transList.add("last_express_in_site_x_operation_lbl");
+        transList.add("dialog_duplicate_ttl");
+        transList.add("dialog_duplicate_warning_msg");
+        transList.add("dialog_serial_lbl");
+        transList.add("dialog_last_date_lbl");
+        transList.add("dialog_duplicate_confirm_msg");
+        transList.add("dialog_btn_confirm");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -176,6 +190,27 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                 ToolBox_Con.getPreference_Translate_Code(context),
                 transList
         );
+        List<String> transListFrag = new ArrayList<String>();
+        transListFrag.add("serial_rule_lbl");
+        transListFrag.add("serial_min_length_lbl");
+        transListFrag.add("serial_min_max_separator_lbl");
+        transListFrag.add("serial_max_length_lbl");
+        //
+        hmAux_Trans.putAll(
+            ToolBox_Inf.setLanguage(
+                context,
+                mModule_Code,
+                ToolBox_Inf.getResourceCode(
+                    context,
+                    mModule_Code,
+                    Constant.FRG_SERIAL_SEARCH
+                ),
+                ToolBox_Con.getPreference_Translate_Code(context),
+                transListFrag
+            )
+        );
+
+
     }
 
     private void initVars() {
@@ -223,6 +258,8 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                 )
         );
         //
+        mPresenter.getLastExpressInfoInSiteOper();
+        //
         binding.tilPack.setHint(hmAux_Trans.get("tv_barcode_hint"));
         binding.mketPack.requestFocus();
         //
@@ -245,9 +282,8 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                 )
         );
         //
+        binding.clFinalizeBtn.setEnabled(false);
         binding.tvFinalize.setText(hmAux_Trans.get("btn_create_so"));
-        //
-        setExpressSOPendency();
         //
         binding.ssPartner.setmShowLabel(false);
         binding.ssPartner.setmHint(hmAux_Trans.get("ss_partner_hint"));
@@ -263,20 +299,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         connectionStatusAlter = false;
     }
 
-    private void setExpressSOPendency() {
-        expressSoPendency = mPresenter.getExpressSoPendency(hmAux_Trans);
-        if(expressSoPendency >0) {
-            updateToolbarPendencyIcon(true);
-        }else{
-            updateToolbarPendencyIcon(false);
-        }
-    }
-    //TODO METODO QUE VAI COLOCAR A NUVEM
-    private void updateToolbarPendencyIcon(boolean show){
-        //getSupportActionBar().
-    }
-
-    private void recoverIntentsInfo() {
+   private void recoverIntentsInfo() {
         bundle = getIntent().getExtras();
         //
         if (bundle != null) {
@@ -292,12 +315,36 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                 bundle_express_pack_code = bundle.getString(EXPRESS_PACK_CODE,"");
                 bundle_partner_code = bundle.getString(MD_PartnerDao.PARTNER_CODE,"-1");
                 bundle_serial_id = bundle.getString(Constant.MAIN_MD_PRODUCT_SERIAL_ID,"");
+                bundle_billing_info1 = bundle.getString(SO_Pack_Express_LocalDao.BILLING_ADD_INF1_VALUE,"");
+                bundle_billing_info2 = bundle.getString(SO_Pack_Express_LocalDao.BILLING_ADD_INF2_VALUE,"");
+                bundle_billing_info3 = bundle.getString(SO_Pack_Express_LocalDao.BILLING_ADD_INF3_VALUE,"");
             }
 
         } else {
             bundle_express_pack_code = "";
             bundle_partner_code = "-1";
             bundle_serial_id = "";
+            bundle_billing_info1 = "";
+            bundle_billing_info2 = "";
+            bundle_billing_info3 = "";
+        }
+    }
+
+    @Override
+    public void setLastExpressInfo(SO_Pack_Express_Local lastExpressInSiteOper) {
+        if(lastExpressInSiteOper != null){
+            binding.clLastOrder.setVisibility(View.VISIBLE);
+            binding.tvLastOrderTtl.setText(hmAux_Trans.get("last_express_in_site_x_operation_lbl"));
+            binding.tvPackDesc.setText(lastExpressInSiteOper.getSo_desc());
+            binding.tvSerialId.setText(lastExpressInSiteOper.getSerial_id());
+            binding.tvLogDate.setText(
+                ToolBox_Inf.millisecondsToString(
+                    ToolBox_Inf.dateToMilliseconds(lastExpressInSiteOper.getLog_date()),
+                    ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                )
+            );
+        }else{
+            binding.clLastOrder.setVisibility(View.GONE);
         }
     }
 
@@ -322,8 +369,8 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         if (mSo_pack_express != null) {
             String tilPackHelper = mSo_pack_express.getPack_desc();
 
-            binding.ivSearchSerial.setVisibility(View.VISIBLE);
-            binding.ivSearchSerial.setEnabled(true);
+            binding.clSerialSearch.setVisibility(View.VISIBLE);
+            binding.clSerialSearchBtn.setEnabled(true);
             //
             md_product = mPresenter.getProdutctInfo(so_pack_express.getProduct_code());
             //
@@ -333,6 +380,8 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                 binding.mketSerial.setmMinSize(null);
                 binding.mketSerial.setmMaxSize(null);
                 binding.mketSerial.setmIgnoreMaxMinSize(true);
+                //Seta helper do serial
+                setSerialHelper(null, null, null);
             } else {
                 tilPackHelper = mSo_pack_express.getPack_desc() +"\n" + md_product.getProduct_desc();
                 binding.mketSerial.setmInputTypeValidator(md_product.getSerial_rule());
@@ -341,19 +390,29 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                 binding.mketSerial.setmMaxSize(md_product.getSerial_max_length());
                 //
                 binding.mketSerial.setmIgnoreMaxMinSize(true);
+                ////Seta helper do serial
+                setSerialHelper(
+                    md_product.getSerial_rule(),
+                    md_product.getSerial_min_length(),
+                    md_product.getSerial_max_length()
+                );
             }
             binding.tilPack.setHelperText(tilPackHelper);
+            binding.tilPack.setBackground(ContextCompat.getDrawable(context, R.drawable.shape_ok));
             //
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(binding.mketPack.getWindowToken(), 0);
         } else {
+            binding.tilPack.setBackground(ContextCompat.getDrawable(context, R.drawable.shape_error));
             binding.tilPack.setHelperText(null);
-            binding.ivSearchSerial.setVisibility(View.GONE);
-            binding.ivSearchSerial.setEnabled(false);
+            binding.clSerialSearch.setVisibility(View.GONE);
+            binding.clSerialSearchBtn.setEnabled(false);
             //Reseta configuração do produto no mket de serial
             binding.mketSerial.setmInputTypeValidator(null);
             binding.mketSerial.setmMinSize(null);
             binding.mketSerial.setmMaxSize(null);
+            //Seta helper do serial
+            setSerialHelper(null, null, null);
             //
             if (express_code.isEmpty()) {
                 binding.tilPack.setHelperText(null);
@@ -364,7 +423,6 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         //
         refreshAddInfoVisibility();
     }
-
 
     @Override
     public void setPartner(HMAux partner) {
@@ -400,18 +458,21 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         if(mSo_pack_express != null) {
             configBillingInfoView(
                 binding.tilAddInfo1,
+                binding.mketAddInfo1,
                 mSo_pack_express.getBilling_add_inf1_view(),
                 mSo_pack_express.getBilling_add_inf1_text(),
                 hmAux_Trans.get("billing_add_info1_lbl")
             );
             configBillingInfoView(
                 binding.tilAddInfo2,
+                binding.mketAddInfo2,
                 mSo_pack_express.getBilling_add_inf2_view(),
                 mSo_pack_express.getBilling_add_inf2_text(),
                 hmAux_Trans.get("billing_add_info2_lbl")
             );
             configBillingInfoView(
                 binding.tilAddInfo3,
+                binding.mketAddInfo3,
                 mSo_pack_express.getBilling_add_inf3_view(),
                 mSo_pack_express.getBilling_add_inf3_text(),
                 hmAux_Trans.get("billing_add_info3_lbl")
@@ -420,26 +481,79 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             binding.tilAddInfo1.setVisibility(View.GONE);
             binding.tilAddInfo2.setVisibility(View.GONE);
             binding.tilAddInfo3.setVisibility(View.GONE);
+            binding.mketAddInfo1.setOnReportTextChangeListner(null);
+            binding.mketAddInfo2.setOnReportTextChangeListner(null);
+            binding.mketAddInfo3.setOnReportTextChangeListner(null);
         }
     }
 
-    private void configBillingInfoView(TextInputLayout til, String viewDef,String hint, String helperText){
+    private void configBillingInfoView(TextInputLayout til, MKEditTextNM mketAddInfo, String viewDef, String hint, String helperText){
         if(!ConstantBaseApp.MASK_VIEW_TYPE_HIDE.equals(viewDef)){
             til.setHint(hint);
             til.setHelperTextEnabled(true);
             til.setHelperText(helperText);
             til.setVisibility(View.VISIBLE);
-            til.setBackground(
-                ContextCompat.getDrawable(
-                    context,
-                    ConstantBaseApp.MASK_VIEW_TYPE_REQUIRED.equals(viewDef)
+            til.setBackground(ContextCompat.getDrawable(context, R.drawable.shape_ok));
+            //Se required, seta borda de required e configura listener para aplicara e remover baseado
+            //no conteudo digitado
+            if(ConstantBaseApp.MASK_VIEW_TYPE_REQUIRED.equals(viewDef)){
+                til.setBackground(
+                    ContextCompat.getDrawable(
+                        context,
+                        mketAddInfo.getText() != null && mketAddInfo.getText().toString().trim().isEmpty()
                         ? R.drawable.shape_error
                         : R.drawable.shape_ok
-                )
-            );
+                    )
+                );
+                //
+                mketAddInfo.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
+                    @Override
+                    public void reportTextChange(String s) {
+
+                    }
+
+                    @Override
+                    public void reportTextChange(String s, boolean sNotEmpty) {
+                        applyBackgroundForRequireField(til,sNotEmpty);
+                    }
+                });
+            }
+
         }else{
             til.setVisibility(View.GONE);
         }
+    }
+
+    /**
+     * LUCHE - 07/11/2019
+     *
+     * Metodo que seta no textHelper as regras do produto.
+     *
+     * A validação helper != null é uma gambiarra para corrigir o que parece ser um problema
+     * de "redesenho" da espaço do textHelper.
+     * A correção foi necessaria pois, quando o produto é selecionado via act de seleção de produto,
+     * ao setar o valor no textHelper, o topo do texto ficava "comido", como se tivesse por baixo
+     * do Mket do serial.
+     *
+     * LUCHE - 08/11/2019
+     * Removido a gambiarra de desabilitar e abilitar o textHelper, pois
+     * descobrimos que o que gerava o "bug" era a segunda chamada do metodo
+     * setSerialRule dentro do metodo processResult()
+     *
+     * @param serial_rule - Regra do Serial ou null se não houver
+     * @param min         - Qtd Min de caracteres ou null se não houver
+     * @param max         - Qtd Max de caracteres ou null se não houver
+     */
+    private void setSerialHelper(String serial_rule, Integer min, Integer max) {
+        //Chama metodo que retorna texto ja formatado
+        binding.tilSerial.setHelperText(
+            mPresenter.getFormattedRuleHelper(
+                hmAux_Trans,
+                serial_rule,
+                min,
+                max
+            )
+        );
     }
 
     private void iniUIFooter() {
@@ -479,9 +593,21 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                     );
                 } else {
                     //tv_status.setText("");
-                    binding.ivSearchSerial.setEnabled(false);
-                    binding.ivSearchSerial.setVisibility(View.GONE);
+                    binding.clSerialSearchBtn.setEnabled(false);
+                    binding.clSerialSearch.setVisibility(View.GONE);
                 }
+            }
+        });
+
+        binding.mketSerial.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
+            @Override
+            public void reportTextChange(String s) {
+
+            }
+
+            @Override
+            public void reportTextChange(String s, boolean sNotEmpty) {
+                applyBackgroundForRequireField(binding.clSerial,sNotEmpty);
             }
         });
 
@@ -512,7 +638,10 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                 exitProcess = false;
                 //
                 handleSerialIdCharConstraints();
-                if (mSo_pack_express != null && md_partner != null && md_product != null && binding.mketSerial.isValid() && !mSo_pack_express.getExpress_code().equalsIgnoreCase(ToolBox_Inf.removeAllLineBreaks(binding.mketSerial.getText().toString()))) {
+                if (isRequiredFieldsValid()
+                    && binding.mketSerial.isValid()
+                    && !mSo_pack_express.getExpress_code().equalsIgnoreCase(ToolBox_Inf.removeAllLineBreaks(binding.mketSerial.getText().toString()))
+                ) {
                     ToolBox.alertMSG_YES_NO(
                             context,
                             hmAux_Trans.get("alert_create_so_express_ttl"),
@@ -520,40 +649,43 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    if(mPresenter.checkOrderAlreadyExists(
-                                            ToolBox_Con.getPreference_Customer_Code(context),
-                                            ToolBox_Con.getPreference_Site_Code(context),
-                                            ToolBox_Con.getPreference_Operation_Code(context),
-                                            md_product.getProduct_code(),
-                                            mSo_pack_express.getExpress_code(),
-                                            ToolBox_Inf.removeAllLineBreaks(binding.mketSerial.getText().toString())
-                                        )
-                                    ){
-                                        ToolBox.alertMSG_YES_NO(
-                                                context,
-                                                hmAux_Trans.get("alert_pending_so_express_exists_ttl"),
-                                                hmAux_Trans.get("alert_pending_so_express_exists_msg"),
-                                                new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialog, int which) {
-                                                        mPresenter.onCreateSo_Pack_Express(
-                                                                mSo_pack_express,
-                                                                md_partner,
-                                                                md_product,
-                                                                ToolBox_Inf.removeAllLineBreaks(binding.mketSerial.getText().toString().trim()),
-                                                                connectionStatusAlter
-                                                        );
-                                                    }
-                                                },
-                                                2,
-                                                new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialog, int which) {
-                                                        automationCleanForm();
-                                                    }
-                                                },
-                                                false
-                                        );
+
+                                    SO_Pack_Express_Local lastExpressIn3hour = mPresenter.checkOrderAlreadyExists(
+                                        ToolBox_Con.getPreference_Customer_Code(context),
+                                        ToolBox_Con.getPreference_Site_Code(context),
+                                        ToolBox_Con.getPreference_Operation_Code(context),
+                                        md_product.getProduct_code(),
+                                        mSo_pack_express.getExpress_code(),
+                                        ToolBox_Inf.removeAllLineBreaks(binding.mketSerial.getText().toString())
+                                    );
+                                    if(lastExpressIn3hour != null){
+                                        showDuplicateExpressDialog(lastExpressIn3hour);
+
+//                                        ToolBox.alertMSG_YES_NO(
+//                                                context,
+//                                                hmAux_Trans.get("alert_pending_so_express_exists_ttl"),
+//                                                hmAux_Trans.get("alert_pending_so_express_exists_msg"),
+//                                                new DialogInterface.OnClickListener() {
+//                                                    @Override
+//                                                    public void onClick(DialogInterface dialog, int which) {
+//                                                        mPresenter.onCreateSo_Pack_Express(
+//                                                                mSo_pack_express,
+//                                                                md_partner,
+//                                                                md_product,
+//                                                                ToolBox_Inf.removeAllLineBreaks(binding.mketSerial.getText().toString().trim()),
+//                                                                connectionStatusAlter
+//                                                        );
+//                                                    }
+//                                                },
+//                                                2,
+//                                                new DialogInterface.OnClickListener() {
+//                                                    @Override
+//                                                    public void onClick(DialogInterface dialog, int which) {
+//                                                        automationCleanForm();
+//                                                    }
+//                                                },
+//                                                false
+//                                        );
                                     }else{
                                         mPresenter.onCreateSo_Pack_Express(
                                                 mSo_pack_express,
@@ -582,6 +714,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                         result = hmAux_Trans.get("pack_equals_serial_msg");
                     } else if (!binding.mketSerial.isValid()) {
                         //result = hmAux_Trans.get("status_no_serial_msg");
+                        binding.mketSerial.requestFocus();
                         result = binding.mketSerial.getmErrorMSG();
                     } else {
                         result = "";
@@ -609,7 +742,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         });
 
         //08/10/2018 - Busca de serial
-        binding.ivSearchSerial.setOnClickListener(new View.OnClickListener() {
+        binding.clSerialSearchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -630,7 +763,93 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         if(!bundle_express_pack_code.equalsIgnoreCase("")){
             binding.mketPack.setText(bundle_express_pack_code);
             binding.mketSerial.setText(bundle_serial_id);
+            if( binding.tilAddInfo1.getVisibility() == View.VISIBLE) {
+                binding.mketAddInfo1.setText(bundle_billing_info1);
+            }
+            if( binding.tilAddInfo2.getVisibility() == View.VISIBLE) {
+                binding.mketAddInfo2.setText(bundle_billing_info2);
+            }
+            if( binding.tilAddInfo3.getVisibility() == View.VISIBLE) {
+                binding.mketAddInfo3.setText(bundle_billing_info3);
+            }
         }
+    }
+
+    private void showDuplicateExpressDialog(SO_Pack_Express_Local lastExpressIn3hour) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        Act040MainDuplicatedDialogBinding dialogBinding = Act040MainDuplicatedDialogBinding.inflate(getLayoutInflater());
+        View view = dialogBinding.getRoot();
+
+        dialogBinding.tvDialogTtl.setText(hmAux_Trans.get("dialog_duplicate_ttl"));
+        dialogBinding.tvWarningLbl.setText(hmAux_Trans.get("dialog_duplicate_warning_msg"));
+        dialogBinding.tvSerialLbl.setText(hmAux_Trans.get("dialog_serial_lbl"));
+        dialogBinding.tvSerialVal.setText(lastExpressIn3hour.getSerial_id());
+        dialogBinding.tvLogDateLbl.setText(hmAux_Trans.get("dialog_last_date_lbl"));
+        dialogBinding.tvLogDateVal.setText(
+            ToolBox_Inf.millisecondsToString(
+                ToolBox_Inf.dateToMilliseconds(lastExpressIn3hour.getLog_date()),
+                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+            )
+        );
+        dialogBinding.tvConfirmLbl.setText(hmAux_Trans.get("dialog_duplicate_confirm_msg"));
+        dialogBinding.btnCancel.setText(hmAux_Trans.get("sys_alert_btn_cancel"));
+        dialogBinding.btnConfirm.setText(hmAux_Trans.get("dialog_btn_confirm"));
+        builder.setView(view);
+        AlertDialog alertDialog = builder.create();
+        //
+        dialogBinding.btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+        dialogBinding.btnConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.onCreateSo_Pack_Express(
+                    mSo_pack_express,
+                    md_partner,
+                    md_product,
+                    ToolBox_Inf.removeAllLineBreaks(binding.mketSerial.getText().toString().trim()),
+                    connectionStatusAlter
+                );
+                //
+                alertDialog.dismiss();
+            }
+        });
+        //
+        alertDialog.show();
+    }
+
+    private void applyBackgroundForRequireField(View til, boolean isStringNotEmpty) {
+        if(isStringNotEmpty){
+            til.setBackground(ContextCompat.getDrawable(context,R.drawable.shape_ok));
+        }else{
+            til.setBackground(ContextCompat.getDrawable(context,R.drawable.shape_error));
+        }
+        //
+        validateEnableFinalizeBtn();
+    }
+
+    private void validateEnableFinalizeBtn() {
+        binding.clFinalizeBtn.setEnabled(isRequiredFieldsValid());
+    }
+
+    private boolean isRequiredFieldsValid() {
+       return  mSo_pack_express != null
+            && md_partner != null
+            && md_product != null
+            && !binding.mketSerial.getText().toString().trim().isEmpty()
+            && isBillingInfoValid(mSo_pack_express.getBilling_add_inf1_view(), binding.mketAddInfo1)
+            && isBillingInfoValid(mSo_pack_express.getBilling_add_inf2_view(), binding.mketAddInfo2)
+            && isBillingInfoValid(mSo_pack_express.getBilling_add_inf3_view(), binding.mketAddInfo3);
+    }
+
+    private boolean isBillingInfoValid(String billingInfoView, MKEditTextNM billingField) {
+        boolean ret = !ConstantBaseApp.MASK_VIEW_TYPE_REQUIRED.equals(billingInfoView)
+            || (billingField.getText() != null && !billingField.getText().toString().trim().isEmpty());
+
+        return ret;
     }
 
     private void handleSerialIdCharConstraints() {
@@ -646,6 +865,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     @Override
     public void disablePartnerSelector() {
         binding.ssPartner.setmEnabled(false);
+        binding.ssPartner.setVisibility(View.GONE);
     }
 
     @Override
@@ -669,6 +889,9 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         if(md_partner != null ) {
             bundle.putString(MD_PartnerDao.PARTNER_CODE, String.valueOf(md_partner.getPartner_code()));
         }
+        bundle.putString(SO_Pack_Express_LocalDao.BILLING_ADD_INF1_VALUE,binding.mketAddInfo1.getText().toString().trim());
+        bundle.putString(SO_Pack_Express_LocalDao.BILLING_ADD_INF2_VALUE,binding.mketAddInfo2.getText().toString().trim());
+        bundle.putString(SO_Pack_Express_LocalDao.BILLING_ADD_INF3_VALUE,binding.mketAddInfo3.getText().toString().trim());
         //
         mIntent.putExtras(bundle);
         startActivity(mIntent);
@@ -680,8 +903,12 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     public void automationCleanForm() {
         binding.mketSerial.setText("");
         binding.tilSerial.setBackground(ContextCompat.getDrawable(context, R.drawable.shape_error));
-        binding.ivSearchSerial.setVisibility(View.GONE);
-        binding.ivSearchSerial.setEnabled(true);
+        binding.clSerialSearch.setVisibility(View.GONE);
+        binding.clSerialSearchBtn.setEnabled(true);
+        //
+        binding.mketAddInfo1.setText("");
+        binding.mketAddInfo2.setText("");
+        binding.mketAddInfo3.setText("");
         //
         mSo_pack_express = null;
         md_product = null;
@@ -689,7 +916,8 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         binding.mketSerial.requestFocus();
         wsAuxResult.clear();
         exitProcess = false;
-        setExpressSOPendency();
+        //Chama Refresh do ultimo item enviado.
+        mPresenter.getLastExpressInfoInSiteOper();
     }
 
     @Override
@@ -703,20 +931,22 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
 
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
-
-        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
-        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        if(mPresenter.getExpressSoPendency(hmAux_Trans) > 0){
+            Drawable wrappedDrawable = DrawableCompat.wrap(ContextCompat.getDrawable(context,R.drawable.ic_cloud_upload));
+            DrawableCompat.setTint(wrappedDrawable.mutate(), ContextCompat.getColor(context, R.color.namoa_cancel_red));
+            //
+            menu.add(0, 1, Menu.FIRST, hmAux_Trans.get("menu_sync_express_lbl"));
+            menu.getItem(0).setIcon(wrappedDrawable);
+            menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        }
 
         return true;
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            // Respond to the action bar's Up/Home button
-            case android.R.id.home:
-                onBackPressed();
-                return true;
+        if (item.getItemId() == 1) {
+            mPresenter.executeSO_Pack_Express_Local(false);
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -734,6 +964,9 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         super.processCloseACT(mLink, mRequired);
         //
         if(wsProcess.equalsIgnoreCase(WS_SO_Pack_Express_Local.class.getName())) {
+            //Atualiza item de nuvem na toolbar
+            invalidateOptionsMenu();
+            //
             progressDialog.dismiss();
             //
             if (hmAux.keySet().size() == 0) {
@@ -959,6 +1192,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
 
     @Override
     public void showMsgToast(String msg) {
+        invalidateOptionsMenu();
         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
     }
 

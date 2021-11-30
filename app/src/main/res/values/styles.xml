@@ -101,4 +101,8 @@
         <item name="android:textSize">@dimen/font_size_font_16</item>
     </style>
 
+    <style name="TextInputLayoutHelperTextColorMainBlue" parent="Widget.Design.TextInputLayout">
+        <item name="android:textColor">@color/namoa_dark_blue</item>
+    </style>
+
 </resources>

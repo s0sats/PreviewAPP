@@ -6,6 +6,12 @@
             <solid android:color="@color/namoa_color_light_green_transp_lib" />
         </shape>
     </item>
+    <item android:state_enabled="false">
+        <shape android:shape="rectangle">
+            <corners android:radius="5dp"/>
+            <solid android:color="@color/namoa_color_gray_6" />
+        </shape>
+    </item>
     <item>
         <shape android:shape="rectangle">
             <corners android:radius="5dp"/>
