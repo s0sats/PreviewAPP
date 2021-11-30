@@ -4,6 +4,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.MD_Partner;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.SO_Pack_Express;
+import com.namoadigital.prj001.model.SO_Pack_Express_Local;
 
 /**
  * Created by d.luche on 09/03/2018.
@@ -27,7 +28,7 @@ public interface Act040_Main_Presenter {
 
     void executeSO_Pack_Express_Local(boolean connectionStatusAlter);
 
-    boolean checkOrderAlreadyExists(long customer_code, String site_code, long operation_code, long product_code, String express_code, String serial_id);
+    SO_Pack_Express_Local checkOrderAlreadyExists(long customer_code, String site_code, long operation_code, long product_code, String express_code, String serial_id);
     //08/10/2018
     void executeSerialSearch(MD_Product mdProduct, String serial_id);
     //
@@ -38,6 +39,10 @@ public interface Act040_Main_Presenter {
     void processSerialSaveResult(HMAux hmSaveResult);
 
     int getExpressSoPendency(HMAux hmAux_Trans);
+
+    String getFormattedRuleHelper(HMAux hmAux_trans, String serial_rule, Integer min, Integer max);
+
+    void getLastExpressInfoInSiteOper();
 
     //void checkSerialUpdateRequired(long product_code, String serial_id);
 

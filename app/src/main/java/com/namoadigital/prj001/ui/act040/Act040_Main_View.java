@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.SO_Pack_Express;
+import com.namoadigital.prj001.model.SO_Pack_Express_Local;
 
 import java.util.ArrayList;
 
@@ -55,4 +56,6 @@ public interface Act040_Main_View {
     void exitProcessMsg(boolean successMsg);
 
     void callAct005(Context context);
+
+    void setLastExpressInfo(SO_Pack_Express_Local lastExpressInSiteOper);
 }

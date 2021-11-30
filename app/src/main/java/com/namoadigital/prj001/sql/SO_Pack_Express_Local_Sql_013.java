@@ -8,6 +8,12 @@ import com.namoadigital.prj001.database.Specification;
  *
  * Verifica se ja existe um pacote + serial pendente de envio
  *
+ * LUCHE - 29/11/2021
+ * Modificado query para verifica se existe pacote + serial executado nas ultimas 3 hrs.
+ * A regra de 3 hrs foi definida pelo cliente...
+ * Query agora retorna o obj pois os dados serão usado
+ *
+ *
  */
 
 public class SO_Pack_Express_Local_Sql_013 implements Specification {
@@ -36,8 +42,7 @@ public class SO_Pack_Express_Local_Sql_013 implements Specification {
 
         return sb
                 .append(" SELECT\n" +
-                        "      IFNULL(COUNT(S.express_code),0) "+ALREADY_NEW_EXPRESS_ORDER+"\n" +
-                        //"      S.*\n" +
+                        "      S.*\n" +
                         " FROM\n" +
                         SO_Pack_Express_LocalDao.TABLE + " S\n" +
                         " WHERE\n" +
@@ -47,7 +52,11 @@ public class SO_Pack_Express_Local_Sql_013 implements Specification {
                         "    AND S.product_code =    '" + product_code + "'\n" +
                         "    AND S.express_code =    '" + express_code + "'\n" +
                         "    AND S.serial_id =    '" + serial_id + "'\n" +
-                        "    AND S.status = 'NEW'\n")
+                        "    AND (strftime('%s',s.log_date) * 1000) >= (strftime('%s','now','-3 hours') * 1000)\n" +
+                        " ORDER BY" +
+                        "    s.log_date DESC" +
+                        " LIMIT 1 \n"
+                )
                 .append(";")
                 //.append(ALREADY_NEW_EXPRESS_ORDER)
                 .toString();

@@ -3,7 +3,6 @@ package com.namoadigital.prj001.ui.act048;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,6 +13,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.appcompat.widget.Toolbar;
+
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
@@ -21,6 +22,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act020_Prod_Serial_Adapter;
 import com.namoadigital.prj001.dao.MD_PartnerDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.receiver.WBR_Logout;
@@ -328,6 +330,9 @@ public class Act048_Main extends Base_Activity_Frag implements Act048_Main_Contr
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mBundle.putString(Act040_Main.EXPRESS_PACK_CODE, bundle.getString(Act040_Main.EXPRESS_PACK_CODE));
         mBundle.putString(MD_PartnerDao.PARTNER_CODE, bundle.getString(MD_PartnerDao.PARTNER_CODE));
+        mBundle.putString(SO_Pack_Express_LocalDao.BILLING_ADD_INF1_VALUE, bundle.getString(SO_Pack_Express_LocalDao.BILLING_ADD_INF1_VALUE));
+        mBundle.putString(SO_Pack_Express_LocalDao.BILLING_ADD_INF2_VALUE, bundle.getString(SO_Pack_Express_LocalDao.BILLING_ADD_INF2_VALUE));
+        mBundle.putString(SO_Pack_Express_LocalDao.BILLING_ADD_INF3_VALUE, bundle.getString(SO_Pack_Express_LocalDao.BILLING_ADD_INF3_VALUE));
 
         mIntent.putExtras(mBundle);
         //
