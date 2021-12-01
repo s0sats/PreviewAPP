@@ -584,7 +584,7 @@ public class Frg_Serial_Search extends Fragment {
         values.put(PRODUCT_ID, (mket_product_id.getText().toString().trim().isEmpty() || iv_product_change.getVisibility() == View.VISIBLE) ? "" : mket_product_id.getText().toString().trim());
         //LUCHE - 27/10/2020
         //Como o setOnReportTextChangeListner reseta a var de busca exata, foi removido o listener nesse momento.
-        String serial_id = ToolBox_Inf.removeForbidenChars(mket_serial.getText().toString().trim());
+        String serial_id = ToolBox_Inf.removeForbidenChars(mket_serial.getText().toString().trim()).toUpperCase();
         mket_serial.setOnReportTextChangeListner(null);
         mket_serial.setText(serial_id);
         mket_serial.setOnReportTextChangeListner(mketSerialTextChangeListener);
