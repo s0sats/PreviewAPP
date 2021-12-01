@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act042;
 
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT042;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.WindowManager;
@@ -63,7 +65,7 @@ public class Act042_Main extends Base_Activity {
         mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
                 mModule_Code,
-                Constant.ACT042
+                ACT042
         );
 
         loadTranslation();
@@ -139,8 +141,8 @@ public class Act042_Main extends Base_Activity {
         iniFooter();
         //
         mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
-        mAct_Info = Constant.ACT042;
-        mAct_Title = Constant.ACT042 + "_" + "title";
+        mAct_Info = ACT042;
+        mAct_Title = ACT042 + "_" + "title";
         //
         HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
         mSite_Value = mFooter.get(Constant.FOOTER_SITE);
@@ -197,7 +199,7 @@ public class Act042_Main extends Base_Activity {
     public void callAct040() {
         Intent mIntent = new Intent(context, Act040_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, ACT042);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();

@@ -313,7 +313,10 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             * o preenhcimento das variaiveis necessarios para criação da O.S
             */
 
-            if(requestingAct.equals(Constant.ACT048) || requestingAct.equals(Constant.ACT049)){
+            if(requestingAct.equals(Constant.ACT048)
+                    || requestingAct.equals(Constant.ACT049)
+                    || requestingAct.equals(Constant.ACT042)
+            ){
                 bundle_express_pack_code = bundle.getString(EXPRESS_PACK_CODE,"");
                 bundle_partner_code = bundle.getString(MD_PartnerDao.PARTNER_CODE,"-1");
                 bundle_serial_id = bundle.getString(Constant.MAIN_MD_PRODUCT_SERIAL_ID,"");
@@ -891,6 +894,15 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             bundle = new Bundle();
         }
         //
+        setFieldsBundle(bundle);
+        //
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+
+    }
+
+    private void setFieldsBundle(Bundle bundle) {
         bundle.putString(EXPRESS_PACK_CODE, mSo_pack_express.getExpress_code()); //mdProduct != null ? mdProduct.getProduct_id() : "");
         if(md_partner != null ) {
             bundle.putString(MD_PartnerDao.PARTNER_CODE, String.valueOf(md_partner.getPartner_code()));
@@ -898,11 +910,6 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         bundle.putString(SO_Pack_Express_LocalDao.BILLING_ADD_INF1_VALUE,binding.mketAddInfo1.getText().toString().trim());
         bundle.putString(SO_Pack_Express_LocalDao.BILLING_ADD_INF2_VALUE,binding.mketAddInfo2.getText().toString().trim());
         bundle.putString(SO_Pack_Express_LocalDao.BILLING_ADD_INF3_VALUE,binding.mketAddInfo3.getText().toString().trim());
-        //
-        mIntent.putExtras(bundle);
-        startActivity(mIntent);
-        finish();
-
     }
 
     @Override
@@ -1230,6 +1237,8 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         Bundle bundle = new Bundle();
 
         bundle.putString(Constant.MAIN_REQUESTING_ACT,Constant.ACT040);
+        setFieldsBundle(bundle);
+        bundle.putString(Constant.MAIN_MD_PRODUCT_SERIAL_ID, binding.mketSerial.getText().toString().trim());
 
         mIntent.putExtras(bundle);
         startActivity(mIntent);
