@@ -31,7 +31,7 @@ public class Sql_Act014_002 implements Specification {
         return sb
                 .append(" SELECT\n" +
                         "     count(1) "+ SENT_QTY+",\n " +
-                        "    '"+hmAux_Trans.get(Act014_Main.LABEL_TRANS_OS)+"' " + TYPE + "\n " +
+                        "    '"+hmAux_Trans.get(Act014_Main.LABEL_TRANS_SO)+"' " + TYPE + "\n " +
                         " FROM\n" +
                         SM_SODao.TABLE+" l\n " +
                         " WHERE\n" +

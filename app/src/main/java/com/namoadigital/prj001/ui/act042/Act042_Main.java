@@ -1,9 +1,11 @@
 package com.namoadigital.prj001.ui.act042;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.WindowManager;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.ViewFlipper;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
@@ -18,8 +20,10 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act042SOExpressAdapter;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.model.SO_Pack_Express_Local;
+import com.namoadigital.prj001.ui.act014.Act014_Main;
 import com.namoadigital.prj001.ui.act040.Act040_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -32,6 +36,10 @@ public class Act042_Main extends Base_Activity {
     private RecyclerView rv_sos;
     private Act042SOExpressAdapter mAdapter;
     private MKEditTextNM mket_filter;
+    private Bundle bundle;
+    private TextView tv_placeholder;
+    private ProgressBar pb_list;
+    private ViewFlipper vf_main;
 
 
     @Override
@@ -92,25 +100,34 @@ public class Act042_Main extends Base_Activity {
                 .get(Act042MainViewModel.class);
         //
         rv_sos = findViewById(R.id.act042_rv_sos);
-//        tv_placeholder = findViewById(R.id.act042_tv_placeholder);
+        pb_list = findViewById(R.id.act042_pb_list);
+        tv_placeholder = findViewById(R.id.act042_tv_placeholder);
+        vf_main = findViewById(R.id.act042_vf_main);
         //
-//        vf_main.setDisplayedChild(0);
+        vf_main.setDisplayedChild(0);
         //
         mket_filter = findViewById(R.id.act042_mket_filter_desc);
         mket_filter.setHint(hmAux_Trans.get("filter_hint"));
+        tv_placeholder.setText(hmAux_Trans.get("alert_get_express_so_error"));
         //
         viewModel.getSo_express_list().observe(this, new Observer<ArrayList<SO_Pack_Express_Local>>() {
             @Override
             public void onChanged(ArrayList<SO_Pack_Express_Local> so_pack_express_locals) {
-                loadSoExpress(so_pack_express_locals);
+
+                if(so_pack_express_locals != null) {
+                    vf_main.setDisplayedChild(1);
+                    loadSoExpress(so_pack_express_locals);
+                }else{
+                    vf_main.setDisplayedChild(2);
+                }
             }
         });
         //
-        viewModel.getSoExpressList();
+        viewModel.getData();
     }
 
     private void recoverIntentsInfo() {
-        Bundle bundle = getIntent().getExtras();
+        bundle = getIntent().getExtras();
         //
         if (bundle != null) {
             //requesting_act = bundle.getString(Constant.MAIN_REQUESTING_ACT,Constant.ACT036);
@@ -177,10 +194,10 @@ public class Act042_Main extends Base_Activity {
         //
     }
 
-    public void callAct040(Context context) {
+    public void callAct040() {
         Intent mIntent = new Intent(context, Act040_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        Bundle bundle = new Bundle();
+
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
@@ -188,6 +205,21 @@ public class Act042_Main extends Base_Activity {
 
     @Override
     public void onBackPressed() {
-        callAct040(context);
+        String requestingAct = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT);
+
+        if(ConstantBaseApp.ACT014.equals(requestingAct)) {
+            callAct014();
+        }else{
+            callAct040();
+        }
+    }
+
+    private void callAct014() {
+        Intent mIntent = new Intent(context, Act014_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
     }
 }

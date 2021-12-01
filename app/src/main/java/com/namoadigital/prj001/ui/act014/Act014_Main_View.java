@@ -34,4 +34,6 @@ public interface Act014_Main_View {
     void callAct069(Context context);
 
     void callAct084(Context context);
+
+    void callAct042(Context context);
 }

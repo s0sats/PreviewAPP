@@ -7,6 +7,7 @@ import android.widget.Filter
 import android.widget.Filterable
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.namoa_digital.namoa_library.util.ConstantBase.SYS_STATUS_DENIED
 import com.namoa_digital.namoa_library.util.ConstantBase.SYS_STATUS_SENT
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.R
@@ -59,7 +60,10 @@ class Act042SOExpressAdapter (
                     ToolBox_Inf.dateToMilliseconds(soPackExpressLocal.log_date),
                     ToolBox_Inf.nlsDateFormat(root.context) + " HH:mm"
                 ))
-                if(soPackExpressLocal.status.equals(SYS_STATUS_SENT)) {
+
+                if(SYS_STATUS_DENIED.equals(soPackExpressLocal.ret_code)){
+                    soExpressIvStatus.applyVisibilityIfSourceExists(R.drawable.ic_baseline_close_24)
+                }else if(SYS_STATUS_SENT.equals(soPackExpressLocal.status)) {
                     soExpressIvStatus.applyVisibilityIfSourceExists(R.drawable.ic_baseline_cloud_done_24_blue)
                 }else{
                     soExpressIvStatus.applyVisibilityIfSourceExists(R.drawable.ic_cloud_upload_24_red)

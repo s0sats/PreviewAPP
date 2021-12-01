@@ -4,7 +4,6 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.ui.act014.Act014_Main;
-import com.namoadigital.prj001.util.Constant;
 
 /**
  * Created by d.luche on 21/06/2017.
@@ -34,13 +33,11 @@ public class SO_Pack_Express_Local_Sql_011 implements Specification {
         return sb
                 .append(" SELECT\n" +
                         "     count(1) " + SENT_QTY + ",\n " +
-                        "    '" + hmAux_Trans.get(Act014_Main.LABEL_TRANS_OS) + "' " + TYPE + "\n " +
+                        "    '" + hmAux_Trans.get(Act014_Main.LABEL_TRANS_SO_EXPRESS) + "' " + TYPE + "\n " +
                         " FROM\n" +
                         SO_Pack_Express_LocalDao.TABLE + " l\n " +
                         " WHERE\n" +
-                        "   l." + SO_Pack_Express_LocalDao.CUSTOMER_CODE + " = '" + s_customer_code + "' " +
-                        "   AND l." + SO_Pack_Express_LocalDao.STATUS + "" +
-                        "    = '" + Constant.SYS_STATUS_SENT + "' ")
+                        "   l." + SO_Pack_Express_LocalDao.CUSTOMER_CODE + " = '" + s_customer_code + "' " )
                 .append(";")
                 //.append(SENT_QTY + "#" + TYPE)
                 .toString();
