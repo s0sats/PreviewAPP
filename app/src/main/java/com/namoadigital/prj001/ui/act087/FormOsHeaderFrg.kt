@@ -5,6 +5,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import android.widget.Toast
@@ -1028,7 +1029,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             }
         }
         //
-        builder.apply {
+        val dialog = builder.apply {
             setTitle(hmAuxTrans["erro_dialog_ttl"])
             setView(dialogBinding.root)
             setPositiveButton(
@@ -1039,7 +1040,10 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             calculatedExecCycle = -1f
             calculatedExecMeasureValue = -1f
         }.create()
-        .show()
+        //
+        dialog.show()
+        //LUCHE - 01/12/2021 - Ajuste necessario para Android 6 ¬¬
+        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
     fun showBkpMachineDialog(serialBkpMachineList: List<FormOsHeaderFrgSerialBkpItemAbs>, onlineSearch: Boolean) {
