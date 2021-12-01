@@ -262,7 +262,6 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         mPresenter.getLastExpressInfoInSiteOper();
         //
         binding.tilPack.setHint(hmAux_Trans.get("tv_barcode_hint"));
-        binding.mketPack.requestFocus();
         //
         binding.tilSerial.setHint(hmAux_Trans.get("tv_serial_hint"));
         //09/01/18 - Luche
@@ -286,7 +285,9 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         binding.clFinalizeBtn.setEnabled(false);
         binding.tvFinalize.setText(hmAux_Trans.get("btn_create_so"));
         //
+        binding.tvPartner.setText(hmAux_Trans.get("ss_partner_hint"));
         binding.ssPartner.setmShowLabel(false);
+        binding.ssPartner.setmCanClean(false);
         binding.ssPartner.setmHint(hmAux_Trans.get("ss_partner_hint"));
         binding.ssPartner.setmTitle(hmAux_Trans.get("ss_partner_ttl"));
         //
@@ -432,8 +433,9 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     @Override
     public void setPartner(HMAux partner) {
         this.md_partner = getMdPartnerFromHMAux(partner);
-        //
-        this.binding.ssPartner.setmValue(partner);
+        binding.ssPartner.setmValue(partner);
+        binding.tilPartner.setBackground(ContextCompat.getDrawable(context,R.drawable.shape_ok));
+        binding.tvPartner.setVisibility(View.VISIBLE);
     }
 
     private MD_Partner getMdPartnerFromHMAux(HMAux partner) {
@@ -457,6 +459,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     @Override
     public void setPartnerList(ArrayList<HMAux> partnerList) {
         binding.ssPartner.setmOption(partnerList);
+        binding.ssPartner.requestFocus();
     }
 
     private void refreshAddInfoVisibility(){
@@ -633,13 +636,13 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             @Override
             public void onItemPostSelected(HMAux hmAux) {
                 if (hmAux.size() > 0) {
-                    /*mPresenter.setMD_Partner(
-                            Long.parseLong(hmAux.get("customer_code")),
-                            Long.parseLong(hmAux.get(SearchableSpinner.ID))
-                    );*/
                     md_partner = getMdPartnerFromHMAux(hmAux);
+                    binding.tilPartner.setBackground(ContextCompat.getDrawable(context, R.drawable.shape_ok));
+                    binding.tvPartner.setVisibility(View.VISIBLE);
                 }else{
                     md_partner = null;
+                    binding.tilPartner.setBackground(ContextCompat.getDrawable(context, R.drawable.shape_error));
+                    binding.tvPartner.setVisibility(View.GONE);
                 }
                 //Valida liberação do botão
                 validateEnableFinalizeBtn();
@@ -742,9 +745,15 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             }
         });
         //
-        //Se pacote expresso enviado pelo bundle, seta valores.
-        if(!bundle_express_pack_code.equalsIgnoreCase("")){
-            binding.mketPack.setText(bundle_express_pack_code);
+        //Se pacote expresso, ou parceiro ou serial enviado pelo bundle, seta valores.
+        if(
+            !bundle_partner_code.equalsIgnoreCase("-1")
+            || !bundle_express_pack_code.equalsIgnoreCase("")
+            || !bundle_serial_id.equalsIgnoreCase("")
+        ){
+            if(!bundle_express_pack_code.equalsIgnoreCase("")) {
+                binding.mketPack.setText(bundle_express_pack_code);
+            }
             binding.mketSerial.setText(bundle_serial_id);
             if( binding.tilAddInfo1.getVisibility() == View.VISIBLE) {
                 binding.mketAddInfo1.setText(bundle_billing_info1);
@@ -874,7 +883,8 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     @Override
     public void disablePartnerSelector() {
         binding.ssPartner.setmEnabled(false);
-        binding.ssPartner.setVisibility(View.GONE);
+        binding.tilPartner.setVisibility(View.GONE);
+        binding.mketPack.requestFocus();
     }
 
     @Override
@@ -903,7 +913,9 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     }
 
     private void setFieldsBundle(Bundle bundle) {
-        bundle.putString(EXPRESS_PACK_CODE, mSo_pack_express.getExpress_code()); //mdProduct != null ? mdProduct.getProduct_id() : "");
+        if(mSo_pack_express != null) {
+            bundle.putString(EXPRESS_PACK_CODE, mSo_pack_express.getExpress_code()); //mdProduct != null ? mdProduct.getProduct_id() : "");
+        }
         if(md_partner != null ) {
             bundle.putString(MD_PartnerDao.PARTNER_CODE, String.valueOf(md_partner.getPartner_code()));
         }
