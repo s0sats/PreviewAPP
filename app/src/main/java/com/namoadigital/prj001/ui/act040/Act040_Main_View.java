@@ -39,7 +39,6 @@ public interface Act040_Main_View {
 
     void showMsgToast(String msg);
 
-    void setConnectionStatusAlter(boolean connectionStatusAlter);
     //08/10/2018
     void setWsProcess(String wsProcess);
     //
@@ -50,8 +49,6 @@ public interface Act040_Main_View {
     boolean isExitProcess();
 
     void setExitProcess(boolean exitProcess);
-
-    boolean isConnectionStatusAlter();
 
     void exitProcessMsg(boolean successMsg);
 

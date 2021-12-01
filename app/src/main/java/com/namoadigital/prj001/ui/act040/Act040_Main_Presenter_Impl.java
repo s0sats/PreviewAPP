@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act040;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -36,21 +37,25 @@ import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_003;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_004;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Sql_003;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_005;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_006;
+import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_011;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_013;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_014;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Sql_005;
 import com.namoadigital.prj001.sql.Sql_Act012_004;
 import com.namoadigital.prj001.sql.Sql_Act040_001;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -195,7 +200,7 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
     }
 
     @Override
-    public void onCreateSo_Pack_Express(SO_Pack_Express mSo_pack_express, MD_Partner md_partner, MD_Product md_product, String serial, boolean connectionStatusAlter) {
+    public void onCreateSo_Pack_Express(SO_Pack_Express mSo_pack_express, MD_Partner md_partner, MD_Product md_product, String serial, String billingInfo1, String billingInfo2, String billingInfo3) {
         SO_Pack_Express_Local so_pack_express_local = new SO_Pack_Express_Local();
         MD_Site md_site = getSiteInfo();
         MD_Operation md_operation = getOperationInfo();
@@ -238,17 +243,19 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
         so_pack_express_local.setExpress_tmp(nTemp);
         so_pack_express_local.setPartner_code(md_partner.getPartner_code());
         so_pack_express_local.setSerial_id(serial);
-        so_pack_express_local.setStatus("NEW");
+        so_pack_express_local.setStatus(ConstantBaseApp.SO_EXPRESS_STATUS_NEW);
         //
         so_pack_express_local.setSo_desc(mSo_pack_express.getPack_desc());
-
         so_pack_express_local.setSo_status(Constant.SYS_STATUS_WAITING_SYNC);
         so_pack_express_local.setLog_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
         //
+        so_pack_express_local.setBilling_add_inf1_value(billingInfo1);
+        so_pack_express_local.setBilling_add_inf2_value(billingInfo2);
+        so_pack_express_local.setBilling_add_inf3_value(billingInfo3);
+        //
         so_pack_express_localDao.addUpdate(so_pack_express_local);
         //
-        //executeSO_Pack_Express_Local(connectionStatusAlter);
-        executeSerialSave(connectionStatusAlter);
+        executeSerialSave();
     }
 
     private MD_Site_Zone getZoneInfo() {
@@ -308,7 +315,7 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
     }
 
     @Override
-    public void executeSerialSave(boolean connectionStatusAlter) {
+    public void executeSerialSave() {
         if (ToolBox_Con.isOnline(context)) {
             mView.setWsProcess(WS_Serial_Save.class.getName());
             //
@@ -328,29 +335,15 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
             context.sendBroadcast(mIntent);
         } else {
             if(!mView.isExitProcess()) {
-                if (!connectionStatusAlter) {
-                    connectionStatusAlter = true;
-                    mView.setConnectionStatusAlter(connectionStatusAlter);
-                    //
-                    //ToolBox_Inf.showNoConnectionDialog(context);
-                    mView.showMsg(
-                            hmAux_Trans.get("express_send_error_ttl"),
-                            hmAux_Trans.get("express_send_error_msg")
-                    );
-                } else {
-                }
-
                 mView.showMsgToast(hmAux_Trans.get("toast_express_saved_msg"));
-
-                mView.automationCleanForm();
             }else{
-                onBackPressedClicked(null,null);
+                onBackPressedClicked();
             }
         }
     }
 
     @Override
-    public void executeSO_Pack_Express_Local(boolean connectionStatusAlter) {
+    public void executeSO_Pack_Express_Local() {
         if (ToolBox_Con.isOnline(context)) {
             mView.setWsProcess(WS_SO_Pack_Express_Local.class.getName());
             //
@@ -367,21 +360,7 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
             context.sendBroadcast(mIntent);
         } else {
             if(!mView.isExitProcess()) {
-                if (!connectionStatusAlter) {
-                    connectionStatusAlter = true;
-                    mView.setConnectionStatusAlter(connectionStatusAlter);
-                    //
-                    //ToolBox_Inf.showNoConnectionDialog(context);
-                    mView.showMsg(
-                            hmAux_Trans.get("express_send_error_ttl"),
-                            hmAux_Trans.get("express_send_error_msg")
-                    );
-                } else {
-                }
-
                 mView.showMsgToast(hmAux_Trans.get("toast_express_saved_msg"));
-
-                mView.automationCleanForm();
             }else{
                 mView.exitProcessMsg(false);
             }
@@ -464,6 +443,22 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
                 }
             }
         }
+    }
+
+    @Override
+    public boolean hasSerialOrExpressOsPendency() {
+        return getExpressSoPendency(hmAux_Trans) > 0 || hasSerialUpdateRequired();
+    }
+
+    @Override
+    public boolean hasSerialUpdateRequired() {
+        List<HMAux> auxSerials = productSerialDao.query_HM(
+            new MD_Product_Serial_Sql_004(
+                ToolBox_Con.getPreference_Customer_Code(context)
+            ).toSqlQuery()
+        );
+        //
+       return auxSerials != null && auxSerials.size() > 0 ;
     }
 
     @Override
@@ -615,14 +610,14 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
                 );
         //
         if(productSerial == null || productSerial.getUpdate_required() == 0){
-            onBackPressedClicked(null, null);
+            onBackPressedClicked();
         }else{
             if(ToolBox_Con.isOnline(context)) {
                 mView.setExitProcess(true);
                 //
-                executeSerialSave(mView.isConnectionStatusAlter());
+                executeSerialSave();
             }else{
-                onBackPressedClicked(null, null);
+                onBackPressedClicked();
             }
         }
     }
@@ -668,21 +663,49 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
         return sHelper;
     }
 
+    @Override
+    public void handleHistClick() {
+        HMAux auxLocalExpress  = so_pack_express_localDao.getByStringHM(
+            new SO_Pack_Express_Local_Sql_011(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                hmAux_Trans
+            ).toSqlQuery()
+        );
+        //
+        if( auxLocalExpress != null
+            && auxLocalExpress.hasConsistentValue(SO_Pack_Express_Local_Sql_011.SENT_QTY)
+            && ToolBox_Inf.convertStringToInt(auxLocalExpress.get(SO_Pack_Express_Local_Sql_011.SENT_QTY)) > 0
+        ){
+            mView.callAct042(context);
+        }else{
+            mView.showMsg(
+                hmAux_Trans.get("alert_no_express_os_history_found_ttl"),
+                hmAux_Trans.get("alert_no_express_os_history_found_msg")
+            );
+        }
+    }
+
+    private void onBackPressedClicked(){
+        onBackPressedClicked(null, null , true);
+    }
 
     @Override
-    public void onBackPressedClicked(Long product_code, String serial_id) {
-        if(product_code != null && serial_id != null && serial_id.length() > 0) {
-            checkSerialUpdateRequired(
-                    product_code,
-                    serial_id
-            );
+    public void onBackPressedClicked(SO_Pack_Express mSoPackExpress, String serialID, boolean skipConfirm) {
+        if((mSoPackExpress == null && (serialID == null || serialID.isEmpty())) || skipConfirm) {
+            mView.callAct005(context);
         }else {
-//            if(ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, ConstantBaseApp.PROFILE_MENU_SO_PARAM_DIRECT_EXPRESS_ORDER)){
-                mView.callAct005(context);
-//            }else {
-//                mView.callAct021(context);
-//            }
+            ToolBox.alertMSG_YES_NO(
+                context,
+                hmAux_Trans.get("alert_leave_express_creation_ttl"),
+                hmAux_Trans.get("alert_leave_express_creation_confirm"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        onBackPressedClicked(mSoPackExpress,serialID,true);
+                    }
+                },
+                1
+            );
         }
-
     }
 }

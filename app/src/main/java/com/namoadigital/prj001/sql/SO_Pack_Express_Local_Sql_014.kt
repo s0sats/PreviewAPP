@@ -25,7 +25,12 @@ class SO_Pack_Express_Local_Sql_014(
             ${SO_Pack_Express_LocalDao.CUSTOMER_CODE} = '$customerCode'
             AND ${SO_Pack_Express_LocalDao.SITE_CODE} = '$siteCode'  
             AND ${SO_Pack_Express_LocalDao.OPERATION_CODE} = '$operationCode'
-            AND ${SO_Pack_Express_LocalDao.STATUS} = '${ConstantBaseApp.SYS_STATUS_SENT}'
+            --status sent e so_status != denied OU status new 
+            AND ( ${SO_Pack_Express_LocalDao.STATUS}  = '${ConstantBaseApp.SO_EXPRESS_STATUS_NEW}'
+                  OR ( ${SO_Pack_Express_LocalDao.STATUS} = '${ConstantBaseApp.SYS_STATUS_SENT}' 
+                       AND ${SO_Pack_Express_LocalDao.SO_STATUS} <> '${ConstantBaseApp.SYS_STATUS_DENIED}' 
+                      )
+                )                                    
           ORDER BY
             ${SO_Pack_Express_LocalDao.LOG_DATE} DESC
           LIMIT 1                                                

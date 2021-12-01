@@ -22,11 +22,18 @@ public interface Act040_Main_Presenter {
 
     void loadPartners(String partner_code);
 
-    void onBackPressedClicked(Long product_code, String serial_id);
+    void onBackPressedClicked(SO_Pack_Express mSoPackExpress, String serialID, boolean skipConfirm);
 
-    void onCreateSo_Pack_Express(SO_Pack_Express mSo_pack_express, MD_Partner md_partner, MD_Product md_product, String serial, boolean connectionStatusAlter);
+    void onCreateSo_Pack_Express(SO_Pack_Express mSo_pack_express,
+                                 MD_Partner md_partner,
+                                 MD_Product md_product,
+                                 String serial,
+                                 String billingInfo1,
+                                 String billingInfo2,
+                                 String billingInfo3
+                                );
 
-    void executeSO_Pack_Express_Local(boolean connectionStatusAlter);
+    void executeSO_Pack_Express_Local();
 
     SO_Pack_Express_Local checkOrderAlreadyExists(long customer_code, String site_code, long operation_code, long product_code, String express_code, String serial_id);
     //08/10/2018
@@ -34,7 +41,7 @@ public interface Act040_Main_Presenter {
     //
     void extractSearchResult(MD_Product mdProduct, String serial_id, String result);
 
-    void executeSerialSave(boolean connectionStatusAlter);
+    void executeSerialSave();
 
     void processSerialSaveResult(HMAux hmSaveResult);
 
@@ -43,6 +50,12 @@ public interface Act040_Main_Presenter {
     String getFormattedRuleHelper(HMAux hmAux_trans, String serial_rule, Integer min, Integer max);
 
     void getLastExpressInfoInSiteOper();
+
+    void handleHistClick();
+
+    boolean hasSerialOrExpressOsPendency();
+
+    boolean hasSerialUpdateRequired();
 
     //void checkSerialUpdateRequired(long product_code, String serial_id);
 

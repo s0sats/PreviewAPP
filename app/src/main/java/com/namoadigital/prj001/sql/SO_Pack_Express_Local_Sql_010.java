@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.sql;
 
 import com.namoadigital.prj001.database.Specification;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 
 /**
  * Created by d.luche on 03/08/2017.
@@ -27,7 +28,7 @@ public class SO_Pack_Express_Local_Sql_010 implements Specification {
                         "   so_pack_expresss_local s\n" +
                         " WHERE\n" +
                         "   s.customer_code = '" + customer_code + "' \n" +
-                        "   and s.status = '" + "NEW" + "'\n")
+                        "   and s.status = '" + ConstantBaseApp.SO_EXPRESS_STATUS_NEW + "'\n")
                 .append(";")
                 //.append(BADGE_IN_NEW_QTY)
                 .toString();
