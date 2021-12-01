@@ -88,7 +88,7 @@
             android:id="@+id/so_express_error_msg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/namoa_cancel_red"
+            android:textColor="@color/namoa_os_form_problem_red"
             tools:text="teste" />
         <TextView
             android:id="@+id/so_express_end_datetime"
