@@ -50,16 +50,36 @@
                 />
         </LinearLayout>
 
-        <ListView
-            android:id="@+id/act042_lv_sos"
+        <ViewFlipper
+            android:id="@+id/act042_vf_main"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_weight="1"
-            android:divider="@color/padrao_TRANSPARENT"
-            android:dividerHeight="4dp"
-            android:padding="5dp" />
+            android:layout_height="wrap_content">
+            <ProgressBar
+                android:id="@+id/act042_pb_list"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_margin="16dp"
+                />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/act042_rv_sos"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_weight="1"
+                android:divider="@color/padrao_TRANSPARENT"
+                android:dividerHeight="4dp"
+                android:padding="5dp" />
+            <TextView
+                android:id="@+id/act042_tv_placeholder"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                />
+
+        </ViewFlipper>
+
+
 
     </LinearLayout>
 

@@ -7,15 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
-import android.widget.ImageView
 import android.widget.TextView
-import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.MyActionsFormButtonItemBinding
 import com.namoadigital.prj001.databinding.MyActionsItemBinding
+import com.namoadigital.prj001.extensions.applyVisibilityIfSourceExists
 import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.model.MyActionsBase
 import com.namoadigital.prj001.model.MyActionsFormButton
@@ -240,17 +239,7 @@ class MyActionsAdapter(
         }
     }
 
-    /**
-     * Kotlin extension para ImageView que seta o source e visibilidade caso exista.
-     */
-    fun ImageView.applyVisibilityIfSourceExists(@DrawableRes source: Int?){
-        this.visibility = if (source != null){
-            setImageDrawable(ContextCompat.getDrawable(this.context, source))
-            View.VISIBLE
-        }else{
-            View.GONE
-        }
-    }
+
 
     /**
      * Busca o item do qual o usr acabou de voltar na lista.

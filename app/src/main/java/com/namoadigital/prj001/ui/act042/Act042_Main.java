@@ -1,32 +1,45 @@
 package com.namoadigital.prj001.ui.act042;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.appcompat.widget.Toolbar;
 import android.view.WindowManager;
-import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.ViewFlipper;
+
+import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.adapter.SO_Header_Adapter;
-import com.namoadigital.prj001.ui.act012.Act012_Main;
+import com.namoadigital.prj001.adapter.Act042SOExpressAdapter;
+import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
+import com.namoadigital.prj001.model.SO_Pack_Express_Local;
+import com.namoadigital.prj001.ui.act014.Act014_Main;
 import com.namoadigital.prj001.ui.act040.Act040_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Act042_Main extends Base_Activity implements Act042_Main_View{
+public class Act042_Main extends Base_Activity {
 
-    private Act042_Main_Presenter_Impl mPresenter;
-    private ListView lv_sos;
-    private SO_Header_Adapter mAdapter;
+//    private Act042_Main_Presenter_Impl mPresenter;
+    private RecyclerView rv_sos;
+    private Act042SOExpressAdapter mAdapter;
     private MKEditTextNM mket_filter;
+    private Bundle bundle;
+    private TextView tv_placeholder;
+    private ProgressBar pb_list;
+    private ViewFlipper vf_main;
 
 
     @Override
@@ -61,6 +74,7 @@ public class Act042_Main extends Base_Activity implements Act042_Main_View{
         List<String> transList = new ArrayList<String>();
         transList.add("act042_title");
         transList.add("filter_hint");
+        transList.add("alert_get_express_so_error");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -77,22 +91,43 @@ public class Act042_Main extends Base_Activity implements Act042_Main_View{
         //
         recoverIntentsInfo();
         //
-        mPresenter = new Act042_Main_Presenter_Impl(
-                context,
-                this,
-                hmAux_Trans
+        Act042MainViewModelFactory viewModelFactory = new Act042MainViewModelFactory(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                new SO_Pack_Express_LocalDao(context)
         );
+
+        Act042MainViewModel viewModel = new ViewModelProvider(this, viewModelFactory)
+                .get(Act042MainViewModel.class);
         //
-        lv_sos = (ListView) findViewById(R.id.act042_lv_sos);
+        rv_sos = findViewById(R.id.act042_rv_sos);
+        pb_list = findViewById(R.id.act042_pb_list);
+        tv_placeholder = findViewById(R.id.act042_tv_placeholder);
+        vf_main = findViewById(R.id.act042_vf_main);
         //
-        mket_filter = (MKEditTextNM) findViewById(R.id.act042_mket_filter_desc);
+        vf_main.setDisplayedChild(0);
+        //
+        mket_filter = findViewById(R.id.act042_mket_filter_desc);
         mket_filter.setHint(hmAux_Trans.get("filter_hint"));
+        tv_placeholder.setText(hmAux_Trans.get("alert_get_express_so_error"));
         //
-        mPresenter.getSoExpressList();
+        viewModel.getSo_express_list().observe(this, new Observer<ArrayList<SO_Pack_Express_Local>>() {
+            @Override
+            public void onChanged(ArrayList<SO_Pack_Express_Local> so_pack_express_locals) {
+
+                if(so_pack_express_locals != null) {
+                    vf_main.setDisplayedChild(1);
+                    loadSoExpress(so_pack_express_locals);
+                }else{
+                    vf_main.setDisplayedChild(2);
+                }
+            }
+        });
+        //
+        viewModel.getData();
     }
 
     private void recoverIntentsInfo() {
-        Bundle bundle = getIntent().getExtras();
+        bundle = getIntent().getExtras();
         //
         if (bundle != null) {
             //requesting_act = bundle.getString(Constant.MAIN_REQUESTING_ACT,Constant.ACT036);
@@ -135,37 +170,34 @@ public class Act042_Main extends Base_Activity implements Act042_Main_View{
 
             @Override
             public void reportTextChange(String s, boolean b) {
-                applySearchFilter();
+                applySearchFilter(s.trim());
             }
         });
     }
 
-    private void applySearchFilter() {
+    private void applySearchFilter(String textFilter) {
         if (mAdapter != null) {
-            mAdapter.getFilter().filter(mket_filter.getText().toString().trim());
+            mAdapter.getFilter().filter(textFilter);
         }
     }
 
-    @Override
-    public void loadSoExpress(ArrayList<HMAux> so_express_list) {
-
-        mAdapter = new SO_Header_Adapter(
-                context,
-                so_express_list,
-                SO_Header_Adapter.CONFIG_TYPE_EXIBITION_FULL,
-                R.layout.so_header_cell,
-                R.layout.so_header_cell
+    public void loadSoExpress(ArrayList<SO_Pack_Express_Local> so_express_list) {
+        //
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
+        rv_sos.setLayoutManager(linearLayoutManager);
+        //
+        mAdapter = new Act042SOExpressAdapter(
+                so_express_list
         );
         //
-        lv_sos.setAdapter(mAdapter);
+        rv_sos.setAdapter(mAdapter);
         //
     }
 
-    @Override
-    public void callAct040(Context context) {
+    public void callAct040() {
         Intent mIntent = new Intent(context, Act040_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        Bundle bundle = new Bundle();
+
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
@@ -173,7 +205,21 @@ public class Act042_Main extends Base_Activity implements Act042_Main_View{
 
     @Override
     public void onBackPressed() {
-        //super.onBackPressed();
-        mPresenter.onBackPressedClicked();
+        String requestingAct = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT);
+
+        if(ConstantBaseApp.ACT014.equals(requestingAct)) {
+            callAct014();
+        }else{
+            callAct040();
+        }
+    }
+
+    private void callAct014() {
+        Intent mIntent = new Intent(context, Act014_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
     }
 }

@@ -401,4 +401,17 @@ public class SO_Pack_Express_Local {
     public void setToken(String token) {
         this.token = token;
     }
+
+    public String getAllFieldForFilter(){
+        return express_code
+                + serial_id
+                + billing_add_inf1_value
+                + billing_add_inf2_value
+                + billing_add_inf3_value
+                + exec_site_desc
+                + operation_desc
+                + ret_msg
+                + log_date
+                        .replace("null|","");
+    }
 }

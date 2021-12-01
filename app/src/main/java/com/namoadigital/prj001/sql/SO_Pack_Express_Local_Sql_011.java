@@ -29,7 +29,7 @@ public class SO_Pack_Express_Local_Sql_011 implements Specification {
         return sb
                 .append(" SELECT\n" +
                         "     count(1) " + SENT_QTY + ",\n " +
-                        "    '" + hmAux_Trans.get(Act014_Main.LABEL_TRANS_OS) + "' " + TYPE + "\n " +
+                        "    '" + hmAux_Trans.get(Act014_Main.LABEL_TRANS_SO_EXPRESS) + "' " + TYPE + "\n " +
                         " FROM\n" +
                         SO_Pack_Express_LocalDao.TABLE + " l\n " +
                         " WHERE\n" +

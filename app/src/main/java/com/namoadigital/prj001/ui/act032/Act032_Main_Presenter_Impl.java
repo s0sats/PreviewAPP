@@ -6,10 +6,8 @@ import android.os.Bundle;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.sql.SM_SO_Sql_016;
-import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_012;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
-import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.List;
 
@@ -43,15 +41,19 @@ public class Act032_Main_Presenter_Impl  implements Act032_Main_Presenter {
                         serial_id
                 ).toSqlQuery()
         );
-        if(ToolBox_Inf.profileExists(context,Constant.PROFILE_MENU_SO,Constant.PROFILE_MENU_SO_EXPRESS)) {
-            List<HMAux> soExpressList = soDao.query_HM(
-                    new SO_Pack_Express_Local_Sql_012(
-                            ToolBox_Con.getPreference_Customer_Code(context)
-                    ).toSqlQuery()
-            );
-            //
-            soList.addAll(soExpressList);
-        }
+        /**
+         * BARRIONUEVO - 30-11-2021
+         * Remoção de itens de SO Express.
+         */
+//        if(ToolBox_Inf.profileExists(context,Constant.PROFILE_MENU_SO,Constant.PROFILE_MENU_SO_EXPRESS)) {
+//            List<HMAux> soExpressList = soDao.query_HM(
+//                    new SO_Pack_Express_Local_Sql_012(
+//                            ToolBox_Con.getPreference_Customer_Code(context)
+//                    ).toSqlQuery()
+//            );
+//            //
+//            soList.addAll(soExpressList);
+//        }
         //
         mView.loadSOList(soList);
     }

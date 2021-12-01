@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/namoa_cell_8_states"
+    android:layout_marginBottom="8dp"
+    android:padding="8dp"
+    >
+
+    <TextView
+        android:id="@+id/so_express_package_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        />
+
+    <ImageView
+        android:id="@+id/so_express_iv_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintLeft_toRightOf="@+id/so_express_package_desc"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/so_express_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/so_express_package_desc"
+        app:layout_constraintVertical_bias="0.0">
+
+        <TextView
+            android:id="@+id/so_express_product_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            tools:text="teste" />
+
+        <TextView
+            android:id="@+id/so_express_serial_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            tools:text="teste" />
+
+        <TextView
+            android:id="@+id/so_express_billing_add_inf1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="teste" />
+
+        <TextView
+            android:id="@+id/so_express_billing_add_inf2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="teste" />
+
+        <TextView
+            android:id="@+id/so_express_billing_add_inf3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="teste" />
+
+        <TextView
+            android:id="@+id/so_express_site_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="teste" />
+
+        <TextView
+            android:id="@+id/so_express_operation_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="teste" />
+
+        <TextView
+            android:id="@+id/so_express_error_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/namoa_cancel_red"
+            tools:text="teste" />
+        <TextView
+            android:id="@+id/so_express_end_datetime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/namoa_lime_green_2"
+            tools:text="teste" />
+
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

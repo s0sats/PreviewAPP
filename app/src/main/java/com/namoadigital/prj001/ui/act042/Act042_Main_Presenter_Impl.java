@@ -9,7 +9,7 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
 import java.util.ArrayList;
-
+@Deprecated
 public class Act042_Main_Presenter_Impl implements Act042_Main_Presenter {
 
     private Context context;
@@ -19,7 +19,7 @@ public class Act042_Main_Presenter_Impl implements Act042_Main_Presenter {
 
     public Act042_Main_Presenter_Impl(Context context, Act042_Main mView, HMAux hmAux_Trans) {
         this.context = context;
-        this.mView = mView;
+//        this.mView = mView;
         this.hmAux_Trans = hmAux_Trans;
         //
         this.expressLocalDao = new SO_Pack_Express_LocalDao(context);

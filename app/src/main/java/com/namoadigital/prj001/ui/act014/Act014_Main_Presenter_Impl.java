@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.IO_InboundDao;
 import com.namoadigital.prj001.dao.IO_MoveDao;
@@ -12,7 +11,6 @@ import com.namoadigital.prj001.dao.IO_OutboundDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
-import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.IO_Move_Search_Record;
 import com.namoadigital.prj001.sql.SM_SO_Sql_015;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_011;
@@ -21,7 +19,6 @@ import com.namoadigital.prj001.sql.Sql_Act014_003;
 import com.namoadigital.prj001.sql.Sql_Act014_004;
 import com.namoadigital.prj001.sql.Sql_Act014_005;
 import com.namoadigital.prj001.sql.Sql_Act014_006;
-import com.namoadigital.prj001.sql.Sql_Act014_007;
 import com.namoadigital.prj001.sql.Sql_Act014_008;
 import com.namoadigital.prj001.sql.Sql_Act058_007;
 import com.namoadigital.prj001.util.Constant;
@@ -74,26 +71,6 @@ public class Act014_Main_Presenter_Impl implements Act014_Main_Presenter {
             senList.addAll(senListF);
         }
 
-
-        //
-        //FINALIZADOS FORM AP
-        /**
-         *   BARRIONUEVO 07-04-2020
-         *   Verifica perfil para form-ap
-         */
-//        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_AP, null)) {
-//            GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(context);
-//            List<HMAux> NFormAPHistoric = formApDao.query_HM(
-//                    new Sql_Act014_003(
-//                            ToolBox_Con.getPreference_Customer_Code(context),
-//                            hmAux_Trans
-//                    ).toSqlQuery()
-//            );
-//            //
-//            senList.addAll(NFormAPHistoric);
-//        }
-        //
-        //if (ToolBox_Inf.parameterExists(context, new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})) {
         if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO,null)) {
             ArrayList<HMAux> senListSO =
                     (ArrayList<HMAux>) sm_soDao.query_HM(
@@ -104,32 +81,21 @@ public class Act014_Main_Presenter_Impl implements Act014_Main_Presenter {
                     );
 
             HMAux hmAuxSO = senListSO.get(0);
-            HMAux hmAuxTotal = new HMAux();
+            senList.add(hmAuxSO);
             //
-            if(ToolBox_Inf.profileExists(context,Constant.PROFILE_MENU_SO,Constant.PROFILE_MENU_SO_EXPRESS)) {
-                ArrayList<HMAux> senListSOExpress =
-                        (ArrayList<HMAux>) soPackExpressLocalDao.query_HM(
-                                new SO_Pack_Express_Local_Sql_011(
-                                        ToolBox_Con.getPreference_Customer_Code(context),
-                                        hmAux_Trans
-                                ).toSqlQuery()
-                        );
+        }
 
-                HMAux hmAuxSOExpress = senListSOExpress.get(0);
+        if(ToolBox_Inf.profileExists(context,Constant.PROFILE_MENU_SO,Constant.PROFILE_MENU_SO_EXPRESS)) {
+            ArrayList<HMAux> senListSOExpress =
+                    (ArrayList<HMAux>) soPackExpressLocalDao.query_HM(
+                            new SO_Pack_Express_Local_Sql_011(
+                                    ToolBox_Con.getPreference_Customer_Code(context),
+                                    hmAux_Trans
+                            ).toSqlQuery()
+                    );
 
-
-                int mTotal = ToolBox_Inf.convertStringToInt(hmAuxSO.get(SM_SO_Sql_015.SENT_QTY)) +
-                        ToolBox_Inf.convertStringToInt(hmAuxSOExpress.get(SM_SO_Sql_015.SENT_QTY));
-
-
-                hmAuxTotal.put(SM_SO_Sql_015.TYPE, hmAuxSO.get(SM_SO_Sql_015.TYPE));
-                hmAuxTotal.put(SM_SO_Sql_015.SENT_QTY, String.valueOf(mTotal));
-            }else{
-                hmAuxTotal = hmAuxSO;
-            }
-
-            senList.add(hmAuxTotal);
-
+            HMAux hmAuxSOExpress = senListSOExpress.get(0);
+            senList.add(hmAuxSOExpress);
         }
 
         if(ToolBox_Inf.profileExists(context , Constant.PROFILE_MENU_IO , Constant.PROFILE_MENU_IO_PARAM_INBOUND)){
@@ -183,24 +149,6 @@ public class Act014_Main_Presenter_Impl implements Act014_Main_Presenter {
             //
             senList.addAll(outboundHistoric);
         }
-//        if(ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET ,null)){
-//            TK_TicketDao tk_ticketDao = new TK_TicketDao(
-//                    context,
-//                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-//                    Constant.DB_VERSION_CUSTOM
-//            );
-//
-//            List<HMAux> ticketHistoric = tk_ticketDao.query_HM(
-//                    new Sql_Act014_007(
-//                            ToolBox_Con.getPreference_Customer_Code(context),
-//                            hmAux_Trans
-//                    ).toSqlQuery()
-//            );
-//            //
-//            senList.addAll(ticketHistoric);
-//        }
-
-
         //
         mView.loadSentData(senList);
     }
@@ -218,8 +166,12 @@ public class Act014_Main_Presenter_Impl implements Act014_Main_Presenter {
 //                mView.callAct015(context);
 //            }
 
-            if (item.get(Sql_Act014_001.TYPE).equalsIgnoreCase(hmAux_Trans.get(Act014_Main.LABEL_TRANS_OS))) {
+            if (item.get(Sql_Act014_001.TYPE).equalsIgnoreCase(hmAux_Trans.get(Act014_Main.LABEL_TRANS_SO))) {
                 mView.callAct032(context);
+            }
+            //
+            if (item.get(Sql_Act014_001.TYPE).equalsIgnoreCase(hmAux_Trans.get(Act014_Main.LABEL_TRANS_SO_EXPRESS))) {
+                mView.callAct042(context);
             }
 
 //            if (item.get(Sql_Act014_003.TYPE).equalsIgnoreCase(hmAux_Trans.get(Act014_Main.LABEL_TRANS_FORM_AP))) {
