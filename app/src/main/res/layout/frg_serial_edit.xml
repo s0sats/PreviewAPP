@@ -183,10 +183,10 @@
                         <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                             android:id="@+id/frg_serial_edit_mket_serial"
                             android:layout_width="0dp"
-                            android:layout_height="50dp"
+                            android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:background="@drawable/namoa_bg_1"
-                            android:inputType="text"
+                            android:inputType="textMultiLine"
                             android:padding="10dp"
                             android:textSize="@dimen/font_size_title"
                             android:textStyle="bold"
