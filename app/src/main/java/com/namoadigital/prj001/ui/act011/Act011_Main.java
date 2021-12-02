@@ -720,19 +720,7 @@ public class Act011_Main extends Base_Activity
         onBackFocusEvent = new CustomFF.ICustomFFDotsDialogDismiss() {
             @Override
             public void OnDotsDialogDismiss(CustomFF customFF) {
-                //Remove o foco da view atual
-                View currentFocus = getCurrentFocus();
-                if (currentFocus != null) {
-                    currentFocus.clearFocus();
-                }
-                customFF.requestFocus();
-                //Inicia processo de scroll, buscando o fragment atual e depois chamando o metodo que
-                //faz o scroll
-                int currentItem = pager.getCurrentItem();
-                Act011BaseFrg fragment = screens.get(currentItem);
-                if (fragment instanceof Act011FrgFF) {
-                    ((Act011FrgFF) fragment).scrollToSelectedView(customFF);
-                }
+                scrollToLastCustomFFClicked(customFF);
             }
         };
 
@@ -758,6 +746,57 @@ public class Act011_Main extends Base_Activity
                 mTicket_seq_tmp,
                 mStep_code
         );
+    }
+
+    /**
+     * Metodo que faz o scroll para o customFF passado.
+     * Busca a view que é o foco atual, remove o foco dele e seta o foco no customFF. Na sequencia,
+     * resgata o Act011FrgFF e roda o metodo scrollToSelectedView
+     * @param customFF
+     */
+    private void scrollToLastCustomFFClicked(CustomFF customFF) {
+         //Remove o foco da view atual
+                View currentFocus = getCurrentFocus();
+                if (currentFocus != null) {
+                    currentFocus.clearFocus();
+                }
+                customFF.requestFocus();
+                //Inicia processo de scroll, buscando o fragment atual e depois chamando o metodo que
+                //faz o scroll
+                int currentItem = pager.getCurrentItem();
+                Act011BaseFrg fragment = screens.get(currentItem);
+                if (fragment instanceof Act011FrgFF) {
+                    ((Act011FrgFF) fragment).scrollToSelectedView(customFF);
+                }
+    }
+
+    /**
+     * Feito override do metodo pai para regatar os valos da preferencia antes dela ser resetada
+     * pela execução do metodo super.
+     * Essa implementação foi necessario pois, caso o updateUI seja rodado devido ao preenchimento
+     * de campos tipo PictureFF ou PhotoFF, deve ser feito scroll devolta para o campo. Pedido mosolf
+     * Após chamar o super, realiza loop na lista de customFF buscando o item pela sequencia.
+     * Ao encontrar, chama metodo scrollToLastCustomFFClicked que é responsavel por remove o foco atual
+     * e chamar o scroll para o item usando metodo do fragment
+     */
+    @Override
+    protected void updateUI() {
+        //mSequence do customFF
+        int id = ToolBox.getPreference_UI_ID(this.context);
+        //Type é a ação que nesses casos  é 1
+        int type = ToolBox.getPreference_UI_TYPE(this.context);
+        //
+        super.updateUI();
+        //
+        if(type == 1 && id > -1 ){
+            for (CustomFF customFF : controls_dyn) {
+                if( customFF.getmSequence() == id
+                    && (customFF instanceof PictureFF || customFF instanceof PhotoFF)
+                ) {
+                    scrollToLastCustomFFClicked(customFF);
+                }
+            }
+        }
     }
 
     /**

@@ -8945,13 +8945,16 @@ public class ToolBox_Inf {
     /**
      * Metodo que recebe valor float e o formata para String, aplicando qtd de casas decimais informada
      * Se applyDecimalSeparatorByLocale verdadeira, usa o separado decimal  baseado no locale
+     * LUCHE - 02/12/2021
+     * Alterado maneira de criar o BigDecimal pois o cast de float pra double por vezes gerava valores
+     * bizarros. Utilizado a conversão de float pra String para então criar o BigDecimal
      * @param valor
      * @param decimalScale
      * @param applyDecimalSeparatorByLocale
      * @return
      */
     public static String convertFloatToBigDecimalString(float valor, int decimalScale, boolean applyDecimalSeparatorByLocale){
-        String convertedValue =  new DecimalFormat("#.####").format(BigDecimal.valueOf((double) valor).setScale(decimalScale, RoundingMode.HALF_DOWN));
+        String convertedValue =  new DecimalFormat("#.####").format(new BigDecimal(String.valueOf(valor)).setScale(decimalScale, RoundingMode.HALF_DOWN));
         if(applyDecimalSeparatorByLocale){
            return  applyDecimalSeparatorByUserLocale(convertedValue);
         }
