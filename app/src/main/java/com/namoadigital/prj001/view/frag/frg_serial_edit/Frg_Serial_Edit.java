@@ -207,6 +207,10 @@ public class Frg_Serial_Edit extends BaseFragment {
     //manter o que ja esta preenchido.
     private boolean isSiteAlreadySuggested = false;
     private boolean showOffline;
+    //LUCHE - 03/12/2021
+    //Se o customer usar tracking, será aplicada regra que somente a mosolf usa. Será validado se alguma dos campos
+    //de informação adicional esta repitido.
+    private ArrayList<MKEditTextNM> addInfoTrackingList = new ArrayList<>();
 
     public void setShowOffline(boolean showOffline) {
         //Quando serial eh acessado offline
@@ -683,6 +687,14 @@ public class Frg_Serial_Edit extends BaseFragment {
         mket_info2 = (MKEditTextNM) view.findViewById(R.id.frg_serial_edit_et_info2);
         //
         mket_info3 = (MKEditTextNM) view.findViewById(R.id.frg_serial_edit_et_info3);
+        //LUCHE - 03/12/2021
+        //Se customer usa tracking, seta o campos de addinfo na lista de validação de falso tracking
+        if(useTracking){
+           addInfoTrackingList.clear();
+           addInfoTrackingList.add(mket_info1);
+           addInfoTrackingList.add(mket_info2);
+           addInfoTrackingList.add(mket_info3);
+        }
         //
         ll_serial_properties = (LinearLayout) view.findViewById(R.id.frg_serial_edit_ll_serial_properties);
         //
@@ -1396,26 +1408,39 @@ public class Frg_Serial_Edit extends BaseFragment {
                 if (validadeSerialLocation()) {
                     if(validateMoveReasonSS()) {
                         if (validateSiteRestriction()) {
-                            if (new_serial || checkSerialChanges() || forceSaveAgain) {
-                                //
-                                setUIDataToSerialObj();
-                                //
-                                if (btnId == R.id.frg_serial_edit_btn_action) {
-                                    delegate.onSaveWithChangesClick(
+                            if(validateAddInfoDuplication()){
+                                if (new_serial || checkSerialChanges() || forceSaveAgain) {
+                                    //
+                                    setUIDataToSerialObj();
+                                    //
+                                    if (btnId == R.id.frg_serial_edit_btn_action) {
+                                        delegate.onSaveWithChangesClick(
                                             mdProductSerial,
                                             !mket_serial_id.getText().toString().equals(mket_serial_id.getTag())
-                                    );
-                                }
-                                resetSaveCtrlVar();
-                            } else {
-                                if (btnId == R.id.frg_serial_edit_btn_action) {
-                                    delegate.onSaveNoChangesClick(
+                                        );
+                                    }
+                                    resetSaveCtrlVar();
+                                } else {
+                                    if (btnId == R.id.frg_serial_edit_btn_action) {
+                                        delegate.onSaveNoChangesClick(
                                             mdProductSerial,
                                             !mket_serial_id.getText().toString().equals(mket_serial_id.getTag())
-                                    );
+                                        );
+                                    }
+                                    resetSaveCtrlVar();
                                 }
-                                resetSaveCtrlVar();
+                            }else{
+                                //Concatena msg informando que existe add info duplicada
+                                String msg =
+                                        hmAux_Trans.get("alert_tracking_add_info_duplicated_msg")
+                                        + "\n" + hmAux_Trans.get("serial_add_info_ttl");
+                                //
+                                showAlertDialog(
+                                    hmAux_Trans.get("alert_tracking_add_info_validation_ttl"),
+                                    msg
+                                );
                             }
+
                         } else {
                             showAlertDialog(
                                     hmAux_Trans.get("alert_serial_validation_ttl"),
@@ -1448,6 +1473,34 @@ public class Frg_Serial_Edit extends BaseFragment {
                     mket_serial_id.getmErrorMSG()
             );
         }
+    }
+
+    /**
+     * Metodo que valida se os campos de info add possuem dados repetidos.
+     * Se customer não controla tracking, retorna OK
+     * Se customer CONTROLA TRACKING, valida se existe valor repetido entre os campos add info 1,2 e 3
+     * @return Verdadeiro se customer não controla tracking ou controla e as infos 1,2 3 são diferentes
+     */
+    private boolean validateAddInfoDuplication() {
+        //Se customer não usa tracking, retorna verdadeiro
+        if(!useTracking){
+            return true;
+        }
+        ArrayList<String> addInfoList = new ArrayList<>();
+        //Valida item a item vericando se o texto entre eles ja existe.
+        for (MKEditTextNM addInfo : addInfoTrackingList) {
+            if(addInfo.getText() != null) {
+                String tracking = addInfo.getText().toString().trim();
+                if (tracking != null && !tracking.isEmpty()) {
+                    if (!addInfoList.contains(tracking)) {
+                        addInfoList.add(tracking);
+                    }else{
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     private void resetSaveCtrlVar() {
@@ -3364,7 +3417,9 @@ public class Frg_Serial_Edit extends BaseFragment {
         //
         transListFrag.add("alert_new_so_ttl");
         transListFrag.add("alert_new_so_fill_required_fields_msg");
-
+        //
+        transListFrag.add("alert_tracking_add_info_validation_ttl");
+        transListFrag.add("alert_tracking_add_info_duplicated_msg");
         //
         return transListFrag;
     }
