@@ -253,6 +253,10 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
         so_pack_express_local.setBilling_add_inf2_value(billingInfo2);
         so_pack_express_local.setBilling_add_inf3_value(billingInfo3);
         //
+        so_pack_express_local.setBilling_add_inf1_tracking(mSo_pack_express.getBilling_add_inf1_tracking());
+        so_pack_express_local.setBilling_add_inf2_tracking(mSo_pack_express.getBilling_add_inf2_tracking());
+        so_pack_express_local.setBilling_add_inf3_tracking(mSo_pack_express.getBilling_add_inf3_tracking());
+        //
         so_pack_express_localDao.addUpdate(so_pack_express_local);
         //
         executeSerialSave();

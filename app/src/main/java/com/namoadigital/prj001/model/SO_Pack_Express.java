@@ -17,13 +17,15 @@ public class SO_Pack_Express {
     private String billing_add_inf1_view;
     @Nullable
     private String billing_add_inf1_text;
+    private int billing_add_inf1_tracking;
     private String billing_add_inf2_view;
     @Nullable
     private String billing_add_inf2_text;
+    private int billing_add_inf2_tracking;
     private String billing_add_inf3_view;
     @Nullable
     private String billing_add_inf3_text;
-
+    private int billing_add_inf3_tracking;
 
     public long getCustomer_code() {
         return customer_code;
@@ -122,5 +124,29 @@ public class SO_Pack_Express {
 
     public void setBilling_add_inf3_text(@Nullable String billing_add_inf3_text) {
         this.billing_add_inf3_text = billing_add_inf3_text;
+    }
+
+    public int getBilling_add_inf1_tracking() {
+        return billing_add_inf1_tracking;
+    }
+
+    public void setBilling_add_inf1_tracking(int billing_add_inf1_tracking) {
+        this.billing_add_inf1_tracking = billing_add_inf1_tracking;
+    }
+
+    public int getBilling_add_inf2_tracking() {
+        return billing_add_inf2_tracking;
+    }
+
+    public void setBilling_add_inf2_tracking(int billing_add_inf2_tracking) {
+        this.billing_add_inf2_tracking = billing_add_inf2_tracking;
+    }
+
+    public int getBilling_add_inf3_tracking() {
+        return billing_add_inf3_tracking;
+    }
+
+    public void setBilling_add_inf3_tracking(int billing_add_inf3_tracking) {
+        this.billing_add_inf3_tracking = billing_add_inf3_tracking;
     }
 }

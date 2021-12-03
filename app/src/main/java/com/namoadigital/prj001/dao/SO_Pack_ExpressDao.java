@@ -37,6 +37,9 @@ public class SO_Pack_ExpressDao extends BaseDao implements Dao<SO_Pack_Express> 
     public static final String BILLING_ADD_INF2_TEXT = "billing_add_inf2_text";
     public static final String BILLING_ADD_INF3_VIEW = "billing_add_inf3_view";
     public static final String BILLING_ADD_INF3_TEXT = "billing_add_inf3_text";
+    public static final String BILLING_ADD_INF1_TRACKING = "billing_add_inf1_tracking";
+    public static final String BILLING_ADD_INF2_TRACKING = "billing_add_inf2_tracking";
+    public static final String BILLING_ADD_INF3_TRACKING = "billing_add_inf3_tracking";
 
     private String[] columns = {CUSTOMER_CODE, SITE_CODE, OPERATION_CODE, PRODUCT_CODE, EXPRESS_CODE, PACK_DESC};
 
@@ -253,18 +256,21 @@ public class SO_Pack_ExpressDao extends BaseDao implements Dao<SO_Pack_Express> 
             so_pack_express.setExpress_code(cursor.getString(cursor.getColumnIndex(EXPRESS_CODE)));
             so_pack_express.setPack_desc(cursor.getString(cursor.getColumnIndex(PACK_DESC)));
             so_pack_express.setBilling_add_inf1_view(cursor.getString(cursor.getColumnIndex(BILLING_ADD_INF1_VIEW)));
+            so_pack_express.setBilling_add_inf1_tracking(cursor.getInt(cursor.getColumnIndex(BILLING_ADD_INF1_TRACKING)));
             if(cursor.isNull(cursor.getColumnIndex(BILLING_ADD_INF1_TEXT))){
                 so_pack_express.setBilling_add_inf1_text(null);
             }else{
                 so_pack_express.setBilling_add_inf1_text(cursor.getString(cursor.getColumnIndex(BILLING_ADD_INF1_TEXT)));
             }
             so_pack_express.setBilling_add_inf2_view(cursor.getString(cursor.getColumnIndex(BILLING_ADD_INF2_VIEW)));
+            so_pack_express.setBilling_add_inf2_tracking(cursor.getInt(cursor.getColumnIndex(BILLING_ADD_INF2_TRACKING)));
             if(cursor.isNull(cursor.getColumnIndex(BILLING_ADD_INF2_TEXT))){
                 so_pack_express.setBilling_add_inf2_text(null);
             }else{
                 so_pack_express.setBilling_add_inf2_text(cursor.getString(cursor.getColumnIndex(BILLING_ADD_INF2_TEXT)));
             }
             so_pack_express.setBilling_add_inf3_view(cursor.getString(cursor.getColumnIndex(BILLING_ADD_INF3_VIEW)));
+            so_pack_express.setBilling_add_inf3_tracking(cursor.getInt(cursor.getColumnIndex(BILLING_ADD_INF3_TRACKING)));
             if(cursor.isNull(cursor.getColumnIndex(BILLING_ADD_INF3_TEXT))){
                 so_pack_express.setBilling_add_inf3_text(null);
             }else{
@@ -302,13 +308,22 @@ public class SO_Pack_ExpressDao extends BaseDao implements Dao<SO_Pack_Express> 
             if (so_pack_express.getBilling_add_inf1_view() != null) {
                 contentValues.put(BILLING_ADD_INF1_VIEW, so_pack_express.getBilling_add_inf1_view());
             }
+            if (so_pack_express.getBilling_add_inf1_tracking() > -1) {
+                contentValues.put(BILLING_ADD_INF1_TRACKING, so_pack_express.getBilling_add_inf1_tracking());
+            }
             contentValues.put(BILLING_ADD_INF1_TEXT, so_pack_express.getBilling_add_inf1_text());
             if (so_pack_express.getBilling_add_inf2_view() != null) {
                 contentValues.put(BILLING_ADD_INF2_VIEW, so_pack_express.getBilling_add_inf2_view());
             }
+            if (so_pack_express.getBilling_add_inf2_tracking() > -1) {
+                contentValues.put(BILLING_ADD_INF2_TRACKING, so_pack_express.getBilling_add_inf2_tracking());
+            }
             contentValues.put(BILLING_ADD_INF2_TEXT, so_pack_express.getBilling_add_inf2_text());
             if (so_pack_express.getBilling_add_inf3_view() != null) {
                 contentValues.put(BILLING_ADD_INF3_VIEW, so_pack_express.getBilling_add_inf3_view());
+            }
+            if (so_pack_express.getBilling_add_inf3_tracking() > -1) {
+                contentValues.put(BILLING_ADD_INF3_TRACKING, so_pack_express.getBilling_add_inf3_tracking());
             }
             contentValues.put(BILLING_ADD_INF3_TEXT, so_pack_express.getBilling_add_inf3_text());
             //

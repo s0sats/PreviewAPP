@@ -41,6 +41,9 @@ public class SO_Pack_Express_Local {
     private String billing_add_inf1_value;
     private String billing_add_inf2_value;
     private String billing_add_inf3_value;
+    private int billing_add_inf1_tracking;
+    private int billing_add_inf2_tracking;
+    private int billing_add_inf3_tracking;
     private String ret_code;
     private String ret_msg;
     private String status;
@@ -84,6 +87,9 @@ public class SO_Pack_Express_Local {
         this.billing_add_inf1_value = null;
         this.billing_add_inf2_value = null;
         this.billing_add_inf3_value = null;
+        this.billing_add_inf1_tracking = 0;
+        this.billing_add_inf2_tracking = 0;
+        this.billing_add_inf3_tracking = 0;
         this.ret_code = null;
         this.ret_msg = null;
         this.status = "NEW";
@@ -360,6 +366,30 @@ public class SO_Pack_Express_Local {
 
     public void setBilling_add_inf3_value(String billing_add_inf3_value) {
         this.billing_add_inf3_value = billing_add_inf3_value;
+    }
+
+    public int getBilling_add_inf1_tracking() {
+        return billing_add_inf1_tracking;
+    }
+
+    public void setBilling_add_inf1_tracking(int billing_add_inf1_tracking) {
+        this.billing_add_inf1_tracking = billing_add_inf1_tracking;
+    }
+
+    public int getBilling_add_inf2_tracking() {
+        return billing_add_inf2_tracking;
+    }
+
+    public void setBilling_add_inf2_tracking(int billing_add_inf2_tracking) {
+        this.billing_add_inf2_tracking = billing_add_inf2_tracking;
+    }
+
+    public int getBilling_add_inf3_tracking() {
+        return billing_add_inf3_tracking;
+    }
+
+    public void setBilling_add_inf3_tracking(int billing_add_inf3_tracking) {
+        this.billing_add_inf3_tracking = billing_add_inf3_tracking;
     }
 
     public String getRet_code() {
