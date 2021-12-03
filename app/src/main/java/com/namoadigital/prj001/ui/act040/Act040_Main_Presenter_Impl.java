@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -463,6 +464,56 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
         );
         //
        return auxSerials != null && auxSerials.size() > 0 ;
+    }
+
+    /**
+     * Metodo que verifica se existe um tracking repitido nos campos de tracking.
+     * Varre lista views config como tracking verificando se o texto ja existe na lista de tracking String.
+     * Se texto não existir, adiciona na lista e parte para o proximo, se existir retorna erro
+     * @param trackingFields
+     * @return True se não houver itens duplicados.
+     */
+    @Override
+    public boolean hasNoTrackingDuplicated(ArrayList<MKEditTextNM> trackingFields) {
+        List<String> trackingList = new ArrayList<>();
+        for (MKEditTextNM trackingField : trackingFields) {
+            if(trackingField.getText() != null) {
+                String tracking = trackingField.getText().toString().trim();
+                if (tracking != null && !tracking.isEmpty()) {
+                    if (!trackingList.contains(tracking)) {
+                        trackingList.add(tracking);
+                    }else{
+                        return false;
+                    }
+                }
+            }
+        }
+        //
+        return true;
+    }
+
+    /**
+     * Metodo que gera msg de tracking duplicada
+     * Faz loop na lista de mket e resgata a tag, que tem o helper com o nome do campo pra ser listado.
+     * Lista  todos os mket config como tracking, independente dele ter item duplicado ou não
+     * @param tracking_duplicated_msg Lbl principal da msg
+     * @param trackingFields Lista de mket config como tracking
+     * @return Msg de erro formatada.
+     */
+    @Override
+    public String getFormattedTrackingDuplicated(String tracking_duplicated_msg, ArrayList<MKEditTextNM> trackingFields) {
+        String finalMsg = tracking_duplicated_msg;
+        //
+        for (MKEditTextNM trackingField : trackingFields) {
+            if(trackingField.getTag() != null) {
+                String tracking = trackingField.getTag().toString().trim();
+                if (tracking != null && !tracking.isEmpty()) {
+                    finalMsg += "\n" + tracking;
+                }
+            }
+        }
+        //
+        return finalMsg;
     }
 
     @Override

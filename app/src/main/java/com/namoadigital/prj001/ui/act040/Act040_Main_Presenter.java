@@ -1,10 +1,13 @@
 package com.namoadigital.prj001.ui.act040;
 
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.MD_Partner;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.SO_Pack_Express;
 import com.namoadigital.prj001.model.SO_Pack_Express_Local;
+
+import java.util.ArrayList;
 
 /**
  * Created by d.luche on 09/03/2018.
@@ -56,6 +59,10 @@ public interface Act040_Main_Presenter {
     boolean hasSerialOrExpressOsPendency();
 
     boolean hasSerialUpdateRequired();
+
+    boolean hasNoTrackingDuplicated(ArrayList<MKEditTextNM> trackingFields);
+
+    String getFormattedTrackingDuplicated(String tracking_duplicated_msg, ArrayList<MKEditTextNM> trackingFields);
 
     //void checkSerialUpdateRequired(long product_code, String serial_id);
 

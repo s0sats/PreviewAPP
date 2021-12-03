@@ -83,6 +83,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     private ArrayList<HMAux> wsAuxResult = new ArrayList<>();
     private boolean exitProcess = false;
     public static final String LABEL_TRANS_OS_EXPRESS= "lbl_type_service_order_express";
+    private ArrayList<MKEditTextNM> trackingFields = new ArrayList<>();
 
     private Act040MainContentBinding binding;
 
@@ -185,6 +186,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         transList.add("alert_no_express_os_history_found_msg");
         transList.add("alert_leave_express_creation_ttl");
         transList.add("alert_leave_express_creation_confirm");
+        transList.add("tracking_duplicated_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -463,12 +465,15 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     }
 
     private void refreshAddInfoVisibility(){
-        if(mSo_pack_express != null) {
+        trackingFields.clear();
+        //
+       if(mSo_pack_express != null) {
             configBillingInfoView(
                 binding.tilAddInfo1,
                 binding.mketAddInfo1,
                 mSo_pack_express.getBilling_add_inf1_view(),
                 mSo_pack_express.getBilling_add_inf1_text(),
+                mSo_pack_express.getBilling_add_inf1_tracking(),
                 hmAux_Trans.get("billing_add_info1_lbl")
             );
             configBillingInfoView(
@@ -476,6 +481,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                 binding.mketAddInfo2,
                 mSo_pack_express.getBilling_add_inf2_view(),
                 mSo_pack_express.getBilling_add_inf2_text(),
+                mSo_pack_express.getBilling_add_inf2_tracking(),
                 hmAux_Trans.get("billing_add_info2_lbl")
             );
             configBillingInfoView(
@@ -483,6 +489,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                 binding.mketAddInfo3,
                 mSo_pack_express.getBilling_add_inf3_view(),
                 mSo_pack_express.getBilling_add_inf3_text(),
+                mSo_pack_express.getBilling_add_inf3_tracking(),
                 hmAux_Trans.get("billing_add_info3_lbl")
             );
         }else{
@@ -495,10 +502,13 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             binding.mketAddInfo1.setText("");
             binding.mketAddInfo2.setText("");
             binding.mketAddInfo3.setText("");
+            binding.mketAddInfo1.setTag("");
+            binding.mketAddInfo2.setTag("");
+            binding.mketAddInfo3.setTag("");
         }
     }
 
-    private void configBillingInfoView(TextInputLayout til, MKEditTextNM mketAddInfo, String viewDef, String hint, String helperText){
+    private void configBillingInfoView(TextInputLayout til, MKEditTextNM mketAddInfo, String viewDef, String hint, int isTracking, String helperText){
         if(!ConstantBaseApp.MASK_VIEW_TYPE_HIDE.equals(viewDef)){
             til.setHint(hint);
             til.setHelperTextEnabled(true);
@@ -529,7 +539,12 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                     }
                 });
             }
-
+            //Se item for visivel e for tracking, adiciona na lista de views conf como tracking
+            //Tambem seta na tag do mket o valor do helper do til , pois será usado para msg de erro.
+            if(isTracking == 1){
+                mketAddInfo.setTag(til.getHelperText());
+                trackingFields.add(mketAddInfo);
+            }
         }else{
             til.setVisibility(View.GONE);
         }
@@ -655,10 +670,13 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                 //Seta variavel de controle.
                 exitProcess = false;
                 //
+                boolean hasNoTrackingRepeated = mPresenter.hasNoTrackingDuplicated(trackingFields);
+                //
                 handleSerialIdCharConstraints();
                 if (isRequiredFieldsValid()
                     && binding.mketSerial.isValid()
                     && !mSo_pack_express.getExpress_code().equalsIgnoreCase(ToolBox_Inf.removeAllLineBreaks(binding.mketSerial.getText().toString()))
+                    && hasNoTrackingRepeated
                 ) {
                     ToolBox.alertMSG(
                             context,
@@ -702,6 +720,11 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                         //result = hmAux_Trans.get("status_no_serial_msg");
                         binding.mketSerial.requestFocus();
                         result = binding.mketSerial.getmErrorMSG();
+                    } else if(!hasNoTrackingRepeated){
+                        result = mPresenter.getFormattedTrackingDuplicated(
+                            hmAux_Trans.get("tracking_duplicated_msg"),
+                            trackingFields
+                        );
                     } else {
                         result = "";
                     }
@@ -938,7 +961,11 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         //LUCHE - 30/11/2021 -
         //Os dados de pacote agora são mantidos após o save, então chama metodo que revalida campos
         //configura helper do serial e libera lupa de busca.
-        loadSO_Pack_Express(mSo_pack_express,mSo_pack_express.getExpress_code());
+        //Add var para caso campo null, não crashar(acontecia se clicasse na nuvem de enviar sem ter
+        // conexão e sem pack definido) Tratado tando aqui quando no clique da nuvem offline.
+        if(mSo_pack_express != null) {
+            loadSO_Pack_Express(mSo_pack_express, mSo_pack_express.getExpress_code());
+        }
         //Da foco no serial
         binding.mketSerial.requestFocus();
         wsAuxResult.clear();
@@ -974,10 +1001,14 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
 
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == 1) {
-            if(mPresenter.hasSerialUpdateRequired()) {
-                mPresenter.executeSerialSave();
+            if(ToolBox_Con.isOnline(context)) {
+                if (mPresenter.hasSerialUpdateRequired()) {
+                    mPresenter.executeSerialSave();
+                } else {
+                    mPresenter.executeSO_Pack_Express_Local();
+                }
             }else{
-                mPresenter.executeSO_Pack_Express_Local();
+                ToolBox_Inf.showNoConnectionDialog(context);
             }
             return true;
         }
