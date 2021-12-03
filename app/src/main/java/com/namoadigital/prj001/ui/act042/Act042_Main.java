@@ -189,7 +189,8 @@ public class Act042_Main extends Base_Activity {
         rv_sos.setLayoutManager(linearLayoutManager);
         //
         mAdapter = new Act042SOExpressAdapter(
-                so_express_list
+                so_express_list,
+                hmAux_Trans
         );
         //
         rv_sos.setAdapter(mAdapter);
