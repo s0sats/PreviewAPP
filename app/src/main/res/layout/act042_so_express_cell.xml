@@ -4,15 +4,37 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@drawable/namoa_cell_8_states"
-    android:layout_marginBottom="8dp"
-    android:padding="8dp"
+    android:layout_marginTop="10dp"
     >
+
+    <TextView
+        android:id="@+id/so_express_tv_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/so_express_cl_cell"
+        tools:text="2021.120"
+        android:textSize="8sp"
+        android:textColor="@color/my_action_gray_font"
+        />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/so_express_cl_cell"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/namoa_cell_8_states"
+        android:padding="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/so_express_tv_header"
+        >
 
     <TextView
         android:id="@+id/so_express_package_desc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:textColor="@color/namoa_status_pending"
+        android:textAllCaps="true"
         app:layout_constrainedWidth="true"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -20,8 +42,8 @@
 
     <ImageView
         android:id="@+id/so_express_iv_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/namoa_icon_cell_so_width"
+        android:layout_height="@dimen/namoa_icon_cell_so_height"
         app:layout_constrainedWidth="true"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintLeft_toRightOf="@+id/so_express_package_desc"
@@ -45,6 +67,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="bold"
+            android:textSize="12sp"
             tools:text="teste" />
 
         <TextView
@@ -52,36 +75,42 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="bold"
+            android:textSize="12sp"
             tools:text="teste" />
 
         <TextView
             android:id="@+id/so_express_billing_add_inf1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="12sp"
             tools:text="teste" />
 
         <TextView
             android:id="@+id/so_express_billing_add_inf2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="12sp"
             tools:text="teste" />
 
         <TextView
             android:id="@+id/so_express_billing_add_inf3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="12sp"
             tools:text="teste" />
 
         <TextView
             android:id="@+id/so_express_site_desc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="12sp"
             tools:text="teste" />
 
         <TextView
             android:id="@+id/so_express_operation_desc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="12sp"
             tools:text="teste" />
 
         <TextView
@@ -89,18 +118,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/namoa_os_form_problem_red"
+            android:textSize="12sp"
             tools:text="teste" />
         <TextView
             android:id="@+id/so_express_end_datetime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/namoa_lime_green_2"
+            android:textSize="12sp"
             tools:text="teste" />
 
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
 
-
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

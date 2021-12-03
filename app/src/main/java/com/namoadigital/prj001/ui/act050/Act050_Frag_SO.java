@@ -1,5 +1,9 @@
 package com.namoadigital.prj001.ui.act050;
 
+import static com.namoadigital.prj001.ui.act050.Act050_Frag_Parameters.FAVORITE_CODE;
+import static com.namoadigital.prj001.ui.act050.Act050_Frag_Parameters.FAVORITE_DESC;
+import static com.namoadigital.prj001.util.ConstantBaseApp.CLIENT_TYPE_CLIENT;
+
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -42,10 +46,6 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import static com.namoadigital.prj001.ui.act050.Act050_Frag_Parameters.FAVORITE_CODE;
-import static com.namoadigital.prj001.ui.act050.Act050_Frag_Parameters.FAVORITE_DESC;
-import static com.namoadigital.prj001.util.ConstantBaseApp.CLIENT_TYPE_CLIENT;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -91,6 +91,8 @@ public class Act050_Frag_SO extends BaseFragment {
     private EditText etBillingInfo2;
     private EditText etBillingInfo3;
     private EditText etClientSoId;
+    //
+    private List<EditText> tagFieldsForValidation = new ArrayList<>();
     //
     private TextView tvFavoriteVal;
     private TextView tvClientIdLbl;
@@ -304,9 +306,9 @@ public class Act050_Frag_SO extends BaseFragment {
      * @param soCreationObj
      */
     private void applyBillingInfoConfig(SO_Creation_Obj soCreationObj) {
-        configMaskedViewWithTracking(llBillingInfo1,tvBilingInfo1lbl, soCreationObj.getBilling_add_inf1_view(), tvBillingInfo1Hint, soCreationObj.getBilling_add_inf1_text(), ivBillingInfo1, soCreationObj.getBilling_add_inf1_tracking());
-        configMaskedViewWithTracking(llBillingInfo2,tvBilingInfo2lbl, soCreationObj.getBilling_add_inf2_view(), tvBillingInfo2Hint, soCreationObj.getBilling_add_inf2_text(), ivBillingInfo2, soCreationObj.getBilling_add_inf2_tracking());
-        configMaskedViewWithTracking(llBillingInfo3,tvBilingInfo3lbl, soCreationObj.getBilling_add_inf3_view(), tvBillingInfo3Hint, soCreationObj.getBilling_add_inf3_text(), ivBillingInfo3, soCreationObj.getBilling_add_inf3_tracking());
+        configMaskedViewWithTracking(llBillingInfo1,tvBilingInfo1lbl, soCreationObj.getBilling_add_inf1_view(), tvBillingInfo1Hint, soCreationObj.getBilling_add_inf1_text(), ivBillingInfo1, soCreationObj.getBilling_add_inf1_tracking(), etBillingInfo1);
+        configMaskedViewWithTracking(llBillingInfo2,tvBilingInfo2lbl, soCreationObj.getBilling_add_inf2_view(), tvBillingInfo2Hint, soCreationObj.getBilling_add_inf2_text(), ivBillingInfo2, soCreationObj.getBilling_add_inf2_tracking(), etBillingInfo2);
+        configMaskedViewWithTracking(llBillingInfo3,tvBilingInfo3lbl, soCreationObj.getBilling_add_inf3_view(), tvBillingInfo3Hint, soCreationObj.getBilling_add_inf3_text(), ivBillingInfo3, soCreationObj.getBilling_add_inf3_tracking(), etBillingInfo3);
     }
 
     /**
@@ -317,15 +319,15 @@ public class Act050_Frag_SO extends BaseFragment {
      *
      */
     private void applyMaskConfig(SO_Favorite_Item favoriteItem) {
-        configMaskedViewWithTracking(llInfo1,tvInfo1lbl, favoriteItem.getSoAddInf1View(), tvInfo1Hint, favoriteItem.getSoAddInf1Text(), ivInfo1, favoriteItem.getSoAddInf1Tracking());
-        configMaskedViewWithTracking(llInfo2,tvInfo2lbl, favoriteItem.getSoAddInf2View(), tvInfo2Hint, favoriteItem.getSoAddInf2Text(), ivInfo2, favoriteItem.getSoAddInf2Tracking());
-        configMaskedViewWithTracking(llInfo3,tvInfo3lbl, favoriteItem.getSoAddInf3View(), tvInfo3Hint, favoriteItem.getSoAddInf3Text(), ivInfo3, favoriteItem.getSoAddInf3Tracking());
-        configMaskedViewWithTracking(llInfo4,tvInfo4lbl, favoriteItem.getSoAddInf4View(), tvInfo4Hint, favoriteItem.getSoAddInf4Text(), ivInfo4, favoriteItem.getSoAddInf4Tracking());
-        configMaskedViewWithTracking(llInfo5,tvInfo5lbl, favoriteItem.getSoAddInf5View(), tvInfo5Hint, favoriteItem.getSoAddInf5Text(), ivInfo5, favoriteItem.getSoAddInf5Tracking());
-        configMaskedViewWithTracking(llInfo6,tvInfo6lbl, favoriteItem.getSoAddInf6View(), tvInfo6Hint, favoriteItem.getSoAddInf6Text(), ivInfo6, favoriteItem.getSoAddInf6Tracking());
-        configMaskedViewWithTracking(llId,tvSoIDLbl, favoriteItem.getSoIdView(), tvIdHint, favoriteItem.getSoIdText(), null, null);
-        configMaskedViewWithTracking(llClientSoId, tvClientSoIdLbl, favoriteItem.getSoClientSoIdView(), tvClientSoIdHint, favoriteItem.getSoClientSoIdText(), null, null);
-        configMaskedViewWithTracking(llDesc,tvSoDescLbl, favoriteItem.getSoDescView(), tvDescHint, favoriteItem.getSoDescText(), null, null);
+        configMaskedViewWithTracking(llInfo1,tvInfo1lbl, favoriteItem.getSoAddInf1View(), tvInfo1Hint, favoriteItem.getSoAddInf1Text(), ivInfo1, favoriteItem.getSoAddInf1Tracking(), edtSoInfo1);
+        configMaskedViewWithTracking(llInfo2,tvInfo2lbl, favoriteItem.getSoAddInf2View(), tvInfo2Hint, favoriteItem.getSoAddInf2Text(), ivInfo2, favoriteItem.getSoAddInf2Tracking(), edtSoInfo2);
+        configMaskedViewWithTracking(llInfo3,tvInfo3lbl, favoriteItem.getSoAddInf3View(), tvInfo3Hint, favoriteItem.getSoAddInf3Text(), ivInfo3, favoriteItem.getSoAddInf3Tracking(), edtSoInfo3);
+        configMaskedViewWithTracking(llInfo4,tvInfo4lbl, favoriteItem.getSoAddInf4View(), tvInfo4Hint, favoriteItem.getSoAddInf4Text(), ivInfo4, favoriteItem.getSoAddInf4Tracking(), edtSoInfo4);
+        configMaskedViewWithTracking(llInfo5,tvInfo5lbl, favoriteItem.getSoAddInf5View(), tvInfo5Hint, favoriteItem.getSoAddInf5Text(), ivInfo5, favoriteItem.getSoAddInf5Tracking(), edtSoInfo5);
+        configMaskedViewWithTracking(llInfo6,tvInfo6lbl, favoriteItem.getSoAddInf6View(), tvInfo6Hint, favoriteItem.getSoAddInf6Text(), ivInfo6, favoriteItem.getSoAddInf6Tracking(), edtSoInfo6);
+        configMaskedViewWithTracking(llId,tvSoIDLbl, favoriteItem.getSoIdView(), tvIdHint, favoriteItem.getSoIdText(), null, null, null);
+        configMaskedViewWithTracking(llClientSoId, tvClientSoIdLbl, favoriteItem.getSoClientSoIdView(), tvClientSoIdHint, favoriteItem.getSoClientSoIdText(), null, null, null);
+        configMaskedViewWithTracking(llDesc,tvSoDescLbl, favoriteItem.getSoDescView(), tvDescHint, favoriteItem.getSoDescText(), null, null, null);
         configMaskedViewSingle(ssPriority,favoriteItem.getSoPriorityView());
         configMaskedViewSingle(ssClientType,favoriteItem.getSoClientTypeView());
     }
@@ -354,7 +356,7 @@ public class Act050_Frag_SO extends BaseFragment {
      * @param ivTracking - ImageView com icone do tracking
      * @param setTracking - Info Tracking para o item
      */
-    private void configMaskedViewWithTracking(LinearLayout llContainer, TextView tvLbl, String viewType, TextView tvHint, String hintText, @Nullable ImageView ivTracking, @Nullable Integer setTracking) {
+    private void configMaskedViewWithTracking(LinearLayout llContainer, TextView tvLbl, String viewType, TextView tvHint, String hintText, @Nullable ImageView ivTracking, @Nullable Integer setTracking, EditText etForTrackingValidation) {
         if(viewType == null || (MASK_VIEW_TYPE_HIDE.equals(viewType) && !swFullVision.isChecked())){
             llContainer.setVisibility(View.GONE);
             if(ivTracking != null) {
@@ -365,7 +367,15 @@ public class Act050_Frag_SO extends BaseFragment {
             llContainer.setVisibility(View.VISIBLE);
             applySpannableStringIfRequired(tvLbl,MASK_VIEW_TYPE_REQUIRED.equals(viewType));
             if(ivTracking != null) {
-                ivTracking.setVisibility(setTracking != null && setTracking == 1 ? View.VISIBLE : View.GONE);
+                if(setTracking != null && setTracking == 1) {
+                    ivTracking.setVisibility(View.VISIBLE);
+                    if(etForTrackingValidation != null) {
+                        etForTrackingValidation.setTag(tvLbl.getText().toString());
+                        tagFieldsForValidation.add(etForTrackingValidation);
+                    }
+                }else{
+                    ivTracking.setVisibility(View.GONE);
+                }
             }
             if(hintText != null && !hintText.isEmpty()){
                 tvHint.setText(hintText);
@@ -975,6 +985,16 @@ public class Act050_Frag_SO extends BaseFragment {
             }
         }
 
+        if(!trackingFieldsValidation()){
+            StringBuilder alertMsgBuilder = new StringBuilder(alertMsg);
+            alertMsgBuilder.append(hmAux_Trans.get("msg_error_so_tracking_duplicate"));
+            for(EditText edtField : tagFieldsForValidation){
+                alertMsgBuilder.append(edtField.getTag().toString()).append("\n");
+            }
+            alertMsg = alertMsgBuilder.toString();
+            isValidated = false;
+        }
+
         //chamado para limpar retangulo de validacao do componente
         mkDateTime.isValid();
         if (isValidated) {
@@ -983,6 +1003,20 @@ public class Act050_Frag_SO extends BaseFragment {
 
         alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"), alertMsg);
         return isValidated;
+    }
+
+    private boolean trackingFieldsValidation() {
+        List<String> trackingValidation = new ArrayList<>();
+        for(EditText edtField : tagFieldsForValidation){
+            if(edtField.getText() != null && !edtField.getText().toString().trim().isEmpty()) {
+                if (!trackingValidation.contains(edtField.getText().toString())) {
+                    trackingValidation.add(edtField.getText().toString());
+                } else {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**
@@ -1352,6 +1386,7 @@ public class Act050_Frag_SO extends BaseFragment {
         transList.add("msg_error_client_so_id_required");
         transList.add("msg_error_so_id_required");
         transList.add("msg_error_so_desc_required");
+        transList.add("msg_error_so_tracking_duplicate");
         transList.add("full_vision_lbl");
         //
         return transList;

@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.namoa_digital.namoa_library.util.ConstantBase.SYS_STATUS_DENIED
 import com.namoa_digital.namoa_library.util.ConstantBase.SYS_STATUS_SENT
+import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.Act042SoExpressCellBinding
@@ -17,7 +18,8 @@ import com.namoadigital.prj001.model.SO_Pack_Express_Local
 import com.namoadigital.prj001.util.ToolBox_Inf
 
 class Act042SOExpressAdapter (
-    val soExpressList : ArrayList<SO_Pack_Express_Local>
+    val soExpressList : ArrayList<SO_Pack_Express_Local>,
+    val hmAux_Trans: HMAux
 ) : RecyclerView.Adapter<Act042SOExpressAdapter.MySOExpressVh>(), Filterable{
     //
     val soExpressListFiltered: MutableList<SO_Pack_Express_Local> = mutableListOf()
@@ -47,6 +49,7 @@ class Act042SOExpressAdapter (
     inner class MySOExpressVh(val binding: Act042SoExpressCellBinding)  : RecyclerView.ViewHolder(binding.root){
         fun onBind(soPackExpressLocal: SO_Pack_Express_Local){
             binding.apply {
+                setHeaderContentAndVisibility(soExpressTvHeader ,soPackExpressLocal.so_id, hmAux_Trans.get(soPackExpressLocal.so_status))
                 setViewContentAndVisibility(soExpressPackageDesc ,soPackExpressLocal.so_desc)
                 setViewContentAndVisibility(soExpressProductDesc ,soPackExpressLocal.product_desc)
                 setViewContentAndVisibility(soExpressSerialId ,soPackExpressLocal.serial_id)
@@ -60,9 +63,10 @@ class Act042SOExpressAdapter (
                     ToolBox_Inf.dateToMilliseconds(soPackExpressLocal.log_date),
                     ToolBox_Inf.nlsDateFormat(root.context) + " HH:mm"
                 ))
-
+                soExpressEndDatetime.setTextColor(root.context.getResources().getColor(R.color.namoa_lime_green_2))
                 if(SYS_STATUS_DENIED.equals(soPackExpressLocal.ret_code)){
                     soExpressIvStatus.applyVisibilityIfSourceExists(R.drawable.ic_baseline_close_24)
+                    soExpressEndDatetime.setTextColor(root.context.getResources().getColor(R.color.namoa_color_gray_8))
                 }else if(SYS_STATUS_SENT.equals(soPackExpressLocal.status)) {
                     soExpressIvStatus.applyVisibilityIfSourceExists(R.drawable.ic_baseline_cloud_done_24_blue)
                 }else{
@@ -70,8 +74,25 @@ class Act042SOExpressAdapter (
                 }
             }
         }
+        private fun setHeaderContentAndVisibility(soExpressTvHeader: TextView, soId: String?, soStatus: String?) {
+            if(soStatus.isNullOrEmpty()
+                && soId.isNullOrEmpty()){
+                soExpressTvHeader.visibility = View.GONE
+            }else{
+                soExpressTvHeader.visibility = View.VISIBLE
+                if(!soId.isNullOrEmpty()){
+                    soExpressTvHeader.text = soId
+                }
+                if(!soStatus.isNullOrEmpty()){
+                    soExpressTvHeader.text = """${soExpressTvHeader.text}  ${soStatus}"""
+                }
+            }
+        }
+
     }
     //
+
+
 
     fun setViewContentAndVisibility(textView: TextView, content: String?){
         if(content.isNullOrEmpty()){
