@@ -288,6 +288,7 @@ public class Act050_Frag_SO extends BaseFragment {
      */
     private void setMaskInfoWithExists(SO_Creation_Obj soCreationObj) {
         if(mListener != null) {
+            tagFieldsForValidation.clear();
             SO_Favorite_Item favoriteItem = mListener.getFavoriteItem();
             if (favoriteItem != null) {
                 if(favoriteItem.getMaskCode() != null){
@@ -669,7 +670,6 @@ public class Act050_Frag_SO extends BaseFragment {
             public void onClick(View v) {
                 if(mListener!= null) {
                     mListener.getmSOCreationObj();
-                    tagFieldsForValidation.clear();
                     setMaskInfoWithExists(mListener.getmSOCreationObj());
                 }
             }
