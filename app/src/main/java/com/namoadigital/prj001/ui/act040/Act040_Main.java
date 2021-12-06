@@ -39,6 +39,7 @@ import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.databinding.Act040MainBinding;
 import com.namoadigital.prj001.databinding.Act040MainContentBinding;
 import com.namoadigital.prj001.databinding.Act040MainDuplicatedDialogBinding;
+import com.namoadigital.prj001.extensions.AppCompatActivityKt;
 import com.namoadigital.prj001.model.MD_Partner;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.SO_Pack_Express;
@@ -669,18 +670,18 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             public void onClick(View v) {
                 //Seta variavel de controle.
                 exitProcess = false;
-                //
+                final String finalSerial = ToolBox_Inf.removeAllLineBreaks(binding.mketSerial.getText().toString());
                 boolean hasNoTrackingRepeated = mPresenter.hasNoTrackingDuplicated(trackingFields);
                 //
                 handleSerialIdCharConstraints();
                 if (isRequiredFieldsValid()
                     && binding.mketSerial.isValid()
-                    && !mSo_pack_express.getExpress_code().equalsIgnoreCase(ToolBox_Inf.removeAllLineBreaks(binding.mketSerial.getText().toString()))
+                    && !mSo_pack_express.getExpress_code().equalsIgnoreCase(finalSerial)
                     && hasNoTrackingRepeated
                 ) {
                     ToolBox.alertMSG(
                             context,
-                            hmAux_Trans.get("alert_create_so_express_ttl"),
+                            finalSerial.toUpperCase(),
                             hmAux_Trans.get("alert_create_so_express_msg"),
                             new DialogInterface.OnClickListener() {
                                 @Override
@@ -692,7 +693,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                                         ToolBox_Con.getPreference_Operation_Code(context),
                                         md_product.getProduct_code(),
                                         mSo_pack_express.getExpress_code(),
-                                        ToolBox_Inf.removeAllLineBreaks(binding.mketSerial.getText().toString())
+                                        finalSerial
                                     );
                                     if(lastExpressIn3hour != null){
                                         showDuplicateExpressDialog(lastExpressIn3hour);
@@ -705,7 +706,6 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                             false
                     );
                 } else {
-
                     String result = "";
 
                     if (mSo_pack_express == null) {
@@ -714,11 +714,16 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                         result = hmAux_Trans.get("status_no_partner_msg");
                     } else if (md_product == null) {
                         result = hmAux_Trans.get("status_no_product_msg");
-                    } else if (mSo_pack_express.getExpress_code().equalsIgnoreCase(ToolBox_Inf.removeAllLineBreaks(binding.mketSerial.getText().toString()))) {
+                    } else if (mSo_pack_express.getExpress_code().equalsIgnoreCase(finalSerial)) {
                         result = hmAux_Trans.get("pack_equals_serial_msg");
                     } else if (!binding.mketSerial.isValid()) {
-                        //result = hmAux_Trans.get("status_no_serial_msg");
+                        //Seta foco
                         binding.mketSerial.requestFocus();
+                        //Se ponteiro no final do mket
+                        binding.mketSerial.setSelection(binding.mketSerial.getText().length());
+                        //Chama Kotlin extension que força abertura do teclado.
+                        AppCompatActivityKt.forceOpenKeyboard(Act040_Main.this);
+                        //define msg de erro
                         result = binding.mketSerial.getmErrorMSG();
                     } else if(!hasNoTrackingRepeated){
                         result = mPresenter.getFormattedTrackingDuplicated(
