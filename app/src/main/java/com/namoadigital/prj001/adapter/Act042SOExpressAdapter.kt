@@ -82,9 +82,11 @@ class Act042SOExpressAdapter (
                 soExpressTvHeader.visibility = View.VISIBLE
                 if(!soId.isNullOrEmpty()){
                     soExpressTvHeader.text = soId
-                }
-                if(!soStatus.isNullOrEmpty()){
-                    soExpressTvHeader.text = """${soExpressTvHeader.text}  ${soStatus}"""
+                    if(!soStatus.isNullOrEmpty()){
+                        soExpressTvHeader.text = """${soExpressTvHeader.text}  ${soStatus}"""
+                    }
+                }else{
+                    soExpressTvHeader.text = """${soStatus}"""
                 }
             }
         }
@@ -119,7 +121,15 @@ class Act042SOExpressAdapter (
                     soExpressList.filter {
                         when(it){
                             is SO_Pack_Express_Local ->{
-                                val allFields = ToolBox.AccentMapper(it.getAllFieldForFilter().toLowerCase())
+                                /**
+                                 * BARRIONUEVO 06-12-2021
+                                 * Tradução foi marretada pq não previ o status como filtrado.
+                                 */
+                                var soStatusFiltered = ""
+                                if(hmAux_Trans.get(it.so_status) != null) {
+                                    soStatusFiltered = hmAux_Trans.get(it.so_status)!!.toLowerCase()
+                                }
+                                val allFields = ToolBox.AccentMapper(it.getAllFieldForFilter().toLowerCase() + soStatusFiltered)
                                 allFields.contains(charFilter)
                             }
                             //se for o botão, sempre exibe

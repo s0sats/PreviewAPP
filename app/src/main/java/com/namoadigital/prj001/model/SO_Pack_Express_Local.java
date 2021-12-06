@@ -434,6 +434,7 @@ public class SO_Pack_Express_Local {
 
     public String getAllFieldForFilter(){
         return express_code
+                + so_id
                 + serial_id
                 + billing_add_inf1_value
                 + billing_add_inf2_value
