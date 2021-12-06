@@ -669,6 +669,7 @@ public class Act050_Frag_SO extends BaseFragment {
             public void onClick(View v) {
                 if(mListener!= null) {
                     mListener.getmSOCreationObj();
+                    tagFieldsForValidation.clear();
                     setMaskInfoWithExists(mListener.getmSOCreationObj());
                 }
             }
@@ -987,7 +988,7 @@ public class Act050_Frag_SO extends BaseFragment {
 
         if(!trackingFieldsValidation()){
             StringBuilder alertMsgBuilder = new StringBuilder(alertMsg);
-            alertMsgBuilder.append(hmAux_Trans.get("msg_error_so_tracking_duplicate"));
+            alertMsgBuilder.append(hmAux_Trans.get("msg_error_so_tracking_duplicate")).append("\n");
             for(EditText edtField : tagFieldsForValidation){
                 alertMsgBuilder.append(edtField.getTag().toString()).append("\n");
             }
