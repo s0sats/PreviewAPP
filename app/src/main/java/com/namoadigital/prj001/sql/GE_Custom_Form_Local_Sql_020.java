@@ -12,7 +12,6 @@ public class GE_Custom_Form_Local_Sql_020 implements Specification {
 
 
     private String s_customer_code;
-    private String s_form_status;
     private Integer mTicket_prefix;
     private Integer mTicket_code;
     private Integer mTicket_seq;
@@ -26,7 +25,7 @@ public class GE_Custom_Form_Local_Sql_020 implements Specification {
         this.mTicket_seq = mTicket_seq;
         this.mTicket_seq_tmp = mTicket_seq_tmp;
         this.mStep_code = mStep_code;
-        this.s_form_status = Constant.SYS_STATUS_IN_PROCESSING;
+
     }
 
     @Override
@@ -45,8 +44,10 @@ public class GE_Custom_Form_Local_Sql_020 implements Specification {
                         "\n     AND " + GE_Custom_Form_LocalDao.TICKET_SEQ + " = '" + mTicket_seq + "' " +
                         "\n     AND " + GE_Custom_Form_LocalDao.TICKET_SEQ_TMP + " = '" + mTicket_seq_tmp + "' " +
                         "     AND " + GE_Custom_Form_LocalDao.STEP_CODE + " = '" + mStep_code + "' " +
-                        "     AND " + GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS + " = '" + s_form_status + "' "
-        )
+                        "     AND " + GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS + " in(" +
+                        "'"+ Constant.SYS_STATUS_IN_PROCESSING+"'," +
+                                "'"+ Constant.SYS_STATUS_WAITING_SYNC+"')"
+                )
                 .append(";")
                 .toString();
     }

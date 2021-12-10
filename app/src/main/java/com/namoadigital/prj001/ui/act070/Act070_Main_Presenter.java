@@ -1403,7 +1403,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                                  */
                                     GE_Custom_Form customForm = getCustomFormFromCtrl(ticketCtrl.getForm());
                                     //
-                                    if (ticketCtrl.getForm().getIs_so() != customForm.getIs_so()) {
+                                    if (customForm == null
+                                            || ticketCtrl.getForm().getIs_so() != customForm.getIs_so()) {
                                         mView.showAlert(
                                                 hmAux_Trans.get("alert_form_so_not_found_ttl"),
                                                 hmAux_Trans.get("alert_form_so_not_found_msg"));
@@ -1775,55 +1776,60 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
 //                }
                 tryOpenFormPDF(ticketCtrl.getForm());
             }else{
-                if(ticketCtrl.getForm().getIs_so() == 1
-                    && !formExists(ticketCtrl)
-                ){
                 GE_Custom_Form customForm = getCustomFormFromCtrl(ticketCtrl.getForm());
-                    Bundle bundle = getAct011BundleForAct087(ticketCtrl, customForm);
-                    //Se form os e não existe form, verifica se tem estrutura.
-                    //Se tiver abre o form, caso contrario, exibe msg de serial sem estrutura.
-                    if(serialHasStructure(ticketCtrl)) {
-                        bundle.putAll(getAct087Bundle(ticketCtrl, customForm));
-                        mView.callAct087(bundle);
+                if(ticketCtrl.getForm().getIs_so() == 0){
+                    GE_Custom_Form_Local ge_custom_form_local = getGe_custom_form_local(ticketCtrl);
+                    mView.callAct011(getAct011Bundle(ticketCtrl, customForm, ge_custom_form_local));
+                }else{
+                    Bundle bundle;
+                    if(formExists(ticketCtrl)){
+                        GE_Custom_Form_Local ge_custom_form_local = getGe_custom_form_local(ticketCtrl);
+                        mView.callAct011(getAct011Bundle(ticketCtrl, customForm, ge_custom_form_local));
                     }else{
-                        mView.showAlert(
-                            hmAux_Trans.get("alert_form_without_serial_structure_ttl"),
-                            hmAux_Trans.get("alert_form_without_serial_structure_msg")
-                        );
+                        bundle = getAct011BundleForAct087(ticketCtrl, customForm);
+                        //Se form os e não existe form, verifica se tem estrutura.
+                        //Se tiver abre o form, caso contrario, exibe msg de serial sem estrutura.
+                        if(serialHasStructure(ticketCtrl)) {
+                            bundle.putAll(getAct087Bundle(ticketCtrl, customForm));
+                            mView.callAct087(bundle);
+                        }else{
+                            mView.showAlert(
+                                    hmAux_Trans.get("alert_form_without_serial_structure_ttl"),
+                                    hmAux_Trans.get("alert_form_without_serial_structure_msg")
+                            );
+                        }
                     }
-                }else {
-                    Bundle bundle = getAct011Bundle(ticketCtrl);
-                    mView.callAct011(bundle);
+
                 }
             }
         }
     }
 
-    private Bundle getAct011Bundle(TK_Ticket_Ctrl ticketCtrl) {
+    private Bundle getAct011Bundle(TK_Ticket_Ctrl ticketCtrl, GE_Custom_Form customForm, GE_Custom_Form_Local ge_custom_form_local) {
         Bundle bundle = new Bundle();
-        if(formExists(ticketCtrl)){
-            GE_Custom_Form_Local ge_custom_form_local = getGe_custom_form_local(ticketCtrl);
-            bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, String.valueOf(ge_custom_form_local.getCustom_form_type()));
-            bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, String.valueOf(ge_custom_form_local.getCustom_form_code()));
-            bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, String.valueOf(ge_custom_form_local.getCustom_form_version()));
-            bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, ge_custom_form_local.getCustom_form_desc());
-            bundle.putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, String.valueOf(ge_custom_form_local.getCustom_form_data()));
-        }else{
-            GE_Custom_Form_Data customFormData = getGe_custom_form_data(ticketCtrl.getForm());
-            bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, String.valueOf(customFormData.getCustom_form_type()));
-            bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, String.valueOf(customFormData.getCustom_form_code()));
-            bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, String.valueOf(customFormData.getCustom_form_version()));
-            bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, ticketCtrl.getForm().getCustom_form_desc());
-            bundle.putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA,
-                    getCustomFormDataOrNew(ticketCtrl)
-            );
-        }
-
         bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(ticketCtrl.getProduct_code()));
         bundle.putString(MD_ProductDao.PRODUCT_DESC, ticketCtrl.getProduct_desc());
         bundle.putString(MD_ProductDao.PRODUCT_ID, ticketCtrl.getProduct_id());
         bundle.putString(MD_Product_SerialDao.SERIAL_ID, ticketCtrl.getSerial_id());
+        /*
+            Barrionuevo - 02-09-2020
+            Parametro com a versão mais atual do form.
+         */
+//        String formVersionTarget = getVersionToUse(customForm,ticketCtrl);
+        if(ge_custom_form_local != null){
+            bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, String.valueOf(ge_custom_form_local.getCustom_form_version()));
+            bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, String.valueOf(ge_custom_form_local.getCustom_form_type()));
+            bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, String.valueOf(ge_custom_form_local.getCustom_form_code()));
+        } else {
+            bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, String.valueOf(customForm.getCustom_form_version()));
+            bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, String.valueOf(customForm.getCustom_form_type()));
+            bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, String.valueOf(customForm.getCustom_form_code()));
 
+        }
+        bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, ticketCtrl.getForm().getCustom_form_desc());
+        bundle.putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA,
+                getCustomFormDataOrNew(ticketCtrl)
+        );
         bundle.putInt(TK_Ticket_CtrlDao.TICKET_PREFIX,ticketCtrl.getTicket_prefix());
         bundle.putInt(TK_Ticket_CtrlDao.TICKET_CODE,ticketCtrl.getTicket_code());
         bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ,ticketCtrl.getTicket_seq());
@@ -1982,8 +1988,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             Barrionuevo - 02-09-2020
             Parametro com a versão mais atual do form.
          */
-        String formVersionTarget = getVersionToUse(customForm,ticketCtrl);
-        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, formVersionTarget);
+//        String formVersionTarget = getVersionToUse(customForm,ticketCtrl);
+        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, String.valueOf(customForm.getCustom_form_version()));
         bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, ticketCtrl.getForm().getCustom_form_desc());
         bundle.putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA,
             getCustomFormDataOrNew(ticketCtrl)
