@@ -5,6 +5,6 @@
 
     <application
         tools:replace="android:icon"
-        android:icon="@mipmap/ic_launcher_namoa_gradient" />
+        android:icon="@mipmap/ic_launcher_alt" />
 
 </manifest>
