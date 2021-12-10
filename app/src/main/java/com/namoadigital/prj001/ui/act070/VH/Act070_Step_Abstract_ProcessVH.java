@@ -60,6 +60,16 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
         ivStartEndDateIcon.setImageDrawable(drawable);
     }
 
+    /**
+     * Modificado validação de se exibe o texto do de ação ou não. Compatibilizado validação com a que define o clique no vh., substituindo  !isInWgEditMode por (!isInWgEditMode && !forceVHToReadOnlyMode)
+     *
+     * @param ivProcessAction
+     * @param tvProcessAction
+     * @param processStatus
+     * @param stepType
+     * @param isCurrentStep
+     * @param isStepAlreadyCheckedIn
+     */
     protected void configProcessAction(ImageView ivProcessAction,TextView tvProcessAction,String processStatus, String stepType, boolean isCurrentStep, boolean isStepAlreadyCheckedIn) {
         int tintColor = ToolBox_Inf.getStatusColorV2(context,ConstantBaseApp.SYS_STATUS_PENDING);
         Drawable drawable = null;
@@ -97,7 +107,7 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
               && !ConstantBaseApp.SYS_STATUS_REJECTED.equals(processStatus)
               &&( ConstantBaseApp.SYS_STATUS_DONE.equals(processStatus)
                   || ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(processStatus)
-                  || (isProcessCheckedIn(stepType,isCurrentStep,isStepAlreadyCheckedIn) && !isInWgEditMode)
+                  || (isProcessCheckedIn(stepType,isCurrentStep,isStepAlreadyCheckedIn) && (!isInWgEditMode && !forceVHToReadOnlyMode))
             )
         ) {
             ivProcessAction.setImageDrawable(drawable);
