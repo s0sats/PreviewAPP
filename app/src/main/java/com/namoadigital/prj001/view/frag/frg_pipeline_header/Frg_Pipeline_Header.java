@@ -91,7 +91,6 @@ public class Frg_Pipeline_Header extends Fragment {
     private TextView tv_ticket_date;
     private TextView tv_site_desc;
     private TextView tv_client;
-    private TextView tv_contract;
     private TextView tv_serial;
     private TextView tv_desc_origin;
     private ImageView iv_action_shortcut;
@@ -289,8 +288,7 @@ public class Frg_Pipeline_Header extends Fragment {
         tv_prod_desc = pipeline_header_view.findViewById(R.id.frg_ticket_tv_prod_desc);
         tv_ticket_date = pipeline_header_view.findViewById(R.id.frg_ticket_tv_ticket_date);
         tv_site_desc = pipeline_header_view.findViewById(R.id.frg_ticket_tv_site_desc);
-        tv_client = pipeline_header_view.findViewById(R.id.frg_ticket_tv_client_name);
-        tv_contract = pipeline_header_view.findViewById(R.id.frg_ticket_tv_contract_desc);
+        tv_client = pipeline_header_view.findViewById(R.id.frg_ticket_tv_client_and_contract_info);
         tv_serial = pipeline_header_view.findViewById(R.id.frg_ticket_tv_serial);
         tv_desc_origin = pipeline_header_view.findViewById(R.id.frg_ticket_tv_desc_origin);
         iv_action_shortcut = pipeline_header_view.findViewById(R.id.frg_ticket_iv_action_shortcut);
@@ -326,14 +324,29 @@ public class Frg_Pipeline_Header extends Fragment {
         //
         setFragmentProfile();
         //
-        String preference_site_code = ToolBox_Con.getPreference_Site_Code(getContext());
-        if (preference_site_code.equals(String.valueOf(site_code))) {
-            tv_site_desc.setVisibility(View.GONE);
-        }
+        setSiteDesc();
         //
         setTvContent();
         //
         return pipeline_header_view;
+    }
+
+    /**
+     * Metodo que define a cor do campo site. Se igual ao logado, azul, se não, vermelho.
+     * Agora a info de site será sempre exibida.
+     */
+    private void setSiteDesc() {
+        String preference_site_code = ToolBox_Con.getPreference_Site_Code(getContext());
+        tv_site_desc.setVisibility(View.VISIBLE);
+        //
+        tv_site_desc.setTextColor(
+            ContextCompat.getColor(
+                requireContext(),
+                preference_site_code.equals(String.valueOf(site_code))
+                    ? R.color.namoa_dark_blue
+                    : R.color.namoa_color_danger_red
+            )
+        );
     }
 
     private void setmAction() {
@@ -464,9 +477,9 @@ public class Frg_Pipeline_Header extends Fragment {
 
     private void initializeLayoutVisibility() {
         tv_ticket_id.setVisibility(View.VISIBLE);
-        tv_ticket_date.setVisibility(View.VISIBLE);
+        //LUCHE - 09/12/2021 - Foi definido que a data não deve mais ser exibida.
+        tv_ticket_date.setVisibility(View.GONE);
         tv_site_desc.setVisibility(View.VISIBLE);
-        tv_contract.setVisibility(View.VISIBLE);
         tv_client.setVisibility(View.VISIBLE);
         tv_serial.setVisibility(View.VISIBLE);
         iv_action_shortcut.setVisibility(View.GONE);
@@ -489,18 +502,7 @@ public class Frg_Pipeline_Header extends Fragment {
         tv_ticket_id.setText(ticket_id_param);
         tv_ticket_date.setText(ticket_date_param);
         tv_site_desc.setText(site_desc_param);
-        if(mTicket != null) {
-            if(mTicket.getContract_desc() != null) {
-                tv_contract.setText(mTicket.getContract_desc());
-            }else{
-                tv_contract.setVisibility(View.GONE);
-            }
-            if(mTicket.getClient_name() != null) {
-                tv_client.setText(mTicket.getClient_name());
-            }else{
-                tv_client.setVisibility(View.GONE);
-            }
-        }
+        setClientAndContractInfo();
         tv_serial.setText(serial_id_param);
         tv_prod_desc.setText(prod_desc_param);
         tv_status.setText(status_desc_param);
@@ -519,6 +521,30 @@ public class Frg_Pipeline_Header extends Fragment {
         tv_origin_end_date.setText(origin_end_date);
         tv_origin_end_user.setText(origin_end_user);
 
+    }
+
+    /**
+     * Metodo que define a visualização do campo cliente + contrato
+     * Se ao menos 1 info existir exibe o campo com a info. Caso as duas existam separado por |
+     */
+    private void setClientAndContractInfo() {
+        if(mTicket != null) {
+            String clientContractInfo = "";
+            if(mTicket.getClient_name() != null && mTicket.getContract_desc() != null ){
+                clientContractInfo = mTicket.getClient_name() +" | " + mTicket.getContract_desc();
+            }else if(mTicket.getClient_name() != null){
+                clientContractInfo = mTicket.getClient_name();
+            }else{
+                clientContractInfo = mTicket.getContract_desc();
+            }
+            //
+            tv_client.setText(clientContractInfo);
+            tv_client.setVisibility(
+                clientContractInfo != null && !clientContractInfo.isEmpty() ? View.VISIBLE : View.GONE
+            );
+        }else{
+            tv_client.setVisibility(View.GONE);
+        }
     }
 
     private void defineTicketIdLayout(){
