@@ -1403,8 +1403,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                                  */
                                     GE_Custom_Form customForm = getCustomFormFromCtrl(ticketCtrl.getForm());
                                     //
-                                    if (customForm == null
-                                            || ticketCtrl.getForm().getIs_so() != customForm.getIs_so()) {
+                                    if (customForm != null
+                                            && ticketCtrl.getForm().getIs_so() != customForm.getIs_so()) {
                                         mView.showAlert(
                                                 hmAux_Trans.get("alert_form_so_not_found_ttl"),
                                                 hmAux_Trans.get("alert_form_so_not_found_msg"));
@@ -1777,29 +1777,36 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 tryOpenFormPDF(ticketCtrl.getForm());
             }else{
                 GE_Custom_Form customForm = getCustomFormFromCtrl(ticketCtrl.getForm());
-                if(ticketCtrl.getForm().getIs_so() == 0){
-                    GE_Custom_Form_Local ge_custom_form_local = getGe_custom_form_local(ticketCtrl);
-                    mView.callAct011(getAct011Bundle(ticketCtrl, customForm, ge_custom_form_local));
-                }else{
-                    Bundle bundle;
-                    if(formExists(ticketCtrl)){
+                if(customForm != null) {
+                    if (ticketCtrl.getForm().getIs_so() == 0) {
                         GE_Custom_Form_Local ge_custom_form_local = getGe_custom_form_local(ticketCtrl);
                         mView.callAct011(getAct011Bundle(ticketCtrl, customForm, ge_custom_form_local));
-                    }else{
-                        bundle = getAct011BundleForAct087(ticketCtrl, customForm);
-                        //Se form os e não existe form, verifica se tem estrutura.
-                        //Se tiver abre o form, caso contrario, exibe msg de serial sem estrutura.
-                        if(serialHasStructure(ticketCtrl)) {
-                            bundle.putAll(getAct087Bundle(ticketCtrl, customForm));
-                            mView.callAct087(bundle);
-                        }else{
-                            mView.showAlert(
-                                    hmAux_Trans.get("alert_form_without_serial_structure_ttl"),
-                                    hmAux_Trans.get("alert_form_without_serial_structure_msg")
-                            );
+                    } else {
+                        Bundle bundle;
+                        if (formExists(ticketCtrl)) {
+                            GE_Custom_Form_Local ge_custom_form_local = getGe_custom_form_local(ticketCtrl);
+                            mView.callAct011(getAct011Bundle(ticketCtrl, customForm, ge_custom_form_local));
+                        } else {
+                            bundle = getAct011BundleForAct087(ticketCtrl, customForm);
+                            //Se form os e não existe form, verifica se tem estrutura.
+                            //Se tiver abre o form, caso contrario, exibe msg de serial sem estrutura.
+                            if (serialHasStructure(ticketCtrl)) {
+                                bundle.putAll(getAct087Bundle(ticketCtrl, customForm));
+                                mView.callAct087(bundle);
+                            } else {
+                                mView.showAlert(
+                                        hmAux_Trans.get("alert_form_without_serial_structure_ttl"),
+                                        hmAux_Trans.get("alert_form_without_serial_structure_msg")
+                                );
+                            }
                         }
-                    }
 
+                    }
+                }else{
+                    mView.showAlert(
+                            hmAux_Trans.get("alert_form_master_data_not_found_after_sync_ttl"),
+                            hmAux_Trans.get("alert_form_master_data_not_found_after_sync_msg")
+                    );
                 }
             }
         }
@@ -1949,7 +1956,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     private boolean checkFormMasterDataExists(TK_Ticket_Form form) {
         GE_Custom_Form customForm =  getCustomFormFromCtrl(form);
         //
-        if(form.getIs_so() != customForm.getIs_so()){
+        if(customForm == null
+                || form.getIs_so() != customForm.getIs_so()){
             return false;
         }
         if(form.getIs_so() == 1){
