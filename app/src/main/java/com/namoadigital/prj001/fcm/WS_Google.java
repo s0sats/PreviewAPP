@@ -95,7 +95,7 @@ public class WS_Google extends IntentService {
                 context,
                 30,
                 mIntent,
-                0
+                ToolBox_Inf.getMutableFlag( 0, false)
         );
         //
         AlarmManager am = (AlarmManager)

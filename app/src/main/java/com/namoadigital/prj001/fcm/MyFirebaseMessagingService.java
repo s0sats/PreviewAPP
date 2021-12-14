@@ -857,7 +857,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
         //
         PendingIntent pi = PendingIntent.getActivity(this, 0, mIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT
+                ToolBox_Inf.getMutableFlag( PendingIntent.FLAG_UPDATE_CURRENT, true)
         );
         //
         NotificationCompat.Builder builder = ToolBox_Inf.getNotificationBuilder(getApplicationContext(),nm);

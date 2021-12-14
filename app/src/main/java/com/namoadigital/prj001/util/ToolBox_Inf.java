@@ -1720,14 +1720,14 @@ public class ToolBox_Inf {
         NotificationManager nm = (NotificationManager)
                 context.getSystemService(NOTIFICATION_SERVICE);
         //
-        Intent mIntent = new Intent(context, WS_Notification_Sync.class);
+//        Intent mIntent = new Intent(context, WS_Notification_Sync.class);
 
-        PendingIntent pi = PendingIntent.getService(
-                context,
-                0,
-                mIntent,
-                0
-        );
+//        PendingIntent pi = PendingIntent.getService(
+//                context,
+//                0,
+//                mIntent,
+//                0
+//        );
         //
         NotificationCompat.Builder builder = getNotificationBuilder(context, nm);
         builder.setSmallIcon(R.drawable.sync_notification_animation);
@@ -5190,7 +5190,7 @@ public class ToolBox_Inf {
                 context,
                 0,
                 mIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT
+                getMutableFlag( PendingIntent.FLAG_UPDATE_CURRENT, true)
         );
         NotificationCompat.Builder builder = getNotificationBuilder(context, nm);
         builder.setAutoCancel(true);
@@ -5251,7 +5251,7 @@ public class ToolBox_Inf {
                                         context,
                                         0,
                                         mIntent,
-                                        PendingIntent.FLAG_UPDATE_CURRENT
+                                        getMutableFlag( PendingIntent.FLAG_UPDATE_CURRENT, true)
                                 );
 
                                 builder.setContentIntent(pi);
@@ -5331,6 +5331,25 @@ public class ToolBox_Inf {
             registerException(CLASS_NAME, e);
         }
 
+    }
+
+    /**
+     * BARRIONUEVO 14-12-2021
+     * Trata flag de pendingIntent para Mutable e Immutable atendendo aos requisitos do Android 12.
+     * @param currentFlag
+     * @param isMutable
+     * @return
+     */
+    public static int getMutableFlag(int currentFlag, boolean isMutable) {
+        int flags = currentFlag;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if(isMutable){
+                flags = currentFlag | PendingIntent.FLAG_MUTABLE;
+            }else {
+                flags = currentFlag | PendingIntent.FLAG_IMMUTABLE;
+            }
+        }
+        return flags;
     }
 
     public static void cancelChatNotification(Context context) {
@@ -8576,7 +8595,7 @@ public class ToolBox_Inf {
             context,
             0,
             cleanningAlarmIntent,
-            0
+                ToolBox_Inf.getMutableFlag( 0, false)
         );
         //
         Intent mIntent_Full = new Intent(context,
@@ -8587,7 +8606,7 @@ public class ToolBox_Inf {
             //100,
             ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_FULL,
             mIntent_Full,
-            0
+                ToolBox_Inf.getMutableFlag( 0, false)
         );
         //
         Intent mIntent_Quarter = new Intent(context,
@@ -8598,7 +8617,7 @@ public class ToolBox_Inf {
             //200,
             ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_QUARTER,
             mIntent_Quarter,
-            0
+                ToolBox_Inf.getMutableFlag( 0, false)
         );
         //
         am.cancel(piCleanning);

@@ -169,7 +169,7 @@ public class WS_Process_Form_AP extends IntentService {
                 context,
                 Constant.ALARM_REQUEST_CODE_WS_PROCESS_FORM_AP,
                 mIntent,
-                0
+                ToolBox_Inf.getMutableFlag( 0, false)
         );
         //
         AlarmManager am = (AlarmManager)

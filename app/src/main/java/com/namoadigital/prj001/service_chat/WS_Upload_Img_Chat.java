@@ -148,7 +148,7 @@ public class WS_Upload_Img_Chat extends IntentService {
                 context,
                 10,
                 mIntent,
-                0
+                ToolBox_Inf.getMutableFlag( 0, false)
         );
         //
         AlarmManager am = (AlarmManager)
