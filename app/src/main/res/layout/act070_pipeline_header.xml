@@ -99,7 +99,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
-            android:id="@+id/frg_ticket_tv_client_name"
+            android:id="@+id/frg_ticket_tv_client_and_contract_info"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
@@ -111,21 +111,7 @@
             app:layout_constraintEnd_toStartOf="@id/frg_ticket_guide_end"
             app:layout_constraintStart_toStartOf="@id/frg_ticket_guide_start"
             app:layout_constraintTop_toBottomOf="@id/frg_ticket_tv_site_desc"
-            tools:text="Desc Client" />
-
-        <TextView
-            android:id="@+id/frg_ticket_tv_contract_desc"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:textSize="@dimen/pipeline_smallest_font_size"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@id/frg_ticket_guide_end"
-            app:layout_constraintStart_toStartOf="@id/frg_ticket_guide_start"
-            app:layout_constraintTop_toBottomOf="@id/frg_ticket_tv_client_name"
-            tools:text="Desc Contract" />
+            tools:text="Client | Contract" />
 
         <TextView
             android:id="@+id/frg_ticket_tv_prod_desc"
@@ -139,7 +125,7 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@id/frg_ticket_guide_end"
             app:layout_constraintStart_toStartOf="@id/frg_ticket_guide_start"
-            app:layout_constraintTop_toBottomOf="@id/frg_ticket_tv_contract_desc"
+            app:layout_constraintTop_toBottomOf="@id/frg_ticket_tv_client_and_contract_info"
             tools:text="Desc Prod" />
 
         <TextView
@@ -154,12 +140,15 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/frg_ticket_guide_start"
             app:layout_constraintTop_toBottomOf="@+id/frg_ticket_cl_ticket_id"
-            tools:text="31/02/2999 25:69:59" />
+            tools:text="31/02/2999 25:69:59"
+            android:visibility="gone"
+            />
 
         <TextView
             android:id="@+id/frg_ticket_tv_site_desc"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="8dp"
             android:textColor="@color/namoa_color_danger_red"
             android:textSize="12sp"

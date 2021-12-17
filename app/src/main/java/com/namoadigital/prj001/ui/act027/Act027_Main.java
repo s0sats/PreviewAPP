@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act027;
 
+import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH_PHOTO;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -106,8 +108,6 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH_PHOTO;
 
 /**
  * Created by neomatrix on 14/08/17.
@@ -1851,6 +1851,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
 
     private void showResultsApproval(String[] so) {
         ArrayList<HMAux> sos = new ArrayList<>();
+        //var que indica se alguam item da lista retornou erro.
+        boolean hasError = false;
         for (int i = 0; i < so.length; i++) {
             String fields[] = so[i].split(Constant.MAIN_CONCAT_STRING_2);
             //
@@ -1860,6 +1862,10 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             mHmAux.put("final_status", fields[0] + " / " + fields[1]);
             //
             sos.add(mHmAux);
+            //Se nao em erro, verifica se esse item tem erro.
+            if(!hasError){
+                hasError = !ConstantBaseApp.MAIN_RESULT_OK.equalsIgnoreCase(fields[1]);
+            }
         }
 
         if (sos.size() == 1) {
@@ -1868,20 +1874,27 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                 if (sos.get(0).get("status").equalsIgnoreCase("Ok")) {
                     progressDialog.dismiss();
                     only_save = false;
+                    //LUCHE - 10/12/2021 - Solicitado que as aprovações não tenham amsi confirmação,
+                    // apenas toast como feedback
+//                    ToolBox.alertMSG(
+//                            context,
+//                            hmAux_Trans.get("alert_so_ttl"),
+//                            hmAux_Trans.get("msg_so_save_ok"),
+//                            new DialogInterface.OnClickListener() {
+//                                @Override
+//                                public void onClick(DialogInterface dialog, int which) {
+//                                    refreshUI();
+//                                }
+//                            },
+//                            0
+//                    );
                     //
-                    ToolBox.alertMSG(
-                            context,
-                            hmAux_Trans.get("alert_so_ttl"),
-                            hmAux_Trans.get("msg_so_save_ok"),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    refreshUI();
-                                }
-                            },
-                            0
+                    ToolBox.toastMSG(
+                        context,
+                        hmAux_Trans.get("msg_so_save_ok")
                     );
-                    //refreshUI();
+                    //
+                    refreshUI();
                 } else {
                     progressDialog.dismiss();
                     //
@@ -1899,71 +1912,81 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                     );
                 }
             } else {
-                showNewOptDialogApproval(sos);
+                showNewOptDialogApproval(sos,hasError);
             }
 
         } else {
-            showNewOptDialogApproval(sos);
+            showNewOptDialogApproval(sos, hasError);
         }
     }
 
-    public void showNewOptDialogApproval(List<HMAux> sos) {
+    public void showNewOptDialogApproval(List<HMAux> sos, boolean hasError) {
+        //LUCHE - 10/12/2021 - Solicitado que as aprovações não tenham amsi confirmação,
+        // apenas toast como feedback
+        if(!hasError){
+            //
+            ToolBox.toastMSG(
+                context,
+                hmAux_Trans.get("msg_so_save_ok")
+            );
+            //
+            refreshUI();
+        }else{
+            final AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
-        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View view = inflater.inflate(R.layout.act028_dialog_results, null);
 
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.act028_dialog_results, null);
+            /**
+             * Ini Vars
+             */
 
-        /**
-         * Ini Vars
-         */
+            TextView tv_title = (TextView) view.findViewById(R.id.act028_dialog_tv_title);
+            ListView lv_results = (ListView) view.findViewById(R.id.act028_dialog_lv_results);
+            Button btn_ok = (Button) view.findViewById(R.id.act028_dialog_btn_ok);
 
-        TextView tv_title = (TextView) view.findViewById(R.id.act028_dialog_tv_title);
-        ListView lv_results = (ListView) view.findViewById(R.id.act028_dialog_lv_results);
-        Button btn_ok = (Button) view.findViewById(R.id.act028_dialog_btn_ok);
-
-        tv_title.setText(hmAux_Trans.get("alert_results_ttl"));
-        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
-        //
-        final HMAux auxSo = new HMAux();
-        for (int i = 0; i < sos.size(); i++) {
-            if (sos.get(i).get("label").equals(mSm_so.getSo_prefix() + "." + mSm_so.getSo_code())) {
-                auxSo.putAll(sos.get(i));
-                break;
-            }
-        }
-        //
-        lv_results.setAdapter(
-                new Act028_Results_Adapter(
-                        context,
-                        R.layout.act028_results_adapter_cell,
-                        sos
-                )
-        );
-
-
-        //builder.setTitle(hmAux_Trans.get("alert_results_ttl"));
-        builder.setView(view);
-        builder.setCancelable(false);
-
-        final AlertDialog show = builder.show();
-
-        /**
-         * Ini Action
-         */
-        btn_ok.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                show.dismiss();
-
-                if (progressDialog != null && progressDialog.isShowing()) {
-                    progressDialog.dismiss();
+            tv_title.setText(hmAux_Trans.get("alert_results_ttl"));
+            btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
+            //
+            final HMAux auxSo = new HMAux();
+            for (int i = 0; i < sos.size(); i++) {
+                if (sos.get(i).get("label").equals(mSm_so.getSo_prefix() + "." + mSm_so.getSo_code())) {
+                    auxSo.putAll(sos.get(i));
+                    break;
                 }
-                //
-                if (auxSo.containsKey("status")) {
-                    if (auxSo.get("status").equalsIgnoreCase("Ok")) {
-                        //
-                        ToolBox.alertMSG(
+            }
+            //
+            lv_results.setAdapter(
+                new Act028_Results_Adapter(
+                    context,
+                    R.layout.act028_results_adapter_cell,
+                    sos
+                )
+            );
+
+
+            //builder.setTitle(hmAux_Trans.get("alert_results_ttl"));
+            builder.setView(view);
+            builder.setCancelable(false);
+
+            final AlertDialog show = builder.show();
+
+            /**
+             * Ini Action
+             */
+            btn_ok.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    show.dismiss();
+
+                    if (progressDialog != null && progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
+                    //
+                    if (auxSo.containsKey("status")) {
+                        if (auxSo.get("status").equalsIgnoreCase("Ok")) {
+                            //
+                            ToolBox.alertMSG(
                                 context,
                                 hmAux_Trans.get("alert_so_sync_ok_ttl"),
                                 hmAux_Trans.get("alert_so_sync_ok_msg"),
@@ -1974,18 +1997,19 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                                     }
                                 },
                                 0
-                        );
-                        //refreshUI();
-                    }
-                } else {
-                    if (!only_approval) {
-                        executeSoSync(mSm_so.getSo_prefix(), mSm_so.getSo_code());
+                            );
+                            //refreshUI();
+                        }
                     } else {
-                        only_approval = false;
+                        if (!only_approval) {
+                            executeSoSync(mSm_so.getSo_prefix(), mSm_so.getSo_code());
+                        } else {
+                            only_approval = false;
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
     }
     //endregion
 

@@ -123,11 +123,13 @@ class MyActionsAdapter(
             with(binding.myActionsItemTvSite){
                  myAction.siteCode?.let {
                     if(ToolBox_Inf.equalsToLoggedSite(context,it.toString())){
-                       visibility = View.GONE
-                       text = myAction.siteDesc
-                    }else{
                         visibility = View.VISIBLE
                         text = myAction.siteDesc
+                        setTextColor(ContextCompat.getColor(context,R.color.namoa_dark_blue))
+                    }else{
+                        visibility = View.VISIBLE
+                        text = myAction.siteDesc //namoa_color_danger_red
+                        setTextColor(ContextCompat.getColor(context,R.color.namoa_color_danger_red))
                     }
                  } ?: {
                      visibility = View.GONE

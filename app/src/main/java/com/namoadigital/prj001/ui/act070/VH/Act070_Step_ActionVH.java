@@ -74,12 +74,14 @@ public class Act070_Step_ActionVH extends Act070_Step_Abstract_ProcessVH {
         tvActionDesc.setText(stepAction.getStepDescription());
 
         if(ToolBox_Inf.hasConsistentValueString(stepAction.getProductDesc())) {
-            setProductAndSerialVisibility(tvProduct,tvSerial, stepAction.isProductDifferentThanTicket(), stepAction.isSerialDifferentThanTicket());
+            //setProductAndSerialVisibility(tvProduct,tvSerial, stepAction.isProductDifferentThanTicket(), stepAction.isSerialDifferentThanTicket());
             tvProduct.setText(stepAction.getProductDesc());
+            tvProduct.setVisibility(View.VISIBLE);
         }
         if(ToolBox_Inf.hasConsistentValueString(stepAction.getSerialId())) {
-            setProductAndSerialVisibility(tvProduct,tvSerial, stepAction.isProductDifferentThanTicket(), stepAction.isSerialDifferentThanTicket());
+            //setProductAndSerialVisibility(tvProduct,tvSerial, stepAction.isProductDifferentThanTicket(), stepAction.isSerialDifferentThanTicket());
             tvSerial.setText(stepAction.getSerialId());
+            tvSerial.setVisibility(View.VISIBLE);
         }
         //Sem necessidade de chamar o hasConsistentValueString, pois já é chamado internamento
         // no metodo equalsToLoggedSite
