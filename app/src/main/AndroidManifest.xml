@@ -650,7 +650,8 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
             </intent-filter>
         </receiver>
 
-        <service android:name=".service.SV_LocationTracker" />
+        <service android:name=".service.SV_LocationTracker"
+            android:foregroundServiceType="location"/>
         <service android:name=".fcm.MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
