@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.service;
 
+import static com.namoadigital.prj001.util.ConstantBaseApp.NOTIFICATION_SYNC_ID;
+
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -201,7 +203,7 @@ public class WS_Sync extends IntentService {
     private String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";
     private String mResource_Name = "ws_sync";
-    final int SYNC_NOTIFICATION_ID = 9990;
+
     public WS_Sync() {
         super("WS_Sync");
     }
@@ -230,12 +232,12 @@ public class WS_Sync extends IntentService {
         builder.setOngoing(true);
         builder.setContentTitle(getApplicationContext().getString(R.string.title_notification_generic));
         builder.setContentText(getApplicationContext().getString(R.string.msg_synchronizing_data));
-        builder.setSmallIcon(R.drawable.ic_baseline_cloud_download_24);
+        builder.setSmallIcon(R.drawable.download_animation);
 
         Notification notification = builder.build();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
                 && notification != null) {
-            startForeground(SYNC_NOTIFICATION_ID, notification);
+            startForeground(NOTIFICATION_SYNC_ID, notification);
         }
         return super.onStartCommand(intent, flags, startId);
     }

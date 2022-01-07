@@ -50,6 +50,7 @@ public class AppBackgroundService extends Service {
      */
     public static String serviceChatMode;
     private String notificationContentText = "";
+    private int notificationSmallIcon = -1;
     private Handler mHandler;
     private Runnable mRunnable;
     private static int PROGRESS_TIME_OUT = 1000 * 30 ;
@@ -119,15 +120,19 @@ public class AppBackgroundService extends Service {
 
     private void setNotificationContentText() {
         String chat_service_mode_desc;
+        int chat_service_mode_icon;
         //LUCHE - 15/03/2021 - Substituido switch por if, pois embora haja mais 2 modos, só existem
         //2 opções retornaveis. Alem disse, como o if evitamo so null pointer caso serviceChatMode null
         if(CHAT_SERVICE_MODE_ACTIVED.equalsIgnoreCase(serviceChatMode)){
             chat_service_mode_desc =  hmAux_Trans.get("sys_active_chat_notification_detail");
+            chat_service_mode_icon = R.drawable.ic_forum_black_24dp;
         }else{
             chat_service_mode_desc = hmAux_Trans.get("sys_sync_chat_notification_detail");
+            chat_service_mode_icon = R.drawable.download_animation;
         }
         //
         notificationContentText = chat_service_mode_desc;
+        notificationSmallIcon = chat_service_mode_icon;
         //
     }
 
@@ -140,7 +145,7 @@ public class AppBackgroundService extends Service {
         NotificationCompat.Builder builder;
 
         builder = ToolBox_Inf.getLowImportanceBuilder(getApplicationContext(), nm);
-        builder.setSmallIcon(R.drawable.ic_baseline_cloud_download_24);
+        builder.setSmallIcon(notificationSmallIcon);
         builder.setOngoing(true);
         builder.setContentTitle(getApplicationContext().getString(R.string.title_notification_generic));
         builder.setContentText(notificationContentText);
