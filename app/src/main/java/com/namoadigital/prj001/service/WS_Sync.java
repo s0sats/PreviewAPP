@@ -1,11 +1,16 @@
 package com.namoadigital.prj001.service;
 
 import android.app.IntentService;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -196,9 +201,43 @@ public class WS_Sync extends IntentService {
     private String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";
     private String mResource_Name = "ws_sync";
-
+    final int SYNC_NOTIFICATION_ID = 9990;
     public WS_Sync() {
         super("WS_Sync");
+    }
+
+    /**
+     * BARRIONUEVO 07-01-2022
+     *     Aplicação de foreground service para WS de sincronismo.
+     *     Foi feito desse jeito pela urgencia da correção.
+     *     CAUSA: Foi detectado que o WakefullBroadcast jah nao eh mais o mesmo, quando o celular
+     *     entra em hibernacao por inatividade o servicao estava quebrando por java.net.SocketException: Software caused connection abort
+     *     Na analise feita o servico quebrava depois de 1:50 minutos
+     *     SOLUCAO: Foreground service para toda e qualquer chamada do sincronismo por ser um
+     * @param intent
+     * @param flags
+     * @param startId
+     * @return
+     */
+    @Override
+    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
+        //
+        NotificationManager nm = (NotificationManager)
+                getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
+
+        NotificationCompat.Builder builder = ToolBox_Inf.getNotificationBuilder(getApplicationContext(), nm);
+
+        builder.setOngoing(true);
+        builder.setContentTitle(getApplicationContext().getString(R.string.title_notification_generic));
+        builder.setContentText(getApplicationContext().getString(R.string.msg_synchronizing_data));
+        builder.setSmallIcon(R.drawable.ic_baseline_cloud_download_24);
+
+        Notification notification = builder.build();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+                && notification != null) {
+            startForeground(SYNC_NOTIFICATION_ID, notification);
+        }
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @Override

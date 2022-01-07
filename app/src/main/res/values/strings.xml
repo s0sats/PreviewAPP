@@ -131,6 +131,7 @@
     <!--Text Helpers -->
     <string name="unicode_bullet">"\u2022"</string>
     <string name="unicode_copyright">©</string>
+    <string name="msg_synchronizing_data">Synchronizing Data</string>
 
 
 </resources>

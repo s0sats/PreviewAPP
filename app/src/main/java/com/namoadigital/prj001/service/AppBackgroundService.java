@@ -1,5 +1,9 @@
 package com.namoadigital.prj001.service;
 
+import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE_ACTIVED;
+import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE_LOGIN;
+import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE_SCHEDULED;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.Service;
@@ -28,10 +32,6 @@ import com.namoadigital.prj001.worker.Work_Quarter_Chat_Refresh;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE_ACTIVED;
-import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE_LOGIN;
-import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE_SCHEDULED;
 
 /**
  * Created by neomatrix on 27/11/17.
@@ -140,7 +140,7 @@ public class AppBackgroundService extends Service {
         NotificationCompat.Builder builder;
 
         builder = ToolBox_Inf.getLowImportanceBuilder(getApplicationContext(), nm);
-        builder.setSmallIcon(R.drawable.ic_n_chat);
+        builder.setSmallIcon(R.drawable.ic_baseline_cloud_download_24);
         builder.setOngoing(true);
         builder.setContentTitle(getApplicationContext().getString(R.string.title_notification_generic));
         builder.setContentText(notificationContentText);
