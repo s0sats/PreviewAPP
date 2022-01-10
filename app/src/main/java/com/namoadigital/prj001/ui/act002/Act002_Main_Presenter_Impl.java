@@ -158,7 +158,7 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
         bundle.putBoolean(Constant.GS_LOGIN_PROCESS, true);
         //LUCHE - 07/06/2019
         //Add param que redefine timeout da chamada.Usada somente no sync full
-        bundle.putInt(Constant.WS_CONNECTION_TIMEOUT, 300000);
+        bundle.putInt(Constant.WS_CONNECTION_TIMEOUT, ConstantBaseApp.TIMEOUT_FOR_SYNC_FULL);
 
         mIntent.putExtras(bundle);
         //

@@ -829,6 +829,8 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
                 bundle.putLong(Constant.GS_PRODUCT_CODE, 0);
                 bundle.putInt(Constant.GC_STATUS_JUMP, 1);
                 bundle.putInt(Constant.GC_STATUS, 1);
+                //LUCHE - 10/01/2022 - Aumentado timeout do sync de form para bauko
+                bundle.putInt(Constant.WS_CONNECTION_TIMEOUT, ConstantBaseApp.TIMEOUT_FOR_SYNC_FORM);
                 //
                 mIntent.putExtras(bundle);
                 //

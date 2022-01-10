@@ -505,6 +505,9 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         bundle.putLong(Constant.GS_PRODUCT_CODE, product_code);
         bundle.putInt(Constant.GC_STATUS_JUMP, 1);
         bundle.putInt(Constant.GC_STATUS, 1);
+        //todo verificar se necessario nesse caso
+        //LUCHE - 10/01/2022 - Aumentado timeout do sync de form para fica igual aos outros pontos do software
+        bundle.putInt(Constant.WS_CONNECTION_TIMEOUT, ConstantBaseApp.TIMEOUT_FOR_SYNC_FORM);
 
         mIntent.putExtras(bundle);
         //

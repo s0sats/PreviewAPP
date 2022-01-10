@@ -1397,6 +1397,9 @@ class Act083_Main_Presenter(private val context: Context,
         bundle.putLong(Constant.GS_PRODUCT_CODE, productCode)
         bundle.putInt(Constant.GC_STATUS_JUMP, 1)
         bundle.putInt(Constant.GC_STATUS, 1)
+        //LUCHE - 07/06/2019
+        //Add param que redefine timeout da chamada.Usada somente no sync full
+        bundle.putInt(ConstantBaseApp.WS_CONNECTION_TIMEOUT, ConstantBaseApp.TIMEOUT_FOR_SYNC_FORM)
         //
         mIntent.putExtras(bundle)
         //

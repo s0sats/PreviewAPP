@@ -3188,6 +3188,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             bundle.putLong(Constant.GS_PRODUCT_CODE, !nFormProductSelected.get(SM_SODao.PRODUCT_CODE).equalsIgnoreCase("-1") ? Long.parseLong(nFormProductSelected.get(SM_SODao.PRODUCT_CODE)) : mSm_so.getProduct_code());
             bundle.putInt(Constant.GC_STATUS_JUMP, 1);
             bundle.putInt(Constant.GC_STATUS, 1);
+            //LUCHE - 10/01/2022 - Aumentado timeout do sync de form para fica igual aos outros pontos do software
+            bundle.putInt(Constant.WS_CONNECTION_TIMEOUT, ConstantBaseApp.TIMEOUT_FOR_SYNC_FORM);
 
             mIntent.putExtras(bundle);
             //

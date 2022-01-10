@@ -1,5 +1,13 @@
 package com.namoadigital.prj001.ui.act005;
 
+import static com.namoadigital.prj001.sql.Sql_Act005_009.PENDING_QTY;
+import static com.namoadigital.prj001.ui.act005.Act005_Main.WS_PROCESS_SO_SAVE;
+import static com.namoadigital.prj001.ui.act005.Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL;
+import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_CURRENT_SITE_OPTION;
+import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_FOCUS_FILTER;
+import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_PERIOD_FILTER;
+import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_SITES_FILTER;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -105,13 +113,13 @@ import com.namoadigital.prj001.sql.Sql_Act005_006;
 import com.namoadigital.prj001.sql.Sql_Act005_007;
 import com.namoadigital.prj001.sql.Sql_Act005_008;
 import com.namoadigital.prj001.sql.Sql_Act005_009;
+import com.namoadigital.prj001.sql.Sql_Act005_011;
 import com.namoadigital.prj001.sql.Sql_Act012_005;
 import com.namoadigital.prj001.sql.Sql_Act012_006;
 import com.namoadigital.prj001.sql.Sql_Act012_007;
 import com.namoadigital.prj001.sql.Sql_Act021_002;
 import com.namoadigital.prj001.sql.Sql_Act021_003;
 import com.namoadigital.prj001.sql.Sql_Act021_004;
-import com.namoadigital.prj001.sql.Sql_Act005_011;
 import com.namoadigital.prj001.sql.Sql_Act068_002;
 import com.namoadigital.prj001.sql.Sql_Act069_002;
 import com.namoadigital.prj001.util.Constant;
@@ -124,14 +132,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import static com.namoadigital.prj001.sql.Sql_Act005_009.PENDING_QTY;
-import static com.namoadigital.prj001.ui.act005.Act005_Main.WS_PROCESS_SO_SAVE;
-import static com.namoadigital.prj001.ui.act005.Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL;
-import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_CURRENT_SITE_OPTION;
-import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_FOCUS_FILTER;
-import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_PERIOD_FILTER;
-import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_SITES_FILTER;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -905,6 +905,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             bundle.putLong(Constant.GS_PRODUCT_CODE, 0);
             bundle.putInt(Constant.GC_STATUS_JUMP, 1);
             bundle.putInt(Constant.GC_STATUS, 1);
+            //LUCHE - 10/01/2022 - Aumentado timeout do sync de form para fica igual aos outros pontos do software
+            bundle.putInt(Constant.WS_CONNECTION_TIMEOUT, ConstantBaseApp.TIMEOUT_FOR_SYNC_FORM);
             //
             mIntent.putExtras(bundle);
             //
@@ -1436,7 +1438,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         bundle.putInt(Constant.GC_STATUS, 1);
         //LUCHE - 07/06/2019
         //Add param que redefine timeout da chamada.Usada somente no sync full
-        bundle.putInt(Constant.WS_CONNECTION_TIMEOUT, 300000);
+        bundle.putInt(Constant.WS_CONNECTION_TIMEOUT, ConstantBaseApp.TIMEOUT_FOR_SYNC_FULL);
 
         mIntent.putExtras(bundle);
         //
