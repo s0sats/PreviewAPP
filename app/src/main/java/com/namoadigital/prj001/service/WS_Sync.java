@@ -227,7 +227,7 @@ public class WS_Sync extends IntentService {
         NotificationManager nm = (NotificationManager)
                 getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
 
-        NotificationCompat.Builder builder = ToolBox_Inf.getNotificationBuilder(getApplicationContext(), nm);
+        NotificationCompat.Builder builder = ToolBox_Inf.getLowImportanceBuilder(getApplicationContext(), nm);
 
         builder.setOngoing(true);
         builder.setContentTitle(getApplicationContext().getString(R.string.title_notification_generic));
