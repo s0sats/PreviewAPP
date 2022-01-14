@@ -3941,7 +3941,7 @@ public class Act011_Main extends Base_Activity
     private void getLocation() {
         requestPermissions(
                 Act011_Main.this,
-                NamoaPermissionRequest.MULTIIPLE_PERMISSION_REQUEST_WITHOUT_RATIONALE,
+                NamoaPermissionRequest.GPS_PERMISSION_REQUEST,
                 new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
                 new NamoaPermissionRequest() {
                     @Override
