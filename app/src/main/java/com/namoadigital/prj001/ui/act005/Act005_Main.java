@@ -20,6 +20,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -308,7 +309,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     private void retryGetLocation() {
         requestPermissions(
                 Act005_Main.this,
-                NamoaPermissionRequest.MULTIIPLE_PERMISSION_REQUEST_WITHOUT_RATIONALE,
+                NamoaPermissionRequest.GPS_PERMISSION_REQUEST,
                 new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
                 new NamoaPermissionRequest() {
                     @Override
@@ -318,11 +319,17 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
                     @Override
                     public void accessDenied(final String[] permissions) {
+                        String alertTtl = hmAux_Trans.get("alert_gps_denied_permission_ttl");
+                        String alertMsg = hmAux_Trans.get("alert_gps_denied_permission_msg");
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+                            alertTtl = hmAux_Trans.get("alert_gps_denied_exact_permission_ttl");
+                            alertMsg = hmAux_Trans.get("alert_gps_denied_exact_permission_msg");
+                        }
                         showPermissionRationaleDialog(
                                 Act005_Main.this,
                                 com.namoa_digital.namoa_library.R.drawable.ic_alert_n,
-                                hmAux_Trans.get("alert_gps_denied_permission_ttl"),
-                                hmAux_Trans.get("alert_gps_denied_permission_msg"),
+                                alertTtl,
+                                alertMsg,
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -340,12 +347,17 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
                     @Override
                     public void requestPermissionRationale(final String[] permissions) {
-
+                        String alertTtl = hmAux_Trans.get("alert_gps_rationale_permission_ttl");
+                        String alertMsg = hmAux_Trans.get("alert_gps_rationale_permission_msg");
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+                            alertTtl = hmAux_Trans.get("alert_gps_rationale_exact_permission_ttl");
+                            alertMsg = hmAux_Trans.get("alert_gps_rationale_exact_permission_msg");
+                        }
                         showPermissionRationaleDialog(
                                 Act005_Main.this,
                                 com.namoa_digital.namoa_library.R.drawable.ic_alert_n,
-                                hmAux_Trans.get("alert_gps_rationale_permission_ttl"),
-                                hmAux_Trans.get("alert_gps_rationale_permission_msg"),
+                                alertTtl,
+                                alertMsg,
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -363,11 +375,16 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
                     @Override
                     public void accessDeniedNeverAskAgain(String[] permissions) {
-
+                        String alertTtl = hmAux_Trans.get("alert_gps_never_ask_again_permission_ttl");
+                        String alertMsg = hmAux_Trans.get("alert_gps_never_ask_again_permission_msg");
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+                            alertTtl = hmAux_Trans.get("alert_gps_never_ask_again_exact_permission_ttl");
+                            alertMsg = hmAux_Trans.get("alert_gps_never_ask_again_exact_permission_msg");
+                        }
                         showPermissionNeverAskAgainDialog(
                                 R.drawable.ic_location_on_24,
-                                hmAux_Trans.get("alert_gps_never_ask_again_permission_ttl"),
-                                hmAux_Trans.get("alert_gps_never_ask_again_permission_msg"),
+                                alertTtl,
+                                alertMsg,
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -596,6 +613,13 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         transList.add("alert_gps_denied_permission_msg");
         transList.add("alert_gps_never_ask_again_permission_ttl");
         transList.add("alert_gps_never_ask_again_permission_msg");
+
+        transList.add("alert_gps_never_ask_again_exact_permission_ttl");
+        transList.add("alert_gps_never_ask_again_exact_permission_msg");
+        transList.add("alert_gps_rationale_exact_permission_ttl");
+        transList.add("alert_gps_rationale_exact_permission_msg");
+        transList.add("alert_gps_denied_exact_permission_ttl");
+        transList.add("alert_gps_denied_exact_permission_msg");
         //
         transList.add("drawer_historic_lbl");
         transList.add("drawer_loading_lbl");
