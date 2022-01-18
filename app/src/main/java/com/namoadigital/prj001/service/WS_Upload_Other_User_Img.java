@@ -108,7 +108,7 @@ public class WS_Upload_Other_User_Img extends IntentService {
                 context,
                 ConstantBaseApp.ALARM_REQUEST_CODE_WS_UPLOAD_UNSENT_IMGS,
                 mIntent,
-                0
+                ToolBox_Inf.getMutableFlag( 0, false)
         );
         //
         AlarmManager am = (AlarmManager)

@@ -5,9 +5,10 @@ import android.app.IntentService;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.util.Log;
 
 import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -114,7 +115,7 @@ public class RegistrationIntentService extends IntentService {
                 context,
                 20,
                 mIntent,
-                0
+                ToolBox_Inf.getMutableFlag( 0, false)
         );
         //
         AlarmManager am = (AlarmManager)
