@@ -1905,6 +1905,8 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
             bundle.putLong(Constant.GS_PRODUCT_CODE, !nFormProductSelected.get(SM_SODao.PRODUCT_CODE).equalsIgnoreCase("-1") ? Long.parseLong(nFormProductSelected.get(SM_SODao.PRODUCT_CODE)) : Long.parseLong(mSoAux.get(SM_SODao.PRODUCT_CODE)));
             bundle.putInt(Constant.GC_STATUS_JUMP, 1);
             bundle.putInt(Constant.GC_STATUS, 1);
+            //LUCHE - 10/01/2022 - Aumentado timeout do sync de form para fica igual aos outros pontos do software
+            bundle.putInt(Constant.WS_CONNECTION_TIMEOUT, ConstantBaseApp.TIMEOUT_FOR_SYNC_FORM);
 
             mIntent.putExtras(bundle);
             //
