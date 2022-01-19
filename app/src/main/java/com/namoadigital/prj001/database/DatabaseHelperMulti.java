@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.namoadigital.prj001.migrations.MigrationsKt;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -274,6 +275,8 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
             db.execSQL(scripts[i].toLowerCase() + ";");
         }
         //
+
+        MigrationsKt.getMigrationV1().migrate(db);
         onCreate(db);
     }
 }
