@@ -4,7 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 public abstract class DatabaseBaseHelper extends SQLiteOpenHelper {
@@ -25,36 +25,24 @@ public abstract class DatabaseBaseHelper extends SQLiteOpenHelper {
         this.mIgnoreCounter = mIgnoreCounter;
     }
 
+    //TODO Esse metodo praticamento não faz mais nada, remover usa chamada?
     public String getDBHelperName() {
         try {
             if (mDBName == null || mDBName.isEmpty()) {
                 return "";
             }
 
-            return mDBName.replace(".db3", "_") + String.valueOf(mDBVersion) + ".db3";
+            //return mDBName.replace(".db3", "_") + String.valueOf(mDBVersion) + ".db3";
+            return mDBName;
 
         } catch (Exception e) {
             return "";
         }
     }
 
-    public boolean compareDBHelperNames(String name, int version) {
-        try {
-            String mDBNamePar = name.replace(".db3", "_") + String.valueOf(version) + ".db3";
-            String mDBNameLocal = mDBName.replace(".db3", "_") + String.valueOf(mDBVersion) + ".db3";
-
-            return mDBNameLocal.equalsIgnoreCase(mDBNamePar);
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
     public boolean compareDBHelperNames(String full_name) {
         try {
-            String mDBNamePar = full_name;
-            String mDBNameLocal = mDBName.replace(".db3", "_") + String.valueOf(mDBVersion) + ".db3";
-
-            return mDBNameLocal.equalsIgnoreCase(mDBNamePar);
+            return mDBName.equalsIgnoreCase(full_name);
         } catch (Exception e) {
             return false;
         }
@@ -90,10 +78,10 @@ public abstract class DatabaseBaseHelper extends SQLiteOpenHelper {
 
         try {
             if (name.contains("-1")) {
-                throw new Exception(Constant.EXCEPTION_DATABASE_NO_CUSTOMER_PREFERENCE);
+                throw new Exception(ConstantBaseApp.EXCEPTION_DATABASE_NO_CUSTOMER_PREFERENCE);
             }
         } catch (Exception e) {
-            if (e.toString().contains(Constant.EXCEPTION_DATABASE_NO_CUSTOMER_PREFERENCE)) {
+            if (e.toString().contains(ConstantBaseApp.EXCEPTION_DATABASE_NO_CUSTOMER_PREFERENCE)) {
                 ToolBox_Inf.registerException(getClass().getName(), e);
             }
         }

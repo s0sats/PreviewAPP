@@ -1,5 +1,9 @@
 package com.namoadigital.prj001.dao;
 
+import static com.namoadigital.prj001.util.ConstantBaseApp.DB_MODE_CHAT;
+import static com.namoadigital.prj001.util.ConstantBaseApp.DB_MODE_MULTI;
+import static com.namoadigital.prj001.util.ToolBox_Con.getDBHelperName;
+
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -8,10 +12,6 @@ import com.namoadigital.prj001.database.DatabaseHelperMulti;
 import com.namoadigital.prj001.database.DatabaseHelperSingle;
 import com.namoadigital.prj001.database.DatabaseManager;
 import com.namoadigital.prj001.util.ToolBox_Inf;
-
-import static com.namoadigital.prj001.util.ConstantBaseApp.DB_MODE_CHAT;
-import static com.namoadigital.prj001.util.ConstantBaseApp.DB_MODE_MULTI;
-import static com.namoadigital.prj001.util.ToolBox_Con.getDBHelperName;
 
 /**
  * Created by neomatrix on 18/01/17.
@@ -51,15 +51,15 @@ public class BaseDao {
             switch (mMode) {
                 case DB_MODE_MULTI:
                     DatabaseManager.addDatabaseHelper(new DatabaseHelperMulti(context, mDB_NAME, mDB_VERSION));
-
-                    this.db = DatabaseManager.getInstance().openDatabase(getDBHelperName(mDB_NAME, mDB_VERSION), mIgnoreCounter);
+                    //todo
+                    this.db = DatabaseManager.getInstance().openDatabase(getDBHelperName(mDB_NAME), mIgnoreCounter);
 
                     break;
 
                 case DB_MODE_CHAT:
                     DatabaseManager.addDatabaseHelper(new DatabaseHelperChat(context, mDB_NAME, mDB_VERSION));
 
-                    this.db = DatabaseManager.getInstance().openDatabase(getDBHelperName(mDB_NAME, mDB_VERSION), mIgnoreCounter);
+                    this.db = DatabaseManager.getInstance().openDatabase(getDBHelperName(mDB_NAME), mIgnoreCounter);
 
 
                     break;
@@ -67,7 +67,7 @@ public class BaseDao {
                 default:
                     DatabaseManager.addDatabaseHelper(new DatabaseHelperSingle(context, mDB_NAME, mDB_VERSION));
 
-                    this.db = DatabaseManager.getInstance().openDatabase(getDBHelperName(mDB_NAME, mDB_VERSION), mIgnoreCounter);
+                    this.db = DatabaseManager.getInstance().openDatabase(getDBHelperName(mDB_NAME), mIgnoreCounter);
 
 
                     break;
@@ -82,13 +82,13 @@ public class BaseDao {
         try {
             switch (mMode) {
                 case DB_MODE_MULTI:
-                    DatabaseManager.getInstance().closeDatabase(getDBHelperName(mDB_NAME, mDB_VERSION), mIgnoreCounter);
+                    DatabaseManager.getInstance().closeDatabase(getDBHelperName(mDB_NAME), mIgnoreCounter);
                     break;
                 case DB_MODE_CHAT:
-                    DatabaseManager.getInstance().closeDatabase(getDBHelperName(mDB_NAME, mDB_VERSION), mIgnoreCounter);
+                    DatabaseManager.getInstance().closeDatabase(getDBHelperName(mDB_NAME), mIgnoreCounter);
                     break;
                 default:
-                    DatabaseManager.getInstance().closeDatabase(getDBHelperName(mDB_NAME, mDB_VERSION), mIgnoreCounter);
+                    DatabaseManager.getInstance().closeDatabase(getDBHelperName(mDB_NAME), mIgnoreCounter);
                     break;
             }
         } catch (Exception e) {

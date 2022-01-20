@@ -1,34 +1,32 @@
 package com.namoadigital.prj001.ui;
 
 import static com.namoa_digital.namoa_library.util.ConstantBase.PKG_CLEAN;
-import static com.namoadigital.prj001.util.Constant.CACHE_PATH;
-import static com.namoadigital.prj001.util.Constant.CACHE_PATH_PHOTO;
-import static com.namoadigital.prj001.util.Constant.CACHE_PDF;
-import static com.namoadigital.prj001.util.Constant.DB_FULL_BASE;
-import static com.namoadigital.prj001.util.Constant.DB_FULL_CHAT;
-import static com.namoadigital.prj001.util.Constant.DB_FULL_CUSTOM;
-import static com.namoadigital.prj001.util.Constant.DB_NAME_BASE;
-import static com.namoadigital.prj001.util.Constant.DB_NAME_CHAT;
-import static com.namoadigital.prj001.util.Constant.DB_NAME_CUSTOM;
-import static com.namoadigital.prj001.util.Constant.DB_PATH;
-import static com.namoadigital.prj001.util.Constant.DB_VERSION_BASE;
-import static com.namoadigital.prj001.util.Constant.DB_VERSION_CHAT;
-import static com.namoadigital.prj001.util.Constant.DB_VERSION_CUSTOM;
-import static com.namoadigital.prj001.util.Constant.IMG_PATH;
-import static com.namoadigital.prj001.util.Constant.SUPPORT_PATH;
-import static com.namoadigital.prj001.util.Constant.THU_PATH;
-import static com.namoadigital.prj001.util.Constant.ZIP_NAME;
-import static com.namoadigital.prj001.util.Constant.ZIP_NAME_FULL;
-import static com.namoadigital.prj001.util.Constant.ZIP_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CACHE_CHAT_PATH;
+import static com.namoadigital.prj001.util.ConstantBaseApp.CACHE_PATH;
+import static com.namoadigital.prj001.util.ConstantBaseApp.CACHE_PATH_PHOTO;
+import static com.namoadigital.prj001.util.ConstantBaseApp.CACHE_PDF;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_NAME_FULL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_PREFIX;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CUSTOMER_SITE_LICENSE_JSON_PATH;
+import static com.namoadigital.prj001.util.ConstantBaseApp.DB_FULL_BASE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.DB_FULL_CHAT;
+import static com.namoadigital.prj001.util.ConstantBaseApp.DB_FULL_CUSTOM;
+import static com.namoadigital.prj001.util.ConstantBaseApp.DB_NAME_BASE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.DB_NAME_CHAT;
+import static com.namoadigital.prj001.util.ConstantBaseApp.DB_NAME_CUSTOM;
+import static com.namoadigital.prj001.util.ConstantBaseApp.DB_PATH;
+import static com.namoadigital.prj001.util.ConstantBaseApp.DB_PREFIX_CUSTOM;
+import static com.namoadigital.prj001.util.ConstantBaseApp.DB_VERSION_BASE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.DB_VERSION_CHAT;
+import static com.namoadigital.prj001.util.ConstantBaseApp.DB_VERSION_CUSTOM;
 import static com.namoadigital.prj001.util.ConstantBaseApp.GENERIC_CHANNEL_ID;
+import static com.namoadigital.prj001.util.ConstantBaseApp.IMG_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PENDENCY_CHANNEL_ID;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME_FULL;
+import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_PATH;
+import static com.namoadigital.prj001.util.ConstantBaseApp.THU_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TICKET_JSON_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SERIAL_NAME_FULL;
@@ -36,6 +34,9 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SERIAL_PREFIX;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SO_NAME_FULL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SO_PREFIX;
 import static com.namoadigital.prj001.util.ConstantBaseApp.UNSENT_IMG_PATH;
+import static com.namoadigital.prj001.util.ConstantBaseApp.ZIP_NAME;
+import static com.namoadigital.prj001.util.ConstantBaseApp.ZIP_NAME_FULL;
+import static com.namoadigital.prj001.util.ConstantBaseApp.ZIP_PATH;
 
 import android.app.Application;
 import android.app.NotificationManager;
@@ -46,7 +47,6 @@ import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoadigital.prj001.BuildConfig;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.receiver.WBR_Connections_Change;
-import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -131,17 +131,18 @@ public class AppBase extends Application {
         DB_FULL_BASE = DB_PATH + "/" + DB_NAME_BASE;
 
         DB_NAME_CUSTOM = "cc.db3";
-        DB_VERSION_CUSTOM = 73;
+        DB_PREFIX_CUSTOM = "namoa_app_";
+        DB_VERSION_CUSTOM = 1;
         DB_FULL_CUSTOM = DB_PATH + "/" + DB_NAME_CUSTOM;
 
         //DB_NAME_CHAT = "namoa_chat.db3";
         DB_VERSION_CHAT = 6;
         DB_FULL_CHAT = DB_PATH + "/" + DB_NAME_CHAT;
 
-        Constant.PRJ001_VERSION_CODE = BuildConfig.VERSION_CODE;
-        Constant.PRJ001_VERSION = BuildConfig.VERSION_NAME;
+        ConstantBaseApp.PRJ001_VERSION_CODE = BuildConfig.VERSION_CODE;
+        ConstantBaseApp.PRJ001_VERSION = BuildConfig.VERSION_NAME;
 
-        PKG_CLEAN = String.valueOf(Constant.PRJ001_VERSION);
+        PKG_CLEAN = String.valueOf(ConstantBaseApp.PRJ001_VERSION);
 
         String PGK_CLEAN_P = ToolBox_Con.getPreference_PKG_CLEAN(getApplicationContext());
         /**
@@ -154,27 +155,27 @@ public class AppBase extends Application {
          * OBS: OS FLAVOR COM OCR DEVEM TER SETADO COMO PREFERENCIA  PKG_APP_TYPE O VALOR PKG_APP_TYPE_MICROBLINK_OCR_VIN
          * ENQUANTO AS SEM OCR VALOR PKG_APP_TYPE_STANDARD
          */
-        Constant.PKG_APP_TYPE_DEFAULT = Constant.PKG_APP_TYPE_STANDARD;
+        ConstantBaseApp.PKG_APP_TYPE_DEFAULT = ConstantBaseApp.PKG_APP_TYPE_STANDARD;
         String PGK_APP_TYPE_P = ToolBox_Con.getPreference_PKG_APP_TYPE(getApplicationContext());
         //
-        if (!PKG_CLEAN.equals(PGK_CLEAN_P) || !Constant.PKG_APP_TYPE_DEFAULT.equals(PGK_APP_TYPE_P)) {
+        if (!PKG_CLEAN.equals(PGK_CLEAN_P) || !ConstantBaseApp.PKG_APP_TYPE_DEFAULT.equals(PGK_APP_TYPE_P)) {
             ToolBox_Con.cleanPreferences(getApplicationContext());
             if(!PKG_CLEAN.equals(PGK_CLEAN_P)) {
                 ToolBox_Con.setPreference_PKG_CLEAN(getApplicationContext(), PKG_CLEAN);
             }
             //
-            if(!Constant.PKG_APP_TYPE_DEFAULT.equals(PGK_APP_TYPE_P)) {
-                ToolBox_Con.setPreference_PKG_APP_TYPE(getApplicationContext(), Constant.PKG_APP_TYPE_DEFAULT);
+            if(!ConstantBaseApp.PKG_APP_TYPE_DEFAULT.equals(PGK_APP_TYPE_P)) {
+                ToolBox_Con.setPreference_PKG_APP_TYPE(getApplicationContext(), ConstantBaseApp.PKG_APP_TYPE_DEFAULT);
             }
         }
 
         ToolBox_Inf.libTranslation(getApplicationContext());
 
-        Constant.DEVELOPMENT_BASE = ToolBox_Inf.isDevelopmentBase();
+        ConstantBaseApp.DEVELOPMENT_BASE = ToolBox_Inf.isDevelopmentBase();
 
-        Constant.HM_ICON_NAMOA = R.mipmap.ic_namoa;
-        Constant.HM_ICON_NAMOA_GO_ACT021 = "com.namoadigital.prj001.ui.act021.Act021_Main";
-        Constant.HM_ICON_NAMOA_SERVICES = R.drawable.ic_n_service2_24x24;
+        ConstantBaseApp.HM_ICON_NAMOA = R.mipmap.ic_namoa;
+        ConstantBaseApp.HM_ICON_NAMOA_GO_ACT021 = "com.namoadigital.prj001.ui.act021.Act021_Main";
+        ConstantBaseApp.HM_ICON_NAMOA_SERVICES = R.drawable.ic_n_service2_24x24;
         ConstantBase.AUTHORITIES_FOR_PROVIDER = BuildConfig.APPLICATION_ID + ".fileprovider";
         /**
          * Migração target28+

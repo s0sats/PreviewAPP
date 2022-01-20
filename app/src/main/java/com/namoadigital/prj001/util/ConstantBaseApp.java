@@ -225,6 +225,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static int DB_VERSION_BASE;
 
     public static String DB_NAME_CUSTOM;
+    public static String DB_PREFIX_CUSTOM;
     public static String DB_FULL_CUSTOM = DB_PATH + "/" + DB_NAME_CUSTOM;
     public static int DB_VERSION_CUSTOM;
 

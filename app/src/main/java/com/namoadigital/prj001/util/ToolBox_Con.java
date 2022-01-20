@@ -1,5 +1,10 @@
 package com.namoadigital.prj001.util;
 
+import static android.content.Context.CONNECTIVITY_SERVICE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_SITE_OPTION;
+import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION;
+import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ONLY_MY_ACTIONS_OPTION;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.LocationManager;
@@ -49,11 +54,6 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-
-import static android.content.Context.CONNECTIVITY_SERVICE;
-import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_SITE_OPTION;
-import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION;
-import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ONLY_MY_ACTIONS_OPTION;
 
 /**
  * Created by neomatrix on 09/01/17.
@@ -1316,8 +1316,16 @@ public class ToolBox_Con {
     }
 
 
+    /**
+     * LUCHE - 20/01/2022
+     * Modificado metodo para retornar o nome dos bancos custom
+     * namoa_app_customer_code.db3
+     * @param customer_code
+     * @return
+     */
     public static String customDBPath(long customer_code) {
-        return (Constant.DB_PATH + "/C_" + customer_code + "_" + Constant.DB_VERSION_CUSTOM + ".db3");
+        //return (Constant.DB_PATH + "/C_" + customer_code + "_" + Constant.DB_VERSION_CUSTOM + ".db3");
+        return (Constant.DB_PATH + "/"+ ConstantBaseApp.DB_PREFIX_CUSTOM + customer_code + ".db3");
     }
 
     public static boolean isOnline(Context context) {
@@ -1396,13 +1404,20 @@ public class ToolBox_Con {
         }
     }
 
-    public static String getDBHelperName(String mDBName, int mDBVersion) {
+    /**
+     * LUCHE - 20/01/2022
+     * Modificado metodo, removendo da DBVErsion da assinatura e tb da criaçaõ do nome
+     * deixando apenas a tratativa de se null ou vazio, retornar ""
+     * @param mDBName
+     * @return
+     */
+    public static String getDBHelperName(String mDBName) {
         try {
             if (mDBName == null || mDBName.isEmpty()) {
                 return "";
             }
 
-            return mDBName.replace(".db3", "_") + String.valueOf(mDBVersion) + ".db3";
+            return mDBName;
 
         } catch (Exception e) {
             return "";
