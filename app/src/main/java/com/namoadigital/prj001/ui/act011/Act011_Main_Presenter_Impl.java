@@ -2268,7 +2268,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     }
 
     @Override
-    public InspectionCell setNotVerifyItem(String itemPk, String geOsDateStart) {
+    public InspectionCell setAlreadyOkItem(String itemPk, String geOsDateStart) {
         String[] device_item_pk = itemPk.split("\\.");
         GeOsDeviceItem deviceItem = geOsDeviceItemDao.getByString(
                 new GeOsDeviceItem_Sql_001(
@@ -2285,7 +2285,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 ).toSqlQuery()
         );
         //
-        deviceItem.setExec_type(GeOsDeviceItem.EXEC_TYPE_NOT_VERIFIED);
+        deviceItem.setExec_type(GeOsDeviceItem.EXEC_TYPE_ALREADY_OK);
         deviceItem.setExec_date(ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT));
         deviceItem.setStatus_answer(SYS_STATUS_DONE);
 

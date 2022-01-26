@@ -14,6 +14,42 @@
         <item name="android:textColorPrimary">@color/namoa_color_dark_blue</item>
         <item name="android:statusBarColor">@color/namoa_color_dark_blue</item>
         <!--   <item name="android:textColorPrimary">@color/namoa_color_light_blue</item>-->
+
+        <!-- Material3 attributes (needed if parent="Theme.MaterialComponents"). -->
+        <item name="colorPrimaryInverse">@color/namoa_color_light_blue</item>
+        <item name="colorPrimaryContainer">@color/namoa_color_light_blue</item>
+        <item name="colorOnPrimaryContainer">@color/namoa_color_light_blue</item>
+        <item name="colorSecondaryContainer">@color/namoa_color_dark_blue</item>
+        <item name="colorOnSecondaryContainer">@color/namoa_color_dark_blue</item>
+        <item name="colorTertiary">@color/namoa_color_light_green3</item>
+        <item name="colorOnTertiary">@color/namoa_color_light_green3</item>
+        <item name="colorTertiaryContainer">@color/namoa_color_light_green3</item>
+        <item name="colorOnTertiaryContainer">@color/namoa_color_light_green3</item>
+        <item name="colorSurfaceVariant">@color/namoa_color_light_blue</item>
+        <item name="colorOnSurfaceVariant">@color/namoa_color_light_blue</item>
+        <item name="colorSurfaceInverse">@color/namoa_color_light_blue</item>
+        <item name="colorOnSurfaceInverse">@color/namoa_color_light_blue</item>
+        <item name="colorOutline">@color/namoa_color_dark_blue</item>
+        <item name="colorErrorContainer">@color/namoa_color_danger_red</item>
+        <item name="colorOnErrorContainer">@color/namoa_color_danger_red_alpha</item>
+        <item name="textAppearanceDisplayLarge">@style/TextAppearance.Material3.DisplayLarge</item>
+        <item name="textAppearanceDisplayMedium">@style/TextAppearance.Material3.DisplayMedium</item>
+        <item name="textAppearanceDisplaySmall">@style/TextAppearance.Material3.DisplaySmall</item>
+        <item name="textAppearanceHeadlineLarge">@style/TextAppearance.Material3.HeadlineLarge</item>
+        <item name="textAppearanceHeadlineMedium">@style/TextAppearance.Material3.HeadlineMedium</item>
+        <item name="textAppearanceHeadlineSmall">@style/TextAppearance.Material3.HeadlineSmall</item>
+        <item name="textAppearanceTitleLarge">@style/TextAppearance.Material3.TitleLarge</item>
+        <item name="textAppearanceTitleMedium">@style/TextAppearance.Material3.TitleMedium</item>
+        <item name="textAppearanceTitleSmall">@style/TextAppearance.Material3.TitleSmall</item>
+        <item name="textAppearanceBodyLarge">@style/TextAppearance.Material3.BodyLarge</item>
+        <item name="textAppearanceBodyMedium">@style/TextAppearance.Material3.BodyMedium</item>
+        <item name="textAppearanceBodySmall">@style/TextAppearance.Material3.BodySmall</item>
+        <item name="textAppearanceLabelLarge">@style/TextAppearance.Material3.LabelLarge</item>
+        <item name="textAppearanceLabelMedium">@style/TextAppearance.Material3.LabelMedium</item>
+        <item name="textAppearanceLabelSmall">@style/TextAppearance.Material3.LabelSmall</item>
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.Material3.SmallComponent</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.Material3.MediumComponent</item>
+        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.Material3.LargeComponent</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -103,6 +139,65 @@
 
     <style name="TextInputLayoutHelperTextColorMainBlue" parent="Widget.Design.TextInputLayout">
         <item name="android:textColor">@color/namoa_dark_blue</item>
+    </style>
+
+    <style name="NamoaMaterialButtonOutlined" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="strokeColor">@color/namoa_color_dark_blue</item>
+        <item name="iconTint">@color/namoa_color_dark_blue</item>
+        <item name="android:textColor">@color/namoa_color_dark_blue</item>
+        <item name="iconSize">18dp</item>
+    </style>
+
+    <style name="NamoaMaterialButtonElevated" parent="Widget.Material3.Button.ElevatedButton.Icon">
+        <item name="strokeColor">@color/namoa_color_dark_blue</item>
+        <item name="iconTint">@color/namoa_color_dark_blue</item>
+        <item name="android:textColor">@color/namoa_color_dark_blue</item>
+        <item name="iconSize">18dp</item>
+    </style>
+
+    <style name="NamoaMaterialButtonElevatedFilled" parent="Widget.Material3.Button.ElevatedButton.Icon">
+        <item name="strokeColor">@color/namoa_color_dark_blue</item>
+        <item name="backgroundTint">@color/namoa_color_dark_blue</item>
+        <item name="iconTint">@color/padrao_WHITE</item>
+        <item name="android:textColor">@color/padrao_WHITE</item>
+        <item name="iconSize">18dp</item>
+    </style>
+
+    <style name="NamoaMaterialButtonFilled" parent="Widget.Material3.Button.Icon">
+        <item name="strokeColor">@color/namoa_color_dark_blue</item>
+        <item name="iconTint">@color/padrao_WHITE</item>
+        <item name="android:textColor">@color/padrao_WHITE</item>
+        <item name="iconSize">18dp</item>
+    </style>
+
+    <style name="NamoaMaterialButtonFilledGreen" parent="Widget.Material3.Button">
+        <item name="strokeColor">@color/namoa_color_light_green5</item>
+<!--        <item name="backgroundTint">@color/namoa_green_bg_color_states</item>-->
+        <item name="backgroundTint">@color/namoa_color_light_green5</item>
+        <item name="iconSize">18dp</item>
+    </style>
+
+    <style name="NamoaMaterialButtonFilledDarkBlue" parent="Widget.Material3.Button.Icon">
+        <item name="strokeColor">@color/namoa_color_dark_blue</item>
+        <item name="backgroundTint">@color/namoa_color_dark_blue</item>
+        <item name="iconSize">18dp</item>
+        <item name="iconTint">@color/padrao_WHITE</item>
+        <item name="android:textColor">@color/padrao_WHITE</item>
+    </style>
+
+    <style name="NamoaMaterialButtonFilledOrange" parent="Widget.Material3.Button.Icon">
+        <item name="strokeColor">@color/namoa_color_highlight_required_item</item>
+        <item name="backgroundTint">@color/namoa_color_highlight_required_item</item>
+        <item name="iconSize">18dp</item>
+        <item name="iconTint">@color/padrao_WHITE</item>
+        <item name="android:textColor">@color/padrao_WHITE</item>
+    </style>
+
+    <style name="NamoaMaterialButtonText" parent="Widget.Material3.Button.TextButton.Icon">
+        <item name="strokeColor">@color/namoa_color_dark_blue</item>
+        <item name="iconTint">@color/namoa_color_dark_blue</item>
+        <item name="android:textColor">@color/namoa_color_dark_blue</item>
+        <item name="iconSize">18dp</item>
     </style>
 
 </resources>

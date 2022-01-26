@@ -77,7 +77,7 @@ public interface Act011_Main_Presenter {
 
     void addGeOsDeviceItemPhotosIntoFiles(GE_Custom_Form_Local formLocal, ArrayList<GE_File> geFiles, String sDate);
 
-    InspectionCell setNotVerifyItem(String itemPk, String date_start);
+    InspectionCell setAlreadyOkItem(String itemPk, String date_start);
 
     int getMissingForecastAnswers(GeOs geOs);
 }

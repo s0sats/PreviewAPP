@@ -136,7 +136,7 @@
             app:layout_constraintTop_toBottomOf="@+id/chk_non_forecast_item"
             app:layout_constraintVertical_bias="0.0"
             tools:listitem="@layout/act011_inspection_question_form_cell"
-            tools:itemCount="1"
+            tools:itemCount="2"
             />
 
         <androidx.constraintlayout.widget.ConstraintLayout

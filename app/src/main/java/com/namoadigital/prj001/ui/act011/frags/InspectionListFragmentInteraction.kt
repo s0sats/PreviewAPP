@@ -13,7 +13,7 @@ interface InspectionListFragmentInteraction {
         itemCodeAndSeqPk: String
     )
     //
-    fun onNotVerifyAction(itemPk: String): InspectionCell
+    fun onAlreadyOkAction(itemPk: String): InspectionCell
     fun onRefreshTabCounter(tabIndex: Int)
     fun getObjectView(position: Int): AcessoryFormView
 }

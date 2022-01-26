@@ -29,7 +29,7 @@ class Act011InspectionFormAdapter(
     private val acessoryFormView: AcessoryFormView,
     private val hmAuxTrans: HMAux,
     private val onItemSelected: (position: Int, itemPk: String) -> Unit,
-    private val onNotVerifyItemSelected: (position: Int, item: InspectionCell) -> Unit,
+    private val onAlreadyOkItemSelected: (position: Int, item: InspectionCell) -> Unit,
     private val onAdapterFilterApplied: (Int) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
     private var inspections: MutableList<InspectionCell>
@@ -68,14 +68,18 @@ class Act011InspectionFormAdapter(
                 binding.clContainer.setBackgroundColor(binding.root.context.resources.getColor(R.color.namoa_color_gray_5))
             }
             //
-            binding.root.setOnClickListener {
+            val openItemListener = View.OnClickListener {
                 onItemSelected(
                     position,
                     inspectionCell.itemCodeAndSeq
                 )
             }
-            holder.binding.tvAutoSkipInspection.setOnClickListener {
-                onNotVerifyItemSelected(
+            binding.root.setOnClickListener(openItemListener)
+            holder.binding.tvInspectionVerificationAction.setOnClickListener(openItemListener)
+            holder.binding.btnInspectionOngoingAction.setOnClickListener(openItemListener)
+            //
+            holder.binding.tvAutoAlreadyOk.setOnClickListener {
+                onAlreadyOkItemSelected(
                     position,
                     inspectionCell
                 )
@@ -112,15 +116,15 @@ class Act011InspectionFormAdapter(
         return mFilter as InspectionFormFilter
     }
 
-    fun refreshList(position: Int, onNotVerifyActionItem: InspectionCell) {
+    fun refreshList(position: Int, onAlreadyOkActionItem: InspectionCell) {
         //LUCHE - 04/11/2021 - Altera highlightedItemPosition para o item passado e notifica mudança
         //no anterior caso exista.
-        val oldHighlight = highlightedItemPosition;
+        val oldHighlight = highlightedItemPosition
         highlightedItemPosition = position
         if(oldHighlight > -1) {
             notifyItemChanged(oldHighlight)
         }
-        inspectionsFiltered[position] = onNotVerifyActionItem
+        inspectionsFiltered[position] = onAlreadyOkActionItem
         notifyItemChanged(position)
     }
 
@@ -188,21 +192,21 @@ class Act011InspectionFormAdapter(
         fun onBinding(inspection: InspectionCell) {
             inspection.apply {
                 val context = binding.root.context
-                binding.tvInspectionOngoingAction.visibility = View.GONE
+                binding.btnInspectionOngoingAction.visibility = View.GONE
                 if (isDone) {
                     binding.llAnswerInfo.visibility = View.VISIBLE
-                    binding.tvInspectAnswered.visibility = View.VISIBLE
-                    binding.tvInspectionOngoingAction.visibility = View.GONE
+                    binding.btnInspectAnswered.visibility = View.VISIBLE
+                    binding.btnInspectionOngoingAction.visibility = View.GONE
                     binding.tvInspectionVerificationAction.visibility = View.GONE
-                    binding.tvAutoSkipInspection.visibility = View.GONE
+                    binding.tvAutoAlreadyOk.visibility = View.GONE
                 } else {
                     binding.llAnswerInfo.visibility = View.GONE
-                    binding.tvInspectAnswered.visibility = View.GONE
+                    binding.btnInspectAnswered.visibility = View.GONE
                     binding.tvInspectionVerificationAction.visibility = View.VISIBLE
-                    if (!InspectionCell.NORMAL.equals(inspection.status)) {
-                        binding.tvAutoSkipInspection.visibility = View.VISIBLE
+                    if (!InspectionCell.MANUAL_ALERT.equals(inspection.status)) {
+                        binding.tvAutoAlreadyOk.visibility = View.VISIBLE
                     } else {
-                        binding.tvAutoSkipInspection.visibility = View.GONE
+                        binding.tvAutoAlreadyOk.visibility = View.GONE
                     }
                 }
                 //
@@ -214,10 +218,7 @@ class Act011InspectionFormAdapter(
                     } else {
                         text = statusTransalted
                     }
-                    background.setColorFilter(
-                        ContextCompat.getColor(context, tagColor),
-                        android.graphics.PorterDuff.Mode.SRC_ATOP
-                    )
+                    setTextColor(ContextCompat.getColor(context,tagColor))
                     invalidate()
                 }
                 binding.vCellColorTag.apply {
@@ -228,56 +229,56 @@ class Act011InspectionFormAdapter(
                 }
                 //
                 if (answerStatus != null) {
-                    binding.tvInspectAnswered.text = execTypeTranslated
+                    binding.btnInspectAnswered.text = execTypeTranslated
                     when (execType) {
                         EXEC_TYPE_FIXED -> {
-                            binding.ivInspectAnswered.setImageDrawable(
+                            binding.btnInspectAnswered.icon =
                                 ContextCompat.getDrawable(
                                     Objects.requireNonNull(context),
                                     R.drawable.ic_build_black_24dp
                                 )
-                            )
+
                         }
                         EXEC_TYPE_ALERT -> {
-                            binding.ivInspectAnswered.setImageDrawable(
+                            binding.btnInspectAnswered.icon =
                                 ContextCompat.getDrawable(
                                     Objects.requireNonNull(context),
                                     R.drawable.ic_outline_report_problem_24_black
                                 )
-                            )
+
                         }
                         EXEC_TYPE_ALREADY_OK -> {
-                            binding.ivInspectAnswered.setImageDrawable(
+                            binding.btnInspectAnswered.icon =
                                 ContextCompat.getDrawable(
                                     Objects.requireNonNull(context),
                                     R.drawable.ic_done_black_24dp
                                 )
-                            )
+
                         }
+
                         EXEC_TYPE_NOT_VERIFIED -> {
-                            binding.ivInspectAnswered.setImageDrawable(
+                            binding.btnInspectAnswered.icon =
                                 ContextCompat.getDrawable(
                                     Objects.requireNonNull(context),
                                     R.drawable.ic_baseline_redo_24_black
                                 )
-                            )
                         }
                     }
 
                     if (!isDone) {
-                        binding.tvInspectionOngoingAction.text =
+                        binding.btnInspectionOngoingAction.text =
                             hmAuxTrans.get("inspection_ongoing_action_lbl")
-                        binding.tvInspectionOngoingAction.visibility = View.VISIBLE
+                        binding.btnInspectionOngoingAction.visibility = View.VISIBLE
                         binding.tvInspectionVerificationAction.visibility = View.GONE
-                        binding.tvAutoSkipInspection.visibility = View.GONE
+                        binding.tvAutoAlreadyOk.visibility = View.GONE
                         binding.llAnswerInfo.visibility = View.VISIBLE
                     }
                 } else {
                     binding.tvInspectionVerificationAction.visibility = View.VISIBLE
                     binding.tvInspectionVerificationAction.text =
                         hmAuxTrans.get("inspection_verify_action_lbl")
-                    binding.tvAutoSkipInspection.text =
-                        hmAuxTrans.get("inspection_not_verify_action_lbl")
+                    binding.tvAutoAlreadyOk.text =
+                        hmAuxTrans.get("inspection_already_ok_action_lbl")
                 }
                 //
                 if (isNewItem
@@ -294,13 +295,16 @@ class Act011InspectionFormAdapter(
                         }else{
                             "${hmAuxTrans["inspection_missing_days"]}: ${abs(dayCount)}"
                         }
-                        setTextColor(
-                            if(dayCount < 0 && !isDone){
-                                ContextCompat.getColor(context,R.color.namoa_os_form_problem_red)
-                            } else{
-                                ContextCompat.getColor(context,R.color.gray_colors_menu)
-                            }
-                        )
+                        //LUCHE - 26/01/2022
+                        //Conforme solicitado em BUS-329, sempre exibir a cor cinza.
+//                        setTextColor(
+//                            if(dayCount < 0 && !isDone){
+//                                ContextCompat.getColor(context,R.color.namoa_os_form_problem_red)
+//                            } else{
+//                                ContextCompat.getColor(context,R.color.gray_colors_menu)
+//                            }
+//                        )
+                        setTextColor(ContextCompat.getColor(context,R.color.gray_colors_menu))
                     }
                 }
                 //
