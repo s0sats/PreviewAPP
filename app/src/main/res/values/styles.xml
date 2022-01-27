@@ -141,7 +141,7 @@
         <item name="android:textColor">@color/namoa_dark_blue</item>
     </style>
 
-    <style name="NamoaMaterialButtonOutlined" parent="Widget.Material3.Button.OutlinedButton">
+    <style name="NamoaMaterialButtonOutlined" parent="Widget.Material3.Button.OutlinedButton.Icon">
         <item name="strokeColor">@color/namoa_color_dark_blue</item>
         <item name="iconTint">@color/namoa_color_dark_blue</item>
         <item name="android:textColor">@color/namoa_color_dark_blue</item>
