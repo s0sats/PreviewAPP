@@ -49,7 +49,7 @@ public class Sql_Act027_Product_Selection_001 implements Specification {
                         "      t.recursive_code_father = " + s_recursive_code_father  + "\n" +
                         "      and ( '" + s_filter  + "' IS NULL OR 1 = 0)\n" +
                         "   ORDER BY\n" +
-                        "      t.group_desc;")
+                        "      trim(t.group_desc);")
                 //.append("group_code#group_id#group_desc#full_group_desc#type#recursive_code")
                 .toString().replace("'%null%'","null").replace("'null'","null");
 

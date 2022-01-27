@@ -57,7 +57,7 @@ public class Sql_Act027_Product_Selection_002 implements Specification {
                             "    and pgp.product_code is null and '" + s_filter + "' IS NULL  \n" +
                             "    or ( '" + s_filter + "' IS NOT NULL and ( lower(p.product_id) GLOB lower('*" + s_filter + "*') OR lower(p.product_desc) GLOB lower('*" + s_filter + "*' )) )" +
                             "  ORDER BY \n" +
-                            "     p.product_desc;")
+                            "     trim(p.product_desc);")
                     //.append("product_code#product_id#product_desc#full_product_desc#type")
                     .toString()
                     .replace("'%null%'","null")
@@ -83,7 +83,7 @@ public class Sql_Act027_Product_Selection_002 implements Specification {
                             "              AND (lower(p.product_id) GLOB lower('*" + s_filter + "*') OR lower(p.product_desc) GLOB lower('*" + s_filter + "*'))" +
                             "           ) \n" +
                             "     ORDER BY\n" +
-                            "        P.product_desc;")
+                            "        trim(P.product_desc);")
                     //.append("product_code#product_id#product_desc#full_product_desc#type")
                     .toString().replace("'%null%'","null")
                     .replace("'null'","null")
