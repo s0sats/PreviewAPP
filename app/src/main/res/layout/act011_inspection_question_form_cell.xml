@@ -162,14 +162,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
+                app:layout_constrainedWidth="true"
+                android:clickable="false"
+                android:focusable="false"
+                app:layout_constraintHorizontal_bias="1"
                 app:icon="@drawable/ic_build_black_24dp"
                 app:layout_constraintBottom_toBottomOf="@+id/ll_answer_info"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/ll_answer_info"
                 app:layout_constraintTop_toTopOf="@+id/ll_answer_info"
-                tools:text="Ajuste realizado"
-                android:clickable="false"
-                android:focusable="false"
-                />
+                tools:text="Ajuste realizado" />
 
             <LinearLayout
                 android:id="@+id/ll_answer_info"
