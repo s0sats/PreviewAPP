@@ -18,9 +18,15 @@ import com.namoadigital.prj001.sql.Sql_Act027_Product_Selection_002;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.text.Collator;
+import java.text.Normalizer;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Objects;
 
 public class Act_Product_Selection_Presenter implements Act_Product_Selection_Contract.I_Presenter {
+    public static final String DESC_FOR_SORT = "descForSort";
     private Context context;
     private Act_Product_Selection_Contract.I_View mView;
     private MD_ProductDao productDao;
@@ -58,7 +64,7 @@ public class Act_Product_Selection_Presenter implements Act_Product_Selection_Co
         );
 
         ArrayList<HMAux> data = new ArrayList<>();
-
+        ArrayList<HMAux> sortedProducts = new ArrayList<>();
         for (HMAux aux : groups) {
             HMAux item = new HMAux();
             item.put("code", aux.get("group_code"));
@@ -66,10 +72,15 @@ public class Act_Product_Selection_Presenter implements Act_Product_Selection_Co
             item.put("id", aux.get("group_id"));
             item.put("full_desc", aux.get("full_group_desc"));
             item.put("type", aux.get("type"));
+            String group_desc = Normalizer.normalize(aux.get("group_desc"), Normalizer.Form.NFD);
+            item.put(DESC_FOR_SORT, group_desc);
             // Hugo
             item.put("recursive", aux.get("recursive_code"));
             //
             data.add(item);
+        }
+        if(data.size() > 1) {
+            sortResults(data);
         }
 
         for (HMAux aux : products) {
@@ -80,9 +91,17 @@ public class Act_Product_Selection_Presenter implements Act_Product_Selection_Co
             item.put("full_desc", aux.get("full_product_desc"));
             item.put("type", aux.get("type"));
             item.put("recursive", aux.get(""));
+            String product_desc = Normalizer.normalize(aux.get("product_desc"), Normalizer.Form.NFD);
+            item.put(DESC_FOR_SORT, product_desc);
             //
-            data.add(item);
+            sortedProducts.add(item);
         }
+        if(sortedProducts.size() > 1) {
+            sortResults(sortedProducts);
+        }
+
+        data.addAll(sortedProducts);
+        sortedProducts.clear();
 
         if (data.size() == 1 && returnOnFound) {
             mView.sendResult(
@@ -95,6 +114,19 @@ public class Act_Product_Selection_Presenter implements Act_Product_Selection_Co
         } else {
             mView.loadGroups_Products(data);
         }
+    }
+
+    private void sortResults(ArrayList<HMAux> itemsForSort) {
+        Comparator<HMAux> comparator = new Comparator<HMAux>() {
+            @Override
+            public int compare(HMAux product, HMAux productAux) {
+                String description = product.get(DESC_FOR_SORT) != null ? Objects.requireNonNull(product.get(DESC_FOR_SORT)).trim() : "";
+                String descriptionAux = productAux.get(DESC_FOR_SORT) != null ? Objects.requireNonNull(productAux.get(DESC_FOR_SORT)).trim() : "";
+
+                return Collator.getInstance().compare(description, descriptionAux);
+            }
+        };
+        Collections.sort(itemsForSort, comparator);
     }
 
     @Override
@@ -138,6 +170,7 @@ public class Act_Product_Selection_Presenter implements Act_Product_Selection_Co
         );
         //
         ArrayList<HMAux> data = new ArrayList<>();
+        ArrayList<HMAux> sortedProducts = new ArrayList<>();
         //
         for (HMAux aux : groups) {
             HMAux item = new HMAux();
@@ -146,10 +179,15 @@ public class Act_Product_Selection_Presenter implements Act_Product_Selection_Co
             item.put("id", aux.get("group_id"));
             item.put("full_desc", aux.get("full_group_desc"));
             item.put("type", aux.get("type"));
+            String group_desc = Normalizer.normalize(aux.get("group_desc"), Normalizer.Form.NFD);
+            item.put(DESC_FOR_SORT, group_desc.replaceAll("[^\\p{ASCII}]", ""));
             // Hugo
             item.put("recursive", aux.get("recursive_code"));
             //
             data.add(item);
+        }
+        if(data.size() > 1) {
+            sortResults(data);
         }
 
         for (HMAux aux : products) {
@@ -160,9 +198,17 @@ public class Act_Product_Selection_Presenter implements Act_Product_Selection_Co
             item.put("full_desc", aux.get("full_product_desc"));
             item.put("type", aux.get("type"));
             item.put("recursive", aux.get(""));
+            String product_desc = Normalizer.normalize(aux.get("product_desc"), Normalizer.Form.NFD);
+            item.put(DESC_FOR_SORT, product_desc.replaceAll("[^\\p{ASCII}]", ""));
             //
-            data.add(item);
+            sortedProducts.add(item);
         }
+        if(sortedProducts.size() > 1) {
+            sortResults(sortedProducts);
+        }
+
+        data.addAll(sortedProducts);
+        sortedProducts.clear();
 
         if (data.size() == 1 && returnOnFound) {
             mView.sendResult(
