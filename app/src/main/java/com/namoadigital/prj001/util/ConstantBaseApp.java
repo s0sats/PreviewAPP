@@ -955,4 +955,9 @@ public class ConstantBaseApp extends ConstantBase {
      */
     public static final int TIMEOUT_FOR_SYNC_FULL = 300000;
     public static final int TIMEOUT_FOR_SYNC_FORM = 180000;
+
+    /*
+     * Constante para Ordernação de produtos e grupos.
+     */
+    public static final String DESC_FOR_SORT = "descForSort";
 }

@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act027;
 
+import static com.namoadigital.prj001.util.ConstantBaseApp.DESC_FOR_SORT;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -26,6 +28,7 @@ import com.namoadigital.prj001.sql.Sql_Act027_Product_Selection_002;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -256,7 +259,7 @@ public class Act027_Product_Selection extends BaseFragment {
             );
 
             ArrayList<HMAux> data = new ArrayList<>();
-
+            ArrayList<HMAux> sortedProducts = new ArrayList<>();
             for (HMAux aux : groups) {
                 HMAux item = new HMAux();
                 item.put("code", aux.get("group_code"));
@@ -267,9 +270,16 @@ public class Act027_Product_Selection extends BaseFragment {
                 // Hugo
                 item.put("recursive", aux.get("recursive_code"));
                 //
+                String product_desc = Normalizer.normalize(aux.get("group_desc"), Normalizer.Form.NFD);
+                item.put(DESC_FOR_SORT, product_desc);
+                //
                 data.add(item);
             }
-
+            //
+            if(data.size() > 1) {
+                ToolBox_Inf.sortResults(data,DESC_FOR_SORT);
+            }
+            //
             for (HMAux aux : products) {
                 HMAux item = new HMAux();
                 item.put("code", aux.get("product_code"));
@@ -279,9 +289,19 @@ public class Act027_Product_Selection extends BaseFragment {
                 item.put("type", aux.get("type"));
                 item.put("recursive", aux.get(""));
                 //
-                data.add(item);
+                String product_desc = Normalizer.normalize(aux.get("product_desc"), Normalizer.Form.NFD);
+                item.put(DESC_FOR_SORT, product_desc);
+                //
+                sortedProducts.add(item);
             }
-
+            //
+            if(sortedProducts.size() > 1) {
+                ToolBox_Inf.sortResults(sortedProducts,DESC_FOR_SORT);
+            }
+            //
+            data.addAll(sortedProducts);
+            sortedProducts.clear();
+            //
             loadGroups_Products(data);
         }
     }

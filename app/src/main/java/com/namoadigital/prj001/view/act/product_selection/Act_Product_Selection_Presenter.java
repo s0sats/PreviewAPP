@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.view.act.product_selection;
 
+import static com.namoadigital.prj001.util.ConstantBaseApp.DESC_FOR_SORT;
+
 import android.content.Context;
 
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -18,15 +20,11 @@ import com.namoadigital.prj001.sql.Sql_Act027_Product_Selection_002;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
-import java.text.Collator;
 import java.text.Normalizer;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Objects;
 
 public class Act_Product_Selection_Presenter implements Act_Product_Selection_Contract.I_Presenter {
-    public static final String DESC_FOR_SORT = "descForSort";
+
     private Context context;
     private Act_Product_Selection_Contract.I_View mView;
     private MD_ProductDao productDao;
@@ -80,7 +78,7 @@ public class Act_Product_Selection_Presenter implements Act_Product_Selection_Co
             data.add(item);
         }
         if(data.size() > 1) {
-            sortResults(data);
+            ToolBox_Inf.sortResults(data, DESC_FOR_SORT);
         }
 
         for (HMAux aux : products) {
@@ -97,7 +95,7 @@ public class Act_Product_Selection_Presenter implements Act_Product_Selection_Co
             sortedProducts.add(item);
         }
         if(sortedProducts.size() > 1) {
-            sortResults(sortedProducts);
+            ToolBox_Inf.sortResults(sortedProducts,DESC_FOR_SORT);
         }
 
         data.addAll(sortedProducts);
@@ -114,19 +112,6 @@ public class Act_Product_Selection_Presenter implements Act_Product_Selection_Co
         } else {
             mView.loadGroups_Products(data);
         }
-    }
-
-    private void sortResults(ArrayList<HMAux> itemsForSort) {
-        Comparator<HMAux> comparator = new Comparator<HMAux>() {
-            @Override
-            public int compare(HMAux product, HMAux productAux) {
-                String description = product.get(DESC_FOR_SORT) != null ? Objects.requireNonNull(product.get(DESC_FOR_SORT)).trim() : "";
-                String descriptionAux = productAux.get(DESC_FOR_SORT) != null ? Objects.requireNonNull(productAux.get(DESC_FOR_SORT)).trim() : "";
-
-                return Collator.getInstance().compare(description, descriptionAux);
-            }
-        };
-        Collections.sort(itemsForSort, comparator);
     }
 
     @Override
@@ -180,14 +165,14 @@ public class Act_Product_Selection_Presenter implements Act_Product_Selection_Co
             item.put("full_desc", aux.get("full_group_desc"));
             item.put("type", aux.get("type"));
             String group_desc = Normalizer.normalize(aux.get("group_desc"), Normalizer.Form.NFD);
-            item.put(DESC_FOR_SORT, group_desc.replaceAll("[^\\p{ASCII}]", ""));
+            item.put(DESC_FOR_SORT, group_desc);
             // Hugo
             item.put("recursive", aux.get("recursive_code"));
             //
             data.add(item);
         }
         if(data.size() > 1) {
-            sortResults(data);
+            ToolBox_Inf.sortResults(data,DESC_FOR_SORT);
         }
 
         for (HMAux aux : products) {
@@ -199,14 +184,15 @@ public class Act_Product_Selection_Presenter implements Act_Product_Selection_Co
             item.put("type", aux.get("type"));
             item.put("recursive", aux.get(""));
             String product_desc = Normalizer.normalize(aux.get("product_desc"), Normalizer.Form.NFD);
-            item.put(DESC_FOR_SORT, product_desc.replaceAll("[^\\p{ASCII}]", ""));
+            item.put(DESC_FOR_SORT, product_desc);
             //
             sortedProducts.add(item);
         }
+        //
         if(sortedProducts.size() > 1) {
-            sortResults(sortedProducts);
+            ToolBox_Inf.sortResults(sortedProducts,DESC_FOR_SORT);
         }
-
+        //
         data.addAll(sortedProducts);
         sortedProducts.clear();
 

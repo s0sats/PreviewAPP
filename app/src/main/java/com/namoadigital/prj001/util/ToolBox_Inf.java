@@ -287,6 +287,7 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.Collator;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
@@ -294,10 +295,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.TimeZone;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -9113,5 +9117,18 @@ public class ToolBox_Inf {
         }
         //
         return noAccentText.toString();
+    }
+
+    public static void sortResults(ArrayList<HMAux> itemsForSort, String hmAuxKey) {
+        Comparator<HMAux> comparator = new Comparator<HMAux>() {
+            @Override
+            public int compare(HMAux product, HMAux productAux) {
+                String description = product.get(hmAuxKey) != null ? Objects.requireNonNull(product.get(hmAuxKey)).trim().toLowerCase() : "";
+                String descriptionAux = productAux.get(hmAuxKey) != null ? Objects.requireNonNull(productAux.get(hmAuxKey)).trim().toLowerCase() : "";
+
+                return Collator.getInstance().compare(description, descriptionAux);
+            }
+        };
+        Collections.sort(itemsForSort, comparator);
     }
 }
