@@ -1190,7 +1190,7 @@ public class ToolBox_Inf {
 
         LocalBroadcastManager.getInstance(context).sendBroadcast(mIntent);
     }
-
+    @Deprecated
     public static void executeUpdSW(Context context, String link, String required) {
         Intent mIntent = new Intent(context, WBR_UpdateSoftware.class);
         Bundle bundle = new Bundle();
@@ -1218,13 +1218,13 @@ public class ToolBox_Inf {
                         //sendBCStatus(context, "UPDATE_REQUIRED", context.getString(R.string.msg_update_required), s_Link, "0");
                         checkNewDbVersion(context,db_version);
                         //
-                        ToolBox.sendBCStatus(
-                            context,
-                            ConstantBase.PD_TYPE_UPDATE_REQUIRED,
-                            context.getString(R.string.msg_update_required),
-                            s_Link,
-                            "0"
-                        );
+//                        ToolBox.sendBCStatus(
+//                            context,
+//                            ConstantBase.PD_TYPE_UPDATE_REQUIRED,
+//                            context.getString(R.string.msg_update_required),
+//                            s_Link,
+//                            "0"
+//                        );
                         return false;
                     } else {
                         break;
@@ -1235,16 +1235,16 @@ public class ToolBox_Inf {
                         HMAux hmAux = checkNewDbVersionV2(context, db_version);
                         //
                         if(hmAux == null || hmAux.size() == 0) {
-                            ToolBox.sendBCStatus(context, ConstantBase.PD_TYPE_UPDATE_REQUIRED, context.getString(R.string.msg_update_required), s_Link, "0");
+//                            ToolBox.sendBCStatus(context, ConstantBase.PD_TYPE_UPDATE_REQUIRED, context.getString(R.string.msg_update_required), s_Link, "0");
                         }else {
-                            ToolBox
-                                .sendBCStatus(context,
-                                    ConstantBase.PD_TYPE_UPDATE_REQUIRED_WARNING,
-                                    context.getString(R.string.msg_update_required_warning),
-                                    hmAux,
-                                    s_Link,
-                                    "0"
-                                );
+//                            ToolBox
+//                                .sendBCStatus(context,
+//                                    ConstantBase.PD_TYPE_UPDATE_REQUIRED_WARNING,
+//                                    context.getString(R.string.msg_update_required_warning),
+//                                    hmAux,
+//                                    s_Link,
+//                                    "0"
+//                                );
                         }
                         //
                         return false;
@@ -1427,9 +1427,9 @@ public class ToolBox_Inf {
             case "UPDATE_REQUIRED":
                 if (iStatus == 0) {
                     //sendBCStatus(context, "UPDATE_REQUIRED", context.getString(R.string.msg_update_required), s_Link, "0");
-                    checkNewDbVersion(context,db_version);
+//                    checkNewDbVersion(context,db_version);
                     //
-                    ToolBox.sendBCStatus(context, ConstantBase.PD_TYPE_UPDATE_REQUIRED, context.getString(R.string.msg_update_required), s_Link, "0");
+//                    ToolBox.sendBCStatus(context, ConstantBase.PD_TYPE_UPDATE_REQUIRED, context.getString(R.string.msg_update_required), s_Link, "0");
                     return false;
                 } else {
                     return true;
