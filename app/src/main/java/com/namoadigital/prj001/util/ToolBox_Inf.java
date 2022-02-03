@@ -1422,18 +1422,17 @@ public class ToolBox_Inf {
 
         switch (validation) {
             case "OK":
-                break;
-
             case "UPDATE_REQUIRED":
-                if (iStatus == 0) {
-                    //sendBCStatus(context, "UPDATE_REQUIRED", context.getString(R.string.msg_update_required), s_Link, "0");
+                break;
+//                if (iStatus == 0) {
+//                    sendBCStatus(context, "UPDATE_REQUIRED", context.getString(R.string.msg_update_required), s_Link, "0");
 //                    checkNewDbVersion(context,db_version);
-                    //
+//
 //                    ToolBox.sendBCStatus(context, ConstantBase.PD_TYPE_UPDATE_REQUIRED, context.getString(R.string.msg_update_required), s_Link, "0");
-                    return false;
-                } else {
-                    return true;
-                }
+//                    return false;
+//                } else {
+//                    return true;
+//                }
 
             case "VERSION_ERRO":
             case "VERSION_INVALID":
