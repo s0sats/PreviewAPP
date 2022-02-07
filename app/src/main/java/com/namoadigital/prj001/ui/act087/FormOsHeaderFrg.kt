@@ -427,7 +427,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
 
                 }
                 mainMeasureTp?.let { measure->
-                    mketOsMainMeasureVal.setmDecimal(measure.restrictionDecimal?:4)
+                    mketOsMainMeasureVal.setmDecimal(measure.restrictionDecimal?:ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT)
                 }
             }
     }
@@ -485,7 +485,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     private fun getFormattedLastMeasureValue(lastMeasureValue: Float) : String{
         return ToolBox_Inf.convertFloatToBigDecimalString(
             lastMeasureValue,
-            formOsHeader.restriction_decimal ?: 4,
+            formOsHeader.restriction_decimal ?: ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT,
             true
         )
     }
@@ -607,7 +607,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     }
 
     private fun getFormattedMeasureValue(): Float {
-        return BigDecimal(binding.mketOsMainMeasureVal.text.toString()).setScale( mainMeasureTp?.restrictionDecimal?:4,RoundingMode.HALF_DOWN).toFloat()
+        return BigDecimal(binding.mketOsMainMeasureVal.text.toString()).setScale( mainMeasureTp?.restrictionDecimal?:ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT,RoundingMode.HALF_DOWN).toFloat()
     }
 
     /**
@@ -752,7 +752,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         //Calc perc de dias...
         val modDay = (diffInMs % ONE_DAY_IN_MILLISECOND.toDouble()) / ONE_DAY_IN_MILLISECOND.toDouble()
         //Soma e devolve float com 4 casas.
-        return BigDecimal(calcDay + modDay).setScale( 4,RoundingMode.HALF_DOWN).toFloat()
+        return BigDecimal(calcDay + modDay).setScale( ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT,RoundingMode.HALF_DOWN).toFloat()
     }
 
     private fun isMeasureRestrictionValueValid(

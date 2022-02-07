@@ -949,6 +949,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String FORM_TAB_ERROR = "FORM_TAB_ERROR";
     public static final String FORM_TAB_PENDING = "FORM_TAB_PENDING";
     public static final String GE_OS_DEVICE_ITEM_PREX_IMG = "GE_OS_ITEM_";
+    public static final int FORM_OS_MEASURE_DECIMAL_DEFAULT = 0;
 
     /**
      * Consts de timeout especificos
