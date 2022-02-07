@@ -19,6 +19,7 @@ public class GE_Custom_Form_Field {
     private int custom_form_order;
     private int page;
     private int required;
+    private Integer device_tp_code;
     private String automatic;
     private String comment;
     private String require_photo_on_nc;
@@ -129,6 +130,14 @@ public class GE_Custom_Form_Field {
 
     public void setRequired(int required) {
         this.required = required;
+    }
+
+    public Integer getDevice_tp_code() {
+        return device_tp_code;
+    }
+
+    public void setDevice_tp_code(Integer device_tp_code) {
+        this.device_tp_code = device_tp_code;
     }
 
     public String getAutomatic() {

@@ -36,6 +36,7 @@ public class GE_Custom_Form_FieldDao extends BaseDao implements Dao<GE_Custom_Fo
     public static final String CUSTOM_FORM_ORDER = "custom_form_order";
     public static final String PAGE = "page";
     public static final String REQUIRED = "required";
+    public static final String DEVICE_TP_CODE = "device_tp_code";
     public static final String AUTOMATIC = "automatic";
     public static final String COMMENT = "comment";
     public static final String REQUIRE_PHOTO_ON_NC = "require_photo_on_nc";
@@ -268,6 +269,11 @@ public class GE_Custom_Form_FieldDao extends BaseDao implements Dao<GE_Custom_Fo
             custom_form_field.setPage(cursor.getInt(cursor.getColumnIndex(PAGE)));
             custom_form_field.setRequired(cursor.getInt(cursor.getColumnIndex(REQUIRED)));
 
+            if (cursor.isNull(cursor.getColumnIndex(DEVICE_TP_CODE))) {
+                custom_form_field.setDevice_tp_code(null);
+            } else {
+                custom_form_field.setDevice_tp_code(cursor.getInt(cursor.getColumnIndex(DEVICE_TP_CODE)));
+            }
             custom_form_field.setAutomatic(cursor.getString(cursor.getColumnIndex(AUTOMATIC)));
 
             custom_form_field.setComment(cursor.getString(cursor.getColumnIndex(COMMENT)));
@@ -322,6 +328,9 @@ public class GE_Custom_Form_FieldDao extends BaseDao implements Dao<GE_Custom_Fo
             if (custom_form_field.getRequired() > -1) {
                 contentValues.put(REQUIRED, custom_form_field.getRequired());
             }
+
+            contentValues.put(DEVICE_TP_CODE, custom_form_field.getDevice_tp_code());
+
             if (custom_form_field.getAutomatic() != null) {
                 contentValues.put(AUTOMATIC, custom_form_field.getAutomatic());
             }
