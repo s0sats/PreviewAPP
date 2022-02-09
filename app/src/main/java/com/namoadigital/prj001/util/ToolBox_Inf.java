@@ -8985,10 +8985,60 @@ public class ToolBox_Inf {
     public static String convertFloatToBigDecimalString(float valor, int decimalScale, boolean applyDecimalSeparatorByLocale){
         String convertedValue =  new DecimalFormat("#.####").format(new BigDecimal(String.valueOf(valor)).setScale(decimalScale, RoundingMode.HALF_DOWN));
         if(applyDecimalSeparatorByLocale){
-           return  applyDecimalSeparatorByUserLocale(convertedValue);
-        }
+                return  applyDecimalSeparatorByUserLocale(convertedValue);
+            }
         //
         return convertedValue;
+    }
+
+    public static String formatLastMeaseureInfo(Context context, String valueSufix, Float lastMeasureValue, String lastMeasureDate, Integer decimalRestriction){
+        String meSufix = "";
+        if(valueSufix != null){
+            //O espaço esta na var meSufix
+            meSufix = " " + valueSufix;
+        }
+        //
+        int restriction = 0;
+        if(decimalRestriction != null){
+            restriction = decimalRestriction;
+        }
+        //
+        if(lastMeasureValue != null && lastMeasureDate != null){
+
+            return convertFloatToBigDecimalString(
+                    lastMeasureValue,
+                    restriction,
+                    true
+                    ) +
+                    meSufix + " - " +
+                    millisecondsToString(
+                        dateToMilliseconds(
+                            lastMeasureDate
+                        ),
+                        nlsDateFormat(context) + " HH:mm"
+            );
+        }else{
+            String info = "";
+            //
+            if(lastMeasureValue != null){
+                info  +=  convertFloatToBigDecimalString(
+                        lastMeasureValue,
+                        restriction,
+                        true
+                ) + meSufix;
+            }
+            //
+            if(lastMeasureDate != null){
+                info  +=  millisecondsToString(
+                        dateToMilliseconds(
+                                lastMeasureDate,
+                                ConstantBaseApp.DATE_TO_MILLISECOND_TYPE_IGNORE_SECOND
+                        ),
+                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                );
+            }
+            return info;
+        }
     }
 
     /**

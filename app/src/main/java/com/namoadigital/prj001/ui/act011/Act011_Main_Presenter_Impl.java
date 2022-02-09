@@ -36,6 +36,7 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.MdTagDao;
+import com.namoadigital.prj001.dao.MeMeasureTpDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.dao.TK_Ticket_FormDao;
@@ -58,6 +59,7 @@ import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.MdOrderType;
 import com.namoadigital.prj001.model.MdTag;
+import com.namoadigital.prj001.model.MeMeasureTp;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Form;
@@ -86,6 +88,7 @@ import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_016;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
+import com.namoadigital.prj001.sql.MeMeasureTpSql_001;
 import com.namoadigital.prj001.sql.Sql_Act011_002;
 import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_008;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_004;
@@ -111,6 +114,7 @@ import java.util.List;
  */
 
 public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
+
 
     private Context context;
     private Act011_Main_View mView;
@@ -148,8 +152,9 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     private GeOsDao geOsDao;
     private GeOsDeviceDao geOsDeviceDao;
     private GeOsDeviceItemDao geOsDeviceItemDao;
+    private MeMeasureTpDao measureTpDao;
 
-    public Act011_Main_Presenter_Impl(Context context, Act011_Main_View mView, EV_Module_Res_Txt_TransDao module_res_txt_transDao, GE_Custom_FormDao custom_formDao, GE_Custom_Form_FieldDao custom_form_fieldDao, GE_Custom_Form_DataDao custom_form_dataDao, GE_Custom_Form_Data_FieldDao custom_form_data_fieldDao, GE_Custom_Form_LocalDao custom_form_LocalDao, GE_Custom_Form_Field_LocalDao custom_form_field_LocalDao, GE_Custom_Form_BlobDao custom_form_blobDao, GE_Custom_Form_Blob_LocalDao custom_form_blob_localDao, MD_Product_SerialDao md_product_serialDao, MD_ProductDao md_productDao, HMAux hmAux_Trans, MD_Schedule_ExecDao scheduleExecDao, TK_Ticket_StepDao ticketStepDao, MD_SiteDao siteDao, MdTagDao mdTagDao, GeOsDao geOsDao,  GeOsDeviceDao geOsDeviceDao, GeOsDeviceItemDao geOsDeviceItemDao) {
+    public Act011_Main_Presenter_Impl(Context context, Act011_Main_View mView, EV_Module_Res_Txt_TransDao module_res_txt_transDao, GE_Custom_FormDao custom_formDao, GE_Custom_Form_FieldDao custom_form_fieldDao, GE_Custom_Form_DataDao custom_form_dataDao, GE_Custom_Form_Data_FieldDao custom_form_data_fieldDao, GE_Custom_Form_LocalDao custom_form_LocalDao, GE_Custom_Form_Field_LocalDao custom_form_field_LocalDao, GE_Custom_Form_BlobDao custom_form_blobDao, GE_Custom_Form_Blob_LocalDao custom_form_blob_localDao, MD_Product_SerialDao md_product_serialDao, MD_ProductDao md_productDao, HMAux hmAux_Trans, MD_Schedule_ExecDao scheduleExecDao, TK_Ticket_StepDao ticketStepDao, MD_SiteDao siteDao, MdTagDao mdTagDao, GeOsDao geOsDao,  GeOsDeviceDao geOsDeviceDao, GeOsDeviceItemDao geOsDeviceItemDao, MeMeasureTpDao measureTpDao) {
         this.context = context;
         this.mView = mView;
         this.module_res_txt_transDao = module_res_txt_transDao;
@@ -171,6 +176,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         this.geOsDao = geOsDao;
         this.geOsDeviceDao = geOsDeviceDao;
         this.geOsDeviceItemDao = geOsDeviceItemDao;
+        this.measureTpDao = measureTpDao;
     }
 
     @Override
@@ -2331,4 +2337,13 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         }
         return missingForecastAnsewrs;
     }
+
+    @Override
+    public MeMeasureTp getMeasureTp(long customerCode, int measureTpCode) {
+        return measureTpDao.getByString( new MeMeasureTpSql_001(
+            customerCode,
+            measureTpCode
+        ).toSqlQuery());
+    }
+
 }

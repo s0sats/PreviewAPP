@@ -56,6 +56,7 @@ import com.namoa_digital.namoa_library.ctls.CustomFF;
 import com.namoa_digital.namoa_library.ctls.LabelFF;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNMFF;
+import com.namoa_digital.namoa_library.ctls.MeasureFF;
 import com.namoa_digital.namoa_library.ctls.MkDateTime;
 import com.namoa_digital.namoa_library.ctls.PhotoFF;
 import com.namoa_digital.namoa_library.ctls.PictureFF;
@@ -89,6 +90,7 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.MdTagDao;
+import com.namoadigital.prj001.dao.MeMeasureTpDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
@@ -108,6 +110,7 @@ import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
+import com.namoadigital.prj001.model.MeMeasureTp;
 import com.namoadigital.prj001.model.MyActionFilterParam;
 import com.namoadigital.prj001.model.MyActions;
 import com.namoadigital.prj001.model.TSave_Rec;
@@ -147,9 +150,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -275,6 +280,8 @@ public class Act011_Main extends Base_Activity
     //LUCHE - 29/10/2021 - Var que indica que a abertura da act011 foi feita pela navegação de volta
     //da act086
     private boolean isNavegationFromGeOsFlow = false;
+
+    private MeasureFF.OnValidationListener measureValidateListener = null;
 
 
     public void setWsSoProcess(String wsSoProcess) {
@@ -502,6 +509,7 @@ public class Act011_Main extends Base_Activity
         transList.add("alert_invalid_sys_end_date_ttl");
         transList.add("alert_invalid_sys_end_date_msg");
         transList.add("form_sys_start_date_lbl");
+        transList.add("form_measure_last_value_lbl");
         //
         transList.addAll(Act011FrgInspection.Companion.getFragTranslationsVars());
         //
@@ -714,7 +722,8 @@ public class Act011_Main extends Base_Activity
                 new MdTagDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
                 new GeOsDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
                 new GeOsDeviceDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
-                new GeOsDeviceItemDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
+                new GeOsDeviceItemDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
+                new MeMeasureTpDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
         );
 
         recoverGetIntents();
@@ -1873,7 +1882,16 @@ public class Act011_Main extends Base_Activity
     }
 
     private CustomFF cfg_Number(HMAux cf) {
-        return cfg_Char(cf);
+        if(cf.hasConsistentValue(GE_Custom_Form_FieldDao.DEVICE_TP_CODE)){
+            MD_Product_Serial serialInfo = getSerialInfo();
+            if(Objects.requireNonNull(cf.get(GE_Custom_Form_FieldDao.DEVICE_TP_CODE)).equals(String.valueOf(serialInfo.getDevice_tp_code_main()))){
+                return getMeasureFF(serialInfo);
+            }else{
+                return cfg_Char(cf);
+            }
+        }else{
+            return cfg_Char(cf);
+        }
     }
 
     private CustomFF cfg_Date(HMAux cf) {
@@ -2074,6 +2092,39 @@ public class Act011_Main extends Base_Activity
         return photoFF;
     }
 
+    //
+    private CustomFF getMeasureFF(MD_Product_Serial serialInfo) {
+
+        MeMeasureTp me_measure_tp = mPresenter.getMeasureTp(serialInfo.getCustomer_code(), serialInfo.getMeasure_tp_code());
+        String historicalInfo = ToolBox_Inf.formatLastMeaseureInfo(
+                context,
+                me_measure_tp.getValueSufix(),
+                new BigDecimal(serialInfo.getLast_measure_value()).floatValue(),
+                serialInfo.getLast_measure_date(),
+                me_measure_tp.getRestrictionDecimal()
+        );
+
+        MeasureFF measureFF = new MeasureFF(Act011_Main.this);
+        measureFF.setLastMeasureValue(historicalInfo);
+        measureFF.setLastMeasureLbl(hmAux_Trans.get("form_measure_last_value_lbl"));
+        if(measureValidateListener == null) {
+            measureValidateListener = new MeasureFF.OnValidationListener() {
+                @NonNull
+                @Override
+                public MeasureFF.MeasureValidationReturnObj isMeasureValid(@NonNull String measure) {
+
+                    if (measure.isEmpty()) {
+
+                    }
+
+                    return null;
+                }
+            };
+            measureFF.setValidateListener(measureValidateListener);
+        }
+        return measureFF;
+    }
+    //
     private HMAux retornDBValue(int seq) {
         HMAux hmAux = new HMAux();
         //
