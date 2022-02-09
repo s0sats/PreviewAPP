@@ -58,9 +58,7 @@ class Act086HistoricFrgPresenter(
         restrictionDecimal: Int?
     ): String {
         return "${ToolBox_Inf.convertFloatToBigDecimalString(
-            lastFixed,
-            restrictionDecimal ?: ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT,
-            true
+            lastFixed,true
         )}${if(measureValueSufix != null) " ".plus(measureValueSufix) else ""}"
     }
 }

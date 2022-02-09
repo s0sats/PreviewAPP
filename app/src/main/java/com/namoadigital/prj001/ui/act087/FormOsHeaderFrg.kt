@@ -484,9 +484,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
      */
     private fun getFormattedLastMeasureValue(lastMeasureValue: Float) : String{
         return ToolBox_Inf.convertFloatToBigDecimalString(
-            lastMeasureValue,
-            formOsHeader.restriction_decimal ?: ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT,
-            true
+            lastMeasureValue,true
         )
     }
 
