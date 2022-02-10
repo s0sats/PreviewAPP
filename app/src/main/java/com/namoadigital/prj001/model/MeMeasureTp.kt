@@ -1,6 +1,8 @@
 package com.namoadigital.prj001.model
 
 import com.google.gson.annotations.SerializedName
+import com.namoa_digital.namoa_library.util.ConstantBase.DATEFORMATDB
+import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.math.BigDecimal
@@ -19,10 +21,6 @@ class MeMeasureTp(
     @SerializedName("value_cycle_size") val valueCycleSize: Float?,
     @SerializedName("cycle_tolerance") val cycleTolerance: Int?
 ) {
-
-    fun isMeasureRestrictionInvalid(measureValue: Float, lastMeasureValue: Float?): Boolean {
-        return isMeasureRestrictionInvalid(measureValue, lastMeasureValue, null, null)
-    }
 
     fun isMeasureRestrictionInvalid(
         measureValue: Float,
@@ -157,7 +155,11 @@ class MeMeasureTp(
 
     private fun isValidStartDate(lastMeasureDate: String, measureDate: String): Boolean {
         //
-        if (!ToolBox_Inf.isFutureDate(measureDate)
+        var timeValues = measureDate.split(" ")
+        //
+        if (ToolBox.isValidDate(timeValues.get(0), DATEFORMATDB)
+            && ToolBox_Inf.isValidHour24MinutesAndSecounds(timeValues.get(1) )
+            && !ToolBox_Inf.isFutureDate(measureDate)
             && (ToolBox_Inf.dateToMilliseconds(lastMeasureDate) <= ToolBox_Inf.dateToMilliseconds(measureDate))
         ) {
             return true

@@ -2108,19 +2108,7 @@ public class Act011_Main extends Base_Activity
         measureFF.setLastMeasureValue(historicalInfo);
         measureFF.setLastMeasureLbl(hmAux_Trans.get("form_measure_last_value_lbl"));
         if(measureValidateListener == null) {
-            measureValidateListener = new MeasureFF.OnValidationListener() {
-                @NonNull
-                @Override
-                public MeasureFF.MeasureValidationReturnObj isMeasureValid(@NonNull String measure) {
 
-                    if (measure.isEmpty()) {
-
-                    }
-
-                    return null;
-                }
-            };
-            measureFF.setValidateListener(measureValidateListener);
         }
         return measureFF;
     }
