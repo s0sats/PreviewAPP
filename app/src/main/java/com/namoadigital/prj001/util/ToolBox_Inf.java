@@ -9042,6 +9042,23 @@ public class ToolBox_Inf {
     }
 
     /**
+     * LUCHE - 09/02/2022
+     * Metodo que recebe valor float e o formata para String
+     * Se applyDecimalSeparatorByLocale verdadeira, usa o separado decimal  baseado no locale
+     * @param valor*
+     * @param applyDecimalSeparatorByLocale
+     * @return
+     */
+    public static String convertFloatToBigDecimalString(float valor, boolean applyDecimalSeparatorByLocale){
+        String convertedValue =  new DecimalFormat("#.####").format(new BigDecimal(String.valueOf(valor)));
+        if(applyDecimalSeparatorByLocale){
+            return  applyDecimalSeparatorByUserLocale(convertedValue);
+        }
+        //
+        return convertedValue;
+    }
+
+    /**
      * LUCHE - 25/10/2021
      * Metodo que recebe um data no formato full timestamp tz e joga o horario
      * para o ultimo minutos do dia.
