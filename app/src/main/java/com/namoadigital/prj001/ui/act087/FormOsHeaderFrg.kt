@@ -422,7 +422,6 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                     mketOsMainMeasureVal.setText(
                         ToolBox_Inf.convertFloatToBigDecimalString(
                             it,
-                            formOsHeader.restriction_decimal ?: 4,
                             true
                         )
                     )
@@ -441,16 +440,6 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             tvOsLastMeasureVal.text = ToolBox_Inf.formatLastMeaseureInfo(context, formOsHeader.value_sufix, formOsHeader.last_measure_value, formOsHeader.last_measure_date, formOsHeader.restriction_decimal)
             clLastMeasure.visibility = if(!tvOsLastMeasureVal.text.toString().isNullOrEmpty()) View.VISIBLE else View.GONE
         }
-    }
-
-    /**
-     * Fun que retorna o valor da ultima medição formatada utilizando a qtd de casas decimais definida
-     * na medição
-     */
-    private fun getFormattedLastMeasureValue(lastMeasureValue: Float) : String{
-        return ToolBox_Inf.convertFloatToBigDecimalString(
-            lastMeasureValue,true
-        )
     }
 
     private fun iniSaveBtn() {
