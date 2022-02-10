@@ -154,7 +154,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -1432,7 +1431,7 @@ public class Act011_Main extends Base_Activity
                         customField = cfg_ComboBox(cf);
                         break;
                     case CustomFF.NUMBER:
-                        customField = cfg_Number(cf);
+                        customField = mPresenter.checkNumberOrMeasureCtrl(cf,getSerialInfo());
                         break;
                     case CustomFF.DATE:
                         customField = cfg_Date(cf);
@@ -1804,23 +1803,27 @@ public class Act011_Main extends Base_Activity
 
         if (mkEditTextNMFF.getmMaxSize() == 0 && cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_TYPE).equalsIgnoreCase(CustomFF.NUMBER)) {
 
-            String[] opcs = null;
-
-            try {
-                JSONObject jsonObject = new JSONObject(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_CONTENT));
-                JSONArray jsonArray = jsonObject.getJSONArray(CONTENT);
-                //
-                opcs = new String[jsonArray.length()];
-                //
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject jo = jsonArray.getJSONObject(i);
-                    opcs[i] = jo.getString(DECIMAL);
-                }
-                //
-                mkEditTextNMFF.setmDecimal(Integer.parseInt(opcs[0]));
-            } catch (JSONException e) {
-                mkEditTextNMFF.setmDecimal(0);
-            }
+//
+//            String[] opcs = null;
+//
+//            try {
+//                JSONObject jsonObject = new JSONObject(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_CONTENT));
+//                JSONArray jsonArray = jsonObject.getJSONArray(CONTENT);
+//                //
+//                opcs = new String[jsonArray.length()];
+//                //
+//                for (int i = 0; i < jsonArray.length(); i++) {
+//                    JSONObject jo = jsonArray.getJSONObject(i);
+//                    opcs[i] = jo.getString(DECIMAL);
+//                }
+//                //
+//                mkEditTextNMFF.setmDecimal(Integer.parseInt(opcs[0]));
+//            } catch (JSONException e) {
+//                mkEditTextNMFF.setmDecimal(0);
+//            }
+            mkEditTextNMFF.setmDecimal(
+                getDecimalFromContent(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_CONTENT))
+            );
         }
 
         mkEditTextNMFF.setmRequired(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRED).equalsIgnoreCase("1") ? true : false);
@@ -1842,6 +1845,30 @@ public class Act011_Main extends Base_Activity
         }
 
         return mkEditTextNMFF;
+    }
+
+    /**
+     * Metodo que retorna o qtd de casa decimais de dentro do customFormContent
+     * @param customFormContent
+     * @return Valor do decimal ou 0 caos não exista ou de exception
+     */
+    private int getDecimalFromContent(String customFormContent){
+        String[] opcs = null;
+        try {
+            JSONObject jsonObject = new JSONObject(customFormContent);
+            JSONArray jsonArray = jsonObject.getJSONArray(CONTENT);
+            //
+            opcs = new String[jsonArray.length()];
+            //
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jo = jsonArray.getJSONObject(i);
+                opcs[i] = jo.getString(DECIMAL);
+            }
+            //
+           return Integer.parseInt(opcs[0]);
+        } catch (JSONException e) {
+            return 0;
+        }
     }
 
     private CustomFF cfg_ComboBox(HMAux cf) {
@@ -1881,18 +1908,8 @@ public class Act011_Main extends Base_Activity
         return comboBoxFF;
     }
 
-    private CustomFF cfg_Number(HMAux cf) {
-        if(cf.hasConsistentValue(GE_Custom_Form_FieldDao.DEVICE_TP_CODE)){
-            MD_Product_Serial serialInfo = getSerialInfo();
-            if(Objects.requireNonNull(cf.get(GE_Custom_Form_FieldDao.DEVICE_TP_CODE)).equals(String.valueOf(serialInfo.getDevice_tp_code_main()))){
-                return getMeasureFF(serialInfo);
-            }else{
-                return cfg_Char(cf);
-            }
-        }else{
-            return cfg_Char(cf);
-        }
-    }
+    @Override
+    public CustomFF cfg_Number(HMAux cf) { return cfg_Char(cf); }
 
     private CustomFF cfg_Date(HMAux cf) {
         return cfg_Char(cf);
@@ -2093,34 +2110,78 @@ public class Act011_Main extends Base_Activity
     }
 
     //
-    private CustomFF getMeasureFF(MD_Product_Serial serialInfo) {
 
-        MeMeasureTp me_measure_tp = mPresenter.getMeasureTp(serialInfo.getCustomer_code(), serialInfo.getMeasure_tp_code());
+
+    @Override
+    public CustomFF cfg_Measure(HMAux cf, MD_Product_Serial serialInfo, MeMeasureTp measureTp) {
         String historicalInfo = ToolBox_Inf.formatLastMeaseureInfo(
                 context,
-                me_measure_tp.getValueSufix(),
+                measureTp.getValueSufix(),
                 new BigDecimal(serialInfo.getLast_measure_value()).floatValue(),
                 serialInfo.getLast_measure_date(),
-                me_measure_tp.getRestrictionDecimal()
+                measureTp.getRestrictionDecimal()
         );
-
+        //
         MeasureFF measureFF = new MeasureFF(Act011_Main.this);
         measureFF.setLastMeasureValue(historicalInfo);
         measureFF.setLastMeasureLbl(hmAux_Trans.get("form_measure_last_value_lbl"));
+        measureFF.setMDecimal(
+            measureTp.getRestrictionDecimal() != null
+            ? measureTp.getRestrictionDecimal()
+            : getDecimalFromContent(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_CONTENT))
+        );
+        //
         if(measureValidateListener == null) {
             measureValidateListener = new MeasureFF.OnValidationListener() {
                 @NonNull
                 @Override
-                public MeasureFF.MeasureValidationReturnObj isMeasureValid(@NonNull String measure) {
-
-                    if (measure.isEmpty()) {
-
-                    }
-
-                    return null;
+                public MeasureFF.MeasureValidationReturn isMeasureValid(float measure) {
+                    boolean isValid = measureTp.isMeasureRestrictionInvalid(
+                        measure,
+                        serialInfo.getLast_measure_value().floatValue(),
+                        serialInfo.getLast_measure_date(),
+                        ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT)
+                    );
+                    //TODO IMPLEMENTAR
+                    return new MeasureFF.MeasureValidationReturn(
+                        isValid,
+                        isValid ? null : "Invalido - trad"
+                    );
                 }
             };
-            measureFF.setValidateListener(measureValidateListener);
+            measureFF.setOnValidation(measureValidateListener);
+        }
+        //
+        measureFF.setmDots_txt_app(cf.get(GE_Custom_Form_Field_LocalDao.COMMENT));
+
+        measureFF.setId(View.generateViewId());
+        measureFF.setmRequire_photo_on_nc(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRE_PHOTO_ON_NC).equals("1") ? true : false);
+        measureFF.setmLabel(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_FIELD_DESC));
+        measureFF.setmOrder(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_ORDER)));
+        measureFF.setmSequence(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
+        measureFF.setmPage(Integer.parseInt(cf.get(PAGE)));
+        measureFF.setmType(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_TYPE));
+
+        measureFF.setmOption(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_CONTENT));
+
+        measureFF.setmRequired(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRED).equalsIgnoreCase("1") ? true : false);
+        measureFF.setmPre(prefix);
+
+        HMAux itemDB = retornDBValue(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
+
+        measureFF.setmAutomatic(cf.get(GE_Custom_Form_Field_LocalDao.AUTOMATIC));
+
+        measureFF.setmValue(itemDB.get(HMAux.TEXTO_01));
+        measureFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
+        //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
+        //mas a vida eh uma caixinha de surpresas e teve que ser removido t0d0 acesso aos nform deletados
+        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) ||
+            formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE)
+//               || formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
+        ) {
+            measureFF.setmEnabled(false);
+        } else {
+            measureFF.setmEnabled(true);
         }
         return measureFF;
     }

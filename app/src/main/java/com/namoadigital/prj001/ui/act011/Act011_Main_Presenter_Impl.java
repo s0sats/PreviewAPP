@@ -15,6 +15,7 @@ import androidx.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.namoa_digital.namoa_library.ctls.CustomFF;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -108,6 +109,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -2346,4 +2348,37 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         ).toSqlQuery());
     }
 
+    /**
+     *
+     * Metodo que valida se field number deve ser configurado como medição.
+      * Field é configurado como medição se:
+     *  - Serial definido
+     *  - Field tiver campo DEVICE_TP_CODE preenchido
+     *  - Device code do campo é o mesmo do serial
+     *  - A medição definida no serial existe na base local.
+     * @param cf - Field vindo do banco
+     * @param serialInfo - Obj Serial
+     * @return Number ou Measure
+     */
+    @Override
+    public CustomFF checkNumberOrMeasureCtrl(HMAux cf, MD_Product_Serial serialInfo) {
+        if( serialInfo != null
+            && serialInfo.getSerial_id() != null
+            && !serialInfo.getSerial_id().isEmpty()
+            && cf.hasConsistentValue(GE_Custom_Form_FieldDao.DEVICE_TP_CODE)
+        ){
+            if(
+                Objects.requireNonNull(cf.get(GE_Custom_Form_FieldDao.DEVICE_TP_CODE))
+                    .equals(String.valueOf(serialInfo.getDevice_tp_code_main()))
+                && serialInfo.getMeasure_tp_code() != null
+            ){
+                MeMeasureTp measureTp = getMeasureTp(serialInfo.getCustomer_code(), serialInfo.getMeasure_tp_code());
+                if(measureTp != null){
+                   return mView.cfg_Measure(cf,serialInfo,measureTp);
+                }
+            }
+        }
+        //
+        return mView.cfg_Number(cf);
+    }
 }

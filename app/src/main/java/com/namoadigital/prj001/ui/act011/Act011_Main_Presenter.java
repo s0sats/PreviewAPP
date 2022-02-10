@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 
+import com.namoa_digital.namoa_library.ctls.CustomFF;
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.Act011FormTab;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
@@ -83,4 +85,6 @@ public interface Act011_Main_Presenter {
     int getMissingForecastAnswers(GeOs geOs);
 
     MeMeasureTp getMeasureTp(long customerCode, int measureTpCode);
+
+    CustomFF checkNumberOrMeasureCtrl(HMAux cf, MD_Product_Serial serialInfo);
 }
