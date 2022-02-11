@@ -305,6 +305,8 @@ import java.util.Objects;
 import java.util.TimeZone;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -4021,6 +4023,20 @@ public class ToolBox_Inf {
     public static boolean usesSoMainActivity(Context context) {
         return ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_OI, null)
                 || ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null);
+    }
+
+    /**
+     * BARRIONUEVO
+     * VERIFICA SE HORA ESTÁ NO PADRÃO 24 HORAS COM FORMATONN:NN:NN
+     * @param hour
+     * @return
+     */
+    public static boolean isValidHour24MinutesAndSecounds(@NotNull String hour) {
+        Pattern pattern = Pattern.compile("([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]");
+        Matcher matcher = pattern.matcher(hour);
+
+        return matcher.matches();
+
     }
 
     private static class GenericExtFilter implements FilenameFilter {

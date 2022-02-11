@@ -2125,6 +2125,7 @@ public class Act011_Main extends Base_Activity
         );
         //
         if(measureValidateListener == null) {
+<<<<<<< HEAD
             measureValidateListener = new MeasureFF.OnValidationListener() {
                 @NonNull
                 @Override
@@ -2175,6 +2176,9 @@ public class Act011_Main extends Base_Activity
             measureFF.setmEnabled(false);
         } else {
             measureFF.setmEnabled(true);
+=======
+
+>>>>>>> origin/LB_device_tp_code_field_02
         }
         return measureFF;
     }
