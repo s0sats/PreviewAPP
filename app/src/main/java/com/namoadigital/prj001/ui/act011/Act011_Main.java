@@ -2129,16 +2129,17 @@ public class Act011_Main extends Base_Activity
                 @NonNull
                 @Override
                 public MeasureFF.MeasureValidationReturn isMeasureValid(float measure) {
-                    MeasureFF.MeasureValidationReturn measureValidationReturn = measureTp.validateMeasureRestriction(
+                    //Trata lastMeasure null.
+                    Float lastMeasureValue =
+                        serialInfo.getLast_measure_value() != null
+                        ? serialInfo.getLast_measure_value().floatValue()
+                        : null;
+                    //
+                    return measureTp.validateMeasureRestriction(
                         measure,
-                        serialInfo.getLast_measure_value().floatValue(),
+                        lastMeasureValue ,
                         serialInfo.getLast_measure_date(),
                         ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT)
-                    );
-                    //TODO IMPLEMENTAR
-                    return new MeasureFF.MeasureValidationReturn(
-                        measureValidationReturn.isValid(),
-                        hmAux_Trans.get(measureValidationReturn.getErrorMsg())
                     );
                 }
             };
@@ -2153,7 +2154,7 @@ public class Act011_Main extends Base_Activity
         measureFF.setmOrder(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_ORDER)));
         measureFF.setmSequence(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
         measureFF.setmPage(Integer.parseInt(cf.get(PAGE)));
-        measureFF.setmType(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_TYPE));
+        //measureFF.setmType(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_TYPE));
 
         measureFF.setmOption(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_CONTENT));
 
@@ -2176,6 +2177,7 @@ public class Act011_Main extends Base_Activity
         } else {
             measureFF.setmEnabled(true);
         }
+        //
         return measureFF;
     }
     //

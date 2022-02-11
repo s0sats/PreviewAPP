@@ -56,7 +56,7 @@ class MeMeasureTp(
                 measureDate
             )
             RESTRICTION_TYPE_MIN_MAX -> isMeasureRestrictionMinMaxValid(measureValue)
-            else -> MeasureFF.MeasureValidationReturn(false, INVALID_RESTRICTION_TYPE_ERROR)
+            else -> MeasureFF.MeasureValidationReturn(true)
         }
     }
 
@@ -242,6 +242,5 @@ class MeMeasureTp(
 
         const val OVER_VALUE_ERROR = "OVER_VALUE_ERROR"
         const val UNDER_VALUE_ERROR = "UNDER_VALUE_ERROR"
-        const val INVALID_RESTRICTION_TYPE_ERROR = "INVALID_RESTRICTION_TYPE_ERROR"
     }
 }
