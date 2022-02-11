@@ -2125,12 +2125,11 @@ public class Act011_Main extends Base_Activity
         );
         //
         if(measureValidateListener == null) {
-<<<<<<< HEAD
             measureValidateListener = new MeasureFF.OnValidationListener() {
                 @NonNull
                 @Override
                 public MeasureFF.MeasureValidationReturn isMeasureValid(float measure) {
-                    boolean isValid = measureTp.isMeasureRestrictionInvalid(
+                    MeasureFF.MeasureValidationReturn measureValidationReturn = measureTp.validateMeasureRestriction(
                         measure,
                         serialInfo.getLast_measure_value().floatValue(),
                         serialInfo.getLast_measure_date(),
@@ -2138,8 +2137,8 @@ public class Act011_Main extends Base_Activity
                     );
                     //TODO IMPLEMENTAR
                     return new MeasureFF.MeasureValidationReturn(
-                        isValid,
-                        isValid ? null : "Invalido - trad"
+                        measureValidationReturn.isValid(),
+                        hmAux_Trans.get(measureValidationReturn.getErrorMsg())
                     );
                 }
             };
@@ -2176,9 +2175,6 @@ public class Act011_Main extends Base_Activity
             measureFF.setmEnabled(false);
         } else {
             measureFF.setmEnabled(true);
-=======
-
->>>>>>> origin/LB_device_tp_code_field_02
         }
         return measureFF;
     }
