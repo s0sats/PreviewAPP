@@ -2135,12 +2135,20 @@ public class Act011_Main extends Base_Activity
                         ? serialInfo.getLast_measure_value().floatValue()
                         : null;
                     //
-                    return measureTp.validateMeasureRestriction(
+                    MeasureFF.MeasureValidationReturn validationReturn = measureTp.validateMeasureRestriction(
                         measure,
-                        lastMeasureValue ,
+                        lastMeasureValue,
                         serialInfo.getLast_measure_date(),
                         ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT)
                     );
+                    //Se msg de erro, seta tradução
+                    if(validationReturn.getErrorMsg() != null && !validationReturn.getErrorMsg().isEmpty()){
+                        validationReturn.setErrorMsg(
+                            hmAux_Trans.get(validationReturn.getErrorMsg())
+                        );
+                    }
+                    //
+                    return validationReturn;
                 }
             };
             measureFF.setOnValidation(measureValidateListener);
