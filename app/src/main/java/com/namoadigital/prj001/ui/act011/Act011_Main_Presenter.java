@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
+
 import com.namoa_digital.namoa_library.ctls.CustomFF;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.Act011FormTab;
@@ -87,4 +89,7 @@ public interface Act011_Main_Presenter {
     MeMeasureTp getMeasureTp(long customerCode, int measureTpCode);
 
     CustomFF checkNumberOrMeasureCtrl(HMAux cf, MD_Product_Serial serialInfo);
+
+    @Nullable
+    String getLastMeasureInfo(MeMeasureTp measureTp, MD_Product_Serial serialInfo);
 }

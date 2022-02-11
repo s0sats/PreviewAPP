@@ -104,6 +104,7 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -2380,5 +2381,27 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         }
         //
         return mView.cfg_Number(cf);
+    }
+
+    /**
+     * Metodo que retorna ultima medição formatada ou null caso não exista medição.
+     * @param measureTp
+     * @param serialInfo
+     * @return
+     */
+    @Nullable
+    @Override
+    public String getLastMeasureInfo(MeMeasureTp measureTp, MD_Product_Serial serialInfo) {
+        if(serialInfo.getLast_measure_value() == null ){
+            return null;
+        }
+        //
+       return ToolBox_Inf.formatLastMeaseureInfo(
+            context,
+            measureTp.getValueSufix(),
+            new BigDecimal(serialInfo.getLast_measure_value()).floatValue(),
+            serialInfo.getLast_measure_date(),
+            measureTp.getRestrictionDecimal()
+        );
     }
 }

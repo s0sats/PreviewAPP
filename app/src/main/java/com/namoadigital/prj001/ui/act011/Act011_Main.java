@@ -150,7 +150,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -2114,13 +2113,7 @@ public class Act011_Main extends Base_Activity
 
     @Override
     public CustomFF cfg_Measure(HMAux cf, MD_Product_Serial serialInfo, MeMeasureTp measureTp) {
-        String historicalInfo = ToolBox_Inf.formatLastMeaseureInfo(
-                context,
-                measureTp.getValueSufix(),
-                new BigDecimal(serialInfo.getLast_measure_value()).floatValue(),
-                serialInfo.getLast_measure_date(),
-                measureTp.getRestrictionDecimal()
-        );
+        String historicalInfo = mPresenter.getLastMeasureInfo(measureTp,serialInfo);
         //
         MeasureFF measureFF = new MeasureFF(Act011_Main.this);
         measureFF.setLastMeasureValue(historicalInfo);
