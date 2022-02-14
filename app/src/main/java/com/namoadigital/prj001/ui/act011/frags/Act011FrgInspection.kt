@@ -32,7 +32,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
     private lateinit var mLayoutManager: LinearLayoutManager
     private var tabItemSelectedIndex: Int = -1
     private val mAdapter by lazy {
-        Act011InspectionFormAdapter(acessoryFormView, hmAuxTrans, ::onItemSelected, ::onNotVerifyItemSelected, ::onAdapterFilterApplied)
+        Act011InspectionFormAdapter(acessoryFormView, hmAuxTrans, ::onItemSelected, ::onAlreadyOkItemSelected, ::onAdapterFilterApplied)
     }
     private var acessoryFormViewIdx = -1
     private lateinit var acessoryFormView: AcessoryFormView
@@ -360,7 +360,8 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
                 "inspection_not_verify_action_lbl",
                 "inspection_hide_non_forecast_item_chk",
                 "inspection_empty_list_placeholder",
-                "inspection_empty_list_filtered"
+                "inspection_empty_list_filtered",
+                "inspection_already_ok_action_lbl",
             )
         }
     }
@@ -479,21 +480,21 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
         }
     }
     //
-    fun onNotVerifyItemSelected(position: Int,
+    fun onAlreadyOkItemSelected(position: Int,
                                 item: InspectionCell
     ){
-        val onNotVerifyActionItem = mFrgListener.onNotVerifyAction(
+        val onAlreadyOkActionItem = mFrgListener.onAlreadyOkAction(
             acessoryFormView.devicePkPrefix + "." + item.itemCodeAndSeq
         )
 
         for(i in 0..acessoryFormView.inspections.size -1 ){
             if(acessoryFormView.inspections[i].itemCodeAndSeq.equals(item.itemCodeAndSeq)){
-                acessoryFormView.inspections.set(i, onNotVerifyActionItem)
+                acessoryFormView.inspections.set(i, onAlreadyOkActionItem)
                 break
             }
         }
 
-        mAdapter.refreshList(position, onNotVerifyActionItem)
+        mAdapter.refreshList(position, onAlreadyOkActionItem)
         mFrgListener.onRefreshTabCounter(acessoryFormView.tabIndex)
     }
 

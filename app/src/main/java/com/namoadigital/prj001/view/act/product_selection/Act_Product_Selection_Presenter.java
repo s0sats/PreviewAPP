@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.view.act.product_selection;
 
+import static com.namoadigital.prj001.util.ConstantBaseApp.DESC_FOR_SORT;
+
 import android.content.Context;
 
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -18,9 +20,11 @@ import com.namoadigital.prj001.sql.Sql_Act027_Product_Selection_002;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
 
 public class Act_Product_Selection_Presenter implements Act_Product_Selection_Contract.I_Presenter {
+
     private Context context;
     private Act_Product_Selection_Contract.I_View mView;
     private MD_ProductDao productDao;
@@ -58,7 +62,7 @@ public class Act_Product_Selection_Presenter implements Act_Product_Selection_Co
         );
 
         ArrayList<HMAux> data = new ArrayList<>();
-
+        ArrayList<HMAux> sortedProducts = new ArrayList<>();
         for (HMAux aux : groups) {
             HMAux item = new HMAux();
             item.put("code", aux.get("group_code"));
@@ -66,10 +70,15 @@ public class Act_Product_Selection_Presenter implements Act_Product_Selection_Co
             item.put("id", aux.get("group_id"));
             item.put("full_desc", aux.get("full_group_desc"));
             item.put("type", aux.get("type"));
+            String group_desc = Normalizer.normalize(aux.get("group_desc"), Normalizer.Form.NFD);
+            item.put(DESC_FOR_SORT, group_desc);
             // Hugo
             item.put("recursive", aux.get("recursive_code"));
             //
             data.add(item);
+        }
+        if(data.size() > 1) {
+            ToolBox_Inf.sortResults(data, DESC_FOR_SORT);
         }
 
         for (HMAux aux : products) {
@@ -80,9 +89,17 @@ public class Act_Product_Selection_Presenter implements Act_Product_Selection_Co
             item.put("full_desc", aux.get("full_product_desc"));
             item.put("type", aux.get("type"));
             item.put("recursive", aux.get(""));
+            String product_desc = Normalizer.normalize(aux.get("product_desc"), Normalizer.Form.NFD);
+            item.put(DESC_FOR_SORT, product_desc);
             //
-            data.add(item);
+            sortedProducts.add(item);
         }
+        if(sortedProducts.size() > 1) {
+            ToolBox_Inf.sortResults(sortedProducts,DESC_FOR_SORT);
+        }
+
+        data.addAll(sortedProducts);
+        sortedProducts.clear();
 
         if (data.size() == 1 && returnOnFound) {
             mView.sendResult(
@@ -138,6 +155,7 @@ public class Act_Product_Selection_Presenter implements Act_Product_Selection_Co
         );
         //
         ArrayList<HMAux> data = new ArrayList<>();
+        ArrayList<HMAux> sortedProducts = new ArrayList<>();
         //
         for (HMAux aux : groups) {
             HMAux item = new HMAux();
@@ -146,10 +164,15 @@ public class Act_Product_Selection_Presenter implements Act_Product_Selection_Co
             item.put("id", aux.get("group_id"));
             item.put("full_desc", aux.get("full_group_desc"));
             item.put("type", aux.get("type"));
+            String group_desc = Normalizer.normalize(aux.get("group_desc"), Normalizer.Form.NFD);
+            item.put(DESC_FOR_SORT, group_desc);
             // Hugo
             item.put("recursive", aux.get("recursive_code"));
             //
             data.add(item);
+        }
+        if(data.size() > 1) {
+            ToolBox_Inf.sortResults(data,DESC_FOR_SORT);
         }
 
         for (HMAux aux : products) {
@@ -160,9 +183,18 @@ public class Act_Product_Selection_Presenter implements Act_Product_Selection_Co
             item.put("full_desc", aux.get("full_product_desc"));
             item.put("type", aux.get("type"));
             item.put("recursive", aux.get(""));
+            String product_desc = Normalizer.normalize(aux.get("product_desc"), Normalizer.Form.NFD);
+            item.put(DESC_FOR_SORT, product_desc);
             //
-            data.add(item);
+            sortedProducts.add(item);
         }
+        //
+        if(sortedProducts.size() > 1) {
+            ToolBox_Inf.sortResults(sortedProducts,DESC_FOR_SORT);
+        }
+        //
+        data.addAll(sortedProducts);
+        sortedProducts.clear();
 
         if (data.size() == 1 && returnOnFound) {
             mView.sendResult(

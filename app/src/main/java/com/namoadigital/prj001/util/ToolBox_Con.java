@@ -5,6 +5,7 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_S
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ONLY_MY_ACTIONS_OPTION;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.LocationManager;
@@ -1276,8 +1277,20 @@ public class ToolBox_Con {
                 "SERVICE",
                 "NO_SERVICE"
         ).apply();
-
+        //Cancela notificações e workers
+        cancelAllNotifications(context);
         cancelAllWorkers(context);
+    }
+
+    /**
+     * LUCHE - 28/01/2022
+     * <p></p>
+     * Metodo que cancela todas as notificações do app
+     * @param context
+     */
+    private static void cancelAllNotifications(Context context) {
+        NotificationManager nMgr = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        nMgr.cancelAll();
     }
 
     /**

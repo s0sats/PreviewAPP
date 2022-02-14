@@ -120,6 +120,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String ACT085 = "act085";
     public static final String ACT086 = "act086";
     public static final String ACT087 = "act087";
+    public static final String ACT088 = "act088";
 
     public static final String title_lbl = "_title";
 
@@ -955,4 +956,9 @@ public class ConstantBaseApp extends ConstantBase {
      */
     public static final int TIMEOUT_FOR_SYNC_FULL = 300000;
     public static final int TIMEOUT_FOR_SYNC_FORM = 180000;
+
+    /*
+     * Constante para Ordernação de produtos e grupos.
+     */
+    public static final String DESC_FOR_SORT = "descForSort";
 }

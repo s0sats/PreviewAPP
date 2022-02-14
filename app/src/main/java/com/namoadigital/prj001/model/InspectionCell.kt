@@ -46,7 +46,7 @@ data class InspectionCell   (
             this.status = status
             when (status) {
                 NORMAL -> {
-                    tagColor = R.color.namoa_color_gray_6
+                    tagColor = R.color.namoa_color_gray_7
                     statusTransalted = hmAuxTrans["inspection_status_non_forecast_item_lbl"]!!
                 }
                 MANUAL_ALERT -> {

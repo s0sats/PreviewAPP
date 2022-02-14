@@ -5,12 +5,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="1dp">
+    android:layout_marginTop="2dp"
+    android:layout_marginBottom="2dp"
+    app:cardCornerRadius="8dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
         android:orientation="horizontal">
 
         <View
@@ -35,9 +36,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:layout_marginEnd="24dp"
+                android:layout_marginEnd="16dp"
                 android:textColor="@color/text_black"
-                android:textSize="16sp"
+                android:textSize="@dimen/font_size_title_dialog"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -47,172 +48,184 @@
                 android:id="@+id/tv_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="24dp"
-                android:background="@drawable/act011_inspection_cornered_bg"
-                android:backgroundTint="@color/emoticons_red"
+                android:layout_marginTop="@dimen/my_action_info_margin_top"
+                android:layout_marginEnd="16dp"
                 android:textAlignment="viewStart"
-                android:textColor="@color/padrao_WHITE"
+                android:textAllCaps="true"
+                android:textColor="@color/emoticons_red"
                 android:textStyle="bold"
+                app:layout_constrainedWidth="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/tv_inspection_description"
                 app:layout_constraintTop_toBottomOf="@+id/tv_inspection_description"
-                app:layout_constrainedWidth="true"
                 tools:text="TextView" />
 
             <TextView
                 android:id="@+id/tv_day_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:textSize="11sp"
+                android:layout_marginTop="@dimen/my_action_info_margin_top"
+                android:textColor="@color/gray_colors_menu"
+                android:textSize="@dimen/font_size_font_12"
                 app:layout_constraintEnd_toEndOf="@+id/tv_status"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/tv_status"
                 app:layout_constraintTop_toBottomOf="@+id/tv_status"
                 tools:text="TextView" />
 
-            <TextView
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/tv_inspection_verification_action"
-                android:layout_width="0dp"
+                style="@style/NamoaMaterialButtonFilledDarkBlue"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
                 android:layout_marginTop="24dp"
-                android:layout_marginEnd="8dp"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="10dp"
-                android:textAllCaps="true"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@+id/tv_auto_skip_inspection"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintHorizontal_chainStyle="spread_inside"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_day_count"
-                tools:text="TextView"
-                tools:visibility="visible"
-                android:gravity="center_vertical"
-                app:drawableLeftCompat="@drawable/ic_baseline_play_arrow_24dp"
-                app:drawableTint="#074C61" />
-
-            <TextView
-                android:id="@+id/tv_inspection_ongoing_action"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="10dp"
-                android:textAllCaps="true"
-                android:textStyle="bold"
-                android:textColor="@color/namoa_color_highlight_required_item"
-                app:layout_constraintBottom_toBottomOf="@+id/ll_answer_info"
-                app:layout_constraintEnd_toStartOf="@+id/ll_answer_info"
-                app:layout_constraintStart_toStartOf="@+id/tv_inspection_verification_action"
-                app:layout_constraintTop_toTopOf="@+id/ll_answer_info"
-                tools:text="TextView"
-                tools:visibility="gone"
-                android:gravity="center_vertical"
-                app:drawableLeftCompat="@drawable/ic_baseline_play_arrow_24dp"
-                app:drawableTint="@color/namoa_color_highlight_required_item" />
-
-            <TextView
-                android:id="@+id/tv_auto_skip_inspection"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                app:layout_constrainedHeight="true"
                 android:layout_marginEnd="16dp"
-                android:drawableLeft="@drawable/ic_baseline_redo_24"
-                android:drawablePadding="8dp"
-                android:textAllCaps="true"
-                android:textColor="@color/namoa_os_form_verify_later"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/tv_inspection_verification_action"
+                android:layout_marginBottom="12dp"
+                app:icon="@drawable/ic_baseline_play_arrow_24dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/tv_inspection_verification_action"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintVertical_bias="0"
+                app:layout_constraintStart_toEndOf="@+id/tv_auto_already_ok"
+                app:layout_constraintTop_toBottomOf="@+id/tv_day_count"
+                app:layout_constraintBottom_toBottomOf="parent"
+                tools:text="Verificar"
+                tools:visibility="visible"
+
+                />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/tv_auto_already_ok"
+                style="@style/NamoaMaterialButtonOutlined"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constrainedWidth="true"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="8dp"
+                app:icon="@drawable/ic_done_black_24dp"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_inspection_verification_action"
+                app:layout_constraintEnd_toStartOf="@+id/tv_inspection_verification_action"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/tv_inspection_verification_action"
-                tools:text="Não Verificar"
-                android:gravity="center_vertical"
+                tools:text="Ja estava ok"
+                tools:visibility="visible" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_inspection_ongoing_action"
+                style="@style/NamoaMaterialButtonFilledOrange"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="12dp"
+                app:icon="@drawable/ic_baseline_play_arrow_24dp"
+                app:layout_constraintBottom_toBottomOf="@+id/ll_answer_info"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/ll_answer_info"
+                tools:text="Continuar"
                 tools:visibility="gone" />
 
-            <ImageView
-                android:id="@+id/iv_inspect_answered"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:src="@drawable/ic_build_black_24dp"
-                android:layout_marginStart="16dp"
-                app:layout_constraintBottom_toBottomOf="@+id/tv_inspect_answered"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/tv_inspect_answered"
-                app:tint="@color/namoa_color_cone_item" />
+<!--            <ImageView-->
+<!--                android:id="@+id/iv_inspect_answered"-->
+<!--                android:layout_width="18dp"-->
+<!--                android:layout_height="18dp"-->
+<!--                android:layout_marginStart="16dp"-->
+<!--                android:src="@drawable/ic_build_black_24dp"-->
+<!--                app:layout_constraintBottom_toBottomOf="@+id/tv_inspect_answered"-->
+<!--                app:layout_constraintStart_toEndOf="@id/ll_answer_info"-->
+<!--                app:layout_constraintTop_toTopOf="@+id/tv_inspect_answered"-->
+<!--                app:tint="@color/namoa_color_cone_item"-->
+<!--                />-->
 
-            <TextView
-                android:id="@+id/tv_inspect_answered"
-                android:layout_width="0dp"
+<!--            <TextView-->
+<!--                android:id="@+id/tv_inspect_answered"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginStart="4dp"-->
+<!--                android:layout_marginTop="8dp"-->
+<!--                android:layout_marginEnd="16dp"-->
+<!--                android:layout_marginBottom="12dp"-->
+<!--                android:visibility="visible"-->
+<!--                app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                app:layout_constraintHorizontal_bias="1"-->
+<!--                app:layout_constraintStart_toEndOf="@+id/iv_inspect_answered"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintTop_toBottomOf="@+id/tv_inspection_verification_action"-->
+<!--                tools:text="Já estava ok"-->
+<!--                />-->
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_inspect_answered"
+                style="@style/NamoaMaterialButtonText"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="12dp"
-                android:visibility="visible"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/ll_answer_info"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@+id/iv_inspect_answered"
-                app:layout_constraintTop_toBottomOf="@+id/tv_inspection_verification_action"
-                tools:text="Já estava ok" />
+                android:layout_marginEnd="16dp"
+                app:layout_constrainedWidth="true"
+                android:clickable="false"
+                android:focusable="false"
+                app:layout_constraintHorizontal_bias="1"
+                app:icon="@drawable/ic_build_black_24dp"
+                app:layout_constraintBottom_toBottomOf="@+id/ll_answer_info"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/ll_answer_info"
+                app:layout_constraintTop_toTopOf="@+id/ll_answer_info"
+                tools:text="Ajuste realizado" />
 
             <LinearLayout
                 android:id="@+id/ll_answer_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="20dp"
+                android:layout_marginStart="16dp"
                 android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_auto_skip_inspection">
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_auto_already_ok">
 
                 <ImageView
                     android:id="@+id/iv_commentary"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_width="@dimen/pipeline_step_icon_width"
+                    android:layout_height="@dimen/pipeline_step_icon_height"
                     android:layout_marginRight="8dp"
-                    android:gravity="center"
+                    android:layout_gravity="center"
                     android:src="@drawable/ic_baseline_notes_24"
                     app:tint="@color/namoa_color_cone_item" />
 
                 <ImageView
                     android:id="@+id/iv_product_applied"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginRight="4dp"
-                    android:gravity="center"
+                    android:layout_width="@dimen/pipeline_step_icon_width"
+                    android:layout_height="@dimen/pipeline_step_icon_height"
+                    android:layout_gravity="center"
                     android:src="@drawable/ic_baseline_inventory_2_black_24"
                     app:tint="@color/namoa_color_cone_item" />
 
                 <TextView
                     android:id="@+id/tv_product_applied_count"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginRight="4dp"
-                    android:gravity="center"
-                    tools:text="10" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="8dp"
+                    android:gravity="center_vertical"
+                    tools:text="10"
+
+                    />
 
                 <ImageView
                     android:id="@+id/iv_photo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
+                    android:layout_width="@dimen/pipeline_step_icon_width"
+                    android:layout_height="@dimen/pipeline_step_icon_height"
+                    android:layout_gravity="center"
                     android:src="@drawable/ic_baseline_photo_camera_24"
                     app:tint="@color/namoa_color_cone_item" />
 
                 <TextView
                     android:id="@+id/tv_photo_count"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginRight="8dp"
                     android:gravity="center"
-                    tools:text="1" />
+                    tools:text="1"
+                    />
 
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>

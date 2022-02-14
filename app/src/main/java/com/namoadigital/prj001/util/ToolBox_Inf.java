@@ -129,7 +129,6 @@ import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
-import com.namoadigital.prj001.fcm.WS_Notification_Sync;
 import com.namoadigital.prj001.model.CH_Room;
 import com.namoadigital.prj001.model.Chat_Obj;
 import com.namoadigital.prj001.model.EV_Module_Res;
@@ -164,7 +163,6 @@ import com.namoadigital.prj001.model.TSerial_Save_Env;
 import com.namoadigital.prj001.model.T_IO_Inbound_Item_Env;
 import com.namoadigital.prj001.model.T_IO_Outbound_Item_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Env;
-import com.namoadigital.prj001.receiver.NotificationReceiver;
 import com.namoadigital.prj001.receiver.WBR_AL_Full;
 import com.namoadigital.prj001.receiver.WBR_AL_Quarter;
 import com.namoadigital.prj001.receiver.WBR_Cleanning;
@@ -246,6 +244,7 @@ import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.ui.act078.Act078_Main;
 import com.namoadigital.prj001.ui.act079.Act079_Main;
+import com.namoadigital.prj001.ui.act088.Act088Main;
 import com.namoadigital.prj001.worker.Work_Cleanning_Data;
 import com.namoadigital.prj001.worker.Work_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.worker.Work_DownLoad_PDF;
@@ -288,6 +287,7 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.Collator;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
@@ -295,10 +295,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.TimeZone;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -5182,10 +5185,17 @@ public class ToolBox_Inf {
                 context.getSystemService(NOTIFICATION_SERVICE);
         //
         Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        Intent mIntent = new Intent(context, NotificationReceiver.class);
+        /*
+        * LUCHE - 28/01/2022
+        * A partir do androdi 12, uma notificação que chame um service ou receiver que depois chama uma
+        * act, não e mas permitido.
+        * PAra solucionar o problema, ao inves de chamar NotificationReceiver, agora é chamada act088
+        * que possui a mesma logica que o receiver e chama a act034 com a configuração esperada
+        * */
+        Intent mIntent = new Intent(context, Act088Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-        PendingIntent pi = PendingIntent.getBroadcast(
+        //
+        PendingIntent pi = PendingIntent.getActivity(
                 context,
                 0,
                 mIntent,
@@ -5242,11 +5252,11 @@ public class ToolBox_Inf {
                             }*/
                             //Se msg são de apenas um customer, passa como parametro
                             if (msgInfo.get(Sql_Chat_Notification_001.QTY_CUSTOMER).equals("1")) {
-                                mIntent = new Intent(context, NotificationReceiver.class);
+                                mIntent = new Intent(context, Act088Main.class);
                                 mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 mIntent.putExtra(CH_RoomDao.CUSTOMER_CODE, Long.parseLong(msgInfo.get(CH_RoomDao.CUSTOMER_CODE)));
                                 //
-                                pi = PendingIntent.getBroadcast(
+                                pi = PendingIntent.getActivity(
                                         context,
                                         0,
                                         mIntent,
@@ -9106,5 +9116,18 @@ public class ToolBox_Inf {
         }
         //
         return noAccentText.toString();
+    }
+
+    public static void sortResults(ArrayList<HMAux> itemsForSort, String hmAuxKey) {
+        Comparator<HMAux> comparator = new Comparator<HMAux>() {
+            @Override
+            public int compare(HMAux product, HMAux productAux) {
+                String description = product.get(hmAuxKey) != null ? Objects.requireNonNull(product.get(hmAuxKey)).trim().toLowerCase() : "";
+                String descriptionAux = productAux.get(hmAuxKey) != null ? Objects.requireNonNull(productAux.get(hmAuxKey)).trim().toLowerCase() : "";
+
+                return Collator.getInstance().compare(description, descriptionAux);
+            }
+        };
+        Collections.sort(itemsForSort, comparator);
     }
 }

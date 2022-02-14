@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/namoa_color_light_green_transp_lib" android:state_pressed="true"/>
+    <item android:color="@color/namoa_color_gray_6" android:state_enabled="false"/>
+    <item android:color="@color/namoa_color_light_green5"/>
+</selector>
