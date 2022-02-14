@@ -437,7 +437,12 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
 
     private fun iniLastMeasureInfo() {
         with(binding){
-            tvOsLastMeasureVal.text = ToolBox_Inf.formatLastMeaseureInfo(context, formOsHeader.value_sufix, formOsHeader.last_measure_value, formOsHeader.last_measure_date, formOsHeader.restriction_decimal)
+            tvOsLastMeasureVal.text = ToolBox_Inf.formatLastMeaseureInfo(
+                context,
+                formOsHeader.value_sufix,
+                formOsHeader.last_measure_value,
+                formOsHeader.last_measure_date
+            )
             clLastMeasure.visibility = if(!tvOsLastMeasureVal.text.toString().isNullOrEmpty()) View.VISIBLE else View.GONE
         }
     }

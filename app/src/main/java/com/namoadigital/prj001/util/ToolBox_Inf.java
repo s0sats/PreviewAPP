@@ -9007,23 +9007,17 @@ public class ToolBox_Inf {
         return convertedValue;
     }
 
-    public static String formatLastMeaseureInfo(Context context, String valueSufix, Float lastMeasureValue, String lastMeasureDate, Integer decimalRestriction){
+    public static String formatLastMeaseureInfo(Context context, String valueSufix, Float lastMeasureValue, String lastMeasureDate){
         String meSufix = "";
         if(valueSufix != null){
             //O espaço esta na var meSufix
             meSufix = " " + valueSufix;
         }
         //
-        int restriction = 0;
-        if(decimalRestriction != null){
-            restriction = decimalRestriction;
-        }
-        //
         if(lastMeasureValue != null && lastMeasureDate != null){
 
             return convertFloatToBigDecimalString(
                     lastMeasureValue,
-                    restriction,
                     true
                     ) +
                     meSufix + " - " +
@@ -9039,7 +9033,6 @@ public class ToolBox_Inf {
             if(lastMeasureValue != null){
                 info  +=  convertFloatToBigDecimalString(
                         lastMeasureValue,
-                        restriction,
                         true
                 ) + meSufix;
             }

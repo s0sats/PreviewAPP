@@ -14,6 +14,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by neomatrix on 11/01/17.
@@ -435,7 +436,9 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
             contentValues.put(CUSTOM_FORM_ORDER, hmAux.get(CUSTOM_FORM_ORDER));
             contentValues.put(PAGE, hmAux.get(PAGE));
             contentValues.put(REQUIRED, hmAux.get(REQUIRED));
-            contentValues.put(DEVICE_TP_CODE, hmAux.get(DEVICE_TP_CODE));
+            if(hmAux.hasConsistentValue(DEVICE_TP_CODE) && !Objects.requireNonNull(hmAux.get(DEVICE_TP_CODE)).isEmpty()) {
+                contentValues.put(DEVICE_TP_CODE, hmAux.get(DEVICE_TP_CODE));
+            }
             contentValues.put(AUTOMATIC, hmAux.get(AUTOMATIC));
             contentValues.put(COMMENT, hmAux.get(COMMENT));
             contentValues.put(REQUIRE_PHOTO_ON_NC, hmAux.get(REQUIRE_PHOTO_ON_NC));

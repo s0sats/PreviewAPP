@@ -2400,8 +2400,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             context,
             measureTp.getValueSufix(),
             new BigDecimal(serialInfo.getLast_measure_value()).floatValue(),
-            serialInfo.getLast_measure_date(),
-            measureTp.getRestrictionDecimal()
-        );
+            serialInfo.getLast_measure_date()
+       );
     }
 }
