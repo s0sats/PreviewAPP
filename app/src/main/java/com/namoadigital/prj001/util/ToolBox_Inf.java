@@ -1220,15 +1220,16 @@ public class ToolBox_Inf {
                     if (iStatus == 0) {
                         //sendBCStatus(context, "UPDATE_REQUIRED", context.getString(R.string.msg_update_required), s_Link, "0");
                         checkNewDbVersion(context,db_version);
-                        //
-//                        ToolBox.sendBCStatus(
-//                            context,
-//                            ConstantBase.PD_TYPE_UPDATE_REQUIRED,
-//                            context.getString(R.string.msg_update_required),
-//                            s_Link,
-//                            "0"
-//                        );
+
+                        ToolBox.sendBCStatus(
+                            context,
+                            ConstantBase.PD_TYPE_UPDATE_REQUIRED,
+                            context.getString(R.string.msg_update_required),
+                            s_Link,
+                            "0"
+                        );
                         return false;
+//                        break;
                     } else {
                         break;
                     }
@@ -1250,7 +1251,7 @@ public class ToolBox_Inf {
 //                                );
                         }
                         //
-                        return false;
+//                        return false;
                     } else {
                         break;
                     }

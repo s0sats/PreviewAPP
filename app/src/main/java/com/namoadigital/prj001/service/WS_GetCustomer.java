@@ -61,7 +61,13 @@ public class WS_GetCustomer extends IntentService {
             String user = bundle.getString(Constant.GC_USER_CODE);
             String password = bundle.getString(Constant.GC_PWD);
             String nfc = bundle.getString(Constant.GC_NFC);
-            int statusjump = bundle.getInt(Constant.GC_STATUS_JUMP);
+//            int statusjump = bundle.getInt(Constant.GC_STATUS_JUMP);
+            /**
+             * 15/02/2022 - BARRIONUEVO
+             * Remoção de atualização por Servidor.
+             *
+             */
+            int statusjump = 1;
 
             processWS_GC(user, password, nfc, statusjump);
 
