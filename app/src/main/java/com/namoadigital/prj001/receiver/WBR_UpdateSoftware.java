@@ -11,7 +11,7 @@ import com.namoadigital.prj001.service.WS_UpdateSoftware;
 /**
  * Created by neomatrix on 16/01/17.
  */
-
+@Deprecated
 public class WBR_UpdateSoftware extends WakefulBroadcastReceiver {
 
     public static boolean IS_RUNNING = false;

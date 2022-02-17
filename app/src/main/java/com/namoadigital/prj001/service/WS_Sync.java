@@ -252,7 +252,13 @@ public class WS_Sync extends IntentService {
 
             String session_app = bundle.getString(Constant.GS_SESSION_APP);
             ArrayList<String> dataPackageType = bundle.getStringArrayList(Constant.GS_DATA_PACKAGE);
-            int jumpValidation = bundle.getInt(Constant.GC_STATUS_JUMP);
+//            int jumpValidation = bundle.getInt(Constant.GC_STATUS_JUMP);
+            /**
+             * 15/02/2022 - BARRIONUEVO
+             * Remoção de atualização por Servidor.
+             *
+             */
+            int jumpValidation = 1;
             int jumpOD = bundle.getInt(Constant.GC_STATUS);
             //Essa chave só é passada pela Act008, tela de criação se formulario.
             Long product_code = bundle.getLong(Constant.GS_PRODUCT_CODE, -1L);

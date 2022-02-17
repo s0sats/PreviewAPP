@@ -18,7 +18,7 @@ import java.io.File;
 /**
  * Created by neomatrix on 16/01/17.
  */
-
+@Deprecated
 public class WS_UpdateSoftware extends IntentService {
 
     private String l_version_link;
