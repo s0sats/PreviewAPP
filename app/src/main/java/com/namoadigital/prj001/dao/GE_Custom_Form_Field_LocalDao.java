@@ -14,6 +14,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by neomatrix on 11/01/17.
@@ -39,6 +40,7 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
     public static final String CUSTOM_FORM_ORDER = "custom_form_order";
     public static final String PAGE = "page";
     public static final String REQUIRED = "required";
+    public static final String DEVICE_TP_CODE = "device_tp_code";
     public static final String AUTOMATIC = "automatic";
     public static final String COMMENT = "comment";
     public static final String REQUIRE_PHOTO_ON_NC = "require_photo_on_nc";
@@ -325,6 +327,12 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
             custom_form_field_local.setPage(cursor.getInt(cursor.getColumnIndex(PAGE)));
             custom_form_field_local.setRequired(cursor.getInt(cursor.getColumnIndex(REQUIRED)));
 
+            if (cursor.isNull(cursor.getColumnIndex(DEVICE_TP_CODE))) {
+                custom_form_field_local.setDevice_tp_code(null);
+            } else {
+                custom_form_field_local.setDevice_tp_code(cursor.getInt(cursor.getColumnIndex(DEVICE_TP_CODE)));
+            }
+
             custom_form_field_local.setAutomatic(cursor.getString(cursor.getColumnIndex(AUTOMATIC)));
 
             custom_form_field_local.setComment(cursor.getString(cursor.getColumnIndex(COMMENT)));
@@ -385,6 +393,9 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
             if (custom_form_field_local.getRequired() > -1) {
                 contentValues.put(REQUIRED, custom_form_field_local.getRequired());
             }
+
+            contentValues.put(DEVICE_TP_CODE, custom_form_field_local.getDevice_tp_code());
+
             if (custom_form_field_local.getAutomatic() != null) {
                 contentValues.put(AUTOMATIC, custom_form_field_local.getAutomatic());
             }
@@ -425,6 +436,9 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
             contentValues.put(CUSTOM_FORM_ORDER, hmAux.get(CUSTOM_FORM_ORDER));
             contentValues.put(PAGE, hmAux.get(PAGE));
             contentValues.put(REQUIRED, hmAux.get(REQUIRED));
+            if(hmAux.hasConsistentValue(DEVICE_TP_CODE) && !Objects.requireNonNull(hmAux.get(DEVICE_TP_CODE)).isEmpty()) {
+                contentValues.put(DEVICE_TP_CODE, hmAux.get(DEVICE_TP_CODE));
+            }
             contentValues.put(AUTOMATIC, hmAux.get(AUTOMATIC));
             contentValues.put(COMMENT, hmAux.get(COMMENT));
             contentValues.put(REQUIRE_PHOTO_ON_NC, hmAux.get(REQUIRE_PHOTO_ON_NC));

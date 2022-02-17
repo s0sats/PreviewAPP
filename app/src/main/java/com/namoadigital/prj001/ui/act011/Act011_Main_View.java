@@ -3,12 +3,15 @@ package com.namoadigital.prj001.ui.act011;
 import android.content.Context;
 import android.os.Bundle;
 
+import com.namoa_digital.namoa_library.ctls.CustomFF;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.AcessoryFormView;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.GeOs;
+import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
+import com.namoadigital.prj001.model.MeMeasureTp;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,4 +65,8 @@ public interface Act011_Main_View {
     void defineFinalizeFlow();
 
     boolean isNavegationFromGeOsFlow();
+
+    CustomFF cfg_Measure(HMAux cf, MD_Product_Serial serialInfo, MeMeasureTp measureTp);
+
+    CustomFF cfg_Number(HMAux cf);
 }

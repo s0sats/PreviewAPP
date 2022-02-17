@@ -420,74 +420,31 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 //todo rever o save do float no obj
                 formOsHeader.measure_value?.let {
                     mketOsMainMeasureVal.setText(
-                        getFormattedLastMeasureValue(it)
+                        ToolBox_Inf.convertFloatToBigDecimalString(
+                            it,
+                            true
+                        )
                     )
                     mketOsMainMeasureVal.isEnabled = isOsCreation
                     mketOsMainMeasureVal.setmBARCODE(isOsCreation)
 
                 }
                 mainMeasureTp?.let { measure->
-                    mketOsMainMeasureVal.setmDecimal(measure.restrictionDecimal?:4)
+                    mketOsMainMeasureVal.setmDecimal(measure.restrictionDecimal?:ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT)
                 }
             }
     }
 
     private fun iniLastMeasureInfo() {
         with(binding){
-            tvOsLastMeasureVal.text = formatLastMeaseureInfo(formOsHeader.last_measure_value,formOsHeader.last_measure_date)
+            tvOsLastMeasureVal.text = ToolBox_Inf.formatLastMeaseureInfo(
+                context,
+                formOsHeader.value_sufix,
+                formOsHeader.last_measure_value,
+                formOsHeader.last_measure_date
+            )
             clLastMeasure.visibility = if(!tvOsLastMeasureVal.text.toString().isNullOrEmpty()) View.VISIBLE else View.GONE
         }
-    }
-
-    private fun formatLastMeaseureInfo(
-        lastMeasureValue: Float?,
-        lastMeasureDate: String?
-    ): String {
-        val meSufix = if(formOsHeader.value_sufix != null){
-            " ${formOsHeader.value_sufix}"
-        }else{
-            ""
-        }
-        if(lastMeasureValue != null && lastMeasureDate != null){
-            val formattedLastMeasureValue = getFormattedLastMeasureValue(lastMeasureValue)
-            //O espaço esta na var meSufix
-            return "$formattedLastMeasureValue$meSufix - ${
-                ToolBox_Inf.millisecondsToString(
-                    ToolBox_Inf.dateToMilliseconds(
-                        lastMeasureDate
-                    ),
-                    ToolBox_Inf.nlsDateFormat(requireContext()) + " HH:mm"
-                )}"
-        }else{
-            var info = ""
-            lastMeasureValue?.let{
-                val formattedLastMeasureValue = getFormattedLastMeasureValue(it)
-                //O espaço esta na var meSufix
-                info += "$formattedLastMeasureValue$meSufix"
-            }
-            lastMeasureDate?.let{
-                info += ToolBox_Inf.millisecondsToString(
-                    ToolBox_Inf.dateToMilliseconds(
-                        it,
-                        ConstantBaseApp.DATE_TO_MILLISECOND_TYPE_IGNORE_SECOND
-                    ),
-                    ToolBox_Inf.nlsDateFormat(requireContext()) + " HH:mm"
-                )
-            }
-            return info
-        }
-    }
-
-    /**
-     * Fun que retorna o valor da ultima medição formatada utilizando a qtd de casas decimais definida
-     * na medição
-     */
-    private fun getFormattedLastMeasureValue(lastMeasureValue: Float) : String{
-        return ToolBox_Inf.convertFloatToBigDecimalString(
-            lastMeasureValue,
-            formOsHeader.restriction_decimal ?: 4,
-            true
-        )
     }
 
     private fun iniSaveBtn() {
@@ -513,7 +470,15 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             } else {
                 ContextCompat.getDrawable(requireContext(), R.drawable.shape_ok)
             }
-            val measureInvalid = isMeasureRestrictionInvalid()
+            val measureInvalid = mainMeasureTp?.let {
+                if(!binding.mketOsMainMeasureVal.text.isNullOrEmpty() && isMeasureValNumeric()) {
+                    val typedMeasure = binding.mketOsMainMeasureVal.text.toString().toFloat()
+                    it.isMeasureRestrictionInvalid(typedMeasure, formOsHeader.last_measure_value, formOsHeader.last_measure_date, binding.mkdtStartDate.getmValue())
+                }else{
+                    true
+                }
+            }?: true
+            //
             val preventiveCycleInvalid = isPreventiveCycleValid(isOrderTypeInvalid).not()
             //
             if(isOrderTypeInvalid || isMachineEmpty || isMachineTheSame || isStartDateInvalid || measureInvalid || preventiveCycleInvalid ){
@@ -607,7 +572,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     }
 
     private fun getFormattedMeasureValue(): Float {
-        return BigDecimal(binding.mketOsMainMeasureVal.text.toString()).setScale( mainMeasureTp?.restrictionDecimal?:4,RoundingMode.HALF_DOWN).toFloat()
+        return BigDecimal(binding.mketOsMainMeasureVal.text.toString()).setScale( mainMeasureTp?.restrictionDecimal?:ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT,RoundingMode.HALF_DOWN).toFloat()
     }
 
     /**
@@ -672,22 +637,22 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         return true
     }
 
-    private fun isMeasureRestrictionInvalid(): Boolean {
-        mainMeasureTp?.let{
-            return if(!binding.mketOsMainMeasureVal.text.isNullOrEmpty() && isMeasureValNumeric()){
-                val typedMeasure = binding.mketOsMainMeasureVal.text.toString().toFloat()
-                when(it.restrictionType){
-                    MeMeasureTp.RESTRICTION_TYPE_VALUE -> isMeasureRestrictionValueValid(typedMeasure,it).not()
-                    MeMeasureTp.RESTRICTION_TYPE_VALUE_BY_DAY -> isMeasureRestrictionValueByDayValid(typedMeasure,it).not()
-                    MeMeasureTp.RESTRICTION_TYPE_MIN_MAX  -> isMeasureRestrictionMinMaxValid(typedMeasure,it).not()
-                    else-> false
-                }
-            }else{
-                true
-            }
-        }
-        return false
-    }
+//    private fun isMeasureRestrictionInvalid(): Boolean {
+//        mainMeasureTp?.let{
+//            return if(!binding.mketOsMainMeasureVal.text.isNullOrEmpty() && isMeasureValNumeric()){
+//                val typedMeasure = binding.mketOsMainMeasureVal.text.toString().toFloat()
+//                when(it.restrictionType){
+//                    MeMeasureTp.RESTRICTION_TYPE_VALUE -> it.isMeasureRestrictionValueValid(typedMeasure,formOsHeader.last_measure_value).not()
+//                    MeMeasureTp.RESTRICTION_TYPE_VALUE_BY_DAY -> it.isMeasureRestrictionValueByDayValid(typedMeasure,it).not()
+//                    MeMeasureTp.RESTRICTION_TYPE_MIN_MAX  -> it.isMeasureRestrictionMinMaxValid(typedMeasure,it).not()
+//                    else-> false
+//                }
+//            }else{
+//                true
+//            }
+//        }
+//        return false
+//    }
 
     /**
      * Valida se medição digita é um float ou não
@@ -752,7 +717,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         //Calc perc de dias...
         val modDay = (diffInMs % ONE_DAY_IN_MILLISECOND.toDouble()) / ONE_DAY_IN_MILLISECOND.toDouble()
         //Soma e devolve float com 4 casas.
-        return BigDecimal(calcDay + modDay).setScale( 4,RoundingMode.HALF_DOWN).toFloat()
+        return BigDecimal(calcDay + modDay).setScale( ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT,RoundingMode.HALF_DOWN).toFloat()
     }
 
     private fun isMeasureRestrictionValueValid(

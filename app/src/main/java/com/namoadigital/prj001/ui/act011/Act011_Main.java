@@ -56,6 +56,7 @@ import com.namoa_digital.namoa_library.ctls.CustomFF;
 import com.namoa_digital.namoa_library.ctls.LabelFF;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNMFF;
+import com.namoa_digital.namoa_library.ctls.MeasureFF;
 import com.namoa_digital.namoa_library.ctls.MkDateTime;
 import com.namoa_digital.namoa_library.ctls.PhotoFF;
 import com.namoa_digital.namoa_library.ctls.PictureFF;
@@ -89,6 +90,7 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.MdTagDao;
+import com.namoadigital.prj001.dao.MeMeasureTpDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
@@ -108,6 +110,7 @@ import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
+import com.namoadigital.prj001.model.MeMeasureTp;
 import com.namoadigital.prj001.model.MyActionFilterParam;
 import com.namoadigital.prj001.model.MyActions;
 import com.namoadigital.prj001.model.TSave_Rec;
@@ -275,6 +278,8 @@ public class Act011_Main extends Base_Activity
     //LUCHE - 29/10/2021 - Var que indica que a abertura da act011 foi feita pela navegação de volta
     //da act086
     private boolean isNavegationFromGeOsFlow = false;
+
+    private MeasureFF.OnValidationListener measureValidateListener = null;
 
 
     public void setWsSoProcess(String wsSoProcess) {
@@ -502,6 +507,7 @@ public class Act011_Main extends Base_Activity
         transList.add("alert_invalid_sys_end_date_ttl");
         transList.add("alert_invalid_sys_end_date_msg");
         transList.add("form_sys_start_date_lbl");
+        transList.add("form_measure_last_value_lbl");
         //
         transList.addAll(Act011FrgInspection.Companion.getFragTranslationsVars());
         //
@@ -714,7 +720,8 @@ public class Act011_Main extends Base_Activity
                 new MdTagDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
                 new GeOsDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
                 new GeOsDeviceDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
-                new GeOsDeviceItemDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
+                new GeOsDeviceItemDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
+                new MeMeasureTpDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
         );
 
         recoverGetIntents();
@@ -1423,7 +1430,7 @@ public class Act011_Main extends Base_Activity
                         customField = cfg_ComboBox(cf);
                         break;
                     case CustomFF.NUMBER:
-                        customField = cfg_Number(cf);
+                        customField = mPresenter.checkNumberOrMeasureCtrl(cf,getSerialInfo());
                         break;
                     case CustomFF.DATE:
                         customField = cfg_Date(cf);
@@ -1795,23 +1802,27 @@ public class Act011_Main extends Base_Activity
 
         if (mkEditTextNMFF.getmMaxSize() == 0 && cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_TYPE).equalsIgnoreCase(CustomFF.NUMBER)) {
 
-            String[] opcs = null;
-
-            try {
-                JSONObject jsonObject = new JSONObject(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_CONTENT));
-                JSONArray jsonArray = jsonObject.getJSONArray(CONTENT);
-                //
-                opcs = new String[jsonArray.length()];
-                //
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject jo = jsonArray.getJSONObject(i);
-                    opcs[i] = jo.getString(DECIMAL);
-                }
-                //
-                mkEditTextNMFF.setmDecimal(Integer.parseInt(opcs[0]));
-            } catch (JSONException e) {
-                mkEditTextNMFF.setmDecimal(0);
-            }
+//
+//            String[] opcs = null;
+//
+//            try {
+//                JSONObject jsonObject = new JSONObject(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_CONTENT));
+//                JSONArray jsonArray = jsonObject.getJSONArray(CONTENT);
+//                //
+//                opcs = new String[jsonArray.length()];
+//                //
+//                for (int i = 0; i < jsonArray.length(); i++) {
+//                    JSONObject jo = jsonArray.getJSONObject(i);
+//                    opcs[i] = jo.getString(DECIMAL);
+//                }
+//                //
+//                mkEditTextNMFF.setmDecimal(Integer.parseInt(opcs[0]));
+//            } catch (JSONException e) {
+//                mkEditTextNMFF.setmDecimal(0);
+//            }
+            mkEditTextNMFF.setmDecimal(
+                getDecimalFromContent(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_CONTENT))
+            );
         }
 
         mkEditTextNMFF.setmRequired(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRED).equalsIgnoreCase("1") ? true : false);
@@ -1833,6 +1844,30 @@ public class Act011_Main extends Base_Activity
         }
 
         return mkEditTextNMFF;
+    }
+
+    /**
+     * Metodo que retorna o qtd de casa decimais de dentro do customFormContent
+     * @param customFormContent
+     * @return Valor do decimal ou 0 caos não exista ou de exception
+     */
+    private int getDecimalFromContent(String customFormContent){
+        String[] opcs = null;
+        try {
+            JSONObject jsonObject = new JSONObject(customFormContent);
+            JSONArray jsonArray = jsonObject.getJSONArray(CONTENT);
+            //
+            opcs = new String[jsonArray.length()];
+            //
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jo = jsonArray.getJSONObject(i);
+                opcs[i] = jo.getString(DECIMAL);
+            }
+            //
+           return Integer.parseInt(opcs[0]);
+        } catch (JSONException e) {
+            return 0;
+        }
     }
 
     private CustomFF cfg_ComboBox(HMAux cf) {
@@ -1872,9 +1907,8 @@ public class Act011_Main extends Base_Activity
         return comboBoxFF;
     }
 
-    private CustomFF cfg_Number(HMAux cf) {
-        return cfg_Char(cf);
-    }
+    @Override
+    public CustomFF cfg_Number(HMAux cf) { return cfg_Char(cf); }
 
     private CustomFF cfg_Date(HMAux cf) {
         return cfg_Char(cf);
@@ -2074,6 +2108,87 @@ public class Act011_Main extends Base_Activity
         return photoFF;
     }
 
+    //
+
+
+    @Override
+    public CustomFF cfg_Measure(HMAux cf, MD_Product_Serial serialInfo, MeMeasureTp measureTp) {
+        String historicalInfo = mPresenter.getLastMeasureInfo(measureTp,serialInfo);
+        //
+        MeasureFF measureFF = new MeasureFF(Act011_Main.this);
+        measureFF.setLastMeasureValue(historicalInfo);
+        measureFF.setLastMeasureLbl(hmAux_Trans.get("form_measure_last_value_lbl"));
+        measureFF.setMDecimal(
+            measureTp.getRestrictionDecimal() != null
+            ? measureTp.getRestrictionDecimal()
+            : getDecimalFromContent(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_CONTENT))
+        );
+        //
+        if(measureValidateListener == null) {
+            measureValidateListener = new MeasureFF.OnValidationListener() {
+                @NonNull
+                @Override
+                public MeasureFF.MeasureValidationReturn isMeasureValid(float measure) {
+                    //Trata lastMeasure null.
+                    Float lastMeasureValue =
+                        serialInfo.getLast_measure_value() != null
+                        ? serialInfo.getLast_measure_value().floatValue()
+                        : null;
+                    //
+                    MeasureFF.MeasureValidationReturn validationReturn = measureTp.validateMeasureRestriction(
+                        measure,
+                        lastMeasureValue,
+                        serialInfo.getLast_measure_date(),
+                        ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT)
+                    );
+                    //Se msg de erro, seta tradução
+                    if(validationReturn.getErrorMsg() != null && !validationReturn.getErrorMsg().isEmpty()){
+                        validationReturn.setErrorMsg(
+                            hmAux_Trans.get(validationReturn.getErrorMsg())
+                        );
+                    }
+                    //
+                    return validationReturn;
+                }
+            };
+            measureFF.setOnValidation(measureValidateListener);
+        }
+        //
+        measureFF.setmDots_txt_app(cf.get(GE_Custom_Form_Field_LocalDao.COMMENT));
+
+        measureFF.setId(View.generateViewId());
+        measureFF.setmRequire_photo_on_nc(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRE_PHOTO_ON_NC).equals("1") ? true : false);
+        measureFF.setmLabel(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_FIELD_DESC));
+        measureFF.setmOrder(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_ORDER)));
+        measureFF.setmSequence(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
+        measureFF.setmPage(Integer.parseInt(cf.get(PAGE)));
+        //measureFF.setmType(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_TYPE));
+
+        measureFF.setmOption(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_CONTENT));
+
+        measureFF.setmRequired(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRED).equalsIgnoreCase("1") ? true : false);
+        measureFF.setmPre(prefix);
+
+        HMAux itemDB = retornDBValue(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
+
+        measureFF.setmAutomatic(cf.get(GE_Custom_Form_Field_LocalDao.AUTOMATIC));
+
+        measureFF.setmValue(itemDB.get(HMAux.TEXTO_01));
+        measureFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
+        //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
+        //mas a vida eh uma caixinha de surpresas e teve que ser removido t0d0 acesso aos nform deletados
+        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) ||
+            formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE)
+//               || formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
+        ) {
+            measureFF.setmEnabled(false);
+        } else {
+            measureFF.setmEnabled(true);
+        }
+        //
+        return measureFF;
+    }
+    //
     private HMAux retornDBValue(int seq) {
         HMAux hmAux = new HMAux();
         //

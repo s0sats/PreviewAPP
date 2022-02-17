@@ -4,6 +4,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
+
+import com.namoa_digital.namoa_library.ctls.CustomFF;
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.Act011FormTab;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
@@ -12,6 +16,7 @@ import com.namoadigital.prj001.model.GeOs;
 import com.namoadigital.prj001.model.InspectionCell;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
+import com.namoadigital.prj001.model.MeMeasureTp;
 
 import java.util.ArrayList;
 
@@ -80,4 +85,11 @@ public interface Act011_Main_Presenter {
     InspectionCell setAlreadyOkItem(String itemPk, String date_start);
 
     int getMissingForecastAnswers(GeOs geOs);
+
+    MeMeasureTp getMeasureTp(long customerCode, int measureTpCode);
+
+    CustomFF checkNumberOrMeasureCtrl(HMAux cf, MD_Product_Serial serialInfo);
+
+    @Nullable
+    String getLastMeasureInfo(MeMeasureTp measureTp, MD_Product_Serial serialInfo);
 }
