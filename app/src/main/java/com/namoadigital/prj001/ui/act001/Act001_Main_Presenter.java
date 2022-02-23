@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act001;
 
+import com.google.android.play.core.appupdate.AppUpdateManager;
+
 /**
  * Created by neomatrix on 29/12/16.
  */
@@ -12,5 +14,5 @@ public interface Act001_Main_Presenter {
 
     void checkLogin();
 
-
+    void checkUpdateAvailable(AppUpdateManager updateManager);
 }

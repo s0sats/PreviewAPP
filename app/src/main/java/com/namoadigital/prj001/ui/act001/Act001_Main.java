@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act001;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +12,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+
+import com.google.android.play.core.appupdate.AppUpdateManager;
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_NFC;
@@ -44,6 +49,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
     private String mEmail = "";
     private String mPassWord = "";
     private String mNFC = "";
+    private AppUpdateManager updateManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +90,14 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
             //23/08/2018
             deleteApkFile();
             removeDeprecatedPreferences();
+            //
+            checkForAppUpdate();
         }
+    }
+
+    private void checkForAppUpdate() {
+        updateManager = AppUpdateManagerFactory.create(this);
+        mPresenter.checkUpdateAvailable(updateManager);
     }
 
     /**
@@ -257,6 +270,11 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         }
     }
 
+    @Override
+    public Activity getActivity() {
+        return this;
+    }
+
     //
     @Override
     protected void processCloseAPP(String mLink, String mRequired) {
@@ -300,6 +318,17 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         context.startActivity(mIntent);
 
         finish();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        //
+        if( requestCode == ConstantBaseApp.PLAYSTORE_UPDATE_REQUEST_CODE
+            && resultCode != RESULT_OK
+        ){
+            ToolBox.toastMSG(context,"Cancelado pelo usr");
+        }
     }
 
     @Override

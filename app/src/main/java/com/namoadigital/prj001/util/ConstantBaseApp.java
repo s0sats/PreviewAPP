@@ -25,6 +25,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String DEVICE_ITEM_LIST_CHECKBOX_STATUS = "DEVICE_ITEM_LIST_CHECKBOX_STATUS";
     public static final String DEVICE_ITEM_NEW_ACTION = "DEVICE_ITEM_NEW_ACTION";
     public static final String DEVICE_BUNDLE = "DEVICE_BUNDLE";
+
     //As 3 variaveis abaixo são preenchidas pela classe AppBase
     public static String PRJ001_VERSION = "";
     public static int PRJ001_VERSION_CODE = -1;
@@ -492,6 +493,7 @@ public class ConstantBaseApp extends ConstantBase {
 
     //Request codes
     public static final int REQUEST_CODE_SERIAL_LOG = 666;
+    public static final int PLAYSTORE_UPDATE_REQUEST_CODE = 672;
 
     //Helper
     public static final String BACK_ACTION = "back_action";

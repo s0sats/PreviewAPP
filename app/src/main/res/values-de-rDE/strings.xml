@@ -129,4 +129,5 @@
     <string name="act002_ws_ticket_download_ttl">Download</string>
     <string name="act002_ws_ticket_download_msg">Alte Tickets werden aktualisiert.</string>
     <string name="msg_synchronizing_data">Daten werden synchronisiert</string>
+    <string name="error_on_inapp_start_update_flow">\"Error on call update app via Google Play \"</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act001;
 
+import android.app.Activity;
 import android.content.Context;
 
 /**
@@ -22,4 +23,5 @@ public interface Act001_Main_View {
 
     void call_Act003_Main(Context context);
 
+    Activity getActivity();
 }

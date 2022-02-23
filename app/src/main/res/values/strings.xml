@@ -132,6 +132,7 @@
     <string name="unicode_bullet">"\u2022"</string>
     <string name="unicode_copyright">©</string>
     <string name="msg_synchronizing_data">Synchronizing Data</string>
+    <string name="error_on_inapp_start_update_flow">\"Error on call update app via Google Play \"</string>
 
 
 </resources>

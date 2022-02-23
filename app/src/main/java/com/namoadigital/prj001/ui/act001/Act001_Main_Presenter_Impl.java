@@ -2,11 +2,18 @@ package com.namoadigital.prj001.ui.act001;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.os.Bundle;
 
+import com.google.android.play.core.appupdate.AppUpdateInfo;
+import com.google.android.play.core.appupdate.AppUpdateManager;
+import com.google.android.play.core.install.model.AppUpdateType;
+import com.google.android.play.core.install.model.UpdateAvailability;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.receiver.WBR_GetCustomer;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -15,6 +22,8 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
  */
 
 public class Act001_Main_Presenter_Impl implements Act001_Main_Presenter {
+
+    private final int TOLERANCE_UPDATE_DIALOG_DAYS = 2;
 
     private Context context;
 
@@ -85,5 +94,60 @@ public class Act001_Main_Presenter_Impl implements Act001_Main_Presenter {
                 mView.call_Act002_Main(context);
             }
         }
+    }
+
+    @Override
+    public void checkUpdateAvailable(AppUpdateManager updateManager) {
+        updateManager
+            .getAppUpdateInfo()
+            .addOnSuccessListener(appUpdateInfo -> {
+                if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE){
+                    if( allowUpdatePopup(appUpdateInfo.clientVersionStalenessDays())
+                        && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
+                    ){
+                        callImmediateUpdateFlow(updateManager,appUpdateInfo);
+                    }
+                }
+            });
+    }
+
+    private void callImmediateUpdateFlow(AppUpdateManager updateManager, AppUpdateInfo appUpdateInfo) {
+        try {
+            updateManager.startUpdateFlowForResult(
+                appUpdateInfo,// Pass the intent that is returned by 'getAppUpdateInfo()'.
+                AppUpdateType.IMMEDIATE,
+                mView.getActivity(), // The current activity making the update request.
+                ConstantBaseApp.PLAYSTORE_UPDATE_REQUEST_CODE // Include a request code to later monitor this update request.
+            );
+        } catch (IntentSender.SendIntentException e) {
+            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox.toastMSG(
+                context,
+                context.getString(R.string.error_on_inapp_start_update_flow)
+            );
+        }
+    }
+
+    /**
+     * Metodo que verifica a qtds dias foi exibido o dialog de update para saber se deve
+     * ou não exibi-lo novamente.
+     * Foi definido que o popup de atualização deve aparecer apenas a cada X dias onde X é o valor
+     * da constante TOLERANCE_UPDATE_DIALOG_DAYS
+     *
+     * @param daysSinceLastUpdatePopupShowed - Qtd de dias decorridos ou null se nunca foi exibido
+     * @return
+     */
+    private boolean allowUpdatePopup(Integer daysSinceLastUpdatePopupShowed) {
+        if(daysSinceLastUpdatePopupShowed == null){
+            return true;
+        }
+        //
+        try{
+            return (int) daysSinceLastUpdatePopupShowed >= TOLERANCE_UPDATE_DIALOG_DAYS;
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(),e);
+            return true;
+        }
+
     }
 }
