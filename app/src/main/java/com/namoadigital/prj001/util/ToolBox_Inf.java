@@ -925,6 +925,10 @@ public class ToolBox_Inf {
             int count;
 
             while ((ze = zis.getNextEntry()) != null) {
+                //LUCHE -24/02/2022 - Testa Zip Path Traversal Vulnerability
+                File f = new File(stp,ze.getName());
+                ensureZipPathSafety(f,stp);
+                //
                 filename = ze.getName();
 
                 if (ze.isDirectory()) {
@@ -945,12 +949,31 @@ public class ToolBox_Inf {
 
             zis.close();
 
-        } catch (IOException e) {
+        } catch (IOException | SecurityException e) {
             ToolBox_Inf.registerException(CLASS_NAME, e);
             return false;
         }
 
         return true;
+    }
+
+    /**
+     * LUCHE - 24/02/2022
+     * Metodo que veifica se o file gerado possui um inicido de path diferente do path destino passado
+     * Add esse metodo para tratar vulnerabilidade de Zip Path Traversal Vulnerability reportado
+     * pela Google Play Store
+     *
+     * @param outputFile
+     * @param destDirectory
+     * @throws SecurityException
+     * @throws IOException
+     */
+    private static void ensureZipPathSafety(final File outputFile, final String destDirectory) throws SecurityException, IOException {
+        String destDirCanonicalPath = (new File(destDirectory)).getCanonicalPath();
+        String outputFilecanonicalPath = outputFile.getCanonicalPath();
+        if (!outputFilecanonicalPath.startsWith(destDirCanonicalPath)) {
+            throw new SecurityException(String.format("Found Zip Path Traversal Vulnerability with %s", outputFilecanonicalPath));
+        }
     }
 
     public static void zipFolder(String inputFolderPath, String outZipPath) {
