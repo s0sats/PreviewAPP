@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.android.play.core.appupdate.AppUpdateInfo;
 import com.google.android.play.core.appupdate.AppUpdateManager;
@@ -23,7 +24,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 public class Act001_Main_Presenter_Impl implements Act001_Main_Presenter {
 
-    private final int TOLERANCE_UPDATE_DIALOG_DAYS = 2;
+    private final int TOLERANCE_UPDATE_DIALOG_DAYS = 1;
 
     private Context context;
 
@@ -98,9 +99,11 @@ public class Act001_Main_Presenter_Impl implements Act001_Main_Presenter {
 
     @Override
     public void checkUpdateAvailable(AppUpdateManager updateManager) {
+        Log.i("inRonaldo", "checkUpdateAvailable acessado" );
         updateManager
             .getAppUpdateInfo()
             .addOnSuccessListener(appUpdateInfo -> {
+                Log.i("inRonaldo", "updateAvailability =" + appUpdateInfo.updateAvailability());
                 if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE){
                     if( allowUpdatePopup(appUpdateInfo.clientVersionStalenessDays())
                         && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
@@ -138,16 +141,40 @@ public class Act001_Main_Presenter_Impl implements Act001_Main_Presenter {
      * @return
      */
     private boolean allowUpdatePopup(Integer daysSinceLastUpdatePopupShowed) {
-        if(daysSinceLastUpdatePopupShowed == null){
-            return true;
-        }
-        //
+        Log.i("inRonaldo", "daysSinceLastUpdatePopupShowed =" + daysSinceLastUpdatePopupShowed);
+        //Se daysSinceLastUpdatePopupShowed null, cairá no catch. ISSO não deveria acontecer
         try{
-            return (int) daysSinceLastUpdatePopupShowed >= TOLERANCE_UPDATE_DIALOG_DAYS;
+            if( daysSinceLastUpdatePopupShowed == 0
+                && !ToolBox_Con.getBooleanPreferencesByKey(
+                        context,
+                        ConstantBaseApp.PREFERENCE_HAS_INAPP_DIALOG_ALREADY_SHOWED,
+                        false
+                    )
+            ){
+                ToolBox_Con.setBooleanPreference(
+                    context,
+                    ConstantBaseApp.PREFERENCE_HAS_INAPP_DIALOG_ALREADY_SHOWED,
+                    true
+                );
+                //
+                return true;
+            } else {
+                //Se qtd de dias maior que 0, reseta preferencia.
+                if(daysSinceLastUpdatePopupShowed > 0){
+                    ToolBox_Con.setBooleanPreference(
+                        context,
+                        ConstantBaseApp.PREFERENCE_HAS_INAPP_DIALOG_ALREADY_SHOWED,
+                        false
+                    );
+                    //Se o qtd de dias for diferente da qt
+                    return !(daysSinceLastUpdatePopupShowed == TOLERANCE_UPDATE_DIALOG_DAYS);
+                }
+                //Se chegou aqui, qtd de dias 0 e ja foi exibido entao , não exibe novamente.
+                return false;
+            }
         }catch (Exception e){
             ToolBox_Inf.registerException(getClass().getName(),e);
             return true;
         }
-
     }
 }

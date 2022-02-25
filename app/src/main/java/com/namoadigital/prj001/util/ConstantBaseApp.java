@@ -467,6 +467,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String DATETIME_LAST_VALID_TIME = "DATETIME_LAST_VALID_TIME";
     public static final String DATETIME_TOLERANCE= "DATETIME_TOLERANCE";
     public static final String PREFERENCE_PIPELINE_HEADER_FORM_INFO_TOGGLE= "PREFERENCE_PIPELINE_HEADER_FORM_INFO_TOGGLE";
+    public static final String PREFERENCE_HAS_INAPP_DIALOG_ALREADY_SHOWED = "PREFERENCE_HAS_INAPP_DIALOG_ALREADY_SHOWED";
 
     public static final String LOGIN_USER_NFC_TMP = "login_user_nfc_tmp";
     public static final String LOGIN_CUSTOMER_CODE_TMP = "login_customer_code_tmp";

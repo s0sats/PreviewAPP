@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -96,6 +97,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
     }
 
     private void checkForAppUpdate() {
+        Log.i("inRonaldo", "checkForAppUpdate acessado" );
         updateManager = AppUpdateManagerFactory.create(this);
         mPresenter.checkUpdateAvailable(updateManager);
     }
