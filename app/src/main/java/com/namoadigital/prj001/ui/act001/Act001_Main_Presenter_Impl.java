@@ -110,6 +110,9 @@ public class Act001_Main_Presenter_Impl implements Act001_Main_Presenter {
                     ){
                         callImmediateUpdateFlow(updateManager,appUpdateInfo);
                     }
+                } else {
+                    Log.i("inRonaldo", "Reseta pref por nao ter atualizacao e ao impedir o inapp na proxima atualizacao " );
+                    updateInAppDialogShowedPreference(false);
                 }
             });
     }
@@ -151,21 +154,16 @@ public class Act001_Main_Presenter_Impl implements Act001_Main_Presenter {
                         false
                     )
             ){
-                ToolBox_Con.setBooleanPreference(
-                    context,
-                    ConstantBaseApp.PREFERENCE_HAS_INAPP_DIALOG_ALREADY_SHOWED,
-                    true
-                );
+                Log.i("inRonaldo", "daysSinceLastUpdatePopupShowed 0 && pref false" );
+                updateInAppDialogShowedPreference(true);
                 //
                 return true;
             } else {
+                Log.i("inRonaldo", "daysSinceLastUpdatePopupShowed "+daysSinceLastUpdatePopupShowed);
                 //Se qtd de dias maior que 0, reseta preferencia.
                 if(daysSinceLastUpdatePopupShowed > 0){
-                    ToolBox_Con.setBooleanPreference(
-                        context,
-                        ConstantBaseApp.PREFERENCE_HAS_INAPP_DIALOG_ALREADY_SHOWED,
-                        false
-                    );
+                    Log.i("inRonaldo", "daysSinceLastUpdatePopupShowed > 0, rest pref && compara qtd de dias com TOLERANCE_UPDATE_DIALOG_DAYS");
+                    updateInAppDialogShowedPreference(false);
                     //Se o qtd de dias for diferente da qt
                     return !(daysSinceLastUpdatePopupShowed == TOLERANCE_UPDATE_DIALOG_DAYS);
                 }
@@ -173,8 +171,21 @@ public class Act001_Main_Presenter_Impl implements Act001_Main_Presenter {
                 return false;
             }
         }catch (Exception e){
+            Log.i("inRonaldo", "daysSinceLastUpdatePopupShowed Exception...");
+            //Reseta pref pq se teve exception acho deu errado e talvez nesse caso, seja interessante
+            //o resete
+            updateInAppDialogShowedPreference(false);
             ToolBox_Inf.registerException(getClass().getName(),e);
             return true;
         }
+    }
+
+
+    private void updateInAppDialogShowedPreference(boolean prefValue) {
+        ToolBox_Con.setBooleanPreference(
+            context,
+            ConstantBaseApp.PREFERENCE_HAS_INAPP_DIALOG_ALREADY_SHOWED,
+            prefValue
+        );
     }
 }

@@ -4,12 +4,13 @@ apply plugin: 'kotlin-android'
 android {
     compileSdkVersion 31
     buildToolsVersion '30.0.3'
+
     defaultConfig {
         applicationId "com.namoadigital.prj001"
         minSdkVersion 21
         targetSdkVersion 31
-        versionCode 61
-        versionName "4.4.0.333"
+        versionCode 66
+        versionName "4.4.0.3366"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
         multiDexEnabled true
@@ -17,10 +18,12 @@ android {
             checkReleaseBuilds false
         }
     }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            //signingConfig signingConfigs.release
         }
     }
 
