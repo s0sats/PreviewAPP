@@ -1,11 +1,14 @@
 package com.namoadigital.prj001.database;
 
+import static com.namoadigital.prj001.util.ConstantBaseApp.DB_MULTI_STATUS_ERROR;
+
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.namoadigital.prj001.migrations.MigrationsKt;
 import com.namoadigital.prj001.util.ConstantBaseApp;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
@@ -278,6 +281,14 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
 
         MigrationsKt.getMigrationV1().migrate(db);
         onCreate(db);
+    }
+
+    private void setMigrationError(boolean hasError){
+        ToolBox_Con.setBooleanPreference(
+                context,
+                DB_MULTI_STATUS_ERROR,
+                hasError
+        );
     }
 }
 

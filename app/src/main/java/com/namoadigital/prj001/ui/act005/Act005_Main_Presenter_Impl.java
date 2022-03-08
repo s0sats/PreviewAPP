@@ -8,10 +8,8 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_FOCUS
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_PERIOD_FILTER;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_SITES_FILTER;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -24,14 +22,12 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
@@ -61,6 +57,7 @@ import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.MainTagMenu;
 import com.namoadigital.prj001.model.MenuMainNamoa;
 import com.namoadigital.prj001.model.MyActionFilterParam;
+import com.namoadigital.prj001.model.SupportDialogFields;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.receiver.WBR_AP_Save;
@@ -126,6 +123,7 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+import com.namoadigital.prj001.view.dialog.SupportDialog;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -1561,68 +1559,88 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     @Override
     public void showSupportDialog() {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.act005_dialog_support, null);
-
-        /**
-         * Ini Vars
-         */
-        TextView tv_msg = (TextView) view.findViewById(R.id.act005_dialog_support_tv_msg);
-        TextView tv_contact = (TextView) view.findViewById(R.id.act005_dialog_support_tv_contect);
-        tv_msg.setText(hmAux_Trans.get("alert_support_msg"));
-        tv_contact.setText(hmAux_Trans.get("alert_support_contact"));
-        final MKEditTextNM et_support_msg = (MKEditTextNM) view.findViewById(R.id.act005_dialog_support_et_msg);
-        final MKEditTextNM et_support_contact = (MKEditTextNM) view.findViewById(R.id.act005_dialog_support_et_contact);
-        et_support_msg.setHint(hmAux_Trans.get("alert_support_hint"));
-        et_support_contact.setHint(hmAux_Trans.get("alert_support_contact_hint"));
-
-        builder.setTitle(hmAux_Trans.get("alert_support_ttl"));
-        builder.setView(view);
-        builder.setCancelable(false);
-        builder.setPositiveButton(hmAux_Trans.get("sys_alert_btn_ok"), null);
-        builder.setNegativeButton(hmAux_Trans.get("sys_alert_btn_cancel"), null);
-
-        AlertDialog dialog = builder.create();
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(final DialogInterface dialog) {
-                Button button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
-                //
-                button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (et_support_msg.getText().toString().trim().length() > 0) {
-                            if(et_support_contact.getText().toString().trim().length() > 0) {
-                                executeSupport(et_support_msg.getText().toString().trim(), et_support_contact.getText().toString().trim());
-                                //
-                                dialog.dismiss();
-                            }else{
-                                et_support_contact.setText("");
-                                et_support_contact.findFocus();
-                                //
-                                Toast.makeText(
-                                        context,
-                                        hmAux_Trans.get("alert_support_empty_contact"),
-                                        Toast.LENGTH_LONG
-                                ).show();
-                            }
-                        } else {
-                            et_support_msg.setText("");
-                            et_support_msg.findFocus();
-                            //
-                            Toast.makeText(
-                                    context,
-                                    hmAux_Trans.get("alert_support_empty_msg"),
-                                    Toast.LENGTH_LONG
-                            ).show();
-                        }
-                    }
-                });
-            }
-        });
-        dialog.show();
+//        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+//
+//        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//        View view = inflater.inflate(R.layout.act005_dialog_support, null);
+//
+//        /**
+//         * Ini Vars
+//         */
+//        TextView tv_msg = (TextView) view.findViewById(R.id.act005_dialog_support_tv_msg);
+//        TextView tv_contact = (TextView) view.findViewById(R.id.act005_dialog_support_tv_contect);
+//        tv_msg.setText(hmAux_Trans.get("alert_support_msg"));
+//        tv_contact.setText(hmAux_Trans.get("alert_support_contact"));
+//        final MKEditTextNM et_support_msg = (MKEditTextNM) view.findViewById(R.id.act005_dialog_support_et_msg);
+//        final MKEditTextNM et_support_contact = (MKEditTextNM) view.findViewById(R.id.act005_dialog_support_et_contact);
+//        et_support_msg.setHint(hmAux_Trans.get("alert_support_hint"));
+//        et_support_contact.setHint(hmAux_Trans.get("alert_support_contact_hint"));
+//
+//        builder.setTitle(hmAux_Trans.get("alert_support_ttl"));
+//        builder.setView(view);
+//        builder.setCancelable(false);
+//        builder.setPositiveButton(hmAux_Trans.get("sys_alert_btn_ok"), null);
+//        builder.setNegativeButton(hmAux_Trans.get("sys_alert_btn_cancel"), null);
+//
+//        AlertDialog dialog = builder.create();
+//        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+//            @Override
+//            public void onShow(final DialogInterface dialog) {
+//                Button button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+//                //
+//                button.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        if (et_support_msg.getText().toString().trim().length() > 0) {
+//                            if(et_support_contact.getText().toString().trim().length() > 0) {
+//                                executeSupport(et_support_msg.getText().toString().trim(), et_support_contact.getText().toString().trim());
+//                                //
+//                                dialog.dismiss();
+//                            }else{
+//                                et_support_contact.setText("");
+//                                et_support_contact.findFocus();
+//                                //
+//                                Toast.makeText(
+//                                        context,
+//                                        hmAux_Trans.get("alert_support_empty_contact"),
+//                                        Toast.LENGTH_LONG
+//                                ).show();
+//                            }
+//                        } else {
+//                            et_support_msg.setText("");
+//                            et_support_msg.findFocus();
+//                            //
+//                            Toast.makeText(
+//                                    context,
+//                                    hmAux_Trans.get("alert_support_empty_msg"),
+//                                    Toast.LENGTH_LONG
+//                            ).show();
+//                        }
+//                    }
+//                });
+//            }
+//        });
+//        dialog.show();
+        SupportDialogFields supportDialogFields = new SupportDialogFields(
+                hmAux_Trans.get("alert_support_msg"),
+                hmAux_Trans.get("alert_support_contact"),
+                hmAux_Trans.get("alert_support_hint"),
+                hmAux_Trans.get("alert_support_contact_hint"),
+                hmAux_Trans.get("alert_support_ttl"),
+                hmAux_Trans.get("alert_support_empty_contact"),
+                hmAux_Trans.get("alert_support_empty_msg")
+        );
+        //
+        SupportDialog supportDialog = new SupportDialog(
+                context,
+                supportDialogFields,
+                (support_contact, support_msg) -> {
+                    executeSupport(support_msg.trim(), support_contact.trim());
+                    return null;
+                }
+        );
+        //
+        supportDialog.show();
         //builder.show();
     }
 

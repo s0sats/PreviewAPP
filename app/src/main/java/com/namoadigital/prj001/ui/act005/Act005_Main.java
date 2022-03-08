@@ -61,6 +61,7 @@ import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
+import com.namoadigital.prj001.extensions.AppCompatActivityKt;
 import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MainTagMenu;
 import com.namoadigital.prj001.model.MenuMainNamoa;
@@ -102,6 +103,7 @@ import com.namoadigital.prj001.ui.act069.Act069_Main;
 import com.namoadigital.prj001.ui.act083.Act083_Main;
 import com.namoadigital.prj001.ui.act084.Act084Main;
 import com.namoadigital.prj001.ui.act085.Act085Main;
+import com.namoadigital.prj001.ui.act089.Act089Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -304,6 +306,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
          *  Remocao de foco no menu do hamburguer e do menu calendario.
          */
         mDrawerLayout.requestFocus();
+        //
+        if(ToolBox_Inf.hasAnyDatabaseOnUpgradeError(context)) {
+            call_Act089_Main(context);
+        }
     }
 
     private void retryGetLocation() {
@@ -2678,11 +2684,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     protected void processLogin() {
         super.processLogin();
         //
-        ToolBox_Con.cleanPreferences(context);
-        //
-        ToolBox_Inf.call_Act001_Main(context);
-        //
-        finish();
+        AppCompatActivityKt.logout(this);
     }
 
     @Override
@@ -3193,6 +3195,15 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         }
     }
 
+
+    public void call_Act089_Main(Context context) {
+        Intent mIntent = new Intent(context, Act089Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        context.startActivity(mIntent);
+
+        finish();
+    }
 
     @Override
     protected void processNotification_close(String mValue, String mActivity) {

@@ -122,6 +122,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String ACT086 = "act086";
     public static final String ACT087 = "act087";
     public static final String ACT088 = "act088";
+    public static final String ACT089 = "act089";
 
     public static final String title_lbl = "_title";
 
@@ -224,15 +225,18 @@ public class ConstantBaseApp extends ConstantBase {
 
     public static String DB_NAME_BASE;
     public static String DB_FULL_BASE = DB_PATH + "/" + DB_NAME_BASE;
+    public static String DB_BASE_STATUS_ERROR = "DB_BASE_STATUS_ERROR";
     public static int DB_VERSION_BASE;
 
     public static String DB_NAME_CUSTOM;
     public static String DB_PREFIX_CUSTOM;
     public static String DB_FULL_CUSTOM = DB_PATH + "/" + DB_NAME_CUSTOM;
+    public static String DB_MULTI_STATUS_ERROR = "DB_MULTI_STATUS_ERROR";
     public static int DB_VERSION_CUSTOM;
 
     public static String DB_NAME_CHAT = "namoa_chat.db3";
     public static String DB_FULL_CHAT = DB_PATH + "/" + DB_NAME_CHAT;
+    public static String DB_CHAT_STATUS_ERROR = "DB_CHAT_STATUS_ERROR";
     public static int DB_VERSION_CHAT;
 
     public static final String DB_MODE_MULTI = "MULTI";

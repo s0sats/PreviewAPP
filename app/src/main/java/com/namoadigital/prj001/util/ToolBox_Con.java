@@ -1257,6 +1257,21 @@ public class ToolBox_Con {
                 false
         ).apply();
         //
+         sharedPreferences.edit().putBoolean(
+                Constant.DB_MULTI_STATUS_ERROR,
+                false
+        ).apply();
+         //
+        sharedPreferences.edit().putBoolean(
+                Constant.DB_BASE_STATUS_ERROR,
+                false
+        ).apply();
+        //
+        sharedPreferences.edit().putBoolean(
+                Constant.DB_CHAT_STATUS_ERROR,
+                false
+        ).apply();
+        //
          sharedPreferences.edit().putString(
                 Constant.PREFERENCE_HOME_PERIOD_FILTER,
                  PREFERENCE_HOME_ALL_TIME_OPTION

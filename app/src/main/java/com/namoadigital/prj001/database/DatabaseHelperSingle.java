@@ -1,7 +1,11 @@
 package com.namoadigital.prj001.database;
 
+import static com.namoadigital.prj001.util.ConstantBaseApp.DB_BASE_STATUS_ERROR;
+
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+
+import com.namoadigital.prj001.util.ToolBox_Con;
 
 /**
  * Created by neomatrix on 18/01/17.
@@ -63,6 +67,13 @@ public class DatabaseHelperSingle extends DatabaseBaseHelper {
         }
         //
         onCreate(db);
+    }
+    private void setMigrationError(boolean hasError){
+        ToolBox_Con.setBooleanPreference(
+                context,
+                DB_BASE_STATUS_ERROR,
+                hasError
+        );
     }
 }
 

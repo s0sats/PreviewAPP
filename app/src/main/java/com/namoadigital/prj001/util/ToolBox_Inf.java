@@ -7,6 +7,9 @@ import static com.namoadigital.prj001.ui.AppBase.NAMOA_NOTIF_INFO;
 import static com.namoadigital.prj001.ui.AppBase.NAMOA_PEND_INFO;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE_ACTIVED;
+import static com.namoadigital.prj001.util.ConstantBaseApp.DB_BASE_STATUS_ERROR;
+import static com.namoadigital.prj001.util.ConstantBaseApp.DB_CHAT_STATUS_ERROR;
+import static com.namoadigital.prj001.util.ConstantBaseApp.DB_MULTI_STATUS_ERROR;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_CANCEL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_IMEI;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_OK;
@@ -4062,6 +4065,22 @@ public class ToolBox_Inf {
 
         return matcher.matches();
 
+    }
+
+    public static boolean hasAnyDatabaseOnUpgradeError(Context context) {
+        return ToolBox_Con.getBooleanPreferencesByKey(
+                context,
+                DB_MULTI_STATUS_ERROR,
+                false
+        )|| ToolBox_Con.getBooleanPreferencesByKey(
+                context,
+                DB_BASE_STATUS_ERROR,
+                false
+        )|| ToolBox_Con.getBooleanPreferencesByKey(
+                context,
+                DB_CHAT_STATUS_ERROR,
+                false
+        );
     }
 
     private static class GenericExtFilter implements FilenameFilter {

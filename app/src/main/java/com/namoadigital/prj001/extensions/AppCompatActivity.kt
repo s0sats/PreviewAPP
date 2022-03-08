@@ -4,6 +4,8 @@ import android.content.Context
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
+import com.namoadigital.prj001.util.ToolBox_Con
+import com.namoadigital.prj001.util.ToolBox_Inf
 
 /**
  * Fun que esconde o teclado
@@ -27,4 +29,12 @@ fun AppCompatActivity.forceOpenKeyboard() {
         InputMethodManager.SHOW_FORCED,
         InputMethodManager.HIDE_IMPLICIT_ONLY
     )
+}
+
+fun AppCompatActivity.logout(){
+    ToolBox_Con.cleanPreferences(this)
+    //
+    ToolBox_Inf.call_Act001_Main(this)
+    //
+    finish()
 }

@@ -133,6 +133,20 @@
     <string name="unicode_copyright">©</string>
     <string name="msg_synchronizing_data">Synchronizing Data</string>
     <string name="error_on_inapp_start_update_flow">\"Error on call update app via Google Play \"</string>
+    <string name="database_error_msg">Database Upgrade Error</string>
+    <string name="recovery_database_btn">Delete and Rebuild Database</string>
+    <string name="send_support_btn">Send Data for Support</string>
+    <string name="alert_support_finish_ttl">Send Support</string>
+    <string name="alert_support_finish_msg">Data sent successfully</string>
+    <string name="progress_support_ttl">Send Support Data</string>
+    <string name="progress_support_msg">Send data in progress</string>
+    <string name="alert_support_msg">Send Support Data</string>
+    <string name="alert_support_contact">Contact</string>
+    <string name="alert_support_hint">Describe the reason for support \n This is a required field</string>
+    <string name="alert_support_contact_hint">Inform us an e-mail or phone number.</string>
+    <string name="alert_support_ttl">Send Support Data.</string>
+    <string name="alert_support_empty_contact">Contact is required!</string>
+    <string name="alert_support_empty_msg">Message is required</string>
 
 
 </resources>

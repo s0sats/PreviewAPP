@@ -3,16 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="16dp"
+    android:padding="20dp"
     android:orientation="vertical">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Enviar dados para suporte"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
         android:orientation="vertical">
 
         <TextView
@@ -50,7 +55,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
+        android:layout_marginTop="20dp"
         android:orientation="vertical">
 
         <TextView
@@ -85,5 +90,28 @@
 
     </LinearLayout>
 
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="right"
+        >
+        <Button
+            android:id="@+id/act005_dialog_support_btn_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/namoa_icon_bg_states"
+            android:textStyle="bold"
+            android:textAllCaps="true"
+            android:text="CANCEL"/>
+        <Button
+            android:id="@+id/act005_dialog_support_btn_ok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/namoa_icon_bg_states"
+            android:textStyle="bold"
+            android:textAllCaps="true"
+            android:text="OK"/>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 </LinearLayout>

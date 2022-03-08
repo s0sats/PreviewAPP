@@ -1,7 +1,11 @@
 package com.namoadigital.prj001.database;
 
+import static com.namoadigital.prj001.util.ConstantBaseApp.DB_CHAT_STATUS_ERROR;
+
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+
+import com.namoadigital.prj001.util.ToolBox_Con;
 
 /**
  * Created by luche on 29/11/2017.
@@ -59,6 +63,14 @@ public class DatabaseHelperChat extends DatabaseBaseHelper {
         }
         //
         onCreate(db);
+    }
+
+    private void setMigrationError(boolean hasError){
+        ToolBox_Con.setBooleanPreference(
+                context,
+                DB_CHAT_STATUS_ERROR,
+                hasError
+        );
     }
 }
 
