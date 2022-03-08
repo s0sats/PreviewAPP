@@ -1634,7 +1634,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         SupportDialog supportDialog = new SupportDialog(
                 context,
                 supportDialogFields,
-                (support_contact, support_msg) -> {
+                (support_msg, support_contact) -> {
                     executeSupport(support_msg.trim(), support_contact.trim());
                     return null;
                 }
