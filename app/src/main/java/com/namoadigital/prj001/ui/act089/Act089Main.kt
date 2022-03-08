@@ -10,9 +10,7 @@ import com.namoadigital.prj001.databinding.Act089MainContentBinding
 import com.namoadigital.prj001.extensions.logout
 import com.namoadigital.prj001.model.SupportDialogFields
 import com.namoadigital.prj001.ui.act005.Act005_Main
-import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
-import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 import com.namoadigital.prj001.view.dialog.SupportDialog
 
@@ -37,7 +35,6 @@ class Act089Main : Base_Activity(), Act089MainContract.I_View {
         //
         iniSetup()
         iniLabels()
-        iniUIFooter()
         initActions()
     }
 
@@ -60,24 +57,6 @@ class Act089Main : Base_Activity(), Act089MainContract.I_View {
             WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN
                     or WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN
         )
-    }
-
-
-    private fun iniUIFooter() {
-        iniFooter()
-        //
-        mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context)
-        mAct_Info = Constant.ACT089
-        mAct_Title = "${Constant.ACT089}${ConstantBaseApp.title_lbl}"
-        //
-        val mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context)
-        mSite_Value = mFooter[Constant.FOOTER_SITE]
-        mOperation_Value = mFooter[Constant.FOOTER_OPERATION]
-        //
-        setUILanguage(hmAux_Trans)
-        setMenuLanguage(hmAux_Trans)
-        setTitleLanguage()
-        setFooter()
     }
 
     fun initActions() {
