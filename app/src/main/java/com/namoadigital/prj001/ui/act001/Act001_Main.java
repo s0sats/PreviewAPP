@@ -98,8 +98,15 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
 
     private void checkForAppUpdate() {
         Log.i("inRonaldo", "checkForAppUpdate acessado" );
-        updateManager = AppUpdateManagerFactory.create(this);
         mPresenter.checkUpdateAvailable(updateManager);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.i("inRonaldo", "onResume acessado" );
+        mPresenter.checkUpdateInProgess(updateManager);
+
     }
 
     /**
@@ -166,6 +173,8 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         ToolBox_Inf.mkDirectory();
         //
         mPresenter.checkLogin();
+        //
+        updateManager = AppUpdateManagerFactory.create(this);
     }
 
     private void initActions() {

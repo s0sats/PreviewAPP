@@ -117,6 +117,20 @@ public class Act001_Main_Presenter_Impl implements Act001_Main_Presenter {
             });
     }
 
+    @Override
+    public void checkUpdateInProgess(AppUpdateManager updateManager) {
+        Log.i("inRonaldo", "checkUpdateInProgess acessado" );
+        updateManager
+            .getAppUpdateInfo()
+            .addOnSuccessListener(appUpdateInfo -> {
+                if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS)
+                {
+                    Log.i("inRonaldo", "Download em progresso, retoma dialog." );
+                    callImmediateUpdateFlow(updateManager,appUpdateInfo);
+                }
+            });
+    }
+
     private void callImmediateUpdateFlow(AppUpdateManager updateManager, AppUpdateInfo appUpdateInfo) {
         try {
             updateManager.startUpdateFlowForResult(
