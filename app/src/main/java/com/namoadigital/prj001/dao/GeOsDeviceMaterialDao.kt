@@ -1,10 +1,13 @@
 package com.namoadigital.prj001.dao
 
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
+import androidx.core.database.getFloatOrNull
+import androidx.core.database.getIntOrNull
 import androidx.core.database.getStringOrNull
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
@@ -41,6 +44,9 @@ class GeOsDeviceMaterialDao(
         const val MATERIAL_QTY = "material_qty"
         const val MATERIAL_UNIT = "material_unit"
         const val CREATION_MS = "creation_ms"
+        const val MATERIAL_PLANNED = "material_planned"
+        const val MATERIAL_PLANNED_USED = "material_planned_used"
+        const val MATERIAL_PLANNED_QTY = "material_planned_qty"
     }
 
     private val toGeOsDeviceMaterialMapper: Mapper<Cursor, GeOsDeviceMaterial>
@@ -346,6 +352,7 @@ class GeOsDeviceMaterialDao(
     }
 
     class CursorToGeOsDeviceMaterialMapper : Mapper<Cursor, GeOsDeviceMaterial> {
+        @SuppressLint("Range")
         override fun map(cursor: Cursor?): GeOsDeviceMaterial? {
             cursor?.let {
                 with(cursor){
@@ -365,7 +372,10 @@ class GeOsDeviceMaterialDao(
                         material_desc = getString(getColumnIndex(MATERIAL_DESC)),
                         material_qty = getFloat(getColumnIndex(MATERIAL_QTY)),
                         material_unit = getStringOrNull(getColumnIndex(MATERIAL_UNIT)),
-                        creation_ms = getLong(getColumnIndex(CREATION_MS))
+                        creation_ms = getLong(getColumnIndex(CREATION_MS)),
+                        material_planned = getInt(getColumnIndex(MATERIAL_PLANNED)),
+                        material_planned_used = getInt(getColumnIndex(MATERIAL_PLANNED_USED)),
+                        material_planned_qty = getFloatOrNull(getColumnIndex(MATERIAL_PLANNED_QTY))
                     )
                 }
             }
@@ -400,6 +410,9 @@ class GeOsDeviceMaterialDao(
                     put(MATERIAL_QTY, it.material_qty)
                     put(MATERIAL_UNIT, it.material_unit)
                     put(CREATION_MS, it.creation_ms)
+                    put(MATERIAL_PLANNED, it.material_planned)
+                    put(MATERIAL_PLANNED_USED, it.material_planned_used)
+                    put(MATERIAL_PLANNED_QTY, it.material_planned_qty)
                     //
                 }
             }
