@@ -5,9 +5,6 @@ import static android.app.Activity.RESULT_OK;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -1059,7 +1056,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                 MD_ClassDao.CLASS_AVAILABLE, String.valueOf(mdProductSerial.getClass_available())
         );
         //
-        setClassIcon(ss_class.getmValue());
+        ToolBox_Inf.setClassIcon(context, ss_class.getmValue(), iv_class_icon);
         //endregion
         //region SS Site
         ToolBox_Inf.setSSmValue(
@@ -1772,7 +1769,7 @@ public class Frg_Serial_Edit extends BaseFragment {
 
             @Override
             public void onItemPostSelected(HMAux hmAux) {
-                setClassIcon(hmAux);
+                ToolBox_Inf.setClassIcon(context, hmAux, iv_class_icon);
             }
         });
         //
@@ -2340,24 +2337,6 @@ public class Frg_Serial_Edit extends BaseFragment {
         auxTracking.setPk(mdProductSerial);
         //
         return auxTracking;
-    }
-
-    private void setClassIcon(HMAux item) {
-        if (item != null && item.containsKey(MD_ClassDao.CLASS_AVAILABLE) && item.get(MD_ClassDao.CLASS_AVAILABLE) != null && item.containsKey(MD_ClassDao.CLASS_COLOR) && item.get(MD_ClassDao.CLASS_COLOR) != null) {
-            iv_class_icon.setVisibility(View.VISIBLE);
-            if (item.get(MD_ClassDao.CLASS_AVAILABLE).equals("1")) {
-                Drawable drawable = context.getDrawable(R.drawable.ic_tag_black_24dp);
-                drawable.setColorFilter(Color.parseColor(item.get(MD_ClassDao.CLASS_COLOR)), PorterDuff.Mode.SRC_ATOP);
-                iv_class_icon.setImageDrawable(drawable);
-            } else {
-                Drawable drawable = context.getDrawable(R.drawable.ic_ban_black_24dp);
-                drawable.setColorFilter(Color.parseColor(item.get(MD_ClassDao.CLASS_COLOR)), PorterDuff.Mode.SRC_ATOP);
-                iv_class_icon.setImageDrawable(drawable);
-            }
-        } else {
-            iv_class_icon.setImageDrawable(null);
-            iv_class_icon.setVisibility(View.INVISIBLE);
-        }
     }
 
     private void setUIDataToSerialObj() {

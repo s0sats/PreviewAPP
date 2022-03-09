@@ -115,6 +115,32 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/ll_serial_class"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toStartOf="@+id/act011_gdl_end"
+                app:layout_constraintStart_toStartOf="@+id/act011_gdl_start"
+                app:layout_constraintTop_toBottomOf="@+id/act011_dialog_check_cl_missing_answers">
+
+                <ImageView
+                    android:id="@+id/iv_serial_class_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:padding="5dp"
+                    android:src="@drawable/ic_archive_black_24dp" />
+
+                <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+                    android:id="@+id/ss_serial_class"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="2dp"
+                    android:gravity="center_vertical"
+                    android:text="Class -Trad" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
             <TextView
                 android:id="@+id/act011_dialog_check_tv_elapsed_time_lbl"
                 android:layout_width="0dp"
@@ -124,7 +150,7 @@
                 android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@+id/act011_dialog_check_tv_elapsed_time_val"
                 app:layout_constraintStart_toStartOf="@+id/act011_gdl_start"
-                app:layout_constraintTop_toBottomOf="@+id/act011_dialog_check_cl_missing_answers"
+                app:layout_constraintTop_toBottomOf="@+id/ll_serial_class"
                 tools:text="Tempo total:" />
 
             <TextView

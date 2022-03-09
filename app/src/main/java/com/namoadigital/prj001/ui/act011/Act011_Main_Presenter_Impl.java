@@ -32,6 +32,7 @@ import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.GeOsDao;
 import com.namoadigital.prj001.dao.GeOsDeviceDao;
 import com.namoadigital.prj001.dao.GeOsDeviceItemDao;
+import com.namoadigital.prj001.dao.MD_ClassDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
@@ -85,6 +86,7 @@ import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_004;
 import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_006;
 import com.namoadigital.prj001.sql.GeOsDeviceSql_002;
 import com.namoadigital.prj001.sql.GeOsSql_001;
+import com.namoadigital.prj001.sql.MD_Class_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_016;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
@@ -156,8 +158,9 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     private GeOsDeviceDao geOsDeviceDao;
     private GeOsDeviceItemDao geOsDeviceItemDao;
     private MeMeasureTpDao measureTpDao;
+    private MD_ClassDao classDao;
 
-    public Act011_Main_Presenter_Impl(Context context, Act011_Main_View mView, EV_Module_Res_Txt_TransDao module_res_txt_transDao, GE_Custom_FormDao custom_formDao, GE_Custom_Form_FieldDao custom_form_fieldDao, GE_Custom_Form_DataDao custom_form_dataDao, GE_Custom_Form_Data_FieldDao custom_form_data_fieldDao, GE_Custom_Form_LocalDao custom_form_LocalDao, GE_Custom_Form_Field_LocalDao custom_form_field_LocalDao, GE_Custom_Form_BlobDao custom_form_blobDao, GE_Custom_Form_Blob_LocalDao custom_form_blob_localDao, MD_Product_SerialDao md_product_serialDao, MD_ProductDao md_productDao, HMAux hmAux_Trans, MD_Schedule_ExecDao scheduleExecDao, TK_Ticket_StepDao ticketStepDao, MD_SiteDao siteDao, MdTagDao mdTagDao, GeOsDao geOsDao,  GeOsDeviceDao geOsDeviceDao, GeOsDeviceItemDao geOsDeviceItemDao, MeMeasureTpDao measureTpDao) {
+    public Act011_Main_Presenter_Impl(Context context, Act011_Main_View mView, EV_Module_Res_Txt_TransDao module_res_txt_transDao, GE_Custom_FormDao custom_formDao, GE_Custom_Form_FieldDao custom_form_fieldDao, GE_Custom_Form_DataDao custom_form_dataDao, GE_Custom_Form_Data_FieldDao custom_form_data_fieldDao, GE_Custom_Form_LocalDao custom_form_LocalDao, GE_Custom_Form_Field_LocalDao custom_form_field_LocalDao, GE_Custom_Form_BlobDao custom_form_blobDao, GE_Custom_Form_Blob_LocalDao custom_form_blob_localDao, MD_Product_SerialDao md_product_serialDao, MD_ProductDao md_productDao, HMAux hmAux_Trans, MD_Schedule_ExecDao scheduleExecDao, TK_Ticket_StepDao ticketStepDao, MD_SiteDao siteDao, MdTagDao mdTagDao, GeOsDao geOsDao,  GeOsDeviceDao geOsDeviceDao, GeOsDeviceItemDao geOsDeviceItemDao, MeMeasureTpDao measureTpDao, MD_ClassDao classDao) {
         this.context = context;
         this.mView = mView;
         this.module_res_txt_transDao = module_res_txt_transDao;
@@ -180,6 +183,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         this.geOsDeviceDao = geOsDeviceDao;
         this.geOsDeviceItemDao = geOsDeviceItemDao;
         this.measureTpDao = measureTpDao;
+        this.classDao = classDao;
     }
 
     @Override
@@ -2402,5 +2406,12 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             new BigDecimal(serialInfo.getLast_measure_value()).floatValue(),
             serialInfo.getLast_measure_date()
        );
+    }
+
+    @Override
+    public List<HMAux> getSerialClassList() {
+        return classDao.query_HM(new MD_Class_Sql_SS(
+                String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+        ).toSqlQuery());
     }
 }

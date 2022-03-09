@@ -62,6 +62,7 @@ import com.namoa_digital.namoa_library.ctls.PhotoFF;
 import com.namoa_digital.namoa_library.ctls.PictureFF;
 import com.namoa_digital.namoa_library.ctls.RatingBarFF;
 import com.namoa_digital.namoa_library.ctls.RatingImageFF;
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -85,6 +86,7 @@ import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.GeOsDao;
 import com.namoadigital.prj001.dao.GeOsDeviceDao;
 import com.namoadigital.prj001.dao.GeOsDeviceItemDao;
+import com.namoadigital.prj001.dao.MD_ClassDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
@@ -721,7 +723,8 @@ public class Act011_Main extends Base_Activity
                 new GeOsDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
                 new GeOsDeviceDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
                 new GeOsDeviceItemDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
-                new MeMeasureTpDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
+                new MeMeasureTpDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
+                new MD_ClassDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
         );
 
         recoverGetIntents();
@@ -3636,6 +3639,27 @@ public class Act011_Main extends Base_Activity
         binding.act011DialogCheckBtnCancel.setText(hmAux_Trans.get("sys_alert_btn_cancel"));
         //
         binding.act011DialogCheckOptionRg.setVisibility(View.GONE);
+        //
+        binding.llSerialClass.setVisibility(View.GONE);
+        List<HMAux> serialClassList = mPresenter.getSerialClassList();
+        if(serialClassList != null && serialClassList.size() > 0) {
+            binding.llSerialClass.setVisibility(View.VISIBLE);
+            MD_Product_Serial mdProductSerial = getSerialInfo();
+            SearchableSpinner ssSerialClass = binding.ssSerialClass;
+            ToolBox_Inf.setSSmValue(
+                    ssSerialClass,
+                    String.valueOf(mdProductSerial.getClass_code()),
+                    String.valueOf(mdProductSerial.getClass_code()),
+                    mdProductSerial.getClass_id(),
+                    true,
+                    MD_ClassDao.CLASS_ID, mdProductSerial.getClass_id(),
+                    MD_ClassDao.CLASS_TYPE, mdProductSerial.getClass_type(),
+                    MD_ClassDao.CLASS_COLOR, mdProductSerial.getClass_color(),
+                    MD_ClassDao.CLASS_AVAILABLE, String.valueOf(mdProductSerial.getClass_available())
+            );
+            //
+            ToolBox_Inf.setClassIcon(context, ssSerialClass.getmValue(), binding.ivSerialClassIcon);
+        }
         //
         if (allowFinalizeWithNewBtn()) {
             binding.act011DialogFinalizeLbl.setVisibility(View.VISIBLE);
