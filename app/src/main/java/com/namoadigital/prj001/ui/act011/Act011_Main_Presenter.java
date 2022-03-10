@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 
 import com.namoa_digital.namoa_library.ctls.CustomFF;
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.Act011FormTab;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
@@ -19,7 +20,6 @@ import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.MeMeasureTp;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -94,5 +94,7 @@ public interface Act011_Main_Presenter {
     @Nullable
     String getLastMeasureInfo(MeMeasureTp measureTp, MD_Product_Serial serialInfo);
 
-    List<HMAux> getSerialClassList();
+    ArrayList<HMAux> getSerialClassList();
+
+    void saveSerialClass(long preference_customer_code, int productCode, String serialId, GE_Custom_Form_Local formLocal, SearchableSpinner ssSerialClass);
 }

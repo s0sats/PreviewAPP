@@ -502,6 +502,7 @@ public class Act011_Main extends Base_Activity
         //
         transList.add("dialog_finalize_os_form_invalid_end_date_ttl");
         transList.add("dialog_finalize_os_form_invalid_end_date_end");
+        transList.add("dialog_finalize_serial_class_lbl");
         //
         transList.add("alert_error_order_or_structure_not_found_ttl");
         transList.add("alert_error_order_or_structure_not_found_msg");
@@ -3496,7 +3497,7 @@ public class Act011_Main extends Base_Activity
             @Override
             public void onClick(View v) {
                 if(isFormOs) {
-                    if(validEndDate(binding)) {
+                    if(isFinalizeDialogInputValid(binding)) {
                         String missingAnswer = binding.act011DialogCheckTilJustifyMissingAnswerVal.getEditText().getText().toString();
                         //LUCHE - 08/11/2021 - resgata contador antes para ser usado na validação
                         //de refreshCurrentTabRecycle. Se não há mais não respondidos(segunda chama),
@@ -3509,6 +3510,13 @@ public class Act011_Main extends Base_Activity
                             missingAnswer,
                             binding.act011DialogCheckMkdateFormStart.getmValue(),
                             binding.act011DialogCheckMkdateFormEnd.getmValue()
+                        );
+                        //
+                        mPresenter.saveSerialClass(ToolBox_Con.getPreference_Customer_Code(context),
+                                Integer.parseInt(product_code),
+                                serial_id,
+                                formLocal,
+                                binding.ssSerialClass
                         );
                         //Somente chama atualização das listas dos recycles se houver itens precisando
                         //ser alterados.
@@ -3567,7 +3575,31 @@ public class Act011_Main extends Base_Activity
             }
         });
         //
+        binding.ssSerialClass.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+            @Override
+            public void onItemPreSelected(HMAux hmAux) {
+
+            }
+
+            @Override
+            public void onItemPostSelected(HMAux hmAux) {
+                ToolBox_Inf.setClassIcon(context, hmAux, binding.ivSerialClassIcon);
+            }
+        });
     }
+
+    private boolean isFinalizeDialogInputValid(com.namoadigital.prj001.databinding.Act011CheckDialogBinding binding) {
+        return validEndDate(binding)
+            && validSerialClass(binding);
+    }
+
+    private boolean validSerialClass(Act011CheckDialogBinding binding) {
+        if(binding.ssSerialClass.ismRequired()){
+            return binding.ssSerialClass.getmValue().hasConsistentValue(SearchableSpinner.CODE);
+        }
+        return true;
+    }
+
 
     /**
      * Metodo rodado após finalização com itens não verificados. Varre todas as abas de acessorios
@@ -3640,12 +3672,38 @@ public class Act011_Main extends Base_Activity
         //
         binding.act011DialogCheckOptionRg.setVisibility(View.GONE);
         //
-        binding.llSerialClass.setVisibility(View.GONE);
-        List<HMAux> serialClassList = mPresenter.getSerialClassList();
+        setSerialClass(binding);
+        //
+        if (allowFinalizeWithNewBtn()) {
+            binding.act011DialogFinalizeLbl.setVisibility(View.VISIBLE);
+            binding.act011DialogCheckOptionRg.setVisibility(View.VISIBLE);
+            binding.act011DialogCheckOptionRdoFinalize.setText(hmAux_Trans.get("dialog_finalize_option_finalize_lbl"));
+            binding.act011DialogCheckOptionRdoFinalizeNew.setText(hmAux_Trans.get("dialog_finalize_option_finalize_new_lbl"));
+        }else{
+            binding.act011DialogFinalizeLbl.setVisibility(View.GONE);
+            binding.act011DialogCheckOptionRg.setVisibility(View.GONE);
+        }
+    }
+
+    private void setSerialClass(Act011CheckDialogBinding binding) {
+        binding.clSerialClass.setVisibility(View.GONE);
+        ArrayList<HMAux> serialClassList = mPresenter.getSerialClassList();
+        SearchableSpinner ssSerialClass = binding.ssSerialClass;
+        ssSerialClass.setmRequired(false);
         if(serialClassList != null && serialClassList.size() > 0) {
-            binding.llSerialClass.setVisibility(View.VISIBLE);
-            MD_Product_Serial mdProductSerial = getSerialInfo();
-            SearchableSpinner ssSerialClass = binding.ssSerialClass;
+            binding.clSerialClass.setVisibility(View.VISIBLE);
+            //
+            MD_Product_Serial mdProductSerial = mPresenter.getSerialInfo(
+                    ToolBox_Con.getPreference_Customer_Code(context),
+                    Integer.parseInt(product_code),
+                    serial_id,
+                    formLocal
+            );
+            //
+            ssSerialClass.setmRequired(true);
+            ssSerialClass.setmCanClean(false);
+            ssSerialClass.setmOption(serialClassList);
+            binding.tvSerialClassTtl.setText(hmAux_Trans.get("dialog_finalize_serial_class_lbl"));
             ToolBox_Inf.setSSmValue(
                     ssSerialClass,
                     String.valueOf(mdProductSerial.getClass_code()),
@@ -3659,16 +3717,6 @@ public class Act011_Main extends Base_Activity
             );
             //
             ToolBox_Inf.setClassIcon(context, ssSerialClass.getmValue(), binding.ivSerialClassIcon);
-        }
-        //
-        if (allowFinalizeWithNewBtn()) {
-            binding.act011DialogFinalizeLbl.setVisibility(View.VISIBLE);
-            binding.act011DialogCheckOptionRg.setVisibility(View.VISIBLE);
-            binding.act011DialogCheckOptionRdoFinalize.setText(hmAux_Trans.get("dialog_finalize_option_finalize_lbl"));
-            binding.act011DialogCheckOptionRdoFinalizeNew.setText(hmAux_Trans.get("dialog_finalize_option_finalize_new_lbl"));
-        }else{
-            binding.act011DialogFinalizeLbl.setVisibility(View.GONE);
-            binding.act011DialogCheckOptionRg.setVisibility(View.GONE);
         }
     }
 

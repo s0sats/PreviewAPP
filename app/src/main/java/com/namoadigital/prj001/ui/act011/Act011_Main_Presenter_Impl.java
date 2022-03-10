@@ -16,6 +16,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.ctls.CustomFF;
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -2409,9 +2410,24 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     }
 
     @Override
-    public List<HMAux> getSerialClassList() {
-        return classDao.query_HM(new MD_Class_Sql_SS(
+    public ArrayList<HMAux> getSerialClassList() {
+        return (ArrayList<HMAux>) classDao.query_HM(new MD_Class_Sql_SS(
                 String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
         ).toSqlQuery());
     }
+
+    @Override
+    public void saveSerialClass(long preference_customer_code, int productCode, String serialId, GE_Custom_Form_Local formLocal, SearchableSpinner ssSerialClass) {
+        MD_Product_Serial mdProductSerial = getSerialInfo(preference_customer_code, productCode, serialId, formLocal);
+        //
+        mdProductSerial.setClass_code(ToolBox_Inf.mIntegerParse(ssSerialClass.getmValue().get(SearchableSpinner.CODE)));
+        mdProductSerial.setClass_id(ssSerialClass.getmValue().get(SearchableSpinner.DESCRIPTION));
+        mdProductSerial.setClass_type(ssSerialClass.getmValue().get(MD_ClassDao.CLASS_TYPE));
+        mdProductSerial.setClass_available(ToolBox_Inf.mIntegerParse(ssSerialClass.getmValue().get(MD_ClassDao.CLASS_AVAILABLE)));
+        mdProductSerial.setClass_color(ssSerialClass.getmValue().get(MD_ClassDao.CLASS_COLOR));
+        //
+        md_product_serialDao.addUpdate(mdProductSerial);
+    }
+
+
 }

@@ -115,13 +115,26 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:id="@+id/ll_serial_class"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_serial_class"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toStartOf="@+id/act011_gdl_end"
                 app:layout_constraintStart_toStartOf="@+id/act011_gdl_start"
                 app:layout_constraintTop_toBottomOf="@+id/act011_dialog_check_cl_missing_answers">
+
+                <TextView
+                    android:id="@+id/tv_serial_class_ttl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="5dp"
+                    tools:text="Class - Trad"
+                    android:textSize="@dimen/font_size_item_md"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageView
                     android:id="@+id/iv_serial_class_icon"
@@ -129,17 +142,22 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:padding="5dp"
-                    android:src="@drawable/ic_archive_black_24dp" />
+                    android:src="@drawable/ic_archive_black_24dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/tv_serial_class_ttl"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_serial_class_ttl" />
 
                 <com.namoa_digital.namoa_library.ctls.SearchableSpinner
                     android:id="@+id/ss_serial_class"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="2dp"
                     android:gravity="center_vertical"
-                    android:text="Class -Trad" />
+                    android:text="Class -Trad"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/iv_serial_class_icon"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_serial_class_ttl" />
 
-            </androidx.appcompat.widget.LinearLayoutCompat>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
                 android:id="@+id/act011_dialog_check_tv_elapsed_time_lbl"
@@ -150,7 +168,7 @@
                 android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@+id/act011_dialog_check_tv_elapsed_time_val"
                 app:layout_constraintStart_toStartOf="@+id/act011_gdl_start"
-                app:layout_constraintTop_toBottomOf="@+id/ll_serial_class"
+                app:layout_constraintTop_toBottomOf="@+id/cl_serial_class"
                 tools:text="Tempo total:" />
 
             <TextView
