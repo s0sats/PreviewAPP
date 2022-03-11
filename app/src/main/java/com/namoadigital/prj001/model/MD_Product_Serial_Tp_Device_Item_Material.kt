@@ -1,8 +1,10 @@
 package com.namoadigital.prj001.model
 
+import java.math.BigDecimal
+
 class MD_Product_Serial_Tp_Device_Item_Material(
     val material_code: Int,
-    val material_qty: Float
+    val qty: BigDecimal
 ) {
     var customer_code: Long = -1
         private set
@@ -25,10 +27,10 @@ class MD_Product_Serial_Tp_Device_Item_Material(
         item_check_code: Int,
         item_check_seq: Int,
         material_code: Int,
-        material_qty: Float
+        qty: BigDecimal
     ) : this(
         material_code,
-        material_qty
+        qty
     ){
         this.customer_code = customer_code
         this.product_code = product_code

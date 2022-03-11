@@ -25,14 +25,14 @@ class MD_Product_Serial_Tp_Device_Item(
     var device_tp_code: Int = -1
         private set
     var hist = mutableListOf<MD_Product_Serial_Tp_Device_Item_Hist>()
-    var materialList = mutableListOf<MD_Product_Serial_Tp_Device_Item_Material>()
+    var material = mutableListOf<MD_Product_Serial_Tp_Device_Item_Material>()
 
     /**
      * QUANDO OBJ GERADO VIA GSON NÃO PASSA NO INIT E LISTA NASCE NULL
      */
     init {
         hist = mutableListOf<MD_Product_Serial_Tp_Device_Item_Hist>()
-        materialList = mutableListOf<MD_Product_Serial_Tp_Device_Item_Material>()
+        material = mutableListOf<MD_Product_Serial_Tp_Device_Item_Material>()
     }
 
     constructor(
@@ -85,7 +85,7 @@ class MD_Product_Serial_Tp_Device_Item(
         this.hist.forEach {
             it.setPk(this)
         }
-        this.materialList.forEach {
+        this.material?.forEach {
             it.setPk(this)
         }
     }

@@ -38,7 +38,8 @@ class Act086MaterialItemVH(
             )
             //
             act086ProductItemTvProductQty.apply {
-                text = materialItem.getFormttedQty()
+                //TODO PASSAR LBL POR PARAM
+                text = materialItem.getFormttedQty("Applied LBL - trad")
                 visibility = if(text.toString().trim().isNotEmpty()) View.VISIBLE else View.GONE
             }
         }

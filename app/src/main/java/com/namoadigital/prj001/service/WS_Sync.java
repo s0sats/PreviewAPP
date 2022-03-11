@@ -107,6 +107,7 @@ import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device_Item;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device_Item_Hist;
+import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device_Item_Material;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.MD_Schedule_Exec_Operation;
 import com.namoadigital.prj001.model.MD_Schedule_Exec_Product;
@@ -916,9 +917,11 @@ public class WS_Sync extends IntentService {
             File[] files_serial_tp_device = ToolBox_Inf.getListOfFiles_v2("md_product_serial_tp_device-");
             File[] files_serial_tp_device_item = ToolBox_Inf.getListOfFiles_v2("md_product_serial_tp_device_item-");
             File[] files_serial_tp_device_item_hist = ToolBox_Inf.getListOfFiles_v2("md_product_serial_tp_device_item_hist-");
+            File[] files_serial_tp_device_item_material = ToolBox_Inf.getListOfFiles_v2("md_product_serial_tp_device_item_material-");
             ArrayList<MD_Product_Serial_Tp_Device> serialTpDevices = new ArrayList<>();
             ArrayList<MD_Product_Serial_Tp_Device_Item> serialTpDeviceItems = new ArrayList<>();
             ArrayList<MD_Product_Serial_Tp_Device_Item_Hist> serialTpDeviceItemHists = new ArrayList<>();
+            ArrayList<MD_Product_Serial_Tp_Device_Item_Material> serialTpDeviceItemMaterials = new ArrayList<>();
             /**
              * Carrega lista de MD_PRODUCT_SERIAL_TP_DEVICE
              */
@@ -963,6 +966,20 @@ public class WS_Sync extends IntentService {
                     )
                 );
             }
+            /**
+             * Carrega lista de MD_PRODUCT_SERIAL_TP_DEVICE_ITEM_MATERIAL
+             */
+            for (File _file : files_serial_tp_device_item_material) {
+                serialTpDeviceItemMaterials.addAll(
+                    gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                            ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Product_Serial_Tp_Device_Item_Material>>() {
+                        }.getType()
+                    )
+                );
+            }
 
             for (File _file : files_serial) {
                 ArrayList<MD_Product_Serial> serialList = gson.fromJson(
@@ -985,7 +1002,8 @@ public class WS_Sync extends IntentService {
                     serialList,
                     serialTpDevices,
                     serialTpDeviceItems,
-                    serialTpDeviceItemHists
+                    serialTpDeviceItemHists,
+                    serialTpDeviceItemMaterials
                 );
             }
             //Libera pro GB
@@ -993,6 +1011,7 @@ public class WS_Sync extends IntentService {
             files_serial_tp_device = null;
             files_serial_tp_device_item = null;
             files_serial_tp_device_item_hist = null;
+            files_serial_tp_device_item_material = null;
             /**
              * Após inserir todos os seriais de todos os arquivos,
              * Seleciona todos os seriais que NÃO FORAM ATUALIZADOS PELO PROCESSO ACIMA,

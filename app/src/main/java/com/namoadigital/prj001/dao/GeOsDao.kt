@@ -15,6 +15,7 @@ import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.sql.GeOsDeviceCreation_Sql_001
 import com.namoadigital.prj001.sql.GeOsDeviceItemCreation_Sql_001
 import com.namoadigital.prj001.sql.GeOsDeviceItemHistCreation_Sql_001
+import com.namoadigital.prj001.sql.GeOsDeviceItemMaterialCreation_Sql_001
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -424,6 +425,7 @@ class GeOsDao(
         val geOsDeviceDao = GeOsDeviceDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
         val geOsDeviceItemDao = GeOsDeviceItemDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
         val geOsDeviceItemHistDao = GeOsDeviceItemHistDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
+        val geOsDeviceItemMaterialDao = GeOsDeviceMaterialDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
         //
         val geOsDevices = geOsDeviceDao.query(
             GeOsDeviceCreation_Sql_001(
@@ -460,6 +462,18 @@ class GeOsDao(
                 mdSerial.serial_code.toInt()
             ).toSqlQuery()
         )
+        //
+        val geOsDeviceMaterial = geOsDeviceItemMaterialDao.query(
+            GeOsDeviceItemMaterialCreation_Sql_001(
+                geOs.customer_code,
+                geOs.custom_form_type,
+                geOs.custom_form_code,
+                geOs.custom_form_version,
+                geOs.custom_form_data,
+                mdSerial.product_code.toInt(),
+                mdSerial.serial_code.toInt()
+            ).toSqlQuery()
+        )
         try {
             //Chama fun que fará a primeira e segunda varredura.
             checkScan(geOs, geOsDeviceItens)
@@ -487,6 +501,10 @@ class GeOsDao(
                 throw Exception(daoObjReturn.errorMsg)
             }
             daoObjReturn =  geOsDeviceItemHistDao.addUpdate(geOsDeviceItemHist,false,db)
+            if (daoObjReturn.hasError()) {
+                throw Exception(daoObjReturn.errorMsg)
+            }
+            daoObjReturn =  geOsDeviceItemMaterialDao.addUpdate(geOsDeviceMaterial,false,db)
             if (daoObjReturn.hasError()) {
                 throw Exception(daoObjReturn.errorMsg)
             }
