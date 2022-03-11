@@ -30,9 +30,9 @@
         </provider> <!-- Login -->
         <activity
             android:name=".ui.act001.Act001_Main"
+            android:exported="true"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:exported="true"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -554,28 +554,33 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".ui.act086.Act086Main"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"/>
-
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.act087.Act087Main"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"/>
-
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.act088.Act088Main"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
 
+        <activity
+            android:name=".ui.act090.Act090Main"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"
+            />
         <activity
             android:name=".view.act.product_selection.Act_Product_Selection"
             android:label="@string/app_name"
@@ -591,9 +596,7 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
             android:name=".view.act.test2.Teste2"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-
-        <!-- Receivers -->
+            android:theme="@style/AppTheme.NoActionBar" /> <!-- Receivers -->
         <receiver android:name=".receiver.WBR_GetCustomer" />
 
         <service android:name=".service.WS_GetCustomer" />
@@ -642,13 +645,15 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
 
         <service android:name=".service.WS_Logout" />
 
-        <receiver android:name=".receiver.WBR_Connections_Change"
+        <receiver
+            android:name=".receiver.WBR_Connections_Change"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".receiver.WBR_BootCompleted"
+        <receiver
+            android:name=".receiver.WBR_BootCompleted"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -657,9 +662,11 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
             </intent-filter>
         </receiver>
 
-        <service android:name=".service.SV_LocationTracker"
-            android:foregroundServiceType="location"/>
-        <service android:name=".fcm.MyFirebaseMessagingService"
+        <service
+            android:name=".service.SV_LocationTracker"
+            android:foregroundServiceType="location" />
+        <service
+            android:name=".fcm.MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

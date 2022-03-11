@@ -103,7 +103,10 @@ class Act086VerificationFrgPresenter(
                 it.productDesc,
                 it.productQty.toFloat(),
                 it.productUnit,
-                it.creationMs
+                it.creationMs,
+                it.materialPlanned,
+                it.materialPlannedUsed,
+                it.materialPlannedQty
             )
         }
         //
@@ -135,7 +138,10 @@ class Act086VerificationFrgPresenter(
                     it.material_desc,
                     it.material_unit?:"",
                     it.material_qty,
-                    it.creation_ms
+                    it.creation_ms,
+                    it.material_planned,
+                    it.material_planned_used,
+                    it.material_planned_qty
                 )
             )
         }

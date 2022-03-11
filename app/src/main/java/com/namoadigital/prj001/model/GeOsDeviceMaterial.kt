@@ -23,9 +23,10 @@ class GeOsDeviceMaterial(
     val material_unit: String?,
     val creation_ms: Long,
     @Expose
-    val material_planned : Int = 0,
+    val material_planned: Int = 0,
     @Expose
-    val material_planned_used : Int = 0,
-    val material_planned_qty : Float? = null
+    val material_planned_used: Int = 0,
+    @Expose
+    val material_planned_qty: Float? = null
 
 ): Serializable
