@@ -18,6 +18,7 @@ import com.namoadigital.prj001.sql.GeOsDeviceMaterialSql_002
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
+import java.lang.Boolean.getBoolean
 
 class GeOsDeviceItemDao(
     context: Context,
@@ -62,6 +63,7 @@ class GeOsDeviceItemDao(
         const val EXEC_PHOTO3 = "exec_photo3"
         const val EXEC_PHOTO4 = "exec_photo4"
         const val STATUS_ANSWER = "status_answer"
+        const val HAS_EXPIRED_CYCLE = "has_expired_cycle"
     }
 
     private val toGeOsDeviceItemMapper: Mapper<Cursor, GeOsDeviceItem>
@@ -475,7 +477,8 @@ class GeOsDeviceItemDao(
                         exec_photo2 = getStringOrNull(getColumnIndex(EXEC_PHOTO2)),
                         exec_photo3 = getStringOrNull(getColumnIndex(EXEC_PHOTO3)),
                         exec_photo4 = getStringOrNull(getColumnIndex(EXEC_PHOTO4)),
-                        status_answer = getStringOrNull(getColumnIndex(STATUS_ANSWER))
+                        status_answer = getStringOrNull(getColumnIndex(STATUS_ANSWER)),
+                        has_expired_cycle = getInt(getColumnIndex(HAS_EXPIRED_CYCLE))
                     )
                 }
             }
@@ -560,6 +563,8 @@ class GeOsDeviceItemDao(
                     put(EXEC_PHOTO4, it.exec_photo4)
                     //
                     put(STATUS_ANSWER, it.status_answer)
+                    //
+                    put(HAS_EXPIRED_CYCLE, it.has_expired_cycle)
                 }
             }
             return contentValues

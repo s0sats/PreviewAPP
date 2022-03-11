@@ -227,13 +227,51 @@
             tools:itemCount="2"
             tools:listitem="@layout/act086_material_item" />
 
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/act086_verification_frg_cl_review_material"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/act086_verification_frg_rv_material"
+            android:background="@drawable/namoa_icon_bg_states"
+            >
+
+            <ImageView
+                android:id="@+id/act086_verification_frg_iv_review_material"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_trash"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:srcCompat="@drawable/ic_search_black_24dp"
+                app:tint="@color/namoa_light_blue" />
+
+            <TextView
+                android:id="@+id/act086_verification_frg_tv_review_material_lbl"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="32dp"
+                android:layout_marginEnd="24dp"
+                android:gravity="center_vertical"
+                android:text="Revisar Previsto"
+                android:textColor="@color/namoa_light_blue"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/act086_verification_frg_iv_review_material"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/act086_verification_frg_cl_photo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/act086_verification_frg_rv_material"
+            app:layout_constraintTop_toBottomOf="@+id/act086_verification_frg_cl_review_material"
             android:background="@drawable/namoa_icon_bg_states"
             android:clickable="false"
             android:enabled="false"

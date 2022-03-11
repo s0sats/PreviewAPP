@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
@@ -29,6 +30,7 @@ import com.namoadigital.prj001.R
 import com.namoadigital.prj001.adapter.Act086MaterialItemAdapter
 import com.namoadigital.prj001.adapter.Act086PhotoAdapter
 import com.namoadigital.prj001.dao.GeOsDeviceItemDao
+import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_ItemDao
 import com.namoadigital.prj001.databinding.Act086VerificationFrgBinding
 import com.namoadigital.prj001.extensions.applyTintColor
 import com.namoadigital.prj001.extensions.hideKeyboard
@@ -60,7 +62,8 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             requireContext(),
             this,
             hmAux_Trans,
-            GeOsDeviceItemDao(requireContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), ConstantBaseApp.DB_VERSION_CUSTOM)
+            GeOsDeviceItemDao(requireContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), ConstantBaseApp.DB_VERSION_CUSTOM),
+            MD_Product_Serial_Tp_Device_ItemDao(requireContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), ConstantBaseApp.DB_VERSION_CUSTOM)
         )
     }
     private lateinit var prefixPhoto: String
@@ -195,6 +198,15 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         applyAnswersUI()
         initRecyclers()
         applyEnableStateToMoreInfoViews()
+        initReviewPlannedMaterial()
+    }
+
+    private fun initReviewPlannedMaterial() {
+        binding.act086VerificationFrgClReviewMaterial.visibility = View.GONE
+        if(binding.act086VerificationFrgRgAnswers.checkedRadioButtonId == binding.act086VerificationFrgRdoAnswerFixed.id
+            && mPresenter.hasMaterialPlanned(geOsDeviceItem)){
+            binding.act086VerificationFrgClReviewMaterial.visibility = View.VISIBLE
+        }
     }
 
     /**
@@ -618,6 +630,12 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                     )
                 }else{
                     commitRdoChange(checkedId)
+                    if(act086VerificationFrgRdoAnswerFixed.id.equals(checkedId)
+                        && mPresenter.isCycleExpired(geOsDeviceItem)
+                        && mPresenter.hasMaterialPlanned(geOsDeviceItem)
+                    ){
+                        callAct090()
+                    }
                 }
             }
         }
@@ -746,6 +764,14 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                 }
             }
         }
+        //
+        binding.act086VerificationFrgClReviewMaterial.setOnClickListener{
+            callAct090()
+        }
+    }
+
+    private fun callAct090() {
+        Toast.makeText(context,"Act em construção", Toast.LENGTH_SHORT).show()
     }
 
     private fun validateManualDescFilled(): Boolean {

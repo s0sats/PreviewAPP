@@ -570,6 +570,7 @@ class GeOsDao(
         //
         geOsDeviceItens.forEach { item ->
 
+            item.has_expired_cycle = 0
             /*
              * Se Status PROJECTED_DATE_REACHED, verifica se deve alterar o status para:
              *   NORMAL:
@@ -582,6 +583,7 @@ class GeOsDao(
                 if (item.next_cycle_measure_date != null
                     && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_measure_date,dateStartLastMinute) > 0
                 ) {
+                    item.has_expired_cycle = 1
                     item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL
                 }
             }
@@ -596,6 +598,7 @@ class GeOsDao(
                 if (item.next_cycle_limit_date != null && geOs.date_start != null
                     && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_limit_date,dateStartLastMinute) > 0
                 ) {
+                    item.has_expired_cycle = 1
                     item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL
                 }
             }
@@ -617,6 +620,7 @@ class GeOsDao(
                 if (item.next_cycle_measure_date != null
                     && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_measure_date,dateStartLastMinute) < 0
                 ) {
+                    item.has_expired_cycle = 1
                     newCheckStatus = GeOsDeviceItem.ITEM_CHECK_STATUS_PROJECTED_DATE_REACHED
                 }
 
@@ -624,6 +628,7 @@ class GeOsDao(
                 if (item.next_cycle_limit_date != null
                     && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_limit_date,dateStartLastMinute) < 0
                 ) {
+                    item.has_expired_cycle = 1
                     newCheckStatus = GeOsDeviceItem.ITEM_CHECK_STATUS_LIMIT_DATE_REACHED
                 }
 
@@ -631,6 +636,7 @@ class GeOsDao(
                 if (item.next_cycle_measure != null
                     && item.next_cycle_measure.compareTo(measureConsider) <= 0
                 ) {
+                    item.has_expired_cycle = 1
                     newCheckStatus = GeOsDeviceItem.ITEM_CHECK_STATUS_MEASURE_ALERT
                 }
 
