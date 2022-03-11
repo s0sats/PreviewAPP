@@ -85,7 +85,7 @@ class Act086VerificationFrgPresenter(
         materialFragList: MutableList<Act086MaterialItem>
     ) {
         val newMaterialItemList = materialFragList.filter {
-            it.productQty > 0f
+            it.productQty > 0f || it.materialPlanned == 1
         }.map {
             GeOsDeviceMaterial(
                 geOsDeviceItem.customer_code,
