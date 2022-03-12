@@ -8,10 +8,6 @@
     tools:context=".ui.act090.Act090Main"
     tools:showIn="@layout/act090_main">
 
-
-
-
-
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/act090_gd_start"
         android:layout_width="wrap_content"
@@ -26,7 +22,21 @@
         android:orientation="vertical"
         app:layout_constraintGuide_end="16dp" />
 
+    <TextView
+        android:id="@+id/act090_tv_empty_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/act090_gd_start"
+        app:layout_constraintEnd_toEndOf="@id/act090_gd_end"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btn_apply_material"
+        app:layout_constraintVertical_bias="0.3"
+        android:textSize="20sp"
+        tools:text="Nenhum dado encontrado"
+        />
+
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/act090_rv_material_list"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
