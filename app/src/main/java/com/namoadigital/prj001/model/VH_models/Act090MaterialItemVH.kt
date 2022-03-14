@@ -19,7 +19,7 @@ class Act090MaterialItemVH(
             }
             //
             act090MaterialId.apply {
-                text = materialItem.productId
+                text = "(${materialItem.productId})"
             }
             //
             act090MaterialPlannedQty.apply{
@@ -38,6 +38,9 @@ class Act090MaterialItemVH(
                     View.GONE
                 }
                 text = materialItem.getFormttedQty(appliedQtyLbl)
+            }
+            swUseMaterial.apply {
+                isChecked = materialItem.materialPlannedUsed == 1
             }
             //
             clMain.setOnClickListener {

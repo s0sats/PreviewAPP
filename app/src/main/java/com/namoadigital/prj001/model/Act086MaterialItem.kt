@@ -29,7 +29,6 @@ class Act086MaterialItem(
     var materialPlanned: Int = 0
         private set
     var materialPlannedUsed: Int = 0
-        private set
     var materialPlannedQty: Float? = null
         private set
 

@@ -1,10 +1,14 @@
 package com.namoadigital.prj001.ui.act090
 
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import com.namoa_digital.namoa_library.util.HMAux
+import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.dao.GeOsDeviceMaterialDao
+import com.namoadigital.prj001.model.Act086MaterialItem
 import com.namoadigital.prj001.model.GeOsDeviceMaterial
+import com.namoadigital.prj001.model.toUiMaterialItem
 import com.namoadigital.prj001.sql.GeOsDeviceMaterialSql_003
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -17,16 +21,26 @@ class Act090MainPresenter(
     private val mModule_Code: String,
     private val mResource_Code: String,
     private val geOsDeviceItemMaterialDao: GeOsDeviceMaterialDao
-): Act090MainContract.IPresenter {
+) : Act090MainContract.IPresenter {
 
     private val hmAuxTrans: HMAux by lazy {
         loadTranslation()
     }
     //
 
-    private fun loadTranslation() : HMAux {
+    private fun loadTranslation(): HMAux {
         val transList: MutableList<String> = mutableListOf(
             "act090_title",
+            "planned_qty_lbl",
+            "applied_qty_lbl",
+            "alert_form_parameter_error_ttl",
+            "alert_form_parameter_error_msg",
+            "btn_apply_material",
+            "empty_list_lbl",
+            "alert_unsaved_data_will_be_lost_ttl",
+            "alert_unsaved_data_will_be_lost_confirm",
+            "alert_error_on_save_material_list_msg",
+            "alert_no_data_changed_msg"
         )
         //
         return ToolBox_Inf.setLanguage(
@@ -41,19 +55,21 @@ class Act090MainPresenter(
     override fun getTranslation() = hmAuxTrans
 
     override fun validBundleParams(): Boolean {
-        if( bundle.containsKey(ConstantBaseApp.DEVICE_BUNDLE)
+        if (bundle.containsKey(ConstantBaseApp.DEVICE_BUNDLE)
             && bundle.getBundle(ConstantBaseApp.DEVICE_BUNDLE) != null
-            && bundle.getBundle(ConstantBaseApp.DEVICE_BUNDLE)!!.containsKey(ConstantBaseApp.DEVICE_ITEM_PK)
-        ){
+            && bundle.getBundle(ConstantBaseApp.DEVICE_BUNDLE)!!
+                .containsKey(ConstantBaseApp.DEVICE_ITEM_PK)
+        ) {
             val deviceItemRawPk = bundle.getBundle(ConstantBaseApp.DEVICE_BUNDLE)!!.getString(
-                ConstantBaseApp.DEVICE_ITEM_PK)
+                ConstantBaseApp.DEVICE_ITEM_PK
+            )
             deviceItemRawPk?.let {
                 //Se tiver
                 return try {
                     //Se tiver "." e o split tiver 10 elementos
-                    it.contains(".")  && validPkSize( it)
-                }catch (e: Exception){
-                    ToolBox_Inf.registerException(javaClass.name,e)
+                    it.contains(".") && validPkSize(it)
+                } catch (e: Exception) {
+                    ToolBox_Inf.registerException(javaClass.name, e)
                     false
                 }
             }
@@ -68,8 +84,12 @@ class Act090MainPresenter(
         return it.split(".").size == 10
     }
 
-    override fun getItemPlannedMaterialList(itemPlannedMaterialList: MutableList<GeOsDeviceMaterial>) {
-        val deviceItemRawPk = bundle.getBundle(ConstantBaseApp.DEVICE_BUNDLE)!!.getString(ConstantBaseApp.DEVICE_ITEM_PK)
+    /**
+     * Fun que resgata itens planejados da tabela.
+     */
+    override fun getGeOsDeviceMaterialList(geOsDeviceMaterial: MutableList<GeOsDeviceMaterial>) {
+        val deviceItemRawPk = bundle.getBundle(ConstantBaseApp.DEVICE_BUNDLE)!!
+            .getString(ConstantBaseApp.DEVICE_ITEM_PK)
         deviceItemRawPk?.let {
             try {
                 val splitedPK = it.split(".")
@@ -88,16 +108,111 @@ class Act090MainPresenter(
                     ).toSqlQuery()
                 )
                 //
-                if(plannedMaterialList.isNotEmpty()){
-                    itemPlannedMaterialList.clear()
+                if (plannedMaterialList.isNotEmpty()) {
+                    geOsDeviceMaterial.clear()
                     //
-                    itemPlannedMaterialList.addAll(
+                    geOsDeviceMaterial.addAll(
                         plannedMaterialList
                     )
                 }
-            }catch (e: Exception){
-                ToolBox_Inf.registerException(javaClass.name,e)
+            } catch (e: Exception) {
+                ToolBox_Inf.registerException(javaClass.name, e)
             }
+        }
+    }
+
+    /**
+     * Fun que transform obj do banco em obj de tela.
+     */
+    override fun getItemPlannedMaterialList(
+        geOsDeviceMaterial: MutableList<GeOsDeviceMaterial>,
+        itemPlannedMaterialList: MutableList<Act086MaterialItem>
+    ) {
+        itemPlannedMaterialList.clear()
+        //
+        geOsDeviceMaterial.forEach {
+            itemPlannedMaterialList.add(
+                it.toUiMaterialItem()
+            )
+        }
+    }
+
+    override fun hasAnyItemChanged(
+        geOsDeviceMaterial: List<GeOsDeviceMaterial>,
+        itemPlannedMaterialList: List<Act086MaterialItem>
+    ): Boolean {
+        //Se listas tam diferente retorna falso.
+        //Logicamente isso não deve acontecer, mas.....
+        if (geOsDeviceMaterial.size != itemPlannedMaterialList.size) {
+            return false
+        }
+        //valida item a item de houve mudança e para na primeira que encontrar
+        geOsDeviceMaterial.forEachIndexed { index, dbMaterial ->
+            val itemMaterialUI = itemPlannedMaterialList[index]
+            //
+            if (itemMaterialUI.materialPlannedUsed != dbMaterial.material_planned_used
+                || itemMaterialUI.productQty != dbMaterial.material_qty
+            ) {
+                return true
+            }
+        }
+        //
+        return false
+    }
+
+    override fun savePlannedMaterialChangesIntoDb(
+        geOsDeviceMaterial: GeOsDeviceMaterial,
+        itemPlannedMaterialList: MutableList<Act086MaterialItem>
+    ) {
+        val geOsDeviceMaterialList = itemPlannedMaterialList.map {
+                GeOsDeviceMaterial(
+                    geOsDeviceMaterial.customer_code,
+                    geOsDeviceMaterial.custom_form_type,
+                    geOsDeviceMaterial.custom_form_code,
+                    geOsDeviceMaterial.custom_form_version,
+                    geOsDeviceMaterial.custom_form_data,
+                    geOsDeviceMaterial.product_code,
+                    geOsDeviceMaterial.serial_code,
+                    geOsDeviceMaterial.device_tp_code,
+                    geOsDeviceMaterial.item_check_code,
+                    geOsDeviceMaterial.item_check_seq,
+                    it.productCode,
+                    it.productId,
+                    it.productDesc,
+                    it.productQty,
+                    it.productUnit,
+                    it.creationMs,
+                    it.materialPlanned,
+                    it.materialPlannedUsed,
+                    it.materialPlannedQty
+                )
+        }.toMutableList()
+        //
+        val daoObjReturn = geOsDeviceItemMaterialDao.addUpdate(geOsDeviceMaterialList, false)
+        //
+        if(!daoObjReturn.hasError()){
+            onBackPressedClicked(true)
+        }else{
+            ToolBox.toastMSG(
+                context,
+                hmAuxTrans["alert_error_on_save_material_list_msg"]
+            )
+        }
+    }
+
+    override fun onBackPressedClicked(skipBackValidation: Boolean) {
+        if(skipBackValidation) {
+            mView.callAct086()
+        }else{
+            ToolBox.alertMSG_YES_NO(
+                context,
+                hmAuxTrans["alert_unsaved_data_will_be_lost_ttl"],
+                hmAuxTrans["alert_unsaved_data_will_be_lost_confirm"],
+                DialogInterface.OnClickListener { _, _ ->
+                    onBackPressedClicked(true)
+                },
+                1
+            )
         }
     }
 }

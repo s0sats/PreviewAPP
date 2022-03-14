@@ -24,6 +24,7 @@ import com.namoadigital.prj001.model.GeOsDeviceItemHist
 import com.namoadigital.prj001.ui.act011.Act011_Main
 import com.namoadigital.prj001.ui.act086.frg_historic.Act086HistoricFrg
 import com.namoadigital.prj001.ui.act086.frg_verification.Act086VerificationFrg
+import com.namoadigital.prj001.ui.act090.Act090Main
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ConstantBaseApp.*
@@ -479,7 +480,22 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if(item.itemId == android.R.id.home){
-            mPresenter.onBackPressedClicked(supportFragmentManager, deviceItem)
+            /**
+             *
+             * //TODO DESCOMENTAR ONBACKPRESSED E REMOVER CHAMADA DA ACT090 APÓS TESTES
+             *
+             */
+            //mPresenter.onBackPressedClicked(supportFragmentManager, deviceItem)
+            startActivity(
+                Intent().apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    setClass(this@Act086Main, Act090Main::class.java)
+                    putExtras(bundle)
+                }
+            )
+            //
+            finish()
+
         }
         return super.onOptionsItemSelected(item)
     }

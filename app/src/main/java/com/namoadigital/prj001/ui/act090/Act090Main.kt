@@ -1,26 +1,27 @@
 package com.namoadigital.prj001.ui.act090
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.Base_Activity
-import com.namoadigital.prj001.R
-import com.namoadigital.prj001.adapter.Act086MaterialItemAdapter
 import com.namoadigital.prj001.adapter.Act090MaterialAdapter
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
-import com.namoadigital.prj001.dao.GeOsDeviceDao
-import com.namoadigital.prj001.dao.GeOsDeviceItemDao
 import com.namoadigital.prj001.dao.GeOsDeviceMaterialDao
 import com.namoadigital.prj001.databinding.Act090MainBinding
 import com.namoadigital.prj001.databinding.Act090MainContentBinding
 import com.namoadigital.prj001.model.Act086MaterialItem
 import com.namoadigital.prj001.model.GeOsDeviceMaterial
 import com.namoadigital.prj001.ui.act086.Act086Main
+import com.namoadigital.prj001.ui.act086.Act086ProductEditDialog
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
+import kotlinx.coroutines.*
 
 class Act090Main : Base_Activity(), Act090MainContract.IView {
 
@@ -39,7 +40,8 @@ class Act090Main : Base_Activity(), Act090MainContract.IView {
             GeOsDeviceMaterialDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
         )
     }
-    private val itemPlannedMaterialList = mutableListOf<GeOsDeviceMaterial>()
+    private val geOsDeviceMaterial = mutableListOf<GeOsDeviceMaterial>()
+    private val itemPlannedMaterialList = mutableListOf<Act086MaterialItem>()
     private val materialAdapter: Act090MaterialAdapter by lazy{
         Act090MaterialAdapter(
             ::onMaterialItemClick,
@@ -73,15 +75,18 @@ class Act090Main : Base_Activity(), Act090MainContract.IView {
         readOnly = defineReadOnlyByStatus(bundleDevice.getString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS))
     }
 
-    private fun defineReadOnlyByStatus(string: String?): Boolean {
-        TODO("Not yet implemented")
+    private fun defineReadOnlyByStatus(formStatus: String?): Boolean {
+        if(formStatus == null || formStatus == ConstantBaseApp.SYS_STATUS_DONE || formStatus == ConstantBaseApp.SYS_STATUS_WAITING_SYNC){
+            return true
+        }
+        return false
     }
 
     private fun iniSetup() {
         mResource_Code = ToolBox_Inf.getResourceCode(
             context,
             mModule_Code,
-            ConstantBaseApp.ACT086
+            ConstantBaseApp.ACT090
         )
         //10/06/2021 - Add recolhimento do teclado
         window.setSoftInputMode(
@@ -96,10 +101,42 @@ class Act090Main : Base_Activity(), Act090MainContract.IView {
 
     private fun initVars() {
         if(mPresenter.validBundleParams()) {
+            setLabels()
+            getGeOsDeviceMaterialList()
             getItemPlannedMaterialList()
             initUI()
+            initRecycler()
         }else{
+            paramErrorFlow()
+        }
+    }
 
+    private fun setLabels() {
+        with(binding){
+            btnApplyMaterial.text = hmAux_Trans ["btn_apply_material"]
+            act090TvEmptyList.text = hmAux_Trans["empty_list_lbl"]
+        }
+    }
+
+    private fun paramErrorFlow() {
+        ToolBox.alertMSG(
+            context,
+            hmAux_Trans["alert_form_parameter_error_ttl"],
+            hmAux_Trans["alert_form_parameter_error_msg"],
+            DialogInterface.OnClickListener { _, _ ->
+                onBackPressed()
+            },
+            0
+        )
+    }
+    private fun initRecycler() {
+        materialAdapter.sourceList = itemPlannedMaterialList
+        //
+        with(binding) {
+            act090RvMaterialList.apply {
+                layoutManager = LinearLayoutManager(context)
+                adapter = materialAdapter
+            }
         }
     }
 
@@ -108,7 +145,10 @@ class Act090Main : Base_Activity(), Act090MainContract.IView {
             with(binding){
                 act090RvMaterialList.apply {
                     visibility = View.VISIBLE
-                    adapter = materialAdapter
+                }
+                //
+                act090TvEmptyList.apply {
+                    visibility = View.GONE
                 }
             }
         } else {
@@ -124,7 +164,7 @@ class Act090Main : Base_Activity(), Act090MainContract.IView {
     }
 
     private fun onMaterialItemClick(position: Int, act086MaterialItem: Act086MaterialItem) {
-        TODO("Not yet implemented")
+        callProductEditDialog(position,act086MaterialItem,false)
     }
 
     private fun onSwitchStatusChange(
@@ -132,23 +172,107 @@ class Act090Main : Base_Activity(), Act090MainContract.IView {
         act086MaterialItem: Act086MaterialItem,
         isChecked: Boolean
     ) {
-        TODO("Not yet implemented")
+        if(isChecked){
+            callProductEditDialog(position,act086MaterialItem,true)
+        } else {
+            itemPlannedMaterialList[position].productQty = 0f
+            itemPlannedMaterialList[position].materialPlannedUsed = 0
+            //
+            if(!binding.act090RvMaterialList.isComputingLayout){
+                materialAdapter.notifyItemChanged(position)
+            }else{
+                CoroutineScope(Dispatchers.Default).launch {
+                    delay(200)
+                    withContext(Dispatchers.Main){
+                        materialAdapter.notifyItemChanged(position)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun getGeOsDeviceMaterialList(){
+        mPresenter.getGeOsDeviceMaterialList(geOsDeviceMaterial)
     }
 
     private fun getItemPlannedMaterialList() {
-        mPresenter.getItemPlannedMaterialList(itemPlannedMaterialList)
+        mPresenter.getItemPlannedMaterialList(geOsDeviceMaterial,itemPlannedMaterialList)
     }
 
     private fun initActions() {
-        TODO("Not yet implemented")
+        binding.btnApplyMaterial.setOnClickListener {
+            if(mPresenter.hasAnyItemChanged(geOsDeviceMaterial,itemPlannedMaterialList)) {
+                savePlannedMaterialChanges()
+            }else{
+                ToolBox.toastMSG(
+                    context,
+                    hmAux_Trans["alert_no_data_changed_msg"]
+                )
+            }
+        }
     }
+
+    private fun savePlannedMaterialChanges() {
+        mPresenter.savePlannedMaterialChangesIntoDb(
+            geOsDeviceMaterial[0],
+            itemPlannedMaterialList
+        )
+    }
+
+    private fun callProductEditDialog(
+        productIndex: Int,
+        materialItem: Act086MaterialItem,
+        isAddProcess: Boolean = false
+    ) {
+        Act086ProductEditDialog.getInstance(
+            hmAux_Trans,
+            productIndex,
+            materialItem,
+            isAddProcess,
+        ).apply {
+            onApplyClick = ::onApplyProductClick
+            onCancelClick = ::onCancelProductClick
+            onBackDismiss = ::onBackDismiss
+        }.show(supportFragmentManager,"teste")
+    }
+
+    private fun onApplyProductClick(productIndex: Int, materialItem: Act086MaterialItem, isAddProcess: Boolean) {
+        if(productIndex > -1){
+            if(materialItem.materialPlannedUsed == 0 && materialItem.productQty > 0f){
+                materialItem.materialPlannedUsed = 1
+            }
+            //Atualiza item na lista
+            itemPlannedMaterialList[productIndex] = materialItem
+            //Informa adapter qual posição atualizar
+            materialAdapter.notifyItemChanged(productIndex)
+        }
+    }
+
+    private fun onCancelProductClick(productIndex: Int, isAddProcess: Boolean){
+        resetItemMaterialUI(productIndex, isAddProcess)
+    }
+
+    private fun onBackDismiss(productIndex: Int, isAddProcess: Boolean){
+        resetItemMaterialUI(productIndex, isAddProcess)
+    }
+
+    private fun resetItemMaterialUI(productIndex: Int, isAddProcess: Boolean) {
+        if (productIndex > -1 && itemPlannedMaterialList.indices.contains(productIndex)) {
+            val act086MaterialItem = itemPlannedMaterialList[productIndex]
+            if (act086MaterialItem.productQty == 0f || isAddProcess) {
+                act086MaterialItem.materialPlannedUsed = 0
+                materialAdapter.notifyItemChanged(productIndex)
+            }
+        }
+    }
+
 
     private fun iniUIFooter() {
         iniFooter()
         //
         mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context)
-        mAct_Info = Constant.ACT086
-        mAct_Title = "${Constant.ACT086}${ConstantBaseApp.title_lbl}"
+        mAct_Info = Constant.ACT090
+        mAct_Title = "${Constant.ACT090}${ConstantBaseApp.title_lbl}"
         //
         val mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context)
         mSite_Value = mFooter[Constant.FOOTER_SITE]
@@ -158,5 +282,28 @@ class Act090Main : Base_Activity(), Act090MainContract.IView {
         setMenuLanguage(hmAux_Trans)
         setTitleLanguage()
         setFooter()
+    }
+
+    override fun footerCreateDialog() {
+        ToolBox_Inf.buildFooterDialog(context)
+    }
+
+    override fun callAct086() {
+        startActivity(
+            Intent().apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                setClass(this@Act090Main, Act086Main::class.java)
+                putExtras(bundle)
+            }
+        )
+        //
+        finish()
+    }
+
+    override fun onBackPressed() {
+        mPresenter.onBackPressedClicked(
+            //Se não tem alteração, não precisa do confirm.
+            !mPresenter.hasAnyItemChanged(geOsDeviceMaterial,itemPlannedMaterialList)
+        )
     }
 }

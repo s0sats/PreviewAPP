@@ -36,9 +36,9 @@ class GeOsDeviceMaterialSql_003(
                         AND ${GeOsDeviceMaterialDao.DEVICE_TP_CODE} = '$deviceTpCode'                           
                         AND ${GeOsDeviceMaterialDao.ITEM_CHECK_CODE} = '$itemCheckCode'                           
                         AND ${GeOsDeviceMaterialDao.ITEM_CHECK_SEQ} = '$itemCheckSeq'
-                        AND ${GeOsDeviceMaterialDao.MATERIAL_PLANNED} = 1
+                        AND ${GeOsDeviceMaterialDao.MATERIAL_PLANNED} = '1'
                    ORDER BY
-                        ${GeOsDeviceMaterialDao.MATERIAL_DESC} 
+                        ${GeOsDeviceMaterialDao.MATERIAL_DESC} ,
                         ${GeOsDeviceMaterialDao.CREATION_MS} 
                                                                                                                           
         """.trimMargin()

@@ -27,6 +27,8 @@ class Act086ProductEditDialog : BottomSheetDialogFragment() {
     private var isAddAction: Boolean = false
     var onApplyClick: (productIdx: Int, materialItem: Act086MaterialItem, isAddProcess: Boolean) -> Unit = { _, _, _ -> }
     var onCancelClick: (productIdx: Int, isAddProcess: Boolean) -> Unit = { _,_ -> }
+    var onBackDismiss: (productIdx: Int, isAddProcess: Boolean) -> Unit = { _, _ -> }
+    var skipOnBackDismiss = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,6 +91,7 @@ class Act086ProductEditDialog : BottomSheetDialogFragment() {
                     //esconde teclado ao selecionar item
                     ToolBox_Inf.hideSoftKeyboard(context, act086ProductEditDialogEtQty)
                     onApplyClick(productIdx, materialItem, isAddAction)
+                    skipOnBackDismiss = true
                     dismiss()
                 }else{
                     Toast.makeText(
@@ -134,12 +137,18 @@ class Act086ProductEditDialog : BottomSheetDialogFragment() {
     /**
      * Como dialog é cancelavel, no dismiss, caso o valor seja invalido, chama metodo de cancelmento
      * removendo o item ja inserido no adapter de material.
+     * 14/06/2022
+     * Na tela de insumo planejado, é necessario pegar o dismiss mesmo valido, para resetar o valor
+     * do switch
      */
     override fun onDismiss(dialog: DialogInterface) {
         val typedQty = binding. act086ProductEditDialogEtQty.text.toString().trim()
         if(!isValidQty(typedQty)) {
-            onCancelClick(productIdx,isAddAction)
+            onCancelClick(productIdx, isAddAction)
+        } else if(!skipOnBackDismiss){
+            onBackDismiss(productIdx, isAddAction)
         }
+        //
         super.onDismiss(dialog)
     }
 

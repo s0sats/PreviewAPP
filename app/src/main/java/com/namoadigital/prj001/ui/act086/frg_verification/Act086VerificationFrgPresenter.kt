@@ -108,9 +108,14 @@ class Act086VerificationFrgPresenter(
                 it.materialPlannedUsed,
                 it.materialPlannedQty
             )
+        }.toMutableList()
+        //Copia itens planjeados para nova lista evitando perde-los no map.
+        geOsDeviceItem.materialList.filter {
+            it.material_planned == 1
+        }.forEach {
+            newMaterialItemList.add(it)
         }
         //
-        geOsDeviceItem.materialList.clear()
         geOsDeviceItem.materialList.addAll(newMaterialItemList)
     }
 
@@ -130,7 +135,11 @@ class Act086VerificationFrgPresenter(
         materialList: MutableList<GeOsDeviceMaterial>,
         materialFragList: MutableList<Act086MaterialItem>
     ) {
-        materialList.forEach {
+        //Com o advento do material planejado, foi aplicado filtrao para remover
+        //insumos planejados sem "uso"  da lista exibida.
+        materialList.filter{
+            it.material_planned == 0 || it.material_planned_used == 1
+        }.forEach {
             materialFragList.add(
                 Act086MaterialItem(
                     it.material_code,

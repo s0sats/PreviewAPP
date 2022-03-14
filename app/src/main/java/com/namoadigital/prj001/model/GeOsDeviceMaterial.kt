@@ -30,3 +30,20 @@ class GeOsDeviceMaterial(
     val material_planned_qty: Float? = null
 
 ): Serializable
+
+/**
+ * Extension que convert modelo do banco para modelo de u.i
+ */
+fun GeOsDeviceMaterial.toUiMaterialItem() : Act086MaterialItem{
+    return Act086MaterialItem(
+        productCode = material_code,
+        productId = material_id,
+        productDesc = material_desc,
+        productUnit = material_unit?:"",
+        productQty = material_qty,
+        creationMs = creation_ms,
+        materialPlanned = material_planned,
+        materialPlannedUsed = material_planned_used,
+        materialPlannedQty = material_planned_qty
+    )
+}
