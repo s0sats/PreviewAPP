@@ -24,6 +24,7 @@ import com.namoadigital.prj001.model.GeOsDeviceItemHist
 import com.namoadigital.prj001.ui.act011.Act011_Main
 import com.namoadigital.prj001.ui.act086.frg_historic.Act086HistoricFrg
 import com.namoadigital.prj001.ui.act086.frg_verification.Act086VerificationFrg
+import com.namoadigital.prj001.ui.act090.Act090Main
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ConstantBaseApp.*
@@ -368,6 +369,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
                 fragment.showAlert = ::showAlert
                 fragment.checkScrollNeeds = ::checkScrollNeeds
                 fragment.leaveItem = ::leaveItem
+                fragment.onMaterialPlannedInteraction = ::onMaterialPlannedInteraction
             }
         }
         //
@@ -400,6 +402,19 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
         }
         onBackPressed()
     }
+
+    fun onMaterialPlannedInteraction(){
+        startActivity(
+            Intent().apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                setClass(this@Act086Main, Act090Main::class.java)
+                putExtras(bundle)
+            }
+        )
+        //
+        finish()
+    }
+
 
     override fun updateScrollPosition(newScrollTop: Int) {
         binding.act086NvMain.scrollTo(0,newScrollTop)

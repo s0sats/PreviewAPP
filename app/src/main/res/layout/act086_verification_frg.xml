@@ -243,7 +243,7 @@
                 android:id="@+id/act086_verification_frg_iv_review_material"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_trash"
+                android:src="@drawable/ic_search_black_24dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"

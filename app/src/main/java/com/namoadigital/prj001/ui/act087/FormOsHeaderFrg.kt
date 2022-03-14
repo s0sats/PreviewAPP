@@ -477,7 +477,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 }else{
                     true
                 }
-            }?: true
+            }?: false
             //
             val preventiveCycleInvalid = isPreventiveCycleValid(isOrderTypeInvalid).not()
             //

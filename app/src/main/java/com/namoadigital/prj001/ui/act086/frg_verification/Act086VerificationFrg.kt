@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
@@ -97,7 +96,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     private var skipSave: Boolean = false
     lateinit var leaveItem: (isManualItemDelete: Boolean) -> Unit
     private var isPhotoAction = false
-
+    lateinit var onMaterialPlannedInteraction: () -> Unit
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -203,11 +202,17 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
 
     private fun initReviewPlannedMaterial() {
         binding.act086VerificationFrgClReviewMaterial.visibility = View.GONE
-        if(binding.act086VerificationFrgRgAnswers.checkedRadioButtonId == binding.act086VerificationFrgRdoAnswerFixed.id
-            && mPresenter.hasMaterialPlanned(geOsDeviceItem)){
+        if(isReviewMaterialVisible()){
             binding.act086VerificationFrgClReviewMaterial.visibility = View.VISIBLE
         }
     }
+
+    private fun isReviewMaterialVisible() =
+        ((binding.act086VerificationFrgRgAnswers.checkedRadioButtonId == binding.act086VerificationFrgRdoAnswerFixed.id
+                || binding.act086VerificationFrgRgAnswers.checkedRadioButtonId == binding.act086VerificationFrgRdoAnswerAlert.id)
+                && mPresenter.hasMaterialPlanned(geOsDeviceItem)
+                && !inReadOnly
+                )
 
     /**
      * Fun que define a cor dos drawable de cada rdo.
@@ -389,6 +394,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             act086VerificationFrgTvMaterialTtl.text  = getMaterialLbl()
             act086VerificationFrgTvPhotoTtl.text  = hmAux_Trans["photo_lbl"]
             act086VerificationFrgTvDeleteLbl.text  = getDeleteLbl()
+            act086VerificationFrgTvReviewMaterialLbl.text  = hmAux_Trans["review_material_planned_lbl"]
         }
     }
 
@@ -633,8 +639,9 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                     if(act086VerificationFrgRdoAnswerFixed.id.equals(checkedId)
                         && mPresenter.isCycleExpired(geOsDeviceItem)
                         && mPresenter.hasMaterialPlanned(geOsDeviceItem)
+                        && !inReadOnly
                     ){
-                        callAct090()
+                        onMaterialPlannedInteraction()
                     }
                 }
             }
@@ -766,12 +773,8 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         }
         //
         binding.act086VerificationFrgClReviewMaterial.setOnClickListener{
-            callAct090()
+            onMaterialPlannedInteraction()
         }
-    }
-
-    private fun callAct090() {
-        Toast.makeText(context,"Act em construção", Toast.LENGTH_SHORT).show()
     }
 
     private fun validateManualDescFilled(): Boolean {
@@ -786,6 +789,14 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     private fun commitRdoChange(checkedId: Int) {
         lastSelectedRdoId = checkedId
         applyEnableStateToMoreInfoViews()
+        binding.apply {
+            if(isReviewMaterialVisible()) {
+                act086VerificationFrgClReviewMaterial.visibility = View.VISIBLE
+            }else {
+                act086VerificationFrgClReviewMaterial.visibility = View.GONE
+            }
+        }
+        //
         updateMaterialLabel()
         saveData()
         //Uma vez respondido, não precisa mais pular o save.
@@ -1211,6 +1222,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                 "alert_error_on_save_item_msg",
                 "alert_invalid_material_qty_msg",
                 "manual_desc_hint",
+                "review_material_planned_lbl"
             )
         }
     }
