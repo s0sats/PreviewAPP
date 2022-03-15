@@ -2412,7 +2412,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     @Override
     public ArrayList<HMAux> getSerialClassList() {
         return (ArrayList<HMAux>) classDao.query_HM(new MD_Class_Sql_SS(
-                String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                MD_ClassDao.CLASS_SERIAL_VALUE
         ).toSqlQuery());
     }
 

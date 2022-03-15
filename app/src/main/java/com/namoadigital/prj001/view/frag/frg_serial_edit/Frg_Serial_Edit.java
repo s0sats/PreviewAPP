@@ -2810,7 +2810,8 @@ public class Frg_Serial_Edit extends BaseFragment {
         MD_ClassDao classDao = new MD_ClassDao(context);
         //
         classList = (ArrayList<HMAux>) classDao.query_HM(new MD_Class_Sql_SS(
-                String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                MD_ClassDao.CLASS_SERIAL_VALUE
         ).toSqlQuery());
         ss_class.setmOption(classList);
         //
