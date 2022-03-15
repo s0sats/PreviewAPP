@@ -3518,6 +3518,8 @@ public class Act011_Main extends Base_Activity
                                 formLocal,
                                 binding.ssSerialClass
                         );
+                        //
+                        formData.setClass_code(ToolBox_Inf.mIntegerParse(binding.ssSerialClass.getmValue().get(SearchableSpinner.CODE)));
                         //Somente chama atualização das listas dos recycles se houver itens precisando
                         //ser alterados.
                         if(missingAnswersCounter > 0) {

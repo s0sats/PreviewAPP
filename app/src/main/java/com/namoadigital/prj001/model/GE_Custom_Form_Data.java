@@ -35,6 +35,13 @@ public class GE_Custom_Form_Data {
     @Expose
     private String serial_id;
 
+    /**
+     * BARRIONUEVO 15-03-2022
+     * Class code do serial preenchido no dialog de finalização de form os.
+     */
+    @Expose
+    private Integer class_code;
+
     @Expose
     private String date_start;
 
@@ -146,6 +153,7 @@ public class GE_Custom_Form_Data {
         this.custom_form_status = "2";
         this.product_code = -1L;
         this.serial_id = "";
+        this.class_code = null;
         this.date_start = "1900-01-01";
         this.date_end = "1900-01-01";
         this.user_code = -1;
@@ -249,6 +257,14 @@ public class GE_Custom_Form_Data {
 
     public void setSerial_id(String serial_id) {
         this.serial_id = serial_id;
+    }
+
+    public Integer getClass_code() {
+        return class_code;
+    }
+
+    public void setClass_code(Integer class_code) {
+        this.class_code = class_code;
     }
 
     public String getDate_start() {
