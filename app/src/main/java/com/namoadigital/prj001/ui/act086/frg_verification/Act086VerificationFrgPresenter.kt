@@ -7,20 +7,22 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.dao.GeOsDeviceItemDao
 import com.namoadigital.prj001.dao.MD_All_ProductDao
+import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_ItemDao
 import com.namoadigital.prj001.model.Act086MaterialItem
 import com.namoadigital.prj001.model.GeOsDeviceItem
 import com.namoadigital.prj001.model.GeOsDeviceMaterial
+import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_DeviceDao_Sql_001
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.io.File
 import java.util.*
-import kotlin.collections.ArrayList
 
 class Act086VerificationFrgPresenter(
     private val context: Context,
     private val mView: Act086VerificationFrgContract.I_View,
     private val hmAuxTrans: HMAux,
-    private val deviceItemDao: GeOsDeviceItemDao
+    private val deviceItemDao: GeOsDeviceItemDao,
+    private val mdProductSerialTpDeviceItemDao: MD_Product_Serial_Tp_Device_ItemDao
 ): Act086VerificationFrgContract.I_Presenter {
 
     override fun handleAddPhoto(
@@ -169,6 +171,24 @@ class Act086VerificationFrgPresenter(
                 }
             )
         }
+    }
+
+    override fun isCycleExpired(geOsDeviceItem: GeOsDeviceItem): Boolean {
+        return geOsDeviceItem.has_expired_cycle == 1;
+    }
+
+    override fun hasMaterialPlanned(geOsDeviceItem: GeOsDeviceItem): Boolean {
+        val mdProductSerialTpDeviceItem = mdProductSerialTpDeviceItemDao.getByString(
+            MD_Product_Serial_Tp_DeviceDao_Sql_001(
+                geOsDeviceItem.customer_code,
+                geOsDeviceItem.product_code.toLong(),
+                geOsDeviceItem.serial_code.toLong(),
+                geOsDeviceItem.device_tp_code
+            ).toSqlQuery()
+        )
+        return mdProductSerialTpDeviceItem?.let{
+            it.material.size > 0
+        } ?: false
     }
 
     override fun deleteOldPhoto(prefixPhoto: String){

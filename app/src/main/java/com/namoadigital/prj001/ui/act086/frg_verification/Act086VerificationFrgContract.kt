@@ -39,6 +39,8 @@ interface Act086VerificationFrgContract {
         )
 
         fun deleteManualItem(geOsDeviceItem: GeOsDeviceItem)
+        fun isCycleExpired(geOsDeviceItem: GeOsDeviceItem): Boolean
+        fun hasMaterialPlanned(geOsDeviceItem: GeOsDeviceItem): Boolean
     }
 
 }

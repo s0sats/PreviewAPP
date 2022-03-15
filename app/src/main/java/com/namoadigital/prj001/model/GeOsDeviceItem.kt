@@ -57,6 +57,7 @@ class GeOsDeviceItem(
     @Expose
     var exec_photo4 :String?,
     var status_answer :String?,
+    var has_expired_cycle :Int,
     @Expose
     @SerializedName("material")
     val materialList: MutableList<GeOsDeviceMaterial>  = mutableListOf()

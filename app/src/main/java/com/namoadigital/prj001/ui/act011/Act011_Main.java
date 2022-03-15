@@ -62,6 +62,7 @@ import com.namoa_digital.namoa_library.ctls.PhotoFF;
 import com.namoa_digital.namoa_library.ctls.PictureFF;
 import com.namoa_digital.namoa_library.ctls.RatingBarFF;
 import com.namoa_digital.namoa_library.ctls.RatingImageFF;
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -85,6 +86,7 @@ import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.GeOsDao;
 import com.namoadigital.prj001.dao.GeOsDeviceDao;
 import com.namoadigital.prj001.dao.GeOsDeviceItemDao;
+import com.namoadigital.prj001.dao.MD_ClassDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
@@ -500,6 +502,7 @@ public class Act011_Main extends Base_Activity
         //
         transList.add("dialog_finalize_os_form_invalid_end_date_ttl");
         transList.add("dialog_finalize_os_form_invalid_end_date_end");
+        transList.add("dialog_finalize_serial_class_lbl");
         //
         transList.add("alert_error_order_or_structure_not_found_ttl");
         transList.add("alert_error_order_or_structure_not_found_msg");
@@ -721,7 +724,8 @@ public class Act011_Main extends Base_Activity
                 new GeOsDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
                 new GeOsDeviceDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
                 new GeOsDeviceItemDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
-                new MeMeasureTpDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
+                new MeMeasureTpDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
+                new MD_ClassDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
         );
 
         recoverGetIntents();
@@ -3493,7 +3497,7 @@ public class Act011_Main extends Base_Activity
             @Override
             public void onClick(View v) {
                 if(isFormOs) {
-                    if(validEndDate(binding)) {
+                    if(isFinalizeDialogInputValid(binding)) {
                         String missingAnswer = binding.act011DialogCheckTilJustifyMissingAnswerVal.getEditText().getText().toString();
                         //LUCHE - 08/11/2021 - resgata contador antes para ser usado na validação
                         //de refreshCurrentTabRecycle. Se não há mais não respondidos(segunda chama),
@@ -3506,6 +3510,13 @@ public class Act011_Main extends Base_Activity
                             missingAnswer,
                             binding.act011DialogCheckMkdateFormStart.getmValue(),
                             binding.act011DialogCheckMkdateFormEnd.getmValue()
+                        );
+                        //
+                        mPresenter.saveSerialClass(ToolBox_Con.getPreference_Customer_Code(context),
+                                Integer.parseInt(product_code),
+                                serial_id,
+                                formLocal,
+                                binding.ssSerialClass
                         );
                         //Somente chama atualização das listas dos recycles se houver itens precisando
                         //ser alterados.
@@ -3564,7 +3575,31 @@ public class Act011_Main extends Base_Activity
             }
         });
         //
+        binding.ssSerialClass.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+            @Override
+            public void onItemPreSelected(HMAux hmAux) {
+
+            }
+
+            @Override
+            public void onItemPostSelected(HMAux hmAux) {
+                ToolBox_Inf.setClassIcon(context, hmAux, binding.ivSerialClassIcon);
+            }
+        });
     }
+
+    private boolean isFinalizeDialogInputValid(com.namoadigital.prj001.databinding.Act011CheckDialogBinding binding) {
+        return validEndDate(binding)
+            && validSerialClass(binding);
+    }
+
+    private boolean validSerialClass(Act011CheckDialogBinding binding) {
+        if(binding.ssSerialClass.ismRequired()){
+            return binding.ssSerialClass.getmValue().hasConsistentValue(SearchableSpinner.CODE);
+        }
+        return true;
+    }
+
 
     /**
      * Metodo rodado após finalização com itens não verificados. Varre todas as abas de acessorios
@@ -3637,6 +3672,8 @@ public class Act011_Main extends Base_Activity
         //
         binding.act011DialogCheckOptionRg.setVisibility(View.GONE);
         //
+        setSerialClass(binding);
+        //
         if (allowFinalizeWithNewBtn()) {
             binding.act011DialogFinalizeLbl.setVisibility(View.VISIBLE);
             binding.act011DialogCheckOptionRg.setVisibility(View.VISIBLE);
@@ -3645,6 +3682,41 @@ public class Act011_Main extends Base_Activity
         }else{
             binding.act011DialogFinalizeLbl.setVisibility(View.GONE);
             binding.act011DialogCheckOptionRg.setVisibility(View.GONE);
+        }
+    }
+
+    private void setSerialClass(Act011CheckDialogBinding binding) {
+        binding.clSerialClass.setVisibility(View.GONE);
+        ArrayList<HMAux> serialClassList = mPresenter.getSerialClassList();
+        SearchableSpinner ssSerialClass = binding.ssSerialClass;
+        ssSerialClass.setmRequired(false);
+        if(serialClassList != null && serialClassList.size() > 0) {
+            binding.clSerialClass.setVisibility(View.VISIBLE);
+            //
+            MD_Product_Serial mdProductSerial = mPresenter.getSerialInfo(
+                    ToolBox_Con.getPreference_Customer_Code(context),
+                    Integer.parseInt(product_code),
+                    serial_id,
+                    formLocal
+            );
+            //
+            ssSerialClass.setmRequired(true);
+            ssSerialClass.setmCanClean(false);
+            ssSerialClass.setmOption(serialClassList);
+            binding.tvSerialClassTtl.setText(hmAux_Trans.get("dialog_finalize_serial_class_lbl"));
+            ToolBox_Inf.setSSmValue(
+                    ssSerialClass,
+                    String.valueOf(mdProductSerial.getClass_code()),
+                    String.valueOf(mdProductSerial.getClass_code()),
+                    mdProductSerial.getClass_id(),
+                    true,
+                    MD_ClassDao.CLASS_ID, mdProductSerial.getClass_id(),
+                    MD_ClassDao.CLASS_TYPE, mdProductSerial.getClass_type(),
+                    MD_ClassDao.CLASS_COLOR, mdProductSerial.getClass_color(),
+                    MD_ClassDao.CLASS_AVAILABLE, String.valueOf(mdProductSerial.getClass_available())
+            );
+            //
+            ToolBox_Inf.setClassIcon(context, ssSerialClass.getmValue(), binding.ivSerialClassIcon);
         }
     }
 

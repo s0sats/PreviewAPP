@@ -29,6 +29,7 @@ import com.namoadigital.prj001.R
 import com.namoadigital.prj001.adapter.Act086MaterialItemAdapter
 import com.namoadigital.prj001.adapter.Act086PhotoAdapter
 import com.namoadigital.prj001.dao.GeOsDeviceItemDao
+import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_ItemDao
 import com.namoadigital.prj001.databinding.Act086VerificationFrgBinding
 import com.namoadigital.prj001.extensions.applyTintColor
 import com.namoadigital.prj001.extensions.hideKeyboard
@@ -60,7 +61,8 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             requireContext(),
             this,
             hmAux_Trans,
-            GeOsDeviceItemDao(requireContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), ConstantBaseApp.DB_VERSION_CUSTOM)
+            GeOsDeviceItemDao(requireContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), ConstantBaseApp.DB_VERSION_CUSTOM),
+            MD_Product_Serial_Tp_Device_ItemDao(requireContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), ConstantBaseApp.DB_VERSION_CUSTOM)
         )
     }
     private lateinit var prefixPhoto: String
@@ -94,7 +96,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     private var skipSave: Boolean = false
     lateinit var leaveItem: (isManualItemDelete: Boolean) -> Unit
     private var isPhotoAction = false
-
+    lateinit var onMaterialPlannedInteraction: () -> Unit
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -195,7 +197,22 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         applyAnswersUI()
         initRecyclers()
         applyEnableStateToMoreInfoViews()
+        initReviewPlannedMaterial()
     }
+
+    private fun initReviewPlannedMaterial() {
+        binding.act086VerificationFrgClReviewMaterial.visibility = View.GONE
+        if(isReviewMaterialVisible()){
+            binding.act086VerificationFrgClReviewMaterial.visibility = View.VISIBLE
+        }
+    }
+
+    private fun isReviewMaterialVisible() =
+        ((binding.act086VerificationFrgRgAnswers.checkedRadioButtonId == binding.act086VerificationFrgRdoAnswerFixed.id
+                || binding.act086VerificationFrgRgAnswers.checkedRadioButtonId == binding.act086VerificationFrgRdoAnswerAlert.id)
+                && mPresenter.hasMaterialPlanned(geOsDeviceItem)
+                && !inReadOnly
+                )
 
     /**
      * Fun que define a cor dos drawable de cada rdo.
@@ -377,6 +394,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             act086VerificationFrgTvMaterialTtl.text  = getMaterialLbl()
             act086VerificationFrgTvPhotoTtl.text  = hmAux_Trans["photo_lbl"]
             act086VerificationFrgTvDeleteLbl.text  = getDeleteLbl()
+            act086VerificationFrgTvReviewMaterialLbl.text  = hmAux_Trans["review_material_planned_lbl"]
         }
     }
 
@@ -618,6 +636,13 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                     )
                 }else{
                     commitRdoChange(checkedId)
+                    if(act086VerificationFrgRdoAnswerFixed.id.equals(checkedId)
+                        && mPresenter.isCycleExpired(geOsDeviceItem)
+                        && mPresenter.hasMaterialPlanned(geOsDeviceItem)
+                        && !inReadOnly
+                    ){
+                        onMaterialPlannedInteraction()
+                    }
                 }
             }
         }
@@ -746,6 +771,10 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                 }
             }
         }
+        //
+        binding.act086VerificationFrgClReviewMaterial.setOnClickListener{
+            onMaterialPlannedInteraction()
+        }
     }
 
     private fun validateManualDescFilled(): Boolean {
@@ -760,6 +789,14 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     private fun commitRdoChange(checkedId: Int) {
         lastSelectedRdoId = checkedId
         applyEnableStateToMoreInfoViews()
+        binding.apply {
+            if(isReviewMaterialVisible()) {
+                act086VerificationFrgClReviewMaterial.visibility = View.VISIBLE
+            }else {
+                act086VerificationFrgClReviewMaterial.visibility = View.GONE
+            }
+        }
+        //
         updateMaterialLabel()
         saveData()
         //Uma vez respondido, não precisa mais pular o save.
@@ -1185,6 +1222,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                 "alert_error_on_save_item_msg",
                 "alert_invalid_material_qty_msg",
                 "manual_desc_hint",
+                "review_material_planned_lbl"
             )
         }
     }
