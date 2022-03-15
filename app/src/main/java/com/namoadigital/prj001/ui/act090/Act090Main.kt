@@ -3,6 +3,8 @@ package com.namoadigital.prj001.ui.act090
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -298,6 +300,17 @@ class Act090Main : Base_Activity(), Act090MainContract.IView {
         )
         //
         finish()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if(item.itemId == android.R.id.home){
+            onBackPressed()
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onBackPressed() {

@@ -76,7 +76,9 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         Act086MaterialItemAdapter(
             ::onProductItemClick,
             ::onDeleteIconClick,
-            inReadOnly
+            inReadOnly,
+            hmAux_Trans["planned_qty_lbl"]!!,
+            hmAux_Trans["applied_qty_lbl"]!!
         )
     }
     private var isNewVerification: Boolean = false
@@ -942,7 +944,11 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         showAlertFrg(
             hmAux_Trans["alert_remove_product_ttl"],
             hmAux_Trans["alert_remove_product_confirm"],
-            (DialogInterface.OnClickListener { dialog, which ->
+            (DialogInterface.OnClickListener { _, _ ->
+                val materialUIItem = materialFragList[position]
+                if(materialUIItem.materialPlanned == 1){
+                    mPresenter.resetMaterialPlannedUsedFlag(geOsDeviceItem.materialList,materialUIItem)
+                }
                 materialFragList.removeAt(position)
                 materialFragAdapter.notifyItemRemoved(position)
                 applyRequiredLayoutIntoSupplementaryData()
@@ -994,7 +1000,6 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             //Informa adapter qual posição atualizar
             materialFragAdapter.notifyItemChanged(productIndex)
             //
-            //handleViewScrollNeeds(productIndex)
             handleViewScrollNeeds(binding.act086VerificationFrgRvMaterial,productIndex)
             //
             binding.act086VerificationFrgRvMaterial.requestFocus()
@@ -1143,7 +1148,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         if(requestCode == ConstantBaseApp.ACT_PRODUCT_SELECTION_REQUEST_CODE
             && resultCode == Base_Activity_Frag.RESULT_OK
         ){
-            mPresenter.processProductSelecionResult(data)
+            mPresenter.processProductSelecionResult(data,geOsDeviceItem.materialList)
         }
     }
 
@@ -1222,7 +1227,9 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                 "alert_error_on_save_item_msg",
                 "alert_invalid_material_qty_msg",
                 "manual_desc_hint",
-                "review_material_planned_lbl"
+                "review_material_planned_lbl",
+                "planned_qty_lbl",
+                "applied_qty_lbl"
             )
         }
     }

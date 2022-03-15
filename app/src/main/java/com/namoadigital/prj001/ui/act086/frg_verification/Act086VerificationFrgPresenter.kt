@@ -11,7 +11,7 @@ import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_ItemDao
 import com.namoadigital.prj001.model.Act086MaterialItem
 import com.namoadigital.prj001.model.GeOsDeviceItem
 import com.namoadigital.prj001.model.GeOsDeviceMaterial
-import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_DeviceDao_Sql_001
+import com.namoadigital.prj001.model.toUiMaterialItem
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.io.File
@@ -64,15 +64,26 @@ class Act086VerificationFrgPresenter(
         mView.callProductAct(listOfProduct)
     }
 
-    override fun processProductSelecionResult(data: Intent?) {
+    override fun processProductSelecionResult(
+        data: Intent?,
+        geOsMaterialList: MutableList<GeOsDeviceMaterial>
+    ) {
         data?.extras?.let{
-            val act086ProductItem = Act086MaterialItem(
-                it.getInt(MD_All_ProductDao.PRODUCT_CODE),
-                it.getString(MD_All_ProductDao.PRODUCT_ID, ""),
-                it.getString(MD_All_ProductDao.PRODUCT_DESC, ""),
-                it.getString(MD_All_ProductDao.UN, ""),
-                creationMs = Calendar.getInstance().timeInMillis
-            )
+            val plannedMaterialItem = geOsMaterialList.find { materialItem ->
+                materialItem.material_code == it.getInt(MD_All_ProductDao.PRODUCT_CODE)
+            }
+            //
+            val act086ProductItem =
+                //Se item planejado, gera item a partir dele, se null, gera item como insumo nao previsto
+                plannedMaterialItem?.toUiMaterialItem()?.apply {
+                    materialPlannedUsed = 1
+                } ?: Act086MaterialItem(
+                        it.getInt(MD_All_ProductDao.PRODUCT_CODE),
+                        it.getString(MD_All_ProductDao.PRODUCT_ID, ""),
+                        it.getString(MD_All_ProductDao.PRODUCT_DESC, ""),
+                        it.getString(MD_All_ProductDao.UN, ""),
+                        creationMs = Calendar.getInstance().timeInMillis
+                    )
             //
             mView.addProductToListAndShowDialog(act086ProductItem)
         }
@@ -113,12 +124,26 @@ class Act086VerificationFrgPresenter(
         }.toMutableList()
         //Copia itens planjeados para nova lista evitando perde-los no map.
         geOsDeviceItem.materialList.filter {
-            it.material_planned == 1
+            it.material_planned == 1 && isDbPlannedMaterialNotListed(it.material_code,newMaterialItemList)
         }.forEach {
             newMaterialItemList.add(it)
         }
-        //
+        //Limpa
+        geOsDeviceItem.materialList.clear()
+        //Adiciona nova lista com os itens que planejados que ja estavam aqui
         geOsDeviceItem.materialList.addAll(newMaterialItemList)
+    }
+
+    /**
+     * Fun que verifica se o insumo do db não existe na lista da u.i
+     */
+    private fun isDbPlannedMaterialNotListed(
+        materialCode: Int,
+        newMaterialItemList: MutableList<GeOsDeviceMaterial>
+    ): Boolean {
+       return !newMaterialItemList.any {
+           it.material_code == materialCode
+       }
     }
 
     override fun updateDeviceItemIntoBd(geOsDeviceItem: GeOsDeviceItem) {
@@ -137,6 +162,7 @@ class Act086VerificationFrgPresenter(
         materialList: MutableList<GeOsDeviceMaterial>,
         materialFragList: MutableList<Act086MaterialItem>
     ) {
+        materialFragList.clear()
         //Com o advento do material planejado, foi aplicado filtrao para remover
         //insumos planejados sem "uso"  da lista exibida.
         materialList.filter{
@@ -181,6 +207,22 @@ class Act086VerificationFrgPresenter(
        return geOsDeviceItem.materialList.any {
            it.material_planned == 1
        }
+    }
+
+    /**
+     * Fun que reseta a flag material_planned_used para 0
+     */
+    override fun resetMaterialPlannedUsedFlag(
+        materialList: MutableList<GeOsDeviceMaterial>,
+        materialUIItem: Act086MaterialItem
+    ) {
+        //Busca na lista o material planejado apagado e material_planned_used para 0
+        materialList.find {
+            it.material_code == materialUIItem.productCode
+        }?.let {
+            it.material_planned_used = 0
+            it.material_qty = 0f
+        }
     }
 
     override fun deleteOldPhoto(prefixPhoto: String){

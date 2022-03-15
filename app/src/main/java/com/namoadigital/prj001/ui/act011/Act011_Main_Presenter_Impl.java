@@ -55,6 +55,7 @@ import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.GeOs;
 import com.namoadigital.prj001.model.GeOsDevice;
 import com.namoadigital.prj001.model.GeOsDeviceItem;
+import com.namoadigital.prj001.model.GeOsDeviceMaterial;
 import com.namoadigital.prj001.model.InspectionCell;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
@@ -619,7 +620,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                                 item.getManual_desc() == null ? item.getItem_check_desc():item.getManual_desc(),
                                 item.getTarget_date() != null ? ToolBox_Inf.getDateDiferenceInDays(item.getTarget_date(),ToolBox_Inf.getDateLastMinute(geOs.getDate_start())): null,
                                 getPhotoCount(item),
-                                item.getMaterialList().size(),
+                                getMaterialCount(item.getMaterialList()),
                                 item.getApply_material().equals(APPLY_MATERIAL_REQUIRED),
                                 item.getExec_comment() != null && !item.getExec_comment().isEmpty(),
                                 item.getRequire_justify_problem() == 1,
@@ -636,6 +637,25 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             acessoryFormViews.add(acessoryFormView);
         }
         return acessoryFormViews;
+    }
+
+    /**
+     * Metodo que conta insumos validos
+     * Valido se insumo não é planejado ou é planjeado mas em uso.
+     * @param materialList
+     * @return
+     */
+    private int getMaterialCount(List<GeOsDeviceMaterial> materialList){
+        int counter = 0;
+        //Se insumo normal ou planejado em uso, conta
+        for (GeOsDeviceMaterial geOsDeviceMaterial : materialList) {
+            if( geOsDeviceMaterial.getMaterial_planned() == 0
+                || geOsDeviceMaterial.getMaterial_planned_used() == 1
+            ){
+                counter++;
+            }
+        }
+        return counter;
     }
 
     @NonNull
@@ -2309,7 +2329,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 deviceItem.getItem_check_desc(),
                 deviceItem.getTarget_date() != null ? ToolBox_Inf.getDateDiferenceInDays(deviceItem.getTarget_date(),ToolBox_Inf.getDateLastMinute(geOsDateStart)): null,
                 getPhotoCount(deviceItem),
-                deviceItem.getMaterialList().size(),
+                getMaterialCount(deviceItem.getMaterialList()),
                 deviceItem.getApply_material().equals(APPLY_MATERIAL_REQUIRED),
                 deviceItem.getExec_comment() != null && !deviceItem.getExec_comment().isEmpty(),
                 deviceItem.getRequire_justify_problem() == 1,

@@ -19,13 +19,13 @@ class GeOsDeviceMaterial(
     val material_id: String,
     val material_desc: String,
     @Expose
-    val material_qty: Float,
+    var material_qty: Float,
     val material_unit: String?,
     val creation_ms: Long,
     @Expose
     val material_planned: Int = 0,
     @Expose
-    val material_planned_used: Int = 0,
+    var material_planned_used: Int = 0,
     @Expose
     val material_planned_qty: Float? = null
 

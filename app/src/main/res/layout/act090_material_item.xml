@@ -12,29 +12,16 @@
         android:id="@+id/act090_material_desc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="16dp"
         android:textColor="@color/namoa_font_color_black222"
         android:textSize="@dimen/font_size_font_16"
         app:layout_constrainedWidth="true"
-        app:layout_constraintEnd_toStartOf="@id/act090_material_id"
+        app:layout_constraintEnd_toStartOf="@id/sw_use_material"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Oleo" />
-
-    <TextView
-        android:id="@+id/act090_material_id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
-        android:textColor="@color/namoa_font_color_black222"
-        android:textSize="@dimen/font_size_font_12"
-        app:layout_constraintBottom_toBottomOf="@+id/act090_material_desc"
-        app:layout_constraintEnd_toStartOf="@id/sw_use_material"
-        app:layout_constraintStart_toEndOf="@id/act090_material_desc"
-        app:layout_constraintTop_toTopOf="@+id/act090_material_desc"
-        tools:text="(12756)" />
 
     <TextView
         android:id="@+id/act090_material_planned_qty"

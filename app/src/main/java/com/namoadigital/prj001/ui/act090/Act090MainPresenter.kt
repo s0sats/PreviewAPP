@@ -40,7 +40,8 @@ class Act090MainPresenter(
             "alert_unsaved_data_will_be_lost_ttl",
             "alert_unsaved_data_will_be_lost_confirm",
             "alert_error_on_save_material_list_msg",
-            "alert_no_data_changed_msg"
+            "alert_no_data_changed_msg",
+            "alert_invalid_material_qty_msg"
         )
         //
         return ToolBox_Inf.setLanguage(
