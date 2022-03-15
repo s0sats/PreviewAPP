@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model.VH_models
 
+import android.text.SpannableString
+import android.text.style.RelativeSizeSpan
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.namoadigital.prj001.databinding.Act090MaterialItemBinding
@@ -14,12 +16,11 @@ class Act090MaterialItemVH(
 ) : RecyclerView.ViewHolder(binding.root){
     fun bindData(materialItem: Act086MaterialItem){
         with(binding){
+            //Reseta listeners pois quando notifyItemChanged rodava, ao atrituir state do sw,
+            //disparava novamente o listener abrindo duas vezes o teclado para informar valor.
+            removeListener()
             act090MaterialDesc.apply {
-                text = materialItem.productDesc
-            }
-            //
-            act090MaterialId.apply {
-                text = materialItem.productId
+                text = materialItem.getFormattedMaterialDesc()
             }
             //
             act090MaterialPlannedQty.apply{
@@ -39,6 +40,9 @@ class Act090MaterialItemVH(
                 }
                 text = materialItem.getFormttedQty(appliedQtyLbl)
             }
+            swUseMaterial.apply {
+                isChecked = materialItem.materialPlannedUsed == 1
+            }
             //
             clMain.setOnClickListener {
                 onMaterialItemClick(adapterPosition,materialItem)
@@ -48,5 +52,10 @@ class Act090MaterialItemVH(
                 onToogleChange(adapterPosition, materialItem,isChecked)
             }
         }
+    }
+
+    private fun removeListener() {
+        binding.swUseMaterial.setOnCheckedChangeListener(null)
+        binding.clMain.setOnClickListener(null)
     }
 }

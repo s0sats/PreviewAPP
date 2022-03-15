@@ -10,7 +10,9 @@ import com.namoadigital.prj001.model.VH_models.Act086MaterialItemVH
 class Act086MaterialItemAdapter(
     private val onProductItemClick: (position: Int, materialItem: Act086MaterialItem) -> Unit,
     private val onDeleteIconClick: (position: Int) -> Unit,
-    private val inReadonly: Boolean
+    private val inReadonly: Boolean,
+    private val plannedQtyLbl: String,
+    private val appliedQtyLbl: String
 ) : RecyclerView.Adapter<Act086MaterialItemVH>() {
 
     var sourceList = mutableListOf<Act086MaterialItem>()
@@ -19,7 +21,7 @@ class Act086MaterialItemAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Act086MaterialItemVH {
         val binding =
             Act086MaterialItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return Act086MaterialItemVH(binding,onProductItemClick, onDeleteIconClick,inReadonly)
+        return Act086MaterialItemVH(binding,onProductItemClick, onDeleteIconClick,inReadonly,plannedQtyLbl,appliedQtyLbl)
     }
 
     override fun onBindViewHolder(holder: Act086MaterialItemVH, position: Int) {

@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model
 
+import android.text.SpannableString
+import android.text.style.RelativeSizeSpan
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.io.Serializable
 
@@ -29,7 +31,6 @@ class Act086MaterialItem(
     var materialPlanned: Int = 0
         private set
     var materialPlannedUsed: Int = 0
-        private set
     var materialPlannedQty: Float? = null
         private set
 
@@ -47,4 +48,17 @@ class Act086MaterialItem(
 
     fun getFormttedQty(lbl: String) = if(productQty > 0f) "$lbl: ${ToolBox_Inf.convertFloatToBigDecimalString(productQty,4,true)} $productUnit" else ""
     fun getFormttedPlannedQty(lbl: String) = if(materialPlannedQty != null && materialPlannedQty!! > 0f) "$lbl: ${ToolBox_Inf.convertFloatToBigDecimalString(materialPlannedQty!!,4,true)} $productUnit" else ""
+    fun getFormattedMaterialDesc(): SpannableString {
+        val s = "$productDesc ($productId)"
+        val span = SpannableString(s)
+        span.setSpan(
+            RelativeSizeSpan(
+                0.8f
+            ),
+            s.indexOf("($productId"),
+            s.length,
+            0
+        )
+        return span
+    }
 }

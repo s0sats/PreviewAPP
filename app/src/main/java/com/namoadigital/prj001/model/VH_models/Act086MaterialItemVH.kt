@@ -4,13 +4,14 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.namoadigital.prj001.databinding.Act086MaterialItemBinding
 import com.namoadigital.prj001.model.Act086MaterialItem
-import com.namoadigital.prj001.util.ToolBox_Inf
 
 class Act086MaterialItemVH(
     private val binding: Act086MaterialItemBinding,
     private val onProductItemClick: (position: Int, materialItem: Act086MaterialItem) -> Unit,
     private val onDeleteIconClick: (position: Int) -> Unit,
-    private val inReadonly: Boolean
+    private val inReadonly: Boolean,
+    private val plannedQtyLbl: String,
+    private val appliedQtyLbl: String
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bindData(materialItem: Act086MaterialItem){
@@ -32,16 +33,16 @@ class Act086MaterialItemVH(
         }
         //Bind das infos
         with(binding){
-            act086ProductItemTvProductDesc.text = ToolBox_Inf.getFormattedGenericIdDesc(
-                materialItem.productId,
-                materialItem.productDesc
-            )
+            act086ProductItemTvProductDesc.text = materialItem.getFormattedMaterialDesc()
             //
-            act086ProductItemTvProductQty.apply {
-                //TODO PASSAR LBL POR PARAM
-                text = materialItem.getFormttedQty("Applied LBL - trad")
+            act086ProductItemTvMaterialPlannedQty.apply{
+                text = materialItem.getFormttedPlannedQty(plannedQtyLbl)
+                visibility = if(text.toString().trim().isNotEmpty()) View.VISIBLE else View.GONE
+            }
+            act086ProductItemTvMaterialAppliedQty.apply {
+                text = materialItem.getFormttedQty(appliedQtyLbl)
                 visibility = if(text.toString().trim().isNotEmpty()) View.VISIBLE else View.GONE
             }
         }
     }
-}
+    }

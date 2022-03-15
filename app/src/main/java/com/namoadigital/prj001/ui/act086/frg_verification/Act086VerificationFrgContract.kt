@@ -27,7 +27,10 @@ interface Act086VerificationFrgContract {
         fun handleAddPhoto(prefixPhoto: String, photoList: MutableList<String>, photoLimit: Int)
         fun prepareCallProductAct(materialInputList: MutableList<Act086MaterialItem>)
         fun reviewPhotoExists(photoList: MutableList<String>)
-        fun processProductSelecionResult(data: Intent?)
+        fun processProductSelecionResult(
+            data: Intent?,
+            geOsMaterialList: MutableList<GeOsDeviceMaterial>
+        )
         fun getGeOsDeviceMaterialList(
             geOsDeviceItem: GeOsDeviceItem,
             materialFragList: MutableList<Act086MaterialItem>
@@ -41,6 +44,10 @@ interface Act086VerificationFrgContract {
         fun deleteManualItem(geOsDeviceItem: GeOsDeviceItem)
         fun isCycleExpired(geOsDeviceItem: GeOsDeviceItem): Boolean
         fun hasMaterialPlanned(geOsDeviceItem: GeOsDeviceItem): Boolean
+        fun resetMaterialPlannedUsedFlag(
+            materialList: MutableList<GeOsDeviceMaterial>,
+            materialUIItem: Act086MaterialItem
+        )
     }
 
 }

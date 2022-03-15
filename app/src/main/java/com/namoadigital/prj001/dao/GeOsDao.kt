@@ -569,8 +569,15 @@ class GeOsDao(
         var dateStartLastMinute : String? = ToolBox_Inf.getDateLastMinute(geOs.date_start)
         //
         geOsDeviceItens.forEach { item ->
-
             item.has_expired_cycle = 0
+            /*
+            * 15/03/2022
+            * Requisito nascido as 16:20 que diz que se um item não tem ciclo, ele esta vencido / expirado
+            * Criado por jhon em um call
+            */
+            if( GeOsDeviceItem.ITEM_CHECK_STATUS_NO_CYCLE.equals(item.item_check_status,true)){
+                item.has_expired_cycle = 1
+            }
             /*
              * Se Status PROJECTED_DATE_REACHED, verifica se deve alterar o status para:
              *   NORMAL:
