@@ -9214,12 +9214,12 @@ public class ToolBox_Inf {
     public static void setClassIcon(Context context, HMAux item, ImageView iv_class_icon) {
         if (item != null && item.containsKey(MD_ClassDao.CLASS_AVAILABLE) && item.get(MD_ClassDao.CLASS_AVAILABLE) != null && item.containsKey(MD_ClassDao.CLASS_COLOR) && item.get(MD_ClassDao.CLASS_COLOR) != null) {
             iv_class_icon.setVisibility(View.VISIBLE);
-            if (item.get(MD_ClassDao.CLASS_AVAILABLE).equals("1")) {
-                Drawable drawable = context.getDrawable(R.drawable.ic_tag_black_24dp);
+            if (item.get(MD_ClassDao.CLASS_TYPE).equals(MD_ClassDao.CLASS_SERIAL_VALUE)) {
+                Drawable drawable = context.getDrawable(R.drawable.ic_baseline_arrow_right_24);
                 drawable.setColorFilter(Color.parseColor(item.get(MD_ClassDao.CLASS_COLOR)), PorterDuff.Mode.SRC_ATOP);
                 iv_class_icon.setImageDrawable(drawable);
             } else {
-                Drawable drawable = context.getDrawable(R.drawable.ic_ban_black_24dp);
+                Drawable drawable = context.getDrawable(R.drawable.ic_tag_black_24dp);
                 drawable.setColorFilter(Color.parseColor(item.get(MD_ClassDao.CLASS_COLOR)), PorterDuff.Mode.SRC_ATOP);
                 iv_class_icon.setImageDrawable(drawable);
             }
