@@ -494,22 +494,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if(item.itemId == android.R.id.home){
-            /**
-             *
-             * //TODO DESCOMENTAR ONBACKPRESSED E REMOVER CHAMADA DA ACT090 APÓS TESTES
-             *
-             */
-            //mPresenter.onBackPressedClicked(supportFragmentManager, deviceItem)
-            startActivity(
-                Intent().apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    setClass(this@Act086Main, Act090Main::class.java)
-                    putExtras(bundle)
-                }
-            )
-            //
-            finish()
-
+            mPresenter.onBackPressedClicked(supportFragmentManager, deviceItem)
         }
         return super.onOptionsItemSelected(item)
     }

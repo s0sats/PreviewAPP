@@ -178,17 +178,9 @@ class Act086VerificationFrgPresenter(
     }
 
     override fun hasMaterialPlanned(geOsDeviceItem: GeOsDeviceItem): Boolean {
-        val mdProductSerialTpDeviceItem = mdProductSerialTpDeviceItemDao.getByString(
-            MD_Product_Serial_Tp_DeviceDao_Sql_001(
-                geOsDeviceItem.customer_code,
-                geOsDeviceItem.product_code.toLong(),
-                geOsDeviceItem.serial_code.toLong(),
-                geOsDeviceItem.device_tp_code
-            ).toSqlQuery()
-        )
-        return mdProductSerialTpDeviceItem?.let{
-            it.material.size > 0
-        } ?: false
+       return geOsDeviceItem.materialList.any {
+           it.material_planned == 1
+       }
     }
 
     override fun deleteOldPhoto(prefixPhoto: String){
