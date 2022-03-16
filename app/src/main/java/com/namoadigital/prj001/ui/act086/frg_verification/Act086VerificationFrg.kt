@@ -210,8 +210,8 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     }
 
     private fun isReviewMaterialVisible() =
-        ((binding.act086VerificationFrgRgAnswers.checkedRadioButtonId == binding.act086VerificationFrgRdoAnswerFixed.id
-                || binding.act086VerificationFrgRgAnswers.checkedRadioButtonId == binding.act086VerificationFrgRdoAnswerAlert.id)
+        ((binding.act086VerificationFrgRgAnswers.checkedRadioButtonId.equals(binding.act086VerificationFrgRdoAnswerFixed.id)
+                || binding.act086VerificationFrgRgAnswers.checkedRadioButtonId.equals(binding.act086VerificationFrgRdoAnswerAlert.id))
                 && mPresenter.hasMaterialPlanned(geOsDeviceItem)
                 && !inReadOnly
                 )
@@ -639,6 +639,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                 }else{
                     commitRdoChange(checkedId)
                     if(act086VerificationFrgRdoAnswerFixed.id.equals(checkedId)
+                        && act086VerificationFrgRdoAnswerFixed.isPressed()
                         && mPresenter.isCycleExpired(geOsDeviceItem)
                         && mPresenter.hasMaterialPlanned(geOsDeviceItem)
                         && !inReadOnly
