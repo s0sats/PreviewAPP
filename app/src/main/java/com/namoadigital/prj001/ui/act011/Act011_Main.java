@@ -3630,6 +3630,7 @@ public class Act011_Main extends Base_Activity
 
     private void setDialogVisibilityAndLabels(Act011CheckDialogBinding binding) {
         binding.act011DialogCheckTtl.setText(hmAux_Trans.get("dialog_finalize_option_ttl"));
+        binding.clSerialClass.setVisibility(View.GONE);
         //
         if(isFormOs){
             setFormOsViewVisibility(binding, View.VISIBLE);
@@ -3665,6 +3666,9 @@ public class Act011_Main extends Base_Activity
             binding.act011DialogCheckTvElapsedTimeLbl.setText(hmAux_Trans.get("dialog_finalize_os_form_elapsed_time_lbl"));
             binding.act011DialogCheckTvJustifyMissingAnswerLbl.setText(hmAux_Trans.get("dialog_finalize_os_form_justify_missing_answer_lbl"));
             TextViewKt.setAsRequired(binding.act011DialogCheckTvJustifyMissingAnswerLbl, true);
+            //
+            setSerialClass(binding);
+            //
         }else{
             setFormOsViewVisibility(binding, View.GONE);
             binding.act011DialogFinalizeLbl.setText(hmAux_Trans.get("dialog_finalize_form_lbl"));
@@ -3673,8 +3677,6 @@ public class Act011_Main extends Base_Activity
         binding.act011DialogCheckBtnCancel.setText(hmAux_Trans.get("sys_alert_btn_cancel"));
         //
         binding.act011DialogCheckOptionRg.setVisibility(View.GONE);
-        //
-        setSerialClass(binding);
         //
         if (allowFinalizeWithNewBtn()) {
             binding.act011DialogFinalizeLbl.setVisibility(View.VISIBLE);
@@ -3688,7 +3690,7 @@ public class Act011_Main extends Base_Activity
     }
 
     private void setSerialClass(Act011CheckDialogBinding binding) {
-        binding.clSerialClass.setVisibility(View.GONE);
+
         ArrayList<HMAux> serialClassList = mPresenter.getSerialClassList();
         SearchableSpinner ssSerialClass = binding.ssSerialClass;
         ssSerialClass.setmRequired(false);
