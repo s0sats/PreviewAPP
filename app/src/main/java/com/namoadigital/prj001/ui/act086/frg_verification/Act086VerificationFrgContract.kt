@@ -44,10 +44,12 @@ interface Act086VerificationFrgContract {
         fun deleteManualItem(geOsDeviceItem: GeOsDeviceItem)
         fun isCycleExpired(geOsDeviceItem: GeOsDeviceItem): Boolean
         fun hasMaterialPlanned(geOsDeviceItem: GeOsDeviceItem): Boolean
-        fun resetMaterialPlannedUsedFlag(
+        fun resetMaterialPlanned(
             materialList: MutableList<GeOsDeviceMaterial>,
             materialUIItem: Act086MaterialItem
         )
+
+        fun resetMaterialPlannedList(materialList: MutableList<GeOsDeviceMaterial>)
     }
 
 }

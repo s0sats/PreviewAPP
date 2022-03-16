@@ -212,7 +212,7 @@ class Act086VerificationFrgPresenter(
     /**
      * Fun que reseta a flag material_planned_used para 0
      */
-    override fun resetMaterialPlannedUsedFlag(
+    override fun resetMaterialPlanned(
         materialList: MutableList<GeOsDeviceMaterial>,
         materialUIItem: Act086MaterialItem
     ) {
@@ -220,8 +220,26 @@ class Act086VerificationFrgPresenter(
         materialList.find {
             it.material_code == materialUIItem.productCode
         }?.let {
-            it.material_planned_used = 0
-            it.material_qty = 0f
+            resetMaterialPlannedMutableInfo(it)
+        }
+    }
+
+    /**
+     * Fun que reseta proprieades mutaveis pela u.i para estado original
+     */
+    private fun resetMaterialPlannedMutableInfo(it: GeOsDeviceMaterial) {
+        it.material_planned_used = 0
+        it.material_qty = 0f
+    }
+
+    /**
+     * Fun que varre a lista de insumos previstos e reseta as proprieades mutaveis.
+     */
+    override fun resetMaterialPlannedList(materialList: MutableList<GeOsDeviceMaterial>) {
+        materialList.forEach {
+            if(it.material_planned == 1){
+                resetMaterialPlannedMutableInfo(it)
+            }
         }
     }
 
