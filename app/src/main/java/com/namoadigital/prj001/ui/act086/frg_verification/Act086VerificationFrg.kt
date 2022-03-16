@@ -786,6 +786,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
 
     private fun clearMaterialList() {
         materialFragList.clear()
+        mPresenter.resetMaterialPlannedList(geOsDeviceItem.materialList)
         materialFragAdapter.notifyDataSetChanged()
     }
 
@@ -838,10 +839,9 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         with(binding){
             act086VerificationFrgRgAnswers.clearCheck()
             act086VerificationFrgMketComment.text = null
+            clearMaterialList()
             photoList.clear()
-            materialFragList.clear()
             photoAdapter.notifyDataSetChanged()
-            materialFragAdapter.notifyDataSetChanged()
             updateMaterialLabel()
             act086VerificationFrgTvRequireFields.visibility = View.GONE
             act086VerificationFrgClDeleteInfos.visibility = View.GONE
@@ -948,7 +948,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             (DialogInterface.OnClickListener { _, _ ->
                 val materialUIItem = materialFragList[position]
                 if(materialUIItem.materialPlanned == 1){
-                    mPresenter.resetMaterialPlannedUsedFlag(geOsDeviceItem.materialList,materialUIItem)
+                    mPresenter.resetMaterialPlanned(geOsDeviceItem.materialList,materialUIItem)
                 }
                 materialFragList.removeAt(position)
                 materialFragAdapter.notifyItemRemoved(position)
