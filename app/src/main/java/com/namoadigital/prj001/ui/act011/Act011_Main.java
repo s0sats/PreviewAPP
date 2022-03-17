@@ -3704,8 +3704,10 @@ public class Act011_Main extends Base_Activity
                     formLocal
             );
             //
+            ssSerialClass.setmShowLabel(false);
             ssSerialClass.setmRequired(true);
             ssSerialClass.setmCanClean(false);
+            //
             ssSerialClass.setmOption(serialClassList);
             binding.tvSerialClassTtl.setText(hmAux_Trans.get("dialog_finalize_serial_class_lbl"));
             ToolBox_Inf.setSSmValue(
