@@ -7,20 +7,22 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.dao.GeOsDeviceItemDao
 import com.namoadigital.prj001.dao.MD_All_ProductDao
+import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_ItemDao
 import com.namoadigital.prj001.model.Act086MaterialItem
 import com.namoadigital.prj001.model.GeOsDeviceItem
 import com.namoadigital.prj001.model.GeOsDeviceMaterial
+import com.namoadigital.prj001.model.toUiMaterialItem
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.io.File
 import java.util.*
-import kotlin.collections.ArrayList
 
 class Act086VerificationFrgPresenter(
     private val context: Context,
     private val mView: Act086VerificationFrgContract.I_View,
     private val hmAuxTrans: HMAux,
-    private val deviceItemDao: GeOsDeviceItemDao
+    private val deviceItemDao: GeOsDeviceItemDao,
+    private val mdProductSerialTpDeviceItemDao: MD_Product_Serial_Tp_Device_ItemDao
 ): Act086VerificationFrgContract.I_Presenter {
 
     override fun handleAddPhoto(
@@ -62,15 +64,26 @@ class Act086VerificationFrgPresenter(
         mView.callProductAct(listOfProduct)
     }
 
-    override fun processProductSelecionResult(data: Intent?) {
+    override fun processProductSelecionResult(
+        data: Intent?,
+        geOsMaterialList: MutableList<GeOsDeviceMaterial>
+    ) {
         data?.extras?.let{
-            val act086ProductItem = Act086MaterialItem(
-                it.getInt(MD_All_ProductDao.PRODUCT_CODE),
-                it.getString(MD_All_ProductDao.PRODUCT_ID, ""),
-                it.getString(MD_All_ProductDao.PRODUCT_DESC, ""),
-                it.getString(MD_All_ProductDao.UN, ""),
-                creationMs = Calendar.getInstance().timeInMillis
-            )
+            val plannedMaterialItem = geOsMaterialList.find { materialItem ->
+                materialItem.material_code == it.getInt(MD_All_ProductDao.PRODUCT_CODE)
+            }
+            //
+            val act086ProductItem =
+                //Se item planejado, gera item a partir dele, se null, gera item como insumo nao previsto
+                plannedMaterialItem?.toUiMaterialItem()?.apply {
+                    materialPlannedUsed = 1
+                } ?: Act086MaterialItem(
+                        it.getInt(MD_All_ProductDao.PRODUCT_CODE),
+                        it.getString(MD_All_ProductDao.PRODUCT_ID, ""),
+                        it.getString(MD_All_ProductDao.PRODUCT_DESC, ""),
+                        it.getString(MD_All_ProductDao.UN, ""),
+                        creationMs = Calendar.getInstance().timeInMillis
+                    )
             //
             mView.addProductToListAndShowDialog(act086ProductItem)
         }
@@ -85,7 +98,7 @@ class Act086VerificationFrgPresenter(
         materialFragList: MutableList<Act086MaterialItem>
     ) {
         val newMaterialItemList = materialFragList.filter {
-            it.productQty > 0f
+            it.productQty > 0f || it.materialPlanned == 1
         }.map {
             GeOsDeviceMaterial(
                 geOsDeviceItem.customer_code,
@@ -103,12 +116,34 @@ class Act086VerificationFrgPresenter(
                 it.productDesc,
                 it.productQty.toFloat(),
                 it.productUnit,
-                it.creationMs
+                it.creationMs,
+                it.materialPlanned,
+                it.materialPlannedUsed,
+                it.materialPlannedQty
             )
+        }.toMutableList()
+        //Copia itens planjeados para nova lista evitando perde-los no map.
+        geOsDeviceItem.materialList.filter {
+            it.material_planned == 1 && isDbPlannedMaterialNotListed(it.material_code,newMaterialItemList)
+        }.forEach {
+            newMaterialItemList.add(it)
         }
-        //
+        //Limpa
         geOsDeviceItem.materialList.clear()
+        //Adiciona nova lista com os itens que planejados que ja estavam aqui
         geOsDeviceItem.materialList.addAll(newMaterialItemList)
+    }
+
+    /**
+     * Fun que verifica se o insumo do db não existe na lista da u.i
+     */
+    private fun isDbPlannedMaterialNotListed(
+        materialCode: Int,
+        newMaterialItemList: MutableList<GeOsDeviceMaterial>
+    ): Boolean {
+       return !newMaterialItemList.any {
+           it.material_code == materialCode
+       }
     }
 
     override fun updateDeviceItemIntoBd(geOsDeviceItem: GeOsDeviceItem) {
@@ -127,7 +162,12 @@ class Act086VerificationFrgPresenter(
         materialList: MutableList<GeOsDeviceMaterial>,
         materialFragList: MutableList<Act086MaterialItem>
     ) {
-        materialList.forEach {
+        materialFragList.clear()
+        //Com o advento do material planejado, foi aplicado filtrao para remover
+        //insumos planejados sem "uso"  da lista exibida.
+        materialList.filter{
+            it.material_planned == 0 || it.material_planned_used == 1
+        }.forEach {
             materialFragList.add(
                 Act086MaterialItem(
                     it.material_code,
@@ -135,7 +175,10 @@ class Act086VerificationFrgPresenter(
                     it.material_desc,
                     it.material_unit?:"",
                     it.material_qty,
-                    it.creation_ms
+                    it.creation_ms,
+                    it.material_planned,
+                    it.material_planned_used,
+                    it.material_planned_qty
                 )
             )
         }
@@ -153,6 +196,51 @@ class Act086VerificationFrgPresenter(
                     mView.leaveWithoutSave()
                 }
             )
+        }
+    }
+
+    override fun isCycleExpired(geOsDeviceItem: GeOsDeviceItem): Boolean {
+        return geOsDeviceItem.has_expired_cycle == 1 && !geOsDeviceItem.item_check_status.equals(
+            GeOsDeviceItem.ITEM_CHECK_STATUS_FORCED);
+    }
+
+    override fun hasMaterialPlanned(geOsDeviceItem: GeOsDeviceItem): Boolean {
+       return geOsDeviceItem.materialList.any {
+           it.material_planned == 1
+       }
+    }
+
+    /**
+     * Fun que reseta a flag material_planned_used para 0
+     */
+    override fun resetMaterialPlanned(
+        materialList: MutableList<GeOsDeviceMaterial>,
+        materialUIItem: Act086MaterialItem
+    ) {
+        //Busca na lista o material planejado apagado e material_planned_used para 0
+        materialList.find {
+            it.material_code == materialUIItem.productCode
+        }?.let {
+            resetMaterialPlannedMutableInfo(it)
+        }
+    }
+
+    /**
+     * Fun que reseta proprieades mutaveis pela u.i para estado original
+     */
+    private fun resetMaterialPlannedMutableInfo(it: GeOsDeviceMaterial) {
+        it.material_planned_used = 0
+        it.material_qty = 0f
+    }
+
+    /**
+     * Fun que varre a lista de insumos previstos e reseta as proprieades mutaveis.
+     */
+    override fun resetMaterialPlannedList(materialList: MutableList<GeOsDeviceMaterial>) {
+        materialList.forEach {
+            if(it.material_planned == 1){
+                resetMaterialPlannedMutableInfo(it)
+            }
         }
     }
 

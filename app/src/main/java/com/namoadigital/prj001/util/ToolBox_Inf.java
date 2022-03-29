@@ -40,6 +40,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -64,6 +65,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RemoteViews;
 import android.widget.Switch;
@@ -120,6 +122,7 @@ import com.namoadigital.prj001.dao.IO_Blind_MoveDao;
 import com.namoadigital.prj001.dao.IO_InboundDao;
 import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.IO_OutboundDao;
+import com.namoadigital.prj001.dao.MD_ClassDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
@@ -9250,5 +9253,23 @@ public class ToolBox_Inf {
             }
         };
         Collections.sort(itemsForSort, comparator);
+    }
+
+    public static void setClassIcon(Context context, HMAux item, ImageView iv_class_icon) {
+        if (item != null && item.containsKey(MD_ClassDao.CLASS_AVAILABLE) && item.get(MD_ClassDao.CLASS_AVAILABLE) != null && item.containsKey(MD_ClassDao.CLASS_COLOR) && item.get(MD_ClassDao.CLASS_COLOR) != null) {
+            iv_class_icon.setVisibility(View.VISIBLE);
+            if (item.get(MD_ClassDao.CLASS_TYPE).equals(MD_ClassDao.CLASS_SERIAL_VALUE)) {
+                Drawable drawable = context.getDrawable(R.drawable.ic_baseline_arrow_right_24);
+                drawable.setColorFilter(Color.parseColor(item.get(MD_ClassDao.CLASS_COLOR)), PorterDuff.Mode.SRC_ATOP);
+                iv_class_icon.setImageDrawable(drawable);
+            } else {
+                Drawable drawable = context.getDrawable(R.drawable.ic_tag_black_24dp);
+                drawable.setColorFilter(Color.parseColor(item.get(MD_ClassDao.CLASS_COLOR)), PorterDuff.Mode.SRC_ATOP);
+                iv_class_icon.setImageDrawable(drawable);
+            }
+        } else {
+            iv_class_icon.setImageDrawable(null);
+            iv_class_icon.setVisibility(View.INVISIBLE);
+        }
     }
 }

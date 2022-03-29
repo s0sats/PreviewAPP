@@ -25,7 +25,6 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String DEVICE_ITEM_LIST_CHECKBOX_STATUS = "DEVICE_ITEM_LIST_CHECKBOX_STATUS";
     public static final String DEVICE_ITEM_NEW_ACTION = "DEVICE_ITEM_NEW_ACTION";
     public static final String DEVICE_BUNDLE = "DEVICE_BUNDLE";
-
     //As 3 variaveis abaixo são preenchidas pela classe AppBase
     public static String PRJ001_VERSION = "";
     public static int PRJ001_VERSION_CODE = -1;
@@ -123,6 +122,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String ACT087 = "act087";
     public static final String ACT088 = "act088";
     public static final String ACT089 = "act089";
+    public static final String ACT090 = "act090";
 
     public static final String title_lbl = "_title";
 

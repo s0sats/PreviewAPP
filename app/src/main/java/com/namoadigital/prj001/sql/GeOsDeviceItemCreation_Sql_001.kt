@@ -1,6 +1,8 @@
 package com.namoadigital.prj001.sql
 
-import com.namoadigital.prj001.dao.*
+import com.namoadigital.prj001.dao.GeOsDeviceItemDao
+import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_ItemDao
+import com.namoadigital.prj001.dao.MdItemCheckDao
 import com.namoadigital.prj001.database.Specification
 
 /**
@@ -54,7 +56,8 @@ class GeOsDeviceItemCreation_Sql_001(
                         null ${GeOsDeviceItemDao.EXEC_PHOTO2},
                         null ${GeOsDeviceItemDao.EXEC_PHOTO3},
                         null ${GeOsDeviceItemDao.EXEC_PHOTO4},
-                        null ${GeOsDeviceItemDao.STATUS_ANSWER}
+                        null ${GeOsDeviceItemDao.STATUS_ANSWER},
+                        0 ${GeOsDeviceItemDao.HAS_EXPIRED_CYCLE}
                     FROM
                         ${MD_Product_Serial_Tp_Device_ItemDao.TABLE} si,
                         ${MdItemCheckDao.TABLE} i

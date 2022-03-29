@@ -36,6 +36,7 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
     public static final String CUSTOM_FORM_STATUS = "custom_form_status";
     public static final String PRODUCT_CODE = "product_code";
     public static final String SERIAL_ID = "serial_id";
+    public static final String CLASS_CODE = "class_code";
     public static final String DATE_START = "date_start";
     public static final String DATE_END = "date_end";
     public static final String USER_CODE = "user_code";
@@ -410,6 +411,12 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             custom_form_data.setUser_code(cursor.getLong(cursor.getColumnIndex(USER_CODE)));
             custom_form_data.setOperation_code(cursor.getLong(cursor.getColumnIndex(OPERATION_CODE)));
 
+            if (cursor.isNull(cursor.getColumnIndex(CLASS_CODE))) {
+                custom_form_data.setClass_code(null);
+            } else {
+                custom_form_data.setClass_code(cursor.getInt(cursor.getColumnIndex(CLASS_CODE)));
+            }
+
             if (cursor.isNull(cursor.getColumnIndex(SIGNATURE))) {
                 custom_form_data.setSignature("");
             } else {
@@ -618,6 +625,9 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             }
             if (custom_form_data.getSerial_id() != null) {
                 contentValues.put(SERIAL_ID, custom_form_data.getSerial_id());
+            }
+            if (custom_form_data.getClass_code() != null) {
+                contentValues.put(CLASS_CODE, custom_form_data.getClass_code());
             }
             if (custom_form_data.getDate_start() != null) {
                 contentValues.put(DATE_START, custom_form_data.getDate_start());

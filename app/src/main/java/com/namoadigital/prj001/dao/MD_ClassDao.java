@@ -27,6 +27,8 @@ public class MD_ClassDao extends BaseDao implements Dao<MD_Class> {
     public static final String CLASS_TYPE = "class_type";
     public static final String CLASS_COLOR = "class_color";
     public static final String CLASS_AVAILABLE = "class_available";
+    public static final String CLASS_TICKET_TYPE_VALUE = "CLASS_TICKET_TYPE";
+    public static final String CLASS_SERIAL_VALUE = "CLASS_SERIAL";
 
     public String[] columns = {
                                 CUSTOMER_CODE, CLASS_CODE, CLASS_ID,

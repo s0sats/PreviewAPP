@@ -64,20 +64,19 @@ class SqlAct084_004(
                          
                     FROM 
                          ${GE_Custom_Form_LocalDao.TABLE} l,
-                         ${GE_Custom_Form_DataDao.TABLE} d,
-                         ${GE_Custom_Form_Data_FieldDao.TABLE} df                  
+                         ${GE_Custom_Form_DataDao.TABLE} d
+                    LEFT JOIN     
+                         ${GE_Custom_Form_Data_FieldDao.TABLE} df ON  d.${GE_Custom_Form_DataDao.CUSTOMER_CODE}  = df.${GE_Custom_Form_Data_FieldDao.CUSTOMER_CODE}      
+                                                                      and d.${GE_Custom_Form_DataDao.CUSTOM_FORM_TYPE} = df.${GE_Custom_Form_Data_FieldDao.CUSTOM_FORM_TYPE}   
+                                                                      and d.${GE_Custom_Form_DataDao.CUSTOM_FORM_CODE} = df.${GE_Custom_Form_Data_FieldDao.CUSTOM_FORM_CODE}   
+                                                                      and d.${GE_Custom_Form_DataDao.CUSTOM_FORM_VERSION} = df.${GE_Custom_Form_Data_FieldDao.CUSTOM_FORM_VERSION} 
+                                                                      and d.${GE_Custom_Form_DataDao.CUSTOM_FORM_DATA} = df.${GE_Custom_Form_Data_FieldDao.CUSTOM_FORM_DATA}                   
                     WHERE
                          l.${GE_Custom_Form_LocalDao.CUSTOMER_CODE} = d.${GE_Custom_Form_DataDao.CUSTOMER_CODE}
                          and l.${GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE} = d.${GE_Custom_Form_DataDao.CUSTOM_FORM_TYPE}
                          and l.${GE_Custom_Form_LocalDao.CUSTOM_FORM_CODE} = d.${GE_Custom_Form_DataDao.CUSTOM_FORM_CODE}
                          and l.${GE_Custom_Form_LocalDao.CUSTOM_FORM_VERSION} = d.${GE_Custom_Form_DataDao.CUSTOM_FORM_VERSION}
-                         and l.${GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA} = d.${GE_Custom_Form_DataDao.CUSTOM_FORM_DATA}
-                         --
-                         and d.${GE_Custom_Form_DataDao.CUSTOMER_CODE}  = df.${GE_Custom_Form_Data_FieldDao.CUSTOMER_CODE}      
-                         and d.${GE_Custom_Form_DataDao.CUSTOM_FORM_TYPE} = df.${GE_Custom_Form_Data_FieldDao.CUSTOM_FORM_TYPE}   
-                         and d.${GE_Custom_Form_DataDao.CUSTOM_FORM_CODE} = df.${GE_Custom_Form_Data_FieldDao.CUSTOM_FORM_CODE}   
-                         and d.${GE_Custom_Form_DataDao.CUSTOM_FORM_VERSION} = df.${GE_Custom_Form_Data_FieldDao.CUSTOM_FORM_VERSION} 
-                         and d.${GE_Custom_Form_DataDao.CUSTOM_FORM_DATA} = df.${GE_Custom_Form_Data_FieldDao.CUSTOM_FORM_DATA}   
+                         and l.${GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA} = d.${GE_Custom_Form_DataDao.CUSTOM_FORM_DATA}                          
                          --
                          and l.${GE_Custom_Form_LocalDao.CUSTOMER_CODE} = $customerCode
                          and l.${GE_Custom_Form_LocalDao.SCHEDULE_PREFIX} is null

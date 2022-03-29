@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cl_main"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="6dp"
+    android:paddingBottom="6dp">
+
+    <TextView
+        android:id="@+id/act090_material_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:textColor="@color/namoa_font_color_black222"
+        android:textSize="@dimen/font_size_font_16"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintEnd_toStartOf="@id/sw_use_material"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Oleo" />
+
+    <TextView
+        android:id="@+id/act090_material_planned_qty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
+        android:textColor="@color/namoa_status_pending"
+        android:textSize="@dimen/font_size_font_12"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/act090_material_applied_qty"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/act090_material_desc"
+        tools:text="Previsto: 3" />
+
+    <TextView
+        android:id="@+id/act090_material_applied_qty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintWidth_percent="0.5"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="16dp"
+        android:textAlignment="textEnd"
+        android:textColor="@color/namoa_font_color_black222"
+        android:textSize="@dimen/font_size_font_12"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/sw_use_material"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@id/act090_material_planned_qty"
+        app:layout_constraintTop_toBottomOf="@id/act090_material_desc"
+        tools:text="Aplicado: 8 L" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/sw_use_material"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:text=""
+        android:textSize="@dimen/font_size_font_16"
+        android:thumb="@drawable/namoa_switch_states"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:thumbTint="@color/namoa_switch_color_states"
+        app:trackTint="@color/namoa_switch_track_color_states" />
+</androidx.constraintlayout.widget.ConstraintLayout>

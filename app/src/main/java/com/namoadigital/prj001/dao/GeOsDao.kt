@@ -15,6 +15,7 @@ import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.sql.GeOsDeviceCreation_Sql_001
 import com.namoadigital.prj001.sql.GeOsDeviceItemCreation_Sql_001
 import com.namoadigital.prj001.sql.GeOsDeviceItemHistCreation_Sql_001
+import com.namoadigital.prj001.sql.GeOsDeviceItemMaterialCreation_Sql_001
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -424,6 +425,7 @@ class GeOsDao(
         val geOsDeviceDao = GeOsDeviceDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
         val geOsDeviceItemDao = GeOsDeviceItemDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
         val geOsDeviceItemHistDao = GeOsDeviceItemHistDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
+        val geOsDeviceItemMaterialDao = GeOsDeviceMaterialDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
         //
         val geOsDevices = geOsDeviceDao.query(
             GeOsDeviceCreation_Sql_001(
@@ -460,6 +462,18 @@ class GeOsDao(
                 mdSerial.serial_code.toInt()
             ).toSqlQuery()
         )
+        //
+        val geOsDeviceMaterial = geOsDeviceItemMaterialDao.query(
+            GeOsDeviceItemMaterialCreation_Sql_001(
+                geOs.customer_code,
+                geOs.custom_form_type,
+                geOs.custom_form_code,
+                geOs.custom_form_version,
+                geOs.custom_form_data,
+                mdSerial.product_code.toInt(),
+                mdSerial.serial_code.toInt()
+            ).toSqlQuery()
+        )
         try {
             //Chama fun que fará a primeira e segunda varredura.
             checkScan(geOs, geOsDeviceItens)
@@ -487,6 +501,10 @@ class GeOsDao(
                 throw Exception(daoObjReturn.errorMsg)
             }
             daoObjReturn =  geOsDeviceItemHistDao.addUpdate(geOsDeviceItemHist,false,db)
+            if (daoObjReturn.hasError()) {
+                throw Exception(daoObjReturn.errorMsg)
+            }
+            daoObjReturn =  geOsDeviceItemMaterialDao.addUpdate(geOsDeviceMaterial,false,db)
             if (daoObjReturn.hasError()) {
                 throw Exception(daoObjReturn.errorMsg)
             }
@@ -551,7 +569,7 @@ class GeOsDao(
         var dateStartLastMinute : String? = ToolBox_Inf.getDateLastMinute(geOs.date_start)
         //
         geOsDeviceItens.forEach { item ->
-
+            item.has_expired_cycle = 1
             /*
              * Se Status PROJECTED_DATE_REACHED, verifica se deve alterar o status para:
              *   NORMAL:
@@ -564,6 +582,7 @@ class GeOsDao(
                 if (item.next_cycle_measure_date != null
                     && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_measure_date,dateStartLastMinute) > 0
                 ) {
+                    item.has_expired_cycle = 0
                     item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL
                 }
             }
@@ -578,6 +597,7 @@ class GeOsDao(
                 if (item.next_cycle_limit_date != null && geOs.date_start != null
                     && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_limit_date,dateStartLastMinute) > 0
                 ) {
+                    item.has_expired_cycle = 0
                     item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL
                 }
             }
@@ -595,10 +615,13 @@ class GeOsDao(
              */
             if(GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL.equals(item.item_check_status,true)){
                 var newCheckStatus = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL
+                item.has_expired_cycle = 0
+
                 //Verifica se data projetada do proximo ciclo foi atingida
                 if (item.next_cycle_measure_date != null
                     && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_measure_date,dateStartLastMinute) < 0
                 ) {
+                    item.has_expired_cycle = 1
                     newCheckStatus = GeOsDeviceItem.ITEM_CHECK_STATUS_PROJECTED_DATE_REACHED
                 }
 
@@ -606,6 +629,7 @@ class GeOsDao(
                 if (item.next_cycle_limit_date != null
                     && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_limit_date,dateStartLastMinute) < 0
                 ) {
+                    item.has_expired_cycle = 1
                     newCheckStatus = GeOsDeviceItem.ITEM_CHECK_STATUS_LIMIT_DATE_REACHED
                 }
 
@@ -613,6 +637,7 @@ class GeOsDao(
                 if (item.next_cycle_measure != null
                     && item.next_cycle_measure.compareTo(measureConsider) <= 0
                 ) {
+                    item.has_expired_cycle = 1
                     newCheckStatus = GeOsDeviceItem.ITEM_CHECK_STATUS_MEASURE_ALERT
                 }
 
@@ -628,6 +653,7 @@ class GeOsDao(
                 if (item.next_cycle_measure != null
                     && item.next_cycle_measure.compareTo(measureConsider) > 0
                 ) {
+                    item.has_expired_cycle = 1
                     item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL
                 }
             }

@@ -296,7 +296,8 @@ public class Frag_Move_Create_Presenter implements Frag_Move_Create_Contract.I_P
         MD_ClassDao classDao = new MD_ClassDao(context);
 
         return (ArrayList<HMAux>) classDao.query_HM(new MD_Class_Sql_SS(
-                String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                MD_ClassDao.CLASS_SERIAL_VALUE
         ).toSqlQuery());
     }
 

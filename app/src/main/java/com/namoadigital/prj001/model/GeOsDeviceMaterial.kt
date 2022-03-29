@@ -19,7 +19,31 @@ class GeOsDeviceMaterial(
     val material_id: String,
     val material_desc: String,
     @Expose
-    val material_qty: Float,
+    var material_qty: Float,
     val material_unit: String?,
-    val creation_ms: Long
+    val creation_ms: Long,
+    @Expose
+    val material_planned: Int = 0,
+    @Expose
+    var material_planned_used: Int = 0,
+    @Expose
+    val material_planned_qty: Float? = null
+
 ): Serializable
+
+/**
+ * Extension que convert modelo do banco para modelo de u.i
+ */
+fun GeOsDeviceMaterial.toUiMaterialItem() : Act086MaterialItem{
+    return Act086MaterialItem(
+        productCode = material_code,
+        productId = material_id,
+        productDesc = material_desc,
+        productUnit = material_unit?:"",
+        productQty = material_qty,
+        creationMs = creation_ms,
+        materialPlanned = material_planned,
+        materialPlannedUsed = material_planned_used,
+        materialPlannedQty = material_planned_qty
+    )
+}

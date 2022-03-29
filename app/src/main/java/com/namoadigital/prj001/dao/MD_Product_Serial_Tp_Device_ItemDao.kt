@@ -13,6 +13,7 @@ import com.namoadigital.prj001.database.Mapper
 import com.namoadigital.prj001.model.DaoObjReturn
 import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device_Item
 import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device_Item_Hist
+import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device_Item_Material
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_Device_ItemDao_Sql_001
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -105,30 +106,24 @@ class MD_Product_Serial_Tp_Device_ItemDao(
                 curAction = DaoObjReturn.INSERT
                 db.insertOrThrow(TABLE, null, toContentValuesMapper.map(mdProductSerialTpDeviceItem))
             }
-            //Tenta inserir steps
-            //LUCHE - 21/07/2020
-            //Ctrl será dependendo do step e não do ticket.
-            //Tenta inserir action
-//                TK_Ticket_CtrlDao ticketCtrlDao = new TK_Ticket_CtrlDao(
-//                    context,
-//                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-//                    Constant.DB_VERSION_CUSTOM
-//                );
-//                //Chama insertUpdate do Ctrl,passando db como param aguardando retorno.
-//                daoObjReturn = ticketCtrlDao.addUpdate(tk_ticket.getCtrl(), false, db);
-//                //Se erro durante insert, dispara exception abortando o processamento.
-//                if (daoObjReturn.hasError()) {
-//                    throw new Exception(daoObjReturn.getRawMessage());
-//                }
-            //Tenta inserir historico
-            mdProductSerialTpDeviceItem?.let {
+
+            mdProductSerialTpDeviceItem?.let { item->
                 /**
                  * Como hist é um valor setado dentro do init ou via delegate, quando é carregado direto do json
                  * o valor setado e null. Isso acontece pois é feito via reflections no Gson e que não tem
                  * suporte a essa features do Kotlin
                  */
-                if(it.hist != null && it.hist.isNotEmpty() ){
-                    daoObjReturn = tryAddUpdateHist(it.hist, db)
+                //Tenta inserir historico
+                if(item.hist != null && item.hist.isNotEmpty() ){
+                    daoObjReturn = tryAddUpdateHist(item.hist, db)
+                    //Se erro durante insert, dispara exception abortando o processamento.
+                    if (daoObjReturn.hasError()) {
+                        throw java.lang.Exception(daoObjReturn.rawMessage)
+                    }
+                }
+                //Tenta inserir insum planejado
+                if(item.material != null && item.material.isNotEmpty() ){
+                    daoObjReturn = tryAddUpdateMaterial(item.material, db)
                     //Se erro durante insert, dispara exception abortando o processamento.
                     if (daoObjReturn.hasError()) {
                         throw java.lang.Exception(daoObjReturn.rawMessage)
@@ -215,6 +210,14 @@ class MD_Product_Serial_Tp_Device_ItemDao(
                      */
                     if(it.hist != null && it.hist.isNotEmpty()){
                         daoObjReturn = tryAddUpdateHist(it.hist, db)
+                        //Se erro durante insert, dispara exception abortando o processamento.
+                        if (daoObjReturn.hasError()) {
+                            throw java.lang.Exception(daoObjReturn.rawMessage)
+                        }
+                    }
+                    //Tenta inserir insum planejado
+                    if(it.material != null && it.material.isNotEmpty() ){
+                        daoObjReturn = tryAddUpdateMaterial(it.material, db)
                         //Se erro durante insert, dispara exception abortando o processamento.
                         if (daoObjReturn.hasError()) {
                             throw java.lang.Exception(daoObjReturn.rawMessage)
@@ -438,6 +441,24 @@ class MD_Product_Serial_Tp_Device_ItemDao(
      */
     private fun getItemHistDao(): MD_Product_Serial_Tp_Device_Item_HistDao {
         return MD_Product_Serial_Tp_Device_Item_HistDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        )
+    }
+
+    /**
+     * Fun que tenta o insert do historico.
+     */
+    private fun tryAddUpdateMaterial(material: MutableList<MD_Product_Serial_Tp_Device_Item_Material>, db: SQLiteDatabase?): DaoObjReturn {
+        return getItemMaterialDao().addUpdate(material,false,db)
+    }
+
+    /**
+     * Fun que retorna o dao do historico.
+     */
+    private fun getItemMaterialDao(): MD_Product_Serial_Tp_Device_Item_MaterialDao {
+        return MD_Product_Serial_Tp_Device_Item_MaterialDao(
             context,
             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
             Constant.DB_VERSION_CUSTOM

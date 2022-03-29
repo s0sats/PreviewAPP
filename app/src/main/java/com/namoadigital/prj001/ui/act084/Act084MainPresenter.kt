@@ -150,11 +150,11 @@ class Act084MainPresenter(
             myActionsList.addAll(
                     getLocalForms(tabDone,ncFilterOn).map {
                         val lastFormSelected = getLastSelectedPk(MyActions.MY_ACTION_TYPE_FORM)
-                        GE_Custom_Form_Local.toMyActionsObj(context, it,lastFormSelected)
+                        GE_Custom_Form_Local.toMyActionsObj(context, it,lastFormSelected, true)
                     }
             )
             //
-            _myActionsList.sortBy {
+            _myActionsList.sortByDescending {
                 when (it) {
                     is MyActions -> it.orderBy
                     is MyActionsFormButton -> it.orderBy

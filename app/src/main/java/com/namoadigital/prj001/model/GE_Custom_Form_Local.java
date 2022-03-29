@@ -553,7 +553,7 @@ public class GE_Custom_Form_Local {
         this.so_allow_backup = so_allow_backup;
     }
 
-    public static MyActions toMyActionsObj(Context context, HMAux hmAux, @Nullable String lastFormSelectedPk){
+    public static MyActions toMyActionsObj(Context context, HMAux hmAux, @Nullable String lastFormSelectedPk, boolean forHistoric){
         String endDate = null;
         Integer leftIcon = null;
         String statusToUse = ConstantBaseApp.SYS_STATUS_IN_PROCESSING.equals(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)) ? ConstantBaseApp.SYS_STATUS_PROCESS : hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS);
@@ -584,6 +584,21 @@ public class GE_Custom_Form_Local {
             soInfo = hmAux.get(GE_Custom_Form_DataDao.SO_PREFIX)  +"."+ hmAux.get(GE_Custom_Form_DataDao.SO_CODE);
         }
         //
+        /**
+         * BARRIONUEVO 15-03-2022
+         * Correção de ordenacao de lista de historico.
+         */
+        String orderBy = ToolBox_Inf.millisecondsToString(
+                ToolBox_Inf.dateToMilliseconds(hmAux.get(GE_Custom_Form_DataDao.DATE_START)),
+                "yyyyMMddHHmm"
+        );
+        if(forHistoric){
+            orderBy = ToolBox_Inf.millisecondsToString(
+                    ToolBox_Inf.dateToMilliseconds(hmAux.get(GE_Custom_Form_DataDao.DATE_END)),
+                    "yyyyMMddHHmm"
+            );
+        }
+        //
         MyActions myActions = new MyActions(
             MyActions.MY_ACTION_TYPE_FORM,
             processPk,
@@ -605,10 +620,7 @@ public class GE_Custom_Form_Local {
             null,
             soInfo,
             endDate,
-            ToolBox_Inf.millisecondsToString(
-                ToolBox_Inf.dateToMilliseconds(hmAux.get(GE_Custom_Form_DataDao.DATE_START)),
-                "yyyyMMddHHmm"
-            ),
+            orderBy,
             null,
             ConstantBaseApp.SYS_STATUS_PROCESS.equals(statusToUse),
             false,

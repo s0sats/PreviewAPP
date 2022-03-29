@@ -17,11 +17,7 @@ import com.namoadigital.prj001.service.WS_Sync
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download
 import com.namoadigital.prj001.sql.*
 import com.namoadigital.prj001.ui.act070.Act070_Main
-import com.namoadigital.prj001.util.Constant
-import com.namoadigital.prj001.util.ConstantBaseApp
-import com.namoadigital.prj001.util.ToolBox_Con
-import com.namoadigital.prj001.util.ToolBox_Inf
-import com.namoadigital.prj001.util.ScheduleFormFatory
+import com.namoadigital.prj001.util.*
 import com.namoadigital.prj001.view.dialog.ScheduleRequestSerialDialog2
 import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
@@ -1507,7 +1503,7 @@ class Act083_Main_Presenter(private val context: Context,
                 myActionsList.addAll(
                         getLocalForms(tabUserFocusFilter).map {
                             val lastFormSelected = getLastSelectedPk(MyActions.MY_ACTION_TYPE_FORM)
-                            GE_Custom_Form_Local.toMyActionsObj(context, it, lastFormSelected)
+                            GE_Custom_Form_Local.toMyActionsObj(context, it, lastFormSelected, false)
                         }
                 )
             }

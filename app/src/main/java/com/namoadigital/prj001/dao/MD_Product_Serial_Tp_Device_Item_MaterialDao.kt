@@ -1,90 +1,75 @@
 package com.namoadigital.prj001.dao
 
-import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
-import androidx.core.database.getFloatOrNull
-import androidx.core.database.getIntOrNull
-import androidx.core.database.getStringOrNull
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
 import com.namoadigital.prj001.model.DaoObjReturn
-import com.namoadigital.prj001.model.GeOsDeviceMaterial
+import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device_Item_Material
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
+import java.math.BigDecimal
 
-class GeOsDeviceMaterialDao(
+class MD_Product_Serial_Tp_Device_Item_MaterialDao(
     context: Context,
     mDB_NAME: String,
     mDB_VERSION: Int
 ) : BaseDao(
-    context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI
-), DaoWithReturn<GeOsDeviceMaterial> {
+    context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI),
+    DaoWithReturn<MD_Product_Serial_Tp_Device_Item_Material>,
+    DaoWithReturnSharedDbInstance<MD_Product_Serial_Tp_Device_Item_Material>{
 
     companion object{
-        const val TABLE = "ge_os_device_item_material"
+        const val TABLE = "md_product_serial_tp_device_item_material"
         const val CUSTOMER_CODE = "customer_code"
-        const val CUSTOM_FORM_TYPE = "custom_form_type"
-        const val CUSTOM_FORM_CODE = "custom_form_code"
-        const val CUSTOM_FORM_VERSION = "custom_form_version"
-        const val CUSTOM_FORM_DATA = "custom_form_data"
         const val PRODUCT_CODE = "product_code"
         const val SERIAL_CODE = "serial_code"
         const val DEVICE_TP_CODE = "device_tp_code"
         const val ITEM_CHECK_CODE = "item_check_code"
         const val ITEM_CHECK_SEQ = "item_check_seq"
         const val MATERIAL_CODE = "material_code"
-        const val MATERIAL_ID = "material_id"
-        const val MATERIAL_DESC = "material_desc"
-        const val MATERIAL_QTY = "material_qty"
-        const val MATERIAL_UNIT = "material_unit"
-        const val CREATION_MS = "creation_ms"
-        const val MATERIAL_PLANNED = "material_planned"
-        const val MATERIAL_PLANNED_USED = "material_planned_used"
-        const val MATERIAL_PLANNED_QTY = "material_planned_qty"
+        const val QTY = "qty"
     }
-
-    private val toGeOsDeviceMaterialMapper: Mapper<Cursor, GeOsDeviceMaterial>
-    private val toContentValuesMapper: Mapper<GeOsDeviceMaterial, ContentValues>
+    
+    private val toMD_Product_Serial_Tp_Device_Item_MaterialMapper: Mapper<Cursor, MD_Product_Serial_Tp_Device_Item_Material>
+    private val toContentValuesMapper: Mapper<MD_Product_Serial_Tp_Device_Item_Material, ContentValues>
 
     init {
-        this.toGeOsDeviceMaterialMapper = CursorToGeOsDeviceMaterialMapper()
-        this.toContentValuesMapper = GeOsDeviceMaterialToContentValuesMapper()
+        this.toMD_Product_Serial_Tp_Device_Item_MaterialMapper = CursorToMD_Product_Serial_Tp_Device_Item_MaterialMapper()
+        this.toContentValuesMapper = MD_Product_Serial_Tp_Device_Item_MaterialToContentValuesMapper()
     }
 
     @Throws(java.lang.Exception::class)
-    private fun getWherePkClause(item: GeOsDeviceMaterial?): StringBuilder{
-        item?.let{
+    private fun getWherePkClause(mdProductSerialTpDeviceItemMaterial: MD_Product_Serial_Tp_Device_Item_Material?): StringBuilder{
+        mdProductSerialTpDeviceItemMaterial?.let{
             return java.lang.StringBuilder()
                 .append("""
-                        $CUSTOMER_CODE = '${item.customer_code}'  
-                        AND $CUSTOM_FORM_TYPE = '${item.custom_form_type}'                           
-                        AND $CUSTOM_FORM_CODE = '${item.custom_form_code}'                           
-                        AND $CUSTOM_FORM_VERSION = '${item.custom_form_version}'                           
-                        AND $CUSTOM_FORM_DATA = '${item.custom_form_data}'                           
-                        AND $PRODUCT_CODE = '${item.product_code}'                           
-                        AND $SERIAL_CODE = '${item.serial_code}'                           
-                        AND $DEVICE_TP_CODE = '${item.device_tp_code}'                           
-                        AND $ITEM_CHECK_CODE = '${item.item_check_code}'                           
-                        AND $ITEM_CHECK_SEQ = '${item.item_check_seq}'                           
-                        AND $MATERIAL_CODE = '${item.material_code}'                           
+                        ${CUSTOMER_CODE} = '${mdProductSerialTpDeviceItemMaterial.customer_code}'  
+                        AND ${PRODUCT_CODE} = '${mdProductSerialTpDeviceItemMaterial.product_code}'                           
+                        AND ${SERIAL_CODE} = '${mdProductSerialTpDeviceItemMaterial.serial_code}'                           
+                        AND ${DEVICE_TP_CODE} = '${mdProductSerialTpDeviceItemMaterial.device_tp_code}'                           
+                        AND ${ITEM_CHECK_CODE} = '${mdProductSerialTpDeviceItemMaterial.item_check_code}'                           
+                        AND ${ITEM_CHECK_SEQ} = '${mdProductSerialTpDeviceItemMaterial.item_check_seq}'                           
+                        AND ${MATERIAL_CODE} = '${mdProductSerialTpDeviceItemMaterial.material_code}'                           
                         """.trimIndent()
                 )
         }
         throw Exception("NULL_OBJ_RECEIVED")
     }
 
-
-    override fun addUpdate(item: GeOsDeviceMaterial): DaoObjReturn {
-        return addUpdate(item, null)
+    override fun addUpdate(itemMaterial: MD_Product_Serial_Tp_Device_Item_Material?): DaoObjReturn {
+        return addUpdate(itemMaterial, null)
     }
 
-    fun addUpdate(item: GeOsDeviceMaterial, dbInstance: SQLiteDatabase?): DaoObjReturn {
+    override fun addUpdate(
+        itemMaterial: MD_Product_Serial_Tp_Device_Item_Material?,
+        dbInstance: SQLiteDatabase?
+    ): DaoObjReturn {
         var daoObjReturn = DaoObjReturn()
         var addUpdateRet: Long = 0
         var curAction = DaoObjReturn.INSERT_OR_UPDATE
@@ -94,18 +79,17 @@ class GeOsDeviceMaterialDao(
         }else{
             this.db = dbInstance
         }
-
         try {
             daoObjReturn.table = TABLE
             curAction = DaoObjReturn.UPDATE
             //Where para update
-            val sbWhere: StringBuilder = getWherePkClause(item)
+            val sbWhere: StringBuilder = getWherePkClause(itemMaterial)
             //Tenta update e armazena retorno
-            addUpdateRet = db.update(TABLE, toContentValuesMapper.map(item), sbWhere.toString(), null).toLong()
+            addUpdateRet = db.update(TABLE, toContentValuesMapper.map(itemMaterial), sbWhere.toString(), null).toLong()
             //Se nenhuma linha afetada, tenta insert
             if (addUpdateRet == 0L) {
                 curAction = DaoObjReturn.INSERT
-                db.insertOrThrow(TABLE, null, toContentValuesMapper.map(item))
+                db.insertOrThrow(TABLE, null, toContentValuesMapper.map(itemMaterial))
             }
         } catch (e: SQLiteException) {
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
@@ -130,14 +114,25 @@ class GeOsDeviceMaterialDao(
             daoObjReturn.actionReturn = addUpdateRet
         }
         //
-        if(dbInstance == null) {
+        if (dbInstance == null) {
             closeDB()
         }
         //
         return daoObjReturn
     }
 
-    fun addUpdate(items: MutableList<GeOsDeviceMaterial>?, status: Boolean, dbInstance: SQLiteDatabase?): DaoObjReturn {
+    override fun addUpdate(
+        itemMaterials: MutableList<MD_Product_Serial_Tp_Device_Item_Material>?,
+        status: Boolean
+    ): DaoObjReturn {
+        return addUpdate(itemMaterials, status , null)
+    }
+
+    override fun addUpdate(
+        itemMaterials: MutableList<MD_Product_Serial_Tp_Device_Item_Material>?,
+        status: Boolean,
+        dbInstance: SQLiteDatabase?
+    ): DaoObjReturn {
         var daoObjReturn = DaoObjReturn()
         var addUpdateRet: Long = 0
         var curAction = DaoObjReturn.INSERT_OR_UPDATE
@@ -161,21 +156,20 @@ class GeOsDeviceMaterialDao(
                 db.delete(TABLE, null, null)
             }
 
-            items?.forEach { item ->
-                val sbWhere: StringBuilder = getWherePkClause(item)
+            itemMaterials?.forEach { itemMaterial ->
+                val sbWhere: StringBuilder = getWherePkClause(itemMaterial)
                 //Tenta update e armazena retorno
-                addUpdateRet = db.update(TABLE, toContentValuesMapper.map(item), sbWhere.toString(), null).toLong()
+                addUpdateRet = db.update(TABLE, toContentValuesMapper.map(itemMaterial), sbWhere.toString(), null).toLong()
                 //Se nenhuma linha afetada, tenta insert
                 if (addUpdateRet == 0L) {
                     curAction = DaoObjReturn.INSERT
-                    db.insertOrThrow(TABLE, null, toContentValuesMapper.map(item))
+                    db.insertOrThrow(TABLE, null, toContentValuesMapper.map(itemMaterial))
                 }
             }
-            //Se db não foi passado, finaliza transaction com sucesso
-            if (dbInstance == null) {
+            //
+            if(dbInstance == null) {
                 db.setTransactionSuccessful()
             }
-
         } catch (e: SQLiteException) {
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
             //e contendo msg de erro tratada.
@@ -203,17 +197,14 @@ class GeOsDeviceMaterialDao(
             daoObjReturn.action = curAction
             daoObjReturn.actionReturn = addUpdateRet
         }
+        //
         if (dbInstance == null) {
             closeDB()
         }
         //
         return daoObjReturn
-
     }
 
-    override fun addUpdate(items: MutableList<GeOsDeviceMaterial>?, status: Boolean): DaoObjReturn {
-        return addUpdate(items, status, null)
-    }
 
     override fun addUpdate(sQuery: String?) {
         openDB()
@@ -237,20 +228,25 @@ class GeOsDeviceMaterialDao(
         closeDB()
     }
 
-    fun removeAllForGeOsDeviceItem(deleteByGeOsDeviceItemWhereClause: String, dbInstance: SQLiteDatabase?): DaoObjReturn{
+    override fun remove(
+        itemMaterial: MD_Product_Serial_Tp_Device_Item_Material?,
+        dbInstance: SQLiteDatabase?
+    ): DaoObjReturn {
         var daoObjReturn = DaoObjReturn()
-        var deleteRet: Long = 0
+        var sqlRet: Long = 0
         val curAction = DaoObjReturn.DELETE
         //
-        if(dbInstance == null) {
+        if (dbInstance == null) {
             openDB()
-        }else{
-            this.db = dbInstance
+        } else {
+            db = dbInstance
         }
         try {
             daoObjReturn.table = TABLE
+            //Where para update
+            val sbWhere: StringBuilder = getWherePkClause(itemMaterial)
             //Tenta update e armazena retorno
-            deleteRet = db.delete(TABLE,deleteByGeOsDeviceItemWhereClause,null ).toLong()
+            sqlRet = db.delete(TABLE,sbWhere.toString(), null).toLong()
         } catch (e: SQLiteException) {
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
             //e contendo msg de erro tratada.
@@ -271,23 +267,22 @@ class GeOsDeviceMaterialDao(
             ToolBox_Inf.registerException(javaClass.name, e)
         } finally {
             daoObjReturn.action = curAction
-            daoObjReturn.actionReturn = deleteRet
+            daoObjReturn.actionReturn = sqlRet
         }
         //
-        if(dbInstance == null) {
+        if (dbInstance == null) {
             closeDB()
         }
-        //
         return daoObjReturn
     }
 
-    override fun getByString(sQuery: String?): GeOsDeviceMaterial? {
-        var item: GeOsDeviceMaterial? = null
+    override fun getByString(sQuery: String?): MD_Product_Serial_Tp_Device_Item_Material? {
+        var itemMaterial: MD_Product_Serial_Tp_Device_Item_Material? = null
         openDB()
         try {
             val cursor = db.rawQuery(sQuery, null)
             while (cursor.moveToNext()) {
-                item = toGeOsDeviceMaterialMapper.map(cursor)
+                itemMaterial = toMD_Product_Serial_Tp_Device_Item_MaterialMapper.map(cursor)
             }
             //
             cursor.close()
@@ -296,51 +291,53 @@ class GeOsDeviceMaterialDao(
         } finally {
         }
         closeDB()
-        return item
+        return itemMaterial
     }
 
     override fun getByStringHM(sQuery: String?): HMAux? {
-        var item: HMAux? = null
+        var itemMaterial: HMAux? = null
         openDB()
         try {
             val cursor = db.rawQuery(sQuery, null)
             while (cursor.moveToNext()) {
-                item = CursorToHMAuxMapper.mapN(cursor)
+                itemMaterial = CursorToHMAuxMapper.mapN(cursor)
             }
+            //
             cursor.close()
         } catch (e: java.lang.Exception) {
             ToolBox_Inf.registerException(javaClass.name, e)
         } finally {
         }
         closeDB()
-        return  item
+        return itemMaterial
     }
 
-    override fun query(sQuery: String?): MutableList<GeOsDeviceMaterial> {
-        val items = mutableListOf<GeOsDeviceMaterial>()
+    override fun query(sQuery: String?): MutableList<MD_Product_Serial_Tp_Device_Item_Material> {
+        val itemMaterials = mutableListOf<MD_Product_Serial_Tp_Device_Item_Material>()
         openDB()
         try {
             val cursor = db.rawQuery(sQuery, null)
             while (cursor.moveToNext()) {
-                val uAux = toGeOsDeviceMaterialMapper.map(cursor)
-                items.add(uAux)
+                val itemMaterial = toMD_Product_Serial_Tp_Device_Item_MaterialMapper.map(cursor)
+                itemMaterials.add(itemMaterial)
             }
+            //
             cursor.close()
         } catch (e: java.lang.Exception) {
             ToolBox_Inf.registerException(javaClass.name, e)
         } finally {
         }
         closeDB()
-        return items
+        return itemMaterials
     }
 
     override fun query_HM(sQuery: String?): MutableList<HMAux> {
-        val items = mutableListOf<HMAux>()
+        val itemMaterials = mutableListOf<HMAux>()
         openDB()
         try {
             val cursor = db.rawQuery(sQuery, null)
             while (cursor.moveToNext()) {
-                items.add(CursorToHMAuxMapper.mapN(cursor))
+                itemMaterials.add(CursorToHMAuxMapper.mapN(cursor))
             }
             cursor.close()
         } catch (e: java.lang.Exception) {
@@ -348,76 +345,62 @@ class GeOsDeviceMaterialDao(
         } finally {
         }
         closeDB()
-        return items
+        return itemMaterials
     }
 
-    class CursorToGeOsDeviceMaterialMapper : Mapper<Cursor, GeOsDeviceMaterial> {
-        @SuppressLint("Range")
-        override fun map(cursor: Cursor?): GeOsDeviceMaterial? {
-            cursor?.let {
-                with(cursor){
-                    return GeOsDeviceMaterial(
-                        customer_code = getLong(getColumnIndex(CUSTOMER_CODE)),
-                        custom_form_type = getInt(getColumnIndex(CUSTOM_FORM_TYPE)),
-                        custom_form_code = getInt(getColumnIndex(CUSTOM_FORM_CODE)),
-                        custom_form_version = getInt(getColumnIndex(CUSTOM_FORM_VERSION)),
-                        custom_form_data = getInt(getColumnIndex(CUSTOM_FORM_DATA)),
-                        product_code = getInt(getColumnIndex(PRODUCT_CODE)),
-                        serial_code = getInt(getColumnIndex(SERIAL_CODE)),
-                        device_tp_code = getInt(getColumnIndex(DEVICE_TP_CODE)),
-                        item_check_code = getInt(getColumnIndex(ITEM_CHECK_CODE)),
-                        item_check_seq = getInt(getColumnIndex(ITEM_CHECK_SEQ)),
-                        material_code = getInt(getColumnIndex(MATERIAL_CODE)),
-                        material_id = getString(getColumnIndex(MATERIAL_ID)),
-                        material_desc = getString(getColumnIndex(MATERIAL_DESC)),
-                        material_qty = getFloat(getColumnIndex(MATERIAL_QTY)),
-                        material_unit = getStringOrNull(getColumnIndex(MATERIAL_UNIT)),
-                        creation_ms = getLong(getColumnIndex(CREATION_MS)),
-                        material_planned = getInt(getColumnIndex(MATERIAL_PLANNED)),
-                        material_planned_used = getInt(getColumnIndex(MATERIAL_PLANNED_USED)),
-                        material_planned_qty = getFloatOrNull(getColumnIndex(MATERIAL_PLANNED_QTY))
+    private class CursorToMD_Product_Serial_Tp_Device_Item_MaterialMapper : Mapper<Cursor, MD_Product_Serial_Tp_Device_Item_Material> {
+        override fun map(cursor: Cursor?): MD_Product_Serial_Tp_Device_Item_Material? {
+            cursor?.let{
+                with(it){
+                    return MD_Product_Serial_Tp_Device_Item_Material(
+                        customer_code = getLong(getColumnIndexOrThrow(CUSTOMER_CODE)),
+                        product_code = getLong(getColumnIndexOrThrow(PRODUCT_CODE)),
+                        serial_code = getLong(getColumnIndexOrThrow(SERIAL_CODE)),
+                        device_tp_code = getInt(getColumnIndexOrThrow(DEVICE_TP_CODE)),
+                        item_check_code = getInt(getColumnIndexOrThrow(ITEM_CHECK_CODE)) ,
+                        item_check_seq = getInt(getColumnIndexOrThrow(ITEM_CHECK_SEQ)) ,
+                        material_code = getInt(getColumnIndexOrThrow(MATERIAL_CODE)),
+                        qty = BigDecimal(getDouble(getColumnIndexOrThrow(QTY))),
                     )
                 }
             }
             return null
         }
+
     }
 
-    class GeOsDeviceMaterialToContentValuesMapper : Mapper<GeOsDeviceMaterial, ContentValues> {
-        override fun map(geOsDeviceMaterial: GeOsDeviceMaterial?): ContentValues {
+    class MD_Product_Serial_Tp_Device_Item_MaterialToContentValuesMapper : Mapper<MD_Product_Serial_Tp_Device_Item_Material, ContentValues> {
+        override fun map(mdProductSerialTpDeviceItemMaterial: MD_Product_Serial_Tp_Device_Item_Material?): ContentValues {
             val contentValues = ContentValues()
-            geOsDeviceMaterial?.let {
+            mdProductSerialTpDeviceItemMaterial?.let{
                 with(contentValues){
-                    if(it.customer_code > -1){
-                        put(CUSTOMER_CODE, it.customer_code)
+                    if(mdProductSerialTpDeviceItemMaterial.customer_code > -1){
+                        put(CUSTOMER_CODE,mdProductSerialTpDeviceItemMaterial.customer_code)
                     }
-                    //
-                    if(it.custom_form_type > -1){
-                        put(CUSTOM_FORM_TYPE,it.custom_form_type)
+                    if(mdProductSerialTpDeviceItemMaterial.product_code > -1){
+                        put(PRODUCT_CODE,mdProductSerialTpDeviceItemMaterial.product_code)
                     }
-                    //
-                    put(CUSTOM_FORM_CODE,it.custom_form_code)
-                    put(CUSTOM_FORM_VERSION, it.custom_form_version)
-                    put(CUSTOM_FORM_DATA, it.custom_form_data)
-                    put(PRODUCT_CODE, it.product_code)
-                    put(SERIAL_CODE, it.serial_code)
-                    put(DEVICE_TP_CODE, it.device_tp_code)
-                    put(ITEM_CHECK_CODE, it.item_check_code)
-                    put(ITEM_CHECK_SEQ, it.item_check_seq)
-                    put(MATERIAL_CODE, it.material_code)
-                    put(MATERIAL_ID, it.material_id)
-                    put(MATERIAL_DESC, it.material_desc)
-                    put(MATERIAL_QTY, it.material_qty)
-                    put(MATERIAL_UNIT, it.material_unit)
-                    put(CREATION_MS, it.creation_ms)
-                    put(MATERIAL_PLANNED, it.material_planned)
-                    put(MATERIAL_PLANNED_USED, it.material_planned_used)
-                    put(MATERIAL_PLANNED_QTY, it.material_planned_qty)
-                    //
+                    if(mdProductSerialTpDeviceItemMaterial.serial_code > -1){
+                        put(SERIAL_CODE,mdProductSerialTpDeviceItemMaterial.serial_code)
+                    }
+                    if(mdProductSerialTpDeviceItemMaterial.device_tp_code > -1){
+                        put(DEVICE_TP_CODE,mdProductSerialTpDeviceItemMaterial.device_tp_code)
+                    }
+                    if(mdProductSerialTpDeviceItemMaterial.item_check_code > -1){
+                        put(ITEM_CHECK_CODE,mdProductSerialTpDeviceItemMaterial.item_check_code)
+                    }
+                    if(mdProductSerialTpDeviceItemMaterial.item_check_seq > -1){
+                        put(ITEM_CHECK_SEQ,mdProductSerialTpDeviceItemMaterial.item_check_seq)
+                    }
+                    if(mdProductSerialTpDeviceItemMaterial.material_code > -1){
+                        put(MATERIAL_CODE,mdProductSerialTpDeviceItemMaterial.material_code)
+                    }
+                    if(mdProductSerialTpDeviceItemMaterial.qty > BigDecimal(-1)){
+                        put(QTY,mdProductSerialTpDeviceItemMaterial.qty.toFloat())
+                    }
                 }
             }
             return contentValues
         }
-
     }
 }

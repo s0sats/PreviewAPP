@@ -10,9 +10,14 @@ import com.namoadigital.prj001.database.Specification;
 
 public class MD_Class_Sql_SS implements Specification {
     private String s_customer_code;
-
+    String filter;
     public MD_Class_Sql_SS(String s_customer_code) {
         this.s_customer_code = s_customer_code;
+    }
+
+    public MD_Class_Sql_SS(String s_customer_code, String s_class_type) {
+        this.s_customer_code = s_customer_code;
+        this.filter = "\nAND " + MD_ClassDao.CLASS_TYPE +" = '"+s_class_type+"' ";
     }
 
     @Override
@@ -32,6 +37,7 @@ public class MD_Class_Sql_SS implements Specification {
                         MD_ClassDao.TABLE +
                         " WHERE " +
                                 MD_ClassDao.CUSTOMER_CODE +" = '"+s_customer_code+"' "+
+                                filter +
                        " ORDER BY " +
                         "      class_id")
                 .append(";")
