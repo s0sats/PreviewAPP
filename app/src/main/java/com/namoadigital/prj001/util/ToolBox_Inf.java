@@ -14,6 +14,9 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_PRESENTED_BY_N
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_USER_LEVEL_LBL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_VERSION_LBL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.GENERIC_CHANNEL_ID;
+import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION;
+import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_PERIOD_FILTER;
+import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_BARCODE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_FORM;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_FORM_NC;
@@ -4023,7 +4026,7 @@ public class ToolBox_Inf {
      * @param context
      * @return
      */
-    public static boolean usesSoMainActivity(Context context) {
+    public static boolean hasSoOrIOProfile(Context context) {
         return ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_OI, null)
                 || ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null);
     }
@@ -8855,7 +8858,7 @@ public class ToolBox_Inf {
      * @return
      */
     public static String getActTitleByOrigin(Context context, String originFlow,HMAux hmAuxTrans,String defaultActTitleKey){
-        if(originFlow == null || ToolBox_Inf.usesSoMainActivity(context)){
+        if(originFlow == null || ToolBox_Inf.hasSoOrIOProfile(context)){
             return hmAuxTrans.get(defaultActTitleKey);
         }
         switch (originFlow){
@@ -8933,7 +8936,7 @@ public class ToolBox_Inf {
     @Nullable
     public static Integer getBlockSpontaneousValueByOrigin(Context context, String originFlow) {
         if(originFlow == null || originFlow.isEmpty()){
-            return usesSoMainActivity(context) ? null : 0;
+            return hasSoOrIOProfile(context) ? null : 0;
         }
         //
         switch (originFlow){
@@ -9227,5 +9230,23 @@ public class ToolBox_Inf {
             iv_class_icon.setImageDrawable(null);
             iv_class_icon.setVisibility(View.INVISIBLE);
         }
+    }
+
+    /**
+     * BARRIONUEVO 02-06-2021
+     * Define a opcao default mediante ao profile.
+     * @return
+     */
+    public static String getActionTimeDefaultOption(Context context){
+        if(!ToolBox_Inf.hasSoOrIOProfile(context)) {
+            if (ToolBox_Inf.profileExists(
+                    context,
+                    ConstantBaseApp.PROFILE_PRJ001_PRODUCT_SERIAL,
+                    ConstantBaseApp.PROFILE_PRJ001_PRODUCT_SERIAL_SCHEDULE_UNTIL_TODAY)
+            ) {
+                return ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_PERIOD_FILTER, PREFERENCE_HOME_UNTIL_TODAY_OPTION);
+            }
+        }
+        return ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_PERIOD_FILTER, PREFERENCE_HOME_ALL_TIME_OPTION);
     }
 }

@@ -92,28 +92,23 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
     }
 
     private fun initializeLayoutVisibility() {
-        mListener?.let{
-            //
-            val periodFilter = it.getPeriodFilter()
-            //
-            val tagList = it.getTagList(
-                periodFilter,
+
+        val tagList = mListener?.getTagList(
+                ToolBox_Inf.getActionTimeDefaultOption(context),
                 ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_SITES_FILTER, PREFERENCE_HOME_ALL_SITE_OPTION),
                 ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_FOCUS_FILTER, PREFERENCE_HOME_ONLY_MY_ACTIONS_OPTION)
-            )
-            //
-            if (tagList != null && !tagList.isEmpty()) {
-                binding.rvTags.visibility = View.VISIBLE
-                binding.tvListPlaceholder.visibility = View.GONE
-                handleAllTagItem(tagList)
-                if(mListener != null){
-                    adapter = Act005MainMenuTagAdapter(tagList, hmAux_Trans_Frag, mListener)
-                }
-            }else{
-                adapter = Act005MainMenuTagAdapter(mutableListOf(), hmAux_Trans_Frag, mListener)
-                binding.rvTags.visibility = View.GONE
-                binding.tvListPlaceholder.visibility = View.VISIBLE
+        )
+        if (tagList != null && !tagList.isEmpty()) {
+            binding.rvTags.visibility = View.VISIBLE
+            binding.tvListPlaceholder.visibility = View.GONE
+            handleAllTagItem(tagList)
+            if(mListener != null){
+                adapter = Act005MainMenuTagAdapter(tagList, hmAux_Trans_Frag, mListener)
             }
+        }else{
+            adapter = Act005MainMenuTagAdapter(mutableListOf(), hmAux_Trans_Frag, mListener)
+            binding.rvTags.visibility = View.GONE
+            binding.tvListPlaceholder.visibility = View.VISIBLE
         }
 
         binding.rvTags.adapter = adapter
@@ -236,7 +231,6 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
         fun getTagList(periodFilter: String, sitesFilter: String, focusFilter: String): MutableList<MainTagMenu>
         fun getDatetimeWarning(): String
         fun getChatBadgeQty(): Int
-        fun getPeriodFilter(): String
     }
 
     override fun onApply(periodFilter: String, siteFilter: String, focusFilter: String) {

@@ -2,9 +2,7 @@ package com.namoadigital.prj001.sql
 
 import android.content.Context
 import com.namoa_digital.namoa_library.util.ToolBox
-import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao
-import com.namoadigital.prj001.dao.TK_TicketDao
 import com.namoadigital.prj001.database.Specification
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -116,8 +114,8 @@ class SqlAct083_005(
 
 
     private fun getPeriodFilter(): String {
-        return if (!ToolBox_Inf.usesSoMainActivity(context)) {
-            when(ToolBox_Con.getStringPreferencesByKey(context, ConstantBaseApp.PREFERENCE_HOME_PERIOD_FILTER, ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION)){
+        return if (!ToolBox_Inf.hasSoOrIOProfile(context)) {
+            when(ToolBox_Inf.getActionTimeDefaultOption(context)){
                 ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION -> " and (strftime('%Y-%m-%d',s.${MD_Schedule_ExecDao.DATE_START} || ' $customerGMT','$deviceGMT') <= strftime('%Y-%m-%d','now','"+deviceGMT+"'))"
                 ConstantBaseApp.PREFERENCE_HOME_NEXT_WEEK_OPTION -> " and (strftime('%Y-%m-%d',s.${MD_Schedule_ExecDao.DATE_START} || ' $customerGMT','$deviceGMT') <= strftime('%Y-%m-%d','now','"+deviceGMT+"','+7 days'))"
                 else -> ""

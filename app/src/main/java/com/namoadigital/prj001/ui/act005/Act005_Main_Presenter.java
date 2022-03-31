@@ -143,5 +143,4 @@ public interface Act005_Main_Presenter {
 
     boolean hasTicketSyncRequiredCloudRule();
 
-    String getPeriodFilter();
 }

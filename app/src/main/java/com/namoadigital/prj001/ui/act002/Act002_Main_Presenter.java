@@ -35,4 +35,6 @@ public interface Act002_Main_Presenter {
     void deleteEnvSiteLicenseFile();
 
     void executeWSTicketDownload();
+
+    void setPeriodFilterPreference();
 }
