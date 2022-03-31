@@ -3,10 +3,12 @@ package com.namoadigital.prj001.ui.act005;
 import static com.namoadigital.prj001.sql.Sql_Act005_009.PENDING_QTY;
 import static com.namoadigital.prj001.ui.act005.Act005_Main.WS_PROCESS_SO_SAVE;
 import static com.namoadigital.prj001.ui.act005.Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL;
+import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_CURRENT_SITE_OPTION;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_FOCUS_FILTER;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_PERIOD_FILTER;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_SITES_FILTER;
+import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -525,6 +527,18 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         }
         //
         return qty > 0;
+    }
+
+    @Override
+    public String getPeriodFilter() {
+        if(ToolBox_Inf.profileExists(
+                context,
+                ConstantBaseApp.PROFILE_PRJ001_PRODUCT_SERIAL,
+                ConstantBaseApp.PROFILE_PRJ001_PRODUCT_SERIAL_SCHEDULE_UNTIL_TODAY)
+        ){
+            return ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_SITES_FILTER, PREFERENCE_HOME_UNTIL_TODAY_OPTION);
+        }
+        return ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_SITES_FILTER, PREFERENCE_HOME_ALL_TIME_OPTION);
     }
 
     @Deprecated

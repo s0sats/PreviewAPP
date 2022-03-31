@@ -3126,6 +3126,16 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         return mPresenter.getChatBadgeQty();
     }
 
+    /**
+     * BARRIONUEVO 02-06-2021
+     * Define a opcao default mediante ao profile.
+     * @return
+     */
+    @Override
+    public String getPeriodFilter() {
+        return mPresenter.getPeriodFilter();
+    }
+
     private class FCMReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
