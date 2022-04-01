@@ -80,6 +80,7 @@ public class GE_Custom_Form_Local {
     private Integer so_order_type_code_default;
     private int so_allow_change_order_type;
     private int so_allow_backup;
+    private int so_optional_justify_problem;
 
     public long getCustomer_code() {
         return customer_code;
@@ -547,6 +548,14 @@ public class GE_Custom_Form_Local {
 
     public int getSo_allow_backup() {
         return so_allow_backup;
+    }
+
+    public int getSo_optional_justify_problem() {
+        return so_optional_justify_problem;
+    }
+
+    public void setSo_optional_justify_problem(int so_optional_justify_problem) {
+        this.so_optional_justify_problem = so_optional_justify_problem;
     }
 
     public void setSo_allow_backup(int so_allow_backup) {

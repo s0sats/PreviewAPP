@@ -17,6 +17,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
@@ -3485,8 +3486,10 @@ public class Act011_Main extends Base_Activity
                     @Override
                     public void reportTextChange(String s) {
                         binding.act011DialogCheckBtnOk.setEnabled(s != null && !s.isEmpty());
+                        if(s!= null && s.isEmpty()) {
+                            binding.act011DialogCheckMkedtJustifyMissingAnswerVal.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.font_required)));
+                        }
                     }
-
                     @Override
                     public void reportTextChange(String s, boolean b) {
 
@@ -3640,6 +3643,9 @@ public class Act011_Main extends Base_Activity
                 binding.act011DialogCheckBtnOk.setEnabled(true);
             }else{
                 binding.act011DialogCheckBtnOk.setEnabled(false);
+                if(formLocal.getSo_optional_justify_problem() == 1){
+                    binding.act011DialogCheckBtnOk.setEnabled(true);
+                }
             }
             binding.act011DialogCheckTvMissingAnswerVal.setText(String.valueOf(missingAnswersAmount));
             binding.act011DialogCheckTvElapsedTimeVal.setText(getFormElapsedTimeFormatted(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")));
@@ -3665,7 +3671,10 @@ public class Act011_Main extends Base_Activity
             binding.act011DialogCheckTvMissingAnswerLbl.setText(hmAux_Trans.get("dialog_finalize_os_form_missing_answer_count_lbl"));
             binding.act011DialogCheckTvElapsedTimeLbl.setText(hmAux_Trans.get("dialog_finalize_os_form_elapsed_time_lbl"));
             binding.act011DialogCheckTvJustifyMissingAnswerLbl.setText(hmAux_Trans.get("dialog_finalize_os_form_justify_missing_answer_lbl"));
-            TextViewKt.setAsRequired(binding.act011DialogCheckTvJustifyMissingAnswerLbl, true);
+            if(formLocal.getSo_optional_justify_problem() == 0) {
+                TextViewKt.setAsRequired(binding.act011DialogCheckTvJustifyMissingAnswerLbl, true);
+                binding.act011DialogCheckMkedtJustifyMissingAnswerVal.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.font_required)));
+            }
             //
             setSerialClass(binding);
             //

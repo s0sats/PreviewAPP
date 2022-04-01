@@ -23,6 +23,7 @@ public class GE_Custom_Form {
     private Integer so_order_type_code_default;
     private int so_allow_change_order_type;
     private int so_allow_backup;
+    private int so_optional_justify_problem;
     private int block_spontaneous;
 
     public long getCustomer_code() {
@@ -159,6 +160,14 @@ public class GE_Custom_Form {
 
     public void setSo_allow_backup(int so_allow_backup) {
         this.so_allow_backup = so_allow_backup;
+    }
+
+    public int getSo_optional_justify_problem() {
+        return so_optional_justify_problem;
+    }
+
+    public void setSo_optional_justify_problem(int so_optional_justify_problem) {
+        this.so_optional_justify_problem = so_optional_justify_problem;
     }
 
     public int getBlock_spontaneous() {

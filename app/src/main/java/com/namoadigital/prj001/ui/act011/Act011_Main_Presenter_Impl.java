@@ -390,6 +390,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 customFormLocal.setSo_order_type_code_default(customForm.getSo_order_type_code_default());
                 customFormLocal.setSo_allow_change_order_type(customForm.getSo_allow_change_order_type());
                 customFormLocal.setSo_allow_backup(customForm.getSo_allow_backup());
+                customFormLocal.setSo_optional_justify_problem(customForm.getSo_optional_justify_problem());
                 //LUCHE -  14/03/2019
                 //Alteração Dao de insert com exception NOVO METODO DAO
                 //custom_form_LocalDao.addUpdate(customFormLocal);

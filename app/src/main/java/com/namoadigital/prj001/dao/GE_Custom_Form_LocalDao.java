@@ -92,6 +92,7 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
     public static final String SO_ORDER_TYPE_CODE_DEFAULT = "so_order_type_code_default";
     public static final String SO_ALLOW_CHANGE_ORDER_TYPE = "so_allow_change_order_type";
     public static final String SO_ALLOW_BACKUP = "so_allow_backup";
+    public static final String SO_OPTIONAL_JUSTIFY_PROBLEM = "so_optional_justify_problem";
 
 
     public GE_Custom_Form_LocalDao(Context context, String DB_NAME, int DB_VERSION) {
@@ -768,6 +769,7 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             custom_form_local.setSo_order_type_code_default(cursor.getInt(cursor.getColumnIndex(SO_ORDER_TYPE_CODE_DEFAULT)));
             custom_form_local.setSo_allow_change_order_type(cursor.getInt(cursor.getColumnIndex(SO_ALLOW_CHANGE_ORDER_TYPE)));
             custom_form_local.setSo_allow_backup(cursor.getInt(cursor.getColumnIndex(SO_ALLOW_BACKUP)));
+            custom_form_local.setSo_optional_justify_problem(cursor.getInt(cursor.getColumnIndex(SO_OPTIONAL_JUSTIFY_PROBLEM)));
             return custom_form_local;
         }
     }
@@ -940,8 +942,8 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             if (custom_form_local.getSo_allow_change_order_type() > -1) {
                 contentValues.put(SO_ALLOW_CHANGE_ORDER_TYPE, custom_form_local.getSo_allow_change_order_type());
             }
-            if (custom_form_local.getSo_allow_backup() > -1) {
-                contentValues.put(SO_ALLOW_BACKUP, custom_form_local.getSo_allow_backup());
+            if (custom_form_local.getSo_optional_justify_problem() > -1) {
+                contentValues.put(SO_OPTIONAL_JUSTIFY_PROBLEM, custom_form_local.getSo_optional_justify_problem());
             }
             //
             return contentValues;
