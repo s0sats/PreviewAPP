@@ -135,6 +135,21 @@ class SqlAct083_005(
     private fun setSerialFilterConfg() {
         tagOperCode = null
         periodDateFilter = ""
+        /**
+         * BARRIONUEVO 01-04-2022
+         * Quando fluxo via serial as acoes devem ser limitadas para ateh hoje.
+         */
+        if (!ToolBox_Inf.hasSoOrIOProfile(context)) {
+            if (ToolBox_Inf.profileExists(
+                    context,
+                    ConstantBaseApp.PROFILE_PRJ001_PRODUCT_SERIAL,
+                    ConstantBaseApp.PROFILE_PRJ001_PRODUCT_SERIAL_SCHEDULE_UNTIL_TODAY
+                )
+            ) {
+                periodDateFilter = " and (strftime('%Y-%m-%d',s.${MD_Schedule_ExecDao.DATE_START} || ' $customerGMT','$deviceGMT') <= strftime('%Y-%m-%d','now','"+deviceGMT+"'))"
+            }
+        }
+        //
         calendarDate = null
         siteCode = null
         lateFilter = """        and (strftime('%s',s.${MD_Schedule_ExecDao.DATE_START} || ' $customerGMT','$deviceGMT') * 1000) < (strftime('%s','now','$deviceGMT')*1000)  """
