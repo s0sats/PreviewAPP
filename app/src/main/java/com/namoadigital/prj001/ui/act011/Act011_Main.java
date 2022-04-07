@@ -284,6 +284,13 @@ public class Act011_Main extends Base_Activity
 
     private MeasureFF.OnValidationListener measureValidateListener = null;
 
+    CustomFF.ICustomFFInformUserValueChange form_non_compliance_photo_required_toast = new CustomFF.ICustomFFInformUserValueChange() {
+        @Override
+        public void onShowToast() {
+            Toast.makeText(context, hmAux_Trans.get("form_non_compliance_photo_required_toast"), Toast.LENGTH_SHORT).show();
+        }
+    };
+
 
     public void setWsSoProcess(String wsSoProcess) {
         this.wsSoProcess = wsSoProcess;
@@ -512,6 +519,8 @@ public class Act011_Main extends Base_Activity
         transList.add("alert_invalid_sys_end_date_msg");
         transList.add("form_sys_start_date_lbl");
         transList.add("form_measure_last_value_lbl");
+        //
+        transList.add("form_non_compliance_photo_required_toast");
         //
         transList.addAll(Act011FrgInspection.Companion.getFragTranslationsVars());
         //
@@ -1947,6 +1956,7 @@ public class Act011_Main extends Base_Activity
 
         checkBoxFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         checkBoxFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
+        checkBoxFF.setOnInformUserValueChange(form_non_compliance_photo_required_toast);
         //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
         //mas a vida eh uma caixinha de surpresas e teve que ser removido t0d0 acesso aos nform deletados
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) ||
@@ -1985,6 +1995,8 @@ public class Act011_Main extends Base_Activity
 
         ratingImageFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         ratingImageFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
+
+        ratingImageFF.setOnInformUserValueChange(form_non_compliance_photo_required_toast);
         //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
         //mas a vida eh uma caixinha de surpresas e teve que ser removido t0d0 acesso aos nform deletados
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) ||
@@ -2021,6 +2033,7 @@ public class Act011_Main extends Base_Activity
 
         ratingBarFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         ratingBarFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
+        ratingBarFF.setOnInformUserValueChange(form_non_compliance_photo_required_toast);
         //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
         //mas a vida eh uma caixinha de surpresas e teve que ser removido t0d0 acesso aos nform deletados
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) ||
