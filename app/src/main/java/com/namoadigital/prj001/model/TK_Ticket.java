@@ -51,6 +51,9 @@ public class TK_Ticket implements Cloneable, Serializable {
     private int open_site_code;
     private String open_site_id;
     private String open_site_desc;
+    private Integer open_zone_code;
+    private String open_zone_id;
+    private String open_zone_desc;
     private int open_operation_code;
     private String open_operation_id;
     private String open_operation_desc;
@@ -386,6 +389,30 @@ public class TK_Ticket implements Cloneable, Serializable {
 
     public void setOpen_site_desc(String open_site_desc) {
         this.open_site_desc = open_site_desc;
+    }
+
+    public Integer getOpen_zone_code() {
+        return open_zone_code;
+    }
+
+    public void setOpen_zone_code(Integer open_zone_code) {
+        this.open_zone_code = open_zone_code;
+    }
+
+    public String getOpen_zone_id() {
+        return open_zone_id;
+    }
+
+    public void setOpen_zone_id(String open_zone_id) {
+        this.open_zone_id = open_zone_id;
+    }
+
+    public String getOpen_zone_desc() {
+        return open_zone_desc;
+    }
+
+    public void setOpen_zone_desc(String open_zone_desc) {
+        this.open_zone_desc = open_zone_desc;
     }
 
     public int getOpen_operation_code() {
@@ -1491,6 +1518,18 @@ public class TK_Ticket implements Cloneable, Serializable {
             orderByDate = hmAux.get(TK_TicketDao.CLOSE_DATE);
         }
 
+        String openZoneDesc = null;
+        //
+        boolean hasManyZones = false;
+        if(hmAux.hasConsistentValue(TK_TicketDao.OPEN_SITE_CODE)){
+            hasManyZones = ToolBox_Inf.hasSiteManyZones(context, Integer.parseInt(hmAux.get(TK_TicketDao.OPEN_SITE_CODE)));
+        }
+        //
+        if(hmAux.hasConsistentValue(TK_TicketDao.OPEN_ZONE_DESC)
+        && hasManyZones){
+            openZoneDesc =  hmAux.get(TK_TicketDao.OPEN_ZONE_DESC);
+        }
+        //
         return new MyActions(
             MyActions.MY_ACTION_TYPE_TICKET,
             processPk,
@@ -1508,6 +1547,7 @@ public class TK_Ticket implements Cloneable, Serializable {
             hmAux.get(TK_Ticket_StepDao.STEP_DESC),
             ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.OPEN_SITE_CODE)),
             hmAux.get(TK_TicketDao.OPEN_SITE_DESC),
+            openZoneDesc,
             clientInf,
             contractInf,
             null,

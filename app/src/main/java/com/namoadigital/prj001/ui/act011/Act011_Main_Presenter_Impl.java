@@ -69,6 +69,7 @@ import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Form;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.model.TSave_Rec;
+import com.namoadigital.prj001.model.auxiliar.FormLocalSiteZoneObj;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Local_Sql_005;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Field_MULTI_SqlSpecification;
@@ -343,7 +344,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 //
                 MdTag tagInfo = getTag(customForm.getTag_operational_code());
                 //Resgata dados do site. O site usado pode ser o logado ou do serial, caso existe e esteja alocado
-                MD_Site siteInfo = getSiteInfo(customForm.getCustomer_code(),Integer.parseInt(product_code),serial_id);
+                FormLocalSiteZoneObj siteZoneInfo = getSiteInfo(customForm.getCustomer_code(),Integer.parseInt(product_code),serial_id);
                 //
                 customFormLocal = new GE_Custom_Form_Local();
 
@@ -381,9 +382,15 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 customFormLocal.setTicket_seq_tmp(mTicket_seq_tmp);
                 customFormLocal.setStep_code(mStep_code);
                 //LUCHE - 25/05/2021
-                customFormLocal.setSite_code(siteInfo != null ? ToolBox_Inf.convertStringToInt(siteInfo.getSite_code()) : 0);
-                customFormLocal.setSite_id(siteInfo != null ? siteInfo.getSite_id() : "");
-                customFormLocal.setSite_desc(siteInfo != null ? siteInfo.getSite_desc() : "");
+                customFormLocal.setSite_code(siteZoneInfo != null ? siteZoneInfo.getSite_code() : 0);
+                customFormLocal.setSite_id(siteZoneInfo != null ? siteZoneInfo.getSite_id() : "");
+                customFormLocal.setSite_desc(siteZoneInfo != null ? siteZoneInfo.getSite_desc() : "");
+                if(siteZoneInfo.getZone_code() != null
+                &&siteZoneInfo.getZone_code() > 0 ){
+                    customFormLocal.setZone_code(siteZoneInfo != null ? siteZoneInfo.getZone_code() : 0);
+                    customFormLocal.setZone_id(siteZoneInfo != null ? siteZoneInfo.getZone_id() : "");
+                    customFormLocal.setZone_desc(siteZoneInfo != null ? siteZoneInfo.getZone_desc() : "");
+                }
                 //LUCHE - 30/09/2021
                 customFormLocal.setIs_so(customForm.getIs_so());
                 customFormLocal.setSo_edit_start_end(customForm.getSo_edit_start_end());
@@ -1313,8 +1320,9 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
      * @param serial_id
      * @return
      */
-    private MD_Site getSiteInfo(long customer_code, int productCode, String serial_id) {
+    private FormLocalSiteZoneObj getSiteInfo(long customer_code, int productCode, String serial_id) {
         String siteCode = ToolBox_Con.getPreference_Site_Code(context);
+        FormLocalSiteZoneObj siteObjInfo = null;
         if (serial_id != null && !serial_id.isEmpty()) {
             MD_Product_Serial md_product_serialAux = md_product_serialDao.getByString(
                 new MD_Product_Serial_Sql_002(
@@ -1326,9 +1334,29 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             //
             if (md_product_serialAux != null) {
                 siteCode = md_product_serialAux.getSite_code() != null ? String.valueOf(md_product_serialAux.getSite_code()) : ToolBox_Con.getPreference_Site_Code(context);
+                siteObjInfo  = new FormLocalSiteZoneObj(
+                        customer_code,
+                        md_product_serialAux.getSite_code(),
+                        md_product_serialAux.getSite_id(),
+                        md_product_serialAux.getSite_desc(),
+                        md_product_serialAux.getZone_code(),
+                        md_product_serialAux.getZone_id(),
+                        md_product_serialAux.getZone_desc()
+                );
+            }else{
+                MD_Site mdSite = ToolBox_Inf.getSiteObjInfo(context, siteCode);
+                siteObjInfo  = new FormLocalSiteZoneObj(
+                        customer_code,
+                        Integer.parseInt(mdSite.getSite_code()),
+                        mdSite.getSite_id(),
+                        mdSite.getSite_desc(),
+                        null,
+                        null,
+                        null
+                );
             }
+            //
         }
-        MD_Site siteObjInfo = ToolBox_Inf.getSiteObjInfo(context, siteCode);
         //
         return siteObjInfo;
     }

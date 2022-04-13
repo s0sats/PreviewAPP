@@ -19,6 +19,7 @@ data class MyActions(
         val focusStepDesc: String?,
         val siteCode: Int? = null,
         val siteDesc: String?,
+        val zoneDesc: String?,
         val clientInfo: String?,
         val contractInfo: String?,
         val serviceOrderCode: String?,
@@ -47,6 +48,12 @@ data class MyActions(
         return processPk.split(".")
     }
 
+    fun getFormattedSiteZoneDesc(): String? {
+        return zoneDesc?.let{
+            "$siteDesc | $zoneDesc"
+        }?: siteDesc
+    }
+
     fun getAllFieldForFilter() : String{
         return  "$processId|" +
                 "$processStatusTrans|" +
@@ -58,6 +65,7 @@ data class MyActions(
                 "$processDesc|" +
                 "$focusStepDesc|" +
                 "$siteDesc|" +
+                "$zoneDesc|" +
                 "$clientInfo|" +
                 "$contractInfo|" +
                 "$serviceOrderCode"

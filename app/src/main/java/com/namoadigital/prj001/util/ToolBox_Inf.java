@@ -222,6 +222,7 @@ import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Sql_003;
 import com.namoadigital.prj001.sql.MD_Site_Sql_Footer;
 import com.namoadigital.prj001.sql.MD_Site_Sql_SS_002;
+import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_002;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_003;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_SS;
 import com.namoadigital.prj001.sql.MdTagSql001;
@@ -4044,7 +4045,27 @@ public class ToolBox_Inf {
         return matcher.matches();
 
     }
-
+    //
+    public static boolean hasSiteManyZones(Context context, Integer siteCode) {
+        if(siteCode != null){
+            MD_Site_ZoneDao mdSiteZoneDao = new MD_Site_ZoneDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+            );
+            //
+            List<MD_Site_Zone> zones = mdSiteZoneDao.query(
+                    new MD_Site_Zone_Sql_002(
+                            ToolBox_Con.getPreference_Customer_Code(context),
+                            siteCode
+                    ).toSqlQuery()
+            );
+            //
+            return zones != null && zones.size() > 1;
+        }
+        return false;
+    }
+    //
     private static class GenericExtFilter implements FilenameFilter {
         private String[] exts;
 

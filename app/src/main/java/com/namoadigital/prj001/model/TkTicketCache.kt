@@ -28,6 +28,8 @@ class TkTicketCache(
         var contract_desc: String?,
         var open_site_code: Int,
         var open_site_desc: String,
+        var open_zone_code: Int?,
+        var open_zone_desc: String?,
         var open_operation_code: Int,
         var open_operation_desc: String,
         var open_product_code: Int,
@@ -45,6 +47,14 @@ class TkTicketCache(
 ){
     fun toMyActionsObj(context: Context, lastSelectedActionPk: String?): MyActions{
         val statusTrad = ConstantBaseApp.HMAUX_TRANS_LIB?.get(ticket_status) ?: ticket_status
+        //
+        var openZoneDesc = open_zone_code?.let {
+                if (ToolBox_Inf.hasSiteManyZones(context, open_site_code)){
+                        "$open_zone_desc"
+                }else{
+                        null
+                }
+        }
         //
         val processPk = "$ticket_prefix.$ticket_code.$scn"
         return MyActions(
@@ -64,6 +74,7 @@ class TkTicketCache(
                 step_desc,
                 open_site_code,
                 open_site_desc,
+                openZoneDesc,
                 client_id?.let { "$client_id - $client_name" },
                 contract_id?.let { "$contract_id - $contract_desc" },
                 null,

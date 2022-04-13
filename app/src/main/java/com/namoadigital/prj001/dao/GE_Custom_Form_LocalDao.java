@@ -60,6 +60,10 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
     public static final String SITE_ID = "site_id";
     public static final String SITE_DESC = "site_desc";
 
+    public static final String ZONE_CODE = "zone_code";
+    public static final String ZONE_ID = "zone_id";
+    public static final String ZONE_DESC = "zone_desc";
+
     public static final String IO_CONTROL = "io_control";
     public static final String INBOUND_AUTO_CREATE = "inbound_auto_create";
 
@@ -684,6 +688,25 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             custom_form_local.setSite_code(cursor.getInt(cursor.getColumnIndex(SITE_CODE)));
             custom_form_local.setSite_id(cursor.getString(cursor.getColumnIndex(SITE_ID)));
             custom_form_local.setSite_desc(cursor.getString(cursor.getColumnIndex(SITE_DESC)));
+            //
+            if (cursor.isNull(cursor.getColumnIndex(ZONE_CODE))) {
+                custom_form_local.setZone_code(null);
+            } else {
+                custom_form_local.setZone_code(cursor.getInt(cursor.getColumnIndex(ZONE_CODE)));
+            }
+            //
+            if (cursor.isNull(cursor.getColumnIndex(ZONE_ID))) {
+                custom_form_local.setZone_id(null);
+            } else {
+                custom_form_local.setZone_id(cursor.getString(cursor.getColumnIndex(ZONE_ID)));
+            }
+            //
+            if (cursor.isNull(cursor.getColumnIndex(ZONE_DESC))) {
+                custom_form_local.setZone_desc(null);
+            } else {
+                custom_form_local.setZone_desc(cursor.getString(cursor.getColumnIndex(ZONE_DESC)));
+            }
+            //
             custom_form_local.setIo_control(cursor.getInt(cursor.getColumnIndex(IO_CONTROL)));
             custom_form_local.setInbound_auto_create(cursor.getInt(cursor.getColumnIndex(INBOUND_AUTO_CREATE)));
             custom_form_local.setOperation_code(cursor.getInt(cursor.getColumnIndex(OPERATION_CODE)));
@@ -875,6 +898,11 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             if (custom_form_local.getSite_desc() != null) {
                 contentValues.put(SITE_DESC, custom_form_local.getSite_desc());
             }
+
+            contentValues.put(ZONE_CODE, custom_form_local.getZone_code());
+            contentValues.put(ZONE_ID, custom_form_local.getZone_id());
+            contentValues.put(ZONE_DESC, custom_form_local.getZone_desc());
+
             if (custom_form_local.getIo_control() > -1) {
                 contentValues.put(IO_CONTROL, custom_form_local.getIo_control());
             }

@@ -4,6 +4,8 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteException
+import androidx.core.database.getIntOrNull
+import androidx.core.database.getStringOrNull
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
@@ -46,6 +48,8 @@ class TkTicketCacheDao(
         const val CONTRACT_DESC = "contract_desc"
         const val OPEN_SITE_CODE = "open_site_code"
         const val OPEN_SITE_DESC = "open_site_desc"
+        const val OPEN_ZONE_CODE = "open_zone_code"
+        const val OPEN_ZONE_DESC = "open_zone_desc"
         const val OPEN_OPERATION_CODE = "open_operation_code"
         const val OPEN_OPERATION_DESC = "open_operation_desc"
         const val OPEN_PRODUCT_CODE = "open_product_code"
@@ -322,6 +326,10 @@ class TkTicketCacheDao(
                     if(ticketCache.open_site_code > -1){
                         put(OPEN_SITE_CODE,ticketCache.open_site_code)
                     }
+
+                    put(OPEN_ZONE_CODE,ticketCache.open_zone_code)
+                    put(OPEN_ZONE_DESC,ticketCache.open_zone_desc)
+
                      if(ticketCache.open_operation_code > -1){
                         put(OPEN_OPERATION_CODE,ticketCache.open_operation_code)
                     }
@@ -375,28 +383,30 @@ class TkTicketCacheDao(
                             type_desc = getString(getColumnIndex(TYPE_DESC)),
                             user_focus = getInt(getColumnIndex(USER_FOCUS)),
                             order_by = getLong(getColumnIndex(ORDER_BY)),
-                            client_code = getInt(getColumnIndex(CLIENT_CODE)),
-                            client_id = getString(getColumnIndex(CLIENT_ID)),
-                            client_name = getString(getColumnIndex(CLIENT_NAME)),
-                            contract_code = getInt(getColumnIndex(CONTRACT_CODE)),
-                            contract_id = getString(getColumnIndex(CONTRACT_ID)),
-                            contract_desc = getString(getColumnIndex(CONTRACT_DESC)),
+                            client_code = getIntOrNull(getColumnIndex(CLIENT_CODE)),
+                            client_id = getStringOrNull(getColumnIndex(CLIENT_ID)),
+                            client_name = getStringOrNull(getColumnIndex(CLIENT_NAME)),
+                            contract_code = getIntOrNull(getColumnIndex(CONTRACT_CODE)),
+                            contract_id = getStringOrNull(getColumnIndex(CONTRACT_ID)),
+                            contract_desc = getStringOrNull(getColumnIndex(CONTRACT_DESC)),
                             open_site_code = getInt(getColumnIndex(OPEN_SITE_CODE)),
                             open_site_desc = getString(getColumnIndex(OPEN_SITE_DESC)),
+                            open_zone_code = getIntOrNull(getColumnIndex(OPEN_ZONE_CODE)),
+                            open_zone_desc = getStringOrNull(getColumnIndex(OPEN_ZONE_DESC)),
                             open_operation_code = getInt(getColumnIndex(OPEN_OPERATION_CODE)),
                             open_operation_desc = getString(getColumnIndex(OPEN_OPERATION_DESC)),
                             open_product_code = getInt(getColumnIndex(OPEN_PRODUCT_CODE)),
                             open_product_desc = getString(getColumnIndex(OPEN_PRODUCT_DESC)),
                             open_serial_id = getString(getColumnIndex(OPEN_SERIAL_ID)),
-                            current_step_order = getInt(getColumnIndex(CURRENT_STEP_ORDER)),
+                            current_step_order = getIntOrNull(getColumnIndex(CURRENT_STEP_ORDER)),
                             ticket_status = getString(getColumnIndex(TICKET_STATUS)),
                             origin_type = getString(getColumnIndex(ORIGIN_TYPE)),
                             origin_desc = getString(getColumnIndex(ORIGIN_DESC)),
-                            step_desc = getString(getColumnIndex(STEP_DESC)),
-                            forecast_start = getString(getColumnIndex(FORECAST_START)),
-                            forecast_end = getString(getColumnIndex(FORECAST_END)),
+                            step_desc = getStringOrNull(getColumnIndex(STEP_DESC)),
+                            forecast_start = getStringOrNull(getColumnIndex(FORECAST_START)),
+                            forecast_end = getStringOrNull(getColumnIndex(FORECAST_END)),
                             step_count = getInt(getColumnIndex(STEP_COUNT)),
-                            step_order_seq = getInt(getColumnIndex(STEP_ORDER_SEQ))
+                            step_order_seq = getIntOrNull(getColumnIndex(STEP_ORDER_SEQ))
                     )
                 }
             }

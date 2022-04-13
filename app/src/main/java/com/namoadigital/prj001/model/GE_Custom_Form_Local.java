@@ -50,6 +50,9 @@ public class GE_Custom_Form_Local {
     private int site_code;
     private String site_id;
     private String site_desc;
+    private Integer zone_code;
+    private String zone_id;
+    private String zone_desc;
     private int io_control;
     private int inbound_auto_create;
     private int operation_code;
@@ -59,7 +62,7 @@ public class GE_Custom_Form_Local {
     private int product_io_control;
     private int site_restriction;
     private String serial_rule;
-    private Integer serial_min_length;
+    private Integer serial_min_length   ;
     private Integer serial_max_length;
     private String schedule_comments;
     //Campos novo agendamento
@@ -328,6 +331,30 @@ public class GE_Custom_Form_Local {
 
     public void setSite_desc(String site_desc) {
         this.site_desc = site_desc;
+    }
+
+    public Integer getZone_code() {
+        return zone_code;
+    }
+
+    public void setZone_code(Integer zone_code) {
+        this.zone_code = zone_code;
+    }
+
+    public String getZone_id() {
+        return zone_id;
+    }
+
+    public void setZone_id(String zone_id) {
+        this.zone_id = zone_id;
+    }
+
+    public String getZone_desc() {
+        return zone_desc;
+    }
+
+    public void setZone_desc(String zone_desc) {
+        this.zone_desc = zone_desc;
     }
 
     public int getIo_control() {
@@ -607,6 +634,17 @@ public class GE_Custom_Form_Local {
                     "yyyyMMddHHmm"
             );
         }
+        String formattedZone = null;
+        //
+        boolean hasManyZones = false;
+        int siteCode = ToolBox_Inf.convertStringToInt(hmAux.get(GE_Custom_Form_LocalDao.SITE_CODE));
+        if(siteCode > 0){
+            hasManyZones = ToolBox_Inf.hasSiteManyZones(context, siteCode);
+        }
+        //
+        if(hmAux.hasConsistentValue(GE_Custom_Form_LocalDao.ZONE_DESC) && hasManyZones){
+            formattedZone = hmAux.get(GE_Custom_Form_LocalDao.ZONE_DESC);
+        }
         //
         MyActions myActions = new MyActions(
             MyActions.MY_ACTION_TYPE_FORM,
@@ -625,6 +663,7 @@ public class GE_Custom_Form_Local {
             null,
             ToolBox_Inf.convertStringToInt(hmAux.get(GE_Custom_Form_LocalDao.SITE_CODE)),
             hmAux.get(GE_Custom_Form_LocalDao.SITE_DESC),
+                formattedZone,
             null,
             null,
             soInfo,
