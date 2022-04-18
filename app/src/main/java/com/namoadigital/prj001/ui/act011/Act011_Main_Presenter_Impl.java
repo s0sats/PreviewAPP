@@ -382,7 +382,9 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 customFormLocal.setTicket_seq_tmp(mTicket_seq_tmp);
                 customFormLocal.setStep_code(mStep_code);
                 //LUCHE - 25/05/2021
-                customFormLocal.setSite_code(siteZoneInfo != null ? siteZoneInfo.getSite_code() : 0);
+                if (siteZoneInfo != null) {
+                    customFormLocal.setSite_code(siteZoneInfo.getSite_code() != null ? siteZoneInfo.getSite_code() : 0);
+                }
                 customFormLocal.setSite_id(siteZoneInfo != null ? siteZoneInfo.getSite_id() : "");
                 customFormLocal.setSite_desc(siteZoneInfo != null ? siteZoneInfo.getSite_desc() : "");
                 if(siteZoneInfo.getZone_code() != null

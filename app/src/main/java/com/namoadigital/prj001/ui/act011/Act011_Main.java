@@ -287,7 +287,7 @@ public class Act011_Main extends Base_Activity
     CustomFF.ICustomFFInformUserValueChange form_non_compliance_photo_required_toast = new CustomFF.ICustomFFInformUserValueChange() {
         @Override
         public void onShowToast() {
-            Toast.makeText(context, hmAux_Trans.get("form_non_compliance_photo_required_toast"), Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, hmAux_Trans.get("form_non_compliance_photo_required_toast"), Toast.LENGTH_LONG).show();
         }
     };
 
@@ -3499,8 +3499,10 @@ public class Act011_Main extends Base_Activity
                     @Override
                     public void reportTextChange(String s) {
                         binding.act011DialogCheckBtnOk.setEnabled(s != null && !s.isEmpty());
-                        if(s!= null && s.isEmpty()) {
+                        if(s!= null && s.isEmpty()
+                        ) {
                             binding.act011DialogCheckMkedtJustifyMissingAnswerVal.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.font_required)));
+
                         }
                     }
                     @Override
