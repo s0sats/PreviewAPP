@@ -384,14 +384,18 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 //LUCHE - 25/05/2021
                 if (siteZoneInfo != null) {
                     customFormLocal.setSite_code(siteZoneInfo.getSite_code() != null ? siteZoneInfo.getSite_code() : 0);
-                }
-                customFormLocal.setSite_id(siteZoneInfo != null ? siteZoneInfo.getSite_id() : "");
-                customFormLocal.setSite_desc(siteZoneInfo != null ? siteZoneInfo.getSite_desc() : "");
-                if(siteZoneInfo.getZone_code() != null
-                &&siteZoneInfo.getZone_code() > 0 ){
-                    customFormLocal.setZone_code(siteZoneInfo != null ? siteZoneInfo.getZone_code() : 0);
-                    customFormLocal.setZone_id(siteZoneInfo != null ? siteZoneInfo.getZone_id() : "");
-                    customFormLocal.setZone_desc(siteZoneInfo != null ? siteZoneInfo.getZone_desc() : "");
+                    customFormLocal.setSite_id(siteZoneInfo.getSite_id() != null ? siteZoneInfo.getSite_id() : "");
+                    customFormLocal.setSite_desc(siteZoneInfo.getSite_desc() != null ? siteZoneInfo.getSite_desc() : "");
+                    if(siteZoneInfo.getZone_code() != null
+                            &&siteZoneInfo.getZone_code() > 0 ){
+                        customFormLocal.setZone_code(siteZoneInfo.getZone_code());
+                        customFormLocal.setZone_id(siteZoneInfo.getZone_id());
+                        customFormLocal.setZone_desc(siteZoneInfo.getZone_desc());
+                    } else {
+                        customFormLocal.setZone_code(0);
+                        customFormLocal.setZone_id("");
+                        customFormLocal.setZone_desc("");
+                    }
                 }
                 //LUCHE - 30/09/2021
                 customFormLocal.setIs_so(customForm.getIs_so());
