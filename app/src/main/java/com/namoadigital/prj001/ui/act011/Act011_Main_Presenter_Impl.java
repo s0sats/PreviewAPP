@@ -1338,8 +1338,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 ).toSqlQuery()
             );
             //
-            if (md_product_serialAux != null) {
-                siteCode = md_product_serialAux.getSite_code() != null ? String.valueOf(md_product_serialAux.getSite_code()) : ToolBox_Con.getPreference_Site_Code(context);
+            if (md_product_serialAux != null
+            && md_product_serialAux.getSite_code() != null) {
                 siteObjInfo  = new FormLocalSiteZoneObj(
                         customer_code,
                         md_product_serialAux.getSite_code(),
@@ -1350,7 +1350,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                         md_product_serialAux.getZone_desc()
                 );
             }else{
-                MD_Site mdSite = ToolBox_Inf.getSiteObjInfo(context, siteCode);
+                MD_Site mdSite = ToolBox_Inf.getSiteObjInfo(context, ToolBox_Con.getPreference_Site_Code(context));
                 siteObjInfo  = new FormLocalSiteZoneObj(
                         customer_code,
                         Integer.parseInt(mdSite.getSite_code()),

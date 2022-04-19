@@ -5,6 +5,8 @@ import android.content.Context;
 import androidx.annotation.Nullable;
 
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -594,16 +596,16 @@ public class MD_Schedule_Exec {
             );
         }
         //
-        String formattedZone = null;
-        //
-        boolean hasManyZones = false;
-        if(site_code > 0){
-            hasManyZones = ToolBox_Inf.hasSiteManyZones(context, site_code);
-        }
-        //
-        if(zone_desc != null && hasManyZones){
-            formattedZone = zone_desc;
-        }
+        String formattedZone = ToolBox_Inf.getProductSerialZone(
+                context,
+                site_code,
+                zone_desc,
+                new MD_Product_SerialDao(context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM),
+                product_code,
+                serial_id
+        );
         //
         String processPk = ToolBox_Inf.formatSchedulePk(schedule_prefix, schedule_code, schedule_exec);
         boolean isLastSelectedItem = processPk.equals(lastScheduleSelected);

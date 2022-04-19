@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import com.google.gson.annotations.Expose;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
@@ -1488,7 +1489,6 @@ public class TK_Ticket implements Cloneable, Serializable {
         String orderByDate = hmAux.get(TK_TicketDao.FORECAST_DATE);
         String periodStartDate = hmAux.get(TK_TicketDao.FORECAST_DATE);
         String lateDate = hmAux.get(TK_TicketDao.FORECAST_DATE);
-
         //
         if(hmAux.hasConsistentValue(TK_Ticket_StepDao.FORECAST_START)
            && hmAux.hasConsistentValue(TK_Ticket_StepDao.FORECAST_END)
@@ -1520,14 +1520,17 @@ public class TK_Ticket implements Cloneable, Serializable {
 
         String openZoneDesc = null;
         //
-        boolean hasManyZones = false;
         if(hmAux.hasConsistentValue(TK_TicketDao.OPEN_SITE_CODE)){
-            hasManyZones = ToolBox_Inf.hasSiteManyZones(context, Integer.parseInt(hmAux.get(TK_TicketDao.OPEN_SITE_CODE)));
-        }
-        //
-        if(hmAux.hasConsistentValue(TK_TicketDao.OPEN_ZONE_DESC)
-        && hasManyZones){
-            openZoneDesc =  hmAux.get(TK_TicketDao.OPEN_ZONE_DESC);
+            openZoneDesc = ToolBox_Inf.getProductSerialZone(
+                    context,
+                    Integer.parseInt(hmAux.get(TK_TicketDao.OPEN_SITE_CODE)),
+                    hmAux.get(TK_TicketDao.OPEN_ZONE_CODE),
+                    new MD_Product_SerialDao(context,
+                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                            Constant.DB_VERSION_CUSTOM),
+                    hmAux.hasConsistentValue(TK_TicketDao.OPEN_PRODUCT_CODE)? Long.parseLong(hmAux.get(TK_TicketDao.OPEN_PRODUCT_CODE)) : 0,
+                    hmAux.get(TK_TicketDao.OPEN_SERIAL_ID)
+            );
         }
         //
         return new MyActions(

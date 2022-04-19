@@ -8,8 +8,12 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.sql.SqlAct084_004;
+import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
@@ -634,17 +638,17 @@ public class GE_Custom_Form_Local {
                     "yyyyMMddHHmm"
             );
         }
-        String formattedZone = null;
         //
-        boolean hasManyZones = false;
-        int siteCode = ToolBox_Inf.convertStringToInt(hmAux.get(GE_Custom_Form_LocalDao.SITE_CODE));
-        if(siteCode > 0){
-            hasManyZones = ToolBox_Inf.hasSiteManyZones(context, siteCode);
-        }
-        //
-        if(hmAux.hasConsistentValue(GE_Custom_Form_LocalDao.ZONE_DESC) && hasManyZones){
-            formattedZone = hmAux.get(GE_Custom_Form_LocalDao.ZONE_DESC);
-        }
+        String formattedZone = ToolBox_Inf.getProductSerialZone(
+                context,
+                ToolBox_Inf.convertStringToInt(hmAux.get(GE_Custom_Form_LocalDao.SITE_CODE)),
+                hmAux.get(GE_Custom_Form_LocalDao.ZONE_DESC),
+                new MD_Product_SerialDao(context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM),
+                hmAux.hasConsistentValue(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE) ? Long.parseLong(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE)): 0,
+                hmAux.get(TK_TicketDao.OPEN_SERIAL_ID)
+        );
         //
         MyActions myActions = new MyActions(
             MyActions.MY_ACTION_TYPE_FORM,
