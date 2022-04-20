@@ -50,7 +50,11 @@ data class MyActions(
 
     fun getFormattedSiteZoneDesc(): String? {
         return zoneDesc?.let{
-            "$siteDesc | $zoneDesc"
+            if(it.isNotEmpty()) {
+                "$siteDesc | $zoneDesc"
+            }else{
+                siteDesc
+            }
         }?: siteDesc
     }
 
