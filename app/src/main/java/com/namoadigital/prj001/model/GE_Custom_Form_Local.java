@@ -9,7 +9,6 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
-import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.sql.SqlAct084_004;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -647,7 +646,7 @@ public class GE_Custom_Form_Local {
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM),
                 hmAux.hasConsistentValue(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE) ? Long.parseLong(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE)): 0,
-                hmAux.get(TK_TicketDao.OPEN_SERIAL_ID)
+                hmAux.get(GE_Custom_Form_LocalDao.SERIAL_ID)
         );
         //
         MyActions myActions = new MyActions(
