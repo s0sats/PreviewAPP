@@ -3527,7 +3527,9 @@ public class Act011_Main extends Base_Activity
                     }
                     @Override
                     public void reportTextChange(String s, boolean b) {
-                        binding.act011DialogCheckBtnOk.setEnabled(s != null && !s.isEmpty());
+                        if(formLocal.getSo_optional_justify_problem() == 0) {
+                            binding.act011DialogCheckBtnOk.setEnabled(s != null && !s.isEmpty());
+                        }
                         if(s!= null
                         && b){
                             if (s.isEmpty() && formLocal.getSo_optional_justify_problem() == 0) {
