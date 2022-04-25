@@ -9296,10 +9296,8 @@ public class ToolBox_Inf {
         }
         //
         MD_Product_Serial productSerial = getProductSerial(context, dao, productCode, serialId);
-        if(productSerial != null
-            && productSerial.getSite_code() != null
-        ){
-            if(siteCode == productSerial.getSite_code()) {
+        if(productSerial != null){
+            if(productSerial.getSite_code() != null &&  siteCode == productSerial.getSite_code()) {
                 return productSerial.getZone_desc();
             }
             return null;

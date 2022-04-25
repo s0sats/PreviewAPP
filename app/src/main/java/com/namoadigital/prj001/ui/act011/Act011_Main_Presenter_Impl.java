@@ -1350,20 +1350,29 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                         md_product_serialAux.getZone_desc()
                 );
             }else{
-                MD_Site mdSite = ToolBox_Inf.getSiteObjInfo(context, ToolBox_Con.getPreference_Site_Code(context));
-                siteObjInfo  = new FormLocalSiteZoneObj(
-                        customer_code,
-                        Integer.parseInt(mdSite.getSite_code()),
-                        mdSite.getSite_id(),
-                        mdSite.getSite_desc(),
-                        null,
-                        null,
-                        null
-                );
+                siteObjInfo = getFormLocalPreferenceSiteZoneObj(customer_code, siteCode);
             }
             //
+        }else{
+            siteObjInfo = getFormLocalPreferenceSiteZoneObj(customer_code, siteCode);
         }
         //
+        return siteObjInfo;
+    }
+
+    @NonNull
+    private FormLocalSiteZoneObj getFormLocalPreferenceSiteZoneObj(long customer_code, String siteCode) {
+        FormLocalSiteZoneObj siteObjInfo;
+        MD_Site mdSite = ToolBox_Inf.getSiteObjInfo(context, siteCode);
+        siteObjInfo = new FormLocalSiteZoneObj(
+                customer_code,
+                Integer.parseInt(mdSite.getSite_code()),
+                mdSite.getSite_id(),
+                mdSite.getSite_desc(),
+                null,
+                null,
+                null
+        );
         return siteObjInfo;
     }
 

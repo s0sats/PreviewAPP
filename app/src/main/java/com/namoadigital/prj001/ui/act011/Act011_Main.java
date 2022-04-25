@@ -44,6 +44,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -3494,20 +3496,44 @@ public class Act011_Main extends Base_Activity
     }
 
     private void setDialogAction(Act011CheckDialogBinding binding, AlertDialog alertDialog) {
+        if (binding.act011DialogCheckMkedtJustifyMissingAnswerVal != null) {
+            binding.act011DialogCheckMkedtJustifyMissingAnswerVal.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    String mText = binding.act011DialogCheckMkedtJustifyMissingAnswerVal.getText().toString();
+                    if (!hasFocus) {
+                        binding.act011DialogCheckMkedtJustifyMissingAnswerVal.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(mText != null && !mText.isEmpty()) {
+                                    DrawableCompat.setTintList(binding.act011DialogCheckMkedtJustifyMissingAnswerVal.getBackground(), ColorStateList.valueOf(ContextCompat.getColor(context, R.color.namoa_color_gray_9)));
+                                }else{
+                                    if(formLocal.getSo_optional_justify_problem() == 0) {
+                                        DrawableCompat.setTintList(binding.act011DialogCheckMkedtJustifyMissingAnswerVal.getBackground(), ColorStateList.valueOf(ContextCompat.getColor(context, R.color.font_required)));
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        }
+        //
         binding.act011DialogCheckMkedtJustifyMissingAnswerVal.setOnReportTextChangeListner(
                 new MKEditTextNM.IMKEditTextChangeText() {
                     @Override
                     public void reportTextChange(String s) {
-                        binding.act011DialogCheckBtnOk.setEnabled(s != null && !s.isEmpty());
-                        if(s!= null && s.isEmpty()
-                        ) {
-                            binding.act011DialogCheckMkedtJustifyMissingAnswerVal.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.font_required)));
 
-                        }
                     }
                     @Override
                     public void reportTextChange(String s, boolean b) {
-
+                        binding.act011DialogCheckBtnOk.setEnabled(s != null && !s.isEmpty());
+                        if(s!= null
+                        && b){
+                            if (s.isEmpty() && formLocal.getSo_optional_justify_problem() == 0) {
+                                DrawableCompat.setTintList(binding.act011DialogCheckMkedtJustifyMissingAnswerVal.getBackground(), ColorStateList.valueOf(ContextCompat.getColor(context, R.color.font_required)));
+                            }
+                        }
                     }
                 }
         );
@@ -3580,6 +3606,7 @@ public class Act011_Main extends Base_Activity
         binding.act011DialogCheckMkdateFormEnd.setOnSelectedValue(new MkDateTime.IMKDateTimeValueChange() {
             @Override
             public void onChangeValue(String s) {
+                clearMkEdtJustifyMissingAnswerValFocus(binding.act011DialogCheckMkedtJustifyMissingAnswerVal);
                 if(validEndDate(binding)){
                     binding.act011DialogCheckTvElapsedTimeVal.setText(getFormElapsedTimeFormatted(s));
                 }else{
@@ -3598,7 +3625,7 @@ public class Act011_Main extends Base_Activity
         binding.ssSerialClass.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
             @Override
             public void onItemPreSelected(HMAux hmAux) {
-
+                clearMkEdtJustifyMissingAnswerValFocus(binding.act011DialogCheckMkedtJustifyMissingAnswerVal);
             }
 
             @Override
@@ -3606,6 +3633,12 @@ public class Act011_Main extends Base_Activity
                 ToolBox_Inf.setClassIcon(context, hmAux, binding.ivSerialClassIcon);
             }
         });
+    }
+
+    private void clearMkEdtJustifyMissingAnswerValFocus(MKEditTextNM mkEditTextNM) {
+        if(mkEditTextNM != null) {
+            mkEditTextNM.clearFocus();
+        }
     }
 
     private boolean isFinalizeDialogInputValid(com.namoadigital.prj001.databinding.Act011CheckDialogBinding binding) {
@@ -3688,7 +3721,7 @@ public class Act011_Main extends Base_Activity
             binding.act011DialogCheckTvJustifyMissingAnswerLbl.setText(hmAux_Trans.get("dialog_finalize_os_form_justify_missing_answer_lbl"));
             if(formLocal.getSo_optional_justify_problem() == 0) {
                 TextViewKt.setAsRequired(binding.act011DialogCheckTvJustifyMissingAnswerLbl, true);
-                binding.act011DialogCheckMkedtJustifyMissingAnswerVal.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.font_required)));
+                DrawableCompat.setTintList(binding.act011DialogCheckMkedtJustifyMissingAnswerVal.getBackground(), ColorStateList.valueOf(ContextCompat.getColor(context, R.color.font_required)));
             }
             //
             setSerialClass(binding);
