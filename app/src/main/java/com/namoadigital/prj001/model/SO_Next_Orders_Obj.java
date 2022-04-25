@@ -35,6 +35,8 @@ public class SO_Next_Orders_Obj {
     private String add_inf5;
     private String add_inf6;
     private String client_so_id;
+    private int priority_code;
+    private String priority_desc;
 
     public String getSo_prefix() {
         return so_prefix;
@@ -292,6 +294,22 @@ public class SO_Next_Orders_Obj {
         this.client_so_id = client_so_id;
     }
 
+    public int getPriority_code() {
+        return priority_code;
+    }
+
+    public void setPriority_code(int priority_code) {
+        this.priority_code = priority_code;
+    }
+
+    public String getPriority_desc() {
+        return priority_desc;
+    }
+
+    public void setPriority_desc(String priority_desc) {
+        this.priority_desc = priority_desc;
+    }
+
     /**
      * LUCHE - 17/03/2021
      * Metodo que retorna todos os campos filtraveis e que será usado no filtro da
@@ -315,7 +333,8 @@ public class SO_Next_Orders_Obj {
                 brand_model_color+ "|" +
                 segment_category_price + "|"+
                 pipeline_desc + "|"+
-                client_so_id + "|"
+                client_so_id + "|" +
+                priority_desc + "|"
                     /*+
                 comments+ "|" +
                 service+ "|" +
