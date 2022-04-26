@@ -510,8 +510,10 @@ public class Act011_Main extends Base_Activity
         transList.add("dialog_finalize_os_form_start_date_lbl");
         transList.add("dialog_finalize_os_form_end_date_lbl");
         //
+        transList.add("dialog_finalize_so_form_invalid_ttl");
         transList.add("dialog_finalize_os_form_invalid_end_date_ttl");
         transList.add("dialog_finalize_os_form_invalid_end_date_end");
+        transList.add("dialog_finalize_so_form_serial_empty_class_error");
         transList.add("dialog_finalize_serial_class_lbl");
         //
         transList.add("alert_error_order_or_structure_not_found_ttl");
@@ -3543,7 +3545,8 @@ public class Act011_Main extends Base_Activity
             @Override
             public void onClick(View v) {
                 if(isFormOs) {
-                    if(isFinalizeDialogInputValid(binding)) {
+                    String errorMsg = isFinalizeDialogInputValid(binding);
+                    if(errorMsg.isEmpty()) {
                         String missingAnswer = binding.act011DialogCheckTilJustifyMissingAnswerVal.getEditText().getText().toString();
                         //LUCHE - 08/11/2021 - resgata contador antes para ser usado na validação
                         //de refreshCurrentTabRecycle. Se não há mais não respondidos(segunda chama),
@@ -3580,8 +3583,8 @@ public class Act011_Main extends Base_Activity
                     }else{
                         ToolBox.alertMSG(
                             context,
-                            hmAux_Trans.get("dialog_finalize_os_form_invalid_end_date_ttl"),
-                            hmAux_Trans.get("dialog_finalize_os_form_invalid_end_date_end"),
+                            hmAux_Trans.get("dialog_finalize_so_form_invalid_ttl"),
+                                errorMsg,
                             null,
                             0
                         );
@@ -3643,9 +3646,18 @@ public class Act011_Main extends Base_Activity
         }
     }
 
-    private boolean isFinalizeDialogInputValid(com.namoadigital.prj001.databinding.Act011CheckDialogBinding binding) {
-        return validEndDate(binding)
-            && validSerialClass(binding);
+    private String isFinalizeDialogInputValid(com.namoadigital.prj001.databinding.Act011CheckDialogBinding binding) {
+        String errorMsg = "";
+        //
+        if(!validEndDate(binding)){
+            errorMsg = getString(R.string.unicode_bullet) + " " + hmAux_Trans.get("dialog_finalize_os_form_invalid_end_date_end") + "\n";
+        }
+        //
+        if(!validSerialClass(binding)){
+            errorMsg += getString(R.string.unicode_bullet) + " " + hmAux_Trans.get("dialog_finalize_so_form_serial_empty_class_error");
+        }
+        //
+        return errorMsg;
     }
 
     private boolean validSerialClass(Act011CheckDialogBinding binding) {
