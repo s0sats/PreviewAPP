@@ -5,10 +5,8 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.FCM_ACTION_TK_TICKET_
 import static com.namoadigital.prj001.util.ConstantBaseApp.FCM_MODULE_SYNC;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FCM_MODULE_TICKET;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_SITE_OPTION;
-import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_FOCUS_FILTER;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ONLY_MY_ACTIONS_OPTION;
-import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_PERIOD_FILTER;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_SITES_FILTER;
 import static com.namoadigital.prj001.view.frag.frg_main_home.FrgMainHome.OnFrgMainHomeIteract;
 
@@ -1401,7 +1399,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
     private void refreshTagList() {
         FrgMainHome currentFragment = (FrgMainHome) fm.findFragmentById(R.id.act005_frg_placeholder);
-        currentFragment.refreshList(getTagList( ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_PERIOD_FILTER, PREFERENCE_HOME_ALL_TIME_OPTION),
+        currentFragment.refreshList(getTagList( ToolBox_Inf.getActionTimeDefaultOption(context),
                 ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_SITES_FILTER, PREFERENCE_HOME_ALL_SITE_OPTION),
                 ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_FOCUS_FILTER, PREFERENCE_HOME_ONLY_MY_ACTIONS_OPTION)));
         currentFragment.setDatetimeVisibility();

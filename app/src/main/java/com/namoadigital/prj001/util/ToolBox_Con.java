@@ -2,7 +2,6 @@ package com.namoadigital.prj001.util;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_SITE_OPTION;
-import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ONLY_MY_ACTIONS_OPTION;
 
 import android.app.NotificationManager;
@@ -1274,7 +1273,7 @@ public class ToolBox_Con {
         //
          sharedPreferences.edit().putString(
                 Constant.PREFERENCE_HOME_PERIOD_FILTER,
-                 PREFERENCE_HOME_ALL_TIME_OPTION
+                 ToolBox_Inf.getActionTimeDefaultOption(context)
         ).apply();
         //
          sharedPreferences.edit().putString(

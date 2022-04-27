@@ -124,16 +124,16 @@ class MyActionsAdapter(
                  myAction.siteCode?.let {
                     if(ToolBox_Inf.equalsToLoggedSite(context,it.toString())){
                         visibility = View.VISIBLE
-                        text = myAction.siteDesc
+                        text = myAction.getFormattedSiteZoneDesc()
                         setTextColor(ContextCompat.getColor(context,R.color.namoa_dark_blue))
                     }else{
                         visibility = View.VISIBLE
-                        text = myAction.siteDesc //namoa_color_danger_red
+                        text = myAction.getFormattedSiteZoneDesc() //namoa_color_danger_red
                         setTextColor(ContextCompat.getColor(context,R.color.namoa_color_danger_red))
                     }
                  } ?: {
                      visibility = View.GONE
-                     text = myAction.siteDesc
+                     text = myAction.getFormattedSiteZoneDesc()
                  }
             }
         }

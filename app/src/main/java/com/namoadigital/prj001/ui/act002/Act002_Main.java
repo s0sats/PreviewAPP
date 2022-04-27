@@ -381,6 +381,9 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
             mPresenter.getAllCustomers(false);
         }else if (wsProcess.equals(PROCESS_WS_SYNC)) {
             progressDialog.dismiss();
+            //
+            mPresenter.setPeriodFilterPreference();
+            //
             callAct003(context);
             //
             ToolBox_Con.setPreference_Service(context, "SERVICE");

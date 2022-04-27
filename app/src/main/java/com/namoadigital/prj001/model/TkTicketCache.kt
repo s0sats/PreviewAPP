@@ -2,7 +2,10 @@ package com.namoadigital.prj001.model
 
 import android.content.Context
 import com.namoadigital.prj001.R
+import com.namoadigital.prj001.dao.MD_Product_SerialDao
+import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
+import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 
 class TkTicketCache(
@@ -28,6 +31,8 @@ class TkTicketCache(
         var contract_desc: String?,
         var open_site_code: Int,
         var open_site_desc: String,
+        var open_zone_code: Int?,
+        var open_zone_desc: String?,
         var open_operation_code: Int,
         var open_operation_desc: String,
         var open_product_code: Int,
@@ -45,6 +50,19 @@ class TkTicketCache(
 ){
     fun toMyActionsObj(context: Context, lastSelectedActionPk: String?): MyActions{
         val statusTrad = ConstantBaseApp.HMAUX_TRANS_LIB?.get(ticket_status) ?: ticket_status
+        //
+        val formattedZone = ToolBox_Inf.getProductSerialZone(
+                context,
+                open_site_code,
+                open_zone_desc,
+                MD_Product_SerialDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+                ),
+                open_product_code.toLong(),
+                open_serial_id
+            )
         //
         val processPk = "$ticket_prefix.$ticket_code.$scn"
         return MyActions(
@@ -64,6 +82,7 @@ class TkTicketCache(
                 step_desc,
                 open_site_code,
                 open_site_desc,
+                formattedZone,
                 client_id?.let { "$client_id - $client_name" },
                 contract_id?.let { "$contract_id - $contract_desc" },
                 null,

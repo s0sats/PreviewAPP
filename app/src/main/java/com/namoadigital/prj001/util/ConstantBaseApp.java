@@ -581,6 +581,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_EDIT = "EDIT";
     public static final String PROFILE_PRJ001_PRODUCT_SERIAL_HIDE_SERIAL_INFO = "HIDE_SERIAL_INFO";
     public static final String PROFILE_PRJ001_PRODUCT_SERIAL_FORCE_NOT_SHOW_SERIAL_INFO = "FORCE_NOT_SHOW_SERIAL_INFO";
+    public static final String PROFILE_PRJ001_PRODUCT_SERIAL_SCHEDULE_UNTIL_TODAY = "SCHEDULE_UNTIL_TODAY";
     public static final String PROFILE_PRJ001_CHECKLIST_PARAM_DONE_NEW = "DONE_NEW";
     public static final String PROFILE_PRJ001_CHECKLIST_PARAM_ITEM_CHECK_NEW = "ITEM_CHECK_NEW";
     //Profile de menus PRINCIPAIS

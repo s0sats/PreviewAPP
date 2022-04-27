@@ -60,6 +60,10 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
     public static final String SITE_ID = "site_id";
     public static final String SITE_DESC = "site_desc";
 
+    public static final String ZONE_CODE = "zone_code";
+    public static final String ZONE_ID = "zone_id";
+    public static final String ZONE_DESC = "zone_desc";
+
     public static final String IO_CONTROL = "io_control";
     public static final String INBOUND_AUTO_CREATE = "inbound_auto_create";
 
@@ -92,6 +96,7 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
     public static final String SO_ORDER_TYPE_CODE_DEFAULT = "so_order_type_code_default";
     public static final String SO_ALLOW_CHANGE_ORDER_TYPE = "so_allow_change_order_type";
     public static final String SO_ALLOW_BACKUP = "so_allow_backup";
+    public static final String SO_OPTIONAL_JUSTIFY_PROBLEM = "so_optional_justify_problem";
 
 
     public GE_Custom_Form_LocalDao(Context context, String DB_NAME, int DB_VERSION) {
@@ -683,6 +688,25 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             custom_form_local.setSite_code(cursor.getInt(cursor.getColumnIndex(SITE_CODE)));
             custom_form_local.setSite_id(cursor.getString(cursor.getColumnIndex(SITE_ID)));
             custom_form_local.setSite_desc(cursor.getString(cursor.getColumnIndex(SITE_DESC)));
+            //
+            if (cursor.isNull(cursor.getColumnIndex(ZONE_CODE))) {
+                custom_form_local.setZone_code(null);
+            } else {
+                custom_form_local.setZone_code(cursor.getInt(cursor.getColumnIndex(ZONE_CODE)));
+            }
+            //
+            if (cursor.isNull(cursor.getColumnIndex(ZONE_ID))) {
+                custom_form_local.setZone_id(null);
+            } else {
+                custom_form_local.setZone_id(cursor.getString(cursor.getColumnIndex(ZONE_ID)));
+            }
+            //
+            if (cursor.isNull(cursor.getColumnIndex(ZONE_DESC))) {
+                custom_form_local.setZone_desc(null);
+            } else {
+                custom_form_local.setZone_desc(cursor.getString(cursor.getColumnIndex(ZONE_DESC)));
+            }
+            //
             custom_form_local.setIo_control(cursor.getInt(cursor.getColumnIndex(IO_CONTROL)));
             custom_form_local.setInbound_auto_create(cursor.getInt(cursor.getColumnIndex(INBOUND_AUTO_CREATE)));
             custom_form_local.setOperation_code(cursor.getInt(cursor.getColumnIndex(OPERATION_CODE)));
@@ -768,6 +792,7 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             custom_form_local.setSo_order_type_code_default(cursor.getInt(cursor.getColumnIndex(SO_ORDER_TYPE_CODE_DEFAULT)));
             custom_form_local.setSo_allow_change_order_type(cursor.getInt(cursor.getColumnIndex(SO_ALLOW_CHANGE_ORDER_TYPE)));
             custom_form_local.setSo_allow_backup(cursor.getInt(cursor.getColumnIndex(SO_ALLOW_BACKUP)));
+            custom_form_local.setSo_optional_justify_problem(cursor.getInt(cursor.getColumnIndex(SO_OPTIONAL_JUSTIFY_PROBLEM)));
             return custom_form_local;
         }
     }
@@ -873,6 +898,11 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             if (custom_form_local.getSite_desc() != null) {
                 contentValues.put(SITE_DESC, custom_form_local.getSite_desc());
             }
+
+            contentValues.put(ZONE_CODE, custom_form_local.getZone_code());
+            contentValues.put(ZONE_ID, custom_form_local.getZone_id());
+            contentValues.put(ZONE_DESC, custom_form_local.getZone_desc());
+
             if (custom_form_local.getIo_control() > -1) {
                 contentValues.put(IO_CONTROL, custom_form_local.getIo_control());
             }
@@ -940,8 +970,8 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             if (custom_form_local.getSo_allow_change_order_type() > -1) {
                 contentValues.put(SO_ALLOW_CHANGE_ORDER_TYPE, custom_form_local.getSo_allow_change_order_type());
             }
-            if (custom_form_local.getSo_allow_backup() > -1) {
-                contentValues.put(SO_ALLOW_BACKUP, custom_form_local.getSo_allow_backup());
+            if (custom_form_local.getSo_optional_justify_problem() > -1) {
+                contentValues.put(SO_OPTIONAL_JUSTIFY_PROBLEM, custom_form_local.getSo_optional_justify_problem());
             }
             //
             return contentValues;

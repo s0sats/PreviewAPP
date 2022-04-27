@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import com.google.gson.annotations.Expose;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
@@ -51,6 +52,9 @@ public class TK_Ticket implements Cloneable, Serializable {
     private int open_site_code;
     private String open_site_id;
     private String open_site_desc;
+    private Integer open_zone_code;
+    private String open_zone_id;
+    private String open_zone_desc;
     private int open_operation_code;
     private String open_operation_id;
     private String open_operation_desc;
@@ -386,6 +390,30 @@ public class TK_Ticket implements Cloneable, Serializable {
 
     public void setOpen_site_desc(String open_site_desc) {
         this.open_site_desc = open_site_desc;
+    }
+
+    public Integer getOpen_zone_code() {
+        return open_zone_code;
+    }
+
+    public void setOpen_zone_code(Integer open_zone_code) {
+        this.open_zone_code = open_zone_code;
+    }
+
+    public String getOpen_zone_id() {
+        return open_zone_id;
+    }
+
+    public void setOpen_zone_id(String open_zone_id) {
+        this.open_zone_id = open_zone_id;
+    }
+
+    public String getOpen_zone_desc() {
+        return open_zone_desc;
+    }
+
+    public void setOpen_zone_desc(String open_zone_desc) {
+        this.open_zone_desc = open_zone_desc;
     }
 
     public int getOpen_operation_code() {
@@ -1461,7 +1489,6 @@ public class TK_Ticket implements Cloneable, Serializable {
         String orderByDate = hmAux.get(TK_TicketDao.FORECAST_DATE);
         String periodStartDate = hmAux.get(TK_TicketDao.FORECAST_DATE);
         String lateDate = hmAux.get(TK_TicketDao.FORECAST_DATE);
-
         //
         if(hmAux.hasConsistentValue(TK_Ticket_StepDao.FORECAST_START)
            && hmAux.hasConsistentValue(TK_Ticket_StepDao.FORECAST_END)
@@ -1491,6 +1518,21 @@ public class TK_Ticket implements Cloneable, Serializable {
             orderByDate = hmAux.get(TK_TicketDao.CLOSE_DATE);
         }
 
+        String openZoneDesc = null;
+        //
+        if(hmAux.hasConsistentValue(TK_TicketDao.OPEN_SITE_CODE)){
+            openZoneDesc = ToolBox_Inf.getProductSerialZone(
+                    context,
+                    Integer.parseInt(hmAux.get(TK_TicketDao.OPEN_SITE_CODE)),
+                    hmAux.get(TK_TicketDao.OPEN_ZONE_CODE),
+                    new MD_Product_SerialDao(context,
+                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                            Constant.DB_VERSION_CUSTOM),
+                    hmAux.hasConsistentValue(TK_TicketDao.OPEN_PRODUCT_CODE)? Long.parseLong(hmAux.get(TK_TicketDao.OPEN_PRODUCT_CODE)) : 0,
+                    hmAux.get(TK_TicketDao.OPEN_SERIAL_ID)
+            );
+        }
+        //
         return new MyActions(
             MyActions.MY_ACTION_TYPE_TICKET,
             processPk,
@@ -1508,6 +1550,7 @@ public class TK_Ticket implements Cloneable, Serializable {
             hmAux.get(TK_Ticket_StepDao.STEP_DESC),
             ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.OPEN_SITE_CODE)),
             hmAux.get(TK_TicketDao.OPEN_SITE_DESC),
+            openZoneDesc,
             clientInf,
             contractInf,
             null,

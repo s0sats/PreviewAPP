@@ -17,6 +17,9 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_PRESENTED_BY_N
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_USER_LEVEL_LBL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_VERSION_LBL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.GENERIC_CHANNEL_ID;
+import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION;
+import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_PERIOD_FILTER;
+import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_BARCODE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_FORM;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_FORM_NC;
@@ -216,12 +219,14 @@ import com.namoadigital.prj001.sql.MDProductSerialSql017;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_002;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_003;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_SS;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_015;
 import com.namoadigital.prj001.sql.MD_Product_Serial_x_TK_Ticket_Sql_001;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Sql_003;
 import com.namoadigital.prj001.sql.MD_Site_Sql_Footer;
 import com.namoadigital.prj001.sql.MD_Site_Sql_SS_002;
+import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_002;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_003;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_SS;
 import com.namoadigital.prj001.sql.MdTagSql001;
@@ -4051,7 +4056,7 @@ public class ToolBox_Inf {
      * @param context
      * @return
      */
-    public static boolean usesSoMainActivity(Context context) {
+    public static boolean hasSoOrIOProfile(Context context) {
         return ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_OI, null)
                 || ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null);
     }
@@ -4086,6 +4091,27 @@ public class ToolBox_Inf {
         );
     }
 
+    //
+    public static boolean hasSiteManyZones(Context context, Integer siteCode) {
+        if(siteCode != null){
+            MD_Site_ZoneDao mdSiteZoneDao = new MD_Site_ZoneDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+            );
+            //
+            List<MD_Site_Zone> zones = mdSiteZoneDao.query(
+                    new MD_Site_Zone_Sql_002(
+                            ToolBox_Con.getPreference_Customer_Code(context),
+                            siteCode
+                    ).toSqlQuery()
+            );
+            //
+            return zones != null && zones.size() > 1;
+        }
+        return false;
+    }
+    //
     private static class GenericExtFilter implements FilenameFilter {
         private String[] exts;
 
@@ -8899,7 +8925,7 @@ public class ToolBox_Inf {
      * @return
      */
     public static String getActTitleByOrigin(Context context, String originFlow,HMAux hmAuxTrans,String defaultActTitleKey){
-        if(originFlow == null || ToolBox_Inf.usesSoMainActivity(context)){
+        if(originFlow == null || ToolBox_Inf.hasSoOrIOProfile(context)){
             return hmAuxTrans.get(defaultActTitleKey);
         }
         switch (originFlow){
@@ -8977,7 +9003,7 @@ public class ToolBox_Inf {
     @Nullable
     public static Integer getBlockSpontaneousValueByOrigin(Context context, String originFlow) {
         if(originFlow == null || originFlow.isEmpty()){
-            return usesSoMainActivity(context) ? null : 0;
+            return hasSoOrIOProfile(context) ? null : 0;
         }
         //
         switch (originFlow){
@@ -9271,5 +9297,65 @@ public class ToolBox_Inf {
             iv_class_icon.setImageDrawable(null);
             iv_class_icon.setVisibility(View.INVISIBLE);
         }
+    }
+
+    /**
+     * BARRIONUEVO 02-06-2021
+     * Define a opcao default mediante ao profile.
+     * @return
+     */
+    public static String getActionTimeDefaultOption(Context context){
+        if(!ToolBox_Inf.hasSoOrIOProfile(context)) {
+            if (ToolBox_Inf.profileExists(
+                    context,
+                    ConstantBaseApp.PROFILE_PRJ001_PRODUCT_SERIAL,
+                    ConstantBaseApp.PROFILE_PRJ001_PRODUCT_SERIAL_SCHEDULE_UNTIL_TODAY)
+            ) {
+                return ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_PERIOD_FILTER, PREFERENCE_HOME_UNTIL_TODAY_OPTION);
+            }
+        }
+        return ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_PERIOD_FILTER, PREFERENCE_HOME_ALL_TIME_OPTION);
+    }
+
+    /**
+     * BARRIONUEVO 19-04-202
+     *  - Verifica se o site da açõa possui mais de uma zona.
+     *  - Verifica se o serial da açõa existe e se seu site é igual ao da acao.
+     *  - Caso o serial nao exista, utiliza a zona que esta preenchida na acao.
+     *  - Verifica qual zona deve ser utilizada para preencher o card das ações.
+     *  - A prioridade da zona é a do serial. Caso o serial nao exista deve se usar a zona da ação.
+     *  - A zona só deve ser preenchida se o site possuir mais de uma zona e o site da ação for igual ao site do serial
+     *
+     * @param context
+     * @param siteCode
+     * @param actionZoneDesc
+     * @param dao
+     * @param productCode
+     * @param serialId
+     * @return
+     */
+    public static String getProductSerialZone(Context context, int siteCode, String actionZoneDesc, MD_Product_SerialDao dao, long productCode, String serialId){
+        //
+        if(!ToolBox_Inf.hasSiteManyZones(context, siteCode)){
+            return null;
+        }
+        //
+        MD_Product_Serial productSerial = getProductSerial(context, dao, productCode, serialId);
+        if(productSerial != null){
+            if(productSerial.getSite_code() != null &&  siteCode == productSerial.getSite_code()) {
+                return productSerial.getZone_desc();
+            }
+            return null;
+        }
+        //
+        return actionZoneDesc;
+    }
+    //
+    public static MD_Product_Serial getProductSerial(Context context, MD_Product_SerialDao dao, long productCode, String serialId){
+        return dao.getByString(new MD_Product_Serial_Sql_002(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                productCode,
+                serialId
+        ).toSqlQuery());
     }
 }

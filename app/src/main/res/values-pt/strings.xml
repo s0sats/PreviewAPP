@@ -69,7 +69,7 @@
     <string name="act001_btn_login">Entrar</string>
     <string name="ws_exception_contact_admin_json_syntax">Os dados recebidos não podem ser lidos!\nContate a equipe de suporte!</string>
     <string name="ws_exception_contact_admin_oracle">Ocorreu um erro de banco de dados!\nContate a equipe de suporte!</string>
-    <string name="ws_exception_contact_admin_timeout">Tempo de resposta excedido!\nVerifique suas conexões e tente novamente!</string>
+    <string name="ws_exception_contact_admin_timeout">Erro ao sincronizar dados. Verifique suas conexões e tente novamente.</string>
     //
     <string name="ws_exception_connection_error">Ocorreu um erro de conexão!\nVerifique suas conexões de rede e tente novamente.\nSe o erro persistir, envie um arquivo de suporte através do menu principal.</string>
     <string name="ws_exception_unexpected_error">Ocorreu um erro não identificado!\nSe o erro persistir, envie um arquivo de suporte através do menu principal.</string>

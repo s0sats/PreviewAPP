@@ -54,6 +54,9 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
     public static final String OPEN_SITE_CODE = "open_site_code";
     public static final String OPEN_SITE_ID = "open_site_id";
     public static final String OPEN_SITE_DESC = "open_site_desc";
+    public static final String OPEN_ZONE_CODE = "open_zone_code";
+    public static final String OPEN_ZONE_ID = "open_zone_id";
+    public static final String OPEN_ZONE_DESC = "open_zone_desc";
     public static final String OPEN_OPERATION_CODE = "open_operation_code";
     public static final String OPEN_OPERATION_ID = "open_operation_id";
     public static final String OPEN_OPERATION_DESC = "open_operation_desc";
@@ -845,6 +848,9 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             tk_ticket.setOpen_site_code(cursor.getInt(cursor.getColumnIndex(OPEN_SITE_CODE)));
             tk_ticket.setOpen_site_id(cursor.getString(cursor.getColumnIndex(OPEN_SITE_ID)));
             tk_ticket.setOpen_site_desc(cursor.getString(cursor.getColumnIndex(OPEN_SITE_DESC)));
+            tk_ticket.setOpen_zone_code(cursor.getInt(cursor.getColumnIndex(OPEN_ZONE_CODE)));
+            tk_ticket.setOpen_zone_id(cursor.getString(cursor.getColumnIndex(OPEN_ZONE_ID)));
+            tk_ticket.setOpen_zone_desc(cursor.getString(cursor.getColumnIndex(OPEN_ZONE_DESC)));
             tk_ticket.setOpen_operation_code(cursor.getInt(cursor.getColumnIndex(OPEN_OPERATION_CODE)));
             tk_ticket.setOpen_operation_id(cursor.getString(cursor.getColumnIndex(OPEN_OPERATION_ID)));
             tk_ticket.setOpen_operation_desc(cursor.getString(cursor.getColumnIndex(OPEN_OPERATION_DESC)));
@@ -1118,6 +1124,11 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             if (tk_ticket.getOpen_site_desc() != null) {
                 contentValues.put(OPEN_SITE_DESC, tk_ticket.getOpen_site_desc());
             }
+            //
+            contentValues.put(OPEN_ZONE_CODE, tk_ticket.getOpen_zone_code());
+            contentValues.put(OPEN_ZONE_ID, tk_ticket.getOpen_zone_id());
+            contentValues.put(OPEN_ZONE_DESC, tk_ticket.getOpen_zone_desc());
+            //
             if (tk_ticket.getOpen_operation_code() > -1) {
                 contentValues.put(OPEN_OPERATION_CODE, tk_ticket.getOpen_operation_code());
             }

@@ -71,6 +71,8 @@ class SqlAct083_004(
                      l.${GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC},
                      l.${GE_Custom_Form_LocalDao.SITE_CODE},
                      l.${GE_Custom_Form_LocalDao.SITE_DESC},
+                     l.${GE_Custom_Form_LocalDao.ZONE_CODE},
+                     l.${GE_Custom_Form_LocalDao.ZONE_DESC},
                      d.${GE_Custom_Form_DataDao.SO_PREFIX},
                      d.${GE_Custom_Form_DataDao.SO_CODE},
                      d.${GE_Custom_Form_DataDao.DATE_END},                 

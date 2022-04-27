@@ -80,7 +80,7 @@ class ActionByTagFilterDialog(context: Context,
                 else -> PREFERENCE_HOME_ALL_ACTIONS_OPTION
             }
             //
-            if(!periodFilterPreference.equals(ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_PERIOD_FILTER, PREFERENCE_HOME_ALL_TIME_OPTION))
+            if(!periodFilterPreference.equals(ToolBox_Inf.getActionTimeDefaultOption(context))
                     || !siteFilterPreference.equals(ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_SITES_FILTER, PREFERENCE_HOME_ALL_SITE_OPTION))
                     || !focusFilterPreference.equals(ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_FOCUS_FILTER, PREFERENCE_HOME_ONLY_MY_ACTIONS_OPTION))
             ){
@@ -96,7 +96,7 @@ class ActionByTagFilterDialog(context: Context,
     }
 
     private fun initValues() {
-        val periodFilter = ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_PERIOD_FILTER, PREFERENCE_HOME_ALL_TIME_OPTION)
+        val periodFilter = ToolBox_Inf.getActionTimeDefaultOption(context)
         val sitesFilter =  ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_SITES_FILTER, PREFERENCE_HOME_ALL_SITE_OPTION)
         val focusFilter =  ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_FOCUS_FILTER, PREFERENCE_HOME_ONLY_MY_ACTIONS_OPTION)
         //

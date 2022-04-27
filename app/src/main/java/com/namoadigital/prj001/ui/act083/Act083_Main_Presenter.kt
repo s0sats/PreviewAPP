@@ -160,7 +160,7 @@ class Act083_Main_Presenter(private val context: Context,
         chipList.addAll(
                 myActionFilterParam.getFilledFilters(context)
         )
-        if(!ToolBox_Inf.usesSoMainActivity(context)) {
+        if(!ToolBox_Inf.hasSoOrIOProfile(context)) {
             when (originFlow) {
                 ConstantBaseApp.ACT005 -> setPreferenceChips(chipList)
             }
@@ -169,7 +169,7 @@ class Act083_Main_Presenter(private val context: Context,
     }
 
     private fun setPreferenceChips(chipList: MutableList<String>) {
-        val timePrefence = ToolBox_Con.getStringPreferencesByKey(context, ConstantBaseApp.PREFERENCE_HOME_PERIOD_FILTER, ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION)
+        val timePrefence = ToolBox_Inf.getActionTimeDefaultOption(context)
         if (ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION != timePrefence) {
             hmAux_Trans?.get(timePrefence)?.let { chipList.add(it) }
         }
@@ -1450,7 +1450,7 @@ class Act083_Main_Presenter(private val context: Context,
 
     private fun setSiteFilter(): Boolean {
         return  ConstantBaseApp.PREFERENCE_HOME_CURRENT_SITE_OPTION == ToolBox_Con.getStringPreferencesByKey(context, ConstantBaseApp.PREFERENCE_HOME_SITES_FILTER, ConstantBaseApp.PREFERENCE_HOME_ALL_SITE_OPTION)
-                && !ToolBox_Inf.usesSoMainActivity(context)
+                && !ToolBox_Inf.hasSoOrIOProfile(context)
     }
 
 

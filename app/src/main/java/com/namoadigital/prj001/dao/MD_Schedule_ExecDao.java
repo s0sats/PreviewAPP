@@ -46,6 +46,9 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
     public static final String SITE_CODE = "site_code";
     public static final String SITE_ID = "site_id";
     public static final String SITE_DESC = "site_desc";
+    public static final String ZONE_CODE = "zone_code";
+    public static final String ZONE_ID = "zone_id";
+    public static final String ZONE_DESC = "zone_desc";
     public static final String OPERATION_CODE  = "operation_code";
     public static final String OPERATION_ID  = "operation_id";
     public static final String OPERATION_DESC  = "operation_desc";
@@ -1084,6 +1087,23 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
             }else {
                 md_schedule_exec.setSite_desc(cursor.getString(cursor.getColumnIndex(SITE_DESC)));
             }
+            //
+            if(cursor.isNull(cursor.getColumnIndex(ZONE_CODE))){
+                md_schedule_exec.setZone_code(null);
+            }else {
+                md_schedule_exec.setZone_code(cursor.getInt(cursor.getColumnIndex(ZONE_CODE)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(ZONE_ID))){
+                md_schedule_exec.setZone_id(null);
+            }else {
+                md_schedule_exec.setZone_id(cursor.getString(cursor.getColumnIndex(ZONE_ID)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(ZONE_DESC))){
+                md_schedule_exec.setZone_desc(null);
+            }else {
+                md_schedule_exec.setZone_desc(cursor.getString(cursor.getColumnIndex(ZONE_DESC)));
+            }
+            //
             md_schedule_exec.setOperation_code(cursor.getInt(cursor.getColumnIndex(OPERATION_CODE)));
             if(cursor.isNull(cursor.getColumnIndex(OPERATION_ID))){
                 md_schedule_exec.setOperation_id(null);
@@ -1275,6 +1295,11 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
             }
             contentValues.put(SITE_ID,md_schedule_exec.getSite_id());
             contentValues.put(SITE_DESC,md_schedule_exec.getSite_desc());
+
+            contentValues.put(ZONE_CODE,md_schedule_exec.getZone_code());
+            contentValues.put(ZONE_ID,md_schedule_exec.getZone_id());
+            contentValues.put(ZONE_DESC,md_schedule_exec.getZone_desc());
+            
             if(md_schedule_exec.getOperation_code() > -1){
                 contentValues.put(OPERATION_CODE,md_schedule_exec.getOperation_code());
             }

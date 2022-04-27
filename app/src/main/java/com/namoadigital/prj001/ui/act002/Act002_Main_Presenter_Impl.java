@@ -1,5 +1,9 @@
 package com.namoadigital.prj001.ui.act002;
 
+import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION;
+import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_PERIOD_FILTER;
+import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -491,6 +495,23 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
         //
         context.sendBroadcast(mIntent);
     //
+    }
+
+    @Override
+    public void setPeriodFilterPreference() {
+        if(!ToolBox_Inf.hasSoOrIOProfile(context)) {
+            if (ToolBox_Inf.profileExists(
+                    context,
+                    ConstantBaseApp.PROFILE_PRJ001_PRODUCT_SERIAL,
+                    ConstantBaseApp.PROFILE_PRJ001_PRODUCT_SERIAL_SCHEDULE_UNTIL_TODAY)
+            ) {
+                ToolBox_Con.setStringPreference(context, PREFERENCE_HOME_PERIOD_FILTER, PREFERENCE_HOME_UNTIL_TODAY_OPTION);
+            } else {
+                ToolBox_Con.setStringPreference(context, PREFERENCE_HOME_PERIOD_FILTER, PREFERENCE_HOME_ALL_TIME_OPTION);
+            }
+        }else {
+            ToolBox_Con.setStringPreference(context, PREFERENCE_HOME_PERIOD_FILTER, PREFERENCE_HOME_ALL_TIME_OPTION);
+        }
     }
 
     private String getTicketConcatList(TK_TicketDao tk_ticketDao) {

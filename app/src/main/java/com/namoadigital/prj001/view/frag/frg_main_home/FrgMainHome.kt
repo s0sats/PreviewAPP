@@ -94,7 +94,7 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
     private fun initializeLayoutVisibility() {
 
         val tagList = mListener?.getTagList(
-                ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_PERIOD_FILTER, PREFERENCE_HOME_ALL_TIME_OPTION),
+                ToolBox_Inf.getActionTimeDefaultOption(context),
                 ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_SITES_FILTER, PREFERENCE_HOME_ALL_SITE_OPTION),
                 ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_FOCUS_FILTER, PREFERENCE_HOME_ONLY_MY_ACTIONS_OPTION)
         )
@@ -110,6 +110,7 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
             binding.rvTags.visibility = View.GONE
             binding.tvListPlaceholder.visibility = View.VISIBLE
         }
+
         binding.rvTags.adapter = adapter
         val layoutManager = LinearLayoutManager(context)
         binding.rvTags.layoutManager = layoutManager

@@ -394,7 +394,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
     @Override
     public boolean hasSOProfile() {
-        return ToolBox_Inf.usesSoMainActivity(context);
+        return ToolBox_Inf.hasSoOrIOProfile(context);
     }
 
     @Override

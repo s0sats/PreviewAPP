@@ -8,8 +8,11 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.sql.SqlAct084_004;
+import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
@@ -50,6 +53,9 @@ public class GE_Custom_Form_Local {
     private int site_code;
     private String site_id;
     private String site_desc;
+    private Integer zone_code;
+    private String zone_id;
+    private String zone_desc;
     private int io_control;
     private int inbound_auto_create;
     private int operation_code;
@@ -59,7 +65,7 @@ public class GE_Custom_Form_Local {
     private int product_io_control;
     private int site_restriction;
     private String serial_rule;
-    private Integer serial_min_length;
+    private Integer serial_min_length   ;
     private Integer serial_max_length;
     private String schedule_comments;
     //Campos novo agendamento
@@ -80,6 +86,7 @@ public class GE_Custom_Form_Local {
     private Integer so_order_type_code_default;
     private int so_allow_change_order_type;
     private int so_allow_backup;
+    private int so_optional_justify_problem;
 
     public long getCustomer_code() {
         return customer_code;
@@ -329,6 +336,30 @@ public class GE_Custom_Form_Local {
         this.site_desc = site_desc;
     }
 
+    public Integer getZone_code() {
+        return zone_code;
+    }
+
+    public void setZone_code(Integer zone_code) {
+        this.zone_code = zone_code;
+    }
+
+    public String getZone_id() {
+        return zone_id;
+    }
+
+    public void setZone_id(String zone_id) {
+        this.zone_id = zone_id;
+    }
+
+    public String getZone_desc() {
+        return zone_desc;
+    }
+
+    public void setZone_desc(String zone_desc) {
+        this.zone_desc = zone_desc;
+    }
+
     public int getIo_control() {
         return io_control;
     }
@@ -549,6 +580,14 @@ public class GE_Custom_Form_Local {
         return so_allow_backup;
     }
 
+    public int getSo_optional_justify_problem() {
+        return so_optional_justify_problem;
+    }
+
+    public void setSo_optional_justify_problem(int so_optional_justify_problem) {
+        this.so_optional_justify_problem = so_optional_justify_problem;
+    }
+
     public void setSo_allow_backup(int so_allow_backup) {
         this.so_allow_backup = so_allow_backup;
     }
@@ -599,6 +638,17 @@ public class GE_Custom_Form_Local {
             );
         }
         //
+        String formattedZone = ToolBox_Inf.getProductSerialZone(
+                context,
+                ToolBox_Inf.convertStringToInt(hmAux.get(GE_Custom_Form_LocalDao.SITE_CODE)),
+                hmAux.get(GE_Custom_Form_LocalDao.ZONE_DESC),
+                new MD_Product_SerialDao(context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM),
+                hmAux.hasConsistentValue(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE) ? Long.parseLong(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE)): 0,
+                hmAux.get(GE_Custom_Form_LocalDao.SERIAL_ID)
+        );
+        //
         MyActions myActions = new MyActions(
             MyActions.MY_ACTION_TYPE_FORM,
             processPk,
@@ -616,6 +666,7 @@ public class GE_Custom_Form_Local {
             null,
             ToolBox_Inf.convertStringToInt(hmAux.get(GE_Custom_Form_LocalDao.SITE_CODE)),
             hmAux.get(GE_Custom_Form_LocalDao.SITE_DESC),
+                formattedZone,
             null,
             null,
             soInfo,

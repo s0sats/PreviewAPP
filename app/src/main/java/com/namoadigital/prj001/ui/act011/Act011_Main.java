@@ -17,6 +17,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
@@ -43,6 +44,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -283,6 +286,13 @@ public class Act011_Main extends Base_Activity
 
     private MeasureFF.OnValidationListener measureValidateListener = null;
 
+    CustomFF.ICustomFFInformUserValueChange form_non_compliance_photo_required_toast = new CustomFF.ICustomFFInformUserValueChange() {
+        @Override
+        public void onShowToast() {
+            Toast.makeText(context, hmAux_Trans.get("form_non_compliance_photo_required_toast"), Toast.LENGTH_LONG).show();
+        }
+    };
+
 
     public void setWsSoProcess(String wsSoProcess) {
         this.wsSoProcess = wsSoProcess;
@@ -500,8 +510,10 @@ public class Act011_Main extends Base_Activity
         transList.add("dialog_finalize_os_form_start_date_lbl");
         transList.add("dialog_finalize_os_form_end_date_lbl");
         //
+        transList.add("dialog_finalize_so_form_invalid_ttl");
         transList.add("dialog_finalize_os_form_invalid_end_date_ttl");
         transList.add("dialog_finalize_os_form_invalid_end_date_end");
+        transList.add("dialog_finalize_so_form_serial_empty_class_error");
         transList.add("dialog_finalize_serial_class_lbl");
         //
         transList.add("alert_error_order_or_structure_not_found_ttl");
@@ -511,6 +523,8 @@ public class Act011_Main extends Base_Activity
         transList.add("alert_invalid_sys_end_date_msg");
         transList.add("form_sys_start_date_lbl");
         transList.add("form_measure_last_value_lbl");
+        //
+        transList.add("form_non_compliance_photo_required_toast");
         //
         transList.addAll(Act011FrgInspection.Companion.getFragTranslationsVars());
         //
@@ -1946,6 +1960,7 @@ public class Act011_Main extends Base_Activity
 
         checkBoxFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         checkBoxFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
+        checkBoxFF.setOnInformUserValueChange(form_non_compliance_photo_required_toast);
         //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
         //mas a vida eh uma caixinha de surpresas e teve que ser removido t0d0 acesso aos nform deletados
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) ||
@@ -1984,6 +1999,8 @@ public class Act011_Main extends Base_Activity
 
         ratingImageFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         ratingImageFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
+
+        ratingImageFF.setOnInformUserValueChange(form_non_compliance_photo_required_toast);
         //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
         //mas a vida eh uma caixinha de surpresas e teve que ser removido t0d0 acesso aos nform deletados
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) ||
@@ -2020,6 +2037,7 @@ public class Act011_Main extends Base_Activity
 
         ratingBarFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         ratingBarFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
+        ratingBarFF.setOnInformUserValueChange(form_non_compliance_photo_required_toast);
         //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
         //mas a vida eh uma caixinha de surpresas e teve que ser removido t0d0 acesso aos nform deletados
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) ||
@@ -3480,16 +3498,46 @@ public class Act011_Main extends Base_Activity
     }
 
     private void setDialogAction(Act011CheckDialogBinding binding, AlertDialog alertDialog) {
+        if (binding.act011DialogCheckMkedtJustifyMissingAnswerVal != null) {
+            binding.act011DialogCheckMkedtJustifyMissingAnswerVal.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    String mText = binding.act011DialogCheckMkedtJustifyMissingAnswerVal.getText().toString();
+                    if (!hasFocus) {
+                        binding.act011DialogCheckMkedtJustifyMissingAnswerVal.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(mText != null && !mText.isEmpty()) {
+                                    DrawableCompat.setTintList(binding.act011DialogCheckMkedtJustifyMissingAnswerVal.getBackground(), ColorStateList.valueOf(ContextCompat.getColor(context, R.color.namoa_color_gray_9)));
+                                }else{
+                                    if(formLocal.getSo_optional_justify_problem() == 0) {
+                                        DrawableCompat.setTintList(binding.act011DialogCheckMkedtJustifyMissingAnswerVal.getBackground(), ColorStateList.valueOf(ContextCompat.getColor(context, R.color.font_required)));
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        }
+        //
         binding.act011DialogCheckMkedtJustifyMissingAnswerVal.setOnReportTextChangeListner(
                 new MKEditTextNM.IMKEditTextChangeText() {
                     @Override
                     public void reportTextChange(String s) {
-                        binding.act011DialogCheckBtnOk.setEnabled(s != null && !s.isEmpty());
-                    }
 
+                    }
                     @Override
                     public void reportTextChange(String s, boolean b) {
-
+                        if(formLocal.getSo_optional_justify_problem() == 0) {
+                            binding.act011DialogCheckBtnOk.setEnabled(s != null && !s.isEmpty());
+                        }
+                        if(s!= null
+                        && b){
+                            if (s.isEmpty() && formLocal.getSo_optional_justify_problem() == 0) {
+                                DrawableCompat.setTintList(binding.act011DialogCheckMkedtJustifyMissingAnswerVal.getBackground(), ColorStateList.valueOf(ContextCompat.getColor(context, R.color.font_required)));
+                            }
+                        }
                     }
                 }
         );
@@ -3497,7 +3545,8 @@ public class Act011_Main extends Base_Activity
             @Override
             public void onClick(View v) {
                 if(isFormOs) {
-                    if(isFinalizeDialogInputValid(binding)) {
+                    String errorMsg = isFinalizeDialogInputValid(binding);
+                    if(errorMsg.isEmpty()) {
                         String missingAnswer = binding.act011DialogCheckTilJustifyMissingAnswerVal.getEditText().getText().toString();
                         //LUCHE - 08/11/2021 - resgata contador antes para ser usado na validação
                         //de refreshCurrentTabRecycle. Se não há mais não respondidos(segunda chama),
@@ -3534,8 +3583,8 @@ public class Act011_Main extends Base_Activity
                     }else{
                         ToolBox.alertMSG(
                             context,
-                            hmAux_Trans.get("dialog_finalize_os_form_invalid_end_date_ttl"),
-                            hmAux_Trans.get("dialog_finalize_os_form_invalid_end_date_end"),
+                            hmAux_Trans.get("dialog_finalize_so_form_invalid_ttl"),
+                                errorMsg,
                             null,
                             0
                         );
@@ -3562,6 +3611,7 @@ public class Act011_Main extends Base_Activity
         binding.act011DialogCheckMkdateFormEnd.setOnSelectedValue(new MkDateTime.IMKDateTimeValueChange() {
             @Override
             public void onChangeValue(String s) {
+                clearMkEdtJustifyMissingAnswerValFocus(binding.act011DialogCheckMkedtJustifyMissingAnswerVal);
                 if(validEndDate(binding)){
                     binding.act011DialogCheckTvElapsedTimeVal.setText(getFormElapsedTimeFormatted(s));
                 }else{
@@ -3580,7 +3630,7 @@ public class Act011_Main extends Base_Activity
         binding.ssSerialClass.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
             @Override
             public void onItemPreSelected(HMAux hmAux) {
-
+                clearMkEdtJustifyMissingAnswerValFocus(binding.act011DialogCheckMkedtJustifyMissingAnswerVal);
             }
 
             @Override
@@ -3590,9 +3640,24 @@ public class Act011_Main extends Base_Activity
         });
     }
 
-    private boolean isFinalizeDialogInputValid(com.namoadigital.prj001.databinding.Act011CheckDialogBinding binding) {
-        return validEndDate(binding)
-            && validSerialClass(binding);
+    private void clearMkEdtJustifyMissingAnswerValFocus(MKEditTextNM mkEditTextNM) {
+        if(mkEditTextNM != null) {
+            mkEditTextNM.clearFocus();
+        }
+    }
+
+    private String isFinalizeDialogInputValid(com.namoadigital.prj001.databinding.Act011CheckDialogBinding binding) {
+        String errorMsg = "";
+        //
+        if(!validEndDate(binding)){
+            errorMsg = getString(R.string.unicode_bullet) + " " + hmAux_Trans.get("dialog_finalize_os_form_invalid_end_date_end") + "\n";
+        }
+        //
+        if(!validSerialClass(binding)){
+            errorMsg += getString(R.string.unicode_bullet) + " " + hmAux_Trans.get("dialog_finalize_so_form_serial_empty_class_error");
+        }
+        //
+        return errorMsg;
     }
 
     private boolean validSerialClass(Act011CheckDialogBinding binding) {
@@ -3640,6 +3705,9 @@ public class Act011_Main extends Base_Activity
                 binding.act011DialogCheckBtnOk.setEnabled(true);
             }else{
                 binding.act011DialogCheckBtnOk.setEnabled(false);
+                if(formLocal.getSo_optional_justify_problem() == 1){
+                    binding.act011DialogCheckBtnOk.setEnabled(true);
+                }
             }
             binding.act011DialogCheckTvMissingAnswerVal.setText(String.valueOf(missingAnswersAmount));
             binding.act011DialogCheckTvElapsedTimeVal.setText(getFormElapsedTimeFormatted(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")));
@@ -3665,7 +3733,10 @@ public class Act011_Main extends Base_Activity
             binding.act011DialogCheckTvMissingAnswerLbl.setText(hmAux_Trans.get("dialog_finalize_os_form_missing_answer_count_lbl"));
             binding.act011DialogCheckTvElapsedTimeLbl.setText(hmAux_Trans.get("dialog_finalize_os_form_elapsed_time_lbl"));
             binding.act011DialogCheckTvJustifyMissingAnswerLbl.setText(hmAux_Trans.get("dialog_finalize_os_form_justify_missing_answer_lbl"));
-            TextViewKt.setAsRequired(binding.act011DialogCheckTvJustifyMissingAnswerLbl, true);
+            if(formLocal.getSo_optional_justify_problem() == 0) {
+                TextViewKt.setAsRequired(binding.act011DialogCheckTvJustifyMissingAnswerLbl, true);
+                DrawableCompat.setTintList(binding.act011DialogCheckMkedtJustifyMissingAnswerVal.getBackground(), ColorStateList.valueOf(ContextCompat.getColor(context, R.color.font_required)));
+            }
             //
             setSerialClass(binding);
             //
@@ -3710,6 +3781,8 @@ public class Act011_Main extends Base_Activity
             //
             ssSerialClass.setmOption(serialClassList);
             binding.tvSerialClassTtl.setText(hmAux_Trans.get("dialog_finalize_serial_class_lbl"));
+            TextViewKt.setAsRequired(binding.tvSerialClassTtl, true);
+            //
             ToolBox_Inf.setSSmValue(
                     ssSerialClass,
                     String.valueOf(mdProductSerial.getClass_code()),

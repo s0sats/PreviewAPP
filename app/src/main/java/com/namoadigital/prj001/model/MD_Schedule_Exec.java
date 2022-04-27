@@ -5,6 +5,8 @@ import android.content.Context;
 import androidx.annotation.Nullable;
 
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -20,6 +22,9 @@ public class MD_Schedule_Exec {
     private int site_code;
     private String site_id;
     private String site_desc;
+    private Integer zone_code;
+    private String zone_id;
+    private String zone_desc;
     private int operation_code;
     private String operation_id;
     private String operation_desc;
@@ -179,6 +184,30 @@ public class MD_Schedule_Exec {
 
     public void setSite_desc(String site_desc) {
         this.site_desc = site_desc;
+    }
+
+    public Integer getZone_code() {
+        return zone_code;
+    }
+
+    public void setZone_code(Integer zone_code) {
+        this.zone_code = zone_code;
+    }
+
+    public String getZone_id() {
+        return zone_id;
+    }
+
+    public void setZone_id(String zone_id) {
+        this.zone_id = zone_id;
+    }
+
+    public String getZone_desc() {
+        return zone_desc;
+    }
+
+    public void setZone_desc(String zone_desc) {
+        this.zone_desc = zone_desc;
     }
 
     public int getOperation_code() {
@@ -566,6 +595,18 @@ public class MD_Schedule_Exec {
                 ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
             );
         }
+        //
+        String formattedZone = ToolBox_Inf.getProductSerialZone(
+                context,
+                site_code,
+                zone_desc,
+                new MD_Product_SerialDao(context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM),
+                product_code,
+                serial_id
+        );
+        //
         String processPk = ToolBox_Inf.formatSchedulePk(schedule_prefix, schedule_code, schedule_exec);
         boolean isLastSelectedItem = processPk.equals(lastScheduleSelected);
         //
@@ -588,6 +629,7 @@ public class MD_Schedule_Exec {
                 comments,
                 site_code,
                 site_desc,
+                    formattedZone,
                 null,
                 null,
                 null,
@@ -634,6 +676,7 @@ public class MD_Schedule_Exec {
                 comments,
                 site_code,
                 site_desc,
+                    formattedZone,
                 null,
                 null,
                 null,

@@ -81,6 +81,9 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
         TextView tv_so_id_val = (TextView) convertView.findViewById(R.id.act047_cell_tv_so_id_val);
         TextView tv_status_lbl = (TextView) convertView.findViewById(R.id.act047_cell_tv_status_lbl);
         TextView tv_status_val = (TextView) convertView.findViewById(R.id.act047_cell_tv_status_val);
+        LinearLayout ll_priority = (LinearLayout) convertView.findViewById(R.id.act047_cell_ll_priority);
+        TextView tv_priority_lbl = (TextView) convertView.findViewById(R.id.act047_cell_tv_priority_lbl);
+        TextView tv_priority_val = (TextView) convertView.findViewById(R.id.act047_cell_tv_priority_val);
         LinearLayout ll_deadline = (LinearLayout) convertView.findViewById(R.id.act047_cell_ll_deadline);
         TextView tv_deadline_lbl = (TextView) convertView.findViewById(R.id.act047_cell_tv_deadline_lbl);
         TextView tv_deadline_val = (TextView) convertView.findViewById(R.id.act047_cell_tv_deadline_val);
@@ -125,6 +128,16 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
         tv_status_lbl.setText(hmAux_Trans.get("status_lbl"));
         tv_status_val.setText((hmAux_Trans.get(item.getStatus())));
         tv_status_val.setTextColor(context.getResources().getColor(ToolBox_Inf.getStatusColor(item.getStatus())));
+        //
+        if(item.getPriority_desc() == null || item.getPriority_desc().isEmpty()){
+            ll_priority.setVisibility(View.GONE);
+            tv_priority_lbl.setText(hmAux_Trans.get("priority_lbl"));
+            tv_priority_val.setText("");
+        }else{
+            ll_priority.setVisibility(View.VISIBLE);
+            tv_priority_lbl.setText(hmAux_Trans.get("priority_lbl"));
+            tv_priority_val.setText(item.getPriority_desc());
+        }
         //
         if(item.getDeadline() == null || item.getDeadline().isEmpty()){
             ll_deadline.setVisibility(View.GONE);
@@ -201,6 +214,7 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
         translateList.add("so_desc_lbl");
         translateList.add("operation_lbl");
         translateList.add("status_lbl");
+        translateList.add("priority_lbl");
         translateList.add("deadline_lbl");
         translateList.add("serial_main_title");
         translateList.add("product_lbl");
