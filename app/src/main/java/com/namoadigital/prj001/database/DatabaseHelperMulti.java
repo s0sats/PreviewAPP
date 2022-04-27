@@ -173,120 +173,13 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        StringBuilder script = new StringBuilder();
         //
-        script.append("drop table if exists [ev_modules];");
-        script.append("drop table if exists [ev_module_ress];");
-        script.append("drop table if exists [ev_module_res_txts];");
-        script.append("drop table if exists [ev_module_res_txt_transs];");
-        script.append("drop table if exists [ge_custom_form_types];");
-
-        script.append("drop table if exists [ge_custom_forms];");
-        script.append("drop table if exists [ge_custom_form_fields];");
-
-        script.append("drop table if exists [ge_custom_forms_local];");
-        script.append("drop table if exists [ge_custom_form_fields_local];");
-        script.append("drop table if exists [ge_custom_form_blobs_local];");
-
-        script.append("drop table if exists [ge_custom_form_datas];");
-        script.append("drop table if exists [ge_custom_form_data_fields];");
-        script.append("drop table if exists [ge_custom_form_products];");
-        script.append("drop table if exists [ge_custom_form_blobs];");
-        script.append("drop table if exists [ge_custom_form_operations];");
-        script.append("drop table if exists [ge_custom_form_sites];");
-        script.append("drop table if exists [ge_files];");
-
-        script.append("drop table if exists [md_products];");
-        script.append("drop table if exists [md_product_groups];");
-        script.append("drop table if exists [md_product_group_products];");
-        script.append("drop table if exists [md_product_serials];");
-        script.append("drop table if exists [md_operations];");
-        script.append("drop table if exists [md_sites];");
-        script.append("drop table if exists [md_site_zones];");
-        script.append("drop table if exists [md_site_zone_locals];");
-        script.append("drop table if exists [sync_checklist];");
-
-        // SO Express
-        script.append("drop table if exists [so_pack_expresss];");
-        script.append("drop table if exists [so_pack_expresss_local];");
-
-        //TABLES SO
-        script.append("drop table if exists [sm_sos];");
-        script.append("drop table if exists [sm_so_files];");
-        script.append("drop table if exists [sm_so_packs];");
-        script.append("drop table if exists [sm_so_services];");
-        script.append("drop table if exists [sm_so_service_execs];");
-        script.append("drop table if exists [sm_so_service_exec_tasks];");
-        script.append("drop table if exists [sm_so_service_exec_task_files];");
-
-        script.append("drop table if exists [md_segments];");
-        script.append("drop table if exists [md_category_prices];");
-        script.append("drop table if exists [md_brands];");
-        script.append("drop table if exists [md_brand_models];");
-        script.append("drop table if exists [md_brand_colors];");
-        script.append("drop table if exists [md_partners];");
-        script.append("drop table if exists [md_classes];");
-        script.append("drop table if exists ev_profiles;");
-        script.append("drop table if exists md_product_serial_trackings;");
-        script.append("drop table if exists md_all_products;");
-        script.append("drop table if exists md_all_product_groups;");
-        script.append("drop table if exists md_all_product_group_products;");
-        script.append("drop table if exists sm_so_product_events;");
-        script.append("drop table if exists sm_so_product_event_files ;");
-        script.append("drop table if exists sm_so_product_event_sketchs;");
-        script.append("drop table if exists md_product_brands;");
-        script.append("drop table if exists md_product_segments;");
-        script.append("drop table if exists md_product_category_prices;");
-        //Table ActionPlan
-        script.append("drop table if exists [md_departments];");
-        script.append("drop table if exists [md_users];");
-        script.append("drop table if exists [ge_custom_form_aps];");
-        //Table IO
-        script.append("drop table if exists [io_move_reason];");
-        script.append("drop table if exists io_inbound;");
-        script.append("drop table if exists io_inbound_item;");
-        script.append("drop table if exists io_move;");
-        script.append("drop table if exists io_outbound;");
-        script.append("drop table if exists io_outbound_item;");
-        //Table Ticket
-        script.append("drop table if exists tk_ticket;");
-        script.append("drop table if exists tk_ticket_action;");
-        script.append("drop table if exists tk_ticket_step;");
-        script.append("drop table if exists tk_ticket_product;");
-        script.append("drop table if exists tk_ticket_ctrl;");
-        script.append("drop table if exists tk_ticket_measure;");
-        script.append("drop table if exists tk_ticket_approval;");
-        script.append("drop table if exists tk_ticket_approval_rejection;");
-        script.append("drop table if exists tk_ticket_form;");
-        //Table New Schedule
-        script.append("drop table if exists md_schedule_exec;");
-        //
-        script.append("drop table if exists md_tag;");
-        script.append("drop table if exists tk_ticket_cache;");
-        //Projeto OS no N-Form.
-        script.append("drop table if exists [me_measure_tp]");
-        script.append("drop table if exists [md_device_tp]");
-        script.append("drop table if exists [md_item_check]");
-        script.append("drop table if exists [md_order_type]");
-        script.append("drop table if exists [md_product_serial_tp_device]");
-        script.append("drop table if exists [md_product_serial_tp_device_item]");
-        script.append("drop table if exists [md_product_serial_tp_device_item_hist]");
-        script.append("drop table if exists [md_product_serial_tp_device_item_material]");
-
-        script.append("drop table if exists ge_os");
-        script.append("drop table if exists ge_os_device");
-        script.append("drop table if exists ge_os_device_item");
-        script.append("drop table if exists ge_os_device_item_material");
-        script.append("drop table if exists ge_os_device_item_hist");
-        //
-        String[] scripts = script.toString().split(";");
-        //
-        for (int i = 0; i < scripts.length; i++) {
-            db.execSQL(scripts[i].toLowerCase() + ";");
+        switch (oldVersion){
+            case 1:
+                MigrationsKt.getMigrationV1().migrate(db);
+                break;
         }
-        //
 
-        MigrationsKt.getMigrationV1().migrate(db);
         onCreate(db);
     }
 
