@@ -3781,6 +3781,8 @@ public class Act011_Main extends Base_Activity
             //
             ssSerialClass.setmOption(serialClassList);
             binding.tvSerialClassTtl.setText(hmAux_Trans.get("dialog_finalize_serial_class_lbl"));
+            TextViewKt.setAsRequired(binding.tvSerialClassTtl, true);
+            //
             ToolBox_Inf.setSSmValue(
                     ssSerialClass,
                     String.valueOf(mdProductSerial.getClass_code()),
