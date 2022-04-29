@@ -132,7 +132,7 @@ public class AppBase extends Application {
 
         DB_NAME_CUSTOM = "cc.db3";
         DB_PREFIX_CUSTOM = "namoa_app_";
-        DB_VERSION_CUSTOM = 2;
+        DB_VERSION_CUSTOM = 1;
         DB_FULL_CUSTOM = DB_PATH + "/" + DB_NAME_CUSTOM;
 
         //DB_NAME_CHAT = "namoa_chat.db3";
