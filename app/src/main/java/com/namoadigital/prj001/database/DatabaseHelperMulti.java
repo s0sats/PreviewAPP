@@ -174,13 +174,11 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         //
-        db.beginTransaction();
         switch (oldVersion){
             case 1:
                 MigrationsKt.getMigrationV1().migrate(db);
                 break;
         }
-        db.endTransaction();
 //        onCreate(db);
     }
 
