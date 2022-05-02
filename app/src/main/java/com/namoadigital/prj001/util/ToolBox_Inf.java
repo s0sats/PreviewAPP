@@ -6709,12 +6709,14 @@ public class ToolBox_Inf {
      * Metodo que contabiliza pendencias de localizacao no N-FORM.
      */
     public static int getLocationPendencies(Context context) {
-        GE_Custom_Form_DataDao ge_custom_form_dataDao = new GE_Custom_Form_DataDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
-        List<GE_Custom_Form_Data> formDataList =  ge_custom_form_dataDao.query(
-                new GE_Custom_Form_Data_Sql_006(ToolBox_Con.getPreference_Customer_Code(context)).toSqlQuery()
-        );
-        if (formDataList != null) {
-            return formDataList.size();
+        if(ToolBox_Con.getPreference_Customer_Code(context) > 0) {
+            GE_Custom_Form_DataDao ge_custom_form_dataDao = new GE_Custom_Form_DataDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
+            List<GE_Custom_Form_Data> formDataList = ge_custom_form_dataDao.query(
+                    new GE_Custom_Form_Data_Sql_006(ToolBox_Con.getPreference_Customer_Code(context)).toSqlQuery()
+            );
+            if (formDataList != null) {
+                return formDataList.size();
+            }
         }
         return 0;
     }
