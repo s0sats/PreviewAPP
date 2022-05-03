@@ -2013,7 +2013,7 @@ public class ToolBox_Inf {
      * @return True or false
      */
     public static boolean checkCustomerDBExists(final long customer_code) {
-        File customerDB = new File(Constant.DB_PATH + "/C_" + customer_code + "_" + Constant.DB_VERSION_CUSTOM + ".db3");
+        File customerDB = new File(ToolBox_Con.customDBPath(customer_code));
         //
         return customerDB.exists();
     }
