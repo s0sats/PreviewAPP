@@ -4176,8 +4176,11 @@ public class Act011_Main extends Base_Activity
     @Override
     protected void processUpdateSoftware(String mLink, String mRequired) {
         super.processUpdateSoftware(mLink, mRequired);
-
-        ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+        if(progressDialog != null) {
+            progressDialog.dismiss();
+        }
+        //
+        ToolBox_Inf.executeLogoffAndUpdateSoftware(context);
     }
 
     //Tratativa SESSION NOT FOUND

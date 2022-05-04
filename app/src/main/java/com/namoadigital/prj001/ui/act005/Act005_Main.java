@@ -1800,10 +1800,18 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 //Reseta preferencia
                 ToolBox_Con.setPreference_BkpUnsentImg(context,false);
                 //
-                ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+                if(progressDialog != null) {
+                    progressDialog.dismiss();
+                }
+                //
+                ToolBox_Inf.executeLogoffAndUpdateSoftware(context);
             }
         }else{
-            ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+            if(progressDialog != null) {
+                progressDialog.dismiss();
+            }
+            //
+            ToolBox_Inf.executeLogoffAndUpdateSoftware(context);
         }
     }
 

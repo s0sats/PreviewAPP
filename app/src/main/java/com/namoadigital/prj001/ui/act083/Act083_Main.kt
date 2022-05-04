@@ -720,7 +720,12 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED OU VERSÃO INVALIDA
     override fun processUpdateSoftware(mLink: String?, mRequired: String?) {
         super.processUpdateSoftware(mLink, mRequired)
-        ToolBox_Inf.executeUpdSW(context, mLink, mRequired)
+        //
+        if (progressDialog != null) {
+            progressDialog.dismiss()
+        }
+        //
+        ToolBox_Inf.executeLogoffAndUpdateSoftware(context)
     }
 
 

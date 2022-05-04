@@ -3,12 +3,13 @@ package com.namoadigital.prj001.ui.act007;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -487,8 +488,11 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
     @Override
     protected void processUpdateSoftware(String mLink, String mRequired) {
         super.processUpdateSoftware(mLink, mRequired);
-
-        ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+        if(progressDialog != null) {
+            progressDialog.dismiss();
+        }
+        //
+        ToolBox_Inf.executeLogoffAndUpdateSoftware(context);
     }
 
     //Metodo chamado ao finalizar o download da atualização.

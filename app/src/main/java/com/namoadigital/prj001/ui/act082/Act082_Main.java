@@ -25,10 +25,6 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.MkDateTime;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
@@ -1102,8 +1098,11 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
     @Override
     protected void processUpdateSoftware(String mLink, String mRequired) {
         super.processUpdateSoftware(mLink, mRequired);
-
-        ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+        if(progressDialog != null) {
+            progressDialog.dismiss();
+        }
+        //
+        ToolBox_Inf.executeLogoffAndUpdateSoftware(context);
     }
 
     //Metodo chamado ao finalizar o download da atualização.

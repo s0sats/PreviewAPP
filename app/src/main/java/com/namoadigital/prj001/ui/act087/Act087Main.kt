@@ -546,7 +546,12 @@ class Act087Main : Base_Activity_Frag(),
     //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED OU VERSÃO INVALIDA
     override fun processUpdateSoftware(mLink: String?, mRequired: String?) {
         super.processUpdateSoftware(mLink, mRequired)
-        ToolBox_Inf.executeUpdSW(context, mLink, mRequired)
+        //
+        if (progressDialog != null) {
+            progressDialog.dismiss()
+        }
+        //
+        ToolBox_Inf.executeLogoffAndUpdateSoftware(context)
     }
 
 

@@ -704,4 +704,15 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         iniUIFooter();
 //        checkSiteAvailablity();
     }
+
+    //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED OU VERSÃO INVALIDA
+    @Override
+    protected void processUpdateSoftware(String mLink, String mRequired) {
+        super.processUpdateSoftware(mLink, mRequired);
+        if(progressDialog != null) {
+            progressDialog.dismiss();
+        }
+        //
+        ToolBox_Inf.executeLogoffAndUpdateSoftware(context);
+    }
 }

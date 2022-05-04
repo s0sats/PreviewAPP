@@ -512,8 +512,11 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
     @Override
     protected void processUpdateSoftware(String mLink, String mRequired) {
         super.processUpdateSoftware(mLink, mRequired);
-
-        ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+        if(progressDialog != null) {
+            progressDialog.dismiss();
+        }
+        //
+        ToolBox_Inf.executeLogoffAndUpdateSoftware(context);
     }
     //Metodo chamado ao finalizar o download da atualização.
     @Override

@@ -1,5 +1,8 @@
 package com.namoadigital.prj001.ui.act068;
 
+import static com.namoadigital.prj001.ui.act074.Act074_Main.ALL_TICKETS_UPDATED;
+import static com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search.PRODUCT_ID;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -51,9 +54,6 @@ import com.namoadigital.prj001.view.frag.frg_ticket_search.I_Frg_Ticket_Search;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import static com.namoadigital.prj001.ui.act074.Act074_Main.ALL_TICKETS_UPDATED;
-import static com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search.PRODUCT_ID;
 
 public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_Main_Contract.I_View, I_Frg_Ticket_Search {
 
@@ -705,8 +705,11 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     @Override
     protected void processUpdateSoftware(String mLink, String mRequired) {
         super.processUpdateSoftware(mLink, mRequired);
-
-        ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+        if(progressDialog != null) {
+            progressDialog.dismiss();
+        }
+        //
+        ToolBox_Inf.executeLogoffAndUpdateSoftware(context);
     }
 
     //Metodo chamado ao finalizar o download da atualização.

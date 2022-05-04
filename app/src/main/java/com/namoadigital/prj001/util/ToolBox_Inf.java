@@ -20,6 +20,7 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.GENERIC_CHANNEL_ID;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_PERIOD_FILTER;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION;
+import static com.namoadigital.prj001.util.ConstantBaseApp.SEND_TO_STORE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_BARCODE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_FORM;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_FORM_NC;
@@ -138,6 +139,7 @@ import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
+import com.namoadigital.prj001.extensions.AppCompatActivityKt;
 import com.namoadigital.prj001.model.CH_Room;
 import com.namoadigital.prj001.model.Chat_Obj;
 import com.namoadigital.prj001.model.EV_Module_Res;
@@ -1230,7 +1232,7 @@ public class ToolBox_Inf {
         LocalBroadcastManager.getInstance(context).sendBroadcast(mIntent);
     }
     @Deprecated
-    public static void executeUpdSW(Context context, String link, String required) {
+    public static void executeLogoffAndUpdateSoftware(Context context) {
 //        Intent mIntent = new Intent(context, WBR_UpdateSoftware.class);
 //        Bundle bundle = new Bundle();
 //        bundle.putString(Constant.SW_LINK, link);
@@ -1239,6 +1241,8 @@ public class ToolBox_Inf {
 //        mIntent.putExtras(bundle);
 //        //
 //        context.sendBroadcast(mIntent);
+
+        AppCompatActivityKt.logout((AppCompatActivity) context, true);
     }
 
     public static boolean processWSCheck_GC(Context context, String sVersion, String sLogin, String s_Link, int iStatus, int iStatus_OD,Integer db_version) {
@@ -1751,7 +1755,12 @@ public class ToolBox_Inf {
     }
 
     public static void call_Act001_Main(Context context) {
+        call_Act001_Main(context, false);
+    }
+
+    public static void call_Act001_Main(Context context, Boolean forcedByExpiredVersion) {
         Intent mIntent = new Intent(context, Act001_Main.class);
+        mIntent.putExtra(SEND_TO_STORE, forcedByExpiredVersion);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(mIntent);
     }

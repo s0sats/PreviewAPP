@@ -538,8 +538,11 @@ public class Act049_Main extends Base_Activity_Frag implements Act049_Main_Contr
     @Override
     protected void processUpdateSoftware(String mLink, String mRequired) {
         super.processUpdateSoftware(mLink, mRequired);
-
-        ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+        if(progressDialog != null) {
+            progressDialog.dismiss();
+        }
+        //
+        ToolBox_Inf.executeLogoffAndUpdateSoftware(context);
     }
     //Metodo chamado ao finalizar o download da atualização.
     @Override

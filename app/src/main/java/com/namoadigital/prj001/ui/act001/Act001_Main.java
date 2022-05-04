@@ -1,9 +1,12 @@
 package com.namoadigital.prj001.ui.act001;
 
+import static com.namoadigital.prj001.util.ConstantBaseApp.SEND_TO_STORE;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -91,7 +94,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
             deleteApkFile();
             removeDeprecatedPreferences();
             //
-            checkForAppUpdate();
+            recoverIntentsInfo();
         }
     }
 
@@ -164,6 +167,29 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         ToolBox_Inf.mkDirectory();
         //
         mPresenter.checkLogin();
+    }
+
+    private void recoverIntentsInfo() {
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            boolean sendToStore = bundle.getBoolean(SEND_TO_STORE);
+            if(sendToStore){
+                callAppStore();
+            }else{
+                checkForAppUpdate();
+            }
+        }else{
+            checkForAppUpdate();
+        }
+    }
+
+    private void callAppStore() {
+        final String appPackageName = context.getPackageName();
+        try {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+        } catch (android.content.ActivityNotFoundException anfe) {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+        }
     }
 
     private void initActions() {
@@ -378,13 +404,13 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
                     progressDialog.dismiss();
                 }
                 //
-                ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+                ToolBox_Inf.executeLogoffAndUpdateSoftware(context);
             }
         }else{
             if(progressDialog != null) {
                 progressDialog.dismiss();
             }
-            ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+            ToolBox_Inf.executeLogoffAndUpdateSoftware(context);
         }
     }
 

@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act081;
 
+import static com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search.PRODUCT_ID;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -37,8 +39,6 @@ import com.namoadigital.prj001.view.frag.frg_serial_search.On_Frg_Serial_Search;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search.PRODUCT_ID;
 
 public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements
     Act081_Main_Contract.I_View,
@@ -611,5 +611,16 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements
         }
         startActivity(mIntent);
         finish();
+    }
+
+    //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED OU VERSÃO INVALIDA
+    @Override
+    protected void processUpdateSoftware(String mLink, String mRequired) {
+        super.processUpdateSoftware(mLink, mRequired);
+        if(progressDialog != null) {
+            progressDialog.dismiss();
+        }
+        //
+        ToolBox_Inf.executeLogoffAndUpdateSoftware(context);
     }
 }

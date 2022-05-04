@@ -1,14 +1,14 @@
 package com.namoadigital.prj001.ui.act074;
 
+import static com.namoadigital.prj001.ui.act069.Act069_Main.FILTER_PARTNER_EMPTY;
+import static com.namoadigital.prj001.ui.act069.Act069_Main.FILTER_PARTNER_NO_PROFILE;
+import static com.namoadigital.prj001.ui.act069.Act069_Main.FILTER_PARTNER_PROFILE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.FILTER_TEXT;
+
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.IdRes;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -16,6 +16,12 @@ import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+
+import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -38,11 +44,6 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.namoadigital.prj001.ui.act069.Act069_Main.FILTER_PARTNER_EMPTY;
-import static com.namoadigital.prj001.ui.act069.Act069_Main.FILTER_PARTNER_NO_PROFILE;
-import static com.namoadigital.prj001.ui.act069.Act069_Main.FILTER_PARTNER_PROFILE;
-import static com.namoadigital.prj001.util.ConstantBaseApp.FILTER_TEXT;
 
 public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I_View {
     public static final String TAB_MY_TICKETS = "tab_my_tickets";
@@ -323,8 +324,11 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
     @Override
     protected void processUpdateSoftware(String mLink, String mRequired) {
         super.processUpdateSoftware(mLink, mRequired);
-
-        ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+        if(progressDialog != null) {
+            progressDialog.dismiss();
+        }
+        //
+        ToolBox_Inf.executeLogoffAndUpdateSoftware(context);
     }
 
     //Metodo chamado ao finalizar o download da atualização.

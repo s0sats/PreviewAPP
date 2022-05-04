@@ -7,20 +7,26 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
+
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.widget.Toolbar;
-import android.view.*;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TextView;
+
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -32,9 +38,18 @@ import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.IO_InboundDao;
 import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
-import com.namoadigital.prj001.model.*;
+import com.namoadigital.prj001.model.IO_From_Outbound_Search_Record;
+import com.namoadigital.prj001.model.IO_Inbound;
+import com.namoadigital.prj001.model.MD_Partner;
+import com.namoadigital.prj001.model.MD_Site;
+import com.namoadigital.prj001.model.T_IO_Master_Data_Rec;
 import com.namoadigital.prj001.receiver.WBR_Logout;
-import com.namoadigital.prj001.service.*;
+import com.namoadigital.prj001.service.WS_IO_From_Site_Search;
+import com.namoadigital.prj001.service.WS_IO_Inbound_Download;
+import com.namoadigital.prj001.service.WS_IO_Inbound_Header_Save;
+import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
+import com.namoadigital.prj001.service.WS_IO_Master_Data;
+import com.namoadigital.prj001.service.WS_IO_Transport_Order_Out_Search;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act053.Act053_Main;
 import com.namoadigital.prj001.ui.act056.Act056_Main;
@@ -933,8 +948,11 @@ public class Act061_Main extends Base_Activity_Frag implements Act061_Main_Contr
     @Override
     protected void processUpdateSoftware(String mLink, String mRequired) {
         super.processUpdateSoftware(mLink, mRequired);
-
-        ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+        if(progressDialog != null) {
+            progressDialog.dismiss();
+        }
+        //
+        ToolBox_Inf.executeLogoffAndUpdateSoftware(context);
     }
 
     //Metodo chamado ao finalizar o download da atualização.

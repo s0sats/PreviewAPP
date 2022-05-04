@@ -1185,7 +1185,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
     protected void processUpdateSoftware(String mLink, String mRequired) {
         super.processUpdateSoftware(mLink, mRequired);
 
-        ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+        ToolBox_Inf.executeLogoffAndUpdateSoftware(context);
     }
 
     //Tratativa SESSION NOT FOUND

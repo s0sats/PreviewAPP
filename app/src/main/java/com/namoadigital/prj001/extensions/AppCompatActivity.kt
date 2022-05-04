@@ -32,9 +32,12 @@ fun AppCompatActivity.forceOpenKeyboard() {
 }
 
 fun AppCompatActivity.logout(){
+    logout(false)
+}
+fun AppCompatActivity.logout(forcedByExpiredVersion: Boolean){
     ToolBox_Con.cleanPreferences(this)
     //
-    ToolBox_Inf.call_Act001_Main(this)
+    ToolBox_Inf.call_Act001_Main(this, forcedByExpiredVersion)
     //
     finish()
 }

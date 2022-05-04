@@ -916,6 +916,9 @@ public class ConstantBaseApp extends ConstantBase {
     //Chave de Bundle act069, 74 e 76
     public static final String FILTER_TEXT = "FILTER_TEXT";
 
+    //Chave de Bundle act001.
+    public static final String SEND_TO_STORE = "SEND_TO_STORE";
+
     /*
      * Constantes MainTagMenuStatus
      */
