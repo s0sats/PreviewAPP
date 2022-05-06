@@ -1184,7 +1184,10 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
     @Override
     protected void processUpdateSoftware(String mLink, String mRequired) {
         super.processUpdateSoftware(mLink, mRequired);
-
+        if(progressDialog != null) {
+            progressDialog.dismiss();
+        }
+        //
         ToolBox_Inf.executeLogoffAndUpdateSoftware(context);
     }
 

@@ -1402,12 +1402,15 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         finish();
     }
 
-    //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED
+    //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED OU VERSÃO INVALIDA
     @Override
     protected void processUpdateSoftware(String mLink, String mRequired) {
         super.processUpdateSoftware(mLink, mRequired);
-        //ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
-        progressDialog.dismiss();
+        if(progressDialog != null) {
+            progressDialog.dismiss();
+        }
+        //
+        ToolBox_Inf.executeLogoffAndUpdateSoftware(context);
     }
     //endregion
 

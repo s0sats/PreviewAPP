@@ -1,5 +1,12 @@
 package com.namoadigital.prj001.ui.act038;
 
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_FORM;
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_FORM_AP;
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_LATE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_SITE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_NO_SELECTED_DATE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_SELECTED_DATE;
+
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
@@ -57,13 +64,6 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_FORM;
-import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_FORM_AP;
-import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_LATE;
-import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_SITE;
-import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_NO_SELECTED_DATE;
-import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_SELECTED_DATE;
 
 /**
  * Created by d.luche on 31/08/2017.
@@ -1852,13 +1852,15 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
 
     }
 
-    //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED
+    //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED OU VERSÃO INVALIDA
     @Override
     protected void processUpdateSoftware(String mLink, String mRequired) {
         super.processUpdateSoftware(mLink, mRequired);
-
-        //ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
-        progressDialog.dismiss();
+        if(progressDialog != null) {
+            progressDialog.dismiss();
+        }
+        //
+        ToolBox_Inf.executeLogoffAndUpdateSoftware(context);
     }
 
     @Override

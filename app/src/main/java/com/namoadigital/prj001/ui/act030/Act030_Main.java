@@ -1,15 +1,18 @@
 package com.namoadigital.prj001.ui.act030;
 
+import static com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search.PRODUCT_ID;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentManager;
-import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentManager;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -29,8 +32,6 @@ import com.namoadigital.prj001.view.frag.frg_serial_search.On_Frg_Serial_Search;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search.PRODUCT_ID;
 
 /**
  * Created by neomatrix on 03/07/17.
@@ -529,13 +530,15 @@ public class Act030_Main extends Base_Activity_Frag_NFC_Geral implements Act030_
         progressDialog.dismiss();
     }
 
-    //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED
+    //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED OU VERSÃO INVALIDA
     @Override
     protected void processUpdateSoftware(String mLink, String mRequired) {
         super.processUpdateSoftware(mLink, mRequired);
-
-        //ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
-        progressDialog.dismiss();
+        if(progressDialog != null) {
+            progressDialog.dismiss();
+        }
+        //
+        ToolBox_Inf.executeLogoffAndUpdateSoftware(context);
     }
 
     @Override

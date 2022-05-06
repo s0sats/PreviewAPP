@@ -1,5 +1,10 @@
 package com.namoadigital.prj001.ui.act035;
 
+import static com.namoadigital.prj001.receiver.NotificationReceiver.NOTIFICATION;
+import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE_ACTIVED;
+import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE_DESC;
+
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
@@ -112,11 +117,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-
-import static com.namoadigital.prj001.receiver.NotificationReceiver.NOTIFICATION;
-import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE;
-import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE_ACTIVED;
-import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE_DESC;
 
 /**
  * Created by d.luche on 31/08/2017.
@@ -3209,12 +3209,15 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         }
     }
 
+    //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED OU VERSÃO INVALIDA
     @Override
     protected void processUpdateSoftware(String mLink, String mRequired) {
         super.processUpdateSoftware(mLink, mRequired);
-
-        //ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
-        progressDialog.dismiss();
+        if(progressDialog != null) {
+            progressDialog.dismiss();
+        }
+        //
+        ToolBox_Inf.executeLogoffAndUpdateSoftware(context);
     }
 
     @Override
