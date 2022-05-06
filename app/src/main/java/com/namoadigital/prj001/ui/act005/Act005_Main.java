@@ -2690,7 +2690,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     protected void processLogin() {
         super.processLogin();
         //
-        AppCompatActivityKt.logout(this);
+        AppCompatActivityKt.logout(this, false);
     }
 
     @Override

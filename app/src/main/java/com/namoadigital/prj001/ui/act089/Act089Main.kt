@@ -102,7 +102,7 @@ class Act089Main : Base_Activity(), Act089MainContract.I_View {
     }
 
     override fun callLogout() {
-        logout()
+        logout(false)
     }
 
     override fun setWsProcess(wsProcessSupport: String) {
