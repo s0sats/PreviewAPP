@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 /**
@@ -14,13 +16,13 @@ public class DataPackage {
     public static final String DATA_PACKAGE_AP = "AP";
     public static final String DATA_PACKAGE_SERIAL = "SERIAL";
 
-    private ArrayList<String> MAIN;
-    private ArrayList<Long> CHECKLIST;
-    private ArrayList<T_DataPackage_SM_SO_Env> SO;
-    private ArrayList<String> SCHEDULE;
-    private ArrayList<TSearch_Ap_Env.ObjAp> AP;
-    private ArrayList<T_DataPackage_TK_Ticket_Env> TICKET;
-    private ArrayList<T_DataPackage_MD_Product_Serial_Structure_Env> SERIAL;
+    @SerializedName("MAIN") private ArrayList<String> MAIN;
+    @SerializedName("CHECKLIST") private ArrayList<Long> CHECKLIST;
+    @SerializedName("SO") private ArrayList<T_DataPackage_SM_SO_Env> SO;
+    @SerializedName("SCHEDULE") private ArrayList<String> SCHEDULE;
+    @SerializedName("AP") private ArrayList<TSearch_Ap_Env.ObjAp> AP;
+    @SerializedName("TICKET") private ArrayList<T_DataPackage_TK_Ticket_Env> TICKET;
+    @SerializedName("SERIAL") private ArrayList<T_DataPackage_MD_Product_Serial_Structure_Env> SERIAL;
 
     public DataPackage() {
     }

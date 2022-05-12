@@ -1,15 +1,17 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by DANIEL.LUCHE on 24/03/2017.
  */
 
 public class TLogout_Env {
 
-    private String app_code;
-    private String user_code;
-    private String device_code;
-    private String customer_code;
+    @SerializedName("app_code") private String app_code;
+    @SerializedName("user_code") private String user_code;
+    @SerializedName("device_code") private String device_code;
+    @SerializedName("customer_code") private String customer_code;
 
     public String getApp_code() {
         return app_code;

@@ -1,18 +1,21 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by neomatrix on 7/15/16.
  */
 
 public class TSync_Env extends Main_Header_Env {
 
-    private DataPackage data_package;
-    private int status_jump;
+    @SerializedName("data_package") private DataPackage data_package;
+    @SerializedName("status_jump") private int status_jump;
+    @SerializedName("current_time") private String current_time;
+    @SerializedName("valid_time") private int valid_time;
+
     public DataPackage getData_package() {
         return data_package;
     }
-    private String current_time;
-    private int valid_time;
 
     public void setData_package(DataPackage data_package) {
         this.data_package = data_package;

@@ -1,30 +1,32 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by neomatrix on 7/22/16.
  */
 
 public class GE_Custom_Form {
 
-    private long customer_code;
-    private int custom_form_type;
-    private int custom_form_code;
-    private int custom_form_version;
-    private int require_signature;
-    private int require_location;
-    private int require_serial_done;
-    private String automatic_fill;
-    private int all_site;
-    private int all_operation;
-    private int all_product;
-    private int tag_operational_code;
-    private int is_so;
-    private int so_edit_start_end;
-    private Integer so_order_type_code_default;
-    private int so_allow_change_order_type;
-    private int so_allow_backup;
-    private int so_optional_justify_problem;
-    private int block_spontaneous;
+    @SerializedName("customer_code") private long customer_code;
+    @SerializedName("custom_form_type") private int custom_form_type;
+    @SerializedName("custom_form_code") private int custom_form_code;
+    @SerializedName("custom_form_version") private int custom_form_version;
+    @SerializedName("require_signature") private int require_signature;
+    @SerializedName("require_location") private int require_location;
+    @SerializedName("require_serial_done") private int require_serial_done;
+    @SerializedName("automatic_fill") private String automatic_fill;
+    @SerializedName("all_site") private int all_site;
+    @SerializedName("all_operation") private int all_operation;
+    @SerializedName("all_product") private int all_product;
+    @SerializedName("tag_operational_code") private int tag_operational_code;
+    @SerializedName("is_so") private int is_so;
+    @SerializedName("so_edit_start_end") private int so_edit_start_end;
+    @SerializedName("so_order_type_code_default") private Integer so_order_type_code_default;
+    @SerializedName("so_allow_change_order_type") private int so_allow_change_order_type;
+    @SerializedName("so_allow_backup") private int so_allow_backup;
+    @SerializedName("so_optional_justify_problem") private int so_optional_justify_problem;
+    @SerializedName("block_spontaneous") private int block_spontaneous;
 
     public long getCustomer_code() {
         return customer_code;

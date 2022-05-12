@@ -1,19 +1,21 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by DANIEL.LUCHE on 25/01/2017.
  */
 
 public class GE_Custom_Form_Blob {
 
-    private long customer_code;
-    private int custom_form_type;
-    private int custom_form_code;
-    private int custom_form_version;
-    private long blob_code;
-    private String blob_name;
-    private String blob_url;
-    private String blob_url_local;
+    @SerializedName("customer_code") private long customer_code;
+    @SerializedName("custom_form_type") private int custom_form_type;
+    @SerializedName("custom_form_code") private int custom_form_code;
+    @SerializedName("custom_form_version") private int custom_form_version;
+    @SerializedName("blob_code") private long blob_code;
+    @SerializedName("blob_name") private String blob_name;
+    @SerializedName("blob_url") private String blob_url;
+    @SerializedName("blob_url_local") private String blob_url_local;
 
     public long getCustomer_code() {
         return customer_code;

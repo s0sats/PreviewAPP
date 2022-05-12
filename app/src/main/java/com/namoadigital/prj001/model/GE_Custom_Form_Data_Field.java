@@ -18,21 +18,27 @@ import java.io.File;
 public class GE_Custom_Form_Data_Field {
 
     @Expose
+    @SerializedName("customer_code")
     private long customer_code;
     @Expose
+    @SerializedName("custom_form_type")
     private int custom_form_type;
     @Expose
+    @SerializedName("custom_form_code")
     private int custom_form_code;
     @Expose
+    @SerializedName("custom_form_version")
     private int custom_form_version;
     @Expose
+    @SerializedName("custom_form_data")
     private long custom_form_data; // Indexador
     @Expose
+    @SerializedName("custom_form_seq")
     private int custom_form_seq;
-
+    @SerializedName("value")
     private String value; // Resposta
 
-
+    @SerializedName("value_extra")
     private String value_extra; // Resposta Extra (Foto/Comentario/Plano Acao)
 
     @Expose

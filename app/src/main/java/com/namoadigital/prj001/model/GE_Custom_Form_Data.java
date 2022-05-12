@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,27 +13,35 @@ import java.util.List;
 public class GE_Custom_Form_Data {
 
     @Expose
+    @SerializedName("customer_code")
     private long customer_code;
 
     @Expose
+    @SerializedName("custom_form_type")
     private int custom_form_type;
 
     @Expose
+    @SerializedName("custom_form_code")
     private int custom_form_code;
 
     @Expose
+    @SerializedName("custom_form_version")
     private int custom_form_version;
 
     @Expose
+    @SerializedName("custom_form_data")
     private long custom_form_data; // Indexador
 
     @Expose
+    @SerializedName("custom_form_status")
     private String custom_form_status; // Local (0 = nao sincronizado 1 = sincronizado 2 = Bloqueado para envio)
 
     @Expose
+    @SerializedName("product_code")
     private long product_code;
 
     @Expose
+    @SerializedName("serial_id")
     private String serial_id;
 
     /**
@@ -40,82 +49,112 @@ public class GE_Custom_Form_Data {
      * Class code do serial preenchido no dialog de finalização de form os.
      */
     @Expose
+    @SerializedName("class_code")
     private Integer class_code;
 
     @Expose
+    @SerializedName("date_start")
     private String date_start;
 
     @Expose
+    @SerializedName("date_end")
     private String date_end;
 
     @Expose
+    @SerializedName("user_code")
     private long user_code;
 
     @Expose
+    @SerializedName("site_code")
     private String site_code;
 
     @Expose
+    @SerializedName("operation_code")
     private long operation_code;
 
     @Expose
+    @SerializedName("signature")
     private String signature;
 
     @Expose
+    @SerializedName("signature_name")
     private String signature_name;
 
     @Expose
+    @SerializedName("token")
     private String token;
 
     @Expose
+    @SerializedName("location_type")
     private String location_type;
 
     @Expose
+    @SerializedName("location_lat")
     private String location_lat;
 
     @Expose
+    @SerializedName("location_lng")
     private String location_lng;
 
     @Expose
+    @SerializedName("so_prefix")
     private Integer so_prefix;
 
     @Expose
+    @SerializedName("so_code")
     private Integer so_code;
     @Expose
+    @SerializedName("zone_code")
     private Integer zone_code;
     @Expose
+    @SerializedName("local_code")
     private Integer local_code;
-
+    @SerializedName("location_pendency")
     private int location_pendency;
 
     @Expose
+    @SerializedName("date_gps")
     private String date_gps;
 
+    @SerializedName("dataFields")
     private List<GE_Custom_Form_Data_Field> dataFields;
     //Campos novo agendamento
     @Expose
+    @SerializedName("schedule_prefix")
     private Integer schedule_prefix;
     @Expose
+    @SerializedName("schedule_code")
     private Integer schedule_code;
     @Expose
+    @SerializedName("schedule_exec")
     private Integer schedule_exec;
     //Contem msg de retorno após sae do form no servidor.
+    @SerializedName("error_msg")
     private String error_msg;
     //PK Control usada no Ticket.
     @Expose
+    @SerializedName("ticket_prefix")
     private Integer ticket_prefix;
     @Expose
+    @SerializedName("ticket_code")
     private Integer ticket_code;
     @Expose
+    @SerializedName("ticket_seq")
     private Integer ticket_seq;
     @Expose
+    @SerializedName("ticket_seq_tmp")
     private Integer ticket_seq_tmp;
     @Expose
+    @SerializedName("pipeline_code")
     private Integer pipeline_code;
     @Expose
+    @SerializedName("step_code")
     private Integer step_code;
     @Expose
+    @SerializedName("ticket_checkin_date")
     private String ticket_checkin_date;
     @Expose
+    @SerializedName("tag_operational_code")
     private int tag_operational_code;
     /*
     * CAMPOS FORM O.S
@@ -126,22 +165,31 @@ public class GE_Custom_Form_Data {
     //Era mais facil chamar essas sys_date... de os_date... e não inverter as coisas....
     // mas a vida tem dessas...
     @Expose
+    @SerializedName("sys_date_start")
     private String sys_date_start;
     @Expose
+    @SerializedName("sys_date_end")
     private String sys_date_end;
     @Expose
+    @SerializedName("order_type_code")
     private Integer order_type_code;
     @Expose
+    @SerializedName("backup_product_code")
     private Integer backup_product_code;
     @Expose
+    @SerializedName("backup_serial_code")
     private Integer backup_serial_code;
     @Expose
+    @SerializedName("device_tp_code")
     private Integer device_tp_code;
     @Expose
+    @SerializedName("measure_tp_code")
     private Integer measure_tp_code;
     @Expose
+    @SerializedName("measure_value")
     private Float measure_value;
     @Expose
+    @SerializedName("measure_cycle_value")
     private Float measure_cycle_value;
 
     public GE_Custom_Form_Data() {

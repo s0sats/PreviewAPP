@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
@@ -15,17 +16,17 @@ import java.util.ArrayList;
 
 public class TSave_Rec {
     @Expose
-    private String app;
+    @SerializedName("app") private String app;
     @Expose
-    private String validation;
+    @SerializedName("validation") private String validation;
     @Expose
-    private String link_url;
+    @SerializedName("link_url") private String link_url;
     @Expose
-    private String error_msg;
+    @SerializedName("error_msg") private String error_msg;
     @Expose
-    private String save;
+    @SerializedName("save") private String save;
     @Expose
-    private ArrayList<Error_Process> error_process = new ArrayList<>();
+    @SerializedName("error_process") private ArrayList<Error_Process> error_process = new ArrayList<>();
 
     public String getApp() {
         return app;
@@ -80,31 +81,31 @@ public class TSave_Rec {
         public static final String ERROR_TYPE_TICKET = "TICKET_FORM";
 
         @Expose
-        private int customer_code;
+        @SerializedName("customer_code") private int customer_code;
         @Expose
-        private int custom_form_type;
+        @SerializedName("custom_form_type") private int custom_form_type;
         @Expose
-        private int custom_form_code;
+        @SerializedName("custom_form_code") private int custom_form_code;
         @Expose
-        private int custom_form_version;
+        @SerializedName("custom_form_version") private int custom_form_version;
         @Expose
-        private int custom_form_data;
+        @SerializedName("custom_form_data") private int custom_form_data;
         @Expose
-        private String error;
+        @SerializedName("error") private String error;
         //As propriedades abaixo são preenchidas após o retorno do servidor
         //e são usadas somente para exibição do erro na tela.
         @Expose
-        private String custom_form_desc;
+        @SerializedName("custom_form_desc") private String custom_form_desc;
         @Expose
-        private String schedule_pk;
+        @SerializedName("schedule_pk") private String schedule_pk;
         @Expose
-        private String schedule_desc;
+        @SerializedName("schedule_desc") private String schedule_desc;
         @Expose
-        private String error_type;
+        @SerializedName("error_type") private String error_type;
         @Expose
-        private String ticket_step_pk;
+        @SerializedName("ticket_step_pk") private String ticket_step_pk;
         @Expose
-        private String ticket_step_desc;
+        @SerializedName("ticket_step_desc") private String ticket_step_desc;
 
         public int getCustomer_code() {
             return customer_code;

@@ -1,18 +1,20 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by DANIEL.LUCHE on 23/01/2017.
  */
 
 public class MD_Product_Group {
 
-    private long customer_code;
-    private long group_code;
-    private long recursive_code;
-    private Long recursive_code_father;
-    private String group_id;
-    private String group_desc;
-    private int spare_part;
+    @SerializedName("customer_code") private long customer_code;
+    @SerializedName("group_code") private long group_code;
+    @SerializedName("recursive_code") private long recursive_code;
+    @SerializedName("recursive_code_father") private Long recursive_code_father;
+    @SerializedName("group_id") private String group_id;
+    @SerializedName("group_desc") private String group_desc;
+    @SerializedName("spare_part") private int spare_part;
 
     public long getCustomer_code() {
         return customer_code;

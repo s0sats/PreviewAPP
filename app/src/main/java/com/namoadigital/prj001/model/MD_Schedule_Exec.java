@@ -4,6 +4,7 @@ import android.content.Context;
 
 import androidx.annotation.Nullable;
 
+import com.google.gson.annotations.SerializedName;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.util.Constant;
@@ -12,84 +13,84 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 public class MD_Schedule_Exec {
-    private long customer_code;
-    private int schedule_prefix;
-    private int schedule_code;
-    private int schedule_exec;
-    private String schedule_desc;
-    private String schedule_type;
-    private String status;
-    private int site_code;
-    private String site_id;
-    private String site_desc;
-    private Integer zone_code;
-    private String zone_id;
-    private String zone_desc;
-    private int operation_code;
-    private String operation_id;
-    private String operation_desc;
-    private int product_code;
-    private String product_id;
-    private String product_desc;
+    @SerializedName("customer_code") private long customer_code;
+    @SerializedName("schedule_prefix") private int schedule_prefix;
+    @SerializedName("schedule_code") private int schedule_code;
+    @SerializedName("schedule_exec") private int schedule_exec;
+    @SerializedName("schedule_desc") private String schedule_desc;
+    @SerializedName("schedule_type") private String schedule_type;
+    @SerializedName("status") private String status;
+    @SerializedName("site_code") private int site_code;
+    @SerializedName("site_id") private String site_id;
+    @SerializedName("site_desc") private String site_desc;
+    @SerializedName("zone_code") private Integer zone_code;
+    @SerializedName("zone_id") private String zone_id;
+    @SerializedName("zone_desc") private String zone_desc;
+    @SerializedName("operation_code") private int operation_code;
+    @SerializedName("operation_id") private String operation_id;
+    @SerializedName("operation_desc") private String operation_desc;
+    @SerializedName("product_code") private int product_code;
+    @SerializedName("product_id") private String product_id;
+    @SerializedName("product_desc") private String product_desc;
     @Nullable
-    private Integer serial_code;
+    @SerializedName("serial_code") private Integer serial_code;
     @Nullable
-    private String serial_id;
+    @SerializedName("serial_id") private String serial_id;
     @Nullable
-    private Integer custom_form_type;
+    @SerializedName("custom_form_type") private Integer custom_form_type;
     @Nullable
-    private Integer custom_form_code;
+    @SerializedName("custom_form_code") private Integer custom_form_code;
     @Nullable
-    private Integer custom_form_version;
+    @SerializedName("custom_form_version") private Integer custom_form_version;
     @Nullable
-    private String custom_form_desc;
+    @SerializedName("custom_form_desc") private String custom_form_desc;
     @Nullable
-    private Integer ticket_type;
+    @SerializedName("ticket_type") private Integer ticket_type;
     @Nullable
-    private String ticket_type_id;
+    @SerializedName("ticket_type_id") private String ticket_type_id;
     @Nullable
-    private String ticket_type_desc;
+    @SerializedName("ticket_type_desc") private String ticket_type_desc;
 
-    private int local_control;
-    private int io_control;
+    @SerializedName("local_control") private int local_control;
+    @SerializedName("io_control") private int io_control;
     @Nullable
-    private String serial_rule;
+    @SerializedName("serial_rule") private String serial_rule;
     @Nullable
-    private Integer serial_min_length;
+    @SerializedName("serial_min_length") private Integer serial_min_length;
     @Nullable
-    private Integer serial_max_length;
-    private int site_restriction;
+    @SerializedName("serial_max_length") private Integer serial_max_length;
+    @SerializedName("site_restriction") private int site_restriction;
     @Nullable
-    private String product_icon_name;
+    @SerializedName("product_icon_name") private String product_icon_name;
     @Nullable
-    private String product_icon_url;
-    private String product_icon_url_local;
-    private int require_location;
+    @SerializedName("product_icon_url") private String product_icon_url;
+    @SerializedName("product_icon_url_local") private String product_icon_url_local;
+    @SerializedName("require_location") private int require_location;
 
-    private String date_start;
-    private String date_end;
+    @SerializedName("date_start") private String date_start;
+    @SerializedName("date_end") private String date_end;
     @Nullable
-    private String comments;
-    private int require_serial;
-    private int allow_new_serial_cl;
-    private int require_serial_done;
-    private int sync_process;
+    @SerializedName("comments") private String comments;
+    @SerializedName("require_serial") private int require_serial;
+    @SerializedName("allow_new_serial_cl") private int allow_new_serial_cl;
+    @SerializedName("require_serial_done") private int require_serial_done;
+    @SerializedName("sync_process") private int sync_process;
     @Nullable
-    private String fcm_new_status;
+    @SerializedName("fcm_new_status") private String fcm_new_status;
     @Nullable
-    private String fcm_user_nick;
+    @SerializedName("fcm_user_nick") private String fcm_user_nick;
     @Nullable
-    private String schedule_erro_msg;
+    @SerializedName("schedule_erro_msg") private String schedule_erro_msg;
     @Nullable
-    private String close_date;
-    private int tag_operational_code;
-    private String tag_operational_id;
-    private String tag_operational_desc;
+    @SerializedName("close_date") private String close_date;
+    @SerializedName("tag_operational_code") private int tag_operational_code;
+    @SerializedName("tag_operational_id") private String tag_operational_id;
+    @SerializedName("tag_operational_desc") private String tag_operational_desc;
     @Nullable
-    private Integer has_Nc;
+    @SerializedName("has_Nc") private Integer has_Nc;
     //LUCHE - 17/09/2021 - Flag que indica se originalmente o agendamento tinha um serial
-    private int serial_defined_by_server;
-    private int is_so;//indica se o form é tipo o.s
+    @SerializedName("serial_defined_by_server") private int serial_defined_by_server;
+    @SerializedName("is_so") private int is_so;//indica se o form é tipo o.s
 
     /**
      * LUCHE - 14/02/2020

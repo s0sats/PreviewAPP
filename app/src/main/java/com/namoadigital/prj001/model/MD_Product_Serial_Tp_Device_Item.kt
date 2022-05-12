@@ -1,20 +1,22 @@
 package com.namoadigital.prj001.model
 
+import com.google.gson.annotations.SerializedName
+
 class MD_Product_Serial_Tp_Device_Item(
-    val item_check_code: Int,
-    val item_check_seq: Int,
-    val apply_material: String,
-    val verification_instruction: String?,
-    val require_justify_problem: Int,
-    val critical_item: Int,
-    val order_seq: Int,
-    val structure: Int,
-    val manual_desc: String?,
-    val next_cycle_measure: Double?,
-    val next_cycle_measure_date: String?,
-    val next_cycle_limit_date: String?,
-    val item_check_status: String,
-    val target_date : String?
+    @SerializedName("item_check_code") val item_check_code: Int,
+    @SerializedName("item_check_seq") val item_check_seq: Int,
+    @SerializedName("apply_material") val apply_material: String,
+    @SerializedName("verification_instruction") val verification_instruction: String?,
+    @SerializedName("require_justify_problem") val require_justify_problem: Int,
+    @SerializedName("critical_item") val critical_item: Int,
+    @SerializedName("order_seq") val order_seq: Int,
+    @SerializedName("structure") val structure: Int,
+    @SerializedName("manual_desc") val manual_desc: String?,
+    @SerializedName("next_cycle_measure") val next_cycle_measure: Double?,
+    @SerializedName("next_cycle_measure_date") val next_cycle_measure_date: String?,
+    @SerializedName("next_cycle_limit_date") val next_cycle_limit_date: String?,
+    @SerializedName("item_check_status") val item_check_status: String,
+    @SerializedName("target_date") val target_date : String?
 ) {
     var customer_code: Long = -1
         private set

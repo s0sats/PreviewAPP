@@ -1,13 +1,15 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by neomatrix on 7/22/16.
  */
 
 public class GE_Custom_Form_Type {
 
-    private long customer_code;
-    private int custom_form_type;
+    @SerializedName("customer_code") private long customer_code;
+    @SerializedName("custom_form_type") private int custom_form_type;
 
     public long getCustomer_code() {
         return customer_code;

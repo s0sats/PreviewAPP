@@ -1,11 +1,13 @@
 package com.namoadigital.prj001.model
 
+import com.google.gson.annotations.SerializedName
+
 class MD_Product_Serial_Tp_Device(
-    val device_tp_code: Int,
-    val order_seq: Int,
-    val tracking_number: String? = null
+    @SerializedName("device_tp_code") val device_tp_code: Int,
+    @SerializedName("order_seq") val order_seq: Int,
+    @SerializedName("tracking_number") val tracking_number: String? = null
 ) {
-    var customer_code: Long = -1
+        var customer_code: Long = -1
         private set
     var product_code: Long = -1
         private set

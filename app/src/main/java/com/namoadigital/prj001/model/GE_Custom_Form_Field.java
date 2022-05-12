@@ -1,28 +1,30 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by neomatrix on 7/22/16.
  */
 
 public class GE_Custom_Form_Field {
 
-    private long customer_code;
-    private int custom_form_type;
-    private int custom_form_code;
-    private int custom_form_version;
-    private int custom_form_seq;
-    private String custom_form_data_type;
-    private Integer custom_form_data_size;
-    private String custom_form_data_mask;
-    private String custom_form_data_content;
-    private String custom_form_local_link;
-    private int custom_form_order;
-    private int page;
-    private int required;
-    private Integer device_tp_code;
-    private String automatic;
-    private String comment;
-    private String require_photo_on_nc;
+    @SerializedName("customer_code") private long customer_code;
+    @SerializedName("custom_form_type") private int custom_form_type;
+    @SerializedName("custom_form_code") private int custom_form_code;
+    @SerializedName("custom_form_version") private int custom_form_version;
+    @SerializedName("custom_form_seq") private int custom_form_seq;
+    @SerializedName("custom_form_data_type") private String custom_form_data_type;
+    @SerializedName("custom_form_data_size") private Integer custom_form_data_size;
+    @SerializedName("custom_form_data_mask") private String custom_form_data_mask;
+    @SerializedName("custom_form_data_content") private String custom_form_data_content;
+    @SerializedName("custom_form_local_link") private String custom_form_local_link;
+    @SerializedName("custom_form_order") private int custom_form_order;
+    @SerializedName("page") private int page;
+    @SerializedName("required") private int required;
+    @SerializedName("device_tp_code") private Integer device_tp_code;
+    @SerializedName("automatic") private String automatic;
+    @SerializedName("comment") private String comment;
+    @SerializedName("require_photo_on_nc") private String require_photo_on_nc;
 
     public GE_Custom_Form_Field() {
         this.custom_form_local_link = "";

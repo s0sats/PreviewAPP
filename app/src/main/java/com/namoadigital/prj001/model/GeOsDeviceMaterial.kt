@@ -1,33 +1,34 @@
 package com.namoadigital.prj001.model
 
 import com.google.gson.annotations.Expose
+import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 class GeOsDeviceMaterial(
-    val customer_code: Long,
-    val custom_form_type: Int,
-    val custom_form_code: Int,
-    val custom_form_version: Int,
-    val custom_form_data: Int,
-    val product_code: Int,
-    val serial_code: Int,
-    val device_tp_code: Int,
-    val item_check_code: Int,
-    val item_check_seq: Int,
+    @SerializedName("customer_code") val customer_code: Long,
+    @SerializedName("custom_form_type") val custom_form_type: Int,
+    @SerializedName("custom_form_code") val custom_form_code: Int,
+    @SerializedName("custom_form_version") val custom_form_version: Int,
+    @SerializedName("custom_form_data") val custom_form_data: Int,
+    @SerializedName("product_code") val product_code: Int,
+    @SerializedName("serial_code") val serial_code: Int,
+    @SerializedName("device_tp_code") val device_tp_code: Int,
+    @SerializedName("item_check_code") val item_check_code: Int,
+    @SerializedName("item_check_seq") val item_check_seq: Int,
     @Expose
-    val material_code: Int,
-    val material_id: String,
-    val material_desc: String,
+    @SerializedName("material_code") val material_code: Int,
+    @SerializedName("material_id") val material_id: String,
+    @SerializedName("material_desc") val material_desc: String,
     @Expose
-    var material_qty: Float,
-    val material_unit: String?,
-    val creation_ms: Long,
+    @SerializedName("material_qty") var material_qty: Float,
+    @SerializedName("material_unit") val material_unit: String?,
+    @SerializedName("creation_ms") val creation_ms: Long,
     @Expose
-    val material_planned: Int = 0,
+    @SerializedName("material_planned") val material_planned: Int = 0,
     @Expose
-    var material_planned_used: Int = 0,
+    @SerializedName("material_planned_used") var material_planned_used: Int = 0,
     @Expose
-    val material_planned_qty: Float? = null
+    @SerializedName("material_planned_qty") val material_planned_qty: Float? = null
 
 ): Serializable
 

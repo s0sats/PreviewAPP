@@ -1,17 +1,19 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by d.luche on 26/06/2017.
  */
 
 public class MD_Partner {
 
-    private long customer_code;
-    private int partner_code;
-    private String partner_id;
-    private String partner_desc;
-    private int operational;
-    private int billing;
+    @SerializedName("customer_code") private long customer_code;
+    @SerializedName("partner_code") private int partner_code;
+    @SerializedName("partner_id") private String partner_id;
+    @SerializedName("partner_desc") private String partner_desc;
+    @SerializedName("operational") private int operational;
+    @SerializedName("billing") private int billing;
 
     public long getCustomer_code() {
         return customer_code;

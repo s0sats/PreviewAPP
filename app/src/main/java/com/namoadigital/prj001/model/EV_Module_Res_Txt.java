@@ -1,17 +1,19 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by neomatrix on 5/9/16.
  */
 public class EV_Module_Res_Txt {
 
     //chave
-    private String module_code;
+    @SerializedName("module_code") private String module_code;
     //chave
-    private int resource_code;
+    @SerializedName("resource_code") private int resource_code;
     //chave
-    private String txt_code;
-    private int txt_ref;
+    @SerializedName("txt_code") private String txt_code;
+    @SerializedName("txt_ref") private int txt_ref;
 
     public String getModule_code() {
         return module_code;

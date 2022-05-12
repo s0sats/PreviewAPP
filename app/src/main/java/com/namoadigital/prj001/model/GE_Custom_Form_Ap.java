@@ -5,6 +5,7 @@ import android.content.Context;
 import androidx.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -16,63 +17,63 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 public class GE_Custom_Form_Ap {
 
     @Expose
-    private long customer_code;
+    @SerializedName("customer_code") private long customer_code;
     @Expose
-    private int custom_form_type;
+    @SerializedName("custom_form_type")private int custom_form_type;
     @Expose
-    private int custom_form_code;
+    @SerializedName("custom_form_code")private int custom_form_code;
     @Expose
-    private int custom_form_version;
-    private String custom_form_desc;
+    @SerializedName("custom_form_version")private int custom_form_version;
+    @SerializedName("custom_form_desc")private String custom_form_desc;
     @Expose
-    private long custom_form_data;
+    @SerializedName("custom_form_data")private long custom_form_data;
     @Expose
-    private Integer ap_code;
+    @SerializedName("ap_code")private Integer ap_code;
     @Expose
-    private String ap_description;
+    @SerializedName("ap_description")private String ap_description;
     @Expose
-    private String ap_status;
+    @SerializedName("ap_status")private String ap_status;
     @Expose
-    private String ap_comments;
+    @SerializedName("ap_comments")private String ap_comments;
     @Expose
-    private String ap_what;
+    @SerializedName("ap_what")private String ap_what;
     @Expose
-    private String ap_where;
+    @SerializedName("ap_where")private String ap_where;
     @Expose
-    private String ap_why;
+    @SerializedName("ap_why")private String ap_why;
     @Expose
-    private Integer ap_who;
-    private String ap_who_nick;
+    @SerializedName("ap_who")private Integer ap_who;
+    @SerializedName("ap_who_nick")private String ap_who_nick;
     @Expose
-    private String ap_how;
+    @SerializedName("ap_how")private String ap_how;
     @Expose
-    private String ap_how_much;
+    @SerializedName("ap_how_much")private String ap_how_much;
     @Expose
-    private String ap_when;
+    @SerializedName("ap_when")private String ap_when;
     @Expose
-    private Integer department_code;
-    private String department_id;
-    private String department_desc;
-    private String room_code;
-    private int ap_scn;
-    private int product_code;
-    private String product_id;
-    private String product_desc;
-    private Integer serial_code;
-    private String serial_id;
-    private int sync_required;
-    private int upload_required;
-    private String create_date;
-    private String create_user;
+    @SerializedName("department_code") private Integer department_code;
+    @SerializedName("department_id") private String department_id;
+    @SerializedName("department_desc") private String department_desc;
+    @SerializedName("room_code") private String room_code;
+    @SerializedName("ap_scn") private int ap_scn;
+    @SerializedName("product_code") private int product_code;
+    @SerializedName("product_id") private String product_id;
+    @SerializedName("product_desc") private String product_desc;
+    @SerializedName("serial_code") private Integer serial_code;
+    @SerializedName("serial_id") private String serial_id;
+    @SerializedName("sync_required") private int sync_required;
+    @SerializedName("upload_required") private int upload_required;
+    @SerializedName("create_date") private String create_date;
+    @SerializedName("create_user") private String create_user;
 
     @Expose(serialize = false)
-    private String custom_form_url;
+    @SerializedName("custom_form_url")private String custom_form_url;
 
-    private transient String custom_form_url_local;
-    private String last_update;
-    private int tag_operational_code;
-    private String tag_operational_id;
-    private String tag_operational_desc;
+    @SerializedName("custom_form_url_local") private transient String custom_form_url_local;
+    @SerializedName("last_update") private String last_update;
+    @SerializedName("tag_operational_code") private int tag_operational_code;
+    @SerializedName("tag_operational_id") private String tag_operational_id;
+    @SerializedName("tag_operational_desc") private String tag_operational_desc;
 
     public GE_Custom_Form_Ap() {
         this.custom_form_url_local = "";

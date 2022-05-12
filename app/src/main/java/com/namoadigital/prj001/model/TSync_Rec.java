@@ -1,20 +1,22 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by neomatrix on 7/15/16.
  */
 
 public class TSync_Rec {
 
-    private String app;
-    private String validation;
-    private String link_url;
-    private String error_msg;
-    private String zip;
-    private Integer db_version;
-    private Integer user_code;
-    private int valid_time = -1 ;
-    private long tolerance_time = -1;
+    @SerializedName("app") private String app;
+    @SerializedName("validation") private String validation;
+    @SerializedName("link_url") private String link_url;
+    @SerializedName("error_msg") private String error_msg;
+    @SerializedName("zip") private String zip;
+    @SerializedName("db_version") private Integer db_version;
+    @SerializedName("user_code") private Integer user_code;
+    @SerializedName("valid_time") private int valid_time = -1 ;
+    @SerializedName("tolerance_time") private long tolerance_time = -1;
 
     public String getApp() {
         return app;

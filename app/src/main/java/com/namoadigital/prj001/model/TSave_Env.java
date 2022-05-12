@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
@@ -11,18 +12,18 @@ import java.util.List;
 public class TSave_Env extends Main_Header_Env {
 
     @Expose
-    private String site_code;
+    @SerializedName("site_code") private String site_code;
     @Expose
-    private long operation_code;
+    @SerializedName("operation_code") private long operation_code;
     @Expose
-    private String token;
+    @SerializedName("token") private String token;
     @Expose
-    private List<GE_Custom_Form_Data> form_datas;
+    @SerializedName("form_datas") private List<GE_Custom_Form_Data> form_datas;
     @Expose
-    private List<GE_Custom_Form_Data_Field> form_data_fields;
+    @SerializedName("form_data_fields") private List<GE_Custom_Form_Data_Field> form_data_fields;
     //LISTA DE ITEM DA O.S
     @Expose
-    private List<GeOsDeviceItem> form_items;
+    @SerializedName("form_items") private List<GeOsDeviceItem> form_items;
 
 
     public String getSite_code() {

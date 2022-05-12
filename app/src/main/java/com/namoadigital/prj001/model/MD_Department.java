@@ -1,14 +1,16 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by d.luche on 23/02/2018.
  */
 
 public class MD_Department {
-    private long customer_code;
-    private int department_code;
-    private String department_id;
-    private String department_desc;
+    @SerializedName("customer_code") private long customer_code;
+    @SerializedName("department_code") private int department_code;
+    @SerializedName("department_id") private String department_id;
+    @SerializedName("department_desc") private String department_desc;
 
     public long getCustomer_code() {
         return customer_code;

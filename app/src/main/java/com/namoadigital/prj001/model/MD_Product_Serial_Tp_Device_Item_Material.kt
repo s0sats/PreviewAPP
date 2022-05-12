@@ -1,10 +1,11 @@
 package com.namoadigital.prj001.model
 
+import com.google.gson.annotations.SerializedName
 import java.math.BigDecimal
 
 class MD_Product_Serial_Tp_Device_Item_Material(
-    val material_code: Int,
-    val qty: BigDecimal
+    @SerializedName("material_code") val material_code: Int,
+    @SerializedName("qty") val qty: BigDecimal
 ) {
     var customer_code: Long = -1
         private set

@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * LUCHE - 13/04/2020
  *
@@ -8,10 +10,10 @@ package com.namoadigital.prj001.model;
 
 public class MD_Schedule_Exec_Site {
 
-    private long customer_code;
-    private int site_code;
-    private String site_id;
-    private String site_desc;
+    @SerializedName("customer_code") private long customer_code;
+    @SerializedName("site_code") private int site_code;
+    @SerializedName("site_id") private String site_id;
+    @SerializedName("site_desc") private String site_desc;
 
     public long getCustomer_code() {
         return customer_code;

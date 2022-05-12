@@ -1,12 +1,14 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class MD_Class {
-    private long customer_code;
-    private int class_code;
-    private String class_id;
-    private String class_type;
-    private String class_color;
-    private int class_available;
+    @SerializedName("customer_code") private long customer_code;
+    @SerializedName("class_code") private int class_code;
+    @SerializedName("class_id") private String class_id;
+    @SerializedName("class_type") private String class_type;
+    @SerializedName("class_color") private String class_color;
+    @SerializedName("class_available") private int class_available;
 
     public long getCustomer_code() {
         return customer_code;

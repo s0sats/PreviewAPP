@@ -1,11 +1,13 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class IO_Move_Reason {
 
-    private long customer_code;
-    private int reason_code;
-    private String reason_id;
-    private String reason_desc;
+    @SerializedName("customer_code") private long customer_code;
+    @SerializedName("reason_code") private int reason_code;
+    @SerializedName("reason_id") private String reason_id;
+    @SerializedName("reason_desc") private String reason_desc;
 
     public long getCustomer_code() {
         return customer_code;

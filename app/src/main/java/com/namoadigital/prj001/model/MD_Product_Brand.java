@@ -1,14 +1,16 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by d.luche on 03/07/2017.
  */
 
 public class MD_Product_Brand {
 
-    private long customer_code;
-    private long product_code;
-    private int brand_code;
+    @SerializedName("customer_code") private long customer_code;
+    @SerializedName("product_code") private long product_code;
+    @SerializedName("brand_code") private int brand_code;
 
     public long getCustomer_code() {
         return customer_code;

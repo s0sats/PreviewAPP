@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by DANIEL.LUCHE on 20/01/2017.
  * Classe com propriedade que serão enviadas para o
@@ -7,20 +9,20 @@ package com.namoadigital.prj001.model;
  */
 public class TSession_Env extends Main_Header_Env {
 
-    private String email_p;
-    private String password;
-    private String nfc_code;
-    private String device_code;
-    private String manufacturer;
-    private String model;
-    private String version_os;
-    private String os;
-    private String force_login;
-    private String customer_code;
-    private int translate_code;
-    private String gcm_id = "";
-    private Integer site_code;
-    private Integer user_level_code;
+    @SerializedName("email_p") private String email_p;
+    @SerializedName("password") private String password;
+    @SerializedName("nfc_code") private String nfc_code;
+    @SerializedName("device_code") private String device_code;
+    @SerializedName("manufacturer") private String manufacturer;
+    @SerializedName("model") private String model;
+    @SerializedName("version_os") private String version_os;
+    @SerializedName("os") private String os;
+    @SerializedName("force_login") private String force_login;
+    @SerializedName("customer_code") private String customer_code;
+    @SerializedName("translate_code") private int translate_code;
+    @SerializedName("gcm_id") private String gcm_id = "";
+    @SerializedName("site_code") private Integer site_code;
+    @SerializedName("user_level_code") private Integer user_level_code;
 
     public String getEmail_p() {
         return email_p;

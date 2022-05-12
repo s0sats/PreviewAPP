@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by DANIEL.LUCHE on 20/01/2017.
  * Classe com propriedade que serão recebidas do
@@ -8,12 +10,12 @@ package com.namoadigital.prj001.model;
 
 public class TSession_Rec {
 
-    private String app;
-    private String validation;
-    private String link_url;
-    private String error_msg;
-    private String session_app;
-    private Session_Options session_options;
+    @SerializedName("app") private String app;
+    @SerializedName("validation") private String validation;
+    @SerializedName("link_url") private String link_url;
+    @SerializedName("error_msg") private String error_msg;
+    @SerializedName("session_app") private String session_app;
+    @SerializedName("session_options") private Session_Options session_options;
 
     public String getApp() {
         return app;
@@ -69,12 +71,12 @@ public class TSession_Rec {
      * Esse obj é envia quando o o customer possui licença por site ou global
      */
     public class Session_Options{
-        private Integer site_code;
-        private String site_desc;
-        private int user_level_code;
-        private String user_level_id;
-        private int user_level_value;
-        private int user_level_changed;
+        @SerializedName("site_code") private Integer site_code;
+        @SerializedName("site_desc") private String site_desc;
+        @SerializedName("user_level_code") private int user_level_code;
+        @SerializedName("user_level_id") private String user_level_id;
+        @SerializedName("user_level_value") private int user_level_value;
+        @SerializedName("user_level_changed") private int user_level_changed;
 
         public Integer getSite_code() {
             return site_code;

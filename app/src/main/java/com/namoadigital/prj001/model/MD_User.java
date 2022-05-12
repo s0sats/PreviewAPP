@@ -1,16 +1,18 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by d.luche on 23/02/2018.
  */
 
 public class MD_User {
-    private long customer_code;
-    private int user_code;
-    private String user_nick;
-    private String user_name;
+    @SerializedName("customer_code") private long customer_code;
+    @SerializedName("user_code") private int user_code;
+    @SerializedName("user_nick") private String user_nick;
+    @SerializedName("user_name") private String user_name;
     //acessos
-    private int ap;
+    @SerializedName("ap") private int ap;
 
     public long getCustomer_code() {
         return customer_code;

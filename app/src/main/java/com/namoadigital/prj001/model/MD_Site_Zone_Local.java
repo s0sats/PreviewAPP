@@ -1,17 +1,19 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by d.luche on 23/06/2017.
  */
 
 public class MD_Site_Zone_Local {
 
-    private long customer_code;
-    private int site_code;
-    private int zone_code;
-    private int local_code;
-    private String local_id;
-    private int capacity;
+    @SerializedName("customer_code") private long customer_code;
+    @SerializedName("site_code") private int site_code;
+    @SerializedName("zone_code") private int zone_code;
+    @SerializedName("local_code") private int local_code;
+    @SerializedName("local_id") private String local_id;
+    @SerializedName("capacity") private int capacity;
 
     public long getCustomer_code() {
         return customer_code;

@@ -17,104 +17,104 @@ public class MD_Product_Serial implements Serializable {
     private static final long serialVersionUID = 4954240719813141624L;
 
     @Expose
-    private long customer_code;
+    @SerializedName("customer_code") private long customer_code;
     @Expose
-    private long product_code;
-    private String product_id;
-    private String product_desc;
+    @SerializedName("product_code") private long product_code;
+    @SerializedName("product_id") private String product_id;
+    @SerializedName("product_desc") private String product_desc;
     @Expose
-    private long serial_code;
+    @SerializedName("serial_code") private long serial_code;
     @Expose
-    private long serial_tmp;
+    @SerializedName("serial_tmp") private long serial_tmp;
     @Expose
-    private String serial_id;
+    @SerializedName("serial_id") private String serial_id;
     @Expose
-    private Integer site_code;
-    private String site_id;
-    private String site_desc;
-    private String site_reason_code;
+    @SerializedName("site_code") private Integer site_code;
+    @SerializedName("site_id") private String site_id;
+    @SerializedName("site_desc") private String site_desc;
+    @SerializedName("site_reason_code") private String site_reason_code;
     @Expose
-    private Integer zone_code;
-    private String zone_id;
-    private String zone_desc;
+    @SerializedName("zone_code") private Integer zone_code;
+    @SerializedName("zone_id") private String zone_id;
+    @SerializedName("zone_desc") private String zone_desc;
     @Expose
-    private Integer local_code;
-    private String local_id;
+    @SerializedName("local_code") private Integer local_code;
+    @SerializedName("local_id") private String local_id;
     @Expose
-    private Integer site_code_owner;
+    @SerializedName("site_code_owner") private Integer site_code_owner;
     @Expose
-    private Integer brand_code;
-    private String brand_id;
-    private String brand_desc;
+    @SerializedName("brand_code") private Integer brand_code;
+    @SerializedName("brand_id") private String brand_id;
+    @SerializedName("brand_desc") private String brand_desc;
     @Expose
-    private Integer model_code;
-    private String model_id;
-    private String model_desc;
+    @SerializedName("model_code") private Integer model_code;
+    @SerializedName("model_id") private String model_id;
+    @SerializedName("model_desc") private String model_desc;
     @Expose
-    private Integer color_code;
-    private String color_id;
-    private String color_desc;
+    @SerializedName("color_code") private Integer color_code;
+    @SerializedName("color_id") private String color_id;
+    @SerializedName("color_desc") private String color_desc;
     @Expose
-    private Integer segment_code;
-    private String segment_id;
-    private String segment_desc;
+    @SerializedName("segment_code") private Integer segment_code;
+    @SerializedName("segment_id") private String segment_id;
+    @SerializedName("segment_desc") private String segment_desc;
     @Expose
-    private Integer category_price_code;
-    private String category_price_id;
-    private String category_price_desc;
+    @SerializedName("category_price_code") private Integer category_price_code;
+    @SerializedName("category_price_id") private String category_price_id;
+    @SerializedName("category_price_desc") private String category_price_desc;
     @Expose
-    private String add_inf1;
+    @SerializedName("add_inf1") private String add_inf1;
     @Expose
-    private String add_inf2;
+    @SerializedName("add_inf2") private String add_inf2;
     @Expose
-    private String add_inf3;
+    @SerializedName("add_inf3") private String add_inf3;
     @Expose
-    private int update_required;
+    @SerializedName("update_required") private int update_required;
     //SOMENTE PARA ENVIO NO WS
     @Expose
-    private Integer only_position;
+    @SerializedName("only_position") private Integer only_position;
     @Expose
-    private ArrayList<MD_Product_Serial_Tracking> tracking_list = new ArrayList<>();
-    private int flag_offline;
-    private int sync_process;
+    @SerializedName("tracking_list") private ArrayList<MD_Product_Serial_Tracking> tracking_list = new ArrayList<>();
+    @SerializedName("flag_offline") private int flag_offline;
+    @SerializedName("sync_process") private int sync_process;
     @Expose
-    private Integer class_code;
-    private String class_id;
-    private String class_type;
-    private String class_color;
-    private Integer class_available;
-    private Integer inbound_prefix;
-    private Integer inbound_code;
-    private String inbound_id;
-    private String inbound_conf_date;
-    private Integer move_prefix;
-    private Integer move_code;
-    private Integer move_group_code;
-    private Integer outbound_prefix;
-    private Integer outbound_code;
-    private String outbound_id;
-    private Integer product_io_control;
-    private Integer local_control;
-    private Integer site_io_control;
-    private Integer inbound_auto_create;
-    private Integer site_restriction;
+    @SerializedName("class_code") private Integer class_code;
+    @SerializedName("class_id") private String class_id;
+    @SerializedName("class_type") private String class_type;
+    @SerializedName("class_color") private String class_color;
+    @SerializedName("class_available") private Integer class_available;
+    @SerializedName("inbound_prefix") private Integer inbound_prefix;
+    @SerializedName("inbound_code") private Integer inbound_code;
+    @SerializedName("inbound_id") private String inbound_id;
+    @SerializedName("inbound_conf_date") private String inbound_conf_date;
+    @SerializedName("move_prefix") private Integer move_prefix;
+    @SerializedName("move_code") private Integer move_code;
+    @SerializedName("move_group_code") private Integer move_group_code;
+    @SerializedName("outbound_prefix") private Integer outbound_prefix;
+    @SerializedName("outbound_code") private Integer outbound_code;
+    @SerializedName("outbound_id") private String outbound_id;
+    @SerializedName("product_io_control") private Integer product_io_control;
+    @SerializedName("local_control") private Integer local_control;
+    @SerializedName("site_io_control") private Integer site_io_control;
+    @SerializedName("inbound_auto_create") private Integer inbound_auto_create;
+    @SerializedName("site_restriction") private Integer site_restriction;
     @Expose
-    private String edit_mode;
+    @SerializedName("edit_mode") private String edit_mode;
     @Expose
-    private String profile;
+    @SerializedName("profile") private String profile;
     @Expose
-    private String log_date;
+    @SerializedName("log_date") private String log_date;
     @Expose
-    private Integer reason_code;
+    @SerializedName("reason_code") private Integer reason_code;
     //LUCHE - 24/08/2021 - O.S FORM O.o
-    private int has_item_check;
-    private Integer scn_item_check;
-    private Integer measure_tp_code;
-    private Double last_measure_value;
+    @SerializedName("has_item_check") private int has_item_check;
+    @SerializedName("scn_item_check") private Integer scn_item_check;
+    @SerializedName("measure_tp_code") private Integer measure_tp_code;
+    @SerializedName("last_measure_value") private Double last_measure_value;
     @Nullable
-    private String last_measure_date;
-    private Float last_cycle_value;
-    private Integer device_tp_code_main;
+    @SerializedName("last_measure_date") private String last_measure_date;
+    @SerializedName("last_cycle_value") private Float last_cycle_value;
+    @SerializedName("device_tp_code_main") private Integer device_tp_code_main;
     @SerializedName("structure")
     @Expose
     private List<MD_Product_Serial_Structure> structure = new ArrayList<>();

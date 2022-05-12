@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
@@ -8,29 +9,29 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 public class MD_Site {
 
-    private long customer_code;
-    private String site_code;
-    private String site_id;
-    private String site_desc;
-    private int io_control;
-    private Integer reason_code;
-    private int inbound_auto_create;
-    private int in_allow_new_item;
-    private int in_put_away_process;
-    private Integer in_zone_code_conf;
-    private Integer in_local_code_conf;
-    private int in_done_automatic;
-    private int out_allow_new_item;
-    private int out_picking_process;
-    private Integer out_zone_code_picking;
-    private Integer out_local_code_picking;
-    private int out_done_automatic;
+    @SerializedName("customer_code") private long customer_code;
+    @SerializedName("site_code") private String site_code;
+    @SerializedName("site_id") private String site_id;
+    @SerializedName("site_desc") private String site_desc;
+    @SerializedName("io_control") private int io_control;
+    @SerializedName("reason_code") private Integer reason_code;
+    @SerializedName("inbound_auto_create") private int inbound_auto_create;
+    @SerializedName("in_allow_new_item") private int in_allow_new_item;
+    @SerializedName("in_put_away_process") private int in_put_away_process;
+    @SerializedName("in_zone_code_conf") private Integer in_zone_code_conf;
+    @SerializedName("in_local_code_conf") private Integer in_local_code_conf;
+    @SerializedName("in_done_automatic") private int in_done_automatic;
+    @SerializedName("out_allow_new_item") private int out_allow_new_item;
+    @SerializedName("out_picking_process") private int out_picking_process;
+    @SerializedName("out_zone_code_picking") private Integer out_zone_code_picking;
+    @SerializedName("out_local_code_picking") private Integer out_local_code_picking;
+    @SerializedName("out_done_automatic") private int out_done_automatic;
     //LUCHE - 13/01/2021 - Controle de licença
-    private Integer license_enabled;
-    private Integer free_executions_max;
-    private Integer free_executions_count;
-    private int app_executions_count;
-    private int license_blocked;
+    @SerializedName("license_enabled") private Integer license_enabled;
+    @SerializedName("free_executions_max") private Integer free_executions_max;
+    @SerializedName("free_executions_count") private Integer free_executions_count;
+    @SerializedName("app_executions_count") private int app_executions_count;
+    @SerializedName("license_blocked") private int license_blocked;
 
     public long getCustomer_code() {
         return customer_code;

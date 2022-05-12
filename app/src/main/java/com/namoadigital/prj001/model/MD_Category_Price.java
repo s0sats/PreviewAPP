@@ -1,15 +1,17 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by d.luche on 23/06/2017.
  */
 
 public class MD_Category_Price {
 
-    private long customer_code;
-    private int category_price_code;
-    private String category_price_id;
-    private String category_price_desc;
+    @SerializedName("customer_code") private long customer_code;
+    @SerializedName("category_price_code") private int category_price_code;
+    @SerializedName("category_price_id") private String category_price_id;
+    @SerializedName("category_price_desc") private String category_price_desc;
 
     public long getCustomer_code() {
         return customer_code;

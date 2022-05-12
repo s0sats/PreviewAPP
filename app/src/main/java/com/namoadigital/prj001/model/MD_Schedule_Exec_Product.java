@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * LUCHE - 13/04/2020
  *
@@ -7,21 +9,21 @@ package com.namoadigital.prj001.model;
  */
 
 public class MD_Schedule_Exec_Product {
-    private long customer_code;
-    private int product_code;
-    private String product_id;
-    private String product_desc;
-    private int require_serial;
-    private int allow_new_serial_cl;
-    private int local_control;
-    private int io_control;
-    private String serial_rule;
-    private Integer serial_min_length;
-    private Integer serial_max_length;
-    private int site_restriction;
-    private String product_icon_name;
-    private String product_icon_url;
-    private String product_icon_url_local;
+    @SerializedName("customer_code") private long customer_code;
+    @SerializedName("product_code") private int product_code;
+    @SerializedName("product_id") private String product_id;
+    @SerializedName("product_desc") private String product_desc;
+    @SerializedName("require_serial") private int require_serial;
+    @SerializedName("allow_new_serial_cl") private int allow_new_serial_cl;
+    @SerializedName("local_control") private int local_control;
+    @SerializedName("io_control") private int io_control;
+    @SerializedName("serial_rule") private String serial_rule;
+    @SerializedName("serial_min_length") private Integer serial_min_length;
+    @SerializedName("serial_max_length") private Integer serial_max_length;
+    @SerializedName("site_restriction") private int site_restriction;
+    @SerializedName("product_icon_name") private String product_icon_name;
+    @SerializedName("product_icon_url") private String product_icon_url;
+    @SerializedName("product_icon_url_local") private String product_icon_url_local;
 
     public long getCustomer_code() {
         return customer_code;

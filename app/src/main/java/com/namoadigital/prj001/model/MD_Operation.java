@@ -1,17 +1,19 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by DANIEL.LUCHE on 16/01/2017.
  */
 
 public class MD_Operation {
 
-    private long customer_code;
-    private long operation_code;
-    private String operation_id;
-    private String operation_desc;
-    private int alias_service_oper;
-    private int alias_service_com;
+    @SerializedName("customer_code") private long customer_code;
+    @SerializedName("operation_code") private long operation_code;
+    @SerializedName("operation_id") private String operation_id;
+    @SerializedName("operation_desc") private String operation_desc;
+    @SerializedName("alias_service_oper") private int alias_service_oper;
+    @SerializedName("alias_service_com") private int alias_service_com;
 
     public long getCustomer_code() {
         return customer_code;

@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -8,24 +10,24 @@ import org.jetbrains.annotations.Nullable;
 
 public class SO_Pack_Express {
 
-    private long customer_code;
-    private long site_code;
-    private long operation_code;
-    private long product_code;
-    private String express_code;
-    private String pack_desc;
-    private String billing_add_inf1_view;
+    @SerializedName("customer_code") private long customer_code;
+    @SerializedName("site_code") private long site_code;
+    @SerializedName("operation_code") private long operation_code;
+    @SerializedName("product_code") private long product_code;
+    @SerializedName("express_code") private String express_code;
+    @SerializedName("pack_desc") private String pack_desc;
+    @SerializedName("billing_add_inf1_view") private String billing_add_inf1_view;
     @Nullable
-    private String billing_add_inf1_text;
-    private int billing_add_inf1_tracking;
-    private String billing_add_inf2_view;
+    @SerializedName("billing_add_inf1_text") private String billing_add_inf1_text;
+    @SerializedName("billing_add_inf1_tracking") private int billing_add_inf1_tracking;
+    @SerializedName("billing_add_inf2_view") private String billing_add_inf2_view;
     @Nullable
-    private String billing_add_inf2_text;
-    private int billing_add_inf2_tracking;
-    private String billing_add_inf3_view;
+    @SerializedName("billing_add_inf2_text") private String billing_add_inf2_text;
+    @SerializedName("billing_add_inf2_tracking") private int billing_add_inf2_tracking;
+    @SerializedName("billing_add_inf3_view") private String billing_add_inf3_view;
     @Nullable
-    private String billing_add_inf3_text;
-    private int billing_add_inf3_tracking;
+    @SerializedName("billing_add_inf3_text") private String billing_add_inf3_text;
+    @SerializedName("billing_add_inf3_tracking") private int billing_add_inf3_tracking;
 
     public long getCustomer_code() {
         return customer_code;
