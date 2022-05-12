@@ -1,17 +1,19 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by neomatrix on 7/13/16.
  */
 
 public class EV_User {
 
-    private long user_code;
-    private String user_nick;
-    private String email_p;
-    private int admin;
-    private int exist_nfc;
-    private int nfc_blocked;
+    @SerializedName("user_code") private long user_code;
+    @SerializedName("user_nick") private String user_nick;
+    @SerializedName("email_p") private String email_p;
+    @SerializedName("admin") private int admin;
+    @SerializedName("exist_nfc") private int exist_nfc;
+    @SerializedName("nfc_blocked") private int nfc_blocked;
 
     public long getUser_code() {
         return user_code;

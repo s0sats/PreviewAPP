@@ -5,6 +5,7 @@ import android.content.Context;
 import androidx.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
@@ -24,149 +25,149 @@ import java.util.ArrayList;
 
 public class TK_Ticket implements Cloneable, Serializable {
     @Expose
-    private long customer_code;//pk
+    @SerializedName("customer_code") private long customer_code;//pk
     @Expose
-    private int ticket_prefix;//pk
+    @SerializedName("ticket_prefix") private int ticket_prefix;//pk
     @Expose
-    private int ticket_code;//pk
+    @SerializedName("ticket_code") private int ticket_code;//pk
     @Expose
-    private int scn;
-    private int user_level_min;
-    private String ticket_id;
-    private int type_code;
-    private String type_id;
-    private String type_desc;
-    private int app_personal_data;
-    private String type_path;
-    private String open_comments;
-    private String open_photo;
-    private String open_photo_local;
-    private String open_name;
-    private String open_email;
-    private String open_phone;
-    private String open_date;
-    private int open_user;
-    private String open_user_name;
+    @SerializedName("scn") private int scn;
+    @SerializedName("user_level_min") private int user_level_min;
+    @SerializedName("ticket_id") private String ticket_id;
+    @SerializedName("type_code") private int type_code;
+    @SerializedName("type_id") private String type_id;
+    @SerializedName("type_desc") private String type_desc;
+    @SerializedName("app_personal_data") private int app_personal_data;
+    @SerializedName("type_path") private String type_path;
+    @SerializedName("open_comments") private String open_comments;
+    @SerializedName("open_photo") private String open_photo;
+    @SerializedName("open_photo_local") private String open_photo_local;
+    @SerializedName("open_name") private String open_name;
+    @SerializedName("open_email") private String open_email;
+    @SerializedName("open_phone") private String open_phone;
+    @SerializedName("open_date") private String open_date;
+    @SerializedName("open_user") private int open_user;
+    @SerializedName("open_user_name") private String open_user_name;
     @Expose
-    private String internal_comments;
-    private int open_site_code;
-    private String open_site_id;
-    private String open_site_desc;
-    private Integer open_zone_code;
-    private String open_zone_id;
-    private String open_zone_desc;
-    private int open_operation_code;
-    private String open_operation_id;
-    private String open_operation_desc;
-    private int open_product_code;
-    private String open_product_id;
-    private String open_product_desc;
-    private int open_serial_code;
-    private String open_serial_id;
+    @SerializedName("internal_comments") private String internal_comments;
+    @SerializedName("open_site_code") private int open_site_code;
+    @SerializedName("open_site_id") private String open_site_id;
+    @SerializedName("open_site_desc") private String open_site_desc;
+    @SerializedName("open_zone_code") private Integer open_zone_code;
+    @SerializedName("open_zone_id") private String open_zone_id;
+    @SerializedName("open_zone_desc") private String open_zone_desc;
+    @SerializedName("open_operation_code") private int open_operation_code;
+    @SerializedName("open_operation_id") private String open_operation_id;
+    @SerializedName("open_operation_desc") private String open_operation_desc;
+    @SerializedName("open_product_code") private int open_product_code;
+    @SerializedName("open_product_id") private String open_product_id;
+    @SerializedName("open_product_desc") private String open_product_desc;
+    @SerializedName("open_serial_code") private int open_serial_code;
+    @SerializedName("open_serial_id") private String open_serial_id;
     @Expose
-    private String change_date;
-    private String start_date;
+    @SerializedName("change_date") private String change_date;
+    @SerializedName("start_date") private String start_date;
     @Nullable
-    private String forecast_date;
+    @SerializedName("forecast_date") private String forecast_date;
     @Expose
-    private String forecast_time;
-    private String ticket_status;
+    @SerializedName("forecast_time") private String forecast_time;
+    @SerializedName("ticket_status") private String ticket_status;
     @Nullable
-    private String close_date;
-    private Integer close_user;
+    @SerializedName("close_date") private String close_date;
+    @SerializedName("close_user") private Integer close_user;
     @Nullable
-    private String close_user_name;
-    private Integer duration_minutes;
-    private Integer barcode_code;
+    @SerializedName("close_user_name") private String close_user_name;
+    @SerializedName("duration_minutes") private Integer duration_minutes;
+    @SerializedName("barcode_code") private Integer barcode_code;
     @Nullable
-    private Integer pc_code;
+    @SerializedName("pc_code") private Integer pc_code;
     @Nullable
-    private String pc_id;
+    @SerializedName("pc_id") private String pc_id;
     @Nullable
-    private String pc_desc;
-    @Nullable
-    @Expose
-    private Integer main_user;
+    @SerializedName("pc_desc") private String pc_desc;
     @Nullable
     @Expose
-    private String main_user_nick;
+    @SerializedName("main_user") private Integer main_user;
     @Nullable
     @Expose
-    private String main_user_name;
-    private Integer pipeline_code;
+    @SerializedName("main_user_nick") private String main_user_nick;
     @Nullable
-    private String pipeline_id;
-    @Nullable
-    private String pipeline_desc;
-    private Integer current_step_order;
-    private int approval_rejected;
-    private String origin_type;
-    private String origin_desc;
-    private int valid_structure_step;
-    private int inventory_control;
-    private int user_focus;
-    private int has_item_check;
-    private int allow_step_approval;
-    private int sync_required;
-    private int update_required;
-    private int update_required_product;
     @Expose
-    private String token;
-    @Expose
+    @SerializedName("main_user_name") private String main_user_name;
+    @SerializedName("pipeline_code") private Integer pipeline_code;
     @Nullable
-    private Integer schedule_prefix;
-    @Expose
+    @SerializedName("pipeline_id") private String pipeline_id;
     @Nullable
-    private Integer schedule_code;
+    @SerializedName("pipeline_desc") private String pipeline_desc;
+    @SerializedName("current_step_order") private Integer current_step_order;
+    @SerializedName("approval_rejected") private int approval_rejected;
+    @SerializedName("origin_type") private String origin_type;
+    @SerializedName("origin_desc") private String origin_desc;
+    @SerializedName("valid_structure_step") private int valid_structure_step;
+    @SerializedName("inventory_control") private int inventory_control;
+    @SerializedName("user_focus") private int user_focus;
+    @SerializedName("has_item_check") private int has_item_check;
+    @SerializedName("allow_step_approval") private int allow_step_approval;
+    @SerializedName("sync_required") private int sync_required;
+    @SerializedName("update_required") private int update_required;
+    @SerializedName("update_required_product") private int update_required_product;
+    @Expose
+    @SerializedName("token") private String token;
     @Expose
     @Nullable
-    private Integer schedule_exec;
+    @SerializedName("schedule_prefix") private Integer schedule_prefix;
+    @Expose
     @Nullable
-    private Integer client_code;
+    @SerializedName("schedule_code") private Integer schedule_code;
+    @Expose
     @Nullable
-    private String client_id;
+    @SerializedName("schedule_exec") private Integer schedule_exec;
     @Nullable
-    private String client_name;
+    @SerializedName("client_code") private Integer client_code;
     @Nullable
-    private String address_country;
+    @SerializedName("client_id") private String client_id;
     @Nullable
-    private String address_state;
+    @SerializedName("client_name") private String client_name;
     @Nullable
-    private String address_city;
+    @SerializedName("address_country") private String address_country;
     @Nullable
-    private String address_district;
+    @SerializedName("address_state") private String address_state;
     @Nullable
-    private String address_street;
+    @SerializedName("address_city") private String address_city;
     @Nullable
-    private String address_num;
+    @SerializedName("address_district") private String address_district;
     @Nullable
-    private String address_complement;
+    @SerializedName("address_street") private String address_street;
     @Nullable
-    private String address_zipcode;
+    @SerializedName("address_num") private String address_num;
     @Nullable
-    private String address_lat;
+    @SerializedName("address_complement") private String address_complement;
     @Nullable
-    private String address_lng;
+    @SerializedName("address_zipcode") private String address_zipcode;
     @Nullable
-    private Integer contract_code;
+    @SerializedName("address_lat") private String address_lat;
     @Nullable
-    private String contract_id;
+    @SerializedName("address_lng") private String address_lng;
     @Nullable
-    private String contract_desc;
+    @SerializedName("contract_code") private Integer contract_code;
+    @Nullable
+    @SerializedName("contract_id") private String contract_id;
+    @Nullable
+    @SerializedName("contract_desc") private String contract_desc;
     //LUCHE - 03/12/2020 - Propriedade que grava o SCN recebido via FCM
-    private int fcm_scn;
+    @SerializedName("fcm_scn") private int fcm_scn;
     @Expose
-    String time_action;
+    @SerializedName("time_action") String time_action;
     @Expose
-    Integer move_other_date;
+    @SerializedName("move_other_date") Integer move_other_date;
     @Expose
-    Integer move_steps;
+    @SerializedName("move_steps") Integer move_steps;
     @Expose
-    String apply_perc_steps;
+    @SerializedName("apply_perc_steps") String apply_perc_steps;
     @Expose
-    private int tag_operational_code;
-    private String tag_operational_id;
-    private String tag_operational_desc;
+    @SerializedName("tag_operational_code") private int tag_operational_code;
+    @SerializedName("tag_operational_id") private String tag_operational_id;
+    @SerializedName("tag_operational_desc") private String tag_operational_desc;
     @Expose
     private ArrayList<TK_Ticket_Step> step = new ArrayList<>();
     @Expose

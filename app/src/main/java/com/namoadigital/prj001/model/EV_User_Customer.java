@@ -1,33 +1,35 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by neomatrix on 5/2/16.
  */
 public class EV_User_Customer {
 
-    private long user_code;
-    private long customer_code;
-    private String customer_name;
-    private int translate_code;
-    private String language_code;
-    private String translate_desc;
-    private String nls_date_format;
-    private int keyuser;
-    private int blocked;
-    private String session_app;
-    private int pending;
-    private String logo_url;
-    private int tracking;
-    private int sync_required;
-    private String timezone;
-    private String license_control_type;
+    @SerializedName("user_code") private long user_code;
+    @SerializedName("customer_code") private long customer_code;
+    @SerializedName("customer_name") private String customer_name;
+    @SerializedName("translate_code") private int translate_code;
+    @SerializedName("language_code") private String language_code;
+    @SerializedName("translate_desc") private String translate_desc;
+    @SerializedName("nls_date_format") private String nls_date_format;
+    @SerializedName("keyuser") private int keyuser;
+    @SerializedName("blocked") private int blocked;
+    @SerializedName("session_app") private String session_app;
+    @SerializedName("pending") private int pending;
+    @SerializedName("logo_url") private String logo_url;
+    @SerializedName("tracking") private int tracking;
+    @SerializedName("sync_required") private int sync_required;
+    @SerializedName("timezone") private String timezone;
+    @SerializedName("license_control_type") private String license_control_type;
     //LUCHE - 07/01/2021 - Propriedades referente a licença
-    private Integer license_site_code;
-    private String license_site_desc;
-    private Integer license_user_level_code;
-    private String license_user_level_id;
-    private Integer license_user_level_value;
-    private Integer license_user_level_changed;
+    @SerializedName("license_site_code") private Integer license_site_code;
+    @SerializedName("license_site_desc") private String license_site_desc;
+    @SerializedName("license_user_level_code") private Integer license_user_level_code;
+    @SerializedName("license_user_level_id") private String license_user_level_id;
+    @SerializedName("license_user_level_value") private Integer license_user_level_value;
+    @SerializedName("license_user_level_changed") private Integer license_user_level_changed;
 
     public long getUser_code() {
         return user_code;

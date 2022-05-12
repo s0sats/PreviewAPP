@@ -1,18 +1,20 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 public class T_EV_Get_Customer_Site_License_Rec {
 
-    private String app;
-    private String validation;
-    private String link_url;
-    private String error_msg;
-    private String login;
-    private int valid_time;
-    private int tolerance_time;
-    private String version;
-    private ArrayList<SiteLicense> site_license = new ArrayList<>();
+    @SerializedName("app") private String app;
+    @SerializedName("validation") private String validation;
+    @SerializedName("link_url") private String link_url;
+    @SerializedName("error_msg") private String error_msg;
+    @SerializedName("login") private String login;
+    @SerializedName("valid_time") private int valid_time;
+    @SerializedName("tolerance_time") private int tolerance_time;
+    @SerializedName("version") private String version;
+    @SerializedName("site_license") private ArrayList<SiteLicense> site_license = new ArrayList<>();
 
     public String getApp() {
         return app;

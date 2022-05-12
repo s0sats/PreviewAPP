@@ -1,17 +1,19 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by neomatrix on 5/9/16.
  */
 public class TGC_Rec extends Main_Header_Rec {
 
-    private String version;
-    private String login;
-    private String zip;
-    private Integer db_version;
-    private Integer user_code;
-    private int valid_time = -1 ;
-    private long tolerance_time = -1;
+    @SerializedName("version") private String version;
+    @SerializedName("login") private String login;
+    @SerializedName("zip") private String zip;
+    @SerializedName("db_version") private Integer db_version;
+    @SerializedName("user_code") private Integer user_code;
+    @SerializedName("valid_time") private int valid_time = -1 ;
+    @SerializedName("tolerance_time") private long tolerance_time = -1;
 
     public String getVersion() {
         return version;

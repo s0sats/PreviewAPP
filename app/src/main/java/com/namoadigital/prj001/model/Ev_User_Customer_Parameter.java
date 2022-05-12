@@ -1,13 +1,15 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by DANIEL.LUCHE on 30/03/2017.
  */
 
 public class Ev_User_Customer_Parameter {
 
-    private long customer_code;
-    private String parameter_code;
+    @SerializedName("customer_code") private long customer_code;
+    @SerializedName("parameter_code") private String parameter_code;
 
 
     public long getCustomer_code() {

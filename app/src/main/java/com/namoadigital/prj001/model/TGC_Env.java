@@ -1,16 +1,23 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by neomatrix on 5/9/16.
  */
-public class TGC_Env extends Main_Header_Env {
+public class TGC_Env extends Main_Header_Env{
 
+    @SerializedName("device_code")
     private String device_code;
-
+    @SerializedName("email_p")
     private String email_p;
+    @SerializedName("password")
     private String password;
+    @SerializedName("nfc_code")
     private String nfc_code;
+    @SerializedName("status_jump")
     private int status_jump;
+    @SerializedName("current_time")
     private String current_time;
 
     public String getDevice_code() {

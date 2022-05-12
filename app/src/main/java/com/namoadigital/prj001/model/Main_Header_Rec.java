@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * LUCHE - 18/11/2020
@@ -9,13 +10,13 @@ import com.google.gson.annotations.Expose;
  */
 public class Main_Header_Rec {
     @Expose
-    protected String app;
+    @SerializedName("app") protected String app;
     @Expose
-    protected String validation;
+    @SerializedName("validation")protected String validation;
     @Expose
-    protected String link_url;
+    @SerializedName("link_url")protected String link_url;
     @Expose
-    protected String error_msg;
+    @SerializedName("error_msg")protected String error_msg;
 
     public String getApp() {
         return app;

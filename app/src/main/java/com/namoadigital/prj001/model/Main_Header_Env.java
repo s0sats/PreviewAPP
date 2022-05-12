@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 public class Main_Header_Env {
 
@@ -15,13 +16,13 @@ public class Main_Header_Env {
     }
 
     @Expose
-    private String app_code;
+    @SerializedName("app_code") private String app_code;
     @Expose
-    private String app_version;
+    @SerializedName("app_version") private String app_version;
     @Expose
-    private String app_type;
+    @SerializedName("app_type") private String app_type;
     @Expose
-    private String session_app;
+    @SerializedName("session_app") private String session_app;
 
     public String getApp_code() {
         return app_code;
