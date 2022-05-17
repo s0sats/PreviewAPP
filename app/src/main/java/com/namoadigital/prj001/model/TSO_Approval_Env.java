@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
 import com.namoadigital.prj001.util.Constant;
 
 import java.util.ArrayList;
@@ -10,9 +11,9 @@ import java.util.ArrayList;
 
 public class TSO_Approval_Env extends Main_Header_Env{
 
-    private String token;
+    @SerializedName("token") private String token;
 
-    private ArrayList<SO_Approval_Item> so_status;
+    @SerializedName("so_status") private ArrayList<SO_Approval_Item> so_status;
 
     public String getToken() {
         return token;
@@ -34,23 +35,23 @@ public class TSO_Approval_Env extends Main_Header_Env{
     }
 
     public static class SO_Approval_Item {
-        private long customer_code;
-        private int so_prefix;
-        private int so_code;
-        private int so_scn;
-        private String action;//HJ só approve_client, no futuro dependerá de qual status chamou.
-        private String origin_change;//
+        @SerializedName("customer_code") private long customer_code;
+        @SerializedName("so_prefix") private int so_prefix;
+        @SerializedName("so_code") private int so_code;
+        @SerializedName("so_scn") private int so_scn;
+        @SerializedName("action") private String action;//HJ só approve_client, no futuro dependerá de qual status chamou.
+        @SerializedName("origin_change") private String origin_change;//
 
         // Quality Approval
-        private String quality_user;
-        private String quality_date;
+        @SerializedName("quality_user") private String quality_user;
+        @SerializedName("quality_date") private String quality_date;
 
         // Final Approval
-        private String client_name;// nome do cliente
-        private String client_date;//: data da aprovação
-        private String client_image;//: nome da imagem que subiu no s3 (assinatura)
-        private String client_type_sig;//: client ou user (apenas quando o client_type = client)
-        private Integer client_user;//
+        @SerializedName("client_name") private String client_name;// nome do cliente
+        @SerializedName("client_date") private String client_date;//: data da aprovação
+        @SerializedName("client_image") private String client_image;//: nome da imagem que subiu no s3 (assinatura)
+        @SerializedName("client_type_sig") private String client_type_sig;//: client ou user (apenas quando o client_type = client)
+        @SerializedName("client_user") private Integer client_user;//
 
         public SO_Approval_Item() {
             //this.action = Constant.PROFILE_MENU_SO_PARAM_APPROVE_CLIENT;

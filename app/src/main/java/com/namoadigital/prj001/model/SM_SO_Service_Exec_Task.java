@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
@@ -10,58 +11,69 @@ import java.util.ArrayList;
 
 public class SM_SO_Service_Exec_Task {
 
-    private long customer_code; //pk
-    private int so_prefix; //pk
-    private int so_code; //pk
-    private int price_list_code; //pk
-    private int pack_code; //pk
-    private int pack_seq; //pk
-    private int category_price_code; //pk
-    private int service_code; //pk
-    private int service_seq; //pk
-    private Integer exec_code; //pk
+    @SerializedName("customer_code") private long customer_code; //pk
+    @SerializedName("so_prefix") private int so_prefix; //pk
+    @SerializedName("so_code") private int so_code; //pk
+    @SerializedName("price_list_code") private int price_list_code; //pk
+    @SerializedName("pack_code") private int pack_code; //pk
+    @SerializedName("pack_seq") private int pack_seq; //pk
+    @SerializedName("category_price_code") private int category_price_code; //pk
+    @SerializedName("service_code") private int service_code; //pk
+    @SerializedName("service_seq") private int service_seq; //pk
+    @SerializedName("exec_code") private Integer exec_code; //pk
 
     // Novos Criados
     @Expose
+    @SerializedName("task_code")
     private Integer task_code; //pk #SQN
-    private long exec_tmp; //pk
+    @SerializedName("exec_tmp") private long exec_tmp; //pk
     @Expose
+    @SerializedName("task_tmp")
     private long task_tmp; //pk
-    private int task_seq_oper;
-    private int task_user;
-    private String task_user_nick;
+    @SerializedName("task_seq_oper") private int task_seq_oper;
+    @SerializedName("task_user") private int task_user;
+    @SerializedName("task_user_nick") private String task_user_nick;
     @Expose
+    @SerializedName("start_date")
     private String start_date;
 
     // Null
     @Expose
+    @SerializedName("end_date")
     private String end_date;
-    private Integer exec_time;
+    @SerializedName("exec_time") private Integer exec_time;
 
     // Novos Criados
     // Null
-    private String exec_time_format;
+    @SerializedName("exec_time_format") private String exec_time_format;
     @Expose
+    @SerializedName("task_perc")
     private int task_perc;
     @Expose
+    @SerializedName("qty_people")
     private int qty_people;
     @Expose
+    @SerializedName("status")
     private String status;
     @Expose
+    @SerializedName("site_code")
     private Integer site_code;
-    private String site_id;
-    private String site_desc;
+    @SerializedName("site_id") private String site_id;
+    @SerializedName("site_desc") private String site_desc;
     @Expose
+    @SerializedName("zone_code")
     private Integer zone_code;
-    private String zone_id;
-    private String zone_desc;
-    private Integer local_code;
-    private String local_id;
+    @SerializedName("zone_id") private String zone_id;
+    @SerializedName("zone_desc") private String zone_desc;
+    @SerializedName("local_code") private Integer local_code;
+    @SerializedName("local_id") private String local_id;
 
     // Null
     @Expose
+    @SerializedName("comments")
     private String comments;
     @Expose
+    @SerializedName("task_file")
     private ArrayList<SM_SO_Service_Exec_Task_File> task_file;
 
     public SM_SO_Service_Exec_Task() {

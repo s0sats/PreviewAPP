@@ -1,15 +1,17 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by d.luche on 29/11/2019.
  */
 
 public class T_TK_Ticket_Client_Contract_Search_Param {
 
-    private long customer_code;
-    private String contract_id;
-    private String client_id;
-    private String ticket_id;
+    @SerializedName("customer_code") private long customer_code;
+    @SerializedName("contract_id") private String contract_id;
+    @SerializedName("client_id") private String client_id;
+    @SerializedName("ticket_id") private String ticket_id;
 
     public T_TK_Ticket_Client_Contract_Search_Param() {
     }

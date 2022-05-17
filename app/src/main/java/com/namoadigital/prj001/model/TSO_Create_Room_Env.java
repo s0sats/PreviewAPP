@@ -1,9 +1,11 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class TSO_Create_Room_Env extends Main_Header_Env  {
-    private int so_prefix;
-    private int so_code;
-    private int so_scn;
+    @SerializedName("so_prefix") private int so_prefix;
+    @SerializedName("so_code") private int so_code;
+    @SerializedName("so_scn") private int so_scn;
 
     public int getSo_prefix() {
         return so_prefix;

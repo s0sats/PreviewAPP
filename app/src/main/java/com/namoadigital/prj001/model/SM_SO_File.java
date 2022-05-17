@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by d.luche on 14/06/2017.
@@ -9,15 +10,16 @@ import com.google.gson.annotations.Expose;
 public class SM_SO_File {
 
 
-    private long customer_code; //pk
-    private int so_prefix; //pk
-    private int so_code; //pk
+    @SerializedName("customer_code") private long customer_code; //pk
+    @SerializedName("so_prefix") private int so_prefix; //pk
+    @SerializedName("so_code") private int so_code; //pk
     @Expose
+    @SerializedName("file_code")
     private int file_code; //pk
-    private String file_name;
-    private String file_url;
-    private String file_url_local = "";
-    private String file_custom_form_pk;
+    @SerializedName("file_name") private String file_name;
+    @SerializedName("file_url") private String file_url;
+    @SerializedName("file_url_local") private String file_url_local = "";
+    @SerializedName("file_custom_form_pk") private String file_custom_form_pk;
 
     public SM_SO_File() {
         this.customer_code = -1;

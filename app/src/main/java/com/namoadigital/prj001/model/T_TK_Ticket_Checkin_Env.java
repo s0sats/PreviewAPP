@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 /**
@@ -8,8 +10,8 @@ import java.util.ArrayList;
 
 public class T_TK_Ticket_Checkin_Env extends Main_Header_Env {
 
-    private ArrayList<T_TK_Ticket_Checkin_Obj_Env> ticket = new ArrayList<>();
-    private String token;
+    @SerializedName("ticket") private ArrayList<T_TK_Ticket_Checkin_Obj_Env> ticket = new ArrayList<>();
+    @SerializedName("token") private String token;
 
     public ArrayList<T_TK_Ticket_Checkin_Obj_Env> getTicket() {
         return ticket;

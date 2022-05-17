@@ -3,39 +3,40 @@ package com.namoadigital.prj001.model;
 import androidx.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
 public class TK_Ticket_Product implements Serializable {
     @Expose
-    private long customer_code;//pk
+    @SerializedName("customer_code") private long customer_code;//pk
     @Expose
-    private int ticket_prefix;//pk
+    @SerializedName("ticket_prefix") private int ticket_prefix;//pk
     @Expose
-    private int ticket_code;//pk
+    @SerializedName("ticket_code") private int ticket_code;//pk
     @Expose
-    private int product_code;//pk
-    private String product_id;
-    private String product_desc;
-    private String un;
+    @SerializedName("product_code") private int product_code;//pk
+    @SerializedName("product_id") private String product_id;
+    @SerializedName("product_desc") private String product_desc;
+    @SerializedName("un") private String un;
     @Nullable
     @Expose
-    private Double qty_planned;
+    @SerializedName("qty_planned") private Double qty_planned;
     @Nullable
     @Expose
-    private Double qty;
+    @SerializedName("qty") private Double qty;
     @Nullable
     @Expose
-    private Double qty_used;
+    @SerializedName("qty_used") private Double qty_used;
     @Nullable
     @Expose
-    private String pickup_status;
+    @SerializedName("pickup_status") private String pickup_status;
     @Nullable
     @Expose
-    private Double qty_returned;
+    @SerializedName("qty_returned") private Double qty_returned;
     @Nullable
     @Expose
-    private String return_status;
+    @SerializedName("return_status") private String return_status;
 
     public TK_Ticket_Product() {
         this.customer_code = -1;

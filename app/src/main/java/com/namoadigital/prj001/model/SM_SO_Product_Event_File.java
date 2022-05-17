@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by d.luche on 30/10/2017.
@@ -8,20 +9,23 @@ import com.google.gson.annotations.Expose;
 
 public class SM_SO_Product_Event_File {
 
-    private long customer_code; //pk
-    private int so_prefix; //pk
-    private int so_code; //pk
-    private int seq; //pk - server
-    private int seq_tmp; //pk
+    @SerializedName("customer_code") private long customer_code; //pk
+    @SerializedName("so_prefix") private int so_prefix; //pk
+    @SerializedName("so_code") private int so_code; //pk
+    @SerializedName("seq") private int seq; //pk - server
+    @SerializedName("seq_tmp") private int seq_tmp; //pk
     //
     @Expose
+    @SerializedName("file_code")
     private int file_code;
     @Expose
+    @SerializedName("file_tmp")
     private int file_tmp;
     @Expose
+    @SerializedName("file_name")
     private String file_name;
-    private String file_url;
-    private String file_url_local;
+    @SerializedName("file_url") private String file_url;
+    @SerializedName("file_url_local") private String file_url_local;
 
     public SM_SO_Product_Event_File() {
         this.customer_code = -1;

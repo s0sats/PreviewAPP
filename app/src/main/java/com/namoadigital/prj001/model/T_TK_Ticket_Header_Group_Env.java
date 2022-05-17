@@ -1,16 +1,15 @@
 package com.namoadigital.prj001.model;
 
-import androidx.annotation.Nullable;
-
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
 public class T_TK_Ticket_Header_Group_Env extends Main_Header_Env{
     @Expose
-    List<TK_Ticket> ticket;
+    @SerializedName("ticket") List<TK_Ticket> ticket;
     @Expose
-    private String token;
+    @SerializedName("token") private String token;
     public List<TK_Ticket> getTicket() {
         return ticket;
     }

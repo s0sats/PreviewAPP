@@ -3,6 +3,7 @@ package com.namoadigital.prj001.model;
 import androidx.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
@@ -12,186 +13,236 @@ import java.util.ArrayList;
 
 public class SM_SO {
     @Expose
+    @SerializedName("customer_code")
     private long customer_code; //pk
     @Expose
+    @SerializedName("so_prefix")
     private int so_prefix; //pk
     @Expose
+    @SerializedName("so_code")
     private int so_code; //pk
     @Expose
+    @SerializedName("so_id")
     private String so_id;
     @Expose
+    @SerializedName("so_scn")
     private int so_scn;
     @Expose
+    @SerializedName("so_desc")
     private String so_desc;
     @Expose
-    private int product_code;
-    private String product_id;
-    private String product_desc;
+    @SerializedName("product_code") private int product_code;
+    @SerializedName("product_id") private String product_id;
+    @SerializedName("product_desc") private String product_desc;
     @Expose
-    private int serial_code;
+    @SerializedName("serial_code") private int serial_code;
     @Expose
-    private String serial_id;
+    @SerializedName("serial_id") private String serial_id;
     @Expose
-    private int category_price_code;
-    private String category_price_id;
-    private String category_price_desc;
+    @SerializedName("category_price_code") private int category_price_code;
+    @SerializedName("category_price_id") private String category_price_id;
+    @SerializedName("category_price_desc") private String category_price_desc;
     @Expose
-    private int segment_code;
-    private String segment_id;
-    private String segment_desc;
+    @SerializedName("segment_code") private int segment_code;
+    @SerializedName("segment_id") private String segment_id;
+    @SerializedName("segment_desc") private String segment_desc;
     @Expose
-    private int site_code;
-    private String site_id;
-    private String site_desc;
+    @SerializedName("site_code") private int site_code;
+    @SerializedName("site_id") private String site_id;
+    @SerializedName("site_desc") private String site_desc;
     @Expose
-    private int operation_code;
-    private String operation_id;
-    private String operation_desc;
+    @SerializedName("operation_code") private int operation_code;
+    @SerializedName("operation_id") private String operation_id;
+    @SerializedName("operation_desc") private String operation_desc;
     @Expose
-    private int contract_code;
-    private String contract_desc;
-    private String contract_po_erp;
-    private String contract_po_client1;
-    private String contract_po_client2;
-    private String contract_po_client3;
+    @SerializedName("contract_code") private int contract_code;
+    @SerializedName("contract_desc") private String contract_desc;
+    @SerializedName("contract_po_erp") private String contract_po_erp;
+    @SerializedName("contract_po_client1") private String contract_po_client1;
+    @SerializedName("contract_po_client2") private String contract_po_client2;
+    @SerializedName("contract_po_client3") private String contract_po_client3;
     @Expose
-    private int po_code;
-    private String po_id;
-    private String po_desc;
+    @SerializedName("po_code") private int po_code;
+    @SerializedName("po_id") private String po_id;
+    @SerializedName("po_desc") private String po_desc;
     @Expose
-    private int priority_code;
-    private String priority_desc;
-    private String status;
-    private Integer quality_approval_user;
-    private String quality_approval_user_nick;
-    private String quality_approval_date;
+    @SerializedName("priority_code") private int priority_code;
+    @SerializedName("priority_desc") private String priority_desc;
+    @SerializedName("status") private String status;
+    @SerializedName("quality_approval_user") private Integer quality_approval_user;
+    @SerializedName("quality_approval_user_nick") private String quality_approval_user_nick;
+    @SerializedName("quality_approval_date") private String quality_approval_date;
     @Expose
+    @SerializedName("comments")
     private String comments;
     @Expose
+    @SerializedName("so_father_prefix")
     private Integer so_father_prefix;
     @Expose
+    @SerializedName("so_father_code")
     private Integer so_father_code;
     @Expose
+    @SerializedName("deadline")
     private String deadline;
     @Expose
+    @SerializedName("origin")
     private String origin;
     @Expose
+    @SerializedName("client_type")
     private String client_type;
     @Expose
+    @SerializedName("client_user")
     private Integer client_user;
     @Expose
+    @SerializedName("client_code")
     private Integer client_code;
     @Expose
+    @SerializedName("client_id")
     private String client_id;
     @Expose
+    @SerializedName("client_name")
     private String client_name;
     @Expose
+    @SerializedName("client_email")
     private String client_email;
     @Expose
-    private String client_phone;
-    private Integer client_approval_image;
-    private String client_approval_image_name;
-    private String client_approval_image_url;
-    private String client_approval_image_url_local;
-    private String client_approval_date;
-    private String client_approval_user_nick;
-    private Integer client_approval_user;
-    private String client_approval_type_sig;
-    private String client_so_id;
+    @SerializedName("client_phone") private String client_phone;
+    @SerializedName("client_approval_image") private Integer client_approval_image;
+    @SerializedName("client_approval_image_name") private String client_approval_image_name;
+    @SerializedName("client_approval_image_url") private String client_approval_image_url;
+    @SerializedName("client_approval_image_url_local") private String client_approval_image_url_local;
+    @SerializedName("client_approval_date") private String client_approval_date;
+    @SerializedName("client_approval_user_nick") private String client_approval_user_nick;
+    @SerializedName("client_approval_user") private Integer client_approval_user;
+    @SerializedName("client_approval_type_sig") private String client_approval_type_sig;
+    @SerializedName("client_so_id") private String client_so_id;
     @Expose
-    private String origin_change;
-    private int started_flag;
+    @SerializedName("origin_change") private String origin_change;
+    @SerializedName("started_flag") private int started_flag;
     @Expose
-    private String edit_origin;
+    @SerializedName("edit_origin") private String edit_origin;
     @Expose
-    private Integer edit_user;
-    private String edit_user_nick;
-    private int total_qty_service;
-    private double total_price;
+    @SerializedName("edit_user") private Integer edit_user;
+    @SerializedName("edit_user_nick") private String edit_user_nick;
+    @SerializedName("total_qty_service") private int total_qty_service;
+    @SerializedName("total_price") private double total_price;
     @Expose
+    @SerializedName("add_inf1")
     private String add_inf1;
     @Expose
+    @SerializedName("add_inf1_tracking")
     private Integer add_inf1_tracking;
     @Expose
+    @SerializedName("add_inf2")
     private String add_inf2;
     @Expose
+    @SerializedName("add_inf2_tracking")
     private Integer add_inf2_tracking;
     @Expose
+    @SerializedName("add_inf3")
     private String add_inf3;
     @Expose
+    @SerializedName("add_inf3_tracking")
     private Integer add_inf3_tracking;
     @Expose
+    @SerializedName("add_inf4")
     private String add_inf4;
     @Expose
+    @SerializedName("add_inf4_tracking")
     private Integer add_inf4_tracking;
     @Expose
+    @SerializedName("add_inf5")
     private String add_inf5;
     @Expose
+    @SerializedName("add_inf5_tracking")
     private Integer add_inf5_tracking;
     @Expose
+    @SerializedName("add_inf6")
     private String add_inf6;
     @Expose
+    @SerializedName("add_inf6_tracking")
     private Integer add_inf6_tracking;
     @Expose
+    @SerializedName("billing_add_inf1")
     private String billing_add_inf1;
     @Expose
+    @SerializedName("billing_add_inf1_tracking")
     private Integer billing_add_inf1_tracking;
     @Expose
+    @SerializedName("billing_add_inf2")
     private String billing_add_inf2;
     @Expose
+    @SerializedName("billing_add_inf2_tracking")
     private Integer billing_add_inf2_tracking;
     @Expose
+    @SerializedName("billing_add_inf3")
     private String billing_add_inf3;
     @Expose
+    @SerializedName("billing_add_inf3_tracking")
     private Integer billing_add_inf3_tracking;
     @Expose
+    @SerializedName("serial_add_inf1")
     private String serial_add_inf1;
     @Expose
+    @SerializedName("serial_add_inf2")
     private String serial_add_inf2;
     @Expose
+    @SerializedName("serial_add_inf3")
     private String serial_add_inf3;
-    private int approve_budget;
-    private int approve_client;
-    private int update_required;
-    private int approval_required;
-    private int sync_required;
-    private String log_date;
+    @SerializedName("approve_budget") private int approve_budget;
+    @SerializedName("approve_client") private int approve_client;
+    @SerializedName("update_required") private int update_required;
+    @SerializedName("approval_required") private int approval_required;
+    @SerializedName("sync_required") private int sync_required;
+    @SerializedName("log_date") private String log_date;
     @Expose
+    @SerializedName("action")
     private String action;
-    private String token;
+    @SerializedName("token") private String token;
     @Expose
+    @SerializedName("so_file")
     private ArrayList<SM_SO_File> so_file = new ArrayList<>();
     @Expose
+    @SerializedName("pack")
     private ArrayList<SM_SO_Pack> pack = new ArrayList<>();
     @Expose
+    @SerializedName("product_event")
     private ArrayList<SM_SO_Product_Event> product_event = new ArrayList<>();
     @Expose
+    @SerializedName("product_icon_name")
     private String product_icon_name;
     @Expose
+    @SerializedName("product_icon_url")
     private String product_icon_url;
-    private String product_icon_url_local;
+    @SerializedName("product_icon_url_local") private String product_icon_url_local;
     //LUCHE - 02/06/2020 - Chat integration
-    private int room_member;
-    private String room_code;
+    @SerializedName("room_member") private int room_member;
+    @SerializedName("room_code") private String room_code;
     //LUCHE - 13/07/2021
     @Expose
+    @SerializedName("site_exec")
     private int site_exec;
-    private String site_exec_id;
-    private String site_exec_desc;
-    private String create_date;
-    private int create_user;
-    private String create_user_nick;
-    private int log_user;
-    private String log_user_nick;
+    @SerializedName("site_exec_id") private String site_exec_id;
+    @SerializedName("site_exec_desc") private String site_exec_desc;
+    @SerializedName("create_date") private String create_date;
+    @SerializedName("create_user") private int create_user;
+    @SerializedName("create_user_nick") private String create_user_nick;
+    @SerializedName("log_user") private int log_user;
+    @SerializedName("log_user_nick") private String log_user_nick;
     @Nullable
+    @SerializedName("last_approval_budget_date")
     private String last_approval_budget_date;
     @Nullable
+    @SerializedName("last_approval_budget_user")
     private Integer last_approval_budget_user;
     @Nullable
+    @SerializedName("last_approval_budget_user_nick")
     private String last_approval_budget_user_nick;
     @Nullable
+    @SerializedName("pipeline_code")
     private Integer pipeline_code;
     @Nullable
+    @SerializedName("pipeline_desc")
     private String pipeline_desc;
 
     public void setPK() {

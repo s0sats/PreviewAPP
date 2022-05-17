@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 /**
@@ -7,20 +9,20 @@ import java.util.ArrayList;
  */
 
 public class T_TK_Ticket_Save_Rec_Result {
-    private int customer_code;
-    private int ticket_prefix;
-    private int ticket_code;
-    private int scn;
-    private String ret_status;
-    private String ret_msg;
-    private Integer schedule_prefix;
-    private Integer schedule_code;
-    private Integer schedule_exec;
-    private String schedule_status;
+    @SerializedName("customer_code") private int customer_code;
+    @SerializedName("ticket_prefix") private int ticket_prefix;
+    @SerializedName("ticket_code") private int ticket_code;
+    @SerializedName("scn") private int scn;
+    @SerializedName("ret_status") private String ret_status;
+    @SerializedName("ret_msg") private String ret_msg;
+    @SerializedName("schedule_prefix") private Integer schedule_prefix;
+    @SerializedName("schedule_code") private Integer schedule_code;
+    @SerializedName("schedule_exec") private Integer schedule_exec;
+    @SerializedName("schedule_status") private String schedule_status;
 //    private TK_Ticket ticket;
-    private ArrayList<T_TK_Ticket_Save_Rec_Result_Step> step;
-    private ArrayList<T_TK_Ticket_Save_Rec_Result_Step> product;
-    private int ticket_update;
+    @SerializedName("step") private ArrayList<T_TK_Ticket_Save_Rec_Result_Step> step;
+    @SerializedName("product") private ArrayList<T_TK_Ticket_Save_Rec_Result_Step> product;
+    @SerializedName("ticket_update") private int ticket_update;
 //
     public int getCustomer_code() {
         return customer_code;

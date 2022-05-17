@@ -1,31 +1,33 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
 public class TSO_Service_Search_Detail_Obj implements Serializable {
 
-    private long customer_code;
-    private int price_list_code;
-    private int pack_code;
-    private int service_code;
-    private String service_desc;
-    private String service_desc_full;
-    private Double price;
-    private Double price_ref;
-    private int qty;
-    private int manual_price;
-    private int optional;
-    private int require_approval;
-    private Integer site_code_selected;
-    private String site_desc_selected;
-    private Integer zone_code_selected;
-    private String zone_desc_selected;
-    private Integer partner_code_selected;
-    private String partner_desc_selected;
-    private String comment;
-    private boolean isSelected;
-    private ArrayList<TSO_Service_Search_Detail_Params_Obj> site_zone;
+    @SerializedName("customer_code") private long customer_code;
+    @SerializedName("price_list_code") private int price_list_code;
+    @SerializedName("pack_code") private int pack_code;
+    @SerializedName("service_code") private int service_code;
+    @SerializedName("service_desc") private String service_desc;
+    @SerializedName("service_desc_full") private String service_desc_full;
+    @SerializedName("price") private Double price;
+    @SerializedName("price_ref") private Double price_ref;
+    @SerializedName("qty") private int qty;
+    @SerializedName("manual_price") private int manual_price;
+    @SerializedName("optional") private int optional;
+    @SerializedName("require_approval") private int require_approval;
+    @SerializedName("site_code_selected") private Integer site_code_selected;
+    @SerializedName("site_desc_selected") private String site_desc_selected;
+    @SerializedName("zone_code_selected") private Integer zone_code_selected;
+    @SerializedName("zone_desc_selected") private String zone_desc_selected;
+    @SerializedName("partner_code_selected") private Integer partner_code_selected;
+    @SerializedName("partner_desc_selected") private String partner_desc_selected;
+    @SerializedName("comment") private String comment;
+    @SerializedName("isSelected") private boolean isSelected;
+    @SerializedName("site_zone") private ArrayList<TSO_Service_Search_Detail_Params_Obj> site_zone;
     //private JSONArray site_zone;
 
     public long getCustomer_code() {

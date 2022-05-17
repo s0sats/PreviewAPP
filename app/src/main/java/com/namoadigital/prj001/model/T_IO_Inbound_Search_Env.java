@@ -1,12 +1,14 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class T_IO_Inbound_Search_Env extends Main_Header_Env {
 
-    private String site_code;
-    private String zone_code;
-    private String local_code;
-    private String code_id;
-    private String invoice;
+    @SerializedName("site_code") private String site_code;
+    @SerializedName("zone_code") private String zone_code;
+    @SerializedName("local_code") private String local_code;
+    @SerializedName("code_id") private String code_id;
+    @SerializedName("invoice") private String invoice;
 
     public String getSite_code() {
         return site_code;

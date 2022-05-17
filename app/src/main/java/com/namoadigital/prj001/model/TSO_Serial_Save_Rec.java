@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
@@ -10,20 +11,28 @@ import java.util.ArrayList;
 
 public class TSO_Serial_Save_Rec {
     @Expose
+    @SerializedName("app")
     private String app;
     @Expose
+    @SerializedName("validation")
     private String validation;
     @Expose
+    @SerializedName("link_url")
     private String link_url;
     @Expose
+    @SerializedName("error_msg")
     private String error_msg;
     @Expose
+    @SerializedName("serial_return")
     private ArrayList<Serial_Save_Return> serial_return;
     @Expose
+    @SerializedName("so_return")
     private ArrayList<SO_Save_Return> so_return;
     @Expose
+    @SerializedName("so")
     private ArrayList<SM_SO> so;
     @Expose
+    @SerializedName("so_from_to")
     private So_From_To so_from_to;
 
     public String getApp() {
@@ -99,11 +108,11 @@ public class TSO_Serial_Save_Rec {
     }
 
     public class Serial_Save_Return{
-        private long customer_code;
-        private long product_code;
-        private int serial_code;
-        private String ret_status;
-        private String ret_msg;
+        @SerializedName("customer_code") private long customer_code;
+        @SerializedName("product_code") private long product_code;
+        @SerializedName("serial_code") private int serial_code;
+        @SerializedName("ret_status") private String ret_status;
+        @SerializedName("ret_msg") private String ret_msg;
 
         public long getCustomer_code() {
             return customer_code;
@@ -221,8 +230,10 @@ public class TSO_Serial_Save_Rec {
 
     public class So_From_To{
         @Expose
+        @SerializedName("task")
         private ArrayList<SM_SO_Service_Exec_Task> task = new ArrayList<>();
         @Expose
+        @SerializedName("task_file")
         private ArrayList<SM_SO_Service_Exec_Task_File> task_file = new ArrayList<>();
 
         public ArrayList<SM_SO_Service_Exec_Task> getTask() {

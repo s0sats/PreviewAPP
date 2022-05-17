@@ -1,19 +1,21 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by d.luche on 22/05/2017.
  */
 
 public class TSerial_Search_Env extends Main_Header_Env  {
 
-    private String product_code;
-    private String product_id;
-    private String serial_code;
-    private String serial_id;
-    private int serial_exact;
-    private String tracking;
-    private String site_code;
-    private int profile_check;
+    @SerializedName("product_code") private String product_code;
+    @SerializedName("product_id") private String product_id;
+    @SerializedName("serial_code") private String serial_code;
+    @SerializedName("serial_id") private String serial_id;
+    @SerializedName("serial_exact") private int serial_exact;
+    @SerializedName("tracking") private String tracking;
+    @SerializedName("site_code") private String site_code;
+    @SerializedName("profile_check") private int profile_check;
 
     public String getProduct_code() {
         return product_code;

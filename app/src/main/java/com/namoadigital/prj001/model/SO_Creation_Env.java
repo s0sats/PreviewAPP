@@ -1,11 +1,13 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 public class SO_Creation_Env extends Main_Header_Env {
 
-    private String token;
-    private ArrayList<SO_Creation_Obj> so;
+    @SerializedName("token") private String token;
+    @SerializedName("so") private ArrayList<SO_Creation_Obj> so;
 
     public String getToken() {
         return token;

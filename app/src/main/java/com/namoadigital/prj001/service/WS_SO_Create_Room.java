@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.SerializedName;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
@@ -221,10 +222,10 @@ public class WS_SO_Create_Room extends IntentService {
      * Classe que representa o JSON retornado a tela.
      */
     public class SoCreateRoomReturn{
-        private String retStatus;
-        private String retRoom_code;
-        private boolean retSync_full;
-        private String retMsg;
+        @SerializedName("retStatus") private String retStatus;
+        @SerializedName("retRoom_code") private String retRoom_code;
+        @SerializedName("retSync_full") private boolean retSync_full;
+        @SerializedName("retMsg") private String retMsg;
 
         public String getRetStatus() {
             return retStatus;

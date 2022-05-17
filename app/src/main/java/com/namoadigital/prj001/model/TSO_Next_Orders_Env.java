@@ -1,11 +1,13 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class TSO_Next_Orders_Env extends Main_Header_Env  {
 
-    private long customer_code;
-    private String site_code;
-    private int zone_code;
-    private long operation_code;
+    @SerializedName("customer_code") private long customer_code;
+    @SerializedName("site_code") private String site_code;
+    @SerializedName("zone_code") private int zone_code;
+    @SerializedName("operation_code") private long operation_code;
 
 
     public long getCustomer_code() {

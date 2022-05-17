@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 /**
@@ -7,8 +9,8 @@ import java.util.ArrayList;
  */
 
 public class T_TK_Get_Workgroup_List_Rec extends Main_Header_Rec {
-    private int scn_valid;
-    private ArrayList<Data> data;
+    @SerializedName("scn_valid") private int scn_valid;
+    @SerializedName("data") private ArrayList<Data> data;
 
     public int getScn_valid() {
         return scn_valid;
@@ -27,9 +29,9 @@ public class T_TK_Get_Workgroup_List_Rec extends Main_Header_Rec {
     }
 
     public static class Data {
-        private int customer_code;
-        private int group_code;
-        private String group_desc;
+        @SerializedName("customer_code") private int customer_code;
+        @SerializedName("group_code") private int group_code;
+        @SerializedName("group_desc") private String group_desc;
 
         public int getCustomer_code() {
             return customer_code;

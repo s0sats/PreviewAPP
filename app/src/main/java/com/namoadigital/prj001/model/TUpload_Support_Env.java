@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by neomatrix on 20/02/17.
  */
@@ -7,15 +9,15 @@ package com.namoadigital.prj001.model;
 public class TUpload_Support_Env extends Main_Header_Env {
 
 
-    private String device_code;
-    private String file_path;
-    private String customer_desc;
-    private long customer_code;
-    private String user_code;
-    private String user_nick;
-    private int support;
-    private String support_msg;
-    private String support_contact;
+    @SerializedName("device_code") private String device_code;
+    @SerializedName("file_path") private String file_path;
+    @SerializedName("customer_desc") private String customer_desc;
+    @SerializedName("customer_code") private long customer_code;
+    @SerializedName("user_code") private String user_code;
+    @SerializedName("user_nick") private String user_nick;
+    @SerializedName("support") private int support;
+    @SerializedName("support_msg") private String support_msg;
+    @SerializedName("support_contact") private String support_contact;
 
     public String getDevice_code() {
         return device_code;

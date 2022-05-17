@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 /**
@@ -12,8 +14,8 @@ import java.util.ArrayList;
 
 public class T_TK_Ticket_Download_Env extends Main_Header_Env {
 
-    private int login = 0;
-    private ArrayList<T_TK_Ticket_Download_PK_Env> ticket = new ArrayList<>();
+    @SerializedName("login") private int login = 0;
+    @SerializedName("ticket") private ArrayList<T_TK_Ticket_Download_PK_Env> ticket = new ArrayList<>();
 
     public int getLogin() {
         return login;

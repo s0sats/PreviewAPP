@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -9,29 +11,29 @@ import java.util.ArrayList;
 
 public class TSO_Service_Search_Obj implements Serializable {
 
-    private String type_ps;
-    private long customer_code;//long
-    private int price_list_code;//int
-    private int pack_code;//int
-    private int service_code;//int
-    private String pack_service_desc;
-    private String pack_service_desc_full;
-    private Double price;//double
-    private Double price_ref;//Preenchido pelo app
-    private int manual_price;//double
-    private int rating;//int
-    private Double rating_ref;//double
-    private ArrayList<TSO_Service_Search_Detail_Obj> service_list = new ArrayList<>();
-    private ArrayList<TSO_Service_Search_Detail_Params_Obj> site_zone;//SiteZone quando type_ps = S
+    @SerializedName("type_ps") private String type_ps;
+    @SerializedName("customer_code") private long customer_code;//long
+    @SerializedName("price_list_code") private int price_list_code;//int
+    @SerializedName("pack_code") private int pack_code;//int
+    @SerializedName("service_code") private int service_code;//int
+    @SerializedName("pack_service_desc") private String pack_service_desc;
+    @SerializedName("pack_service_desc_full") private String pack_service_desc_full;
+    @SerializedName("price") private Double price;//double
+    @SerializedName("price_ref") private Double price_ref;//Preenchido pelo app
+    @SerializedName("manual_price") private int manual_price;//double
+    @SerializedName("rating") private int rating;//int
+    @SerializedName("rating_ref") private Double rating_ref;//double
+    @SerializedName("service_list") private ArrayList<TSO_Service_Search_Detail_Obj> service_list = new ArrayList<>();
+    @SerializedName("site_zone") private ArrayList<TSO_Service_Search_Detail_Params_Obj> site_zone;//SiteZone quando type_ps = S
     //Atributos apenas para lista
-    private boolean selected;
-    private boolean anyNullPrice;
-    private boolean detailed;
-    private int qty;
-    private Integer site_code_selected;
-    private Integer zone_code_selected;
-    private Integer partner_code_selected;
-    private String comment;
+    @SerializedName("selected") private boolean selected;
+    @SerializedName("anyNullPrice") private boolean anyNullPrice;
+    @SerializedName("detailed") private boolean detailed;
+    @SerializedName("qty") private int qty;
+    @SerializedName("site_code_selected") private Integer site_code_selected;
+    @SerializedName("zone_code_selected") private Integer zone_code_selected;
+    @SerializedName("partner_code_selected") private Integer partner_code_selected;
+    @SerializedName("comment") private String comment;
 
 
     public String getType_ps() {

@@ -1,17 +1,23 @@
 package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 public class TSO_Product_Event_Cancel_Env extends Main_Header_Env  {
     @Expose
+    @SerializedName("so_prefix")
     private int so_prefix; //pk
     @Expose
+    @SerializedName("so_code")
     private int so_code; //pk
     @Expose
+    @SerializedName("so_scn")
     private int so_scn;
     @Expose
+    @SerializedName("seq")
     private int seq; //pk - server
     @Expose
+    @SerializedName("token")
     private String token;
 
     public int getSo_prefix() {

@@ -1,14 +1,16 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by d.luche on 29/11/2019.
  */
 
 public class T_TK_Ticket_Search_Serial_PK_Env {
 
-    private long customer_code;
-    private String product_code;
-    private String serial_code;
+    @SerializedName("customer_code") private long customer_code;
+    @SerializedName("product_code") private String product_code;
+    @SerializedName("serial_code") private String serial_code;
 
     public T_TK_Ticket_Search_Serial_PK_Env() {
     }

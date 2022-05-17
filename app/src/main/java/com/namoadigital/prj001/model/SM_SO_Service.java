@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
@@ -10,51 +11,58 @@ import java.util.ArrayList;
 
 public class SM_SO_Service {
 
-    private long customer_code; //pk
-    private int so_prefix; //pk
-    private int so_code; //pk
-    private int price_list_code; //pk
-    private int pack_code; //pk
-    private int pack_seq; //pk
+    @SerializedName("customer_code") private long customer_code; //pk
+    @SerializedName("so_prefix") private int so_prefix; //pk
+    @SerializedName("so_code") private int so_code; //pk
+    @SerializedName("price_list_code") private int price_list_code; //pk
+    @SerializedName("pack_code") private int pack_code; //pk
+    @SerializedName("pack_seq") private int pack_seq; //pk
     @Expose
+    @SerializedName("category_price_code")
     private int category_price_code; //pk
     @Expose
+    @SerializedName("service_code")
     private int service_code; //pk
     @Expose
+    @SerializedName("service_seq")
     private int service_seq; //pk
-    private String service_id;
-    private String service_desc;
-    private String service_oper_id;
+    @SerializedName("service_id") private String service_id;
+    @SerializedName("service_desc") private String service_desc;
+    @SerializedName("service_oper_id") private String service_oper_id;
     @Expose
+    @SerializedName("status")
     private String status;
-    private int qty;
-    private int optional;
-    private int manual_price;
-    private int express;
-    private int time_exec_standard;
+    @SerializedName("qty") private int qty;
+    @SerializedName("optional") private int optional;
+    @SerializedName("manual_price") private int manual_price;
+    @SerializedName("express") private int express;
+    @SerializedName("time_exec_standard") private int time_exec_standard;
     //@Expose
-    private Double price;
-    private Double cost;
-    private String exec_type;
-    private int exec_seq_oper;
-    private Integer approval_budget_user;
-    private String approval_budget_user_nick;
-    private String approval_budget_date;
+    @SerializedName("price") private Double price;
+    @SerializedName("cost") private Double cost;
+    @SerializedName("exec_type") private String exec_type;
+    @SerializedName("exec_seq_oper") private int exec_seq_oper;
+    @SerializedName("approval_budget_user") private Integer approval_budget_user;
+    @SerializedName("approval_budget_user_nick") private String approval_budget_user_nick;
+    @SerializedName("approval_budget_date") private String approval_budget_date;
     @Expose
+    @SerializedName("partner_code")
     private Integer partner_code;
-    private String partner_id;
-    private String partner_desc;
-    private String require_approval;
+    @SerializedName("partner_id") private String partner_id;
+    @SerializedName("partner_desc") private String partner_desc;
+    @SerializedName("require_approval") private String require_approval;
     @Expose
+    @SerializedName("comments")
     private String comments;
-    private Integer site_code;
-    private String site_id;
-    private String site_desc;
-    private Integer zone_code;
-    private String zone_id;
-    private String zone_desc;
+    @SerializedName("site_code") private Integer site_code;
+    @SerializedName("site_id") private String site_id;
+    @SerializedName("site_desc") private String site_desc;
+    @SerializedName("zone_code") private Integer zone_code;
+    @SerializedName("zone_id") private String zone_id;
+    @SerializedName("zone_desc") private String zone_desc;
 
     @Expose
+    @SerializedName("exec")
     private ArrayList<SM_SO_Service_Exec> exec;
 
     public SM_SO_Service() {

@@ -1,17 +1,19 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by d.luche on 06/12/2019.
  */
 
 public class T_TK_Ticket_WS_Return {
-    private int customer_code;
-    private int ticket_prefix;
-    private int ticket_code;
-    private Integer scn;
-    private String ret_status;
-    private String ret_msg;
-    private TK_Ticket ticket;
+    @SerializedName("customer_code") private int customer_code;
+    @SerializedName("ticket_prefix") private int ticket_prefix;
+    @SerializedName("ticket_code") private int ticket_code;
+    @SerializedName("scn") private Integer scn;
+    @SerializedName("ret_status") private String ret_status;
+    @SerializedName("ret_msg") private String ret_msg;
+    @SerializedName("ticket") private TK_Ticket ticket;
 
     public int getCustomer_code() {
         return customer_code;

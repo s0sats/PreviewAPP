@@ -1,9 +1,10 @@
 package com.namoadigital.prj001.model
 
+import com.google.gson.annotations.SerializedName
 import java.util.*
 
 class T_TK_Ticket_Search_Not_Focus_Env : Main_Header_Env() {
-    private var search = ArrayList<T_TK_Ticket_Search_Not_Focus_Param>()
+    @SerializedName("search") private var search = ArrayList<T_TK_Ticket_Search_Not_Focus_Param>()
 
     fun getSearch(): ArrayList<T_TK_Ticket_Search_Not_Focus_Param> {
         return search

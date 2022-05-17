@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
@@ -11,10 +12,13 @@ import java.util.ArrayList;
 public class TSO_Serial_Save_Env extends Main_Header_Env {
 
     @Expose
+    @SerializedName("token")
     private String token;
     @Expose
+    @SerializedName("so")
     private ArrayList<SM_SO> so;
     @Expose
+    @SerializedName("serial")
     private ArrayList<MD_Product_Serial> serial;
 
     public ArrayList<SM_SO> getSo() {

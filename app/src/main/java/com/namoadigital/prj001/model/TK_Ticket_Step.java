@@ -4,71 +4,72 @@ package com.namoadigital.prj001.model;
 import androidx.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
 public class TK_Ticket_Step implements Serializable {
-    private long customer_code;//pk
-    private int ticket_prefix;//pk
-    private int ticket_code;//pk
+    @SerializedName("customer_code") private long customer_code;//pk
+    @SerializedName("ticket_prefix") private int ticket_prefix;//pk
+    @SerializedName("ticket_code") private int ticket_code;//pk
     @Expose
-    private int step_code;
+    @SerializedName("step_code") private int step_code;
     @Nullable
-    private String step_id;
+    @SerializedName("step_id") private String step_id;
     @Nullable
-    private String step_desc;
-    private int step_order;
+    @SerializedName("step_desc") private String step_desc;
+    @SerializedName("step_order") private int step_order;
     @Nullable
-    private Integer step_order_seq;
+    @SerializedName("step_order_seq") private Integer step_order_seq;
     @Nullable
-    private String forecast_start;
+    @SerializedName("forecast_start") private String forecast_start;
     @Nullable
-    private String forecast_end;
-    private String exec_type;
-    private int scan_serial;
-    private int allow_new_obj;
-    private int move_next_step;
-    @Expose
-    @Nullable
-    private String step_start_date;
-    @Nullable
-    private Integer step_start_user;
-    @Nullable
-    private String step_start_user_nick;
+    @SerializedName("forecast_end") private String forecast_end;
+    @SerializedName("exec_type") private String exec_type;
+    @SerializedName("scan_serial") private int scan_serial;
+    @SerializedName("allow_new_obj") private int allow_new_obj;
+    @SerializedName("move_next_step") private int move_next_step;
     @Expose
     @Nullable
-    private String step_end_date;
+    @SerializedName("step_start_date") private String step_start_date;
     @Nullable
-    private Integer step_end_user;
+    @SerializedName("step_start_user") private Integer step_start_user;
     @Nullable
-    private String step_end_user_nick;
-    private String step_status;
-    private int user_focus;
-    private Integer has_item_check;
-    @Nullable
-    private Integer group_code;
-    @Nullable
-    private String group_desc;
-    @Nullable
-    private Integer zone_site_group_code;
-    @Nullable
-    private String zone_site_group_desc;
-    @Nullable
-    private String pc_level_target;
-    @Nullable
-    private Integer ap_group_code;
-    @Nullable
-    private String ap_group_desc;
-    @Nullable
-    private Integer ap_zone_site_group_code;
-    @Nullable
-    private String ap_zone_site_group_desc;
-    @Nullable
-    private String ap_pc_level_target;
-    private int update_required;
+    @SerializedName("step_start_user_nick") private String step_start_user_nick;
     @Expose
-    private ArrayList<TK_Ticket_Ctrl> ctrl = new ArrayList<>();
+    @Nullable
+    @SerializedName("step_end_date") private String step_end_date;
+    @Nullable
+    @SerializedName("step_end_user") private Integer step_end_user;
+    @Nullable
+    @SerializedName("step_end_user_nick") private String step_end_user_nick;
+    @SerializedName("step_status") private String step_status;
+    @SerializedName("user_focus") private int user_focus;
+    @SerializedName("has_item_check") private Integer has_item_check;
+    @Nullable
+    @SerializedName("group_code") private Integer group_code;
+    @Nullable
+    @SerializedName("group_desc") private String group_desc;
+    @Nullable
+    @SerializedName("zone_site_group_code") private Integer zone_site_group_code;
+    @Nullable
+    @SerializedName("zone_site_group_desc") private String zone_site_group_desc;
+    @Nullable
+    @SerializedName("pc_level_target") private String pc_level_target;
+    @Nullable
+    @SerializedName("ap_group_code") private Integer ap_group_code;
+    @Nullable
+    @SerializedName("ap_group_desc") private String ap_group_desc;
+    @Nullable
+    @SerializedName("ap_zone_site_group_code") private Integer ap_zone_site_group_code;
+    @Nullable
+    @SerializedName("ap_zone_site_group_desc") private String ap_zone_site_group_desc;
+    @Nullable
+    @SerializedName("ap_pc_level_target") private String ap_pc_level_target;
+    @SerializedName("update_required") private int update_required;
+    @Expose
+    @SerializedName("ctrl") private ArrayList<TK_Ticket_Ctrl> ctrl = new ArrayList<>();
 
     public TK_Ticket_Step() {
         this.customer_code = -1;

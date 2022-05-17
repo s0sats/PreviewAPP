@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
@@ -10,59 +11,81 @@ import java.util.ArrayList;
 
 public class SM_SO_Product_Event {
 
-    private long customer_code; //pk
-    private int so_prefix; //pk
-    private int so_code; //pk
+    @SerializedName("customer_code") private long customer_code; //pk
+    @SerializedName("so_prefix") private int so_prefix; //pk
+    @SerializedName("so_code") private int so_code; //pk
     @Expose
+    @SerializedName("seq")
     private int seq; //pk - server
     @Expose
+    @SerializedName("seq_tmp")
     private int seq_tmp; //pk
     //
     @Expose
+    @SerializedName("product_code")
     private int product_code;
     @Expose
+    @SerializedName("product_id")
     private String product_id;
     @Expose
+    @SerializedName("product_desc")
     private String product_desc;
     @Expose
+    @SerializedName("un")
     private String un;
     @Expose
+    @SerializedName("flag_apply")
     private int flag_apply;
     @Expose
+    @SerializedName("flag_inspection")
     private int flag_inspection;
     @Expose
+    @SerializedName("flag_repair")
     private int flag_repair;
     @Expose
+    @SerializedName("qty_apply")
     private String qty_apply;
     @Expose
+    @SerializedName("sketch_code")
     private Integer sketch_code;
-    private String sketch_name;
-    private String sketch_url;
-    private String sketch_url_local;
+    @SerializedName("sketch_name") private String sketch_name;
+    @SerializedName("sketch_url") private String sketch_url;
+    @SerializedName("sketch_url_local") private String sketch_url_local;
     @Expose
+    @SerializedName("sketch_lines")
     private Integer sketch_lines;
     @Expose
+    @SerializedName("sketch_columns")
     private Integer sketch_columns;
     @Expose
+    @SerializedName("sketch_color")
     private String sketch_color;
     @Expose
+    @SerializedName("comments")
     private String comments;
     @Expose
+    @SerializedName("status")
     private String status;
-    private String create_date;
-    private int create_user;
-    private String create_user_nick;
+    @SerializedName("create_date") private String create_date;
+    @SerializedName("create_user") private int create_user;
+    @SerializedName("create_user_nick") private String create_user_nick;
     @Expose
+    @SerializedName("done_date")
     private String done_date;
     @Expose
+    @SerializedName("done_user")
     private Integer done_user;
     @Expose
+    @SerializedName("done_user_nick")
     private String done_user_nick;
     @Expose
+    @SerializedName("integrated")
     private int integrated;
     @Expose
+    @SerializedName("file")
     private ArrayList<SM_SO_Product_Event_File> file = new ArrayList<>();
     @Expose
+    @SerializedName("sketch")
     private ArrayList<SM_SO_Product_Event_Sketch> sketch = new ArrayList<>();
 
     public SM_SO_Product_Event() {

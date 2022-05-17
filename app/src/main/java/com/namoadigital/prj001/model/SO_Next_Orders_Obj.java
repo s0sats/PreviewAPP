@@ -1,42 +1,44 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class SO_Next_Orders_Obj {
 
-    private String so_prefix;
-    private String so_code;
-    private String so_id;
-    private String so_desc;
+    @SerializedName("so_prefix") private String so_prefix;
+    @SerializedName("so_code") private String so_code;
+    @SerializedName("so_id") private String so_id;
+    @SerializedName("so_desc") private String so_desc;
     //private String product_code;
-    private String product_id;
+    @SerializedName("product_id") private String product_id;
    // private String product_desc;
-    private String serial_code;
-    private String serial_id;
-    private String status;
-    private String deadline;
-    private String tracking;
-    private String brand_model_color;
-    private String comments;
-    private String service;
-    private String serial_site_code;
-    private String serial_site_desc;
-    private String serial_zone_desc;
-    private String serial_local_desc;
-    private String create_user;
-    private String last_approval_budget_user;
-    private String deadline_filter;
-    private String status_filter;
+    @SerializedName("serial_code") private String serial_code;
+    @SerializedName("serial_id") private String serial_id;
+    @SerializedName("status") private String status;
+    @SerializedName("deadline") private String deadline;
+    @SerializedName("tracking") private String tracking;
+    @SerializedName("brand_model_color") private String brand_model_color;
+    @SerializedName("comments") private String comments;
+    @SerializedName("service") private String service;
+    @SerializedName("serial_site_code") private String serial_site_code;
+    @SerializedName("serial_site_desc") private String serial_site_desc;
+    @SerializedName("serial_zone_desc") private String serial_zone_desc;
+    @SerializedName("serial_local_desc") private String serial_local_desc;
+    @SerializedName("create_user") private String create_user;
+    @SerializedName("last_approval_budget_user") private String last_approval_budget_user;
+    @SerializedName("deadline_filter") private String deadline_filter;
+    @SerializedName("status_filter") private String status_filter;
     //LUCHE - 13/07/2021
-    private String segment_category_price;
-    private String pipeline_desc;
-    private String add_inf1;
-    private String add_inf2;
-    private String add_inf3;
-    private String add_inf4;
-    private String add_inf5;
-    private String add_inf6;
-    private String client_so_id;
-    private int priority_code;
-    private String priority_desc;
+    @SerializedName("segment_category_price") private String segment_category_price;
+    @SerializedName("pipeline_desc") private String pipeline_desc;
+    @SerializedName("add_inf1") private String add_inf1;
+    @SerializedName("add_inf2") private String add_inf2;
+    @SerializedName("add_inf3") private String add_inf3;
+    @SerializedName("add_inf4") private String add_inf4;
+    @SerializedName("add_inf5") private String add_inf5;
+    @SerializedName("add_inf6") private String add_inf6;
+    @SerializedName("client_so_id") private String client_so_id;
+    @SerializedName("priority_code") private int priority_code;
+    @SerializedName("priority_desc") private String priority_desc;
 
     public String getSo_prefix() {
         return so_prefix;

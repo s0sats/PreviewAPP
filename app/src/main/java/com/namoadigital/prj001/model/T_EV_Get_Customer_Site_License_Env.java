@@ -1,22 +1,30 @@
 package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 public class T_EV_Get_Customer_Site_License_Env extends Main_Header_Env {
 
     @Expose
+    @SerializedName("current_time")
     private String current_time;
     @Expose
+    @SerializedName("device_code")
     private String device_code;
     @Expose
+    @SerializedName("email_p")
     private String email_p;
     @Expose
+    @SerializedName("nfc_code")
     private String nfc_code;
     @Expose
+    @SerializedName("password")
     private String password;
     @Expose
+    @SerializedName("status_jump")
     private String status_jump;
     @Expose
+    @SerializedName("customer_code")
     private String customer_code;
 
     public String getCurrent_time() {

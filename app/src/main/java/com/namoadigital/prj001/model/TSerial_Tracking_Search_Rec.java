@@ -1,17 +1,19 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by d.luche on 22/05/2017.
  */
 
 public class TSerial_Tracking_Search_Rec {
 
-    private String app;
-    private String validation;
-    private String link_url;
-    private String error_msg;
-    private int tracking_ret;
-    private String tracking_msg;
+    @SerializedName("app") private String app;
+    @SerializedName("validation") private String validation;
+    @SerializedName("link_url") private String link_url;
+    @SerializedName("error_msg") private String error_msg;
+    @SerializedName("tracking_ret") private int tracking_ret;
+    @SerializedName("tracking_msg") private String tracking_msg;
 
     public String getApp() {
         return app;

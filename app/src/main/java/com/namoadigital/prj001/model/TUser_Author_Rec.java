@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by d.luche on 27/06/2017.
  */
@@ -7,12 +9,12 @@ package com.namoadigital.prj001.model;
 public class TUser_Author_Rec {
 
 
-    private String app;
-    private String validation;
-    private String link_url;
-    private String error_msg;
-    private String auth;
-    private String auth_msg;
+    @SerializedName("app") private String app;
+    @SerializedName("validation") private String validation;
+    @SerializedName("link_url") private String link_url;
+    @SerializedName("error_msg") private String error_msg;
+    @SerializedName("auth") private String auth;
+    @SerializedName("auth_msg") private String auth_msg;
 
     public String getApp() {
         return app;

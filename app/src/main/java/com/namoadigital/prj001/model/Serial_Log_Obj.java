@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -9,16 +10,16 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 public class Serial_Log_Obj {
 
-    private String process;
-    private String datetime;
-    private String user_action;
-    private String description;
-    private String sys_status;
-    private String location;
-    private String sys_process;
-    private String sys_pk;
-    private String file_url;
-    private boolean log_downloaded;
+    @SerializedName("process") private String process;
+    @SerializedName("datetime") private String datetime;
+    @SerializedName("user_action") private String user_action;
+    @SerializedName("description") private String description;
+    @SerializedName("sys_status") private String sys_status;
+    @SerializedName("location") private String location;
+    @SerializedName("sys_process") private String sys_process;
+    @SerializedName("sys_pk") private String sys_pk;
+    @SerializedName("file_url") private String file_url;
+    @SerializedName("log_downloaded") private boolean log_downloaded;
 
     public String getProcess() {
         return process;

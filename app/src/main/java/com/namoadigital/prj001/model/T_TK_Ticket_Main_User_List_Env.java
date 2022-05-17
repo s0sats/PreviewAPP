@@ -1,11 +1,13 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class T_TK_Ticket_Main_User_List_Env extends Main_Header_Env {
-    private int customer_code;
-    private int ticket_prefix;
-    private int ticket_code;
-    private int scn;
-    private int edit_header;
+    @SerializedName("customer_code") private int customer_code;
+    @SerializedName("ticket_prefix") private int ticket_prefix;
+    @SerializedName("ticket_code") private int ticket_code;
+    @SerializedName("scn") private int scn;
+    @SerializedName("edit_header") private int edit_header;
 
     public int getCustomer_code() {
         return customer_code;

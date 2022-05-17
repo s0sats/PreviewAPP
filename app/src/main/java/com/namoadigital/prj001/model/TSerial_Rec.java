@@ -1,16 +1,18 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by DANIEL.LUCHE on 03/02/2017.
  */
 
 public class TSerial_Rec {
 
-    private String app;
-    private String validation;
-    private String link_url;
-    private String error_msg;
-    private String serial;
+    @SerializedName("app") private String app;
+    @SerializedName("validation") private String validation;
+    @SerializedName("link_url") private String link_url;
+    @SerializedName("error_msg") private String error_msg;
+    @SerializedName("serial") private String serial;
 
     public String getApp() {
         return app;

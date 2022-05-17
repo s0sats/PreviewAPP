@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 /**
@@ -12,11 +14,11 @@ import java.util.ArrayList;
  */
 
 public class T_TK_Ticket_Download_Rec {
-    private String app;
-    private String validation;
-    private String link_url;
-    private String error_msg;
-    private ArrayList<TK_Ticket> ticket = new ArrayList<>();
+    @SerializedName("app") private String app;
+    @SerializedName("validation") private String validation;
+    @SerializedName("link_url") private String link_url;
+    @SerializedName("error_msg") private String error_msg;
+    @SerializedName("ticket") private ArrayList<TK_Ticket> ticket = new ArrayList<>();
 
     public String getApp() {
         return app;

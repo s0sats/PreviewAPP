@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 /**
@@ -8,7 +10,7 @@ import java.util.ArrayList;
 
 public class T_TK_Ticket_Client_Contract_Search_Env extends Main_Header_Env {
 
-    private ArrayList<T_TK_Ticket_Client_Contract_Search_Param> search = new ArrayList<>();
+    @SerializedName("search") private ArrayList<T_TK_Ticket_Client_Contract_Search_Param> search = new ArrayList<>();
 
     public ArrayList<T_TK_Ticket_Client_Contract_Search_Param> getSearch() {
         return search;

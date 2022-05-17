@@ -1,17 +1,19 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class TSO_Get_Service_Edit_Env extends Main_Header_Env {
-    int site_code;
-    int product_code;
-    int serial_code;
-    int service_code;
-    int so_prefix;
-    int so_code;
-    int price_list_code;
-    int pack_code;
-    int pack_seq;
-    int category_price_code;
-    int service_seq;
+    @SerializedName("site_code") int site_code;
+    @SerializedName("product_code") int product_code;
+    @SerializedName("serial_code") int serial_code;
+    @SerializedName("service_code") int service_code;
+    @SerializedName("so_prefix") int so_prefix;
+    @SerializedName("so_code") int so_code;
+    @SerializedName("price_list_code") int price_list_code;
+    @SerializedName("pack_code") int pack_code;
+    @SerializedName("pack_seq") int pack_seq;
+    @SerializedName("category_price_code") int category_price_code;
+    @SerializedName("service_seq") int service_seq;
 
     public int getSite_code() {
         return site_code;

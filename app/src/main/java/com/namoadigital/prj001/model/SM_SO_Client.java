@@ -1,13 +1,15 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class SM_SO_Client {
 
-    private long customer_code;
-    private int client_code;
-    private String client_id;
-    private String client_name;
-    private String client_email;
-    private String client_phone;
+    @SerializedName("customer_code") private long customer_code;
+    @SerializedName("client_code") private int client_code;
+    @SerializedName("client_id") private String client_id;
+    @SerializedName("client_name") private String client_name;
+    @SerializedName("client_email") private String client_email;
+    @SerializedName("client_phone") private String client_phone;
 
     public long getCustomer_code() {
         return customer_code;

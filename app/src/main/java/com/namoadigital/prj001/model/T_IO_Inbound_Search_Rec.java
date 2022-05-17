@@ -1,15 +1,17 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 public class T_IO_Inbound_Search_Rec {
-    private String app;
-    private String validation;
-    private String link_url;
-    private String error_msg;
-    private ArrayList<IO_Inbound_Search_Record> record;
-    private long record_count;
-    private long record_page;
+    @SerializedName("app") private String app;
+    @SerializedName("validation") private String validation;
+    @SerializedName("link_url") private String link_url;
+    @SerializedName("error_msg") private String error_msg;
+    @SerializedName("record") private ArrayList<IO_Inbound_Search_Record> record;
+    @SerializedName("record_count") private long record_count;
+    @SerializedName("record_page") private long record_page;
 
     public String getApp() {
         return app;

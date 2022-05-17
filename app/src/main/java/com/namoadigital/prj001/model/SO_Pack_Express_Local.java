@@ -1,54 +1,56 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by neomatrix on 3/22/18.
  */
 
 public class SO_Pack_Express_Local {
 
-    private long customer_code;
-    private long site_code;
-    private long operation_code;
-    private long product_code;
-    private String express_code;
-    private long express_tmp;
-    private String serial_id;
-    private long partner_code;
+    @SerializedName("customer_code") private long customer_code;
+    @SerializedName("site_code") private long site_code;
+    @SerializedName("operation_code") private long operation_code;
+    @SerializedName("product_code") private long product_code;
+    @SerializedName("express_code") private String express_code;
+    @SerializedName("express_tmp") private long express_tmp;
+    @SerializedName("serial_id") private String serial_id;
+    @SerializedName("partner_code") private long partner_code;
 
-    private Long so_prefix;
-    private Long so_code;
-    private String so_id;
-    private String so_desc;
-    private String so_status;
-    private Long contract_code;
-    private String contract_desc;
-    private Long priority_code;
-    private String priority_desc;
-    private int exec_site_code;
-    private String exec_site_id;
-    private String exec_site_desc;
-    private int exec_zone_code;
-    private String exec_zone_id;
-    private String exec_zone_desc;
-    private String operation_id;
-    private String operation_desc;
-    private String product_id;
-    private String product_desc;
-    private Long serial_code;
-    private Integer segment_code;
-    private String segment_id;
-    private String segment_desc;
-    private String billing_add_inf1_value;
-    private String billing_add_inf2_value;
-    private String billing_add_inf3_value;
-    private int billing_add_inf1_tracking;
-    private int billing_add_inf2_tracking;
-    private int billing_add_inf3_tracking;
-    private String ret_code;
-    private String ret_msg;
-    private String status;
-    private String log_date;
-    private String token;
+    @SerializedName("so_prefix") private Long so_prefix;
+    @SerializedName("so_code") private Long so_code;
+    @SerializedName("so_id") private String so_id;
+    @SerializedName("so_desc") private String so_desc;
+    @SerializedName("so_status") private String so_status;
+    @SerializedName("contract_code") private Long contract_code;
+    @SerializedName("contract_desc") private String contract_desc;
+    @SerializedName("priority_code") private Long priority_code;
+    @SerializedName("priority_desc") private String priority_desc;
+    @SerializedName("exec_site_code") private int exec_site_code;
+    @SerializedName("exec_site_id") private String exec_site_id;
+    @SerializedName("exec_site_desc") private String exec_site_desc;
+    @SerializedName("exec_zone_code") private int exec_zone_code;
+    @SerializedName("exec_zone_id") private String exec_zone_id;
+    @SerializedName("exec_zone_desc") private String exec_zone_desc;
+    @SerializedName("operation_id") private String operation_id;
+    @SerializedName("operation_desc") private String operation_desc;
+    @SerializedName("product_id") private String product_id;
+    @SerializedName("product_desc") private String product_desc;
+    @SerializedName("serial_code") private Long serial_code;
+    @SerializedName("segment_code") private Integer segment_code;
+    @SerializedName("segment_id") private String segment_id;
+    @SerializedName("segment_desc") private String segment_desc;
+    @SerializedName("billing_add_inf1_value") private String billing_add_inf1_value;
+    @SerializedName("billing_add_inf2_value") private String billing_add_inf2_value;
+    @SerializedName("billing_add_inf3_value") private String billing_add_inf3_value;
+    @SerializedName("billing_add_inf1_tracking") private int billing_add_inf1_tracking;
+    @SerializedName("billing_add_inf2_tracking") private int billing_add_inf2_tracking;
+    @SerializedName("billing_add_inf3_tracking") private int billing_add_inf3_tracking;
+    @SerializedName("ret_code") private String ret_code;
+    @SerializedName("ret_msg") private String ret_msg;
+    @SerializedName("status") private String status;
+    @SerializedName("log_date") private String log_date;
+    @SerializedName("token") private String token;
 
 
     public SO_Pack_Express_Local() {

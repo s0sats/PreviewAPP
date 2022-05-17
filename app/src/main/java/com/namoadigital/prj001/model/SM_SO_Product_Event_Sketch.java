@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by d.luche on 30/10/2017.
@@ -8,15 +9,17 @@ import com.google.gson.annotations.Expose;
 
 public class SM_SO_Product_Event_Sketch {
 
-    private long customer_code; //pk
-    private int so_prefix; //pk
-    private int so_code; //pk
-    private int seq; //pk - server
-    private int seq_tmp; //pk
+    @SerializedName("customer_code") private long customer_code; //pk
+    @SerializedName("so_prefix") private int so_prefix; //pk
+    @SerializedName("so_code") private int so_code; //pk
+    @SerializedName("seq") private int seq; //pk - server
+    @SerializedName("seq_tmp") private int seq_tmp; //pk
     //
     @Expose
+    @SerializedName("line")
     private int line;
     @Expose
+    @SerializedName("col")
     private int col;
 
     public SM_SO_Product_Event_Sketch() {

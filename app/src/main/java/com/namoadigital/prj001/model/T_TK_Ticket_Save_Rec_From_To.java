@@ -1,12 +1,14 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class T_TK_Ticket_Save_Rec_From_To {
-    private int customer_code;
-    private int ticket_prefix;
-    private int ticket_code;
-    private int step_code;
-    private int ticket_seq;
-    private int ticket_seq_tmp;
+    @SerializedName("customer_code") private int customer_code;
+    @SerializedName("ticket_prefix") private int ticket_prefix;
+    @SerializedName("ticket_code") private int ticket_code;
+    @SerializedName("step_code") private int step_code;
+    @SerializedName("ticket_seq") private int ticket_seq;
+    @SerializedName("ticket_seq_tmp") private int ticket_seq_tmp;
 
     public int getCustomer_code() {
         return customer_code;

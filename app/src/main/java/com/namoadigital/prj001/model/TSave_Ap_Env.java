@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
@@ -17,8 +18,10 @@ import java.util.ArrayList;
 public class TSave_Ap_Env extends Main_Header_Env {
 
     @Expose
+    @SerializedName("token")
     private String token;
     @Expose
+    @SerializedName("AP")
     private ArrayList<GE_Custom_Form_Ap> AP;
 
     public String getToken() {

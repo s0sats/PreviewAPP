@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by d.luche on 23/02/2018.
  *
@@ -11,6 +13,7 @@ package com.namoadigital.prj001.model;
 
 public class TSearch_Ap_Env extends Main_Header_Env {
 
+    @SerializedName("data_package")
     private DataPackage data_package;
 
     public DataPackage getData_package() {
@@ -22,13 +25,13 @@ public class TSearch_Ap_Env extends Main_Header_Env {
     }
 
     public static class ObjAp{
-        private String customer_code;
-        private String custom_form_type;
-        private String custom_form_code;
-        private String custom_form_version;
-        private String custom_form_data;
-        private String ap_code;
-        private String ap_scn;
+        @SerializedName("customer_code") private String customer_code;
+        @SerializedName("custom_form_type") private String custom_form_type;
+        @SerializedName("custom_form_code") private String custom_form_code;
+        @SerializedName("custom_form_version") private String custom_form_version;
+        @SerializedName("custom_form_data") private String custom_form_data;
+        @SerializedName("ap_code") private String ap_code;
+        @SerializedName("ap_scn") private String ap_scn;
 
         public String getCustomer_code() {
             return customer_code;

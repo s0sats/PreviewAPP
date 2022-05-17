@@ -1,16 +1,18 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
 public class TSO_Service_Search_Detail_Params_Obj implements Serializable {
 
-    private Integer site_code;
-    private String site_id;
-    private String site_desc;
-    private Integer zone_code;
-    private String zone_id;
-    private String zone_desc;
-    private Integer partner_code;
+    @SerializedName("site_code") private Integer site_code;
+    @SerializedName("site_id") private String site_id;
+    @SerializedName("site_desc") private String site_desc;
+    @SerializedName("zone_code") private Integer zone_code;
+    @SerializedName("zone_id") private String zone_id;
+    @SerializedName("zone_desc") private String zone_desc;
+    @SerializedName("partner_code") private Integer partner_code;
     //
     public Integer getSite_code() {
         return site_code;

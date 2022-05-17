@@ -1,9 +1,11 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class T_TK_Main_User_Rec {
-    int user_code;
-    String user_nick;
-    String user_name;
+    @SerializedName("user_code") int user_code;
+    @SerializedName("user_nick") String user_nick;
+    @SerializedName("user_name") String user_name;
 
     public int getUser_code() {
         return user_code;

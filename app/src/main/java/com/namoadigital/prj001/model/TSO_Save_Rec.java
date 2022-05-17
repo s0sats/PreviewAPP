@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
@@ -10,18 +11,25 @@ import java.util.ArrayList;
 
 public class TSO_Save_Rec {
     @Expose
+    @SerializedName("app")
     private String app;
     @Expose
+    @SerializedName("validation")
     private String validation;
     @Expose
+    @SerializedName("link_url")
     private String link_url;
     @Expose
+    @SerializedName("error_msg")
     private String error_msg;
     @Expose
+    @SerializedName("so_return")
     private ArrayList<SO_Save_Return> so_return;
     @Expose
+    @SerializedName("so")
     private ArrayList<SM_SO> so;
     @Expose
+    @SerializedName("so_from_to")
     private So_From_To so_from_to;
 
     public String getApp() {

@@ -16,5 +16,6 @@ data class TWorkgroupObj(
     val dateExpire: String?,
     @SerializedName("active")
     var active : Int,
+    @SerializedName("createUsrWgLink")
     var createUsrWgLink: Boolean = false
 ) : Serializable

@@ -1,26 +1,27 @@
 package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
 public class TSO_Get_Service_Edit_Rec {
     @Expose
-    private String app;
+    @SerializedName("app") private String app;
     @Expose
-    private String validation;
+    @SerializedName("validation") private String validation;
     @Expose
-    private String link_url;
+    @SerializedName("link_url") private String link_url;
     @Expose
-    private String error_msg;
+    @SerializedName("error_msg") private String error_msg;
     @Expose
-    private ArrayList<TSO_Service_Search_Detail_Params_Obj> site_zone_list = new ArrayList<>();
+    @SerializedName("site_zone_list") private ArrayList<TSO_Service_Search_Detail_Params_Obj> site_zone_list = new ArrayList<>();
     @Expose
-    private ArrayList<MD_Partner> partner_list = new ArrayList<>();
+    @SerializedName("partner_list") private ArrayList<MD_Partner> partner_list = new ArrayList<>();
     //Atributos apenas para lista
-    private Integer site_code_selected;
-    private Integer zone_code_selected;
-    private Integer partner_code_selected;
+    @SerializedName("site_code_selected") private Integer site_code_selected;
+    @SerializedName("zone_code_selected") private Integer zone_code_selected;
+    @SerializedName("partner_code_selected") private Integer partner_code_selected;
 
 
     public String getApp() {

@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 /**
@@ -7,11 +9,11 @@ import java.util.ArrayList;
  */
 
 public class TSerial_Save_Rec {
-    private String app;
-    private String validation;
-    private String link_url;
-    private String error_msg;
-    private ArrayList<Serial_Save_Return> serial_return;
+    @SerializedName("app") private String app;
+    @SerializedName("validation") private String validation;
+    @SerializedName("link_url") private String link_url;
+    @SerializedName("error_msg") private String error_msg;
+    @SerializedName("serial_return") private ArrayList<Serial_Save_Return> serial_return;
 
 
     public String getApp() {
@@ -55,13 +57,13 @@ public class TSerial_Save_Rec {
     }
 
     public class Serial_Save_Return{
-        private long customer_code;
-        private long product_code;
-        private int serial_code;
-        private int serial_tmp;
+        @SerializedName("customer_code") private long customer_code;
+        @SerializedName("product_code") private long product_code;
+        @SerializedName("serial_code") private int serial_code;
+        @SerializedName("serial_tmp") private int serial_tmp;
         //private String serial_id;
-        private String ret_status;
-        private String ret_msg;
+        @SerializedName("ret_status") private String ret_status;
+        @SerializedName("ret_msg") private String ret_msg;
 
         public long getCustomer_code() {
             return customer_code;

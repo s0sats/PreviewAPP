@@ -1,18 +1,20 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by d.luche on 27/06/2017.
  */
 
 public class TUser_Author_Env extends Main_Header_Env {
 
-    private String customer_code;
-    private String so_prefix;
-    private String so_code;
-    private String auth_type;
-    private String auth_nick_mail;
-    private String auth_password;
-    private String auth_nfc;
+    @SerializedName("customer_code") private String customer_code;
+    @SerializedName("so_prefix") private String so_prefix;
+    @SerializedName("so_code") private String so_code;
+    @SerializedName("auth_type") private String auth_type;
+    @SerializedName("auth_nick_mail") private String auth_nick_mail;
+    @SerializedName("auth_password") private String auth_password;
+    @SerializedName("auth_nfc") private String auth_nfc;
 
     public String getCustomer_code() {
         return customer_code;

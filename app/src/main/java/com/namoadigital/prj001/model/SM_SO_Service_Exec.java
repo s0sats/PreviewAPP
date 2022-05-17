@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
@@ -10,29 +11,34 @@ import java.util.ArrayList;
 
 public class SM_SO_Service_Exec {
 
-    private long customer_code; //pk
-    private int so_prefix; //pk
-    private int so_code; //pk
-    private int price_list_code; //pk
-    private int pack_code; //pk
-    private int pack_seq; //pk
-    private int category_price_code; //pk
-    private int service_code; //pk
-    private int service_seq; //pk
+    @SerializedName("customer_code") private long customer_code; //pk
+    @SerializedName("so_prefix") private int so_prefix; //pk
+    @SerializedName("so_code") private int so_code; //pk
+    @SerializedName("price_list_code") private int price_list_code; //pk
+    @SerializedName("pack_code") private int pack_code; //pk
+    @SerializedName("pack_seq") private int pack_seq; //pk
+    @SerializedName("category_price_code") private int category_price_code; //pk
+    @SerializedName("service_code") private int service_code; //pk
+    @SerializedName("service_seq") private int service_seq; //pk
     @Expose
+    @SerializedName("exec_code")
     private Integer exec_code; //pk #SQN
     @Expose
+    @SerializedName("exec_tmp")
     private long exec_tmp; //pk
     @Expose
+    @SerializedName("status")
     private String status;
 
     // Novos Criados Null
     @Expose
+    @SerializedName("partner_code")
     private Integer partner_code;
-    private String partner_id;
-    private String partner_desc;
+    @SerializedName("partner_id") private String partner_id;
+    @SerializedName("partner_desc") private String partner_desc;
 
     @Expose
+    @SerializedName("task")
     private ArrayList<SM_SO_Service_Exec_Task> task;
 
     public SM_SO_Service_Exec() {

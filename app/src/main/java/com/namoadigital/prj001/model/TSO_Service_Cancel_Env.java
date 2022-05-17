@@ -1,22 +1,24 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by d.luche on 15/10/2019.
  */
 
 public class TSO_Service_Cancel_Env extends Main_Header_Env {
 
-    private String so_prefix;
-    private String so_code;
-    private String type_ps;
-    private String price_list_code;
-    private String pack_code;
-    private String pack_seq;
-    private String category_price_code;
-    private String service_code;
-    private String service_seq;
-    private String exec_code;
-    private String token;
+    @SerializedName("so_prefix") private String so_prefix;
+    @SerializedName("so_code") private String so_code;
+    @SerializedName("type_ps") private String type_ps;
+    @SerializedName("price_list_code") private String price_list_code;
+    @SerializedName("pack_code") private String pack_code;
+    @SerializedName("pack_seq") private String pack_seq;
+    @SerializedName("category_price_code") private String category_price_code;
+    @SerializedName("service_code") private String service_code;
+    @SerializedName("service_seq") private String service_seq;
+    @SerializedName("exec_code") private String exec_code;
+    @SerializedName("token") private String token;
 
     public String getSo_prefix() {
         return so_prefix;

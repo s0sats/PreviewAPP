@@ -1,15 +1,17 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by d.luche on 22/05/2017.
  */
 
 public class TSerial_Tracking_Search_Env extends Main_Header_Env  {
 
-    private String site_code;
-    private String product_code;
-    private String serial_code;
-    private String tracking;
+    @SerializedName("site_code") private String site_code;
+    @SerializedName("product_code") private String product_code;
+    @SerializedName("serial_code") private String serial_code;
+    @SerializedName("tracking") private String tracking;
 
     public String getSite_code() {
         return site_code;

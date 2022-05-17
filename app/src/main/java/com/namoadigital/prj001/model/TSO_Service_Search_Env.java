@@ -1,18 +1,20 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by d.luche on 27/06/2017.
  */
 
 public class TSO_Service_Search_Env extends Main_Header_Env {
 
-    private int contract_code;
-    private int product_code;
-    private int serial_code;
-    private int category_price_code;
-    private int segment_code;
-    private int site_code;
-    private int operation_code;
+    @SerializedName("contract_code") private int contract_code;
+    @SerializedName("product_code") private int product_code;
+    @SerializedName("serial_code") private int serial_code;
+    @SerializedName("category_price_code") private int category_price_code;
+    @SerializedName("segment_code") private int segment_code;
+    @SerializedName("site_code") private int site_code;
+    @SerializedName("operation_code") private int operation_code;
 
     public int getContract_code() {
         return contract_code;

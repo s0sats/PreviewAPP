@@ -115,8 +115,8 @@ public class MD_Product_Serial implements Serializable {
     @SerializedName("last_measure_date") private String last_measure_date;
     @SerializedName("last_cycle_value") private Float last_cycle_value;
     @SerializedName("device_tp_code_main") private Integer device_tp_code_main;
-    @SerializedName("structure")
     @Expose
+    @SerializedName("structure")
     private List<MD_Product_Serial_Structure> structure = new ArrayList<>();
     /*
     * Add contrutor com inicialização de -1 no serial temp para diferenciar dos seriais criados

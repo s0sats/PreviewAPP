@@ -1,23 +1,25 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
 public class IO_Inbound_Search_Record implements Serializable {
     private static final long serialVersionUID = -590062680310963072L;
-    private int customer_code;
-    private int inbound_prefix;
-    private int inbound_code;
-    private String inbound_id;
-    private String inbound_desc;
-    private String create_date;
-    private String eta_date;
-    private String invoice_number;
-    private String status;
-    private String comments;
-    private Float perc_done;
-    private String from;
-    private String modal;
-    private String transport_order;
+    @SerializedName("customer_code") private int customer_code;
+    @SerializedName("inbound_prefix") private int inbound_prefix;
+    @SerializedName("inbound_code") private int inbound_code;
+    @SerializedName("inbound_id") private String inbound_id;
+    @SerializedName("inbound_desc") private String inbound_desc;
+    @SerializedName("create_date") private String create_date;
+    @SerializedName("eta_date") private String eta_date;
+    @SerializedName("invoice_number") private String invoice_number;
+    @SerializedName("status") private String status;
+    @SerializedName("comments") private String comments;
+    @SerializedName("perc_done") private Float perc_done;
+    @SerializedName("from") private String from;
+    @SerializedName("modal") private String modal;
+    @SerializedName("transport_order") private String transport_order;
     //Propriedade usada somente no adapter
     private boolean toDownload;
     private boolean sameSiteAsLoggedOrFree;

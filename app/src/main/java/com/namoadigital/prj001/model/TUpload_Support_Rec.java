@@ -1,12 +1,14 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by neomatrix on 20/02/17.
  */
 
 public class TUpload_Support_Rec {
 
-    private String save;
+    @SerializedName("save") private String save;
 
     public String getSave() {
         return save;

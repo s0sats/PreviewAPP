@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 /**
@@ -8,11 +10,11 @@ import java.util.ArrayList;
 
 public class TSave_Ap_Rec {
 
-    private String app;
-    private String validation;
-    private String link_url;
-    private String error_msg;
-    private String save;
+    @SerializedName("app") private String app;
+    @SerializedName("validation") private String validation;
+    @SerializedName("link_url") private String link_url;
+    @SerializedName("error_msg") private String error_msg;
+    @SerializedName("save") private String save;
 
     private ArrayList<ApSaveStatus> ap = new ArrayList<>();
 
@@ -65,15 +67,15 @@ public class TSave_Ap_Rec {
     }
 
     public static class ApSaveStatus {
-        private long customer_code;
-        private int custom_form_type;
-        private int custom_form_code;
-        private int custom_form_version;
-        private long custom_form_data;
-        private int ap_code;
-        private int ap_scn;
-        private int status_code;
-        private String status_msg;
+        @SerializedName("customer_code") private long customer_code;
+        @SerializedName("custom_form_type") private int custom_form_type;
+        @SerializedName("custom_form_code") private int custom_form_code;
+        @SerializedName("custom_form_version") private int custom_form_version;
+        @SerializedName("custom_form_data") private long custom_form_data;
+        @SerializedName("ap_code") private int ap_code;
+        @SerializedName("ap_scn") private int ap_scn;
+        @SerializedName("status_code") private int status_code;
+        @SerializedName("status_msg") private String status_msg;
 
         public long getCustomer_code() {
             return customer_code;

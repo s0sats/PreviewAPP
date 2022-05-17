@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 /**
@@ -9,13 +11,13 @@ import java.util.ArrayList;
 public class TSO_Pack_Express_Rec {
 
 
-    private String app;
-    private String validation;
-    private String link_url;
-    private String error_msg;
-    private String save;
+    @SerializedName("app") private String app;
+    @SerializedName("validation") private String validation;
+    @SerializedName("link_url") private String link_url;
+    @SerializedName("error_msg") private String error_msg;
+    @SerializedName("save") private String save;
 
-    private ArrayList<SO_Pack_Express_Local> pack_express;
+    @SerializedName("pack_express") private ArrayList<SO_Pack_Express_Local> pack_express;
 
     public String getApp() {
         return app;

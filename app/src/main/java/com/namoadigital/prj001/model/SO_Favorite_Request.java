@@ -1,12 +1,14 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class SO_Favorite_Request  extends  Main_Header_Env{
-    String site_code;
-	long operation_code;
-	long product_code;
-	long serial_code;
-	int category_price_code;
-	int segment_code;
+    @SerializedName("site_code") String site_code;
+	@SerializedName("operation_code") long operation_code;
+	@SerializedName("product_code") long product_code;
+	@SerializedName("serial_code") long serial_code;
+	@SerializedName("category_price_code") int category_price_code;
+	@SerializedName("segment_code") int segment_code;
 
 	public SO_Favorite_Request(String siteCode, long operation_code, long product_code, long serial_code, int category_price_code, int segment_code) {
 		this.site_code = siteCode;

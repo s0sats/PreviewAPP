@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
@@ -8,28 +9,28 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 public class Chat_Message_Obj_Form_Ap {
 
-    private String pk;
-    private long customer_code;
-    private Integer custom_form_type;
-    private Integer custom_form_code;
-    private Integer custom_form_version;
-    private Integer custom_form_data;
-    private Integer ap_code;
-    private Integer ap_scn;
-    private String ap_description;
-    private String ap_status;
-    private String ap_what;
-    private Integer ap_who;
-    private String ap_who_name;
-    private String ap_when;
-    private String custom_form_desc;
-    private Integer ap_product_code;
-    private String ap_product_id;
-    private String ap_product_desc;
-    private String ap_serial_id;
-    private Integer tag_operational_code;
-    private String tag_operational_id;
-    private String tag_operational_desc;
+    @SerializedName("pk") private String pk;
+    @SerializedName("customer_code") private long customer_code;
+    @SerializedName("custom_form_type") private Integer custom_form_type;
+    @SerializedName("custom_form_code") private Integer custom_form_code;
+    @SerializedName("custom_form_version") private Integer custom_form_version;
+    @SerializedName("custom_form_data") private Integer custom_form_data;
+    @SerializedName("ap_code") private Integer ap_code;
+    @SerializedName("ap_scn") private Integer ap_scn;
+    @SerializedName("ap_description") private String ap_description;
+    @SerializedName("ap_status") private String ap_status;
+    @SerializedName("ap_what") private String ap_what;
+    @SerializedName("ap_who") private Integer ap_who;
+    @SerializedName("ap_who_name") private String ap_who_name;
+    @SerializedName("ap_when") private String ap_when;
+    @SerializedName("custom_form_desc") private String custom_form_desc;
+    @SerializedName("ap_product_code") private Integer ap_product_code;
+    @SerializedName("ap_product_id") private String ap_product_id;
+    @SerializedName("ap_product_desc") private String ap_product_desc;
+    @SerializedName("ap_serial_id") private String ap_serial_id;
+    @SerializedName("tag_operational_code") private Integer tag_operational_code;
+    @SerializedName("tag_operational_id") private String tag_operational_id;
+    @SerializedName("tag_operational_desc") private String tag_operational_desc;
 
     public String getPk() {
         return pk;

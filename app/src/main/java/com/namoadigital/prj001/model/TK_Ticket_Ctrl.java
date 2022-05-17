@@ -3,6 +3,7 @@ package com.namoadigital.prj001.model;
 import androidx.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -10,69 +11,69 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class TK_Ticket_Ctrl implements Serializable {
-    private long customer_code;//pk
-    private int ticket_prefix;//pk
-    private int ticket_code;//pk
+    @SerializedName("customer_code") private long customer_code;//pk
+    @SerializedName("ticket_prefix") private int ticket_prefix;//pk
+    @SerializedName("ticket_code") private int ticket_code;//pk
     @Expose
-    private int ticket_seq;//pk
+    @SerializedName("ticket_seq") private int ticket_seq;//pk
     @Expose
-    private int ticket_seq_tmp;//pk
+    @SerializedName("ticket_seq_tmp") private int ticket_seq_tmp;//pk
     @Expose
-    private String ctrl_type;
-    @Expose
-    @Nullable
-    private Integer product_code;
-    @Nullable
-    private String product_id;
-    @Nullable
-    private String product_desc;
+    @SerializedName("ctrl_type") private String ctrl_type;
     @Expose
     @Nullable
-    private Integer serial_code;
+    @SerializedName("product_code") private Integer product_code;
+    @Nullable
+    @SerializedName("product_id") private String product_id;
+    @Nullable
+    @SerializedName("product_desc") private String product_desc;
     @Expose
     @Nullable
-    private String serial_id;
-    @Expose
-    private Integer has_item_check;
+    @SerializedName("serial_code") private Integer serial_code;
     @Expose
     @Nullable
-    private String ctrl_start_date;
+    @SerializedName("serial_id") private String serial_id;
     @Expose
-    private Integer ctrl_start_user;
-    private String ctrl_start_user_name;
+    @SerializedName("has_item_check") private Integer has_item_check;
+    @Expose
+    @Nullable
+    @SerializedName("ctrl_start_date") private String ctrl_start_date;
+    @Expose
+    @SerializedName("ctrl_start_user") private Integer ctrl_start_user;
+    @SerializedName("ctrl_start_user_name") private String ctrl_start_user_name;
     @Nullable
     @Expose
-    private String ctrl_end_date;
-    private Integer ctrl_end_user;
+    @SerializedName("ctrl_end_date") private String ctrl_end_date;
+    @SerializedName("ctrl_end_user") private Integer ctrl_end_user;
     @Nullable
-    private String ctrl_end_user_name;
+    @SerializedName("ctrl_end_user_name") private String ctrl_end_user_name;
     @Expose
-    private String ctrl_status;
-    private Integer partner_code;
+    @SerializedName("ctrl_status") private String ctrl_status;
+    @SerializedName("partner_code") private Integer partner_code;
     @Nullable
-    private String partner_id;
+    @SerializedName("partner_id") private String partner_id;
     @Nullable
-    private String partner_desc;
-    private int step_code;
+    @SerializedName("partner_desc") private String partner_desc;
+    @SerializedName("step_code") private int step_code;
     @Nullable//Somente se for agendado
-    private Integer step_order;
-    private int obj_planned;
-    private int update_required;
+    @SerializedName("step_order") private Integer step_order;
+    @SerializedName("obj_planned") private int obj_planned;
+    @SerializedName("update_required") private int update_required;
     //LUCHE - 12/11/2020 - Propriedade que define se o de para deve ser reportado a tela via broadcast
-    private int from_to_notify;
+    @SerializedName("from_to_notify") private int from_to_notify;
     @Expose
     @Nullable
-    private TK_Ticket_Action action;
+    @SerializedName("action") private TK_Ticket_Action action;
     @Expose
     @Nullable
-    private TK_Ticket_Measure measure;
+    @SerializedName("measure") private TK_Ticket_Measure measure;
     @Expose
     @Nullable
-    private TK_Ticket_Approval approval;
+    @SerializedName("approval") private TK_Ticket_Approval approval;
     @Nullable
-    private ArrayList<TK_Ticket_Approval_Rejection> rejection = new ArrayList<>();
+    @SerializedName("rejection") private ArrayList<TK_Ticket_Approval_Rejection> rejection = new ArrayList<>();
     @Nullable
-    private TK_Ticket_Form form;
+    @SerializedName("form") private TK_Ticket_Form form;
 
     public TK_Ticket_Ctrl() {
         this.customer_code = -1;

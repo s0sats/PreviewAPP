@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
@@ -10,26 +11,28 @@ import java.util.ArrayList;
 
 public class SM_SO_Pack {
 
-    private long customer_code; //pk
-    private int so_prefix; //pk
-    private int so_code; //pk
+    @SerializedName("customer_code") private long customer_code; //pk
+    @SerializedName("so_prefix") private int so_prefix; //pk
+    @SerializedName("so_code") private int so_code; //pk
     @Expose
-    private int price_list_code; //pk
-    private String price_list_id;
-    private String price_list_desc;
+    @SerializedName("price_list_code") private int price_list_code; //pk
+    @SerializedName("price_list_id") private String price_list_id;
+    @SerializedName("price_list_desc") private String price_list_desc;
     @Expose
-    private int pack_code; //pk
+    @SerializedName("pack_code") private int pack_code; //pk
     @Expose
-    private int pack_seq; //pk
-    private String pack_id;
-    private String pack_desc;
+    @SerializedName("pack_seq") private int pack_seq; //pk
+    @SerializedName("pack_id") private String pack_id;
+    @SerializedName("pack_desc") private String pack_desc;
     @Expose
+    @SerializedName("status")
     private String status;
-    private String rule;
-    private String billing_type;
-    private int express;
-    private String selection_type;
+    @SerializedName("rule") private String rule;
+    @SerializedName("billing_type") private String billing_type;
+    @SerializedName("express") private int express;
+    @SerializedName("selection_type") private String selection_type;
     @Expose
+    @SerializedName("service")
     private ArrayList<SM_SO_Service> service;
 
     public SM_SO_Pack() {

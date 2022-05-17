@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
@@ -12,14 +13,19 @@ public class MD_Product_Serial_Tracking implements Serializable {
     private static final long serialVersionUID = -2220422244392353101L;
 
     @Expose
+    @SerializedName("customer_code")
     private long customer_code;
     @Expose
+    @SerializedName("product_code")
     private long product_code;
     @Expose
+    @SerializedName("serial_code")
     private long serial_code;
     @Expose
+    @SerializedName("serial_tmp")
     private Long serial_tmp;
     @Expose
+    @SerializedName("tracking")
     private String tracking;
 
     public MD_Product_Serial_Tracking() {

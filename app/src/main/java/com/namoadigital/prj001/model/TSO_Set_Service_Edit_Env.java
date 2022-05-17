@@ -1,21 +1,21 @@
 package com.namoadigital.prj001.model;
 
-import java.io.Serializable;
+import com.google.gson.annotations.SerializedName;
 
 public class TSO_Set_Service_Edit_Env extends Main_Header_Env {
-    String token;
-    int so_prefix;
-    int so_code;
-    int price_list_code;
-    int pack_code;
-    int pack_seq;
-    int category_price_code;
-    int service_code;
-    int service_seq;
-    Integer site_code;
-    Integer zone_code;
-    Integer partner_code;
-    private int so_scn;
+    @SerializedName("token") String token;
+    @SerializedName("so_prefix") int so_prefix;
+    @SerializedName("so_code") int so_code;
+    @SerializedName("price_list_code") int price_list_code;
+    @SerializedName("pack_code") int pack_code;
+    @SerializedName("pack_seq") int pack_seq;
+    @SerializedName("category_price_code") int category_price_code;
+    @SerializedName("service_code") int service_code;
+    @SerializedName("service_seq") int service_seq;
+    @SerializedName("site_code") Integer site_code;
+    @SerializedName("zone_code") Integer zone_code;
+    @SerializedName("partner_code") Integer partner_code;
+    @SerializedName("so_scn") private int so_scn;
 
     public String getToken() {
         return token;

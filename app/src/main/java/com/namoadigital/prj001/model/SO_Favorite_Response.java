@@ -9,22 +9,22 @@ import java.util.List;
 public class SO_Favorite_Response implements Serializable {
     private static final long serialVersionUID = -8556367998671062222L;
 
+    @Expose
     @SerializedName("app")
-    @Expose
     private String app;
+    @Expose
     @SerializedName("validation")
-    @Expose
     private String validation;
-    private String link_url;
-    private String error_msg;
+    @SerializedName("link_url") private String link_url;
+    @SerializedName("error_msg") private String error_msg;
+    @Expose
     @SerializedName("contract")
-    @Expose
     private List<SO_Favorite_Contract> contract;
+    @Expose
     @SerializedName("favorite")
-    @Expose
     private List<SO_Favorite_Item> favorite;
-    @SerializedName("priority")
     @Expose
+    @SerializedName("priority")
     private List<SO_Favorite_Priority> priority;
 
     public String getApp() {

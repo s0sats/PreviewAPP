@@ -10,6 +10,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.SerializedName;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -1420,21 +1421,21 @@ public class WS_TK_Ticket_Save extends IntentService {
     }
 
     public static class TicketSaveActReturn {
-        private int customer_code = -1;
-        private int prefix = -1;
-        private int code = -1;
-        private Integer scn = -1;
-        private String retStatus = "";
-        private String retMsg = "";
-        private boolean fromTokenProcess = false;
-        private boolean processError = false;
-        private String processStatus = "";
-        private String processMsg = "";
-        private int oldPrefix = -1;
-        private int oldCode = -1;
-        private int schedulePrefix = -1;
-        private int scheduleCode = -1;
-        private int scheduleExec = -1;
+        @SerializedName("customer_code") private int customer_code = -1;
+        @SerializedName("prefix") private int prefix = -1;
+        @SerializedName("code") private int code = -1;
+        @SerializedName("scn") private Integer scn = -1;
+        @SerializedName("retStatus") private String retStatus = "";
+        @SerializedName("retMsg") private String retMsg = "";
+        @SerializedName("fromTokenProcess") private boolean fromTokenProcess = false;
+        @SerializedName("processError") private boolean processError = false;
+        @SerializedName("processStatus") private String processStatus = "";
+        @SerializedName("processMsg") private String processMsg = "";
+        @SerializedName("oldPrefix") private int oldPrefix = -1;
+        @SerializedName("oldCode") private int oldCode = -1;
+        @SerializedName("schedulePrefix") private int schedulePrefix = -1;
+        @SerializedName("scheduleCode") private int scheduleCode = -1;
+        @SerializedName("scheduleExec") private int scheduleExec = -1;
 
         //
         public TicketSaveActReturn(int customer_code, int prefix, int code, Integer scn, String retStatus, String retMsg, boolean fromTokenProcess, int oldPrefix, int oldCode) {

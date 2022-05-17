@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by d.luche on 12/06/2017.
@@ -8,27 +9,30 @@ import com.google.gson.annotations.Expose;
 
 public class SM_SO_Service_Exec_Task_File {
 
-    private long customer_code; //pk
-    private int so_prefix; //pk
-    private int so_code; //pk
-    private int price_list_code; //pk
-    private int pack_code; //pk
-    private int pack_seq; //pk
-    private int category_price_code; //pk
-    private int service_code; //pk
-    private int service_seq; //pk
-    private int exec_code; //pk server
-    private long exec_tmp; //pk local
-    private int task_code; //pk server
-    private long task_tmp; //pk local
+    @SerializedName("customer_code") private long customer_code; //pk
+    @SerializedName("so_prefix") private int so_prefix; //pk
+    @SerializedName("so_code") private int so_code; //pk
+    @SerializedName("price_list_code") private int price_list_code; //pk
+    @SerializedName("pack_code") private int pack_code; //pk
+    @SerializedName("pack_seq") private int pack_seq; //pk
+    @SerializedName("category_price_code") private int category_price_code; //pk
+    @SerializedName("service_code") private int service_code; //pk
+    @SerializedName("service_seq") private int service_seq; //pk
+    @SerializedName("exec_code") private int exec_code; //pk server
+    @SerializedName("exec_tmp") private long exec_tmp; //pk local
+    @SerializedName("task_code") private int task_code; //pk server
+    @SerializedName("task_tmp") private long task_tmp; //pk local
     @Expose
+    @SerializedName("file_code")
     private int file_code; //ok
     @Expose
+    @SerializedName("file_tmp")
     private long file_tmp; //ok
     @Expose
+    @SerializedName("file_name")
     private String file_name;
-    private String file_url;
-    private String file_url_local;
+    @SerializedName("file_url") private String file_url;
+    @SerializedName("file_url_local") private String file_url_local;
 
     public SM_SO_Service_Exec_Task_File() {
         this.customer_code = -1;

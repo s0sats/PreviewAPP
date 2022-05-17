@@ -1,15 +1,17 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by d.luche on 27/06/2017.
  */
 
 public class TSO_Search_Env extends Main_Header_Env {
 
-    private Long product_code;
-    private String serial_id;
-    private String so_mult;
-    private int profile_check;
+    @SerializedName("product_code") private Long product_code;
+    @SerializedName("serial_id") private String serial_id;
+    @SerializedName("so_mult") private String so_mult;
+    @SerializedName("profile_check") private int profile_check;
 
     public Long getProduct_code() {
         return product_code;

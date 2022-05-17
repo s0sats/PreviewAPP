@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by d.luche on 27/07/2017.
@@ -9,18 +10,25 @@ import com.google.gson.annotations.Expose;
 public class SO_Save_Return {
 
     @Expose
+    @SerializedName("customer_code")
     private long customer_code;
     @Expose
+    @SerializedName("so_prefix")
     private int so_prefix;
     @Expose
+    @SerializedName("so_code")
     private int so_code;
     @Expose
+    @SerializedName("so_scn")
     private int so_scn;
     @Expose
+    @SerializedName("so_update")
     private int so_update;
     @Expose
+    @SerializedName("ret_status")
     private String ret_status;
     @Expose
+    @SerializedName("ret_msg")
     private String ret_msg;
 
     public long getCustomer_code() {

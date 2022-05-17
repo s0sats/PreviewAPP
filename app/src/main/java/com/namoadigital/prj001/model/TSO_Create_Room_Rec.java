@@ -1,14 +1,16 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class TSO_Create_Room_Rec {
-    private String app;
-    private String validation;
-    private String link_url;
-    private String error_msg;
-    private String ret_code;
-    private String ret_msg;
-    private Integer ret_sync_full;
-    private Integer ret_so_scn;
+    @SerializedName("app") private String app;
+    @SerializedName("validation") private String validation;
+    @SerializedName("link_url") private String link_url;
+    @SerializedName("error_msg") private String error_msg;
+    @SerializedName("ret_code") private String ret_code;
+    @SerializedName("ret_msg") private String ret_msg;
+    @SerializedName("ret_sync_full") private Integer ret_sync_full;
+    @SerializedName("ret_so_scn") private Integer ret_so_scn;
 
     public String getApp() {
         return app;
