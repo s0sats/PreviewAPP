@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -9,55 +10,55 @@ public class IO_Inbound_Item implements Serializable {
     private static final long serialVersionUID = 6534975604003631255L;
 
     @Expose
-    private long customer_code;
+    @SerializedName("customer_code") private long customer_code;
     @Expose
-    private int inbound_prefix;
+    @SerializedName("inbound_prefix") private int inbound_prefix;
     @Expose
-    private int inbound_code;
+    @SerializedName("inbound_code") private int inbound_code;
     @Expose
-    private int inbound_item;
+    @SerializedName("inbound_item") private int inbound_item;
     @Expose
-    private long product_code;
+    @SerializedName("product_code") private long product_code;
     @Expose
-    private long serial_code;
+    @SerializedName("serial_code") private long serial_code;
     @Expose
-    private Integer site_code;
+    @SerializedName("site_code") private Integer site_code;
     @Expose
-    private Integer zone_code;
+    @SerializedName("zone_code") private Integer zone_code;
     @Expose
-    private String zone_id;
+    @SerializedName("zone_id") private String zone_id;
     @Expose
-    private String zone_desc;
+    @SerializedName("zone_desc") private String zone_desc;
     @Expose
-    private Integer local_code;
+    @SerializedName("local_code") private Integer local_code;
     @Expose
-    private String local_id;
+    @SerializedName("local_id") private String local_id;
     @Expose
-    private Integer class_code;
+    @SerializedName("class_code") private Integer class_code;
     @Expose
-    private String class_id;
+    @SerializedName("class_id") private String class_id;
     @Expose
-    private String conf_date;
+    @SerializedName("conf_date") private String conf_date;
     @Expose
-    private String status;
+    @SerializedName("status") private String status;
     @Expose
-    private String comments;
+    @SerializedName("comments") private String comments;
     @Expose
-    private Integer planned_zone_code;
+    @SerializedName("planned_zone_code") private Integer planned_zone_code;
     @Expose
-    private Integer planned_local_code;
+    @SerializedName("planned_local_code") private Integer planned_local_code;
     @Expose
-    private Integer planned_class_code;
+    @SerializedName("planned_class_code") private Integer planned_class_code;
     @Expose
-    private String save_date;
+    @SerializedName("save_date") private String save_date;
     @Expose
-    private int update_required;
+    @SerializedName("update_required") private int update_required;
     //SOMENTE PARA RETORNO DO WS
-    private ArrayList<MD_Product_Serial> serial = new ArrayList<>();
-    private ArrayList<IO_Move> move = new ArrayList<>();
+    @SerializedName("serial") private ArrayList<MD_Product_Serial> serial = new ArrayList<>();
+    @SerializedName("move") private ArrayList<IO_Move> move = new ArrayList<>();
     //Somente para envio dos tracking quando in_conf\/
     @Expose
-    private ArrayList<IO_Conf_Tracking> tracking_list = new ArrayList<>();
+    @SerializedName("tracking_list") private ArrayList<IO_Conf_Tracking> tracking_list = new ArrayList<>();
 
 
     public IO_Inbound_Item() {

@@ -1,13 +1,15 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 public class T_IO_Outbound_Download_Rec {
-    private String app;
-    private String validation;
-    private String link_url;
-    private String error_msg;
-    private ArrayList<IO_Outbound> outbound;
+    @SerializedName("app") private String app;
+    @SerializedName("validation") private String validation;
+    @SerializedName("link_url") private String link_url;
+    @SerializedName("error_msg") private String error_msg;
+    @SerializedName("outbound") private ArrayList<IO_Outbound> outbound;
 
 
     public String getApp() {

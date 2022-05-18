@@ -1,27 +1,28 @@
 package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
 public class TK_Ticket_Measure implements Serializable {
     @Expose
-    private long customer_code;//pk
+    @SerializedName("customer_code") private long customer_code;//pk
     @Expose
-    private int ticket_prefix;//pk
+    @SerializedName("ticket_prefix") private int ticket_prefix;//pk
     @Expose
-    private int ticket_code;//pk
+    @SerializedName("ticket_code") private int ticket_code;//pk
     @Expose
-    private int ticket_seq;//pk
+    @SerializedName("ticket_seq") private int ticket_seq;//pk
     @Expose
-    private int step_code;//pk
-    private int measure_tp_code;
-    private String measure_tp_id;
-    private String measure_tp_desc;
-    private float measure_value;
-    private String value_sufix;
-    private String measure_date;
-    private String measure_info;
+    @SerializedName("step_code") private int step_code;//pk
+    @SerializedName("measure_tp_code") private int measure_tp_code;
+    @SerializedName("measure_tp_id") private String measure_tp_id;
+    @SerializedName("measure_tp_desc") private String measure_tp_desc;
+    @SerializedName("measure_value") private float measure_value;
+    @SerializedName("value_sufix") private String value_sufix;
+    @SerializedName("measure_date") private String measure_date;
+    @SerializedName("measure_info") private String measure_info;
 
     public TK_Ticket_Measure() {
         this.customer_code = -1;

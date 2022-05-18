@@ -2,27 +2,28 @@
 package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
 public class TK_Ticket_Approval_Rejection implements Serializable {
     @Expose
-    private long customer_code;//pk
+    @SerializedName("customer_code") private long customer_code;//pk
     @Expose
-    private int ticket_prefix;//pk
+    @SerializedName("ticket_prefix") private int ticket_prefix;//pk
     @Expose
-    private int ticket_code;//pk
+    @SerializedName("ticket_code") private int ticket_code;//pk
     @Expose
-    private int ticket_seq;//pk
+    @SerializedName("ticket_seq") private int ticket_seq;//pk
     @Expose
-    private int step_code;//pk
-    private int seq;//pk
+    @SerializedName("step_code") private int step_code;//pk
+    @SerializedName("seq") private int seq;//pk
     @Expose
-    private String rejection_comments;
+    @SerializedName("rejection_comments") private String rejection_comments;
     @Expose
-    private String rejection_date;
-    private int rejection_user;
-    private String rejection_user_nick;
+    @SerializedName("rejection_date") private String rejection_date;
+    @SerializedName("rejection_user") private int rejection_user;
+    @SerializedName("rejection_user_nick") private String rejection_user_nick;
 
     public TK_Ticket_Approval_Rejection() {
         this.customer_code = -1;

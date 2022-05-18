@@ -1,37 +1,39 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 public class T_IO_Serial_Process_Download_Move {
 
-    private Long customer_code;
-    private Integer move_prefix;
-    private Integer move_code;
-    private Long product_code;
-    private Integer serial_code;
-    private Integer site_code;
-    private Integer from_zone_code;
-    private Integer from_local_code;
-    private Integer from_class_code;
-    private Integer planned_zone_code;
-    private Integer planned_local_code;
-    private Integer planned_class_code;
-    private Integer to_zone_code;
-    private Integer to_local_code;
-    private Integer to_class_code;
-    private String move_type;
-    private Integer reason_code;
-    private Integer inbound_prefix;
-    private Integer inbound_code;
-    private Integer inbound_item;
-    private Integer outbound_prefix;
-    private Integer outbound_code;
-    private Integer outbound_item;
-    private String done_date;
-    private Integer done_user;
-    private String done_user_nick;
-    private String status;
-    private ArrayList<MD_Product_Serial> serial;
+    @SerializedName("customer_code") private Long customer_code;
+    @SerializedName("move_prefix") private Integer move_prefix;
+    @SerializedName("move_code") private Integer move_code;
+    @SerializedName("product_code") private Long product_code;
+    @SerializedName("serial_code") private Integer serial_code;
+    @SerializedName("site_code") private Integer site_code;
+    @SerializedName("from_zone_code") private Integer from_zone_code;
+    @SerializedName("from_local_code") private Integer from_local_code;
+    @SerializedName("from_class_code") private Integer from_class_code;
+    @SerializedName("planned_zone_code") private Integer planned_zone_code;
+    @SerializedName("planned_local_code") private Integer planned_local_code;
+    @SerializedName("planned_class_code") private Integer planned_class_code;
+    @SerializedName("to_zone_code") private Integer to_zone_code;
+    @SerializedName("to_local_code") private Integer to_local_code;
+    @SerializedName("to_class_code") private Integer to_class_code;
+    @SerializedName("move_type") private String move_type;
+    @SerializedName("reason_code") private Integer reason_code;
+    @SerializedName("inbound_prefix") private Integer inbound_prefix;
+    @SerializedName("inbound_code") private Integer inbound_code;
+    @SerializedName("inbound_item") private Integer inbound_item;
+    @SerializedName("outbound_prefix") private Integer outbound_prefix;
+    @SerializedName("outbound_code") private Integer outbound_code;
+    @SerializedName("outbound_item") private Integer outbound_item;
+    @SerializedName("done_date") private String done_date;
+    @SerializedName("done_user") private Integer done_user;
+    @SerializedName("done_user_nick") private String done_user_nick;
+    @SerializedName("status") private String status;
+    @SerializedName("serial") private ArrayList<MD_Product_Serial> serial;
 
     public Long getCustomer_code() {
         return customer_code;

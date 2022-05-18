@@ -169,12 +169,16 @@ public class TK_Ticket implements Cloneable, Serializable {
     @SerializedName("tag_operational_id") private String tag_operational_id;
     @SerializedName("tag_operational_desc") private String tag_operational_desc;
     @Expose
+    @SerializedName("step")
     private ArrayList<TK_Ticket_Step> step = new ArrayList<>();
     @Expose
+    @SerializedName("product")
     private ArrayList<TK_Ticket_Product> product = new ArrayList<>();
     @Expose
+    @SerializedName("nc")
     private ArrayList<TkTicketOriginNc> nc = new ArrayList<>();
     @Expose
+    @SerializedName("serial")
     private ArrayList<MD_Product_Serial> serial = new ArrayList<>();
 
     public void setPK() {

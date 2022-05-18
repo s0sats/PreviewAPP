@@ -1,8 +1,10 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class T_IO_Outbound_Download_Env extends Main_Header_Env {
 
-    private String outbound;
+    @SerializedName("outbound") private String outbound;
 
     public String getOutbound() {
         return outbound;

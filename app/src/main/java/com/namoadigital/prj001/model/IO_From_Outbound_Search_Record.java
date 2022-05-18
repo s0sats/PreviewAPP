@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
 /**
@@ -10,24 +12,24 @@ import java.io.Serializable;
 
 public class IO_From_Outbound_Search_Record implements Serializable {
 
-    private Integer customer_code;
-    private int count;
-    private String from_type;
-    private int outbound_from_site_code;
-    private String outbound_from_site_id;
-    private String outbound_from_site_desc;
-    private int outbound_to_site_code;
-    private String outbound_to_site_id;
-    private String outbound_to_site_desc;
-    private Integer outbound_prefix;
-    private Integer outbound_code;
-    private String outbound_id;
-    private String outbound_desc;
-    private Integer carrier_code;
-    private String carrier_id;
-    private String carrier_desc;
-    private String truck_number;
-    private String driver;
+    @SerializedName("customer_code") private Integer customer_code;
+    @SerializedName("count") private int count;
+    @SerializedName("from_type") private String from_type;
+    @SerializedName("outbound_from_site_code") private int outbound_from_site_code;
+    @SerializedName("outbound_from_site_id") private String outbound_from_site_id;
+    @SerializedName("outbound_from_site_desc") private String outbound_from_site_desc;
+    @SerializedName("outbound_to_site_code") private int outbound_to_site_code;
+    @SerializedName("outbound_to_site_id") private String outbound_to_site_id;
+    @SerializedName("outbound_to_site_desc") private String outbound_to_site_desc;
+    @SerializedName("outbound_prefix") private Integer outbound_prefix;
+    @SerializedName("outbound_code") private Integer outbound_code;
+    @SerializedName("outbound_id") private String outbound_id;
+    @SerializedName("outbound_desc") private String outbound_desc;
+    @SerializedName("carrier_code") private Integer carrier_code;
+    @SerializedName("carrier_id") private String carrier_id;
+    @SerializedName("carrier_desc") private String carrier_desc;
+    @SerializedName("truck_number") private String truck_number;
+    @SerializedName("driver") private String driver;
 
     public Integer getCustomer_code() {
         return customer_code;

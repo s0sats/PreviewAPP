@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -8,45 +9,45 @@ import java.util.ArrayList;
 public class IO_Outbound_Item implements Serializable {
 
     @Expose
-    private  long customer_code;
+    @SerializedName("customer_code") private  long customer_code;
     @Expose
-    private  int outbound_prefix;
+    @SerializedName("outbound_prefix") private  int outbound_prefix;
     @Expose
-    private  int outbound_code;
+    @SerializedName("outbound_code") private  int outbound_code;
     @Expose
-    private  int outbound_item;
+    @SerializedName("outbound_item") private  int outbound_item;
     @Expose
-    private  long product_code;
+    @SerializedName("product_code") private  long product_code;
     @Expose
-    private  long serial_code;
+    @SerializedName("serial_code") private  long serial_code;
     @Expose
-    private Integer class_code;
+    @SerializedName("class_code") private Integer class_code;
     @Expose
-    private String class_id;
+    @SerializedName("class_id") private String class_id;
     @Expose
-    private  String conf_date;
+    @SerializedName("conf_date") private  String conf_date;
     @Expose
-    private  String status;
+    @SerializedName("status") private  String status;
     @Expose
-    private  Integer inbound_prefix;
+    @SerializedName("inbound_prefix") private  Integer inbound_prefix;
     @Expose
-    private  Integer inbound_code;
+    @SerializedName("inbound_code") private  Integer inbound_code;
     @Expose
-    private  Integer inbound_item;
+    @SerializedName("inbound_item") private  Integer inbound_item;
     @Expose
-    private  String comments;
+    @SerializedName("comments") private  String comments;
     @Expose
-    private  String save_date;
+    @SerializedName("save_date") private  String save_date;
     @Expose
-    private  int update_required;
+    @SerializedName("update_required") private  int update_required;
     @Expose
-    private  int out_conf_done;
+    @SerializedName("out_conf_done") private  int out_conf_done;
 
-    private ArrayList<MD_Product_Serial> serial = new ArrayList<>();
-    private ArrayList<IO_Move> move = new ArrayList<>();
+    @SerializedName("serial") private ArrayList<MD_Product_Serial> serial = new ArrayList<>();
+    @SerializedName("move") private ArrayList<IO_Move> move = new ArrayList<>();
     //Somente para envio dos tracking quando out_conf\/
     @Expose
-    private ArrayList<IO_Conf_Tracking> tracking_list = new ArrayList<>();
+    @SerializedName("tracking_list") private ArrayList<IO_Conf_Tracking> tracking_list = new ArrayList<>();
     public void IO_Outbound_Item(){
         this.customer_code = -1;
         this.outbound_prefix = -1;

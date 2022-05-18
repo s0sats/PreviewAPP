@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.SerializedName;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
@@ -384,13 +385,13 @@ public class WS_IO_Outbound_Item_Add extends IntentService {
     }
 
     public class OutboundItemSaveActReturn {
-        private int customer_code;
-        private int outbound_prefix;
-        private int outbound_code;
-        private Integer outbound_item;
-        private boolean retStatus;
-        private String msg;
-        private boolean outboundFull;
+        @SerializedName("customer_code") private int customer_code;
+        @SerializedName("outbound_prefix") private int outbound_prefix;
+        @SerializedName("outbound_code") private int outbound_code;
+        @SerializedName("outbound_item") private Integer outbound_item;
+        @SerializedName("retStatus") private boolean retStatus;
+        @SerializedName("msg") private String msg;
+        @SerializedName("outboundFull") private boolean outboundFull;
 
         public OutboundItemSaveActReturn() {
         }

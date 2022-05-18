@@ -4,47 +4,48 @@ package com.namoadigital.prj001.model;
 import androidx.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 
 import java.io.Serializable;
 
 public class TK_Ticket_Form implements Serializable {
     @Expose
-    private long customer_code;//pk
+    @SerializedName("customer_code") private long customer_code;//pk
     @Expose
-    private int ticket_prefix;//pk
+    @SerializedName("ticket_prefix") private int ticket_prefix;//pk
     @Expose
-    private int ticket_code;//pk
+    @SerializedName("ticket_code") private int ticket_code;//pk
     @Expose
-    private int ticket_seq;//pk
+    @SerializedName("ticket_seq") private int ticket_seq;//pk
     @Expose
-    private int ticket_seq_tmp;//pk
+    @SerializedName("ticket_seq_tmp") private int ticket_seq_tmp;//pk
     @Expose
-    private int step_code;//pk
+    @SerializedName("step_code") private int step_code;//pk
     @Expose
-    private String form_status;
-    private int custom_form_type;
-    private int custom_form_code;
-    private int custom_form_version;
-    private String custom_form_desc;
+    @SerializedName("form_status") private String form_status;
+    @SerializedName("custom_form_type") private int custom_form_type;
+    @SerializedName("custom_form_code") private int custom_form_code;
+    @SerializedName("custom_form_version") private int custom_form_version;
+    @SerializedName("custom_form_desc") private String custom_form_desc;
     @Nullable
-    private Integer custom_form_data;
+    @SerializedName("custom_form_data") private Integer custom_form_data;
     @Nullable
-    private String score_status;
+    @SerializedName("score_status") private String score_status;
     @Nullable
-    private String score_perc;
-    private int nc;
-    private int is_so;
+    @SerializedName("score_perc") private String score_perc;
+    @SerializedName("nc") private int nc;
+    @SerializedName("is_so") private int is_so;
     @Nullable
-    private Integer custom_form_data_tmp;
+    @SerializedName("custom_form_data_tmp") private Integer custom_form_data_tmp;
     @Nullable
-    private Integer pdf_code;
+    @SerializedName("pdf_code") private Integer pdf_code;
     @Nullable
-    private String pdf_name;
+    @SerializedName("pdf_name") private String pdf_name;
     @Nullable
-    private String pdf_url;
+    @SerializedName("pdf_url") private String pdf_url;
     @Nullable
-    private String pdf_url_local;
+    @SerializedName("pdf_url_local") private String pdf_url_local;
 
     public TK_Ticket_Form() {
         this.customer_code = -1;

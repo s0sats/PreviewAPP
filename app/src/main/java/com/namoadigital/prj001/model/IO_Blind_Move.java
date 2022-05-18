@@ -1,27 +1,29 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 public class IO_Blind_Move {
 
-    private long customer_code;
-    private int blind_tmp;
-    private Integer blind_prefix;
-    private Integer blind_code;
-    private long product_code;
-    private int serial_code;
-    private String serial_id;
-    private int site_code;
-    private int zone_code;
-    private int local_code;
-    private int reason_code;
-    private Integer class_code;
-    private int flag_blind;
-    private String status;
-    private String save_date;
-    private String token;
-    private String error_msg;
-    private ArrayList<IO_Blind_Move_Tracking> tracking_list = new ArrayList<>();
+    @SerializedName("customer_code") private long customer_code;
+    @SerializedName("blind_tmp") private int blind_tmp;
+    @SerializedName("blind_prefix") private Integer blind_prefix;
+    @SerializedName("blind_code") private Integer blind_code;
+    @SerializedName("product_code") private long product_code;
+    @SerializedName("serial_code") private int serial_code;
+    @SerializedName("serial_id") private String serial_id;
+    @SerializedName("site_code") private int site_code;
+    @SerializedName("zone_code") private int zone_code;
+    @SerializedName("local_code") private int local_code;
+    @SerializedName("reason_code") private int reason_code;
+    @SerializedName("class_code") private Integer class_code;
+    @SerializedName("flag_blind") private int flag_blind;
+    @SerializedName("status") private String status;
+    @SerializedName("save_date") private String save_date;
+    @SerializedName("token") private String token;
+    @SerializedName("error_msg") private String error_msg;
+    @SerializedName("tracking_list") private ArrayList<IO_Blind_Move_Tracking> tracking_list = new ArrayList<>();
 
     public void setPk(){
         for (int i = 0; i < tracking_list.size(); i++) {

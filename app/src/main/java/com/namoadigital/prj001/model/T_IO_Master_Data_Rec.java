@@ -1,15 +1,17 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 public class T_IO_Master_Data_Rec {
-    private String app;
-    private String validation;
-    private String link_url;
-    private String error_msg;
-    private ArrayList<MD_Site> site = new ArrayList<>();
-    private ArrayList<MD_Partner> partner = new ArrayList<>();
-    private ArrayList<ModalObj> modal = new ArrayList<>();
+    @SerializedName("app") private String app;
+    @SerializedName("validation") private String validation;
+    @SerializedName("link_url") private String link_url;
+    @SerializedName("error_msg") private String error_msg;
+    @SerializedName("site") private ArrayList<MD_Site> site = new ArrayList<>();
+    @SerializedName("partner") private ArrayList<MD_Partner> partner = new ArrayList<>();
+    @SerializedName("modal") private ArrayList<ModalObj> modal = new ArrayList<>();
 
     public String getApp() {
         return app;
@@ -68,10 +70,10 @@ public class T_IO_Master_Data_Rec {
     }
 
     public class ModalObj{
-        private long customer_code;
-        private int modal_code;
-        private String modal_id;
-        private String modal_desc;
+        @SerializedName("customer_code") private long customer_code;
+        @SerializedName("modal_code") private int modal_code;
+        @SerializedName("modal_id") private String modal_id;
+        @SerializedName("modal_desc") private String modal_desc;
 
         public long getCustomer_code() {
             return customer_code;

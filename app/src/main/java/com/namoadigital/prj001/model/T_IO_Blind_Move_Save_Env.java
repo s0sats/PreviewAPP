@@ -1,14 +1,15 @@
 package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
 public class T_IO_Blind_Move_Save_Env extends Main_Header_Env {
     @Expose
-    private String token;
+    @SerializedName("token") private String token;
     @Expose
-    private List<IO_Blind_Move>  blind;
+    @SerializedName("blind") private List<IO_Blind_Move>  blind;
 
     public String getToken() {
         return token;

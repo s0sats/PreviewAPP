@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -8,92 +9,92 @@ import java.util.ArrayList;
 public class IO_Outbound implements Serializable {
 
     @Expose
-    private long customer_code;
+    @SerializedName("customer_code") private long customer_code;
     @Expose
-    private int outbound_prefix;
+    @SerializedName("outbound_prefix") private int outbound_prefix;
     @Expose
-    private int outbound_code;
+    @SerializedName("outbound_code") private int outbound_code;
     @Expose
-    private String outbound_desc;
+    @SerializedName("outbound_desc") private String outbound_desc;
     @Expose
-    private String outbound_id;
+    @SerializedName("outbound_id") private String outbound_id;
     @Expose
-    private int scn;
+    @SerializedName("scn") private int scn;
     @Expose
-    private String origin;
+    @SerializedName("origin") private String origin;
     @Expose
-    private String transport_order;
+    @SerializedName("transport_order") private String transport_order;
     @Expose
-    private String invoice_number;
+    @SerializedName("invoice_number") private String invoice_number;
     @Expose
-    private String invoice_date;
+    @SerializedName("invoice_date") private String invoice_date;
     @Expose
-    private String eta_date;
+    @SerializedName("eta_date") private String eta_date;
     @Expose
-    private String departure_date;
+    @SerializedName("departure_date") private String departure_date;
     @Expose
-    private String loading_date;
+    @SerializedName("loading_date") private String loading_date;
     @Expose
-    private int from_site_code;
+    @SerializedName("from_site_code") private int from_site_code;
     @Expose
-    private String to_type;
+    @SerializedName("to_type") private String to_type;
     @Expose
-    private Integer to_partner_code;
+    @SerializedName("to_partner_code") private Integer to_partner_code;
     @Expose
-    private String to_partner_id;
+    @SerializedName("to_partner_id") private String to_partner_id;
     @Expose
-    private String to_partner_desc;
+    @SerializedName("to_partner_desc") private String to_partner_desc;
     @Expose
-    private Integer to_site_code;
+    @SerializedName("to_site_code") private Integer to_site_code;
     @Expose
-    private String to_site_id;
+    @SerializedName("to_site_id") private String to_site_id;
     @Expose
-    private String to_site_desc;
+    @SerializedName("to_site_desc") private String to_site_desc;
     @Expose
-    private Integer carrier_code;
-    private String carrier_id;
-    private String carrier_desc;
+    @SerializedName("carrier_code") private Integer carrier_code;
+    @SerializedName("carrier_id") private String carrier_id;
+    @SerializedName("carrier_desc") private String carrier_desc;
     @Expose
-    private String truck_number;
+    @SerializedName("truck_number") private String truck_number;
     @Expose
-    private String driver;
+    @SerializedName("driver") private String driver;
     @Expose
-    private String comments;
+    @SerializedName("comments") private String comments;
     @Expose
-    private String status;
+    @SerializedName("status") private String status;
     @Expose
-    private Double perc_done;
+    @SerializedName("perc_done") private Double perc_done;
     @Expose
-    private Integer modal_code;
-    private String modal_id;
-    private String modal_desc;
+    @SerializedName("modal_code") private Integer modal_code;
+    @SerializedName("modal_id") private String modal_id;
+    @SerializedName("modal_desc") private String modal_desc;
     @Expose
-    private int allow_new_item;
+    @SerializedName("allow_new_item") private int allow_new_item;
     @Expose
-    private Integer zone_code_picking;
-    private String zone_id_picking;
-    private String zone_desc_picking;
+    @SerializedName("zone_code_picking") private Integer zone_code_picking;
+    @SerializedName("zone_id_picking") private String zone_id_picking;
+    @SerializedName("zone_desc_picking") private String zone_desc_picking;
     @Expose
-    private Integer local_code_picking;
-    private String local_id_picking;
+    @SerializedName("local_code_picking") private Integer local_code_picking;
+    @SerializedName("local_id_picking") private String local_id_picking;
     @Expose
-    private int picking_process;
+    @SerializedName("picking_process") private int picking_process;
     @Expose
-    private int done_automatic;
+    @SerializedName("done_automatic") private int done_automatic;
     @Expose
-    private ArrayList<IO_Outbound_Item> items = new ArrayList<>();
+    @SerializedName("items") private ArrayList<IO_Outbound_Item> items = new ArrayList<>();
     //CAMPO EXCLUSIVO PARA RECEBIMENTO DO WS PROCESS DOWNLOAD
     @Expose
-    private ArrayList<MD_Product_Serial> serial = new ArrayList<>();
+    @SerializedName("serial") private ArrayList<MD_Product_Serial> serial = new ArrayList<>();
     //CAMPO EXCLUSIVO PARA RECEBIMENTO DO WS PROCESS DOWNLOAD
     @Expose
-    private ArrayList<IO_Move> move = new ArrayList<>();
+    @SerializedName("move") private ArrayList<IO_Move> move = new ArrayList<>();
     @Expose
-    private int update_required;
+    @SerializedName("update_required") private int update_required;
     @Expose
-    private int sync_required;
+    @SerializedName("sync_required") private int sync_required;
     @Expose
-    private String token;
+    @SerializedName("token") private String token;
 
     //Metodo necessario para repassar a pk do cabeçalho para o item
     //Como esse metodo, exugamos o tamanho do json enviado pelo server

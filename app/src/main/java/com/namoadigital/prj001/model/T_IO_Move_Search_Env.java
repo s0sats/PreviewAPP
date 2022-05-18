@@ -1,11 +1,13 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class T_IO_Move_Search_Env extends Main_Header_Env {
 
-    private String site_code;
-    private String move_type;
-    private String zone_code;
-    private String orientation;
+    @SerializedName("site_code") private String site_code;
+    @SerializedName("move_type") private String move_type;
+    @SerializedName("zone_code") private String zone_code;
+    @SerializedName("orientation") private String orientation;
 
     public String getSite_code() {
         return site_code;

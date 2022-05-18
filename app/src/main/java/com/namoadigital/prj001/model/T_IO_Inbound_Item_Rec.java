@@ -1,16 +1,18 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 public class T_IO_Inbound_Item_Rec {
-    private String app;
-    private String validation;
-    private String link_url;
-    private String error_msg;
-    private String save;
-    private ArrayList<IO_Inbound_Item_Save_Return> result = new ArrayList<>();
-    private ArrayList<IO_Inbound> inbound = new ArrayList<>();
-    private ArrayList<IO_Move> move = new ArrayList<>();
+    @SerializedName("app") private String app;
+    @SerializedName("validation") private String validation;
+    @SerializedName("link_url") private String link_url;
+    @SerializedName("error_msg") private String error_msg;
+    @SerializedName("save") private String save;
+    @SerializedName("result") private ArrayList<IO_Inbound_Item_Save_Return> result = new ArrayList<>();
+    @SerializedName("inbound") private ArrayList<IO_Inbound> inbound = new ArrayList<>();
+    @SerializedName("move") private ArrayList<IO_Move> move = new ArrayList<>();
 
     public String getApp() {
         return app;
@@ -77,13 +79,13 @@ public class T_IO_Inbound_Item_Rec {
     }
 
     public class  IO_Inbound_Item_Save_Return{
-        private long customer_code;
-        private int inbound_prefix;
-        private int inbound_code;
-        private int scn;
-        private String ret_status;
-        private String ret_msg;
-        private ArrayList<IO_Inbound_Item_Save_Return_Item> items = new ArrayList<>();
+        @SerializedName("customer_code") private long customer_code;
+        @SerializedName("inbound_prefix") private int inbound_prefix;
+        @SerializedName("inbound_code") private int inbound_code;
+        @SerializedName("scn") private int scn;
+        @SerializedName("ret_status") private String ret_status;
+        @SerializedName("ret_msg") private String ret_msg;
+        @SerializedName("items") private ArrayList<IO_Inbound_Item_Save_Return_Item> items = new ArrayList<>();
 
         public long getCustomer_code() {
             return customer_code;
@@ -143,12 +145,12 @@ public class T_IO_Inbound_Item_Rec {
     }
 
     public class  IO_Inbound_Item_Save_Return_Item{
-        private Integer inbound_item;
-        private Integer move_prefix;
-        private Integer move_code;
-        private String ret_status = "";
-        private String ret_msg = "";
-        private ArrayList<MD_Product_Serial> serial = new ArrayList<>();
+        @SerializedName("inbound_item") private Integer inbound_item;
+        @SerializedName("move_prefix") private Integer move_prefix;
+        @SerializedName("move_code") private Integer move_code;
+        @SerializedName("ret_status") private String ret_status = "";
+        @SerializedName("ret_msg") private String ret_msg = "";
+        @SerializedName("serial") private ArrayList<MD_Product_Serial> serial = new ArrayList<>();
         //
         public Integer getInbound_item() {
             return inbound_item;

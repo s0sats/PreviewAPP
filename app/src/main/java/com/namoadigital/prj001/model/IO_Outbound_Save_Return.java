@@ -1,24 +1,25 @@
 package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
 public class IO_Outbound_Save_Return {
     @Expose
-    private long customer_code;
+    @SerializedName("customer_code") private long customer_code;
     @Expose
-    private int outbound_prefix;
+    @SerializedName("outbound_prefix") private int outbound_prefix;
     @Expose
-    private int outbound_code;
+    @SerializedName("outbound_code") private int outbound_code;
     @Expose
-    private int scn;
+    @SerializedName("scn") private int scn;
     @Expose
-    private String ret_status;
+    @SerializedName("ret_status") private String ret_status;
     @Expose
-    private String ret_msg;
+    @SerializedName("ret_msg") private String ret_msg;
     @Expose
-    private ArrayList<IO_Outbound> outbound = new ArrayList<>();
+    @SerializedName("outbound") private ArrayList<IO_Outbound> outbound = new ArrayList<>();
 
     public long getCustomer_code() {
         return customer_code;

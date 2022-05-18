@@ -1,9 +1,11 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class T_IO_Serial_Process_Download_Env extends Main_Header_Env {
 
-    private String product_code;
-    private String serial_code;
+    @SerializedName("product_code") private String product_code;
+    @SerializedName("serial_code") private String serial_code;
 
     public String getProduct_code() {
         return product_code;

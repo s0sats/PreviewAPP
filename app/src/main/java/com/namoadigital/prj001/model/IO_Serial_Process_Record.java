@@ -1,37 +1,39 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
 public class IO_Serial_Process_Record implements Serializable {
     private static final long serialVersionUID = -3829891887006189025L;
 
-    private long customer_code;
-    private long product_code;
-    private String product_id;
-    private String product_desc;
-    private int serial_code;
-    private String serial_id;
-    private Integer site_code;
-    private String site_id;
-    private String site_desc;
-    private Integer zone_code;
-    private String zone_id;
-    private String zone_desc;
-    private Integer local_code;
-    private String local_id;
-    private Integer brand_code;
-    private String brand_id;
-    private String brand_desc;
-    private Integer model_code;
-    private String model_id;
-    private String model_desc;
-    private Integer color_code;
-    private String color_id;
-    private String color_desc;
-    private String process_type;
-    private ArrayList<TrackingObj> tracking_list;
-    private String transport_order;
+    @SerializedName("customer_code") private long customer_code;
+    @SerializedName("product_code") private long product_code;
+    @SerializedName("product_id") private String product_id;
+    @SerializedName("product_desc") private String product_desc;
+    @SerializedName("serial_code") private int serial_code;
+    @SerializedName("serial_id") private String serial_id;
+    @SerializedName("site_code") private Integer site_code;
+    @SerializedName("site_id") private String site_id;
+    @SerializedName("site_desc") private String site_desc;
+    @SerializedName("zone_code") private Integer zone_code;
+    @SerializedName("zone_id") private String zone_id;
+    @SerializedName("zone_desc") private String zone_desc;
+    @SerializedName("local_code") private Integer local_code;
+    @SerializedName("local_id") private String local_id;
+    @SerializedName("brand_code") private Integer brand_code;
+    @SerializedName("brand_id") private String brand_id;
+    @SerializedName("brand_desc") private String brand_desc;
+    @SerializedName("model_code") private Integer model_code;
+    @SerializedName("model_id") private String model_id;
+    @SerializedName("model_desc") private String model_desc;
+    @SerializedName("color_code") private Integer color_code;
+    @SerializedName("color_id") private String color_id;
+    @SerializedName("color_desc") private String color_desc;
+    @SerializedName("process_type") private String process_type;
+    @SerializedName("tracking_list") private ArrayList<TrackingObj> tracking_list;
+    @SerializedName("transport_order") private String transport_order;
 
 
     public long getCustomer_code() {
@@ -237,7 +239,7 @@ public class IO_Serial_Process_Record implements Serializable {
     public class TrackingObj implements Serializable {
         private static final long serialVersionUID = 4479285985116101246L;
 
-        private String tracking;
+        @SerializedName("tracking") private String tracking;
 
         public String getTracking() {
             return tracking;

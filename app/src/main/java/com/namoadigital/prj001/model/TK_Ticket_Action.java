@@ -3,35 +3,36 @@ package com.namoadigital.prj001.model;
 import androidx.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
 public class TK_Ticket_Action implements Serializable {
-    private long customer_code;//pk
-    private int ticket_prefix;//pk
-    private int ticket_code;//pk
-    private int ticket_seq;//pk
+    @SerializedName("customer_code") private long customer_code;//pk
+    @SerializedName("ticket_prefix") private int ticket_prefix;//pk
+    @SerializedName("ticket_code") private int ticket_code;//pk
+    @SerializedName("ticket_seq") private int ticket_seq;//pk
     @Expose
-    private int ticket_seq_tmp;//pk
+    @SerializedName("ticket_seq_tmp") private int ticket_seq_tmp;//pk
     @Expose
-    private int step_code;//pk
+    @SerializedName("step_code") private int step_code;//pk
     @Nullable
     @Expose
-    private String action_comments;//Max 500
+    @SerializedName("action_comments") private String action_comments;//Max 500
     @Nullable
     @Expose
-    private String action_photo_url;
+    @SerializedName("action_photo_url") private String action_photo_url;
     @Nullable
     @Expose
-    private String action_photo_local;
+    @SerializedName("action_photo_local") private String action_photo_local;
     @Expose
     @Nullable
-    private String action_photo_name;
+    @SerializedName("action_photo_name") private String action_photo_name;
     @Expose
-    private String action_status;
+    @SerializedName("action_status") private String action_status;
     @Expose
-    private int action_photo_changed;
-    private Integer action_photo_code;//somente usado para identificar se foto recebida é diferente da alterior
+    @SerializedName("action_photo_changed") private int action_photo_changed;
+    @SerializedName("action_photo_code") private Integer action_photo_code;//somente usado para identificar se foto recebida é diferente da alterior
 
     public TK_Ticket_Action() {
         this.customer_code = -1;

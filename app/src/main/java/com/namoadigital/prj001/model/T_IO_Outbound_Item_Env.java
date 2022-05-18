@@ -1,17 +1,18 @@
 package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
 public class T_IO_Outbound_Item_Env extends Main_Header_Env{
 
     @Expose
-    private String token;
+    @SerializedName("token") private String token;
     @Expose
-    private ArrayList<IO_Outbound_Header> outbound = new ArrayList<>();
+    @SerializedName("outbound") private ArrayList<IO_Outbound_Header> outbound = new ArrayList<>();
     @Expose
-    private int reprocess;
+    @SerializedName("reprocess") private int reprocess;
 
     public String getToken() {
         return token;
@@ -39,17 +40,17 @@ public class T_IO_Outbound_Item_Env extends Main_Header_Env{
 
     public static class IO_Outbound_Header {
         @Expose
-        private long customer_code;
+        @SerializedName("customer_code") private long customer_code;
         @Expose
-        private int outbound_prefix;
+        @SerializedName("outbound_prefix") private int outbound_prefix;
         @Expose
-        private int outbound_code;
+        @SerializedName("outbound_code") private int outbound_code;
         @Expose
-        private int scn;
+        @SerializedName("scn") private int scn;
         @Expose
-        private ArrayList<IO_Outbound_Item> items = new ArrayList<>();
+        @SerializedName("items") private ArrayList<IO_Outbound_Item> items = new ArrayList<>();
         @Expose
-        private ArrayList<IO_Move> move = new ArrayList<>();
+        @SerializedName("move") private ArrayList<IO_Move> move = new ArrayList<>();
         //
         public long getCustomer_code() {
             return customer_code;

@@ -1,9 +1,11 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class T_IO_Master_Data_Env extends Main_Header_Env {
-    private String site_code;
-    private String type;
-    private String action;
+    @SerializedName("site_code") private String site_code;
+    @SerializedName("type") private String type;
+    @SerializedName("action") private String action;
 
     public String getSite_code() {
         return site_code;

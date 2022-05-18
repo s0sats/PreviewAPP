@@ -1,18 +1,19 @@
 package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
 public class IO_Move_Tracking implements Serializable {
     @Expose
-    private long customer_code;
+    @SerializedName("customer_code") private long customer_code;
     @Expose
-    private int move_prefix;
+    @SerializedName("move_prefix") private int move_prefix;
     @Expose
-    private int move_code;
+    @SerializedName("move_code") private int move_code;
     @Expose
-    private String tracking;
+    @SerializedName("tracking") private String tracking;
 
     public long getCustomer_code() {
         return customer_code;

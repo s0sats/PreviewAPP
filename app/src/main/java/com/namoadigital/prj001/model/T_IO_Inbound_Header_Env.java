@@ -1,17 +1,18 @@
 package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
 public class T_IO_Inbound_Header_Env extends Main_Header_Env {
 
     @Expose
-    private String token;
+    @SerializedName("token") private String token;
     @Expose
-    private ArrayList<IO_Inbound> inbound = new ArrayList<>();
+    @SerializedName("inbound") private ArrayList<IO_Inbound> inbound = new ArrayList<>();
     @Expose
-    private int reprocess;
+    @SerializedName("reprocess") private int reprocess;
 
     public String getToken() {
         return token;

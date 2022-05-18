@@ -1,10 +1,12 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class T_IO_From_Site_Search_Env extends Main_Header_Env {
 
-    private String from_site_code;
-    private String to_site_code;
-    private String transport_order;
+    @SerializedName("from_site_code") private String from_site_code;
+    @SerializedName("to_site_code") private String to_site_code;
+    @SerializedName("transport_order") private String transport_order;
 
     public String getFrom_site_code() {
         return from_site_code;

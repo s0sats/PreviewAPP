@@ -1,17 +1,19 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class T_IO_Address_Suggestion_Rec{
 
-    private String app;
-    private String validation;
-    private String link_url;
-    private String error_msg;
-    private Integer site_code;
-    private Integer zone_code;
-    private String zone_id;
-    private String zone_desc;
-    private Integer local_code;
-    private String local_id;
+    @SerializedName("app") private String app;
+    @SerializedName("validation") private String validation;
+    @SerializedName("link_url") private String link_url;
+    @SerializedName("error_msg") private String error_msg;
+    @SerializedName("site_code") private Integer site_code;
+    @SerializedName("zone_code") private Integer zone_code;
+    @SerializedName("zone_id") private String zone_id;
+    @SerializedName("zone_desc") private String zone_desc;
+    @SerializedName("local_code") private Integer local_code;
+    @SerializedName("local_id") private String local_id;
 
     public String getApp() {
         return app;

@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
@@ -11,19 +12,19 @@ import java.util.ArrayList;
 public class IO_Inbound_Save_Return {
 
     @Expose
-    private long customer_code;
+    @SerializedName("customer_code") private long customer_code;
     @Expose
-    private int inbound_prefix;
+    @SerializedName("inbound_prefix") private int inbound_prefix;
     @Expose
-    private int inbound_code;
+    @SerializedName("inbound_code") private int inbound_code;
     @Expose
-    private int scn;
+    @SerializedName("scn") private int scn;
     @Expose
-    private String ret_status;
+    @SerializedName("ret_status") private String ret_status;
     @Expose
-    private String ret_msg;
+    @SerializedName("ret_msg") private String ret_msg;
     @Expose
-    private ArrayList<IO_Inbound> inbound = new ArrayList<>();
+    @SerializedName("inbound") private ArrayList<IO_Inbound> inbound = new ArrayList<>();
 
     public long getCustomer_code() {
         return customer_code;

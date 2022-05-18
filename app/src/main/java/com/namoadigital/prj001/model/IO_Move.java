@@ -1,65 +1,66 @@
 package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
 public class IO_Move implements Serializable {
     @Expose
-    private long customer_code;
+    @SerializedName("customer_code") private long customer_code;
     @Expose
-    private int move_prefix;
+    @SerializedName("move_prefix") private int move_prefix;
     @Expose
-    private int move_code;
+    @SerializedName("move_code") private int move_code;
     @Expose
-    private long product_code;
+    @SerializedName("product_code") private long product_code;
     @Expose
-    private int serial_code;
-    private int site_code;
-    private Integer from_zone_code;
-    private Integer from_local_code;
-    private Integer from_class_code;
-    private Integer planned_zone_code;
-    private Integer planned_local_code;
-    private Integer planned_class_code;
+    @SerializedName("serial_code") private int serial_code;
+    @SerializedName("site_code") private int site_code;
+    @SerializedName("from_zone_code") private Integer from_zone_code;
+    @SerializedName("from_local_code") private Integer from_local_code;
+    @SerializedName("from_class_code") private Integer from_class_code;
+    @SerializedName("planned_zone_code") private Integer planned_zone_code;
+    @SerializedName("planned_local_code") private Integer planned_local_code;
+    @SerializedName("planned_class_code") private Integer planned_class_code;
     @Expose
-    private Integer to_zone_code;
+    @SerializedName("to_zone_code") private Integer to_zone_code;
     @Expose
-    private Integer to_local_code;
+    @SerializedName("to_local_code") private Integer to_local_code;
     @Expose
-    private Integer to_class_code;
-    private String move_type;
+    @SerializedName("to_class_code") private Integer to_class_code;
+    @SerializedName("move_type") private String move_type;
     @Expose
-    private Integer reason_code;
+    @SerializedName("reason_code") private Integer reason_code;
     @Expose
-    private Integer inbound_prefix;
+    @SerializedName("inbound_prefix") private Integer inbound_prefix;
     @Expose
-    private Integer inbound_code;
+    @SerializedName("inbound_code") private Integer inbound_code;
     @Expose
-    private Integer inbound_item;
+    @SerializedName("inbound_item") private Integer inbound_item;
     @Expose
-    private Integer outbound_prefix;
+    @SerializedName("outbound_prefix") private Integer outbound_prefix;
     @Expose
-    private Integer outbound_code;
+    @SerializedName("outbound_code") private Integer outbound_code;
     @Expose
-    private Integer outbound_item;
+    @SerializedName("outbound_item") private Integer outbound_item;
     @Expose
-    private String done_date;
+    @SerializedName("done_date") private String done_date;
     @Expose
-    private Integer done_user;
+    @SerializedName("done_user") private Integer done_user;
     @Expose
-    private String done_user_nick;
+    @SerializedName("done_user_nick") private String done_user_nick;
     @Expose
-    private String status;
+    @SerializedName("status") private String status;
     //CAMPO EXCLUSIVO PARA RECEBIMENTO DO WS PROCESS DOWNLOAD
     @Expose
-    private ArrayList<MD_Product_Serial> serial = new ArrayList<>();
+    @SerializedName("serial") private ArrayList<MD_Product_Serial> serial = new ArrayList<>();
     @Expose
-    private ArrayList<IO_Move_Tracking> tracking_list = new ArrayList<>();
+    @SerializedName("tracking_list") private ArrayList<IO_Move_Tracking> tracking_list = new ArrayList<>();
     @Expose
-    private int update_required;
-    private String token;
+    @SerializedName("update_required") private int update_required;
+    @SerializedName("token") private String token;
 
     public long getCustomer_code() {
         return customer_code;

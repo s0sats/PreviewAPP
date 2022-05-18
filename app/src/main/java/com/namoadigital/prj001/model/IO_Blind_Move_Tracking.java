@@ -1,10 +1,12 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class IO_Blind_Move_Tracking {
 
-    private long customer_code;
-    private int blind_tmp;
-    private String tracking;
+    @SerializedName("customer_code") private long customer_code;
+    @SerializedName("blind_tmp") private int blind_tmp;
+    @SerializedName("tracking") private String tracking;
 
     public IO_Blind_Move_Tracking() {
         this.customer_code = -1;

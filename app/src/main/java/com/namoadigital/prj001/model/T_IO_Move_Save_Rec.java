@@ -1,14 +1,16 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 public class T_IO_Move_Save_Rec {
-    private String app;
-    private String validation;
-    private String link_url;
-    private String error_msg;
-    private String save;
-    private ArrayList<IO_Move_Return> result;
+    @SerializedName("app") private String app;
+    @SerializedName("validation") private String validation;
+    @SerializedName("link_url") private String link_url;
+    @SerializedName("error_msg") private String error_msg;
+    @SerializedName("save") private String save;
+    @SerializedName("result") private ArrayList<IO_Move_Return> result;
 
     public String getApp() {
         return app;

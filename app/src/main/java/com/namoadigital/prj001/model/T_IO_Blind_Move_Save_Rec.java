@@ -1,14 +1,16 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 public class T_IO_Blind_Move_Save_Rec {
 
-    private String app;
-    private String validation;
-    private String link_url;
-    private String error_msg;
-    private ArrayList<IO_Blind_Move_Return> result = new ArrayList<>();
+    @SerializedName("app") private String app;
+    @SerializedName("validation") private String validation;
+    @SerializedName("link_url") private String link_url;
+    @SerializedName("error_msg") private String error_msg;
+    @SerializedName("result") private ArrayList<IO_Blind_Move_Return> result = new ArrayList<>();
 
     public String getApp() {
         return app;
@@ -51,16 +53,16 @@ public class T_IO_Blind_Move_Save_Rec {
     }
 
     public class IO_Blind_Move_Return {
-         private long customer_code;
-         private Integer blind_tmp;
-         private Integer blind_prefix;
-         private Integer blind_code;
-         private Integer move_prefix;
-         private Integer move_code;
-         private String ret_status;
-         private String ret_msg;
-         private ArrayList<MD_Product_Serial> serial = new ArrayList<>();
-         private ArrayList<IO_Move> move = new ArrayList<>();
+         @SerializedName("customer_code") private long customer_code;
+         @SerializedName("blind_tmp") private Integer blind_tmp;
+         @SerializedName("blind_prefix") private Integer blind_prefix;
+         @SerializedName("blind_code") private Integer blind_code;
+         @SerializedName("move_prefix") private Integer move_prefix;
+         @SerializedName("move_code") private Integer move_code;
+         @SerializedName("ret_status") private String ret_status;
+         @SerializedName("ret_msg") private String ret_msg;
+         @SerializedName("serial") private ArrayList<MD_Product_Serial> serial = new ArrayList<>();
+         @SerializedName("move") private ArrayList<IO_Move> move = new ArrayList<>();
 
         public long getCustomer_code() {
             return customer_code;

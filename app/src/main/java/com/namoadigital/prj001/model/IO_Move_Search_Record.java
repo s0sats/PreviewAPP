@@ -1,46 +1,48 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
 public class IO_Move_Search_Record implements Serializable {
 
-    private int customer_code;
-    private int move_prefix;
-    private int move_code;
-    private int product_code;
-    private int serial_code;
-    private String site_code;
-    private Integer planned_zone_code;
-    private Integer planned_local_code;
-    private Integer planned_class_code;
-    private String move_type;
-    private Integer inbound_prefix;
-    private Integer inbound_code;
-    private Integer inbound_item;
-    private Integer outbound_prefix;
-    private Integer outbound_code;
-    private Integer outbound_item;
-    private String planned_zone_id;
-    private String planned_zone_desc;
-    private String planned_local_id;
-    private String product_id;
-    private String product_desc;
-    private String serial_id;
-    private Integer zone_code;
-    private String zone_id;
-    private String zone_desc;
-    private Integer local_code;
-    private String local_id;
-    private Integer brand_code;
-    private String brand_id;
-    private String brand_desc;
-    private Integer model_code;
-    private String model_id;
-    private String model_desc;
-    private Integer color_code;
-    private String color_id;
-    private String color_desc;
-    private String transport_order;
+    @SerializedName("customer_code") private int customer_code;
+    @SerializedName("move_prefix") private int move_prefix;
+    @SerializedName("move_code") private int move_code;
+    @SerializedName("product_code") private int product_code;
+    @SerializedName("serial_code") private int serial_code;
+    @SerializedName("site_code") private String site_code;
+    @SerializedName("planned_zone_code") private Integer planned_zone_code;
+    @SerializedName("planned_local_code") private Integer planned_local_code;
+    @SerializedName("planned_class_code") private Integer planned_class_code;
+    @SerializedName("move_type") private String move_type;
+    @SerializedName("inbound_prefix") private Integer inbound_prefix;
+    @SerializedName("inbound_code") private Integer inbound_code;
+    @SerializedName("inbound_item") private Integer inbound_item;
+    @SerializedName("outbound_prefix") private Integer outbound_prefix;
+    @SerializedName("outbound_code") private Integer outbound_code;
+    @SerializedName("outbound_item") private Integer outbound_item;
+    @SerializedName("planned_zone_id") private String planned_zone_id;
+    @SerializedName("planned_zone_desc") private String planned_zone_desc;
+    @SerializedName("planned_local_id") private String planned_local_id;
+    @SerializedName("product_id") private String product_id;
+    @SerializedName("product_desc") private String product_desc;
+    @SerializedName("serial_id") private String serial_id;
+    @SerializedName("zone_code") private Integer zone_code;
+    @SerializedName("zone_id") private String zone_id;
+    @SerializedName("zone_desc") private String zone_desc;
+    @SerializedName("local_code") private Integer local_code;
+    @SerializedName("local_id") private String local_id;
+    @SerializedName("brand_code") private Integer brand_code;
+    @SerializedName("brand_id") private String brand_id;
+    @SerializedName("brand_desc") private String brand_desc;
+    @SerializedName("model_code") private Integer model_code;
+    @SerializedName("model_id") private String model_id;
+    @SerializedName("model_desc") private String model_desc;
+    @SerializedName("color_code") private Integer color_code;
+    @SerializedName("color_id") private String color_id;
+    @SerializedName("color_desc") private String color_desc;
+    @SerializedName("transport_order") private String transport_order;
 
     public int getCustomer_code() {
         return customer_code;

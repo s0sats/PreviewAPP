@@ -21,8 +21,8 @@ public class IO_Inbound_Search_Record implements Serializable {
     @SerializedName("modal") private String modal;
     @SerializedName("transport_order") private String transport_order;
     //Propriedade usada somente no adapter
-    private boolean toDownload;
-    private boolean sameSiteAsLoggedOrFree;
+    @SerializedName("toDownload") private boolean toDownload;
+    @SerializedName("sameSiteAsLoggedOrFree") private boolean sameSiteAsLoggedOrFree;
 
     public int getCustomer_code() {
         return customer_code;

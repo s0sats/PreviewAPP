@@ -4,29 +4,30 @@ package com.namoadigital.prj001.model;
 import androidx.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
 public class TK_Ticket_Approval implements Serializable {
     @Expose
-    private long customer_code;//pk
+    @SerializedName("customer_code") private long customer_code;//pk
     @Expose
-    private int ticket_prefix;//pk
+    @SerializedName("ticket_prefix") private int ticket_prefix;//pk
     @Expose
-    private int ticket_code;//pk
+    @SerializedName("ticket_code") private int ticket_code;//pk
     @Expose
-    private int ticket_seq;//pk
+    @SerializedName("ticket_seq") private int ticket_seq;//pk
     @Expose
-    private int step_code;//pk
+    @SerializedName("step_code") private int step_code;//pk
     @Expose
-    private String approval_status;
+    @SerializedName("approval_status") private String approval_status;
     @Nullable
-    private String approval_question;
+    @SerializedName("approval_question") private String approval_question;
     @Nullable
-    private String approval_type;
+    @SerializedName("approval_type") private String approval_type;
     @Nullable
     @Expose
-    private String approval_comments;
+    @SerializedName("approval_comments") private String approval_comments;
 
     public TK_Ticket_Approval() {
         this.customer_code = -1;

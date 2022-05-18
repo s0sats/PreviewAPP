@@ -1,16 +1,18 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 public class IO_Move_Return {
 
-    private long customer_code;
-    private int move_prefix;
-    private int move_code;
-    private String ret_status;
-    private String ret_msg;
-    private ArrayList<MD_Product_Serial> serial;
-    private ArrayList<IO_Move> move;
+    @SerializedName("customer_code") private long customer_code;
+    @SerializedName("move_prefix") private int move_prefix;
+    @SerializedName("move_code") private int move_code;
+    @SerializedName("ret_status") private String ret_status;
+    @SerializedName("ret_msg") private String ret_msg;
+    @SerializedName("serial") private ArrayList<MD_Product_Serial> serial;
+    @SerializedName("move") private ArrayList<IO_Move> move;
 
     public long getCustomer_code() {
         return customer_code;

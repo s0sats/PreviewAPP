@@ -1,18 +1,20 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 public class T_IO_Serial_Process_Download_Rec{
 
-    private String app;
-    private String validation;
-    private String link_url;
-    private String error_msg;
-    private String process_type;
-    private ArrayList<T_IO_Serial_Process_Download_Move> move;
-    private ArrayList<IO_Inbound> inbound;
-    private ArrayList<IO_Outbound> outbound;
-    private ArrayList<MD_Product_Serial> serial;
+    @SerializedName("app") private String app;
+    @SerializedName("validation") private String validation;
+    @SerializedName("link_url") private String link_url;
+    @SerializedName("error_msg") private String error_msg;
+    @SerializedName("process_type") private String process_type;
+    @SerializedName("move") private ArrayList<T_IO_Serial_Process_Download_Move> move;
+    @SerializedName("inbound") private ArrayList<IO_Inbound> inbound;
+    @SerializedName("outbound") private ArrayList<IO_Outbound> outbound;
+    @SerializedName("serial") private ArrayList<MD_Product_Serial> serial;
 
     public String getApp() {
         return app;
