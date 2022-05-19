@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.model;
 
 import com.google.gson.JsonElement;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by d.luche on 30/11/2017.
@@ -8,7 +9,7 @@ import com.google.gson.JsonElement;
 
 public class Chat_Obj {
 
-    private JsonElement obj;
+    @SerializedName("obj") private JsonElement obj;
 
     public JsonElement getObj() {
         return obj;

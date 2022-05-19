@@ -1,30 +1,32 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by d.luche on 09/02/2018.
  */
 
 public class Chat_Room_Obj_SO {
 
-    private String pk;
-    private Integer so_prefix;
-    private Integer so_code;
-    private String so_desc;
-    private String so_id;
-    private String so_client;
-    private String so_priority;
-    private String so_status;
-    private String so_deadline;
-    private String so_pipeline;
-    private String so_site;
-    private String so_operation;
-    private String so_contract_po;
-    private String so_product_id;
-    private String so_product_desc;
-    private String so_serial;
-    private String so_brand_model_color;
-    private String so_segment;
-    private String so_category_price;
+    @SerializedName("pk") private String pk;
+    @SerializedName("so_prefix") private Integer so_prefix;
+    @SerializedName("so_code") private Integer so_code;
+    @SerializedName("so_desc") private String so_desc;
+    @SerializedName("so_id") private String so_id;
+    @SerializedName("so_client") private String so_client;
+    @SerializedName("so_priority") private String so_priority;
+    @SerializedName("so_status") private String so_status;
+    @SerializedName("so_deadline") private String so_deadline;
+    @SerializedName("so_pipeline") private String so_pipeline;
+    @SerializedName("so_site") private String so_site;
+    @SerializedName("so_operation") private String so_operation;
+    @SerializedName("so_contract_po") private String so_contract_po;
+    @SerializedName("so_product_id") private String so_product_id;
+    @SerializedName("so_product_desc") private String so_product_desc;
+    @SerializedName("so_serial") private String so_serial;
+    @SerializedName("so_brand_model_color") private String so_brand_model_color;
+    @SerializedName("so_segment") private String so_segment;
+    @SerializedName("so_category_price") private String so_category_price;
 
     public String getPk() {
         return pk;

@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.model;
 
 import com.google.gson.JsonObject;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
@@ -10,29 +11,29 @@ import java.util.ArrayList;
 
 public class Chat_C_Message {
 
-    private String room_type;
-    private String room_code;
-    private Long customer_code;
-    private int msg_prefix;
-    private int msg_code;
-    private long msg_tmp;
-    private String msg_date;
-    private String msg_type;
-    private JsonObject msg_obj;
-    private String msg_origin;
-    private int delivered;
-    private int all_delivered;
-    private String delivered_date;
-    private int read;
-    private int all_read;
-    private String read_date;
-    private String msg_pk;
-    private int user_code;
-    private String user_nick;
-    private int delivered_user;
-    private String socket_id;
-    private long msg_count;
-    private String action;
+    @SerializedName("room_type") private String room_type;
+    @SerializedName("room_code") private String room_code;
+    @SerializedName("customer_code") private Long customer_code;
+    @SerializedName("msg_prefix") private int msg_prefix;
+    @SerializedName("msg_code") private int msg_code;
+    @SerializedName("msg_tmp") private long msg_tmp;
+    @SerializedName("msg_date") private String msg_date;
+    @SerializedName("msg_type") private String msg_type;
+    @SerializedName("msg_obj") private JsonObject msg_obj;
+    @SerializedName("msg_origin") private String msg_origin;
+    @SerializedName("delivered") private int delivered;
+    @SerializedName("all_delivered") private int all_delivered;
+    @SerializedName("delivered_date") private String delivered_date;
+    @SerializedName("read") private int read;
+    @SerializedName("all_read") private int all_read;
+    @SerializedName("read_date") private String read_date;
+    @SerializedName("msg_pk") private String msg_pk;
+    @SerializedName("user_code") private int user_code;
+    @SerializedName("user_nick") private String user_nick;
+    @SerializedName("delivered_user") private int delivered_user;
+    @SerializedName("socket_id") private String socket_id;
+    @SerializedName("msg_count") private long msg_count;
+    @SerializedName("action") private String action;
 
     public String getRoom_type() {
         return room_type;

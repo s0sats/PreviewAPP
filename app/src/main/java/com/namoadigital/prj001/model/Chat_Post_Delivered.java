@@ -1,13 +1,15 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by d.luche on 30/01/2018.
  */
 
 public class Chat_Post_Delivered {
 
-    private String json;
-    private String session_app;
+    @SerializedName("json") private String json;
+    @SerializedName("session_app") private String session_app;
 
     public String getJson() {
         return json;

@@ -1,12 +1,14 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by d.luche on 29/11/2017.
  */
 
 public class Chat_C_All_Delivered_Read {
-    private int msg_prefix;
-    private int msg_code;
+    @SerializedName("msg_prefix") private int msg_prefix;
+    @SerializedName("msg_code") private int msg_code;
 
     public int getMsg_prefix() {
         return msg_prefix;

@@ -1,15 +1,17 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by d.luche on 01/12/2017.
  */
 
 public class Chat_C_Message_Tmp {
 
-    private long msg_tmp;
-    private String room_code;
-    private int msg_prefix;
-    private int msg_code;
+    @SerializedName("msg_tmp") private long msg_tmp;
+    @SerializedName("room_code") private String room_code;
+    @SerializedName("msg_prefix") private int msg_prefix;
+    @SerializedName("msg_code") private int msg_code;
 
     public long getMsg_tmp() {
         return msg_tmp;

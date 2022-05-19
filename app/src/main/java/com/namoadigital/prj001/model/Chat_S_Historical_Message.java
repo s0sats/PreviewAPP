@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 /**
@@ -8,11 +10,11 @@ import java.util.ArrayList;
 
 public class Chat_S_Historical_Message {
 
-    private String room_code;
-    private Integer msg_ref_prefix;
-    private Integer msg_ref_code;
-    private String action;
-    private ArrayList<Chat_Ref_Json> ref_json;
+    @SerializedName("room_code") private String room_code;
+    @SerializedName("msg_ref_prefix") private Integer msg_ref_prefix;
+    @SerializedName("msg_ref_code") private Integer msg_ref_code;
+    @SerializedName("action") private String action;
+    @SerializedName("ref_json") private ArrayList<Chat_Ref_Json> ref_json;
 
     public String getRoom_code() {
         return room_code;

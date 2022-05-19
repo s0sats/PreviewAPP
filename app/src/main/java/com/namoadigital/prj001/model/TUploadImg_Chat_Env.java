@@ -1,15 +1,17 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by neomatrix on 20/02/17.
  */
 
 public class TUploadImg_Chat_Env {
 
-    private String app_code;
-    private long msg_prefix;
-    private long msg_code;
-    private String socket_id;
+    @SerializedName("app_code") private String app_code;
+    @SerializedName("msg_prefix") private long msg_prefix;
+    @SerializedName("msg_code") private long msg_code;
+    @SerializedName("socket_id") private String socket_id;
 
     public String getApp_code() {
         return app_code;

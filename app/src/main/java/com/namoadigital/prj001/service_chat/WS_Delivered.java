@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
+import com.google.gson.annotations.SerializedName;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.CH_MessageDao;
@@ -136,7 +137,7 @@ public class WS_Delivered extends IntentService {
     }
 
     private class DeliveredRetObj {
-        String obj;
+        @SerializedName("obj") String obj;
 
         public String getObj() {
             return obj;

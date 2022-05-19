@@ -1,14 +1,16 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by d.luche on 10/01/2018.
  */
 
 public class Chat_Room_Info_Env {
 
-    private String session_app;
-    private String room_code;
-    private int active;
+    @SerializedName("session_app") private String session_app;
+    @SerializedName("room_code") private String room_code;
+    @SerializedName("active") private int active;
 
     public String getSession_app() {
         return session_app;

@@ -1,19 +1,21 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by d.luche on 13/12/2017.
  */
 
 public class Chat_Add_User_Into_Room_Env {
 
-    private String socket_id;
-    private String room_code;
-    private String custom_form_type;
-    private String custom_form_code;
-    private String custom_form_version;
-    private String custom_form_data;
-    private String ap_code;
-    private String user_code_sql;
+    @SerializedName("socket_id") private String socket_id;
+    @SerializedName("room_code") private String room_code;
+    @SerializedName("custom_form_type") private String custom_form_type;
+    @SerializedName("custom_form_code") private String custom_form_code;
+    @SerializedName("custom_form_version") private String custom_form_version;
+    @SerializedName("custom_form_data") private String custom_form_data;
+    @SerializedName("ap_code") private String ap_code;
+    @SerializedName("user_code_sql") private String user_code_sql;
 
     public String getSocket_id() {
         return socket_id;

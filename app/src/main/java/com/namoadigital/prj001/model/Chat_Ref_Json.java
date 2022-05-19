@@ -1,13 +1,15 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by d.luche on 16/01/2018.
  */
 
 public class Chat_Ref_Json {
 
-    private Integer msg_prefix;
-    private Integer msg_code;
+    @SerializedName("msg_prefix") private Integer msg_prefix;
+    @SerializedName("msg_code") private Integer msg_code;
 
     public Integer getMsg_prefix() {
         return msg_prefix;

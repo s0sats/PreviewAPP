@@ -1,13 +1,15 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by d.luche on 13/12/2017.
  */
 
 public class Chat_C_Error {
 
-    private String error_msg;
-    private String error_caller;
+    @SerializedName("error_msg") private String error_msg;
+    @SerializedName("error_caller") private String error_caller;
 
     public String getError_msg() {
         return error_msg;

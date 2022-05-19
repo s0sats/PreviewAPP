@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.model;
 
 import com.google.gson.JsonObject;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
@@ -10,18 +11,18 @@ import java.util.ArrayList;
 
 public class Chat_C_Room {
 
-    private String room_type;
-    private String room_code;
-    private String room_desc;
-    private Long customer_code;
-    private JsonObject room_obj;
-    private String room_image;
-    private String room_image_name;
-    private int first_msg_prefix;
-    private int first_msg_code;
-    private Long user_code;
-    private Integer msg_prefix;
-    private Integer msg_code;
+    @SerializedName("room_type") private String room_type;
+    @SerializedName("room_code") private String room_code;
+    @SerializedName("room_desc") private String room_desc;
+    @SerializedName("customer_code") private Long customer_code;
+    @SerializedName("room_obj") private JsonObject room_obj;
+    @SerializedName("room_image") private String room_image;
+    @SerializedName("room_image_name") private String room_image_name;
+    @SerializedName("first_msg_prefix") private int first_msg_prefix;
+    @SerializedName("first_msg_code") private int first_msg_code;
+    @SerializedName("user_code") private Long user_code;
+    @SerializedName("msg_prefix") private Integer msg_prefix;
+    @SerializedName("msg_code") private Integer msg_code;
 
     public String getRoom_type() {
         return room_type;

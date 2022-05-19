@@ -1,18 +1,20 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by d.luche on 29/11/2017.
  */
 
 public class Chat_Login_Env {
 
-    private String user_code;
-    private String customer_code;
-    private String session_id;
-    private String session_type;
-    private String translate_code;
-    private int force;
-    private String device_code;
+    @SerializedName("user_code") private String user_code;
+    @SerializedName("customer_code") private String customer_code;
+    @SerializedName("session_id") private String session_id;
+    @SerializedName("session_type") private String session_type;
+    @SerializedName("translate_code") private String translate_code;
+    @SerializedName("force") private int force;
+    @SerializedName("device_code") private String device_code;
 
     public String getUser_code() {
         return user_code;

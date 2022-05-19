@@ -1,20 +1,22 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by d.luche on 07/03/2018.
  */
 
 public class TRoom_AP_Env {
 
-    private long customer_code;
-    private String translate_code;
-    private String user_code;
-    private String session_app;
-    private int custom_form_type;
-    private int custom_form_code;
-    private int custom_form_version;
-    private long custom_form_data;
-    private int ap_code;
+    @SerializedName("customer_code") private long customer_code;
+    @SerializedName("translate_code") private String translate_code;
+    @SerializedName("user_code") private String user_code;
+    @SerializedName("session_app") private String session_app;
+    @SerializedName("custom_form_type") private int custom_form_type;
+    @SerializedName("custom_form_code") private int custom_form_code;
+    @SerializedName("custom_form_version") private int custom_form_version;
+    @SerializedName("custom_form_data") private long custom_form_data;
+    @SerializedName("ap_code") private int ap_code;
 
     public long getCustomer_code() {
         return customer_code;

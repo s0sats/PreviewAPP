@@ -1,13 +1,15 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by neomatrix on 20/02/17.
  */
 
 public class TUploadImg_Chat_Rec {
 
-    private String app;
-    private String result;
+    @SerializedName("app") private String app;
+    @SerializedName("result") private String result;
 
     public String getApp() {
         return app;
