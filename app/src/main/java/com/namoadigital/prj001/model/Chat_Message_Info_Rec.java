@@ -1,22 +1,24 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by d.luche on 10/01/2018.
  */
 
 public class Chat_Message_Info_Rec {
 
-    private int msg_prefix;
-    private int msg_code;
-    private int user_code;
-    private String user_nick;
-    private int delivered;
-    private String delivered_date;
-    private int read;
-    private String read_date;
-    private int on_line;
-    private String sys_user_image;
-    private String sys_user_image_name;
+    @SerializedName("msg_prefix") private int msg_prefix;
+    @SerializedName("msg_code") private int msg_code;
+    @SerializedName("user_code") private int user_code;
+    @SerializedName("user_nick") private String user_nick;
+    @SerializedName("delivered") private int delivered;
+    @SerializedName("delivered_date") private String delivered_date;
+    @SerializedName("read") private int read;
+    @SerializedName("read_date") private String read_date;
+    @SerializedName("on_line") private int on_line;
+    @SerializedName("sys_user_image") private String sys_user_image;
+    @SerializedName("sys_user_image_name") private String sys_user_image_name;
 
     public int getMsg_prefix() {
         return msg_prefix;

@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.SerializedName;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 
 /**
@@ -139,19 +140,19 @@ public class FCM_Schedule {
 
     public class FCM_Schedule_Msg_long {
         @Nullable
-        private String schedule_desc = null;
+        @SerializedName("schedule_desc") private String schedule_desc = null;
         @Nullable
-        private String date_start  = null;
+        @SerializedName("date_start") private String date_start  = null;
         @Nullable
-        private String date_end  = null;
+        @SerializedName("date_end") private String date_end  = null;
         @Nullable
-        private String schedule_status  = null;
+        @SerializedName("schedule_status") private String schedule_status  = null;
         @Nullable
-        private String exec_status  = null;
+        @SerializedName("exec_status") private String exec_status  = null;
         @Nullable
-        private String comments  = null;
+        @SerializedName("comments") private String comments  = null;
         @Nullable
-        private String user_nick  = null;
+        @SerializedName("user_nick") private String user_nick  = null;
 
         @Nullable
         public String getSchedule_desc() {

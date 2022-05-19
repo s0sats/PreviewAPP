@@ -1,12 +1,14 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by neomatrix on 17/04/17.
  */
 
 public class TGoogle_Rec {
 
-    private String ret;
+    @SerializedName("ret") private String ret;
 
     public String getRet() {
         return ret;
