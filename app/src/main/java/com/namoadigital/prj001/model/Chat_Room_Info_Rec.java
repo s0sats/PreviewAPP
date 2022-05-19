@@ -1,19 +1,21 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by d.luche on 10/01/2018.
  */
 
 public class Chat_Room_Info_Rec {
 
-    private String room_code;
-    private int user_code;
-    private String user_nick;
-    private int admin;
-    private int active;
-    private int on_line;
-    private String sys_user_image;
-    private String sys_user_image_name;
+    @SerializedName("room_code") private String room_code;
+    @SerializedName("user_code") private int user_code;
+    @SerializedName("user_nick") private String user_nick;
+    @SerializedName("admin") private int admin;
+    @SerializedName("active") private int active;
+    @SerializedName("on_line") private int on_line;
+    @SerializedName("sys_user_image") private String sys_user_image;
+    @SerializedName("sys_user_image_name") private String sys_user_image_name;
 
     public String getRoom_code() {
         return room_code;
