@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -8,8 +10,8 @@ import java.util.ArrayList;
  */
 
 public class T_TK_Header_N_Group_Save_WG_Env extends Main_Header_Env {
-    private String token;
-    private ArrayList<T_TK_Header_N_Group_Save_WG_Ticket> ticket = new ArrayList<>();
+    @SerializedName("token") private String token;
+    @SerializedName("ticket") private ArrayList<T_TK_Header_N_Group_Save_WG_Ticket> ticket = new ArrayList<>();
 
     public T_TK_Header_N_Group_Save_WG_Env(String app_code, String app_version, String app_type, String session_app, String token, T_TK_Header_N_Group_Save_WG_Ticket ticket) {
         super(app_code, app_version, app_type, session_app);
@@ -34,11 +36,11 @@ public class T_TK_Header_N_Group_Save_WG_Env extends Main_Header_Env {
     }
 
     public static class T_TK_Header_N_Group_Save_WG_Ticket implements Serializable {
-        private long customer_code;
-        private int ticket_prefix;
-        private int ticket_code;
-        private int scn;
-        private ArrayList<T_TK_Header_N_Group_Save_WG_Step> step;
+        @SerializedName("customer_code") private long customer_code;
+        @SerializedName("ticket_prefix") private int ticket_prefix;
+        @SerializedName("ticket_code") private int ticket_code;
+        @SerializedName("scn") private int scn;
+        @SerializedName("step") private ArrayList<T_TK_Header_N_Group_Save_WG_Step> step;
 
         public T_TK_Header_N_Group_Save_WG_Ticket() {
         }
@@ -93,9 +95,9 @@ public class T_TK_Header_N_Group_Save_WG_Env extends Main_Header_Env {
     }
 
     public static class T_TK_Header_N_Group_Save_WG_Step implements Serializable{
-        private int step_code;
-        private Integer step_group_code;
-        private String step_group_desc;
+        @SerializedName("customer_code") private int step_code;
+        @SerializedName("ticket_prefix") private Integer step_group_code;
+        @SerializedName("ticket_code") private String step_group_desc;
 
         public T_TK_Header_N_Group_Save_WG_Step() {
         }

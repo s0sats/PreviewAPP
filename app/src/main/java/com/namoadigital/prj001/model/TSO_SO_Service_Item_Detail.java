@@ -1,16 +1,18 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class TSO_SO_Service_Item_Detail {
 
-    private int category_price_code;
-    private int service_code;
-    private long service_seq;//maior que 100 mil e incrementado a cada item adicionado
-    private int qty;
-    private Integer partner_code;
-    private String price;
-    private String comments;
-    private Integer site_code;
-    private Integer zone_code;
+    @SerializedName("category_price_code") private int category_price_code;
+    @SerializedName("service_code") private int service_code;
+    @SerializedName("service_seq") private long service_seq;//maior que 100 mil e incrementado a cada item adicionado
+    @SerializedName("qty") private int qty;
+    @SerializedName("partner_code") private Integer partner_code;
+    @SerializedName("price") private String price;
+    @SerializedName("comments") private String comments;
+    @SerializedName("site_code") private Integer site_code;
+    @SerializedName("zone_code") private Integer zone_code;
 
     public TSO_SO_Service_Item_Detail(int category_price_code, int service_code, long service_seq, int qty, Integer partner_code, String price, String comments, Integer site_code, Integer zone_code) {
         this.category_price_code = category_price_code;

@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 /**
@@ -8,11 +10,11 @@ import java.util.ArrayList;
 
 public class TSO_SO_Service {
 
-    private long customer_code;
-    private long so_prefix;
-    private long so_code;
-    private int so_scn;
-    private ArrayList<TSO_SO_Service_Item> pack;
+    @SerializedName("customer_code") private long customer_code;
+    @SerializedName("so_prefix") private long so_prefix;
+    @SerializedName("so_code") private long so_code;
+    @SerializedName("so_scn") private int so_scn;
+    @SerializedName("pack") private ArrayList<TSO_SO_Service_Item> pack;
 
     public long getCustomer_code() {
         return customer_code;

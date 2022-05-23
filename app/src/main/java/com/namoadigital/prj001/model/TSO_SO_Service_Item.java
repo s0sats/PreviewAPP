@@ -11,19 +11,21 @@ package com.namoadigital.prj001.model;
  * Eles serão usados no TSO_SO_Service_Item_Detail
  */
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 public class TSO_SO_Service_Item {
-    private String type_ps;
-    private int price_list_code;//int
-    private int pack_code;//int
-    private long pack_seq;//maior que 100 mil e incrementado a cada item adicionado
-    private int service_code;//int
-    private String price;//double
-    private int qty;
-    private Integer partner_code;
-    private String comments;
-    private ArrayList<TSO_SO_Service_Item_Detail> service = new ArrayList<>();
+    @SerializedName("type_ps") private String type_ps;
+    @SerializedName("price_list_code") private int price_list_code;//int
+    @SerializedName("pack_code") private int pack_code;//int
+    @SerializedName("pack_seq") private long pack_seq;//maior que 100 mil e incrementado a cada item adicionado
+    @SerializedName("service_code") private int service_code;//int
+    @SerializedName("price") private String price;//double
+    @SerializedName("qty") private int qty;
+    @SerializedName("partner_code") private Integer partner_code;
+    @SerializedName("comments") private String comments;
+    @SerializedName("service") private ArrayList<TSO_SO_Service_Item_Detail> service = new ArrayList<>();
 
     public TSO_SO_Service_Item() {}
 
