@@ -30,6 +30,7 @@ public class WS_SO_Service_Search extends IntentService {
     private String mResource_Code = "0";
     private String mResource_Name = "WS_SO_Service_Search";
     private Gson gson;
+    public static final String WS_EXPRESS_MODE  = "WS_EXPRESS_MODE";
 
     public WS_SO_Service_Search() {
         super("WS_SO_Service_Search");
@@ -44,19 +45,23 @@ public class WS_SO_Service_Search extends IntentService {
             int contract_code = bundle.getInt(SM_SODao.CONTRACT_CODE,0);
             int product_code = bundle.getInt(SM_SODao.PRODUCT_CODE,0);
             int serial_code = bundle.getInt(SM_SODao.SERIAL_CODE,0);
+            String serial_id = bundle.getString(SM_SODao.SERIAL_ID);
             int category_price_code = bundle.getInt(SM_SODao.CATEGORY_PRICE_CODE,0);
             int segment_code = bundle.getInt(SM_SODao.SEGMENT_CODE,0);
             int site_code = bundle.getInt(SM_SODao.SITE_CODE,0);
             int operation_code = bundle.getInt(SM_SODao.OPERATION_CODE,0);
+            int express = bundle.getInt(WS_EXPRESS_MODE,0);
             //
             processSOSearchList(
                     contract_code,
                     product_code,
                     serial_code,
+                    serial_id,
                     category_price_code,
                     segment_code,
                     site_code,
-                    operation_code
+                    operation_code,
+                    express
             );
 
         }catch (Exception e) {
@@ -74,7 +79,7 @@ public class WS_SO_Service_Search extends IntentService {
 
     }
 
-    private void processSOSearchList(int contract_code, int product_code, int serial_code, int category_price_code, int segment_code, int site_code, int operation_code) throws Exception {
+    private void processSOSearchList(int contract_code, int product_code, int serial_code, String serial_id, int category_price_code, int segment_code, int site_code, int operation_code, int express) throws Exception {
         //Seleciona traduções
         loadTranslation();
         //
@@ -88,10 +93,12 @@ public class WS_SO_Service_Search extends IntentService {
         env.setContract_code(contract_code);
         env.setProduct_code(product_code);
         env.setSerial_code(serial_code);
+        env.setSerial_id(serial_id);
         env.setCategory_price_code(category_price_code);
         env.setSegment_code(segment_code);
         env.setSite_code(site_code);
         env.setOperation_code(operation_code);
+        env.setExpress(express);
         env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
         //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_searching_services"), "", "0");

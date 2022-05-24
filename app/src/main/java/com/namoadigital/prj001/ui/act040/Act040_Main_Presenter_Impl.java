@@ -18,6 +18,7 @@ import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
+import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_ExpressDao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.model.MD_Operation;
@@ -30,9 +31,11 @@ import com.namoadigital.prj001.model.SO_Pack_Express;
 import com.namoadigital.prj001.model.SO_Pack_Express_Local;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_SO_Pack_Express_Local;
+import com.namoadigital.prj001.receiver.WBR_SO_Service_Search;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.service.WS_SO_Pack_Express_Local;
+import com.namoadigital.prj001.service.WS_SO_Service_Search;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_003;
@@ -762,5 +765,49 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
                 1
             );
         }
+    }
+
+    private void executeWS_SO_Service_Search(SO_Pack_Express mSo_pack_express, String serialId) {
+        mView.setWsProcess(WS_SO_Service_Search.class.getName());
+        //
+        mView.showPD(
+                hmAux_Trans.get("dialog_service_search_ttl"),
+                hmAux_Trans.get("dialog_service_search_msg")
+        );
+        //
+        int serialCode = getSerialCode(mSo_pack_express.getCustomer_code(), mSo_pack_express.getProduct_code(), serialId);
+        if(serialCode >0) {
+            //
+            Intent mIntent = new Intent(context, WBR_SO_Service_Search.class);
+            Bundle bundle = new Bundle();
+            //
+            bundle.putInt(SM_SODao.CONTRACT_CODE, mSo_pack_express.getContract_code());
+            bundle.putInt(SM_SODao.PRODUCT_CODE, (int) mSo_pack_express.getProduct_code());
+            bundle.putInt(SM_SODao.SERIAL_CODE, serialCode);
+            bundle.putString(SM_SODao.SERIAL_ID, serialId);
+            bundle.putInt(SM_SODao.CATEGORY_PRICE_CODE, mSo_pack_express.getCategory_price_code());
+            bundle.putInt(SM_SODao.SEGMENT_CODE, mSo_pack_express.getSegment_code());
+            bundle.putInt(SM_SODao.SITE_CODE, (int) mSo_pack_express.getSite_code());
+            bundle.putInt(SM_SODao.OPERATION_CODE, (int) mSo_pack_express.getOperation_code());
+            bundle.putInt(WS_SO_Service_Search.WS_EXPRESS_MODE, 1);
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        }else{
+            mView.showMsgToast(hmAux_Trans.get("alert_express_order_serial_not_found"));
+        }
+    }
+
+    private int getSerialCode(long customer_code, long product_code, String serialId) {
+        MD_Product_Serial serial = new MD_Product_SerialDao(context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM).getByString(new MD_Product_Serial_Sql_002(
+                        customer_code,
+                        product_code,
+                        serialId
+                ).toSqlQuery()
+        );
+        return serial != null ? (int) serial.getSerial_code() : -1;
     }
 }

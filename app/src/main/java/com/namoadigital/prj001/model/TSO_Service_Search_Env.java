@@ -9,10 +9,12 @@ public class TSO_Service_Search_Env extends Main_Header_Env {
     private int contract_code;
     private int product_code;
     private int serial_code;
+    private String serial_id;
     private int category_price_code;
     private int segment_code;
     private int site_code;
     private int operation_code;
+    private int express;
 
     public int getContract_code() {
         return contract_code;
@@ -36,6 +38,14 @@ public class TSO_Service_Search_Env extends Main_Header_Env {
 
     public void setSerial_code(int serial_code) {
         this.serial_code = serial_code;
+    }
+
+    public String getSerial_id() {
+        return serial_id;
+    }
+
+    public void setSerial_id(String serial_id) {
+        this.serial_id = serial_id;
     }
 
     public int getCategory_price_code() {
@@ -68,5 +78,13 @@ public class TSO_Service_Search_Env extends Main_Header_Env {
 
     public void setOperation_code(int operation_code) {
         this.operation_code = operation_code;
+    }
+
+    public int getExpress() {
+        return express;
+    }
+
+    public void setExpress(int express) {
+        this.express = express;
     }
 }

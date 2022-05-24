@@ -14,6 +14,12 @@ public class SO_Pack_Express {
     private long product_code;
     private String express_code;
     private String pack_desc;
+    private int category_price_code;
+    private int contract_code;
+    private int segment_code;
+    private int price_list_code;
+    private int pack_code;
+    private int add_pack_service;
     private String billing_add_inf1_view;
     @Nullable
     private String billing_add_inf1_text;
@@ -73,6 +79,54 @@ public class SO_Pack_Express {
 
     public void setPack_desc(String pack_desc) {
         this.pack_desc = pack_desc;
+    }
+
+    public int getCategory_price_code() {
+        return category_price_code;
+    }
+
+    public void setCategory_price_code(int category_price_code) {
+        this.category_price_code = category_price_code;
+    }
+
+    public int getContract_code() {
+        return contract_code;
+    }
+
+    public void setContract_code(int contract_code) {
+        this.contract_code = contract_code;
+    }
+
+    public int getSegment_code() {
+        return segment_code;
+    }
+
+    public void setSegment_code(int segment_code) {
+        this.segment_code = segment_code;
+    }
+
+    public int getPrice_list_code() {
+        return price_list_code;
+    }
+
+    public void setPrice_list_code(int price_list_code) {
+        this.price_list_code = price_list_code;
+    }
+
+    public int getPack_code() {
+        return pack_code;
+    }
+
+    public void setPack_code(int pack_code) {
+        this.pack_code = pack_code;
+    }
+
+    public int getAdd_pack_service() {
+        return add_pack_service;
+    }
+
+    public void setAdd_pack_service(int add_pack_service) {
+        this.add_pack_service = add_pack_service;
     }
 
     public String getBilling_add_inf1_view() {

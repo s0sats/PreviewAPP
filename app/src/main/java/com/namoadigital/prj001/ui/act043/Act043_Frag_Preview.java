@@ -4,13 +4,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -158,6 +159,7 @@ public class Act043_Frag_Preview extends BaseFragment {
         bundle.putInt(SM_SODao.SEGMENT_CODE,mSm_so.getSegment_code());
         bundle.putInt(SM_SODao.SITE_CODE,mSm_so.getSite_code());
         bundle.putInt(SM_SODao.OPERATION_CODE,mSm_so.getOperation_code());
+        bundle.putInt(WS_SO_Service_Search.WS_EXPRESS_MODE,0);
         //
         mIntent.putExtras(bundle);
         //
