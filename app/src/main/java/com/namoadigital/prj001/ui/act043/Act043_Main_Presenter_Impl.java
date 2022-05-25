@@ -141,7 +141,7 @@ public class Act043_Main_Presenter_Impl implements Act043_Main_Presenter {
                     innerService.setPrice_ref(innerService.getPrice());
                 }
                 //Seta qtd 0 para 1
-                innerService.setQty(packService.getQty() == 0 ? 1 : packService.getQty());
+                innerService.setQty(innerService.getQty() == 0 ? 1 : innerService.getQty());
                 //Calcula preço total, soma dos valores
                 if (innerService.getPrice() != null) {
                     totPrice = totPrice == null ? innerService.getPrice() : totPrice + innerService.getPrice();

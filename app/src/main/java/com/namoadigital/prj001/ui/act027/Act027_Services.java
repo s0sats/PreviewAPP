@@ -97,7 +97,7 @@ public class Act027_Services extends BaseFragment {
     private ImageView iv_editable_serial;
     private View listHeader;
     private View cvlistHeaderProductSerial;
-    private Button btn_quality_approval;
+    private Button btn_approval_shortcut;
     private Button btn_product_event_shortcut;
 
     public void setmSm_so(SM_SO mSm_so) {
@@ -219,12 +219,9 @@ public class Act027_Services extends BaseFragment {
         iv_editable_serial = listHeader.findViewById(R.id.iv_editable_serial);
         sw_filter = view.findViewById(R.id.act027_services_content_sw_filter);
         lv_services = view.findViewById(R.id.act027_services_content_lv_services);
-        btn_quality_approval = view.findViewById(R.id.act027_services_content_btn_quality_approval);
+        btn_approval_shortcut = view.findViewById(R.id.act027_services_content_btn_quality_approval);
         btn_product_event_shortcut = view.findViewById(R.id.act027_services_content_btn_product_event_shortcut);
 
-
-
-        btn_quality_approval.setText(hmAux_Trans.get("quality_approval_shortcut"));
         iv_editable_serial.setVisibility(View.VISIBLE);
         iv_editable_serial.setImageResource(R.drawable.ic_edit_black_24dp);
         lv_services.addHeaderView(cvlistHeaderProductSerial);
@@ -235,17 +232,21 @@ public class Act027_Services extends BaseFragment {
             }
         });
 
-        if(hasQualityStatus()) {
-            btn_quality_approval.setVisibility(View.VISIBLE);
+        if(hasApprovalStatus()) {
+            btn_approval_shortcut.setText(hmAux_Trans.get("quality_approval_shortcut"));
+            if(ConstantBase.SYS_STATUS_WAITING_CLIENT.equals(mSm_so.getStatus())) {
+                btn_approval_shortcut.setText(hmAux_Trans.get("final_approval_shortcut"));
+            }
+            btn_approval_shortcut.setVisibility(View.VISIBLE);
             btn_product_event_shortcut.setVisibility(View.GONE);
-            btn_quality_approval.setOnClickListener(new View.OnClickListener() {
+            btn_approval_shortcut.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mMain.selectDrawerOption(Act027_Main.SELECTION_APPROVAL);
                 }
             });
         }else{
-            btn_quality_approval.setVisibility(View.GONE);
+            btn_approval_shortcut.setVisibility(View.GONE);
             int productEventPendancy = getProductEventPendancy();
             if(productEventPendancy > 0){
                 btn_product_event_shortcut.setVisibility(View.VISIBLE);
@@ -305,8 +306,9 @@ public class Act027_Services extends BaseFragment {
         return 0;
     }
 
-    private boolean hasQualityStatus() {
-        return ConstantBase.SYS_STATUS_WAITING_QUALITY.equals(mSm_so.getStatus());
+    private boolean hasApprovalStatus() {
+        return ConstantBase.SYS_STATUS_WAITING_QUALITY.equals(mSm_so.getStatus())
+                || ConstantBase.SYS_STATUS_WAITING_CLIENT.equals(mSm_so.getStatus());
     }
 
     private void iniAction() {
