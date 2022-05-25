@@ -63,12 +63,14 @@ import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.Sync_Checklist;
+import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_SO_Approval;
 import com.namoadigital.prj001.receiver.WBR_SO_Create_Room;
 import com.namoadigital.prj001.receiver.WBR_SO_Save;
 import com.namoadigital.prj001.receiver.WBR_SO_Search;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
+import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_UserAuthor;
@@ -138,6 +140,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     public static final String WS_PROCESS_SO_SAVE_APPROVAL = "WS_PROCESS_SO_SAVE_APPROVAL";
     public static final String WS_SEARCH_TRACKING = "WS_SEARCH_TRACKING";
     public static final String WS_PROCESS_SERIAL = "WS_PROCESS_SERIAL";
+    public static final String WS_PROCESS_SERIAL_REFRESH = "WS_PROCESS_SERIAL_REFRESH";
     public static final String WS_PROCESS_SO_SYNC = "WS_PROCESS_SO_SYNC";
     public static final String WS_PROCESS_SO_SAVE = "WS_PROCESS_SO_SAVE";
     public static final String WS_PROCESS_N_FORM_SYNC = "WS_PROCESS_N_FORM_SYNC";
@@ -499,6 +502,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         transList.add("alert_no_data_changes_msg");
         transList.add("progress_save_serial_ttl");
         transList.add("progress_save_serial_msg");
+        transList.add("progress_download_serial_ttl");
+        transList.add("progress_download_serial_msg");
         transList.add("searchable_spinner_lbl");
         transList.add("add_info1_ttl");
         transList.add("add_info2_ttl");
@@ -1000,6 +1005,28 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         context.sendBroadcast(mIntent);
     }
 
+    public void executeSerialDownload() {
+        //
+        setWs_process(Act027_Main.WS_PROCESS_SERIAL_REFRESH);
+        //
+        showPD(
+                hmAux_Trans.get("progress_download_serial_ttl"),
+                hmAux_Trans.get("progress_download_serial_msg")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_Serial_Search.class);
+        Bundle bundle = new Bundle();
+        //
+        bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE, String.valueOf(mSm_so.getProduct_code()));
+        bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, mSm_so.getSerial_id());
+        bundle.putString(Constant.WS_SERIAL_SEARCH_TRACKING, "");
+        bundle.putInt(Constant.WS_SERIAL_SEARCH_EXACT, 1);
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
     public void executeTrackingSearch(long product_code, long serial_code, String tracking, String site_code) {
         setWs_process(Act027_Main.WS_SEARCH_TRACKING);
         //
@@ -1469,7 +1496,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                 if (isSoSaveLinked) {
                     isSoSaveLinked = false;
                     //
-                    executeSoSave();
+                    if(mSm_so.getSync_required() == 1){
+                        executeSerialDownload();
+                    }else {
+                        executeSoSave();
+                    }
                 } else {
                     showAlertDialog(
                             hmAux_Trans.get("alert_save_serial_return_ttl"),
@@ -1496,6 +1527,22 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         } else {
             setWs_process("");
             progressDialog.dismiss();
+        }
+    }
+
+    private void saveSerial(String mLink) {
+        //Transforma resposta de json para obj
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        //
+        TSerial_Search_Rec rec = gson.fromJson(
+                mLink,
+                TSerial_Search_Rec.class
+        );
+        //
+        try {
+            serialDao.addUpdateTmp(rec.getRecord().get(0));
+        }catch (NullPointerException e){
+            ToolBox_Inf.registerException(getClass().getName(), e);
         }
     }
 
@@ -1566,6 +1613,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             updateSyncChecklist();
             //
             callAct009();
+        }else if (ws_process.equalsIgnoreCase(WS_PROCESS_SERIAL_REFRESH)) {
+            saveSerial(mLink);
+            executeSoSave();
         }
     }
 
