@@ -1399,7 +1399,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             }
         }
         //Verificar com Jhon
-        if (ws_process.equals(WS_PROCESS_SERIAL)) {
+        if (ws_process.equals(WS_PROCESS_SERIAL)
+        ||ws_process.equals(WS_PROCESS_SERIAL_REFRESH)) {
             setWs_process("");
             loadProductSerialIntoFragment();
             refreshFragUI();
@@ -1424,7 +1425,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         }
 
         //Verificar com Jhon
-        if (ws_process.equals(WS_PROCESS_SERIAL)) {
+        if (ws_process.equals(WS_PROCESS_SERIAL)
+        || ws_process.equals(WS_PROCESS_SERIAL_REFRESH)) {
             setWs_process("");
             loadProductSerialIntoFragment();
             refreshFragUI();
@@ -1493,14 +1495,12 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             if (hmAux.size() > 0) {
                 processSerialSaveResult(frgSerialEdit.getMdProductSerial().getProduct_code(), frgSerialEdit.getMdProductSerial().getSerial_id(), hmAux);
             } else {
-                if (isSoSaveLinked) {
+                if(act027_opc_.hasSyncRequired()){
+                    executeSerialDownload();
+                }else if (isSoSaveLinked) {
                     isSoSaveLinked = false;
                     //
-                    if(mSm_so.getSync_required() == 1){
-                        executeSerialDownload();
-                    }else {
-                        executeSoSave();
-                    }
+                    executeSoSave();
                 } else {
                     showAlertDialog(
                             hmAux_Trans.get("alert_save_serial_return_ttl"),
@@ -1615,7 +1615,10 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             callAct009();
         }else if (ws_process.equalsIgnoreCase(WS_PROCESS_SERIAL_REFRESH)) {
             saveSerial(mLink);
-            executeSoSave();
+            if (isSoSaveLinked) {
+                isSoSaveLinked = false;
+                executeSoSave();
+            }
         }
     }
 
