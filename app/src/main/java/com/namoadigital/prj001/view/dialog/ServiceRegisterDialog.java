@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -12,6 +11,8 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
@@ -221,8 +222,7 @@ public class ServiceRegisterDialog extends AlertDialog {
 
     private void setPriceValue(int qty, Double unitPrice) {
         if(unitPrice != null) {
-            Double unitaryPrice = (unitPrice / qty);
-            mk_price_val.setText((new DecimalFormat(DECIMAL_PRICE_PATTERN).format(unitaryPrice)).replace(",","."));
+            mk_price_val.setText((new DecimalFormat(DECIMAL_PRICE_PATTERN).format(unitPrice)).replace(",","."));
         }else{
             mk_price_val.setText("");
         }
