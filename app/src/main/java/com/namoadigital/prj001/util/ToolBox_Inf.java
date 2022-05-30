@@ -166,6 +166,7 @@ import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.model.TSO_Save_Env;
 import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.model.TSerial_Save_Env;
+import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.model.T_IO_Inbound_Item_Env;
 import com.namoadigital.prj001.model.T_IO_Outbound_Item_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Env;
@@ -9312,5 +9313,24 @@ public class ToolBox_Inf {
                 productCode,
                 serialId
         ).toSqlQuery());
+    }
+
+    public static void saveSerialFromJson(Context context, String result) {
+        //Transforma resposta de json para obj
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        //
+        TSerial_Search_Rec rec = gson.fromJson(
+                result,
+                TSerial_Search_Rec.class
+        );
+        //
+        try {
+            MD_Product_SerialDao serialDao = new MD_Product_SerialDao(
+                    context
+            );
+            serialDao.addUpdateTmp(rec.getRecord().get(0));
+        }catch (NullPointerException e){
+            ToolBox_Inf.registerException(context.getClass().getName(), e);
+        }
     }
 }

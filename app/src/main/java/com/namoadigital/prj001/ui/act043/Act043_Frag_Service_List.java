@@ -2,18 +2,21 @@ package com.namoadigital.prj001.ui.act043;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -24,7 +27,9 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act043_Adapter_Services_Packs_List_RV;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.SO_Save_Return;
 import com.namoadigital.prj001.model.TSO_SO_Service;
@@ -34,6 +39,12 @@ import com.namoadigital.prj001.model.TSO_SO_Service_Item_Detail;
 import com.namoadigital.prj001.model.TSO_SO_Service_Rec;
 import com.namoadigital.prj001.model.TSO_Service_Search_Detail_Obj;
 import com.namoadigital.prj001.model.TSO_Service_Search_Obj;
+import com.namoadigital.prj001.receiver.WBR_Serial_Save;
+import com.namoadigital.prj001.receiver.WBR_Serial_Search;
+import com.namoadigital.prj001.service.WS_Serial_Save;
+import com.namoadigital.prj001.service.WS_Serial_Search;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_004;
+import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -179,43 +190,131 @@ public class Act043_Frag_Service_List extends BaseFragment {
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if (ToolBox_Con.isOnline(context)) {
                     //ArrayList<HMAux> data_env = new ArrayList<>();
-                    ArrayList<TSO_SO_Service_Item> pack = new ArrayList<>();
-
-                    for (TSO_Service_Search_Obj packService : adapterData) {
-                        if(packService.isSelected()){
-                            TSO_SO_Service_Item item = createPackDetail(packService);
-                            //Verifica a necessidade de abrir os serviços para gerar itens
-                            if( Act043_Main.TYPE_PS_SERVICE.equals(packService.getType_ps())
-                                || (Act043_Main.TYPE_PS_PACK.equals(packService.getType_ps()) && packService.isDetailed())
-                            ){
-                               if(Act043_Main.TYPE_PS_SERVICE.equals(packService.getType_ps())){
-                                   item.getService().add(
-                                       createServiceDetail(packService)
-                                   );
-                               } else{
-                                   for (TSO_Service_Search_Detail_Obj detailObj : packService.getService_list()) {
-                                       item.getService().add(
-                                           createServiceDetail(detailObj)
-                                       );
-                                   }
-                               }
+                    if(hasServiceToSend()) {
+                        sm_so_serviceDao = new SM_SODao(context);
+                        SM_SO sm_so = sm_so_serviceDao.getByString(
+                                new SM_SO_Sql_001(
+                                        mSO_Service.getCustomer_code(),
+                                        mSO_Service.getSo_prefix(),
+                                        mSO_Service.getSo_code()
+                                ).toSqlQuery()
+                        );
+                        if (sm_so.getSync_required() == 0) {
+                            callServicePackService();
+                        } else {
+                            MD_Product_SerialDao serialDao = new MD_Product_SerialDao(
+                                    context,
+                                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                                    Constant.DB_VERSION_CUSTOM
+                            );
+                            ArrayList<MD_Product_Serial> serialList = (ArrayList<MD_Product_Serial>) serialDao.query(
+                                    new MD_Product_Serial_Sql_004(
+                                            ToolBox_Con.getPreference_Customer_Code(context)
+                                    ).toSqlQuery()
+                            );
+                            if (serialList != null
+                                    && serialList.size() > 0) {
+                                callSerialService();
+                            } else {
+                                callDownloadSerialService();
                             }
-                            //
-                            pack.add(item);
                         }
-                    }
-                    //
-                    if (pack.size() > 0) {
-                        new Service_Pack_MicroService().execute(pack);
-                    } else {
+                    }else{
+                        Toast.makeText(context, hmAux_Trans.get("toast_no_service_selected"), Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     ToolBox_Inf.showNoConnectionDialog(context);
                 }
             }
         });
+    }
+
+    private boolean hasServiceToSend() {
+        for (TSO_Service_Search_Obj packService : adapterData) {
+            if (packService.isSelected()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void callServicePackService() {
+        ArrayList<TSO_SO_Service_Item> pack = new ArrayList<>();
+
+        for (TSO_Service_Search_Obj packService : adapterData) {
+            if (packService.isSelected()) {
+                TSO_SO_Service_Item item = createPackDetail(packService);
+                //Verifica a necessidade de abrir os serviços para gerar itens
+                if (Act043_Main.TYPE_PS_SERVICE.equals(packService.getType_ps())
+                        || (Act043_Main.TYPE_PS_PACK.equals(packService.getType_ps()) && packService.isDetailed())
+                ) {
+                    if (Act043_Main.TYPE_PS_SERVICE.equals(packService.getType_ps())) {
+                        item.getService().add(
+                                createServiceDetail(packService)
+                        );
+                    } else {
+                        for (TSO_Service_Search_Detail_Obj detailObj : packService.getService_list()) {
+                            item.getService().add(
+                                    createServiceDetail(detailObj)
+                            );
+                        }
+                    }
+                }
+                //
+                pack.add(item);
+            }
+        }
+        //
+        if (pack.size() > 0) {
+            new Service_Pack_MicroService().execute(pack);
+        } else {
+        }
+    }
+
+    private void callDownloadSerialService() {
+        //
+        Act043_Main act043Main = (Act043_Main) this.context;
+        act043Main.setWs_process(WS_Serial_Search.class.getSimpleName());
+        delegateMainView.showPD(
+                hmAux_Trans.get("progress_download_serial_ttl"),
+                hmAux_Trans.get("progress_download_serial_msg")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_Serial_Search.class);
+        Bundle bundle = new Bundle();
+        //
+        bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE, String.valueOf(mSO_Service.getProduct_code()));
+        bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, mSO_Service.getSerial_id());
+        bundle.putString(Constant.WS_SERIAL_SEARCH_TRACKING, "");
+        bundle.putInt(Constant.WS_SERIAL_SEARCH_EXACT, 1);
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+
+    }
+
+    private void callSerialService() {
+        //
+        Act043_Main act043Main = (Act043_Main) context;
+        act043Main.setWs_process(WS_Serial_Save.class.getSimpleName());
+        //
+        delegateMainView.showPD(
+                hmAux_Trans.get("progress_save_serial_ttl"),
+                hmAux_Trans.get("progress_save_serial_msg")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_Serial_Save.class);
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(Constant.PROCESS_MENU_SEND, true);
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+
     }
 
     /**

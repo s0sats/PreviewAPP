@@ -7,21 +7,22 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -37,7 +38,10 @@ import com.namoadigital.prj001.model.TSO_Service_Search_Obj;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_SO_Service_Cancel;
 import com.namoadigital.prj001.service.WS_SO_Service_Search;
+import com.namoadigital.prj001.service.WS_Serial_Save;
+import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
+import com.namoadigital.prj001.sql.SM_SO_Sql_018;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Opc;
@@ -120,6 +124,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         transList.add("alert_discard_services_msg");
         transList.add("alert_service_list_not_found_ttl");
         transList.add("alert_service_list_not_found_msg");
+        transList.add("toast_error_on_sync_serial_msg");
         //
         //FragPreview
         transList.add("btn_search_service");
@@ -141,6 +146,10 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         transList.add("btn_save_service");
         transList.add("dialog_start_add_service_ttl");
         transList.add("dialog_start_add_service_msg");
+        transList.add("progress_save_serial_ttl");
+        transList.add("progress_save_serial_msg");
+        transList.add("progress_download_serial_ttl");
+        transList.add("progress_download_serial_msg");
         transList.add("dialog_receiving_add_service_msg");
         transList.add("alert_service_desc");
         transList.add("alert_service_id");
@@ -162,6 +171,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         transList.add("alert_invalid_package_total_value_ttl");
         transList.add("alert_invalid_package_total_value_msg");
         transList.add("service_or_pack_filter_hint");
+        transList.add("toast_no_service_selected");
         //Frag_Package_Detail_List
         transList.add("btn_save_package_detail");
         transList.add("btn_cancel_package_detail");
@@ -777,6 +787,18 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
     }
 
     //region WS_Return
+
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired) {
+        super.processCloseACT(mLink, mRequired);
+        if(ws_process.equalsIgnoreCase(WS_Serial_Search.class.getSimpleName())){
+            ToolBox_Inf.saveSerialFromJson(context, mLink);
+            disableProgressDialog();
+            act043_frag_service_list.callServicePackService();
+        }
+    }
+
     @Override
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
@@ -815,11 +837,16 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
             } else {
                 //DEFINIR MSG DE ERRO
             }
+            disableProgressDialog();
         //}else if(ws_process.equalsIgnoreCase(WBR_SO_Search.class.getName())){
         }else if(ws_process.equalsIgnoreCase(WS_SO_Service_Cancel.class.getName())){
             showResults(hmAux);
+            disableProgressDialog();
+        }else if(ws_process.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())){
+            disableProgressDialog();
+            act043_frag_service_list.callServicePackService();
         }
-        disableProgressDialog();
+
     }
 
     private void showResults(HMAux so) {
@@ -951,6 +978,25 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
 //            );
 //        }
 //    }
+
+    @Override
+    protected void processError_http() {
+        super.processError_http();
+        if (ws_process.equals(WS_Serial_Search.class.getSimpleName())) {
+            setWs_process("");
+            //Verifica se após chamar o WS de Serial deve ser chama o WS de S.O
+            sm_soDao.addUpdate(
+                    new SM_SO_Sql_018(
+                            mSm_so.getCustomer_code(),
+                            mSm_so.getSo_prefix(),
+                            mSm_so.getSo_code(),
+                            0
+                    ).toSqlQuery()
+            );
+//            Toast.makeText(context, hmAux_Trans.get("toast_error_on_sync_serial_msg"), Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
     @Override
     protected void processCustom_error(String mLink, String mRequired) {
