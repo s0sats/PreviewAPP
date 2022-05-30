@@ -2068,6 +2068,15 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
     }
 
     public boolean hasSOSyncStatus() {
+        //
+        mSoAux = sm_soDao.getByStringHM(
+                new SM_SO_Sql_002(
+                        mService.getCustomer_code(),
+                        mService.getSo_prefix(),
+                        mService.getSo_code()
+                ).toSqlQuery()
+        );
+        //
         if(mSoAux.hasConsistentValue(SM_SODao.SYNC_REQUIRED)){
             if ("1".equals(mSoAux.get(SM_SODao.SYNC_REQUIRED))) {
                 return true;
