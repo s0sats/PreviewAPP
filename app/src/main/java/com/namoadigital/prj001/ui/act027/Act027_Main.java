@@ -63,7 +63,6 @@ import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.Sync_Checklist;
-import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_SO_Approval;
 import com.namoadigital.prj001.receiver.WBR_SO_Create_Room;
@@ -79,6 +78,7 @@ import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.sql.CH_Room_Sql_001;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_004;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Product_Sql_SS_001;
@@ -1598,22 +1598,6 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         }
     }
 
-    private void saveSerial(String mLink) {
-        //Transforma resposta de json para obj
-        Gson gson = new GsonBuilder().serializeNulls().create();
-        //
-        TSerial_Search_Rec rec = gson.fromJson(
-                mLink,
-                TSerial_Search_Rec.class
-        );
-        //
-        try {
-            serialDao.addUpdateTmp(rec.getRecord().get(0));
-        }catch (NullPointerException e){
-            ToolBox_Inf.registerException(getClass().getName(), e);
-        }
-    }
-
     /**
      * LUCHE - 04/06/2020
      * <P></P>
@@ -1852,12 +1836,17 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-
+                                    refreshUI();
                                     if(isSoCreateRoomCall) {
-                                        refreshUI();
                                         executeSoCreateRoom();
                                     }else{
-                                        if(isSerialOutdated){
+                                        ArrayList<MD_Product_Serial> serialList = (ArrayList<MD_Product_Serial>) serialDao.query(
+                                                new MD_Product_Serial_Sql_004(
+                                                        ToolBox_Con.getPreference_Customer_Code(context)
+                                                ).toSqlQuery()
+                                        );
+                                        if ( (serialList != null && serialList.size() > 0)
+                                        || isSerialOutdated){
                                             executeSerialSave(false);
                                         }
                                     }
@@ -1877,7 +1866,13 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     refreshUI();
-                                    if(isSerialOutdated){
+                                    ArrayList<MD_Product_Serial> serialList = (ArrayList<MD_Product_Serial>) serialDao.query(
+                                            new MD_Product_Serial_Sql_004(
+                                                    ToolBox_Con.getPreference_Customer_Code(context)
+                                            ).toSqlQuery()
+                                    );
+                                    if ( (serialList != null && serialList.size() > 0)
+                                            || isSerialOutdated){
                                         executeSerialSave(false);
                                     }
                                 }
@@ -2032,15 +2027,21 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
 //                            0
 //                    );
                     //
-                    if(isSerialOutdated){
+                    ToolBox.toastMSG(
+                            context,
+                            hmAux_Trans.get("msg_so_save_ok")
+                    );
+                    //
+                    refreshUI();
+                    //
+                    ArrayList<MD_Product_Serial> serialList = (ArrayList<MD_Product_Serial>) serialDao.query(
+                            new MD_Product_Serial_Sql_004(
+                                    ToolBox_Con.getPreference_Customer_Code(context)
+                            ).toSqlQuery()
+                    );
+                    if ( (serialList != null && serialList.size() > 0)
+                            || isSerialOutdated){
                         executeSerialSave(false);
-                    }else {
-                        ToolBox.toastMSG(
-                                context,
-                                hmAux_Trans.get("msg_so_save_ok")
-                        );
-                        //
-                        refreshUI();
                     }
                 } else {
                     progressDialog.dismiss();

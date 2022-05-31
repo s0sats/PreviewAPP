@@ -1103,6 +1103,19 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         disableProgressDialog();
         //REMOVER A LINHA ABAIXO APOS WS FUNCIONAR DIREITO
         //setFrag(act043_frag_service_list, SELECTION_FRAG_SERVICE_LIST);
+        if (ws_process.equals(WS_Serial_Search.class.getSimpleName())) {
+            setWs_process("");
+            //Verifica se após chamar o WS de Serial deve ser chama o WS de S.O
+            sm_soDao.addUpdate(
+                    new SM_SO_Sql_018(
+                            mSm_so.getCustomer_code(),
+                            mSm_so.getSo_prefix(),
+                            mSm_so.getSo_code(),
+                            0
+                    ).toSqlQuery()
+            );
+//            Toast.makeText(context, hmAux_Trans.get("toast_error_on_sync_serial_msg"), Toast.LENGTH_SHORT).show();
+        }
     }
 
     //Metodo chamado ao finalizar o download da atualização.
