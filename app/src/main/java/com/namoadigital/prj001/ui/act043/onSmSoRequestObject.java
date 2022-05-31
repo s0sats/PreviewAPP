@@ -4,6 +4,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.SM_SO;
 
 public interface onSmSoRequestObject {
+    SM_SO getRealtimeSmSo(int soPrefix, int soCode);
     SM_SO getSmSo();
     HMAux getHMAux_Trans();
     void callAct005();
