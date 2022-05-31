@@ -2221,7 +2221,14 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                     }
                 }
                 //
-                if(act027_opc_.hasSyncRequired()
+                ArrayList<MD_Product_Serial> serialList = (ArrayList<MD_Product_Serial>) serialDao.query(
+                        new MD_Product_Serial_Sql_004(
+                                ToolBox_Con.getPreference_Customer_Code(context)
+                        ).toSqlQuery()
+                );
+                if ( (serialList != null && serialList.size() > 0)){
+                    executeSerialSave(false);
+                }else if(act027_opc_.hasSyncRequired()
                         || isSerialOutdated){
                     isSerialOutdated = true;
                     executeSerialDownload();

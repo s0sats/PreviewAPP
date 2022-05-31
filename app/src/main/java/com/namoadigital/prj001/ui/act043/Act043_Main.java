@@ -1084,6 +1084,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
                             0
                     ).toSqlQuery()
             );
+            reloadSO();
 //            Toast.makeText(context, hmAux_Trans.get("toast_error_on_sync_serial_msg"), Toast.LENGTH_SHORT).show();
         }
     }
@@ -1095,6 +1096,12 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         disableProgressDialog();
         //REMOVER A LINHA ABAIXO APOS WS FUNCIONAR DIREITO
         //setFrag(act043_frag_service_list, SELECTION_FRAG_SERVICE_LIST);
+        if (ws_process.equals(WS_Serial_Save.class.getSimpleName())) {
+            setWs_process("");
+            //Verifica se após chamar o WS de Serial deve ser chama o WS de S.O
+            reloadSO();
+//            Toast.makeText(context, hmAux_Trans.get("toast_error_on_sync_serial_msg"), Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -1114,6 +1121,13 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
                             0
                     ).toSqlQuery()
             );
+            reloadSO();
+//            Toast.makeText(context, hmAux_Trans.get("toast_error_on_sync_serial_msg"), Toast.LENGTH_SHORT).show();
+        }
+        if (ws_process.equals(WS_Serial_Save.class.getSimpleName())) {
+            setWs_process("");
+            //Verifica se após chamar o WS de Serial deve ser chama o WS de S.O
+            reloadSO();
 //            Toast.makeText(context, hmAux_Trans.get("toast_error_on_sync_serial_msg"), Toast.LENGTH_SHORT).show();
         }
     }
