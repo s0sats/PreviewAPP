@@ -711,6 +711,7 @@ public class Act027_Approval extends BaseFragment {
                     }
 
                     if (!rb_user.isChecked() && !rb_other.isChecked()) {
+                        rg_opc.clearCheck();
                         rb_user.setChecked(true);
                     }
 
@@ -768,6 +769,7 @@ public class Act027_Approval extends BaseFragment {
                 }
 
                 if (!rb_user.isChecked() && !rb_other.isChecked()) {
+                    rg_opc.clearCheck();
                     rb_user.setChecked(true);
                 }
 
