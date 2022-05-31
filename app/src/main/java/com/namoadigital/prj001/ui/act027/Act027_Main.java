@@ -1840,13 +1840,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                                     if(isSoCreateRoomCall) {
                                         executeSoCreateRoom();
                                     }else{
-                                        ArrayList<MD_Product_Serial> serialList = (ArrayList<MD_Product_Serial>) serialDao.query(
-                                                new MD_Product_Serial_Sql_004(
-                                                        ToolBox_Con.getPreference_Customer_Code(context)
-                                                ).toSqlQuery()
-                                        );
-                                        if ( (serialList != null && serialList.size() > 0)
-                                        || isSerialOutdated){
+                                        boolean hasSerialPendency = getMd_product_serialsPendency(serialDao);
+
+                                        if ( hasSerialPendency || isSerialOutdated){
                                             executeSerialSave(false);
                                         }
                                     }
@@ -1866,13 +1862,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     refreshUI();
-                                    ArrayList<MD_Product_Serial> serialList = (ArrayList<MD_Product_Serial>) serialDao.query(
-                                            new MD_Product_Serial_Sql_004(
-                                                    ToolBox_Con.getPreference_Customer_Code(context)
-                                            ).toSqlQuery()
-                                    );
-                                    if ( (serialList != null && serialList.size() > 0)
-                                            || isSerialOutdated){
+                                    boolean hasSerialPendency = getMd_product_serialsPendency(serialDao);
+
+                                    if ( hasSerialPendency || isSerialOutdated){
                                         executeSerialSave(false);
                                     }
                                 }
@@ -1887,6 +1879,21 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         } else {
             showNewOptDialog(wsResults);
         }
+    }
+
+    private boolean getMd_product_serialsPendency(MD_Product_SerialDao serialDao) {
+        ArrayList<MD_Product_Serial> serialList = (ArrayList<MD_Product_Serial>) serialDao.query(
+                new MD_Product_Serial_Sql_004(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        );
+        File[] files = ToolBox_Inf.checkTokenToSend(
+                getApplicationContext(),
+                ConstantBaseApp.TOKEN_PATH,
+                ConstantBaseApp.TOKEN_SERIAL_PREFIX
+        );
+        return (serialList != null && serialList.size() > 0)
+                || (files != null && files.length > 0);
     }
 
     public void showNewOptDialog(List<HMAux> sos) {
@@ -2034,13 +2041,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                     //
                     refreshUI();
                     //
-                    ArrayList<MD_Product_Serial> serialList = (ArrayList<MD_Product_Serial>) serialDao.query(
-                            new MD_Product_Serial_Sql_004(
-                                    ToolBox_Con.getPreference_Customer_Code(context)
-                            ).toSqlQuery()
-                    );
-                    if ( (serialList != null && serialList.size() > 0)
-                            || isSerialOutdated){
+                    boolean hasSerialPendency = getMd_product_serialsPendency(serialDao);
+
+                    if ( hasSerialPendency || isSerialOutdated){
                         executeSerialSave(false);
                     }
                 } else {
@@ -2221,12 +2224,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                     }
                 }
                 //
-                ArrayList<MD_Product_Serial> serialList = (ArrayList<MD_Product_Serial>) serialDao.query(
-                        new MD_Product_Serial_Sql_004(
-                                ToolBox_Con.getPreference_Customer_Code(context)
-                        ).toSqlQuery()
-                );
-                if ( (serialList != null && serialList.size() > 0)){
+                boolean hasSerialPendency = getMd_product_serialsPendency(serialDao);
+
+                if (hasSerialPendency){
                     executeSerialSave(false);
                 }else if(act027_opc_.hasSyncRequired()
                         || isSerialOutdated){

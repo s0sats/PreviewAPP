@@ -56,6 +56,7 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -984,14 +985,9 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
                         Constant.DB_VERSION_CUSTOM
                 );
                 //
-                ArrayList<MD_Product_Serial> serialList = (ArrayList<MD_Product_Serial>) serialDao.query(
-                        new MD_Product_Serial_Sql_004(
-                                ToolBox_Con.getPreference_Customer_Code(context)
-                        ).toSqlQuery()
-                );
+                boolean hasSerialPendency = getMd_product_serialsPendency(serialDao);
                 //
-                if (serialList != null
-                        && serialList.size() > 0){
+                if (hasSerialPendency){
                     isSyncSerialNeeded = false;
                     callSerialService();
                 }else if(isSyncSerialNeeded){
@@ -1011,6 +1007,21 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
                 }
             }
         });
+    }
+
+    private boolean getMd_product_serialsPendency(MD_Product_SerialDao serialDao) {
+        ArrayList<MD_Product_Serial> serialList = (ArrayList<MD_Product_Serial>) serialDao.query(
+                new MD_Product_Serial_Sql_004(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        );
+        File[] files = ToolBox_Inf.checkTokenToSend(
+                getApplicationContext(),
+                ConstantBaseApp.TOKEN_PATH,
+                ConstantBaseApp.TOKEN_SERIAL_PREFIX
+        );
+        return (serialList != null && serialList.size() > 0)
+        || (files != null && files.length > 0);
     }
 
     private void showAlert(String ttl, String msg,@Nullable DialogInterface.OnClickListener listenerOK) {
