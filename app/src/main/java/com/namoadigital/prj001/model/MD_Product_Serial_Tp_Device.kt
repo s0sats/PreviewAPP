@@ -7,12 +7,16 @@ class MD_Product_Serial_Tp_Device(
     @SerializedName("order_seq") val order_seq: Int,
     @SerializedName("tracking_number") val tracking_number: String? = null
 ) {
-        var customer_code: Long = -1
+    @SerializedName("customer_code")
+    var customer_code: Long = -1
         private set
+    @SerializedName("product_code")
     var product_code: Long = -1
         private set
+    @SerializedName("serial_code")
     var serial_code: Long = -1
         private set
+    @SerializedName("item")
     var item: MutableList<MD_Product_Serial_Tp_Device_Item> = mutableListOf()
 
     /**

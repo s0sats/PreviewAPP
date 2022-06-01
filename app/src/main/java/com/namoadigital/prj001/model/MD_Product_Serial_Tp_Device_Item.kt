@@ -26,7 +26,9 @@ class MD_Product_Serial_Tp_Device_Item(
         private set
     var device_tp_code: Int = -1
         private set
+    @SerializedName("hist")
     var hist = mutableListOf<MD_Product_Serial_Tp_Device_Item_Hist>()
+    @SerializedName("material")
     var material = mutableListOf<MD_Product_Serial_Tp_Device_Item_Material>()
 
     /**
