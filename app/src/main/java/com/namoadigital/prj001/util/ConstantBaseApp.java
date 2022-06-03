@@ -758,6 +758,7 @@ public class ConstantBaseApp extends ConstantBase {
      * Constantes FAB menu item
      */
     public static final String FAB_TO_PRODUCT_LBL = "to_product_lbl";
+    public static final String FAB_NOT_EXECUTE_LBL = "to_not_execute_lbl";
     public static final String FAB_TO_HEADER_EDIT_LBL = "fab_to_header_edit_lbl";
     public static final String FAB_TO_WORK_GROUP_EDIT_LBL = "fab_to_work_group_edit_lbl";
     public static final String FAB_TO_ORIGIN_LBL = "fab_to_origin_lbl";

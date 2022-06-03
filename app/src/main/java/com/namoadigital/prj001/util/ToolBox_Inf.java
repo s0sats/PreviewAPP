@@ -8386,7 +8386,8 @@ public class ToolBox_Inf {
 
     private static ArrayList<FabMenuItem> initFabMenuItens(Context context, HMAux hmAux_Trans, TK_Ticket ticket) {
         FabMenuItem fabStep;
-        FabMenuItem fabProduct;
+//        FabMenuItem fabProduct;
+        FabMenuItem fabNotExecuted;
         FabMenuItem fabOrigin;
         FabMenuItem fabEditHeader;
 
@@ -8441,15 +8442,27 @@ public class ToolBox_Inf {
         fabStep.setmButton_Resource(R.drawable.ic_baseline_assignment_24);
         fabMenuItems.add(fabStep);
         //atalaho para produto.
-        fabProduct = new FabMenuItem(context);
-        fabProduct.setTag(ConstantBaseApp.FAB_TO_PRODUCT_LBL);
-        fabProduct.setmLabel(hmAux_Trans.get("to_product_lbl"));
-        fabProduct.setmLabel_Back_Color(lblBgColor);
-        fabProduct.setmLabel_Text_Color(lblColor);
-        fabProduct.setmButton_Back_Color(btnBgColor);
-        fabProduct.setmButton_Resource_Color(iconColor);
-        fabProduct.setmButton_Resource(R.drawable.ic_baseline_build_24);
-        fabMenuItems.add(fabProduct);
+//        fabProduct = new FabMenuItem(context);
+//        fabProduct.setTag(ConstantBaseApp.FAB_TO_PRODUCT_LBL);
+//        fabProduct.setmLabel(hmAux_Trans.get("to_product_lbl"));
+//        fabProduct.setmLabel_Back_Color(lblBgColor);
+//        fabProduct.setmLabel_Text_Color(lblColor);
+//        fabProduct.setmButton_Back_Color(btnBgColor);
+//        fabProduct.setmButton_Resource_Color(iconColor);
+//        fabProduct.setmButton_Resource(R.drawable.ic_baseline_build_24);
+//        fabMenuItems.add(fabProduct);
+        //Nao executar.
+        if(!ticket.isReadOnly(context)) {
+            fabNotExecuted = new FabMenuItem(context);
+            fabNotExecuted.setTag(ConstantBaseApp.FAB_NOT_EXECUTE_LBL);
+            fabNotExecuted.setmLabel(hmAux_Trans.get("to_not_execute_lbl"));
+            fabNotExecuted.setmLabel_Back_Color(lblBgColor);
+            fabNotExecuted.setmLabel_Text_Color(lblColor);
+            fabNotExecuted.setmButton_Back_Color(btnBgColor);
+            fabNotExecuted.setmButton_Resource_Color(iconColor);
+            fabNotExecuted.setmButton_Resource(R.drawable.ic_baseline_build_24);
+            fabMenuItems.add(fabNotExecuted);
+        }
         //
         return fabMenuItems;
     }

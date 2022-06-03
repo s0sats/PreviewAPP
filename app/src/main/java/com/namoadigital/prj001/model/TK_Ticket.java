@@ -167,6 +167,11 @@ public class TK_Ticket implements Cloneable, Serializable {
     private int tag_operational_code;
     private String tag_operational_id;
     private String tag_operational_desc;
+    Integer justify_group_code;
+    Integer justify_item_code;
+    Integer not_executed_photo;
+    String not_executed_comment;
+    String not_executed_photo_url;
     @Expose
     private ArrayList<TK_Ticket_Step> step = new ArrayList<>();
     @Expose
@@ -975,6 +980,38 @@ public class TK_Ticket implements Cloneable, Serializable {
 
     public void setTag_operational_desc(String tag_operational_desc) {
         this.tag_operational_desc = tag_operational_desc;
+    }
+
+    public Integer getJustify_group_code() {
+        return justify_group_code;
+    }
+
+    public void setJustify_group_code(Integer justify_group_code) {
+        this.justify_group_code = justify_group_code;
+    }
+
+    public Integer getJustify_item_code() {
+        return justify_item_code;
+    }
+
+    public void setJustify_item_code(Integer justify_item_code) {
+        this.justify_item_code = justify_item_code;
+    }
+
+    public String getNot_executed_comment() {
+        return not_executed_comment;
+    }
+
+    public void setNot_executed_comment(String not_executed_comment) {
+        this.not_executed_comment = not_executed_comment;
+    }
+
+    public String getNot_executed_photo_url() {
+        return not_executed_photo_url;
+    }
+
+    public void setNot_executed_photo_url(String not_executed_photo_url) {
+        this.not_executed_photo_url = not_executed_photo_url;
     }
 
     public ArrayList<TK_Ticket_Step> getStep() {
