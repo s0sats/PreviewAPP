@@ -82,6 +82,7 @@ import com.namoadigital.prj001.ui.act070.model.StepFooter;
 import com.namoadigital.prj001.ui.act070.model.StepForm;
 import com.namoadigital.prj001.ui.act070.model.StepMain;
 import com.namoadigital.prj001.ui.act070.model.StepNone;
+import com.namoadigital.prj001.ui.act070.model.StepNotExecuted;
 import com.namoadigital.prj001.ui.act070.model.StepProcessBtn;
 import com.namoadigital.prj001.ui.act087.Act087Main;
 import com.namoadigital.prj001.util.Constant;
@@ -2602,7 +2603,26 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 )
             );
         }
+//        if(ConstantBaseApp.SYS_STATUS_NOT_EXECUTED.equals(mTicket.getTicket_status())){
+            String justify = mTicket.getJustify_item_code() == null? "": getJustifyByCode(mTicket.getJustify_item_code());
+            String userCode = mTicket.getLog_user() == null? "": mTicket.getLog_user().toString();
+            baseSteps.add(
+                new StepNotExecuted(
+                        justify,
+                        mTicket.getNot_executed_comments(),
+                        mTicket.getLog_user_nick(),
+                        userCode,
+                        mTicket.getNot_executed_photo_url(),
+                        mTicket.getLog_date()
+                )
+            );
+//        }
+
         return baseSteps;
+    }
+
+    private String getJustifyByCode(Integer justify_item_code) {
+        return null;
     }
 
     private void loadSelectedWorkgroupFromEditionFile(File fileWorkgroupEditionFile, StepMain stepMain) {

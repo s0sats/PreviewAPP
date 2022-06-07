@@ -5,6 +5,7 @@ import android.content.Context;
 import androidx.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
@@ -167,11 +168,22 @@ public class TK_Ticket implements Cloneable, Serializable {
     private int tag_operational_code;
     private String tag_operational_id;
     private String tag_operational_desc;
-    Integer justify_group_code;
-    Integer justify_item_code;
-    Integer not_executed_photo;
-    String not_executed_comment;
-    String not_executed_photo_url;
+    @SerializedName("justify_group_code")
+    private Integer justify_group_code;
+    @SerializedName("justify_item_code")
+    private Integer justify_item_code;
+    @SerializedName("not_executed_comments")
+    private String not_executed_comments;
+    @SerializedName("not_executed_photo")
+    private Integer not_executed_photo;
+    @SerializedName("not_executed_photo_url")
+    private String not_executed_photo_url;
+    @SerializedName("log_date")
+    private String log_date;
+    @SerializedName("log_user")
+    private Integer log_user;
+    @SerializedName("log_user_nick")
+    private String log_user_nick;
     @Expose
     private ArrayList<TK_Ticket_Step> step = new ArrayList<>();
     @Expose
@@ -998,12 +1010,20 @@ public class TK_Ticket implements Cloneable, Serializable {
         this.justify_item_code = justify_item_code;
     }
 
-    public String getNot_executed_comment() {
-        return not_executed_comment;
+    public String getNot_executed_comments() {
+        return not_executed_comments;
     }
 
-    public void setNot_executed_comment(String not_executed_comment) {
-        this.not_executed_comment = not_executed_comment;
+    public void setNot_executed_comments(String not_executed_comments) {
+        this.not_executed_comments = not_executed_comments;
+    }
+
+    public Integer getNot_executed_photo() {
+        return not_executed_photo;
+    }
+
+    public void setNot_executed_photo(Integer not_executed_photo) {
+        this.not_executed_photo = not_executed_photo;
     }
 
     public String getNot_executed_photo_url() {
@@ -1012,6 +1032,30 @@ public class TK_Ticket implements Cloneable, Serializable {
 
     public void setNot_executed_photo_url(String not_executed_photo_url) {
         this.not_executed_photo_url = not_executed_photo_url;
+    }
+
+    public String getLog_date() {
+        return log_date;
+    }
+
+    public void setLog_date(String log_date) {
+        this.log_date = log_date;
+    }
+
+    public Integer getLog_user() {
+        return log_user;
+    }
+
+    public void setLog_user(Integer log_user) {
+        this.log_user = log_user;
+    }
+
+    public String getLog_user_nick() {
+        return log_user_nick;
+    }
+
+    public void setLog_user_nick(String log_user_nick) {
+        this.log_user_nick = log_user_nick;
     }
 
     public ArrayList<TK_Ticket_Step> getStep() {

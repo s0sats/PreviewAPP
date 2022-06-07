@@ -148,6 +148,8 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
             script_dados.append(" insert into ev_modules (module_code, module_name) values ('CUST_FORM', 'Custom FormF');");
             script_dados.append(" insert into ev_modules (module_code, module_name) values ('SYS', 'System');");
             //
+            script.append("CREATE TABLE IF NOT EXISTS [md_justify_item] ([customer_code] int not null,[justify_group_code] int not null,[justify_item_code] int not null collate nocase,[justify_item_id] text not null collate nocase,[justify_item_desc] text not null collate nocase,[required_comment] int not null collate nocase,[reschedule] int not null collate nocase, constraint [pk_md_tag] primary key(customer_code,justify_group_code,justify_item_code));");
+            //
             String[] scripts = script.toString().split(";");
             String[] scripts_dados = script_dados.toString().split(";");
             //

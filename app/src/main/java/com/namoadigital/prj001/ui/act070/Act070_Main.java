@@ -941,6 +941,19 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             }
 
         },
+                new Act070_Steps_Adapter.OnNotExecutedPhotoClickListener(){
+                    @Override
+                    public void onPhotoClick(int imageViewId, String path) {
+                        if(ToolBox_Inf.isImageUnder4kLimit(path)){
+//                            callCameraAct(imageViewId,path);
+                        }else{
+                            showAlert(
+                                    hmAux_Trans.get("alert_image_too_large_to_open_ttl"),
+                                    hmAux_Trans.get("alert_image_too_large_to_open_msg")
+                            );
+                        }
+                    }
+                }     ,
                 inWgEditMode,
                 //LUCHE - 02/07/2021 - Voltado a regra do readOnly apenas de status. Para focus ou claim,
                 //cada processo fará a ato avalição, pois se o processo estiver em processo, seré permitido
