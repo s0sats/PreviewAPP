@@ -168,20 +168,26 @@ public class TK_Ticket implements Cloneable, Serializable {
     private int tag_operational_code;
     private String tag_operational_id;
     private String tag_operational_desc;
+    @Expose
     @SerializedName("justify_group_code")
     private Integer justify_group_code;
+    @Expose
     @SerializedName("justify_item_code")
     private Integer justify_item_code;
+    @Expose
     @SerializedName("not_executed_comments")
     private String not_executed_comments;
-    @SerializedName("not_executed_photo")
-    private Integer not_executed_photo;
+    @SerializedName("not_executed_photo_local")
+    private String not_executed_photo_local;
     @SerializedName("not_executed_photo_url")
     private String not_executed_photo_url;
+    @Expose
     @SerializedName("log_date")
     private String log_date;
+    @Expose
     @SerializedName("log_user")
     private Integer log_user;
+    @Expose
     @SerializedName("log_user_nick")
     private String log_user_nick;
     @Expose
@@ -1018,12 +1024,12 @@ public class TK_Ticket implements Cloneable, Serializable {
         this.not_executed_comments = not_executed_comments;
     }
 
-    public Integer getNot_executed_photo() {
-        return not_executed_photo;
+    public String getNot_executed_photo_local() {
+        return not_executed_photo_local;
     }
 
-    public void setNot_executed_photo(Integer not_executed_photo) {
-        this.not_executed_photo = not_executed_photo;
+    public void setNot_executed_photo_local(String not_executed_photo_local) {
+        this.not_executed_photo_local = not_executed_photo_local;
     }
 
     public String getNot_executed_photo_url() {
@@ -1103,6 +1109,9 @@ public class TK_Ticket implements Cloneable, Serializable {
                     ToolBox_Inf.buildTicketImgPath(this)
                 )
             );
+        }
+        if(not_executed_photo_url != null && !not_executed_photo_url.isEmpty()) {
+            setNot_executed_photo_local(getLocalPath(ToolBox_Inf.buildTicketNotExecutedImgPath(this)));
         }
         //
         if(getStep() != null) {

@@ -171,6 +171,7 @@ import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_User_Sql_Truncate;
 import com.namoadigital.prj001.sql.MdDeviceTpSqlTruncate;
 import com.namoadigital.prj001.sql.MdItemCheckSqlTruncate;
+import com.namoadigital.prj001.sql.MdJustifyItemTruncate;
 import com.namoadigital.prj001.sql.MdOrderTypeSqlTruncate;
 import com.namoadigital.prj001.sql.MdTagSqlTruncate;
 import com.namoadigital.prj001.sql.MeMeasureTpSqlTruncate;
@@ -676,6 +677,7 @@ public class WS_Sync extends IntentService {
             tkTicketCacheDao.remove(new TkTicketCacheSqlTruncate().toSqlQuery());
             deviceTpDao.remove(new MdDeviceTpSqlTruncate().toSqlQuery());
             orderTypeDao.remove(new MdOrderTypeSqlTruncate().toSqlQuery());
+            justifyItemDao.remove(new MdJustifyItemTruncate().toSqlQuery());
             mdItemCheckDao.remove(new MdItemCheckSqlTruncate().toSqlQuery());
             meMeasureTpDao.remove(new MeMeasureTpSqlTruncate().toSqlQuery());
             //

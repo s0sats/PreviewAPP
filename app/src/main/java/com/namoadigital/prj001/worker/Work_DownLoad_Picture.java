@@ -49,6 +49,8 @@ import com.namoadigital.prj001.sql.SM_SO_Sql_021;
 import com.namoadigital.prj001.sql.SM_SO_Sql_022;
 import com.namoadigital.prj001.sql.TK_Ticket_Action_Sql_Img_Download_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Action_Sql_Img_Download_002;
+import com.namoadigital.prj001.sql.TK_Ticket_Justify_Sql_Img_Download_001;
+import com.namoadigital.prj001.sql.TK_Ticket_Justify_Sql_Img_Download_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_Img_Download_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_Img_Download_002;
 import com.namoadigital.prj001.sql.TkTicketOriginNcDownloadSql001;
@@ -102,6 +104,7 @@ public class Work_DownLoad_Picture extends Worker {
     private ArrayList<HMAux> messageImgList = new ArrayList<>();
     //Ticket
     private ArrayList<HMAux> ticketImgList = new ArrayList<>();
+    private ArrayList<HMAux> ticketJustifyList = new ArrayList<>();
     private ArrayList<HMAux> ticketActionImgList = new ArrayList<>();
     private ArrayList<HMAux> ticketNcImgList = new ArrayList<>();
 
@@ -196,6 +199,7 @@ public class Work_DownLoad_Picture extends Worker {
              messageImgList.size() +
              product_icon_list.size() +
              ticketImgList.size() +
+             ticketJustifyList.size() +
              ticketActionImgList.size() +
              ticketNcImgList.size() ;
 
@@ -213,6 +217,7 @@ public class Work_DownLoad_Picture extends Worker {
             && product_icon_list.size() == 0
             //&& schedule_product_icon_list.size() == 0
             && ticketImgList.size() == 0
+            && ticketJustifyList.size() == 0
             && ticketActionImgList.size() == 0
             && ticketNcImgList.size() == 0;
     }
@@ -324,6 +329,12 @@ public class Work_DownLoad_Picture extends Worker {
         ticketImgList.addAll(
             ticketDao.query_HM(
                 new TK_Ticket_Sql_Img_Download_001(customer_code).toSqlQuery()
+            )
+        );
+        //
+        ticketJustifyList.addAll(
+            ticketDao.query_HM(
+                new TK_Ticket_Justify_Sql_Img_Download_001(customer_code).toSqlQuery()
             )
         );
         //
@@ -464,6 +475,48 @@ public class Work_DownLoad_Picture extends Worker {
                             hmAux.get(TK_TicketDao.TICKET_PREFIX),
                             hmAux.get(TK_TicketDao.TICKET_CODE),
                             hmAux.get(TK_Ticket_Sql_Img_Download_001.FILE_LOCAL_NAME) + ".jpg"
+                        ).toSqlQuery().toLowerCase()
+                    );
+                }
+            } catch (Exception e) {
+                ToolBox_Inf.registerException(getClass().getName(), e);
+            }
+        }
+        //
+        for (HMAux hmAux : ticketJustifyList) {
+            if(isStopped()){
+                break;
+            }
+            try {
+                if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(TK_Ticket_Justify_Sql_Img_Download_001.FILE_LOCAL_NAME).toLowerCase() + ".jpg", Constant.CACHE_PATH_PHOTO)) {
+
+                    ToolBox_Inf.deleteDownloadFileInf(hmAux.get(TK_Ticket_Justify_Sql_Img_Download_001.FILE_LOCAL_NAME).toLowerCase() + ".tmp", Constant.CACHE_PATH_PHOTO);
+                    //
+                    ToolBox_Inf.downloadImagePDF(
+                        hmAux.get(TK_TicketDao.NOT_EXECUTED_PHOTO_URL),
+                        Constant.CACHE_PATH_PHOTO + "/" + hmAux.get(TK_Ticket_Justify_Sql_Img_Download_001.FILE_LOCAL_NAME).toLowerCase() + ".tmp"
+                    );
+                    //
+                    ToolBox_Inf.renameDownloadFileInf(hmAux.get(TK_Ticket_Justify_Sql_Img_Download_001.FILE_LOCAL_NAME).toLowerCase(), ".jpg", Constant.CACHE_PATH_PHOTO);
+                    //
+                    //Atualiza campo com url local
+                    ticketDao.addUpdate(
+                        new TK_Ticket_Justify_Sql_Img_Download_002(
+                            customer_code,
+                            hmAux.get(TK_TicketDao.TICKET_PREFIX),
+                            hmAux.get(TK_TicketDao.TICKET_CODE),
+                            hmAux.get(TK_Ticket_Justify_Sql_Img_Download_001.FILE_LOCAL_NAME) + ".jpg"
+                        ).toSqlQuery().toLowerCase()
+                    );
+
+                } else {
+                    //Atualiza campo com url local
+                    ticketDao.addUpdate(
+                        new TK_Ticket_Justify_Sql_Img_Download_002(
+                            customer_code,
+                            hmAux.get(TK_TicketDao.TICKET_PREFIX),
+                            hmAux.get(TK_TicketDao.TICKET_CODE),
+                            hmAux.get(TK_Ticket_Justify_Sql_Img_Download_001.FILE_LOCAL_NAME) + ".jpg"
                         ).toSqlQuery().toLowerCase()
                     );
                 }

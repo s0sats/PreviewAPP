@@ -40,24 +40,18 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/act070_not_execute_dialog_ttl" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/act070_not_execute_dialog_justify_option_til"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+
+        <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+            android:id="@+id/act070_not_execute_dialog_justify_option_ss"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
+
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/act070_not_execute_dialog_msg">
-
-            <AutoCompleteTextView
-                android:id="@+id/act070_not_execute_dialog_justify_option_actv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:focusable="false" />
-        </com.google.android.material.textfield.TextInputLayout>
+            app:layout_constraintTop_toBottomOf="@+id/act070_not_execute_dialog_msg"/>
 
         <ImageView
             android:id="@+id/act070_iv_justify_photo"
@@ -70,7 +64,7 @@
             android:layout_marginEnd="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/act070_not_execute_dialog_justify_option_til"
+            app:layout_constraintTop_toBottomOf="@+id/act070_not_execute_dialog_justify_option_ss"
             app:srcCompat="@drawable/ic_foto_ns_black" />
 
 

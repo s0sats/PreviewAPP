@@ -647,13 +647,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
 //        saveBitmapToFile(bitmap, tempImageFile);
     }
 
-    private void saveBitmapToFile(Bitmap bitmap, File tempImageFile) {
-        try (FileOutputStream out = new FileOutputStream(tempImageFile)) {
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+
 
     @Override
     public void restoreActionImage() {
@@ -988,7 +982,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                         //
                         if(finalSaveBitmap){
                             final File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + actionPhotoLocalPath);
-                            saveBitmapToFile(resource, sFile);
+                            ToolBox_Inf.saveBitmapToFile(resource, sFile);
                             previousLenght = sFile.length();
                         }
                         //

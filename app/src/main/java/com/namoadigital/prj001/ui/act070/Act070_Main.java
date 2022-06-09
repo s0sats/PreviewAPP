@@ -40,6 +40,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.namoa_digital.namoa_library.ctls.FabMenu;
 import com.namoa_digital.namoa_library.ctls.FabMenuItem;
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -50,6 +51,7 @@ import com.namoadigital.prj001.adapter.Act070_Steps_Adapter;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
+import com.namoadigital.prj001.dao.MdJustifyItemDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.databinding.TicketNotExecutedDialogBinding;
@@ -92,6 +94,7 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -348,6 +351,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("alert_not_execute_save_btn");
         transList.add("alert_not_execute_justify_comment_hint");
         transList.add("alert_not_execute_justify_option_hint");
+        transList.add("alert_not_execute_justify_comment_required_ttl");
+        transList.add("alert_not_execute_justify_comment_required_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -475,12 +480,27 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private void setLabel(TicketNotExecutedDialogBinding binding) {
         binding.act070NotExecuteDialogTtl.setText(hmAux_Trans.get("alert_not_execute_ttl"));
         binding.act070NotExecuteDialogMsg.setText(hmAux_Trans.get("alert_not_execute_msg"));
-        binding.act070NotExecuteDialogJustifyOptionTil.setHint(hmAux_Trans.get("alert_not_execute_justify_option_lbl"));
+        SearchableSpinner ssJustifyItem = binding.act070NotExecuteDialogJustifyOptionSs;
+        //
+        if(mTicket.getJustify_group_code() != null
+        && mTicket.getJustify_group_code() > -1) {
+            ArrayList<HMAux> justifyItems = mPresenter.getJustifyItems(mTicket);
+            if(justifyItems.isEmpty()){
+                ssJustifyItem.setVisibility(View.GONE);
+            }else {
+                ssJustifyItem.setmRequired(false);
+                ssJustifyItem.setmShowLabel(true);
+                ssJustifyItem.setmCanClean(true);
+                ssJustifyItem.setmOption(justifyItems);
+                ssJustifyItem.setmLabel(hmAux_Trans.get("alert_not_execute_justify_option_lbl"));
+            }
+        }else{
+            ssJustifyItem.setVisibility(View.GONE);
+        }
+        //
         binding.act070NotExecuteDialogJustifyCommentsTil.setHint(hmAux_Trans.get("alert_not_execute_justify_comment_lbl"));
         binding.act070NotExecuteDialogJustifyBtnCancel.setText(hmAux_Trans.get("sys_alert_btn_cancel"));
         binding.act070NotExecuteDialogJustifyBtnSave.setText(hmAux_Trans.get("alert_not_execute_save_btn"));
-        binding.act070NotExecuteDialogJustifyOptionActv.setHint(hmAux_Trans.get("alert_not_execute_justify_option_hint"));
-        binding.act070NotExecuteDialogJustifyCommentsActv.setHint(hmAux_Trans.get("alert_not_execute_justify_comment_hint"));
         setJustifyImage(binding);
     }
 
@@ -531,19 +551,30 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         binding.act070NotExecuteDialogJustifyBtnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(validateNotExecuteFormEntry()){
-
+                if(validateNotExecuteFormEntry(binding)){
                     dialog.dismiss();
                 }else{
-                    Toast.makeText(context, hmAux_Trans.get(""), Toast.LENGTH_SHORT).show();
+                    showAlert(
+                            hmAux_Trans.get("alert_not_execute_justify_comment_required_ttl"),
+                            hmAux_Trans.get("alert_not_execute_justify_comment_required_msg")
+                    );
                 }
             }
         });
         //
     }
 
-    private boolean validateNotExecuteFormEntry() {
-        return false;
+    private boolean validateNotExecuteFormEntry(TicketNotExecutedDialogBinding act070NotExecuteDialogJustifyOptionSs) {
+        HMAux hmAux = binding.act070NotExecuteDialogJustifyOptionSs.getmValue();
+        if(hmAux.hasConsistentValue(MdJustifyItemDao.REQUIRED_COMMENT)
+                && "1".equals(hmAux.get(MdJustifyItemDao.REQUIRED_COMMENT))){
+            if( binding.act070NotExecuteDialogJustifyCommentsActv == null
+            || binding.act070NotExecuteDialogJustifyCommentsActv.getText() == null
+            || binding.act070NotExecuteDialogJustifyCommentsActv.getText().toString().isEmpty()){
+                return false;
+            }
+        }
+        return true;
     }
 
     private void checkEditFlow() {
@@ -941,17 +972,23 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             }
 
         },
-                new Act070_Steps_Adapter.OnNotExecutedPhotoClickListener(){
+                new Act070_Steps_Adapter.OnNotExecutedInteraction(){
                     @Override
-                    public void onPhotoClick(int imageViewId, String path) {
+                    public void onPhotoClickListener(int imageViewId) {
+                        String path =  ConstantBase.CACHE_PATH_PHOTO + "/" + ToolBox_Inf.buildTicketNotExecutedImgPath(mTicket);
                         if(ToolBox_Inf.isImageUnder4kLimit(path)){
-//                            callCameraAct(imageViewId,path);
+                            callCameraAct(imageViewId,ToolBox_Inf.buildTicketNotExecutedImgPath(mTicket));
                         }else{
                             showAlert(
                                     hmAux_Trans.get("alert_image_too_large_to_open_ttl"),
                                     hmAux_Trans.get("alert_image_too_large_to_open_msg")
                             );
                         }
+                    }
+
+                    @Override
+                    public String getTicketJustifyImagePath() {
+                        return ToolBox_Inf.buildTicketNotExecutedImgPath(mTicket);
                     }
                 }     ,
                 inWgEditMode,
@@ -962,6 +999,30 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         );
         //
         initRecycle();
+    }
+
+    private void callCameraAct(int imageViewId, String path) {
+        File sFile;
+        sFile = new File( ConstantBase.CACHE_PATH_PHOTO + "/" + path);
+
+        if (!sFile.exists()) {
+            return;
+        }
+        //
+        Bundle bundle = new Bundle();
+        bundle.putInt(ConstantBase.PID, imageViewId);
+        bundle.putInt(ConstantBase.PTYPE, 1);
+        bundle.putString(ConstantBase.PPATH, path);
+        bundle.putBoolean(ConstantBase.PEDIT, false);
+        bundle.putBoolean(ConstantBase.PENABLED, false);
+        bundle.putBoolean(ConstantBase.P_ALLOW_GALLERY, false);
+        bundle.putBoolean(ConstantBase.P_ALLOW_HIGH_RESOLUTION, false);
+        bundle.putString(ConstantBase.FILE_AUTHORITIES, ConstantBase.AUTHORITIES_FOR_PROVIDER);
+        //
+        Intent mIntent = new Intent(context, Camera_Activity.class);
+        mIntent.putExtras(bundle);
+        //
+        context.startActivity(mIntent);
     }
 
     //region NOVO_TICKET

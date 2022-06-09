@@ -58,7 +58,7 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
     private OnProcessBtnClickListener onProcessBtnClickListener;
     private OnNoneClickListener onNoneClickListener;
     private OnWorkgroupSpinnerListeners onWorkgroupSpinnerClickListener;
-    private OnNotExecutedPhotoClickListener onNotExecutedPhotoClickListener;
+    private OnNotExecutedInteraction onNotExecutedInteraction;
     private boolean isInWgEditMode;
     private boolean inReadOnlyMode;
 
@@ -88,8 +88,9 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
         void notifySpinnerItemSelected(int StepMainPosition, HMAux hmAux, boolean dbValueChanges);
     }
 
-    public interface OnNotExecutedPhotoClickListener {
-        void onPhotoClick(int imageViewId, String path);
+    public interface OnNotExecutedInteraction {
+        void onPhotoClickListener(int imageViewId);
+        String getTicketJustifyImagePath();
     }
 
 
@@ -97,7 +98,7 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
         this.onMainClickListener = onMainClickListener;
     }
 
-    public Act070_Steps_Adapter(Context context, ArrayList<BaseStep> source, OnMainClickListener onMainClickListener, OnActionClickListener onActionClickListener, OnChecklistClickListener onChecklistClickListener, OnApprovalClickListener onApprovalClickListener, OnProcessBtnClickListener onProcessBtnClickListener, OnNoneClickListener onNoneClickListener, OnWorkgroupSpinnerListeners onWorkgroupSpinnerClickListener,OnNotExecutedPhotoClickListener onNotExecutedPhotoClickListener, boolean isInWgEditMode,boolean inReadOnlyMode) {
+    public Act070_Steps_Adapter(Context context, ArrayList<BaseStep> source, OnMainClickListener onMainClickListener, OnActionClickListener onActionClickListener, OnChecklistClickListener onChecklistClickListener, OnApprovalClickListener onApprovalClickListener, OnProcessBtnClickListener onProcessBtnClickListener, OnNoneClickListener onNoneClickListener, OnWorkgroupSpinnerListeners onWorkgroupSpinnerClickListener, OnNotExecutedInteraction onNotExecutedInteraction, boolean isInWgEditMode, boolean inReadOnlyMode) {
         this.context = context;
         this.source = source;
         this.onMainClickListener = onMainClickListener;
@@ -106,7 +107,7 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
         this.onApprovalClickListener = onApprovalClickListener;
         this.onProcessBtnClickListener = onProcessBtnClickListener;
         this.onNoneClickListener = onNoneClickListener;
-        this.onNotExecutedPhotoClickListener = onNotExecutedPhotoClickListener;
+        this.onNotExecutedInteraction = onNotExecutedInteraction;
         this.mResource_Code = ToolBox_Inf.getResourceCode(
             context,
             ConstantBaseApp.APP_MODULE,
@@ -211,7 +212,7 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
                 return  new Act070_Step_Not_ExecutedVH(
                         context,
                         view,
-                        onNotExecutedPhotoClickListener
+                        onNotExecutedInteraction
                 );
             case VIEW_TYPE_STEP_PROCESS_BTN:
                 view = LayoutInflater.from(context).inflate(R.layout.act070_step_process_btn_cell, viewGroup, false);

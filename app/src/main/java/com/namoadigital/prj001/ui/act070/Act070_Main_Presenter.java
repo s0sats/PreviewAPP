@@ -23,6 +23,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_DeviceDao;
+import com.namoadigital.prj001.dao.MdJustifyItemDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_ActionDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
@@ -61,6 +62,7 @@ import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_020;
+import com.namoadigital.prj001.sql.MdJustifyItemSqlSS;
 import com.namoadigital.prj001.sql.MDProductSerialSql017;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_Device_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
@@ -111,6 +113,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     private GE_Custom_Form_DataDao formDataDao;
     private MD_Product_SerialDao mdProductSerialDao;
     private MD_Product_Serial_Tp_DeviceDao serialTpDeviceDao;
+    private MdJustifyItemDao mdJustifyItemDao;
     private ArrayList<HMAux> workgroupOptionList;
 
     public Act070_Main_Presenter(Context context, Act070_Main_Contract.I_View mView, HMAux hmAux_Trans) {
@@ -154,6 +157,11 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 Constant.DB_VERSION_CUSTOM
         );
         this.serialTpDeviceDao = new MD_Product_Serial_Tp_DeviceDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        this.mdJustifyItemDao = new MdJustifyItemDao(
             context,
             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
             Constant.DB_VERSION_CUSTOM
@@ -466,6 +474,17 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             //
             startFormProcess(ticketCtrl);
         }
+    }
+
+    @Override
+    public ArrayList<HMAux> getJustifyItems(TK_Ticket ticket) {
+        ArrayList<HMAux> justifyItems = (ArrayList<HMAux>) mdJustifyItemDao.query_HM(new MdJustifyItemSqlSS(
+                        ticket.getCustomer_code(),
+                        ticket.getJustify_group_code()
+                ).toSqlQuery()
+        );
+
+        return justifyItems != null? justifyItems : new ArrayList<>();
     }
 
     private void callWsWgSave(T_TK_Header_N_Group_Save_WG_Env.T_TK_Header_N_Group_Save_WG_Ticket wgTicket) {
@@ -2551,6 +2570,20 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         ArrayList<BaseStep> baseSteps = new ArrayList<>();
         File fileWorkgroupEditionFile = getWorkgroupEditionFile();
         //
+        if(ConstantBaseApp.SYS_STATUS_NOT_EXECUTED.equals(mTicket.getTicket_status())){
+            baseSteps.add(
+                    new StepNotExecuted(
+                            mTicket.getJustify_item_code() == null? "": getJustifyByCode(mTicket.getJustify_item_code()),
+                            mTicket.getNot_executed_comments(),
+                            mTicket.getClose_user_name(),
+                            mTicket.getClose_user() == null? "": mTicket.getClose_user().toString(),
+                            mTicket.getNot_executed_photo_local(),
+                            mTicket.getNot_executed_photo_url(),
+                            mTicket.getClose_date()
+                    )
+            );
+        }
+        //
         for (TK_Ticket_Step ticketStep : ticketStepList) {
             StepMain stepMain = new StepMain(
                 ticketStep.getStep_code(),
@@ -2603,20 +2636,6 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 )
             );
         }
-//        if(ConstantBaseApp.SYS_STATUS_NOT_EXECUTED.equals(mTicket.getTicket_status())){
-            String justify = mTicket.getJustify_item_code() == null? "": getJustifyByCode(mTicket.getJustify_item_code());
-            String userCode = mTicket.getLog_user() == null? "": mTicket.getLog_user().toString();
-            baseSteps.add(
-                new StepNotExecuted(
-                        justify,
-                        mTicket.getNot_executed_comments(),
-                        mTicket.getLog_user_nick(),
-                        userCode,
-                        mTicket.getNot_executed_photo_url(),
-                        mTicket.getLog_date()
-                )
-            );
-//        }
 
         return baseSteps;
     }

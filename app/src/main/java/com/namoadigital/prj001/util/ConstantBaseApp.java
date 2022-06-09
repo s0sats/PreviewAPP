@@ -25,6 +25,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String DEVICE_ITEM_LIST_CHECKBOX_STATUS = "DEVICE_ITEM_LIST_CHECKBOX_STATUS";
     public static final String DEVICE_ITEM_NEW_ACTION = "DEVICE_ITEM_NEW_ACTION";
     public static final String DEVICE_BUNDLE = "DEVICE_BUNDLE";
+    public static final String ACTION_NOT_EXECUTED = "NOT_EXECUTED";
     //As 3 variaveis abaixo são preenchidas pela classe AppBase
     public static String PRJ001_VERSION = "";
     public static int PRJ001_VERSION_CODE = -1;
@@ -710,6 +711,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String TK_TICKET_CRTL_TYPE_APPROVAL ="OBJ_APPROVAL";
     public static final String TK_TICKET_CRTL_TYPE_NONE ="OBJ_NONE";
     public static final String TK_TICKET_PREX_IMG ="tk_";
+    public static final String TK_TICKET_JUSTIFY_SUFIX = "_justify";
     public static final String TK_TICKET_NC_PREX_IMG ="tk_nc";
     //Ticket Origin Type
     public static final String TK_TICKET_ORIGIN_TYPE_SCHEDULE ="SCHEDULE";

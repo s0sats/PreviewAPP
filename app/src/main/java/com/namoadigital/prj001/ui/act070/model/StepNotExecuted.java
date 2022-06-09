@@ -6,13 +6,15 @@ public class StepNotExecuted extends BaseStep{
     private String userId;
     private String userCode;
     private String photoUrl;
+    private String photoName;
     private String date;
     //
-    public StepNotExecuted(String justify, String comment, String userId, String userCode, String photoUrl, String date) {
+    public StepNotExecuted(String justify, String comment, String userId, String userCode, String photoName, String photoUrl, String date) {
         this.justify = justify;
         this.comment = comment;
         this.userId = userId;
         this.userCode = userCode;
+        this.photoName = photoName;
         this.photoUrl = photoUrl;
         this.date = date;
     }
@@ -48,6 +50,14 @@ public class StepNotExecuted extends BaseStep{
 
     public void setUserCode(String userCode) {
         this.userCode = userCode;
+    }
+
+    public String getPhotoName() {
+        return photoName;
+    }
+
+    public void setPhotoName(String photoName) {
+        this.photoName = photoName;
     }
 
     public String getPhotoUrl() {

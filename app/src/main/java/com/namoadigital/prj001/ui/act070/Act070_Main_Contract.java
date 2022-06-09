@@ -167,5 +167,7 @@ public interface Act070_Main_Contract {
         boolean isFormSoConfigurationDone(TK_Ticket mTicket, TK_Ticket_Ctrl ticketCtrl);
 
         void defineAfterFormSyncProcess(TK_Ticket mTicket, StepForm stepForm, boolean callWsStructureIfNoneStructure);
+
+        public ArrayList<HMAux> getJustifyItems(TK_Ticket ticket);
     }
 }

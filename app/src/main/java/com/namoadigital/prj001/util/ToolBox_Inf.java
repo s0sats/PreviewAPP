@@ -17,6 +17,7 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.GENERIC_CHANNEL_ID;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_PERIOD_FILTER;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_JUSTIFY_SUFIX;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_BARCODE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_FORM;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_FORM_NC;
@@ -7101,6 +7102,15 @@ public class ToolBox_Inf {
             return null;
         }
     }
+    @Nullable
+    public static String buildTicketNotExecutedImgPath(TK_Ticket tkTicket) {
+        try {
+            return ConstantBaseApp.TK_TICKET_PREX_IMG + tkTicket.getCustomer_code() + "_" + tkTicket.getTicket_prefix() + "_" + tkTicket.getTicket_code() + TK_TICKET_JUSTIFY_SUFIX + ".jpg";
+        }catch (Exception e){
+            registerException(CLASS_NAME,e);
+            return null;
+        }
+    }
 
     /**
      * LUCHE
@@ -9344,6 +9354,14 @@ public class ToolBox_Inf {
             serialDao.addUpdateTmp(rec.getRecord().get(0));
         }catch (NullPointerException e){
             ToolBox_Inf.registerException(context.getClass().getName(), e);
+        }
+    }
+
+    public static void saveBitmapToFile(Bitmap bitmap, File tempImageFile) {
+        try (FileOutputStream out = new FileOutputStream(tempImageFile)) {
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

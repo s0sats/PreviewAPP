@@ -120,6 +120,15 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
     public static final String TAG_OPERATIONAL_ID = "tag_operational_id";
     public static final String TAG_OPERATIONAL_DESC = "tag_operational_desc";
 
+    public static final String JUSTIFY_GROUP_CODE = "justify_group_code";
+    public static final String JUSTIFY_ITEM_CODE = "justify_item_code";
+    public static final String NOT_EXECUTED_COMMENTS = "not_executed_comments";
+    public static final String NOT_EXECUTED_PHOTO_LOCAL = "not_executed_photo_local";
+    public static final String NOT_EXECUTED_PHOTO_URL = "not_executed_photo_url";
+    public static final String LOG_DATE = "log_date";
+    public static final String LOG_USER = "log_user";
+    public static final String LOG_USER_NICK = "log_user_nick";
+
     public TK_TicketDao(Context context, String mDB_NAME, int mDB_VERSION) {
         super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI);
         //
@@ -1060,6 +1069,48 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             tk_ticket.setTag_operational_code(cursor.getInt(cursor.getColumnIndex(TAG_OPERATIONAL_CODE)));
             tk_ticket.setTag_operational_id(cursor.getString(cursor.getColumnIndex(TAG_OPERATIONAL_ID)));
             tk_ticket.setTag_operational_desc(cursor.getString(cursor.getColumnIndex(TAG_OPERATIONAL_DESC)));
+
+            if (cursor.isNull(cursor.getColumnIndex(JUSTIFY_GROUP_CODE))) {
+                tk_ticket.setJustify_group_code(null);
+            } else {
+                tk_ticket.setJustify_group_code(cursor.getInt(cursor.getColumnIndex(JUSTIFY_GROUP_CODE)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(JUSTIFY_ITEM_CODE))) {
+                tk_ticket.setJustify_item_code(null);
+            } else {
+                tk_ticket.setJustify_item_code(cursor.getInt(cursor.getColumnIndex(JUSTIFY_ITEM_CODE)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(NOT_EXECUTED_COMMENTS))) {
+                tk_ticket.setNot_executed_comments(null);
+            } else {
+                tk_ticket.setNot_executed_comments(cursor.getString(cursor.getColumnIndex(NOT_EXECUTED_COMMENTS)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(NOT_EXECUTED_PHOTO_LOCAL))) {
+                tk_ticket.setNot_executed_photo_local(null);
+            } else {
+                tk_ticket.setNot_executed_photo_local(cursor.getString(cursor.getColumnIndex(NOT_EXECUTED_PHOTO_LOCAL)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(NOT_EXECUTED_PHOTO_URL))) {
+                tk_ticket.setNot_executed_photo_url(null);
+            } else {
+                tk_ticket.setNot_executed_photo_url(cursor.getString(cursor.getColumnIndex(NOT_EXECUTED_PHOTO_URL)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(LOG_DATE))) {
+                tk_ticket.setLog_date(null);
+            } else {
+                tk_ticket.setLog_date(cursor.getString(cursor.getColumnIndex(LOG_DATE)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(LOG_USER))) {
+                tk_ticket.setLog_user(null);
+            } else {
+                tk_ticket.setLog_user(cursor.getInt(cursor.getColumnIndex(LOG_USER)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(LOG_USER_NICK))) {
+                tk_ticket.setLog_user_nick(null);
+            } else {
+                tk_ticket.setLog_user_nick(cursor.getString(cursor.getColumnIndex(LOG_USER_NICK)));
+            }
+
             return tk_ticket;
         }
     }
@@ -1104,7 +1155,16 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             contentValues.put(OPEN_PHOTO_LOCAL, tk_ticket.getOpen_photo_local());
             contentValues.put(OPEN_NAME, tk_ticket.getOpen_name());
             contentValues.put(OPEN_EMAIL, tk_ticket.getOpen_email());
-            contentValues.put(OPEN_PHONE, tk_ticket.getOpen_phone());
+
+            contentValues.put(JUSTIFY_GROUP_CODE, tk_ticket.getJustify_group_code());
+            contentValues.put(JUSTIFY_ITEM_CODE, tk_ticket.getJustify_item_code());
+            contentValues.put(NOT_EXECUTED_COMMENTS, tk_ticket.getNot_executed_comments());
+            contentValues.put(NOT_EXECUTED_PHOTO_LOCAL, tk_ticket.getNot_executed_photo_local());
+            contentValues.put(NOT_EXECUTED_PHOTO_URL, tk_ticket.getNot_executed_photo_url());
+            contentValues.put(LOG_DATE, tk_ticket.getLog_date());
+            contentValues.put(LOG_USER, tk_ticket.getLog_user());
+            contentValues.put(LOG_USER_NICK, tk_ticket.getLog_user_nick());
+
             if (tk_ticket.getOpen_date() != null) {
                 contentValues.put(OPEN_DATE, tk_ticket.getOpen_date());
             }
