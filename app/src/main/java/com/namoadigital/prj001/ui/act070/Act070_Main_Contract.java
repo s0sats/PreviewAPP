@@ -168,6 +168,8 @@ public interface Act070_Main_Contract {
 
         void defineAfterFormSyncProcess(TK_Ticket mTicket, StepForm stepForm, boolean callWsStructureIfNoneStructure);
 
-        public ArrayList<HMAux> getJustifyItems(TK_Ticket ticket);
+         ArrayList<HMAux> getJustifyItems(TK_Ticket ticket);
+
+        void defineNotExecuteFlow(TK_Ticket mTicket);
     }
 }

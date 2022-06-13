@@ -28,7 +28,7 @@ public class TK_Ticket_Justify_Sql_Img_Download_001 implements Specification {
                         " WHERE\n" +
                         "   t.customer_code = '"+customer_code+"'\n" +
                         "   and t.not_executed_photo_url is not null\n" +
-                        "   and t.not_executed_photo_local is null\n"+
+                        "   and t.not_executed_photo_name is null\n"+
                         " ORDER BY\n" +
                         "   t.ticket_prefix,\n" +
                         "   t.ticket_code\n")

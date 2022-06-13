@@ -252,6 +252,7 @@ import com.namoadigital.prj001.ui.AppBase;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
+import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.ui.act078.Act078_Main;
 import com.namoadigital.prj001.ui.act079.Act079_Main;
 import com.namoadigital.prj001.ui.act088.Act088Main;
@@ -8462,7 +8463,8 @@ public class ToolBox_Inf {
 //        fabProduct.setmButton_Resource(R.drawable.ic_baseline_build_24);
 //        fabMenuItems.add(fabProduct);
         //Nao executar.
-        if(!ticket.isReadOnly(context)) {
+        if(!ticket.isReadOnly(context)
+        && context instanceof Act070_Main) {
             fabNotExecuted = new FabMenuItem(context);
             fabNotExecuted.setTag(ConstantBaseApp.FAB_NOT_EXECUTE_LBL);
             fabNotExecuted.setmLabel(hmAux_Trans.get("to_not_execute_lbl"));
@@ -9364,4 +9366,32 @@ public class ToolBox_Inf {
             e.printStackTrace();
         }
     }
+
+    public static void copyFiles(String fromFile, String toFile) throws IOException {
+
+        File src = new File(fromFile);
+        File dst = new File(toFile);
+
+        InputStream in = new FileInputStream(src);
+        try {
+            OutputStream out = new FileOutputStream(dst);
+            try {
+                // Transfer bytes from in to out
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+            } finally {
+                out.close();
+            }
+        } finally {
+            in.close();
+        }
+
+//        Bitmap bitmap = BitmapFactory.decodeFile(fromFile);
+//        File tempImageFile = new File(toFile);
+//        saveBitmapToFile(bitmap, tempImageFile);
+    }
+
 }

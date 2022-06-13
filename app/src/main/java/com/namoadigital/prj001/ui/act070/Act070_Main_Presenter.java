@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
+import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
@@ -20,6 +21,7 @@ import com.namoadigital.prj001.dao.GE_Custom_FormDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
+import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_DeviceDao;
@@ -33,6 +35,7 @@ import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.GE_Custom_Form;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
+import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device;
 import com.namoadigital.prj001.model.TK_Ticket;
@@ -487,6 +490,35 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         return justifyItems != null? justifyItems : new ArrayList<>();
     }
 
+    @Override
+    public void defineNotExecuteFlow(TK_Ticket mTicket) {
+        ticketDao.addUpdate(mTicket);
+        uploadNotExecutedImage(mTicket);
+        prepareSyncProcess(mTicket, true);
+    }
+
+    private void uploadNotExecutedImage(TK_Ticket mTicket) {
+        GE_FileDao geFileDao = new GE_FileDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        //
+        File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + ToolBox_Inf.buildTicketNotExecutedImgPath(mTicket));
+        if (sFile.exists()) {
+            GE_File geFile = new GE_File();
+            geFile.setFile_code(mTicket.getNot_executed_photo_name().replace(".png", "").replace(".jpg", ""));
+            geFile.setFile_path(mTicket.getNot_executed_photo_name());
+            geFile.setFile_status("OPENED");
+            geFile.setFile_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+            //
+            geFileDao.addUpdate(geFile);
+            //
+            ToolBox_Inf.scheduleUploadImgWork(context);
+        }
+    }
+
+
     private void callWsWgSave(T_TK_Header_N_Group_Save_WG_Env.T_TK_Header_N_Group_Save_WG_Ticket wgTicket) {
         if(ToolBox_Con.isOnline(context)){
             mView.setWsProcess(WS_TK_Header_N_Group_Save.class.getName());
@@ -868,6 +900,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         return mTicket != null
             && (mTicket.getUpdate_required() == 1
             || mTicket.getUpdate_required_product() == 1
+            || mTicket.getUpdate_required_status() == 1
             || ToolBox_Inf.isTicketInTokenFile(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())
             || ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())
             || ToolBox_Inf.hasSerialUpdateRequiredWithinTicket(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())
@@ -2573,11 +2606,12 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         if(ConstantBaseApp.SYS_STATUS_NOT_EXECUTED.equals(mTicket.getTicket_status())){
             baseSteps.add(
                     new StepNotExecuted(
-                            mTicket.getJustify_item_code() == null? "": getJustifyByCode(mTicket.getJustify_item_code()),
+                            hmAux_Trans.get("cell_not_execute_justify_lbl"),
+                            mTicket.getJustify_item_code() == null? "": getJustifyFormated(mTicket),
                             mTicket.getNot_executed_comments(),
                             mTicket.getClose_user_name(),
                             mTicket.getClose_user() == null? "": mTicket.getClose_user().toString(),
-                            mTicket.getNot_executed_photo_local(),
+                            mTicket.getNot_executed_photo_name(),
                             mTicket.getNot_executed_photo_url(),
                             mTicket.getClose_date()
                     )
@@ -2640,8 +2674,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         return baseSteps;
     }
 
-    private String getJustifyByCode(Integer justify_item_code) {
-        return null;
+    private String getJustifyFormated(TK_Ticket mTicket) {
+        return mTicket.getJustify_item_id() + " - " + mTicket.getJustify_item_desc();
     }
 
     private void loadSelectedWorkgroupFromEditionFile(File fileWorkgroupEditionFile, StepMain stepMain) {

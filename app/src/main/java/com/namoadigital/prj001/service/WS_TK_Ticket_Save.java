@@ -261,6 +261,11 @@ public class WS_TK_Ticket_Save extends IntentService {
                 removeCancelledProducts(tk_ticket);
             }
             //
+            if (tk_ticket.getUpdate_required_status() == 1) {
+                tk_ticket.setTime_action(ConstantBaseApp.ACTION_NOT_EXECUTED);
+                tk_ticket.setChange_date(tk_ticket.getNot_executed_date());
+            }
+            //
             if (tk_ticket.getStep() != null && tk_ticket.getStep().size() > 0) {
                 ArrayList<TK_Ticket_Step> stepsToUpdate = new ArrayList<>();
                 for (TK_Ticket_Step tk_ticket_step : tk_ticket.getStep()) {
@@ -552,6 +557,7 @@ public class WS_TK_Ticket_Save extends IntentService {
                                 ticket.setTicket_status(ConstantBase.SYS_STATUS_CANCELLED);
                                 ticket.setUpdate_required(0);
                                 ticket.setUpdate_required_product(0);
+                                ticket.setUpdate_required_status(0);
 
                                 ticketDao.addUpdate(ticket);
 

@@ -111,6 +111,7 @@ public class TK_Ticket implements Cloneable, Serializable {
     private int sync_required;
     private int update_required;
     private int update_required_product;
+    private int update_required_status;
     @Expose
     private String token;
     @Expose
@@ -172,24 +173,27 @@ public class TK_Ticket implements Cloneable, Serializable {
     @SerializedName("justify_group_code")
     private Integer justify_group_code;
     @Expose
+    @Nullable
     @SerializedName("justify_item_code")
     private Integer justify_item_code;
+    @Nullable
+    @SerializedName("justify_item_id")
+    private String justify_item_id;
+    @Nullable
+    @SerializedName("justify_item_desc")
+    private String justify_item_desc;
     @Expose
     @SerializedName("not_executed_comments")
     private String not_executed_comments;
-    @SerializedName("not_executed_photo_local")
-    private String not_executed_photo_local;
+    @Expose
+    @SerializedName("not_executed_photo_name")
+    private String not_executed_photo_name;
     @SerializedName("not_executed_photo_url")
     private String not_executed_photo_url;
-    @Expose
-    @SerializedName("log_date")
-    private String log_date;
-    @Expose
-    @SerializedName("log_user")
-    private Integer log_user;
-    @Expose
-    @SerializedName("log_user_nick")
-    private String log_user_nick;
+    @SerializedName("not_executed_photo")
+    private Integer not_executed_photo;
+    @SerializedName("not_executed_date")
+    private String not_executed_date;
     @Expose
     private ArrayList<TK_Ticket_Step> step = new ArrayList<>();
     @Expose
@@ -756,6 +760,14 @@ public class TK_Ticket implements Cloneable, Serializable {
         this.update_required_product = update_required_product;
     }
 
+    public int getUpdate_required_status() {
+        return update_required_status;
+    }
+
+    public void setUpdate_required_status(int update_required_status) {
+        this.update_required_status = update_required_status;
+    }
+
     public String getToken() {
         return token;
     }
@@ -1016,6 +1028,22 @@ public class TK_Ticket implements Cloneable, Serializable {
         this.justify_item_code = justify_item_code;
     }
 
+    public String getJustify_item_id() {
+        return justify_item_id;
+    }
+
+    public void setJustify_item_id(String justify_item_id) {
+        this.justify_item_id = justify_item_id;
+    }
+
+    public String getJustify_item_desc() {
+        return justify_item_desc;
+    }
+
+    public void setJustify_item_desc(String justify_item_desc) {
+        this.justify_item_desc = justify_item_desc;
+    }
+
     public String getNot_executed_comments() {
         return not_executed_comments;
     }
@@ -1024,12 +1052,12 @@ public class TK_Ticket implements Cloneable, Serializable {
         this.not_executed_comments = not_executed_comments;
     }
 
-    public String getNot_executed_photo_local() {
-        return not_executed_photo_local;
+    public String getNot_executed_photo_name() {
+        return not_executed_photo_name;
     }
 
-    public void setNot_executed_photo_local(String not_executed_photo_local) {
-        this.not_executed_photo_local = not_executed_photo_local;
+    public void setNot_executed_photo_name(String not_executed_photo_name) {
+        this.not_executed_photo_name = not_executed_photo_name;
     }
 
     public String getNot_executed_photo_url() {
@@ -1040,28 +1068,20 @@ public class TK_Ticket implements Cloneable, Serializable {
         this.not_executed_photo_url = not_executed_photo_url;
     }
 
-    public String getLog_date() {
-        return log_date;
+    public Integer getNot_executed_photo() {
+        return not_executed_photo;
     }
 
-    public void setLog_date(String log_date) {
-        this.log_date = log_date;
+    public void setNot_executed_photo(Integer not_executed_photo) {
+        this.not_executed_photo = not_executed_photo;
     }
 
-    public Integer getLog_user() {
-        return log_user;
+    public String getNot_executed_date() {
+        return not_executed_date;
     }
 
-    public void setLog_user(Integer log_user) {
-        this.log_user = log_user;
-    }
-
-    public String getLog_user_nick() {
-        return log_user_nick;
-    }
-
-    public void setLog_user_nick(String log_user_nick) {
-        this.log_user_nick = log_user_nick;
+    public void setNot_executed_date(String not_executed_date) {
+        this.not_executed_date = not_executed_date;
     }
 
     public ArrayList<TK_Ticket_Step> getStep() {
@@ -1110,8 +1130,9 @@ public class TK_Ticket implements Cloneable, Serializable {
                 )
             );
         }
-        if(not_executed_photo_url != null && !not_executed_photo_url.isEmpty()) {
-            setNot_executed_photo_local(getLocalPath(ToolBox_Inf.buildTicketNotExecutedImgPath(this)));
+        if((not_executed_photo_url != null && !not_executed_photo_url.isEmpty())
+        || (not_executed_photo != null &&  not_executed_photo > 0)) {
+            setNot_executed_photo_name(getLocalPath(ToolBox_Inf.buildTicketNotExecutedImgPath(this)));
         }
         //
         if(getStep() != null) {
@@ -1481,6 +1502,7 @@ public class TK_Ticket implements Cloneable, Serializable {
     public boolean isUpdateRequired() {
         return update_required >0
                 || update_required_product >0
+                || update_required_status >0
                 || isCurrentStepUpdateRequired();
     }
 

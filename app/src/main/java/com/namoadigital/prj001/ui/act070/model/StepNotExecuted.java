@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act070.model;
 
 public class StepNotExecuted extends BaseStep{
+    private String justifyLbl;
     private String justify;
     private String comment;
     private String userId;
@@ -9,7 +10,8 @@ public class StepNotExecuted extends BaseStep{
     private String photoName;
     private String date;
     //
-    public StepNotExecuted(String justify, String comment, String userId, String userCode, String photoName, String photoUrl, String date) {
+    public StepNotExecuted(String justifyLbl,String justify, String comment, String userId, String userCode, String photoName, String photoUrl, String date) {
+        this.justifyLbl = justifyLbl;
         this.justify = justify;
         this.comment = comment;
         this.userId = userId;
@@ -19,6 +21,14 @@ public class StepNotExecuted extends BaseStep{
         this.date = date;
     }
     //
+
+    public String getJustifyLbl() {
+        return justifyLbl;
+    }
+
+    public void setJustifyLbl(String justifyLbl) {
+        this.justifyLbl = justifyLbl;
+    }
 
     public String getJustify() {
         return justify;

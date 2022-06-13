@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.ui.act070;
 
-import static com.namoadigital.prj001.ui.act071.Act071_Main.TEMP_SUFIX_FILE;
 import static com.namoadigital.prj001.ui.act075.Act075_Main.APPROVAL_VIEW_ID;
 import static com.namoadigital.prj001.ui.act075.Act075_Main.PRODUCT_VIEW_ID;
 import static com.namoadigital.prj001.ui.act075.Act075_Main.VIEW_PROFILE;
@@ -95,8 +94,10 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contract.I_View, Frg_Pipeline_Header.OnPipelineFragmentInteractionListener, Frg_Pipeline_Header.OnPipelineFragmentOriginListener {
 
@@ -107,7 +108,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     public static final String PARAM_FORCE_SEND_BY_FORM_EXEC = "PARAM_FORCE_SEND_BY_FORM_EXEC";
     public static final String PARAM_WORKGROUP_EDIT_MODE = "PARAM_WORKGROUP_EDIT_MODE";
     public static final String PARAM_FORCE_WORKGROUP_EDIT_MODE = "PARAM_FORCE_WORKGROUP_EDIT_MODE";
-
+    private static final String TEMP_SUFIX_FILE = "temp_";
     private FragmentManager fm;
     private Frg_Pipeline_Header mFrgPipelineHeader;
     private Act070_Main_Presenter mPresenter;
@@ -353,6 +354,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("alert_not_execute_justify_option_hint");
         transList.add("alert_not_execute_justify_comment_required_ttl");
         transList.add("alert_not_execute_justify_comment_required_msg");
+        transList.add("cell_not_execute_justify_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -506,7 +508,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
 
     private void setJustifyImage(TicketNotExecutedDialogBinding binding) {
         try{
-            Bitmap bitmap = BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + mTicket.getTicket_prefix() + "." + mTicket.getTicket_prefix());
+            Bitmap bitmap = BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + ToolBox_Inf.buildTicketNotExecutedImgPath(mTicket));
             if(bitmap != null) {
                 binding.act070IvJustifyPhoto.setImageBitmap(bitmap);
                 binding.act070IvJustifyPhoto.postInvalidate();
@@ -523,22 +525,12 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         binding.act070IvJustifyPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bundle bundle = new Bundle();
-                bundle.putInt(ConstantBase.PID, binding.act070IvJustifyPhoto.getId());
-                bundle.putInt(ConstantBase.PTYPE, 1);
-                bundle.putString(ConstantBase.PPATH, TEMP_SUFIX_FILE + mTicket.getTicket_prefix() + "." + mTicket.getTicket_prefix());
-                bundle.putBoolean(ConstantBase.PEDIT, !bReadOnly);
-                bundle.putBoolean(ConstantBase.PENABLED, !bReadOnly);
-                bundle.putBoolean(ConstantBase.P_ALLOW_GALLERY, false);
-                bundle.putBoolean(ConstantBase.P_ALLOW_HIGH_RESOLUTION, false);
-                bundle.putString(ConstantBase.FILE_AUTHORITIES, ConstantBase.AUTHORITIES_FOR_PROVIDER);
-                //
-                Intent mIntent = new Intent(context, Camera_Activity.class);
-                mIntent.putExtras(bundle);
-                //
                 fromCamera = true;
-                //
-                context.startActivity(mIntent);
+                callCameraAct(
+                        binding.act070IvJustifyPhoto.getId(),
+                        TEMP_SUFIX_FILE + ToolBox_Inf.buildTicketNotExecutedImgPath(mTicket),
+                        !bReadOnly,
+                        !bReadOnly);
             }
         });
         binding.act070NotExecuteDialogJustifyBtnCancel.setOnClickListener(new View.OnClickListener() {
@@ -552,7 +544,31 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             @Override
             public void onClick(View v) {
                 if(validateNotExecuteFormEntry(binding)){
+                    mTicket.setUpdate_required_status(1);
+                    if(!binding.act070NotExecuteDialogJustifyCommentsActv.getText().toString().isEmpty()) {
+                        mTicket.setNot_executed_comments(binding.act070NotExecuteDialogJustifyCommentsActv.getText().toString());
+                    }
+                    mTicket.setNot_executed_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+                    String tempPath = ConstantBase.CACHE_PATH_PHOTO + "/" +TEMP_SUFIX_FILE + ToolBox_Inf.buildTicketNotExecutedImgPath(mTicket);
+                    File temp = new File(tempPath);
+                    if(temp.length() > 0){
+                        File notExecutedPhoto = new File(ConstantBase.CACHE_PATH_PHOTO + "/" +ToolBox_Inf.buildTicketNotExecutedImgPath(mTicket));
+                        try {
+                            ToolBox_Inf.copyFiles(temp.getPath(), notExecutedPhoto.getPath());
+                            temp.delete();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        mTicket.setNot_executed_photo_name(ToolBox_Inf.buildTicketNotExecutedImgPath(mTicket));
+                    }
+                    HMAux justifyHM = binding.act070NotExecuteDialogJustifyOptionSs.getmValue();
+
+                    if(justifyHM.hasConsistentValue(SearchableSpinner.CODE)) {
+                        mTicket.setJustify_item_code(Integer.valueOf(Objects.requireNonNull(justifyHM.get(SearchableSpinner.CODE))));
+                    }
+                    //
                     dialog.dismiss();
+                    mPresenter.defineNotExecuteFlow(mTicket);
                 }else{
                     showAlert(
                             hmAux_Trans.get("alert_not_execute_justify_comment_required_ttl"),
@@ -977,7 +993,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                     public void onPhotoClickListener(int imageViewId) {
                         String path =  ConstantBase.CACHE_PATH_PHOTO + "/" + ToolBox_Inf.buildTicketNotExecutedImgPath(mTicket);
                         if(ToolBox_Inf.isImageUnder4kLimit(path)){
-                            callCameraAct(imageViewId,ToolBox_Inf.buildTicketNotExecutedImgPath(mTicket));
+                            callCameraAct(imageViewId,ToolBox_Inf.buildTicketNotExecutedImgPath(mTicket), false, false);
                         }else{
                             showAlert(
                                     hmAux_Trans.get("alert_image_too_large_to_open_ttl"),
@@ -1001,11 +1017,11 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         initRecycle();
     }
 
-    private void callCameraAct(int imageViewId, String path) {
+    private void callCameraAct(int imageViewId, String path, boolean inEditMode, boolean isEnable) {
         File sFile;
         sFile = new File( ConstantBase.CACHE_PATH_PHOTO + "/" + path);
 
-        if (!sFile.exists()) {
+        if (!sFile.exists() && !inEditMode && !isEnable) {
             return;
         }
         //
@@ -1013,8 +1029,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         bundle.putInt(ConstantBase.PID, imageViewId);
         bundle.putInt(ConstantBase.PTYPE, 1);
         bundle.putString(ConstantBase.PPATH, path);
-        bundle.putBoolean(ConstantBase.PEDIT, false);
-        bundle.putBoolean(ConstantBase.PENABLED, false);
+        bundle.putBoolean(ConstantBase.PEDIT, inEditMode);
+        bundle.putBoolean(ConstantBase.PENABLED, isEnable);
         bundle.putBoolean(ConstantBase.P_ALLOW_GALLERY, false);
         bundle.putBoolean(ConstantBase.P_ALLOW_HIGH_RESOLUTION, false);
         bundle.putString(ConstantBase.FILE_AUTHORITIES, ConstantBase.AUTHORITIES_FOR_PROVIDER);

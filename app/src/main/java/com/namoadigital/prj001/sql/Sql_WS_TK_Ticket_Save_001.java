@@ -47,6 +47,7 @@ public class Sql_WS_TK_Ticket_Save_001 implements Specification {
                     "      and \n" +
                     "          ( t.update_required = 1 \n" +
                     "            OR t.update_required_product = 1\n" +
+                    "            OR t.update_required_status = 1\n" +
                     "            OR s.update_required = 1\n" +
                     "            OR c.update_required = 1\n" +
                     "           )\n" +

@@ -26,11 +26,11 @@ import java.io.File;
 
 public class Act070_Step_Not_ExecutedVH extends RecyclerView.ViewHolder{
     private Context context;
+    private TextView stepNotExecutedTvJustifyLbl;
     private TextView stepNotExecutedTvJustify;
     private TextView stepNotExecutedTvComment;
     private ImageView stepNotExecutedIvPhoto;
     private TextView stepNotExecutedTvUserInfo;
-    private TextView stepNotExecutedTvDate;
     private Act070_Steps_Adapter.OnNotExecutedInteraction onNotExecutedInteraction;
 
     public Act070_Step_Not_ExecutedVH(Context context, @NonNull View itemView, Act070_Steps_Adapter.OnNotExecutedInteraction onNotExecutedInteraction) {
@@ -41,19 +41,27 @@ public class Act070_Step_Not_ExecutedVH extends RecyclerView.ViewHolder{
     }
 
     private void bindViews() {
+        stepNotExecutedTvJustifyLbl = this.itemView.findViewById(R.id.step_not_executed_tv_justify_lbl);
         stepNotExecutedTvJustify = this.itemView.findViewById(R.id.step_not_executed_tv_justify);
         stepNotExecutedTvComment = this.itemView.findViewById(R.id.step_not_executed_tv_comment);
         stepNotExecutedIvPhoto = this.itemView.findViewById(R.id.step_not_executed_iv_photo);
         stepNotExecutedTvUserInfo = this.itemView.findViewById(R.id.step_not_executed_tv_user_info);
-        stepNotExecutedTvDate = this.itemView.findViewById(R.id.step_not_executed_tv_date);
     }
 
     public void bindData(StepNotExecuted stepNotExecuted) {
-        stepNotExecutedTvJustify.setText(stepNotExecuted.getJustify());
-        stepNotExecutedTvComment.setText(stepNotExecuted.getComment());
+        setTextViewContent(stepNotExecutedTvJustifyLbl, stepNotExecuted.getJustifyLbl());
+        setTextViewContent(stepNotExecutedTvJustify, stepNotExecuted.getJustify());
+        setTextViewContent(stepNotExecutedTvComment, stepNotExecuted.getComment());
+        setTextViewContent(stepNotExecutedTvUserInfo, stepNotExecuted.getUserId());
         setNotExecutedImage(stepNotExecuted);
-        stepNotExecutedTvUserInfo.setText(stepNotExecuted.getUserId());
-//        stepNotExecutedTvDate.setText(stepNotExecuted.getDate());
+    }
+
+    private void setTextViewContent(TextView textView, String textContent){
+        textView.setVisibility(View.GONE);
+        if(textContent != null && !textContent.isEmpty()){
+            textView.setVisibility(View.VISIBLE);
+            textView.setText(textContent);
+        }
     }
 
     private void setNotExecutedImage(StepNotExecuted stepNotExecuted) {
@@ -130,7 +138,16 @@ public class Act070_Step_Not_ExecutedVH extends RecyclerView.ViewHolder{
                         }
                     });
         }else{
-            stepNotExecutedIvPhoto.setVisibility(View.GONE);
+            if(stepNotExecuted.getPhotoName() != null
+            && !stepNotExecuted.getPhotoName().isEmpty()) {
+                Glide.with(context)
+                        .load(ConstantBase.CACHE_PATH_PHOTO + "/" + stepNotExecuted.getPhotoName())
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .skipMemoryCache(true)
+                        .into(stepNotExecutedIvPhoto);
+            }else{
+                stepNotExecutedIvPhoto.setVisibility(View.GONE);
+            }
         }
     }
 }
