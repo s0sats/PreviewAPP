@@ -26,6 +26,7 @@ import java.io.File;
 
 public class Act070_Step_Not_ExecutedVH extends RecyclerView.ViewHolder{
     private Context context;
+    private ImageView stepNotExecutedIvIcon;
     private TextView stepNotExecutedTvJustifyLbl;
     private TextView stepNotExecutedTvJustify;
     private TextView stepNotExecutedTvComment;
@@ -41,6 +42,7 @@ public class Act070_Step_Not_ExecutedVH extends RecyclerView.ViewHolder{
     }
 
     private void bindViews() {
+        stepNotExecutedIvIcon = this.itemView.findViewById(R.id.step_main_tv_step_num);
         stepNotExecutedTvJustifyLbl = this.itemView.findViewById(R.id.step_not_executed_tv_justify_lbl);
         stepNotExecutedTvJustify = this.itemView.findViewById(R.id.step_not_executed_tv_justify);
         stepNotExecutedTvComment = this.itemView.findViewById(R.id.step_not_executed_tv_comment);
@@ -49,6 +51,10 @@ public class Act070_Step_Not_ExecutedVH extends RecyclerView.ViewHolder{
     }
 
     public void bindData(StepNotExecuted stepNotExecuted) {
+        Drawable placeHolder;
+        placeHolder = context.getResources().getDrawable(R.drawable.ic_baseline_close_24);
+        placeHolder.setColorFilter(context.getResources().getColor(R.color.padrao_WHITE), PorterDuff.Mode.SRC_ATOP);
+        stepNotExecutedIvIcon.setImageDrawable(placeHolder);
         setTextViewContent(stepNotExecutedTvJustifyLbl, stepNotExecuted.getJustifyLbl());
         setTextViewContent(stepNotExecutedTvJustify, stepNotExecuted.getJustify());
         setTextViewContent(stepNotExecutedTvComment, stepNotExecuted.getComment());
@@ -145,6 +151,16 @@ public class Act070_Step_Not_ExecutedVH extends RecyclerView.ViewHolder{
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .skipMemoryCache(true)
                         .into(stepNotExecutedIvPhoto);
+                final File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + onNotExecutedInteraction.getTicketJustifyImagePath());
+                if(onNotExecutedInteraction != null && ToolBox_Inf.isImageUnder4kLimit(sFile.getPath())){
+                    stepNotExecutedIvPhoto.setEnabled(true);
+                    stepNotExecutedIvPhoto.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            onNotExecutedInteraction.onPhotoClickListener(stepNotExecutedIvPhoto.getId());
+                        }
+                    });
+                }
             }else{
                 stepNotExecutedIvPhoto.setVisibility(View.GONE);
             }

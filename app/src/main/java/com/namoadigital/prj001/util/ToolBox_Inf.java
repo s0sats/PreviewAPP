@@ -8472,7 +8472,7 @@ public class ToolBox_Inf {
             fabNotExecuted.setmLabel_Text_Color(lblColor);
             fabNotExecuted.setmButton_Back_Color(btnBgColor);
             fabNotExecuted.setmButton_Resource_Color(iconColor);
-            fabNotExecuted.setmButton_Resource(R.drawable.ic_baseline_build_24);
+            fabNotExecuted.setmButton_Resource(R.drawable.ic_baseline_close_24);
             fabMenuItems.add(fabNotExecuted);
         }
         //

@@ -13,6 +13,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
@@ -354,6 +356,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("alert_not_execute_justify_option_hint");
         transList.add("alert_not_execute_justify_comment_required_ttl");
         transList.add("alert_not_execute_justify_comment_required_msg");
+        transList.add("alert_not_execute_justify_option_required_msg");
         transList.add("cell_not_execute_justify_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
@@ -475,6 +478,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         setLabel(binding);
         setActions(binding, notExecutedDialog);
         notExecutedDialog.getWindow().setLayout((int) dmW, ViewGroup.LayoutParams.WRAP_CONTENT);
+        notExecutedDialog.setCanceledOnTouchOutside(false);
         notExecutedDialog.show();
         //
     }
@@ -503,6 +507,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         binding.act070NotExecuteDialogJustifyCommentsTil.setHint(hmAux_Trans.get("alert_not_execute_justify_comment_lbl"));
         binding.act070NotExecuteDialogJustifyBtnCancel.setText(hmAux_Trans.get("sys_alert_btn_cancel"));
         binding.act070NotExecuteDialogJustifyBtnSave.setText(hmAux_Trans.get("alert_not_execute_save_btn"));
+        resetNotExecutedFile();
         setJustifyImage(binding);
     }
 
@@ -511,16 +516,21 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             Bitmap bitmap = BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + ToolBox_Inf.buildTicketNotExecutedImgPath(mTicket));
             if(bitmap != null) {
                 binding.act070IvJustifyPhoto.setImageBitmap(bitmap);
+                binding.act070IvJustifyPhoto.setTag(Boolean.TRUE);
                 binding.act070IvJustifyPhoto.postInvalidate();
             }else{
-                binding.act070IvJustifyPhoto.setImageDrawable( getResources().getDrawable(R.drawable.ic_foto_ns_black));
+                binding.act070IvJustifyPhoto.setTag(Boolean.FALSE);
+                Drawable placeHolder;
+                placeHolder = getResources().getDrawable(R.drawable.ic_foto_ns_black);
+                placeHolder.setColorFilter(context.getResources().getColor(R.color.namoa_dark_blue), PorterDuff.Mode.SRC_ATOP);
+                binding.act070IvJustifyPhoto.setImageDrawable(placeHolder);
             }
         } catch (NullPointerException e ){
             e.printStackTrace();
         }
     }
 
-    private void setActions(TicketNotExecutedDialogBinding binding, Dialog dialog) {
+    private void setActions(TicketNotExecutedDialogBinding binding, Dialog notExecutedDialog) {
         //
         binding.act070IvJustifyPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -536,14 +546,32 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         binding.act070NotExecuteDialogJustifyBtnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.dismiss();
+                boolean hasPhoto = (binding.act070IvJustifyPhoto.getTag() instanceof Boolean && (Boolean) binding.act070IvJustifyPhoto.getTag());
+                boolean hasJustify = binding.act070NotExecuteDialogJustifyOptionSs.getVisibility() == View.VISIBLE
+                        && binding.act070NotExecuteDialogJustifyOptionSs.getmValue().hasConsistentValue(SearchableSpinner.CODE);
+                boolean hasComments = !binding.act070NotExecuteDialogJustifyCommentsActv.getText().toString().isEmpty();
+                if(hasPhoto || hasJustify || hasComments) {
+                    showAlert(
+                            hmAux_Trans.get("alert_not_execute_justify_lost_data_ttl"),
+                            hmAux_Trans.get("alert_not_execute_justify_lost_data_msg"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    notExecutedDialog.dismiss();
+                                }
+                            }, true
+                    );
+                }else{
+                    notExecutedDialog.dismiss();
+                }
             }
         });
         //
         binding.act070NotExecuteDialogJustifyBtnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(validateNotExecuteFormEntry(binding)){
+                String errorMsg = validateNotExecuteFormEntry(binding);
+                if(errorMsg.isEmpty()){
                     mTicket.setUpdate_required_status(1);
                     if(!binding.act070NotExecuteDialogJustifyCommentsActv.getText().toString().isEmpty()) {
                         mTicket.setNot_executed_comments(binding.act070NotExecuteDialogJustifyCommentsActv.getText().toString());
@@ -567,30 +595,52 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                         mTicket.setJustify_item_code(Integer.valueOf(Objects.requireNonNull(justifyHM.get(SearchableSpinner.CODE))));
                     }
                     //
-                    dialog.dismiss();
+                    notExecutedDialog.dismiss();
                     mPresenter.defineNotExecuteFlow(mTicket);
                 }else{
                     showAlert(
                             hmAux_Trans.get("alert_not_execute_justify_comment_required_ttl"),
-                            hmAux_Trans.get("alert_not_execute_justify_comment_required_msg")
+                            errorMsg
                     );
+                }
+            }
+        });
+        notExecutedDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                if(binding.act070IvJustifyPhoto.getTag() instanceof Boolean
+                        && (Boolean) binding.act070IvJustifyPhoto.getTag()) {
+                    resetNotExecutedFile();
                 }
             }
         });
         //
     }
 
-    private boolean validateNotExecuteFormEntry(TicketNotExecutedDialogBinding act070NotExecuteDialogJustifyOptionSs) {
+    private void resetNotExecutedFile() {
+        String tempPath = ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + ToolBox_Inf.buildTicketNotExecutedImgPath(mTicket);
+        File temp = new File(tempPath);
+        if (temp.length() > 0) {
+            temp.delete();
+        }
+    }
+
+    private String validateNotExecuteFormEntry(TicketNotExecutedDialogBinding binding) {
+        String errorMsg = "";
         HMAux hmAux = binding.act070NotExecuteDialogJustifyOptionSs.getmValue();
         if(hmAux.hasConsistentValue(MdJustifyItemDao.REQUIRED_COMMENT)
                 && "1".equals(hmAux.get(MdJustifyItemDao.REQUIRED_COMMENT))){
             if( binding.act070NotExecuteDialogJustifyCommentsActv == null
             || binding.act070NotExecuteDialogJustifyCommentsActv.getText() == null
             || binding.act070NotExecuteDialogJustifyCommentsActv.getText().toString().isEmpty()){
-                return false;
+                 errorMsg = hmAux_Trans.get("alert_not_execute_justify_comment_required_msg");
             }
         }
-        return true;
+        if( binding.act070NotExecuteDialogJustifyOptionSs.getVisibility() == View.VISIBLE
+        && !hmAux.hasConsistentValue(SearchableSpinner.CODE)){
+            errorMsg += hmAux_Trans.get("alert_not_execute_justify_option_required_msg");
+        }
+        return errorMsg;
     }
 
     private void checkEditFlow() {
@@ -1158,7 +1208,6 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                             || ConstantBaseApp.FAB_NOT_EXECUTE_LBL.equals(fabMenuItem.getTag())
                     ) {
                         fabMenu.removeFabMenuItens(fabMenuItem);
-                        break;
                     }
                 }
             }

@@ -2607,7 +2607,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             baseSteps.add(
                     new StepNotExecuted(
                             hmAux_Trans.get("cell_not_execute_justify_lbl"),
-                            mTicket.getJustify_item_code() == null? "": getJustifyFormated(mTicket),
+                            mTicket.getJustify_item_code() == null? "": mTicket.getJustify_item_desc(),
                             mTicket.getNot_executed_comments(),
                             mTicket.getClose_user_name(),
                             mTicket.getClose_user() == null? "": mTicket.getClose_user().toString(),
