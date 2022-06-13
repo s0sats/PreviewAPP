@@ -358,6 +358,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("alert_not_execute_justify_comment_required_msg");
         transList.add("alert_not_execute_justify_option_required_msg");
         transList.add("cell_not_execute_justify_lbl");
+        transList.add("alert_not_execute_justify_lost_data_ttl");
+        transList.add("alert_not_execute_justify_lost_data_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -443,7 +445,14 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                                 callAct075(PRODUCT_VIEW_ID);
                                 break;
                             case ConstantBaseApp.FAB_NOT_EXECUTE_LBL:
-                                createNotExecuteDialog();
+                                if (ToolBox_Inf.hasOffHandFormInProcess(context, mTkPrefix, mTkCode)) {
+                                    showAlert(
+                                            hmAux_Trans.get("alert_ticket_has_off_hand_form_in_process_ttl"),
+                                            hmAux_Trans.get("alert_ticket_has_off_hand_form_in_process_msg")
+                                    );
+                                }else {
+                                    createNotExecuteDialog();
+                                }
                                 break;
                             case ConstantBaseApp.FAB_TO_STEP_LBL:
                                 break;
@@ -596,7 +605,14 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                     }
                     //
                     notExecutedDialog.dismiss();
-                    mPresenter.defineNotExecuteFlow(mTicket);
+                    if (ToolBox_Inf.hasOffHandFormInProcess(context, mTkPrefix, mTkCode)) {
+                        showAlert(
+                                hmAux_Trans.get("alert_ticket_has_off_hand_form_in_process_ttl"),
+                                hmAux_Trans.get("alert_ticket_has_off_hand_form_in_process_msg")
+                        );
+                    }else {
+                        mPresenter.defineNotExecuteFlow(mTicket);
+                    }
                 }else{
                     showAlert(
                             hmAux_Trans.get("alert_not_execute_justify_comment_required_ttl"),
@@ -1202,13 +1218,18 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private void handleFabMenuOnTicketStatusChanged() {
         if(mPresenter.getReadOnlyDefinition(mTicket)){
             ArrayList<FabMenuItem> fabMenuItems = fabMenu.getmButtons();
+            ArrayList<FabMenuItem> fabMenuItemsRemoved = new ArrayList<>();
             if (!fabMenuItems.isEmpty()) {
                 for (FabMenuItem fabMenuItem : fabMenuItems) {
                     if(ConstantBaseApp.FAB_TO_WORK_GROUP_EDIT_LBL.equals(fabMenuItem.getTag())
                             || ConstantBaseApp.FAB_NOT_EXECUTE_LBL.equals(fabMenuItem.getTag())
                     ) {
-                        fabMenu.removeFabMenuItens(fabMenuItem);
+                        fabMenuItemsRemoved.add(fabMenuItem);
                     }
+                }
+                //
+                for(FabMenuItem fabMenuItem: fabMenuItemsRemoved){
+                    fabMenu.removeFabMenuItens(fabMenuItem);
                 }
             }
         }else{
