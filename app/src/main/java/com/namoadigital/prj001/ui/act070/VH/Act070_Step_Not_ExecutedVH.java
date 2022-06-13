@@ -42,7 +42,7 @@ public class Act070_Step_Not_ExecutedVH extends RecyclerView.ViewHolder{
     }
 
     private void bindViews() {
-        stepNotExecutedIvIcon = this.itemView.findViewById(R.id.step_main_tv_step_num);
+        stepNotExecutedIvIcon = this.itemView.findViewById(R.id.step_not_executed_main_iv_step_num);
         stepNotExecutedTvJustifyLbl = this.itemView.findViewById(R.id.step_not_executed_tv_justify_lbl);
         stepNotExecutedTvJustify = this.itemView.findViewById(R.id.step_not_executed_tv_justify);
         stepNotExecutedTvComment = this.itemView.findViewById(R.id.step_not_executed_tv_comment);
