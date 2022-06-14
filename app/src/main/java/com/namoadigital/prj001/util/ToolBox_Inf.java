@@ -8464,6 +8464,7 @@ public class ToolBox_Inf {
 //        fabMenuItems.add(fabProduct);
         //Nao executar.
         if(!ticket.isReadOnly(context)
+        && ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_TICKET, ConstantBaseApp.PROFILE_MENU_TICKET_PARAM_NOT_EXECUTED)
         && context instanceof Act070_Main) {
             fabNotExecuted = new FabMenuItem(context);
             fabNotExecuted.setTag(ConstantBaseApp.FAB_NOT_EXECUTE_LBL);

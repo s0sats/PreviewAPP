@@ -615,6 +615,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_MENU_TICKET_PARAM_EDIT_HEADER = "EDIT_HEADER";
     public static final String PROFILE_MENU_TICKET_PARAM_STEP_EDIT_TIME = "STEP_EDIT_TIME";
     public static final String PROFILE_MENU_TICKET_PARAM_CLAIM_SPECIAL_EXECUTION_PERMITION = "CLAIM_SPECIAL_EXECUTION_PERMITION";
+    public static final String PROFILE_MENU_TICKET_PARAM_NOT_EXECUTED = "NOT_EXECUTED";
 
     //Modulos
     public static final String MODULE_CHECKLIST = "MODULE_CHECKLIST";

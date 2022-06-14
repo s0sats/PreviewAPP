@@ -1448,8 +1448,9 @@ public class TK_Ticket implements Cloneable, Serializable {
     }
 
     public boolean isReadOnlyStatus() {
-        return !ConstantBaseApp.SYS_STATUS_PENDING.equalsIgnoreCase(ticket_status)
-                && !ConstantBaseApp.SYS_STATUS_PROCESS.equalsIgnoreCase(ticket_status);
+        return (!ConstantBaseApp.SYS_STATUS_PENDING.equalsIgnoreCase(ticket_status)
+                && !ConstantBaseApp.SYS_STATUS_PROCESS.equalsIgnoreCase(ticket_status))
+                || update_required_status == 1;
     }
 
     public static boolean isReadOnlyStatus(String ticketStatus) {

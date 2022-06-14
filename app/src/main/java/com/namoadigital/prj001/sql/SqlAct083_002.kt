@@ -142,6 +142,7 @@ class SqlAct083_002(
                      ts.${TK_Ticket_StepDao.FORECAST_END},
                      max(
                             t.${TK_TicketDao.UPDATE_REQUIRED},
+                            t.${TK_TicketDao.UPDATE_REQUIRED_STATUS},
                             t.${TK_TicketDao.UPDATE_REQUIRED_PRODUCT},
                             ifnull(ts.$INNER_UPDATE_REQUIRED,0)
                      ) $TOTAL_UPDATE_REQUIRED                                           
