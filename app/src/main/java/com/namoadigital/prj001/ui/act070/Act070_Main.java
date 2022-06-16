@@ -152,6 +152,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private String originFlow;
     private TicketNotExecutedDialogBinding binding;
     private boolean fromCamera = false;
+    private boolean assertSingleTouch = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -435,34 +436,40 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                 new FabMenu.IFabMenu() {
                     @Override
                     public void onFabClick(View view) {
-                        String tag = (String) view.getTag();
-                        //
-                        switch (tag){
-                            case ConstantBaseApp.FAB_TO_ORIGIN_LBL:
-                                callOrigin();
-                                break;
-                            case ConstantBaseApp.FAB_TO_PRODUCT_LBL:
-                                callAct075(PRODUCT_VIEW_ID);
-                                break;
-                            case ConstantBaseApp.FAB_NOT_EXECUTE_LBL:
-                                if (ToolBox_Inf.hasOffHandFormInProcess(context, mTkPrefix, mTkCode)) {
-                                    showAlert(
-                                            hmAux_Trans.get("alert_ticket_has_off_hand_form_in_process_ttl"),
-                                            hmAux_Trans.get("alert_ticket_has_off_hand_form_in_process_msg")
-                                    );
-                                }else {
-                                    createNotExecuteDialog();
-                                }
-                                break;
-                            case ConstantBaseApp.FAB_TO_STEP_LBL:
-                                break;
-                            case ConstantBaseApp.FAB_TO_HEADER_EDIT_LBL:
-                                callAct082();
-                                break;
-                            case ConstantBaseApp.FAB_TO_WORK_GROUP_EDIT_LBL:
-                                checkEditFlow();
-                                break;
+                        if(assertSingleTouch) {
+                            assertSingleTouch = false;
+                            String tag = (String) view.getTag();
+                            //
+                            switch (tag) {
+                                case ConstantBaseApp.FAB_TO_ORIGIN_LBL:
+                                    callOrigin();
+                                    break;
+                                case ConstantBaseApp.FAB_TO_PRODUCT_LBL:
+                                    callAct075(PRODUCT_VIEW_ID);
+                                    break;
+                                case ConstantBaseApp.FAB_NOT_EXECUTE_LBL:
+                                    if (ToolBox_Inf.hasOffHandFormInProcess(context, mTkPrefix, mTkCode)
+                                            || mPresenter.hasFormInProcess(mTicket)
+                                    ) {
+                                        showAlert(
+                                                hmAux_Trans.get("alert_ticket_has_off_hand_form_in_process_ttl"),
+                                                hmAux_Trans.get("alert_ticket_has_off_hand_form_in_process_msg")
+                                        );
+                                    } else {
+                                        createNotExecuteDialog();
+                                    }
+                                    break;
+                                case ConstantBaseApp.FAB_TO_STEP_LBL:
+                                    break;
+                                case ConstantBaseApp.FAB_TO_HEADER_EDIT_LBL:
+                                    callAct082();
+                                    break;
+                                case ConstantBaseApp.FAB_TO_WORK_GROUP_EDIT_LBL:
+                                    checkEditFlow();
+                                    break;
+                            }
                         }
+                        assertSingleTouch = true;
                         //
                     }
 

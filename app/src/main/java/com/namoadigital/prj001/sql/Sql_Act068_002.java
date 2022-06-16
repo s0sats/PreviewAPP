@@ -44,6 +44,7 @@ public class Sql_Act068_002 implements Specification {
                         "  \n" +
                         "  and t.sync_required = 1\n" +
                         "  and t.update_required_product = 0\n" +
+                        "  and t.update_required_status = 0\n" +
                         "  and t.update_required = 0\n" +
                         "  and s.update_required = 0\n" +
                         "  and c.update_required = 0\n" +

@@ -171,5 +171,7 @@ public interface Act070_Main_Contract {
          ArrayList<HMAux> getJustifyItems(TK_Ticket ticket);
 
         void defineNotExecuteFlow(TK_Ticket mTicket);
+
+        boolean hasFormInProcess(TK_Ticket mTicket);
     }
 }
