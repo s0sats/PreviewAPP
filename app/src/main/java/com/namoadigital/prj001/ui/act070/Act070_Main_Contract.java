@@ -173,5 +173,7 @@ public interface Act070_Main_Contract {
         void defineNotExecuteFlow(TK_Ticket mTicket);
 
         boolean hasFormInProcess(TK_Ticket mTicket);
+
+        boolean hasNonExecutionRestriction(TK_Ticket mTicket);
     }
 }

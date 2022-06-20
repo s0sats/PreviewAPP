@@ -515,6 +515,26 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 && tkCtrl.getStep_order().equals(mTicket.getCurrent_step_order());
     }
 
+    @Override
+    public boolean hasNonExecutionRestriction(TK_Ticket mTicket) {
+        return ToolBox_Inf.hasOffHandFormInProcess(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())
+                || hasFormInProcess(mTicket)
+                || hasSyncRequiredByFcmScn(mTicket.getTicket_prefix(), mTicket.getTicket_code())
+                || isOfflineFinished(mTicket.getTicket_prefix(), mTicket.getTicket_code());
+    }
+
+    private boolean isOfflineFinished(int ticket_prefix, int ticket_code) {
+        TK_Ticket dbTicket = getTicketObj(ticket_prefix,ticket_code);
+        if(dbTicket != null) {
+            for (TK_Ticket_Step step : dbTicket.getStep()) {
+                if (step.getStep_end_date() == null) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     private void uploadNotExecutedImage(TK_Ticket mTicket) {
         GE_FileDao geFileDao = new GE_FileDao(
                 context,

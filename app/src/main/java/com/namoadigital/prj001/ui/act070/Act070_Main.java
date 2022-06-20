@@ -361,6 +361,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("alert_not_execute_justify_lost_data_ttl");
         transList.add("alert_not_execute_justify_lost_data_msg");
         transList.add("alert_not_execute_add_photo_btn");
+        transList.add("alert_update_ticket_to_not_execute_ttl");
+        transList.add("alert_update_ticket_to_not_execute_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -448,12 +450,10 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                                     callAct075(PRODUCT_VIEW_ID);
                                     break;
                                 case ConstantBaseApp.FAB_NOT_EXECUTE_LBL:
-                                    if (ToolBox_Inf.hasOffHandFormInProcess(context, mTkPrefix, mTkCode)
-                                            || mPresenter.hasFormInProcess(mTicket)
-                                    ) {
+                                    if (mPresenter.hasNonExecutionRestriction(mTicket)) {
                                         showAlert(
-                                                hmAux_Trans.get("alert_ticket_has_off_hand_form_in_process_ttl"),
-                                                hmAux_Trans.get("alert_ticket_has_off_hand_form_in_process_msg")
+                                                hmAux_Trans.get("alert_update_ticket_to_not_execute_ttl"),
+                                                hmAux_Trans.get("alert_update_ticket_to_not_execute_msg")
                                         );
                                     } else {
                                         createNotExecuteDialog();
