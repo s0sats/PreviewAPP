@@ -74,6 +74,7 @@ import com.namoadigital.prj001.sql.Sql_Act070_002;
 import com.namoadigital.prj001.sql.Sql_Act070_003;
 import com.namoadigital.prj001.sql.Sql_Act070_006;
 import com.namoadigital.prj001.sql.Sql_Act070_007;
+import com.namoadigital.prj001.sql.Sql_Act070_009;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_006;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
@@ -493,8 +494,25 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     @Override
     public void defineNotExecuteFlow(TK_Ticket mTicket) {
         ticketDao.addUpdate(mTicket);
-        uploadNotExecutedImage(mTicket);
+        if(mTicket.getNot_executed_photo_name() != null) {
+            uploadNotExecutedImage(mTicket);
+        }
         prepareSyncProcess(mTicket, true);
+    }
+
+    @Override
+    public boolean hasFormInProcess(TK_Ticket mTicket) {
+
+        TK_Ticket_Ctrl tkCtrl = ticketCtrlDao.getByString(
+                new Sql_Act070_009(
+                        mTicket.getCustomer_code(),
+                        mTicket.getTicket_prefix(),
+                        mTicket.getTicket_code()
+                ).toSqlQuery()
+        );
+        return tkCtrl != null
+                && tkCtrl.getStep_order()!= null
+                && tkCtrl.getStep_order().equals(mTicket.getCurrent_step_order());
     }
 
     private void uploadNotExecutedImage(TK_Ticket mTicket) {
@@ -504,8 +522,9 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 Constant.DB_VERSION_CUSTOM
         );
         //
-        File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + ToolBox_Inf.buildTicketNotExecutedImgPath(mTicket));
-        if (sFile.exists()) {
+        File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + mTicket.getNot_executed_photo_name());
+        if (sFile.exists()
+                && !sFile.isDirectory()) {
             GE_File geFile = new GE_File();
             geFile.setFile_code(mTicket.getNot_executed_photo_name().replace(".png", "").replace(".jpg", ""));
             geFile.setFile_path(mTicket.getNot_executed_photo_name());
@@ -2796,6 +2815,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
      */
     private String getFooterDate(TK_Ticket mTicket) {
         return ConstantBaseApp.SYS_STATUS_DONE.equals(mTicket.getTicket_status())
+            || ConstantBaseApp.SYS_STATUS_NOT_EXECUTED.equals(mTicket.getTicket_status())
             ? mTicket.getClose_date()
             : mTicket.getForecast_date();
     }

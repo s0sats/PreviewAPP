@@ -4,12 +4,13 @@ import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.ui.act070.model.StepFooter;
@@ -53,6 +54,10 @@ public class Act070_Step_FooterVH extends RecyclerView.ViewHolder{
         if(ConstantBaseApp.SYS_STATUS_DONE.equals(stepFooter.getTicketStatus())){
             color = ContextCompat.getColor(context,R.color.namoa_status_done);
             fontColor = ContextCompat.getColor(context,R.color.namoa_status_done);
+            typeface = Typeface.defaultFromStyle(Typeface.BOLD);
+        }else if(ConstantBaseApp.SYS_STATUS_NOT_EXECUTED.equals(stepFooter.getTicketStatus())){
+            color = ContextCompat.getColor(context,R.color.namoa_status_not_executed);
+            fontColor = ContextCompat.getColor(context,R.color.namoa_status_not_executed);
             typeface = Typeface.defaultFromStyle(Typeface.BOLD);
         }
         drawable.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);

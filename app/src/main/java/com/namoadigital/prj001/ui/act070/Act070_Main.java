@@ -13,8 +13,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
@@ -152,6 +150,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private String originFlow;
     private TicketNotExecutedDialogBinding binding;
     private boolean fromCamera = false;
+    private boolean assertSingleTouch = true;
+    private Dialog notExecutedDialog = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -360,6 +360,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("cell_not_execute_justify_lbl");
         transList.add("alert_not_execute_justify_lost_data_ttl");
         transList.add("alert_not_execute_justify_lost_data_msg");
+        transList.add("alert_not_execute_add_photo_btn");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -435,34 +436,40 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                 new FabMenu.IFabMenu() {
                     @Override
                     public void onFabClick(View view) {
-                        String tag = (String) view.getTag();
-                        //
-                        switch (tag){
-                            case ConstantBaseApp.FAB_TO_ORIGIN_LBL:
-                                callOrigin();
-                                break;
-                            case ConstantBaseApp.FAB_TO_PRODUCT_LBL:
-                                callAct075(PRODUCT_VIEW_ID);
-                                break;
-                            case ConstantBaseApp.FAB_NOT_EXECUTE_LBL:
-                                if (ToolBox_Inf.hasOffHandFormInProcess(context, mTkPrefix, mTkCode)) {
-                                    showAlert(
-                                            hmAux_Trans.get("alert_ticket_has_off_hand_form_in_process_ttl"),
-                                            hmAux_Trans.get("alert_ticket_has_off_hand_form_in_process_msg")
-                                    );
-                                }else {
-                                    createNotExecuteDialog();
-                                }
-                                break;
-                            case ConstantBaseApp.FAB_TO_STEP_LBL:
-                                break;
-                            case ConstantBaseApp.FAB_TO_HEADER_EDIT_LBL:
-                                callAct082();
-                                break;
-                            case ConstantBaseApp.FAB_TO_WORK_GROUP_EDIT_LBL:
-                                checkEditFlow();
-                                break;
+                        if(assertSingleTouch) {
+                            assertSingleTouch = false;
+                            String tag = (String) view.getTag();
+                            //
+                            switch (tag) {
+                                case ConstantBaseApp.FAB_TO_ORIGIN_LBL:
+                                    callOrigin();
+                                    break;
+                                case ConstantBaseApp.FAB_TO_PRODUCT_LBL:
+                                    callAct075(PRODUCT_VIEW_ID);
+                                    break;
+                                case ConstantBaseApp.FAB_NOT_EXECUTE_LBL:
+                                    if (ToolBox_Inf.hasOffHandFormInProcess(context, mTkPrefix, mTkCode)
+                                            || mPresenter.hasFormInProcess(mTicket)
+                                    ) {
+                                        showAlert(
+                                                hmAux_Trans.get("alert_ticket_has_off_hand_form_in_process_ttl"),
+                                                hmAux_Trans.get("alert_ticket_has_off_hand_form_in_process_msg")
+                                        );
+                                    } else {
+                                        createNotExecuteDialog();
+                                    }
+                                    break;
+                                case ConstantBaseApp.FAB_TO_STEP_LBL:
+                                    break;
+                                case ConstantBaseApp.FAB_TO_HEADER_EDIT_LBL:
+                                    callAct082();
+                                    break;
+                                case ConstantBaseApp.FAB_TO_WORK_GROUP_EDIT_LBL:
+                                    checkEditFlow();
+                                    break;
+                            }
                         }
+                        assertSingleTouch = true;
                         //
                     }
 
@@ -477,18 +484,23 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private void createNotExecuteDialog() {
         DisplayMetrics dm = context.getResources().getDisplayMetrics();
         float dmW = (float) dm.widthPixels * 0.95f;
-        float dmH = (float) dm.heightPixels * 0.95f;
-        Dialog notExecutedDialog = new Dialog(context);
-        //
-        binding = TicketNotExecutedDialogBinding.inflate(getLayoutInflater());
-        //
-        notExecutedDialog.setContentView(binding.getRoot());
-        //
-        setLabel(binding);
-        setActions(binding, notExecutedDialog);
-        notExecutedDialog.getWindow().setLayout((int) dmW, ViewGroup.LayoutParams.WRAP_CONTENT);
-        notExecutedDialog.setCanceledOnTouchOutside(false);
-        notExecutedDialog.show();
+//        float dmH = (float) dm.heightPixels * 0.95f;
+        if(notExecutedDialog == null) {
+            notExecutedDialog = new Dialog(context);
+            //
+            binding = TicketNotExecutedDialogBinding.inflate(getLayoutInflater());
+            //
+            notExecutedDialog.setContentView(binding.getRoot());
+            //
+            setLabel(binding);
+            setActions(binding, notExecutedDialog);
+            notExecutedDialog.getWindow().setLayout((int) dmW, ViewGroup.LayoutParams.WRAP_CONTENT);
+            notExecutedDialog.setCanceledOnTouchOutside(false);
+            notExecutedDialog.show();
+        }else{
+            setJustifyImage(binding);
+            notExecutedDialog.show();
+        }
         //
     }
 
@@ -516,6 +528,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         binding.act070NotExecuteDialogJustifyCommentsTil.setHint(hmAux_Trans.get("alert_not_execute_justify_comment_lbl"));
         binding.act070NotExecuteDialogJustifyBtnCancel.setText(hmAux_Trans.get("sys_alert_btn_cancel"));
         binding.act070NotExecuteDialogJustifyBtnSave.setText(hmAux_Trans.get("alert_not_execute_save_btn"));
+        binding.act070IvJustifyPhotoBtn.setText(hmAux_Trans.get("alert_not_execute_add_photo_btn"));
         resetNotExecutedFile();
         setJustifyImage(binding);
     }
@@ -524,15 +537,15 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         try{
             Bitmap bitmap = BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + ToolBox_Inf.buildTicketNotExecutedImgPath(mTicket));
             if(bitmap != null) {
+                binding.act070IvJustifyPhoto.setVisibility(View.VISIBLE);
+                binding.act070IvJustifyPhotoBtn.setVisibility(View.GONE);
                 binding.act070IvJustifyPhoto.setImageBitmap(bitmap);
                 binding.act070IvJustifyPhoto.setTag(Boolean.TRUE);
                 binding.act070IvJustifyPhoto.postInvalidate();
             }else{
+                binding.act070IvJustifyPhoto.setVisibility(View.GONE);
+                binding.act070IvJustifyPhotoBtn.setVisibility(View.VISIBLE);
                 binding.act070IvJustifyPhoto.setTag(Boolean.FALSE);
-                Drawable placeHolder;
-                placeHolder = getResources().getDrawable(R.drawable.ic_foto_ns_black);
-                placeHolder.setColorFilter(context.getResources().getColor(R.color.namoa_dark_blue), PorterDuff.Mode.SRC_ATOP);
-                binding.act070IvJustifyPhoto.setImageDrawable(placeHolder);
             }
         } catch (NullPointerException e ){
             e.printStackTrace();
@@ -542,6 +555,17 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private void setActions(TicketNotExecutedDialogBinding binding, Dialog notExecutedDialog) {
         //
         binding.act070IvJustifyPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fromCamera = true;
+                callCameraAct(
+                        binding.act070IvJustifyPhoto.getId(),
+                        TEMP_SUFIX_FILE + ToolBox_Inf.buildTicketNotExecutedImgPath(mTicket),
+                        !bReadOnly,
+                        !bReadOnly);
+            }
+        });
+        binding.act070IvJustifyPhotoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 fromCamera = true;
@@ -960,7 +984,10 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         super.onResume();
         if(fromCamera){
             fromCamera = false;
-            setJustifyImage(binding);
+            if(notExecutedDialog != null) {
+                notExecutedDialog.invalidateOptionsMenu();
+                setJustifyImage(binding);
+            }
         }
         //openCurrentSteps();
     }

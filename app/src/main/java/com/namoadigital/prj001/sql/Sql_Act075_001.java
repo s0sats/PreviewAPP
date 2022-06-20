@@ -37,6 +37,7 @@ public class Sql_Act075_001 implements Specification {
                         "  and s.ticket_code = c.ticket_code\n" +
                         "  and s.step_code = c.step_code\n" +
                         "  and (t.update_required_product = 1\n" +
+                        "  or t.update_required_status = 1\n" +
                         "  or t.update_required = 1\n" +
                         "  or s.update_required = 1\n" +
                         "  or c.update_required = 1)"
