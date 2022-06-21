@@ -363,6 +363,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("alert_not_execute_add_photo_btn");
         transList.add("alert_update_ticket_to_not_execute_ttl");
         transList.add("alert_update_ticket_to_not_execute_msg");
+        transList.add("alert_form_in_process_to_not_execute_msg");
+        transList.add("alert_sync_to_not_execute_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -450,10 +452,14 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                                     callAct075(PRODUCT_VIEW_ID);
                                     break;
                                 case ConstantBaseApp.FAB_NOT_EXECUTE_LBL:
-                                    if (mPresenter.hasNonExecutionRestriction(mTicket)) {
+                                    String errorMsg = mPresenter.hasNonExecutionRestriction(mTicket);
+                                    if (!errorMsg.isEmpty()) {
+                                        String formattedErrorMsg = hmAux_Trans.get("alert_update_ticket_to_not_execute_msg")
+                                                + "\n"
+                                                + errorMsg;
                                         showAlert(
                                                 hmAux_Trans.get("alert_update_ticket_to_not_execute_ttl"),
-                                                hmAux_Trans.get("alert_update_ticket_to_not_execute_msg")
+                                                formattedErrorMsg
                                         );
                                     } else {
                                         createNotExecuteDialog();
@@ -1905,8 +1911,12 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             wsProcess = "";
             progressDialog.dismiss();
             if(save_return == null || save_return.isEmpty()) {
-                StepForm stepForm = (StepForm) sources.get(lastPositionClicked);
-                mPresenter.defineAfterFormSyncProcess(mTicket, stepForm, true);
+                if(lastPositionClicked >= 0) {
+                    StepForm stepForm = (StepForm) sources.get(lastPositionClicked);
+                    mPresenter.defineAfterFormSyncProcess(mTicket, stepForm, true);
+                }else{
+                    refreshUi();
+                }
             }else{
                 mPresenter.processSaveReturn(mTicket.getTicket_prefix(), mTicket.getTicket_code(), save_return);
                 save_return = "";

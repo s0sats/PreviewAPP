@@ -174,6 +174,6 @@ public interface Act070_Main_Contract {
 
         boolean hasFormInProcess(TK_Ticket mTicket);
 
-        boolean hasNonExecutionRestriction(TK_Ticket mTicket);
+        String hasNonExecutionRestriction(TK_Ticket mTicket);
     }
 }

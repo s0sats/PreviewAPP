@@ -16,6 +16,7 @@ import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
@@ -516,11 +517,19 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     }
 
     @Override
-    public boolean hasNonExecutionRestriction(TK_Ticket mTicket) {
-        return ToolBox_Inf.hasOffHandFormInProcess(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())
-                || hasFormInProcess(mTicket)
-                || hasSyncRequiredByFcmScn(mTicket.getTicket_prefix(), mTicket.getTicket_code())
-                || isOfflineFinished(mTicket.getTicket_prefix(), mTicket.getTicket_code());
+    public String hasNonExecutionRestriction(TK_Ticket mTicket) {
+        String errorMsg = "";
+        if(ToolBox_Inf.hasOffHandFormInProcess(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())
+                || hasFormInProcess(mTicket)){
+            errorMsg += context.getString(R.string.unicode_bullet) + " " + hmAux_Trans.get("alert_form_in_process_to_not_execute_msg") + "\n";
+        }
+        //
+        if(hasSyncRequiredByFcmScn(mTicket.getTicket_prefix(), mTicket.getTicket_code())
+                || isOfflineFinished(mTicket.getTicket_prefix(), mTicket.getTicket_code())){
+            errorMsg += context.getString(R.string.unicode_bullet) + " " + hmAux_Trans.get("alert_sync_to_not_execute_msg") + "\n";
+        }
+
+        return errorMsg;
     }
 
     private boolean isOfflineFinished(int ticket_prefix, int ticket_code) {
