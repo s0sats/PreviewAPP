@@ -151,7 +151,6 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private TicketNotExecutedDialogBinding binding;
     private boolean fromCamera = false;
     private boolean assertSingleTouch = true;
-    private Dialog notExecutedDialog = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -491,22 +490,17 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         DisplayMetrics dm = context.getResources().getDisplayMetrics();
         float dmW = (float) dm.widthPixels * 0.95f;
 //        float dmH = (float) dm.heightPixels * 0.95f;
-        if(notExecutedDialog == null) {
-            notExecutedDialog = new Dialog(context);
-            //
-            binding = TicketNotExecutedDialogBinding.inflate(getLayoutInflater());
-            //
-            notExecutedDialog.setContentView(binding.getRoot());
-            //
-            setLabel(binding);
-            setActions(binding, notExecutedDialog);
-            notExecutedDialog.getWindow().setLayout((int) dmW, ViewGroup.LayoutParams.WRAP_CONTENT);
-            notExecutedDialog.setCanceledOnTouchOutside(false);
-            notExecutedDialog.show();
-        }else{
-            setJustifyImage(binding);
-            notExecutedDialog.show();
-        }
+        Dialog notExecutedDialog = new Dialog(context);
+        //
+        binding = TicketNotExecutedDialogBinding.inflate(getLayoutInflater());
+        //
+        notExecutedDialog.setContentView(binding.getRoot());
+        //
+        setLabel(binding);
+        setActions(binding, notExecutedDialog);
+        notExecutedDialog.getWindow().setLayout((int) dmW, ViewGroup.LayoutParams.WRAP_CONTENT);
+        notExecutedDialog.setCancelable(false);
+        notExecutedDialog.show();
         //
     }
 
@@ -657,6 +651,12 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                 if(binding.act070IvJustifyPhoto.getTag() instanceof Boolean
                         && (Boolean) binding.act070IvJustifyPhoto.getTag()) {
                     resetNotExecutedFile();
+                }
+                //
+                try {
+                    ToolBox_Inf.hideSoftKeyboard(Act070_Main.this);
+                } catch (Exception e){
+                    e.printStackTrace();
                 }
             }
         });
@@ -990,10 +990,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         super.onResume();
         if(fromCamera){
             fromCamera = false;
-            if(notExecutedDialog != null) {
-                notExecutedDialog.invalidateOptionsMenu();
-                setJustifyImage(binding);
-            }
+            setJustifyImage(binding);
         }
         //openCurrentSteps();
     }
