@@ -25,6 +25,7 @@ class GeOsDeviceItem(
     val item_check_seq :Int,
     val item_check_id :String,
     val item_check_desc :String,
+    @SerializedName("item_check_group_code") var item_check_group_code: Int?,
     val apply_material :String,
     val verification_instruction :String?,
     val require_justify_problem :Int,

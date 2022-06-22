@@ -33,6 +33,7 @@ class MD_Product_Serial_Tp_DeviceDao(
         const val DEVICE_TP_CODE = "device_tp_code"
         const val ORDER_SEQ = "order_seq"
         const val TRACKING_NUMBER = "tracking_number"
+        const val SHOW_EMPTY = "show_empty"
     }
 
     private val toMD_Product_Serial_Tp_DeviceMapper: Mapper<Cursor,MD_Product_Serial_Tp_Device>
@@ -392,6 +393,10 @@ class MD_Product_Serial_Tp_DeviceDao(
                         put(ORDER_SEQ,mdProductSerialTpDevice.order_seq)
                     }
                     put(TRACKING_NUMBER,mdProductSerialTpDevice.tracking_number)
+                    //
+                    if(mdProductSerialTpDevice.show_empty > -1){
+                        put(SHOW_EMPTY,mdProductSerialTpDevice.show_empty)
+                    }
                 }
             }
             //

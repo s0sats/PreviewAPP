@@ -6,5 +6,6 @@ class MdItemCheck(
     @SerializedName("customer_code") val customerCode: Long,
     @SerializedName("item_check_code") val itemCheckCode: Int,
     @SerializedName("item_check_id") val itemCheckId: String,
-    @SerializedName("item_check_desc") val itemCheckDesc: String
+    @SerializedName("item_check_desc") val itemCheckDesc: String,
+    @SerializedName("item_check_group_code") val itemCheckGroupCode: Int?
 )

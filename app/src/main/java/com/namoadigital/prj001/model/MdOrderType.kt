@@ -8,7 +8,8 @@ class MdOrderType(
     @SerializedName("order_type_id") val orderTypeId: String,
     @SerializedName("order_type_desc") val orderTypeDesc: String,
     @SerializedName("process_type") val processType: String,
-    @SerializedName("display_option") val displayOption: String
+    @SerializedName("display_option") val displayOption: String,
+    @SerializedName("item_check_group_code") val itemCheckGroupCode: Int?
 ){
    companion object {
         //Valor para process_type

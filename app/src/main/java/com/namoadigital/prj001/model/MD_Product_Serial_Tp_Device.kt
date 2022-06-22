@@ -1,9 +1,12 @@
 package com.namoadigital.prj001.model
 
+import com.google.gson.annotations.SerializedName
+
 class MD_Product_Serial_Tp_Device(
     val device_tp_code: Int,
     val order_seq: Int,
-    val tracking_number: String? = null
+    val tracking_number: String? = null,
+    @SerializedName("show_empty") var show_empty: Int = 0
 ) {
     var customer_code: Long = -1
         private set

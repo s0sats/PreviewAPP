@@ -225,7 +225,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                     "",
                     "",
                     "",
-                    ""
+                    "",
+                    null
                 )
             )
         }
@@ -247,7 +248,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                     formOsHeader.order_type_id,
                     formOsHeader.order_type_desc,
                     formOsHeader.process_type,
-                    formOsHeader.display_option
+                    formOsHeader.display_option,
+                    formOsHeader.item_check_group_code
                 )
             )
         }
