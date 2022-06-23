@@ -648,7 +648,11 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                     )
                 );
             }
-            acessoryFormViews.add(acessoryFormView);
+            //
+            if(!inspections.isEmpty() || device.getShow_empty() == 1) {
+                acessoryFormViews.add(acessoryFormView);
+            }
+            //
         }
         return acessoryFormViews;
     }
