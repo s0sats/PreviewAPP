@@ -150,6 +150,11 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
             //
             script.append("CREATE TABLE IF NOT EXISTS [md_justify_item] ([customer_code] int not null,[justify_group_code] int not null,[justify_item_code] int not null collate nocase,[justify_item_id] text not null collate nocase,[justify_item_desc] text not null collate nocase,[required_comment] int not null collate nocase,[reschedule] int not null collate nocase, constraint [pk_md_tag] primary key(customer_code,justify_group_code,justify_item_code));");
             //
+            script.append("create table if not exists [tk_ticket_type_products] ([customer_code] int not null, [ticket_type_code] int not null, [product_code] int not null, constraint pk_tk_ticket_type_products primary key([customer_code], [ticket_type_code]));");
+            script.append("create table if not exists [tk_ticket_type_operations] ([customer_code] int NOT NULL, [ticket_type_code] int NOT NULL, [operation_code] int not null, constraint pk_tk_ticket_type_operations primary key([customer_code], [ticket_type_code]));");
+            script.append("create table if not exists [tk_ticket_type_sites] ([customer_code] int not null, [ticket_type_code] int not null, [site_code] int not null, constraint pk_tk_ticket_type_sites primary key([customer_code], [ticket_type_code]));");
+            script.append("create table if not exists [tk_ticket_type] ([customer_code] int not null, [ticket_type_code] int not null, [type_id] text not null collate nocase, [type_desc] text not null collate nocase,[all_site] int not null,[all_operation] int not null,[all_product] int not null,[tag_operational_code] int not null, constraint pk_tk_ticket_type_sites primary key([customer_code], [ticket_type_code]));");
+            //
             String[] scripts = script.toString().split(";");
             String[] scripts_dados = script_dados.toString().split(";");
             //
