@@ -23,7 +23,7 @@ class TkTicketTypeOperationDao(
 ), DaoWithReturn<TkTicketTypeOperation> {
 
     companion object {
-        const val TABLE = "tk_ticket_type"
+        const val TABLE = "tk_ticket_type_operations"
         const val CUSTOMER_CODE = "customer_code"
         const val TICKET_TYPE_CODE = "ticket_type_code"
         const val OPERATION_CODE = "operation_code"

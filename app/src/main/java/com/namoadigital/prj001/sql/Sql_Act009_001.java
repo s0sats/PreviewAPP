@@ -5,6 +5,10 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ProductDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_SiteDao;
 import com.namoadigital.prj001.dao.MdTagDao;
+import com.namoadigital.prj001.dao.TkTicketTypeDao;
+import com.namoadigital.prj001.dao.TkTicketTypeOperationDao;
+import com.namoadigital.prj001.dao.TkTicketTypeProductDao;
+import com.namoadigital.prj001.dao.TkTicketTypeSiteDao;
 import com.namoadigital.prj001.database.Specification;
 
 /**
@@ -42,10 +46,11 @@ public class Sql_Act009_001 implements Specification {
 
         return sb
                 .append(
-                        " SELECT \n" +
-                        "    DISTINCT " +
-                        "       T."+MdTagDao.TAG_CODE+", \n" +
-                        "       T."+MdTagDao.TAG_DESC+" \n" +
+                        " SELECT "+MdTagDao.TAG_CODE+", \n" +
+                        "       "+MdTagDao.TAG_DESC+" \n" +
+                        " FROM " +MdTagDao.TABLE + "\n" +
+                        " WHERE " +MdTagDao.TAG_CODE + " IN ( \n" +
+                         " SELECT T."+MdTagDao.TAG_CODE+" \n" +
                         " FROM \n" +
                         "       "+ MdTagDao.TABLE + " t, \n" +
                         "       "+ GE_Custom_FormDao.TABLE + " f \n" +
@@ -77,7 +82,33 @@ public class Sql_Act009_001 implements Specification {
                         "   AND (f.all_operation = 1 OR o.operation_code = '"+s_operation_code+"') \n" +
                         "   AND (f.all_site = 1 OR s.site_code = '"+s_site_code+"')\n"+
                         "   AND ( '"+s_serial_id+"' IS NOT NULL OR f.require_serial_done = 0)\n"+
-                        " ORDER BY \n" +
+                        " UNION \n" +
+                        " " +
+                            " SELECT T."+MdTagDao.TAG_CODE+" \n" +
+                            " FROM " +MdTagDao.TABLE + " T, \n" +
+                               TkTicketTypeDao.TABLE + " TP \n" +
+                            " LEFT JOIN\n" +
+                            "       "+ TkTicketTypeProductDao.TABLE +" p on p.customer_code = tp.customer_code \n" +
+                            "                                           and p.ticket_type_code = tp.ticket_type_code \n"+
+                            "                                           and p.product_code = '"+s_product_code+"'\n" +
+                            " LEFT JOIN\n" +
+                            "       "+ TkTicketTypeOperationDao.TABLE +" o on o.customer_code = tp.customer_code\n" +
+                            "                               and o.ticket_type_code = tp.ticket_type_code\n" +
+                            "                               and o.operation_code = '"+s_operation_code+"' \n "+
+                            " LEFT JOIN\n" +
+                            "    "+ TkTicketTypeSiteDao.TABLE +" s on s.customer_code = tp.customer_code\n" +
+                            "                               and s.ticket_type_code = tp.ticket_type_code\n" +
+                            "                               and s.site_code = '"+s_site_code+"' \n"+
+                            " WHERE    \n" +
+                            "   t.customer_code = tp.customer_code \n" +
+                            "   AND t.tag_code = tp.tag_operational_code\n"+
+                            "\n"+
+                            "   AND t.customer_code = '"+s_customer_code+"'\n"+
+                            "   AND (TP.all_product = 1 OR p.product_code = '"+s_product_code+"')\n" +
+                            "   AND (TP.all_operation = 1 OR o.operation_code = '"+s_operation_code+"') \n" +
+                            "   AND (TP.all_site = 1 OR s.site_code = '"+s_site_code+"')\n"+
+                            "   AND ( '"+s_serial_id+"' IS NOT NULL)\n"+
+                            " )ORDER BY \n" +
                         "   upper(" + MdTagDao.TAG_DESC+ ") \n"
                 )
                 .append(";")
