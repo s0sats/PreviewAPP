@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act010;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -15,10 +16,15 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
 import com.namoadigital.prj001.dao.GeOsDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_DeviceDao;
+import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GeOs;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device;
+import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
+import com.namoadigital.prj001.receiver.WBR_Ticket_Creation;
+import com.namoadigital.prj001.service.WSTicketCreation;
+import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_004;
 import com.namoadigital.prj001.sql.GeOsSql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
@@ -333,6 +339,56 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
         );
         //
         return spannableString;
+    }
+
+    @Override
+    public void callTicketCreationService(long customer_code, int type_code, String site_code, long operation_code, int product_code, int serial_code, String comments) {
+        mView.setWsProcess(WSTicketCreation.class.getName());
+        //
+        mView.showPD(
+                hmAux_Trans.get("dialog_ticket_creation_ttl"),
+                hmAux_Trans.get("dialog_ticket_creation_start")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_Ticket_Creation.class);
+        Bundle bundle = new Bundle();
+
+        bundle.putLong(WSTicketCreation.WS_BUNDLE_CUSTOMER_CODE,customer_code);
+        bundle.putInt(WSTicketCreation.WS_BUNDLE_TYPE_CODE,type_code);
+        bundle.putInt(WSTicketCreation.WS_BUNDLE_SITE_CODE, Integer.parseInt(site_code));
+        bundle.putLong(WSTicketCreation.WS_BUNDLE_OPERATION_CODE,operation_code);
+        bundle.putInt(WSTicketCreation.WS_BUNDLE_PRODUCT_CODE,product_code);
+        bundle.putInt(WSTicketCreation.WS_BUNDLE_SERIAL_CODE,serial_code);
+        bundle.putString(WSTicketCreation.WS_BUNDLE_COMMENTS,comments);
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    @Override
+    public void callTicketDownload(Integer ticketPrefix, Integer ticketCode) {
+        if(ToolBox_Con.isOnline(context)) {
+            mView.setWsProcess(WS_TK_Ticket_Download.class.getName());
+            //
+            mView.showPD(
+                    hmAux_Trans.get("dialog_download_ticket_ttl"),
+                    hmAux_Trans.get("dialog_download_ticket_start")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_TK_Ticket_Download.class);
+            Bundle bundle = new Bundle();
+            bundle.putString(TK_TicketDao.TICKET_PREFIX,ticketPrefix+"."+ticketCode);
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        }else{
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
+    }
+
+    @Override
+    public boolean verifyProductForForm(HMAux hmAux) {
+        return false;
     }
 
     @Override

@@ -11,10 +11,13 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
@@ -33,9 +36,12 @@ import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.databinding.Act010MainBinding;
 import com.namoadigital.prj001.databinding.Act010MainContentBinding;
+import com.namoadigital.prj001.model.TicketCreationRec;
+import com.namoadigital.prj001.service.WSTicketCreation;
 import com.namoadigital.prj001.sql.Sql_Act010_001;
 import com.namoadigital.prj001.ui.act009.Act009_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
+import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.ui.act087.Act087Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -70,6 +76,7 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
     private int tagCode;
     private String tagDesc;
     private String originFlow = null;
+    private String wsProcess="";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -119,6 +126,11 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
         //
         transList.add("alert_os_form_ttl");
         transList.add("alert_serial_undefined_or_without_structure_msg");
+        //
+        transList.add("dialog_ticket_creation_ttl");
+        transList.add("dialog_ticket_creation_start");
+        transList.add("dialog_download_ticket_ttl");
+        transList.add("dialog_download_ticket_start");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -240,6 +252,22 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
                 mPresenter.validateOpenForm(item);
             }
         });
+        //
+        binding.btnCreateTicket.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                mPresenter.callTicketCreationService(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        73,
+                        ToolBox_Con.getPreference_Site_Code(context),
+                        ToolBox_Con.getPreference_Operation_Code(context),
+                        108,
+                        34,
+                        "EU acho que é bem por aí mesmo"
+                );
+            }
+        });
     }
 
     @Override
@@ -296,6 +324,48 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
                 null,
                 0
         );
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
+        super.processCloseACT(mLink, mRequired, hmAux);
+        //
+
+        progressDialog.dismiss();
+        if(wsProcess.equals(WSTicketCreation.class.getName())) {
+            setWsProcess("");
+            Gson gson = new GsonBuilder().serializeNulls().create();
+            TicketCreationRec rec = gson.fromJson(mLink, TicketCreationRec.class);
+            mPresenter.callTicketDownload(rec.getTicketPrefix(), rec.getTicketCode());
+
+        }else if (wsProcess.equals(WSTicketCreation.class.getName())){
+            Toast.makeText(context, "CHama tela de ticket", Toast.LENGTH_SHORT).show();
+            //
+            setWsProcess("");
+            bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT010);
+            if (hmAux.hasConsistentValue(TK_TicketDao.TICKET_PREFIX)
+                    && hmAux.hasConsistentValue(TK_TicketDao.TICKET_CODE)) {
+                bundle.putInt(TK_TicketDao.TICKET_PREFIX, Integer.parseInt(hmAux.get(TK_TicketDao.TICKET_PREFIX)));
+                bundle.putInt(TK_TicketDao.TICKET_CODE, Integer.parseInt(hmAux.get(TK_TicketDao.TICKET_CODE)));
+            }
+            //
+            if(!mPresenter.verifyProductForForm(hmAux)) {
+                callAct070(bundle);
+            }
+        }
+        //
+    }
+
+    private void callAct070(Bundle bundle) {
+        Intent mIntent = new Intent(context, Act070_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        mIntent.putExtras(bundle);
+        //
+        ToolBox_Inf.stopChatService(context);
+        //
+        startActivity(mIntent);
+        finish();
     }
 
     @Override
@@ -391,5 +461,20 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
+    }
+
+    @Override
+    public void setWsProcess(String wsProcess) {
+        this.wsProcess = wsProcess;
+    }
+
+    @Override
+    public void showPD(String title, String msg) {
+        enableProgressDialog(
+                title,
+                msg,
+                hmAux_Trans.get("sys_alert_btn_cancel"),
+                hmAux_Trans.get("sys_alert_btn_ok")
+        );
     }
 }

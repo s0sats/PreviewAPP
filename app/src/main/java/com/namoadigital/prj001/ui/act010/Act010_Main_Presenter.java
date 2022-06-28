@@ -19,4 +19,10 @@ public interface Act010_Main_Presenter {
     void validateGPSResource(HMAux item);
 
     SpannableString getTagLblText(String tag_lbl, String tag_desc);
+
+    void callTicketCreationService(long customer_code, int type_code, String site_code, long operation_code, int product_code, int serial_code, String comments);
+
+    void callTicketDownload(Integer ticketPrefix, Integer ticketCode);
+
+    boolean verifyProductForForm(HMAux hmAux);
 }

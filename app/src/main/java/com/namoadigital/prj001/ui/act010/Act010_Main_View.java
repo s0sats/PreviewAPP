@@ -32,4 +32,8 @@ public interface Act010_Main_View {
     Bundle getBundle();
 
     void callAct087();
+
+    void setWsProcess(String name);
+
+    void showPD(String alert_start_sync_title, String alert_start_sync_msg);
 }

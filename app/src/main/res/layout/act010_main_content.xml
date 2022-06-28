@@ -57,6 +57,12 @@
             tools:listitem="@layout/act010_cell"
             />
 
+        <Button
+            android:id="@+id/btn_create_ticket"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:text="Chamar Servico"
+            />
     </LinearLayout>
 
     <include layout="@layout/footer_base" />
