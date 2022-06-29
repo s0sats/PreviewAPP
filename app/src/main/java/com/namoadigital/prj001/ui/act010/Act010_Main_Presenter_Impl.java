@@ -342,7 +342,7 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
     }
 
     @Override
-    public void callTicketCreationService(long customer_code, int type_code, String site_code, long operation_code, int product_code, int serial_code, String comments) {
+    public void callTicketCreationService(long customer_code, int type_code, String site_code, long operation_code, long product_code, int serial_code, String comments) {
         mView.setWsProcess(WSTicketCreation.class.getName());
         //
         mView.showPD(
@@ -357,7 +357,7 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
         bundle.putInt(WSTicketCreation.WS_BUNDLE_TYPE_CODE,type_code);
         bundle.putInt(WSTicketCreation.WS_BUNDLE_SITE_CODE, Integer.parseInt(site_code));
         bundle.putLong(WSTicketCreation.WS_BUNDLE_OPERATION_CODE,operation_code);
-        bundle.putInt(WSTicketCreation.WS_BUNDLE_PRODUCT_CODE,product_code);
+        bundle.putLong(WSTicketCreation.WS_BUNDLE_PRODUCT_CODE, product_code);
         bundle.putInt(WSTicketCreation.WS_BUNDLE_SERIAL_CODE,serial_code);
         bundle.putString(WSTicketCreation.WS_BUNDLE_COMMENTS,comments);
         mIntent.putExtras(bundle);

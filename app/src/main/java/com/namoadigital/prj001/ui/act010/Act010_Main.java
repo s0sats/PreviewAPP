@@ -37,6 +37,7 @@ import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.databinding.Act010MainBinding;
 import com.namoadigital.prj001.databinding.Act010MainContentBinding;
 import com.namoadigital.prj001.model.TicketCreationRec;
+import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WSTicketCreation;
 import com.namoadigital.prj001.sql.Sql_Act010_001;
 import com.namoadigital.prj001.ui.act009.Act009_Main;
@@ -262,8 +263,8 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
                         73,
                         ToolBox_Con.getPreference_Site_Code(context),
                         ToolBox_Con.getPreference_Operation_Code(context),
-                        108,
-                        34,
+                        product_code,
+                        1,
                         "EU acho que é bem por aí mesmo"
                 );
             }
@@ -477,4 +478,57 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
                 hmAux_Trans.get("sys_alert_btn_ok")
         );
     }
+
+    @Override
+    protected void processError_1(String mLink, String mRequired) {
+        super.processError_1(mLink, mRequired);
+        //
+        disableProgressDialog();
+    }
+
+    @Override
+    protected void processCustom_error(String mLink, String mRequired) {
+        super.processCustom_error(mLink, mRequired);
+        //
+        disableProgressDialog();
+    }
+    //TRATA MSG SESSION NOT FOUND
+    @Override
+    protected void processLogin() {
+        super.processLogin();
+        //
+        ToolBox_Con.cleanPreferences(context);
+        //
+        ToolBox_Inf.call_Act001_Main(context);
+        //
+        finish();
+    }
+
+    //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED OU VERSÃO INVALIDA
+    @Override
+    protected void processUpdateSoftware(String mLink, String mRequired) {
+        super.processUpdateSoftware(mLink, mRequired);
+
+        ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+    }
+
+    //Metodo chamado ao finalizar o download da atualização.
+    @Override
+    protected void processCloseAPP(String mLink, String mRequired) {
+        super.processCloseAPP(mLink, mRequired);
+        //
+        Intent mIntent = new Intent(context, WBR_Logout.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.WS_LOGOUT_CUSTOMER_LIST, String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)));
+        bundle.putString(Constant.WS_LOGOUT_USER_CODE, String.valueOf(ToolBox_Con.getPreference_User_Code(context)));
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+        //
+        ToolBox_Con.cleanPreferences(context);
+
+        finish();
+    }
+
 }

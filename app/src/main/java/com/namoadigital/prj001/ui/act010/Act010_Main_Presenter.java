@@ -20,7 +20,7 @@ public interface Act010_Main_Presenter {
 
     SpannableString getTagLblText(String tag_lbl, String tag_desc);
 
-    void callTicketCreationService(long customer_code, int type_code, String site_code, long operation_code, int product_code, int serial_code, String comments);
+    void callTicketCreationService(long customer_code, int type_code, String site_code, long operation_code, long product_code, int serial_code, String comments);
 
     void callTicketDownload(Integer ticketPrefix, Integer ticketCode);
 
