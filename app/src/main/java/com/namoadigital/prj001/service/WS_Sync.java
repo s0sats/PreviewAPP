@@ -62,6 +62,7 @@ import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
 import com.namoadigital.prj001.dao.MD_UserDao;
 import com.namoadigital.prj001.dao.MdDeviceTpDao;
 import com.namoadigital.prj001.dao.MdItemCheckDao;
+import com.namoadigital.prj001.dao.MdJustifyItemDao;
 import com.namoadigital.prj001.dao.MdOrderTypeDao;
 import com.namoadigital.prj001.dao.MdTagDao;
 import com.namoadigital.prj001.dao.MeMeasureTpDao;
@@ -119,6 +120,7 @@ import com.namoadigital.prj001.model.MD_Site_Zone_Local;
 import com.namoadigital.prj001.model.MD_User;
 import com.namoadigital.prj001.model.MdDeviceTp;
 import com.namoadigital.prj001.model.MdItemCheck;
+import com.namoadigital.prj001.model.MdJustifyItem;
 import com.namoadigital.prj001.model.MdOrderType;
 import com.namoadigital.prj001.model.MdTag;
 import com.namoadigital.prj001.model.MeMeasureTp;
@@ -169,6 +171,7 @@ import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_User_Sql_Truncate;
 import com.namoadigital.prj001.sql.MdDeviceTpSqlTruncate;
 import com.namoadigital.prj001.sql.MdItemCheckSqlTruncate;
+import com.namoadigital.prj001.sql.MdJustifyItemTruncate;
 import com.namoadigital.prj001.sql.MdOrderTypeSqlTruncate;
 import com.namoadigital.prj001.sql.MdTagSqlTruncate;
 import com.namoadigital.prj001.sql.MeMeasureTpSqlTruncate;
@@ -642,6 +645,7 @@ public class WS_Sync extends IntentService {
             TkTicketCacheDao tkTicketCacheDao = new TkTicketCacheDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             MdDeviceTpDao deviceTpDao = new MdDeviceTpDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             MdOrderTypeDao orderTypeDao = new MdOrderTypeDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            MdJustifyItemDao justifyItemDao = new MdJustifyItemDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             MdItemCheckDao mdItemCheckDao = new MdItemCheckDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             MeMeasureTpDao meMeasureTpDao = new MeMeasureTpDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             //
@@ -673,6 +677,7 @@ public class WS_Sync extends IntentService {
             tkTicketCacheDao.remove(new TkTicketCacheSqlTruncate().toSqlQuery());
             deviceTpDao.remove(new MdDeviceTpSqlTruncate().toSqlQuery());
             orderTypeDao.remove(new MdOrderTypeSqlTruncate().toSqlQuery());
+            justifyItemDao.remove(new MdJustifyItemTruncate().toSqlQuery());
             mdItemCheckDao.remove(new MdItemCheckSqlTruncate().toSqlQuery());
             meMeasureTpDao.remove(new MeMeasureTpSqlTruncate().toSqlQuery());
             //
@@ -1551,6 +1556,22 @@ public class WS_Sync extends IntentService {
                 );
                 //
                 orderTypeDao.addUpdate(orderTypes, false);
+            }
+            /**
+             * Processamento MD_ORDER_TYPE
+             */
+            File[] files_justify_item = ToolBox_Inf.getListOfFiles_v2("md_justify_item-");
+
+            for (File _file : files_justify_item) {
+                ArrayList<MdJustifyItem> justifyItem = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MdJustifyItem>>() {
+                        }.getType()
+                );
+                //
+                justifyItemDao.addUpdate(justifyItem, false);
             }
             //Libera pro GB
             files_order_type = null;

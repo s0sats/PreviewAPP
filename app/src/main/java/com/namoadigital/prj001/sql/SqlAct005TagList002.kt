@@ -17,14 +17,14 @@ class SqlAct005TagList002 (private val customerCode: Int) : Specification {
     override fun toSqlQuery(): String {
         val sb = StringBuilder()
         val toString = sb.append(
-                """
+            """
 
     select 
           sum(ticket.qty) qty, 
           IFNULL(max(ticket.update_required),0) update_required
     from (
             select count(1) qty, 
-            max( IFNULL(max(tk.update_required),0), IFNULL(max(tk.update_required_product),0)) update_required
+            max( IFNULL(max(tk.update_required),0), IFNULL(max(tk.update_required_product),0), IFNULL(max(tk.update_required_status),0)) update_required
             from ${TK_TicketDao.TABLE} tk 
             where  tk.customer_code = $customerCode                      
                    and tk.ticket_status in ('${ConstantBaseApp.SYS_STATUS_PENDING}' , '${ConstantBaseApp.SYS_STATUS_PROCESS}' , '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}')                 

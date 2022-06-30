@@ -197,6 +197,8 @@ public class WS_TK_Ticket_Search_Not_Focus : IntentService("WS_TK_Ticket_Search_
                         )
                         if (!ToolBox_Inf.hasOffHandFormInProcess(applicationContext, dbTicket.ticket_prefix, dbTicket.ticket_code)
                                 && "0".equals(ticketHasUpdateRequired.get(TK_TicketDao.UPDATE_REQUIRED))
+                                && "0".equals(ticketHasUpdateRequired.get(TK_TicketDao.UPDATE_REQUIRED_PRODUCT))
+                                && "0".equals(ticketHasUpdateRequired.get(TK_TicketDao.UPDATE_REQUIRED_STATUS))
                         ) {
                             //Verifica se precisa resetar alguma foto. Isso deve ser feito se o "file_code" da foto
                             //for alterado, o que significa que mudaram a foto no server...

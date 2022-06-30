@@ -166,8 +166,17 @@ public class Act043_Frag_Preview extends BaseFragment {
         context.sendBroadcast(mIntent);
     }
 
-    private void executeWSServiceCancel(HMAux hmAux) {
+    protected void executeWSServiceCancel(HMAux hmAux) {
         if(ToolBox_Con.isOnline(context)) {
+            //
+            SM_SO realtimeSmSo = delegateSmSo.getRealtimeSmSo(mSm_so.getSo_prefix(), mSm_so.getSo_code());
+            //
+            if(realtimeSmSo != null){
+                mMain.setIsSyncSerialNeeded(realtimeSmSo.getSync_required() == 1);
+            }else{
+                mMain.setIsSyncSerialNeeded(false);
+            }
+            //
             mMain.setWs_process(WS_SO_Service_Cancel.class.getName());
             //
             mMain.showPD(

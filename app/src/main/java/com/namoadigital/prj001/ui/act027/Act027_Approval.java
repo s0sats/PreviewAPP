@@ -1,13 +1,13 @@
 package com.namoadigital.prj001.ui.act027;
 
+import static com.namoadigital.prj001.ui.act027.Act027_Main.WS_PROCESS_APPROVAL_ON_LINE;
+import static com.namoadigital.prj001.ui.act027.Act027_Main.WS_PROCESS_APPROVAL_ON_SIGNATURE;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.IBinder;
-import androidx.annotation.IdRes;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +21,10 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import androidx.annotation.IdRes;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+
 import com.namoa_digital.namoa_library.ctls.ButtonNFC;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -32,9 +36,6 @@ import com.namoadigital.prj001.sql.SM_SO_Sql_012;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
-
-import static com.namoadigital.prj001.ui.act027.Act027_Main.WS_PROCESS_APPROVAL_ON_LINE;
-import static com.namoadigital.prj001.ui.act027.Act027_Main.WS_PROCESS_APPROVAL_ON_SIGNATURE;
 
 /**
  * Created by neomatrix on 05/09/17.
@@ -710,7 +711,8 @@ public class Act027_Approval extends BaseFragment {
                     }
 
                     if (!rb_user.isChecked() && !rb_other.isChecked()) {
-                        rb_other.setChecked(true);
+                        rg_opc.clearCheck();
+                        rb_user.setChecked(true);
                     }
 
                 } else {
@@ -767,7 +769,8 @@ public class Act027_Approval extends BaseFragment {
                 }
 
                 if (!rb_user.isChecked() && !rb_other.isChecked()) {
-                    rb_other.setChecked(true);
+                    rg_opc.clearCheck();
+                    rb_user.setChecked(true);
                 }
 
                 tv_so_approval_quality_type_lbl.setVisibility(View.GONE);

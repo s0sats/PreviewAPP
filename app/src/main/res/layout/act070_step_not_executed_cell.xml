@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/step_not_executed_main_iv_step_num"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/step_status"
+        android:backgroundTint="@color/namoa_status_not_executed"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/gl_start"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintWidth_default="wrap" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gl_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.15"  />
+
+    <TextView
+        android:id="@+id/step_not_executed_tv_justify_lbl"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/gl_start"
+        app:layout_constraintTop_toTopOf="@+id/step_not_executed_main_iv_step_num"
+        tools:text="TextView" />
+
+    <TextView
+        android:id="@+id/step_not_executed_tv_justify"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:textSize="16sp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/gl_start"
+        app:layout_constraintTop_toBottomOf="@+id/step_not_executed_tv_justify_lbl"
+        tools:text="TextView" />
+
+    <TextView
+        android:id="@+id/step_not_executed_tv_comment"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/gl_start"
+        app:layout_constraintTop_toBottomOf="@+id/step_not_executed_tv_justify"
+        tools:text="TextView" />
+
+    <ImageView
+        android:id="@+id/step_not_executed_iv_photo"
+        android:layout_width="0dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/gl_start"
+        app:layout_constraintTop_toBottomOf="@+id/step_not_executed_tv_comment"
+        app:srcCompat="@drawable/ic_foto_marcada_ns" />
+
+    <ImageView
+        android:id="@+id/step_main_iv_main_user"
+        android:layout_width="@dimen/pipeline_step_icon_width"
+        android:layout_height="@dimen/pipeline_step_icon_width"
+        app:layout_constraintBottom_toBottomOf="@+id/step_not_executed_tv_user_info"
+        app:layout_constraintStart_toStartOf="@+id/gl_start"
+        app:layout_constraintTop_toTopOf="@+id/step_not_executed_tv_user_info"
+        app:srcCompat="@drawable/ic_person_black_24dp"
+        app:tint="@color/namoa_color_gray_4"
+        />
+
+    <TextView
+        android:id="@+id/step_not_executed_tv_user_info"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/step_main_iv_main_user"
+        app:layout_constraintTop_toBottomOf="@+id/step_not_executed_iv_photo"
+        tools:text="TextView" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

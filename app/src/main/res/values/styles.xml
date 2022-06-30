@@ -185,6 +185,14 @@
         <item name="android:textColor">@color/padrao_WHITE</item>
     </style>
 
+    <style name="NamoaNoIconMaterialButtonFilledDarkBlue" parent="Widget.Material3.Button.Icon">
+        <item name="strokeColor">@color/namoa_color_dark_blue</item>
+        <item name="backgroundTint">@color/namoa_color_dark_blue</item>
+        <item name="iconTint">@color/padrao_WHITE</item>
+        <item name="android:textColor">@color/padrao_WHITE</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+
     <style name="NamoaMaterialButtonFilledOrange" parent="Widget.Material3.Button.Icon">
         <item name="strokeColor">@color/namoa_color_highlight_required_item</item>
         <item name="backgroundTint">@color/namoa_color_highlight_required_item</item>

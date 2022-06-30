@@ -4,56 +4,56 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteException
-import androidx.core.database.getIntOrNull
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
 import com.namoadigital.prj001.model.DaoObjReturn
-import com.namoadigital.prj001.model.MdItemCheck
+import com.namoadigital.prj001.model.MdJustifyItem
+
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 
-class MdItemCheckDao (
+class MdJustifyItemDao(
     context: Context,
     mDB_NAME: String,
     mDB_VERSION: Int
 ) : BaseDao(
     context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI ),
-    DaoWithReturn<MdItemCheck> {
-
-
+    DaoWithReturn<MdJustifyItem> {
     companion object{
-        const val TABLE = "md_item_check"
+        const val TABLE = "md_justify_item"
         const val CUSTOMER_CODE = "customer_code"
-        const val ITEM_CHECK_CODE = "item_check_code"
-        const val ITEM_CHECK_ID   = "item_check_id"
-        const val ITEM_CHECK_DESC = "item_check_desc"
-        const val ITEM_CHECK_GROUP_CODE = "item_check_group_code"
+        const val JUSTIFY_GROUP_CODE = "justify_group_code"
+        const val JUSTIFY_ITEM_CODE = "justify_item_code"
+        const val JUSTIFY_ITEM_ID = "justify_item_id"
+        const val JUSTIFY_ITEM_DESC = "justify_item_desc"
+        const val REQUIRED_COMMENT = "required_comment"
+        const val RESCHEDULE = "reschedule"
     }
 
-    private val toMdItemCheckMapper: Mapper<Cursor,MdItemCheck>
-    private val toContentValuesMapper: Mapper<MdItemCheck,ContentValues>
+    private val toMdJustifyItemMapper: Mapper<Cursor, MdJustifyItem>
+    private val toContentValuesMapper: Mapper<MdJustifyItem,ContentValues>
 
     init {
-        this.toMdItemCheckMapper = MdItemCheckDao.CursorToMdItemCheckMapper()
-        this.toContentValuesMapper = MdItemCheckDao.MdItemCheckToContentValuesMapper()
+        this.toMdJustifyItemMapper = CursorToMdJustifyItemMapper()
+        this.toContentValuesMapper = MdJustifyItemToContentValuesMapper()
     }
 
-    @Throws(java.lang.Exception::class)
-    private fun getWherePkClause(item: MdItemCheck?): StringBuilder{
-        item?.let{
+    private fun getWherePkClause(mdJustifyItem: MdJustifyItem?): StringBuilder{
+        mdJustifyItem?.let{
             return java.lang.StringBuilder()
                 .append("""
-                        ${CUSTOMER_CODE} = '${item.customerCode}'  
-                        AND ${ITEM_CHECK_CODE} = '${item.itemCheckCode}'                           
+                        ${CUSTOMER_CODE} = '${mdJustifyItem.customerCode}'  
+                        AND ${JUSTIFY_GROUP_CODE} = '${mdJustifyItem.justifyGroupCode}'                           
+                        AND ${JUSTIFY_ITEM_CODE} = '${mdJustifyItem.justifyItemCode}'                           
                         """.trimIndent()
                 )
         }
         throw Exception("NULL_OBJ_RECEIVED")
     }
-
-    override fun addUpdate(item: MdItemCheck?): DaoObjReturn {
+    //
+    override fun addUpdate(mdJustifyItem: MdJustifyItem?): DaoObjReturn {
         var daoObjReturn = DaoObjReturn()
         var addUpdateRet: Long = 0
         var curAction = DaoObjReturn.INSERT_OR_UPDATE
@@ -61,16 +61,16 @@ class MdItemCheckDao (
         openDB()
 
         try {
-            daoObjReturn.table = MdItemCheckDao.TABLE
+            daoObjReturn.table = MdJustifyItemDao.TABLE
             curAction = DaoObjReturn.UPDATE
             //Where para update
-            val sbWhere: StringBuilder = getWherePkClause(item)
+            val sbWhere: StringBuilder = getWherePkClause(mdJustifyItem)
             //Tenta update e armazena retorno
-            addUpdateRet = db.update(MdItemCheckDao.TABLE, toContentValuesMapper.map(item), sbWhere.toString(), null).toLong()
+            addUpdateRet = db.update(MdJustifyItemDao.TABLE, toContentValuesMapper.map(mdJustifyItem), sbWhere.toString(), null).toLong()
             //Se nenhuma linha afetada, tenta insert
             if (addUpdateRet == 0L) {
                 curAction = DaoObjReturn.INSERT
-                db.insertOrThrow(MdItemCheckDao.TABLE, null, toContentValuesMapper.map(item))
+                db.insertOrThrow(MdJustifyItemDao.TABLE, null, toContentValuesMapper.map(mdJustifyItem))
             }
         } catch (e: SQLiteException) {
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
@@ -100,7 +100,7 @@ class MdItemCheckDao (
         return daoObjReturn
     }
 
-    override fun addUpdate(items: MutableList<MdItemCheck>?, status: Boolean): DaoObjReturn {
+    override fun addUpdate(mdJustifyItems: MutableList<MdJustifyItem>?, status: Boolean): DaoObjReturn {
         var daoObjReturn = DaoObjReturn()
         var addUpdateRet: Long = 0
         var curAction = DaoObjReturn.INSERT_OR_UPDATE
@@ -108,23 +108,23 @@ class MdItemCheckDao (
         openDB()
 
         try {
-            daoObjReturn.table = MdItemCheckDao.TABLE
+            daoObjReturn.table = MdJustifyItemDao.TABLE
             curAction = DaoObjReturn.UPDATE
 
             db.beginTransaction()
 
             if (status) {
-                db.delete(MdItemCheckDao.TABLE, null, null)
+                db.delete(MdJustifyItemDao.TABLE, null, null)
             }
 
-            items?.forEach { item ->
-                val sbWhere: StringBuilder = getWherePkClause(item)
+            mdJustifyItems?.forEach { mdJustifyItem ->
+                val sbWhere: StringBuilder = getWherePkClause(mdJustifyItem)
                 //Tenta update e armazena retorno
-                addUpdateRet = db.update(MdItemCheckDao.TABLE, toContentValuesMapper.map(item), sbWhere.toString(), null).toLong()
+                addUpdateRet = db.update(MdJustifyItemDao.TABLE, toContentValuesMapper.map(mdJustifyItem), sbWhere.toString(), null).toLong()
                 //Se nenhuma linha afetada, tenta insert
                 if (addUpdateRet == 0L) {
                     curAction = DaoObjReturn.INSERT
-                    db.insertOrThrow(MdItemCheckDao.TABLE, null, toContentValuesMapper.map(item))
+                    db.insertOrThrow(MdJustifyItemDao.TABLE, null, toContentValuesMapper.map(mdJustifyItem))
                 }
             }
             //
@@ -183,13 +183,13 @@ class MdItemCheckDao (
         closeDB()
     }
 
-    override fun getByString(sQuery: String?): MdItemCheck? {
-        var item: MdItemCheck? = null
+    override fun getByString(sQuery: String?): MdJustifyItem? {
+        var mdJustifyItem: MdJustifyItem? = null
         openDB()
         try {
             val cursor = db.rawQuery(sQuery, null)
             while (cursor.moveToNext()) {
-                item = toMdItemCheckMapper.map(cursor)
+                mdJustifyItem = toMdJustifyItemMapper.map(cursor)
             }
             //
             cursor.close()
@@ -198,16 +198,16 @@ class MdItemCheckDao (
         } finally {
         }
         closeDB()
-        return item
+        return mdJustifyItem
     }
 
     override fun getByStringHM(sQuery: String?): HMAux? {
-        var item: HMAux? = null
+        var mdJustifyItem: HMAux? = null
         openDB()
         try {
             val cursor = db.rawQuery(sQuery, null)
             while (cursor.moveToNext()) {
-                item = CursorToHMAuxMapper.mapN(cursor)
+                mdJustifyItem = CursorToHMAuxMapper.mapN(cursor)
             }
             cursor.close()
         } catch (e: java.lang.Exception) {
@@ -215,17 +215,17 @@ class MdItemCheckDao (
         } finally {
         }
         closeDB()
-        return  item
+        return  mdJustifyItem
     }
 
-    override fun query(sQuery: String?): MutableList<MdItemCheck> {
-        val items = mutableListOf<MdItemCheck>()
+    override fun query(sQuery: String?): MutableList<MdJustifyItem> {
+        val mdJustifyItems = mutableListOf<MdJustifyItem>()
         openDB()
         try {
             val cursor = db.rawQuery(sQuery, null)
             while (cursor.moveToNext()) {
-                val uAux = toMdItemCheckMapper.map(cursor)
-                items.add(uAux)
+                val uAux = toMdJustifyItemMapper.map(cursor)
+                mdJustifyItems.add(uAux)
             }
             cursor.close()
         } catch (e: java.lang.Exception) {
@@ -233,16 +233,16 @@ class MdItemCheckDao (
         } finally {
         }
         closeDB()
-        return items
+        return mdJustifyItems
     }
 
     override fun query_HM(sQuery: String?): MutableList<HMAux> {
-        val items = mutableListOf<HMAux>()
+        val mdJustifyItems = mutableListOf<HMAux>()
         openDB()
         try {
             val cursor = db.rawQuery(sQuery, null)
             while (cursor.moveToNext()) {
-                items.add(CursorToHMAuxMapper.mapN(cursor))
+                mdJustifyItems.add(CursorToHMAuxMapper.mapN(cursor))
             }
             cursor.close()
         } catch (e: java.lang.Exception) {
@@ -250,19 +250,21 @@ class MdItemCheckDao (
         } finally {
         }
         closeDB()
-        return items
+        return mdJustifyItems
     }
-
-    class CursorToMdItemCheckMapper : Mapper<Cursor, MdItemCheck> {
-        override fun map(cursor: Cursor?): MdItemCheck? {
+    //
+    private class CursorToMdJustifyItemMapper : Mapper<Cursor, MdJustifyItem> {
+        override fun map(cursor: Cursor?): MdJustifyItem? {
             cursor?.let {
                 with(cursor){
-                    return MdItemCheck(
-                        customerCode = getLong(getColumnIndex(CUSTOMER_CODE)),
-                        itemCheckCode = getInt(getColumnIndex(ITEM_CHECK_CODE)),
-                        itemCheckId = getString(getColumnIndex(ITEM_CHECK_ID)),
-                        itemCheckDesc = getString(getColumnIndex(ITEM_CHECK_ID)),
-                        itemCheckGroupCode = getIntOrNull(getColumnIndex(ITEM_CHECK_GROUP_CODE))
+                    return MdJustifyItem(
+                        getLong(getColumnIndex(CUSTOMER_CODE)),
+                        getInt(getColumnIndex(JUSTIFY_GROUP_CODE)),
+                        getInt(getColumnIndex(JUSTIFY_ITEM_CODE)),
+                        getString(getColumnIndex(JUSTIFY_ITEM_ID)),
+                        getString(getColumnIndex(JUSTIFY_ITEM_DESC)),
+                        getInt(getColumnIndex(REQUIRED_COMMENT)),
+                        getInt(getColumnIndex(RESCHEDULE))
                     )
                 }
             }
@@ -270,34 +272,28 @@ class MdItemCheckDao (
         }
     }
 
-    class MdItemCheckToContentValuesMapper : Mapper<MdItemCheck, ContentValues> {
-        override fun map(item: MdItemCheck?): ContentValues {
+    private class MdJustifyItemToContentValuesMapper : Mapper<MdJustifyItem, ContentValues> {
+        override fun map(mdJustifyItem: MdJustifyItem?): ContentValues {
             val contentValues = ContentValues()
             //
-            item?.let {
+            mdJustifyItem?.let {
                 with(contentValues){
-                    //
-                    if(item.customerCode > -1){
-                        put(CUSTOMER_CODE,item.customerCode)
+                    if(mdJustifyItem.customerCode > -1){
+                        put(CUSTOMER_CODE,mdJustifyItem.customerCode)
                     }
-                    //
-                    if(item.itemCheckCode > -1){
-                        put(ITEM_CHECK_CODE,item.itemCheckCode)
+                    if(mdJustifyItem.justifyGroupCode > -1){
+                        put(JUSTIFY_GROUP_CODE,mdJustifyItem.justifyGroupCode)
                     }
-                    //
-                    if(item.itemCheckId != null){
-                        put(ITEM_CHECK_ID,item.itemCheckId)
-                    }
-                    //
-                    if(item.itemCheckDesc != null){
-                        put(ITEM_CHECK_DESC,item.itemCheckDesc)
-                    }
-                    //
-                    put(ITEM_CHECK_GROUP_CODE, item.itemCheckGroupCode)
+                    put(JUSTIFY_ITEM_CODE,mdJustifyItem.justifyItemCode)
+                    put(JUSTIFY_ITEM_ID,mdJustifyItem.justifyItemId)
+                    put(JUSTIFY_ITEM_DESC,mdJustifyItem.justifyItemDesc)
+                    put(REQUIRED_COMMENT,mdJustifyItem.requiredComment)
+                    put(RESCHEDULE,mdJustifyItem.reschedule)
                 }
             }
             //
             return contentValues
         }
     }
+
 }

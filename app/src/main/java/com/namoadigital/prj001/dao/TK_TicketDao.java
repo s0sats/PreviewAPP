@@ -95,6 +95,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
     public static final String SYNC_REQUIRED = "sync_required";
     public static final String UPDATE_REQUIRED = "update_required";
     public static final String UPDATE_REQUIRED_PRODUCT = "update_required_product";
+    public static final String UPDATE_REQUIRED_STATUS = "update_required_status";
     public static final String TOKEN = "token";
     public static final String SCHEDULE_PREFIX = "schedule_prefix";
     public static final String SCHEDULE_CODE = "schedule_code";
@@ -119,6 +120,17 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
     public static final String TAG_OPERATIONAL_CODE = "tag_operational_code";
     public static final String TAG_OPERATIONAL_ID = "tag_operational_id";
     public static final String TAG_OPERATIONAL_DESC = "tag_operational_desc";
+
+    public static final String JUSTIFY_GROUP_CODE = "justify_group_code";
+    public static final String JUSTIFY_ITEM_CODE = "justify_item_code";
+    public static final String JUSTIFY_ITEM_ID = "justify_item_id";
+    public static final String JUSTIFY_ITEM_DESC = "justify_item_desc";
+    public static final String NOT_EXECUTED_COMMENTS = "not_executed_comments";
+    public static final String NOT_EXECUTED_PHOTO_NAME = "not_executed_photo_name";
+    public static final String NOT_EXECUTED_PHOTO_URL = "not_executed_photo_url";
+    public static final String NOT_EXECUTED_PHOTO = "not_executed_photo";
+    public static final String NOT_EXECUTED_DATE = "not_executed_date";
+
 
     public TK_TicketDao(Context context, String mDB_NAME, int mDB_VERSION) {
         super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI);
@@ -956,6 +968,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             tk_ticket.setSync_required(cursor.getInt(cursor.getColumnIndex(SYNC_REQUIRED)));
             tk_ticket.setUpdate_required(cursor.getInt(cursor.getColumnIndex(UPDATE_REQUIRED)));
             tk_ticket.setUpdate_required_product(cursor.getInt(cursor.getColumnIndex(UPDATE_REQUIRED_PRODUCT)));
+            tk_ticket.setUpdate_required_status(cursor.getInt(cursor.getColumnIndex(UPDATE_REQUIRED_STATUS)));
             if (cursor.isNull(cursor.getColumnIndex(TOKEN))) {
                 tk_ticket.setToken(null);
             } else {
@@ -1060,6 +1073,53 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             tk_ticket.setTag_operational_code(cursor.getInt(cursor.getColumnIndex(TAG_OPERATIONAL_CODE)));
             tk_ticket.setTag_operational_id(cursor.getString(cursor.getColumnIndex(TAG_OPERATIONAL_ID)));
             tk_ticket.setTag_operational_desc(cursor.getString(cursor.getColumnIndex(TAG_OPERATIONAL_DESC)));
+
+            if (cursor.isNull(cursor.getColumnIndex(JUSTIFY_GROUP_CODE))) {
+                tk_ticket.setJustify_group_code(null);
+            } else {
+                tk_ticket.setJustify_group_code(cursor.getInt(cursor.getColumnIndex(JUSTIFY_GROUP_CODE)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(JUSTIFY_ITEM_CODE))) {
+                tk_ticket.setJustify_item_code(null);
+            } else {
+                tk_ticket.setJustify_item_code(cursor.getInt(cursor.getColumnIndex(JUSTIFY_ITEM_CODE)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(JUSTIFY_ITEM_ID))) {
+                tk_ticket.setJustify_item_id(null);
+            } else {
+                tk_ticket.setJustify_item_id(cursor.getString(cursor.getColumnIndex(JUSTIFY_ITEM_ID)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(JUSTIFY_ITEM_DESC))) {
+                tk_ticket.setJustify_item_desc(null);
+            } else {
+                tk_ticket.setJustify_item_desc(cursor.getString(cursor.getColumnIndex(JUSTIFY_ITEM_DESC)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(NOT_EXECUTED_COMMENTS))) {
+                tk_ticket.setNot_executed_comments(null);
+            } else {
+                tk_ticket.setNot_executed_comments(cursor.getString(cursor.getColumnIndex(NOT_EXECUTED_COMMENTS)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(NOT_EXECUTED_PHOTO_NAME))) {
+                tk_ticket.setNot_executed_photo_name(null);
+            } else {
+                tk_ticket.setNot_executed_photo_name(cursor.getString(cursor.getColumnIndex(NOT_EXECUTED_PHOTO_NAME)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(NOT_EXECUTED_PHOTO_URL))) {
+                tk_ticket.setNot_executed_photo_url(null);
+            } else {
+                tk_ticket.setNot_executed_photo_url(cursor.getString(cursor.getColumnIndex(NOT_EXECUTED_PHOTO_URL)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(NOT_EXECUTED_PHOTO))) {
+                tk_ticket.setNot_executed_photo(null);
+            } else {
+                tk_ticket.setNot_executed_photo(cursor.getInt(cursor.getColumnIndex(NOT_EXECUTED_PHOTO)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(NOT_EXECUTED_DATE))) {
+                tk_ticket.setNot_executed_date(null);
+            } else {
+                tk_ticket.setNot_executed_date(cursor.getString(cursor.getColumnIndex(NOT_EXECUTED_DATE)));
+            }
+
             return tk_ticket;
         }
     }
@@ -1104,7 +1164,17 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             contentValues.put(OPEN_PHOTO_LOCAL, tk_ticket.getOpen_photo_local());
             contentValues.put(OPEN_NAME, tk_ticket.getOpen_name());
             contentValues.put(OPEN_EMAIL, tk_ticket.getOpen_email());
-            contentValues.put(OPEN_PHONE, tk_ticket.getOpen_phone());
+
+            contentValues.put(JUSTIFY_GROUP_CODE, tk_ticket.getJustify_group_code());
+            contentValues.put(JUSTIFY_ITEM_CODE, tk_ticket.getJustify_item_code());
+            contentValues.put(JUSTIFY_ITEM_ID, tk_ticket.getJustify_item_id());
+            contentValues.put(JUSTIFY_ITEM_DESC, tk_ticket.getJustify_item_desc());
+            contentValues.put(NOT_EXECUTED_COMMENTS, tk_ticket.getNot_executed_comments());
+            contentValues.put(NOT_EXECUTED_PHOTO_NAME, tk_ticket.getNot_executed_photo_name());
+            contentValues.put(NOT_EXECUTED_PHOTO_URL, tk_ticket.getNot_executed_photo_url());
+            contentValues.put(NOT_EXECUTED_PHOTO, tk_ticket.getNot_executed_photo());
+            contentValues.put(NOT_EXECUTED_DATE, tk_ticket.getNot_executed_date());
+
             if (tk_ticket.getOpen_date() != null) {
                 contentValues.put(OPEN_DATE, tk_ticket.getOpen_date());
             }
@@ -1217,6 +1287,9 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             }
             if (tk_ticket.getUpdate_required_product() > -1) {
                 contentValues.put(UPDATE_REQUIRED_PRODUCT, tk_ticket.getUpdate_required_product());
+            }
+            if (tk_ticket.getUpdate_required_status() > -1) {
+                contentValues.put(UPDATE_REQUIRED_STATUS, tk_ticket.getUpdate_required_status());
             }
             //TODO REVER CAMPO TOKEN POIS ESTA MUITO ESTRANHO
             tk_ticket.setToken(tk_ticket.getToken());

@@ -4,16 +4,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,7 +14,19 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -49,16 +51,19 @@ import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
 import com.namoadigital.prj001.model.Sync_Checklist;
 import com.namoadigital.prj001.model.TSO_Get_Service_Edit_Rec;
 import com.namoadigital.prj001.model.TSO_Service_Search_Obj;
+import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_SO_Get_Service_For_Edit;
 import com.namoadigital.prj001.receiver.WBR_SO_Save;
 import com.namoadigital.prj001.receiver.WBR_SO_Set_Service_For_Edit;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
+import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.service.WS_SO_Get_Service_For_Edit;
 import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.service.WS_SO_Set_Service_For_Edit;
 import com.namoadigital.prj001.service.WS_Serial_Save;
+import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
@@ -869,9 +874,18 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
                         wsResults.add(mHmAux);
                     }
                 }
+                executeSoSave(false);
+            }else{
+                if(hasSOSyncStatus()
+                && mSoAux.hasConsistentValue(SM_SODao.PRODUCT_CODE)
+                && mSoAux.hasConsistentValue(SM_SODao.SERIAL_ID)){
+                    executeSerialDownload();
+                }else {
+                    executeSoSave(false);
+                }
             }
 
-            executeSoSave(false);
+
 
         } else if (wsSoProcess.equalsIgnoreCase(WS_SO_Save.class.getSimpleName())) {
             setWsSoProcess("");
@@ -945,6 +959,23 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
 //            //refreshUI();
 //            Log.d("SO_RETURN", "SO RETURN null!!!");
 //        }
+    }
+
+    private void executeSerialDownload() {
+        //
+        ws_process = WS_Serial_Search.class.getSimpleName();
+        //
+        Intent mIntent = new Intent(context, WBR_Serial_Search.class);
+        Bundle bundle = new Bundle();
+        //
+        bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE, mSoAux.get(SM_SODao.PRODUCT_CODE));
+        bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, mSoAux.get(SM_SODao.SERIAL_ID));
+        bundle.putString(Constant.WS_SERIAL_SEARCH_TRACKING, "");
+        bundle.putInt(Constant.WS_SERIAL_SEARCH_EXACT, 1);
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
     }
 
     private TSO_Service_Search_Obj getServiceFromHmaux(String return_list) {
@@ -1919,15 +1950,23 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
     @Override
     protected void processCloseACT(String mLink, String mRequired) {
         super.processCloseACT(mLink, mRequired);
-        //
-        progressDialog.dismiss();
+
         //
         if (ws_process.equals(WS_PROCESS_N_FORM_SYNC)) {
+            //
+            progressDialog.dismiss();
+            //
             updateSyncChecklist();
             //
             callAct009();
             //
             ws_process = "";
+        }else if(ws_process.equals(WS_Serial_Search.class.getSimpleName())){
+            setWsSoProcess("");
+            saveSerial(mLink);
+            executeSoSave(false);
+        }else{
+            progressDialog.dismiss();
         }
     }
 
@@ -2029,6 +2068,15 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
     }
 
     public boolean hasSOSyncStatus() {
+        //
+        mSoAux = sm_soDao.getByStringHM(
+                new SM_SO_Sql_002(
+                        mService.getCustomer_code(),
+                        mService.getSo_prefix(),
+                        mService.getSo_code()
+                ).toSqlQuery()
+        );
+        //
         if(mSoAux.hasConsistentValue(SM_SODao.SYNC_REQUIRED)){
             if ("1".equals(mSoAux.get(SM_SODao.SYNC_REQUIRED))) {
                 return true;
@@ -2135,5 +2183,20 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
         //
         context.sendBroadcast(mIntent);
     }
-
+    private void saveSerial(String mLink) {
+        //Transforma resposta de json para obj
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        //
+        TSerial_Search_Rec rec = gson.fromJson(
+                mLink,
+                TSerial_Search_Rec.class
+        );
+        //
+        try {
+            MD_Product_SerialDao serialDao = new MD_Product_SerialDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
+            serialDao.addUpdateTmp(rec.getRecord().get(0));
+        }catch (NullPointerException e){
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        }
+    }
 }

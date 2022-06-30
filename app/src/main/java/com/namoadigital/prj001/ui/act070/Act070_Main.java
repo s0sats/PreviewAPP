@@ -5,13 +5,17 @@ import static com.namoadigital.prj001.ui.act075.Act075_Main.PRODUCT_VIEW_ID;
 import static com.namoadigital.prj001.ui.act075.Act075_Main.VIEW_PROFILE;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -35,16 +39,21 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.namoa_digital.namoa_library.ctls.FabMenu;
 import com.namoa_digital.namoa_library.ctls.FabMenuItem;
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
+import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
+import com.namoa_digital.namoa_library.view.Camera_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act070_Steps_Adapter;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
+import com.namoadigital.prj001.dao.MdJustifyItemDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
+import com.namoadigital.prj001.databinding.TicketNotExecutedDialogBinding;
 import com.namoadigital.prj001.model.MyActionFilterParam;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.service.WS_Product_Serial_Structure;
@@ -84,8 +93,11 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contract.I_View, Frg_Pipeline_Header.OnPipelineFragmentInteractionListener, Frg_Pipeline_Header.OnPipelineFragmentOriginListener {
 
@@ -96,7 +108,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     public static final String PARAM_FORCE_SEND_BY_FORM_EXEC = "PARAM_FORCE_SEND_BY_FORM_EXEC";
     public static final String PARAM_WORKGROUP_EDIT_MODE = "PARAM_WORKGROUP_EDIT_MODE";
     public static final String PARAM_FORCE_WORKGROUP_EDIT_MODE = "PARAM_FORCE_WORKGROUP_EDIT_MODE";
-
+    private static final String TEMP_SUFIX_FILE = "temp_";
     private FragmentManager fm;
     private Frg_Pipeline_Header mFrgPipelineHeader;
     private Act070_Main_Presenter mPresenter;
@@ -136,6 +148,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private boolean forceWgEditMode = false;
     //LUCHE - 08/06/2021 - Fluxo de voltar para lista de action
     private String originFlow;
+    private TicketNotExecutedDialogBinding binding;
+    private boolean fromCamera = false;
+    private boolean assertSingleTouch = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -215,6 +230,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("to_step_lbl");
         transList.add("to_origin_lbl");
         transList.add("to_work_group_edit_lbl");
+        transList.add("to_not_execute_lbl");
         transList.add("to_header_edit_lbl");
         //
         transList.add("alert_checkout_confirm_ttl");
@@ -330,6 +346,25 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("alert_form_so_not_found_ttl");
         transList.add("alert_form_so_not_found_msg");
         //
+        transList.add("alert_not_execute_ttl");
+        transList.add("alert_not_execute_msg");
+        transList.add("alert_not_execute_justify_option_lbl");
+        transList.add("alert_not_execute_justify_comment_lbl");
+        transList.add("alert_not_execute_save_btn");
+        transList.add("alert_not_execute_justify_comment_hint");
+        transList.add("alert_not_execute_justify_option_hint");
+        transList.add("alert_not_execute_justify_comment_required_ttl");
+        transList.add("alert_not_execute_justify_comment_required_msg");
+        transList.add("alert_not_execute_justify_option_required_msg");
+        transList.add("cell_not_execute_justify_lbl");
+        transList.add("alert_not_execute_justify_lost_data_ttl");
+        transList.add("alert_not_execute_justify_lost_data_msg");
+        transList.add("alert_not_execute_add_photo_btn");
+        transList.add("alert_update_ticket_to_not_execute_ttl");
+        transList.add("alert_update_ticket_to_not_execute_msg");
+        transList.add("alert_form_in_process_to_not_execute_msg");
+        transList.add("alert_sync_to_not_execute_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
             mModule_Code,
@@ -404,24 +439,42 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                 new FabMenu.IFabMenu() {
                     @Override
                     public void onFabClick(View view) {
-                        String tag = (String) view.getTag();
-                        //
-                        switch (tag){
-                            case ConstantBaseApp.FAB_TO_ORIGIN_LBL:
-                                callOrigin();
-                                break;
-                            case ConstantBaseApp.FAB_TO_PRODUCT_LBL:
-                                callAct075(PRODUCT_VIEW_ID);
-                                break;
-                            case ConstantBaseApp.FAB_TO_STEP_LBL:
-                                break;
-                            case ConstantBaseApp.FAB_TO_HEADER_EDIT_LBL:
-                                callAct082();
-                                break;
-                            case ConstantBaseApp.FAB_TO_WORK_GROUP_EDIT_LBL:
-                                checkEditFlow();
-                                break;
+                        if(assertSingleTouch) {
+                            assertSingleTouch = false;
+                            String tag = (String) view.getTag();
+                            //
+                            switch (tag) {
+                                case ConstantBaseApp.FAB_TO_ORIGIN_LBL:
+                                    callOrigin();
+                                    break;
+                                case ConstantBaseApp.FAB_TO_PRODUCT_LBL:
+                                    callAct075(PRODUCT_VIEW_ID);
+                                    break;
+                                case ConstantBaseApp.FAB_NOT_EXECUTE_LBL:
+                                    String errorMsg = mPresenter.hasNonExecutionRestriction(mTicket);
+                                    if (!errorMsg.isEmpty()) {
+                                        String formattedErrorMsg = hmAux_Trans.get("alert_update_ticket_to_not_execute_msg")
+                                                + "\n"
+                                                + errorMsg;
+                                        showAlert(
+                                                hmAux_Trans.get("alert_update_ticket_to_not_execute_ttl"),
+                                                formattedErrorMsg
+                                        );
+                                    } else {
+                                        createNotExecuteDialog();
+                                    }
+                                    break;
+                                case ConstantBaseApp.FAB_TO_STEP_LBL:
+                                    break;
+                                case ConstantBaseApp.FAB_TO_HEADER_EDIT_LBL:
+                                    callAct082();
+                                    break;
+                                case ConstantBaseApp.FAB_TO_WORK_GROUP_EDIT_LBL:
+                                    checkEditFlow();
+                                    break;
+                            }
                         }
+                        assertSingleTouch = true;
                         //
                     }
 
@@ -431,6 +484,209 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                     }
                 }
         );
+    }
+
+    private void createNotExecuteDialog() {
+        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+        float dmW = (float) dm.widthPixels * 0.95f;
+//        float dmH = (float) dm.heightPixels * 0.95f;
+        Dialog notExecutedDialog = new Dialog(context);
+        //
+        binding = TicketNotExecutedDialogBinding.inflate(getLayoutInflater());
+        //
+        notExecutedDialog.setContentView(binding.getRoot());
+        //
+        setLabel(binding);
+        setActions(binding, notExecutedDialog);
+        notExecutedDialog.getWindow().setLayout((int) dmW, ViewGroup.LayoutParams.WRAP_CONTENT);
+        notExecutedDialog.setCancelable(false);
+        notExecutedDialog.show();
+        //
+    }
+
+    private void setLabel(TicketNotExecutedDialogBinding binding) {
+        binding.act070NotExecuteDialogTtl.setText(hmAux_Trans.get("alert_not_execute_ttl"));
+        binding.act070NotExecuteDialogMsg.setText(hmAux_Trans.get("alert_not_execute_msg"));
+        SearchableSpinner ssJustifyItem = binding.act070NotExecuteDialogJustifyOptionSs;
+        //
+        if(mTicket.getJustify_group_code() != null
+        && mTicket.getJustify_group_code() > -1) {
+            ArrayList<HMAux> justifyItems = mPresenter.getJustifyItems(mTicket);
+            if(justifyItems.isEmpty()){
+                ssJustifyItem.setVisibility(View.GONE);
+            }else {
+                ssJustifyItem.setmRequired(false);
+                ssJustifyItem.setmShowLabel(true);
+                ssJustifyItem.setmCanClean(true);
+                ssJustifyItem.setmOption(justifyItems);
+                ssJustifyItem.setmLabel(hmAux_Trans.get("alert_not_execute_justify_option_lbl"));
+            }
+        }else{
+            ssJustifyItem.setVisibility(View.GONE);
+        }
+        //
+        binding.act070NotExecuteDialogJustifyCommentsTil.setHint(hmAux_Trans.get("alert_not_execute_justify_comment_lbl"));
+        binding.act070NotExecuteDialogJustifyBtnCancel.setText(hmAux_Trans.get("sys_alert_btn_cancel"));
+        binding.act070NotExecuteDialogJustifyBtnSave.setText(hmAux_Trans.get("alert_not_execute_save_btn"));
+        binding.act070IvJustifyPhotoBtn.setText(hmAux_Trans.get("alert_not_execute_add_photo_btn"));
+        resetNotExecutedFile();
+        setJustifyImage(binding);
+    }
+
+    private void setJustifyImage(TicketNotExecutedDialogBinding binding) {
+        try{
+            Bitmap bitmap = BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + ToolBox_Inf.buildTicketNotExecutedImgPath(mTicket));
+            if(bitmap != null) {
+                binding.act070IvJustifyPhoto.setVisibility(View.VISIBLE);
+                binding.act070IvJustifyPhotoBtn.setVisibility(View.GONE);
+                binding.act070IvJustifyPhoto.setImageBitmap(bitmap);
+                binding.act070IvJustifyPhoto.setTag(Boolean.TRUE);
+                binding.act070IvJustifyPhoto.postInvalidate();
+            }else{
+                binding.act070IvJustifyPhoto.setVisibility(View.GONE);
+                binding.act070IvJustifyPhotoBtn.setVisibility(View.VISIBLE);
+                binding.act070IvJustifyPhoto.setTag(Boolean.FALSE);
+            }
+        } catch (NullPointerException e ){
+            e.printStackTrace();
+        }
+    }
+
+    private void setActions(TicketNotExecutedDialogBinding binding, Dialog notExecutedDialog) {
+        //
+        binding.act070IvJustifyPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fromCamera = true;
+                callCameraAct(
+                        binding.act070IvJustifyPhoto.getId(),
+                        TEMP_SUFIX_FILE + ToolBox_Inf.buildTicketNotExecutedImgPath(mTicket),
+                        !bReadOnly,
+                        !bReadOnly);
+            }
+        });
+        binding.act070IvJustifyPhotoBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fromCamera = true;
+                callCameraAct(
+                        binding.act070IvJustifyPhoto.getId(),
+                        TEMP_SUFIX_FILE + ToolBox_Inf.buildTicketNotExecutedImgPath(mTicket),
+                        !bReadOnly,
+                        !bReadOnly);
+            }
+        });
+        binding.act070NotExecuteDialogJustifyBtnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean hasPhoto = (binding.act070IvJustifyPhoto.getTag() instanceof Boolean && (Boolean) binding.act070IvJustifyPhoto.getTag());
+                boolean hasJustify = binding.act070NotExecuteDialogJustifyOptionSs.getVisibility() == View.VISIBLE
+                        && binding.act070NotExecuteDialogJustifyOptionSs.getmValue().hasConsistentValue(SearchableSpinner.CODE);
+                boolean hasComments = !binding.act070NotExecuteDialogJustifyCommentsActv.getText().toString().isEmpty();
+                if(hasPhoto || hasJustify || hasComments) {
+                    showAlert(
+                            hmAux_Trans.get("alert_not_execute_justify_lost_data_ttl"),
+                            hmAux_Trans.get("alert_not_execute_justify_lost_data_msg"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    notExecutedDialog.dismiss();
+                                }
+                            }, true
+                    );
+                }else{
+                    notExecutedDialog.dismiss();
+                }
+            }
+        });
+        //
+        binding.act070NotExecuteDialogJustifyBtnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String errorMsg = validateNotExecuteFormEntry(binding);
+                if(errorMsg.isEmpty()){
+                    mTicket.setUpdate_required_status(1);
+                    if(!binding.act070NotExecuteDialogJustifyCommentsActv.getText().toString().isEmpty()) {
+                        mTicket.setNot_executed_comments(binding.act070NotExecuteDialogJustifyCommentsActv.getText().toString());
+                    }
+                    mTicket.setNot_executed_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+                    String tempPath = ConstantBase.CACHE_PATH_PHOTO + "/" +TEMP_SUFIX_FILE + ToolBox_Inf.buildTicketNotExecutedImgPath(mTicket);
+                    File temp = new File(tempPath);
+                    if(temp.length() > 0){
+                        File notExecutedPhoto = new File(ConstantBase.CACHE_PATH_PHOTO + "/" +ToolBox_Inf.buildTicketNotExecutedImgPath(mTicket));
+                        try {
+                            ToolBox_Inf.copyFiles(temp.getPath(), notExecutedPhoto.getPath());
+                            temp.delete();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        mTicket.setNot_executed_photo_name(ToolBox_Inf.buildTicketNotExecutedImgPath(mTicket));
+                    }
+                    HMAux justifyHM = binding.act070NotExecuteDialogJustifyOptionSs.getmValue();
+
+                    if(justifyHM.hasConsistentValue(SearchableSpinner.CODE)) {
+                        mTicket.setJustify_item_code(Integer.valueOf(Objects.requireNonNull(justifyHM.get(SearchableSpinner.CODE))));
+                    }
+                    //
+                    notExecutedDialog.dismiss();
+                    if (ToolBox_Inf.hasOffHandFormInProcess(context, mTkPrefix, mTkCode)) {
+                        showAlert(
+                                hmAux_Trans.get("alert_ticket_has_off_hand_form_in_process_ttl"),
+                                hmAux_Trans.get("alert_ticket_has_off_hand_form_in_process_msg")
+                        );
+                    }else {
+                        mPresenter.defineNotExecuteFlow(mTicket);
+                    }
+                }else{
+                    showAlert(
+                            hmAux_Trans.get("alert_not_execute_justify_comment_required_ttl"),
+                            errorMsg
+                    );
+                }
+            }
+        });
+        notExecutedDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                if(binding.act070IvJustifyPhoto.getTag() instanceof Boolean
+                        && (Boolean) binding.act070IvJustifyPhoto.getTag()) {
+                    resetNotExecutedFile();
+                }
+                //
+                try {
+                    ToolBox_Inf.hideSoftKeyboard(Act070_Main.this);
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        });
+        //
+    }
+
+    private void resetNotExecutedFile() {
+        String tempPath = ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + ToolBox_Inf.buildTicketNotExecutedImgPath(mTicket);
+        File temp = new File(tempPath);
+        if (temp.length() > 0) {
+            temp.delete();
+        }
+    }
+
+    private String validateNotExecuteFormEntry(TicketNotExecutedDialogBinding binding) {
+        String errorMsg = "";
+        HMAux hmAux = binding.act070NotExecuteDialogJustifyOptionSs.getmValue();
+        if(hmAux.hasConsistentValue(MdJustifyItemDao.REQUIRED_COMMENT)
+                && "1".equals(hmAux.get(MdJustifyItemDao.REQUIRED_COMMENT))){
+            if( binding.act070NotExecuteDialogJustifyCommentsActv == null
+            || binding.act070NotExecuteDialogJustifyCommentsActv.getText() == null
+            || binding.act070NotExecuteDialogJustifyCommentsActv.getText().toString().isEmpty()){
+                 errorMsg = hmAux_Trans.get("alert_not_execute_justify_comment_required_msg");
+            }
+        }
+        if( binding.act070NotExecuteDialogJustifyOptionSs.getVisibility() == View.VISIBLE
+        && !hmAux.hasConsistentValue(SearchableSpinner.CODE)){
+            errorMsg += hmAux_Trans.get("alert_not_execute_justify_option_required_msg");
+        }
+        return errorMsg;
     }
 
     private void checkEditFlow() {
@@ -481,21 +737,21 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private void iniHeaderFrag() {
         if(mFrgPipelineHeader == null) {
             mFrgPipelineHeader = Frg_Pipeline_Header.newInstanceForPipeline(
-                mTicket,
-                mTicket.getTicket_id() + " ",
-                ToolBox_Inf.millisecondsToString(
-                    ToolBox_Inf.dateToMilliseconds(mTicket.getOpen_date()),
-                    ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-                ),
-                mTicket.getOpen_site_code(),
-                mTicket.getOpen_site_desc(),
-                mTicket.getOpen_serial_id(),
-                mTicket.getOpen_product_desc(),
-                hmAux_Trans.get(mTicket.getTicket_status()),
-                ToolBox_Inf.getStatusColorV2(context, mTicket.getTicket_status()),
-                ToolBox_Inf.getFormattedTicketOriginDesc(mTicket.getOrigin_type(), mTicket.getOrigin_desc(),mTicket.getType_desc()),
-                hmAux_Trans.get("please_sync_lbl"),
-                mPresenter.getSyncStatusParam(mTicket)
+                    mTicket,
+                    mTicket.getTicket_id() + " ",
+                    ToolBox_Inf.millisecondsToString(
+                            ToolBox_Inf.dateToMilliseconds(mTicket.getOpen_date()),
+                            ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                    ),
+                    mTicket.getOpen_site_code(),
+                    mTicket.getOpen_site_desc(),
+                    mTicket.getOpen_serial_id(),
+                    mTicket.getOpen_product_desc(),
+                    hmAux_Trans.get(mTicket.getTicket_status()),
+                    ToolBox_Inf.getStatusColorV2(context, mTicket.getTicket_status()),
+                    ToolBox_Inf.getFormattedTicketOriginDesc(mTicket.getOrigin_type(), mTicket.getOrigin_desc(),mTicket.getType_desc()),
+                    hmAux_Trans.get("please_sync_lbl"),
+                    mPresenter.getSyncStatusParam(mTicket)
             );
             //
             //
@@ -521,15 +777,15 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             syncPipelineFlow(false);
         }else{
             showAlert(
-                hmAux_Trans.get("alert_discard_wg_changes_and_sync_ttl"),
-                hmAux_Trans.get("alert_discard_wg_changes_and_sync_msg"),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        syncPipelineFlow(true);
-                    }
-                },
-                true
+                    hmAux_Trans.get("alert_discard_wg_changes_and_sync_ttl"),
+                    hmAux_Trans.get("alert_discard_wg_changes_and_sync_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            syncPipelineFlow(true);
+                        }
+                    },
+                    true
             );
         }
     }
@@ -551,15 +807,15 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                 mPresenter.prepareSyncProcess(mTicket, false);
             }else{
                 showAlert(
-                    hmAux_Trans.get("alert_ticket_sync_confirm_ttl"),
-                    hmAux_Trans.get("alert_ticket_sync_confirm_msg"),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            mPresenter.prepareSyncProcess(mTicket, false);
-                        }
-                    },
-                    true
+                        hmAux_Trans.get("alert_ticket_sync_confirm_ttl"),
+                        hmAux_Trans.get("alert_ticket_sync_confirm_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                mPresenter.prepareSyncProcess(mTicket, false);
+                            }
+                        },
+                        true
                 );
             }
         }
@@ -624,17 +880,17 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         rvTicketPipeline.setLayoutManager(new LinearLayoutManager(context));
         rvTicketPipeline.setAdapter(mAdapter);
         rvTicketPipeline.postDelayed(
-            new Runnable() {
-                @Override
-                public void run() {
-                    if(hasNavegationBundleParam()) {
-                        openLastProcessInteraction();
-                    }else {
-                        openCurrentSteps();
-                        moveToCurrentStep(currentStepFirstPosition);
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        if(hasNavegationBundleParam()) {
+                            openLastProcessInteraction();
+                        }else {
+                            openCurrentSteps();
+                            moveToCurrentStep(currentStepFirstPosition);
+                        }
                     }
-                }
-            },100
+                },100
         );
         //
     }
@@ -677,27 +933,27 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                             stepMainVH.itemView.performClick();
                             //
                             new Handler().postDelayed(
-                                new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        for (int i = 0; i < sources.size(); i++) {
-                                            if(sources.get(i) instanceof StepAbstractProcess){
-                                                StepAbstractProcess process = (StepAbstractProcess) sources.get(i);
-                                                if(process.getStepCode() == mNavStepCode
-                                                    && (   (mNavTicketSeq > 0 && process.getProcessTkSeq() == mNavTicketSeq)
+                                    new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            for (int i = 0; i < sources.size(); i++) {
+                                                if(sources.get(i) instanceof StepAbstractProcess){
+                                                    StepAbstractProcess process = (StepAbstractProcess) sources.get(i);
+                                                    if(process.getStepCode() == mNavStepCode
+                                                            && (   (mNavTicketSeq > 0 && process.getProcessTkSeq() == mNavTicketSeq)
                                                             || (mNavTicketSeq <= 0 && process.getProcessTkSeqTmp() == mNavTicketSeqTmp)
-                                                        )
-                                                ){
-                                                    smoothMoveToItemAndScrollItToTop(i);
-                                                    process.setBackProcessHighlight(true);
-                                                    mAdapter.notifyItemChanged(i);
-                                                    resetNavegationVars();
+                                                    )
+                                                    ){
+                                                        smoothMoveToItemAndScrollItToTop(i);
+                                                        process.setBackProcessHighlight(true);
+                                                        mAdapter.notifyItemChanged(i);
+                                                        resetNavegationVars();
+                                                    }
                                                 }
                                             }
                                         }
-                                    }
-                                },
-                                500
+                                    },
+                                    500
                             );
                             break;
                         }
@@ -709,7 +965,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         }
     }
 
-   private void resetNavegationVars() {
+    private void resetNavegationVars() {
         mNavStepCode = -1;
         mNavTicketSeq = -1;
         mNavTicketSeqTmp = -1;
@@ -732,45 +988,49 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     @Override
     protected void onResume() {
         super.onResume();
+        if(fromCamera){
+            fromCamera = false;
+            setJustifyImage(binding);
+        }
         //openCurrentSteps();
     }
 
     private void iniAdapter() {
         //
         mAdapter = new Act070_Steps_Adapter(
-            context,
-            sources,
-            new Act070_Steps_Adapter.OnMainClickListener() {
-                @Override
-                public void onMainClick(boolean isShown, int mainPosition) {
-                    mPresenter.updateStepOpenStates(sources, mainPosition, isShown);
-                    if (isShown) {
-                        mPresenter.removeStepCtrlsContent(sources, mainPosition);
-                    } else {
-                        mPresenter.generateStepCtrlsContent(
-                            mTicket,
-                            sources,
-                            mainPosition
-                        );
+                context,
+                sources,
+                new Act070_Steps_Adapter.OnMainClickListener() {
+                    @Override
+                    public void onMainClick(boolean isShown, int mainPosition) {
+                        mPresenter.updateStepOpenStates(sources, mainPosition, isShown);
+                        if (isShown) {
+                            mPresenter.removeStepCtrlsContent(sources, mainPosition);
+                        } else {
+                            mPresenter.generateStepCtrlsContent(
+                                    mTicket,
+                                    sources,
+                                    mainPosition
+                            );
+                        }
                     }
-                }
-            },
-            new Act070_Steps_Adapter.OnActionClickListener() {
-                @Override
-                public void onActionClick(int actionPosition) {
-                    StepAction stepAction = (StepAction) sources.get(actionPosition);
-                    mPresenter.defineActionFlow(mTicket, stepAction);
+                },
+                new Act070_Steps_Adapter.OnActionClickListener() {
+                    @Override
+                    public void onActionClick(int actionPosition) {
+                        StepAction stepAction = (StepAction) sources.get(actionPosition);
+                        mPresenter.defineActionFlow(mTicket, stepAction);
 //                    callAct071(
 //                        mPresenter.getAct071Bundle(mTicket, stepAction.getStepCode(), stepAction.getProcessTkSeq())
 //                    );
-                }
-            },
-            new Act070_Steps_Adapter.OnChecklistClickListener() {
-                @Override
-                public void onChecklistClick(int checklistPosition) {
-                    lastPositionClicked = checklistPosition;
-                    StepForm stepForm = (StepForm) sources.get(checklistPosition);
-                    mPresenter.defineFormFlow(mTicket, stepForm);
+                    }
+                },
+                new Act070_Steps_Adapter.OnChecklistClickListener() {
+                    @Override
+                    public void onChecklistClick(int checklistPosition) {
+                        lastPositionClicked = checklistPosition;
+                        StepForm stepForm = (StepForm) sources.get(checklistPosition);
+                        mPresenter.defineFormFlow(mTicket, stepForm);
 //                    if(ConstantBaseApp.SYS_STATUS_PENDING.equals(stepForm.getProcessStatus())){
 //                        showAlert(
 //                            hmAux_Trans.get("alert_start_form_process_ttl"),
@@ -784,35 +1044,35 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
 //                            true
 //                        );
 //                    }
-                }
-            },
-            new Act070_Steps_Adapter.OnApprovalClickListener() {
-                @Override
-                public void onApprovalClick(int approvalPosition) {
-                    StepApproval stepApproval = (StepApproval) sources.get(approvalPosition);
-                    mPresenter.defineApprovalFlow(mTicket, stepApproval);
-                }
+                    }
+                },
+                new Act070_Steps_Adapter.OnApprovalClickListener() {
+                    @Override
+                    public void onApprovalClick(int approvalPosition) {
+                        StepApproval stepApproval = (StepApproval) sources.get(approvalPosition);
+                        mPresenter.defineApprovalFlow(mTicket, stepApproval);
+                    }
 
-                @Override
-                public void onShowRejectionClick(int approvalPosition) {
-                    StepApproval stepApproval = (StepApproval) sources.get(approvalPosition);
-                    mPresenter.prepareRejectionDialog(mTicket, stepApproval);
-                }
-            },
-            new Act070_Steps_Adapter.OnProcessBtnClickListener() {
-                @Override
-                public void onProcessBtnClick(int processBtnPosition) {
-                    StepProcessBtn stepProcessBtn = (StepProcessBtn) sources.get(processBtnPosition);
-                    mPresenter.defineProcessBtnFlow(mTicket, stepProcessBtn);
-                }
-            },
-            new Act070_Steps_Adapter.OnNoneClickListener() {
-                @Override
-                public void onNoneClick(int nonePosition) {
-                    final StepNone stepNone = (StepNone) sources.get(nonePosition);
-                    mPresenter.defineNoneFlow(mTicket, stepNone);
-                }
-            }, new Act070_Steps_Adapter.OnWorkgroupSpinnerListeners() {
+                    @Override
+                    public void onShowRejectionClick(int approvalPosition) {
+                        StepApproval stepApproval = (StepApproval) sources.get(approvalPosition);
+                        mPresenter.prepareRejectionDialog(mTicket, stepApproval);
+                    }
+                },
+                new Act070_Steps_Adapter.OnProcessBtnClickListener() {
+                    @Override
+                    public void onProcessBtnClick(int processBtnPosition) {
+                        StepProcessBtn stepProcessBtn = (StepProcessBtn) sources.get(processBtnPosition);
+                        mPresenter.defineProcessBtnFlow(mTicket, stepProcessBtn);
+                    }
+                },
+                new Act070_Steps_Adapter.OnNoneClickListener() {
+                    @Override
+                    public void onNoneClick(int nonePosition) {
+                        final StepNone stepNone = (StepNone) sources.get(nonePosition);
+                        mPresenter.defineNoneFlow(mTicket, stepNone);
+                    }
+                }, new Act070_Steps_Adapter.OnWorkgroupSpinnerListeners() {
             @Override
             public ArrayList<HMAux> onWorkgroupSpinnerClick() {
                 return mPresenter.getWorkgroupChangeList(mTicket);
@@ -824,14 +1084,57 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             }
 
         },
-        inWgEditMode,
-        //LUCHE - 02/07/2021 - Voltado a regra do readOnly apenas de status. Para focus ou claim,
-        //cada processo fará a ato avalição, pois se o processo estiver em processo, seré permitido
-        // a finalizacao do mesmo.
-        bReadOnly
+                new Act070_Steps_Adapter.OnNotExecutedInteraction(){
+                    @Override
+                    public void onPhotoClickListener(int imageViewId) {
+                        String path =  ConstantBase.CACHE_PATH_PHOTO + "/" + ToolBox_Inf.buildTicketNotExecutedImgPath(mTicket);
+                        if(ToolBox_Inf.isImageUnder4kLimit(path)){
+                            callCameraAct(imageViewId,ToolBox_Inf.buildTicketNotExecutedImgPath(mTicket), false, false);
+                        }else{
+                            showAlert(
+                                    hmAux_Trans.get("alert_image_too_large_to_open_ttl"),
+                                    hmAux_Trans.get("alert_image_too_large_to_open_msg")
+                            );
+                        }
+                    }
+
+                    @Override
+                    public String getTicketJustifyImagePath() {
+                        return ToolBox_Inf.buildTicketNotExecutedImgPath(mTicket);
+                    }
+                }     ,
+                inWgEditMode,
+                //LUCHE - 02/07/2021 - Voltado a regra do readOnly apenas de status. Para focus ou claim,
+                //cada processo fará a ato avalição, pois se o processo estiver em processo, seré permitido
+                // a finalizacao do mesmo.
+                bReadOnly
         );
         //
         initRecycle();
+    }
+
+    private void callCameraAct(int imageViewId, String path, boolean inEditMode, boolean isEnable) {
+        File sFile;
+        sFile = new File( ConstantBase.CACHE_PATH_PHOTO + "/" + path);
+
+        if (!sFile.exists() && !inEditMode && !isEnable) {
+            return;
+        }
+        //
+        Bundle bundle = new Bundle();
+        bundle.putInt(ConstantBase.PID, imageViewId);
+        bundle.putInt(ConstantBase.PTYPE, 1);
+        bundle.putString(ConstantBase.PPATH, path);
+        bundle.putBoolean(ConstantBase.PEDIT, inEditMode);
+        bundle.putBoolean(ConstantBase.PENABLED, isEnable);
+        bundle.putBoolean(ConstantBase.P_ALLOW_GALLERY, false);
+        bundle.putBoolean(ConstantBase.P_ALLOW_HIGH_RESOLUTION, false);
+        bundle.putString(ConstantBase.FILE_AUTHORITIES, ConstantBase.AUTHORITIES_FOR_PROVIDER);
+        //
+        Intent mIntent = new Intent(context, Camera_Activity.class);
+        mIntent.putExtras(bundle);
+        //
+        context.startActivity(mIntent);
     }
 
     //region NOVO_TICKET
@@ -945,12 +1248,18 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private void handleFabMenuOnTicketStatusChanged() {
         if(mPresenter.getReadOnlyDefinition(mTicket)){
             ArrayList<FabMenuItem> fabMenuItems = fabMenu.getmButtons();
+            ArrayList<FabMenuItem> fabMenuItemsRemoved = new ArrayList<>();
             if (!fabMenuItems.isEmpty()) {
                 for (FabMenuItem fabMenuItem : fabMenuItems) {
-                    if(ConstantBaseApp.FAB_TO_WORK_GROUP_EDIT_LBL.equals(fabMenuItem.getTag())) {
-                        fabMenu.removeFabMenuItens(fabMenuItem);
-                        break;
+                    if(ConstantBaseApp.FAB_TO_WORK_GROUP_EDIT_LBL.equals(fabMenuItem.getTag())
+                            || ConstantBaseApp.FAB_NOT_EXECUTE_LBL.equals(fabMenuItem.getTag())
+                    ) {
+                        fabMenuItemsRemoved.add(fabMenuItem);
                     }
+                }
+                //
+                for(FabMenuItem fabMenuItem: fabMenuItemsRemoved){
+                    fabMenu.removeFabMenuItens(fabMenuItem);
                 }
             }
         }else{
@@ -965,7 +1274,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private void callToastTest() {
         LayoutInflater inflater = getLayoutInflater();
         View layout = inflater.inflate(R.layout.custom_warning_toast,
-            (ViewGroup) findViewById(R.id.custom_warning_toast_cl_container));
+                (ViewGroup) findViewById(R.id.custom_warning_toast_cl_container));
 
         TextView text = (TextView) layout.findViewById(R.id.custom_warning_toast_tv_msg);
         text.setText("Sincronize o ticket.");
@@ -1005,28 +1314,28 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         mPresenter.checkBtnSaveEditState(sources);
         if(inWgEditMode && !mPresenter.allowEditModeOn(mTicket)){
             if(mPresenter.hasWorkgroupChanges(sources)){
-                   showAlert(
-                       hmAux_Trans.get("alert_wg_changes_ll_be_lost_by_sync_needs_ttl"),
-                       hmAux_Trans.get("alert_wg_changes_ll_be_lost_by_sync_needs_msg"),
-                       new DialogInterface.OnClickListener() {
-                           @Override
-                           public void onClick(DialogInterface dialogInterface, int i) {
-                               syncPipelineFlow(false);
-                           }
-                       },
-                       true
-                   );
+                showAlert(
+                        hmAux_Trans.get("alert_wg_changes_ll_be_lost_by_sync_needs_ttl"),
+                        hmAux_Trans.get("alert_wg_changes_ll_be_lost_by_sync_needs_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                syncPipelineFlow(false);
+                            }
+                        },
+                        true
+                );
             }else{
                 showAlert(
-                    hmAux_Trans.get("alert_wg_edit_mode_cancel_by_sync_needs_ttl"),
-                    hmAux_Trans.get("alert_wg_edit_mode_cancel_by_sync_needs_msg"),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            syncPipelineFlow(true);
-                        }
-                    },
-                    false
+                        hmAux_Trans.get("alert_wg_edit_mode_cancel_by_sync_needs_ttl"),
+                        hmAux_Trans.get("alert_wg_edit_mode_cancel_by_sync_needs_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                syncPipelineFlow(true);
+                            }
+                        },
+                        false
                 );
             }
         }
@@ -1121,37 +1430,37 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
 
     private void paramErrorFlow() {
         ToolBox.alertMSG(
-            context,
-            hmAux_Trans.get("alert_ticket_parameter_error_ttl"),
-            hmAux_Trans.get("alert_ticket_parameter_error_msg"),
-            new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    callAct076();
-                }
-            },
-            0
+                context,
+                hmAux_Trans.get("alert_ticket_parameter_error_ttl"),
+                hmAux_Trans.get("alert_ticket_parameter_error_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        callAct076();
+                    }
+                },
+                0
         );
     }
 
     @Override
     public void showPD(String ttl, String msg) {
         enableProgressDialog(
-            ttl,
-            msg,
-            hmAux_Trans.get("sys_alert_btn_cancel"),
-            hmAux_Trans.get("sys_alert_btn_ok")
+                ttl,
+                msg,
+                hmAux_Trans.get("sys_alert_btn_cancel"),
+                hmAux_Trans.get("sys_alert_btn_ok")
         );
     }
 
     @Override
     public void showAlert(String ttl, String msg) {
         ToolBox.alertMSG(
-            context,
-            ttl,
-            msg,
-            null,
-            0
+                context,
+                ttl,
+                msg,
+                null,
+                0
         );
     }
 
@@ -1159,19 +1468,19 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     public void showAlert(String ttl, String msg, DialogInterface.OnClickListener listenerOk, boolean showNegative) {
         if(showNegative){
             ToolBox.alertMSG_YES_NO(
-                context,
-                ttl,
-                msg,
-                listenerOk,
-                showNegative ? 1 : 0
+                    context,
+                    ttl,
+                    msg,
+                    listenerOk,
+                    showNegative ? 1 : 0
             );
         }else{
             ToolBox.alertMSG(
-                context,
-                ttl,
-                msg,
-                listenerOk,
-                showNegative ? 1 : 0
+                    context,
+                    ttl,
+                    msg,
+                    listenerOk,
+                    showNegative ? 1 : 0
             );
         }
     }
@@ -1200,10 +1509,10 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             bundle = new Bundle();
         }
         if (ConstantBaseApp.ACT012.equals(requestingAct)
-            || ConstantBaseApp.ACT014.equals(requestingAct)
-            || ConstantBaseApp.ACT035.equals(requestingAct)
-            || ConstantBaseApp.ACT017.equals(requestingAct)
-            || ConstantBaseApp.ACT083.equals(requestingAct))
+                || ConstantBaseApp.ACT014.equals(requestingAct)
+                || ConstantBaseApp.ACT035.equals(requestingAct)
+                || ConstantBaseApp.ACT017.equals(requestingAct)
+                || ConstantBaseApp.ACT083.equals(requestingAct))
         {
             bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, requestingAct);
             if (ConstantBaseApp.ACT035.equals(requestingAct)) {
@@ -1211,7 +1520,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             }
             //LUCHE - 18/03/2020 - Tratativa especifica do agendamento
             if( ConstantBaseApp.ACT017.equals(requestingAct)
-                ||  ConstantBaseApp.ACT083.equals(requestingAct)
+                    ||  ConstantBaseApp.ACT083.equals(requestingAct)
             ){
                 bundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK, requestingBundle.getString(MD_Schedule_ExecDao.SCHEDULE_PK, null));
                 bundle.putString(ConstantBaseApp.ACT_SELECTED_DATE, requestingBundle.getString(ConstantBaseApp.ACT_SELECTED_DATE, null));
@@ -1308,8 +1617,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         //
         Bundle bundle = new Bundle();
         bundle.putString(
-            ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
-            requestingBundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,ConstantBaseApp.ACT005)
+                ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
+                requestingBundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,ConstantBaseApp.ACT005)
         );
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM,ToolBox_Inf.getMyActionFilterParam(requestingBundle));
         intent.putExtras(bundle);
@@ -1367,8 +1676,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                     mPresenter.generateJsonWGSave(mTicket, sources);
                 }else{
                     showAlert(
-                        hmAux_Trans.get("alert_update_ticket_to_edit_ttl"),
-                        hmAux_Trans.get("alert_update_ticket_to_edit_msg")
+                            hmAux_Trans.get("alert_update_ticket_to_edit_ttl"),
+                            hmAux_Trans.get("alert_update_ticket_to_edit_msg")
                     );
                 }
 
@@ -1379,15 +1688,15 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private void confirmEditModeExit() {
         if(mPresenter.hasWorkgroupChanges(sources)) {
             showAlert(
-                hmAux_Trans.get("alert_cancel_edit_mode_ttl"),
-                hmAux_Trans.get("alert_unsaved_group_changes_will_be_lost_msg"),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        toogleIntoEditMode();
-                    }
-                },
-                true
+                    hmAux_Trans.get("alert_cancel_edit_mode_ttl"),
+                    hmAux_Trans.get("alert_unsaved_group_changes_will_be_lost_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            toogleIntoEditMode();
+                        }
+                    },
+                    true
             );
         }else{
             toogleIntoEditMode();
@@ -1441,12 +1750,12 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         if(position > -1) {
             //Faz scroll para o fim do scroll
             new Handler().postDelayed(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        smoothMoveToItemAndScrollItToTop(position);
-                    }
-                }, 400
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            smoothMoveToItemAndScrollItToTop(position);
+                        }
+                    }, 400
             );
         }
     }
@@ -1531,8 +1840,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                 requestingBundle.putInt(TK_TicketDao.TICKET_CODE, mTkCode);
                 requestingBundle.putBoolean(PARAM_WORKGROUP_EDIT_MODE, inWgEditMode);
                 intent.putExtras(requestingBundle);
-                    startActivity(intent);
-                    finish();
+                startActivity(intent);
+                finish();
             }
             //Não tem else pois se for false, será disparado msg dentro do metodo checkWorkgroupEditJsonFileCreation
         }
@@ -1548,7 +1857,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         public void onReceive(Context context, Intent intent) {
             Bundle bundle = intent.getExtras();
             if (bundle != null
-                && bundle.containsKey(ConstantBaseApp.SW_TYPE)
+                    && bundle.containsKey(ConstantBaseApp.SW_TYPE)
             ) {
                 //
                 if(bundle.getString(ConstantBaseApp.SW_TYPE).equals(ConstantBaseApp.FCM_ACTION_TK_TICKET_UPDATE)) {
@@ -1599,8 +1908,12 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             wsProcess = "";
             progressDialog.dismiss();
             if(save_return == null || save_return.isEmpty()) {
-                StepForm stepForm = (StepForm) sources.get(lastPositionClicked);
-                mPresenter.defineAfterFormSyncProcess(mTicket, stepForm, true);
+                if(lastPositionClicked >= 0) {
+                    StepForm stepForm = (StepForm) sources.get(lastPositionClicked);
+                    mPresenter.defineAfterFormSyncProcess(mTicket, stepForm, true);
+                }else{
+                    refreshUi();
+                }
             }else{
                 mPresenter.processSaveReturn(mTicket.getTicket_prefix(), mTicket.getTicket_code(), save_return);
                 save_return = "";

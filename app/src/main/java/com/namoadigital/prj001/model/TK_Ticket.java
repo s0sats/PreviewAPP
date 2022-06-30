@@ -5,6 +5,7 @@ import android.content.Context;
 import androidx.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
@@ -110,6 +111,7 @@ public class TK_Ticket implements Cloneable, Serializable {
     private int sync_required;
     private int update_required;
     private int update_required_product;
+    private int update_required_status;
     @Expose
     private String token;
     @Expose
@@ -167,6 +169,31 @@ public class TK_Ticket implements Cloneable, Serializable {
     private int tag_operational_code;
     private String tag_operational_id;
     private String tag_operational_desc;
+    @Expose
+    @SerializedName("justify_group_code")
+    private Integer justify_group_code;
+    @Expose
+    @Nullable
+    @SerializedName("justify_item_code")
+    private Integer justify_item_code;
+    @Nullable
+    @SerializedName("justify_item_id")
+    private String justify_item_id;
+    @Nullable
+    @SerializedName("justify_item_desc")
+    private String justify_item_desc;
+    @Expose
+    @SerializedName("not_executed_comments")
+    private String not_executed_comments;
+    @Expose
+    @SerializedName("not_executed_photo_name")
+    private String not_executed_photo_name;
+    @SerializedName("not_executed_photo_url")
+    private String not_executed_photo_url;
+    @SerializedName("not_executed_photo")
+    private Integer not_executed_photo;
+    @SerializedName("not_executed_date")
+    private String not_executed_date;
     @Expose
     private ArrayList<TK_Ticket_Step> step = new ArrayList<>();
     @Expose
@@ -733,6 +760,14 @@ public class TK_Ticket implements Cloneable, Serializable {
         this.update_required_product = update_required_product;
     }
 
+    public int getUpdate_required_status() {
+        return update_required_status;
+    }
+
+    public void setUpdate_required_status(int update_required_status) {
+        this.update_required_status = update_required_status;
+    }
+
     public String getToken() {
         return token;
     }
@@ -977,6 +1012,78 @@ public class TK_Ticket implements Cloneable, Serializable {
         this.tag_operational_desc = tag_operational_desc;
     }
 
+    public Integer getJustify_group_code() {
+        return justify_group_code;
+    }
+
+    public void setJustify_group_code(Integer justify_group_code) {
+        this.justify_group_code = justify_group_code;
+    }
+
+    public Integer getJustify_item_code() {
+        return justify_item_code;
+    }
+
+    public void setJustify_item_code(Integer justify_item_code) {
+        this.justify_item_code = justify_item_code;
+    }
+
+    public String getJustify_item_id() {
+        return justify_item_id;
+    }
+
+    public void setJustify_item_id(String justify_item_id) {
+        this.justify_item_id = justify_item_id;
+    }
+
+    public String getJustify_item_desc() {
+        return justify_item_desc;
+    }
+
+    public void setJustify_item_desc(String justify_item_desc) {
+        this.justify_item_desc = justify_item_desc;
+    }
+
+    public String getNot_executed_comments() {
+        return not_executed_comments;
+    }
+
+    public void setNot_executed_comments(String not_executed_comments) {
+        this.not_executed_comments = not_executed_comments;
+    }
+
+    public String getNot_executed_photo_name() {
+        return not_executed_photo_name;
+    }
+
+    public void setNot_executed_photo_name(String not_executed_photo_name) {
+        this.not_executed_photo_name = not_executed_photo_name;
+    }
+
+    public String getNot_executed_photo_url() {
+        return not_executed_photo_url;
+    }
+
+    public void setNot_executed_photo_url(String not_executed_photo_url) {
+        this.not_executed_photo_url = not_executed_photo_url;
+    }
+
+    public Integer getNot_executed_photo() {
+        return not_executed_photo;
+    }
+
+    public void setNot_executed_photo(Integer not_executed_photo) {
+        this.not_executed_photo = not_executed_photo;
+    }
+
+    public String getNot_executed_date() {
+        return not_executed_date;
+    }
+
+    public void setNot_executed_date(String not_executed_date) {
+        this.not_executed_date = not_executed_date;
+    }
+
     public ArrayList<TK_Ticket_Step> getStep() {
         return step;
     }
@@ -1022,6 +1129,10 @@ public class TK_Ticket implements Cloneable, Serializable {
                     ToolBox_Inf.buildTicketImgPath(this)
                 )
             );
+        }
+        if((not_executed_photo_url != null && !not_executed_photo_url.isEmpty())
+        || (not_executed_photo != null &&  not_executed_photo > 0)) {
+            setNot_executed_photo_name(getLocalPath(ToolBox_Inf.buildTicketNotExecutedImgPath(this)));
         }
         //
         if(getStep() != null) {
@@ -1337,8 +1448,9 @@ public class TK_Ticket implements Cloneable, Serializable {
     }
 
     public boolean isReadOnlyStatus() {
-        return !ConstantBaseApp.SYS_STATUS_PENDING.equalsIgnoreCase(ticket_status)
-                && !ConstantBaseApp.SYS_STATUS_PROCESS.equalsIgnoreCase(ticket_status);
+        return (!ConstantBaseApp.SYS_STATUS_PENDING.equalsIgnoreCase(ticket_status)
+                && !ConstantBaseApp.SYS_STATUS_PROCESS.equalsIgnoreCase(ticket_status))
+                || update_required_status == 1;
     }
 
     public static boolean isReadOnlyStatus(String ticketStatus) {
@@ -1391,6 +1503,7 @@ public class TK_Ticket implements Cloneable, Serializable {
     public boolean isUpdateRequired() {
         return update_required >0
                 || update_required_product >0
+                || update_required_status >0
                 || isCurrentStepUpdateRequired();
     }
 

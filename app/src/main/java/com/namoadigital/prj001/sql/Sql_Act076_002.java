@@ -98,7 +98,7 @@ public class Sql_Act076_002 implements Specification {
                         "       0 fcm,\n" +
                         "       t.user_focus,\n" +
                         "       t.sync_required,\n" +
-                        "       CASE WHEN t.update_required + t.update_required_product > 0 \n" +
+                        "       CASE WHEN t.update_required + t.update_required_product + t.update_required_status > 0 \n" +
                         "            THEN 1\n" +
                         "            ELSE 0\n" +
                         "       END update_required,\n" +

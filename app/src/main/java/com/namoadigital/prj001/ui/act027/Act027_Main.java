@@ -69,6 +69,7 @@ import com.namoadigital.prj001.receiver.WBR_SO_Create_Room;
 import com.namoadigital.prj001.receiver.WBR_SO_Save;
 import com.namoadigital.prj001.receiver.WBR_SO_Search;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
+import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_UserAuthor;
@@ -77,6 +78,7 @@ import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.sql.CH_Room_Sql_001;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_004;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Product_Sql_SS_001;
@@ -86,6 +88,8 @@ import com.namoadigital.prj001.sql.SM_SO_File_Sql_005;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Sql_012;
 import com.namoadigital.prj001.sql.SM_SO_Sql_014;
+import com.namoadigital.prj001.sql.SM_SO_Sql_018;
+import com.namoadigital.prj001.sql.SM_SO_Sql_025;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_002;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act009.Act009_Main;
@@ -138,6 +142,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     public static final String WS_PROCESS_SO_SAVE_APPROVAL = "WS_PROCESS_SO_SAVE_APPROVAL";
     public static final String WS_SEARCH_TRACKING = "WS_SEARCH_TRACKING";
     public static final String WS_PROCESS_SERIAL = "WS_PROCESS_SERIAL";
+    public static final String WS_PROCESS_SERIAL_REFRESH = "WS_PROCESS_SERIAL_REFRESH";
     public static final String WS_PROCESS_SO_SYNC = "WS_PROCESS_SO_SYNC";
     public static final String WS_PROCESS_SO_SAVE = "WS_PROCESS_SO_SAVE";
     public static final String WS_PROCESS_N_FORM_SYNC = "WS_PROCESS_N_FORM_SYNC";
@@ -202,6 +207,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     private MD_Product_SerialDao serialDao;
     private MD_Product_Serial_TrackingDao trackingDao;
     private boolean isSoSaveLinked = false;
+    private boolean isSerialOutdated = false;
     //Receiver do que captura disparo do FCM
     //LUCHE - 16/07/2019
     private FCMReceiver fcmReceiver;
@@ -499,6 +505,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         transList.add("alert_no_data_changes_msg");
         transList.add("progress_save_serial_ttl");
         transList.add("progress_save_serial_msg");
+        transList.add("progress_download_serial_ttl");
+        transList.add("progress_download_serial_msg");
         transList.add("searchable_spinner_lbl");
         transList.add("add_info1_ttl");
         transList.add("add_info2_ttl");
@@ -537,6 +545,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         transList.add("alert_goto_service_menu_ttl");
         transList.add("alert_goto_service_menu_msg");
         transList.add("quality_approval_shortcut");
+        transList.add("final_approval_shortcut");
         transList.add("product_event_shortcut");
         //N-Form Creation
         transList.add("toolbar_n_form_lbl");
@@ -592,6 +601,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         transList.add("alert_cancel_product_event_confirm");
         transList.add("alert_error_on_cancel_product_event_ttl");
         transList.add("alert_error_on_cancel_product_event_msg");
+        //
+        transList.add("toast_error_on_sync_serial_msg");
+        transList.add("toast_success_on_sync_serial_msg");
         //
         transList.add("so_room_not_found_ttl");
         transList.add("so_room_not_found_msg");
@@ -999,6 +1011,31 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         context.sendBroadcast(mIntent);
     }
 
+    public void executeSerialDownload() {
+        if(isSerialOutdated) {
+            isSerialOutdated = false;
+            //
+            setWs_process(Act027_Main.WS_PROCESS_SERIAL_REFRESH);
+            //
+            showPD(
+                    hmAux_Trans.get("progress_download_serial_ttl"),
+                    hmAux_Trans.get("progress_download_serial_msg")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_Serial_Search.class);
+            Bundle bundle = new Bundle();
+            //
+            bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE, String.valueOf(mSm_so.getProduct_code()));
+            bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, mSm_so.getSerial_id());
+            bundle.putString(Constant.WS_SERIAL_SEARCH_TRACKING, "");
+            bundle.putInt(Constant.WS_SERIAL_SEARCH_EXACT, 1);
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        }
+    }
+
     public void executeTrackingSearch(long product_code, long serial_code, String tracking, String site_code) {
         setWs_process(Act027_Main.WS_SEARCH_TRACKING);
         //
@@ -1082,6 +1119,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                 //
                 executeSoSave();
             } else {
+                resetSOSyncRequired();
                 //if(returnList.size() == 1){
                 if (returnList.size() == 1) {
                     showSingleResultMsg(ttl, msg);
@@ -1381,6 +1419,31 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                 executeSoSave();
             }
         }
+        //
+        if (ws_process.equals(WS_PROCESS_SERIAL_REFRESH)) {
+            setWs_process("");
+            refreshFragUI();
+            //Verifica se após chamar o WS de Serial deve ser chama o WS de S.O
+            if (isSoSaveLinked) {
+                isSoSaveLinked = false;
+                executeSoSave();
+            }else{
+                /**
+                 * BARRIONUEVO 29-05-2022
+                 * Em caso de erro no serviço de download de serial, a SO se mantem desatualizada
+                 * para o envio do serial.
+                 */
+                sm_soDao.addUpdate(
+                        new SM_SO_Sql_018(
+                                mSm_so.getCustomer_code(),
+                                mSm_so.getSo_prefix(),
+                                mSm_so.getSo_code(),
+                                0
+                        ).toSqlQuery()
+                );
+
+            }
+        }
         //LUCHE - 08/06/2020
         resetSoCreateRoomFlag();
         //
@@ -1401,10 +1464,43 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             loadProductSerialIntoFragment();
             refreshFragUI();
         }
+        //
+        if (ws_process.equals(WS_PROCESS_SERIAL_REFRESH)) {
+            setWs_process("");
+            refreshFragUI();
+            sm_soDao.addUpdate(
+                    new SM_SO_Sql_018(
+                            mSm_so.getCustomer_code(),
+                            mSm_so.getSo_prefix(),
+                            mSm_so.getSo_code(),
+                            0
+                    ).toSqlQuery()
+            );
+        }
         //LUCHE - 08/06/2020
         resetSoCreateRoomFlag();
 
     }
+
+    @Override
+    protected void processError_http() {
+        super.processError_http();
+        if (ws_process.equals(WS_PROCESS_SERIAL_REFRESH)) {
+            setWs_process("");
+            refreshFragUI();
+            //Verifica se após chamar o WS de Serial deve ser chama o WS de S.O
+            sm_soDao.addUpdate(
+                    new SM_SO_Sql_018(
+                            mSm_so.getCustomer_code(),
+                            mSm_so.getSo_prefix(),
+                            mSm_so.getSo_code(),
+                            0
+                    ).toSqlQuery()
+            );
+            Toast.makeText(context, hmAux_Trans.get("toast_error_on_sync_serial_msg"), Toast.LENGTH_SHORT).show();
+        }
+    }
+
     //LUCHE - 08/06/2020
     //Se erro durante em qualquer WS reseta var que indica que a room precisa criada.
     //Como a chamada de WS é encadeada, caso de erro em algum WS e essa var não seja resetada,
@@ -1465,7 +1561,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             if (hmAux.size() > 0) {
                 processSerialSaveResult(frgSerialEdit.getMdProductSerial().getProduct_code(), frgSerialEdit.getMdProductSerial().getSerial_id(), hmAux);
             } else {
-                if (isSoSaveLinked) {
+                if(act027_opc_.hasSyncRequired()
+                || isSerialOutdated){
+                    isSerialOutdated = true;
+                    executeSerialDownload();
+                }else if (isSoSaveLinked) {
                     isSoSaveLinked = false;
                     //
                     executeSoSave();
@@ -1565,7 +1665,26 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             updateSyncChecklist();
             //
             callAct009();
+        }else if (ws_process.equalsIgnoreCase(WS_PROCESS_SERIAL_REFRESH)) {
+            ToolBox_Inf.saveSerialFromJson(context, mLink);
+            if (isSoSaveLinked) {
+                isSoSaveLinked = false;
+                executeSoSave();
+            }else{
+                Toast.makeText(context, hmAux_Trans.get("toast_success_on_sync_serial_msg"), Toast.LENGTH_SHORT).show();
+                resetSOSyncRequired();
+                refreshUI();
+            }
         }
+    }
+
+    private void resetSOSyncRequired() {
+        sm_soDao.addUpdate(new SM_SO_Sql_025(
+                mSm_so.getCustomer_code(),
+                mSm_so.getSo_prefix(),
+                mSm_so.getSo_code(),
+                0
+        ).toSqlQuery());
     }
 
 //    public void addControlToList(MKEditTextNM mket_tracking){
@@ -1719,7 +1838,13 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                                 public void onClick(DialogInterface dialog, int which) {
                                     refreshUI();
                                     if(isSoCreateRoomCall) {
-                                       executeSoCreateRoom();
+                                        executeSoCreateRoom();
+                                    }else{
+                                        boolean hasSerialPendency = getMd_product_serialsPendency(serialDao);
+
+                                        if ( hasSerialPendency || isSerialOutdated){
+                                            executeSerialSave(false);
+                                        }
                                     }
                                 }
                             },
@@ -1737,6 +1862,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     refreshUI();
+                                    boolean hasSerialPendency = getMd_product_serialsPendency(serialDao);
+
+                                    if ( hasSerialPendency || isSerialOutdated){
+                                        executeSerialSave(false);
+                                    }
                                 }
                             },
                             0
@@ -1749,6 +1879,21 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         } else {
             showNewOptDialog(wsResults);
         }
+    }
+
+    private boolean getMd_product_serialsPendency(MD_Product_SerialDao serialDao) {
+        ArrayList<MD_Product_Serial> serialList = (ArrayList<MD_Product_Serial>) serialDao.query(
+                new MD_Product_Serial_Sql_004(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        );
+        File[] files = ToolBox_Inf.checkTokenToSend(
+                getApplicationContext(),
+                ConstantBaseApp.TOKEN_PATH,
+                ConstantBaseApp.TOKEN_SERIAL_PREFIX
+        );
+        return (serialList != null && serialList.size() > 0)
+                || (files != null && files.length > 0);
     }
 
     public void showNewOptDialog(List<HMAux> sos) {
@@ -1890,11 +2035,17 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
 //                    );
                     //
                     ToolBox.toastMSG(
-                        context,
-                        hmAux_Trans.get("msg_so_save_ok")
+                            context,
+                            hmAux_Trans.get("msg_so_save_ok")
                     );
                     //
                     refreshUI();
+                    //
+                    boolean hasSerialPendency = getMd_product_serialsPendency(serialDao);
+
+                    if ( hasSerialPendency || isSerialOutdated){
+                        executeSerialSave(false);
+                    }
                 } else {
                     progressDialog.dismiss();
                     //
@@ -2073,6 +2224,16 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                     }
                 }
                 //
+                boolean hasSerialPendency = getMd_product_serialsPendency(serialDao);
+
+                if (hasSerialPendency){
+                    executeSerialSave(false);
+                }else if(act027_opc_.hasSyncRequired()
+                        || isSerialOutdated){
+                    isSerialOutdated = true;
+                    executeSerialDownload();
+                }
+                //
                 refreshUI();
             }
         });
@@ -2106,6 +2267,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     }
 
     public void executeSoSaveApproval() {
+        setSerialSyncRequired();
         setWs_process(WS_PROCESS_SO_SAVE_APPROVAL);
         //
         enableProgressDialog(
@@ -2121,6 +2283,13 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
+    }
+
+    protected void setSerialSyncRequired() {
+        if (act027_opc_.hasSyncRequired()
+                || isSerialOutdated) {
+            isSerialOutdated = true;
+        }
     }
 
     public void executeSoSave() {
@@ -2153,6 +2322,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
 
     ) {
         if (ToolBox_Con.isOnline(context)) {
+            setSerialSyncRequired();
             setWs_process(WS_PROCESS_USER_AUTHOR);
             //
             enableProgressDialog(

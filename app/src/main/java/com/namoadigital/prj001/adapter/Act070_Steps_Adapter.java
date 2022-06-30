@@ -17,6 +17,7 @@ import com.namoadigital.prj001.ui.act070.VH.Act070_Step_FooterVH;
 import com.namoadigital.prj001.ui.act070.VH.Act070_Step_FormVH;
 import com.namoadigital.prj001.ui.act070.VH.Act070_Step_MainVH;
 import com.namoadigital.prj001.ui.act070.VH.Act070_Step_NoneVH;
+import com.namoadigital.prj001.ui.act070.VH.Act070_Step_Not_ExecutedVH;
 import com.namoadigital.prj001.ui.act070.VH.Act070_Step_Process_Btn_VH;
 import com.namoadigital.prj001.ui.act070.model.BaseStep;
 import com.namoadigital.prj001.ui.act070.model.StepAction;
@@ -25,6 +26,7 @@ import com.namoadigital.prj001.ui.act070.model.StepFooter;
 import com.namoadigital.prj001.ui.act070.model.StepForm;
 import com.namoadigital.prj001.ui.act070.model.StepMain;
 import com.namoadigital.prj001.ui.act070.model.StepNone;
+import com.namoadigital.prj001.ui.act070.model.StepNotExecuted;
 import com.namoadigital.prj001.ui.act070.model.StepProcessBtn;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -41,6 +43,8 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
     public static final int VIEW_TYPE_STEP_FOOTER = 4;
     public static final int VIEW_TYPE_STEP_APPROVAL = 5;
     public static final int VIEW_TYPE_STEP_NONE = 6;
+    public static final int VIEW_TYPE_STEP_NOT_EXECUTED = 7;
+
 
     private Context context;
     private ArrayList<BaseStep> source;
@@ -54,6 +58,7 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
     private OnProcessBtnClickListener onProcessBtnClickListener;
     private OnNoneClickListener onNoneClickListener;
     private OnWorkgroupSpinnerListeners onWorkgroupSpinnerClickListener;
+    private OnNotExecutedInteraction onNotExecutedInteraction;
     private boolean isInWgEditMode;
     private boolean inReadOnlyMode;
 
@@ -83,11 +88,17 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
         void notifySpinnerItemSelected(int StepMainPosition, HMAux hmAux, boolean dbValueChanges);
     }
 
+    public interface OnNotExecutedInteraction {
+        void onPhotoClickListener(int imageViewId);
+        String getTicketJustifyImagePath();
+    }
+
+
     public void setOnMainClickListener(OnMainClickListener onMainClickListener) {
         this.onMainClickListener = onMainClickListener;
     }
 
-    public Act070_Steps_Adapter(Context context, ArrayList<BaseStep> source, OnMainClickListener onMainClickListener, OnActionClickListener onActionClickListener, OnChecklistClickListener onChecklistClickListener, OnApprovalClickListener onApprovalClickListener, OnProcessBtnClickListener onProcessBtnClickListener, OnNoneClickListener onNoneClickListener, OnWorkgroupSpinnerListeners onWorkgroupSpinnerClickListener, boolean isInWgEditMode,boolean inReadOnlyMode) {
+    public Act070_Steps_Adapter(Context context, ArrayList<BaseStep> source, OnMainClickListener onMainClickListener, OnActionClickListener onActionClickListener, OnChecklistClickListener onChecklistClickListener, OnApprovalClickListener onApprovalClickListener, OnProcessBtnClickListener onProcessBtnClickListener, OnNoneClickListener onNoneClickListener, OnWorkgroupSpinnerListeners onWorkgroupSpinnerClickListener, OnNotExecutedInteraction onNotExecutedInteraction, boolean isInWgEditMode, boolean inReadOnlyMode) {
         this.context = context;
         this.source = source;
         this.onMainClickListener = onMainClickListener;
@@ -96,6 +107,7 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
         this.onApprovalClickListener = onApprovalClickListener;
         this.onProcessBtnClickListener = onProcessBtnClickListener;
         this.onNoneClickListener = onNoneClickListener;
+        this.onNotExecutedInteraction = onNotExecutedInteraction;
         this.mResource_Code = ToolBox_Inf.getResourceCode(
             context,
             ConstantBaseApp.APP_MODULE,
@@ -195,6 +207,13 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
                     isInWgEditMode,
                     inReadOnlyMode
                 );
+            case VIEW_TYPE_STEP_NOT_EXECUTED:
+                view = LayoutInflater.from(context).inflate(R.layout.act070_step_not_executed_cell, viewGroup, false);
+                return  new Act070_Step_Not_ExecutedVH(
+                        context,
+                        view,
+                        onNotExecutedInteraction
+                );
             case VIEW_TYPE_STEP_PROCESS_BTN:
                 view = LayoutInflater.from(context).inflate(R.layout.act070_step_process_btn_cell, viewGroup, false);
                 return new Act070_Step_Process_Btn_VH(context,view, onProcessBtnClickListener,isInWgEditMode,inReadOnlyMode);
@@ -225,6 +244,9 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
         } else if(baseStep instanceof StepNone){
             Act070_Step_NoneVH stepNoneVH = (Act070_Step_NoneVH) viewHolder;
             stepNoneVH.bindData((StepNone) source.get(position));
+        } else if(baseStep instanceof StepNotExecuted){
+            Act070_Step_Not_ExecutedVH stepNotExecutedVH = (Act070_Step_Not_ExecutedVH) viewHolder;
+            stepNotExecutedVH.bindData((StepNotExecuted) source.get(position));
         } else if(baseStep instanceof StepProcessBtn){
             Act070_Step_Process_Btn_VH stepProcessBtnVh = (Act070_Step_Process_Btn_VH) viewHolder;
             stepProcessBtnVh.bindData((StepProcessBtn) source.get(position));
@@ -256,8 +278,10 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
             return VIEW_TYPE_STEP_FOOTER;
         } else if(baseStep instanceof StepNone){
             return VIEW_TYPE_STEP_NONE;
+        } else if(baseStep instanceof StepNotExecuted){
+            return VIEW_TYPE_STEP_NOT_EXECUTED;
         }else{
-            return 7;
+            return 8;
         }
     }
 }

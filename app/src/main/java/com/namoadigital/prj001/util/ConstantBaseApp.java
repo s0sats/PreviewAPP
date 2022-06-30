@@ -25,6 +25,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String DEVICE_ITEM_LIST_CHECKBOX_STATUS = "DEVICE_ITEM_LIST_CHECKBOX_STATUS";
     public static final String DEVICE_ITEM_NEW_ACTION = "DEVICE_ITEM_NEW_ACTION";
     public static final String DEVICE_BUNDLE = "DEVICE_BUNDLE";
+    public static final String ACTION_NOT_EXECUTED = "NOT_EXECUTED";
     //As 3 variaveis abaixo são preenchidas pela classe AppBase
     public static String PRJ001_VERSION = "";
     public static int PRJ001_VERSION_CODE = -1;
@@ -614,6 +615,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_MENU_TICKET_PARAM_EDIT_HEADER = "EDIT_HEADER";
     public static final String PROFILE_MENU_TICKET_PARAM_STEP_EDIT_TIME = "STEP_EDIT_TIME";
     public static final String PROFILE_MENU_TICKET_PARAM_CLAIM_SPECIAL_EXECUTION_PERMITION = "CLAIM_SPECIAL_EXECUTION_PERMITION";
+    public static final String PROFILE_MENU_TICKET_PARAM_NOT_EXECUTED = "NOT_EXECUTED";
 
     //Modulos
     public static final String MODULE_CHECKLIST = "MODULE_CHECKLIST";
@@ -710,6 +712,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String TK_TICKET_CRTL_TYPE_APPROVAL ="OBJ_APPROVAL";
     public static final String TK_TICKET_CRTL_TYPE_NONE ="OBJ_NONE";
     public static final String TK_TICKET_PREX_IMG ="tk_";
+    public static final String TK_TICKET_JUSTIFY_SUFIX = "_justify";
     public static final String TK_TICKET_NC_PREX_IMG ="tk_nc";
     //Ticket Origin Type
     public static final String TK_TICKET_ORIGIN_TYPE_SCHEDULE ="SCHEDULE";
@@ -758,6 +761,7 @@ public class ConstantBaseApp extends ConstantBase {
      * Constantes FAB menu item
      */
     public static final String FAB_TO_PRODUCT_LBL = "to_product_lbl";
+    public static final String FAB_NOT_EXECUTE_LBL = "to_not_execute_lbl";
     public static final String FAB_TO_HEADER_EDIT_LBL = "fab_to_header_edit_lbl";
     public static final String FAB_TO_WORK_GROUP_EDIT_LBL = "fab_to_work_group_edit_lbl";
     public static final String FAB_TO_ORIGIN_LBL = "fab_to_origin_lbl";

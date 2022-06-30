@@ -41,6 +41,7 @@ class GeOsDeviceItemDao(
         const val ITEM_CHECK_SEQ = "item_check_seq"
         const val ITEM_CHECK_ID = "item_check_id"
         const val ITEM_CHECK_DESC = "item_check_desc"
+        const val ITEM_CHECK_GROUP_CODE = "item_check_group_code"
         const val APPLY_MATERIAL = "apply_material"
         const val VERIFICATION_INSTRUCTION = "verification_instruction"
         const val REQUIRE_JUSTIFY_PROBLEM = "require_justify_problem"
@@ -456,6 +457,7 @@ class GeOsDeviceItemDao(
                         item_check_seq = getInt(getColumnIndex(ITEM_CHECK_SEQ)),
                         item_check_id = getString(getColumnIndex(ITEM_CHECK_ID)),
                         item_check_desc = getString(getColumnIndex(ITEM_CHECK_DESC)),
+                        item_check_group_code = getIntOrNull(getColumnIndex(ITEM_CHECK_GROUP_CODE)),
                         apply_material = getString(getColumnIndex(APPLY_MATERIAL)),
                         verification_instruction = getStringOrNull(getColumnIndex(VERIFICATION_INSTRUCTION)),
                         require_justify_problem = getInt(getColumnIndex(REQUIRE_JUSTIFY_PROBLEM)),
@@ -519,6 +521,8 @@ class GeOsDeviceItemDao(
                     put(ITEM_CHECK_ID, it.item_check_id)
                     //
                     put(ITEM_CHECK_DESC, it.item_check_desc)
+                    //
+                    put(ITEM_CHECK_GROUP_CODE, it.item_check_group_code)
                     //
                     put(APPLY_MATERIAL, it.apply_material)
                     //

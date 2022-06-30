@@ -44,6 +44,7 @@ public class Sql_WS_TK_Ticket_Download_001 implements Specification {
                         "  and s.ticket_prefix = c.ticket_prefix\n" +
                         "  and s.ticket_code = c.ticket_code\n" +
                         "  \n" +
+                        "  and t.update_required_status = 0\n" +
                         "  and t.update_required_product = 0\n" +
                         "  and t.update_required = 0\n" +
                         "  and s.update_required = 0\n" +

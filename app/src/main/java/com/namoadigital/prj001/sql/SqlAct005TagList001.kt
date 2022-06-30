@@ -95,7 +95,7 @@ class SqlAct005TagList001(private val context: Context,
                 count(t.tag_operational_code) qty,
                 max(case when ifnull(t.has_in_processing,0) > 0
                             then 0
-                            else max(t.update_required, t.update_required_product, t.step_update_required)
+                            else max(t.update_required, t.update_required_product,t.update_required_status , t.step_update_required)
                 end) update_required,             
                 --max(t.sync_required) sync_required,
                 CASE WHEN sum(t.sync_required) > (ifnull(max(t.has_in_processing),0) + ifnull(max(t.has_gps_pendency),0))
@@ -108,6 +108,7 @@ class SqlAct005TagList001(private val context: Context,
                        tk.tag_operational_desc ,                    
                        tk.update_required,
                        tk.update_required_product,
+                       tk.update_required_status,
                        s.update_required step_update_required,
                        tk.sync_required sync_required,
                        d.has_in_processing,

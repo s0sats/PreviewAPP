@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteException
+import androidx.core.database.getIntOrNull
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
@@ -29,6 +30,7 @@ class MdOrderTypeDao(
         const val ORDER_TYPE_DESC = "order_type_desc"
         const val PROCESS_TYPE = "process_type"
         const val DISPLAY_OPTION = "display_option"
+        const val ITEM_CHECK_GROUP_CODE = "item_check_group_code"
     }
 
     private val toMdOrderTypeMapper: Mapper<Cursor,MdOrderType>
@@ -262,7 +264,8 @@ class MdOrderTypeDao(
                         orderTypeId = getString(getColumnIndex(ORDER_TYPE_ID)),
                         orderTypeDesc = getString(getColumnIndex(ORDER_TYPE_DESC)),
                         processType = getString(getColumnIndex(PROCESS_TYPE)),
-                        displayOption = getString(getColumnIndex(DISPLAY_OPTION))
+                        displayOption = getString(getColumnIndex(DISPLAY_OPTION)),
+                        itemCheckGroupCode = getIntOrNull(getColumnIndex(MdItemCheckDao.ITEM_CHECK_GROUP_CODE))
                     )
                 }
             }
@@ -294,6 +297,8 @@ class MdOrderTypeDao(
                     if(mdOrderType.displayOption != null){
                         put(DISPLAY_OPTION,mdOrderType.displayOption)
                     }
+                    //
+                    put(ITEM_CHECK_GROUP_CODE, mdOrderType.itemCheckGroupCode)
                 }
             }
             //

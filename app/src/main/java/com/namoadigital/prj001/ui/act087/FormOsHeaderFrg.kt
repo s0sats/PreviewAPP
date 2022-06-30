@@ -225,7 +225,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                     "",
                     "",
                     "",
-                    ""
+                    "",
+                    null
                 )
             )
         }
@@ -247,7 +248,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                     formOsHeader.order_type_id,
                     formOsHeader.order_type_desc,
                     formOsHeader.process_type,
-                    formOsHeader.display_option
+                    formOsHeader.display_option,
+                    formOsHeader.item_check_group_code
                 )
             )
         }
@@ -553,6 +555,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             order_type_desc = orderType.orderTypeDesc
             process_type = orderType.processType
             display_option = orderType.displayOption
+            item_check_group_code  = orderType.itemCheckGroupCode
             selectedBkpMachineProduct?.let{ product ->
                 backup_product_code = product.product_code.toInt()
                 backup_product_id = product.product_id

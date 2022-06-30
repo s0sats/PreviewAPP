@@ -243,6 +243,7 @@ public class Act082_Main_Presenter implements Act082_Main_Contract.I_Presenter {
                 || ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, tkTicket.getTicket_prefix(),tkTicket.getTicket_code())
                 || ToolBox_Inf.hasFormGpsPendencyWithinTicket(context, tkTicket.getTicket_prefix(),tkTicket.getTicket_code())
                 || tkTicket.getUpdate_required() == 1
+                || tkTicket.getUpdate_required_status() == 1
                 || tkTicket.getSync_required() == 1
                 || tkTicket.getUpdate_required_product() == 1;
     }
