@@ -766,8 +766,8 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
             );
         }
     }
-
-    private void executeWS_SO_Service_Search(SO_Pack_Express mSo_pack_express, String serialId) {
+    @Override
+    public void executeWS_SO_Service_Search(SO_Pack_Express mSo_pack_express, String serialId) {
         mView.setWsProcess(WS_SO_Service_Search.class.getName());
         //
         mView.showPD(
@@ -775,28 +775,20 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
                 hmAux_Trans.get("dialog_service_search_msg")
         );
         //
-        int serialCode = getSerialCode(mSo_pack_express.getCustomer_code(), mSo_pack_express.getProduct_code(), serialId);
-        if(serialCode >0) {
-            //
-            Intent mIntent = new Intent(context, WBR_SO_Service_Search.class);
-            Bundle bundle = new Bundle();
-            //
-            bundle.putInt(SM_SODao.CONTRACT_CODE, mSo_pack_express.getContract_code());
-            bundle.putInt(SM_SODao.PRODUCT_CODE, (int) mSo_pack_express.getProduct_code());
-            bundle.putInt(SM_SODao.SERIAL_CODE, serialCode);
-            bundle.putString(SM_SODao.SERIAL_ID, serialId);
-            bundle.putInt(SM_SODao.CATEGORY_PRICE_CODE, mSo_pack_express.getCategory_price_code());
-            bundle.putInt(SM_SODao.SEGMENT_CODE, mSo_pack_express.getSegment_code());
-            bundle.putInt(SM_SODao.SITE_CODE, (int) mSo_pack_express.getSite_code());
-            bundle.putInt(SM_SODao.OPERATION_CODE, (int) mSo_pack_express.getOperation_code());
-            bundle.putInt(WS_SO_Service_Search.WS_EXPRESS_MODE, 1);
-            //
-            mIntent.putExtras(bundle);
-            //
-            context.sendBroadcast(mIntent);
-        }else{
-            mView.showMsgToast(hmAux_Trans.get("alert_express_order_serial_not_found"));
-        }
+        Intent mIntent = new Intent(context, WBR_SO_Service_Search.class);
+        Bundle bundle = new Bundle();
+        //
+        bundle.putInt(SM_SODao.CONTRACT_CODE, mSo_pack_express.getContract_code());
+        bundle.putInt(SM_SODao.PRODUCT_CODE, (int) mSo_pack_express.getProduct_code());
+        bundle.putInt(SM_SODao.CATEGORY_PRICE_CODE, mSo_pack_express.getCategory_price_code());
+        bundle.putInt(SM_SODao.SEGMENT_CODE, mSo_pack_express.getSegment_code());
+        bundle.putInt(SM_SODao.SITE_CODE, (int) mSo_pack_express.getSite_code());
+        bundle.putInt(SM_SODao.OPERATION_CODE, (int) mSo_pack_express.getOperation_code());
+        bundle.putInt(WS_SO_Service_Search.WS_EXPRESS_MODE, 1);
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
     }
 
     private int getSerialCode(long customer_code, long product_code, String serialId) {

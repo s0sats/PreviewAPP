@@ -8,7 +8,7 @@ public class TSO_Service_Search_Env extends Main_Header_Env {
 
     private int contract_code;
     private int product_code;
-    private int serial_code;
+    private Integer serial_code;
     private String serial_id;
     private int category_price_code;
     private int segment_code;
@@ -32,11 +32,11 @@ public class TSO_Service_Search_Env extends Main_Header_Env {
         this.product_code = product_code;
     }
 
-    public int getSerial_code() {
+    public Integer getSerial_code() {
         return serial_code;
     }
 
-    public void setSerial_code(int serial_code) {
+    public void setSerial_code(Integer serial_code) {
         this.serial_code = serial_code;
     }
 

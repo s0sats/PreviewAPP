@@ -65,5 +65,5 @@ public interface Act040_Main_Presenter {
     String getFormattedTrackingDuplicated(String tracking_duplicated_msg, ArrayList<MKEditTextNM> trackingFields);
 
     //void checkSerialUpdateRequired(long product_code, String serial_id);
-
+    void executeWS_SO_Service_Search(SO_Pack_Express mSo_pack_express, String serialId);
 }

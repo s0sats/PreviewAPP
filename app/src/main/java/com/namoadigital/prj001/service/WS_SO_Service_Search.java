@@ -92,8 +92,12 @@ public class WS_SO_Service_Search extends IntentService {
         env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
         env.setContract_code(contract_code);
         env.setProduct_code(product_code);
-        env.setSerial_code(serial_code);
-        env.setSerial_id(serial_id);
+        env.setSerial_code(null);
+        env.setSerial_id(null);
+        if(express == 0) {
+            env.setSerial_code(serial_code);
+            env.setSerial_id(serial_id);
+        }
         env.setCategory_price_code(category_price_code);
         env.setSegment_code(segment_code);
         env.setSite_code(site_code);

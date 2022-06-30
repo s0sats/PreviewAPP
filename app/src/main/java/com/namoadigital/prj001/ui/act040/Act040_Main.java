@@ -760,6 +760,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             @Override
             public void onClick(View v) {
 
+//                mPresenter.executeWS_SO_Service_Search(mSo_pack_express, binding.mketSerial.getText().toString());
                 handleSerialIdCharConstraints();
 
                 if(md_product != null) {
