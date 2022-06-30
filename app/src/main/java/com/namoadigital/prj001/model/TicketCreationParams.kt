@@ -7,7 +7,7 @@ class TicketCreationParams(
     @SerializedName("type_code") var typeCode: Int,
     @SerializedName("site_code") var siteCode: Int,
     @SerializedName("operation_code") var operationCode: Long,
-    @SerializedName("product_code") var productCode: Int,
+    @SerializedName("product_code") var productCode: Long,
     @SerializedName("serial_code") var serialCode: Int,
     @SerializedName("comments") var comments: String
 ) {

@@ -36,7 +36,7 @@ class WSTicketCreation:
             val type_code = bundle.getInt(WS_BUNDLE_TYPE_CODE,-1)
             val site_code = bundle.getInt(WS_BUNDLE_SITE_CODE,-1)
             val operation_code = bundle.getLong(WS_BUNDLE_OPERATION_CODE,-1)
-            val product_code = bundle.getInt(WS_BUNDLE_PRODUCT_CODE,-1)
+            val product_code = bundle.getLong(WS_BUNDLE_PRODUCT_CODE,-1)
             val serial_code = bundle.getInt(WS_BUNDLE_SERIAL_CODE,-1)
             val comments = bundle.getString(WS_BUNDLE_COMMENTS,"")
             //
@@ -70,7 +70,7 @@ class WSTicketCreation:
         typeCode: Int,
         siteCode: Int,
         operationCode: Long,
-        productCode: Int,
+        productCode: Long,
         serialCode: Int,
         comments: String
     ) {
