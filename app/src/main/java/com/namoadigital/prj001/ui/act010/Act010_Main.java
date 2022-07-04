@@ -1,23 +1,23 @@
 package com.namoadigital.prj001.ui.act010;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
@@ -34,12 +34,13 @@ import com.namoadigital.prj001.dao.MdTagDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
+import com.namoadigital.prj001.dao.TkTicketTypeDao;
 import com.namoadigital.prj001.databinding.Act010MainBinding;
 import com.namoadigital.prj001.databinding.Act010MainContentBinding;
-import com.namoadigital.prj001.model.TicketCreationRec;
+import com.namoadigital.prj001.databinding.TicketCreationDialogBinding;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WSTicketCreation;
-import com.namoadigital.prj001.sql.Sql_Act010_001;
+import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.ui.act009.Act009_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
 import com.namoadigital.prj001.ui.act070.Act070_Main;
@@ -78,6 +79,11 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
     private String tagDesc;
     private String originFlow = null;
     private String wsProcess="";
+    public static final String CUSTOM_DESC = "custom_desc";
+    public static final String CUSTOM_PK = "custom_pk";
+    public static final String IS_FORM = "IS_FORM";
+    private String ticketInternalComments = "";
+    private int ticketTypeCode = -1;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -132,6 +138,11 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
         transList.add("dialog_ticket_creation_start");
         transList.add("dialog_download_ticket_ttl");
         transList.add("dialog_download_ticket_start");
+        transList.add("progress_serial_save_ttl");
+        transList.add("progress_serial_save_msg");
+        //
+        transList.add("alert_create_ticket_internal_comments_lbl");
+        transList.add("alert_create_ticket_btn_save");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -158,7 +169,8 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
                 hmAux_Trans,
                 new MD_Product_SerialDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
                 new MD_Product_Serial_Tp_DeviceDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
-                new GeOsDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
+                new GeOsDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
+                new TkTicketTypeDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
         );
         //
         setLabels();
@@ -250,30 +262,64 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HMAux item = (HMAux) parent.getItemAtPosition(position);
                 //
-                mPresenter.validateOpenForm(item);
-            }
-        });
-        //
-        binding.btnCreateTicket.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                mPresenter.callTicketCreationService(
-                        ToolBox_Con.getPreference_Customer_Code(context),
-                        73,
-                        ToolBox_Con.getPreference_Site_Code(context),
-                        ToolBox_Con.getPreference_Operation_Code(context),
-                        133,
-                        1,
-                        "EU acho que é bem por aí mesmo"
-                );
+                if ("1".equals(item.get(IS_FORM))) {
+                    mPresenter.validateOpenForm(item);
+                }else{
+                    createTicketDialog(item);
+                }
             }
         });
     }
 
+    private void createTicketDialog(HMAux item) {
+        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+        float dmW = (float) dm.widthPixels * 0.95f;
+//        float dmH = (float) dm.heightPixels * 0.95f;
+        Dialog ticketDialog = new Dialog(context);
+        //
+        TicketCreationDialogBinding dialogBinding = TicketCreationDialogBinding.inflate(getLayoutInflater());
+        //
+        ticketDialog.setContentView(dialogBinding.getRoot());
+        //
+        setLabel(dialogBinding, item);
+        setAction(dialogBinding, ticketDialog, item);
+        ticketDialog.getWindow().setLayout((int) dmW, ViewGroup.LayoutParams.WRAP_CONTENT);
+        ticketDialog.setCancelable(false);
+        ticketDialog.show();
+        //
+    }
+
+    private void setAction(TicketCreationDialogBinding dialogBinding, Dialog ticketDialog, HMAux item) {
+        dialogBinding.act010CreateTicketDialogBtnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ticketDialog.dismiss();
+            }
+        });
+        //
+        dialogBinding.act010CreateTicketDialogBtnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ticketDialog.dismiss();
+                //
+                ticketTypeCode = Integer.parseInt(item.get(TkTicketTypeDao.TICKET_TYPE_CODE));
+                ticketInternalComments = dialogBinding.act010CreateTicketDialogInternalCommentsActv.getText().toString();
+                mPresenter.executeSerialSave();
+            }
+        });
+
+    }
+
+    private void setLabel(TicketCreationDialogBinding dialogBinding, HMAux item) {
+        dialogBinding.act010CreateTicketDialogTtl.setText(item.get(Act010_Main.CUSTOM_DESC));
+        dialogBinding.act010CreateTicketDialogInternalCommentsTil.setHint(hmAux_Trans.get("alert_create_ticket_internal_comments_lbl"));
+        dialogBinding.act010CreateTicketDialogBtnSave.setText(hmAux_Trans.get("alert_create_ticket_btn_save"));
+        dialogBinding.act010CreateTicketDialogBtnCancel.setText(hmAux_Trans.get("sys_alert_btn_cancel"));
+    }
+
     @Override
     public void loadForms(List<HMAux> forms) {
-        String[] from = {GE_Custom_FormDao.CUSTOM_FORM_DESC, Sql_Act010_001.CUSTOM_FORM_PK};
+        String[] from = {CUSTOM_DESC, CUSTOM_PK};
         int[] to = {R.id.act010_cell_tv_desc,R.id.act010_cell_tv_id};
         binding.act010LvForm.setAdapter(
                 new SimpleAdapter(
@@ -331,16 +377,8 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
         //
-
         progressDialog.dismiss();
-        if(wsProcess.equals(WSTicketCreation.class.getName())) {
-            setWsProcess("");
-            Gson gson = new GsonBuilder().serializeNulls().create();
-            TicketCreationRec rec = gson.fromJson(mLink, TicketCreationRec.class);
-            mPresenter.callTicketDownload(rec.getTicketPrefix(), rec.getTicketCode());
-
-        }else if (wsProcess.equals(WSTicketCreation.class.getName())){
-            Toast.makeText(context, "CHama tela de ticket", Toast.LENGTH_SHORT).show();
+        if (wsProcess.equals(WSTicketCreation.class.getName())){
             //
             setWsProcess("");
             bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT010);
@@ -353,6 +391,16 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
             if(!mPresenter.verifyProductForForm(hmAux)) {
                 callAct070(bundle);
             }
+        }else if (wsProcess.equals(WS_Serial_Save.class.getName())){
+            mPresenter.callTicketCreationService(
+                    ToolBox_Con.getPreference_Customer_Code(context),
+                    ticketTypeCode,
+                    ToolBox_Con.getPreference_Site_Code(context),
+                    ToolBox_Con.getPreference_Operation_Code(context),
+                    product_code,
+                    mPresenter.getSerialCode(product_code, serial_id),
+                    ticketInternalComments
+            );
         }
         //
     }
