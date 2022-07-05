@@ -37,7 +37,10 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -113,6 +116,12 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
                 validateOpenForm(aux);
             }
         }
+        //
+        Collections.sort(forms, new Comparator<HMAux>(){
+            public int compare(HMAux obj1, HMAux obj2) {
+                return Objects.requireNonNull(obj1.get(Act010_Main.CUSTOM_DESC)).compareToIgnoreCase(Objects.requireNonNull(obj2.get(Act010_Main.CUSTOM_DESC)));
+            }
+        });
         //
         mView.loadForms(forms);
     }

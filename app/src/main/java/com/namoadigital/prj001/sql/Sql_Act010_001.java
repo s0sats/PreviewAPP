@@ -74,7 +74,7 @@ public class Sql_Act010_001 implements Specification {
                 "         AND tr."+EV_Module_Res_TxtDao.TXT_CODE+" = 'TITLE') "+CUSTOM_DESC+",\n" +
                 "       cf."+GE_Custom_FormDao.CUSTOM_FORM_TYPE+"||'.'||" +
                 "       cf."+GE_Custom_FormDao.CUSTOM_FORM_CODE+"||'.'||" +
-                "       cf."+GE_Custom_FormDao.CUSTOM_FORM_VERSION+" " + CUSTOM_PK+"\n" +
+                "       cf."+GE_Custom_FormDao.CUSTOM_FORM_VERSION+" " + CUSTOM_PK+",\n" +
                 "       1 " + IS_FORM+"\n" +
                 "    FROM\n" +
                 "       " +     GE_Custom_FormDao.TABLE +" CF \n" +
@@ -106,7 +106,7 @@ public class Sql_Act010_001 implements Specification {
                 "      AND ( '"+s_serial_id+"' IS NOT NULL OR cf.require_serial_done = 0)\n"+
                 "    \n" +
                 "    ORDER BY\n" +
-                "      upper(" + GE_Custom_FormDao.CUSTOM_FORM_DESC + ") \n;"
+                "      upper(" + CUSTOM_PK + ") \n;"
             )
                 //GE_Custom_FormDao.CUSTOMER_CODE+"#"+GE_Custom_FormDao.CUSTOM_FORM_TYPE+"#"+GE_Custom_FormDao.CUSTOM_FORM_CODE+"#"+GE_Custom_FormDao.CUSTOM_FORM_VERSION+"#"+GE_Custom_FormDao.CUSTOM_FORM_DESC)
                 .toString()
