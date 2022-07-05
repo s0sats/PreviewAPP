@@ -91,6 +91,7 @@ class TkTicketTypeProductDao (
                 .append("""
                         ${CUSTOMER_CODE} = '${tkTicketTypeProduct.customer_code}'  
                         AND ${TICKET_TYPE_CODE} = '${tkTicketTypeProduct.ticket_type_code}'
+                        AND ${PRODUCT_CODE} = '${tkTicketTypeProduct.product_code}'
                         """.trimIndent()
                 )
         }

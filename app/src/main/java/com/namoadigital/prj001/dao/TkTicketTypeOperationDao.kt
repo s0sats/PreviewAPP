@@ -38,7 +38,7 @@ class TkTicketTypeOperationDao(
         toContentValuesMapper = TkTicketTypeOperationToContentValuesMapper()
     }
 
-    override fun addUpdate(tkTicketTypeProduct: TkTicketTypeOperation?): DaoObjReturn {
+    override fun addUpdate(tkTicketTypeOperation: TkTicketTypeOperation?): DaoObjReturn {
         var daoObjReturn = DaoObjReturn()
         var addUpdateRet: Long = 0
         var curAction = DaoObjReturn.INSERT_OR_UPDATE
@@ -49,13 +49,13 @@ class TkTicketTypeOperationDao(
             daoObjReturn.table = TABLE
             curAction = DaoObjReturn.UPDATE
             //Where para update
-            val sbWhere: StringBuilder = getWherePkClause(tkTicketTypeProduct)
+            val sbWhere: StringBuilder = getWherePkClause(tkTicketTypeOperation)
             //Tenta update e armazena retorno
-            addUpdateRet = db.update(TABLE, toContentValuesMapper.map(tkTicketTypeProduct), sbWhere.toString(), null).toLong()
+            addUpdateRet = db.update(TABLE, toContentValuesMapper.map(tkTicketTypeOperation), sbWhere.toString(), null).toLong()
             //Se nenhuma linha afetada, tenta insert
             if (addUpdateRet == 0L) {
                 curAction = DaoObjReturn.INSERT
-                db.insertOrThrow(TABLE, null, toContentValuesMapper.map(tkTicketTypeProduct))
+                db.insertOrThrow(TABLE, null, toContentValuesMapper.map(tkTicketTypeOperation))
             }
         } catch (e: SQLiteException) {
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
@@ -86,12 +86,13 @@ class TkTicketTypeOperationDao(
     }
 
     @Throws(java.lang.Exception::class)
-    private fun getWherePkClause(tkTicketTypeProduct: TkTicketTypeOperation?): StringBuilder {
-        tkTicketTypeProduct?.let{
+    private fun getWherePkClause(tkTicketTypeOperation: TkTicketTypeOperation?): StringBuilder {
+        tkTicketTypeOperation?.let{
             return java.lang.StringBuilder()
                 .append("""
-                        ${CUSTOMER_CODE} = '${tkTicketTypeProduct.customer_code}'  
-                        AND ${TICKET_TYPE_CODE} = '${tkTicketTypeProduct.ticket_type_code}'
+                        ${CUSTOMER_CODE} = '${tkTicketTypeOperation.customer_code}'  
+                        AND ${TICKET_TYPE_CODE} = '${tkTicketTypeOperation.ticket_type_code}'
+                        AND ${OPERATION_CODE} = '${tkTicketTypeOperation.operation_code}'
                         """.trimIndent()
                 )
         }
@@ -115,15 +116,15 @@ class TkTicketTypeOperationDao(
                 db.delete(TABLE, null, null)
             }
 
-            tkTicketChaces?.forEach { tkTicketTypeProduct->
+            tkTicketChaces?.forEach { tkTicketTypeOperation->
                 //Where para update
-                val sbWhere: StringBuilder = getWherePkClause(tkTicketTypeProduct)
+                val sbWhere: StringBuilder = getWherePkClause(tkTicketTypeOperation)
                 //Tenta update e armazena retorno
-                addUpdateRet = db.update(TABLE, toContentValuesMapper.map(tkTicketTypeProduct), sbWhere.toString(), null).toLong()
+                addUpdateRet = db.update(TABLE, toContentValuesMapper.map(tkTicketTypeOperation), sbWhere.toString(), null).toLong()
                 //Se nenhuma linha afetada, tenta insert
                 if (addUpdateRet == 0L) {
                     curAction = DaoObjReturn.INSERT
-                    db.insertOrThrow(TABLE, null, toContentValuesMapper.map(tkTicketTypeProduct))
+                    db.insertOrThrow(TABLE, null, toContentValuesMapper.map(tkTicketTypeOperation))
                 }
             }
             //
@@ -180,12 +181,12 @@ class TkTicketTypeOperationDao(
     }
 
     override fun getByString(sQuery: String): TkTicketTypeOperation? {
-        var tkTicketTypeProduct: TkTicketTypeOperation? = null
+        var tkTicketTypeOperation: TkTicketTypeOperation? = null
         openDB()
         try {
             val cursor = db.rawQuery(sQuery, null)
             while (cursor.moveToNext()) {
-                tkTicketTypeProduct = toTkTicketTypeOperationMapper.map(cursor)
+                tkTicketTypeOperation = toTkTicketTypeOperationMapper.map(cursor)
             }
             //
             cursor.close()
@@ -194,7 +195,7 @@ class TkTicketTypeOperationDao(
         } finally {
         }
         closeDB()
-        return tkTicketTypeProduct
+        return tkTicketTypeOperation
     }
 
     override fun getByStringHM(sQuery: String): HMAux? {
@@ -252,10 +253,10 @@ class TkTicketTypeOperationDao(
 
     private inner class TkTicketTypeOperationToContentValuesMapper :
         Mapper<TkTicketTypeOperation, ContentValues> {
-        override fun map(tkTicketTypeProduct: TkTicketTypeOperation?): ContentValues {
+        override fun map(tkTicketTypeOperation: TkTicketTypeOperation?): ContentValues {
             val contentValues = ContentValues()
             //
-            tkTicketTypeProduct?.let{
+            tkTicketTypeOperation?.let{
                 with(contentValues){
                     if(it.customer_code > -1){
                         put(CUSTOMER_CODE, it.customer_code)

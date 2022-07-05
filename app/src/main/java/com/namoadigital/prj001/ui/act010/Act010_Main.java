@@ -395,7 +395,7 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
             mPresenter.callTicketCreationService(
                     ToolBox_Con.getPreference_Customer_Code(context),
                     ticketTypeCode,
-                    ToolBox_Con.getPreference_Site_Code(context),
+                    site_code_form_param,
                     ToolBox_Con.getPreference_Operation_Code(context),
                     product_code,
                     mPresenter.getSerialCode(product_code, serial_id),
