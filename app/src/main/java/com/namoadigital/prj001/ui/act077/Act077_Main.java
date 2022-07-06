@@ -1,5 +1,8 @@
 package com.namoadigital.prj001.ui.act077;
 
+import static com.namoadigital.prj001.ui.act075.Act075_Main.PRODUCT_VIEW_ID;
+import static com.namoadigital.prj001.ui.act075.Act075_Main.VIEW_PROFILE;
+
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -36,9 +39,6 @@ import com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.namoadigital.prj001.ui.act075.Act075_Main.PRODUCT_VIEW_ID;
-import static com.namoadigital.prj001.ui.act075.Act075_Main.VIEW_PROFILE;
 
 public class Act077_Main extends Base_Activity_Frag implements Act077_Main_Contract.I_View {
     private FragmentManager fm;
@@ -121,6 +121,7 @@ public class Act077_Main extends Base_Activity_Frag implements Act077_Main_Contr
                 tkTicket.getOpen_site_code(),
                 tkTicket.getOpen_site_desc(),
                 tkTicket.getOpen_serial_id(),
+                tkTicket.getInternal_comments(),
                 tkTicket.getOpen_product_desc(),
                 hmAux_Trans.get("measure_origin_type_lbl"),
                 context.getResources().getColor(R.color.grid_header_normal),

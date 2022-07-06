@@ -43,6 +43,7 @@ public class Frg_Pipeline_Header extends Fragment {
     private static final String SITE_CODE_PARAM = "SITE_CODE_PARAM";
     private static final String SITE_DESC_PARAM = "SITE_DESC_PARAM";
     private static final String SERIAL_ID_PARAM = "SERIAL_ID_PARAM";
+    private static final String INTERNAL_COMMENTS_PARAM = "INTERNAL_COMMENTS_PARAM";
     private static final String HEADER_PROFILE_PARAM = "HEADER_PROFILE_PARAM";
     private static final String DESC_ORIGIN_PARAM = "DESC_ORIGIN_PARAM";
     private static final String BTN_SYNC_DESCRIPTION_PARAM = "BTN_SYNC_DESCRIPTION_PARAM";
@@ -68,6 +69,7 @@ public class Frg_Pipeline_Header extends Fragment {
     private int site_code;
     private String site_desc_param;
     private String serial_id_param;
+    private String internal_comments_param;
     private String prod_desc_param;
     private String status_desc_param;
     private int status_color_param;
@@ -92,6 +94,7 @@ public class Frg_Pipeline_Header extends Fragment {
     private TextView tv_site_desc;
     private TextView tv_client;
     private TextView tv_serial;
+    private TextView tv_internal_comments;
     private TextView tv_desc_origin;
     private ImageView iv_action_shortcut;
     //Pipeline Profiler.
@@ -137,7 +140,7 @@ public class Frg_Pipeline_Header extends Fragment {
         // Required empty public constructor
     }
 
-    public static Frg_Pipeline_Header newInstanceForPipeline(TK_Ticket mTicket, String ticket_id, String ticket_date, int site_code, String site_desc, String serial_id, String prod_desc, String status_desc, int status_color, String desc_origin_param, String btn_sync_description_param, boolean btn_sync_status_param) {
+    public static Frg_Pipeline_Header newInstanceForPipeline(TK_Ticket mTicket, String ticket_id, String ticket_date, int site_code, String site_desc, String serial_id,String internal_comments, String prod_desc, String status_desc, int status_color, String desc_origin_param, String btn_sync_description_param, boolean btn_sync_status_param) {
         Frg_Pipeline_Header fragment = new Frg_Pipeline_Header();
         Bundle args = new Bundle();
         args.putString(HEADER_PROFILE_PARAM, PIPELINE);
@@ -146,6 +149,7 @@ public class Frg_Pipeline_Header extends Fragment {
         args.putInt(SITE_CODE_PARAM, site_code);
         args.putString(SITE_DESC_PARAM, site_desc);
         args.putString(SERIAL_ID_PARAM, serial_id);
+        args.putString(INTERNAL_COMMENTS_PARAM, internal_comments);
         args.putString(PROD_DESC_PARAM, prod_desc);
         args.putString(STATUS_DESC_PARAM, status_desc);
         args.putInt(STATUS_COLOR_PARAM, status_color);
@@ -158,7 +162,7 @@ public class Frg_Pipeline_Header extends Fragment {
         return fragment;
     }
 
-    public static Frg_Pipeline_Header newInstanceForApprovalOrAction(TK_Ticket mTicket, String ticket_id, String ticket_date, int site_code, String site_desc, String serial_id, String prod_desc, String desc_origin_param, int step_main_step_num_color_param, String step_main_step_num_param, String step_main_desc_param) {
+    public static Frg_Pipeline_Header newInstanceForApprovalOrAction(TK_Ticket mTicket, String ticket_id, String ticket_date, int site_code, String site_desc, String serial_id, String internal_comments, String prod_desc, String desc_origin_param, int step_main_step_num_color_param, String step_main_step_num_param, String step_main_desc_param) {
         Frg_Pipeline_Header fragment = new Frg_Pipeline_Header();
         Bundle args = new Bundle();
         args.putString(HEADER_PROFILE_PARAM, APPROVAL);
@@ -167,6 +171,7 @@ public class Frg_Pipeline_Header extends Fragment {
         args.putInt(SITE_CODE_PARAM, site_code);
         args.putString(SITE_DESC_PARAM, site_desc);
         args.putString(SERIAL_ID_PARAM, serial_id);
+        args.putString(INTERNAL_COMMENTS_PARAM, internal_comments);
         args.putString(PROD_DESC_PARAM, prod_desc);
         args.putString(DESC_ORIGIN_PARAM, desc_origin_param);
         args.putInt(STEP_MAIN_STEP_NUM_COLOR_PARAM, step_main_step_num_color_param);
@@ -177,7 +182,7 @@ public class Frg_Pipeline_Header extends Fragment {
         return fragment;
     }
 
-    public static Frg_Pipeline_Header newInstanceForProduct(TK_Ticket mTicket, String ticket_id, String ticket_date, int site_code, String site_desc, String serial_id, String prod_desc, String desc_origin_param) {
+    public static Frg_Pipeline_Header newInstanceForProduct(TK_Ticket mTicket, String ticket_id, String ticket_date, int site_code, String site_desc, String serial_id, String internal_comments, String prod_desc, String desc_origin_param) {
         Frg_Pipeline_Header fragment = new Frg_Pipeline_Header();
         Bundle args = new Bundle();
         args.putString(HEADER_PROFILE_PARAM, PRODUCT);
@@ -187,13 +192,14 @@ public class Frg_Pipeline_Header extends Fragment {
         args.putInt(SITE_CODE_PARAM, site_code);
         args.putString(SITE_DESC_PARAM, site_desc);
         args.putString(SERIAL_ID_PARAM, serial_id);
+        args.putString(INTERNAL_COMMENTS_PARAM, internal_comments);
         args.putString(DESC_ORIGIN_PARAM, desc_origin_param);
         args.putSerializable(TICKET_OBJ_PARAM, mTicket );
         fragment.setArguments(args);
         return fragment;
     }
 
-    public static Frg_Pipeline_Header newInstanceForOrigin(TK_Ticket mTicket, String ticket_id, String ticket_date, int site_code, String site_desc, String serial_id, String prod_desc, String origin_type, int status_color, String origin_complete_path, String origin_desc, String origin_end_date, String origin_end_user) {
+    public static Frg_Pipeline_Header newInstanceForOrigin(TK_Ticket mTicket, String ticket_id, String ticket_date, int site_code, String site_desc, String serial_id,String internal_comments, String prod_desc, String origin_type, int status_color, String origin_complete_path, String origin_desc, String origin_end_date, String origin_end_user) {
         Frg_Pipeline_Header fragment = new Frg_Pipeline_Header();
         Bundle args = new Bundle();
         args.putString(HEADER_PROFILE_PARAM, ORIGIN);
@@ -205,6 +211,7 @@ public class Frg_Pipeline_Header extends Fragment {
         args.putString(STATUS_DESC_PARAM, origin_type);
         args.putInt(STATUS_COLOR_PARAM, status_color);
         args.putString(SERIAL_ID_PARAM, serial_id);
+        args.putString(INTERNAL_COMMENTS_PARAM, internal_comments);
         args.putString(ORIGIN_COMPLETE_PATH, origin_complete_path);
         args.putString(ORIGIN_DESC, origin_desc);
         args.putString(ORIGIN_END_DATE, origin_end_date);
@@ -229,7 +236,7 @@ public class Frg_Pipeline_Header extends Fragment {
         return fragment;
     }
 
-    public static Frg_Pipeline_Header newInstanceForHeaderEdit(TK_Ticket mTicket, String ticket_id, String ticket_date, int site_code, String site_desc, String serial_id, String prod_desc, String desc_origin_param) {
+    public static Frg_Pipeline_Header newInstanceForHeaderEdit(TK_Ticket mTicket, String ticket_id, String ticket_date, int site_code, String site_desc, String serial_id,String internal_comments, String prod_desc, String desc_origin_param) {
         Frg_Pipeline_Header fragment = new Frg_Pipeline_Header();
         Bundle args = new Bundle();
         args.putString(HEADER_PROFILE_PARAM, HEADER_EDIT);
@@ -239,6 +246,7 @@ public class Frg_Pipeline_Header extends Fragment {
         args.putInt(SITE_CODE_PARAM, site_code);
         args.putString(SITE_DESC_PARAM, site_desc);
         args.putString(SERIAL_ID_PARAM, serial_id);
+        args.putString(INTERNAL_COMMENTS_PARAM, internal_comments);
         args.putString(DESC_ORIGIN_PARAM, desc_origin_param);
         args.putSerializable(TICKET_OBJ_PARAM, mTicket );
         fragment.setArguments(args);
@@ -257,6 +265,7 @@ public class Frg_Pipeline_Header extends Fragment {
             site_code = getArguments().getInt(SITE_CODE_PARAM,0);
             site_desc_param = getArguments().getString(SITE_DESC_PARAM,"");
             serial_id_param = getArguments().getString(SERIAL_ID_PARAM,"");
+            internal_comments_param = getArguments().getString(INTERNAL_COMMENTS_PARAM,"");
             desc_origin_param = getArguments().getString(DESC_ORIGIN_PARAM,"");
             status_color_param =  getArguments().getInt(STATUS_COLOR_PARAM, 0);
             btn_sync_description_param = getArguments().getString(BTN_SYNC_DESCRIPTION_PARAM,"");
@@ -290,6 +299,7 @@ public class Frg_Pipeline_Header extends Fragment {
         tv_site_desc = pipeline_header_view.findViewById(R.id.frg_ticket_tv_site_desc);
         tv_client = pipeline_header_view.findViewById(R.id.frg_ticket_tv_client_and_contract_info);
         tv_serial = pipeline_header_view.findViewById(R.id.frg_ticket_tv_serial);
+        tv_internal_comments = pipeline_header_view.findViewById(R.id.frg_ticket_tv_internal_comments);
         tv_desc_origin = pipeline_header_view.findViewById(R.id.frg_ticket_tv_desc_origin);
         iv_action_shortcut = pipeline_header_view.findViewById(R.id.frg_ticket_iv_action_shortcut);
         btn_sync_description = pipeline_header_view.findViewById(R.id.frg_ticket_btn_sync_description);
@@ -482,6 +492,7 @@ public class Frg_Pipeline_Header extends Fragment {
         tv_site_desc.setVisibility(View.VISIBLE);
         tv_client.setVisibility(View.VISIBLE);
         tv_serial.setVisibility(View.VISIBLE);
+        tv_internal_comments.setVisibility(View.GONE);
         iv_action_shortcut.setVisibility(View.GONE);
         cv_btn_sync.setVisibility(View.GONE);
         frg_pipeline_header_ticket.setVisibility(View.GONE);
@@ -504,6 +515,10 @@ public class Frg_Pipeline_Header extends Fragment {
         tv_site_desc.setText(site_desc_param);
         setClientAndContractInfo();
         tv_serial.setText(serial_id_param);
+        if(internal_comments_param != null && !internal_comments_param.isEmpty()){
+            tv_internal_comments.setVisibility(View.VISIBLE);
+            tv_internal_comments.setText(internal_comments_param);
+        }
         tv_prod_desc.setText(prod_desc_param);
         tv_status.setText(status_desc_param);
         tv_status.setTextColor(status_color_param);

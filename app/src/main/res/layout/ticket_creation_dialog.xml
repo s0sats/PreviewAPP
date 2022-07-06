@@ -52,12 +52,15 @@
             android:layout_marginEnd="16dp"
             android:hint="Texto"
             app:endIconMode="none"
+            app:counterEnabled="true"
+            app:counterMaxLength="500"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/act010_create_ticket_dialog_tv_site">
 
             <AutoCompleteTextView
                 android:id="@+id/act010_create_ticket_dialog_internal_comments_actv"
+                android:maxLength="500"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </com.google.android.material.textfield.TextInputLayout>

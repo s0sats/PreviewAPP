@@ -746,6 +746,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                     mTicket.getOpen_site_code(),
                     mTicket.getOpen_site_desc(),
                     mTicket.getOpen_serial_id(),
+                    mTicket.getInternal_comments(),
                     mTicket.getOpen_product_desc(),
                     hmAux_Trans.get(mTicket.getTicket_status()),
                     ToolBox_Inf.getStatusColorV2(context, mTicket.getTicket_status()),
