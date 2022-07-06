@@ -352,7 +352,7 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
         // DIFERENTE VERIFICAR
         bundle.putString(
                 Constant.ACT010_CUSTOM_FORM_CODE_DESC,
-                item.get(GE_Custom_FormDao.CUSTOM_FORM_DESC)
+                item.get(CUSTOM_DESC)
         );
     }
 
