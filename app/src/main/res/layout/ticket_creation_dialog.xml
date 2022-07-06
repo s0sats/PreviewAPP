@@ -22,11 +22,25 @@
             android:layout_marginEnd="16dp"
             android:text="asdsdasdasdasdasdaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
             android:textColor="@color/text_black"
+            android:textAlignment="center"
             android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            android:id="@+id/act010_create_ticket_dialog_tv_site"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            tools:text="asdsdasdasdasdasdaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            android:textColor="@color/text_red"
+            android:textAlignment="center"
+            app:layout_constraintEnd_toEndOf="@+id/act010_create_ticket_dialog_ttl"
+            app:layout_constraintStart_toStartOf="@+id/act010_create_ticket_dialog_ttl"
+            app:layout_constraintTop_toBottomOf="@+id/act010_create_ticket_dialog_ttl" />
 
        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/act010_create_ticket_dialog_internal_comments_til"
@@ -40,7 +54,7 @@
             app:endIconMode="none"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/act010_create_ticket_dialog_ttl">
+            app:layout_constraintTop_toBottomOf="@+id/act010_create_ticket_dialog_tv_site">
 
             <AutoCompleteTextView
                 android:id="@+id/act010_create_ticket_dialog_internal_comments_actv"

@@ -27,4 +27,6 @@ public interface Act010_Main_Presenter {
     boolean verifyProductForForm(HMAux hmAux);
 
     long getSerialCode(long product_code, String serial_id);
+
+    String getSerialSiteDescription(String site_code_form_param);
 }

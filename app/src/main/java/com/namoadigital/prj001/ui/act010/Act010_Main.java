@@ -312,6 +312,14 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
 
     private void setLabel(TicketCreationDialogBinding dialogBinding, HMAux item) {
         dialogBinding.act010CreateTicketDialogTtl.setText(item.get(Act010_Main.CUSTOM_DESC));
+        dialogBinding.act010CreateTicketDialogTvSite.setVisibility(View.GONE);
+        if(!ToolBox_Con.getPreference_Site_Code(context).equals(site_code_form_param)){
+            String serialSiteDescription = mPresenter.getSerialSiteDescription(site_code_form_param);
+            if(!serialSiteDescription.isEmpty()) {
+                dialogBinding.act010CreateTicketDialogTvSite.setText(serialSiteDescription);
+                dialogBinding.act010CreateTicketDialogTvSite.setVisibility(View.VISIBLE);
+            }
+        }
         dialogBinding.act010CreateTicketDialogInternalCommentsTil.setHint(hmAux_Trans.get("alert_create_ticket_internal_comments_lbl"));
         dialogBinding.act010CreateTicketDialogBtnSave.setText(hmAux_Trans.get("alert_create_ticket_btn_save"));
         dialogBinding.act010CreateTicketDialogBtnCancel.setText(hmAux_Trans.get("sys_alert_btn_cancel"));

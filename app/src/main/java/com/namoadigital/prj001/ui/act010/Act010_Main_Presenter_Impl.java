@@ -437,6 +437,12 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
     }
 
     @Override
+    public String getSerialSiteDescription(String site_code_form_param) {
+        MD_Product_Serial md_product_serial = getMd_product_serial();
+        return md_product_serial.getSite_desc() != null ? md_product_serial.getSite_desc() : "";
+    }
+
+    @Override
     public void onBackPressedClicked() {
         mView.callAct009(context);
     }
