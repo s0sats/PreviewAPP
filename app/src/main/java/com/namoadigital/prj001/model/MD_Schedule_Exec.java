@@ -626,6 +626,7 @@ public class MD_Schedule_Exec {
                 serial_id == null ? "" : serial_id,
                 schedule_desc,
                 ConstantBaseApp.MD_SCHEDULE_TYPE_FORM.equals(schedule_type) ? custom_form_desc : ticket_type_desc,
+                null,
                 comments,
                 site_code,
                 site_desc,
@@ -642,7 +643,8 @@ public class MD_Schedule_Exec {
                 ConstantBaseApp.SYS_STATUS_IN_PROCESSING.contentEquals(status),
                 ToolBox_Inf.isItemLate(date_start + " " + customerGMT),
                 ToolBox_Inf.isItemLate(date_end + " " + customerGMT),
-                isLastSelectedItem
+                isLastSelectedItem,
+                    false
             );
             myActions.setProductCode(product_code);
             myActions.setProductId(product_id);
@@ -673,6 +675,7 @@ public class MD_Schedule_Exec {
                 serial_id == null ? "" : serial_id,
                 schedule_desc,
                 ConstantBaseApp.MD_SCHEDULE_TYPE_FORM.equals(schedule_type) ? custom_form_desc : ticket_type_desc,
+                null,
                 comments,
                 site_code,
                 site_desc,
@@ -689,7 +692,8 @@ public class MD_Schedule_Exec {
                 ConstantBaseApp.SYS_STATUS_IN_PROCESSING.contentEquals(status),
                 ToolBox_Inf.isItemLate(date_start + " " + customerGMT),
                 ToolBox_Inf.isItemLate(date_end + " " + customerGMT),
-                isLastSelectedItem
+                isLastSelectedItem,
+                    false
             );
             myActions.setProductCode(product_code);
             myActions.setProductId(product_id);

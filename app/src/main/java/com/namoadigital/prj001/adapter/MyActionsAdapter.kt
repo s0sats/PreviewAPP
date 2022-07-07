@@ -82,7 +82,9 @@ class MyActionsAdapter(
             configTvTag(myAction)
             binding.myActionsItemTvProdDesc.text = myAction.productDesc
             binding.myActionsItemTvSerialId.text = myAction.serialId
-            configTvOriginView(myAction)
+            if(ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_MANUAL != myAction.ticketOriginType){
+                configTvOriginView(myAction)
+            }
             binding.myActionsItemTvProcessDesc.text = myAction.processDesc
             binding.myActionsItemTvFocusStepDesc.applyVisibilityIfTextExists(
                     getFocusStepInfo(
@@ -98,6 +100,19 @@ class MyActionsAdapter(
             binding.myActionsItemTvOsCode.applyVisibilityIfTextExists(myAction.serviceOrderCode)
             binding.myActionsItemTvErrorMsg.applyVisibilityIfTextExists(myAction.erroMsg)
             configDoneDate(myAction)
+
+            if(myAction.isMainUserTicket){
+                binding.myActionsItemIvMainUser.visibility = View.VISIBLE
+            }else{
+                binding.myActionsItemIvMainUser.visibility = View.GONE
+            }
+
+            if(myAction.internalComments.isNullOrEmpty()){
+                binding.myActionsItemTvInternalComments.visibility = View.GONE
+            }else{
+                binding.myActionsItemTvInternalComments.visibility = View.VISIBLE
+                binding.myActionsItemTvInternalComments.text = binding.root.context.getString(R.string.unicode_bullet) + " " + myAction.internalComments
+            }
 
             applyBackgroundStrokeColor(myAction)
         }
