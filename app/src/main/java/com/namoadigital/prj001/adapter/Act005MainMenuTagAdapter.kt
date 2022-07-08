@@ -53,7 +53,35 @@ class Act005MainMenuTagAdapter(
             //
             binding.tvTagName.text = mMainTagMenu.tagName
             //
-            binding.tvTagQty.text = """${hmAux_Trans.get("tag_item_qty")} :  ${mMainTagMenu.tagQty} """
+            if(mMainTagMenu.tagCode == 0) {
+                binding.tvTagQty.text =
+                    """${hmAux_Trans.get("tag_item_qty")} :  ${mMainTagMenu.tagQty} """
+                binding.apply {
+                    ivTagQtyUser.visibility = View.GONE
+                    ivTagQtyGroup.visibility = View.GONE
+                    ivTagQtyOther.visibility = View.GONE
+                    tvTagQtyUser.visibility = View.GONE
+                    tvTagQtyGroup.visibility = View.GONE
+                    tvTagQtyOther.visibility = View.GONE
+                }
+            }else{
+                // Apagar apos testes
+                binding.tvTagQty.text =
+                    """${hmAux_Trans.get("tag_item_qty")} :  ${mMainTagMenu.tagQty} """
+//                binding.tvTagQty.text =
+//                    """${hmAux_Trans.get("tag_item_qty")} :"""
+                binding.apply {
+                    ivTagQtyUser.visibility = View.VISIBLE
+                    ivTagQtyGroup.visibility = View.VISIBLE
+                    ivTagQtyOther.visibility = View.VISIBLE
+                    tvTagQtyUser.visibility = View.VISIBLE
+                    tvTagQtyGroup.visibility = View.VISIBLE
+                    tvTagQtyOther.visibility = View.VISIBLE
+                }
+            }
+            binding.tvTagQtyUser.text = """${mMainTagMenu.qtyMainUser} """
+            binding.tvTagQtyGroup.text = """${mMainTagMenu.qtyGroup} """
+            binding.tvTagQtyOther.text = """${mMainTagMenu.qtyOther} """
             //
             if(mMainTagMenu.tagHasFormInExecution > 0 ){
                 val tagInfo: String = """${binding.tvTagQty.text} (${hmAux_Trans.get("tag_item_form_in_execution")})"""
