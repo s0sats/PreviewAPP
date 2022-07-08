@@ -41,45 +41,54 @@
             tools:text="TextView"
             android:textColor="@color/gray_colors_menu"
              />
+
+        <TextView
+            android:id="@+id/tv_tag_qty_user"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="@color/gray_colors_menu"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="4dp"
+            tools:text="TextView"
+            />
         <ImageView
             android:id="@+id/iv_tag_qty_user"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_person_black_24dp"
-            />
-        <TextView
-            android:id="@+id/tv_tag_qty_user"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            tools:text="TextView"
-            android:textColor="@color/gray_colors_menu"
+            app:tint="@color/namoa_color_cone_item"
             />
 
+        <TextView
+            android:id="@+id/tv_tag_qty_group"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="@color/gray_colors_menu"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="4dp"
+            tools:text="TextView"
+            />
         <ImageView
             android:id="@+id/iv_tag_qty_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_baseline_group_24_black"
-            />
+            app:tint="@color/namoa_color_pipeline_origin_icon" />
         <TextView
-            android:id="@+id/tv_tag_qty_group"
+            android:id="@+id/tv_tag_qty_other"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            tools:text="TextView"
             android:textColor="@color/gray_colors_menu"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="4dp"
+            tools:text="TextView"
             />
         <ImageView
             android:id="@+id/iv_tag_qty_other"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/ic_person_off"
-            />
-        <TextView
-            android:id="@+id/tv_tag_qty_other"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            tools:text="TextView"
-            android:textColor="@color/gray_colors_menu"
+            app:tint="@color/namoa_color_cone_item"
             />
 
     </LinearLayout>
