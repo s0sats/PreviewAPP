@@ -209,14 +209,8 @@ class SqlAct005TagList001(private val context: Context,
                     max(mse.${MD_Schedule_ExecDao.TAG_OPERATIONAL_DESC}) tag_operational_desc, 
                     count(mse.${MD_Schedule_ExecDao.TAG_OPERATIONAL_CODE}) qty,
                     0 qty_main_user,
-                    count(mse.tag_operational_code) - COUNT((case when mse.${MD_Schedule_ExecDao.STATUS} = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'
-                          then 1
-                          else null
-                    end))  qty_group,
-                    COUNT((case when mse.${MD_Schedule_ExecDao.STATUS} = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'
-                          then 1
-                          else null
-                    end))  qty_other,
+                    count(mse.tag_operational_code) qty_group,
+                    0 qty_other,
                     max((case when mse.${MD_Schedule_ExecDao.STATUS} = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'
                           then 1
                           else 0
@@ -237,15 +231,9 @@ class SqlAct005TagList001(private val context: Context,
                 s2.${MD_Schedule_ExecDao.TAG_OPERATIONAL_CODE} tag_operational_code, 
                 max(s2.${MD_Schedule_ExecDao.TAG_OPERATIONAL_DESC}) tag_operational_desc, 
                 count(1) qty,
-                 0 qty_main_user,
-                count(s2.tag_operational_code) -  COUNT((case when s2.${MD_Schedule_ExecDao.STATUS} = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'
-                          then 1
-                          else null
-                    end)) qty_group,
-                COUNT((case when s2.${MD_Schedule_ExecDao.STATUS} = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'
-                          then 1
-                          else null
-                    end))  qty_other,
+                0 qty_main_user,
+                count(s2.tag_operational_code) qty_group,
+                0 qty_other,
                 max((case when s2.${MD_Schedule_ExecDao.STATUS}  = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'
                       then 1
                       else 0
@@ -313,15 +301,9 @@ class SqlAct005TagList001(private val context: Context,
                 select gcdl.${GE_Custom_Form_LocalDao.TAG_OPERATIONAL_CODE}, 
                        max(gcdl.${GE_Custom_Form_LocalDao.TAG_OPERATIONAL_DESC}) tag_operational_desc, 
                        count(gcdl.${GE_Custom_Form_LocalDao.TAG_OPERATIONAL_CODE}) qty, 
-                       count(gcdl.${GE_Custom_Form_LocalDao.TAG_OPERATIONAL_CODE}) - count((case when gcdl.${GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS} = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'
-                          then 1
-                          else null
-                    end))  qty_main_user, 
+                       count(gcdl.${GE_Custom_Form_LocalDao.TAG_OPERATIONAL_CODE}) qty_main_user, 
                        0 qty_group,
-                       count((case when gcdl.${GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS} = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'
-                          then 1
-                          else null
-                    end)) qty_other,
+                       0 qty_other,
                 max((case when gcdl.${GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS} = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'
                       then 1
                       else 0
