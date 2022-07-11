@@ -48,7 +48,6 @@
             android:layout_height="match_parent"
             android:textColor="@color/gray_colors_menu"
             android:layout_marginLeft="8dp"
-            android:layout_marginRight="4dp"
             tools:text="0"
             />
         <ImageView
@@ -65,7 +64,6 @@
             android:layout_height="match_parent"
             android:textColor="@color/gray_colors_menu"
             android:layout_marginLeft="8dp"
-            android:layout_marginRight="4dp"
             tools:text="0"
             />
         <ImageView
@@ -80,15 +78,15 @@
             android:layout_height="match_parent"
             android:textColor="@color/gray_colors_menu"
             android:layout_marginLeft="8dp"
-            android:layout_marginRight="4dp"
             tools:text="0"
             />
         <ImageView
             android:id="@+id/iv_tag_qty_other"
             android:layout_width="24dp"
             android:layout_height="24dp"
+            android:layout_marginRight="4dp"
             android:src="@drawable/ic_person_off"
-            app:tint="@color/namoa_color_cone_item"
+            app:tint="@color/namoa_color_pipeline_origin_icon"
             />
 
         <TextView

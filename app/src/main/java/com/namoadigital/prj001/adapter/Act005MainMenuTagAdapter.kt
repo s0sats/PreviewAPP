@@ -67,7 +67,7 @@ class Act005MainMenuTagAdapter(
             }else{
                 // Apagar apos testes
                 binding.tvTagQty.text =
-                    """${hmAux_Trans.get("tag_item_qty")} : """
+                    """${hmAux_Trans.get("tag_item_qty")}: """
 //                binding.tvTagQty.text =
 //                    """${hmAux_Trans.get("tag_item_qty")} :"""
                 binding.apply {
