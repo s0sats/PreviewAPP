@@ -17,6 +17,7 @@ import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.Act005TagCellBinding
 import com.namoadigital.prj001.model.MainTagMenu
 import com.namoadigital.prj001.util.ConstantBaseApp.*
+import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.view.frag.frg_main_home.FrgMainHome
 
 class Act005MainMenuTagAdapter(
@@ -81,7 +82,14 @@ class Act005MainMenuTagAdapter(
             }
             binding.tvTagQtyUser.text = """${mMainTagMenu.qtyMainUser} """
             binding.tvTagQtyGroup.text = """${mMainTagMenu.qtyGroup} """
-            binding.tvTagQtyOther.text = """${mMainTagMenu.qtyOther} """
+            if(PREFERENCE_HOME_ALL_ACTIONS_OPTION.equals(ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_FOCUS_FILTER, PREFERENCE_HOME_ONLY_MY_ACTIONS_OPTION))){
+                binding.ivTagQtyOther.visibility = View.VISIBLE
+                binding.tvTagQtyOther.visibility = View.VISIBLE
+                binding.tvTagQtyOther.text = """${mMainTagMenu.qtyOther} """
+            }else{
+                binding.tvTagQtyOther.visibility = View.GONE
+                binding.ivTagQtyOther.visibility = View.GONE
+            }
             //
             if(mMainTagMenu.tagHasFormInExecution > 0 ){
                 binding.tvTagFormsInProgress.visibility = View.VISIBLE

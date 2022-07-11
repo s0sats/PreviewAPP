@@ -10,7 +10,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 
 public interface Act010_Main_Presenter {
 
-    void setAdapterData(long product_code, int tagCode, Integer blockSpontaneous);
+    void setAdapterData(long product_code, int tagCode, Integer blockSpontaneous, boolean has_tk_ticket_is_form_off_hand);
 
     void validateOpenForm(HMAux item);
 

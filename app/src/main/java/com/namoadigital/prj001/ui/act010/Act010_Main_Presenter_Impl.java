@@ -81,7 +81,7 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
     }
 
     @Override
-    public void setAdapterData(long product_code, int tagCode, Integer blockSpontaneous) {
+    public void setAdapterData(long product_code, int tagCode, Integer blockSpontaneous, boolean has_tk_ticket_is_form_off_hand) {
         List<HMAux> forms =
                 custom_formDao.query_HM(
                         new Sql_Act010_001(
@@ -95,20 +95,22 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
                                 blockSpontaneous
                         ).toSqlQuery()
                 );
-        //
-        List<HMAux> tickets =
-                tkTicketTypeDao.query_HM(
-                        new Sql_Act010_002(
-                                ToolBox_Con.getPreference_Customer_Code(context),
-                                tagCode,
-                                String.valueOf(this.product_code),
-                                ToolBox_Con.getPreference_Operation_Code(context),
-                                site_code_form_param,
-                                serial_id
-                        ).toSqlQuery()
-                );
-        //
-        forms.addAll(tickets);
+
+        if(!has_tk_ticket_is_form_off_hand) {
+            List<HMAux> tickets =
+                    tkTicketTypeDao.query_HM(
+                            new Sql_Act010_002(
+                                    ToolBox_Con.getPreference_Customer_Code(context),
+                                    tagCode,
+                                    String.valueOf(this.product_code),
+                                    ToolBox_Con.getPreference_Operation_Code(context),
+                                    site_code_form_param,
+                                    serial_id
+                            ).toSqlQuery()
+                    );
+            //
+            forms.addAll(tickets);
+        }
         if (forms != null && forms.size() == 1) {
             HMAux aux = forms.get(0);
             if(aux.hasConsistentValue(Act010_Main.IS_FORM)
@@ -117,11 +119,13 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
             }
         }
         //
-        Collections.sort(forms, new Comparator<HMAux>(){
-            public int compare(HMAux obj1, HMAux obj2) {
-                return Objects.requireNonNull(obj1.get(Act010_Main.CUSTOM_DESC)).compareToIgnoreCase(Objects.requireNonNull(obj2.get(Act010_Main.CUSTOM_DESC)));
-            }
-        });
+        if(!has_tk_ticket_is_form_off_hand) {
+            Collections.sort(forms, new Comparator<HMAux>() {
+                public int compare(HMAux obj1, HMAux obj2) {
+                    return Objects.requireNonNull(obj1.get(Act010_Main.CUSTOM_DESC)).compareToIgnoreCase(Objects.requireNonNull(obj2.get(Act010_Main.CUSTOM_DESC)));
+                }
+            });
+        }
         //
         mView.loadForms(forms);
     }

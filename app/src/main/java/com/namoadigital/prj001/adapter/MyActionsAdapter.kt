@@ -84,6 +84,8 @@ class MyActionsAdapter(
             binding.myActionsItemTvSerialId.text = myAction.serialId
             if(ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_MANUAL != myAction.ticketOriginType){
                 configTvOriginView(myAction)
+            }else{
+                binding.myActionsItemTvOrigin.visibility = View.GONE
             }
             binding.myActionsItemTvProcessDesc.text = myAction.processDesc
             binding.myActionsItemTvFocusStepDesc.applyVisibilityIfTextExists(

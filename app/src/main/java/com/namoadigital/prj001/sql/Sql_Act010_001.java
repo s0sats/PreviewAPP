@@ -106,7 +106,7 @@ public class Sql_Act010_001 implements Specification {
                 "      AND ( '"+s_serial_id+"' IS NOT NULL OR cf.require_serial_done = 0)\n"+
                 "    \n" +
                 "    ORDER BY\n" +
-                "      upper(" + CUSTOM_PK + ") \n;"
+                "      upper(" + CUSTOM_DESC + ") \n;"
             )
                 //GE_Custom_FormDao.CUSTOMER_CODE+"#"+GE_Custom_FormDao.CUSTOM_FORM_TYPE+"#"+GE_Custom_FormDao.CUSTOM_FORM_CODE+"#"+GE_Custom_FormDao.CUSTOM_FORM_VERSION+"#"+GE_Custom_FormDao.CUSTOM_FORM_DESC)
                 .toString()
