@@ -67,7 +67,7 @@ class Act005MainMenuTagAdapter(
             }else{
                 // Apagar apos testes
                 binding.tvTagQty.text =
-                    """${hmAux_Trans.get("tag_item_qty")} :  ${mMainTagMenu.tagQty} """
+                    """${hmAux_Trans.get("tag_item_qty")} : """
 //                binding.tvTagQty.text =
 //                    """${hmAux_Trans.get("tag_item_qty")} :"""
                 binding.apply {
@@ -84,16 +84,20 @@ class Act005MainMenuTagAdapter(
             binding.tvTagQtyOther.text = """${mMainTagMenu.qtyOther} """
             //
             if(mMainTagMenu.tagHasFormInExecution > 0 ){
-                val tagInfo: String = """${binding.tvTagQty.text} (${hmAux_Trans.get("tag_item_form_in_execution")})"""
-                val spannableString = SpannableString(tagInfo)
-                //
-                spannableString.setSpan(
-                        ForegroundColorSpan(context.getResources().getColor(R.color.namoa_amount_pipeline_background_btn)),
-                        tagInfo.indexOf("("+ hmAux_Trans.get("tag_item_form_in_execution") +")"),
-                        tagInfo.length,
-                        Spanned.SPAN_INCLUSIVE_INCLUSIVE
-                )
-                binding.tvTagQty.text = spannableString
+                binding.tvTagFormsInProgress.visibility = View.VISIBLE
+                binding.tvTagFormsInProgress.text = hmAux_Trans.get("tag_item_form_in_execution")
+//                val tagInfo: String = """${binding.tvTagQty.text} (${hmAux_Trans.get("tag_item_form_in_execution")})"""
+//                val spannableString = SpannableString(tagInfo)
+//                //
+//                spannableString.setSpan(
+//                        ForegroundColorSpan(context.getResources().getColor(R.color.namoa_amount_pipeline_background_btn)),
+//                        tagInfo.indexOf("("+ hmAux_Trans.get("tag_item_form_in_execution") +")"),
+//                        tagInfo.length,
+//                        Spanned.SPAN_INCLUSIVE_INCLUSIVE
+//                )
+//                binding.tvTagQty.text = spannableString
+            }else{
+                binding.tvTagFormsInProgress.visibility = View.GONE
             }
 
             binding.ivTagStatus.visibility = View.VISIBLE

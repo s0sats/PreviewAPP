@@ -236,7 +236,7 @@ public class Frg_Pipeline_Header extends Fragment {
         return fragment;
     }
 
-    public static Frg_Pipeline_Header newInstanceForHeaderEdit(TK_Ticket mTicket, String ticket_id, String ticket_date, int site_code, String site_desc, String serial_id,String internal_comments, String prod_desc, String desc_origin_param) {
+    public static Frg_Pipeline_Header newInstanceForHeaderEdit(TK_Ticket mTicket, String ticket_id, String ticket_date, int site_code, String site_desc, String serial_id, String prod_desc, String desc_origin_param) {
         Frg_Pipeline_Header fragment = new Frg_Pipeline_Header();
         Bundle args = new Bundle();
         args.putString(HEADER_PROFILE_PARAM, HEADER_EDIT);
@@ -246,7 +246,6 @@ public class Frg_Pipeline_Header extends Fragment {
         args.putInt(SITE_CODE_PARAM, site_code);
         args.putString(SITE_DESC_PARAM, site_desc);
         args.putString(SERIAL_ID_PARAM, serial_id);
-        args.putString(INTERNAL_COMMENTS_PARAM, internal_comments);
         args.putString(DESC_ORIGIN_PARAM, desc_origin_param);
         args.putSerializable(TICKET_OBJ_PARAM, mTicket );
         fragment.setArguments(args);
@@ -641,11 +640,19 @@ public class Frg_Pipeline_Header extends Fragment {
         }
     }
 
-    public void updateTicketStatus(String ticket_status, int statusColor) {
+    public void updateTicketStatus(String ticket_status, int statusColor, String internal_comments) {
         status_desc_param = ticket_status;
         status_color_param = statusColor;
         tv_status.setText(ticket_status);
         tv_status.setTextColor(statusColor);
+        if(internal_comments != null
+        && !internal_comments.isEmpty()) {
+            tv_internal_comments.setText(internal_comments);
+            tv_internal_comments.setVisibility(View.VISIBLE);
+        }else{
+            tv_internal_comments.setText("");
+            tv_internal_comments.setVisibility(View.GONE);
+        }
     }
 
     public void setFormInfo() {

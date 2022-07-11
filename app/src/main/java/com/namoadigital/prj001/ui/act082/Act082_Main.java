@@ -476,7 +476,6 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
                 tkTicket.getOpen_site_code(),
                 tkTicket.getOpen_site_desc(),
                 tkTicket.getOpen_serial_id(),
-                tkTicket.getInternal_comments(),
                 tkTicket.getOpen_product_desc(),
                 ToolBox_Inf.getFormattedTicketOriginDesc(tkTicket.getOrigin_type(), tkTicket.getOrigin_desc(),tkTicket.getType_desc())
         );
