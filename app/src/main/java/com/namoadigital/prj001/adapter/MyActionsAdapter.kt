@@ -89,7 +89,7 @@ class MyActionsAdapter(
             }
             binding.myActionsItemTvProcessDesc.text = myAction.processDesc
             binding.myActionsItemTvFocusStepDesc.applyVisibilityIfTextExists(
-                    getFocusStepInfo(
+                    getInfoBulletFormatted(
                             binding.myActionsItemTvFocusStepDesc.context,
                             myAction.focusStepDesc
                     )
@@ -108,14 +108,14 @@ class MyActionsAdapter(
             }else{
                 binding.myActionsItemIvMainUser.visibility = View.GONE
             }
-
-            if(myAction.internalComments.isNullOrEmpty()){
-                binding.myActionsItemTvInternalComments.visibility = View.GONE
-            }else{
-                binding.myActionsItemTvInternalComments.visibility = View.VISIBLE
-                binding.myActionsItemTvInternalComments.text = binding.root.context.getString(R.string.unicode_bullet) + " " + myAction.internalComments
-            }
-
+            //
+            binding.myActionsItemTvInternalComments.applyVisibilityIfTextExists(
+                getInfoBulletFormatted(
+                    binding.myActionsItemTvInternalComments.context,
+                    myAction.internalComments
+                )
+            )
+            //
             applyBackgroundStrokeColor(myAction)
         }
 
@@ -227,11 +227,11 @@ class MyActionsAdapter(
                         || ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_MANUAL == myAction.ticketOriginType))
 
         /**
-         * Formata step focado com bullet quando há informação.
+         * Formata info com bullet quando há informação.
          */
-        private fun getFocusStepInfo(context: Context, focusStepDesc: String?) : String?{
-            if(!focusStepDesc.isNullOrEmpty()){
-                return " ${context.getString(R.string.unicode_bullet)} $focusStepDesc"
+        private fun getInfoBulletFormatted(context: Context, value: String?) : String?{
+            if(!value.isNullOrEmpty()){
+                return " ${context.getString(R.string.unicode_bullet)} $value"
             }
             return null
         }

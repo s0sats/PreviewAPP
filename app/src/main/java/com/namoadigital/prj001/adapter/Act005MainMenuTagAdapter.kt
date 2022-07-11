@@ -54,31 +54,30 @@ class Act005MainMenuTagAdapter(
             //
             binding.tvTagName.text = mMainTagMenu.tagName
             //
-            if(mMainTagMenu.tagCode == 0) {
-                binding.tvTagQty.text =
-                    """${hmAux_Trans.get("tag_item_qty")} :  ${mMainTagMenu.tagQty} """
-                binding.apply {
-                    ivTagQtyUser.visibility = View.GONE
-                    ivTagQtyGroup.visibility = View.GONE
-                    ivTagQtyOther.visibility = View.GONE
-                    tvTagQtyUser.visibility = View.GONE
-                    tvTagQtyGroup.visibility = View.GONE
-                    tvTagQtyOther.visibility = View.GONE
-                }
-            }else{
+//            if(mMainTagMenu.tagCode == 0) {
+//                binding.tvTagQty.text =
+//                    """${hmAux_Trans.get("tag_item_qty")} :  ${mMainTagMenu.tagQty} """
+//                binding.apply {
+//                    ivTagQtyUser.visibility = View.GONE
+//                    ivTagQtyGroup.visibility = View.GONE
+//                    ivTagQtyOther.visibility = View.GONE
+//                    tvTagQtyUser.visibility = View.GONE
+//                    tvTagQtyGroup.visibility = View.GONE
+//                    tvTagQtyOther.visibility = View.GONE
+//                }
+//            }else{
                 // Apagar apos testes
-                binding.tvTagQty.text =
-                    """${hmAux_Trans.get("tag_item_qty")}: """
+            binding.tvTagQty.text =
+                """${hmAux_Trans.get("tag_item_qty")}: """
 //                binding.tvTagQty.text =
 //                    """${hmAux_Trans.get("tag_item_qty")} :"""
-                binding.apply {
-                    ivTagQtyUser.visibility = View.VISIBLE
-                    ivTagQtyGroup.visibility = View.VISIBLE
-                    ivTagQtyOther.visibility = View.VISIBLE
-                    tvTagQtyUser.visibility = View.VISIBLE
-                    tvTagQtyGroup.visibility = View.VISIBLE
-                    tvTagQtyOther.visibility = View.VISIBLE
-                }
+            binding.apply {
+                ivTagQtyUser.visibility = View.VISIBLE
+                ivTagQtyGroup.visibility = View.VISIBLE
+                ivTagQtyOther.visibility = View.VISIBLE
+                tvTagQtyUser.visibility = View.VISIBLE
+                tvTagQtyGroup.visibility = View.VISIBLE
+                tvTagQtyOther.visibility = View.VISIBLE
             }
             binding.tvTagQtyUser.text = """${mMainTagMenu.qtyMainUser} """
             binding.tvTagQtyGroup.text = """${mMainTagMenu.qtyGroup} """
@@ -90,6 +89,7 @@ class Act005MainMenuTagAdapter(
                 binding.tvTagQtyOther.visibility = View.GONE
                 binding.ivTagQtyOther.visibility = View.GONE
             }
+//            }
             //
             if(mMainTagMenu.tagHasFormInExecution > 0 ){
                 binding.tvTagFormsInProgress.visibility = View.VISIBLE

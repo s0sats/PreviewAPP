@@ -271,8 +271,8 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
             }
         });
     }
-
-    private void createTicketDialog(HMAux item) {
+    @Override
+    public void createTicketDialog(HMAux item) {
         DisplayMetrics dm = context.getResources().getDisplayMetrics();
         float dmW = (float) dm.widthPixels * 0.95f;
 //        float dmH = (float) dm.heightPixels * 0.95f;

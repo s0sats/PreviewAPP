@@ -116,6 +116,8 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
             if(aux.hasConsistentValue(Act010_Main.IS_FORM)
             && "1".equals(aux.get(Act010_Main.IS_FORM))) {
                 validateOpenForm(aux);
+            }else{
+                mView.createTicketDialog(aux);
             }
         }
         //

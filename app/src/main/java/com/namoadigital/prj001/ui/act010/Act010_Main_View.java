@@ -36,4 +36,6 @@ public interface Act010_Main_View {
     void setWsProcess(String name);
 
     void showPD(String alert_start_sync_title, String alert_start_sync_msg);
+
+    void createTicketDialog(HMAux item);
 }

@@ -2993,12 +2993,18 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         ArrayList<MainTagMenu> mainTagMenus = new ArrayList<>();
         //
         int tagListItemCount = 0;
+        int tagListItemMainUserCount = 0;
+        int tagListItemGroupCount = 0;
+        int tagListItemOtherCount = 0;
         for(HMAux aux: queryResult){
             //
             int updateRequired = aux.hasConsistentValue("update_required")? Integer.parseInt(aux.get("update_required")) : 0;
             int syncRequired   = aux.hasConsistentValue("sync_required")? Integer.parseInt(aux.get("sync_required")) : 0;
             //
             tagListItemCount += aux.hasConsistentValue("qty")? Integer.parseInt(aux.get("qty")) : 0;
+            tagListItemMainUserCount += aux.hasConsistentValue("qty_main_user")? Integer.parseInt(aux.get("qty_main_user")) : 0;
+            tagListItemGroupCount += aux.hasConsistentValue("qty_group")? Integer.parseInt(aux.get("qty_group")) : 0;
+            tagListItemOtherCount += aux.hasConsistentValue("qty_other")? Integer.parseInt(aux.get("qty_other")) : 0;
             mainTagMenus.add( new MainTagMenu(
                             aux.hasConsistentValue("tag_operational_code")? Integer.parseInt(aux.get("tag_operational_code")) : 0,
                             aux.hasConsistentValue("tag_operational_code")? aux.get("tag_operational_desc") : "null",
@@ -3017,9 +3023,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             mainTagMenus.add(new MainTagMenu(0,
                     "",
                     tagListItemCount,
-                    0,
-                    0,
-                    0,
+                    tagListItemMainUserCount,
+                    tagListItemGroupCount,
+                    tagListItemOtherCount,
                     0,
                     0,
                     0)
