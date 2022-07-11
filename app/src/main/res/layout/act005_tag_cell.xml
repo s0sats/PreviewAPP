@@ -52,8 +52,8 @@
             />
         <ImageView
             android:id="@+id/iv_tag_qty_user"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/namoa_icon_cell_tag_width"
+            android:layout_height="@dimen/namoa_icon_cell_tag_height"
             android:src="@drawable/ic_person_black_24dp"
             app:tint="@color/namoa_color_cone_item"
             />
@@ -68,8 +68,8 @@
             />
         <ImageView
             android:id="@+id/iv_tag_qty_group"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/namoa_icon_cell_tag_width"
+            android:layout_height="@dimen/namoa_icon_cell_tag_height"
             android:src="@drawable/ic_baseline_group_24_black"
             app:tint="@color/namoa_color_pipeline_origin_icon" />
         <TextView
@@ -82,8 +82,8 @@
             />
         <ImageView
             android:id="@+id/iv_tag_qty_other"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="@dimen/namoa_icon_cell_tag_width"
+            android:layout_height="@dimen/namoa_icon_cell_tag_height"
             android:layout_marginRight="4dp"
             android:src="@drawable/ic_person_off"
             app:tint="@color/namoa_color_pipeline_origin_icon"
