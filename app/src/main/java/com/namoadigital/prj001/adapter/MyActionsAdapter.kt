@@ -37,7 +37,11 @@ class MyActionsAdapter(
     init{
         myFilteredAction = myActions as MutableList<MyActionsBase>
         myUserMainFilteredAction = myActions.filter {
-            (it as MyActions).isMainUserTicket
+            if(it is MyActions){
+                it.isMainUserTicket
+            }else{
+                true
+            }
         } as MutableList<MyActionsBase>
     }
 
