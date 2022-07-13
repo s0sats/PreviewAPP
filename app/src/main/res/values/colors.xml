@@ -201,6 +201,6 @@
 
     <color name="namoa_color_highlight_required_item">#FF9635</color>
     <color name="namoa_color_cone_item">#074C61</color>
-
+    <color name="my_action_toogle_circle">#70797C</color>
     <!--Cores OS form -->
 </resources>

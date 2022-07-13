@@ -31,9 +31,14 @@ class MyActionsAdapter(
     private val VIEW_TYPE_MY_ACTION_FORM_BUTTON = 1
 
     private var myFilteredAction: MutableList<MyActionsBase>
+    private var myUserMainFilteredAction: MutableList<MyActionsBase>
     private val mFilter = MyActionFilter()
+    var userMainFilterOn: Boolean = false
     init{
         myFilteredAction = myActions as MutableList<MyActionsBase>
+        myUserMainFilteredAction = myActions.filter {
+            (it as MyActions).isMainUserTicket
+        } as MutableList<MyActionsBase>
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -103,7 +108,8 @@ class MyActionsAdapter(
             binding.myActionsItemTvErrorMsg.applyVisibilityIfTextExists(myAction.erroMsg)
             configDoneDate(myAction)
 
-            if(myAction.isMainUserTicket){
+            if(myAction.isMainUserTicket
+                && !ConstantBaseApp.SYS_STATUS_DONE.equals(myAction.processStatus)){
                 binding.myActionsItemIvMainUser.visibility = View.VISIBLE
             }else{
                 binding.myActionsItemIvMainUser.visibility = View.GONE
@@ -293,20 +299,43 @@ class MyActionsAdapter(
             var temp = mutableListOf<MyActionsBase>()
             var charFilter = ToolBox.AccentMapper(constraint.toString().toLowerCase())
             if(charFilter.isNullOrEmpty()){
-                temp = myActions as MutableList<MyActionsBase>
+                if(userMainFilterOn){
+                    temp = myUserMainFilteredAction as MutableList<MyActionsBase>
+                }else {
+                    temp = myActions as MutableList<MyActionsBase>
+                }
             }else{
-                temp.addAll(
-                        myActions.filter {
-                            when(it){
-                                is MyActions ->{
-                                    val allFields = ToolBox.AccentMapper(it.getAllFieldForFilter().toLowerCase())
+                if(userMainFilterOn) {
+                    temp.addAll(
+                        myUserMainFilteredAction.filter {
+                            when (it) {
+                                is MyActions -> {
+                                    val allFields = ToolBox.AccentMapper(
+                                        it.getAllFieldForFilter().toLowerCase()
+                                    )
                                     allFields.contains(charFilter)
                                 }
                                 //se for o botão, sempre exibe
                                 else -> true
                             }
                         }
-                )
+                    )
+                }else{
+                    temp.addAll(
+                        myActions.filter {
+                            when (it) {
+                                is MyActions -> {
+                                    val allFields = ToolBox.AccentMapper(
+                                        it.getAllFieldForFilter().toLowerCase()
+                                    )
+                                    allFields.contains(charFilter)
+                                }
+                                //se for o botão, sempre exibe
+                                else -> true
+                            }
+                        }
+                    )
+                }
             }
             val filterResults = FilterResults()
             filterResults.count = temp.size
