@@ -69,6 +69,7 @@ data class MyActions(
                 "$serialId|" +
                 "$originDescriptor|" +
                 "$processDesc|" +
+                "$internalComments|" +
                 "$focusStepDesc|" +
                 "$siteDesc|" +
                 "$zoneDesc|" +
