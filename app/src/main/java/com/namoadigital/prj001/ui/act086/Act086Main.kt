@@ -403,7 +403,8 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
         onBackPressed()
     }
 
-    fun onMaterialPlannedInteraction(){
+    fun onMaterialPlannedInteraction(isPlanned: Boolean){
+        bundle.putBoolean(ConstantBaseApp.ITEM_CHECK_ANSWER, isPlanned)
         startActivity(
             Intent().apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK

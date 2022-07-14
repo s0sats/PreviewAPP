@@ -27,7 +27,9 @@ class GeOsDeviceMaterial(
     @Expose
     var material_planned_used: Int = 0,
     @Expose
-    val material_planned_qty: Float? = null
+    val material_planned_qty: Float? = null,
+    val origin: String? = null
+
 
 ): Serializable
 
@@ -44,6 +46,7 @@ fun GeOsDeviceMaterial.toUiMaterialItem() : Act086MaterialItem{
         creationMs = creation_ms,
         materialPlanned = material_planned,
         materialPlannedUsed = material_planned_used,
-        materialPlannedQty = material_planned_qty
+        materialPlannedQty = material_planned_qty,
+        origin = origin
     )
 }

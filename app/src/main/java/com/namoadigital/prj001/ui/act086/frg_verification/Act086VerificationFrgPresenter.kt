@@ -119,7 +119,8 @@ class Act086VerificationFrgPresenter(
                 it.creationMs,
                 it.materialPlanned,
                 it.materialPlannedUsed,
-                it.materialPlannedQty
+                it.materialPlannedQty,
+                it.origin
             )
         }.toMutableList()
         //Copia itens planjeados para nova lista evitando perde-los no map.
@@ -178,7 +179,8 @@ class Act086VerificationFrgPresenter(
                     it.creation_ms,
                     it.material_planned,
                     it.material_planned_used,
-                    it.material_planned_qty
+                    it.material_planned_qty,
+                    it.origin
                 )
             )
         }

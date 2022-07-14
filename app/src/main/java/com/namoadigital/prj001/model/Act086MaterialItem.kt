@@ -14,7 +14,8 @@ class Act086MaterialItem(
     creationMs: Long = 0,
     materialPlanned: Int = 0,
     materialPlannedUsed: Int = 0,
-    materialPlannedQty: Float? = null
+    materialPlannedQty: Float? = null,
+    origin: String? = null
 ):Serializable{
     var productCode: Int = -1
     private set
@@ -33,6 +34,8 @@ class Act086MaterialItem(
     var materialPlannedUsed: Int = 0
     var materialPlannedQty: Float? = null
         private set
+    var origin: String? = null
+        private set
 
     init {
         this.productCode = productCode
@@ -44,6 +47,7 @@ class Act086MaterialItem(
         this.materialPlanned = materialPlanned
         this.materialPlannedUsed = materialPlannedUsed
         this.materialPlannedQty = materialPlannedQty
+        this.origin = origin
     }
 
     fun getFormttedQty(lbl: String) = if(productQty > 0f) "$lbl: ${ToolBox_Inf.convertFloatToBigDecimalString(productQty,4,true)} $productUnit" else ""

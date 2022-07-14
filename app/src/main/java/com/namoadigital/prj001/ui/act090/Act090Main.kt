@@ -31,6 +31,7 @@ class Act090Main : Base_Activity(), Act090MainContract.IView {
     private val binding get() = _binding!!
     private var bundle: Bundle = Bundle()
     private var bundleDevice: Bundle = Bundle()
+    private var isRequested = true
     private var readOnly = false
     private val mPresenter: Act090MainContract.IPresenter by lazy{
         Act090MainPresenter(
@@ -48,8 +49,8 @@ class Act090Main : Base_Activity(), Act090MainContract.IView {
         Act090MaterialAdapter(
             ::onMaterialItemClick,
             ::onSwitchStatusChange,
-            hmAux_Trans["planned_qty_lbl"]!!,
-            hmAux_Trans["applied_qty_lbl"]!!
+            hmAux_Trans,
+            isRequested
         )
     }
 
@@ -74,6 +75,7 @@ class Act090Main : Base_Activity(), Act090MainContract.IView {
     private fun recoverIntentsInfo() {
         bundle = intent?.extras?:Bundle()
         bundleDevice = bundle.getBundle(ConstantBaseApp.DEVICE_BUNDLE)!!
+        isRequested = bundle.getBoolean(ConstantBaseApp.ITEM_CHECK_ANSWER, false)
         readOnly = defineReadOnlyByStatus(bundleDevice.getString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS))
     }
 

@@ -33,6 +33,7 @@ class Act090MainPresenter(
             "act090_title",
             "planned_qty_lbl",
             "applied_qty_lbl",
+            "request_qty_lbl",
             "alert_form_parameter_error_ttl",
             "alert_form_parameter_error_msg",
             "btn_apply_material",
@@ -185,7 +186,8 @@ class Act090MainPresenter(
                     it.creationMs,
                     it.materialPlanned,
                     it.materialPlannedUsed,
-                    it.materialPlannedQty
+                    it.materialPlannedQty,
+                    it.origin
                 )
         }.toMutableList()
         //
