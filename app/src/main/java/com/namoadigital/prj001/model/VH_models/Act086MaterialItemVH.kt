@@ -38,13 +38,12 @@ class Act086MaterialItemVH(
             act086ProductItemTvProductDesc.text = materialItem.getFormattedMaterialDesc()
             //
             act086ProductItemTvMaterialPlannedQty.apply{
-                if("A".equals(materialItem.origin)){
+                if("A" == materialItem.origin){
                     text = materialItem.getFormttedPlannedQty(hmAuxTrans["request_qty_lbl"]!!)
-                    setTextColor(root.context.getResources().getColor(R.color.namoa_color_red))
+                    setTextColor(root.context.resources.getColor(R.color.namoa_color_red))
                 }else{
                     text = materialItem.getFormttedPlannedQty(hmAuxTrans["planned_qty_lbl"]!!)
-                    setTextColor(root.context.getResources().getColor(R.color.namoa_status_pending))
-
+                    setTextColor(root.context.resources.getColor(R.color.namoa_status_pending))
                 }
                 visibility = if(text.toString().trim().isNotEmpty()) View.VISIBLE else View.GONE
             }
