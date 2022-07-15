@@ -1625,7 +1625,8 @@ class Act083_Main_Presenter(private val context: Context,
                         contractId,
                         ticketId,
                         calendarDate,
-                        userFocus
+                        userFocus,
+                        hmAux_Trans?.get("other_steps_available_lbl")
                 ).toSqlQuery()
         )
     }

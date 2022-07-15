@@ -163,10 +163,10 @@ class SqlAct083_002(
                                            s.${TK_Ticket_StepDao.TICKET_PREFIX},
                                            s.${TK_Ticket_StepDao.TICKET_CODE},
                                            s.${TK_Ticket_StepDao.STEP_ORDER},
-                                           s.${TK_Ticket_StepDao.USER_FOCUS},
-                                           (case when s.${TK_Ticket_StepDao.USER_FOCUS} = 0
+                                           max(s.${TK_Ticket_StepDao.USER_FOCUS}),
+                                           (case when max(s.${TK_Ticket_StepDao.USER_FOCUS}) = 0
                                                  then null   
-                                                 when count(distinct(s.${TK_Ticket_StepDao.STEP_CODE})) = 1
+                                                 when count(case when s.${TK_Ticket_StepDao.USER_FOCUS} = 1 then 1 else null end ) = 1
                                                  then min(s.${TK_Ticket_StepDao.STEP_DESC})
                                                  else '$multStepsLbl'
                                            end) ${TK_Ticket_StepDao.STEP_DESC} ,
