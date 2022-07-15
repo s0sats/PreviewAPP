@@ -223,7 +223,6 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 applyTextFilter(binding.act083MainContent.act083MketFilter.text.toString())
             }else{
                 applyTextFilter("")
-                scrollToLastSelectedItem()
             }
         }else{
             with(binding.act083MainContent){
