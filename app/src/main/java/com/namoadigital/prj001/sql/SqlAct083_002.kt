@@ -163,10 +163,10 @@ class SqlAct083_002(
                                            s.${TK_Ticket_StepDao.TICKET_PREFIX},
                                            s.${TK_Ticket_StepDao.TICKET_CODE},
                                            s.${TK_Ticket_StepDao.STEP_ORDER},
-                                           max(s.${TK_Ticket_StepDao.USER_FOCUS}),
-                                           (case when count(distinct case when (s.${TK_Ticket_StepDao.USER_FOCUS} = 1 and s.${TK_Ticket_StepDao.STEP_STATUS} in ('${ConstantBaseApp.SYS_STATUS_PENDING}','${ConstantBaseApp.SYS_STATUS_PROCESS}','${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'))then s.${TK_Ticket_StepDao.STEP_CODE} else null end ) = 0
+                                           s.${TK_Ticket_StepDao.USER_FOCUS},
+                                           (case when s.${TK_Ticket_StepDao.USER_FOCUS} = 0
                                                  then null    
-                                                 when count(distinct case when (s.${TK_Ticket_StepDao.USER_FOCUS} = 1 and s.${TK_Ticket_StepDao.STEP_STATUS} in ('${ConstantBaseApp.SYS_STATUS_PENDING}','${ConstantBaseApp.SYS_STATUS_PROCESS}','${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'))then s.${TK_Ticket_StepDao.STEP_CODE} else null end ) = 1
+                                                 when count(distinct(s.${TK_Ticket_StepDao.STEP_CODE})) = 1
                                                  then min(s.${TK_Ticket_StepDao.STEP_DESC})
                                                  else '$multStepsLbl'
                                            end) ${TK_Ticket_StepDao.STEP_DESC} ,

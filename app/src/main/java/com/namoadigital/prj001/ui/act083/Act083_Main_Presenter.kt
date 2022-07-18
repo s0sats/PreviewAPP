@@ -1543,7 +1543,6 @@ class Act083_Main_Presenter(private val context: Context,
                 //LUCHE - 11/06/2021
                 //Chama fun que insere a qtd concatenado ao label da aba
                 mView.setTabsCounters(currentTabCounter, otherCounter)
-                mView.setPlaceholderTextAndVisibility(currentTabCounter)
             }
         }
     }
