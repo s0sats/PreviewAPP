@@ -1637,7 +1637,7 @@ public class TK_Ticket implements Cloneable, Serializable {
             openZoneDesc = ToolBox_Inf.getProductSerialZone(
                     context,
                     Integer.parseInt(hmAux.get(TK_TicketDao.OPEN_SITE_CODE)),
-                    hmAux.get(TK_TicketDao.OPEN_ZONE_CODE),
+                    hmAux.get(TK_TicketDao.OPEN_ZONE_DESC),
                     new MD_Product_SerialDao(context,
                             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                             Constant.DB_VERSION_CUSTOM),
