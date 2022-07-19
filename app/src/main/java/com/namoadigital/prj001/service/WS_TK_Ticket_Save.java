@@ -785,35 +785,38 @@ public class WS_TK_Ticket_Save extends IntentService {
         //Executa loop nos tickets caso exista
         if (rec.getTicket() != null && rec.getTicket().size() > 0) {
             for (TK_Ticket tk_ticket : rec.getTicket()) {
-                //Seta pk nos filhos
-                tk_ticket.setPK();
-                //Verifica se precisa resetar alguma foto. Isso deve ser feito se o "file_code" da foto
-                //for alterado, o que significa que mudaram a foto no server...
-                TK_Ticket.checkActionPhotoResetNeeds(
-                        getDbTicket(tk_ticket, false),
-                        tk_ticket
-                );
-                //Varre todas as imagens verificando se existe imagem local para cada item que pode ter foto
-                tk_ticket.updateLocalImagesPathIfExists();
-                /**
-                 * LUCHE - 04/09/2020
-                 * No download do ticket, existe chamado do metodo abaixo, pois como ao criar o form
-                 * os dados de "inicio" do ctrl não são transmitidos e não setam update_required, então
-                 * o download apaga essas infos.
-                 * Aqui, como é save, em tese, não precisa chamada.
-                 * //Busca ctrls tipo form em andamento e que seriam resetados.
-                 * LUCHE - 10/09/2020
-                 * O luche que passado errou feio, precisa sim
-                 */
-                tk_ticket.updateTicketCtrlFormInProcess(getApplicationContext());
-                //Remove o ticket do banco de dados
-                ticketDao.removeFullV2(tk_ticket);
-                //Tenta o insert do ticket
-                DaoObjReturn daoObjReturn = ticketDao.addUpdate(tk_ticket);
-                //Se não houve erro , chama metodo define proximo passo.
+                if(tk_ticket.getTicket_prefix() > 0
+                && tk_ticket.getTicket_code() > 0) {
+                    //Seta pk nos filhos
+                    tk_ticket.setPK();
+                    //Verifica se precisa resetar alguma foto. Isso deve ser feito se o "file_code" da foto
+                    //for alterado, o que significa que mudaram a foto no server...
+                    TK_Ticket.checkActionPhotoResetNeeds(
+                            getDbTicket(tk_ticket, false),
+                            tk_ticket
+                    );
+                    //Varre todas as imagens verificando se existe imagem local para cada item que pode ter foto
+                    tk_ticket.updateLocalImagesPathIfExists();
+                    /**
+                     * LUCHE - 04/09/2020
+                     * No download do ticket, existe chamado do metodo abaixo, pois como ao criar o form
+                     * os dados de "inicio" do ctrl não são transmitidos e não setam update_required, então
+                     * o download apaga essas infos.
+                     * Aqui, como é save, em tese, não precisa chamada.
+                     * //Busca ctrls tipo form em andamento e que seriam resetados.
+                     * LUCHE - 10/09/2020
+                     * O luche que passado errou feio, precisa sim
+                     */
+                    tk_ticket.updateTicketCtrlFormInProcess(getApplicationContext());
+                    //Remove o ticket do banco de dados
+                    ticketDao.removeFullV2(tk_ticket);
+                    //Tenta o insert do ticket
+                    DaoObjReturn daoObjReturn = ticketDao.addUpdate(tk_ticket);
+                    //Se não houve erro , chama metodo define proximo passo.
 //                if (!daoObjReturn.hasError()) {
 //
 //                }
+                }
                 if(!tk_ticket.getSerial().isEmpty()){
                     for(MD_Product_Serial serial: tk_ticket.getSerial()){
                         serialDao.addUpdateTmp(serial);
