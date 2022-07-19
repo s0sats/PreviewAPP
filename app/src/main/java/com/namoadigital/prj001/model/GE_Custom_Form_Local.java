@@ -663,6 +663,7 @@ public class GE_Custom_Form_Local {
             hmAux.get(GE_Custom_Form_LocalDao.SERIAL_ID),
             hmAux.get(MyActions.MY_ACTION_TYPE_FORM),
             hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC),
+                "",
             null,
             ToolBox_Inf.convertStringToInt(hmAux.get(GE_Custom_Form_LocalDao.SITE_CODE)),
             hmAux.get(GE_Custom_Form_LocalDao.SITE_DESC),
@@ -676,7 +677,8 @@ public class GE_Custom_Form_Local {
             ConstantBaseApp.SYS_STATUS_PROCESS.equals(statusToUse),
             false,
             false,
-            isSelectedItem
+            isSelectedItem,
+                true
         );
         myActions.setProductCode(Integer.parseInt(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE)));
         myActions.setCustomFormDesc(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC));

@@ -311,8 +311,10 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
         //
         if (serial_tmp != 0) {
             md_product_serial.setSerial_tmp(serial_tmp);
-            for (int i = 0; i < md_product_serial.getTracking_list().size(); i++) {
-                md_product_serial.getTracking_list().get(i).setPk(md_product_serial);
+            if(md_product_serial.getTracking_list() != null) {
+                for (int i = 0; i < md_product_serial.getTracking_list().size(); i++) {
+                    md_product_serial.getTracking_list().get(i).setPk(md_product_serial);
+                }
             }
         }
 

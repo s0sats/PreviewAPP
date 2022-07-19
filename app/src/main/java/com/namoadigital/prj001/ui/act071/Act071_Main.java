@@ -135,6 +135,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     private int mPipelineHeaderOpen_site_code;
     private String mPipelineHeaderOpen_site_desc;
     private String mPipelineHeaderOpen_serial_id;
+    private String mPipelineHeaderInternalComments;
     private String mPipelineHeaderOpen_product_desc;
     private String mPipelineHeaderTicket_status;
     private String mPipelineHeaderOrigin_desc;
@@ -313,6 +314,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             mPipelineHeaderOpen_site_code = requestingBundle.getInt(TK_TicketDao.OPEN_SITE_CODE, -1);
             mPipelineHeaderOpen_site_desc = requestingBundle.getString(TK_TicketDao.OPEN_SITE_DESC, "");
             mPipelineHeaderOpen_serial_id = requestingBundle.getString(TK_TicketDao.OPEN_SERIAL_ID,"");
+            mPipelineHeaderInternalComments = requestingBundle.getString(TK_TicketDao.INTERNAL_COMMENTS,"");
             mPipelineHeaderOpen_product_desc = requestingBundle.getString(TK_TicketDao.OPEN_PRODUCT_DESC, "");
             mPipelineHeaderTicket_status = requestingBundle.getString(TK_TicketDao.TICKET_STATUS, "");
             mPipelineHeaderOrigin_desc = requestingBundle.getString(TK_TicketDao.ORIGIN_DESC, "");
@@ -379,6 +381,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             mPipelineHeaderOpen_site_code = -1;
             mPipelineHeaderOpen_site_desc = "";
             mPipelineHeaderOpen_serial_id  = "";
+            mPipelineHeaderInternalComments  = "";
             mPipelineHeaderOpen_product_desc =  "";
             mPipelineHeaderTicket_status  =  "";
             mPipelineHeaderOrigin_desc =  "";
@@ -488,6 +491,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                 mPipelineHeaderOpen_site_code,
                 mPipelineHeaderOpen_site_desc,
                 mPipelineHeaderOpen_serial_id,
+                mPipelineHeaderInternalComments,
                 mPipelineHeaderOpen_product_desc,
                 mPipelineHeaderOrigin_desc,
                 mPresenter.getStepColor(tkTicketStep, mPipelineHeaderIsCurrentStepOrder),

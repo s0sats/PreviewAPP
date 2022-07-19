@@ -32,28 +32,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <com.google.android.material.chip.ChipGroup
-                    android:id="@+id/act083_cg_filter"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:paddingTop="2dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginTop="8dp"
-                    >
-
-<!--                    <TextView-->
-<!--                        android:id="@+id/act083_tv_filter1"-->
-<!--                        style="@style/TextViewChips"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:text="200.SHOPPING" />-->
-
-
-                </com.google.android.material.chip.ChipGroup>
 
                 <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                     android:id="@+id/act083_mket_filter"
@@ -63,21 +41,60 @@
                     android:layout_marginEnd="8dp"
                     android:hint="Search Desc - Trad"
                     android:inputType="text"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/act083_ib_main_user_selection"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/act083_cg_filter"
+                    app:layout_constraintTop_toTopOf="parent"
                     app:mBARCODE="false"
                     app:mNFC="false"
                     app:mOCR="false" />
+
+                <ImageView
+                    android:id="@+id/act083_ib_main_user_selection"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:padding="4dp"
+                    android:background="@drawable/my_action_toogle_default"
+                    android:src="@drawable/ic_person_black_24dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/act083_mket_filter"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/act083_mket_filter"
+                    app:layout_constraintVertical_bias="0.7" />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/act083_cg_filter"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/act083_mket_filter"
+                    android:paddingTop="2dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginTop="8dp"
+                    >
+
+                    <!--                    <TextView-->
+                    <!--                        android:id="@+id/act083_tv_filter1"-->
+                    <!--                        style="@style/TextViewChips"-->
+                    <!--                        android:layout_width="wrap_content"-->
+                    <!--                        android:layout_height="wrap_content"-->
+                    <!--                        android:text="200.SHOPPING" />-->
+
+
+                </com.google.android.material.chip.ChipGroup>
+
+
 
                 <RadioGroup
                     android:id="@+id/act083_tabs"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
+                    android:layout_marginTop="4dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/act083_mket_filter">
+                    app:layout_constraintTop_toBottomOf="@id/act083_cg_filter">
 
                     <RadioButton
                         android:id="@+id/act083_tab_my_actions"

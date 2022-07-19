@@ -1193,6 +1193,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         bundle.putInt(TK_TicketDao.OPEN_SITE_CODE, mTicket.getOpen_site_code());
         bundle.putString(TK_TicketDao.OPEN_SITE_DESC, mTicket.getOpen_site_desc());
         bundle.putString(TK_TicketDao.OPEN_SERIAL_ID, mTicket.getOpen_serial_id());
+        bundle.putString(TK_TicketDao.INTERNAL_COMMENTS, mTicket.getInternal_comments());
         bundle.putString(TK_TicketDao.OPEN_PRODUCT_DESC, mTicket.getOpen_product_desc());
         bundle.putString(TK_TicketDao.ORIGIN_DESC, mTicket.getOrigin_desc());
         bundle.putBoolean(TK_TicketDao.CURRENT_STEP_ORDER, currentStep);

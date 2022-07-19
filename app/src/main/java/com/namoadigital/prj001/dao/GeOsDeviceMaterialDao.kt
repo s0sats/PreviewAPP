@@ -47,6 +47,7 @@ class GeOsDeviceMaterialDao(
         const val MATERIAL_PLANNED = "material_planned"
         const val MATERIAL_PLANNED_USED = "material_planned_used"
         const val MATERIAL_PLANNED_QTY = "material_planned_qty"
+        const val ORIGIN = "origin"
     }
 
     private val toGeOsDeviceMaterialMapper: Mapper<Cursor, GeOsDeviceMaterial>
@@ -375,7 +376,8 @@ class GeOsDeviceMaterialDao(
                         creation_ms = getLong(getColumnIndex(CREATION_MS)),
                         material_planned = getInt(getColumnIndex(MATERIAL_PLANNED)),
                         material_planned_used = getInt(getColumnIndex(MATERIAL_PLANNED_USED)),
-                        material_planned_qty = getFloatOrNull(getColumnIndex(MATERIAL_PLANNED_QTY))
+                        material_planned_qty = getFloatOrNull(getColumnIndex(MATERIAL_PLANNED_QTY)),
+                        origin = getStringOrNull(getColumnIndex(ORIGIN))
                     )
                 }
             }
@@ -413,6 +415,7 @@ class GeOsDeviceMaterialDao(
                     put(MATERIAL_PLANNED, it.material_planned)
                     put(MATERIAL_PLANNED_USED, it.material_planned_used)
                     put(MATERIAL_PLANNED_QTY, it.material_planned_qty)
+                    put(ORIGIN, it.origin)
                     //
                 }
             }

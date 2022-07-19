@@ -39,6 +39,7 @@ class TkTicketCacheDao(
         const val TYPE_ID = "type_id"
         const val TYPE_DESC = "type_desc"
         const val USER_FOCUS = "user_focus"
+        const val MAIN_USER = "main_user"
         const val ORDER_BY = "order_by"
         const val CLIENT_CODE =  "client_code"
         const val CLIENT_ID = "client_id"
@@ -59,6 +60,7 @@ class TkTicketCacheDao(
         const val TICKET_STATUS = "ticket_status"
         const val ORIGIN_TYPE = "origin_type"
         const val ORIGIN_DESC = "origin_desc"
+        const val INTERNAL_COMMENTS = "internal_comments"
         const val STEP_DESC = "step_desc"
         const val FORECAST_START = "forecast_start"
         const val FORECAST_END = "forecast_end"
@@ -322,6 +324,7 @@ class TkTicketCacheDao(
                     if(ticketCache.user_focus > -1){
                         put(USER_FOCUS,ticketCache.user_focus)
                     }
+                    put(MAIN_USER,ticketCache.main_user)
                     put(ORDER_BY,ticketCache.order_by)
                     if(ticketCache.open_site_code > -1){
                         put(OPEN_SITE_CODE,ticketCache.open_site_code)
@@ -348,6 +351,7 @@ class TkTicketCacheDao(
                     put(TICKET_STATUS,ticketCache.ticket_status)
                     put(ORIGIN_TYPE,ticketCache.origin_type)
                     put(ORIGIN_DESC,ticketCache.origin_desc)
+                    put(INTERNAL_COMMENTS,ticketCache.internal_comments)
                     put(STEP_DESC,ticketCache.step_desc)
                     put(FORECAST_START,ticketCache.forecast_start)
                     put(FORECAST_END,ticketCache.forecast_end)
@@ -382,6 +386,7 @@ class TkTicketCacheDao(
                             type_id = getString(getColumnIndex(TYPE_ID)),
                             type_desc = getString(getColumnIndex(TYPE_DESC)),
                             user_focus = getInt(getColumnIndex(USER_FOCUS)),
+                            main_user = getIntOrNull(getColumnIndex(MAIN_USER)),
                             order_by = getLong(getColumnIndex(ORDER_BY)),
                             client_code = getIntOrNull(getColumnIndex(CLIENT_CODE)),
                             client_id = getStringOrNull(getColumnIndex(CLIENT_ID)),
@@ -402,6 +407,7 @@ class TkTicketCacheDao(
                             ticket_status = getString(getColumnIndex(TICKET_STATUS)),
                             origin_type = getString(getColumnIndex(ORIGIN_TYPE)),
                             origin_desc = getString(getColumnIndex(ORIGIN_DESC)),
+                            internal_comments = getStringOrNull(getColumnIndex(INTERNAL_COMMENTS)),
                             step_desc = getStringOrNull(getColumnIndex(STEP_DESC)),
                             forecast_start = getStringOrNull(getColumnIndex(FORECAST_START)),
                             forecast_end = getStringOrNull(getColumnIndex(FORECAST_END)),

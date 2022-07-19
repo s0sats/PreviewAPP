@@ -5,6 +5,7 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
+import androidx.core.database.getStringOrNull
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
@@ -34,6 +35,7 @@ class MD_Product_Serial_Tp_Device_Item_MaterialDao(
         const val ITEM_CHECK_SEQ = "item_check_seq"
         const val MATERIAL_CODE = "material_code"
         const val QTY = "qty"
+        const val ORIGIN = "origin"
     }
     
     private val toMD_Product_Serial_Tp_Device_Item_MaterialMapper: Mapper<Cursor, MD_Product_Serial_Tp_Device_Item_Material>
@@ -361,6 +363,7 @@ class MD_Product_Serial_Tp_Device_Item_MaterialDao(
                         item_check_seq = getInt(getColumnIndexOrThrow(ITEM_CHECK_SEQ)) ,
                         material_code = getInt(getColumnIndexOrThrow(MATERIAL_CODE)),
                         qty = BigDecimal(getDouble(getColumnIndexOrThrow(QTY))),
+                        origin = getStringOrNull(getColumnIndexOrThrow(ORIGIN))
                     )
                 }
             }
@@ -398,6 +401,7 @@ class MD_Product_Serial_Tp_Device_Item_MaterialDao(
                     if(mdProductSerialTpDeviceItemMaterial.qty > BigDecimal(-1)){
                         put(QTY,mdProductSerialTpDeviceItemMaterial.qty.toFloat())
                     }
+                    put(ORIGIN,mdProductSerialTpDeviceItemMaterial.origin)
                 }
             }
             return contentValues

@@ -28,13 +28,15 @@ class MyActionFilterParam(
     var paramItemSelectedPk: String? = null
     var paramNcFilter: Boolean? = null
     var originFlow: String = ConstantBaseApp.ACT005
+    var mainUserFilterState: Boolean? = null
 
-    fun setSelectedItemParams(textFilter: String? = null, selectedTab: Int, selectedType: String, selectedPk: String,ncFilterOn: Boolean? = null){
+    fun setSelectedItemParams(textFilter: String? = null, selectedTab: Int, selectedType: String, selectedPk: String,ncFilterOn: Boolean? = null, mainUserFilter: Boolean = false){
         paramTextFilter = textFilter
         paramItemSelectedTab = selectedTab
         paramItemSelectedType = selectedType
         paramItemSelectedPk = selectedPk
         paramNcFilter = ncFilterOn
+        mainUserFilterState = mainUserFilter
     }
 
     fun getFilledFilters(context: Context): List<String>{

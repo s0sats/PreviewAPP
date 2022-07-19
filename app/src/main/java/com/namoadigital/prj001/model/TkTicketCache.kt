@@ -22,6 +22,7 @@ class TkTicketCache(
         var type_id: String,
         var type_desc: String,
         var user_focus: Int,
+        var main_user: Int?,
         var order_by: Long,
         var client_code: Int?,
         var client_id: String?,
@@ -42,6 +43,7 @@ class TkTicketCache(
         var ticket_status: String,
         var origin_type: String,
         var origin_desc: String,
+        var internal_comments: String?,
         var step_desc: String?,
         var forecast_start: String?,
         var forecast_end: String?,
@@ -79,6 +81,7 @@ class TkTicketCache(
                 open_serial_id,
                 origin_desc,
                 type_desc,
+                internal_comments,
                 step_desc,
                 open_site_code,
                 open_site_desc,
@@ -95,7 +98,8 @@ class TkTicketCache(
                 false,
                 ToolBox_Inf.isItemLate(forecast_start),
                 ToolBox_Inf.isItemLate(forecast_end),
-                processPk == lastSelectedActionPk
+                processPk == lastSelectedActionPk,
+                main_user?.toString()?.equals(ToolBox_Con.getPreference_User_Code(context)) ?: false
         )
     }
 }

@@ -215,6 +215,7 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
                 tkTicket.getOpen_site_code(),
                 tkTicket.getOpen_site_desc(),
                 tkTicket.getOpen_serial_id(),
+                tkTicket.getInternal_comments(),
                 tkTicket.getOpen_product_desc(),
                 mPresenter.getOriginTypeLbl(tkTicket),
                 context.getResources().getColor(R.color.grid_header_normal),

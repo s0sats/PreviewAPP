@@ -7,6 +7,8 @@ import android.view.ContextThemeWrapper
 import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.HMAux
@@ -60,6 +62,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     private var hmAuxTicketDownload: HMAux = HMAux()
     private val CHANGE_ZONE_RESULT_CODE = 10
     private var firstScroll = true
+    private var applyMainUserFilter = false
 
     private val mPresenter by lazy {
         Act083_Main_Presenter(
@@ -213,13 +216,21 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 visibility = View.VISIBLE
             }
             //
+
+            mAdapter.userMainFilterOn = applyMainUserFilter
+
             if(!binding.act083MainContent.act083MketFilter.text.isNullOrEmpty()){
                 applyTextFilter(binding.act083MainContent.act083MketFilter.text.toString())
             }else{
-                scrollToLastSelectedItem()
+                applyTextFilter("")
             }
         }else{
             with(binding.act083MainContent){
+                if(applyMainUserFilter){
+                    act083TvNoResult.text = hmAux_Trans["no_record_for_filter_lbl"]
+                }else{
+                    act083TvNoResult.text = hmAux_Trans["no_record_lbl"]
+                }
                 act083TvNoResult.visibility = View.VISIBLE
                 act083RvActionsList.visibility = View.INVISIBLE
             }
@@ -241,6 +252,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         if(qtyItensFiltered > 0){
             scrollToLastSelectedItem()
         }
+        setPlaceholderTextAndVisibility(mPresenter.myActionsList.size)
     }
 
     /**
@@ -327,14 +339,24 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         }
     }
 
+    override fun getMainUserFilter(): Boolean {
+        return applyMainUserFilter
+    }
+
     /**
      * Fun que seta os params de filtro texto e aba recuperados do bundle
      */
-    override fun setViewFiltersParam(textFilter: String?, initialTabToLoad: Int) {
+    override fun setViewFiltersParam(
+        textFilter: String?,
+        initialTabToLoad: Int,
+        mainUserFilterState: Boolean
+    ) {
         binding.act083MainContent.act083MketFilter.setText(textFilter)
         if(initialTabToLoad == 0){
             binding.act083MainContent.act083TabOtherActions.performClick()
         }
+        applyMainUserFilter = mainUserFilterState
+        setIvMainUserSelection()
     }
 
     override fun processCloseACT(mLink: String?, mRequired: String?) {
@@ -441,6 +463,41 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                     else -> updateMyActionList(0)
                 }
             }
+        }
+
+        binding.act083MainContent.act083IbMainUserSelection.setOnClickListener {
+            applyMainUserFilter = !applyMainUserFilter
+            setIvMainUserSelection()
+            if(::mAdapter.isInitialized) {
+                mAdapter.userMainFilterOn = applyMainUserFilter
+            }
+            applyTextFilter(binding.act083MainContent.act083MketFilter.text.toString())
+        }
+    }
+
+    private fun setIvMainUserSelection() {
+        if (applyMainUserFilter) {
+            binding.act083MainContent.act083IbMainUserSelection.setImageDrawable(null)
+            binding.act083MainContent.act083IbMainUserSelection.setImageResource(R.drawable.ic_person_white_24dp)
+            binding.act083MainContent.act083IbMainUserSelection.background =
+                context.getDrawable(R.drawable.my_action_toogle_pressed)
+            binding.act083MainContent.act083IbMainUserSelection.postInvalidate()
+        } else {
+            binding.act083MainContent.act083IbMainUserSelection.setImageDrawable(null)
+            binding.act083MainContent.act083IbMainUserSelection.background =
+                context.getDrawable(R.drawable.my_action_toogle_default)
+            var drawable = DrawableCompat.wrap(
+                ContextCompat.getDrawable(
+                    context,
+                    R.drawable.ic_person_black_24dp
+                )!!
+            )!!
+            DrawableCompat.setTint(
+                drawable.mutate(),
+                ContextCompat.getColor(context, R.color.my_action_toogle_circle)
+            )
+            binding.act083MainContent.act083IbMainUserSelection.setImageDrawable(drawable)
+            binding.act083MainContent.act083IbMainUserSelection.postInvalidate()
         }
     }
 
@@ -682,6 +739,25 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         mAdapter.notifyDataSetChanged()
         //Atualiza dados no footer
         iniUIFooter()
+    }
+
+    override fun setPlaceholderTextAndVisibility(currentTabCounter: Int) {
+        if(currentTabCounter > 0){
+            if(mAdapter.itemCount == 0){
+                binding.act083MainContent.apply {
+                    act083TvNoResult.text = hmAux_Trans["no_record_for_filter_lbl"]
+                    act083TvNoResult.visibility = View.VISIBLE
+                    act083RvActionsList.visibility = View.INVISIBLE
+                }
+            }else{
+                binding.act083MainContent.apply {
+                    act083TvNoResult.visibility = View.INVISIBLE
+                    act083RvActionsList.visibility = View.VISIBLE
+                }
+            }
+        }else{
+            binding.act083MainContent.act083TvNoResult.text = hmAux_Trans["no_record_lbl"]
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

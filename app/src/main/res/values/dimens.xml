@@ -17,6 +17,8 @@
     <dimen name="btn_width_default">200dp</dimen>
     <dimen name="namoa_icon_cell_so_width">20dp</dimen>
     <dimen name="namoa_icon_cell_so_height">20dp</dimen>
+    <dimen name="namoa_icon_cell_tag_height">18dp</dimen>
+    <dimen name="namoa_icon_cell_tag_width">18dp</dimen>
     <dimen name="text_margin">16dp</dimen>
 
     <dimen name="pipeline_step_vertical_line_width">2dp</dimen>

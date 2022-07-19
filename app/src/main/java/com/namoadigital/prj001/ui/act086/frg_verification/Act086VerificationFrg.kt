@@ -76,9 +76,9 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         Act086MaterialItemAdapter(
             ::onProductItemClick,
             ::onDeleteIconClick,
+            ::onSetAppliedLabel,
             inReadOnly,
-            hmAux_Trans["planned_qty_lbl"]!!,
-            hmAux_Trans["applied_qty_lbl"]!!
+            hmAux_Trans
         )
     }
     private var isNewVerification: Boolean = false
@@ -98,7 +98,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     private var skipSave: Boolean = false
     lateinit var leaveItem: (isManualItemDelete: Boolean) -> Unit
     private var isPhotoAction = false
-    lateinit var onMaterialPlannedInteraction: () -> Unit
+    lateinit var onMaterialPlannedInteraction: (isPlanned: Boolean) -> Unit
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -644,7 +644,15 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                         && mPresenter.hasMaterialPlanned(geOsDeviceItem)
                         && !inReadOnly
                     ){
-                        onMaterialPlannedInteraction()
+                        when(lastSelectedRdoId){
+                            act086VerificationFrgRdoAnswerFixed.id -> act086VerificationFrgRdoAnswerFixed.isChecked = true
+                            act086VerificationFrgRdoAnswerAlreadyDone.id -> act086VerificationFrgRdoAnswerAlreadyDone.isChecked = true
+                            act086VerificationFrgRdoAnswerAlert.id -> act086VerificationFrgRdoAnswerAlert.isChecked = true
+                            else -> act086VerificationFrgRdoAnswerNotVerified.isChecked = true
+                        }
+                        onMaterialPlannedInteraction(lastSelectedRdoId.equals(act086VerificationFrgRdoAnswerAlert.id))
+                    }else{
+                        materialFragAdapter.notifyDataSetChanged()
                     }
                 }
             }
@@ -776,7 +784,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         }
         //
         binding.act086VerificationFrgClReviewMaterial.setOnClickListener{
-            onMaterialPlannedInteraction()
+            onMaterialPlannedInteraction(lastSelectedRdoId.equals(binding.act086VerificationFrgRdoAnswerAlert.id))
         }
     }
 
@@ -956,6 +964,13 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             }),
             1
         )
+    }
+
+    fun onSetAppliedLabel() :String {
+        if(lastSelectedRdoId.equals(binding.act086VerificationFrgRdoAnswerAlert.id)){
+            return hmAux_Trans["request_qty_lbl"]!!
+        }
+        return hmAux_Trans["applied_qty_lbl"]!!
     }
 
     override fun showAlertFrg(
@@ -1230,7 +1245,8 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                 "manual_desc_hint",
                 "review_material_planned_lbl",
                 "planned_qty_lbl",
-                "applied_qty_lbl"
+                "applied_qty_lbl",
+                "request_qty_lbl"
             )
         }
     }

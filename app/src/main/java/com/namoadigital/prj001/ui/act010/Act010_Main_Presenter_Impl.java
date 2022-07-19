@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act010;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -15,21 +16,31 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
 import com.namoadigital.prj001.dao.GeOsDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_DeviceDao;
+import com.namoadigital.prj001.dao.TkTicketTypeDao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GeOs;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device;
+import com.namoadigital.prj001.receiver.WBR_Serial_Save;
+import com.namoadigital.prj001.receiver.WBR_Ticket_Creation;
+import com.namoadigital.prj001.service.WSTicketCreation;
+import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_004;
 import com.namoadigital.prj001.sql.GeOsSql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_Device_Sql_002;
 import com.namoadigital.prj001.sql.Sql_Act010_001;
+import com.namoadigital.prj001.sql.Sql_Act010_002;
 import com.namoadigital.prj001.ui.act087.Act087Main;
+import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -50,8 +61,9 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
     private MD_Product_SerialDao serialDao;
     private MD_Product_Serial_Tp_DeviceDao serialTpDeviceDao;
     private GeOsDao geOsDao;
+    private TkTicketTypeDao tkTicketTypeDao;
 
-    public Act010_Main_Presenter_Impl(Context context, Act010_Main_View mView, GE_Custom_FormDao custom_formDao, GE_Custom_Form_DataDao customFormDataDao, long product_code, String serial_id, String so_prefix, String so_code, String site_code_form_param, HMAux hmAux_Trans, MD_Product_SerialDao serialDao, MD_Product_Serial_Tp_DeviceDao serial_tp_deviceDao, GeOsDao geOsDao) {
+    public Act010_Main_Presenter_Impl(Context context, Act010_Main_View mView, GE_Custom_FormDao custom_formDao, GE_Custom_Form_DataDao customFormDataDao, long product_code, String serial_id, String so_prefix, String so_code, String site_code_form_param, HMAux hmAux_Trans, MD_Product_SerialDao serialDao, MD_Product_Serial_Tp_DeviceDao serial_tp_deviceDao, GeOsDao geOsDao, TkTicketTypeDao tkTicketTypeDao) {
         this.context = context;
         this.mView = mView;
         this.custom_formDao = custom_formDao;
@@ -65,11 +77,12 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
         this.serialDao = serialDao;
         this.serialTpDeviceDao = serial_tp_deviceDao;
         this.geOsDao = geOsDao;
+        this.tkTicketTypeDao = tkTicketTypeDao;
     }
 
     @Override
-    public void setAdapterData(long product_code, int tagCode, Integer blockSpontaneous) {
-        List<HMAux> data =
+    public void setAdapterData(long product_code, int tagCode, Integer blockSpontaneous, boolean has_tk_ticket_is_form_off_hand) {
+        List<HMAux> forms =
                 custom_formDao.query_HM(
                         new Sql_Act010_001(
                                 ToolBox_Con.getPreference_Customer_Code(context),
@@ -82,12 +95,41 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
                                 blockSpontaneous
                         ).toSqlQuery()
                 );
-        //
-        if (data != null && data.size() == 1) {
-            validateOpenForm(data.get(0));
+
+        if(!has_tk_ticket_is_form_off_hand) {
+            List<HMAux> tickets =
+                    tkTicketTypeDao.query_HM(
+                            new Sql_Act010_002(
+                                    ToolBox_Con.getPreference_Customer_Code(context),
+                                    tagCode,
+                                    String.valueOf(this.product_code),
+                                    ToolBox_Con.getPreference_Operation_Code(context),
+                                    site_code_form_param,
+                                    serial_id
+                            ).toSqlQuery()
+                    );
+            //
+            forms.addAll(tickets);
+        }
+        if (forms != null && forms.size() == 1) {
+            HMAux aux = forms.get(0);
+            if(aux.hasConsistentValue(Act010_Main.IS_FORM)
+            && "1".equals(aux.get(Act010_Main.IS_FORM))) {
+                validateOpenForm(aux);
+            }else{
+                mView.createTicketDialog(aux);
+            }
         }
         //
-        mView.loadForms(data);
+        if(!has_tk_ticket_is_form_off_hand) {
+            Collections.sort(forms, new Comparator<HMAux>() {
+                public int compare(HMAux obj1, HMAux obj2) {
+                    return Objects.requireNonNull(obj1.get(Act010_Main.CUSTOM_DESC)).compareToIgnoreCase(Objects.requireNonNull(obj2.get(Act010_Main.CUSTOM_DESC)));
+                }
+            });
+        }
+        //
+        mView.loadForms(forms);
     }
 
     @Override
@@ -333,6 +375,77 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
         );
         //
         return spannableString;
+    }
+
+    @Override
+    public void callTicketCreationService(long customer_code, int type_code, String site_code, long operation_code, long product_code, long serial_code, String comments) {
+        mView.setWsProcess(WSTicketCreation.class.getName());
+        //
+        mView.showPD(
+                hmAux_Trans.get("dialog_ticket_creation_ttl"),
+                hmAux_Trans.get("dialog_ticket_creation_start")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_Ticket_Creation.class);
+        Bundle bundle = new Bundle();
+
+        bundle.putLong(WSTicketCreation.WS_BUNDLE_CUSTOMER_CODE,customer_code);
+        bundle.putInt(WSTicketCreation.WS_BUNDLE_TYPE_CODE,type_code);
+        bundle.putInt(WSTicketCreation.WS_BUNDLE_SITE_CODE, Integer.parseInt(site_code));
+        bundle.putLong(WSTicketCreation.WS_BUNDLE_OPERATION_CODE,operation_code);
+        bundle.putLong(WSTicketCreation.WS_BUNDLE_PRODUCT_CODE, product_code);
+        bundle.putLong(WSTicketCreation.WS_BUNDLE_SERIAL_CODE,serial_code);
+        bundle.putString(WSTicketCreation.WS_BUNDLE_COMMENTS,comments);
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    @Override
+    public void executeSerialSave() {
+        if (ToolBox_Con.isOnline(context)) {
+            mView.setWsProcess(WS_Serial_Save.class.getName());
+            //
+            mView.showPD(
+                    hmAux_Trans.get("progress_serial_save_ttl"),
+                    hmAux_Trans.get("progress_serial_save_msg")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_Serial_Save.class);
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(Constant.PROCESS_MENU_SEND, true);
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
+    }
+
+    @Override
+    public boolean verifyProductForForm(HMAux hmAux) {
+        return false;
+    }
+
+    @Override
+    public long getSerialCode(long product_code, String serial_id) {
+        MD_Product_SerialDao serialDao = new MD_Product_SerialDao(context);
+        //
+        MD_Product_Serial objSerial = serialDao.getByString(
+                new MD_Product_Serial_Sql_002(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        product_code,
+                        serial_id
+                ).toSqlQuery()
+        );
+        return objSerial.getSerial_code();
+    }
+
+    @Override
+    public String getSerialSiteDescription(String site_code_form_param) {
+        MD_Product_Serial md_product_serial = getMd_product_serial();
+        return md_product_serial.getSite_desc() != null ? md_product_serial.getSite_desc() : "";
     }
 
     @Override

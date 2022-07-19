@@ -50,6 +50,7 @@ class Act083_Main_Presenter(private val context: Context,
     private var contractId: String? = null
     private var calendarDate: String? = null
     private lateinit var originFlow: String
+    private var mainUserFilterState: Boolean = false
     private var _myActionsList = mutableListOf<MyActionsBase>()
     var myActionsList = mutableListOf<MyActionsBase>()
         get() {
@@ -83,7 +84,8 @@ class Act083_Main_Presenter(private val context: Context,
     private fun setViewFiltersParam() {
         mView.setViewFiltersParam(
                 initialTextFilter,
-                initialTabToLoad
+                initialTabToLoad,
+                mainUserFilterState
         )
     }
 
@@ -96,6 +98,7 @@ class Act083_Main_Presenter(private val context: Context,
         transList.add("form_lbl")
         transList.add("IN_PROCESSING")
         transList.add("no_record_lbl")
+        transList.add("no_record_for_filter_lbl")
         transList.add("other_steps_available_lbl")
         transList.add("dialog_download_ticket_ttl")
         transList.add("dialog_download_ticket_start")
@@ -265,6 +268,7 @@ class Act083_Main_Presenter(private val context: Context,
                 bundle.putString(MD_SiteDao.SITE_CODE, if (mdProductSerial.site_code != null) mdProductSerial.site_code.toString() else ToolBox_Con.getPreference_Site_Code(context))
 //            bundle.putAll(act081Bundle)
                 myActionFilterParam.paramTextFilter = mView.getMketFilter()
+                myActionFilterParam.mainUserFilterState = mView.getMainUserFilter()
                 myActionFilterParam.paramItemSelectedTab = mView.getCurrentTab()
                 myActionFilterParam.paramItemSelectedPk = null
                 myActionFilterParam.paramItemSelectedType = null
@@ -311,6 +315,10 @@ class Act083_Main_Presenter(private val context: Context,
                     getCacheTicketBundle(hmAuxTicketDownload)
             )
         }
+    }
+
+    override fun getMainUserFiltersParam(): Boolean {
+        return mainUserFilterState
     }
 
     fun updateSyncChecklist(formButtonData: MyActionsFormButton) {
@@ -769,7 +777,9 @@ class Act083_Main_Presenter(private val context: Context,
                     mView.getMketFilter(),
                     mView.getCurrentTab(),
                     myActionType,
-                    myActionPk
+                    myActionPk,
+                null,
+                    mView.getMainUserFilter()
             )
         }
     }
@@ -1430,6 +1440,7 @@ class Act083_Main_Presenter(private val context: Context,
         initialTabToLoad = myActionFilterParam.paramItemSelectedTab ?: 1
         _lastSelectedActionPk = myActionFilterParam.paramItemSelectedPk
         _lastSelectedActionType = myActionFilterParam.paramItemSelectedType
+        mainUserFilterState = myActionFilterParam.mainUserFilterState ?: false
     }
 
     private fun loadFilters() {
@@ -1613,7 +1624,8 @@ class Act083_Main_Presenter(private val context: Context,
                         contractId,
                         ticketId,
                         calendarDate,
-                        userFocus
+                        userFocus,
+                        hmAux_Trans?.get("other_steps_available_lbl")
                 ).toSqlQuery()
         )
     }

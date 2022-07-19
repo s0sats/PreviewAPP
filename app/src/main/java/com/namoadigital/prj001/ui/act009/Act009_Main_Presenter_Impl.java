@@ -38,7 +38,7 @@ public class Act009_Main_Presenter_Impl implements Act009_Main_Presenter{
     }
 
     @Override
-    public void setAdapterData(long product_code, String serial_id, Integer blockSpontaneous) {
+    public void setAdapterData(long product_code, String serial_id, Integer blockSpontaneous, boolean has_tk_ticket_is_form_off_hand) {
         //
         List<HMAux> data =
         custom_form_typeDao.query_HM(
@@ -49,7 +49,8 @@ public class Act009_Main_Presenter_Impl implements Act009_Main_Presenter{
                         ToolBox_Con.getPreference_Operation_Code(context),
                         site_code_form_param,
                         serial_id,
-                        blockSpontaneous
+                        blockSpontaneous,
+                        has_tk_ticket_is_form_off_hand
                 ).toSqlQuery()
         );
         //Se apenas um tipo, auto seleciona

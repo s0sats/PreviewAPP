@@ -20,7 +20,8 @@ class SqlAct083_001(
         private var contractId: String?,
         private var ticketId: String?,
         private var calendarDate: String?,
-        private val userFocus: Int
+        private val userFocus: Int,
+        private val multStepsLbl: String?
 ) : Specification {
     private val deviceGMT = ToolBox.getDeviceGMT(false)
     private var periodDateFilter: String = ""
@@ -103,7 +104,46 @@ class SqlAct083_001(
 
     override fun toSqlQuery(): String {
         var s = """ SELECT
-                     c.*
+                     c.customer_code,
+                     c.ticket_prefix,
+                     c.ticket_code,
+                     c.scn,
+                     c.user_level_min,
+                     c.ticket_id,
+                     c.tag_operational_code,
+                     c.tag_operational_id,
+                     c.tag_operational_desc,
+                     c.type_code,
+                     c.type_id,
+                     c.type_desc,
+                     c.user_focus,
+                     c.main_user,
+                     c.order_by,
+                     c.client_code,
+                     c.client_id,
+                     c.client_name,
+                     c.contract_code,
+                     c.contract_id,
+                     c.contract_desc,
+                     c.open_site_code,
+                     c.open_site_desc,
+                     c.open_zone_code,
+                     c.open_zone_desc,
+                     c.open_operation_code,
+                     c.open_operation_desc,
+                     c.open_product_code,
+                     c.open_product_desc,
+                     c.open_serial_id,
+                     c.current_step_order,
+                     c.ticket_status,
+                     c.origin_type,
+                     c.origin_desc,
+                     c.internal_comments,
+                     case when c.step_desc is null then '${multStepsLbl}' else  c.step_desc end step_desc,
+                     c.forecast_start,
+                     c.forecast_end,
+                     c.step_count,
+                     c.step_order_seq
                     FROM
                      ${TkTicketCacheDao.TABLE} c 
                     WHERE

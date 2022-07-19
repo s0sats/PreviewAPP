@@ -17,6 +17,7 @@ import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.Act005TagCellBinding
 import com.namoadigital.prj001.model.MainTagMenu
 import com.namoadigital.prj001.util.ConstantBaseApp.*
+import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.view.frag.frg_main_home.FrgMainHome
 
 class Act005MainMenuTagAdapter(
@@ -53,19 +54,58 @@ class Act005MainMenuTagAdapter(
             //
             binding.tvTagName.text = mMainTagMenu.tagName
             //
-            binding.tvTagQty.text = """${hmAux_Trans.get("tag_item_qty")} :  ${mMainTagMenu.tagQty} """
+//            if(mMainTagMenu.tagCode == 0) {
+//                binding.tvTagQty.text =
+//                    """${hmAux_Trans.get("tag_item_qty")} :  ${mMainTagMenu.tagQty} """
+//                binding.apply {
+//                    ivTagQtyUser.visibility = View.GONE
+//                    ivTagQtyGroup.visibility = View.GONE
+//                    ivTagQtyOther.visibility = View.GONE
+//                    tvTagQtyUser.visibility = View.GONE
+//                    tvTagQtyGroup.visibility = View.GONE
+//                    tvTagQtyOther.visibility = View.GONE
+//                }
+//            }else{
+                // Apagar apos testes
+            binding.tvTagQty.text =
+                """${hmAux_Trans.get("tag_item_qty")}: """
+//                binding.tvTagQty.text =
+//                    """${hmAux_Trans.get("tag_item_qty")} :"""
+            binding.apply {
+                ivTagQtyUser.visibility = View.VISIBLE
+                ivTagQtyGroup.visibility = View.VISIBLE
+                ivTagQtyOther.visibility = View.VISIBLE
+                tvTagQtyUser.visibility = View.VISIBLE
+                tvTagQtyGroup.visibility = View.VISIBLE
+                tvTagQtyOther.visibility = View.VISIBLE
+            }
+            binding.tvTagQtyUser.text = """${mMainTagMenu.qtyMainUser} """
+            binding.tvTagQtyGroup.text = """${mMainTagMenu.qtyGroup} """
+            if(PREFERENCE_HOME_ALL_ACTIONS_OPTION.equals(ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_FOCUS_FILTER, PREFERENCE_HOME_ONLY_MY_ACTIONS_OPTION))){
+                binding.ivTagQtyOther.visibility = View.VISIBLE
+                binding.tvTagQtyOther.visibility = View.VISIBLE
+                binding.tvTagQtyOther.text = """${mMainTagMenu.qtyOther} """
+            }else{
+                binding.tvTagQtyOther.visibility = View.GONE
+                binding.ivTagQtyOther.visibility = View.GONE
+            }
+//            }
             //
             if(mMainTagMenu.tagHasFormInExecution > 0 ){
-                val tagInfo: String = """${binding.tvTagQty.text} (${hmAux_Trans.get("tag_item_form_in_execution")})"""
-                val spannableString = SpannableString(tagInfo)
-                //
-                spannableString.setSpan(
-                        ForegroundColorSpan(context.getResources().getColor(R.color.namoa_amount_pipeline_background_btn)),
-                        tagInfo.indexOf("("+ hmAux_Trans.get("tag_item_form_in_execution") +")"),
-                        tagInfo.length,
-                        Spanned.SPAN_INCLUSIVE_INCLUSIVE
-                )
-                binding.tvTagQty.text = spannableString
+                binding.tvTagFormsInProgress.visibility = View.VISIBLE
+                binding.tvTagFormsInProgress.text = hmAux_Trans.get("tag_item_form_in_execution")
+//                val tagInfo: String = """${binding.tvTagQty.text} (${hmAux_Trans.get("tag_item_form_in_execution")})"""
+//                val spannableString = SpannableString(tagInfo)
+//                //
+//                spannableString.setSpan(
+//                        ForegroundColorSpan(context.getResources().getColor(R.color.namoa_amount_pipeline_background_btn)),
+//                        tagInfo.indexOf("("+ hmAux_Trans.get("tag_item_form_in_execution") +")"),
+//                        tagInfo.length,
+//                        Spanned.SPAN_INCLUSIVE_INCLUSIVE
+//                )
+//                binding.tvTagQty.text = spannableString
+            }else{
+                binding.tvTagFormsInProgress.visibility = View.GONE
             }
 
             binding.ivTagStatus.visibility = View.VISIBLE

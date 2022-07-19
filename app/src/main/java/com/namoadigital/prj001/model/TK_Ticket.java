@@ -1637,7 +1637,7 @@ public class TK_Ticket implements Cloneable, Serializable {
             openZoneDesc = ToolBox_Inf.getProductSerialZone(
                     context,
                     Integer.parseInt(hmAux.get(TK_TicketDao.OPEN_SITE_CODE)),
-                    hmAux.get(TK_TicketDao.OPEN_ZONE_CODE),
+                    hmAux.get(TK_TicketDao.OPEN_ZONE_DESC),
                     new MD_Product_SerialDao(context,
                             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                             Constant.DB_VERSION_CUSTOM),
@@ -1660,6 +1660,7 @@ public class TK_Ticket implements Cloneable, Serializable {
             hmAux.get(TK_TicketDao.OPEN_SERIAL_ID),
             hmAux.get(TK_TicketDao.ORIGIN_DESC),
             hmAux.get(TK_TicketDao.TYPE_DESC),
+            hmAux.get(TK_TicketDao.INTERNAL_COMMENTS),
             hmAux.get(TK_Ticket_StepDao.STEP_DESC),
             ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.OPEN_SITE_CODE)),
             hmAux.get(TK_TicketDao.OPEN_SITE_DESC),
@@ -1676,7 +1677,8 @@ public class TK_Ticket implements Cloneable, Serializable {
             !"0".equals(hmAux.get(MyActions.MY_ACTION_TYPE_FORM)),
             ToolBox_Inf.isItemLate(periodStartDate),
             ToolBox_Inf.isItemLate(lateDate),
-            processPk.equals(lastSelectedActionPk)
+            processPk.equals(lastSelectedActionPk),
+                hmAux.hasConsistentValue(TK_TicketDao.MAIN_USER) && hmAux.get(TK_TicketDao.MAIN_USER).equals(ToolBox_Con.getPreference_User_Code(context))
         );
     }
 }
