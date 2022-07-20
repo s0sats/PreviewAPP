@@ -54,10 +54,6 @@ public class SO_Pack_Express_LocalDao extends BaseDao implements Dao<SO_Pack_Exp
     public static final String SEGMENT_CODE = "segment_code";
     public static final String SEGMENT_ID = "segment_id";
     public static final String SEGMENT_DESC = "segment_desc";
-    public static final String CATEGORY_PRICE_CODE = "category_price_code";
-    public static final String PRICE_LIST_CODE = "price_list_code";
-    public static final String PACK_CODE = "pack_code";
-    public static final String ADD_PACK_SERVICE = "add_pack_service";
     public static final String BILLING_ADD_INF1_VALUE = "billing_add_inf1_value";
     public static final String BILLING_ADD_INF2_VALUE = "billing_add_inf2_value";
     public static final String BILLING_ADD_INF3_VALUE = "billing_add_inf3_value";
@@ -79,7 +75,6 @@ public class SO_Pack_Express_LocalDao extends BaseDao implements Dao<SO_Pack_Exp
     public static String[] columns = {
         CUSTOMER_CODE, SITE_CODE, OPERATION_CODE, PRODUCT_CODE, EXPRESS_CODE, EXPRESS_TMP, SERIAL_ID, PARTNER_CODE,
         SO_PREFIX, SO_CODE, SO_ID, SO_DESC, SO_STATUS, CONTRACT_CODE, CONTRACT_DESC, PRIORITY_CODE, PRIORITY_DESC,
-        CATEGORY_PRICE_CODE, PRICE_LIST_CODE, PACK_CODE, ADD_PACK_SERVICE,
         OPERATION_ID, OPERATION_DESC, PRODUCT_ID, PRODUCT_DESC, SERIAL_CODE, SEGMENT_CODE,
         SEGMENT_ID, SEGMENT_DESC, RET_CODE, RET_MSG, STATUS, EXEC_SITE_CODE,EXEC_SITE_ID,EXEC_SITE_DESC,
         EXEC_ZONE_CODE,EXEC_ZONE_ID, EXEC_ZONE_DESC, LOG_DATE, TOKEN
@@ -361,10 +356,6 @@ public class SO_Pack_Express_LocalDao extends BaseDao implements Dao<SO_Pack_Exp
             } else {
                 so_pack_express_local.setPriority_desc(cursor.getString(cursor.getColumnIndex(PRIORITY_DESC)));
             }
-            so_pack_express_local.setCategory_price_code(cursor.getInt(cursor.getColumnIndex(CATEGORY_PRICE_CODE)));
-            so_pack_express_local.setPrice_list_code(cursor.getInt(cursor.getColumnIndex(PRICE_LIST_CODE)));
-            so_pack_express_local.setPack_code(cursor.getInt(cursor.getColumnIndex(PACK_CODE)));
-            so_pack_express_local.setAdd_pack_service(cursor.getInt(cursor.getColumnIndex(ADD_PACK_SERVICE)));
             so_pack_express_local.setExec_site_code(cursor.getInt(cursor.getColumnIndex(EXEC_SITE_CODE)));
             so_pack_express_local.setExec_site_id(cursor.getString(cursor.getColumnIndex(EXEC_SITE_ID)));
             so_pack_express_local.setExec_site_desc(cursor.getString(cursor.getColumnIndex(EXEC_SITE_DESC)));
@@ -546,18 +537,6 @@ public class SO_Pack_Express_LocalDao extends BaseDao implements Dao<SO_Pack_Exp
             }
             if (so_pack_express_local.getSegment_desc() != null) {
                 contentValues.put(SEGMENT_DESC, so_pack_express_local.getSegment_desc());
-            }
-            if (so_pack_express_local.getCategory_price_code() > 0) {
-                contentValues.put(CATEGORY_PRICE_CODE, so_pack_express_local.getCategory_price_code());
-            }
-            if (so_pack_express_local.getPrice_list_code() > 0) {
-                contentValues.put(PRICE_LIST_CODE, so_pack_express_local.getPrice_list_code());
-            }
-            if (so_pack_express_local.getPack_code() > 0) {
-                contentValues.put(PACK_CODE, so_pack_express_local.getPack_code());
-            }
-            if (so_pack_express_local.getAdd_pack_service() > 0) {
-                contentValues.put(ADD_PACK_SERVICE, so_pack_express_local.getAdd_pack_service());
             }
             contentValues.put(BILLING_ADD_INF1_VALUE, so_pack_express_local.getBilling_add_inf1_value());
             if (so_pack_express_local.getBilling_add_inf1_tracking() > -1) {

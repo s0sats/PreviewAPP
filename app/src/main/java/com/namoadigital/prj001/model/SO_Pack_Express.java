@@ -20,6 +20,7 @@ public class SO_Pack_Express {
     private int price_list_code;
     private int pack_code;
     private int add_pack_service;
+    private float price;
     private String billing_add_inf1_view;
     @Nullable
     private String billing_add_inf1_text;
@@ -127,6 +128,14 @@ public class SO_Pack_Express {
 
     public void setAdd_pack_service(int add_pack_service) {
         this.add_pack_service = add_pack_service;
+    }
+
+    public float getPrice() {
+        return price;
+    }
+
+    public void setPrice(float price) {
+        this.price = price;
     }
 
     public String getBilling_add_inf1_view() {

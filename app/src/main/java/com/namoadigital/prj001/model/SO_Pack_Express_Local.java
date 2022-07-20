@@ -38,10 +38,6 @@ public class SO_Pack_Express_Local {
     private Integer segment_code;
     private String segment_id;
     private String segment_desc;
-    private int category_price_code;
-    private int price_list_code;
-    private int pack_code;
-    private int add_pack_service;
     private String billing_add_inf1_value;
     private String billing_add_inf2_value;
     private String billing_add_inf3_value;
@@ -346,38 +342,6 @@ public class SO_Pack_Express_Local {
 
     public void setSegment_desc(String segment_desc) {
         this.segment_desc = segment_desc;
-    }
-
-    public int getCategory_price_code() {
-        return category_price_code;
-    }
-
-    public void setCategory_price_code(int category_price_code) {
-        this.category_price_code = category_price_code;
-    }
-
-    public int getPrice_list_code() {
-        return price_list_code;
-    }
-
-    public void setPrice_list_code(int price_list_code) {
-        this.price_list_code = price_list_code;
-    }
-
-    public int getPack_code() {
-        return pack_code;
-    }
-
-    public void setPack_code(int pack_code) {
-        this.pack_code = pack_code;
-    }
-
-    public int getAdd_pack_service() {
-        return add_pack_service;
-    }
-
-    public void setAdd_pack_service(int add_pack_service) {
-        this.add_pack_service = add_pack_service;
     }
 
     public String getBilling_add_inf1_value() {
