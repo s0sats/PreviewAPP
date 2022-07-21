@@ -566,6 +566,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_MENU_SO_PARAM_PRODUCT_EVENT_CANCEL = "PRODUCT_EVENT_CANCEL";
     public static final String PROFILE_MENU_SO_PARAM_BYPASS_SERIAL_VERIFICATION = "BYPASS_SERIAL_VERIFICATION";
     public static final String PROFILE_MENU_SO_SHOW_ACTIONS = "SHOW_ACTIONS";
+    public static final String PROFILE_MENU_SO_ADD_PACK_SERVICE = "ADD_PACK_SERVICE";
     public static final String PROFILE_PRJ001_MASTER_DATA_PARAM_EDIT_USER_WORKGROUP_HOME = "EDIT_USER_WORKGROUP_HOME";
 
     public static final String SO_ORIGIN_CHANGE_APP = "APP";

@@ -493,6 +493,15 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                 mSo_pack_express.getBilling_add_inf3_tracking(),
                 hmAux_Trans.get("billing_add_info3_lbl")
             );
+            if(mSo_pack_express.getAdd_pack_service() == 1
+            && ToolBox_Inf.profileExists(
+                    context,
+                    Constant.PROFILE_MENU_SO,
+                    Constant.PROFILE_MENU_SO_ADD_PACK_SERVICE
+                )
+            ){
+
+            }
         }else{
             binding.tilAddInfo1.setVisibility(View.GONE);
             binding.tilAddInfo2.setVisibility(View.GONE);
