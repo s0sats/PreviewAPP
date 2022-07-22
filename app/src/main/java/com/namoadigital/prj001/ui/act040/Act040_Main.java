@@ -51,6 +51,7 @@ import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
 import com.namoadigital.prj001.ui.act042.Act042_Main;
 import com.namoadigital.prj001.ui.act048.Act048_Main;
+import com.namoadigital.prj001.ui.act091.Act091_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -320,6 +321,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             if(requestingAct.equals(Constant.ACT048)
                     || requestingAct.equals(Constant.ACT049)
                     || requestingAct.equals(Constant.ACT042)
+                    || requestingAct.equals(Constant.ACT091)
             ){
                 bundle_express_pack_code = bundle.getString(EXPRESS_PACK_CODE,"");
                 bundle_partner_code = bundle.getString(MD_PartnerDao.PARTNER_CODE,"-1");
@@ -760,7 +762,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             @Override
             public void onClick(View v) {
 
-                handleSerialIdCharConstraints();
+/*                handleSerialIdCharConstraints();
 
                 if(md_product != null) {
                     mPresenter.executeSerialSearch(md_product, ToolBox_Inf.removeAllLineBreaks(binding.mketSerial.getText().toString()));
@@ -769,7 +771,19 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                             hmAux_Trans.get("alert_product_not_found_ttl"),
                             hmAux_Trans.get("alert_product_not_found_msg")
                     );
-                }
+                }*/
+                    Intent mIntent = new Intent(context, Act091_Main.class);
+                    Bundle bundle = new Bundle();
+
+                    bundle.putString(Constant.MAIN_REQUESTING_ACT,Constant.ACT040);
+                    setFieldsBundle(bundle);
+                    bundle.putString(Constant.MAIN_MD_PRODUCT_SERIAL_ID, binding.mketSerial.getText().toString().trim());
+
+                    mIntent.putExtras(bundle);
+                    mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(mIntent);
+                    finish();
+
             }
         });
         //

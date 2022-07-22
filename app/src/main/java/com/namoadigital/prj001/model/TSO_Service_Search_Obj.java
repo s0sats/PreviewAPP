@@ -209,4 +209,9 @@ public class TSO_Service_Search_Obj implements Serializable {
     public void setComment(String comment) {
         this.comment = comment;
     }
+
+    public String getAllFieldForFilter() {
+        return pack_service_desc_full + "|" +
+                price;
+    }
 }
