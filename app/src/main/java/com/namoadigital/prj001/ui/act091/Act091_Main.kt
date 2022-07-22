@@ -39,11 +39,11 @@ class Act091_Main : Base_Activity(), Act91_Contract.I_View {
         setContentView(binding.root)
         setSupportActionBar(binding.act091TopAppBar)
 
-        mPresenter = Act091_Presenter()
 
         bundleSaved = intent?.extras
-
-
+        bundleSaved?.let{
+            mPresenter = Act091_Presenter(it)
+        }
         //Starting
         initSetup()
         iniVars()
@@ -71,6 +71,7 @@ class Act091_Main : Base_Activity(), Act91_Contract.I_View {
     }
 
     private fun initVars(){
+
     }
 
     private fun initSetup(){

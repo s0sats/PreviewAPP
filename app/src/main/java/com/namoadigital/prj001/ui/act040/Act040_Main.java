@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -778,8 +777,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         binding.clSerialSearchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-/*                handleSerialIdCharConstraints();
+                handleSerialIdCharConstraints();
 
                 if(md_product != null) {
                     mPresenter.executeSerialSearch(md_product, ToolBox_Inf.removeAllLineBreaks(binding.mketSerial.getText().toString()));
@@ -788,19 +786,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                             hmAux_Trans.get("alert_product_not_found_ttl"),
                             hmAux_Trans.get("alert_product_not_found_msg")
                     );
-                }*/
-                    Intent mIntent = new Intent(context, Act091_Main.class);
-                    Bundle bundle = new Bundle();
-
-                    bundle.putString(Constant.MAIN_REQUESTING_ACT,Constant.ACT040);
-                    setFieldsBundle(bundle);
-                    bundle.putString(Constant.MAIN_MD_PRODUCT_SERIAL_ID, binding.mketSerial.getText().toString().trim());
-
-                    mIntent.putExtras(bundle);
-                    mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(mIntent);
-                    finish();
-
+                }
             }
         });
         //
@@ -812,8 +798,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                     File file = new File(ConstantBaseApp.SO_EXPRESS_JSON_PATH, fileName);
                     //
                     if (file.exists()) {
-//                        callact091()
-                        Toast.makeText(context, "Chama act091", Toast.LENGTH_SHORT).show();
+                        callAct091();
                     }else{
                         mPresenter.executeWS_SO_Service_Search(mSo_pack_express, binding.mketSerial.getText().toString());
                     }
@@ -842,6 +827,23 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                 binding.mketAddInfo3.setText(bundle_billing_info3);
             }
         }
+    }
+
+    private void callAct091() {
+        Intent mIntent = new Intent(context, Act091_Main.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.MAIN_REQUESTING_ACT,Constant.ACT040);
+        setFieldsBundle(bundle);
+        //
+        bundle.putInt(SO_Pack_ExpressDao.CONTRACT_CODE, mSo_pack_express.getContract_code());
+        bundle.putInt(SO_Pack_ExpressDao.PRODUCT_CODE, (int) mSo_pack_express.getProduct_code());
+        bundle.putInt(SO_Pack_ExpressDao.CATEGORY_PRICE_CODE, mSo_pack_express.getCategory_price_code());
+        bundle.putString(Constant.MAIN_MD_PRODUCT_SERIAL_ID, binding.mketSerial.getText().toString().trim());
+        //
+        mIntent.putExtras(bundle);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
     }
 
     /**
@@ -1109,9 +1111,8 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             mPresenter.processSerialSaveResult(hmAux);
             mPresenter.executeSO_Pack_Express_Local();
         }else if(wsProcess.equals(WS_SO_Service_Search.class.getName())){
-//            mPresenter.setPackServiceFile(mLink);
             progressDialog.dismiss();
-            Log.d("ACT040", "FileName: " + mLink);
+            callAct091();
         }
     }
 
