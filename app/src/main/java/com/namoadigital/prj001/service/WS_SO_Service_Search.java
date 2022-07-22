@@ -3,6 +3,7 @@ package com.namoadigital.prj001.service;
 import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
@@ -137,23 +138,33 @@ public class WS_SO_Service_Search extends IntentService {
         }
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_processing_list"), "", "0");
         //
-        processSOServiceSearchReturn(rec);
+        processSOServiceSearchReturn(rec, express, contract_code, product_code, category_price_code);
     }
     //
-    private void processSOServiceSearchReturn(TSO_Service_Search_Rec rec) throws IOException {
-        //ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_proccess"), new HMAux(), gson.toJson(rec.getData()), "0");
-        //Gera nome do arquivo json
-        String file_name = Constant.PREFIX_SO_ADD_SERVICE + ".json";
-        //Chama metodo para criar arquivo
-        createJsonFile(file_name, gson.toJson(rec));
-        HMAux auxName = new HMAux();
-        auxName.put(ConstantBaseApp.WS_RETURN_FILENAME,file_name);
-        //
-        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_proccess"), auxName,"" , "0");
+    private void processSOServiceSearchReturn(TSO_Service_Search_Rec rec, int express, int contract_code, int product_code, int category_price_code) throws IOException {
+
+        if(express == 0) {
+            //ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_proccess"), new HMAux(), gson.toJson(rec.getData()), "0");
+            //Gera nome do arquivo json
+            String file_name = Constant.PREFIX_SO_ADD_SERVICE + ".json";
+            //Chama metodo para criar arquivo
+            createJsonFile(file_name, gson.toJson(rec), Constant.TOKEN_PATH);
+            HMAux auxName = new HMAux();
+            auxName.put(ConstantBaseApp.WS_RETURN_FILENAME, file_name);
+            //
+            ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_proccess"), auxName,"" , "0");
+        }else{
+            String file_name = ToolBox_Inf.getExpressSOFileName(contract_code, product_code, category_price_code);
+            //Chama metodo para criar arquivo
+            createJsonFile(file_name, gson.toJson(rec), Constant.SO_EXPRESS_JSON_PATH);
+            ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_proccess"), new HMAux(),file_name , "0");
+        }
     }
 
-    private void createJsonFile(String file_name, String json) throws IOException {
-        File file = new File(Constant.TOKEN_PATH, file_name);
+
+
+    private void createJsonFile(String file_name, String json, String filePath) throws IOException {
+        File file = new File(filePath, file_name);
         //
         if(file.exists()){
             file.delete();

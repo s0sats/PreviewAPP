@@ -454,6 +454,11 @@ public class ToolBox_Inf {
         if (!dirCustomerSiteLicenseJsonFile.exists()) {
             dirCustomerSiteLicenseJsonFile.mkdir();
         }
+        //BARRIONUEVO - 22/07/2022 - Dir com os arquivos json de lista de site licença do customer
+        File dirExpressSOJsonFile = new File(Constant.SO_EXPRESS_JSON_PATH);
+        if (!dirExpressSOJsonFile.exists()) {
+            dirExpressSOJsonFile.mkdir();
+        }
     }
 
     public static String md5(String s) {
@@ -4069,6 +4074,11 @@ public class ToolBox_Inf {
         }
         return false;
     }
+
+    public static String getExpressSOFileName(int contract_code, int product_code, int category_price_code) {
+        return contract_code + "_" + product_code + "_" + category_price_code + "_" + ".json";
+    }
+
     //
     private static class GenericExtFilter implements FilenameFilter {
         private String[] exts;

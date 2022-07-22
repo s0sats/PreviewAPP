@@ -30,6 +30,7 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.PENDENCY_CHANNEL_ID;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME_FULL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TICKET_JSON_PATH;
+import static com.namoadigital.prj001.util.ConstantBaseApp.SO_EXPRESS_JSON_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SERIAL_NAME_FULL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SERIAL_PREFIX;
@@ -67,6 +68,7 @@ public class AppBase extends Application {
     public static final String CHAT_DIR = "/chat";
     public static final String UNSENT_IMGS_DIR = "/unsentImgs";
     public static final String TICKET_DIR = "/ticket";
+    public static final String SO_EXPRESS_DIR = "/expressSO";
     public static final String CUSTOMER_SITE_LICENSE_JSON_DIR = "/customerSiteLicense";
     public static final String NAMOA_PEND_INFO = "Namoa Pend. Info.";
     public static final String NAMOA_NOTIF_INFO = "Namoa Notif. Info.";
@@ -100,6 +102,7 @@ public class AppBase extends Application {
         CHAT_PATH = DB_PATH + CHAT_DIR;
         UNSENT_IMG_PATH = IMG_PATH + UNSENT_IMGS_DIR;
         TICKET_JSON_PATH = DB_PATH + TICKET_DIR;
+        SO_EXPRESS_JSON_PATH = DB_PATH + SO_EXPRESS_DIR;
         CUSTOMER_SITE_LICENSE_JSON_PATH = DB_PATH + CUSTOMER_SITE_LICENSE_JSON_DIR;
 
         ZIP_NAME = "namoa_sms.zip";

@@ -98,6 +98,7 @@ public class AppBase extends Application {
         CHAT_PATH = DB_PATH + "/chat";
         UNSENT_IMG_PATH = IMG_PATH + "/unsentImgs";
         TICKET_JSON_PATH = DB_PATH + "/ticket";
+        SO_EXPRESS_JSON_PATH = DB_PATH + "/expressSO";
         CUSTOMER_SITE_LICENSE_JSON_PATH = DB_PATH + "/customerSiteLicense";
 
         ZIP_NAME = "namoa_sms.zip";

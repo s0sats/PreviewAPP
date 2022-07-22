@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -45,6 +46,7 @@ import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.SO_Pack_Express;
 import com.namoadigital.prj001.model.SO_Pack_Express_Local;
 import com.namoadigital.prj001.service.WS_SO_Pack_Express_Local;
+import com.namoadigital.prj001.service.WS_SO_Service_Search;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
@@ -56,6 +58,7 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -188,6 +191,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         transList.add("alert_leave_express_creation_ttl");
         transList.add("alert_leave_express_creation_confirm");
         transList.add("tracking_duplicated_msg");
+        transList.add("express_order_pack_service_list_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -288,6 +292,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         binding.clFinalizeBtn.setEnabled(false);
         binding.tvFinalize.setText(hmAux_Trans.get("btn_create_so"));
         //
+        binding.tvServiceListLbl.setText(hmAux_Trans.get("express_order_pack_service_list_lbl"));
         binding.tvPartner.setText(hmAux_Trans.get("ss_partner_hint"));
         binding.ssPartner.setmShowLabel(false);
         binding.ssPartner.setmCanClean(false);
@@ -497,10 +502,12 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             && ToolBox_Inf.profileExists(
                     context,
                     Constant.PROFILE_MENU_SO,
-                    Constant.PROFILE_MENU_SO_ADD_PACK_SERVICE
+                    Constant.PROFILE_MENU_SO_PARAM_EDIT
                 )
             ){
-
+                binding.clAddPackServices.setVisibility(View.VISIBLE);
+            }else{
+                binding.clAddPackServices.setVisibility(View.GONE);
             }
         }else{
             binding.tilAddInfo1.setVisibility(View.GONE);
@@ -515,6 +522,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             binding.mketAddInfo1.setTag("");
             binding.mketAddInfo2.setTag("");
             binding.mketAddInfo3.setTag("");
+            binding.clAddPackServices.setVisibility(View.GONE);
         }
     }
 
@@ -769,7 +777,6 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             @Override
             public void onClick(View v) {
 
-//                mPresenter.executeWS_SO_Service_Search(mSo_pack_express, binding.mketSerial.getText().toString());
                 handleSerialIdCharConstraints();
 
                 if(md_product != null) {
@@ -782,6 +789,24 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                 }
             }
         });
+        //
+        binding.ivAddPackServices.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mSo_pack_express != null) {
+                    String fileName = ToolBox_Inf.getExpressSOFileName(mSo_pack_express.getContract_code(), (int) mSo_pack_express.getProduct_code(), mSo_pack_express.getCategory_price_code());
+                    File file = new File(ConstantBaseApp.SO_EXPRESS_JSON_PATH, fileName);
+                    //
+                    if (file.exists()) {
+//                        callact091()
+                        Toast.makeText(context, "Chama act091", Toast.LENGTH_SHORT).show();
+                    }else{
+                        mPresenter.executeWS_SO_Service_Search(mSo_pack_express, binding.mketSerial.getText().toString());
+                    }
+                }
+            }
+        });
+
         //
         //Se pacote expresso, ou parceiro ou serial enviado pelo bundle, seta valores.
         if(
@@ -1069,6 +1094,10 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         }else if(wsProcess.equals(WS_Serial_Save.class.getName())){
             mPresenter.processSerialSaveResult(hmAux);
             mPresenter.executeSO_Pack_Express_Local();
+        }else if(wsProcess.equals(WS_SO_Service_Search.class.getName())){
+//            mPresenter.setPackServiceFile(mLink);
+            progressDialog.dismiss();
+            Log.d("ACT040", "FileName: " + mLink);
         }
     }
 

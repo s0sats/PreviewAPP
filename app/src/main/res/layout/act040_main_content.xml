@@ -321,26 +321,29 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/act040_cl_add_pack_services"
+                    android:id="@+id/cl_add_pack_services"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/til_add_info_3">
 
                     <TextView
-                        android:id="@+id/act040_tv_service_list_lbl"
+                        android:id="@+id/tv_service_list_lbl"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
                         android:textColor="@color/text_black"
-                        android:textSize="20sp"
+                        android:textSize="16sp"
                         android:textStyle="bold"
-                        app:layout_constraintBottom_toBottomOf="@+id/fab_add_photo"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/fab_add_photo"
+                        app:layout_constraintBottom_toBottomOf="@+id/iv_add_pack_services"
+                        app:layout_constraintEnd_toStartOf="@+id/iv_add_pack_services"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/iv_add_pack_services"
                         tools:text="Serviços/Pacotes Incluidos" />
 
                     <ImageView
-                        android:id="@+id/fab_add_photo"
+                        android:id="@+id/iv_add_pack_services"
                         android:layout_width="33dp"
                         android:layout_height="33dp"
                         android:layout_marginTop="8dp"
