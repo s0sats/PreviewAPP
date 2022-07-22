@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="5dp"
+    android:orientation="vertical"
+    tools:showIn="@layout/act091_bottom_sheet">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Quantidade"
+        android:textAlignment="center"
+        style="@style/TextAppearance.MaterialComponents.Caption"/>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp">
+
+        <ImageView
+            android:id="@+id/act091_bottom_sheet_less"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:background="@color/namoa_dark_blue"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/act091_bottom_sheet_qty"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_remove_black_24dp"
+            app:tint="@color/colorFooterWhite" />
+
+
+        <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+            android:id="@+id/act091_bottom_sheet_qty"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:gravity="center"
+            android:inputType="number"
+            app:mInputType="number"
+            android:text="1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/act091_bottom_sheet_most"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/act091_bottom_sheet_less"
+            app:layout_constraintTop_toTopOf="parent"
+            app:mBARCODE="false"
+            app:mNFC="false"
+            app:mOCR="false" />
+
+
+        <ImageView
+            android:id="@+id/act091_bottom_sheet_most"
+            android:layout_width="30dp"
+            android:layout_height="29dp"
+            android:background="@color/namoa_dark_blue"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/act091_bottom_sheet_qty"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_add_black_24px"
+            app:tint="@color/colorFooterWhite" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>
