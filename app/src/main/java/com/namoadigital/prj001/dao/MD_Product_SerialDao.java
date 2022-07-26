@@ -197,8 +197,11 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             );
 
             //Seta a pk nos tracking
-            for (int i = 0; i < md_product_serial.getTracking_list().size(); i++) {
-                md_product_serial.getTracking_list().get(i).setPk(md_product_serial);
+            if(md_product_serial.getTracking_list() != null) {
+
+                for (int i = 0; i < md_product_serial.getTracking_list().size(); i++) {
+                    md_product_serial.getTracking_list().get(i).setPk(md_product_serial);
+                }
             }
             //Verifica se existe tracking, caso não exista, nem tenta fazer o add update
             if(md_product_serial.getTracking_list() != null && md_product_serial.getTracking_list().size() > 0) {

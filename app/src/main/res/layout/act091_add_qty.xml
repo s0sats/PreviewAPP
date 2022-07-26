@@ -9,6 +9,7 @@
     tools:showIn="@layout/act091_bottom_sheet">
 
     <TextView
+        android:id="@+id/act091_bottom_sheet_qty_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Quantidade"
@@ -26,7 +27,7 @@
             android:id="@+id/act091_bottom_sheet_less"
             android:layout_width="28dp"
             android:layout_height="28dp"
-            android:background="@color/namoa_dark_blue"
+            android:background="@drawable/service_qty_controller"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/act091_bottom_sheet_qty"
             app:layout_constraintHorizontal_bias="0.5"
@@ -60,7 +61,7 @@
             android:id="@+id/act091_bottom_sheet_most"
             android:layout_width="30dp"
             android:layout_height="29dp"
-            android:background="@color/namoa_dark_blue"
+            android:background="@drawable/service_qty_controller"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"

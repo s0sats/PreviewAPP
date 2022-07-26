@@ -2,19 +2,20 @@ package com.namoadigital.prj001.ui.act091
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.View
-import androidx.core.view.isVisible
+import android.view.WindowManager
 import com.google.gson.Gson
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
+import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.view.Base_Activity
-import com.namoadigital.prj001.adapter.Act085WorkgroupAddAdapter
 import com.namoadigital.prj001.adapter.Act091_Item_Adapter
 import com.namoadigital.prj001.databinding.Act091MainBinding
 import com.namoadigital.prj001.model.Act091ServiceItem
 import com.namoadigital.prj001.ui.act040.Act040_Main
+import com.namoadigital.prj001.ui.act091.bottomstate.Act091_BottomSheet
 import com.namoadigital.prj001.util.Constant
+import com.namoadigital.prj001.util.ConstantBaseApp
+import com.namoadigital.prj001.util.ToolBox_Inf
 
 class Act091_Main : Base_Activity(), Act91_Contract.I_View {
 
@@ -23,7 +24,13 @@ class Act091_Main : Base_Activity(), Act91_Contract.I_View {
         Act091MainBinding.inflate(layoutInflater)
     }
 
-    private lateinit var mPresenter: Act091_Presenter
+    private val mPresenter: Act091_Presenter by lazy {
+        Act091_Presenter(
+            context,
+            mModule_Code,
+            mResource_Code
+        )
+    }
     private val mAdapter: Act091_Item_Adapter? by lazy {
         Act091_Item_Adapter(
             mPresenter.getListData(),
@@ -38,15 +45,18 @@ class Act091_Main : Base_Activity(), Act91_Contract.I_View {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         setSupportActionBar(binding.act091TopAppBar)
-
-        mPresenter = Act091_Presenter()
-
         bundleSaved = intent?.extras
 
 
         //Starting
         initSetup()
-        iniVars()
+        initTrans()
+        //Setar titulo da AppBar
+        mAct_Title = "act091_title"
+        setTitleLanguage()
+
+        //Starting
+        initVars()
         initRecyclerView()
         initAction()
     }
@@ -65,15 +75,35 @@ class Act091_Main : Base_Activity(), Act91_Contract.I_View {
         finish()
     }
 
+
     override fun openBottomSheet(item: Act091ServiceItem) {
         Act091_BottomSheet.getInstance(Gson().toJson(item))
             .show(supportFragmentManager, "bottomSheet")
     }
 
     private fun initVars(){
+
+        with(binding){
+            act091TextLayout.hint = hmAux_Trans["filter_hint"]
+            act091TextLayout.placeholderText = hmAux_Trans["insert_filter_placeholder"]
+        }
+
     }
 
     private fun initSetup(){
+        mResource_Code = ToolBox_Inf.getResourceCode(
+            context,
+            mModule_Code,
+            ConstantBaseApp.ACT091
+        )
+
+        window.setSoftInputMode(
+            WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN
+        )
+    }
+
+    private fun initTrans(){
+        hmAux_Trans = mPresenter.getTranslation()
     }
 
     private fun initAction(){
@@ -86,6 +116,7 @@ class Act091_Main : Base_Activity(), Act91_Contract.I_View {
                 applyTextFilter(text)
             }
         })
+
     }
 
     private fun applyTextFilter(text: String?) = mAdapter?.filter?.filter(text)
@@ -98,6 +129,7 @@ class Act091_Main : Base_Activity(), Act91_Contract.I_View {
             return
         }
         binding.act091RecyclerView.visibility = View.GONE
+        binding.act091WithoutList.text = hmAux_Trans["empty_list_lbl"]
         binding.act091WithoutList.visibility = View.VISIBLE
 
     }
