@@ -29,6 +29,7 @@ import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.MD_Site_Zone;
 import com.namoadigital.prj001.model.SO_Pack_Express;
 import com.namoadigital.prj001.model.SO_Pack_Express_Local;
+import com.namoadigital.prj001.model.SoPackExpressPacksLocal;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_SO_Pack_Express_Local;
 import com.namoadigital.prj001.receiver.WBR_SO_Service_Search;
@@ -789,6 +790,11 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
+    }
+
+    @Override
+    public List<SoPackExpressPacksLocal> getExpressPacks(SO_Pack_Express mSo_pack_express) {
+        return new ArrayList<>();
     }
 
     private int getSerialCode(long customer_code, long product_code, String serialId) {

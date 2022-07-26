@@ -6,8 +6,10 @@ import com.namoadigital.prj001.model.MD_Partner;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.SO_Pack_Express;
 import com.namoadigital.prj001.model.SO_Pack_Express_Local;
+import com.namoadigital.prj001.model.SoPackExpressPacksLocal;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by d.luche on 09/03/2018.
@@ -66,4 +68,6 @@ public interface Act040_Main_Presenter {
 
     //void checkSerialUpdateRequired(long product_code, String serial_id);
     void executeWS_SO_Service_Search(SO_Pack_Express mSo_pack_express, String serialId);
+
+    List<SoPackExpressPacksLocal> getExpressPacks(SO_Pack_Express mSo_pack_express);
 }

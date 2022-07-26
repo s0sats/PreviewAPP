@@ -19,6 +19,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.material.textfield.TextInputLayout;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
@@ -27,6 +28,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.adapter.Act040SOExpressPackServicesAdapter;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_PartnerDao;
@@ -44,6 +46,7 @@ import com.namoadigital.prj001.model.MD_Partner;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.SO_Pack_Express;
 import com.namoadigital.prj001.model.SO_Pack_Express_Local;
+import com.namoadigital.prj001.model.SoPackExpressPacksLocal;
 import com.namoadigital.prj001.service.WS_SO_Pack_Express_Local;
 import com.namoadigital.prj001.service.WS_SO_Service_Search;
 import com.namoadigital.prj001.service.WS_Serial_Save;
@@ -90,6 +93,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     private ArrayList<MKEditTextNM> trackingFields = new ArrayList<>();
 
     private Act040MainContentBinding binding;
+    private Act040SOExpressPackServicesAdapter mAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -192,6 +196,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         transList.add("alert_leave_express_creation_confirm");
         transList.add("tracking_duplicated_msg");
         transList.add("express_order_pack_service_list_lbl");
+        transList.add("express_order_pack_service_empty_list_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -293,6 +298,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         binding.tvFinalize.setText(hmAux_Trans.get("btn_create_so"));
         //
         binding.tvServiceListLbl.setText(hmAux_Trans.get("express_order_pack_service_list_lbl"));
+        binding.tvAddPackServicesPlaceholder.setText(hmAux_Trans.get("express_order_pack_service_empty_list_lbl"));
         binding.tvPartner.setText(hmAux_Trans.get("ss_partner_hint"));
         binding.ssPartner.setmShowLabel(false);
         binding.ssPartner.setmCanClean(false);
@@ -507,6 +513,30 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                 )
             ){
                 binding.clAddPackServices.setVisibility(View.VISIBLE);
+                //
+                List<SoPackExpressPacksLocal> packs = mPresenter.getExpressPacks(mSo_pack_express);
+                //
+                if(packs.size() > 0) {
+                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
+                    binding.rvAddPackServices.setLayoutManager(linearLayoutManager);
+                    //
+                    mAdapter = new Act040SOExpressPackServicesAdapter(
+                            packs,
+                            ToolBox_Inf.profileExists(
+                                    context,
+                                    Constant.PROFILE_MENU_SO,
+                                    Constant.PROFILE_MENU_SO_SHOW_SERVICE_PRICE
+                            )
+                    );
+                    //
+                    binding.rvAddPackServices.setAdapter(mAdapter);
+                    binding.rvAddPackServices.setVisibility(View.VISIBLE);
+                    binding.tvAddPackServicesPlaceholder.setVisibility(View.INVISIBLE);
+                }else{
+                    binding.rvAddPackServices.setVisibility(View.INVISIBLE);
+                    binding.tvAddPackServicesPlaceholder.setVisibility(View.VISIBLE);
+                }
+                //
             }else{
                 binding.clAddPackServices.setVisibility(View.GONE);
             }

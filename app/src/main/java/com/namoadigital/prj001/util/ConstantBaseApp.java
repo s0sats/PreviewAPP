@@ -563,6 +563,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_MENU_SO_PARAM_EDIT_SERVICE = "EDIT_SERVICE";
     public static final String PROFILE_MENU_SO_PARAM_DOWNLOAD_SO_HISTORIC = "DOWNLOAD_SO_HISTORIC";
     public static final String PROFILE_MENU_SO_PARAM_NEW = "NEW";
+    public static final String PROFILE_MENU_SO_SHOW_SERVICE_PRICE = "SHOW_SERVICE_PRICE";
     public static final String PROFILE_MENU_SO_PARAM_EDIT_CLIENT = "EDIT_CLIENT";
     public static final String PROFILE_MENU_SO_PARAM_DIRECT_EXPRESS_ORDER = "DIRECT_EXPRESS_ORDER";
     public static final String PROFILE_MENU_SO_PARAM_PRODUCT_EVENT_CANCEL = "PRODUCT_EVENT_CANCEL";

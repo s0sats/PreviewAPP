@@ -101,6 +101,13 @@ public class SO_Pack_Express_Local {
         this.packsLocals = new ArrayList<>();
     }
 
+    public void setPK() {
+        for (int i = 0; i < packsLocals.size(); i++) {
+            packsLocals.get(i).setPk(this);
+        }
+    }
+
+
     public long getCustomer_code() {
         return customer_code;
     }

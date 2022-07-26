@@ -326,6 +326,8 @@
                     android:layout_height="wrap_content"
                     android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/til_add_info_3">
 
                     <TextView
@@ -355,8 +357,32 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.0"
                         app:tint="@color/namoa_color_black" />
 
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_add_pack_services"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="@+id/iv_add_pack_services"
+                        app:layout_constraintStart_toStartOf="@+id/tv_service_list_lbl"
+                        app:layout_constraintTop_toBottomOf="@+id/iv_add_pack_services"
+                        tools:listitem="@layout/cell_add_pack_services_item"
+                        tools:itemCount="5"/>
+
+                    <TextView
+                        android:id="@+id/tv_add_pack_services_placeholder"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:textColor="@color/text_black"
+                        android:visibility="invisible"
+                        app:layout_constraintEnd_toEndOf="@+id/iv_add_pack_services"
+                        app:layout_constraintStart_toStartOf="@+id/tv_service_list_lbl"
+                        app:layout_constraintTop_toBottomOf="@+id/iv_add_pack_services"
+                        tools:text="Lista sen itens" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
