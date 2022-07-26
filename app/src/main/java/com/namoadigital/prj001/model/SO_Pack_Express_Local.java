@@ -1,5 +1,8 @@
 package com.namoadigital.prj001.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by neomatrix on 3/22/18.
  */
@@ -49,6 +52,7 @@ public class SO_Pack_Express_Local {
     private String status;
     private String log_date;
     private String token;
+    private List<SoPackExpressPacksLocal> packsLocals;
 
 
     public SO_Pack_Express_Local() {
@@ -94,6 +98,7 @@ public class SO_Pack_Express_Local {
         this.ret_msg = null;
         this.status = "NEW";
         this.token = "";
+        this.packsLocals = new ArrayList<>();
     }
 
     public long getCustomer_code() {

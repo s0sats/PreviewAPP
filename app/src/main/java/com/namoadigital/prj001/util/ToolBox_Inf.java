@@ -4075,8 +4075,8 @@ public class ToolBox_Inf {
         return false;
     }
 
-    public static String getExpressSOFileName(int contract_code, int product_code, int category_price_code) {
-        return contract_code + "_" + product_code + "_" + category_price_code + ".json";
+    public static String getExpressSOFileName(int contract_code, int product_code, int category_price_code, int site_code, int operation_code) {
+        return contract_code + "_" + category_price_code + "_" + product_code + "_" + site_code + "_" + operation_code + ".json";
     }
 
     //

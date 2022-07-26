@@ -138,10 +138,10 @@ public class WS_SO_Service_Search extends IntentService {
         }
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_processing_list"), "", "0");
         //
-        processSOServiceSearchReturn(rec, express, contract_code, product_code, category_price_code);
+        processSOServiceSearchReturn(rec, express, contract_code, product_code, category_price_code, site_code, operation_code);
     }
     //
-    private void processSOServiceSearchReturn(TSO_Service_Search_Rec rec, int express, int contract_code, int product_code, int category_price_code) throws IOException {
+    private void processSOServiceSearchReturn(TSO_Service_Search_Rec rec, int express, int contract_code, int product_code, int category_price_code, int site_code, int operation_code) throws IOException {
 
         if(express == 0) {
             //ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_proccess"), new HMAux(), gson.toJson(rec.getData()), "0");
@@ -154,7 +154,7 @@ public class WS_SO_Service_Search extends IntentService {
             //
             ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_proccess"), auxName,"" , "0");
         }else{
-            String file_name = ToolBox_Inf.getExpressSOFileName(contract_code, product_code, category_price_code);
+            String file_name = ToolBox_Inf.getExpressSOFileName(contract_code, product_code, category_price_code, site_code, operation_code);
             //Chama metodo para criar arquivo
             createJsonFile(file_name, gson.toJson(rec), Constant.SO_EXPRESS_JSON_PATH);
             ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_proccess"), new HMAux(),file_name , "0");

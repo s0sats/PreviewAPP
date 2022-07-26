@@ -794,7 +794,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             @Override
             public void onClick(View v) {
                 if(mSo_pack_express != null) {
-                    String fileName = ToolBox_Inf.getExpressSOFileName(mSo_pack_express.getContract_code(), (int) mSo_pack_express.getProduct_code(), mSo_pack_express.getCategory_price_code());
+                    String fileName = ToolBox_Inf.getExpressSOFileName(mSo_pack_express.getContract_code(), (int) mSo_pack_express.getProduct_code(), mSo_pack_express.getCategory_price_code(), (int) mSo_pack_express.getSite_code(), (int) mSo_pack_express.getOperation_code());
                     File file = new File(ConstantBaseApp.SO_EXPRESS_JSON_PATH, fileName);
                     //
                     if (file.exists()) {
@@ -838,6 +838,8 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         bundle.putInt(SO_Pack_ExpressDao.CONTRACT_CODE, mSo_pack_express.getContract_code());
         bundle.putInt(SO_Pack_ExpressDao.PRODUCT_CODE, (int) mSo_pack_express.getProduct_code());
         bundle.putInt(SO_Pack_ExpressDao.CATEGORY_PRICE_CODE, mSo_pack_express.getCategory_price_code());
+        bundle.putInt(SO_Pack_ExpressDao.SITE_CODE, (int) mSo_pack_express.getSite_code());
+        bundle.putInt(SO_Pack_ExpressDao.OPERATION_CODE, (int) mSo_pack_express.getOperation_code());
         bundle.putString(Constant.MAIN_MD_PRODUCT_SERIAL_ID, binding.mketSerial.getText().toString().trim());
         //
         mIntent.putExtras(bundle);

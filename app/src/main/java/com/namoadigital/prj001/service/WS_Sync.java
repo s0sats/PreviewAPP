@@ -2064,6 +2064,9 @@ public class WS_Sync extends IntentService {
             files_so_pack_express = null;
         }
         //endregion
+        //region Limpeza de diretorio de SO Express
+        ToolBox_Inf.deleteAllFOD(Constant.SO_EXPRESS_JSON_PATH);
+        //endregion
 
         if (dataPackageType.contains(DataPackage.DATA_PACKAGE_CHECKLIST) && !productExist) {
             ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_forms_found"), rec.getLink_url(), "0");
