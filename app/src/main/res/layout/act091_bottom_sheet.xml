@@ -1,134 +1,165 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    android:paddingVertical="15dp"
-    android:paddingHorizontal="15dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:animateLayoutChanges="true"
-    >
-
-    <View
-        android:layout_width="50dp"
-        android:layout_height="3dp"
-        android:layout_gravity="center"
-        android:layout_marginBottom="15dp"
-        android:background="@android:color/darker_gray"
-        android:alpha="0.5"/>
+    android:orientation="vertical">
 
 
-    <TextView
-        android:id="@+id/act091_bottom_sheet_title"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="5dp"
-        android:layout_marginBottom="20dp"
-        android:text="Martelinho de Ouro"
-        style="@style/TextAppearance.MaterialComponents.Headline6"
-        android:textColor="@color/namoa_color_black"
-        android:ellipsize="end"
-        android:textAlignment="center"/>
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:scrollbars="vertical"
+        android:paddingHorizontal="15dp"
+        android:paddingTop="15dp">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/act091_bottom_sheet_textLayoutComment"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingVertical="10dp"
-        app:placeholderText="Inserir Comentário..."
-        android:hint="Comentário"
-        app:placeholderTextColor="@android:color/darker_gray">
-
-        <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-            android:id="@+id/act091_bottom_sheet_comment"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="text"
-            app:mBARCODE="false"
-            app:mNFC="false"
-            app:mOCR="false" />
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:scrollbars="vertical">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <View
+                android:layout_width="50dp"
+                android:layout_height="3dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="15dp"
+                android:alpha="0.5"
+                android:background="@android:color/darker_gray" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/act091_bottom_sheet_textLayoutPrice"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:hint="Preço"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/act091_Qty_Bindings"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:placeholderText="Inserir Preço"
-            app:placeholderTextColor="@android:color/darker_gray">
-
-            <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:id="@+id/act091_bottom_sheet_price"
+            <TextView
+                android:id="@+id/act091_bottom_sheet_title"
+                style="@style/TextAppearance.MaterialComponents.Headline6"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="number"
-                android:textSize="16sp"
-                app:mInputType="number"
-                app:mBARCODE="false"
-                app:mNFC="false"
-                app:mOCR="false" />
+                android:layout_marginBottom="20dp"
+                android:ellipsize="end"
+                android:padding="5dp"
+                android:text="Martelinho de Ouro"
+                android:textAlignment="center"
+                android:textColor="@color/namoa_color_black" />
 
-        </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/act091_bottom_sheet_textLayoutComment"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Comentário"
+                android:paddingVertical="10dp"
+                app:placeholderText="Inserir Comentário..."
+                app:placeholderTextColor="@android:color/darker_gray">
+
+                <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                    android:id="@+id/act091_bottom_sheet_comment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    app:mBARCODE="false"
+                    app:mNFC="false"
+                    app:mOCR="false" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
 
-        <include
-            android:id="@+id/act091_Qty_Bindings"
-            layout="@layout/act091_add_qty"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="@+id/act091_bottom_sheet_textLayoutPrice"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline7"
-            app:layout_constraintTop_toTopOf="@+id/act091_bottom_sheet_textLayoutPrice" />
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/act091_bottom_sheet_textLayoutPrice"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:hint="Preço"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/act091_Qty_Bindings"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:placeholderText="Inserir Preço">
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline7"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.5" />
+                    <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                        android:id="@+id/act091_bottom_sheet_price"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:digits="0123456789,"
+                        app:mDecimal="2"
+                        android:textSize="16sp"
+                        app:mBARCODE="false"
+                        app:mInputType="number"
+                        app:mNFC="false"
+                        app:mOCR="false" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                </com.google.android.material.textfield.TextInputLayout>
 
+
+                <include
+                    android:id="@+id/act091_Qty_Bindings"
+                    layout="@layout/act091_add_qty"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="@+id/act091_bottom_sheet_textLayoutPrice"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/guideline7"
+                    app:layout_constraintTop_toTopOf="@+id/act091_bottom_sheet_textLayoutPrice" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline7"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.5" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <TextView
+                android:id="@+id/act091_bottom_sheet_seeMore"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Serviços incluídos:"
+                android:padding="10dp"
+                android:visibility="gone"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/act091_bottom_sheet_recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="visible"
+                tools:listitem="@layout/act091_bottom_sheet_list_item" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="end">
+        android:gravity="end"
+        android:elevation="15dp"
+        android:padding="10dp"
+        android:clipToPadding="false"
+        android:background="@drawable/background_shadow">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/act091_bottom_sheet_cancel"
             style="@style/NamoaMaterialButtonText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
             android:text="Cancelar"
-             />
+            android:layout_marginEnd="8dp"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/act091_bottom_sheet_ok"
-            style="@style/NamoaNoIconMaterialButtonFilledDarkBlue"
+            style="@style/NamoaNMaterialButtonFilledDarkBlue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:textAllCaps="true"
-            android:padding="2dp"
-            android:text="OK"/>
+            android:text="OK"
+            android:textAllCaps="true" />
 
     </LinearLayout>
-    
+
 </LinearLayout>

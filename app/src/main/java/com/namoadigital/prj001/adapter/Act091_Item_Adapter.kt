@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
+import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.databinding.Act091ListItemBinding
 import com.namoadigital.prj001.model.Act091ServiceItem
@@ -29,15 +30,15 @@ class Act091_Item_Adapter constructor(
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
 
         holder.itemView.setOnClickListener {
-            openBottomSheet(filterDataSet[position].toServiceItem())
+            openBottomSheet(filterDataSet[position].toServiceItem().copy(
+                qty = if(filterDataSet[position].qty == 0) 1 else filterDataSet[position].qty
+            ))
         }
 
         return holder.onBinding(filterDataSet[position])
     }
 
-    override fun getItemCount(): Int {
-        return filterDataSet.size
-    }
+    override fun getItemCount() = filterDataSet.size
 
 
     class ItemViewHolder constructor(
@@ -45,10 +46,14 @@ class Act091_Item_Adapter constructor(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun onBinding(item: TSO_Service_Search_Obj?){
-            binding.act091ListTitle.text = item?.pack_service_desc_full ?: "TITLE"
-            binding.act091ListProgress.max = item?.rating ?: 100
-            binding.act091ListProgress.progress = item?.rating_ref?.toInt() ?: 0
-            binding.act091ListPrice.text = formatDoublePriceToScreen(item?.price)
+            with(binding) {
+                item?.let {
+                    act091ListTitle.text = it.pack_service_desc_full
+                    act091ListProgress.max = it.rating
+                    act091ListProgress.progress = it.rating_ref.toInt()
+                    act091ListPrice.text = formatDoublePriceToScreen(it.price)
+                }
+            }
         }
     }
 
