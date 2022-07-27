@@ -61,7 +61,6 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -514,11 +513,16 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             ){
                 binding.clAddPackServices.setVisibility(View.VISIBLE);
                 //
-                List<SoPackExpressPacksLocal> packs = mPresenter.getExpressPacks(mSo_pack_express);
+                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
+                binding.rvAddPackServices.setLayoutManager(linearLayoutManager);
+                List<SoPackExpressPacksLocal> packs = new ArrayList<>();
+                if(mPresenter.hasPackServiceFile(mSo_pack_express.getContract_code(), mSo_pack_express.getProduct_code(), mSo_pack_express.getCategory_price_code(), mSo_pack_express.getSite_code(), mSo_pack_express.getOperation_code())){
+
+                }else {
+                    packs = mPresenter.getExpressPacks(mSo_pack_express);
+                }
                 //
-                if(packs.size() > 0) {
-                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-                    binding.rvAddPackServices.setLayoutManager(linearLayoutManager);
+                if (packs.size() > 0) {
                     //
                     mAdapter = new Act040SOExpressPackServicesAdapter(
                             packs,
@@ -824,10 +828,8 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             @Override
             public void onClick(View v) {
                 if(mSo_pack_express != null) {
-                    String fileName = ToolBox_Inf.getExpressSOFileName(mSo_pack_express.getContract_code(), (int) mSo_pack_express.getProduct_code(), mSo_pack_express.getCategory_price_code(), (int) mSo_pack_express.getSite_code(), (int) mSo_pack_express.getOperation_code());
-                    File file = new File(ConstantBaseApp.SO_EXPRESS_JSON_PATH, fileName);
                     //
-                    if (file.exists()) {
+                    if (mPresenter.hasPackServiceFile(mSo_pack_express.getContract_code(), mSo_pack_express.getProduct_code(), mSo_pack_express.getCategory_price_code(), mSo_pack_express.getSite_code(), mSo_pack_express.getOperation_code())) {
                         callAct091();
                     }else{
                         mPresenter.executeWS_SO_Service_Search(mSo_pack_express, binding.mketSerial.getText().toString());

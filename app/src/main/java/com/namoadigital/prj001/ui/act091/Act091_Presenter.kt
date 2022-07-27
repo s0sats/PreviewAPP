@@ -34,5 +34,4 @@ class Act091_Presenter constructor(val bundle: Bundle) : Act91_Contract.I_Presen
         return list.data
     }
 
-    private val getData = LIST_EXAMPLE_ACT091
 }

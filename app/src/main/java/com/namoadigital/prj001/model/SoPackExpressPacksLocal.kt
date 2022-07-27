@@ -1,6 +1,6 @@
 package com.namoadigital.prj001.model
 
-class SoPackExpressPacksLocal(
+data class SoPackExpressPacksLocal(
     val pack_code:Int,
     val pack_seq:Int,
     val price_list_code:Int,

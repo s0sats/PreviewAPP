@@ -59,6 +59,7 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -794,7 +795,32 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
 
     @Override
     public List<SoPackExpressPacksLocal> getExpressPacks(SO_Pack_Express mSo_pack_express) {
-        return new ArrayList<>();
+        List<SoPackExpressPacksLocal> packs = new ArrayList<>();
+        packs.add(new SoPackExpressPacksLocal(
+                mSo_pack_express.getCustomer_code(),
+                mSo_pack_express.getSite_code(),
+                mSo_pack_express.getOperation_code(),
+                mSo_pack_express.getProduct_code(),
+                mSo_pack_express.getExpress_code(),
+                -1,
+                mSo_pack_express.getPack_code(),
+                -1,
+                mSo_pack_express.getPrice_list_code(),
+                mSo_pack_express.getPack_desc(),
+                mSo_pack_express.getPack_desc(),
+                1,
+                "P",
+                ""
+            )
+        )           ;
+        return packs;
+    }
+
+    @Override
+    public boolean hasPackServiceFile(int contract_code, long product_code, int category_price_code, long site_code, long operation_code) {
+        String fileName = ToolBox_Inf.getExpressSOFileName(contract_code, (int) product_code, category_price_code, (int) site_code, (int) operation_code);
+        File file = new File(ConstantBaseApp.SO_EXPRESS_JSON_PATH, fileName);
+        return file.exists();
     }
 
     private int getSerialCode(long customer_code, long product_code, String serialId) {

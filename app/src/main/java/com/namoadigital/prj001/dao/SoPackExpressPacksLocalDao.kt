@@ -255,13 +255,13 @@ class SoPackExpressPacksLocalDao(
     }
 
     override fun query(sQuery: String?): MutableList<SoPackExpressPacksLocal> {
-        val tkTicketTypeProducts = mutableListOf<SoPackExpressPacksLocal>()
+        val soPackExpressPacksLocal = mutableListOf<SoPackExpressPacksLocal>()
         openDB()
         try {
             val cursor = db.rawQuery(sQuery, null)
             while (cursor.moveToNext()) {
                 val uAux = toSoPackExpressPacksLocalMapper.map(cursor)
-                tkTicketTypeProducts.add(uAux)
+                soPackExpressPacksLocal.add(uAux)
             }
             cursor.close()
         } catch (e: java.lang.Exception) {
@@ -269,16 +269,16 @@ class SoPackExpressPacksLocalDao(
         } finally {
         }
         closeDB()
-        return tkTicketTypeProducts
+        return soPackExpressPacksLocal
     }
 
     override fun query_HM(sQuery: String?): MutableList<HMAux> {
-        val tkTicketTypeProducts: MutableList<HMAux> = ArrayList()
+        val soPackExpressPacksLocal: MutableList<HMAux> = ArrayList()
         openDB()
         try {
             val cursor = db.rawQuery(sQuery, null)
             while (cursor.moveToNext()) {
-                tkTicketTypeProducts.add(CursorToHMAuxMapper.mapN(cursor))
+                soPackExpressPacksLocal.add(CursorToHMAuxMapper.mapN(cursor))
             }
             cursor.close()
         } catch (e: java.lang.Exception) {
@@ -286,7 +286,7 @@ class SoPackExpressPacksLocalDao(
         } finally {
         }
         closeDB()
-        return tkTicketTypeProducts
+        return soPackExpressPacksLocal
     }
 
     //

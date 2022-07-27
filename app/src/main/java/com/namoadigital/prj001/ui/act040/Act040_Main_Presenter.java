@@ -70,4 +70,6 @@ public interface Act040_Main_Presenter {
     void executeWS_SO_Service_Search(SO_Pack_Express mSo_pack_express, String serialId);
 
     List<SoPackExpressPacksLocal> getExpressPacks(SO_Pack_Express mSo_pack_express);
+
+    boolean hasPackServiceFile(int contract_code, long product_code, int category_price_code, long site_code, long operation_code);
 }
