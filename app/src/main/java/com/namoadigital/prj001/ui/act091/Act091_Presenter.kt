@@ -1,21 +1,16 @@
 package com.namoadigital.prj001.ui.act091
 
-import android.os.Bundle
 import android.content.Context
-import com.google.gson.Gson
+import android.os.Bundle
 import com.google.gson.GsonBuilder
-import com.namoadigital.prj001.dao.SO_Pack_ExpressDao
-import com.google.gson.reflect.TypeToken
 import com.namoa_digital.namoa_library.util.HMAux
-import com.namoadigital.prj001.model.Act091ServiceItem
+import com.namoadigital.prj001.dao.SO_Pack_ExpressDao
 import com.namoadigital.prj001.model.TSO_Service_Search_Obj
 import com.namoadigital.prj001.model.TSO_Service_Search_Rec
 import com.namoadigital.prj001.util.ConstantBaseApp
-import com.namoadigital.prj001.util.ToolBox_Inf
-import java.io.File
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
-import java.util.ArrayList
+import java.io.File
 
 class Act091_Presenter constructor(
     private val context: Context,

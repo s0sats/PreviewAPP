@@ -28,7 +28,8 @@ class Act091_Main : Base_Activity(), Act91_Contract.I_View {
         Act091_Presenter(
             context,
             mModule_Code,
-            mResource_Code
+            mResource_Code,
+            bundleSaved!!
         )
     }
     private val mAdapter: Act091_Item_Adapter? by lazy {
