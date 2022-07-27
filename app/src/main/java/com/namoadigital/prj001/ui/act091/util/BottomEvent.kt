@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act091.util
 
 import android.annotation.SuppressLint
+import android.content.res.ColorStateList
 import com.google.android.material.textfield.TextInputLayout
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.R
@@ -10,7 +11,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf
 
 sealed class BottomEvent {
 
-    data class changePriceColor(val value: Boolean) : BottomEvent()
+    data class changePriceColor(val value: Boolean, val hmAux: HMAux) : BottomEvent()
     data class changeButtonLessQtyColor(val value: Boolean) : BottomEvent()
     data class changeStatePrice(val value: Boolean) : BottomEvent()
     data class OnUpdateBottomSheet(val item: Act091ServiceItem, val hmAux: HMAux) : BottomEvent()
@@ -24,9 +25,12 @@ fun Act091BottomSheetBinding.onEvent(state: BottomEvent){
         is BottomEvent.changePriceColor -> {
             this.act091BottomSheetOk.isEnabled = state.value
             if(state.value){
-                this.act091BottomSheetTextLayoutPrice.changeColorTextLayout(R.color.namoa_light_blue)
+                act091BottomSheetTextLayoutPrice.changeColorTextLayout(R.color.namoa_light_blue)
+                act091BottomSheetTextLayoutPrice.isHelperTextEnabled = false
             }else{
-                this.act091BottomSheetTextLayoutPrice.changeColorTextLayout(R.color.edit_text_color_required)
+                act091BottomSheetTextLayoutPrice.isHelperTextEnabled = true
+                act091BottomSheetTextLayoutPrice.helperText = "${state.hmAux["required_lbl"]}"
+                act091BottomSheetTextLayoutPrice.changeColorTextLayout(R.color.edit_text_color_required)
             }
         }
 
@@ -41,7 +45,7 @@ fun Act091BottomSheetBinding.onEvent(state: BottomEvent){
         is BottomEvent.OnUpdateBottomSheet -> {
             var total = 0.0
             val item = state.item
-
+            act091QtyBindings.act091BottomSheetQty.setText("${item.qty}")
             if (item.type_ps == "P") {
                 act091BottomSheetPrice.isEnabled = false
                 act091BottomSheetTextLayoutPrice.isHelperTextEnabled = true
@@ -65,7 +69,10 @@ fun Act091BottomSheetBinding.onEvent(state: BottomEvent){
             }else{
                 item.price?.let { price ->
                     act091BottomSheetPrice.setText(ToolBox_Inf.formatDoublePriceToScreen(price).toString())
+                    return
                 }
+                act091BottomSheetTextLayoutPrice.isHelperTextEnabled = true
+                act091BottomSheetTextLayoutPrice.helperText = "${state.hmAux["required_lbl"]}"
             }
         }
     }

@@ -49,7 +49,7 @@ class Act091_BottomSheet_Item_Adapter constructor(
 
                 act091BottomSheetServiceTitle.text = item.service_desc_full
                 if(type == "P"){
-                    onEvent(BottomListEvent.stateWhenIsPackage(item))
+                    onEvent(BottomListEvent.stateWhenIsPackage(item, hmAux))
                 }
 
 
@@ -59,7 +59,7 @@ class Act091_BottomSheet_Item_Adapter constructor(
                     }
 
                     override fun onTextChanged(char: CharSequence?, start: Int, before: Int, count: Int) {
-                        onEvent(BottomListEvent.changePriceColor(char?.isNotEmpty()!!))
+                        onEvent(BottomListEvent.changePriceColor(char?.isNotEmpty()!!, hmAux))
                     }
 
                     override fun afterTextChanged(editable: Editable) {

@@ -48,6 +48,7 @@ class Act091_BottomSheet constructor(
             "services_included_lbl",
             "qty_lbl",
             "incomplete_placeholder",
+            "required_lbl"
         )
         val mResource_Code = ToolBox_Inf.getResourceCode(
             context,
@@ -124,10 +125,9 @@ class Act091_BottomSheet constructor(
             contentItem.let {
                 act091BottomSheetTitle.text = it.name
                 onEvent(BottomEvent.changeButtonLessQtyColor(it.qty != 1))
-                onEvent(BottomEvent.changePriceColor(it.manual_price == 0))
+                onEvent(BottomEvent.changePriceColor(it.manual_price == 0, hmAux))
                 onEvent(BottomEvent.changeStatePrice(it.manual_price != 0))
                 onEvent(BottomEvent.OnUpdateBottomSheet(it, hmAux))
-                act091QtyBindings.act091BottomSheetQty.setText("${it.qty}")
             }
 
         }
@@ -191,7 +191,7 @@ class Act091_BottomSheet constructor(
                 }
 
                 override fun onTextChanged(char: CharSequence?, start: Int, before: Int, count: Int) {
-                    onEvent(BottomEvent.changePriceColor(char?.isNotEmpty()!!))
+                    onEvent(BottomEvent.changePriceColor(char?.isNotEmpty()!!, hmAux))
                 }
 
                 override fun afterTextChanged(editable: Editable) {
