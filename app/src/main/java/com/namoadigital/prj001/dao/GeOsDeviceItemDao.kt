@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.dao
 
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
@@ -46,6 +47,7 @@ class GeOsDeviceItemDao(
         const val VERIFICATION_INSTRUCTION = "verification_instruction"
         const val REQUIRE_JUSTIFY_PROBLEM = "require_justify_problem"
         const val CRITICAL_ITEM = "critical_item"
+        const val CHANGE_ADJUST = "change_adjust"
         const val ORDER_SEQ = "order_seq"
         const val STRUCTURE = "structure"
         const val MANUAL_DESC = "manual_desc"
@@ -462,6 +464,7 @@ class GeOsDeviceItemDao(
                         verification_instruction = getStringOrNull(getColumnIndex(VERIFICATION_INSTRUCTION)),
                         require_justify_problem = getInt(getColumnIndex(REQUIRE_JUSTIFY_PROBLEM)),
                         critical_item = getInt(getColumnIndex(CRITICAL_ITEM)),
+                        change_adjust = getInt(getColumnIndex(CHANGE_ADJUST)),
                         order_seq = getInt(getColumnIndex(ORDER_SEQ)),
                         structure = getInt(getColumnIndex(STRUCTURE)),
                         manual_desc = getStringOrNull(getColumnIndex(MANUAL_DESC)),
@@ -531,6 +534,8 @@ class GeOsDeviceItemDao(
                     put(REQUIRE_JUSTIFY_PROBLEM, it.require_justify_problem)
                     //
                     put(CRITICAL_ITEM, it.critical_item)
+                    //
+                    put(CHANGE_ADJUST, it.change_adjust)
                     //
                     put(ORDER_SEQ, it.order_seq)
                     //

@@ -239,6 +239,7 @@ class Act086MainPresenter(
                 verification_instruction = null,
                 require_justify_problem = 0,
                 critical_item = 0,
+                change_adjust = 0,
                 order_seq = nextItemCheckSeq,
                 structure = 0,
                 manual_desc = null,

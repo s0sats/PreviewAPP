@@ -37,6 +37,7 @@ import com.namoadigital.prj001.model.Act086MaterialItem
 import com.namoadigital.prj001.model.GeOsDeviceItem
 import com.namoadigital.prj001.ui.act086.Act086Main
 import com.namoadigital.prj001.ui.act086.Act086ProductEditDialog
+import com.namoadigital.prj001.ui.act086.bottomsheet.Act086_BottomSheet
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -68,7 +69,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     private lateinit var prefixPhoto: String
     private val photoList = mutableListOf<String>()
     private val photoLimit = 4
-    private val photoAdapter by lazy{
+    private val photoAdapter by lazy {
         Act086PhotoAdapter(::onPhotoItemClick)
     }
     private val materialFragList = mutableListOf<Act086MaterialItem>()
@@ -98,7 +99,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     private var skipSave: Boolean = false
     lateinit var leaveItem: (isManualItemDelete: Boolean) -> Unit
     private var isPhotoAction = false
-    lateinit var onMaterialPlannedInteraction: (isPlanned: Boolean) -> Unit
+    lateinit var onMaterialPlannedInteraction: (isPlanned: Boolean, maintenceOther: String) -> Unit
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -293,7 +294,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     }
 
     fun isItemDescriptionInEditMode() : Boolean {
-        return isManualDescInEdit && !binding.act086VerificationFrgMketManualDesc.text.toString().isNullOrEmpty();
+        return isManualDescInEdit && !binding.act086VerificationFrgMketManualDesc.text.toString().isNullOrEmpty()
     }
 
     private fun buildPhotoListFromDb() {
@@ -594,6 +595,30 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     }
 
 
+    private fun openBottomSheet(){
+        Act086_BottomSheet.getInstance(
+            callAct090 = {
+                binding.act086VerificationFrgRdoAnswerFixed.text = "${hmAux_Trans["action_done_lbl"]} \n$it"
+                onMaterialPlannedInteraction(lastSelectedRdoId == binding.act086VerificationFrgRdoAnswerAlert.id, it)
+                         },
+            { GoToLastSelection() }
+        )
+            .show(this.activity!!.supportFragmentManager, "bottomSheet")
+    }
+
+    private fun GoToLastSelection() =
+        with(binding) {
+            when (lastSelectedRdoId) {
+                act086VerificationFrgRdoAnswerFixed.id -> act086VerificationFrgRdoAnswerFixed.isChecked =
+                    true
+                act086VerificationFrgRdoAnswerAlreadyDone.id -> act086VerificationFrgRdoAnswerAlreadyDone.isChecked =
+                    true
+                act086VerificationFrgRdoAnswerAlert.id -> act086VerificationFrgRdoAnswerAlert.isChecked =
+                    true
+                else -> act086VerificationFrgRdoAnswerNotVerified.isChecked = true
+            }
+        }
+
     private fun initActions() {
         binding.act086VerificationFrgClMaterial.setOnClickListener {
             binding.act086VerificationFrgMketComment.clearFocus()
@@ -610,6 +635,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         binding.act086VerificationFrgBtnOk.setOnClickListener{
             leaveItem(false)
         }
+
 
         binding.act086VerificationFrgRgAnswers.setOnCheckedChangeListener { _, checkedId ->
             with(binding){
@@ -637,25 +663,34 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                         }
                     )
                 }else{
-                    commitRdoChange(checkedId)
-                    if(act086VerificationFrgRdoAnswerFixed.id.equals(checkedId)
-                        && act086VerificationFrgRdoAnswerFixed.isPressed()
+                    if(act086VerificationFrgRdoAnswerFixed.id == checkedId
+                        && act086VerificationFrgRdoAnswerFixed.isPressed
                         && mPresenter.isCycleExpired(geOsDeviceItem)
                         && mPresenter.hasMaterialPlanned(geOsDeviceItem)
                         && !inReadOnly
                     ){
-                        when(lastSelectedRdoId){
+/*                        when(lastSelectedRdoId){
                             act086VerificationFrgRdoAnswerFixed.id -> act086VerificationFrgRdoAnswerFixed.isChecked = true
                             act086VerificationFrgRdoAnswerAlreadyDone.id -> act086VerificationFrgRdoAnswerAlreadyDone.isChecked = true
                             act086VerificationFrgRdoAnswerAlert.id -> act086VerificationFrgRdoAnswerAlert.isChecked = true
                             else -> act086VerificationFrgRdoAnswerNotVerified.isChecked = true
+                        }*/
+
+                        if(geOsDeviceItem.change_adjust == 1){
+                            openBottomSheet()
+                        }else{
+                            commitRdoChange(checkedId)
+                            onMaterialPlannedInteraction(lastSelectedRdoId == act086VerificationFrgRdoAnswerAlert.id, "")
                         }
-                        onMaterialPlannedInteraction(lastSelectedRdoId.equals(act086VerificationFrgRdoAnswerAlert.id))
+
                     }else{
+                        commitRdoChange(checkedId)
                         materialFragAdapter.notifyDataSetChanged()
                     }
                 }
             }
+            println("BINDING|BINDING|BINDING|BINDING >>>>>>>> ${binding.act086VerificationFrgRgAnswers.checkedRadioButtonId} and $lastSelectedRdoId ${(binding.act086VerificationFrgRgAnswers.checkedRadioButtonId == lastSelectedRdoId)}")
+
         }
 
         binding.act086VerificationFrgClDeleteInfos.setOnClickListener {
@@ -784,7 +819,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         }
         //
         binding.act086VerificationFrgClReviewMaterial.setOnClickListener{
-            onMaterialPlannedInteraction(lastSelectedRdoId.equals(binding.act086VerificationFrgRdoAnswerAlert.id))
+            onMaterialPlannedInteraction(lastSelectedRdoId.equals(binding.act086VerificationFrgRdoAnswerAlert.id), "")
         }
     }
 
@@ -1171,10 +1206,6 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     override fun addProductToListAndShowDialog(materialItem: Act086MaterialItem) {
         materialFragList.add(materialItem)
         callProductEditDialog(materialFragList.lastIndex, materialItem, true)
-    }
-
-    override fun onDetach() {
-        super.onDetach()
     }
 
     fun resetItemDescription() {

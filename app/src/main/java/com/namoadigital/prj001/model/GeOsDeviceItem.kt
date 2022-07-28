@@ -30,6 +30,7 @@ class GeOsDeviceItem(
     val verification_instruction :String?,
     val require_justify_problem :Int,
     var critical_item :Int,//Pode ser modificado pela segunda varredura
+    val change_adjust: Int,
     val order_seq :Int,
     @Expose
     val structure :Int,
