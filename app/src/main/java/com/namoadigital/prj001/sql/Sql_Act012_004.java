@@ -38,7 +38,8 @@ public class Sql_Act012_004 implements Specification {
                             SO_Pack_Express_LocalDao.TABLE +" s\n" +
                         " WHERE \n" +
                         "   s.customer_code = '"+customer_code+"'\n" +
-                        "   and (s.ret_code is null or s.ret_code = '"+ Constant.SYS_STATUS_ERROR+"') \n" +
+//                        "   and (s.ret_code is null or s.ret_code = '"+ Constant.SYS_STATUS_ERROR+"') \n" +
+                        "   and (s.so_status  = '"+ Constant.SYS_STATUS_WAITING_SYNC+"') \n" +
                         ";")
                 //.append(PENDING_QTY+"#"+TYPE+"#"+MODULE)
                 .toString();
