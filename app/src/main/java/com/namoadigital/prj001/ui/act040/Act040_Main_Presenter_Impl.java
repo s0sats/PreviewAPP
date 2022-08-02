@@ -221,6 +221,26 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
             return;
         }
         //
+        setSoPackExpressLocal(mSo_pack_express, md_partner, md_product, serial, billingInfo1, billingInfo2, billingInfo3, so_pack_express_local, md_site, md_operation, md_zone, Constant.SYS_STATUS_WAITING_SYNC);
+        //
+        so_pack_express_localDao.addUpdate(so_pack_express_local);
+        //
+        executeSerialSave();
+    }
+
+    @Override
+    public void onCreateSo_Pack_Express_Structure(SO_Pack_Express mSo_pack_express, MD_Partner md_partner, MD_Product md_product, String serial, String billingInfo1, String billingInfo2, String billingInfo3) {
+        SO_Pack_Express_Local so_pack_express_local = new SO_Pack_Express_Local();
+        MD_Site md_site = getSiteInfo();
+        MD_Operation md_operation = getOperationInfo();
+        MD_Site_Zone md_zone = getZoneInfo();
+        //
+        setSoPackExpressLocal(mSo_pack_express, md_partner, md_product, serial, billingInfo1, billingInfo2, billingInfo3, so_pack_express_local, md_site, md_operation, md_zone, Constant.SYS_STATUS_PROCESS);
+        //
+        so_pack_express_localDao.addUpdate(so_pack_express_local);
+    }
+
+    private void setSoPackExpressLocal(SO_Pack_Express mSo_pack_express, MD_Partner md_partner, MD_Product md_product, String serial, String billingInfo1, String billingInfo2, String billingInfo3, SO_Pack_Express_Local so_pack_express_local, MD_Site md_site, MD_Operation md_operation, MD_Site_Zone md_zone, String so_status) {
         long nTemp = Long.parseLong(so_pack_express_localDao.getByStringHM(
                 new SO_Pack_Express_Local_Sql_006(
                         mSo_pack_express.getCustomer_code(),
@@ -249,10 +269,10 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
         so_pack_express_local.setExpress_tmp(nTemp);
         so_pack_express_local.setPartner_code(md_partner.getPartner_code());
         so_pack_express_local.setSerial_id(serial);
-        so_pack_express_local.setStatus(ConstantBaseApp.SO_EXPRESS_STATUS_NEW);
+        so_pack_express_local.setStatus(Constant.SO_EXPRESS_STATUS_NEW);
         //
         so_pack_express_local.setSo_desc(mSo_pack_express.getPack_desc());
-        so_pack_express_local.setSo_status(Constant.SYS_STATUS_WAITING_SYNC);
+        so_pack_express_local.setSo_status(so_status);
         so_pack_express_local.setLog_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
         //
         so_pack_express_local.setBilling_add_inf1_value(billingInfo1);
@@ -262,10 +282,6 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
         so_pack_express_local.setBilling_add_inf1_tracking(mSo_pack_express.getBilling_add_inf1_tracking());
         so_pack_express_local.setBilling_add_inf2_tracking(mSo_pack_express.getBilling_add_inf2_tracking());
         so_pack_express_local.setBilling_add_inf3_tracking(mSo_pack_express.getBilling_add_inf3_tracking());
-        //
-        so_pack_express_localDao.addUpdate(so_pack_express_local);
-        //
-        executeSerialSave();
     }
 
     private MD_Site_Zone getZoneInfo() {
@@ -812,15 +828,20 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
                 "P",
                 ""
             )
-        )           ;
+        );
         return packs;
     }
 
     @Override
     public boolean hasPackServiceFile(int contract_code, long product_code, int category_price_code, long site_code, long operation_code) {
-        String fileName = ToolBox_Inf.getExpressSOFileName(contract_code, (int) product_code, category_price_code, (int) site_code, (int) operation_code);
+        String fileName = ToolBox_Inf.getExpressSOFileName(contract_code, product_code, category_price_code, site_code, operation_code);
         File file = new File(ConstantBaseApp.SO_EXPRESS_JSON_PATH, fileName);
         return file.exists();
+    }
+
+    @Override
+    public SO_Pack_Express_Local getExpressPackLocal(long customer_code, long product_code, long site_code, long operation_code, int bundle_express_tmp) {
+        return null;
     }
 
     private int getSerialCode(long customer_code, long product_code, String serialId) {

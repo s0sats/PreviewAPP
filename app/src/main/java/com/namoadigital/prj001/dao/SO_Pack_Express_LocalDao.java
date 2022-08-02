@@ -3,12 +3,17 @@ package com.namoadigital.prj001.dao;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
+import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.SO_Pack_Express_Local;
+import com.namoadigital.prj001.model.SoPackExpressPacksLocal;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_010;
+import com.namoadigital.prj001.sql.SoPackExpressPacksLocalSql002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -100,7 +105,15 @@ public class SO_Pack_Express_LocalDao extends BaseDao implements Dao<SO_Pack_Exp
 
     @Override
     public void addUpdate(SO_Pack_Express_Local so_pack_express_local) {
-        openDB();
+        addUpdate(so_pack_express_local, null);
+    }
+
+    public void addUpdate(SO_Pack_Express_Local so_pack_express_local, SQLiteDatabase dbInstance) {
+        if(dbInstance == null) {
+            openDB();
+        }else{
+            this.db = dbInstance;
+        }
 
         try {
 
@@ -120,13 +133,31 @@ public class SO_Pack_Express_LocalDao extends BaseDao implements Dao<SO_Pack_Exp
 
                 db.update(TABLE, toContentValuesMapper.map(so_pack_express_local), sbWhere.toString(), null);
             }
-
+            //
+            if(so_pack_express_local.getPacksLocals().size() > 0) {
+                DaoObjReturn daoObjReturn = tryAddUpdateExpressPackAndServices(so_pack_express_local.getPacksLocals(), db);
+                if (daoObjReturn.hasError()) {
+                    throw new Exception(daoObjReturn.getRawMessage());
+                }
+            }
+            //
         } catch (Exception e) {
             String error = e.toString();
         } finally {
         }
+        if(dbInstance == null) {
+            closeDB();
+        }
+    }
 
-        closeDB();
+    private DaoObjReturn tryAddUpdateExpressPackAndServices(List<SoPackExpressPacksLocal> packsLocals, SQLiteDatabase db) {
+        SoPackExpressPacksLocalDao soPackExpressPacksLocalDao = new  SoPackExpressPacksLocalDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        //Chama insertUpdate do Pacote de servicos adicionais,passando db como param aguardando retorno.
+        return soPackExpressPacksLocalDao.addUpdate(packsLocals, false, db);
     }
 
     @Override
@@ -185,6 +216,61 @@ public class SO_Pack_Express_LocalDao extends BaseDao implements Dao<SO_Pack_Exp
         closeDB();
     }
 
+    public DaoObjReturn removeFull(SO_Pack_Express_Local so_pack_express_local) {
+        DaoObjReturn daoObjReturn = new DaoObjReturn();
+        long addUpdateRet = 0;
+        String curAction = DaoObjReturn.DELETE;
+        daoObjReturn.setTable(TABLE);
+        //
+        openDB();
+        try {
+            StringBuilder sbWhere = new StringBuilder();
+            sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(so_pack_express_local.getCustomer_code())).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(SITE_CODE).append(" = '").append(String.valueOf(so_pack_express_local.getSite_code())).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(OPERATION_CODE).append(" = '").append(String.valueOf(so_pack_express_local.getOperation_code())).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(PRODUCT_CODE).append(" = '").append(so_pack_express_local.getProduct_code()).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(EXPRESS_CODE).append(" = '").append(so_pack_express_local.getExpress_code()).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(EXPRESS_TMP).append(" = '").append(so_pack_express_local.getExpress_tmp()).append("'");
+            //
+            db.beginTransaction();
+            //
+            db.delete(TABLE, sbWhere.toString(), null);
+            db.delete(SoPackExpressPacksLocalDao.TABLE, sbWhere.toString(), null);
+            db.delete(SoPackExpressServicesLocalDao.TABLE, sbWhere.toString(), null);
+            //
+            db.setTransactionSuccessful();
+        }catch (SQLiteException e){
+            //Chama metodo que baseado na exception gera obj de retorno setado como erro
+            //e contendo msg de erro tratada.
+            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
+            //
+            ToolBox_Inf.registerException(
+                    getClass().getName(),
+                    new Exception(
+                            e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
+                    )
+            );
+        } catch (Exception e) {
+            //Seta obj de retorno com flag de erro e gera arquivo de exception
+            daoObjReturn.setError(true);
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        } finally {
+            db.endTransaction();
+            //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
+            //ou rowId do ultimo insert.
+            daoObjReturn.setAction(curAction);
+            daoObjReturn.setActionReturn(addUpdateRet);
+        }
+        closeDB();
+        return daoObjReturn;
+    }
+
+
     @Override
     public void remove(String s_query) {
         openDB();
@@ -212,7 +298,9 @@ public class SO_Pack_Express_LocalDao extends BaseDao implements Dao<SO_Pack_Exp
             while (cursor.moveToNext()) {
                 so_pack_express_local = toSO_Pack_Express_LocalMapper.map(cursor);
             }
-
+            if(so_pack_express_local != null){
+                getSoPackExpressPacksLocal(so_pack_express_local);
+            }
             cursor.close();
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
@@ -222,6 +310,27 @@ public class SO_Pack_Express_LocalDao extends BaseDao implements Dao<SO_Pack_Exp
         closeDB();
 
         return so_pack_express_local;
+    }
+
+    private void getSoPackExpressPacksLocal(SO_Pack_Express_Local so_pack_express_local) {
+        SoPackExpressPacksLocalDao soPackExpressPacksLocalDao = new SoPackExpressPacksLocalDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        List<SoPackExpressPacksLocal> packs = soPackExpressPacksLocalDao.query(
+                new SoPackExpressPacksLocalSql002(
+                        so_pack_express_local.getCustomer_code(),
+                        so_pack_express_local.getSite_code(),
+                        so_pack_express_local.getOperation_code(),
+                        so_pack_express_local.getProduct_code(),
+                        so_pack_express_local.getExpress_code(),
+                        so_pack_express_local.getExpress_tmp()
+                ).toSqlQuery()
+        );
+        //
+        so_pack_express_local.setPacksLocals(packs);
+        //
     }
 
     @Override

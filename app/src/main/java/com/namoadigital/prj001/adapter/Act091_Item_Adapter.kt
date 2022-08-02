@@ -5,19 +5,18 @@ import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
-import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.databinding.Act091ListItemBinding
-import com.namoadigital.prj001.model.Act091ServiceItem
+import com.namoadigital.prj001.model.SOExpressItemHeader
 import com.namoadigital.prj001.model.TSO_Service_Search_Obj
-import com.namoadigital.prj001.model.toServiceItem
+import com.namoadigital.prj001.model.toSOExpressItemHeader
 import com.namoadigital.prj001.util.ToolBox_Inf.formatDoublePriceToScreen
 import java.util.*
 
 class Act091_Item_Adapter constructor(
     private val dataset: List<TSO_Service_Search_Obj>,
     private val notifyFilterApplied: (Int) -> Unit,
-    private val openBottomSheet: (Act091ServiceItem) -> Unit,
+    private val openBottomSheet: (SOExpressItemHeader) -> Unit,
     ) : RecyclerView.Adapter<Act091_Item_Adapter.ItemViewHolder>(), Filterable{
 
     var filterDataSet = dataset.toMutableList()
@@ -30,7 +29,7 @@ class Act091_Item_Adapter constructor(
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
 
         holder.itemView.setOnClickListener {
-            openBottomSheet(filterDataSet[position].toServiceItem().copy(
+            openBottomSheet(filterDataSet[position].toSOExpressItemHeader().copy(
                 qty = if(filterDataSet[position].qty == 0) 1 else filterDataSet[position].qty
             ))
         }
@@ -72,7 +71,7 @@ class Act091_Item_Adapter constructor(
 
                 temp.addAll(
                     dataset.filter {
-                        val allFilter = ToolBox.AccentMapper(it.allFieldForFilter.toLowerCase())
+                        val allFilter = ToolBox.AccentMapper(it.allFieldForFilter.lowercase())
                         allFilter.contains(charString)
                     }
                 )

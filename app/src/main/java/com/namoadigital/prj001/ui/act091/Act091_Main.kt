@@ -6,11 +6,10 @@ import android.view.View
 import android.view.WindowManager
 import com.google.gson.Gson
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
-import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.view.Base_Activity
 import com.namoadigital.prj001.adapter.Act091_Item_Adapter
 import com.namoadigital.prj001.databinding.Act091MainBinding
-import com.namoadigital.prj001.model.Act091ServiceItem
+import com.namoadigital.prj001.model.SOExpressItemHeader
 import com.namoadigital.prj001.ui.act040.Act040_Main
 import com.namoadigital.prj001.ui.act091.bottomstate.Act091_BottomSheet
 import com.namoadigital.prj001.util.Constant
@@ -27,6 +26,7 @@ class Act091_Main : Base_Activity(), Act91_Contract.I_View {
     private val mPresenter: Act091_Presenter by lazy {
         Act091_Presenter(
             context,
+            this,
             mModule_Code,
             mResource_Code,
             bundleSaved!!
@@ -77,9 +77,14 @@ class Act091_Main : Base_Activity(), Act91_Contract.I_View {
     }
 
 
-    override fun openBottomSheet(item: Act091ServiceItem) {
-        Act091_BottomSheet.getInstance(Gson().toJson(item))
-            .show(supportFragmentManager, "bottomSheet")
+    override fun openBottomSheet(itemHeader: SOExpressItemHeader) {
+        Act091_BottomSheet.getInstance(Gson().toJson(itemHeader)).apply {
+            onAddServices = ::onAddServicesClick
+        }.show(supportFragmentManager, "bottomSheet")
+    }
+
+    fun onAddServicesClick(contentItemHeader: SOExpressItemHeader){
+        mPresenter.savePackServices(contentItemHeader)
     }
 
     private fun initVars(){

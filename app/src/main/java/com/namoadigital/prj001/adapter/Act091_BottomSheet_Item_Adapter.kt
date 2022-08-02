@@ -8,24 +8,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.databinding.Act091BottomSheetListItemBinding
-import com.namoadigital.prj001.model.TSO_Service_Search_Detail_Obj
-import com.namoadigital.prj001.ui.act091.util.BottomEvent
+import com.namoadigital.prj001.model.SOExpressItemDetail
 import com.namoadigital.prj001.ui.act091.util.BottomListEvent
 import com.namoadigital.prj001.ui.act091.util.onEvent
-import java.text.NumberFormat
 
 class Act091_BottomSheet_Item_Adapter constructor(
-    private val dataset: List<TSO_Service_Search_Detail_Obj>,
+    private val dataset: List<SOExpressItemDetail>,
     private val type: String,
     private val hmAux: HMAux,
-    private val onUpdateList: (List<TSO_Service_Search_Detail_Obj>) -> Unit,
+    private val onUpdateList: () -> Unit,
 ) : RecyclerView.Adapter<Act091_BottomSheet_Item_Adapter.ItemViewHolder>() {
 
 
-    val listCustomEdit = dataset.toMutableList()
+//    val listCustomEdit = dataset.toMutableList()
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
@@ -33,7 +30,7 @@ class Act091_BottomSheet_Item_Adapter constructor(
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-        return holder.onBinding(dataset[position], position)
+        return holder.onBinding(dataset[position])
     }
 
     override fun getItemCount() = dataset.size
@@ -43,7 +40,7 @@ class Act091_BottomSheet_Item_Adapter constructor(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         @SuppressLint("UseCompatLoadingForDrawables")
-        fun onBinding(item: TSO_Service_Search_Detail_Obj, position: Int){
+        fun onBinding(item: SOExpressItemDetail){
             with(binding) {
                 setLabels(this)
 
@@ -51,7 +48,6 @@ class Act091_BottomSheet_Item_Adapter constructor(
                 if(type == "P"){
                     onEvent(BottomListEvent.stateWhenIsPackage(item, hmAux))
                 }
-
 
                 act091BottomSheetServicePrice.addTextChangedListener(object : TextWatcher {
                     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -73,15 +69,40 @@ class Act091_BottomSheet_Item_Adapter constructor(
                             }
 
                             if (it.isEmpty()) {
-                                listCustomEdit[position].price = null
+                                item.price = null
                             } else {
-                                listCustomEdit[position].price =
+                                item.price =
                                     it.toString().replace(",", ".").toDouble()
                             }
-                            onUpdateList(listCustomEdit)
+                            onUpdateList()
                         }
                     }
                 })
+                //
+                act091BottomSheetServiceComment.addTextChangedListener(object : TextWatcher{
+                    override fun beforeTextChanged(
+                        s: CharSequence?,
+                        start: Int,
+                        count: Int,
+                        after: Int
+                    ) {
+
+                    }
+
+                    override fun onTextChanged(
+                        s: CharSequence?,
+                        start: Int,
+                        before: Int,
+                        count: Int
+                    ) {
+
+                    }
+
+                    override fun afterTextChanged(s: Editable?) {
+                       item.comments = s.toString()
+                    }
+                })
+                //
             }
         }
 

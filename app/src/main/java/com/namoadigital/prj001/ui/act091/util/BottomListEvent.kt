@@ -4,13 +4,14 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.adapter.onHide
 import com.namoadigital.prj001.databinding.Act091BottomSheetListItemBinding
+import com.namoadigital.prj001.model.SOExpressItemDetail
 import com.namoadigital.prj001.model.TSO_Service_Search_Detail_Obj
 import com.namoadigital.prj001.util.ToolBox_Inf
 
 sealed class BottomListEvent {
 
     data class changePriceColor(val value: Boolean, val hmAux: HMAux) : BottomListEvent()
-    data class stateWhenIsPackage(val item: TSO_Service_Search_Detail_Obj, val hmAux: HMAux) : BottomListEvent()
+    data class stateWhenIsPackage(val item: SOExpressItemDetail, val hmAux: HMAux) : BottomListEvent()
 }
 
 fun Act091BottomSheetListItemBinding.onEvent(event: BottomListEvent){

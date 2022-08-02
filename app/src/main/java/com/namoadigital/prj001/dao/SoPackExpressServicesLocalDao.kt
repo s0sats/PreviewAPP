@@ -3,6 +3,7 @@ package com.namoadigital.prj001.dao
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
+import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import androidx.core.database.getStringOrNull
 import com.namoa_digital.namoa_library.util.HMAux
@@ -23,7 +24,7 @@ class SoPackExpressServicesLocalDao(
 ), DaoWithReturn<SoPackExpressServicesLocal> {
 
     companion object {
-        const val TABLE = "tk_ticket_type_sites"
+        const val TABLE = "so_pack_express_services_local"
         const val CUSTOMER_CODE = "customer_code"
         const val SITE_CODE = "site_code"
         const val OPERATION_CODE = "operation_code"
@@ -122,6 +123,7 @@ class SoPackExpressServicesLocalDao(
                         AND ${EXPRESS_TMP} = '${soPackExpressServicesLocal.express_tmp}'
                         AND ${PACK_CODE} = '${soPackExpressServicesLocal.pack_code}'
                         AND ${PACK_SEQ} = '${soPackExpressServicesLocal.pack_seq}'
+                        AND ${SERVICE_CODE} = '${soPackExpressServicesLocal.service_code}'
                         """.trimIndent()
                 )
         }
@@ -132,71 +134,7 @@ class SoPackExpressServicesLocalDao(
         items: MutableList<SoPackExpressServicesLocal>?,
         status: Boolean
     ): DaoObjReturn {
-        var daoObjReturn = DaoObjReturn()
-        var addUpdateRet: Long = 0
-        var curAction = DaoObjReturn.INSERT_OR_UPDATE
-        //
-        openDB()
-
-        try {
-            daoObjReturn.table = TkTicketTypeSiteDao.TABLE
-            curAction = DaoObjReturn.UPDATE
-
-            db.beginTransaction()
-
-            if (status) {
-                db.delete(TkTicketTypeSiteDao.TABLE, null, null)
-            }
-
-            items?.forEach { item ->
-                //Where para update
-                val sbWhere: StringBuilder = getWherePkClause(item)
-                //Tenta update e armazena retorno
-                addUpdateRet = db.update(
-                    TkTicketTypeSiteDao.TABLE,
-                    toContentValuesMapper.map(item),
-                    sbWhere.toString(),
-                    null
-                ).toLong()
-                //Se nenhuma linha afetada, tenta insert
-                if (addUpdateRet == 0L) {
-                    curAction = DaoObjReturn.INSERT
-                    db.insertOrThrow(
-                        TkTicketTypeSiteDao.TABLE,
-                        null,
-                        toContentValuesMapper.map(item)
-                    )
-                }
-            }
-            //
-            db.setTransactionSuccessful()
-        } catch (e: SQLiteException) {
-            //Chama metodo que baseado na exception gera obj de retorno setado como erro
-            //e contendo msg de erro tratada.
-            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.message)
-            //Gera arquivo de exception usando dados da exception e do obj de retorno
-            ToolBox_Inf.registerException(
-                javaClass.name,
-                Exception(
-                    """
-                ${e.message}
-                ${daoObjReturn.errorMsg}
-                """.trimIndent()
-                )
-            )
-        } catch (e: Exception) {
-            //Seta obj de retorno com flag de erro e gera arquivo de exception
-            daoObjReturn.setError(true)
-            ToolBox_Inf.registerException(javaClass.name, e)
-        } finally {
-            db.endTransaction()
-            daoObjReturn.action = curAction
-            daoObjReturn.actionReturn = addUpdateRet
-        }
-        //
-        closeDB()
-        //
-        return daoObjReturn
+        return addUpdate(items, status, null)
     }
 
     override fun addUpdate(sQuery: String?) {
@@ -289,6 +227,84 @@ class SoPackExpressServicesLocalDao(
         }
         closeDB()
         return tkTicketTypeProducts
+    }
+
+    fun addUpdate(items: MutableList<SoPackExpressServicesLocal>?, status: Boolean, dbInstance: SQLiteDatabase?):DaoObjReturn {
+        var daoObjReturn = DaoObjReturn()
+        var addUpdateRet: Long = 0
+        var curAction = DaoObjReturn.INSERT_OR_UPDATE
+        //
+        if(dbInstance == null){
+            openDB()
+        }else{
+            this.db = dbInstance
+        }
+
+        try {
+            daoObjReturn.table = SoPackExpressServicesLocalDao.TABLE
+            curAction = DaoObjReturn.UPDATE
+            if(dbInstance == null) {
+                db.beginTransaction()
+            }
+            if (status) {
+                db.delete(SoPackExpressServicesLocalDao.TABLE, null, null)
+            }
+
+            items?.forEach { item ->
+                //Where para update
+                val sbWhere: StringBuilder = getWherePkClause(item)
+                //Tenta update e armazena retorno
+                addUpdateRet = db.update(
+                    SoPackExpressServicesLocalDao.TABLE,
+                    toContentValuesMapper.map(item),
+                    sbWhere.toString(),
+                    null
+                ).toLong()
+                //Se nenhuma linha afetada, tenta insert
+                if (addUpdateRet == 0L) {
+                    curAction = DaoObjReturn.INSERT
+                    db.insertOrThrow(
+                        SoPackExpressServicesLocalDao.TABLE,
+                        null,
+                        toContentValuesMapper.map(item)
+                    )
+                }
+            }
+            //
+            if(dbInstance == null) {
+                db.setTransactionSuccessful()
+            }
+        } catch (e: SQLiteException) {
+            //Chama metodo que baseado na exception gera obj de retorno setado como erro
+            //e contendo msg de erro tratada.
+            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.message)
+            //Gera arquivo de exception usando dados da exception e do obj de retorno
+            ToolBox_Inf.registerException(
+                javaClass.name,
+                Exception(
+                    """
+                ${e.message}
+                ${daoObjReturn.errorMsg}
+                """.trimIndent()
+                )
+            )
+        } catch (e: Exception) {
+            //Seta obj de retorno com flag de erro e gera arquivo de exception
+            daoObjReturn.setError(true)
+            ToolBox_Inf.registerException(javaClass.name, e)
+        } finally {
+            if(dbInstance == null) {
+                db.endTransaction()
+            }
+            daoObjReturn.action = curAction
+            daoObjReturn.actionReturn = addUpdateRet
+        }
+        //
+        if(dbInstance == null) {
+            closeDB()
+        }
+        //
+        return daoObjReturn
     }
 
     //

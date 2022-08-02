@@ -38,6 +38,15 @@ public interface Act040_Main_Presenter {
                                  String billingInfo3
                                 );
 
+    void onCreateSo_Pack_Express_Structure(SO_Pack_Express mSo_pack_express,
+                                 MD_Partner md_partner,
+                                 MD_Product md_product,
+                                 String serial,
+                                 String billingInfo1,
+                                 String billingInfo2,
+                                 String billingInfo3
+                                );
+
     void executeSO_Pack_Express_Local();
 
     SO_Pack_Express_Local checkOrderAlreadyExists(long customer_code, String site_code, long operation_code, long product_code, String express_code, String serial_id);
@@ -72,4 +81,6 @@ public interface Act040_Main_Presenter {
     List<SoPackExpressPacksLocal> getExpressPacks(SO_Pack_Express mSo_pack_express);
 
     boolean hasPackServiceFile(int contract_code, long product_code, int category_price_code, long site_code, long operation_code);
+
+    SO_Pack_Express_Local getExpressPackLocal(long customer_code, long product_code, long site_code, long operation_code, int bundle_express_tmp);
 }

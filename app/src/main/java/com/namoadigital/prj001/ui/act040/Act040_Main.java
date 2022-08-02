@@ -86,6 +86,10 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     private String bundle_billing_info1 = "";
     private String bundle_billing_info2 = "";
     private String bundle_billing_info3 = "";
+    private int bundle_express_tmp = -1;
+    private String bundle_category_price_code = "";
+    private String bundle_contract_code = "";
+    private String bundle_product_code = "";
     private ArrayList<HMAux> wsAuxResult = new ArrayList<>();
     private boolean exitProcess = false;
     public static final String LABEL_TRANS_OS_EXPRESS= "lbl_type_service_order_express";
@@ -516,7 +520,13 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
                 binding.rvAddPackServices.setLayoutManager(linearLayoutManager);
                 List<SoPackExpressPacksLocal> packs = new ArrayList<>();
-                if(mPresenter.hasPackServiceFile(mSo_pack_express.getContract_code(), mSo_pack_express.getProduct_code(), mSo_pack_express.getCategory_price_code(), mSo_pack_express.getSite_code(), mSo_pack_express.getOperation_code())){
+                SO_Pack_Express_Local so_pack_express_local = mPresenter.getExpressPackLocal(
+                        mSo_pack_express.getCustomer_code(),
+                        mSo_pack_express.getProduct_code(),
+                        mSo_pack_express.getSite_code(),
+                        mSo_pack_express.getOperation_code(),
+                        bundle_express_tmp);
+                if(so_pack_express_local != null) {
 
                 }else {
                     packs = mPresenter.getExpressPacks(mSo_pack_express);
@@ -868,11 +878,13 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         setFieldsBundle(bundle);
         //
         bundle.putInt(SO_Pack_ExpressDao.CONTRACT_CODE, mSo_pack_express.getContract_code());
-        bundle.putInt(SO_Pack_ExpressDao.PRODUCT_CODE, (int) mSo_pack_express.getProduct_code());
+        bundle.putLong(SO_Pack_ExpressDao.PRODUCT_CODE, mSo_pack_express.getProduct_code());
         bundle.putInt(SO_Pack_ExpressDao.CATEGORY_PRICE_CODE, mSo_pack_express.getCategory_price_code());
-        bundle.putInt(SO_Pack_ExpressDao.SITE_CODE, (int) mSo_pack_express.getSite_code());
-        bundle.putInt(SO_Pack_ExpressDao.OPERATION_CODE, (int) mSo_pack_express.getOperation_code());
         bundle.putString(Constant.MAIN_MD_PRODUCT_SERIAL_ID, binding.mketSerial.getText().toString().trim());
+        bundle.putString(SO_Pack_ExpressDao.EXPRESS_CODE, mSo_pack_express.getExpress_code());
+        bundle.putLong(MD_PartnerDao.PARTNER_CODE, md_partner.getPartner_code());
+        bundle.putLong(SO_Pack_Express_LocalDao.EXPRESS_TMP, -1);
+        bundle.putSerializable(Constant.PARAM_KEY_TYPE_SO_EXPRESS, mSo_pack_express);
         //
         mIntent.putExtras(bundle);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

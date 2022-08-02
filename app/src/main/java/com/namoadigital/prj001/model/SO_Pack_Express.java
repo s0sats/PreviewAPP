@@ -2,11 +2,13 @@ package com.namoadigital.prj001.model;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.io.Serializable;
+
 /**
  * Created by neomatrix on 3/22/18.
  */
 
-public class SO_Pack_Express {
+public class SO_Pack_Express implements Serializable {
 
     private long customer_code;
     private long site_code;

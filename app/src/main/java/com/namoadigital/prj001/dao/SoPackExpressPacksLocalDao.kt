@@ -3,6 +3,7 @@ package com.namoadigital.prj001.dao
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
+import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import androidx.core.database.getStringOrNull
 import com.namoa_digital.namoa_library.util.HMAux
@@ -10,6 +11,8 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
 import com.namoadigital.prj001.model.DaoObjReturn
 import com.namoadigital.prj001.model.SoPackExpressPacksLocal
+import com.namoadigital.prj001.model.SoPackExpressServicesLocal
+import com.namoadigital.prj001.sql.SoPackExpressServicesLocalSql002
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -23,7 +26,7 @@ class SoPackExpressPacksLocalDao(
 ), DaoWithReturn<SoPackExpressPacksLocal> {
 
     companion object {
-        const val TABLE = "tk_ticket_type_sites"
+        const val TABLE = "so_pack_express_packs_local"
         const val CUSTOMER_CODE = "customer_code"
         const val SITE_CODE = "site_code"
         const val OPERATION_CODE = "operation_code"
@@ -130,71 +133,7 @@ class SoPackExpressPacksLocalDao(
         items: MutableList<SoPackExpressPacksLocal>?,
         status: Boolean
     ): DaoObjReturn {
-        var daoObjReturn = DaoObjReturn()
-        var addUpdateRet: Long = 0
-        var curAction = DaoObjReturn.INSERT_OR_UPDATE
-        //
-        openDB()
-
-        try {
-            daoObjReturn.table = TkTicketTypeSiteDao.TABLE
-            curAction = DaoObjReturn.UPDATE
-
-            db.beginTransaction()
-
-            if (status) {
-                db.delete(TkTicketTypeSiteDao.TABLE, null, null)
-            }
-
-            items?.forEach { item ->
-                //Where para update
-                val sbWhere: StringBuilder = getWherePkClause(item)
-                //Tenta update e armazena retorno
-                addUpdateRet = db.update(
-                    TkTicketTypeSiteDao.TABLE,
-                    toContentValuesMapper.map(item),
-                    sbWhere.toString(),
-                    null
-                ).toLong()
-                //Se nenhuma linha afetada, tenta insert
-                if (addUpdateRet == 0L) {
-                    curAction = DaoObjReturn.INSERT
-                    db.insertOrThrow(
-                        TkTicketTypeSiteDao.TABLE,
-                        null,
-                        toContentValuesMapper.map(item)
-                    )
-                }
-            }
-            //
-            db.setTransactionSuccessful()
-        } catch (e: SQLiteException) {
-            //Chama metodo que baseado na exception gera obj de retorno setado como erro
-            //e contendo msg de erro tratada.
-            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.message)
-            //Gera arquivo de exception usando dados da exception e do obj de retorno
-            ToolBox_Inf.registerException(
-                javaClass.name,
-                Exception(
-                    """
-                ${e.message}
-                ${daoObjReturn.errorMsg}
-                """.trimIndent()
-                )
-            )
-        } catch (e: Exception) {
-            //Seta obj de retorno com flag de erro e gera arquivo de exception
-            daoObjReturn.setError(true)
-            ToolBox_Inf.registerException(javaClass.name, e)
-        } finally {
-            db.endTransaction()
-            daoObjReturn.action = curAction
-            daoObjReturn.actionReturn = addUpdateRet
-        }
-        //
-        closeDB()
-        //
-        return daoObjReturn
+        return addUpdate(items, status, null)
     }
 
     override fun addUpdate(sQuery: String?) {
@@ -262,6 +201,9 @@ class SoPackExpressPacksLocalDao(
             while (cursor.moveToNext()) {
                 val uAux = toSoPackExpressPacksLocalMapper.map(cursor)
                 soPackExpressPacksLocal.add(uAux)
+                if(uAux != null){
+                    getSoPackExpressPackServicesLocal(uAux)
+                }
             }
             cursor.close()
         } catch (e: java.lang.Exception) {
@@ -270,6 +212,28 @@ class SoPackExpressPacksLocalDao(
         }
         closeDB()
         return soPackExpressPacksLocal
+    }
+
+    private fun getSoPackExpressPackServicesLocal(soPackExpressPacksLocal: SoPackExpressPacksLocal) {
+        val soPackExpressServicesLocalDao = SoPackExpressServicesLocalDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        )
+        val services = soPackExpressServicesLocalDao.query(
+            SoPackExpressServicesLocalSql002(
+                soPackExpressPacksLocal.customer_code,
+                soPackExpressPacksLocal.site_code,
+                soPackExpressPacksLocal.operation_code,
+                soPackExpressPacksLocal.product_code,
+                soPackExpressPacksLocal.express_code,
+                soPackExpressPacksLocal.express_tmp,
+                soPackExpressPacksLocal.pack_code,
+                soPackExpressPacksLocal.pack_seq
+            ).toSqlQuery()
+        )
+        //
+        soPackExpressPacksLocal.serviceList.addAll(services)
     }
 
     override fun query_HM(sQuery: String?): MutableList<HMAux> {
@@ -287,6 +251,107 @@ class SoPackExpressPacksLocalDao(
         }
         closeDB()
         return soPackExpressPacksLocal
+    }
+
+    fun addUpdate(items: MutableList<SoPackExpressPacksLocal>?, status: Boolean, dbInstance: SQLiteDatabase?): DaoObjReturn {
+        var daoObjReturn = DaoObjReturn()
+        var addUpdateRet: Long = 0
+        var curAction = DaoObjReturn.INSERT_OR_UPDATE
+        //
+        if(dbInstance == null) {
+            openDB()
+        }else{
+            this.db = dbInstance
+        }
+
+        try {
+            daoObjReturn.table = SoPackExpressPacksLocalDao.TABLE
+            curAction = DaoObjReturn.UPDATE
+            if(dbInstance == null) {
+                db.beginTransaction()
+            }
+            if (status) {
+                db.delete(SoPackExpressPacksLocalDao.TABLE, null, null)
+            }
+
+            items?.forEach { item ->
+                //Where para update
+                val sbWhere: StringBuilder = getWherePkClause(item)
+                //Tenta update e armazena retorno
+                addUpdateRet = db.update(
+                    SoPackExpressPacksLocalDao.TABLE,
+                    toContentValuesMapper.map(item),
+                    sbWhere.toString(),
+                    null
+                ).toLong()
+                //Se nenhuma linha afetada, tenta insert
+                if (addUpdateRet == 0L) {
+                    curAction = DaoObjReturn.INSERT
+                    db?.insertOrThrow(
+                        SoPackExpressPacksLocalDao.TABLE,
+                        null,
+                        toContentValuesMapper.map(item)
+                    )
+                }
+                if(item.serviceList.size >0) {
+                    tryAddUpdateSoPackExpressServicesLocalDao(item.serviceList, false, db)
+                }
+            }
+            //
+            if(dbInstance == null) {
+                db.setTransactionSuccessful()
+            }
+        } catch (e: SQLiteException) {
+            //Chama metodo que baseado na exception gera obj de retorno setado como erro
+            //e contendo msg de erro tratada.
+            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.message)
+            //Gera arquivo de exception usando dados da exception e do obj de retorno
+            ToolBox_Inf.registerException(
+                javaClass.name,
+                Exception(
+                    """
+                ${e.message}
+                ${daoObjReturn.errorMsg}
+                """.trimIndent()
+                )
+            )
+        } catch (e: Exception) {
+            //Seta obj de retorno com flag de erro e gera arquivo de exception
+            daoObjReturn.setError(true)
+            ToolBox_Inf.registerException(javaClass.name, e)
+        } finally {
+            if(dbInstance == null) {
+                db.endTransaction()
+            }
+            daoObjReturn.action = curAction
+            daoObjReturn.actionReturn = addUpdateRet
+        }
+        //
+        if(dbInstance == null) {
+            closeDB()
+        }
+        //
+        return daoObjReturn
+    }
+
+    private fun tryAddUpdateSoPackExpressServicesLocalDao(
+        services: MutableList<SoPackExpressServicesLocal>,
+        status: Boolean,
+        dbInstance: SQLiteDatabase?
+    ) {
+        var soPackExpressServicesLocalDao = getSoPackExpressServicesLocalDao()
+        soPackExpressServicesLocalDao.addUpdate(services, status,dbInstance)
+    }
+
+    /**
+     * Fun que retorna o dao do historico.
+     */
+    private fun getSoPackExpressServicesLocalDao(): SoPackExpressServicesLocalDao {
+        return SoPackExpressServicesLocalDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        )
     }
 
     //

@@ -22,8 +22,7 @@ import com.namoadigital.prj001.adapter.Act091_BottomSheet_Item_Adapter
 import com.namoadigital.prj001.adapter.onHide
 import com.namoadigital.prj001.adapter.onShow
 import com.namoadigital.prj001.databinding.Act091BottomSheetBinding
-import com.namoadigital.prj001.model.Act091ServiceItem
-import com.namoadigital.prj001.model.TSO_Service_Search_Detail_Obj
+import com.namoadigital.prj001.model.SOExpressItemHeader
 import com.namoadigital.prj001.ui.act091.util.BottomEvent
 import com.namoadigital.prj001.ui.act091.util.onEvent
 import com.namoadigital.prj001.util.ConstantBaseApp
@@ -32,12 +31,12 @@ import com.namoadigital.prj001.util.ToolBox_Inf
 
 class Act091_BottomSheet constructor(
 ) : BottomSheetDialogFragment(){
-
+    var onAddServices: (contentItemHeader: SOExpressItemHeader) -> Unit = { _,-> }
     private val binding: Act091BottomSheetBinding by lazy {
         Act091BottomSheetBinding.inflate(layoutInflater)
     }
 
-    private lateinit var contentItem: Act091ServiceItem
+    private lateinit var contentItemHeader: SOExpressItemHeader
     private val hmAux: HMAux by lazy {
         val transList: MutableList<String> = mutableListOf(
             "comment_hint",
@@ -65,8 +64,8 @@ class Act091_BottomSheet constructor(
     }
     private val mAdapter: Act091_BottomSheet_Item_Adapter? by lazy {
         Act091_BottomSheet_Item_Adapter(
-            contentItem.serviceList,
-            contentItem.type_ps,
+            contentItemHeader.serviceList,
+            contentItemHeader.type_ps,
             hmAux,
             ::onUpdateList
         )
@@ -76,7 +75,7 @@ class Act091_BottomSheet constructor(
         super.onCreate(savedInstanceState)
 
         arguments?.let {
-            contentItem = Gson().fromJson(it.getString(SERVICE_ITEM), Act091ServiceItem::class.java)
+            contentItemHeader = Gson().fromJson(it.getString(SERVICE_ITEM), SOExpressItemHeader::class.java)
         }
     }
 
@@ -122,7 +121,7 @@ class Act091_BottomSheet constructor(
 
     private fun initLabels(){
         with(binding){
-            contentItem.let {
+            contentItemHeader.let {
                 act091BottomSheetTitle.text = it.name
                 onEvent(BottomEvent.changeButtonLessQtyColor(it.qty != 1))
                 onEvent(BottomEvent.changePriceColor(it.manual_price == 0, hmAux))
@@ -155,18 +154,18 @@ class Act091_BottomSheet constructor(
 
     private fun initAction(){
         with(binding.act091QtyBindings){
-
-
             //adicionar quantidade
             act091BottomSheetMost.setOnClickListener {
                 val currentValue = act091BottomSheetQty.text.toString().toInt()
                 act091BottomSheetQty.setText(currentValue.mostQty())
+                contentItemHeader.qty = currentValue
             }
 
             //remover quantidade
             act091BottomSheetLess.setOnClickListener{
                 val currentValue = act091BottomSheetQty.text.toString().toInt()
                 act091BottomSheetQty.setText(currentValue.lessQty())
+                contentItemHeader.qty = currentValue
             }
 
             //habilita/desabilita opção de remover quantidade
@@ -180,7 +179,6 @@ class Act091_BottomSheet constructor(
                 }
 
             })
-
         }
 
         with(binding){
@@ -205,25 +203,54 @@ class Act091_BottomSheet constructor(
                         }
 
                         if (it.isEmpty()) {
-                            contentItem.price = null
+                            contentItemHeader.price = null
                         } else {
-                            contentItem.price = it.toString().replace(",", ".").toDouble()
+                            contentItemHeader.price = it.toString().replace(",", ".").toDouble()
                         }
                     }
                 }
+            })
+
+            act091BottomSheetComment.addTextChangedListener(object: TextWatcher{
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+
+                }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+                }
+
+                override fun afterTextChanged(s: Editable?) {
+                    contentItemHeader.comment = s.toString()
+                }
+
             })
 
             //tirar bottom sheet
             act091BottomSheetCancel.setOnClickListener {
                 dismiss()
             }
-        }
 
+            act091BottomSheetOk.setOnClickListener {
+
+                if(!contentItemHeader.comment.isEmpty()){
+                    contentItemHeader.serviceList.forEach {
+                        it.comments = contentItemHeader.comment
+                    }
+                }
+                onAddServices(contentItemHeader)
+            }
+        }
     }
 
     private fun initRecyclerView() {
         with(binding) {
-            if (contentItem.serviceList.isNotEmpty()) {
+            if (contentItemHeader.serviceList.isNotEmpty()) {
                 with(act091BottomSheetRecyclerView) {
                     layoutManager = LinearLayoutManager(requireContext())
                     adapter = mAdapter
@@ -238,9 +265,8 @@ class Act091_BottomSheet constructor(
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private fun onUpdateList(list: List<TSO_Service_Search_Detail_Obj>) {
-        contentItem.serviceList = list
-        binding.onEvent(BottomEvent.OnUpdateBottomSheet(contentItem, hmAux))
+    private fun onUpdateList() {
+        binding.onEvent(BottomEvent.OnUpdateBottomSheet(contentItemHeader, hmAux))
     }
 
     private fun Int.lessQty(): String{

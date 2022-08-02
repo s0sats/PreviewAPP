@@ -1,12 +1,11 @@
 package com.namoadigital.prj001.ui.act091.util
 
 import android.annotation.SuppressLint
-import android.content.res.ColorStateList
 import com.google.android.material.textfield.TextInputLayout
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.Act091BottomSheetBinding
-import com.namoadigital.prj001.model.Act091ServiceItem
+import com.namoadigital.prj001.model.SOExpressItemHeader
 import com.namoadigital.prj001.util.ToolBox_Inf
 
 sealed class BottomEvent {
@@ -14,7 +13,7 @@ sealed class BottomEvent {
     data class changePriceColor(val value: Boolean, val hmAux: HMAux) : BottomEvent()
     data class changeButtonLessQtyColor(val value: Boolean) : BottomEvent()
     data class changeStatePrice(val value: Boolean) : BottomEvent()
-    data class OnUpdateBottomSheet(val item: Act091ServiceItem, val hmAux: HMAux) : BottomEvent()
+    data class OnUpdateBottomSheet(val itemHeader: SOExpressItemHeader, val hmAux: HMAux) : BottomEvent()
 }
 
 
@@ -44,7 +43,7 @@ fun Act091BottomSheetBinding.onEvent(state: BottomEvent){
 
         is BottomEvent.OnUpdateBottomSheet -> {
             var total = 0.0
-            val item = state.item
+            val item = state.itemHeader
             act091QtyBindings.act091BottomSheetQty.setText("${item.qty}")
             if (item.type_ps == "P") {
                 act091BottomSheetPrice.isEnabled = false
@@ -58,7 +57,7 @@ fun Act091BottomSheetBinding.onEvent(state: BottomEvent){
                         act091BottomSheetOk.isEnabled = false
                         return
                     } else {
-                        total += obj.price
+                        total += obj.price!!
                         act091BottomSheetOk.isEnabled = true
                     }
                 }
