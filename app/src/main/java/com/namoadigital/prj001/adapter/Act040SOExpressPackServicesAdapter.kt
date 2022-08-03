@@ -5,12 +5,14 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.namoadigital.prj001.databinding.Act011InspectionQuestionFormCellBinding
 import com.namoadigital.prj001.databinding.CellAddPackServicesItemBinding
+import com.namoadigital.prj001.model.MainTagMenu
 import com.namoadigital.prj001.model.SoPackExpressPacksLocal
 import com.namoadigital.prj001.model.SoPackExpressServicesLocal
 
 class Act040SOExpressPackServicesAdapter(
     val soExpressList: MutableList<SoPackExpressPacksLocal>,
-    val showServicePrice: Boolean
+    val showServicePrice: Boolean,
+    val onExpressServiceSelected: (packServices: SoPackExpressPacksLocal) -> Any?
 ) : RecyclerView.Adapter<Act040SOExpressPackServicesAdapter.MySOExpressPackVh>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MySOExpressPackVh {
@@ -34,6 +36,9 @@ class Act040SOExpressPackServicesAdapter(
     inner class MySOExpressPackVh(val binding: CellAddPackServicesItemBinding): RecyclerView.ViewHolder(binding.root) {
         fun onBind(packServices: SoPackExpressPacksLocal){
             binding.tvPackServices.text = getFormattedPackDesc(packServices)
+            binding.ivPackServicesEdit.setOnClickListener {
+                onExpressServiceSelected(packServices)
+            }
         }
 
         private fun getFormattedPackDesc(packServices: SoPackExpressPacksLocal): String {
@@ -52,4 +57,7 @@ class Act040SOExpressPackServicesAdapter(
         }
     }
 
+    interface OnFrgMainHomeIteract {
+        fun onSelectMenuTagItem(item: MainTagMenu)
+    }
 }

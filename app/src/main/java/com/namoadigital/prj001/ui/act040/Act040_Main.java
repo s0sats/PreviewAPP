@@ -200,6 +200,8 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         transList.add("tracking_duplicated_msg");
         transList.add("express_order_pack_service_list_lbl");
         transList.add("express_order_pack_service_empty_list_lbl");
+        transList.add("dialog_service_search_ttl");
+        transList.add("dialog_service_search_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -527,7 +529,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                         mSo_pack_express.getOperation_code(),
                         bundle_express_tmp);
                 if(so_pack_express_local != null) {
-
+                    
                 }else {
                     packs = mPresenter.getExpressPacks(mSo_pack_express);
                 }
@@ -540,7 +542,17 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                                     context,
                                     Constant.PROFILE_MENU_SO,
                                     Constant.PROFILE_MENU_SO_SHOW_SERVICE_PRICE
-                            )
+                            ),
+                            soPackExpressPacksLocal -> {
+                                if (mPresenter.hasPackServiceFile(mSo_pack_express.getContract_code(), mSo_pack_express.getProduct_code(), mSo_pack_express.getCategory_price_code(), mSo_pack_express.getSite_code(), mSo_pack_express.getOperation_code())) {
+//                                    callBottomSheet()
+                                }else{
+                                    mPresenter.executeWS_SO_Service_Search(mSo_pack_express, binding.mketSerial.getText().toString());
+                                }
+
+                                return null;
+                            }
+
                     );
                     //
                     binding.rvAddPackServices.setAdapter(mAdapter);
