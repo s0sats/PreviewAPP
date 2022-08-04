@@ -644,7 +644,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                                 item.getStatus_answer(),
                                 item.getExec_type(),
                                 item.getGeOsDeviceItemCodeAndSeq(),
-                                hmAux_Trans
+                                hmAux_Trans,
+                                item.getChange_adjust()
                     )
                 );
             }
@@ -2387,7 +2388,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 deviceItem.getStatus_answer(),
                 deviceItem.getExec_type(),
                 deviceItem.getGeOsDeviceItemCodeAndSeq(),
-                hmAux_Trans);
+                hmAux_Trans,
+                deviceItem.getChange_adjust());
     }
 
     @Override

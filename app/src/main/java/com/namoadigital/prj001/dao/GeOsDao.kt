@@ -682,12 +682,11 @@ class GeOsDao(
                         if(item.item_check_status.equals(GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL ,true)
                             && it.equals(item.item_check_group_code)){
                             item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_FORCED
-                            item.critical_item = 0
                         }
                     } ?:
                         if(item.item_check_status.equals(GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL ,true)){
                             item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_FORCED
-                            item.critical_item = 0
+
                         }
 
                 }

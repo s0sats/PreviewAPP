@@ -83,6 +83,7 @@ class GeOsDeviceItem(
         const val APPLY_MATERIAL_REQUIRED = "REQUIRED"
 
         const val EXEC_TYPE_FIXED = "FIXED"
+        const val EXEC_TYPE_ADJUST = "ADJUST"
         const val EXEC_TYPE_ALERT = "ALERT"
         const val EXEC_TYPE_ALREADY_OK = "ALREADY_OK"
         const val EXEC_TYPE_NOT_VERIFIED = "NOT_VERIFIED"

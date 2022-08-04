@@ -13,6 +13,7 @@ import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.Act011InspectionQuestionFormCellBinding
 import com.namoadigital.prj001.extensions.applyTintColor
 import com.namoadigital.prj001.model.AcessoryFormView
+import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.EXEC_TYPE_ADJUST
 import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.EXEC_TYPE_ALERT
 import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.EXEC_TYPE_ALREADY_OK
 import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.EXEC_TYPE_FIXED
@@ -189,8 +190,8 @@ class Act011InspectionFormAdapter(
 
     inner class MyInspectionFormVH(val binding: Act011InspectionQuestionFormCellBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun onBinding(inspection: InspectionCell) {
-            inspection.apply {
+        fun onBinding(inspection: InspectionCell?) {
+            inspection?.apply {
                 val context = binding.root.context
                 binding.btnInspectionOngoingAction.visibility = View.GONE
                 if (isDone) {
@@ -238,6 +239,14 @@ class Act011InspectionFormAdapter(
                                     R.drawable.ic_build_black_24dp
                                 )
 
+                        }
+
+                        EXEC_TYPE_ADJUST -> {
+                            binding.btnInspectAnswered.icon =
+                                ContextCompat.getDrawable(
+                                    Objects.requireNonNull(context),
+                                    R.drawable.ic_build_black_24dp
+                                )
                         }
                         EXEC_TYPE_ALERT -> {
                             binding.btnInspectAnswered.icon =

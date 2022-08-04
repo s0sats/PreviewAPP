@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act090
 
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.model.Act086MaterialItem
+import com.namoadigital.prj001.model.GeOsDeviceItem
 import com.namoadigital.prj001.model.GeOsDeviceMaterial
 
 interface Act090MainContract {
@@ -14,6 +15,7 @@ interface Act090MainContract {
     interface IPresenter{
         fun getTranslation(): HMAux?
         fun validBundleParams(): Boolean
+        fun getDeviceItem(): GeOsDeviceItem?
         fun getGeOsDeviceMaterialList(geOsDeviceMaterial: MutableList<GeOsDeviceMaterial>)
         fun getItemPlannedMaterialList(
             geOsDeviceMaterial: MutableList<GeOsDeviceMaterial>,

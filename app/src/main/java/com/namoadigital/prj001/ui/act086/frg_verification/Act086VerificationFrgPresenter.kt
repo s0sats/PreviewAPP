@@ -202,8 +202,7 @@ class Act086VerificationFrgPresenter(
     }
 
     override fun isCycleExpired(geOsDeviceItem: GeOsDeviceItem): Boolean {
-        return geOsDeviceItem.has_expired_cycle == 1 && !geOsDeviceItem.item_check_status.equals(
-            GeOsDeviceItem.ITEM_CHECK_STATUS_FORCED);
+        return geOsDeviceItem.has_expired_cycle == 1 && geOsDeviceItem.item_check_status != GeOsDeviceItem.ITEM_CHECK_STATUS_FORCED;
     }
 
     override fun hasMaterialPlanned(geOsDeviceItem: GeOsDeviceItem): Boolean {

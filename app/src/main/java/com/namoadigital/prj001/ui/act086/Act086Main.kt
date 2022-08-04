@@ -405,11 +405,9 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
     }
 
 
-    fun onMaterialPlannedInteraction(isPlanned: Boolean, maintenceOther: String = ""){
+    fun onMaterialPlannedInteraction(isPlanned: Boolean){
         bundle.putBoolean(ConstantBaseApp.ITEM_CHECK_ANSWER, isPlanned)
-        if(maintenceOther.isNotEmpty()){
-            bundle.putString("ITEM_SELECTED", maintenceOther)
-        }
+
         startActivity(
             Intent().apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK

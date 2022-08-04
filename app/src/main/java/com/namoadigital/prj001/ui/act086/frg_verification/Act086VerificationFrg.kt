@@ -99,7 +99,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     private var skipSave: Boolean = false
     lateinit var leaveItem: (isManualItemDelete: Boolean) -> Unit
     private var isPhotoAction = false
-    lateinit var onMaterialPlannedInteraction: (isPlanned: Boolean, maintenceOther: String) -> Unit
+    lateinit var onMaterialPlannedInteraction: (isPlanned: Boolean) -> Unit
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -271,7 +271,12 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                 }
                 //
                 when(geOsDeviceItem.exec_type){
-                    GeOsDeviceItem.EXEC_TYPE_FIXED -> act086VerificationFrgRdoAnswerFixed.isChecked = true
+                    GeOsDeviceItem.EXEC_TYPE_FIXED -> {
+                        act086VerificationFrgRdoAnswerFixed.isChecked = true
+                    }
+                    GeOsDeviceItem.EXEC_TYPE_ADJUST -> {
+                        act086VerificationFrgRdoAnswerFixed.isChecked = true
+                    }
                     GeOsDeviceItem.EXEC_TYPE_ALREADY_OK -> act086VerificationFrgRdoAnswerAlreadyDone.isChecked = true
                     GeOsDeviceItem.EXEC_TYPE_ALERT -> act086VerificationFrgRdoAnswerAlert.isChecked = true
                     GeOsDeviceItem.EXEC_TYPE_NOT_VERIFIED -> act086VerificationFrgRdoAnswerNotVerified.isChecked = true
@@ -387,7 +392,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
 
     private fun setLabels() {
         with(binding){
-            act086VerificationFrgRdoAnswerFixed.text = hmAux_Trans["action_done_lbl"]
+            act086VerificationFrgRdoAnswerFixed.text = getMaintenanceLbl(geOsDeviceItem.exec_type ?: "")
             act086VerificationFrgRdoAnswerAlreadyDone.text = hmAux_Trans["already_checked_lbl"]
             act086VerificationFrgRdoAnswerAlert.text = getAlertAnswerLbl()
             act086VerificationFrgRdoAnswerNotVerified.text = hmAux_Trans["not_verified_lbl"]
@@ -421,6 +426,11 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             hmAux_Trans["has_problem_lbl"]
         }
     }
+
+
+    private fun getMaintenanceLbl(exec_type: String = "") =
+        if(getChangeAdjustLbl(exec_type).isEmpty()) hmAux_Trans["action_done_lbl"]
+        else "${hmAux_Trans["action_done_lbl"]}\n${getChangeAdjustLbl(exec_type)}"
 
     private fun initRecyclers() {
         photoAdapter.sourceList = photoList
@@ -595,27 +605,96 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     }
 
 
-    private fun openBottomSheet(){
+    private fun openBottomSheet(lastItem: Int, checkedId: Int){
         Act086_BottomSheet.getInstance(
+                    geOsDeviceItem.exec_type ?: "",
+            hmAux_Trans,
             callAct090 = {
-                binding.act086VerificationFrgRdoAnswerFixed.text = "${hmAux_Trans["action_done_lbl"]} \n$it"
-                onMaterialPlannedInteraction(lastSelectedRdoId == binding.act086VerificationFrgRdoAnswerAlert.id, it)
-                         },
-            { GoToLastSelection() }
-        )
-            .show(this.activity!!.supportFragmentManager, "bottomSheet")
+                binding.act086VerificationFrgRdoAnswerFixed.text = getMaintenanceLbl(it)
+                         when(it){
+                             GeOsDeviceItem.EXEC_TYPE_FIXED -> {
+                                 if(geOsDeviceItem.critical_item == 1 && !mPresenter.isCycleExpired(geOsDeviceItem)){
+                                     showAlertOnBottomSheet(it, checkedId)
+                                 }else{
+                                     applyExecTypeAndChangeLabelMaintenance(it, checkedId)
+                                 }
+                             }
+
+                             GeOsDeviceItem.EXEC_TYPE_ADJUST -> {
+                                 if(geOsDeviceItem.critical_item == 1 && mPresenter.isCycleExpired(geOsDeviceItem)){
+                                     showAlertOnBottomSheet(it, checkedId)
+                                 }else{
+                                     applyExecTypeAndChangeLabelMaintenance(it, checkedId)
+                                 }
+                             }
+                         }
+            },
+            onRollBackRadioGroup = { setLastSelection(lastItem) }
+        ).show(this.activity!!.supportFragmentManager, "bottomSheet")
     }
 
-    private fun GoToLastSelection() =
+
+    private fun applyExecTypeAndChangeLabelMaintenance(type: String, checkedId: Int){
+        geOsDeviceItem.apply {
+            exec_type = type
+        }
+        commitRdoChange(checkedId)
+        if(mPresenter.hasMaterialPlanned(geOsDeviceItem))
+            onMaterialPlannedInteraction(lastSelectedRdoId == binding.act086VerificationFrgRdoAnswerAlert.id)
+    }
+
+
+    private fun showAlertOnBottomSheet(type: String, checkedId: Int){
+        when(type){
+            GeOsDeviceItem.EXEC_TYPE_FIXED -> {
+                showAlertMessage(
+                    "CHANGE",
+                    "MESSAGE",
+                    type,
+                    checkedId,
+                )
+            }
+
+            GeOsDeviceItem.EXEC_TYPE_ADJUST -> {
+                showAlertMessage(
+                    "ADJUST",
+                    "MESSAGE",
+                    type,
+                    checkedId,
+                )
+            }
+        }
+    }
+
+
+
+    private fun showAlertMessage(
+        title: String,
+        message: String,
+        type: String,
+        checkedId: Int
+    ){
+        showConfirmAlert(
+            title,
+            message,
+            { _, _ ->
+                applyExecTypeAndChangeLabelMaintenance(type, checkedId)
+            },
+            { _, _ ->
+                setLastSelection(lastSelectedRdoId)
+            })
+    }
+
+
+    private fun setLastSelection(last: Int, exec_type: String = geOsDeviceItem.exec_type ?: "") =
         with(binding) {
-            when (lastSelectedRdoId) {
-                act086VerificationFrgRdoAnswerFixed.id -> act086VerificationFrgRdoAnswerFixed.isChecked =
-                    true
-                act086VerificationFrgRdoAnswerAlreadyDone.id -> act086VerificationFrgRdoAnswerAlreadyDone.isChecked =
-                    true
-                act086VerificationFrgRdoAnswerAlert.id -> act086VerificationFrgRdoAnswerAlert.isChecked =
-                    true
-                else -> act086VerificationFrgRdoAnswerNotVerified.isChecked = true
+            act086VerificationFrgRdoAnswerFixed.text = getMaintenanceLbl(exec_type)
+            when (last) {
+                act086VerificationFrgRdoAnswerFixed.id -> act086VerificationFrgRdoAnswerFixed.isChecked = true
+                act086VerificationFrgRdoAnswerAlreadyDone.id -> act086VerificationFrgRdoAnswerAlreadyDone.isChecked = true
+                act086VerificationFrgRdoAnswerAlert.id -> act086VerificationFrgRdoAnswerAlert.isChecked = true
+                act086VerificationFrgRdoAnswerNotVerified.id -> act086VerificationFrgRdoAnswerNotVerified.isChecked = true
+                else -> clearData()
             }
         }
 
@@ -637,8 +716,23 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         }
 
 
+        binding.act086VerificationFrgRdoAnswerFixed.setOnClickListener {
+            if(binding.act086VerificationFrgRdoAnswerFixed.id == lastSelectedRdoId && binding.act086VerificationFrgRdoAnswerFixed.isPressed
+                && geOsDeviceItem.change_adjust == 1){
+
+                openBottomSheet(lastSelectedRdoId, binding.act086VerificationFrgRdoAnswerFixed.id)
+            }
+        }
+
         binding.act086VerificationFrgRgAnswers.setOnCheckedChangeListener { _, checkedId ->
             with(binding){
+                if(act086VerificationFrgRdoAnswerFixed.id == checkedId
+                    && act086VerificationFrgRdoAnswerFixed.isPressed
+                    && geOsDeviceItem.change_adjust == 1){
+
+                    openBottomSheet(lastSelectedRdoId, checkedId)
+                    return@setOnCheckedChangeListener
+                }
                 if( lastSelectedRdoId != -1 && lastSelectedRdoId != checkedId
                     && (checkedId == act086VerificationFrgRdoAnswerAlreadyDone.id  || checkedId == act086VerificationFrgRdoAnswerNotVerified.id)
                     && materialFragList.isNotEmpty()
@@ -647,6 +741,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                         hmAux_Trans["alert_material_not_enabled_for_answer_ttl"],
                         hmAux_Trans["alert_change_and_clear_material_confirm"],
                         { _, _ ->
+                            binding.act086VerificationFrgRdoAnswerFixed.text = getMaintenanceLbl()
                             clearMaterialList()
                             commitRdoChange(checkedId)
                         },
@@ -660,15 +755,22 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                                 act086VerificationFrgRdoAnswerAlert.id -> act086VerificationFrgRdoAnswerAlert.isChecked = true
                                 else -> act086VerificationFrgRdoAnswerNotVerified.isChecked = true
                             }
+                            if(act086VerificationFrgRdoAnswerFixed.id != checkedId) {
+                                binding.act086VerificationFrgRdoAnswerFixed.text = getMaintenanceLbl()
+                            }
+
+
+
                         }
                     )
                 }else{
-                    if(act086VerificationFrgRdoAnswerFixed.id == checkedId
+                   if(act086VerificationFrgRdoAnswerFixed.id == checkedId
                         && act086VerificationFrgRdoAnswerFixed.isPressed
                         && mPresenter.isCycleExpired(geOsDeviceItem)
                         && mPresenter.hasMaterialPlanned(geOsDeviceItem)
                         && !inReadOnly
                     ){
+
 /*                        when(lastSelectedRdoId){
                             act086VerificationFrgRdoAnswerFixed.id -> act086VerificationFrgRdoAnswerFixed.isChecked = true
                             act086VerificationFrgRdoAnswerAlreadyDone.id -> act086VerificationFrgRdoAnswerAlreadyDone.isChecked = true
@@ -676,15 +778,14 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                             else -> act086VerificationFrgRdoAnswerNotVerified.isChecked = true
                         }*/
 
-                        if(geOsDeviceItem.change_adjust == 1){
-                            openBottomSheet()
-                        }else{
                             commitRdoChange(checkedId)
-                            onMaterialPlannedInteraction(lastSelectedRdoId == act086VerificationFrgRdoAnswerAlert.id, "")
-                        }
-
+                            onMaterialPlannedInteraction(lastSelectedRdoId == act086VerificationFrgRdoAnswerAlert.id)
                     }else{
                         commitRdoChange(checkedId)
+
+                        if(act086VerificationFrgRdoAnswerFixed.id != checkedId) {
+                            binding.act086VerificationFrgRdoAnswerFixed.text = getMaintenanceLbl()
+                        }
                         materialFragAdapter.notifyDataSetChanged()
                     }
                 }
@@ -819,7 +920,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         }
         //
         binding.act086VerificationFrgClReviewMaterial.setOnClickListener{
-            onMaterialPlannedInteraction(lastSelectedRdoId.equals(binding.act086VerificationFrgRdoAnswerAlert.id), "")
+            onMaterialPlannedInteraction(lastSelectedRdoId == binding.act086VerificationFrgRdoAnswerAlert.id)
         }
     }
 
@@ -961,10 +1062,31 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         return ConstantBaseApp.SYS_STATUS_DONE
     }
 
+
+
+    private fun getChangeAdjustLbl(exec_type: String): String {
+        var label = ""
+
+        with(binding){
+                if(exec_type == GeOsDeviceItem.EXEC_TYPE_FIXED && geOsDeviceItem.change_adjust == 1){
+                    label = hmAux_Trans["change_lbl"]!!
+                }else if(exec_type == GeOsDeviceItem.EXEC_TYPE_ADJUST){
+                    label = hmAux_Trans["adjust_lbl"]!!
+                }
+        }
+        return label
+    }
+
     private fun getExecTypeForAnswer(): String? {
         with(binding) {
             return when (act086VerificationFrgRgAnswers.checkedRadioButtonId) {
-                        act086VerificationFrgRdoAnswerFixed.id -> GeOsDeviceItem.EXEC_TYPE_FIXED
+                        act086VerificationFrgRdoAnswerFixed.id -> {
+                            when(geOsDeviceItem.change_adjust){
+                                0 -> GeOsDeviceItem.EXEC_TYPE_FIXED
+                                1 -> geOsDeviceItem.exec_type
+                                else -> {"VALOR DIFERENTE"}
+                            }
+                        }
                         act086VerificationFrgRdoAnswerAlreadyDone.id-> GeOsDeviceItem.EXEC_TYPE_ALREADY_OK
                         act086VerificationFrgRdoAnswerAlert.id-> GeOsDeviceItem.EXEC_TYPE_ALERT
                         act086VerificationFrgRdoAnswerNotVerified.id -> GeOsDeviceItem.EXEC_TYPE_NOT_VERIFIED
@@ -1233,7 +1355,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             prefixPhoto: String,
             isNewVerification: Boolean,
             deviceItem: GeOsDeviceItem,
-            readOnly: Boolean
+            readOnly: Boolean,
         ) =
             Act086VerificationFrg().apply {
                 arguments = Bundle().apply {
@@ -1248,6 +1370,9 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         fun getFragTranslationsVars() : List<String>{
             return listOf(
                 "action_done_lbl",
+                "adjust_lbl",
+                "change_lbl",
+                "select_type_maintenance_lbl",
                 "already_checked_lbl",
                 "has_problem_lbl",
                 "not_verified_lbl",
