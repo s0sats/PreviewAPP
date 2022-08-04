@@ -47,6 +47,7 @@ import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Sql_003;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_005;
+import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_001;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_006;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_011;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_013;
@@ -81,8 +82,9 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
     private MD_OperationDao mdOperationDao;
     private MD_Product_SerialDao productSerialDao;
     private MD_Site_ZoneDao zoneDao;
+    private SO_Pack_Express_LocalDao soPackExpressLocalDao;
 
-    public Act040_Main_Presenter_Impl(Context context, Act040_Main mView, HMAux hmAux_Trans, SO_Pack_ExpressDao so_pack_expressDao, SO_Pack_Express_LocalDao so_pack_express_localDao, MD_ProductDao md_productDao, MD_PartnerDao md_partnerDao, MD_SiteDao mdSiteDao, MD_Site_ZoneDao zoneDao, MD_OperationDao mdOperationDao, MD_Product_SerialDao productSerialDao) {
+    public Act040_Main_Presenter_Impl(Context context, Act040_Main mView, HMAux hmAux_Trans, SO_Pack_ExpressDao so_pack_expressDao, SO_Pack_Express_LocalDao so_pack_express_localDao, MD_ProductDao md_productDao, MD_PartnerDao md_partnerDao, MD_SiteDao mdSiteDao, MD_Site_ZoneDao zoneDao, MD_OperationDao mdOperationDao, MD_Product_SerialDao productSerialDao, SO_Pack_Express_LocalDao soPackExpressLocalDao) {
         this.context = context;
         this.mView = mView;
         this.hmAux_Trans = hmAux_Trans;
@@ -94,6 +96,7 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
         this.mdOperationDao = mdOperationDao;
         this.productSerialDao = productSerialDao;
         this.zoneDao = zoneDao;
+        this.soPackExpressLocalDao = soPackExpressLocalDao;
     }
 
     @Override
@@ -840,8 +843,17 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
     }
 
     @Override
-    public SO_Pack_Express_Local getExpressPackLocal(long customer_code, long product_code, long site_code, long operation_code, int bundle_express_tmp) {
-        return null;
+    public SO_Pack_Express_Local getExpressPackLocal(long customer_code, long product_code, long site_code, long operation_code, String express_code, int bundle_express_tmp) {
+        return soPackExpressLocalDao.getByString(
+                new SO_Pack_Express_Local_Sql_001(
+                        customer_code,
+                        site_code,
+                        operation_code,
+                        product_code,
+                        express_code,
+                        bundle_express_tmp
+                ).toSqlQuery()
+            );
     }
 
     private int getSerialCode(long customer_code, long product_code, String serialId) {

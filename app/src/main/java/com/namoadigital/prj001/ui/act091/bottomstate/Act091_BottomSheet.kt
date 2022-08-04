@@ -156,15 +156,15 @@ class Act091_BottomSheet constructor(
         with(binding.act091QtyBindings){
             //adicionar quantidade
             act091BottomSheetMost.setOnClickListener {
-                val currentValue = act091BottomSheetQty.text.toString().toInt()
-                act091BottomSheetQty.setText(currentValue.mostQty())
+                val currentValue = act091BottomSheetQty.text.toString().toInt() + 1
+                act091BottomSheetQty.setText(currentValue.toString())
                 contentItemHeader.qty = currentValue
             }
 
             //remover quantidade
             act091BottomSheetLess.setOnClickListener{
-                val currentValue = act091BottomSheetQty.text.toString().toInt()
-                act091BottomSheetQty.setText(currentValue.lessQty())
+                val currentValue = act091BottomSheetQty.text.toString().toInt() -1
+                act091BottomSheetQty.setText(currentValue.toString())
                 contentItemHeader.qty = currentValue
             }
 
@@ -267,15 +267,6 @@ class Act091_BottomSheet constructor(
     @SuppressLint("NotifyDataSetChanged")
     private fun onUpdateList() {
         binding.onEvent(BottomEvent.OnUpdateBottomSheet(contentItemHeader, hmAux))
-    }
-
-    private fun Int.lessQty(): String{
-        return "${this - 1}"
-    }
-
-
-    private fun Int.mostQty(): String{
-        return "${this + 1}"
     }
 
     companion object {

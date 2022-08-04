@@ -86,7 +86,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     private String bundle_billing_info1 = "";
     private String bundle_billing_info2 = "";
     private String bundle_billing_info3 = "";
-    private int bundle_express_tmp = -1;
+    private long bundle_express_tmp = -1;
     private String bundle_category_price_code = "";
     private String bundle_contract_code = "";
     private String bundle_product_code = "";
@@ -273,6 +273,10 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
+                ), new SO_Pack_Express_LocalDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
                 )
         );
         //
@@ -344,6 +348,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                 bundle_billing_info1 = bundle.getString(SO_Pack_Express_LocalDao.BILLING_ADD_INF1_VALUE,"");
                 bundle_billing_info2 = bundle.getString(SO_Pack_Express_LocalDao.BILLING_ADD_INF2_VALUE,"");
                 bundle_billing_info3 = bundle.getString(SO_Pack_Express_LocalDao.BILLING_ADD_INF3_VALUE,"");
+                bundle_express_tmp = bundle.getLong(SO_Pack_Express_LocalDao.EXPRESS_TMP,-1);
             }
 
         } else {
@@ -527,9 +532,10 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                         mSo_pack_express.getProduct_code(),
                         mSo_pack_express.getSite_code(),
                         mSo_pack_express.getOperation_code(),
-                        bundle_express_tmp);
+                        mSo_pack_express.getExpress_code(),
+                        (int) bundle_express_tmp);
                 if(so_pack_express_local != null) {
-                    
+                    packs = so_pack_express_local.getPacksLocals();
                 }else {
                     packs = mPresenter.getExpressPacks(mSo_pack_express);
                 }
@@ -895,7 +901,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         bundle.putString(Constant.MAIN_MD_PRODUCT_SERIAL_ID, binding.mketSerial.getText().toString().trim());
         bundle.putString(SO_Pack_ExpressDao.EXPRESS_CODE, mSo_pack_express.getExpress_code());
         bundle.putLong(MD_PartnerDao.PARTNER_CODE, md_partner.getPartner_code());
-        bundle.putLong(SO_Pack_Express_LocalDao.EXPRESS_TMP, -1);
+        bundle.putLong(SO_Pack_Express_LocalDao.EXPRESS_TMP, bundle_express_tmp);
         bundle.putSerializable(Constant.PARAM_KEY_TYPE_SO_EXPRESS, mSo_pack_express);
         //
         mIntent.putExtras(bundle);
@@ -1059,6 +1065,9 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         bundle.putString(SO_Pack_Express_LocalDao.BILLING_ADD_INF1_VALUE,binding.mketAddInfo1.getText().toString().trim());
         bundle.putString(SO_Pack_Express_LocalDao.BILLING_ADD_INF2_VALUE,binding.mketAddInfo2.getText().toString().trim());
         bundle.putString(SO_Pack_Express_LocalDao.BILLING_ADD_INF3_VALUE,binding.mketAddInfo3.getText().toString().trim());
+        if(bundle_express_tmp >0){
+            bundle.putLong(SO_Pack_Express_LocalDao.EXPRESS_TMP,bundle_express_tmp);
+        }
     }
 
     @Override

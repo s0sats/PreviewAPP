@@ -32,9 +32,9 @@ data class SOExpressItemHeader(
         product_code: Long,
         express_code: String
     ): SoPackExpressPacksLocal? {
-        var soPackExpressPacksLocal = SoPackExpressPacksLocal(
-            pack_code,
-            generatePackSeq(
+        var packSeq =-1
+        if("P".equals(type_ps)){
+            packSeq = generatePackSeq(
                 context,
                 customer_code,
                 site_code,
@@ -43,7 +43,11 @@ data class SOExpressItemHeader(
                 express_code,
                 so_pack_express_local.express_tmp,
                 pack_code
-            ),
+            )
+        }
+        var soPackExpressPacksLocal = SoPackExpressPacksLocal(
+            pack_code,
+            packSeq,
             price_list_code,
             name,
             name,

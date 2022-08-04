@@ -123,6 +123,7 @@ class SoPackExpressPacksLocalDao(
                         AND ${EXPRESS_TMP} = '${soPackExpressPacksLocal.express_tmp}'
                         AND ${PACK_CODE} = '${soPackExpressPacksLocal.pack_code}'
                         AND ${PACK_SEQ} = '${soPackExpressPacksLocal.pack_seq}'
+                        AND ${TYPE_PS} = '${soPackExpressPacksLocal.type_ps}'
                         """.trimIndent()
                 )
         }

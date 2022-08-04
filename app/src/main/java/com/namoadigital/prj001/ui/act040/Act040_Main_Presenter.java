@@ -82,5 +82,5 @@ public interface Act040_Main_Presenter {
 
     boolean hasPackServiceFile(int contract_code, long product_code, int category_price_code, long site_code, long operation_code);
 
-    SO_Pack_Express_Local getExpressPackLocal(long customer_code, long product_code, long site_code, long operation_code, int bundle_express_tmp);
+    SO_Pack_Express_Local getExpressPackLocal(long customer_code, long product_code, long site_code, long operation_code, String express_code, int bundle_express_tmp);
 }

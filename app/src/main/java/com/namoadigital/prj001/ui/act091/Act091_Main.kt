@@ -8,6 +8,7 @@ import com.google.gson.Gson
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.view.Base_Activity
 import com.namoadigital.prj001.adapter.Act091_Item_Adapter
+import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao
 import com.namoadigital.prj001.databinding.Act091MainBinding
 import com.namoadigital.prj001.model.SOExpressItemHeader
 import com.namoadigital.prj001.ui.act040.Act040_Main
@@ -16,7 +17,7 @@ import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
 
-class Act091_Main : Base_Activity(), Act91_Contract.I_View {
+class Act091_Main : Base_Activity(), Act091_Contract.I_View {
 
 
     private val binding: Act091MainBinding by lazy {
@@ -67,9 +68,10 @@ class Act091_Main : Base_Activity(), Act91_Contract.I_View {
         return super.onSupportNavigateUp()
     }
 
-    override fun callAct040() {
+    override fun callAct040(expressTmp: Long) {
         val mIntent = Intent(context, Act040_Main::class.java)
         bundleSaved?.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT091)
+        bundleSaved?.putLong(SO_Pack_Express_LocalDao.EXPRESS_TMP, expressTmp)
         mIntent.putExtras(bundleSaved!!)
         mIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         startActivity(mIntent)
@@ -155,7 +157,7 @@ class Act091_Main : Base_Activity(), Act91_Contract.I_View {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        callAct040()
+        callAct040(-1)
     }
 
 

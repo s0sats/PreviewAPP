@@ -16,11 +16,11 @@ import java.io.File
 
 class Act091_Presenter constructor(
     private val context: Context,
-    private val mView: Act91_Contract.I_View,
+    private val mView: Act091_Contract.I_View,
     private val mModule_code: String,
     private val mResource_code: String,
     private val bundle: Bundle
-) : Act91_Contract.I_Presenter {
+) : Act091_Contract.I_Presenter {
 
     private val so_Pack_Express_LocalDao by lazy {
         SO_Pack_Express_LocalDao(
@@ -182,7 +182,7 @@ class Act091_Presenter constructor(
         }
         so_Pack_Express_LocalDao.addUpdate(expressLocal)
         //
-        mView.callAct040()
+        mView.callAct040(expressLocal.express_tmp)
     }
 
     private fun getCurrentExpressTmp(): Long {
@@ -262,6 +262,4 @@ class Act091_Presenter constructor(
         ))
         return so_pack_express_local
     }
-
-
 }
