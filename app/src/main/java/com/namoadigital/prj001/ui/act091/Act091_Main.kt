@@ -80,7 +80,7 @@ class Act091_Main : Base_Activity(), Act091_Contract.I_View {
 
 
     override fun openBottomSheet(itemHeader: SOExpressItemHeader) {
-        Act091_BottomSheet.getInstance(Gson().toJson(itemHeader)).apply {
+        Act091_BottomSheet.getInstance(Gson().toJson(itemHeader), false).apply {
             onAddServices = ::onAddServicesClick
         }.show(supportFragmentManager, "bottomSheet")
     }

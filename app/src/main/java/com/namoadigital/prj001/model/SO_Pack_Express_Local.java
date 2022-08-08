@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,6 +54,7 @@ public class SO_Pack_Express_Local {
     private String status;
     private String log_date;
     private String token;
+    @SerializedName("packs_services")
     private List<SoPackExpressPacksLocal> packsLocals;
 
 

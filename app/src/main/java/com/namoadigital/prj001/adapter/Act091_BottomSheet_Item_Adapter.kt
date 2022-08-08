@@ -43,7 +43,7 @@ class Act091_BottomSheet_Item_Adapter constructor(
         fun onBinding(item: SOExpressItemDetail){
             with(binding) {
                 setLabels(this)
-
+                act091BottomSheetServiceComment.setText(item.comments)
                 act091BottomSheetServiceTitle.text = item.service_desc_full
                 if(type == "P"){
                     onEvent(BottomListEvent.stateWhenIsPackage(item, hmAux))

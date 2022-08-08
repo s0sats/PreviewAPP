@@ -22,6 +22,8 @@ import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -38,12 +40,14 @@ import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.SO_Pack_ExpressDao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
+import com.namoadigital.prj001.dao.SoPackExpressPacksLocalDao;
 import com.namoadigital.prj001.databinding.Act040MainBinding;
 import com.namoadigital.prj001.databinding.Act040MainContentBinding;
 import com.namoadigital.prj001.databinding.Act040MainDuplicatedDialogBinding;
 import com.namoadigital.prj001.extensions.AppCompatActivityKt;
 import com.namoadigital.prj001.model.MD_Partner;
 import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.model.SOExpressItemHeader;
 import com.namoadigital.prj001.model.SO_Pack_Express;
 import com.namoadigital.prj001.model.SO_Pack_Express_Local;
 import com.namoadigital.prj001.model.SoPackExpressPacksLocal;
@@ -56,6 +60,7 @@ import com.namoadigital.prj001.ui.act021.Act021_Main;
 import com.namoadigital.prj001.ui.act042.Act042_Main;
 import com.namoadigital.prj001.ui.act048.Act048_Main;
 import com.namoadigital.prj001.ui.act091.Act091_Main;
+import com.namoadigital.prj001.ui.act091.bottomstate.Act091_BottomSheet;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -63,6 +68,10 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 
 /**
  * Created by d.luche on 09/03/2018.
@@ -273,7 +282,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
-                ), new SO_Pack_Express_LocalDao(
+                ), new SoPackExpressPacksLocalDao(
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
@@ -549,16 +558,17 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                                     Constant.PROFILE_MENU_SO,
                                     Constant.PROFILE_MENU_SO_SHOW_SERVICE_PRICE
                             ),
-                            soPackExpressPacksLocal -> {
-                                if (mPresenter.hasPackServiceFile(mSo_pack_express.getContract_code(), mSo_pack_express.getProduct_code(), mSo_pack_express.getCategory_price_code(), mSo_pack_express.getSite_code(), mSo_pack_express.getOperation_code())) {
-//                                    callBottomSheet()
-                                }else{
-                                    mPresenter.executeWS_SO_Service_Search(mSo_pack_express, binding.mketSerial.getText().toString());
+                            new Function1<SoPackExpressPacksLocal, Object>() {
+                                @Override
+                                public Object invoke(SoPackExpressPacksLocal soPackExpressPacksLocal) {
+                                    if (mPresenter.hasPackServiceFile(mSo_pack_express.getContract_code(), mSo_pack_express.getProduct_code(), mSo_pack_express.getCategory_price_code(), mSo_pack_express.getSite_code(), mSo_pack_express.getOperation_code())) {
+                                        callBottomSheet(soPackExpressPacksLocal);
+                                    } else {
+                                        mPresenter.executeWS_SO_Service_Search(mSo_pack_express, Objects.requireNonNull(binding.mketSerial.getText()).toString(), soPackExpressPacksLocal);
+                                    }
+                                    return null;
                                 }
-
-                                return null;
                             }
-
                     );
                     //
                     binding.rvAddPackServices.setAdapter(mAdapter);
@@ -586,7 +596,43 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             binding.mketAddInfo2.setTag("");
             binding.mketAddInfo3.setTag("");
             binding.clAddPackServices.setVisibility(View.GONE);
+            mPresenter.deleteExpressAllPackLocal();
         }
+    }
+
+    private void callBottomSheet(SoPackExpressPacksLocal soPackExpressPacksLocal) {
+        Gson gson = new Gson();
+
+        Act091_BottomSheet packServicesEditFragment = Act091_BottomSheet.Companion.getInstance(gson.toJson(soPackExpressPacksLocal.toSOExpressItemHeader()), true);
+        packServicesEditFragment.setOnAddServices(new Function1<SOExpressItemHeader, Unit>() {
+            @Override
+            public Unit invoke(SOExpressItemHeader soExpressItemHeader) {
+                mPresenter.updateExpressPackage(
+                        soExpressItemHeader,
+                        mSo_pack_express.getCustomer_code(),
+                        mSo_pack_express.getProduct_code(),
+                        mSo_pack_express.getSite_code(),
+                        mSo_pack_express.getOperation_code(),
+                        mSo_pack_express.getExpress_code(),
+                        (int) bundle_express_tmp);
+                return null;
+            }
+        });
+        packServicesEditFragment.setOnDeleteServices(new Function1<SOExpressItemHeader, Unit>() {
+            @Override
+            public Unit invoke(SOExpressItemHeader soExpressItemHeader) {
+                mPresenter.deleteSelectedExpressPackLocal( soExpressItemHeader,
+                        mSo_pack_express.getCustomer_code(),
+                        mSo_pack_express.getProduct_code(),
+                        mSo_pack_express.getSite_code(),
+                        mSo_pack_express.getOperation_code(),
+                        mSo_pack_express.getExpress_code(),
+                        (int) bundle_express_tmp);
+                return null;
+            }
+        });
+        packServicesEditFragment.show(getSupportFragmentManager(), "bottomSheet")
+        ;
     }
 
     private void configBillingInfoView(TextInputLayout til, MKEditTextNM mketAddInfo, String viewDef, String hint, int isTracking, String helperText){
@@ -860,7 +906,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                     if (mPresenter.hasPackServiceFile(mSo_pack_express.getContract_code(), mSo_pack_express.getProduct_code(), mSo_pack_express.getCategory_price_code(), mSo_pack_express.getSite_code(), mSo_pack_express.getOperation_code())) {
                         callAct091();
                     }else{
-                        mPresenter.executeWS_SO_Service_Search(mSo_pack_express, binding.mketSerial.getText().toString());
+                        mPresenter.executeWS_SO_Service_Search(mSo_pack_express, binding.mketSerial.getText().toString(), null);
                     }
                 }
             }
@@ -914,6 +960,14 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
      * Metodo que concentra a chamada da criação da expresso
      */
     private void prepareCreateSoPackExpress() {
+        SO_Pack_Express_Local so_pack_express_local = mPresenter.getExpressPackLocal(
+                mSo_pack_express.getCustomer_code(),
+                mSo_pack_express.getProduct_code(),
+                mSo_pack_express.getSite_code(),
+                mSo_pack_express.getOperation_code(),
+                mSo_pack_express.getExpress_code(),
+                (int) bundle_express_tmp);
+
         mPresenter.onCreateSo_Pack_Express(
                     mSo_pack_express,
                     md_partner,
@@ -921,7 +975,8 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                     ToolBox_Inf.removeAllLineBreaks(binding.mketSerial.getText().toString().trim()),
                     getBillingInfoFromUi(mSo_pack_express.getBilling_add_inf1_view(), binding.mketAddInfo1),
                     getBillingInfoFromUi(mSo_pack_express.getBilling_add_inf2_view(), binding.mketAddInfo2),
-                    getBillingInfoFromUi(mSo_pack_express.getBilling_add_inf3_view(), binding.mketAddInfo3)
+                    getBillingInfoFromUi(mSo_pack_express.getBilling_add_inf3_view(), binding.mketAddInfo3),
+                    so_pack_express_local
         );
     }
 
@@ -1179,7 +1234,15 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             mPresenter.executeSO_Pack_Express_Local();
         }else if(wsProcess.equals(WS_SO_Service_Search.class.getName())){
             progressDialog.dismiss();
-            callAct091();
+            Gson gson = new GsonBuilder().create();
+            if(mLink.isEmpty()){
+                callAct091();
+            }else{
+                SoPackExpressPacksLocal soPackExpressPacksLocal = gson.fromJson(mLink, SoPackExpressPacksLocal.class);
+                if(soPackExpressPacksLocal!=null){
+                    callBottomSheet(soPackExpressPacksLocal);
+                }
+            }
         }
     }
 

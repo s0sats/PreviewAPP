@@ -4,6 +4,7 @@ import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.MD_Partner;
 import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.model.SOExpressItemHeader;
 import com.namoadigital.prj001.model.SO_Pack_Express;
 import com.namoadigital.prj001.model.SO_Pack_Express_Local;
 import com.namoadigital.prj001.model.SoPackExpressPacksLocal;
@@ -35,8 +36,8 @@ public interface Act040_Main_Presenter {
                                  String serial,
                                  String billingInfo1,
                                  String billingInfo2,
-                                 String billingInfo3
-                                );
+                                 String billingInfo3,
+                                 SO_Pack_Express_Local so_pack_express_local);
 
     void onCreateSo_Pack_Express_Structure(SO_Pack_Express mSo_pack_express,
                                  MD_Partner md_partner,
@@ -76,11 +77,17 @@ public interface Act040_Main_Presenter {
     String getFormattedTrackingDuplicated(String tracking_duplicated_msg, ArrayList<MKEditTextNM> trackingFields);
 
     //void checkSerialUpdateRequired(long product_code, String serial_id);
-    void executeWS_SO_Service_Search(SO_Pack_Express mSo_pack_express, String serialId);
+    void executeWS_SO_Service_Search(SO_Pack_Express mSo_pack_express, String serialId, SoPackExpressPacksLocal soPackExpressPacksLocal);
 
     List<SoPackExpressPacksLocal> getExpressPacks(SO_Pack_Express mSo_pack_express);
 
     boolean hasPackServiceFile(int contract_code, long product_code, int category_price_code, long site_code, long operation_code);
 
     SO_Pack_Express_Local getExpressPackLocal(long customer_code, long product_code, long site_code, long operation_code, String express_code, int bundle_express_tmp);
+
+    void deleteExpressAllPackLocal();
+
+    void updateExpressPackage(SOExpressItemHeader soExpressItemHeader, long customer_code, long product_code, long site_code, long operation_code, String express_code, int bundle_express_tmp);
+
+    void deleteSelectedExpressPackLocal(SOExpressItemHeader soExpressItemHeader, long customer_code, long product_code, long site_code, long operation_code, String express_code, int bundle_express_tmp);
 }

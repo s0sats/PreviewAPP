@@ -2,6 +2,7 @@ package com.namoadigital.prj001.sql;
 
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.database.Specification;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 
 /**
  * Created by d.luche on 03/08/2017.
@@ -28,7 +29,10 @@ public class SO_Pack_Express_Local_Sql_008 implements Specification {
                         "   token = '" + token + "'\n" +
                         " WHERE\n" +
                         "  customer_code = '" + customer_code + "'\n" +
-                        "  and express_tmp in (select express_tmp from so_pack_expresss_local where status = 'NEW')\n")
+                        "  and express_tmp in (" +
+                        "  select express_tmp from so_pack_expresss_local where status = 'NEW'  " +
+                        "  and so_status = '" + ConstantBaseApp.SYS_STATUS_WAITING_SYNC + "' "+
+                        "  )\n")
 
                 .toString();
     }

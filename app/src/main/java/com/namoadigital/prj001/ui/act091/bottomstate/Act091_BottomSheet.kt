@@ -32,11 +32,13 @@ import com.namoadigital.prj001.util.ToolBox_Inf
 class Act091_BottomSheet constructor(
 ) : BottomSheetDialogFragment(){
     var onAddServices: (contentItemHeader: SOExpressItemHeader) -> Unit = { _,-> }
+    var onDeleteServices: (contentItemHeader: SOExpressItemHeader) -> Unit = { _,-> }
     private val binding: Act091BottomSheetBinding by lazy {
         Act091BottomSheetBinding.inflate(layoutInflater)
     }
 
     private lateinit var contentItemHeader: SOExpressItemHeader
+    private var showDelete: Boolean = false
     private val hmAux: HMAux by lazy {
         val transList: MutableList<String> = mutableListOf(
             "comment_hint",
@@ -76,6 +78,7 @@ class Act091_BottomSheet constructor(
 
         arguments?.let {
             contentItemHeader = Gson().fromJson(it.getString(SERVICE_ITEM), SOExpressItemHeader::class.java)
+            showDelete = it.getBoolean(UPDATE_PACKAGE_SERVICES, false)
         }
     }
 
@@ -127,6 +130,7 @@ class Act091_BottomSheet constructor(
                 onEvent(BottomEvent.changePriceColor(it.manual_price == 0, hmAux))
                 onEvent(BottomEvent.changeStatePrice(it.manual_price != 0))
                 onEvent(BottomEvent.OnUpdateBottomSheet(it, hmAux))
+                act091BottomSheetComment.setText(it.comment)
             }
 
         }
@@ -149,6 +153,10 @@ class Act091_BottomSheet constructor(
             act091BottomSheetOk.text = hmAux["sys_alert_btn_ok"]
             act091BottomSheetCancel.text = hmAux["sys_alert_btn_cancel"]
 
+            act091BottomSheetDelete.visibility = View.GONE
+            if(showDelete){
+                act091BottomSheetDelete.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -245,6 +253,10 @@ class Act091_BottomSheet constructor(
                 }
                 onAddServices(contentItemHeader)
             }
+            act091BottomSheetDelete.setOnClickListener{
+                onDeleteServices(contentItemHeader)
+                dismiss()
+            }
         }
     }
 
@@ -272,12 +284,15 @@ class Act091_BottomSheet constructor(
     companion object {
 
         const val SERVICE_ITEM = "SERVICE_ITEM"
+        const val UPDATE_PACKAGE_SERVICES = "UPDATE_PACKAGE_SERVICES"
 
         fun getInstance(
             serviceItem: String,
+            updatePackageServices: Boolean
         ) = Act091_BottomSheet().apply {
             arguments = Bundle().apply {
                 putString(SERVICE_ITEM, serviceItem)
+                putBoolean(UPDATE_PACKAGE_SERVICES, updatePackageServices)
             }
         }
 

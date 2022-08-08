@@ -26,7 +26,9 @@ class SO_Pack_Express_Local_Sql_014(
             AND ${SO_Pack_Express_LocalDao.SITE_CODE} = '$siteCode'  
             AND ${SO_Pack_Express_LocalDao.OPERATION_CODE} = '$operationCode'
             --status sent e so_status != denied OU status new 
-            AND ( ${SO_Pack_Express_LocalDao.STATUS}  = '${ConstantBaseApp.SO_EXPRESS_STATUS_NEW}'
+            AND ( (${SO_Pack_Express_LocalDao.STATUS}  = '${ConstantBaseApp.SO_EXPRESS_STATUS_NEW}'
+                    AND ${SO_Pack_Express_LocalDao.SO_STATUS}  <> '${ConstantBaseApp.SYS_STATUS_PROCESS}'
+                    )
                   OR ( ${SO_Pack_Express_LocalDao.STATUS} = '${ConstantBaseApp.SYS_STATUS_SENT}' 
                        AND ${SO_Pack_Express_LocalDao.SO_STATUS} <> '${ConstantBaseApp.SYS_STATUS_DENIED}' 
                       )

@@ -138,11 +138,27 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="end"
         android:elevation="15dp"
         android:padding="10dp"
+        android:gravity="center"
         android:clipToPadding="false"
         android:background="@drawable/background_shadow">
+
+        <ImageView
+            android:id="@+id/act091_bottom_sheet_delete"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="8dp"
+            android:visibility="gone"
+            android:background="@drawable/delete_toogle_default"
+            app:tint="@color/namoa_color_red"
+            android:src="@drawable/ic_trash_bin"
+            android:layout_marginEnd="8dp"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="1dp"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/act091_bottom_sheet_cancel"
@@ -150,7 +166,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Cancelar"
-            android:layout_marginEnd="8dp"/>
+            android:layout_marginEnd="8dp"
+            />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/act091_bottom_sheet_ok"
@@ -158,7 +175,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="OK"
-            android:textAllCaps="true" />
+            android:textAllCaps="true"
+            />
 
     </LinearLayout>
 
