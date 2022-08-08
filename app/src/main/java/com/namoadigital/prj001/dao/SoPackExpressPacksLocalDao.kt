@@ -5,6 +5,7 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
+import androidx.core.database.getDoubleOrNull
 import androidx.core.database.getStringOrNull
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
@@ -38,6 +39,8 @@ class SoPackExpressPacksLocalDao(
         const val PACK_SERVICE_DESC = "pack_service_desc"
         const val PACK_SERVICE_DESC_FULL = "pack_service_desc_full"
         const val PRICE_LIST_CODE = "price_list_code"
+        const val MANUAL_PRICE = "manual_price"
+        const val PRICE = "price"
         const val QTY = "qty"
         const val TYPE_PS = "type_ps"
         const val COMMENTS = "comments"
@@ -121,6 +124,7 @@ class SoPackExpressPacksLocalDao(
                         AND ${PRODUCT_CODE} = '${soPackExpressPacksLocal.product_code}'
                         AND ${EXPRESS_CODE} = '${soPackExpressPacksLocal.express_code}'
                         AND ${EXPRESS_TMP} = '${soPackExpressPacksLocal.express_tmp}'
+                        AND ${PRICE_LIST_CODE} = '${soPackExpressPacksLocal.price_list_code}'
                         AND ${PACK_CODE} = '${soPackExpressPacksLocal.pack_code}'
                         AND ${PACK_SEQ} = '${soPackExpressPacksLocal.pack_seq}'
                         AND ${TYPE_PS} = '${soPackExpressPacksLocal.type_ps}'
@@ -158,6 +162,83 @@ class SoPackExpressPacksLocalDao(
         }
         closeDB()
     }
+
+    fun removeFull(item: SoPackExpressPacksLocal):DaoObjReturn {
+        var daoObjReturn = DaoObjReturn()
+        val addUpdateRet: Long = 0
+        val curAction = DaoObjReturn.DELETE
+        daoObjReturn.table = SO_Pack_Express_LocalDao.TABLE
+        //
+        //
+        openDB()
+        try {
+            val sbWhere = java.lang.StringBuilder()
+            sbWhere.append(CUSTOMER_CODE).append(" = '")
+                .append(item.customer_code.toString()).append("'")
+            sbWhere.append(" and ")
+            sbWhere.append(SITE_CODE).append(" = '")
+                .append(item.site_code.toString()).append("'")
+            sbWhere.append(" and ")
+            sbWhere.append(OPERATION_CODE).append(" = '")
+                .append(item.operation_code.toString()).append("'")
+            sbWhere.append(" and ")
+            sbWhere.append(PRODUCT_CODE).append(" = '")
+                .append(item.product_code).append("'")
+            sbWhere.append(" and ")
+            sbWhere.append(EXPRESS_CODE).append(" = '")
+                .append(item.express_code).append("'")
+            sbWhere.append(" and ")
+            sbWhere.append(EXPRESS_TMP).append(" = '")
+                .append(item.express_tmp).append("'")
+            sbWhere.append(" and ")
+            sbWhere.append(PRICE_LIST_CODE).append(" = '")
+                .append(item.price_list_code).append("'")
+            sbWhere.append(" and ")
+            sbWhere.append(PACK_CODE).append(" = '")
+                .append(item.pack_code).append("'")
+            sbWhere.append(" and ")
+            sbWhere.append(PACK_SEQ).append(" = '")
+                .append(item.pack_seq).append("'")
+            sbWhere.append(" and ")
+            sbWhere.append(TYPE_PS).append(" = '")
+                .append(item.type_ps).append("'")
+            //
+            db.beginTransaction()
+            //
+            db.delete(TABLE, sbWhere.toString(), null)
+            db.delete(SoPackExpressServicesLocalDao.TABLE, sbWhere.toString(), null)
+            //
+            db.setTransactionSuccessful()
+        } catch (e: SQLiteException) {
+            //Chama metodo que baseado na exception gera obj de retorno setado como erro
+            //e contendo msg de erro tratada.
+            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.message)
+            //
+            ToolBox_Inf.registerException(
+                javaClass.name,
+                java.lang.Exception(
+                    """
+            ${e.message}
+            ${daoObjReturn.errorMsg}
+            """.trimIndent()
+                )
+            )
+        } catch (e: java.lang.Exception) {
+            //Seta obj de retorno com flag de erro e gera arquivo de exception
+            daoObjReturn.setError(true)
+            ToolBox_Inf.registerException(javaClass.name, e)
+        } finally {
+            db.endTransaction()
+            //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
+            //ou rowId do ultimo insert.
+            daoObjReturn.action = curAction
+            daoObjReturn.actionReturn = addUpdateRet
+        }
+        closeDB()
+        return daoObjReturn
+    }
+
+
 
     override fun getByString(sQuery: String?): SoPackExpressPacksLocal? {
         var soPackExpressPacksLocal: SoPackExpressPacksLocal? = null
@@ -372,6 +453,8 @@ class SoPackExpressPacksLocalDao(
                         pack_service_desc = getString(getColumnIndex(PACK_SERVICE_DESC)),
                         pack_service_desc_full = getString(getColumnIndex(PACK_SERVICE_DESC_FULL)),
                         price_list_code = getInt(getColumnIndex(PRICE_LIST_CODE)),
+                        manual_price = getInt(getColumnIndex(MANUAL_PRICE)),
+                        price = getDoubleOrNull(getColumnIndex(PRICE)),
                         qty = getInt(getColumnIndex(QTY)),
                         type_ps = getString(getColumnIndex(TYPE_PS)),
                         comments = getStringOrNull(getColumnIndex(COMMENTS))
@@ -460,6 +543,20 @@ class SoPackExpressPacksLocalDao(
                         put(
                             PRICE_LIST_CODE,
                             soPackExpressPacksLocal.price_list_code
+                        )
+                    }
+                    //
+                    if (soPackExpressPacksLocal.manual_price > -1) {
+                        put(
+                            MANUAL_PRICE,
+                            soPackExpressPacksLocal.manual_price
+                        )
+                    }
+                    //
+                    if (soPackExpressPacksLocal.price != null) {
+                        put(
+                            PRICE,
+                            soPackExpressPacksLocal.price
                         )
                     }
                     //

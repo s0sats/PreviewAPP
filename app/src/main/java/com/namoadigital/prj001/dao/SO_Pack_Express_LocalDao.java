@@ -368,6 +368,9 @@ public class SO_Pack_Express_LocalDao extends BaseDao implements Dao<SO_Pack_Exp
 
             while (cursor.moveToNext()) {
                 SO_Pack_Express_Local uAux = toSO_Pack_Express_LocalMapper.map(cursor);
+                if(uAux != null){
+                    getSoPackExpressPacksLocal(uAux);
+                }
                 so_pack_express_locals.add(uAux);
             }
 

@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.model
 
 import android.content.Context
+import com.google.gson.annotations.SerializedName
 import com.namoadigital.prj001.dao.SoPackExpressPacksLocalDao
 import com.namoadigital.prj001.sql.SoPackExpressPacksLocalSql003
 import com.namoadigital.prj001.sql.SoPackExpressServicesLocalSql003
@@ -19,9 +20,12 @@ data class SoPackExpressPacksLocal(
     val price_list_code:Int,
     val pack_service_desc:String,
     val pack_service_desc_full:String,
+    val manual_price: Int = 0,
+    var price:Double =0.0,
     var qty:Int,
-    val type_ps:String?,
+    val type_ps:String,
     var comments:String?,
+    @SerializedName("service")
     val serviceList: MutableList<SoPackExpressServicesLocal> = mutableListOf<SoPackExpressServicesLocal>()
 ) {
     var customer_code:Long = -1
@@ -43,8 +47,10 @@ data class SoPackExpressPacksLocal(
         price_list_code:Int,
         pack_service_desc:String,
         pack_service_desc_full:String,
+        manual_price: Int,
+        price: Double?,
         qty:Int,
-        type_ps:String?,
+        type_ps:String,
         comments:String?
     ) : this(
         pack_code,
@@ -52,6 +58,8 @@ data class SoPackExpressPacksLocal(
         price_list_code,
         pack_service_desc,
         pack_service_desc_full,
+        manual_price,
+        price?:0.0,
         qty,
         type_ps,
         comments
@@ -140,5 +148,26 @@ data class SoPackExpressPacksLocal(
                 packSeq
             ).toSqlQuery()
         )?.get(SoPackExpressServicesLocalSql003.NEXT_TMP)?.toInt()!!
+    }
+
+    fun toSOExpressItemHeader(): SOExpressItemHeader {
+        return SOExpressItemHeader(
+            customer_code = this.customer_code,
+            pack_code = this.pack_code,
+            site_code = this.site_code,
+            operation_code = this.operation_code,
+            product_code = this.product_code,
+            express_code = this.express_code,
+            packSeq = this.pack_seq,
+            price_list_code = this.price_list_code,
+            name = this.pack_service_desc_full,
+            pack_service_desc = this.pack_service_desc,
+            comment = this.comments?: "",
+            price = this.price,
+            qty = this.qty,
+            type_ps = this.type_ps,
+            manual_price = this.manual_price,
+            serviceList = this.serviceList.toSOExpressItemDetail()
+        )
     }
 }

@@ -11,7 +11,9 @@ class SoPackExpressPacksLocalSql001(
     private val express_code: String,
     private val express_tmp: Long,
     private val pack_code: Int,
-    private val pack_seq: Int
+    private val price_list_code: Int,
+    private val pack_seq: Int,
+    private val type_ps: String
     ) : Specification {
 
     override fun toSqlQuery(): String {
@@ -27,8 +29,10 @@ class SoPackExpressPacksLocalSql001(
             AND ${SoPackExpressPacksLocalDao.PRODUCT_CODE} = '$product_code'
             AND ${SoPackExpressPacksLocalDao.EXPRESS_CODE} = '$express_code'
             AND ${SoPackExpressPacksLocalDao.EXPRESS_TMP} = '$express_tmp'
+            AND ${SoPackExpressPacksLocalDao.PRICE_LIST_CODE} = '$price_list_code'
             AND ${SoPackExpressPacksLocalDao.PACK_CODE} = '$pack_code'
             AND ${SoPackExpressPacksLocalDao.PACK_SEQ} = '$pack_seq' ;                                         
+            AND ${SoPackExpressPacksLocalDao.TYPE_PS} = '$type_ps' ;                                         
        """.trimIndent()
         //
         return s

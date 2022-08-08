@@ -16,6 +16,7 @@ data class SOExpressItemHeader(
     var express_code:String,
     val price_list_code:Int,
     val type_ps: String = "",
+    var packSeq: Int = -1,
     val name: String = "",
     val pack_service_desc: String = "",
     var comment: String = "",
@@ -32,8 +33,8 @@ data class SOExpressItemHeader(
         product_code: Long,
         express_code: String
     ): SoPackExpressPacksLocal? {
-        var packSeq =-1
-        if("P".equals(type_ps)){
+
+        if(packSeq < 0) {
             packSeq = generatePackSeq(
                 context,
                 customer_code,
@@ -51,6 +52,8 @@ data class SOExpressItemHeader(
             price_list_code,
             name,
             name,
+            manual_price,
+            price?:0.0,
             qty,
             type_ps,
             comment
@@ -118,6 +121,25 @@ fun List<TSO_Service_Search_Detail_Obj>.toSOExpressItemDetail() = run {
             manual_price = it.manual_price,
             qty = it.qty,
             comments = it.comment)
+        )
+    }
+    list
+}
+
+@JvmName("toSOExpressItemDetailSoPackExpressServicesLocal")
+fun MutableList<SoPackExpressServicesLocal>.toSOExpressItemDetail() = run {
+    val list = mutableListOf<SOExpressItemDetail>()
+    this.forEach {
+        list.add(
+            SOExpressItemDetail(
+            pack_code = it.pack_code,
+            service_code = it.service_code,
+            service_desc = it.service_desc,
+            service_desc_full = it.service_desc_full,
+            price = it.price,
+            manual_price = it.manual_price,
+            qty = it.qty,
+            comments = it.comments)
         )
     }
     list
