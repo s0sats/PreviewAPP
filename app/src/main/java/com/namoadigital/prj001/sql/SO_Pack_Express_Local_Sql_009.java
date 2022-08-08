@@ -70,7 +70,7 @@ public class SO_Pack_Express_Local_Sql_009 implements Specification {
                         "   s.customer_code = '"+customer_code+"'\n" +
 //                        "   and (s.ret_code is null or s.ret_code = '"+ Constant.SYS_STATUS_ERROR+"') \n" +
                         " ORDER BY \n" +
-                        "       s.express_tmp asc\n")
+                        "       s.express_tmp desc\n")
                 .append(
                         ";")
 //                .append(HmAuxFields+"#"

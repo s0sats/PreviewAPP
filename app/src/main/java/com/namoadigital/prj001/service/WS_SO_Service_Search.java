@@ -31,7 +31,10 @@ public class WS_SO_Service_Search extends IntentService {
     private String mResource_Code = "0";
     private String mResource_Name = "WS_SO_Service_Search";
     private Gson gson;
+    private String edit_default_package;
+
     public static final String WS_EXPRESS_MODE  = "WS_EXPRESS_MODE";
+    public static final String EDIT_DEFAULT_PACKAGE  = "EDIT_DEFAULT_PACKAGE";
 
     public WS_SO_Service_Search() {
         super("WS_SO_Service_Search");
@@ -52,6 +55,7 @@ public class WS_SO_Service_Search extends IntentService {
             int site_code = bundle.getInt(SM_SODao.SITE_CODE,0);
             int operation_code = bundle.getInt(SM_SODao.OPERATION_CODE,0);
             int express = bundle.getInt(WS_EXPRESS_MODE,0);
+            edit_default_package = bundle.getString(EDIT_DEFAULT_PACKAGE,"");
             //
             processSOSearchList(
                     contract_code,
@@ -157,7 +161,7 @@ public class WS_SO_Service_Search extends IntentService {
             String file_name = ToolBox_Inf.getExpressSOFileName(contract_code, product_code, category_price_code, site_code, operation_code);
             //Chama metodo para criar arquivo
             createJsonFile(file_name, gson.toJson(rec), Constant.SO_EXPRESS_JSON_PATH);
-            ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_proccess"), new HMAux(),file_name , "0");
+            ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_proccess"), new HMAux(),edit_default_package, "0");
         }
     }
 

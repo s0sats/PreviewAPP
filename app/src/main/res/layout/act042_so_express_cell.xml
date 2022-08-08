@@ -120,6 +120,14 @@
             android:textColor="@color/namoa_os_form_problem_red"
             android:textSize="12sp"
             tools:text="teste" />
+
+        <TextView
+            android:id="@+id/so_express_pack_service_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            tools:text="teste" />
+
         <TextView
             android:id="@+id/so_express_end_datetime"
             android:layout_width="wrap_content"
