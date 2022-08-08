@@ -226,6 +226,15 @@ class Act086VerificationFrgPresenter(
         }
     }
 
+    override fun getFormattedLastMeasureInfo(
+        lastFixed: Float,
+        measureValueSufix: String?
+    ): String {
+        return "${ToolBox_Inf.convertFloatToBigDecimalString(
+            lastFixed,true
+        )}${if(measureValueSufix != null) " ".plus(measureValueSufix) else ""}"
+    }
+
     /**
      * Fun que reseta proprieades mutaveis pela u.i para estado original
      */

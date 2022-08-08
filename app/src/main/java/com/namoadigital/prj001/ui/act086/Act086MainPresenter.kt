@@ -54,7 +54,10 @@ class Act086MainPresenter(
             "alert_unsaved_data_will_be_lost_confirm",
             "info_ttl",
             "new_check_item_ttl",
-            "check_item_ttl"
+            "check_item_ttl",
+            "fixed_lbl",
+            "change_lbl",
+            "adjust_lbl",
         )
         transList.addAll(
             Act086VerificationFrg.getFragTranslationsVars()

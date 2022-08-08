@@ -38,6 +38,7 @@ class MD_Product_Serial_Tp_Device_Item_HistDao(
         const val EXEC_DATE = "exec_date"
         const val EXEC_COMMENT = "exec_comment"
         const val EXEC_MATERIAL = "exec_material"
+        const val CHANGE_ADJUST = "change_adjust"
     }
 
     private val toMD_Product_Serial_Tp_Device_Item_HistMapper: Mapper<Cursor,MD_Product_Serial_Tp_Device_Item_Hist>
@@ -362,7 +363,8 @@ class MD_Product_Serial_Tp_Device_Item_HistDao(
                         exec_value = getDouble(getColumnIndex(EXEC_VALUE)) ,
                         exec_date = getString(getColumnIndex(EXEC_DATE)) ,
                         exec_comment = getStringOrNull(getColumnIndex(EXEC_COMMENT)) ,
-                        exec_material = getInt(getColumnIndex(EXEC_MATERIAL))
+                        exec_material = getInt(getColumnIndex(EXEC_MATERIAL)),
+                        change_adjust = getInt(getColumnIndex(CHANGE_ADJUST))
                     )
                 }
             }
@@ -411,6 +413,8 @@ class MD_Product_Serial_Tp_Device_Item_HistDao(
                     if(mdProductSerialTpDeviceItemHist.exec_material > -1){
                         put(EXEC_MATERIAL,mdProductSerialTpDeviceItemHist.exec_material)
                     }
+
+                    if(mdProductSerialTpDeviceItemHist.change_adjust > -1) put(CHANGE_ADJUST, it.change_adjust)
                 }
             }
             //

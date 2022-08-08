@@ -62,6 +62,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
             prefixPhoto,
             isNewOrCreatedByApp(),
             deviceItem,
+            dateStartUntilLastMinute,
             readOnly
         )
     }

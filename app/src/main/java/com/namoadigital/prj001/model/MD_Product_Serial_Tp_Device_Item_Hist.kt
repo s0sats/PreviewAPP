@@ -6,7 +6,8 @@ class MD_Product_Serial_Tp_Device_Item_Hist(
     val exec_value: Double,
     val exec_date: String,
     val exec_comment: String?,
-    val exec_material: Int
+    val exec_material: Int,
+    val change_adjust: Int,
 ) {
     var customer_code: Long = -1
         private set
@@ -33,14 +34,16 @@ class MD_Product_Serial_Tp_Device_Item_Hist(
         exec_value: Double,
         exec_date: String,
         exec_comment: String?,
-        exec_material: Int
+        exec_material: Int,
+        change_adjust: Int
     ) : this(
         seq,
         exec_type,
         exec_value,
         exec_date,
         exec_comment,
-        exec_material
+        exec_material,
+        change_adjust
     ){
         this.customer_code = customer_code
         this.product_code = product_code

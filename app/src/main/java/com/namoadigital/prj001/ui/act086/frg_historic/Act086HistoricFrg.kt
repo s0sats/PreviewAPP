@@ -11,11 +11,11 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.BaseFragment
 import com.namoadigital.prj001.R
-import com.namoadigital.prj001.adapter.Act086HistoricAlertAdapter
+import com.namoadigital.prj001.adapter.Act086HistoricAdapter
 import com.namoadigital.prj001.dao.GeOsDao
 import com.namoadigital.prj001.dao.GeOsDeviceItemDao
 import com.namoadigital.prj001.databinding.Act086HistoricFrgBinding
-import com.namoadigital.prj001.model.Act086HistoricAlert
+import com.namoadigital.prj001.model.Act086HistoricModel
 import com.namoadigital.prj001.model.GeOsDeviceItem
 import com.namoadigital.prj001.model.GeOsDeviceItemHist
 import com.namoadigital.prj001.util.Constant
@@ -33,10 +33,12 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
     private val binding: Act086HistoricFrgBinding by lazy{
         Act086HistoricFrgBinding.inflate(layoutInflater)
     }
-    private val alertAdapter: Act086HistoricAlertAdapter by lazy{
-        Act086HistoricAlertAdapter(alertList as ArrayList<Act086HistoricAlert>)
+    private val alertAdapter: Act086HistoricAdapter by lazy{
+        Act086HistoricAdapter(
+            alertList
+        )
     }
-    private var alertList = mutableListOf<Act086HistoricAlert>()
+    private var alertList = mutableListOf<Act086HistoricModel>()
     private lateinit var itemHist: ArrayList<GeOsDeviceItemHist>
     private var itemCheckStatus: String? = null
     private var nextCycleMeasure: Float? = null
@@ -91,8 +93,8 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
         setTypeAlertInfo()
         setNextCycleInfo()
         setInstructionInfo()
-        setLastFixedInfo()
-        setAlertListInfo()
+        /*setLastFixedInfo()*/
+        setHistoricInfo()
     }
 
     private fun setLabels() {
@@ -102,10 +104,10 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
             act086HistoricFrgTvMeasureLbl.text = hmAux_Trans["measure_lbl"]
             act086HistoricFrgTvDeadlineLbl.text = hmAux_Trans["limit_date_lbl"]
             act086HistoricFrgTvInstructionTtl.text = hmAux_Trans["verification_instruction_ttl"]
-            act086HistoricFrgTvLastAdjustTtl.text = hmAux_Trans["last_fix_ttl"]
-            act086HistoricFrgTvAdjustLbl.text = hmAux_Trans["fixed_lbl"]
+/*            act086HistoricFrgTvLastAdjustTtl.text = hmAux_Trans["last_fix_ttl"]
+            act086HistoricFrgTvAdjustLbl.text = getMaintenanceLbl()
             act086HistoricFrgTvLastMeasureLbl.text = hmAux_Trans["last_measure_lbl"]
-            act086HistoricFrgTvMaterialLbl.text = hmAux_Trans["material_applied_lbl"]
+            act086HistoricFrgTvMaterialLbl.text = hmAux_Trans["material_applied_lbl"]*/
             act086HistoricFrgTvAlertHistoricTtl.text = hmAux_Trans["alert_historic_ttl"]
         }
     }
@@ -225,7 +227,8 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
         }
     }
 
-    private fun setLastFixedInfo() {
+    //Excluir
+/*    private fun setLastFixedInfo() {
         val lastFixed = itemHist.find {
             it.exec_type.equals(GeOsDeviceItem.EXEC_TYPE_FIXED,true)
         }
@@ -248,7 +251,7 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
                 act086HistoricFrgClLastAdjust.visibility = View.GONE
             }
         }
-    }
+    }*/
 
     private fun initRecycle() {
         binding.act086HistoricFrgRvAlertHistoric.apply {
@@ -257,7 +260,7 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
         }
     }
 
-    private fun setAlertListInfo() {
+    private fun setHistoricInfo() {
         alertList.clear()
         //Filtra itens que são alerta
         val toAlertList = mPresenter.getAlertList(itemHist,measureValueSufix,restrictionDecimal)
@@ -268,6 +271,25 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
             binding.act086HistoricFrgClAlertHistoric.visibility = View.GONE
         }
     }
+
+
+/*    private fun getMaintenanceLbl() : String? {
+        var label = hmAux_Trans["fixed_lbl"]
+        itemHist.forEach {
+            when(it.exec_type){
+                GeOsDeviceItem.EXEC_TYPE_FIXED -> {
+                    label = if(it.change_adjust == 1) hmAux_Trans["change_lbl"]
+                        else hmAux_Trans["fixed_lbl"]
+                }
+
+                GeOsDeviceItem.EXEC_TYPE_ADJUST -> {
+                    binding.act086HistoricFrgIvLastAdjust.setColorFilter(resources.getColor(R.color.bootstrap_gray))
+                    label = hmAux_Trans["adjust_lbl"]
+                }
+            }
+        }
+        return label
+    }*/
 
     companion object {
         /**
@@ -316,7 +338,6 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
                 "limit_date_lbl",
                 "verification_instruction_ttl",
                 "last_fix_ttl",
-                "fixed_lbl",
                 "last_measure_lbl",
                 "material_applied_lbl",
                 "alert_historic_ttl",

@@ -2,10 +2,9 @@ package com.namoadigital.prj001.ui.act086.frg_historic
 
 import android.content.Context
 import com.namoa_digital.namoa_library.util.HMAux
-import com.namoadigital.prj001.model.Act086HistoricAlert
+import com.namoadigital.prj001.model.Act086HistoricModel
 import com.namoadigital.prj001.model.GeOsDeviceItem
 import com.namoadigital.prj001.model.GeOsDeviceItemHist
-import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.util.ArrayList
 
@@ -15,42 +14,40 @@ class Act086HistoricFrgPresenter(
     private val hmAuxTrans: HMAux,
 ): Act086HistoricFrgContract.IPresenter {
 
+
     override fun getAlertList(
         itemHist: ArrayList<GeOsDeviceItemHist>,
         measureValueSufix: String?,
         restrictionDecimal: Int?
-    ): MutableList<Act086HistoricAlert> {
-        val toAlertList = itemHist.filter { hist ->
-            hist.exec_type.equals(GeOsDeviceItem.EXEC_TYPE_ALERT, true)
-        }.map { hist ->
-            //Convert para lista do adapter.
-            Act086HistoricAlert(
-                alertLbl = hmAuxTrans["still_with_problem_lbl"]!!,
-                date = ToolBox_Inf.millisecondsToString(
-                    ToolBox_Inf.dateToMilliseconds(
-                        hist.exec_date
-                    ),
-                    ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-                ),
+    ): MutableList<Act086HistoricModel> {
+
+        val toAlertList = itemHist.map { hist ->
+            //Convert para lista do adapter
+            Act086HistoricModel(
+                icon = hist.getIcon(),
+                titleLbl = hist.getTitleFormated(hmAuxTrans) ?: "",
+                date = hist.getDate(context),
                 measureLbl = hmAuxTrans["last_measure_lbl"]!!,
-                measure = getFormattedLastMeasureInfo(hist.exec_value, measureValueSufix,restrictionDecimal),
-                materialLbl = hmAuxTrans["material_requested_lbl"]!!,
-                material = if (hist.exec_material == 1) {
-                    hmAuxTrans["YES"]!!
-                } else {
-                    hmAuxTrans["NO"]!!
-                },
-                comment = hist.exec_comment
+                measure = getFormattedLastMeasureInfo(hist.exec_value, measureValueSufix, restrictionDecimal),
+                materialLbl = hist.getMaterialLbl(hmAuxTrans) ?: "",
+                material = hist.hasMaterialApplied(hmAuxTrans) ?: "",
+                comment = hist.exec_comment,
+                exec_type = hist.exec_type
             )
         }
         //
-        if (toAlertList.isNotEmpty()) {
-            //Seta label esta com problema apenas no primeiro item.
-            toAlertList[0].alertLbl = hmAuxTrans["has_problem_lbl"]!!
+        if(toAlertList.isNotEmpty()){
+            toAlertList.filter {
+                it.exec_type == GeOsDeviceItem.EXEC_TYPE_ALERT
+            }.forEachIndexed { index, s ->
+                if(index == 0)
+                    s.titleLbl = hmAuxTrans["has_problem_lbl"] ?: ""
+            }
         }
         //
         return toAlertList.toMutableList()
     }
+
 
     override fun getFormattedLastMeasureInfo(
         lastFixed: Float,

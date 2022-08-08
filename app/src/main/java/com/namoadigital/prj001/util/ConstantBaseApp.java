@@ -968,4 +968,6 @@ public class ConstantBaseApp extends ConstantBase {
      * Constante para Ordernação de produtos e grupos.
      */
     public static final String DESC_FOR_SORT = "descForSort";
+
+    //Constante para replace da tradução
 }

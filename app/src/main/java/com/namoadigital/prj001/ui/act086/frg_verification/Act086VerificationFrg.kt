@@ -4,6 +4,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.text.SpannableString
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,23 +29,25 @@ import com.namoa_digital.namoa_library.view.Camera_Activity
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.adapter.Act086MaterialItemAdapter
 import com.namoadigital.prj001.adapter.Act086PhotoAdapter
+import com.namoadigital.prj001.dao.GeOsDao
 import com.namoadigital.prj001.dao.GeOsDeviceItemDao
 import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_ItemDao
 import com.namoadigital.prj001.databinding.Act086VerificationFrgBinding
 import com.namoadigital.prj001.extensions.applyTintColor
+import com.namoadigital.prj001.extensions.changeTextWithStringBuild
 import com.namoadigital.prj001.extensions.hideKeyboard
+import com.namoadigital.prj001.extensions.showAlertWithYesOrNot
 import com.namoadigital.prj001.model.Act086MaterialItem
 import com.namoadigital.prj001.model.GeOsDeviceItem
 import com.namoadigital.prj001.ui.act086.Act086Main
 import com.namoadigital.prj001.ui.act086.Act086ProductEditDialog
 import com.namoadigital.prj001.ui.act086.bottomsheet.Act086_BottomSheet
-import com.namoadigital.prj001.util.ConstantBaseApp
-import com.namoadigital.prj001.util.ToolBox_Con
-import com.namoadigital.prj001.util.ToolBox_Inf
+import com.namoadigital.prj001.util.*
 import com.namoadigital.prj001.view.act.product_selection.Act_Product_Selection
 import kotlinx.coroutines.*
 import java.util.*
-
+import java.util.concurrent.TimeUnit
+import kotlin.math.abs
 /**
  * A simple [Fragment] subclass.
  * Use the [Act086VerificationFrg.newInstance] factory method to
@@ -52,18 +55,27 @@ import java.util.*
  */
 class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_View {
     private val IN_READONLY = "IN_READONLY"
+    private var dateStartUntilLastMinute: String? = null
 
-    private val binding : Act086VerificationFrgBinding by lazy{
+    private val binding: Act086VerificationFrgBinding by lazy {
         Act086VerificationFrgBinding.inflate(layoutInflater)
     }
 
-    private val mPresenter : Act086VerificationFrgContract.I_Presenter by lazy{
+    private val mPresenter: Act086VerificationFrgContract.I_Presenter by lazy {
         Act086VerificationFrgPresenter(
             requireContext(),
             this,
             hmAux_Trans,
-            GeOsDeviceItemDao(requireContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), ConstantBaseApp.DB_VERSION_CUSTOM),
-            MD_Product_Serial_Tp_Device_ItemDao(requireContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), ConstantBaseApp.DB_VERSION_CUSTOM)
+            GeOsDeviceItemDao(
+                requireContext(),
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                ConstantBaseApp.DB_VERSION_CUSTOM
+            ),
+            MD_Product_Serial_Tp_Device_ItemDao(
+                requireContext(),
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                ConstantBaseApp.DB_VERSION_CUSTOM
+            )
         )
     }
     private lateinit var prefixPhoto: String
@@ -73,7 +85,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         Act086PhotoAdapter(::onPhotoItemClick)
     }
     private val materialFragList = mutableListOf<Act086MaterialItem>()
-    private val materialFragAdapter: Act086MaterialItemAdapter by lazy{
+    private val materialFragAdapter: Act086MaterialItemAdapter by lazy {
         Act086MaterialItemAdapter(
             ::onProductItemClick,
             ::onDeleteIconClick,
@@ -84,16 +96,18 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     }
     private var isNewVerification: Boolean = false
 
-    lateinit var showAlert: (ttl: String?,
-                    msg: String?,
-                    positeClickListener: DialogInterface.OnClickListener?,
-                    negativeBtn: Int) -> Unit
-            //= {_,_,_,_ -> }
+    lateinit var showAlert: (
+        ttl: String?,
+        msg: String?,
+        positeClickListener: DialogInterface.OnClickListener?,
+        negativeBtn: Int
+    ) -> Unit
+    //= {_,_,_,_ -> }
 
     lateinit var checkScrollNeeds: (materialBottom: Int, heightToAdd: Int) -> Unit
     private lateinit var geOsDeviceItem: GeOsDeviceItem
     private var lastSelectedRdoId = -1
-    private var inReadOnly : Boolean = false
+    private var inReadOnly: Boolean = false
     private var isMketCommentTypeTriggered: Boolean = false
     private var isManualDescInEdit = false
     private var skipSave: Boolean = false
@@ -103,11 +117,13 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            hmAux_Trans = HMAux.getHmAuxFromHashMap(it.getSerializable(ConstantBaseApp.MAIN_HMAUX_TRANS_KEY) as HashMap<String?, String?>)
-            prefixPhoto = it.getString(Act086Main.PARAM_PREFIX_PHOTO,"")
-            isNewVerification = it.getBoolean(Act086Main.PARAM_NEW_VERIFICATION,false)
+            hmAux_Trans =
+                HMAux.getHmAuxFromHashMap(it.getSerializable(ConstantBaseApp.MAIN_HMAUX_TRANS_KEY) as HashMap<String?, String?>)
+            prefixPhoto = it.getString(Act086Main.PARAM_PREFIX_PHOTO, "")
+            isNewVerification = it.getBoolean(Act086Main.PARAM_NEW_VERIFICATION, false)
             geOsDeviceItem = it.getSerializable(GeOsDeviceItem::javaClass.name) as GeOsDeviceItem
-            inReadOnly = it.getBoolean(IN_READONLY,true)
+            inReadOnly = it.getBoolean(IN_READONLY, true)
+            dateStartUntilLastMinute = it.getString(GeOsDao.DATE_START)
         }
     }
 
@@ -122,7 +138,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         super.onViewCreated(view, savedInstanceState)
         //Reseta listas pra que na troca de frag os items não fiquem duplicado pe o valor da lista
         //persiste entre as trocas de frag
-        if(savedInstanceState == null){
+        if (savedInstanceState == null) {
             resetMaterialAndPhotoList()
         }
         initVars()
@@ -132,7 +148,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     }
 
     private fun applyReadonlyUi() {
-        if(inReadOnly) {
+        if (inReadOnly) {
             with(binding) {
                 act086VerificationFrgIvManualHandler.isEnabled = false
                 act086VerificationFrgIvManualHandler.isClickable = false
@@ -168,8 +184,8 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         with(binding) {
             act086VerificationFrgRgAnswers.forEach {
                 //Se item novo e esta desabilitando, seta icones cinza
-                if(isNewVerification && !enabledState){
-                    if(it is RadioButton){
+                if (isNewVerification && !enabledState) {
+                    if (it is RadioButton) {
                         applyDrawableStartColor(
                             it,
                             R.color.namoa_pipeline_header_icon
@@ -182,7 +198,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             }
             //Se item novo e esta habilitando, seta as cores para da opção.
             //Nesse caso fora do loop, pois a fun ja faz todos de uma vez
-            if(isNewVerification && enabledState){
+            if (isNewVerification && enabledState) {
                 configRdoStartDrawableColor()
             }
         }
@@ -205,7 +221,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
 
     private fun initReviewPlannedMaterial() {
         binding.act086VerificationFrgClReviewMaterial.visibility = View.GONE
-        if(isReviewMaterialVisible()){
+        if (isReviewMaterialVisible()) {
             binding.act086VerificationFrgClReviewMaterial.visibility = View.VISIBLE
         }
     }
@@ -252,34 +268,54 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         radioButton.apply {
             compoundDrawablesRelative.find {
                 it != null
-            }?.let{
-                DrawableCompat.setTint(it,ContextCompat.getColor(context, drawableTintColor))
+            }?.let {
+                DrawableCompat.setTint(it, ContextCompat.getColor(context, drawableTintColor))
             }
         }
     }
 
     private fun setAnswerFromDb() {
-        lastSelectedRdoId = -1
-        if(geOsDeviceItem.status_answer != null){
-            with(binding){
+        if (geOsDeviceItem.status_answer != null) {
+            with(binding) {
                 loadMaterialListFromDb()
                 //
                 buildPhotoListFromDb()
                 //
-                geOsDeviceItem.exec_comment?.let{
+                geOsDeviceItem.exec_comment?.let {
                     act086VerificationFrgMketComment.setText(it)
                 }
                 //
-                when(geOsDeviceItem.exec_type){
+                when (geOsDeviceItem.exec_type) {
                     GeOsDeviceItem.EXEC_TYPE_FIXED -> {
-                        act086VerificationFrgRdoAnswerFixed.isChecked = true
+                        act086VerificationFrgRdoAnswerFixed.run {
+                            isChecked = true
+                            lastSelectedRdoId = id
+                        }
                     }
                     GeOsDeviceItem.EXEC_TYPE_ADJUST -> {
-                        act086VerificationFrgRdoAnswerFixed.isChecked = true
+                        act086VerificationFrgRdoAnswerFixed.run {
+                            isChecked = true
+                            lastSelectedRdoId = id
+                        }
                     }
-                    GeOsDeviceItem.EXEC_TYPE_ALREADY_OK -> act086VerificationFrgRdoAnswerAlreadyDone.isChecked = true
-                    GeOsDeviceItem.EXEC_TYPE_ALERT -> act086VerificationFrgRdoAnswerAlert.isChecked = true
-                    GeOsDeviceItem.EXEC_TYPE_NOT_VERIFIED -> act086VerificationFrgRdoAnswerNotVerified.isChecked = true
+                    GeOsDeviceItem.EXEC_TYPE_ALREADY_OK -> {
+                        act086VerificationFrgRdoAnswerAlreadyDone.run {
+                            isChecked = true
+                            lastSelectedRdoId = id
+                        }
+                    }
+                    GeOsDeviceItem.EXEC_TYPE_ALERT -> {
+                        act086VerificationFrgRdoAnswerAlert.run {
+                            isChecked = true
+                            lastSelectedRdoId = id
+                        }
+                    }
+                    GeOsDeviceItem.EXEC_TYPE_NOT_VERIFIED -> {
+                        act086VerificationFrgRdoAnswerNotVerified.run {
+                            isChecked = true
+                            lastSelectedRdoId = id
+                        }
+                    }
                 }
 //                //Se tem reposta pode salvar no onpause.
 //                //Deve ficar abaixo da seleção do rdo, pois ao selecionar ele salva antes da
@@ -298,8 +334,9 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         }
     }
 
-    fun isItemDescriptionInEditMode() : Boolean {
-        return isManualDescInEdit && !binding.act086VerificationFrgMketManualDesc.text.toString().isNullOrEmpty()
+    fun isItemDescriptionInEditMode(): Boolean {
+        return isManualDescInEdit && !binding.act086VerificationFrgMketManualDesc.text.toString()
+            .isNullOrEmpty()
     }
 
     private fun buildPhotoListFromDb() {
@@ -324,8 +361,8 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     }
 
     private fun setManualDescIfNewItem() {
-        with(binding){
-            if(isNewVerification) {
+        with(binding) {
+            if (isNewVerification) {
                 val emptyAnswer = geOsDeviceItem.status_answer == null
                 //se não tem resposta, não pode salvar
                 skipSave = emptyAnswer
@@ -345,17 +382,17 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                 }
                 //Se não tem resposta, é primeira entrada então inicia bloqueado
                 toogleRadioGroupEnabled(!emptyAnswer)
-            }else{
+            } else {
                 act086VerificationFrgClManualDesc.visibility = View.GONE
             }
         }
     }
 
-    private fun getIvManualDescIcon(ivIsEnable: Boolean): Drawable?{
-        return if(ivIsEnable){
-            ContextCompat.getDrawable(requireContext(),R.drawable.ic_done_black_24dp)
-        }else{
-            ContextCompat.getDrawable(requireContext(),R.drawable.ic_edit_black_24dp)
+    private fun getIvManualDescIcon(ivIsEnable: Boolean): Drawable? {
+        return if (ivIsEnable) {
+            ContextCompat.getDrawable(requireContext(), R.drawable.ic_done_black_24dp)
+        } else {
+            ContextCompat.getDrawable(requireContext(), R.drawable.ic_edit_black_24dp)
         }
     }
 
@@ -365,15 +402,15 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         var rdoAdjustHasProblem = View.VISIBLE
         var rdoAdjustNotVerified = View.VISIBLE
         //
-        when(geOsDeviceItem.item_check_status){
+        when (geOsDeviceItem.item_check_status) {
             GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL -> {
                 rdoAdjustNotVerified = View.GONE
             }
-            GeOsDeviceItem.ITEM_CHECK_STATUS_MANUAL_ALERT-> {
+            GeOsDeviceItem.ITEM_CHECK_STATUS_MANUAL_ALERT -> {
                 rdoAdjustAlreadyOk = View.GONE
             }
             else -> {
-                if(isNewVerification) {
+                if (isNewVerification) {
                     rdoAdjustDone = View.VISIBLE
                     rdoAdjustAlreadyOk = View.GONE
                     rdoAdjustHasProblem = View.VISIBLE
@@ -382,34 +419,35 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             }
         }
         //
-       with(binding){
-           act086VerificationFrgRdoAnswerFixed.visibility = rdoAdjustDone
-           act086VerificationFrgRdoAnswerAlreadyDone.visibility = rdoAdjustAlreadyOk
-           act086VerificationFrgRdoAnswerAlert.visibility = rdoAdjustHasProblem
-           act086VerificationFrgRdoAnswerNotVerified.visibility = rdoAdjustNotVerified
-       }
+        with(binding) {
+            act086VerificationFrgRdoAnswerFixed.visibility = rdoAdjustDone
+            act086VerificationFrgRdoAnswerAlreadyDone.visibility = rdoAdjustAlreadyOk
+            act086VerificationFrgRdoAnswerAlert.visibility = rdoAdjustHasProblem
+            act086VerificationFrgRdoAnswerNotVerified.visibility = rdoAdjustNotVerified
+        }
     }
 
     private fun setLabels() {
-        with(binding){
+        with(binding) {
             act086VerificationFrgRdoAnswerFixed.text = getMaintenanceLbl(geOsDeviceItem.exec_type ?: "")
             act086VerificationFrgRdoAnswerAlreadyDone.text = hmAux_Trans["already_checked_lbl"]
             act086VerificationFrgRdoAnswerAlert.text = getAlertAnswerLbl()
             act086VerificationFrgRdoAnswerNotVerified.text = hmAux_Trans["not_verified_lbl"]
-            act086VerificationFrgTvRequireFields.text  = hmAux_Trans["fill_below_fields_lbl"]
-            act086VerificationFrgTvSupplementaryDataTtl.text  = hmAux_Trans["supplementary_data_lbl"]
-            act086VerificationFrgMketComment.hint  = hmAux_Trans["comment_hint"]
-            act086VerificationFrgTvMaterialTtl.text  = getMaterialLbl()
-            act086VerificationFrgTvPhotoTtl.text  = hmAux_Trans["photo_lbl"]
-            act086VerificationFrgTvDeleteLbl.text  = getDeleteLbl()
-            act086VerificationFrgTvReviewMaterialLbl.text  = hmAux_Trans["review_material_planned_lbl"]
+            act086VerificationFrgTvRequireFields.text = hmAux_Trans["fill_below_fields_lbl"]
+            act086VerificationFrgTvSupplementaryDataTtl.text = hmAux_Trans["supplementary_data_lbl"]
+            act086VerificationFrgMketComment.hint = hmAux_Trans["comment_hint"]
+            act086VerificationFrgTvMaterialTtl.text = getMaterialLbl()
+            act086VerificationFrgTvPhotoTtl.text = hmAux_Trans["photo_lbl"]
+            act086VerificationFrgTvDeleteLbl.text = getDeleteLbl()
+            act086VerificationFrgTvReviewMaterialLbl.text =
+                hmAux_Trans["review_material_planned_lbl"]
         }
     }
 
     private fun getDeleteLbl(): String? {
-        return if(!isNewVerification) {
+        return if (!isNewVerification) {
             hmAux_Trans["erase_all_data_lbl"]
-        }else{
+        } else {
             hmAux_Trans["discard_item_lbl"]
         }
     }
@@ -419,25 +457,25 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
      * Se o item for alerta manual, então o label será continua com problema
      * e nao esta com problemas....
      */
-    private fun getAlertAnswerLbl() : String? {
-       return  if(geOsDeviceItem.item_check_status.equals(GeOsDeviceItem.ITEM_CHECK_STATUS_MANUAL_ALERT ,true)) {
+    private fun getAlertAnswerLbl(): String? {
+        return if (geOsDeviceItem.item_check_status.equals(
+                GeOsDeviceItem.ITEM_CHECK_STATUS_MANUAL_ALERT,
+                true
+            )
+        ) {
             hmAux_Trans["still_with_problem_lbl"]
-        }else{
+        } else {
             hmAux_Trans["has_problem_lbl"]
         }
     }
 
 
-    private fun getMaintenanceLbl(exec_type: String = "") =
-        if(getChangeAdjustLbl(exec_type).isEmpty()) hmAux_Trans["action_done_lbl"]
-        else "${hmAux_Trans["action_done_lbl"]}\n${getChangeAdjustLbl(exec_type)}"
-
     private fun initRecyclers() {
         photoAdapter.sourceList = photoList
         //
-        binding.act086VerificationFrgRvPhotos.apply{
+        binding.act086VerificationFrgRvPhotos.apply {
             adapter = photoAdapter
-            layoutManager = GridLayoutManager(context,2)
+            layoutManager = GridLayoutManager(context, 2)
         }
         //
         materialFragAdapter.sourceList = materialFragList
@@ -448,7 +486,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     }
 
     private fun applyEnableStateToMoreInfoViews() {
-        with(binding){
+        with(binding) {
             val enableState = act086VerificationFrgRgAnswers.checkedRadioButtonId != -1
             act086VerificationFrgMketComment.isEnabled = enableState
             act086VerificationFrgIvAddMaterial.isEnabled = enableState
@@ -466,25 +504,25 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     private fun applyVisibilityOkBtn() {
         with(binding) {
             act086VerificationFrgBtnOk.visibility =
-            if (isNewVerification && act086VerificationFrgRgAnswers.checkedRadioButtonId == -1) {
-                View.GONE
-            }else{
-                View.VISIBLE
-            }
+                if (isNewVerification && act086VerificationFrgRgAnswers.checkedRadioButtonId == -1) {
+                    View.GONE
+                } else {
+                    View.VISIBLE
+                }
         }
     }
 
     private fun applyVisibilityIntoDeleteBtn() {
-        with(binding){
-            if(act086VerificationFrgRgAnswers.checkedRadioButtonId != -1){
-                act086VerificationFrgClDeleteInfos.visibility =   View.VISIBLE
-            }else{
-                act086VerificationFrgClDeleteInfos.visibility =   View.GONE
+        with(binding) {
+            if (act086VerificationFrgRgAnswers.checkedRadioButtonId != -1) {
+                act086VerificationFrgClDeleteInfos.visibility = View.VISIBLE
+            } else {
+                act086VerificationFrgClDeleteInfos.visibility = View.GONE
             }
         }
     }
 
-    private fun applyRequiredLayoutIntoSupplementaryData(){
+    private fun applyRequiredLayoutIntoSupplementaryData() {
         applyRequiredLayoutIntoComment()
         applyRequiredLayoutIntoMaterial()
         applyRequiredLayoutIntoPhoto()
@@ -494,9 +532,9 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     private fun applyRequiredFieldsLblVisibility() {
         with(binding) {
             act086VerificationFrgTvRequireFields.apply {
-                visibility = if( isCommentRequired() || isMaterialRequired()){
+                visibility = if (isCommentRequired() || isMaterialRequired()) {
                     View.VISIBLE
-                }else{
+                } else {
                     View.GONE
                 }
             }
@@ -506,16 +544,16 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     private fun applyRequiredLayoutIntoComment() {
         val answerId = binding.act086VerificationFrgRgAnswers.checkedRadioButtonId
         val commentColor = when {
-                                answerId == -1 -> {
-                                    R.color.namoa_pipeline_header_icon
-                                }
-                                isCommentRequired() -> {
-                                    R.color.namoa_color_highlight_required_item
-                                }
-                                else -> {
-                                    R.color.namoa_dark_blue
-                                }
-                            }
+            answerId == -1 -> {
+                R.color.namoa_pipeline_header_icon
+            }
+            isCommentRequired() -> {
+                R.color.namoa_color_highlight_required_item
+            }
+            else -> {
+                R.color.namoa_dark_blue
+            }
+        }
         with(binding) {
             act086VerificationFrgIvComment.applyTintColor(commentColor)
             act086VerificationFrgMketComment.apply {
@@ -535,10 +573,10 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         var materialColor = R.color.namoa_pipeline_header_icon
         var materialEnabled = false
 
-        if( answerId != binding.act086VerificationFrgRdoAnswerAlreadyDone.id
+        if (answerId != binding.act086VerificationFrgRdoAnswerAlreadyDone.id
             && answerId != binding.act086VerificationFrgRdoAnswerNotVerified.id
             && answerId != -1
-        ){
+        ) {
             if (geOsDeviceItem.apply_material.equals(GeOsDeviceItem.APPLY_MATERIAL_NO, true)) {
                 materialColor = R.color.namoa_pipeline_header_icon
                 materialEnabled = false
@@ -551,7 +589,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                 materialEnabled = true
             }
         }
-        materialEnabled = if(!inReadOnly) materialEnabled else false
+        materialEnabled = if (!inReadOnly) materialEnabled else false
         with(binding) {
             act086VerificationFrgClMaterial.isClickable = materialEnabled
             act086VerificationFrgClMaterial.isEnabled = materialEnabled
@@ -573,18 +611,19 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     }
 
     private fun isMaterialRequired() = (binding.act086VerificationFrgRdoAnswerFixed.isChecked
-            && geOsDeviceItem.apply_material.equals(GeOsDeviceItem.APPLY_MATERIAL_REQUIRED,true)
+            && geOsDeviceItem.apply_material.equals(GeOsDeviceItem.APPLY_MATERIAL_REQUIRED, true)
             && materialFragList.isEmpty()
-    )
+            )
 
     private fun applyRequiredLayoutIntoPhoto() {
         with(binding) {
-            val photoEnabled = act086VerificationFrgRgAnswers.checkedRadioButtonId != -1 && !inReadOnly
-            val photoColor = if(act086VerificationFrgRgAnswers.checkedRadioButtonId != -1 ){
-                                R.color.namoa_dark_blue
-                             }else{
-                                R.color.namoa_pipeline_header_icon
-                             }
+            val photoEnabled =
+                act086VerificationFrgRgAnswers.checkedRadioButtonId != -1 && !inReadOnly
+            val photoColor = if (act086VerificationFrgRgAnswers.checkedRadioButtonId != -1) {
+                R.color.namoa_dark_blue
+            } else {
+                R.color.namoa_pipeline_header_icon
+            }
             act086VerificationFrgClPhoto.isClickable = photoEnabled
             act086VerificationFrgClPhoto.isEnabled = photoEnabled
             act086VerificationFrgClPhoto.forEach {
@@ -605,60 +644,74 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     }
 
 
-    private fun openBottomSheet(lastItem: Int, checkedId: Int){
+    private fun openBottomSheet(checkedId: Int) {
         Act086_BottomSheet.getInstance(
-                    geOsDeviceItem.exec_type ?: "",
+            geOsDeviceItem.exec_type ?: "",
             hmAux_Trans,
             callAct090 = {
                 binding.act086VerificationFrgRdoAnswerFixed.text = getMaintenanceLbl(it)
-                         when(it){
-                             GeOsDeviceItem.EXEC_TYPE_FIXED -> {
-                                 if(geOsDeviceItem.critical_item == 1 && !mPresenter.isCycleExpired(geOsDeviceItem)){
-                                     showAlertOnBottomSheet(it, checkedId)
-                                 }else{
-                                     applyExecTypeAndChangeLabelMaintenance(it, checkedId)
-                                 }
-                             }
+                when (it) {
+                    GeOsDeviceItem.EXEC_TYPE_FIXED -> {
+                        if (geOsDeviceItem.critical_item == 1 && !mPresenter.isCycleExpired(geOsDeviceItem)) {
+                            showAlertOnBottomSheet(it, checkedId)
+                        } else {
+                            applyExecTypeAndChangeLabelMaintenance(it, checkedId)
+                        }
+                    }
 
-                             GeOsDeviceItem.EXEC_TYPE_ADJUST -> {
-                                 if(geOsDeviceItem.critical_item == 1 && mPresenter.isCycleExpired(geOsDeviceItem)){
-                                     showAlertOnBottomSheet(it, checkedId)
-                                 }else{
-                                     applyExecTypeAndChangeLabelMaintenance(it, checkedId)
-                                 }
-                             }
-                         }
+                    GeOsDeviceItem.EXEC_TYPE_ADJUST -> {
+                        if (geOsDeviceItem.critical_item == 1 && mPresenter.isCycleExpired(
+                                geOsDeviceItem
+                            )
+                        ) {
+                            showAlertOnBottomSheet(it, checkedId)
+                        } else {
+                            applyExecTypeAndChangeLabelMaintenance(it, checkedId)
+                        }
+                    }
+                }
             },
-            onRollBackRadioGroup = { setLastSelection(lastItem) }
+            onRollBackRadioGroup = { setLastSelection(lastSelectedRdoId) }
         ).show(this.activity!!.supportFragmentManager, "bottomSheet")
     }
 
 
-    private fun applyExecTypeAndChangeLabelMaintenance(type: String, checkedId: Int){
+    private fun applyExecTypeAndChangeLabelMaintenance(type: String, checkedId: Int) {
         geOsDeviceItem.apply {
             exec_type = type
         }
         commitRdoChange(checkedId)
-        if(mPresenter.hasMaterialPlanned(geOsDeviceItem))
+        if (mPresenter.hasMaterialPlanned(geOsDeviceItem))
             onMaterialPlannedInteraction(lastSelectedRdoId == binding.act086VerificationFrgRdoAnswerAlert.id)
     }
 
 
-    private fun showAlertOnBottomSheet(type: String, checkedId: Int){
-        when(type){
+    private fun showAlertOnBottomSheet(type: String, checkedId: Int) {
+        when (type) {
             GeOsDeviceItem.EXEC_TYPE_FIXED -> {
+                val formatColor = mPresenter.getFormattedLastMeasureInfo(geOsDeviceItem.next_cycle_measure ?: 0f, geOsDeviceItem.value_sufix)
                 showAlertMessage(
-                    "CHANGE",
-                    "MESSAGE",
+                    hmAux_Trans["alert_change_ttl"]!!,
+                    "${hmAux_Trans["alert_change_msg"]!!} $formatColor".changeTextWithStringBuild(
+                            indexOf = formatColor,
+                            color = R.color.namoa_color_red,
+                            resources = resources
+                    ),
                     type,
                     checkedId,
                 )
             }
 
             GeOsDeviceItem.EXEC_TYPE_ADJUST -> {
+                val day = getDaysBetweenTargetAndOsDateStartLastSecond(geOsDeviceItem.target_date ?: "")
+                val formatColor = "${abs(day)}"
                 showAlertMessage(
-                    "ADJUST",
-                    "MESSAGE",
+                    hmAux_Trans["alert_adjust_ttl"]!!,
+                    "${hmAux_Trans["alert_adjust_msg"]!!} $formatColor ${hmAux_Trans["days_lbl"]!!} \n${hmAux_Trans["alert_adjust_msg_confirm"]!!}".changeTextWithStringBuild(
+                        indexOf = formatColor,
+                        color = R.color.namoa_color_red,
+                        resources = resources
+                    ),
                     type,
                     checkedId,
                 )
@@ -667,33 +720,64 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     }
 
 
+    private fun getDaysBetweenTargetAndOsDateStartLastSecond(targetDate: String): Long {
+        ToolBox_Inf.getDateDiferenceInMilliseconds(
+            targetDate,
+            dateStartUntilLastMinute
+        ).let {
+            return TimeUnit.MILLISECONDS.toDays(it)
+        }
+    }
+
+
 
     private fun showAlertMessage(
-        title: String,
-        message: String,
+        title: String?,
+        message: SpannableString,
         type: String,
         checkedId: Int
-    ){
+    ) {
         showConfirmAlert(
-            title,
+            title?.toUpperCase(Locale.ROOT),
             message,
             { _, _ ->
                 applyExecTypeAndChangeLabelMaintenance(type, checkedId)
             },
             { _, _ ->
                 setLastSelection(lastSelectedRdoId)
-            })
+            },
+            colorTitle = R.color.namoa_color_red)
     }
 
 
-    private fun setLastSelection(last: Int, exec_type: String = geOsDeviceItem.exec_type ?: "") =
+    private fun setLastSelection(lastSelection: Int) =
         with(binding) {
-            act086VerificationFrgRdoAnswerFixed.text = getMaintenanceLbl(exec_type)
-            when (last) {
-                act086VerificationFrgRdoAnswerFixed.id -> act086VerificationFrgRdoAnswerFixed.isChecked = true
-                act086VerificationFrgRdoAnswerAlreadyDone.id -> act086VerificationFrgRdoAnswerAlreadyDone.isChecked = true
-                act086VerificationFrgRdoAnswerAlert.id -> act086VerificationFrgRdoAnswerAlert.isChecked = true
-                act086VerificationFrgRdoAnswerNotVerified.id -> act086VerificationFrgRdoAnswerNotVerified.isChecked = true
+            act086VerificationFrgRdoAnswerFixed.text = getMaintenanceLbl(geOsDeviceItem.exec_type ?: "")
+            when (lastSelection) {
+                act086VerificationFrgRdoAnswerFixed.id -> {
+                    act086VerificationFrgRdoAnswerFixed.run {
+                        isChecked = true
+                        lastSelectedRdoId = id
+                    }
+                }
+                act086VerificationFrgRdoAnswerAlreadyDone.id -> {
+                    act086VerificationFrgRdoAnswerAlreadyDone.run {
+                        isChecked = true
+                        lastSelectedRdoId = id
+                    }
+                }
+                act086VerificationFrgRdoAnswerAlert.id -> {
+                    act086VerificationFrgRdoAnswerAlert.run {
+                        isChecked = true
+                        lastSelectedRdoId = id
+                    }
+                }
+                act086VerificationFrgRdoAnswerNotVerified.id -> {
+                    act086VerificationFrgRdoAnswerNotVerified.run {
+                        isChecked = true
+                        lastSelectedRdoId = id
+                    }
+                }
                 else -> clearData()
             }
         }
@@ -705,39 +789,41 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         }
         //
         binding.act086VerificationFrgClPhoto.apply {
-            setOnClickListener {_->
+            setOnClickListener { _ ->
                 binding.act086VerificationFrgMketComment.clearFocus()
-                mPresenter.handleAddPhoto(prefixPhoto,photoList,photoLimit)
+                mPresenter.handleAddPhoto(prefixPhoto, photoList, photoLimit)
             }
         }
 
-        binding.act086VerificationFrgBtnOk.setOnClickListener{
+        binding.act086VerificationFrgBtnOk.setOnClickListener {
             leaveItem(false)
         }
 
 
         binding.act086VerificationFrgRdoAnswerFixed.setOnClickListener {
-            if(binding.act086VerificationFrgRdoAnswerFixed.id == lastSelectedRdoId && binding.act086VerificationFrgRdoAnswerFixed.isPressed
-                && geOsDeviceItem.change_adjust == 1){
-
-                openBottomSheet(lastSelectedRdoId, binding.act086VerificationFrgRdoAnswerFixed.id)
+            if (binding.act086VerificationFrgRdoAnswerFixed.id == lastSelectedRdoId &&
+                binding.act086VerificationFrgRdoAnswerFixed.isPressed &&
+                geOsDeviceItem.change_adjust == 1
+            ) {
+                openBottomSheet(lastSelectedRdoId)
+            }else if (mPresenter.hasMaterialPlanned(geOsDeviceItem) && geOsDeviceItem.change_adjust == 0){
+                    onMaterialPlannedInteraction(lastSelectedRdoId == binding.act086VerificationFrgRdoAnswerAlert.id)
             }
         }
 
         binding.act086VerificationFrgRgAnswers.setOnCheckedChangeListener { _, checkedId ->
-            with(binding){
-                if(act086VerificationFrgRdoAnswerFixed.id == checkedId
-                    && act086VerificationFrgRdoAnswerFixed.isPressed
-                    && geOsDeviceItem.change_adjust == 1){
-
-                    openBottomSheet(lastSelectedRdoId, checkedId)
+            with(binding) {
+                if (act086VerificationFrgRdoAnswerFixed.id == checkedId &&
+                    act086VerificationFrgRdoAnswerFixed.isPressed &&
+                    geOsDeviceItem.change_adjust == 1) {
+                    openBottomSheet(checkedId)
                     return@setOnCheckedChangeListener
                 }
-                if( lastSelectedRdoId != -1 && lastSelectedRdoId != checkedId
-                    && (checkedId == act086VerificationFrgRdoAnswerAlreadyDone.id  || checkedId == act086VerificationFrgRdoAnswerNotVerified.id)
+                if (lastSelectedRdoId != -1 && lastSelectedRdoId != checkedId
+                    && (checkedId == act086VerificationFrgRdoAnswerAlreadyDone.id || checkedId == act086VerificationFrgRdoAnswerNotVerified.id)
                     && materialFragList.isNotEmpty()
-                ){
-                    showConfirmAlert(
+                ) {
+                    showDialogAlert(
                         hmAux_Trans["alert_material_not_enabled_for_answer_ttl"],
                         hmAux_Trans["alert_change_and_clear_material_confirm"],
                         { _, _ ->
@@ -749,27 +835,19 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                             //LUCHE - 07/10/2021
                             //Pro algum motivo se usasse o act086VerificationFrgRgAnswers.check()
                             //esse listener era chamado duas vezes e 2 dialogs era exibidos.
-                            when(lastSelectedRdoId){
-                                act086VerificationFrgRdoAnswerFixed.id -> act086VerificationFrgRdoAnswerFixed.isChecked = true
-                                act086VerificationFrgRdoAnswerAlreadyDone.id -> act086VerificationFrgRdoAnswerAlreadyDone.isChecked = true
-                                act086VerificationFrgRdoAnswerAlert.id -> act086VerificationFrgRdoAnswerAlert.isChecked = true
-                                else -> act086VerificationFrgRdoAnswerNotVerified.isChecked = true
-                            }
-                            if(act086VerificationFrgRdoAnswerFixed.id != checkedId) {
-                                binding.act086VerificationFrgRdoAnswerFixed.text = getMaintenanceLbl()
-                            }
-
+                            setLastSelection(lastSelectedRdoId)
 
 
                         }
                     )
-                }else{
-                   if(act086VerificationFrgRdoAnswerFixed.id == checkedId
+                } else {
+                    commitRdoChange(checkedId)
+                    if (act086VerificationFrgRdoAnswerFixed.id == checkedId
                         && act086VerificationFrgRdoAnswerFixed.isPressed
                         && mPresenter.isCycleExpired(geOsDeviceItem)
                         && mPresenter.hasMaterialPlanned(geOsDeviceItem)
                         && !inReadOnly
-                    ){
+                    ) {
 
 /*                        when(lastSelectedRdoId){
                             act086VerificationFrgRdoAnswerFixed.id -> act086VerificationFrgRdoAnswerFixed.isChecked = true
@@ -777,13 +855,10 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                             act086VerificationFrgRdoAnswerAlert.id -> act086VerificationFrgRdoAnswerAlert.isChecked = true
                             else -> act086VerificationFrgRdoAnswerNotVerified.isChecked = true
                         }*/
+                        onMaterialPlannedInteraction(lastSelectedRdoId == act086VerificationFrgRdoAnswerAlert.id)
+                    } else {
 
-                            commitRdoChange(checkedId)
-                            onMaterialPlannedInteraction(lastSelectedRdoId == act086VerificationFrgRdoAnswerAlert.id)
-                    }else{
-                        commitRdoChange(checkedId)
-
-                        if(act086VerificationFrgRdoAnswerFixed.id != checkedId) {
+                        if (act086VerificationFrgRdoAnswerFixed.id != checkedId) {
                             binding.act086VerificationFrgRdoAnswerFixed.text = getMaintenanceLbl()
                         }
                         materialFragAdapter.notifyDataSetChanged()
@@ -799,27 +874,28 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             var msg: String? = null
             var listener: DialogInterface.OnClickListener? = null
 
-            when(isNewVerification){
-                true ->{
+            when (isNewVerification) {
+                true -> {
                     ttl = hmAux_Trans["alert_manual_item_delete_ttl"]
                     msg = hmAux_Trans["alert_manual_item_delete_confirm"]
-                    listener = DialogInterface.OnClickListener{ _, _ ->
+                    listener = DialogInterface.OnClickListener { _, _ ->
                         deleteManualItem()
                     }
                 }
-                else->{
+                else -> {
                     ttl = hmAux_Trans["alert_clear_item_data_ttl"]
                     msg = hmAux_Trans["alert_clear_item_data_confirm"]
-                    listener = DialogInterface.OnClickListener{ _, _ ->
+                    listener = DialogInterface.OnClickListener { _, _ ->
                         clearData()
                     }
                 }
             }
             //
-            showConfirmAlert(ttl, msg, listener)
+            showDialogAlert(ttl, msg, listener)
         }
 
-        binding.act086VerificationFrgMketComment.setOnReportTextChangeListner(object : MKEditTextNM.IMKEditTextChangeText{
+        binding.act086VerificationFrgMketComment.setOnReportTextChangeListner(object :
+            MKEditTextNM.IMKEditTextChangeText {
             //EXEMPLO DO CODIGO EM JAVA QUE ENGASGAVA
             /*val handler = Handler()
             var isRunnableRunning = false
@@ -841,7 +917,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                 }
             }*/
             //Var que receberá a coroutine
-            var launch : Job? = null
+            var launch: Job? = null
 
             override fun reportTextChange(text: String?) {
                 //
@@ -861,7 +937,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                 }*/
                 //Se coroutine existe e ativa, cancela antes de inicia-la novamente.
                 launch?.let {
-                    if(it.isActive){
+                    if (it.isActive) {
                         it.cancel()
                     }
                 }
@@ -873,7 +949,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                 launch = CoroutineScope(Dispatchers.Default).launch {
                     isMketCommentTypeTriggered = false
                     delay(200)
-                    if(!isMketCommentTypeTriggered){
+                    if (!isMketCommentTypeTriggered) {
                         withContext(Dispatchers.Main) {
                             //todo add save
                             applyRequiredLayoutIntoSupplementaryData()
@@ -889,37 +965,50 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         *  o item, o valor antigo é assumido, ja que ele não foi validado.
         * */
         binding.act086VerificationFrgIvManualHandler.setOnClickListener {
-            with(binding){
-                if(isManualDescInEdit){
-                    if(validateManualDescFilled()){
+            with(binding) {
+                if (isManualDescInEdit) {
+                    if (validateManualDescFilled()) {
                         isManualDescInEdit = false
-                        act086VerificationFrgIvManualHandler.setImageDrawable(getIvManualDescIcon(isManualDescInEdit))
+                        act086VerificationFrgIvManualHandler.setImageDrawable(
+                            getIvManualDescIcon(
+                                isManualDescInEdit
+                            )
+                        )
                         act086VerificationFrgMketManualDesc.apply {
                             isEnabled = isManualDescInEdit
                             tag = this.text.toString()
-                            setTextColor(ContextCompat.getColor(context,R.color.namoa_font_color_black222))
+                            setTextColor(
+                                ContextCompat.getColor(
+                                    context,
+                                    R.color.namoa_font_color_black222
+                                )
+                            )
                         }
                         toogleRadioGroupEnabled(true)
                         //Se ja tem resposta, então libera dados complementares, pois é uma nova edição
                         //da descrição.
-                        if(geOsDeviceItem.status_answer != null){
+                        if (geOsDeviceItem.status_answer != null) {
                             toogleSupplementViewsEnabledStatus(!isManualDescInEdit)
                         }
                     }
-                }else{
+                } else {
                     isManualDescInEdit = true
                     toogleRadioGroupEnabled(!isManualDescInEdit)
                     toogleSupplementViewsEnabledStatus(!isManualDescInEdit)
-                    act086VerificationFrgIvManualHandler.setImageDrawable(getIvManualDescIcon(isManualDescInEdit))
-                    act086VerificationFrgMketManualDesc.apply{
+                    act086VerificationFrgIvManualHandler.setImageDrawable(
+                        getIvManualDescIcon(
+                            isManualDescInEdit
+                        )
+                    )
+                    act086VerificationFrgMketManualDesc.apply {
                         isEnabled = isManualDescInEdit
-                        setTextColor(ContextCompat.getColor(context,R.color.namoa_dark_blue))
+                        setTextColor(ContextCompat.getColor(context, R.color.namoa_dark_blue))
                     }
                 }
             }
         }
         //
-        binding.act086VerificationFrgClReviewMaterial.setOnClickListener{
+        binding.act086VerificationFrgClReviewMaterial.setOnClickListener {
             onMaterialPlannedInteraction(lastSelectedRdoId == binding.act086VerificationFrgRdoAnswerAlert.id)
         }
     }
@@ -938,9 +1027,9 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         lastSelectedRdoId = checkedId
         applyEnableStateToMoreInfoViews()
         binding.apply {
-            if(isReviewMaterialVisible()) {
+            if (isReviewMaterialVisible()) {
                 act086VerificationFrgClReviewMaterial.visibility = View.VISIBLE
-            }else {
+            } else {
                 act086VerificationFrgClReviewMaterial.visibility = View.GONE
             }
         }
@@ -957,22 +1046,38 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
 
     private fun showConfirmAlert(
         ttl: String?,
-        msg: String?,
+        msg: SpannableString,
         positiveListener: DialogInterface.OnClickListener?,
-        negativeListener: DialogInterface.OnClickListener? = null
-    ) {
-        ToolBox.alertMSG_YES_NO(
-            requireContext(),
-            ttl,
+        negativeListener: DialogInterface.OnClickListener? = null,
+        colorTitle: Int = R.color.namoa_dark_blue,
+        ) {
+        requireContext().showAlertWithYesOrNot(
+            ttl ?: "",
             msg,
-            positiveListener,
+            actionYes = positiveListener,
+            actionNo = negativeListener,
+            colorTitle = colorTitle
+        )
+    }
+
+    private fun showDialogAlert(
+        title: String?,
+        message: String?,
+        yesClick: DialogInterface.OnClickListener? = null,
+        noClick: DialogInterface.OnClickListener? = null,
+    ){
+        ToolBox.alertMSG_YES_NO(
+            context,
+            title ?: "",
+            message ?: "",
+            yesClick,
             2,
-            negativeListener
+            noClick
         )
     }
 
     private fun saveData() {
-        if(!inReadOnly) {
+        if (!inReadOnly) {
             setUiDateIntoDeviceItem()
             mPresenter.updateDeviceItemIntoBd(geOsDeviceItem)
         }
@@ -980,7 +1085,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
 
     private fun clearData() {
         //mPresenter.resetDeviceItemData()
-        with(binding){
+        with(binding) {
             act086VerificationFrgRgAnswers.clearCheck()
             act086VerificationFrgMketComment.text = null
             clearMaterialList()
@@ -1012,7 +1117,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             exec_photo3 = photoArray[2]
             exec_photo4 = photoArray[3]
             status_answer = getCheckStatusAnswer()
-            mPresenter.getGeOsDeviceMaterialList(this,materialFragList)
+            mPresenter.getGeOsDeviceMaterialList(this, materialFragList)
         }
     }
 
@@ -1024,74 +1129,98 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
      * validar o novo valor digitado, o valor não validado seja salvo
      */
     private fun getManualDesc(manual_desc: String?): String? {
-        return if(isNewVerification){
+        return if (isNewVerification) {
             binding.act086VerificationFrgMketManualDesc.tag.toString().trim()
-        }else{
+        } else {
             manual_desc
         }
     }
 
-    private fun getCommentToSaveObj() : String?{
+    private fun getCommentToSaveObj(): String? {
         val mketCommentText = binding.act086VerificationFrgMketComment.text.toString()
-        return  if(mketCommentText.isNotEmpty() && mketCommentText.isNotBlank()){
-                    mketCommentText
-                }else{
-                    null
-                }
+        return if (mketCommentText.isNotEmpty() && mketCommentText.isNotBlank()) {
+            mketCommentText
+        } else {
+            null
+        }
     }
 
     private fun getExecDate(): String? {
-        return if(binding.act086VerificationFrgRgAnswers.checkedRadioButtonId == -1){
+        return if (binding.act086VerificationFrgRgAnswers.checkedRadioButtonId == -1) {
             null
-        } else{
-            geOsDeviceItem.exec_date?: ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT)
+        } else {
+            geOsDeviceItem.exec_date
+                ?: ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT)
         }
     }
 
     private fun getCheckStatusAnswer(): String? {
-        if(binding.act086VerificationFrgRgAnswers.checkedRadioButtonId == -1){
+        if (binding.act086VerificationFrgRgAnswers.checkedRadioButtonId == -1) {
             return null
         }
-        if(isMaterialRequired() && materialFragList.size == 0){
+        if (isMaterialRequired() && materialFragList.size == 0) {
             return ConstantBaseApp.SYS_STATUS_PROCESS
         }
         //
-        if(isCommentRequired() && binding.act086VerificationFrgMketComment.text.isNullOrEmpty()){
+        if (isCommentRequired() && binding.act086VerificationFrgMketComment.text.isNullOrEmpty()) {
             return ConstantBaseApp.SYS_STATUS_PROCESS
         }
         return ConstantBaseApp.SYS_STATUS_DONE
     }
 
 
+    private fun getMaintenanceLbl(exec_type: String = "") : SpannableString {
 
-    private fun getChangeAdjustLbl(exec_type: String): String {
-        var label = ""
+        val maintenance = hmAux_Trans["action_done_lbl"]!!
+        val changelbl = hmAux_Trans["change_lbl"]!!
+        val adjustlbl = hmAux_Trans["adjust_lbl"]!!
 
         with(binding){
-                if(exec_type == GeOsDeviceItem.EXEC_TYPE_FIXED && geOsDeviceItem.change_adjust == 1){
-                    label = hmAux_Trans["change_lbl"]!!
-                }else if(exec_type == GeOsDeviceItem.EXEC_TYPE_ADJUST){
-                    label = hmAux_Trans["adjust_lbl"]!!
+           return when(exec_type){
+                GeOsDeviceItem.EXEC_TYPE_FIXED -> {
+                    if(geOsDeviceItem.change_adjust == 1){
+                        "$maintenance\n$changelbl"
+                            .changeTextWithStringBuild(
+                                indexOf = changelbl,
+                                color = R.color.namoa_os_form_done_action_blue,
+                                textSize = 0.9f,
+                                resources = resources
+                            )
+                    }else{
+                        SpannableString(maintenance)
+                    }
                 }
+
+               GeOsDeviceItem.EXEC_TYPE_ADJUST ->{
+                   "$maintenance\n$adjustlbl"
+                       .changeTextWithStringBuild(
+                           indexOf = adjustlbl,
+                           color = R.color.namoa_os_form_done_action_blue,
+                           textSize = 0.9f,
+                           resources = resources
+                       )
+               }
+
+               else -> SpannableString(maintenance)
+            }
         }
-        return label
     }
 
-    private fun getExecTypeForAnswer(): String? {
-        with(binding) {
-            return when (act086VerificationFrgRgAnswers.checkedRadioButtonId) {
-                        act086VerificationFrgRdoAnswerFixed.id -> {
-                            when(geOsDeviceItem.change_adjust){
-                                0 -> GeOsDeviceItem.EXEC_TYPE_FIXED
-                                1 -> geOsDeviceItem.exec_type
-                                else -> {"VALOR DIFERENTE"}
-                            }
-                        }
-                        act086VerificationFrgRdoAnswerAlreadyDone.id-> GeOsDeviceItem.EXEC_TYPE_ALREADY_OK
-                        act086VerificationFrgRdoAnswerAlert.id-> GeOsDeviceItem.EXEC_TYPE_ALERT
-                        act086VerificationFrgRdoAnswerNotVerified.id -> GeOsDeviceItem.EXEC_TYPE_NOT_VERIFIED
-                        else -> null
+    private fun getExecTypeForAnswer() = with(binding) {
+        when (act086VerificationFrgRgAnswers.checkedRadioButtonId) {
+            act086VerificationFrgRdoAnswerFixed.id -> {
+                when (geOsDeviceItem.change_adjust) {
+                    0 -> GeOsDeviceItem.EXEC_TYPE_FIXED
+                    1 -> geOsDeviceItem.exec_type
+                    else -> {
+                        "VALOR DIFERENTE"
                     }
+                }
+            }
+            act086VerificationFrgRdoAnswerAlreadyDone.id -> GeOsDeviceItem.EXEC_TYPE_ALREADY_OK
+            act086VerificationFrgRdoAnswerAlert.id -> GeOsDeviceItem.EXEC_TYPE_ALERT
+            act086VerificationFrgRdoAnswerNotVerified.id -> GeOsDeviceItem.EXEC_TYPE_NOT_VERIFIED
+            else -> null
         }
     }
 
@@ -1109,7 +1238,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     fun onDeleteIconClick(position: Int){
         showAlertFrg(
             hmAux_Trans["alert_remove_product_ttl"],
-            hmAux_Trans["alert_remove_product_confirm"],
+            hmAux_Trans["alert_remove_product_confirm"]!!,
             (DialogInterface.OnClickListener { _, _ ->
                 val materialUIItem = materialFragList[position]
                 if(materialUIItem.materialPlanned == 1){
@@ -1355,6 +1484,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             prefixPhoto: String,
             isNewVerification: Boolean,
             deviceItem: GeOsDeviceItem,
+            dateStartUntilLastMinute: String,
             readOnly: Boolean,
         ) =
             Act086VerificationFrg().apply {
@@ -1364,14 +1494,13 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                     putBoolean(Act086Main.PARAM_NEW_VERIFICATION, isNewVerification)
                     putSerializable(GeOsDeviceItem::javaClass.name, deviceItem)
                     putBoolean(IN_READONLY, readOnly)
+                    putString(GeOsDao.DATE_START, dateStartUntilLastMinute)
                 }
             }
 
         fun getFragTranslationsVars() : List<String>{
             return listOf(
                 "action_done_lbl",
-                "adjust_lbl",
-                "change_lbl",
                 "select_type_maintenance_lbl",
                 "already_checked_lbl",
                 "has_problem_lbl",
@@ -1402,7 +1531,13 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                 "review_material_planned_lbl",
                 "planned_qty_lbl",
                 "applied_qty_lbl",
-                "request_qty_lbl"
+                "request_qty_lbl",
+                "alert_adjust_msg",
+                "days_lbl",
+                "alert_adjust_msg_confirm",
+                "alert_adjust_ttl",
+                "alert_change_msg",
+                "alert_change_ttl"
             )
         }
     }

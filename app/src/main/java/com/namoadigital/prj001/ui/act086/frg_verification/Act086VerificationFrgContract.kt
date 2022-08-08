@@ -48,7 +48,8 @@ interface Act086VerificationFrgContract {
             materialList: MutableList<GeOsDeviceMaterial>,
             materialUIItem: Act086MaterialItem
         )
-
+        fun getFormattedLastMeasureInfo(
+            lastFixed: Float, measureValueSufix: String?): String
         fun resetMaterialPlannedList(materialList: MutableList<GeOsDeviceMaterial>)
     }
 
