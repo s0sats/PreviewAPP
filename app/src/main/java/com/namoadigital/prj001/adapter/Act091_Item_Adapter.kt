@@ -7,16 +7,14 @@ import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.databinding.Act091ListItemBinding
-import com.namoadigital.prj001.model.SOExpressItemHeader
 import com.namoadigital.prj001.model.TSO_Service_Search_Obj
-import com.namoadigital.prj001.model.toSOExpressItemHeader
 import com.namoadigital.prj001.util.ToolBox_Inf.formatDoublePriceToScreen
 import java.util.*
 
 class Act091_Item_Adapter constructor(
     private val dataset: List<TSO_Service_Search_Obj>,
     private val notifyFilterApplied: (Int) -> Unit,
-    private val openBottomSheet: (SOExpressItemHeader) -> Unit,
+    private val openBottomSheet: (TSO_Service_Search_Obj) -> Unit,
     ) : RecyclerView.Adapter<Act091_Item_Adapter.ItemViewHolder>(), Filterable{
 
     var filterDataSet = dataset.toMutableList()
@@ -29,9 +27,7 @@ class Act091_Item_Adapter constructor(
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
 
         holder.itemView.setOnClickListener {
-            openBottomSheet(filterDataSet[position].toSOExpressItemHeader().copy(
-                qty = if(filterDataSet[position].qty == 0) 1 else filterDataSet[position].qty
-            ))
+            openBottomSheet(filterDataSet[position])
         }
 
         return holder.onBinding(filterDataSet[position])

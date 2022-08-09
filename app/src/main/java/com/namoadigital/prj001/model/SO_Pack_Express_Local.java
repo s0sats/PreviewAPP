@@ -2,6 +2,7 @@ package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +10,7 @@ import java.util.List;
  * Created by neomatrix on 3/22/18.
  */
 
-public class SO_Pack_Express_Local {
+public class SO_Pack_Express_Local implements Serializable {
 
     private long customer_code;
     private long site_code;

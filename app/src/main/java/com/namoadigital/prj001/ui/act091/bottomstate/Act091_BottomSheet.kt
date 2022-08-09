@@ -22,22 +22,23 @@ import com.namoadigital.prj001.adapter.Act091_BottomSheet_Item_Adapter
 import com.namoadigital.prj001.adapter.onHide
 import com.namoadigital.prj001.adapter.onShow
 import com.namoadigital.prj001.databinding.Act091BottomSheetBinding
-import com.namoadigital.prj001.model.SOExpressItemHeader
+import com.namoadigital.prj001.model.SoPackExpressPacksLocal
 import com.namoadigital.prj001.ui.act091.util.BottomEvent
 import com.namoadigital.prj001.ui.act091.util.onEvent
+import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 
 class Act091_BottomSheet constructor(
 ) : BottomSheetDialogFragment(){
-    var onAddServices: (contentItemHeader: SOExpressItemHeader) -> Unit = { _,-> }
-    var onDeleteServices: (contentItemHeader: SOExpressItemHeader) -> Unit = { _,-> }
+    var onAddServices: (contentItemHeader: SoPackExpressPacksLocal) -> Unit = { _ -> }
+    var onDeleteServices: (contentItemHeader: SoPackExpressPacksLocal) -> Unit = { _ -> }
     private val binding: Act091BottomSheetBinding by lazy {
         Act091BottomSheetBinding.inflate(layoutInflater)
     }
 
-    private lateinit var contentItemHeader: SOExpressItemHeader
+    private lateinit var contentItemHeader: SoPackExpressPacksLocal
     private var showDelete: Boolean = false
     private val hmAux: HMAux by lazy {
         val transList: MutableList<String> = mutableListOf(
@@ -69,6 +70,11 @@ class Act091_BottomSheet constructor(
             contentItemHeader.serviceList,
             contentItemHeader.type_ps,
             hmAux,
+            ToolBox_Inf.profileExists(
+                context,
+                Constant.PROFILE_MENU_SO,
+                Constant.PROFILE_MENU_SO_SHOW_SERVICE_PRICE
+            ),
             ::onUpdateList
         )
     }
@@ -77,7 +83,7 @@ class Act091_BottomSheet constructor(
         super.onCreate(savedInstanceState)
 
         arguments?.let {
-            contentItemHeader = Gson().fromJson(it.getString(SERVICE_ITEM), SOExpressItemHeader::class.java)
+            contentItemHeader = Gson().fromJson(it.getString(SERVICE_ITEM), SoPackExpressPacksLocal::class.java)
             showDelete = it.getBoolean(UPDATE_PACKAGE_SERVICES, false)
         }
     }
@@ -125,12 +131,12 @@ class Act091_BottomSheet constructor(
     private fun initLabels(){
         with(binding){
             contentItemHeader.let {
-                act091BottomSheetTitle.text = it.name
+                act091BottomSheetTitle.text = it.pack_service_desc_full
                 onEvent(BottomEvent.changeButtonLessQtyColor(it.qty != 1))
                 onEvent(BottomEvent.changePriceColor(it.manual_price == 0, hmAux))
                 onEvent(BottomEvent.changeStatePrice(it.manual_price != 0))
                 onEvent(BottomEvent.OnUpdateBottomSheet(it, hmAux))
-                act091BottomSheetComment.setText(it.comment)
+                act091BottomSheetComment.setText(it.comments)
             }
 
         }
@@ -154,8 +160,19 @@ class Act091_BottomSheet constructor(
             act091BottomSheetCancel.text = hmAux["sys_alert_btn_cancel"]
 
             act091BottomSheetDelete.visibility = View.GONE
+            //
+            if(ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_SHOW_SERVICE_PRICE)
+                || contentItemHeader.manual_price == 1
+            ){
+                act091BottomSheetTextLayoutPrice.visibility = View.VISIBLE
+            }else{
+                act091BottomSheetTextLayoutPrice.visibility = View.INVISIBLE
+            }
+            //
             if(showDelete){
                 act091BottomSheetDelete.visibility = View.VISIBLE
+            }else{
+                act091BottomSheetDelete.visibility = View.GONE
             }
         }
     }
@@ -234,7 +251,7 @@ class Act091_BottomSheet constructor(
                 }
 
                 override fun afterTextChanged(s: Editable?) {
-                    contentItemHeader.comment = s.toString()
+                    contentItemHeader.comments = s.toString()
                 }
 
             })
@@ -246,9 +263,9 @@ class Act091_BottomSheet constructor(
 
             act091BottomSheetOk.setOnClickListener {
 
-                if(!contentItemHeader.comment.isEmpty()){
+                if(!contentItemHeader.comments.isNullOrEmpty()){
                     contentItemHeader.serviceList.forEach {
-                        it.comments = contentItemHeader.comment
+                        it.comments = contentItemHeader.comments
                     }
                 }
                 onAddServices(contentItemHeader)

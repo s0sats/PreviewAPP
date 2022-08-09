@@ -5,7 +5,7 @@ import com.google.android.material.textfield.TextInputLayout
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.Act091BottomSheetBinding
-import com.namoadigital.prj001.model.SOExpressItemHeader
+import com.namoadigital.prj001.model.SoPackExpressPacksLocal
 import com.namoadigital.prj001.util.ToolBox_Inf
 
 sealed class BottomEvent {
@@ -13,7 +13,7 @@ sealed class BottomEvent {
     data class changePriceColor(val value: Boolean, val hmAux: HMAux) : BottomEvent()
     data class changeButtonLessQtyColor(val value: Boolean) : BottomEvent()
     data class changeStatePrice(val value: Boolean) : BottomEvent()
-    data class OnUpdateBottomSheet(val itemHeader: SOExpressItemHeader, val hmAux: HMAux) : BottomEvent()
+    data class OnUpdateBottomSheet(val itemHeader: SoPackExpressPacksLocal, val hmAux: HMAux) : BottomEvent()
 }
 
 

@@ -422,12 +422,12 @@ class SoPackExpressServicesLocalDao(
                         soPackExpressServicesLocal.service_desc_full
                     )
                     //
-                    if (soPackExpressServicesLocal.price > -1) {
-                        put(
-                            PRICE,
-                            soPackExpressServicesLocal.price
-                        )
-                    }
+
+                    put(
+                        PRICE,
+                        soPackExpressServicesLocal.price
+                    )
+
                     //
                     if (soPackExpressServicesLocal.manual_price > -1) {
                         put(

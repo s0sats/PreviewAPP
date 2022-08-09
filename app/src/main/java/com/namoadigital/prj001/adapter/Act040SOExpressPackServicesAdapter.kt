@@ -42,16 +42,16 @@ class Act040SOExpressPackServicesAdapter(
         }
 
         private fun getFormattedPackDesc(packServices: SoPackExpressPacksLocal): String {
-            return packServices.pack_service_desc_full + """(${packServices.qty} x ${getTotalPrice(packServices.serviceList)})"""
+            return packServices.pack_service_desc_full + """(${packServices.qty} x ${getTotalPrice(packServices)})"""
         }
 
-        private fun getTotalPrice(serviceList: MutableList<SoPackExpressServicesLocal>): String {
+        private fun getTotalPrice(packServices: SoPackExpressPacksLocal): String {
             if(showServicePrice) {
-                var price: Double = 0.0
-                for (soPackExpressServicesLocal in serviceList) {
-                    price += soPackExpressServicesLocal.price
+                var price = packServices.price?: 0.0
+                for (soPackExpressServicesLocal in packServices.serviceList) {
+//                    price += soPackExpressServicesLocal.price?: 0.0
                 }
-                return """${price} """
+                return  String.format("%.2f", price)
             }
             return ""
         }

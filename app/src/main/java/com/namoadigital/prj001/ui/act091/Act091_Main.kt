@@ -11,6 +11,9 @@ import com.namoadigital.prj001.adapter.Act091_Item_Adapter
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao
 import com.namoadigital.prj001.databinding.Act091MainBinding
 import com.namoadigital.prj001.model.SOExpressItemHeader
+import com.namoadigital.prj001.model.SO_Pack_Express_Local
+import com.namoadigital.prj001.model.SoPackExpressPacksLocal
+import com.namoadigital.prj001.model.TSO_Service_Search_Obj
 import com.namoadigital.prj001.ui.act040.Act040_Main
 import com.namoadigital.prj001.ui.act091.bottomstate.Act091_BottomSheet
 import com.namoadigital.prj001.util.Constant
@@ -39,6 +42,10 @@ class Act091_Main : Base_Activity(), Act091_Contract.I_View {
             ::notifyFilterApplied,
             ::openBottomSheet
         )
+    }
+
+    private val soPackExpressLocal: SO_Pack_Express_Local by lazy {
+        mPresenter.getSO_Pack_Express_Local()
     }
 
     private var bundleSaved: Bundle? = null
@@ -79,14 +86,21 @@ class Act091_Main : Base_Activity(), Act091_Contract.I_View {
     }
 
 
-    override fun openBottomSheet(itemHeader: SOExpressItemHeader) {
+    override fun openBottomSheet(item: TSO_Service_Search_Obj) {
+
+        if(item.qty == 0){
+            item.qty = 1
+        }
+
+        val itemHeader = SoPackExpressPacksLocal(context, item,  soPackExpressLocal, -1)
+
         Act091_BottomSheet.getInstance(Gson().toJson(itemHeader), false).apply {
             onAddServices = ::onAddServicesClick
         }.show(supportFragmentManager, "bottomSheet")
     }
 
-    fun onAddServicesClick(contentItemHeader: SOExpressItemHeader){
-        mPresenter.savePackServices(contentItemHeader)
+    fun onAddServicesClick(item: SoPackExpressPacksLocal){
+        mPresenter.savePackServices(item)
     }
 
     private fun initVars(){

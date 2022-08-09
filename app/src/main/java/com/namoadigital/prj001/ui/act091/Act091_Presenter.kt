@@ -104,7 +104,9 @@ class Act091_Presenter constructor(
         bundle.getLong(MD_PartnerDao.PARTNER_CODE)
     }
     //
-    private var express_tmp: Long? =null
+    private val express_tmp by lazy{
+        bundle.getLong(SO_Pack_Express_LocalDao.EXPRESS_TMP)
+    }
     //
     private val hmAuxTrans: HMAux by lazy {
         loadTranslation()
@@ -153,7 +155,7 @@ class Act091_Presenter constructor(
         return list.data
     }
 
-    override fun savePackServices(contentItemHeader: SOExpressItemHeader) {
+    override fun savePackServices(contentItemHeader: SoPackExpressPacksLocal) {
         contentItemHeader.let {
             it.customer_code = ToolBox_Con.getPreference_Customer_Code(context)
             it.site_code = site_code
@@ -161,28 +163,38 @@ class Act091_Presenter constructor(
             it.product_code = product_code
             it.express_code = express_code.toString()?: ""
         }
-
-        express_tmp =  bundle.getLong(SO_Pack_Express_LocalDao.EXPRESS_TMP)
-
-        var expressLocal =  if (express_tmp!! > 0) {
-             var local = so_Pack_Express_LocalDao.getByString(
-                SO_Pack_Express_Local_Sql_001(
-                    ToolBox_Con.getPreference_Customer_Code(context),
-                    site_code,
-                    operation_code,
-                    product_code,
-                    express_code,
-                    express_tmp!!
-                ).toSqlQuery()
-            )
-            local.packsLocals.add(contentItemHeader.toSoPackExpressPacksLocal(context, local, site_code,operation_code, product_code, express_code!! ))
-            local
-        }else{
-            setSoPackExpressLocal( getCurrentExpressTmp(), contentItemHeader )
+        val packSeq = generatePackSeq(
+            context,
+            contentItemHeader.customer_code,
+            contentItemHeader.site_code,
+            contentItemHeader.operation_code,
+            contentItemHeader.product_code,
+            contentItemHeader.express_code,
+            contentItemHeader.express_tmp,
+            contentItemHeader.pack_code
+        )
+        contentItemHeader.pack_seq = packSeq
+        for (soPackExpressServicesLocal in contentItemHeader.serviceList) {
+            soPackExpressServicesLocal.pack_seq = packSeq
         }
+        var expressLocal = getSO_Pack_Express_Local()
+        expressLocal.packsLocals.add(contentItemHeader)
         so_Pack_Express_LocalDao.addUpdate(expressLocal)
         //
         mView.callAct040(expressLocal.express_tmp)
+    }
+
+    override fun getSO_Pack_Express_Local(): SO_Pack_Express_Local {
+        return so_Pack_Express_LocalDao.getByString(
+            SO_Pack_Express_Local_Sql_001(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                site_code,
+                operation_code,
+                product_code,
+                express_code,
+                express_tmp
+            ).toSqlQuery()
+        )
     }
 
     private fun getCurrentExpressTmp(): Long {
@@ -199,7 +211,7 @@ class Act091_Presenter constructor(
 
     private fun setSoPackExpressLocal(
         nTemp: Long?,
-        contentItemHeader: SOExpressItemHeader
+        contentItemHeader: SoPackExpressPacksLocal
     ): SO_Pack_Express_Local {
         var so_pack_express_local = SO_Pack_Express_Local()
         //
@@ -252,14 +264,34 @@ class Act091_Presenter constructor(
         so_pack_express_local.so_status = ConstantBaseApp.SYS_STATUS_PROCESS
         so_pack_express_local.log_date = ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")
         //
-        so_pack_express_local.packsLocals.add(contentItemHeader.toSoPackExpressPacksLocal(
-            context,
-            so_pack_express_local,
-            site_code,
-            operation_code,
-            product_code,
-            express_code!!
-        ))
+        so_pack_express_local.packsLocals.add(contentItemHeader)
         return so_pack_express_local
+    }
+
+    private fun generatePackSeq(
+        context: Context,
+        customerCode: Long,
+        siteCode: Long,
+        operationCode: Long,
+        productCode: Long,
+        expressCode: String,
+        expressTmp: Long,
+        packCode: Int
+    ): Int {
+        return SoPackExpressPacksLocalDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        ).getByStringHM(
+            SoPackExpressPacksLocalSql003(
+                customerCode,
+                siteCode,
+                operationCode,
+                productCode,
+                expressCode,
+                expressTmp,
+                packCode
+            ).toSqlQuery()
+        )?.get(SoPackExpressPacksLocalSql003.NEXT_TMP)?.toInt()!!
     }
 }

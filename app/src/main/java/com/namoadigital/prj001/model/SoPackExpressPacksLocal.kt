@@ -7,75 +7,59 @@ import com.namoadigital.prj001.sql.SoPackExpressPacksLocalSql003
 import com.namoadigital.prj001.sql.SoPackExpressServicesLocalSql003
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
+import java.util.ArrayList
 
 data class SoPackExpressPacksLocal(
-//    var customer_code:Long,
-//    var site_code:Long,
-//    var operation_code:Long,
-//    var product_code:Long,
-//    var express_code:String,
-//    var express_tmp:Long,
+    var customer_code:Long,
+    var site_code:Long,
+    var operation_code:Long,
+    var product_code:Long,
+    var express_code:String,
+    var express_tmp:Long,
     val pack_code:Int,
-    val pack_seq:Int,
+    var pack_seq:Int,
     val price_list_code:Int,
     val pack_service_desc:String,
     val pack_service_desc_full:String,
     val manual_price: Int = 0,
-    var price:Double =0.0,
+    var price:Double? =0.0,
     var qty:Int,
     val type_ps:String,
     var comments:String?,
     @SerializedName("service")
     val serviceList: MutableList<SoPackExpressServicesLocal> = mutableListOf<SoPackExpressServicesLocal>()
 ) {
-    var customer_code:Long = -1
-    var site_code:Long = -1
-    var operation_code:Long = -1
-    var product_code:Long = -1
-    var express_code:String = ""
-    var express_tmp:Long = -1
-
     constructor(
-        customer_code:Long,
-        site_code:Long,
-        operation_code:Long,
-        product_code:Long,
-        express_code:String,
-        express_tmp:Long,
-        pack_code:Int,
-        pack_seq:Int,
-        price_list_code:Int,
-        pack_service_desc:String,
-        pack_service_desc_full:String,
-        manual_price: Int,
-        price: Double?,
-        qty:Int,
-        type_ps:String,
-        comments:String?
-    ) : this(
-        pack_code,
-        pack_seq,
-        price_list_code,
-        pack_service_desc,
-        pack_service_desc_full,
-        manual_price,
-        price?:0.0,
-        qty,
-        type_ps,
-        comments
-    ) {
-        this.customer_code = customer_code
-        this.site_code = site_code
-        this.operation_code = operation_code
-        this.product_code = product_code
-        this.express_code = express_code
-        this.express_tmp = express_tmp
-    }
+        context: Context,
+        serviceSearch: TSO_Service_Search_Obj,
+        expressLocal:SO_Pack_Express_Local,
+        pack_seq: Int) :
+            this(
+                expressLocal.customer_code,
+                expressLocal.site_code,
+                expressLocal.operation_code,
+                expressLocal.product_code,
+                expressLocal.express_code,
+                expressLocal.express_tmp,
+                serviceSearch.pack_code,
+                pack_seq,
+                serviceSearch.price_list_code,
+                serviceSearch.pack_service_desc,
+                serviceSearch.pack_service_desc_full,
+                serviceSearch.manual_price,
+                serviceSearch.price,
+                if(serviceSearch.qty==0){1}else{serviceSearch.qty},
+                serviceSearch.type_ps,
+                serviceSearch.comment
+            ){
+        setPkAndServiceList(context, expressLocal, serviceSearch.service_list)
+            }
+
 
     fun setPkAndServiceList(
         context: Context,
         soExpress: SO_Pack_Express_Local,
-        inputServiceList: List<SOExpressItemDetail>
+        inputServiceList: List<TSO_Service_Search_Detail_Obj>
     ){
         this.customer_code = soExpress.customer_code
         this.site_code = soExpress.site_code
@@ -111,9 +95,9 @@ data class SoPackExpressPacksLocal(
                 it.price?:0.0,
                 it.manual_price,
                 it.qty,
-                it.comments
+                it.comment
             )
-//            service.setPk(this)
+
             serviceList.add(
                 service
             )

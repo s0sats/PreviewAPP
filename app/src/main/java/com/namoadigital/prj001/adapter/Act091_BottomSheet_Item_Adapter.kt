@@ -10,20 +10,17 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.databinding.Act091BottomSheetListItemBinding
-import com.namoadigital.prj001.model.SOExpressItemDetail
+import com.namoadigital.prj001.model.SoPackExpressServicesLocal
 import com.namoadigital.prj001.ui.act091.util.BottomListEvent
 import com.namoadigital.prj001.ui.act091.util.onEvent
 
 class Act091_BottomSheet_Item_Adapter constructor(
-    private val dataset: List<SOExpressItemDetail>,
+    private val dataset: List<SoPackExpressServicesLocal>,
     private val type: String,
     private val hmAux: HMAux,
+    private val showPrice: Boolean,
     private val onUpdateList: () -> Unit,
 ) : RecyclerView.Adapter<Act091_BottomSheet_Item_Adapter.ItemViewHolder>() {
-
-
-//    val listCustomEdit = dataset.toMutableList()
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         return ItemViewHolder(Act091BottomSheetListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -40,7 +37,7 @@ class Act091_BottomSheet_Item_Adapter constructor(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         @SuppressLint("UseCompatLoadingForDrawables")
-        fun onBinding(item: SOExpressItemDetail){
+        fun onBinding(item: SoPackExpressServicesLocal){
             with(binding) {
                 setLabels(this)
                 act091BottomSheetServiceComment.setText(item.comments)
@@ -48,7 +45,14 @@ class Act091_BottomSheet_Item_Adapter constructor(
                 if(type == "P"){
                     onEvent(BottomListEvent.stateWhenIsPackage(item, hmAux))
                 }
-
+                //
+                if(showPrice
+                    || item.manual_price == 1){
+                    act091BottomSheetServicePrice.visibility = View.VISIBLE
+                }else{
+                    act091BottomSheetServicePrice.visibility = View.INVISIBLE
+                }
+                //
                 act091BottomSheetServicePrice.addTextChangedListener(object : TextWatcher {
                     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
 
