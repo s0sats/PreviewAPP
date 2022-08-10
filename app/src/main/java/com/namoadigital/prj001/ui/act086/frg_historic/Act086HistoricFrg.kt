@@ -119,9 +119,10 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
             var textVal: String? = null
             //Só exibir tipo de alerta itemCheckStatus for um "alerta"
             when(itemCheckStatus){
-                GeOsDeviceItem.ITEM_CHECK_STATUS_MANUAL_ALERT ,
-                GeOsDeviceItem.ITEM_CHECK_STATUS_MEASURE_ALERT ,
-                GeOsDeviceItem.ITEM_CHECK_STATUS_PROJECTED_DATE_REACHED ,
+                GeOsDeviceItem.ITEM_CHECK_STATUS_FORCED,
+                GeOsDeviceItem.ITEM_CHECK_STATUS_MANUAL_ALERT,
+                GeOsDeviceItem.ITEM_CHECK_STATUS_MEASURE_ALERT,
+                GeOsDeviceItem.ITEM_CHECK_STATUS_PROJECTED_DATE_REACHED,
                 GeOsDeviceItem.ITEM_CHECK_STATUS_LIMIT_DATE_REACHED -> {
                     visibility = View.VISIBLE
                     textVal = hmAux_Trans[itemCheckStatus]

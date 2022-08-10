@@ -571,6 +571,7 @@ class GeOsDao(
         var dateStartLastMinute : String? = ToolBox_Inf.getDateLastMinute(geOs.date_start)
         //
         geOsDeviceItens.forEach { item ->
+            item.hide_days_in_alert = 0
             item.has_expired_cycle = 0
             if ((item.next_cycle_limit_date != null
                 && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_limit_date,dateStartLastMinute) <= 0)
@@ -591,6 +592,7 @@ class GeOsDao(
                     && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_measure_date,dateStartLastMinute) > 0
                 ) {
                     item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL
+                    item.hide_days_in_alert = 1
                 }
             }
 
@@ -605,6 +607,7 @@ class GeOsDao(
                     && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_limit_date,dateStartLastMinute) > 0
                 ) {
                     item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL
+                    item.hide_days_in_alert = 1
                 }
             }
             /*
@@ -657,6 +660,7 @@ class GeOsDao(
                     && item.next_cycle_measure.compareTo(measureConsider) > 0
                 ) {
                     item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL
+                    item.hide_days_in_alert = 1
                 }
             }
         }

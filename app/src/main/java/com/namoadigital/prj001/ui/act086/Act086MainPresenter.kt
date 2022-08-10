@@ -263,6 +263,7 @@ class Act086MainPresenter(
                 exec_photo4 = null,
                 status_answer = null,
                 has_expired_cycle = 0,
+                hide_days_in_alert = 0,
                 materialList = mutableListOf()
             )
         }
@@ -327,6 +328,7 @@ class Act086MainPresenter(
     ): Boolean {
         //Se for um dos "status de alerta", verdadeiro
         when(deviceItem.item_check_status){
+            GeOsDeviceItem.ITEM_CHECK_STATUS_FORCED,
             GeOsDeviceItem.ITEM_CHECK_STATUS_MANUAL_ALERT ,
             GeOsDeviceItem.ITEM_CHECK_STATUS_MEASURE_ALERT ,
             GeOsDeviceItem.ITEM_CHECK_STATUS_PROJECTED_DATE_REACHED ,

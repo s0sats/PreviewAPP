@@ -67,6 +67,7 @@ class GeOsDeviceItemDao(
         const val EXEC_PHOTO4 = "exec_photo4"
         const val STATUS_ANSWER = "status_answer"
         const val HAS_EXPIRED_CYCLE = "has_expired_cycle"
+        const val HIDE_DAYS_IN_ALERT = "hide_days_in_alert"
     }
 
     private val toGeOsDeviceItemMapper: Mapper<Cursor, GeOsDeviceItem>
@@ -483,7 +484,8 @@ class GeOsDeviceItemDao(
                         exec_photo3 = getStringOrNull(getColumnIndex(EXEC_PHOTO3)),
                         exec_photo4 = getStringOrNull(getColumnIndex(EXEC_PHOTO4)),
                         status_answer = getStringOrNull(getColumnIndex(STATUS_ANSWER)),
-                        has_expired_cycle = getInt(getColumnIndex(HAS_EXPIRED_CYCLE))
+                        has_expired_cycle = getInt(getColumnIndex(HAS_EXPIRED_CYCLE)),
+                        hide_days_in_alert = getInt(getColumnIndex(HIDE_DAYS_IN_ALERT))
                     )
                 }
             }
@@ -574,6 +576,8 @@ class GeOsDeviceItemDao(
                     put(STATUS_ANSWER, it.status_answer)
                     //
                     put(HAS_EXPIRED_CYCLE, it.has_expired_cycle)
+                    //
+                    put(HIDE_DAYS_IN_ALERT, it.hide_days_in_alert)
                 }
             }
             return contentValues
