@@ -571,7 +571,14 @@ class GeOsDao(
         var dateStartLastMinute : String? = ToolBox_Inf.getDateLastMinute(geOs.date_start)
         //
         geOsDeviceItens.forEach { item ->
-            item.has_expired_cycle = 1
+            item.has_expired_cycle = 0
+            if ((item.next_cycle_limit_date != null
+                && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_limit_date,dateStartLastMinute) <= 0)
+                || (item.next_cycle_measure != null && item.next_cycle_measure.compareTo(measureConsider) >= 0)
+                || (item.item_check_status == GeOsDeviceItem.ITEM_CHECK_STATUS_NO_CYCLE)
+            ) {
+                    item.has_expired_cycle = 1
+            }
             /*
              * Se Status PROJECTED_DATE_REACHED, verifica se deve alterar o status para:
              *   NORMAL:
@@ -584,7 +591,6 @@ class GeOsDao(
                 if (item.next_cycle_measure_date != null
                     && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_measure_date,dateStartLastMinute) > 0
                 ) {
-                    item.has_expired_cycle = 0
                     item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL
                 }
             }
@@ -599,7 +605,6 @@ class GeOsDao(
                 if (item.next_cycle_limit_date != null && geOs.date_start != null
                     && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_limit_date,dateStartLastMinute) > 0
                 ) {
-                    item.has_expired_cycle = 0
                     item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL
                 }
             }
@@ -617,21 +622,19 @@ class GeOsDao(
              */
             if(GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL.equals(item.item_check_status,true)){
                 var newCheckStatus = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL
-                item.has_expired_cycle = 0
+
 
                 //Verifica se data projetada do proximo ciclo foi atingida
                 if (item.next_cycle_measure_date != null
-                    && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_measure_date,dateStartLastMinute) < 0
+                    && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_measure_date,dateStartLastMinute) <= 0
                 ) {
-                    item.has_expired_cycle = 1
                     newCheckStatus = GeOsDeviceItem.ITEM_CHECK_STATUS_PROJECTED_DATE_REACHED
                 }
 
                 //Verifica se data limite do proximo ciclo foi atingida
                 if (item.next_cycle_limit_date != null
-                    && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_limit_date,dateStartLastMinute) < 0
+                    && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_limit_date,dateStartLastMinute) <= 0
                 ) {
-                    item.has_expired_cycle = 1
                     newCheckStatus = GeOsDeviceItem.ITEM_CHECK_STATUS_LIMIT_DATE_REACHED
                 }
 
@@ -639,7 +642,6 @@ class GeOsDao(
                 if (item.next_cycle_measure != null
                     && item.next_cycle_measure.compareTo(measureConsider) <= 0
                 ) {
-                    item.has_expired_cycle = 1
                     newCheckStatus = GeOsDeviceItem.ITEM_CHECK_STATUS_MEASURE_ALERT
                 }
 
@@ -655,7 +657,6 @@ class GeOsDao(
                 if (item.next_cycle_measure != null
                     && item.next_cycle_measure.compareTo(measureConsider) > 0
                 ) {
-                    item.has_expired_cycle = 1
                     item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL
                 }
             }
