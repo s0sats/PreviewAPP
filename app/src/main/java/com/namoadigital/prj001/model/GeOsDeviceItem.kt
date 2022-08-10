@@ -60,6 +60,7 @@ class GeOsDeviceItem(
     var exec_photo4 :String?,
     var status_answer :String?,
     var has_expired_cycle :Int,
+    var hide_days_in_alert :Int=0,
     @Expose
     @SerializedName("material")
     val materialList: MutableList<GeOsDeviceMaterial>  = mutableListOf()
