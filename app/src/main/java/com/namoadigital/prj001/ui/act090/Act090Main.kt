@@ -251,10 +251,7 @@ class Act090Main : Base_Activity(), Act090MainContract.IView {
             if(mPresenter.hasAnyItemChanged(geOsDeviceMaterial,itemPlannedMaterialList)) {
                 savePlannedMaterialChanges()
             }else{
-                ToolBox.toastMSG(
-                    context,
-                    hmAux_Trans["alert_no_data_changed_msg"]
-                )
+                onBackPressed()
             }
         }
     }
