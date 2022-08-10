@@ -21,7 +21,7 @@ data class InspectionCell   (
     var execType: String?,
     val itemCodeAndSeq: String,
     val hmAuxTrans: HMAux,
-    val change_adjust: Int
+    val change_adjust: Int,
 ): Serializable {
     var isDone: Boolean = false
     @ColorInt

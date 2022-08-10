@@ -290,9 +290,7 @@ class Act011InspectionFormAdapter(
                         hmAuxTrans.get("inspection_already_ok_action_lbl")
                 }
                 //
-                if (isNewItem
-                    || dayCount == null
-                ) {
+                if (isNewItem || dayCount == null) {
                     binding.tvDayCount.visibility = View.GONE
                 } else {
                     //LUCHE - 04/11/2021 - Revisado definição de lbl e cor, pois deve se olhar apenas
