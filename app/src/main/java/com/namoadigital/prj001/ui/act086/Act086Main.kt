@@ -22,7 +22,6 @@ import com.namoadigital.prj001.extensions.setFrag
 import com.namoadigital.prj001.model.GeOsDeviceItem
 import com.namoadigital.prj001.model.GeOsDeviceItemHist
 import com.namoadigital.prj001.ui.act011.Act011_Main
-import com.namoadigital.prj001.ui.act086.bottomsheet.Act086_BottomSheet
 import com.namoadigital.prj001.ui.act086.frg_historic.Act086HistoricFrg
 import com.namoadigital.prj001.ui.act086.frg_verification.Act086VerificationFrg
 import com.namoadigital.prj001.ui.act090.Act090Main
@@ -205,17 +204,17 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
     }
 
     private fun getItemCheckDesc() : String?{
-       return if(deviceItem.structure == 3){
-                   deviceItem.manual_desc
-               }else{
-                   deviceItem.item_check_desc
-               }
+        return if(deviceItem.structure == 3){
+            deviceItem.manual_desc
+        }else{
+            deviceItem.item_check_desc
+        }
     }
 
     private fun setAlertDateInfo() {
         with(binding){
             act086TvAlertDate.apply{
-                if(deviceItem.target_date.isNullOrEmpty()){
+                if(deviceItem.target_date.isNullOrEmpty() || deviceItem.hideDaysInAlert){
                     visibility = View.GONE
                     text = null
                 }else{

@@ -187,6 +187,7 @@ class Act086VerificationFrgPresenter(
     }
 
     override fun deleteManualItem(geOsDeviceItem: GeOsDeviceItem) {
+
         val daoObjReturn = deviceItemDao.removeFull(geOsDeviceItem)
         if(!daoObjReturn.hasError()){
             mView.leaveWithoutSave()
@@ -199,10 +200,6 @@ class Act086VerificationFrgPresenter(
                 }
             )
         }
-    }
-
-    override fun isCycleExpired(geOsDeviceItem: GeOsDeviceItem): Boolean {
-        return geOsDeviceItem.has_expired_cycle == 1 && geOsDeviceItem.item_check_status != GeOsDeviceItem.ITEM_CHECK_STATUS_FORCED;
     }
 
     override fun hasMaterialPlanned(geOsDeviceItem: GeOsDeviceItem): Boolean {

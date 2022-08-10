@@ -60,7 +60,7 @@ class GeOsDeviceItem(
     var exec_photo4 :String?,
     var status_answer :String?,
     var has_expired_cycle :Int,
-    var hide_days_in_alert :Int=0,
+    var hide_days_in_alert : Int = 0,
     @Expose
     @SerializedName("material")
     val materialList: MutableList<GeOsDeviceMaterial>  = mutableListOf()
@@ -68,6 +68,11 @@ class GeOsDeviceItem(
     fun getGeOsDeviceItemCodeAndSeq(): String{
         return "${item_check_code}.${item_check_seq}"
     }
+
+    val hideDaysInAlert = hide_days_in_alert == 1
+    val isCycleExpired = has_expired_cycle == 1
+    val isCritical = critical_item == 1
+    val isNO_CYCLE = item_check_status == ITEM_CHECK_STATUS_NO_CYCLE
 
     companion object{
         const val ITEM_CHECK_STATUS_NO_CYCLE = "NO_CYCLE"

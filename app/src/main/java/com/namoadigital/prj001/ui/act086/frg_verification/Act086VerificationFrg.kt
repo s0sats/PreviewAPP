@@ -33,10 +33,11 @@ import com.namoadigital.prj001.dao.GeOsDao
 import com.namoadigital.prj001.dao.GeOsDeviceItemDao
 import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_ItemDao
 import com.namoadigital.prj001.databinding.Act086VerificationFrgBinding
-import com.namoadigital.prj001.extensions.applyTintColor
-import com.namoadigital.prj001.extensions.changeTextWithStringBuild
-import com.namoadigital.prj001.extensions.hideKeyboard
-import com.namoadigital.prj001.extensions.showAlertWithYesOrNot
+import com.namoadigital.prj001.extensions.*
+import com.namoadigital.prj001.extensions.SpannableStringStyle.applyColor
+import com.namoadigital.prj001.extensions.SpannableStringStyle.customText
+import com.namoadigital.prj001.extensions.SpannableStringStyle.fontSize
+import com.namoadigital.prj001.extensions.SpannableStringStyle.spanStyleWith
 import com.namoadigital.prj001.model.Act086MaterialItem
 import com.namoadigital.prj001.model.GeOsDeviceItem
 import com.namoadigital.prj001.ui.act086.Act086Main
@@ -48,6 +49,7 @@ import kotlinx.coroutines.*
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
+
 /**
  * A simple [Fragment] subclass.
  * Use the [Act086VerificationFrg.newInstance] factory method to
@@ -652,7 +654,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                 binding.act086VerificationFrgRdoAnswerFixed.text = getMaintenanceLbl(it)
                 when (it) {
                     GeOsDeviceItem.EXEC_TYPE_FIXED -> {
-                        if (geOsDeviceItem.critical_item == 1 && !mPresenter.isCycleExpired(geOsDeviceItem)) {
+                        if (geOsDeviceItem.isCritical && !geOsDeviceItem.isCycleExpired && !geOsDeviceItem.isNO_CYCLE) {
                             showAlertOnBottomSheet(it, checkedId)
                         } else {
                             applyExecTypeAndChangeLabelMaintenance(it, checkedId)
@@ -660,10 +662,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                     }
 
                     GeOsDeviceItem.EXEC_TYPE_ADJUST -> {
-                        if (geOsDeviceItem.critical_item == 1 && mPresenter.isCycleExpired(
-                                geOsDeviceItem
-                            )
-                        ) {
+                        if (geOsDeviceItem.isCritical && geOsDeviceItem.isCycleExpired && !geOsDeviceItem.isNO_CYCLE) {
                             showAlertOnBottomSheet(it, checkedId)
                         } else {
                             applyExecTypeAndChangeLabelMaintenance(it, checkedId)
@@ -690,13 +689,20 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         when (type) {
             GeOsDeviceItem.EXEC_TYPE_FIXED -> {
                 val formatColor = mPresenter.getFormattedLastMeasureInfo(geOsDeviceItem.next_cycle_measure ?: 0f, geOsDeviceItem.value_sufix)
+
                 showAlertMessage(
-                    hmAux_Trans["alert_change_ttl"]!!,
-                    "${hmAux_Trans["alert_change_msg"]!!} $formatColor".changeTextWithStringBuild(
-                            indexOf = formatColor,
-                            color = R.color.namoa_color_red,
-                            resources = resources
-                    ),
+                    spanStyleWith(hmAux_Trans["alert_change_ttl"]!!){
+                        customText = hmAux_Trans["alert_change_ttl"]!!
+                        applyColor {
+                            requireContext().resources.getColor(R.color.namoa_color_red)
+                        }
+                    },
+                    spanStyleWith("${hmAux_Trans["alert_change_msg"]!!} $formatColor"){
+                        customText = formatColor
+                        applyColor {
+                            requireContext().resources.getColor(R.color.namoa_color_red)
+                        }
+                    },
                     type,
                     checkedId,
                 )
@@ -705,13 +711,20 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             GeOsDeviceItem.EXEC_TYPE_ADJUST -> {
                 val day = getDaysBetweenTargetAndOsDateStartLastSecond(geOsDeviceItem.target_date ?: "")
                 val formatColor = "${abs(day)}"
+
                 showAlertMessage(
-                    hmAux_Trans["alert_adjust_ttl"]!!,
-                    "${hmAux_Trans["alert_adjust_msg"]!!} $formatColor ${hmAux_Trans["days_lbl"]!!} \n${hmAux_Trans["alert_adjust_msg_confirm"]!!}".changeTextWithStringBuild(
-                        indexOf = formatColor,
-                        color = R.color.namoa_color_red,
-                        resources = resources
-                    ),
+                    spanStyleWith(hmAux_Trans["alert_adjust_ttl"]!!){
+                        customText = hmAux_Trans["alert_adjust_ttl"]!!
+                        applyColor {
+                            requireContext().resources.getColor(R.color.namoa_color_red)
+                        }
+                    },
+                    spanStyleWith("${hmAux_Trans["alert_adjust_msg"]!!} $formatColor ${hmAux_Trans["days_lbl"]!!}\n${hmAux_Trans["alert_adjust_msg_confirm"]!!}"){
+                        customText = formatColor
+                        applyColor {
+                            context?.resources?.getColor(R.color.namoa_color_red)!!
+                        }
+                    },
                     type,
                     checkedId,
                 )
@@ -732,21 +745,20 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
 
 
     private fun showAlertMessage(
-        title: String?,
+        title: SpannableString,
         message: SpannableString,
         type: String,
         checkedId: Int
     ) {
         showConfirmAlert(
-            title?.toUpperCase(Locale.ROOT),
+            title,
             message,
             { _, _ ->
                 applyExecTypeAndChangeLabelMaintenance(type, checkedId)
             },
             { _, _ ->
                 setLastSelection(lastSelectedRdoId)
-            },
-            colorTitle = R.color.namoa_color_red)
+            })
     }
 
 
@@ -807,7 +819,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             ) {
                 openBottomSheet(lastSelectedRdoId)
             }else if (mPresenter.hasMaterialPlanned(geOsDeviceItem) && geOsDeviceItem.change_adjust == 0){
-                    onMaterialPlannedInteraction(lastSelectedRdoId == binding.act086VerificationFrgRdoAnswerAlert.id)
+                onMaterialPlannedInteraction(lastSelectedRdoId == binding.act086VerificationFrgRdoAnswerAlert.id)
             }
         }
 
@@ -844,7 +856,6 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                     commitRdoChange(checkedId)
                     if (act086VerificationFrgRdoAnswerFixed.id == checkedId
                         && act086VerificationFrgRdoAnswerFixed.isPressed
-                        && mPresenter.isCycleExpired(geOsDeviceItem)
                         && mPresenter.hasMaterialPlanned(geOsDeviceItem)
                         && !inReadOnly
                     ) {
@@ -1045,18 +1056,16 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     }
 
     private fun showConfirmAlert(
-        ttl: String?,
+        ttl: SpannableString,
         msg: SpannableString,
         positiveListener: DialogInterface.OnClickListener?,
         negativeListener: DialogInterface.OnClickListener? = null,
-        colorTitle: Int = R.color.namoa_dark_blue,
-        ) {
+    ) {
         requireContext().showAlertWithYesOrNot(
-            ttl ?: "",
+            ttl,
             msg,
             actionYes = positiveListener,
-            actionNo = negativeListener,
-            colorTitle = colorTitle
+            actionNo = negativeListener
         )
     }
 
@@ -1176,32 +1185,32 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         val adjustlbl = hmAux_Trans["adjust_lbl"]!!
 
         with(binding){
-           return when(exec_type){
+            return when(exec_type){
                 GeOsDeviceItem.EXEC_TYPE_FIXED -> {
                     if(geOsDeviceItem.change_adjust == 1){
-                        "$maintenance\n$changelbl"
-                            .changeTextWithStringBuild(
-                                indexOf = changelbl,
-                                color = R.color.namoa_os_form_done_action_blue,
-                                textSize = 0.9f,
-                                resources = resources
-                            )
+                        spanStyleWith("$maintenance\n$changelbl"){
+                            customText = changelbl
+                            applyColor {
+                                context?.resources?.getColor(R.color.namoa_os_form_done_action_blue)!!
+                            }
+                            fontSize { 0.9f }
+                        }
                     }else{
                         SpannableString(maintenance)
                     }
                 }
 
-               GeOsDeviceItem.EXEC_TYPE_ADJUST ->{
-                   "$maintenance\n$adjustlbl"
-                       .changeTextWithStringBuild(
-                           indexOf = adjustlbl,
-                           color = R.color.namoa_os_form_done_action_blue,
-                           textSize = 0.9f,
-                           resources = resources
-                       )
-               }
+                GeOsDeviceItem.EXEC_TYPE_ADJUST ->{
+                    spanStyleWith("$maintenance\n$adjustlbl"){
+                        customText = adjustlbl
+                        applyColor {
+                            context?.resources?.getColor(R.color.namoa_os_form_done_action_blue)!!
+                        }
+                        fontSize { 0.9f }
+                    }
+                }
 
-               else -> SpannableString(maintenance)
+                else -> SpannableString(maintenance)
             }
         }
     }

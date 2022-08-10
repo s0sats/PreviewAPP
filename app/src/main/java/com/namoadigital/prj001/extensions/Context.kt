@@ -8,18 +8,13 @@ import com.namoa_digital.namoa_library.util.ConstantBase
 import com.namoadigital.prj001.R
 
 fun Context.showAlertWithYesOrNot(
-    title: String,
+    title: SpannableString,
     msg: SpannableString,
-    colorTitle: Int = R.color.namoa_dark_blue,
     cancelable: Boolean = false,
     actionYes: DialogInterface.OnClickListener? = null,
     actionNo: DialogInterface.OnClickListener? = null
 ) = AlertDialog.Builder(this, R.style.AlertDialogTheme).apply {
-    setTitle(title.changeTextWithStringBuild(
-        color = colorTitle,
-        resources = resources
-    ))
-
+    setTitle(title)
     setMessage(msg)
     setCancelable(cancelable)
     actionNo?.let {
