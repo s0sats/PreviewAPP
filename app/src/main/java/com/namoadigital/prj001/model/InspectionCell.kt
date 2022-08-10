@@ -54,6 +54,11 @@ data class InspectionCell   (
                     tagColor = R.color.namoa_os_form_problem_red
                     statusTransalted = hmAuxTrans["inspection_status_manual_alert_item_lbl"]!!
                 }
+                STATUS_FORCED -> {
+                    this.status = FORECAST
+                    tagColor = R.color.namoa_color_pipeline_origin_icon
+                    statusTransalted = hmAuxTrans["inspection_status_forecast_item_lbl"]!!
+                }
                 else -> {
                     if (isCritical && status != GeOsDeviceItem.ITEM_CHECK_STATUS_FORCED) {
                         this.status = CRITICAL_FORECAST
@@ -111,6 +116,7 @@ data class InspectionCell   (
         const val MANUAL_ALERT = "MANUAL_ALERT"
         const val FORECAST = "FORECAST"
         const val CRITICAL_FORECAST = "CRITICAL_FORECAST"
+        const val STATUS_FORCED = "STATUS_FORCED"
     }
 }
 
