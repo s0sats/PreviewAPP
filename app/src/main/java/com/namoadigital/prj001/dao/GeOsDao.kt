@@ -575,7 +575,7 @@ class GeOsDao(
             item.has_expired_cycle = 0
             if ((item.next_cycle_limit_date != null
                 && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_limit_date,dateStartLastMinute) <= 0)
-                || (item.next_cycle_measure != null && item.next_cycle_measure.compareTo(measureConsider) >= 0)
+                || (item.next_cycle_measure != null && item.next_cycle_measure.compareTo(geOs.maxMeasureValue()) <= 0)
             ) {
                     item.has_expired_cycle = 1
             }

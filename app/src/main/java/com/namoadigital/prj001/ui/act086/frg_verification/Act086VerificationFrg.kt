@@ -68,6 +68,11 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             requireContext(),
             this,
             hmAux_Trans,
+            GeOsDao(
+                requireContext(),
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                ConstantBaseApp.DB_VERSION_CUSTOM
+            ),
             GeOsDeviceItemDao(
                 requireContext(),
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),

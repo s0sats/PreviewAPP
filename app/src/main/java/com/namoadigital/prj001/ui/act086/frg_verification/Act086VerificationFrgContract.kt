@@ -51,6 +51,7 @@ interface Act086VerificationFrgContract {
         fun getFormattedLastMeasureInfo(
             lastFixed: Float, measureValueSufix: String?): String
         fun resetMaterialPlannedList(materialList: MutableList<GeOsDeviceMaterial>)
+        fun getMaxMeasureValue(geOsDeviceItem: GeOsDeviceItem): Float
     }
 
 }
