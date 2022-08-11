@@ -72,7 +72,7 @@ class GeOsDeviceItem(
     val hideDaysInAlert = hide_days_in_alert == 1
     val isCycleExpired = has_expired_cycle == 1
     val isCritical = critical_item == 1
-    val isNO_CYCLE = next_cycle_measure == null && next_cycle_measure_date == null
+    val isNO_CYCLE = next_cycle_measure == null && next_cycle_limit_date == null
 
     companion object{
         const val ITEM_CHECK_STATUS_NO_CYCLE = "NO_CYCLE"
