@@ -660,7 +660,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                 binding.act086VerificationFrgRdoAnswerFixed.text = getMaintenanceLbl(it)
                 when (it) {
                     GeOsDeviceItem.EXEC_TYPE_FIXED -> {
-                        if (geOsDeviceItem.isCritical && !geOsDeviceItem.isCycleExpired && !geOsDeviceItem.isNO_CYCLE) {
+                        if (!geOsDeviceItem.isCycleExpired && !geOsDeviceItem.isNO_CYCLE) {
                             showAlertOnBottomSheet(it, checkedId)
                         } else {
                             applyExecTypeAndChangeLabelMaintenance(it, checkedId)
@@ -668,7 +668,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                     }
 
                     GeOsDeviceItem.EXEC_TYPE_ADJUST -> {
-                        if (geOsDeviceItem.isCritical && geOsDeviceItem.isCycleExpired && !geOsDeviceItem.isNO_CYCLE) {
+                        if (geOsDeviceItem.isCycleExpired && !geOsDeviceItem.isNO_CYCLE) {
                             showAlertOnBottomSheet(it, checkedId)
                         } else {
                             applyExecTypeAndChangeLabelMaintenance(it, checkedId)
