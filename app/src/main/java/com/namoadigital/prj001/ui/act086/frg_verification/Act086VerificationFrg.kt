@@ -46,6 +46,9 @@ import com.namoadigital.prj001.ui.act086.bottomsheet.Act086_BottomSheet
 import com.namoadigital.prj001.util.*
 import com.namoadigital.prj001.view.act.product_selection.Act_Product_Selection
 import kotlinx.coroutines.*
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
@@ -690,20 +693,47 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     }
 
 
+    private fun getStringDialogAlert(measure: String?, date: String?) = when {
+        measure != null && date != null -> {
+            "$measure ou $date"
+        }
+
+        measure == null -> {
+            date
+        }
+
+        date == null -> {
+            measure
+        }
+        else -> {"$measure ou $date"}
+    }
+
+
     private fun showAlertOnBottomSheet(type: String, checkedId: Int) {
         when (type) {
             GeOsDeviceItem.EXEC_TYPE_FIXED -> {
-                val formatColor = mPresenter.getFormattedLastMeasureInfo(geOsDeviceItem.next_cycle_measure ?: 0f, geOsDeviceItem.value_sufix)
+                val formatColor = mPresenter.getFormattedLastMeasureInfo(geOsDeviceItem.next_cycle_measure ?: 0f, geOsDeviceItem.value_sufix).let {
+                    if(it == "0 h") null else it
+                }
+                val parser = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+
+                val formatter= SimpleDateFormat("dd/MM/yyyy")
+
+                val dateFormatted = geOsDeviceItem.next_cycle_limit_date?.let {
+                    parser.parse(it)
+                }?.let {
+                    formatter.format(it)
+                }
 
                 showAlertMessage(
                     spanStyleWith(hmAux_Trans["alert_change_ttl"]!!){
-                        customText = hmAux_Trans["alert_change_ttl"]!!
+                        customText = listOf(hmAux_Trans["alert_change_ttl"]!!)
                         applyColor {
                             requireContext().resources.getColor(R.color.namoa_color_red)
                         }
                     },
-                    spanStyleWith("${hmAux_Trans["alert_change_msg"]!!} $formatColor"){
-                        customText = formatColor
+                    spanStyleWith("${hmAux_Trans["alert_change_msg"]!!} ${getStringDialogAlert(formatColor, dateFormatted)}."){
+                        customText = listOf(formatColor, dateFormatted)
                         applyColor {
                             requireContext().resources.getColor(R.color.namoa_color_red)
                         }
@@ -714,18 +744,18 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             }
 
             GeOsDeviceItem.EXEC_TYPE_ADJUST -> {
-                val day = getDaysBetweenTargetAndOsDateStartLastSecond(geOsDeviceItem.target_date ?: "")
+                val day = getDaysBetweenTargetAndOsDateStartLastSecond(geOsDeviceItem.next_cycle_limit_date ?: "")
                 val formatColor = "${abs(day)}"
 
                 showAlertMessage(
                     spanStyleWith(hmAux_Trans["alert_adjust_ttl"]!!){
-                        customText = hmAux_Trans["alert_adjust_ttl"]!!
+                        customText = listOf(hmAux_Trans["alert_adjust_ttl"]!!)
                         applyColor {
                             requireContext().resources.getColor(R.color.namoa_color_red)
                         }
                     },
                     spanStyleWith("${hmAux_Trans["alert_adjust_msg"]!!} $formatColor ${hmAux_Trans["days_lbl"]!!}\n${hmAux_Trans["alert_adjust_msg_confirm"]!!}"){
-                        customText = formatColor
+                        customText = listOf(formatColor, hmAux_Trans["days_lbl"]!!)
                         applyColor {
                             context?.resources?.getColor(R.color.namoa_color_red)!!
                         }
@@ -865,12 +895,6 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                         && !inReadOnly
                     ) {
 
-/*                        when(lastSelectedRdoId){
-                            act086VerificationFrgRdoAnswerFixed.id -> act086VerificationFrgRdoAnswerFixed.isChecked = true
-                            act086VerificationFrgRdoAnswerAlreadyDone.id -> act086VerificationFrgRdoAnswerAlreadyDone.isChecked = true
-                            act086VerificationFrgRdoAnswerAlert.id -> act086VerificationFrgRdoAnswerAlert.isChecked = true
-                            else -> act086VerificationFrgRdoAnswerNotVerified.isChecked = true
-                        }*/
                         onMaterialPlannedInteraction(lastSelectedRdoId == act086VerificationFrgRdoAnswerAlert.id)
                     } else {
 
@@ -881,8 +905,6 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                     }
                 }
             }
-            println("BINDING|BINDING|BINDING|BINDING >>>>>>>> ${binding.act086VerificationFrgRgAnswers.checkedRadioButtonId} and $lastSelectedRdoId ${(binding.act086VerificationFrgRgAnswers.checkedRadioButtonId == lastSelectedRdoId)}")
-
         }
 
         binding.act086VerificationFrgClDeleteInfos.setOnClickListener {
@@ -1194,7 +1216,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                 GeOsDeviceItem.EXEC_TYPE_FIXED -> {
                     if(geOsDeviceItem.change_adjust == 1){
                         spanStyleWith("$maintenance\n$changelbl"){
-                            customText = changelbl
+                            customText = listOf(changelbl)
                             applyColor {
                                 context?.resources?.getColor(R.color.namoa_os_form_done_action_blue)!!
                             }
@@ -1207,7 +1229,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
 
                 GeOsDeviceItem.EXEC_TYPE_ADJUST ->{
                     spanStyleWith("$maintenance\n$adjustlbl"){
-                        customText = adjustlbl
+                        customText = listOf(adjustlbl)
                         applyColor {
                             context?.resources?.getColor(R.color.namoa_os_form_done_action_blue)!!
                         }
