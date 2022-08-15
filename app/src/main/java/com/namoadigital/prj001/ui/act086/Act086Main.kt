@@ -266,7 +266,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
      * Retorna o lbl correto baseado se a data esta atrasada ou no futuro
      */
     private fun getAlertDateLblByItemCheckStatus(dateDiff: Long) =
-        if (dateDiff < 0) {
+        if (dateDiff <= 0) {
             hmAux_Trans["inspection_alert_days_lbl"]
         } else {
             hmAux_Trans["inspection_missing_lbl"]
@@ -276,7 +276,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
      * Retorna o cor baseado se a data esta atrasada ou no futuro
      */
     private fun getAlertDateTextColor(daysDiff: Long) =
-        if (daysDiff < 0) {
+        if (daysDiff <= 0) {
             ContextCompat.getColor(context, R.color.namoa_os_form_problem_red)
         } else {
             ContextCompat.getColor(context, R.color.namoa_pipeline_header_icon)

@@ -297,7 +297,7 @@ class Act011InspectionFormAdapter(
                     //se data maior ou menor que 0.
                     binding.tvDayCount.apply {
                         visibility = View.VISIBLE
-                        text = if(dayCount < 0){
+                        text = if(dayCount <= 0){
                             "${hmAuxTrans["inspection_alert_days"]}: ${abs(dayCount)}"
                         }else{
                             "${hmAuxTrans["inspection_missing_days"]}: ${abs(dayCount)}"
