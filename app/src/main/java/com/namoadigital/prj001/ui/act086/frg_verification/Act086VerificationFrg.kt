@@ -710,16 +710,14 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     private fun showAlertOnBottomSheet(type: String, checkedId: Int) {
         when (type) {
             GeOsDeviceItem.EXEC_TYPE_FIXED -> {
-                val formatColor = mPresenter.getFormattedLastMeasureInfo(geOsDeviceItem.next_cycle_measure ?: 0f, geOsDeviceItem.value_sufix).let {
+                val cycleMeasureFormated = mPresenter.getFormattedLastMeasureInfo(geOsDeviceItem.next_cycle_measure ?: 0f, geOsDeviceItem.value_sufix).let {
                     if(it == "0 h") null else it
                 }
-                val parser = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-                val formatter= SimpleDateFormat("dd/MM/yyyy")
 
                 val dateFormatted = geOsDeviceItem.next_cycle_limit_date?.let {
-                    parser.parse(it)
+                    SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(it)
                 }?.let {
-                    formatter.format(it)
+                    SimpleDateFormat("dd/MM/yyyy").format(it)
                 }
 
                 showAlertMessage(
@@ -729,8 +727,8 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                             requireContext().resources.getColor(R.color.namoa_color_red)
                         }
                     },
-                    spanStyleWith("${hmAux_Trans["alert_change_msg"]!!} ${getMeasureOrDate(formatColor, dateFormatted)}."){
-                        customText = listOf(formatColor, dateFormatted)
+                    spanStyleWith("${hmAux_Trans["alert_change_msg"]!!} ${getMeasureOrDate(cycleMeasureFormated, dateFormatted)}."){
+                        customText = listOf(cycleMeasureFormated, dateFormatted)
                         applyColor {
                             requireContext().resources.getColor(R.color.namoa_color_red)
                         }
@@ -741,8 +739,8 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             }
 
             GeOsDeviceItem.EXEC_TYPE_ADJUST -> {
-                val day = getDaysBetweenTargetAndOsDateStartLastSecond(geOsDeviceItem.next_cycle_limit_date ?: "")
-                val formatColor = "${abs(day)}"
+                val getDays = getDaysBetweenTargetAndOsDateStartLastSecond(geOsDeviceItem.next_cycle_limit_date ?: "")
+                val getDaysFormatted = "${abs(getDays)}"
 
                 showAlertMessage(
                     spanStyleWith(hmAux_Trans["alert_adjust_ttl"]!!){
@@ -751,8 +749,8 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                             requireContext().resources.getColor(R.color.namoa_color_red)
                         }
                     },
-                    spanStyleWith("${hmAux_Trans["alert_adjust_msg"]!!} $formatColor ${hmAux_Trans["days_lbl"]!!}\n${hmAux_Trans["alert_adjust_msg_confirm"]!!}."){
-                        customText = listOf(formatColor, hmAux_Trans["days_lbl"]!!)
+                    spanStyleWith("${hmAux_Trans["alert_adjust_msg"]!!} $getDaysFormatted ${hmAux_Trans["days_lbl"]!!}.\n${hmAux_Trans["alert_adjust_msg_confirm"]!!}"){
+                        customText = listOf(getDaysFormatted, hmAux_Trans["days_lbl"]!!)
                         applyColor {
                             context?.resources?.getColor(R.color.namoa_color_red)!!
                         }
