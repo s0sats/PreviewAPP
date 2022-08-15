@@ -1,7 +1,10 @@
 package com.namoadigital.prj001.model;
 
+import com.namoadigital.prj001.extensions.TSOServiceSearchDetailObjKt;
+
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by d.luche on 27/06/2017.
@@ -216,4 +219,14 @@ public class TSO_Service_Search_Obj implements Serializable {
     }
 
 
+    public List<SoPackExpressServicesLocal> toSoPackExpressServicesLocal(SO_Pack_Express mSo_pack_express) {
+        List<SoPackExpressServicesLocal> services = new ArrayList<>();
+        for (TSO_Service_Search_Detail_Obj serviceObj : service_list) {
+
+            services.add(
+                    TSOServiceSearchDetailObjKt.toSoPackExpressServicesLocal(serviceObj, mSo_pack_express)
+            );
+        }
+        return null;
+    }
 }

@@ -11,6 +11,7 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
 import com.namoadigital.prj001.model.DaoObjReturn
 import com.namoadigital.prj001.model.SoPackExpressServicesLocal
+import com.namoadigital.prj001.sql.SoPackExpressServicesLocalSql003
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -251,6 +252,20 @@ class SoPackExpressServicesLocalDao(
             }
 
             items?.forEach { item ->
+                if(item.service_seq < 0){
+                    item.service_seq = getServiceSeq(
+                        context,
+                        item.customer_code,
+                        item.site_code,
+                        item.operation_code,
+                        item.product_code,
+                        item.express_code,
+                        item.express_tmp,
+                        item.pack_code,
+                        item.pack_seq,
+                        item.service_code
+                    )
+                }
                 //Where para update
                 val sbWhere: StringBuilder = getWherePkClause(item)
                 //Tenta update e armazena retorno
@@ -305,6 +320,37 @@ class SoPackExpressServicesLocalDao(
         }
         //
         return daoObjReturn
+    }
+
+    private fun getServiceSeq(
+        context: Context,
+        customerCode: Long,
+        siteCode: Long,
+        operationCode: Long,
+        productCode: Long,
+        expressCode: String,
+        expressTmp: Long,
+        packCode: Int,
+        packSeq: Int,
+        serviceCode: Int
+    ): Int {
+        return SoPackExpressPacksLocalDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        ).getByStringHM(
+            SoPackExpressServicesLocalSql003(
+                customerCode,
+                siteCode,
+                operationCode,
+                productCode,
+                expressCode,
+                expressTmp,
+                packCode,
+                packSeq,
+                serviceCode
+            ).toSqlQuery()
+        )?.get(SoPackExpressServicesLocalSql003.NEXT_TMP)?.toInt()!!
     }
 
     //

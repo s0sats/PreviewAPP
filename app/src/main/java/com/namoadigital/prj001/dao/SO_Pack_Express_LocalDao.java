@@ -12,6 +12,8 @@ import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.SO_Pack_Express_Local;
 import com.namoadigital.prj001.model.SoPackExpressPacksLocal;
+import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_005;
+import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_006;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_010;
 import com.namoadigital.prj001.sql.SoPackExpressPacksLocalSql002;
 import com.namoadigital.prj001.util.Constant;
@@ -116,7 +118,17 @@ public class SO_Pack_Express_LocalDao extends BaseDao implements Dao<SO_Pack_Exp
         }
 
         try {
-
+            if(so_pack_express_local.getExpress_tmp() < 0){
+                so_pack_express_local.setExpress_tmp(Long.parseLong(getByStringHM(
+                        new SO_Pack_Express_Local_Sql_006(
+                                so_pack_express_local.getCustomer_code(),
+                                so_pack_express_local.getSite_code(),
+                                so_pack_express_local.getOperation_code(),
+                                so_pack_express_local.getProduct_code(),
+                                so_pack_express_local.getExpress_code()
+                        ).toSqlQuery()
+                ).get(SM_SO_Service_Exec_Task_File_Sql_005.NEXT_TMP)));
+            }
             if (db.insert(TABLE, null, toContentValuesMapper.map(so_pack_express_local)) == -1) {
                 StringBuilder sbWhere = new StringBuilder();
                 sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(so_pack_express_local.getCustomer_code())).append("'");

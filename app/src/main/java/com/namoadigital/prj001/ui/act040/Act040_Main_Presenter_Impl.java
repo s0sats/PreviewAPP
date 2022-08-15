@@ -22,6 +22,7 @@ import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_ExpressDao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.dao.SoPackExpressPacksLocalDao;
+import com.namoadigital.prj001.extensions.TSOServiceSearchDetailObjKt;
 import com.namoadigital.prj001.extensions.TSoServiceSearchRecKt;
 import com.namoadigital.prj001.model.MD_Operation;
 import com.namoadigital.prj001.model.MD_Partner;
@@ -32,6 +33,8 @@ import com.namoadigital.prj001.model.MD_Site_Zone;
 import com.namoadigital.prj001.model.SO_Pack_Express;
 import com.namoadigital.prj001.model.SO_Pack_Express_Local;
 import com.namoadigital.prj001.model.SoPackExpressPacksLocal;
+import com.namoadigital.prj001.model.SoPackExpressServicesLocal;
+import com.namoadigital.prj001.model.TSO_Service_Search_Detail_Obj;
 import com.namoadigital.prj001.model.TSO_Service_Search_Obj;
 import com.namoadigital.prj001.model.TSO_Service_Search_Rec;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
@@ -272,7 +275,7 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
             String contents = ToolBox_Inf.getContents(file);
             Gson gson = new GsonBuilder().serializeNulls().create();
             TSO_Service_Search_Rec rec = gson.fromJson(contents, TSO_Service_Search_Rec.class);
-            TSO_Service_Search_Obj packageDefault = TSoServiceSearchRecKt.getPackageDefault(
+            List<TSO_Service_Search_Obj> packageDefault = TSoServiceSearchRecKt.getPackageDefault(
                     rec,
                     "P",
                     so_pack_express.getCustomer_code(),
@@ -281,8 +284,9 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
                     so_pack_express.getPack_desc()
             );
 
-            SoPackExpressPacksLocal soPackExpressPacksLocal = new SoPackExpressPacksLocal(context, packageDefault, so_pack_express_local, 1);
+            SoPackExpressPacksLocal soPackExpressPacksLocal = new SoPackExpressPacksLocal(context, packageDefault.get(0), so_pack_express_local, -1);
             so_pack_express_local.getPacksLocals().add(soPackExpressPacksLocal);
+            so_pack_express_localDao.addUpdate(so_pack_express_local);
             //
         }
         return null;
@@ -865,44 +869,53 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
     }
 
     @Override
-    public List<SoPackExpressPacksLocal> getExpressPacks(SO_Pack_Express mSo_pack_express) {
+    public List<SoPackExpressPacksLocal> getExpressPacks(SO_Pack_Express mSo_pack_express, MD_Partner md_partner, MD_Product md_product) {
         List<SoPackExpressPacksLocal> packs = new ArrayList<>();
 //
-//        String fileName = ToolBox_Inf.getExpressSOFileName(mSo_pack_express.getContract_code(), mSo_pack_express.getProduct_code(), mSo_pack_express.getCategory_price_code(), mSo_pack_express.getSite_code(), mSo_pack_express.getOperation_code());
-//        File file = new File(ConstantBaseApp.SO_EXPRESS_JSON_PATH, fileName);
-//        String contents = ToolBox_Inf.getContents(file);
-//        Gson gson = new GsonBuilder().serializeNulls().create();
-//        TSO_Service_Search_Rec rec = gson.fromJson(contents, TSO_Service_Search_Rec.class);
-//        TSO_Service_Search_Obj packageDefault = TSoServiceSearchRecKt.getPackageDefault(
-//                rec,
-//                "P",
-//                mSo_pack_express.getCustomer_code(),
-//                mSo_pack_express.getCategory_price_code(),
-//                mSo_pack_express.getPack_code(),
-//                mSo_pack_express.getPack_desc()
-//        );
-
+        String fileName = ToolBox_Inf.getExpressSOFileName(mSo_pack_express.getContract_code(), mSo_pack_express.getProduct_code(), mSo_pack_express.getCategory_price_code(), mSo_pack_express.getSite_code(), mSo_pack_express.getOperation_code());
+        File file = new File(ConstantBaseApp.SO_EXPRESS_JSON_PATH, fileName);
+        String contents = ToolBox_Inf.getContents(file);
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        TSO_Service_Search_Rec rec = gson.fromJson(contents, TSO_Service_Search_Rec.class);
+        List<SoPackExpressServicesLocal> services = new ArrayList<>();
+        if(rec != null) {
+            List<TSO_Service_Search_Obj> packageDefault = TSoServiceSearchRecKt.getPackageDefault(
+                    rec,
+                    "P",
+                    mSo_pack_express.getCustomer_code(),
+                    mSo_pack_express.getPrice_list_code(),
+                    mSo_pack_express.getPack_code(),
+                    mSo_pack_express.getPack_desc()
+            );
+            //
+            for (TSO_Service_Search_Detail_Obj tso_service_search_detail_obj : packageDefault.get(0).getService_list()) {
+                services.add(TSOServiceSearchDetailObjKt.toSoPackExpressServicesLocal(tso_service_search_detail_obj, mSo_pack_express));
+            }
+            onCreateSo_Pack_Express_Structure(mSo_pack_express, md_partner, md_product, "", "", "", "");
+        }
+        //
         packs.add(new SoPackExpressPacksLocal(
-                mSo_pack_express.getCustomer_code(),
-                mSo_pack_express.getSite_code(),
-                mSo_pack_express.getOperation_code(),
-                mSo_pack_express.getProduct_code(),
-                mSo_pack_express.getExpress_code(),
-                -1,
-                mSo_pack_express.getPack_code(),
-                -1,
-                mSo_pack_express.getPrice_list_code(),
-                mSo_pack_express.getPack_desc(),
-                mSo_pack_express.getPack_desc(),
-                0,
-                (double) mSo_pack_express.getPrice(),
-                1,
-                "P",
-                "",
-                new ArrayList<>()
-            )
+                        mSo_pack_express.getCustomer_code(),
+                        mSo_pack_express.getSite_code(),
+                        mSo_pack_express.getOperation_code(),
+                        mSo_pack_express.getProduct_code(),
+                        mSo_pack_express.getExpress_code(),
+                        -1,
+                        mSo_pack_express.getPack_code(),
+                        -1,
+                        mSo_pack_express.getPrice_list_code(),
+                        mSo_pack_express.getPack_desc(),
+                        mSo_pack_express.getPack_desc(),
+                        0,
+                        (double) mSo_pack_express.getPrice(),
+                        1,
+                        "P",
+                        "",
+                        services
+                )
         );
         return packs;
+
     }
 
     @Override
@@ -939,6 +952,7 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
     @Override
     public void updateExpressPackage(SoPackExpressPacksLocal item, long customer_code, long product_code, long site_code, long operation_code, String express_code, int bundle_express_tmp) {
         soPackExpressLocalDao.addUpdate(item);
+        mView.refreshPackServiceList(getExpressPackLocal(customer_code, product_code, site_code, operation_code, express_code, bundle_express_tmp).getPacksLocals(), item);
     }
 
     private SoPackExpressPacksLocal getPackExpressPacksAndServicesLocal(long customer_code, long site_code, long operation_code, long product_code, String express_code, int bundle_express_tmp, int price_list_code, int pack_code, int packSeq, String type_ps) {
@@ -960,19 +974,14 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
 
     @Override
     public void deleteSelectedExpressPackLocal(SoPackExpressPacksLocal item, long customer_code, long product_code, long site_code, long operation_code, String express_code, int bundle_express_tmp) {
-
         soPackExpressLocalDao.removeFull(item);
 
-        refreshPackServiceList();
+        mView.refreshPackServiceList(getExpressPackLocal(customer_code, product_code, site_code, operation_code, express_code, bundle_express_tmp).getPacksLocals(), item);
     }
 
     @Override
     public SO_Pack_Express_Local createExpressPackLocal(int bundle_express_tmp, SO_Pack_Express mSo_pack_express, MD_Partner md_partner, MD_Product md_product, String serial_id, String billing_add_inf1, String billing_add_inf2, String billing_add_inf3) {
         return null;
-    }
-
-    private void refreshPackServiceList() {
-
     }
 
     private SO_Pack_Express_Local getCurrentExpressPackLocal() {

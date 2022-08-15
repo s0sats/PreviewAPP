@@ -388,6 +388,14 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     }
 
     @Override
+    public void refreshPackServiceList(List<SoPackExpressPacksLocal> packsLocal, SoPackExpressPacksLocal item) {
+        List<SoPackExpressPacksLocal> soExpressList = mAdapter.getSoExpressList();
+        int position = soExpressList.indexOf(item);
+        soExpressList.set(position, item);
+        mAdapter.notifyItemChanged(position);
+    }
+
+    @Override
     public void setWsProcess(String wsProcess) {
         this.wsProcess = wsProcess;
     }
@@ -545,10 +553,10 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                 if(so_pack_express_local != null) {
                     packs = so_pack_express_local.getPacksLocals();
                 }else {
-                    packs = mPresenter.getExpressPacks(mSo_pack_express);
+                    packs = mPresenter.getExpressPacks(mSo_pack_express, md_partner, md_product);
                 }
                 //
-                if (packs.size() > 0) {
+                if (packs != null && packs.size() > 0) {
                     //
                     mAdapter = new Act040SOExpressPackServicesAdapter(
                             packs,
@@ -602,7 +610,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     private void callBottomSheet(SoPackExpressPacksLocal soPackExpressPacksLocal) {
         Gson gson = new Gson();
 
-        Act091_BottomSheet packServicesEditFragment = Act091_BottomSheet.Companion.getInstance(gson.toJson(soPackExpressPacksLocal.toSOExpressItemHeader()), true);
+        Act091_BottomSheet packServicesEditFragment = Act091_BottomSheet.Companion.getInstance(gson.toJson(soPackExpressPacksLocal), true);
         packServicesEditFragment.setOnAddServices(new Function1<SoPackExpressPacksLocal, Unit>() {
             @Override
             public Unit invoke(SoPackExpressPacksLocal item) {
@@ -1154,6 +1162,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         binding.mketAddInfo1.setText("");
         binding.mketAddInfo2.setText("");
         binding.mketAddInfo3.setText("");
+        bundle_express_tmp =-1;
         //LUCHE - 30/11/2021 -
         //Os dados de pacote agora são mantidos após o save, então chama metodo que revalida campos
         //configura helper do serial e libera lupa de busca.

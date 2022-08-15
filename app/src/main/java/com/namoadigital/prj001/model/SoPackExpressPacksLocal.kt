@@ -52,7 +52,7 @@ data class SoPackExpressPacksLocal(
                 serviceSearch.type_ps,
                 serviceSearch.comment
             ){
-        setPkAndServiceList(context, expressLocal, serviceSearch.service_list)
+                setPkAndServiceList(context, expressLocal, serviceSearch.service_list)
             }
 
 
@@ -67,17 +67,7 @@ data class SoPackExpressPacksLocal(
         this.product_code = soExpress.product_code
         this.express_code = soExpress.express_code
         this.express_tmp = soExpress.express_tmp
-        var tmpServiceSeq = getServiceSeq(
-            context,
-            this.customer_code,
-            this.site_code,
-            this.operation_code,
-            this.product_code,
-            this.express_code,
-            this.express_tmp,
-            this.pack_code,
-            this.pack_seq
-        )
+
         inputServiceList.forEach {
             var service = SoPackExpressServicesLocal(
                 soExpress.customer_code,
@@ -89,7 +79,7 @@ data class SoPackExpressPacksLocal(
                         pack_code,
                 pack_seq,
                 it.service_code,
-                tmpServiceSeq,
+                -1,
                 it.service_desc,
                 it.service_desc_full,
                 it.price?:0.0,
@@ -97,61 +87,18 @@ data class SoPackExpressPacksLocal(
                 it.qty,
                 it.comment
             )
-
+            //
             serviceList.add(
                 service
             )
-            tmpServiceSeq++
         }
     }
 
-    private fun getServiceSeq(
-        context: Context,
-        customerCode: Long,
-        siteCode: Long,
-        operationCode: Long,
-        productCode: Long,
-        expressCode: String,
-        expressTmp: Long,
-        packCode: Int,
-        packSeq: Int
-    ): Int {
-        return SoPackExpressPacksLocalDao(
-            context,
-            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-            Constant.DB_VERSION_CUSTOM
-        ).getByStringHM(
-            SoPackExpressServicesLocalSql003(
-                customerCode,
-                siteCode,
-                operationCode,
-                productCode,
-                expressCode,
-                expressTmp,
-                packCode,
-                packSeq
-            ).toSqlQuery()
-        )?.get(SoPackExpressServicesLocalSql003.NEXT_TMP)?.toInt()!!
-    }
-
-    fun toSOExpressItemHeader(): SOExpressItemHeader {
-        return SOExpressItemHeader(
-            customer_code = this.customer_code,
-            pack_code = this.pack_code,
-            site_code = this.site_code,
-            operation_code = this.operation_code,
-            product_code = this.product_code,
-            express_code = this.express_code,
-            packSeq = this.pack_seq,
-            price_list_code = this.price_list_code,
-            name = this.pack_service_desc_full,
-            pack_service_desc = this.pack_service_desc,
-            comment = this.comments?: "",
-            price = this.price,
-            qty = this.qty,
-            type_ps = this.type_ps,
-            manual_price = this.manual_price,
-            serviceList = this.serviceList.toSOExpressItemDetail()
-        )
+    fun setPackSeqForServiceList() {
+        if(this.pack_seq > 0) {
+            for (soPackExpressServicesLocal in serviceList) {
+                soPackExpressServicesLocal.pack_seq = this.pack_seq
+            }
+        }
     }
 }

@@ -13,6 +13,7 @@ import com.namoadigital.prj001.database.Mapper
 import com.namoadigital.prj001.model.DaoObjReturn
 import com.namoadigital.prj001.model.SoPackExpressPacksLocal
 import com.namoadigital.prj001.model.SoPackExpressServicesLocal
+import com.namoadigital.prj001.sql.SoPackExpressPacksLocalSql003
 import com.namoadigital.prj001.sql.SoPackExpressServicesLocalSql002
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -357,6 +358,18 @@ class SoPackExpressPacksLocalDao(
             }
 
             items?.forEach { item ->
+                if(item.pack_seq <0){
+                    item.pack_seq = generatePackSeq(
+                        context,
+                        item.customer_code,
+                        item.site_code,
+                        item.operation_code,
+                        item.product_code,
+                        item.express_code,
+                        item.express_tmp,
+                        item.pack_code
+                    )
+                }
                 //Where para update
                 val sbWhere: StringBuilder = getWherePkClause(item)
                 //Tenta update e armazena retorno
@@ -376,6 +389,7 @@ class SoPackExpressPacksLocalDao(
                     )
                 }
                 if(item.serviceList.size >0) {
+                    item.setPackSeqForServiceList()
                     tryAddUpdateSoPackExpressServicesLocalDao(item.serviceList, false, db)
                 }
             }
@@ -414,6 +428,33 @@ class SoPackExpressPacksLocalDao(
         }
         //
         return daoObjReturn
+    }
+
+    private fun generatePackSeq(
+        context: Context,
+        customerCode: Long,
+        siteCode: Long,
+        operationCode: Long,
+        productCode: Long,
+        expressCode: String,
+        expressTmp: Long,
+        packCode: Int
+    ): Int {
+        return SoPackExpressPacksLocalDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        ).getByStringHM(
+            SoPackExpressPacksLocalSql003(
+                customerCode,
+                siteCode,
+                operationCode,
+                productCode,
+                expressCode,
+                expressTmp,
+                packCode
+            ).toSqlQuery()
+        )?.get(SoPackExpressPacksLocalSql003.NEXT_TMP)?.toInt()!!
     }
 
     private fun tryAddUpdateSoPackExpressServicesLocalDao(

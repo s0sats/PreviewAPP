@@ -78,7 +78,7 @@ public interface Act040_Main_Presenter {
     //void checkSerialUpdateRequired(long product_code, String serial_id);
     void executeWS_SO_Service_Search(SO_Pack_Express mSo_pack_express, String serialId, SoPackExpressPacksLocal soPackExpressPacksLocal);
 
-    List<SoPackExpressPacksLocal> getExpressPacks(SO_Pack_Express mSo_pack_express);
+    List<SoPackExpressPacksLocal> getExpressPacks(SO_Pack_Express mSo_pack_express, MD_Partner md_partner, MD_Product md_product);
 
     boolean hasPackServiceFile(int contract_code, long product_code, int category_price_code, long site_code, long operation_code);
 
