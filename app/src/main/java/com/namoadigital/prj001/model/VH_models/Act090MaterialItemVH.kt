@@ -45,7 +45,7 @@ class Act090MaterialItemVH(
                     View.GONE
                 }
                 if(isRequestedQtyLbl) {
-                    text = materialItem.getFormttedPlannedQty(hmAuxTrans["request_qty_lbl"]!!)
+                    text = materialItem.getFormttedQty(hmAuxTrans["request_qty_lbl"]!!)
                 }else{
                     text = materialItem.getFormttedQty(hmAuxTrans["applied_qty_lbl"]!!)
                 }

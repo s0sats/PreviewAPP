@@ -248,11 +248,7 @@ class Act090Main : Base_Activity(), Act090MainContract.IView {
 
     private fun initActions() {
         binding.btnApplyMaterial.setOnClickListener {
-            if(mPresenter.hasAnyItemChanged(geOsDeviceMaterial,itemPlannedMaterialList)) {
-                savePlannedMaterialChanges()
-            }else{
-                onBackPressed()
-            }
+           onBackPressed()
         }
     }
 
@@ -356,9 +352,13 @@ class Act090Main : Base_Activity(), Act090MainContract.IView {
     }
 
     override fun onBackPressed() {
-        mPresenter.onBackPressedClicked(
-            //Se não tem alteração, não precisa do confirm.
-            !mPresenter.hasAnyItemChanged(geOsDeviceMaterial,itemPlannedMaterialList)
-        )
+        //
+        if(mPresenter.hasAnyItemChanged(geOsDeviceMaterial,itemPlannedMaterialList)) {
+            savePlannedMaterialChanges()
+        }else{
+            mPresenter.onBackPressedClicked(
+                true
+            )
+        }
     }
 }

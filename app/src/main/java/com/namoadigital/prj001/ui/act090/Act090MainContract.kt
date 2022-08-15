@@ -31,6 +31,6 @@ interface Act090MainContract {
             geOsDeviceMaterial: GeOsDeviceMaterial,
             itemPlannedMaterialList: MutableList<Act086MaterialItem>
         )
-        fun onBackPressedClicked(skipBackValidation: Boolean = false)
+        fun onBackPressedClicked(skipBackValidation: Boolean = true)
     }
 }
