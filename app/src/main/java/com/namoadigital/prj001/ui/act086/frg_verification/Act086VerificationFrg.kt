@@ -47,8 +47,6 @@ import com.namoadigital.prj001.util.*
 import com.namoadigital.prj001.view.act.product_selection.Act_Product_Selection
 import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
@@ -693,9 +691,9 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     }
 
 
-    private fun getStringDialogAlert(measure: String?, date: String?) = when {
+    private fun getMeasureOrDate(measure: String?, date: String?) = when {
         measure != null && date != null -> {
-            "$measure ou $date"
+            "$measure ${hmAux_Trans["sys_alert_or"]} $date"
         }
 
         measure == null -> {
@@ -705,7 +703,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         date == null -> {
             measure
         }
-        else -> {"$measure ou $date"}
+        else -> {"$measure ${hmAux_Trans["sys_alert_or"]} $date"}
     }
 
 
@@ -716,7 +714,6 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                     if(it == "0 h") null else it
                 }
                 val parser = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-
                 val formatter= SimpleDateFormat("dd/MM/yyyy")
 
                 val dateFormatted = geOsDeviceItem.next_cycle_limit_date?.let {
@@ -732,7 +729,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                             requireContext().resources.getColor(R.color.namoa_color_red)
                         }
                     },
-                    spanStyleWith("${hmAux_Trans["alert_change_msg"]!!} ${getStringDialogAlert(formatColor, dateFormatted)}."){
+                    spanStyleWith("${hmAux_Trans["alert_change_msg"]!!} ${getMeasureOrDate(formatColor, dateFormatted)}."){
                         customText = listOf(formatColor, dateFormatted)
                         applyColor {
                             requireContext().resources.getColor(R.color.namoa_color_red)
@@ -754,7 +751,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                             requireContext().resources.getColor(R.color.namoa_color_red)
                         }
                     },
-                    spanStyleWith("${hmAux_Trans["alert_adjust_msg"]!!} $formatColor ${hmAux_Trans["days_lbl"]!!}\n${hmAux_Trans["alert_adjust_msg_confirm"]!!}"){
+                    spanStyleWith("${hmAux_Trans["alert_adjust_msg"]!!} $formatColor ${hmAux_Trans["days_lbl"]!!}\n${hmAux_Trans["alert_adjust_msg_confirm"]!!}."){
                         customText = listOf(formatColor, hmAux_Trans["days_lbl"]!!)
                         applyColor {
                             context?.resources?.getColor(R.color.namoa_color_red)!!
@@ -1573,7 +1570,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                 "alert_adjust_msg_confirm",
                 "alert_adjust_ttl",
                 "alert_change_msg",
-                "alert_change_ttl"
+                "alert_change_ttl",
             )
         }
     }
