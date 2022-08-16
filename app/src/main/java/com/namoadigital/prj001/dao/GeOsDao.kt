@@ -561,13 +561,12 @@ class GeOsDao(
         //Testa qual valor deve ser usado, measure_value ou measure_cycle_value(measure cycle só existe
         //se for preventiva). Modificar no futuro?! replicar o measure_value no measure_cycle_value
         // quando não for PREVENTIVE ?!
-        /**
-         * BARRIONUEVO 16-08-2022
-         * Medicao a ser considerada devera ser o maior valor entre measure_value e measure_cycle_value
-         * devido o calculo de tolerancia de ciclo, isto gera um efeito colateral de ter um item normal vencido.
-         * Este efeito colateral ainda nao foi resolvido.
-         */
-        val measureConsider: Float = geOs.maxMeasureValue()
+        val measureConsider: Float =
+            if (geOs.measure_cycle_value != null && geOs.measure_cycle_value!!.compareTo(-1f) > 0) {
+                geOs.measure_cycle_value!!
+            } else {
+                0f
+            }
         //Seta data inseriada pelo usr com 23:59:59.
         var dateStartLastMinute : String? = ToolBox_Inf.getDateLastMinute(geOs.date_start)
         //
@@ -576,7 +575,7 @@ class GeOsDao(
             item.has_expired_cycle = 0
             if ((item.next_cycle_limit_date != null
                 && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_limit_date,dateStartLastMinute) <= 0)
-                || (item.next_cycle_measure != null && item.next_cycle_measure.compareTo(measureConsider) <= 0)
+                || (item.next_cycle_measure != null && item.next_cycle_measure.compareTo(geOs.maxMeasureValue()) <= 0)
             ) {
                     item.has_expired_cycle = 1
             }
