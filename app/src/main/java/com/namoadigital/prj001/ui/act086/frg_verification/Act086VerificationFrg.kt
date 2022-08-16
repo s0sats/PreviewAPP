@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
@@ -33,6 +34,7 @@ import com.namoadigital.prj001.dao.GeOsDao
 import com.namoadigital.prj001.dao.GeOsDeviceItemDao
 import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_ItemDao
 import com.namoadigital.prj001.databinding.Act086VerificationFrgBinding
+import com.namoadigital.prj001.databinding.FormOsFixedAdjustFrgAlertDialogBinding
 import com.namoadigital.prj001.extensions.*
 import com.namoadigital.prj001.extensions.SpannableStringStyle.applyColor
 import com.namoadigital.prj001.extensions.SpannableStringStyle.customText
@@ -49,7 +51,6 @@ import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlin.math.abs
 
 /**
  * A simple [Fragment] subclass.
@@ -710,53 +711,20 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     private fun showAlertOnBottomSheet(type: String, checkedId: Int) {
         when (type) {
             GeOsDeviceItem.EXEC_TYPE_FIXED -> {
-                val cycleMeasureFormated = mPresenter.getFormattedLastMeasureInfo(geOsDeviceItem.next_cycle_measure ?: 0f, geOsDeviceItem.value_sufix).let {
-                    if(it == "0 h") null else it
-                }
-
-                val dateFormatted = geOsDeviceItem.next_cycle_limit_date?.let {
-                    SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(it)
-                }?.let {
-                    SimpleDateFormat("dd/MM/yyyy").format(it)
-                }
-
                 showAlertMessage(
-                    spanStyleWith(hmAux_Trans["alert_change_ttl"]!!){
-                        customText = listOf(hmAux_Trans["alert_change_ttl"]!!)
-                        applyColor {
-                            requireContext().resources.getColor(R.color.namoa_color_red)
-                        }
-                    },
-                    spanStyleWith("${hmAux_Trans["alert_change_msg"]!!} ${getMeasureOrDate(cycleMeasureFormated, dateFormatted)}."){
-                        customText = listOf(cycleMeasureFormated, dateFormatted)
-                        applyColor {
-                            requireContext().resources.getColor(R.color.namoa_color_red)
-                        }
-                    },
+                    hmAux_Trans["alert_change_ttl"]!!,
+                    hmAux_Trans["alert_change_msg"]!!,
                     type,
-                    checkedId,
+                    checkedId
                 )
             }
 
             GeOsDeviceItem.EXEC_TYPE_ADJUST -> {
-                val getDays = getDaysBetweenTargetAndOsDateStartLastSecond(geOsDeviceItem.next_cycle_limit_date ?: "")
-                val getDaysFormatted = "${abs(getDays)}"
-
                 showAlertMessage(
-                    spanStyleWith(hmAux_Trans["alert_adjust_ttl"]!!){
-                        customText = listOf(hmAux_Trans["alert_adjust_ttl"]!!)
-                        applyColor {
-                            requireContext().resources.getColor(R.color.namoa_color_red)
-                        }
-                    },
-                    spanStyleWith("${hmAux_Trans["alert_adjust_msg"]!!} $getDaysFormatted ${hmAux_Trans["days_lbl"]!!}.\n${hmAux_Trans["alert_adjust_msg_confirm"]!!}"){
-                        customText = listOf(getDaysFormatted, hmAux_Trans["days_lbl"]!!)
-                        applyColor {
-                            context?.resources?.getColor(R.color.namoa_color_red)!!
-                        }
-                    },
+                    hmAux_Trans["alert_adjust_ttl"]!!,
+                    hmAux_Trans["alert_adjust_msg"]!!,
                     type,
-                    checkedId,
+                    checkedId
                 )
             }
         }
@@ -775,20 +743,64 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
 
 
     private fun showAlertMessage(
-        title: SpannableString,
-        message: SpannableString,
+        title: String,
+        message: String,
         type: String,
         checkedId: Int
-    ) {
-        showConfirmAlert(
-            title,
-            message,
-            { _, _ ->
-                applyExecTypeAndChangeLabelMaintenance(type, checkedId)
-            },
-            { _, _ ->
-                setLastSelection(lastSelectedRdoId)
+    ){
+        val builder = AlertDialog.Builder(requireContext())
+        val dialogBinding = FormOsFixedAdjustFrgAlertDialogBinding.inflate(layoutInflater)
+        val geOs = mPresenter.getGeOs(geOsDeviceItem)
+        with(dialogBinding){
+            //
+            tvAlertMsg.text = message
+            //
+            gpMeasure.visibility = geOsDeviceItem.next_cycle_measure?.let {
+                tvCurrentMeasureLb.text = hmAux_Trans["alert_current_measure_lbl"]
+                tvNextCycleMeasureLbl.text = hmAux_Trans["alert_next_cycle_measure_lbl"]
+                tvCurrentMeasureVal.text =  mPresenter.getFormattedLastMeasureInfo(mPresenter.getMaxMeasureValue(geOsDeviceItem), geOs.value_sufix)
+                tvNextCycleMeasureVal.text = mPresenter.getFormattedLastMeasureInfo(it, geOsDeviceItem.value_sufix)
+                View.VISIBLE
+            }?: View.GONE
+            //
+            gpLimitDate.visibility = geOsDeviceItem.next_cycle_limit_date?.let {
+                tvOsStartDateLbl.text = hmAux_Trans["alert_start_date_lbl"]
+                tvNextCycleLimitDateLbl.text = hmAux_Trans["alert_limit_date_lbl"]
+                tvOsStartDateVal.text = geOs.date_start?.let{
+                    SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(it)?.let {
+                        SimpleDateFormat("dd/MM/yyyy").format(it)
+                    }
+                }
+                tvNextCycleLimitDateVal.text = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(it)?.let {
+                    SimpleDateFormat("dd/MM/yyyy").format(it)
+                }
+                //
+                View.VISIBLE
+            }?: View.GONE
+            //
+        }
+
+        builder.apply {
+            setTitle(spanStyleWith(title){
+                customText = listOf(title)
+                applyColor {
+                    requireContext().resources.getColor(R.color.namoa_color_red)
+                }
             })
+            setView(dialogBinding.root)
+            setPositiveButton(
+                hmAux_Trans["sys_alert_btn_yes"]
+            ) { _, _ ->
+                applyExecTypeAndChangeLabelMaintenance(type, checkedId)
+            }
+            setNegativeButton(
+                hmAux_Trans["sys_alert_btn_no"]
+            ) { _, _ ->
+                setLastSelection(lastSelectedRdoId)
+            }
+            //
+            show()
+        }
     }
 
 
@@ -1569,6 +1581,10 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                 "alert_adjust_ttl",
                 "alert_change_msg",
                 "alert_change_ttl",
+                "alert_current_measure_lbl",
+                "alert_next_cycle_measure_lbl",
+                "alert_start_date_lbl",
+                "alert_limit_date_lbl"
             )
         }
     }

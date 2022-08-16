@@ -9,10 +9,7 @@ import com.namoadigital.prj001.dao.GeOsDao
 import com.namoadigital.prj001.dao.GeOsDeviceItemDao
 import com.namoadigital.prj001.dao.MD_All_ProductDao
 import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_ItemDao
-import com.namoadigital.prj001.model.Act086MaterialItem
-import com.namoadigital.prj001.model.GeOsDeviceItem
-import com.namoadigital.prj001.model.GeOsDeviceMaterial
-import com.namoadigital.prj001.model.toUiMaterialItem
+import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.sql.GeOsSql_001
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -270,4 +267,17 @@ class Act086VerificationFrgPresenter(
         )
         return geOs?.maxMeasureValue()?:0f
     }
+    override fun getGeOs(geOsDeviceItem: GeOsDeviceItem):GeOs{
+        val geOs = geOsDao.getByString(
+            GeOsSql_001(
+                geOsDeviceItem.customer_code,
+                geOsDeviceItem.custom_form_type,
+                geOsDeviceItem.custom_form_code,
+                geOsDeviceItem.custom_form_version,
+                geOsDeviceItem.custom_form_data
+            ).toSqlQuery()
+        )
+        return geOs!!
+    }
+
 }

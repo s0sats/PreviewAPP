@@ -45,12 +45,8 @@ class GeOs(
      *  METODO QUE TRAZ O MAIOR ENTRE CICLO CONSIDERADO E VALOR INSERIDO PELO USER.
      */
     fun maxMeasureValue():Float{
-        val mMeasure_value = measure_value?.let{
-          measure_value
-        }?: 0f
-        val mMeasure_cycle_value = measure_cycle_value?.let{
-          measure_cycle_value
-        }?: 0f
+        val mMeasure_value = measure_value?: 0f
+        val mMeasure_cycle_value = measure_cycle_value?: 0f
         return if(mMeasure_value>mMeasure_cycle_value){mMeasure_value}else{mMeasure_cycle_value}
     }
 }
