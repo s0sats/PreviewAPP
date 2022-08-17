@@ -581,18 +581,21 @@ class GeOsDao(
             }
             /*
              * Se Status PROJECTED_DATE_REACHED, verifica se deve alterar o status para:
-             *   ITEM_CHECK_STATUS_MEASURE_ALERT:
-             *      - A data projetada nao tem mais influencia alguma no app. Antes deve ser levado em consideracao
-             *   a medicao.
+             *   NORMAL:
+             *      - Se o data projetada foi alcançada no servidor, mas a data de inicio informada
+             * menor que a data de projetada, volta para normal.
+             * Isso só acontece no app, pois o usr pode informar uma data anterior a atual.
              */
             if(GeOsDeviceItem.ITEM_CHECK_STATUS_PROJECTED_DATE_REACHED.equals(item.item_check_status,true)){
                 //Verifica se data projetada do proximo ciclo foi atingida
-                if (item.next_cycle_measure != null
-                    && item.next_cycle_measure.compareTo(measureConsider) <= 0
+                if (item.next_cycle_measure_date != null
+                    && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_measure_date,dateStartLastMinute) > 0
                 ) {
-                    item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_MEASURE_ALERT
+                    item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL
+                    item.hide_days_in_alert = 1
                 }
             }
+
             /*
              * Se Status LIMIT_DATE_REACHED, verifica se deve alterar o status para:
              *   NORMAL:
@@ -623,7 +626,7 @@ class GeOsDao(
                 var newCheckStatus = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL
 
 
-                //Verifica se data projetada do proximo ciclo foi atingida
+//                //Verifica se data projetada do proximo ciclo foi atingida
 //                if (item.next_cycle_measure_date != null
 //                    && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_measure_date,dateStartLastMinute) <= 0
 //                ) {
