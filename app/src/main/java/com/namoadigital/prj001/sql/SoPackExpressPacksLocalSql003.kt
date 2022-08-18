@@ -11,6 +11,8 @@ class SoPackExpressPacksLocalSql003 (
     private val product_code: Long,
     private val express_code: String,
     private val express_tmp: Long,
+    private val price_list_code: Int,
+    private val type_ps: String,
     private val pack_code: Int
 ) : Specification {
 
@@ -26,6 +28,8 @@ class SoPackExpressPacksLocalSql003 (
             AND ${SoPackExpressPacksLocalDao.PRODUCT_CODE} = '$product_code'
             AND ${SoPackExpressPacksLocalDao.EXPRESS_CODE} = '$express_code'
             AND ${SoPackExpressPacksLocalDao.EXPRESS_TMP} = '$express_tmp'                                          
+            AND ${SoPackExpressPacksLocalDao.PRICE_LIST_CODE} = '$price_list_code'                                          
+            AND ${SoPackExpressPacksLocalDao.TYPE_PS} = '$type_ps'                                          
             AND ${SoPackExpressServicesLocalDao.PACK_CODE} = '$pack_code' ;                                         
        """.trimIndent()
         //

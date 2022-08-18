@@ -32,8 +32,10 @@ class SoPackExpressServicesLocalDao(
         const val PRODUCT_CODE = "product_code"
         const val EXPRESS_CODE = "express_code"
         const val EXPRESS_TMP = "express_tmp"
+        const val PRICE_LIST_CODE = "price_list_code"
         const val PACK_CODE = "pack_code"
         const val PACK_SEQ = "pack_seq"
+        const val TYPE_PS = "type_ps"
         const val SERVICE_CODE = "service_code"
         const val SERVICE_SEQ = "service_seq"
         const val SERVICE_DESC = "service_desc"
@@ -122,8 +124,10 @@ class SoPackExpressServicesLocalDao(
                         AND ${PRODUCT_CODE} = '${soPackExpressServicesLocal.product_code}'
                         AND ${EXPRESS_CODE} = '${soPackExpressServicesLocal.express_code}'
                         AND ${EXPRESS_TMP} = '${soPackExpressServicesLocal.express_tmp}'
+                        AND ${PRICE_LIST_CODE} = '${soPackExpressServicesLocal.price_list_code}'
                         AND ${PACK_CODE} = '${soPackExpressServicesLocal.pack_code}'
                         AND ${PACK_SEQ} = '${soPackExpressServicesLocal.pack_seq}'
+                        AND ${TYPE_PS} = '${soPackExpressServicesLocal.type_ps}'
                         AND ${SERVICE_CODE} = '${soPackExpressServicesLocal.service_code}'
                         """.trimIndent()
                 )
@@ -261,8 +265,10 @@ class SoPackExpressServicesLocalDao(
                         item.product_code,
                         item.express_code,
                         item.express_tmp,
+                        item.price_list_code,
                         item.pack_code,
                         item.pack_seq,
+                        item.type_ps,
                         item.service_code
                     )
                 }
@@ -330,8 +336,10 @@ class SoPackExpressServicesLocalDao(
         productCode: Long,
         expressCode: String,
         expressTmp: Long,
+        priceListCode: Int,
         packCode: Int,
         packSeq: Int,
+        typePs: String,
         serviceCode: Int
     ): Int {
         return SoPackExpressPacksLocalDao(
@@ -346,8 +354,10 @@ class SoPackExpressServicesLocalDao(
                 productCode,
                 expressCode,
                 expressTmp,
+                priceListCode,
                 packCode,
                 packSeq,
+                typePs,
                 serviceCode
             ).toSqlQuery()
         )?.get(SoPackExpressServicesLocalSql003.NEXT_TMP)?.toInt()!!
@@ -365,8 +375,10 @@ class SoPackExpressServicesLocalDao(
                         product_code = getLong(getColumnIndex(PRODUCT_CODE)),
                         express_code = getString(getColumnIndex(EXPRESS_CODE)),
                         express_tmp = getLong(getColumnIndex(EXPRESS_TMP)),
+                        price_list_code = getInt(getColumnIndex(PRICE_LIST_CODE)),
                         pack_code = getInt(getColumnIndex(PACK_CODE)),
                         pack_seq = getInt(getColumnIndex(PACK_SEQ)),
+                        type_ps = getString(getColumnIndex(TYPE_PS)),
                         service_code = getInt(getColumnIndex(SERVICE_CODE)),
                         service_seq = getInt(getColumnIndex(SERVICE_SEQ)),
                         service_desc = getString(getColumnIndex(SERVICE_DESC)),
@@ -430,6 +442,13 @@ class SoPackExpressServicesLocalDao(
                         )
                     }
                     //
+                    if (soPackExpressServicesLocal.price_list_code > -1) {
+                        put(
+                            PRICE_LIST_CODE,
+                            soPackExpressServicesLocal.price_list_code
+                        )
+                    }
+                    //
                     if (soPackExpressServicesLocal.pack_code > -1) {
                         put(
                             PACK_CODE,
@@ -443,6 +462,11 @@ class SoPackExpressServicesLocalDao(
                             soPackExpressServicesLocal.pack_seq
                         )
                     }
+                    //
+                    put(
+                        TYPE_PS,
+                        soPackExpressServicesLocal.type_ps
+                    )
                     //
                     if (soPackExpressServicesLocal.service_code > -1) {
                         put(

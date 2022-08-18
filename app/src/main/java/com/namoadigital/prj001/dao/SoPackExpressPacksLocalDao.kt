@@ -170,39 +170,9 @@ class SoPackExpressPacksLocalDao(
         val curAction = DaoObjReturn.DELETE
         daoObjReturn.table = SO_Pack_Express_LocalDao.TABLE
         //
-        //
         openDB()
         try {
-            val sbWhere = java.lang.StringBuilder()
-            sbWhere.append(CUSTOMER_CODE).append(" = '")
-                .append(item.customer_code.toString()).append("'")
-            sbWhere.append(" and ")
-            sbWhere.append(SITE_CODE).append(" = '")
-                .append(item.site_code.toString()).append("'")
-            sbWhere.append(" and ")
-            sbWhere.append(OPERATION_CODE).append(" = '")
-                .append(item.operation_code.toString()).append("'")
-            sbWhere.append(" and ")
-            sbWhere.append(PRODUCT_CODE).append(" = '")
-                .append(item.product_code).append("'")
-            sbWhere.append(" and ")
-            sbWhere.append(EXPRESS_CODE).append(" = '")
-                .append(item.express_code).append("'")
-            sbWhere.append(" and ")
-            sbWhere.append(EXPRESS_TMP).append(" = '")
-                .append(item.express_tmp).append("'")
-            sbWhere.append(" and ")
-            sbWhere.append(PRICE_LIST_CODE).append(" = '")
-                .append(item.price_list_code).append("'")
-            sbWhere.append(" and ")
-            sbWhere.append(PACK_CODE).append(" = '")
-                .append(item.pack_code).append("'")
-            sbWhere.append(" and ")
-            sbWhere.append(PACK_SEQ).append(" = '")
-                .append(item.pack_seq).append("'")
-            sbWhere.append(" and ")
-            sbWhere.append(TYPE_PS).append(" = '")
-                .append(item.type_ps).append("'")
+            val sbWhere = getWherePkClause(item)
             //
             db.beginTransaction()
             //
@@ -311,8 +281,10 @@ class SoPackExpressPacksLocalDao(
                 soPackExpressPacksLocal.product_code,
                 soPackExpressPacksLocal.express_code,
                 soPackExpressPacksLocal.express_tmp,
+                soPackExpressPacksLocal.price_list_code,
                 soPackExpressPacksLocal.pack_code,
-                soPackExpressPacksLocal.pack_seq
+                soPackExpressPacksLocal.pack_seq,
+                soPackExpressPacksLocal.type_ps
             ).toSqlQuery()
         )
         //
@@ -367,7 +339,9 @@ class SoPackExpressPacksLocalDao(
                         item.product_code,
                         item.express_code,
                         item.express_tmp,
-                        item.pack_code
+                        item.pack_code,
+                        item.price_list_code,
+                        item.type_ps
                     )
                 }
                 //Where para update
@@ -438,7 +412,9 @@ class SoPackExpressPacksLocalDao(
         productCode: Long,
         expressCode: String,
         expressTmp: Long,
-        packCode: Int
+        packCode: Int,
+        priceListCode: Int,
+        typePs: String
     ): Int {
         return SoPackExpressPacksLocalDao(
             context,
@@ -452,6 +428,8 @@ class SoPackExpressPacksLocalDao(
                 productCode,
                 expressCode,
                 expressTmp,
+                priceListCode,
+                typePs,
                 packCode
             ).toSqlQuery()
         )?.get(SoPackExpressPacksLocalSql003.NEXT_TMP)?.toInt()!!

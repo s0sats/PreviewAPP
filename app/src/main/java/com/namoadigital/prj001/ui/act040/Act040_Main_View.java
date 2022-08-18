@@ -41,7 +41,7 @@ public interface Act040_Main_View {
 
     void showMsgToast(String msg);
 
-    void refreshPackServiceList(List<SoPackExpressPacksLocal> packsLocal, SoPackExpressPacksLocal item);
+    void refreshPackServiceList(List<SoPackExpressPacksLocal> packsLocal, SoPackExpressPacksLocal item, int position);
 
     //08/10/2018
     void setWsProcess(String wsProcess);

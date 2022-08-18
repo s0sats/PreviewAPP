@@ -269,6 +269,7 @@ class Act091_BottomSheet constructor(
                     }
                 }
                 onAddServices(contentItemHeader)
+                dismiss()
             }
             act091BottomSheetDelete.setOnClickListener{
                 onDeleteServices(contentItemHeader)
@@ -305,7 +306,8 @@ class Act091_BottomSheet constructor(
 
         fun getInstance(
             serviceItem: String,
-            updatePackageServices: Boolean
+            updatePackageServices: Boolean,
+            position: Int = -1
         ) = Act091_BottomSheet().apply {
             arguments = Bundle().apply {
                 putString(SERVICE_ITEM, serviceItem)

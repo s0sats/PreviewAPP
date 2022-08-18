@@ -333,7 +333,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         mPresenter.loadPartners(bundle_partner_code);
     }
 
-   private void recoverIntentsInfo() {
+    private void recoverIntentsInfo() {
         bundle = getIntent().getExtras();
         //
         if (bundle != null) {
@@ -374,7 +374,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         if(lastExpressInSiteOper != null){
             binding.clLastOrder.setVisibility(View.VISIBLE);
             binding.tvLastOrderTtl.setText(hmAux_Trans.get("last_express_in_site_x_operation_lbl"));
-            binding.tvPackDesc.setText(lastExpressInSiteOper.getSo_desc());
+            binding.tvPackDesc.setText(mPresenter.getServicesDetailsResume(lastExpressInSiteOper));
             binding.tvSerialId.setText(lastExpressInSiteOper.getSerial_id());
             binding.tvLogDate.setText(
                 ToolBox_Inf.millisecondsToString(
@@ -388,11 +388,23 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     }
 
     @Override
-    public void refreshPackServiceList(List<SoPackExpressPacksLocal> packsLocal, SoPackExpressPacksLocal item) {
+    public void refreshPackServiceList(List<SoPackExpressPacksLocal> packsLocal, SoPackExpressPacksLocal item, int position) {
         List<SoPackExpressPacksLocal> soExpressList = mAdapter.getSoExpressList();
-        int position = soExpressList.indexOf(item);
-        soExpressList.set(position, item);
-        mAdapter.notifyItemChanged(position);
+        if(position >= 0) {
+            mAdapter.highlightItemChange(position, item);
+        }else{
+            soExpressList.clear();
+            if(packsLocal.size() > 0) {
+                soExpressList.addAll(packsLocal);
+                mAdapter.notifyDataSetChanged();
+                binding.rvAddPackServices.setVisibility(View.VISIBLE);
+                binding.tvAddPackServicesPlaceholder.setVisibility(View.GONE);
+            }else{
+                binding.rvAddPackServices.setVisibility(View.INVISIBLE);
+                binding.tvAddPackServicesPlaceholder.setVisibility(View.VISIBLE);
+            }
+        }
+
     }
 
     @Override
@@ -564,17 +576,13 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                                     context,
                                     Constant.PROFILE_MENU_SO,
                                     Constant.PROFILE_MENU_SO_SHOW_SERVICE_PRICE
-                            ),
-                            new Function1<SoPackExpressPacksLocal, Object>() {
-                                @Override
-                                public Object invoke(SoPackExpressPacksLocal soPackExpressPacksLocal) {
-                                    if (mPresenter.hasPackServiceFile(mSo_pack_express.getContract_code(), mSo_pack_express.getProduct_code(), mSo_pack_express.getCategory_price_code(), mSo_pack_express.getSite_code(), mSo_pack_express.getOperation_code())) {
-                                        callBottomSheet(soPackExpressPacksLocal);
-                                    } else {
-                                        mPresenter.executeWS_SO_Service_Search(mSo_pack_express, Objects.requireNonNull(binding.mketSerial.getText()).toString(), soPackExpressPacksLocal);
-                                    }
-                                    return null;
+                            ),(packsLocal, position) -> {
+                                if (mPresenter.hasPackServiceFile(mSo_pack_express.getContract_code(), mSo_pack_express.getProduct_code(), mSo_pack_express.getCategory_price_code(), mSo_pack_express.getSite_code(), mSo_pack_express.getOperation_code())) {
+                                    callBottomSheet(packsLocal, position);
+                                } else {
+                                    mPresenter.executeWS_SO_Service_Search(mSo_pack_express, Objects.requireNonNull(binding.mketSerial.getText()).toString(), packsLocal);
                                 }
+                                return null;
                             }
                     );
                     //
@@ -607,10 +615,10 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         }
     }
 
-    private void callBottomSheet(SoPackExpressPacksLocal soPackExpressPacksLocal) {
+    private void callBottomSheet(SoPackExpressPacksLocal soPackExpressPacksLocal, int position) {
         Gson gson = new Gson();
 
-        Act091_BottomSheet packServicesEditFragment = Act091_BottomSheet.Companion.getInstance(gson.toJson(soPackExpressPacksLocal), true);
+        Act091_BottomSheet packServicesEditFragment = Act091_BottomSheet.Companion.getInstance(gson.toJson(soPackExpressPacksLocal), true, position);
         packServicesEditFragment.setOnAddServices(new Function1<SoPackExpressPacksLocal, Unit>() {
             @Override
             public Unit invoke(SoPackExpressPacksLocal item) {
@@ -621,7 +629,9 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                         mSo_pack_express.getSite_code(),
                         mSo_pack_express.getOperation_code(),
                         mSo_pack_express.getExpress_code(),
-                        (int) bundle_express_tmp);
+                        (int) bundle_express_tmp,
+                        position
+                );
                 return null;
             }
         });
@@ -635,7 +645,9 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                         mSo_pack_express.getSite_code(),
                         mSo_pack_express.getOperation_code(),
                         mSo_pack_express.getExpress_code(),
-                        (int) bundle_express_tmp);
+                        (int) bundle_express_tmp,
+                        -1
+                );
                 return null;
             }
         });
@@ -954,7 +966,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                     mSo_pack_express.getExpress_code(),
                     (int) bundle_express_tmp);
         }
-
+        //
         if(so_pack_express_local == null) {
             so_pack_express_local = mPresenter.onCreateSo_Pack_Express_Structure(
                     mSo_pack_express,
@@ -1084,7 +1096,8 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             && !binding.mketSerial.getText().toString().trim().isEmpty()
             && isBillingInfoValid(mSo_pack_express.getBilling_add_inf1_view(), binding.mketAddInfo1)
             && isBillingInfoValid(mSo_pack_express.getBilling_add_inf2_view(), binding.mketAddInfo2)
-            && isBillingInfoValid(mSo_pack_express.getBilling_add_inf3_view(), binding.mketAddInfo3);
+            && isBillingInfoValid(mSo_pack_express.getBilling_add_inf3_view(), binding.mketAddInfo3)
+            && mAdapter.getItemCount() > 0;
     }
 
     private boolean isBillingInfoValid(String billingInfoView, MKEditTextNM billingField) {
@@ -1185,6 +1198,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         //
         mPresenter.onBackPressedClicked(
             mSo_pack_express,
+            mAdapter.getItemCount() > 0,
             ToolBox_Inf.removeAllLineBreaks(binding.mketSerial.getText().toString()),
             false
         );
@@ -1268,7 +1282,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             }else{
                 SoPackExpressPacksLocal soPackExpressPacksLocal = gson.fromJson(mLink, SoPackExpressPacksLocal.class);
                 if(soPackExpressPacksLocal!=null){
-                    callBottomSheet(soPackExpressPacksLocal);
+                    callBottomSheet(soPackExpressPacksLocal, 0);
                 }
             }
         }

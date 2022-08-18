@@ -62,6 +62,7 @@ import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_014;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_015;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Sql_005;
 import com.namoadigital.prj001.sql.SoPackExpressPacksLocalSql001;
+import com.namoadigital.prj001.sql.SoPackExpressPacksLocalSql004;
 import com.namoadigital.prj001.sql.Sql_Act012_004;
 import com.namoadigital.prj001.sql.Sql_Act040_001;
 import com.namoadigital.prj001.util.Constant;
@@ -817,12 +818,12 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
     }
 
     private void onBackPressedClicked(){
-        onBackPressedClicked(null, null , true);
+        onBackPressedClicked(null, false, null , true);
     }
 
     @Override
-    public void onBackPressedClicked(SO_Pack_Express mSoPackExpress, String serialID, boolean skipConfirm) {
-        if((mSoPackExpress == null && (serialID == null || serialID.isEmpty())) || skipConfirm) {
+    public void onBackPressedClicked(SO_Pack_Express mSoPackExpress, boolean hasPackServices, String serialID, boolean skipConfirm) {
+        if((mSoPackExpress == null && !hasPackServices && (serialID == null || serialID.isEmpty())) || skipConfirm) {
             mView.callAct005(context);
         }else {
             ToolBox.alertMSG_YES_NO(
@@ -832,7 +833,7 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        onBackPressedClicked(mSoPackExpress,serialID,true);
+                        onBackPressedClicked(mSoPackExpress, hasPackServices,serialID,true);
                     }
                 },
                 1
@@ -950,9 +951,9 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
     }
 
     @Override
-    public void updateExpressPackage(SoPackExpressPacksLocal item, long customer_code, long product_code, long site_code, long operation_code, String express_code, int bundle_express_tmp) {
+    public void updateExpressPackage(SoPackExpressPacksLocal item, long customer_code, long product_code, long site_code, long operation_code, String express_code, int bundle_express_tmp, int position) {
         soPackExpressLocalDao.addUpdate(item);
-        mView.refreshPackServiceList(getExpressPackLocal(customer_code, product_code, site_code, operation_code, express_code, bundle_express_tmp).getPacksLocals(), item);
+        mView.refreshPackServiceList(getExpressPackLocal(customer_code, product_code, site_code, operation_code, express_code, bundle_express_tmp).getPacksLocals(), item, position);
     }
 
     private SoPackExpressPacksLocal getPackExpressPacksAndServicesLocal(long customer_code, long site_code, long operation_code, long product_code, String express_code, int bundle_express_tmp, int price_list_code, int pack_code, int packSeq, String type_ps) {
@@ -973,15 +974,44 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
     }
 
     @Override
-    public void deleteSelectedExpressPackLocal(SoPackExpressPacksLocal item, long customer_code, long product_code, long site_code, long operation_code, String express_code, int bundle_express_tmp) {
+    public void deleteSelectedExpressPackLocal(SoPackExpressPacksLocal item, long customer_code, long product_code, long site_code, long operation_code, String express_code, int bundle_express_tmp, int position) {
         soPackExpressLocalDao.removeFull(item);
-
-        mView.refreshPackServiceList(getExpressPackLocal(customer_code, product_code, site_code, operation_code, express_code, bundle_express_tmp).getPacksLocals(), item);
+        SO_Pack_Express_Local expressPackLocal = getExpressPackLocal(customer_code, product_code, site_code, operation_code, express_code, bundle_express_tmp);
+        if(expressPackLocal != null){
+            mView.refreshPackServiceList(expressPackLocal.getPacksLocals(), item, position);
+        } else {
+            mView.refreshPackServiceList(new ArrayList<>(), item, position);
+        }
     }
 
     @Override
     public SO_Pack_Express_Local createExpressPackLocal(int bundle_express_tmp, SO_Pack_Express mSo_pack_express, MD_Partner md_partner, MD_Product md_product, String serial_id, String billing_add_inf1, String billing_add_inf2, String billing_add_inf3) {
         return null;
+    }
+
+    @Override
+    public String getServicesDetailsResume(SO_Pack_Express_Local lastExpressInSiteOper) {
+
+        StringBuilder serviceResume = new StringBuilder();
+        List<SoPackExpressPacksLocal> packsLocals   = soPackExpressLocalDao.query(
+                new SoPackExpressPacksLocalSql004(
+                        lastExpressInSiteOper.getCustomer_code(),
+                        lastExpressInSiteOper.getSite_code(),
+                        lastExpressInSiteOper.getOperation_code(),
+                        lastExpressInSiteOper.getProduct_code(),
+                        lastExpressInSiteOper.getExpress_code(),
+                        lastExpressInSiteOper.getExpress_tmp()
+                ).toSqlQuery()
+        );
+
+        if (packsLocals != null) {
+            for (SoPackExpressPacksLocal packsLocal : packsLocals) {
+                serviceResume.append(packsLocal.getQty()).append("X ").append(packsLocal.getPack_service_desc_full()).append("\n");
+            }
+            return serviceResume.toString();
+        }else{
+            return "";
+        }
     }
 
     private SO_Pack_Express_Local getCurrentExpressPackLocal() {

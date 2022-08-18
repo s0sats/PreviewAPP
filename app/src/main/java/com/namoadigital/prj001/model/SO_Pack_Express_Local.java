@@ -20,7 +20,6 @@ public class SO_Pack_Express_Local implements Serializable {
     private long express_tmp;
     private String serial_id;
     private long partner_code;
-
     private Long so_prefix;
     private Long so_code;
     private String so_id;
