@@ -2,7 +2,6 @@ package com.namoadigital.prj001.ui.act008;
 
 import static com.namoadigital.prj001.util.ConstantBaseApp.ACT006;
 import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_SELECTED_DATE;
-import static com.namoadigital.prj001.util.ConstantBaseApp.FROM_OFFLINE_SOURCE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SCHEDULED_PROFILE_CHECK;
 import static com.namoadigital.prj001.util.ToolBox_Inf.getMyActionFilterParam;
 
@@ -111,7 +110,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     private String customFormCode;
     private String customFormVersion;
     private String customFormCodeDesc;
-    private boolean bundle_from_offline_source;
+    private boolean is_offline_source;
     private boolean scheduled_profile_check;
     private boolean isOffHandForm;
     private Bundle act081Bundle = new Bundle();
@@ -245,6 +244,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     private void initVars() {
         //Variavel q identifica se dados do produto são chamados do master data ou não.
         isSchedule = false;
+        is_offline_source = ToolBox_Con.getBooleanPreferencesByKey(getApplicationContext(), ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false);
         //
         recoverIntentsInfo();
         //
@@ -359,7 +359,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         frgSerialEdit.setBtnActionLabel(hmAux_Trans.get("btn_create"));
         frgSerialEdit.setViewMode(Frg_Serial_Edit.VIEW_FULL_EDIT);
         frgSerialEdit.setShowCategorySegmentoInfo(false);
-        frgSerialEdit.setShowOffline(bundle_from_offline_source);
+        frgSerialEdit.setShowOffline(is_offline_source);
         //frgSerialEdit.setForceCheckExistences(isSchedule);
         //Se for agendamento e o produto controlar local seguir mesma validação do site_restriction 19/06/2018
         //LUCHE - 16/06/2021
@@ -383,7 +383,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                     mPresenter.updateSerialData(mdProductSerial);
                     //
                     if (ToolBox_Con.isOnline(context)
-                    && !bundle_from_offline_source
+                    && !is_offline_source
                     && !isNewSerial()
                     && ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET , Constant.PROFILE_MENU_TICKET_PARAM_CLAIM_SPECIAL_EXECUTION_PERMITION)
                     && !has_tk_ticket_is_form_off_hand
@@ -554,7 +554,6 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                 act083Bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam);
             }
             //
-            bundle_from_offline_source = bundle.getBoolean(FROM_OFFLINE_SOURCE, false);
             if (isSchedule) {
                 bundle_product_code = Long.parseLong(bundle.getString(MD_ProductDao.PRODUCT_CODE));
                 bundle_serial_id = bundle.getString(MD_Product_SerialDao.SERIAL_ID, "");

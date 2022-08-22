@@ -1216,7 +1216,7 @@ class Act083_Main_Presenter(private val context: Context,
      *
      * Metodo que busca o serial offline
      */
-    private fun offlineSerialSearch() {
+    fun offlineSerialSearch() {
         val item: MD_Schedule_Exec = serialDialog!!.auxSchedule
         val serialToUse = if (!item.serial_id.isNullOrEmpty()){
                                 item.serial_id

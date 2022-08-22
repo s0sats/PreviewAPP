@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.ui.act020;
 
-import static com.namoadigital.prj001.util.ConstantBaseApp.FROM_OFFLINE_SOURCE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SCHEDULED_PROFILE_CHECK;
 
 import android.content.Context;
@@ -110,7 +109,6 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     private String customFormCode;
     private String customFormVersion;
     private String customFormCodeDesc;
-    private boolean from_offline_source;
     //LUCHE - 03/03/2020 - Novo Agendamento
     private Bundle scheduleBundle = new Bundle();
     private Bundle act013Bundle = new Bundle();
@@ -345,7 +343,6 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         Bundle bundle = getIntent().getExtras();
         //
         if (bundle != null) {
-            from_offline_source = bundle.getBoolean(FROM_OFFLINE_SOURCE, false);
             /*
              * BARRIONUEVO 13-04-2020
              * Mudanca de ultima hora: adicionar flag para dar bypass em restricoes de serial.
@@ -517,7 +514,8 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 MD_Product_Serial productSerial = (MD_Product_Serial) parent.getItemAtPosition(position);
-                if(productSerial.getHas_item_check() == 1){
+                if(productSerial.getHas_item_check() == 1
+                && !ToolBox_Con.getBooleanPreferencesByKey(getApplicationContext(), ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false)){
                     mPresenter.callWsSerialStructure(productSerial);
                 }else {
                     mPresenter.defineFlow(productSerial, false);
@@ -625,7 +623,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                 context,
                 R.layout.act020_cell,
                 prod_serial_list,
-                from_offline_source
+                ToolBox_Con.getBooleanPreferencesByKey(getApplicationContext(), ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false)
 
         );
         //
@@ -696,9 +694,6 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         Intent mIntent = new Intent(context, Act008_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //Adicao de imagem informativa que o serial escolhido veio de fonte offline.
-        if(from_offline_source){
-            bundle.putBoolean(FROM_OFFLINE_SOURCE, from_offline_source);
-        }
         /*
          * BARRIONUEVO 13-04-2020
          * Mudanca de ultima hora: adicionar flag para dar bypass em restricoes de serial.
