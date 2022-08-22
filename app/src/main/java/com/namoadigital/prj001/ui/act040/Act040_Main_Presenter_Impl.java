@@ -1006,9 +1006,9 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
 
         if (packsLocals != null) {
             for (SoPackExpressPacksLocal packsLocal : packsLocals) {
-                serviceResume.append(packsLocal.getQty()).append("X ").append(packsLocal.getPack_service_desc_full()).append("\n");
+                serviceResume.append(packsLocal.getQty()).append("x ").append(packsLocal.getPack_service_desc_full()).append("\n");
             }
-            return serviceResume.toString();
+            return serviceResume.substring(0, serviceResume.length() -1);
         }else{
             return "";
         }

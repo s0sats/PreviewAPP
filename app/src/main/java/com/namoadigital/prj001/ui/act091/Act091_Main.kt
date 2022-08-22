@@ -78,7 +78,10 @@ class Act091_Main : Base_Activity(), Act091_Contract.I_View {
     override fun callAct040(expressTmp: Long) {
         val mIntent = Intent(context, Act040_Main::class.java)
         bundleSaved?.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT091)
-        bundleSaved?.putLong(SO_Pack_Express_LocalDao.EXPRESS_TMP, expressTmp)
+        if(expressTmp>0) {
+            bundleSaved?.putLong(SO_Pack_Express_LocalDao.EXPRESS_TMP, expressTmp)
+            bundleSaved?.putBoolean(Act040_Main.HAS_SERVICE_ADDED, true)
+        }
         mIntent.putExtras(bundleSaved!!)
         mIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         startActivity(mIntent)

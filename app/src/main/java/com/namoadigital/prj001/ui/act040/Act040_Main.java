@@ -10,7 +10,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -80,6 +80,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
 
     private static final int PROCESSO_PRODUCT_CODE = 100;
     public static final String EXPRESS_PACK_CODE = "express_pack_code";
+    public static final String HAS_SERVICE_ADDED = "HAS_SERVICE_ADDED";
 
     private Bundle bundle;
     private Act040_Main_Presenter mPresenter;
@@ -95,6 +96,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     private String bundle_billing_info2 = "";
     private String bundle_billing_info3 = "";
     private long bundle_express_tmp = -1;
+    private boolean hasServiceAdded = false;
     private String bundle_category_price_code = "";
     private String bundle_contract_code = "";
     private String bundle_product_code = "";
@@ -118,6 +120,8 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         iniSetup();
         //
         initVars();
+        //
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         //SEMPRE DEVE VIR DEPOIS DO INI VARS E ANTES DA ACTION...
         iniUIFooter();
         //
@@ -210,6 +214,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         transList.add("express_order_pack_service_empty_list_lbl");
         transList.add("dialog_service_search_ttl");
         transList.add("dialog_service_search_msg");
+        transList.add("so_express_service_various_comments");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -357,6 +362,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                 bundle_billing_info2 = bundle.getString(SO_Pack_Express_LocalDao.BILLING_ADD_INF2_VALUE,"");
                 bundle_billing_info3 = bundle.getString(SO_Pack_Express_LocalDao.BILLING_ADD_INF3_VALUE,"");
                 bundle_express_tmp = bundle.getLong(SO_Pack_Express_LocalDao.EXPRESS_TMP,-1);
+                hasServiceAdded = bundle.getBoolean(HAS_SERVICE_ADDED,false);
             }
 
         } else {
@@ -445,7 +451,6 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                 tilPackHelper = mSo_pack_express.getPack_desc() +"\n" + md_product.getProduct_desc();
                 binding.mketSerial.setmInputTypeValidator(md_product.getSerial_rule());
                 binding.mketSerial.setmRequired(true);
-                binding.mketSerial.setmMinSize(md_product.getSerial_min_length());
                 binding.mketSerial.setmMaxSize(md_product.getSerial_max_length());
                 //
                 binding.mketSerial.setmIgnoreMaxMinSize(true);
@@ -459,8 +464,6 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             binding.tilPack.setHelperText(tilPackHelper);
             binding.tilPack.setBackground(ContextCompat.getDrawable(context, R.drawable.shape_ok));
             //
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(binding.mketPack.getWindowToken(), 0);
         } else {
             binding.tilPack.setBackground(ContextCompat.getDrawable(context, R.drawable.shape_error));
             binding.tilPack.setHelperText(null);
@@ -576,7 +579,10 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                                     context,
                                     Constant.PROFILE_MENU_SO,
                                     Constant.PROFILE_MENU_SO_SHOW_SERVICE_PRICE
-                            ),(packsLocal, position) -> {
+                            ),
+                            hmAux_Trans,
+                            getHighlightedPosition(packs),
+                            (packsLocal, position) -> {
                                 if (mPresenter.hasPackServiceFile(mSo_pack_express.getContract_code(), mSo_pack_express.getProduct_code(), mSo_pack_express.getCategory_price_code(), mSo_pack_express.getSite_code(), mSo_pack_express.getOperation_code())) {
                                     callBottomSheet(packsLocal, position);
                                 } else {
@@ -589,6 +595,13 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                     binding.rvAddPackServices.setAdapter(mAdapter);
                     binding.rvAddPackServices.setVisibility(View.VISIBLE);
                     binding.tvAddPackServicesPlaceholder.setVisibility(View.INVISIBLE);
+                    if(hasServiceAdded){
+                        binding.svMain.post(new Runnable() {
+                            public void run() {
+                                binding.svMain.fullScroll(binding.svMain.FOCUS_DOWN);
+                            }
+                        });
+                    }
                 }else{
                     binding.rvAddPackServices.setVisibility(View.INVISIBLE);
                     binding.tvAddPackServicesPlaceholder.setVisibility(View.VISIBLE);
@@ -613,6 +626,10 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             binding.clAddPackServices.setVisibility(View.GONE);
             mPresenter.deleteExpressAllPackLocal();
         }
+    }
+
+    private int getHighlightedPosition(List<SoPackExpressPacksLocal> packs) {
+        return hasServiceAdded ? packs.size() - 1 : -1;
     }
 
     private void callBottomSheet(SoPackExpressPacksLocal soPackExpressPacksLocal, int position) {

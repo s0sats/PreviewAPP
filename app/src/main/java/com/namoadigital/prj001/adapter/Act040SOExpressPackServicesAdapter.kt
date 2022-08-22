@@ -1,8 +1,10 @@
 package com.namoadigital.prj001.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.Act011InspectionQuestionFormCellBinding
 import com.namoadigital.prj001.databinding.CellAddPackServicesItemBinding
@@ -13,9 +15,11 @@ import com.namoadigital.prj001.model.SoPackExpressServicesLocal
 class Act040SOExpressPackServicesAdapter(
     val soExpressList: MutableList<SoPackExpressPacksLocal>,
     val showServicePrice: Boolean,
+    val hmauxTrans: HMAux,
+    var highlightedPosition:Int =-1,
     val onExpressServiceSelected: (packServices: SoPackExpressPacksLocal, position: Int) -> Any?
 ) : RecyclerView.Adapter<Act040SOExpressPackServicesAdapter.MySOExpressPackVh>() {
-    var highlightedPosition =-1
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MySOExpressPackVh {
         return MySOExpressPackVh(
             CellAddPackServicesItemBinding.inflate(
@@ -47,8 +51,46 @@ class Act040SOExpressPackServicesAdapter(
                 onExpressServiceSelected(packServices, position)
             }
             if(position == highlightedPosition){
-                binding.clPackServicesCell.background = binding.root.context.getDrawable(R.color.namoa_color_light_blue6)
+//                binding.clPackServicesCell.background = binding.root.context.getDrawable(R.color.namoa_color_light_blue6)
             }
+            binding.tvPackServicesComment.visibility = View.VISIBLE
+            if(packServices.comments.isNullOrEmpty()){
+                if(hasAllCommentsNullOrEmpty(packServices.serviceList)){
+                    binding.tvPackServicesComment.visibility = View.GONE
+                }else{
+                    binding.tvPackServicesComment.text = if(hasMultipleComments(packServices)){
+                        packServices.comments
+                    }else{
+                        hmauxTrans["so_express_service_various_comments"]
+                    }
+                }
+            }else{
+                binding.tvPackServicesComment.text = packServices.comments
+            }
+        }
+
+        private fun hasAllCommentsNullOrEmpty(serviceList: MutableList<SoPackExpressServicesLocal>): Boolean {
+            for (services in serviceList) {
+                services.comments?.let {
+                    if(it.isNotEmpty()){
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        private fun hasMultipleComments(packServices: SoPackExpressPacksLocal): Boolean {
+            var count = 0
+            for (soPackExpressServicesLocal in packServices.serviceList) {
+                if (count > 1){
+                    return true
+                }
+                if (!soPackExpressServicesLocal.comments.isNullOrEmpty()){
+                    count++
+                }
+            }
+            return false
         }
 
         private fun getFormattedPackDesc(packServices: SoPackExpressPacksLocal): String {
