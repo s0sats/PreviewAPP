@@ -15,9 +15,10 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:paddingHorizontal="10dp"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:padding="5dp">
+        android:scrollbars="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -45,11 +46,19 @@
                 android:textStyle="bold"
                 android:visibility="gone" />
 
-            <Switch
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/act026_sw_filter"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="true" />
+                android:layout_height="20dp"
+                android:checked="true"
+                android:textSize="@dimen/font_size_font_16"
+                android:thumb="@drawable/namoa_switch_states"
+                app:layout_constraintBottom_toBottomOf="@id/tv_os_machine_lbl"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/br_switch"
+                app:layout_constraintTop_toTopOf="@id/tv_os_machine_lbl"
+                app:thumbTint="@color/namoa_switch_color_states"
+                app:trackTint="@color/namoa_switch_track_color_states" />
 
         </LinearLayout>
 
@@ -58,19 +67,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textSize="20sp"
-            android:layout_weight="1"
+            android:visibility="gone"
+            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+            android:padding="25dp"
             />
 
         <ListView
             android:id="@+id/act026_lv_so"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:divider="@color/padrao_TRANSPARENT"
             android:dividerHeight="4dp"
-            android:padding="5dp" />
+            android:padding="5dp"/>
 
     </LinearLayout>
 

@@ -43,8 +43,11 @@ public class Act047_Main_Presenter implements Act047_Main_Contract.I_Presenter {
     }
 
     @Override
-    public void executeNextOrdersSearch() {
+    public void executeNextOrdersSearch(Boolean filter) {
         if (ToolBox_Con.isOnline(context)) {
+
+            int contain_filter = (filter ? ToolBox_Con.getPreference_Zone_Code(context) : -1);
+
             mView.setWsProcess(WS_SO_Next_Orders.class.getName());
             //
             mView.showPD(
@@ -57,7 +60,7 @@ public class Act047_Main_Presenter implements Act047_Main_Contract.I_Presenter {
             //
             bundle.putLong(Constant.LOGIN_CUSTOMER_CODE, ToolBox_Con.getPreference_Customer_Code(context));
             bundle.putString(Constant.LOGIN_SITE_CODE, ToolBox_Con.getPreference_Site_Code(context));
-            bundle.putInt(Constant.LOGIN_ZONE_CODE, ToolBox_Con.getPreference_Zone_Code(context));
+            bundle.putInt(Constant.LOGIN_ZONE_CODE, contain_filter);
             bundle.putLong(Constant.LOGIN_OPERATION_CODE, ToolBox_Con.getPreference_Operation_Code(context));
             //
             mIntent.putExtras(bundle);
@@ -118,37 +121,19 @@ public class Act047_Main_Presenter implements Act047_Main_Contract.I_Presenter {
     public void processNextOrderList(String nextOrderJson) {
         Gson gson = new GsonBuilder().serializeNulls().create();
         //
-        if (nextOrderJson == null || nextOrderJson.trim().length() == 0) {
-            mView.showAlert(
-                hmAux_Trans.get("alert_no_orders_found_ttl"),
-                hmAux_Trans.get("alert_no_orders_found_msg"),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        onBackPressedClicked();
-                    }
-                }
-            );
-        } else {
-            try {
-                ArrayList<SO_Next_Orders_Obj> nextOrderList = gson.fromJson(
+        try {
+            ArrayList<SO_Next_Orders_Obj> nextOrderList = gson.fromJson(
                     nextOrderJson,
                     new TypeToken<ArrayList<SO_Next_Orders_Obj>>() {
                     }.getType()
-                );
-                //
-                if (nextOrderList != null && nextOrderList.size() > 0) {
-                    setFilterData(nextOrderList);
-                    mView.loadNextOrders(nextOrderList);
-                } else {
-                    mView.showEmptyLogMsg();
-                }
-
-            } catch (Exception e) {
-                ToolBox_Inf.registerException(getClass().getName(), e);
-                //
-                mView.showEmptyLogMsg();
-            }
+            );
+            //
+            setFilterData(nextOrderList);
+            mView.loadNextOrders(nextOrderList);
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+            //
+            mView.showErrorMsg();
         }
     }
 

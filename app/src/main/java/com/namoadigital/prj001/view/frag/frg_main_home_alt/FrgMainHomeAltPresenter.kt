@@ -63,7 +63,7 @@ class FrgMainHomeAltPresenter(val context: Context?, private var hmauxTransFrag:
                 osModule.add(
                     MainModuleMenu(
                         ID_MODULE_OS_VIN_SEARCH,
-                        R.drawable.ic_baseline_qr_code_24,
+                        R.drawable.ic_search_black_24dp,
                         hmauxTransFrag["sys_main_menu_os_by_vin_search_lbl"]!!,
                         hmauxTransFrag["main_menu_os_by_vin_search_detail"]!!,
                         0,
@@ -205,7 +205,7 @@ class FrgMainHomeAltPresenter(val context: Context?, private var hmauxTransFrag:
             modules.add(
                 MainModuleMenu(
                     ID_MODULE_TAGS_BY_SERIAL_SEARCH,
-                    R.drawable.ic_baseline_qr_code_24,
+                    R.drawable.ic_search_black_24dp,
                     hmauxTransFrag["sys_main_menu_tag_by_serial_search_lbl"]!!,
                     hmauxTransFrag["main_menu_tag_by_serial_search_detail"]!!,
                     0,

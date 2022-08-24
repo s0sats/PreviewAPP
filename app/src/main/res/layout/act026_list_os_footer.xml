@@ -14,7 +14,7 @@
         <Button
             android:id="@+id/act026_os_list_btn_new_os"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:background="@drawable/namoa_cell_3_states"
             android:text="NEW O.S - trad"
             android:textColor="@color/padrao_WHITE"

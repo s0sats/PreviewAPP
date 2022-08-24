@@ -94,6 +94,7 @@ import com.namoadigital.prj001.sql.Sync_Checklist_Sql_002;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act009.Act009_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
+import com.namoadigital.prj001.ui.act027.fragment.Act027_Approval;
 import com.namoadigital.prj001.ui.act028.Act028_Main;
 import com.namoadigital.prj001.ui.act032.Act032_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
@@ -379,6 +380,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
 
         transList.add("client_external_approval_email_lbl");
 
+        transList.add("approval_exit_os_lbl");
+        transList.add("btn_approval_next_os");
+        transList.add("btn_approval_next_os_serial");
+        transList.add("btn_approval_home");
+        transList.add("btn_approval_search_os");
         // ACT027_Serial Fragment
         transList.add("alert_no_connection_title");
         transList.add("alert_no_connection_msg");
@@ -547,6 +553,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         transList.add("quality_approval_shortcut");
         transList.add("final_approval_shortcut");
         transList.add("product_event_shortcut");
+        transList.add("empty_service_list_lbl");
         //N-Form Creation
         transList.add("toolbar_n_form_lbl");
         transList.add("alert_open_n_form_ttl");

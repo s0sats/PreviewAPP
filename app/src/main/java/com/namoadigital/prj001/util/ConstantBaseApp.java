@@ -478,6 +478,8 @@ public class ConstantBaseApp extends ConstantBase {
 
     public static final String PROCESS_MENU_SEND = "process_menu_send";
 
+    public static final String ACT027_SWITCH_STATE = "act027_switch_state";
+    public static final String ACT047_SWITCH_STATE = "act047_switch_state";
     //ID de Notificações
     public static final int NOTIFICATION_UPLOAD = 666;
     public static final int NOTIFICATION_DOWNLOAD = 667;

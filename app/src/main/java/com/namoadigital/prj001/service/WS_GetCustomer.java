@@ -314,6 +314,10 @@ public class WS_GetCustomer extends IntentService {
             ev_user_customerParamDao.addUpdate(customer_params,true);
         }
 
+        if(!getLastUserCode().equals(userInfo.getUser_code())){
+            ToolBox_Con.cleanSwitchPreferences(getApplicationContext());
+        }
+
         ToolBox_Con.setPreference_User_Code(getApplicationContext(), String.valueOf(userInfo.getUser_code()));
         ToolBox_Con.setPreference_User_Code_Nick(getApplicationContext(), String.valueOf(userInfo.getUser_nick()));
         ToolBox_Con.setPreference_User_Email(getApplicationContext(), userInfo.getEmail_p());
@@ -330,6 +334,12 @@ public class WS_GetCustomer extends IntentService {
         ToolBox_Inf.deleteAllFOD(Constant.ZIP_PATH);
 
     }
+
+
+    private Long getLastUserCode(){
+        return Long.parseLong(ToolBox_Con.getPreference_Last_User_Logged(getApplicationContext()));
+    }
+
 
     /**
      * LUCHE - 07/01/2021

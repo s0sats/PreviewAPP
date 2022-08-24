@@ -1145,6 +1145,21 @@ public class ToolBox_Con {
 
     //endregion
 
+    public static void cleanSwitchPreferences(Context context){
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+        //filtro da tela act027 - Serviços da OS
+        sharedPreferences.edit().putBoolean(
+                Constant.ACT027_SWITCH_STATE,
+                true
+        ).apply();
+
+        //filtro da tela ACT047 - Proxima OS
+        sharedPreferences.edit().putBoolean(
+                Constant.ACT047_SWITCH_STATE,
+                true
+        ).apply();
+    }
 
     public static void cleanPreferences(Context context) {
         SharedPreferences sharedPreferences =

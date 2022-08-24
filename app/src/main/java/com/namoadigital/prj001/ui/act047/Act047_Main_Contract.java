@@ -22,7 +22,7 @@ public interface Act047_Main_Contract {
 
         void showNoConnecionMsg();
 
-        void showEmptyLogMsg();
+        void showErrorMsg();
 
         void callAct021(Context context);
 
@@ -40,7 +40,7 @@ public interface Act047_Main_Contract {
 
     interface I_Presenter {
 
-        void executeNextOrdersSearch();
+        void executeNextOrdersSearch(Boolean filter);
 
         void processNextOrderList(String nextOrderList);
 

@@ -26,6 +26,7 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
 
     private Context context;
     private ArrayList<SO_Next_Orders_Obj> mValues;
+    private OnRememberListState rememberSO_next_listState;
     private int resource;
     private String mResource_Code;
     private String mResource_Name = "act047_next_orders_adapter";
@@ -33,10 +34,11 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
     private ArrayList<SO_Next_Orders_Obj> mFilteredValues;
     private NextOrdersFilter mFilter;
 
-    public Act047_SO_Next_Orders_Adapter(Context context, ArrayList<SO_Next_Orders_Obj> mValues, int resource) {
+    public Act047_SO_Next_Orders_Adapter(Context context, ArrayList<SO_Next_Orders_Obj> mValues, int resource, OnRememberListState listState) {
         this.context = context;
         this.mValues = mValues;
         this.resource = resource;
+        this.rememberSO_next_listState = listState;
         //
         this.mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
@@ -46,6 +48,14 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
         //
         this.mFilteredValues = mValues;
         loadTranslation();
+    }
+
+    public void changeListByFilter(ArrayList<SO_Next_Orders_Obj> list){
+        this.mValues.clear();
+        this.mFilteredValues.clear();
+        this.mValues = list;
+        this.mFilteredValues = list;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -249,7 +259,7 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
 
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
-            List<SO_Next_Orders_Obj> temp = new ArrayList<>();
+            List<SO_Next_Orders_Obj> temp;
             String charString = ToolBox.AccentMapper(constraint.toString().toLowerCase());
             if (charString.isEmpty()) {
                 temp = mValues;
@@ -271,7 +281,8 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
 
         @Override
         protected void publishResults(CharSequence charSequence, FilterResults results) {
-            mFilteredValues = (ArrayList<SO_Next_Orders_Obj>) results.values;
+            mFilteredValues = ((ArrayList<SO_Next_Orders_Obj>) results.values);
+            rememberSO_next_listState.emptyList(mFilteredValues.isEmpty());
             notifyDataSetChanged();
         }
     }

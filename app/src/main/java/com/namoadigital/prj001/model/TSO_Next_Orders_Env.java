@@ -4,7 +4,7 @@ public class TSO_Next_Orders_Env extends Main_Header_Env  {
 
     private long customer_code;
     private String site_code;
-    private int zone_code;
+    private Integer zone_code;
     private long operation_code;
 
 
@@ -24,11 +24,11 @@ public class TSO_Next_Orders_Env extends Main_Header_Env  {
         this.site_code = site_code;
     }
 
-    public int getZone_code() {
+    public Integer getZone_code() {
         return zone_code;
     }
 
-    public void setZone_code(int zone_code) {
+    public void setZone_code(Integer zone_code) {
         this.zone_code = zone_code;
     }
 
