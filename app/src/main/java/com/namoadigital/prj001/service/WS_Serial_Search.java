@@ -31,6 +31,10 @@ public class WS_Serial_Search extends IntentService {
 
     public static final String SOCKET_TIMEOUT_EXCEPTION = "SocketTimeoutException";
     public static final String UNKNOWN_HOST_EXCEPTION = "UnknownHostException";
+    public static final String BIND_EXCEPTION = "BindException";
+    public static final String CONNECT_EXCEPTION = "ConnectException";
+    public static final String NO_ROUTE_TO_HOST_EXCEPTION = "NoRouteToHostException";
+    public static final String PORT_UNREACHABLE_EXCEPTION = "PortUnreachableException";
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";
@@ -87,6 +91,10 @@ public class WS_Serial_Search extends IntentService {
             return e.toString().contains(ConstantBaseApp.WS_TIMEOUT_EXCEPTION)
                     || e.toString().contains(ConstantBaseApp.WS_EXCEPTION_HTTP_STATUS_ERROR)
                     || e.toString().contains(SOCKET_TIMEOUT_EXCEPTION)
+                    || e.toString().contains(BIND_EXCEPTION)
+                    || e.toString().contains(CONNECT_EXCEPTION)
+                    || e.toString().contains(NO_ROUTE_TO_HOST_EXCEPTION)
+                    || e.toString().contains(PORT_UNREACHABLE_EXCEPTION)
                     || e.toString().contains(UNKNOWN_HOST_EXCEPTION);
         }else{
             return false;
