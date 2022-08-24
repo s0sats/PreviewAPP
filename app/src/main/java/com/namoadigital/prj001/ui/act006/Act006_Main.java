@@ -78,6 +78,7 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
     private String customFormCodeDesc;
     private boolean blockedByExecutionLimitReach =false;
     private int isSoForm;
+    private String requestingAct;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -256,7 +257,8 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
             }
         }
 
-        if (!fragSerial_ID.isEmpty() || !fragTracking.isEmpty()) {
+        if ((!fragSerial_ID.isEmpty() || !fragTracking.isEmpty())
+        && !requestingAct.equals(ConstantBaseApp.ACT083)) {
             mFrgSerialSearch.setSerialIdText(fragSerial_ID);
             mFrgSerialSearch.setTrackingText(fragTracking);
         }
@@ -310,7 +312,7 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
             fragProduct_ID = bundle.getString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, "");
             fragSerial_ID = bundle.getString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, "");
             fragTracking = bundle.getString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, "");
-
+            requestingAct = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT005);
             productCode = bundle.getString(MD_ProductDao.PRODUCT_CODE, "");
             productDesc = bundle.getString(MD_ProductDao.PRODUCT_DESC, "");
             productId = bundle.getString(MD_ProductDao.PRODUCT_ID, "");
@@ -567,18 +569,19 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
 //                1
 //        );
     }
-        /*
-            07/02/2020 - Barrionuevo - Continuar fluxo via offline quando ha falha no HTTP.
-            Decidido tratar o erro de Http no metodo processError_http.
-            Para qualquer alteracao futura, considerar o sync_required do serial
-            pois o resultado da consulta de serial online atropela o serial offline
+    /*
+        07/02/2020 - Barrionuevo - Continuar fluxo via offline quando ha falha no HTTP.
+        Decidido tratar o erro de Http no metodo processError_http.
+        Para qualquer alteracao futura, considerar o sync_required do serial
+        pois o resultado da consulta de serial online atropela o serial offline
 
-        */
+    */
     @Override
     protected void processError_http() {
         //Super realiza o mesmo comportamento do error_1
 //        super.processError_http();
         progressDialog.dismiss();
+        ToolBox_Con.setBooleanPreference(getApplicationContext(), ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, true);
         //LUCHE - 17/03/2021 - Aplicado busca exata tb no offline
         //Nesse caso em especifico, de erro http, não faz exato
         mPresenter.offlineSerialSearch(false);

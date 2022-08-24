@@ -205,7 +205,9 @@ public class WS_Save extends IntentService {
                 Constant.WS_SAVE,
                 gson.toJson(env)
         );
-
+        //
+        ToolBox_Con.setBooleanPreference(getApplicationContext(), ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false);
+        //
         TSave_Rec rec = gson.fromJson(
                 resultado,
                 TSave_Rec.class

@@ -457,7 +457,12 @@ public class WS_Sync extends IntentService {
                 gson.toJson(env),
                 connection_timeout
         );
-
+        /**
+         *  BARRIONUEVO 2022-08-23
+         *  Ao retornar do servidor com sucesso setar a preferencia de fluxo offline para false.
+         */
+        ToolBox_Con.setBooleanPreference(getApplicationContext(), ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false);
+        //
         TSync_Rec rec = gson.fromJson(
                 resultado,
                 TSync_Rec.class
@@ -488,7 +493,6 @@ public class WS_Sync extends IntentService {
             ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_forms_found"), rec.getLink_url(), "0");
             return;
         }
-
         //Inicia o processamento dos arquivos zip e atualiza tabelas.
 
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.generic_unzipping_data_msg), "", "0");

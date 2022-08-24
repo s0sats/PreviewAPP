@@ -1175,7 +1175,8 @@ class Act083_Main_Presenter(private val context: Context,
     }
 
     private fun executeSerialSearch(productCode: Int?, productId: String?, serialId: String, searchExact: Boolean) {
-        if (ToolBox_Con.isOnline(context)) {
+        if (ToolBox_Con.isOnline(context)
+            && !ToolBox_Con.getBooleanPreferencesByKey(context, ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false)) {
             mView.setProcess(WS_Serial_Search::class.java.name)
             //
             mView.showPD(
@@ -1703,7 +1704,9 @@ class Act083_Main_Presenter(private val context: Context,
     private fun getBundleToAssetsAndLocalOrigin(): Bundle {
         return Bundle().apply {
             putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, myActionFilterParam.productId)
+            putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, myActionFilterParam.productId)
             putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, serialId)
+            putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT083);
         }
     }
 

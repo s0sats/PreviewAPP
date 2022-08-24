@@ -334,6 +334,8 @@ public class WS_TK_Ticket_Save extends IntentService {
         //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_receiving_data_msg"), "", "0");
         //
+        ToolBox_Con.setBooleanPreference(getApplicationContext(), ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false);
+        //
         T_TK_Ticket_Save_Rec rec = gsonRec.fromJson(
                 resultado,
                 T_TK_Ticket_Save_Rec.class

@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act006;
 
+import static com.namoadigital.prj001.util.ConstantBaseApp.FROM_OFFLINE_SOURCE;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -27,8 +29,6 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.namoadigital.prj001.util.ConstantBaseApp.FROM_OFFLINE_SOURCE;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -115,7 +115,8 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
         mSerial_id = serial_id;
         mTracking = tracking;
 
-        if (ToolBox_Con.isOnline(context)) {
+        if (ToolBox_Con.isOnline(context)
+        && !ToolBox_Con.getBooleanPreferencesByKey(context, ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false)) {
             mView.showPD(
                     hmAux_Trans.get("dialog_serial_search_ttl"),
                     hmAux_Trans.get("dialog_serial_search_start")

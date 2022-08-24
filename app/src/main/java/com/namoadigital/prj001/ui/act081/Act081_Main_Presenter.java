@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act081;
 
+import static com.namoadigital.prj001.util.ConstantBaseApp.FROM_OFFLINE_SOURCE;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,8 +25,6 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
-
-import static com.namoadigital.prj001.util.ConstantBaseApp.FROM_OFFLINE_SOURCE;
 
 public class Act081_Main_Presenter implements Act081_Main_Contract.I_Presenter{
 
@@ -61,7 +61,9 @@ public class Act081_Main_Presenter implements Act081_Main_Contract.I_Presenter{
         mProduct_id = product_id;
         mSerial_id = serial_id;
         mTracking = tracking;
-        if (ToolBox_Con.isOnline(context)) {
+        if (ToolBox_Con.isOnline(context)
+        && !ToolBox_Con.getBooleanPreferencesByKey(context, ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false)
+        ) {
             mView.setWsProcess(WS_Serial_Search.class.getName());
             //
             mView.showPD(
