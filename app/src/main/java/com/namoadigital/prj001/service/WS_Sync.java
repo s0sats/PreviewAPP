@@ -493,6 +493,7 @@ public class WS_Sync extends IntentService {
             ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_forms_found"), rec.getLink_url(), "0");
             return;
         }
+
         //Inicia o processamento dos arquivos zip e atualiza tabelas.
 
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.generic_unzipping_data_msg), "", "0");

@@ -78,7 +78,6 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
     private String customFormCodeDesc;
     private boolean blockedByExecutionLimitReach =false;
     private int isSoForm;
-    private String requestingAct;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -257,8 +256,7 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
             }
         }
 
-        if ((!fragSerial_ID.isEmpty() || !fragTracking.isEmpty())
-        && !requestingAct.equals(ConstantBaseApp.ACT083)) {
+        if (!fragSerial_ID.isEmpty() || !fragTracking.isEmpty()) {
             mFrgSerialSearch.setSerialIdText(fragSerial_ID);
             mFrgSerialSearch.setTrackingText(fragTracking);
         }
@@ -312,7 +310,7 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
             fragProduct_ID = bundle.getString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, "");
             fragSerial_ID = bundle.getString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, "");
             fragTracking = bundle.getString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, "");
-            requestingAct = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT005);
+
             productCode = bundle.getString(MD_ProductDao.PRODUCT_CODE, "");
             productDesc = bundle.getString(MD_ProductDao.PRODUCT_DESC, "");
             productId = bundle.getString(MD_ProductDao.PRODUCT_ID, "");

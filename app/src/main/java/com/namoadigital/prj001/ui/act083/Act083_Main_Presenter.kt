@@ -1704,9 +1704,7 @@ class Act083_Main_Presenter(private val context: Context,
     private fun getBundleToAssetsAndLocalOrigin(): Bundle {
         return Bundle().apply {
             putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, myActionFilterParam.productId)
-            putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, myActionFilterParam.productId)
             putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, serialId)
-            putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT083);
         }
     }
 

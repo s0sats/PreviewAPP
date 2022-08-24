@@ -693,7 +693,6 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     public void callAct008(Context context, Bundle bundle) {
         Intent mIntent = new Intent(context, Act008_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        //Adicao de imagem informativa que o serial escolhido veio de fonte offline.
         /*
          * BARRIONUEVO 13-04-2020
          * Mudanca de ultima hora: adicionar flag para dar bypass em restricoes de serial.
