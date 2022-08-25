@@ -66,7 +66,7 @@ public class WS_Serial_Search extends IntentService {
 
             ToolBox_Inf.registerException(getClass().getName(), e);
 
-            if(isHttpError(e)){
+            if(ToolBox_Con.isHttpError(e)){
                 ToolBox_Inf.sendBCStatus(getApplicationContext(), ConstantBase.PD_TYPE_ERROR_HTTP, sb.toString(), "", "0");
             }else {
                 ToolBox_Inf.sendBCStatus(getApplicationContext(), ConstantBase.PD_TYPE_ERROR_1, sb.toString(), "", "0");

@@ -214,7 +214,12 @@ class Act083_Main_Presenter(private val context: Context,
         if(checkSyncChecklistV2(myActionsFormButton.productCode)){
             validadeCreateNewForm(myActionsFormButton)
         }else{
-            if(ToolBox_Con.isOnline(context)){
+            if(ToolBox_Con.isOnline(context)
+                && !ToolBox_Con.getBooleanPreferencesByKey(
+                    context,
+                    ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW,
+                    false
+                )){
                 formButtonData = myActionsFormButton
                 prepareWsFormSync(myActionsFormButton.productCode.toLong())
             }else{
