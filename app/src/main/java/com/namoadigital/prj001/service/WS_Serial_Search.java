@@ -69,7 +69,7 @@ public class WS_Serial_Search extends IntentService {
 
             ToolBox_Inf.registerException(getClass().getName(), e);
 
-            if(isHttpError(e)){
+            if(ToolBox_Con.isHttpError(e)){
                 ToolBox_Inf.sendBCStatus(getApplicationContext(), ConstantBase.PD_TYPE_ERROR_HTTP, sb.toString(), "", "0");
             }else {
                 ToolBox_Inf.sendBCStatus(getApplicationContext(), ConstantBase.PD_TYPE_ERROR_1, sb.toString(), "", "0");
@@ -79,27 +79,6 @@ public class WS_Serial_Search extends IntentService {
 
             WBR_Serial_Search.completeWakefulIntent(intent);
         }
-
-    }
-    /*
-        BARRIONUEVO - 12-02-2020
-        Avalia exception para induzir a pesquisa offline de serial utilizando ate entao os tipos
-        de exception conhecidos via arquivos de support.
-     */
-    private boolean isHttpError(Exception e) {
-        if (e != null) {
-            return e.toString().contains(ConstantBaseApp.WS_TIMEOUT_EXCEPTION)
-                    || e.toString().contains(ConstantBaseApp.WS_EXCEPTION_HTTP_STATUS_ERROR)
-                    || e.toString().contains(SOCKET_TIMEOUT_EXCEPTION)
-                    || e.toString().contains(BIND_EXCEPTION)
-                    || e.toString().contains(CONNECT_EXCEPTION)
-                    || e.toString().contains(NO_ROUTE_TO_HOST_EXCEPTION)
-                    || e.toString().contains(PORT_UNREACHABLE_EXCEPTION)
-                    || e.toString().contains(UNKNOWN_HOST_EXCEPTION);
-        }else{
-            return false;
-        }
-
 
     }
 

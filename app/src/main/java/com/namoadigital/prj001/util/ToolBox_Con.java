@@ -1,6 +1,8 @@
 package com.namoadigital.prj001.util;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
+import static com.namoadigital.prj001.service.WS_Serial_Search.BIND_EXCEPTION;
+import static com.namoadigital.prj001.service.WS_Serial_Search.CONNECT_EXCEPTION;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_SITE_OPTION;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ONLY_MY_ACTIONS_OPTION;
 
@@ -19,6 +21,7 @@ import androidx.work.WorkManager;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.model.DaoObjReturn;
+import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.worker.Work_Cleanning_Data;
 import com.namoadigital.prj001.worker.Work_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.worker.Work_DownLoad_PDF;
@@ -200,6 +203,26 @@ public class ToolBox_Con {
         }
 
         return writer.toString();
+    }
+    //
+    /*
+       BARRIONUEVO - 12-02-2020
+       Avalia exception para induzir a pesquisa offline de serial utilizando ate entao os tipos
+       de exception conhecidos via arquivos de support.
+    */
+    public static boolean isHttpError(Exception e) {
+        if (e != null) {
+            return e.toString().contains(ConstantBaseApp.WS_TIMEOUT_EXCEPTION)
+                    || e.toString().contains(ConstantBaseApp.WS_EXCEPTION_HTTP_STATUS_ERROR)
+                    || e.toString().contains(WS_Serial_Search.SOCKET_TIMEOUT_EXCEPTION)
+                    || e.toString().contains(BIND_EXCEPTION)
+                    || e.toString().contains(CONNECT_EXCEPTION)
+                    || e.toString().contains(WS_Serial_Search.NO_ROUTE_TO_HOST_EXCEPTION)
+                    || e.toString().contains(WS_Serial_Search.PORT_UNREACHABLE_EXCEPTION)
+                    || e.toString().contains(WS_Serial_Search.UNKNOWN_HOST_EXCEPTION);
+        }else{
+            return false;
+        }
     }
 
     private static class MyTrustManager implements X509TrustManager {

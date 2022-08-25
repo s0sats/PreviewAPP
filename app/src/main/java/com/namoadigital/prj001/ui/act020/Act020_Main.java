@@ -120,6 +120,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     private Bundle act083Bundle = new Bundle();
     private String originFlow = null;
     private int isSoForm = 0;
+    private MD_Product_Serial selectedProductSerial;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -513,12 +514,12 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         lv_prod_serial_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                MD_Product_Serial productSerial = (MD_Product_Serial) parent.getItemAtPosition(position);
-                if(productSerial.getHas_item_check() == 1
+                selectedProductSerial = (MD_Product_Serial) parent.getItemAtPosition(position);
+                if(selectedProductSerial.getHas_item_check() == 1
                 && !ToolBox_Con.getBooleanPreferencesByKey(getApplicationContext(), ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false)){
-                    mPresenter.callWsSerialStructure(productSerial);
+                    mPresenter.callWsSerialStructure(selectedProductSerial);
                 }else {
-                    mPresenter.defineFlow(productSerial, false);
+                    mPresenter.defineFlow(selectedProductSerial, false);
                 }
             }
         });
@@ -902,6 +903,15 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     protected void processCustom_error(String mLink, String mRequired) {
         super.processCustom_error(mLink, mRequired);
         progressDialog.dismiss();
+    }
+
+    @Override
+    protected void processError_http() {
+        super.processError_http();
+        if (ws_process.equals(WS_Product_Serial_Structure.class.getName())) {
+            ToolBox_Con.setBooleanPreference(getApplicationContext(), ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, true);
+            mPresenter.defineFlow(selectedProductSerial, false);
+        }
     }
 
     @Override

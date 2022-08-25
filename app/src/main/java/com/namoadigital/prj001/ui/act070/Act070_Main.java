@@ -2037,6 +2037,15 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         updateTicketData();
     }
 
+    @Override
+    protected void processError_http() {
+        super.processError_http();
+        if (wsProcess.equals(WS_Product_Serial_Structure.class.getName())) {
+            ToolBox_Con.setBooleanPreference(getApplicationContext(), ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, true);
+            //todo selecionar item que gerou a chamada da Structure.
+        }
+    }
+
     //TRATA SESSION_NOT_FOUND
     @Override
     protected void processLogin() {
