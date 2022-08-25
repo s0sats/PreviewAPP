@@ -16,7 +16,6 @@ import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
-import com.namoadigital.prj001.util.NetworkConnectionException;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -76,22 +75,6 @@ public class WS_Serial_Search extends IntentService {
 
             WBR_Serial_Search.completeWakefulIntent(intent);
         }
-
-    }
-    /*
-        BARRIONUEVO - 12-02-2020
-        Avalia exception para induzir a pesquisa offline de serial utilizando ate entao os tipos
-        de exception conhecidos via arquivos de support.
-     */
-    private boolean isHttpError(Exception e) {
-        if (e != null) {
-            return e.toString().contains(ConstantBaseApp.WS_TIMEOUT_EXCEPTION)
-                    || e.toString().contains(ConstantBaseApp.WS_EXCEPTION_HTTP_STATUS_ERROR)
-                    || e instanceof NetworkConnectionException;
-        }else{
-            return false;
-        }
-
 
     }
 
