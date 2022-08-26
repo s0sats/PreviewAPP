@@ -46,9 +46,7 @@ import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketException;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
@@ -136,12 +134,7 @@ public class ToolBox_Con {
 
         } catch (IOException e) {
             conn.disconnect();
-
-            if (e instanceof SocketException || e instanceof UnknownHostException || e.toString().contains(ConstantBaseApp.WS_TIMEOUT_EXCEPTION)
-                    || e.toString().contains(ConstantBaseApp.WS_EXCEPTION_HTTP_STATUS_ERROR)
-            ) {
-                throw new NetworkConnectionException(e.toString());
-            }
+            throw new NetworkConnectionException(e.toString());
         }
         return sb.toString();
     }
