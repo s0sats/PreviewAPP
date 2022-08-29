@@ -138,6 +138,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 "form_os_header_lbl",
                 "alert_form_turn_gps_on_title",
                 "alert_form_turn_gps_on_msg",
+                "allow_measure_in_the_past",
             )
         }
     }
@@ -193,6 +194,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             tilMketSerial.helperText = hmAuxTrans["backup_serial_help_lbl"]
             mketOsMainMeasureVal.hint = hmAuxTrans["measure_current_value_hint"]
             tvOsLastMeasureLbl.text = hmAuxTrans["measure_last_value_lbl"]
+            swAllowFormSoInThePast.text = hmAuxTrans["allow_measure_in_the_past"]
             //Lista com os textView que será usado para add colocar contadore nos campos
             labelsView.add(tvOsTypeLbl)
             labelsView.add(tvOsMachineLbl)
@@ -207,8 +209,23 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         iniStartDate()
         iniMainMeasure()
         iniLastMeasureInfo()
+        iniSwAllowInThePast()
         iniSaveBtn()
         addIdxToVisibleLabels()
+    }
+
+    private fun iniSwAllowInThePast() {
+        with(binding){
+            swAllowFormSoInThePast.visibility = if(ToolBox_Inf.profileExists(
+                requireContext(),
+                ConstantBaseApp.PROFILE_PRJ001_CHECKLIST,
+                ConstantBaseApp.PROFILE_PRJ001_CHECKLIST_PARAM_ALLOW_FORM_SO_IN_THE_PAST
+            )){
+                View.VISIBLE
+            }else{
+                View.GONE
+            }
+        }
     }
 
     /**
@@ -475,7 +492,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             val measureInvalid = mainMeasureTp?.let {
                 if(!binding.mketOsMainMeasureVal.text.isNullOrEmpty() && isMeasureValNumeric()) {
                     val typedMeasure = binding.mketOsMainMeasureVal.text.toString().toFloat()
-                    it.isMeasureRestrictionInvalid(typedMeasure, formOsHeader.last_measure_value, formOsHeader.last_measure_date, binding.mkdtStartDate.getmValue())
+                    it.isMeasureRestrictionInvalid(bypassMinValidation(), typedMeasure, formOsHeader.last_measure_value, formOsHeader.last_measure_date, binding.mkdtStartDate.getmValue())
                 }else{
                     true
                 }
@@ -512,6 +529,14 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 }
             }
         }
+    }
+
+    private fun bypassMinValidation(): Boolean {
+        return ToolBox_Inf.profileExists(
+            requireContext(),
+            ConstantBaseApp.PROFILE_PRJ001_CHECKLIST,
+            ConstantBaseApp.PROFILE_PRJ001_CHECKLIST_PARAM_ALLOW_FORM_SO_IN_THE_PAST
+        ) && binding.swAllowFormSoInThePast.isChecked
     }
 
     /**

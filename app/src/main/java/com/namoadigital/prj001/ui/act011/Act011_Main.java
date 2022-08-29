@@ -2160,6 +2160,7 @@ public class Act011_Main extends Base_Activity
                         : null;
                     //
                     MeasureFF.MeasureValidationReturn validationReturn = measureTp.validateMeasureRestriction(
+                        false,
                         measure,
                         lastMeasureValue,
                         serialInfo.getLast_measure_date(),

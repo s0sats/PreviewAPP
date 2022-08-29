@@ -581,6 +581,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_PRJ001_PRODUCT_SERIAL_SCHEDULE_UNTIL_TODAY = "SCHEDULE_UNTIL_TODAY";
     public static final String PROFILE_PRJ001_CHECKLIST_PARAM_DONE_NEW = "DONE_NEW";
     public static final String PROFILE_PRJ001_CHECKLIST_PARAM_ITEM_CHECK_NEW = "ITEM_CHECK_NEW";
+    public static final String PROFILE_PRJ001_CHECKLIST_PARAM_ALLOW_FORM_SO_IN_THE_PAST = "ALLOW_FORM_SO_IN_THE_PAST";
     //Profile de menus PRINCIPAIS
     public static final String PROFILE_PRJ001_CHECKLIST = "PRJ001_CHECKLIST";
     public static final String PROFILE_PRJ001_AP = "PRJ001_AP";
