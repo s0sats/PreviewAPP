@@ -313,6 +313,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 import java.util.TimeZone;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -612,7 +613,9 @@ public class ToolBox_Inf {
         formater = new SimpleDateFormat("HHmmss");
         String curr_time = formater.format(new Date());
         //
-        String key = IMEI + "_" + curr_date + "_" + curr_time;
+        Random random = new Random();
+        int randomValue = random.nextInt(1000);
+        String key = IMEI + "_" + curr_date + "_" + curr_time + "_" + randomValue;
         //
         return key;
     }
@@ -992,15 +995,8 @@ public class ToolBox_Inf {
 
     public static File[] getListOfFiles_v2(final String prefix) {
         File fileList = new File(Constant.ZIP_PATH);
-        File[] files = fileList.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String filename) {
-                if (filename.startsWith(prefix)) {
-                    return true;
-                }
-
-                return false;
-            }
+        File[] files = fileList.listFiles((dir, filename) -> {
+            return filename.startsWith(prefix);
         });
         //
         if (files != null) {
