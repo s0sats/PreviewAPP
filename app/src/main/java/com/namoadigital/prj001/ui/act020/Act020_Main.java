@@ -907,7 +907,8 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
 
     @Override
     protected void processError_http() {
-        super.processError_http();
+//        super.processError_http();
+        progressDialog.dismiss();
         if (ws_process.equals(WS_Product_Serial_Structure.class.getName())) {
             ToolBox_Con.setBooleanPreference(getApplicationContext(), ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, true);
             mPresenter.defineFlow(selectedProductSerial, false);

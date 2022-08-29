@@ -111,7 +111,6 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     private String customFormCode;
     private String customFormVersion;
     private String customFormCodeDesc;
-    private boolean is_offline_source;
     private boolean scheduled_profile_check;
     private boolean isOffHandForm;
     private Bundle act081Bundle = new Bundle();
@@ -247,7 +246,6 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     private void initVars() {
         //Variavel q identifica se dados do produto são chamados do master data ou não.
         isSchedule = false;
-        is_offline_source = ToolBox_Con.getBooleanPreferencesByKey(getApplicationContext(), ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false);
         //
         recoverIntentsInfo();
         //
@@ -362,7 +360,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         frgSerialEdit.setBtnActionLabel(hmAux_Trans.get("btn_create"));
         frgSerialEdit.setViewMode(Frg_Serial_Edit.VIEW_FULL_EDIT);
         frgSerialEdit.setShowCategorySegmentoInfo(false);
-        frgSerialEdit.setShowOffline(is_offline_source);
+        frgSerialEdit.setShowOffline(ToolBox_Con.getBooleanPreferencesByKey(getApplicationContext(), ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false));
         //frgSerialEdit.setForceCheckExistences(isSchedule);
         //Se for agendamento e o produto controlar local seguir mesma validação do site_restriction 19/06/2018
         //LUCHE - 16/06/2021
@@ -386,7 +384,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                     mPresenter.updateSerialData(mdProductSerial);
                     //
                     if (ToolBox_Con.isOnline(context)
-                    && !is_offline_source
+                    && !ToolBox_Con.getBooleanPreferencesByKey(getApplicationContext(), ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false)
                     && !isNewSerial()
                     && ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET , Constant.PROFILE_MENU_TICKET_PARAM_CLAIM_SPECIAL_EXECUTION_PERMITION)
                     && !has_tk_ticket_is_form_off_hand
@@ -408,7 +406,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                     mdProductSerial = mdProductSerialFrag;
                     //
                     if (ToolBox_Con.isOnline(context)
-                    && !is_offline_source) {
+                    && !ToolBox_Con.getBooleanPreferencesByKey(getApplicationContext(), ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false)) {
                         mPresenter.executeSerialSave();
                     } else {
                         //ToolBox_Inf.showNoConnectionDialog(context);
@@ -525,7 +523,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
     private void searchSerialFlow(long product_code, String product_id, String serial_id, String tracking) {
         if (ToolBox_Con.isOnline(context)
-        && !is_offline_source) {
+        && !ToolBox_Con.getBooleanPreferencesByKey(getApplicationContext(), ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false)) {
             mPresenter.executeSerialSearch(
                     product_id,
                     serial_id,
