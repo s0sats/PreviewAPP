@@ -220,7 +220,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 requireContext(),
                 ConstantBaseApp.PROFILE_PRJ001_CHECKLIST,
                 ConstantBaseApp.PROFILE_PRJ001_CHECKLIST_PARAM_ALLOW_FORM_SO_IN_THE_PAST
-            )){
+            ) && isOsCreation){
                 View.VISIBLE
             }else{
                 View.GONE
@@ -483,7 +483,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             val isOrderTypeInvalid = (spOsType.selectedItemPosition > orderTypeList.lastIndex || orderTypeList[spOsType.selectedItemPosition].orderTypeCode <= 0)
             val isMachineEmpty =  swMachine.isChecked && (selectedBkpMachineProduct == null || selectedBkpMachineSerialCode == null)
             val isMachineTheSame = (swMachine.isChecked && !isMachineEmpty && defaultBkpMachineProduct?.product_code == selectedBkpMachineProduct?.product_code && selectedBkpMachineSerialId == formSerialId)
-            val isStartDateInvalid = isValidStartDate().not()
+            val isStartDateInvalid = if(!bypassMinValidation()) isValidStartDate().not() else false
             clMachineEdit.background = if (isMachineEmpty || isMachineTheSame) {
                 ContextCompat.getDrawable(requireContext(), R.drawable.shape_error)
             } else {
@@ -498,7 +498,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 }
             }?: false
             //
-            val preventiveCycleInvalid = if(!bypassMinValidation()) isPreventiveCycleValid(isOrderTypeInvalid).not() else false
+            val preventiveCycleInvalid = isPreventiveCycleValid(isOrderTypeInvalid).not()
             //
             if(isOrderTypeInvalid || isMachineEmpty || isMachineTheSame || isStartDateInvalid || measureInvalid || preventiveCycleInvalid ){
                 showSaveErroDialog(
@@ -658,7 +658,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                     calculatedExecCycle -= tamDoCiclo
                 }
                 //
-                return calculatedExecCycle > lastCycle
+                return if(!bypassMinValidation()) calculatedExecCycle > lastCycle else true
             }
         }
         //
