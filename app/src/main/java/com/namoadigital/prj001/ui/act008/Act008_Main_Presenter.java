@@ -49,5 +49,7 @@ public interface Act008_Main_Presenter {
 
     String getFormattedTicketInfo(Bundle act081Bundle);
 
-    void checkSerialStructure(MD_Product_Serial serial);
+    boolean checkSerialStructureNeed();
+
+    void callWsSerialStructure(MD_Product_Serial productSerial);
 }
