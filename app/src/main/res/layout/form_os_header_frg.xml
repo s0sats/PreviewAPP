@@ -296,6 +296,9 @@
                     android:textSize="@dimen/font_size_font_16"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@id/gd_start"
+                    android:thumb="@drawable/namoa_switch_states"
+                    app:thumbTint="@color/namoa_switch_color_states"
+                    app:trackTint="@color/namoa_switch_track_color_states"
                     app:layout_constraintTop_toBottomOf="@id/cl_last_measure"/>
 
                 <Button

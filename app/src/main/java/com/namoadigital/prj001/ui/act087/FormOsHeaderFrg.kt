@@ -498,7 +498,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 }
             }?: false
             //
-            val preventiveCycleInvalid = isPreventiveCycleValid(isOrderTypeInvalid).not()
+            val preventiveCycleInvalid = if(!bypassMinValidation()) isPreventiveCycleValid(isOrderTypeInvalid).not() else false
             //
             if(isOrderTypeInvalid || isMachineEmpty || isMachineTheSame || isStartDateInvalid || measureInvalid || preventiveCycleInvalid ){
                 showSaveErroDialog(
