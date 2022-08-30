@@ -110,7 +110,7 @@ class MeMeasureTp(
         if (lastMeasureValue != null && lastMeasureDate != null) {
             //Como considera a data e inicio para calculo, se ela for invalida, o value by day tb será, pois não há como calcular.
             measureDate?.let {
-                if (!isValidStartDate(lastMeasureDate, measureDate)) {
+                if (!isValidStartDate(lastMeasureDate, measureDate) && !bypassMinValidation) {
                     return MeasureFF.MeasureValidationReturn(false, null)
                 }
                 val valPerDay = getDiffBetweenDatesInFloatDays(lastMeasureDate!!, measureDate!!)

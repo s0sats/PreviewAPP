@@ -1735,15 +1735,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 Act005_Main.this,
                 hmAux_Trans.get("alert_logout_data_to_send_ttl"),
                 hmAux_Trans.get("alert_logout_data_to_send_msg"),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+                (dialogInterface, i) -> {
 
-                        if (ToolBox_Con.isOnline(context)) {
-                            mDrawerLayout.closeDrawer(GravityCompat.START);
-                            mPresenter.accessMenuItem(Act005_Main.MENU_ID_SEND_DATA, 0);
-                            ToolBox_Inf.scheduleUploadImgWork(context);
-                        }
+                    if (ToolBox_Con.isOnline(context)) {
+                        mDrawerLayout.closeDrawer(GravityCompat.START);
+                        mPresenter.accessMenuItem(Act005_Main.MENU_ID_SEND_DATA, 0);
+                        ToolBox_Inf.scheduleUploadImgWork(context);
                     }
                 },
                 -1,
