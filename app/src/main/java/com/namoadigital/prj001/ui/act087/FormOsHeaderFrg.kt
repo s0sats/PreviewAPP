@@ -139,6 +139,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 "alert_form_turn_gps_on_title",
                 "alert_form_turn_gps_on_msg",
                 "allow_measure_in_the_past",
+                "alert_measure_error_ttl",
+                "alert_measure_non_negative_value_msg"
             )
         }
     }
@@ -472,13 +474,13 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             text = hmAuxTrans["btn_save"]
             if (isOsCreation) {
                 setOnClickListener {
-                    if(binding.mketOsMainMeasureVal.text.toString().toInt() >= 0)
+                    if(binding.mketOsMainMeasureVal.text.toString().toFloat() >= 0)
                         validateSave()
                     else
                         ToolBox.alertMSG(
                             requireContext(),
-                            "ERROR",
-                            "não pode ser menor que 0",
+                            "alert_measure_error_ttl",
+                            "alert_measure_non_negative_value_msg",
                             { dialogInterface, _ ->
                                 dialogInterface.dismiss()
                             },
