@@ -383,18 +383,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                     //Salva os dados do serial no banco local.
                     mPresenter.updateSerialData(mdProductSerial);
                     //
-                    if (ToolBox_Con.isOnline(context)
-                    && !ToolBox_Con.getBooleanPreferencesByKey(getApplicationContext(), ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false)
-                    && !isNewSerial()
-                    && ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET , Constant.PROFILE_MENU_TICKET_PARAM_CLAIM_SPECIAL_EXECUTION_PERMITION)
-                    && !has_tk_ticket_is_form_off_hand
-                    && ACT006.equals(requesting_process)) {
-                        int productCode = (int) mdProductSerial.getProduct_code();
-                        int serialCode = (int) mdProductSerial.getSerial_code();
-                        mPresenter.executeUnfocusTicketDownload(productCode, serialCode);
-                    }else {
-                        mPresenter.checkFlow();
-                    }
+                    checkSerialStructureAndUnfocusTickets();
                 }
 
             @Override
@@ -512,13 +501,35 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                 }
             }
         });
+    }
 
-        frgSerialEdit.setDelegateStructure(new Frg_Serial_Edit.I_Frg_Serial_Edit_Structure() {
-            @Override
-            public void callWsSerialStructure(MD_Product_Serial received_serial) {
-                mPresenter.checkSerialStructure(received_serial);
+    private void checkSerialStructureAndUnfocusTickets() {
+        if(mPresenter.checkSerialStructureNeed()){
+            if (ToolBox_Con.isOnline(context)
+            && !ToolBox_Con.getBooleanPreferencesByKey(getApplicationContext(), ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false)
+            && ACT006.equals(requesting_process)) {
+                mPresenter.callWsSerialStructure(mdProductSerial);
+            }else{
+                mPresenter.checkFlow();
             }
-        });
+        }else{
+            callExecuteUnfocusTicket();
+            }
+    }
+
+    private void callExecuteUnfocusTicket() {
+        if (ToolBox_Con.isOnline(context)
+        && !ToolBox_Con.getBooleanPreferencesByKey(getApplicationContext(), ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false)
+        && !isNewSerial()
+        && ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET , Constant.PROFILE_MENU_TICKET_PARAM_CLAIM_SPECIAL_EXECUTION_PERMITION)
+        && !has_tk_ticket_is_form_off_hand
+        && ACT006.equals(requesting_process)) {
+            int productCode = (int) mdProductSerial.getProduct_code();
+            int serialCode = (int) mdProductSerial.getSerial_code();
+            mPresenter.executeUnfocusTicketDownload(productCode, serialCode);
+        }else {
+            mPresenter.checkFlow();
+        }
     }
 
     private void searchSerialFlow(long product_code, String product_id, String serial_id, String tracking) {
@@ -814,7 +825,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                     public void onClick(DialogInterface dialog, int which) {
                         frgSerialEdit.scrollToTop();
                         //
-                        mPresenter.checkFlow();
+                        checkSerialStructureAndUnfocusTickets();
                     }
                 },
                 0
@@ -1146,6 +1157,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             disableProgressDialog();
         } else if (ws_process.equals(WS_Product_Serial_Structure.class.getName())) {
             disableProgressDialog();
+            callExecuteUnfocusTicket();
         } else if (ws_process.equals(WS_Serial_Save.class.getName())) {
             frgSerialEdit.setNew_serial(false);
             //frgSerialEdit.refreshUi();
@@ -1179,6 +1191,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             disableProgressDialog();
         } else if (ws_process.equalsIgnoreCase(WS_Product_Serial_Structure.class.getName())) {
             disableProgressDialog();
+            callExecuteUnfocusTicket();
         } else {
             //Atualiza data na tabela de produtos loca
             mPresenter.updateSyncChecklist();
@@ -1190,16 +1203,20 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     @Override
     protected void processError_1(String mLink, String mRequired) {
         super.processError_1(mLink, mRequired);
-        disableProgressDialog();
         if(contentMain.getVisibility() == View.INVISIBLE){
             mPresenter.onBackPressedClicked();
         }else{
-            if (ws_process.equals(WS_TK_Ticket_Search_Not_Focus.class.getName())
-            || ws_process.equals(WS_Serial_Save.class.getName())) {
+            /**
+             * BARRIONUEVO - 30-08-2022
+             * REMOVIDO CONDICAO DO SAVE DO SERIAL APOS CONVERSA COM JHONATHAN
+             * DEVIDO O ALTO IMPACTO DE DESENVOLVIMENTO DECIDIMOS BARRAR O USUARIO EM CASO DE ERRO DE SAVE DE SERIAL.
+             */
+            if (ws_process.equals(WS_TK_Ticket_Search_Not_Focus.class.getName())) {
                 mPresenter.checkFlow();
             }
         }
         //
+        disableProgressDialog();
     }
 
     @Override

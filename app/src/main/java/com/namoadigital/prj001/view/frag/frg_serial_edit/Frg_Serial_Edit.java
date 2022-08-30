@@ -186,7 +186,6 @@ public class Frg_Serial_Edit extends BaseFragment {
     private TextView tv_outbound_lbl;
     private MKEditTextNM mket_outbound_id;
     private I_Frg_Serial_Edit delegate;
-    private I_Frg_Serial_Edit_Structure delegateStructure;
     private boolean useTracking;
     private String btn_action_translation = "";
     private boolean forceCheckExistences = false;
@@ -221,11 +220,6 @@ public class Frg_Serial_Edit extends BaseFragment {
     public String getSerialId() {
         return mket_serial_id.getText().toString();
     }
-
-    public interface I_Frg_Serial_Edit_Structure {
-        void callWsSerialStructure(MD_Product_Serial received_serial);
-    }
-
     //region Interfaces
     public interface I_Frg_Serial_Edit {
         /**
@@ -325,10 +319,6 @@ public class Frg_Serial_Edit extends BaseFragment {
 
     public void setDelegate(I_Frg_Serial_Edit delegate) {
         this.delegate = delegate;
-    }
-
-    public void setDelegateStructure(I_Frg_Serial_Edit_Structure delegateStructure) {
-        this.delegateStructure = delegateStructure;
     }
 
     public void setBtnActionLabel(String label) {
@@ -471,10 +461,6 @@ public class Frg_Serial_Edit extends BaseFragment {
                         btn_action.setOnClickListener(saveSerialListner);
                         //
                         loadDataToScreen();
-                        //
-                        if(delegateStructure != null) {
-                            delegateStructure.callWsSerialStructure(received_serial);
-                        }
                     }
                 }
         );

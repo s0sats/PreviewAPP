@@ -26,7 +26,10 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.sql.MD_Product_Sql_003;
+import com.namoadigital.prj001.ui.act006.Act006_Main;
+import com.namoadigital.prj001.ui.act081.Act081_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.act.product_selection.Act_Product_Selection;
@@ -436,8 +439,12 @@ public class Frg_Serial_Search extends Fragment {
                         0
                     );
 
-                } else if (ToolBox_Con.isOnline(getActivity()) &&
-                    ToolBox_Inf.checkSerialTokenURStatus(getActivity()) && isbTokenPendenciesCheck()) {
+                } else if (ToolBox_Con.isOnline(getActivity())
+                        && ToolBox_Inf.checkSerialTokenURStatus(getActivity()) && isbTokenPendenciesCheck()
+                    && ( (getActivity() instanceof Act006_Main || getActivity() instanceof Act081_Main)
+                         && !ToolBox_Con.getBooleanPreferencesByKey(getContext(), ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false)
+                        )
+                    ) {
                     ToolBox.alertMSG(
                         getActivity(),
                         hmAux_Trans.get("alert_serial_pendencies_ttl"),

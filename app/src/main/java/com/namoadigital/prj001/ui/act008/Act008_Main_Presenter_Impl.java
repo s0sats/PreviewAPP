@@ -896,6 +896,29 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     }
 
     /**
+     * Valida se serial existe e possui estrutura
+     * @return
+     */
+    @Override
+    public boolean checkSerialStructureNeed() {
+        MD_Product_Serial serial = mView.getMdProductSerial();
+        //
+        if(serial != null && serial.getHas_item_check() == 1){
+            ArrayList<MD_Product_Serial_Tp_Device> serialTpDevices = (ArrayList<MD_Product_Serial_Tp_Device>)
+                    serialTpDeviceDao.query(
+                            new MD_Product_Serial_Tp_Device_Sql_002(
+                                    serial.getCustomer_code(),
+                                    serial.getProduct_code(),
+                                    serial.getSerial_code()
+                            ).toSqlQuery()
+                    );
+            //
+            return serialTpDevices.size() == 0;
+        }
+        return false;
+    }
+
+    /**
      * LUCHE - 25/06/2021
      * <p></p>
      * Metodo que faz a validação do fluxo do form off hand, verificando se o produto ja teve form
@@ -1044,26 +1067,7 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     }
 
     @Override
-    public void checkSerialStructure(MD_Product_Serial serial) {
-        if(serial != null && serial.getHas_item_check() == 1){
-            ArrayList<MD_Product_Serial_Tp_Device> serialTpDevices = (ArrayList<MD_Product_Serial_Tp_Device>)
-                    serialTpDeviceDao.query(
-                            new MD_Product_Serial_Tp_Device_Sql_002(
-                                    serial.getCustomer_code(),
-                                    serial.getProduct_code(),
-                                    serial.getSerial_code()
-                            ).toSqlQuery()
-                    );
-            //
-            if(serialTpDevices != null
-            && serialTpDevices.size() == 0){
-                callWsSerialStructure(serial);
-            }
-        }
-        //
-    }
-
-    void callWsSerialStructure(MD_Product_Serial productSerial) {
+    public void callWsSerialStructure(MD_Product_Serial productSerial) {
         //
         if (ToolBox_Con.isOnline(context)
         && !ToolBox_Con.getBooleanPreferencesByKey(context, ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false)) {
