@@ -31,7 +31,6 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_004;
 import com.namoadigital.prj001.sql.GeOsSql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_Device_Sql_002;
-import com.namoadigital.prj001.sql.MdOrderTypeSql_001;
 import com.namoadigital.prj001.sql.MdOrderTypeSql_002;
 import com.namoadigital.prj001.sql.Sql_Act010_001;
 import com.namoadigital.prj001.sql.Sql_Act010_002;
@@ -265,8 +264,8 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
         List<MdOrderType> orderTypeList = orderTypeDao.query(orderTypeQuery);
         if(orderTypeList.isEmpty()){
             mView.showAlertMsg(
-                    hmAux_Trans.get("alert_customer_code_empty_ttl"),
-                    hmAux_Trans.get("alert_customer_code_empty_msg"));
+                    hmAux_Trans.get("alert_order_type_empty_ttl"),
+                    hmAux_Trans.get("alert_order_type_empty_msg"));
         }else {
             mView.callAct087();
         }

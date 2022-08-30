@@ -145,8 +145,8 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
         transList.add("alert_create_ticket_internal_comments_lbl");
         transList.add("alert_create_ticket_btn_save");
         //
-        transList.add("alert_customer_code_empty_ttl");
-        transList.add("alert_customer_code_empty_msg");
+        transList.add("alert_order_type_empty_ttl");
+        transList.add("alert_order_type_empty_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,

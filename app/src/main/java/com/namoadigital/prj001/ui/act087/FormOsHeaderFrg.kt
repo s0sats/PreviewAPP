@@ -138,7 +138,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 "form_os_header_lbl",
                 "alert_form_turn_gps_on_title",
                 "alert_form_turn_gps_on_msg",
-                "allow_measure_in_the_past",
+                "allow_measure_in_the_past_lbl",
             )
         }
     }
@@ -194,7 +194,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             tilMketSerial.helperText = hmAuxTrans["backup_serial_help_lbl"]
             mketOsMainMeasureVal.hint = hmAuxTrans["measure_current_value_hint"]
             tvOsLastMeasureLbl.text = hmAuxTrans["measure_last_value_lbl"]
-            swAllowFormSoInThePast.text = hmAuxTrans["allow_measure_in_the_past"]
+            swAllowFormSoInThePast.text = hmAuxTrans["allow_measure_in_the_past_lbl"]
             //Lista com os textView que será usado para add colocar contadore nos campos
             labelsView.add(tvOsTypeLbl)
             labelsView.add(tvOsMachineLbl)
