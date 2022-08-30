@@ -472,7 +472,18 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             text = hmAuxTrans["btn_save"]
             if (isOsCreation) {
                 setOnClickListener {
-                    validateSave()
+                    if(binding.mketOsMainMeasureVal.text.toString().toInt() >= 0)
+                        validateSave()
+                    else
+                        ToolBox.alertMSG(
+                            requireContext(),
+                            "ERROR",
+                            "não pode ser menor que 0",
+                            { dialogInterface, _ ->
+                                dialogInterface.dismiss()
+                            },
+                            0
+                        )
                 }
             }
         }
