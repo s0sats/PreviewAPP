@@ -2,10 +2,8 @@ package com.namoadigital.prj001.util;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
 import static android.content.Context.NOTIFICATION_SERVICE;
-import static com.namoadigital.prj001.util.ConstantBaseApp.GENERIC_CHANNEL_ID;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_SITE_OPTION;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ONLY_MY_ACTIONS_OPTION;
-import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW;
 
 import android.app.NotificationManager;
 import android.content.Context;
@@ -18,7 +16,6 @@ import android.preference.PreferenceManager;
 import android.provider.Settings;
 
 import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.work.WorkManager;
 
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -303,9 +300,12 @@ public class ToolBox_Con {
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(context);
 
-        if(pref_key.equalsIgnoreCase(PREFERENCE_SERIAL_OFFLINE_FLOW)){
-            showNotificationFlowStatus(context, pref_value);
-        }
+        /*
+         * Notificacao para facilitar testes do modo offline.
+         */
+//        if(pref_key.equalsIgnoreCase(PREFERENCE_SERIAL_OFFLINE_FLOW)){
+//            showNotificationFlowStatus(context, pref_value);
+//        }
 
         sharedPreferences.edit().putBoolean(
                 pref_key,

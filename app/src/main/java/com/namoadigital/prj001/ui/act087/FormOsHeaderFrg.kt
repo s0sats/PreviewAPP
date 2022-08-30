@@ -474,21 +474,25 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             text = hmAuxTrans["btn_save"]
             if (isOsCreation) {
                 setOnClickListener {
-                    if(binding.mketOsMainMeasureVal.text.toString().toFloat() >= 0)
-                        validateSave()
-                    else
-                        ToolBox.alertMSG(
-                            requireContext(),
-                            "alert_measure_error_ttl",
-                            "alert_measure_non_negative_value_msg",
-                            { dialogInterface, _ ->
-                                dialogInterface.dismiss()
-                            },
-                            0
-                        )
+                    checkSave()
                 }
             }
         }
+    }
+
+    private fun checkSave() {
+        if (binding.mketOsMainMeasureVal.text.toString().toFloat() >= 0)
+            validateSave()
+        else
+            ToolBox.alertMSG(
+                requireContext(),
+                "alert_measure_error_ttl",
+                "alert_measure_non_negative_value_msg",
+                { dialogInterface, _ ->
+                    dialogInterface.dismiss()
+                },
+                0
+            )
     }
 
     private fun validateSave() {
@@ -571,7 +575,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             requireContext(),
             hmAuxTrans["alert_form_turn_gps_on_title"],
             hmAuxTrans["alert_form_turn_gps_on_msg"],
-            { dialog, which -> validateSave() },
+            { dialog, which -> checkSave() },
             1
         )
     }
