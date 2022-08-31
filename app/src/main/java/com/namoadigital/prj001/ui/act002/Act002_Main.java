@@ -420,7 +420,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
     protected void processError_1(String mLink, String mRequired) {
         super.processError_1(mLink, mRequired);
         //
-        if(wsProcess.equals(WS_TK_Ticket_Download.class.getName())){
+        if(WS_TK_Ticket_Download.class.getName().equals(wsProcess)){
             wsProcess = PROCESS_WS_SYNC;
             mPresenter.executeSyncProcess();
         }else{
