@@ -140,7 +140,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 "alert_form_turn_gps_on_msg",
                 "allow_measure_in_the_past_lbl",
                 "alert_measure_error_ttl",
-                "alert_measure_non_negative_value_msg"
+                "alert_measure_invalid_value_msg"
             )
         }
     }
@@ -481,18 +481,25 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     }
 
     private fun checkSave() {
-        if (binding.mketOsMainMeasureVal.text.toString().toFloat() >= 0)
+        with(binding){
+            val measure = mketOsMainMeasureVal.text
+
+            if(!isMeasureValNumeric()
+                || measure.toString().toFloat() < 0){
+                ToolBox.alertMSG(
+                    requireContext(),
+                    hmAuxTrans["alert_measure_error_ttl"],
+                    hmAuxTrans["alert_measure_invalid_value_msg"],
+                    { dialog, _ ->
+                        dialog.dismiss()
+                    },
+                    0
+                )
+                return
+            }
+
             validateSave()
-        else
-            ToolBox.alertMSG(
-                requireContext(),
-                "alert_measure_error_ttl",
-                "alert_measure_non_negative_value_msg",
-                { dialogInterface, _ ->
-                    dialogInterface.dismiss()
-                },
-                0
-            )
+        }
     }
 
     private fun validateSave() {
