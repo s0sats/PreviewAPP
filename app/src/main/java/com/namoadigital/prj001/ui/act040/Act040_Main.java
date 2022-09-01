@@ -1227,7 +1227,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     }
 
     private boolean hasPackServicesAdded() {
-        if(mSo_pack_express.getAdd_pack_service() == 1){
+        if(mSo_pack_express != null && mSo_pack_express.getAdd_pack_service() == 1){
             return mAdapter!= null && mAdapter.getItemCount() > 0;
         }
         return false;
