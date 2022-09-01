@@ -824,6 +824,8 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
     @Override
     public void onBackPressedClicked(SO_Pack_Express mSoPackExpress, boolean hasPackServices, String serialID, boolean skipConfirm) {
         if((mSoPackExpress == null && !hasPackServices && (serialID == null || serialID.isEmpty())) || skipConfirm) {
+            deleteExpressAllPackLocal();
+
             mView.callAct005(context);
         }else {
             ToolBox.alertMSG_YES_NO(
@@ -833,9 +835,6 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if(hasPackServices){
-                            deleteExpressAllPackLocal();
-                        }
                         onBackPressedClicked(mSoPackExpress, hasPackServices,serialID,true);
                     }
                 },
@@ -878,9 +877,12 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
 //
         String fileName = ToolBox_Inf.getExpressSOFileName(mSo_pack_express.getContract_code(), mSo_pack_express.getProduct_code(), mSo_pack_express.getCategory_price_code(), mSo_pack_express.getSite_code(), mSo_pack_express.getOperation_code());
         File file = new File(ConstantBaseApp.SO_EXPRESS_JSON_PATH, fileName);
-        String contents = ToolBox_Inf.getContents(file);
-        Gson gson = new GsonBuilder().serializeNulls().create();
-        TSO_Service_Search_Rec rec = gson.fromJson(contents, TSO_Service_Search_Rec.class);
+        TSO_Service_Search_Rec rec = null;
+        if(file.exists()) {
+            String contents = ToolBox_Inf.getContents(file);
+            Gson gson = new GsonBuilder().serializeNulls().create();
+            rec = gson.fromJson(contents, TSO_Service_Search_Rec.class);
+        }
         List<SoPackExpressServicesLocal> services = new ArrayList<>();
         if(rec != null) {
             List<TSO_Service_Search_Obj> packageDefault = TSoServiceSearchRecKt.getPackageDefault(
@@ -955,8 +957,13 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
 
     @Override
     public void updateExpressPackage(SoPackExpressPacksLocal item, long customer_code, long product_code, long site_code, long operation_code, String express_code, int bundle_express_tmp, int position) {
-        soPackExpressLocalDao.addUpdate(item);
-        mView.refreshPackServiceList(getExpressPackLocal(customer_code, product_code, site_code, operation_code, express_code, bundle_express_tmp).getPacksLocals(), item, position);
+        SO_Pack_Express_Local currentExpressPackLocal = getCurrentExpressPackLocal();
+        currentExpressPackLocal.getPacksLocals().set(position, item);
+        so_pack_express_localDao.addUpdate(currentExpressPackLocal);
+        //
+        if(currentExpressPackLocal != null) {
+            mView.refreshPackServiceList(currentExpressPackLocal.getPacksLocals(), item, position);
+        }
     }
 
     private SoPackExpressPacksLocal getPackExpressPacksAndServicesLocal(long customer_code, long site_code, long operation_code, long product_code, String express_code, int bundle_express_tmp, int price_list_code, int pack_code, int packSeq, String type_ps) {
@@ -1007,13 +1014,14 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
                 ).toSqlQuery()
         );
 
-        if (packsLocals != null) {
+        if (packsLocals != null
+        && packsLocals.size() > 0) {
             for (SoPackExpressPacksLocal packsLocal : packsLocals) {
                 serviceResume.append(packsLocal.getQty()).append("x ").append(packsLocal.getPack_service_desc_full()).append("\n");
             }
             return serviceResume.substring(0, serviceResume.length() -1);
         }else{
-            return "";
+            return lastExpressInSiteOper.getSo_desc();
         }
     }
 
