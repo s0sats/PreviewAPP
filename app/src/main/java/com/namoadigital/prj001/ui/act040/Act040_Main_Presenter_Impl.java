@@ -323,7 +323,9 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
         so_pack_express_local.setProduct_desc(md_product.getProduct_desc());
         so_pack_express_local.setExpress_code(mSo_pack_express.getExpress_code());
         so_pack_express_local.setExpress_tmp(nTemp);
-        so_pack_express_local.setPartner_code(md_partner.getPartner_code());
+        if(md_partner != null){
+            so_pack_express_local.setPartner_code(md_partner.getPartner_code());
+        }
         so_pack_express_local.setSerial_id(serial);
         so_pack_express_local.setStatus(Constant.SO_EXPRESS_STATUS_NEW);
         //
