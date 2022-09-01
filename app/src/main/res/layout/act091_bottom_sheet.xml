@@ -58,6 +58,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="text"
+                    android:singleLine="false"
+                    android:maxLines="10"
                     app:mBARCODE="false"
                     app:mNFC="false"
                     app:mOCR="false" />
