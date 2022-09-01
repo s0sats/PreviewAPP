@@ -579,6 +579,17 @@ class GeOsDao(
             ) {
                     item.has_expired_cycle = 1
             }
+
+            if(GeOsDeviceItem.ITEM_CHECK_STATUS_MEASURE_ALERT.equals(item.item_check_status,true)){
+                //Verifica se data projetada do proximo ciclo foi atingida
+                if (item.next_cycle_measure != null
+                    && item.next_cycle_measure.compareTo(measureConsider) > 0
+                ) {
+                    item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL
+                    item.hide_days_in_alert = 1
+                }
+            }
+
             /*
              * Se Status PROJECTED_DATE_REACHED, verifica se deve alterar o status para:
              *   NORMAL:
