@@ -1114,7 +1114,12 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             && isBillingInfoValid(mSo_pack_express.getBilling_add_inf1_view(), binding.mketAddInfo1)
             && isBillingInfoValid(mSo_pack_express.getBilling_add_inf2_view(), binding.mketAddInfo2)
             && isBillingInfoValid(mSo_pack_express.getBilling_add_inf3_view(), binding.mketAddInfo3)
-            && hasPackServicesAdded();
+            && isPackServiceAdditionValid();
+
+    }
+
+    private boolean isPackServiceAdditionValid() {
+        return hasPackServicesAdded() || mSo_pack_express.getAdd_pack_service() == 0;
     }
 
     private boolean isBillingInfoValid(String billingInfoView, MKEditTextNM billingField) {
@@ -1222,7 +1227,10 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     }
 
     private boolean hasPackServicesAdded() {
-        return mAdapter!= null && mAdapter.getItemCount() > 0;
+        if(mSo_pack_express.getAdd_pack_service() == 1){
+            return mAdapter!= null && mAdapter.getItemCount() > 0;
+        }
+        return false;
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
