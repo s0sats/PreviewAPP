@@ -833,6 +833,9 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        if(hasPackServices){
+                            deleteExpressAllPackLocal();
+                        }
                         onBackPressedClicked(mSoPackExpress, hasPackServices,serialID,true);
                     }
                 },
