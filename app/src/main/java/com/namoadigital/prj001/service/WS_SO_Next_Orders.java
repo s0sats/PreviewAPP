@@ -66,6 +66,8 @@ public class WS_SO_Next_Orders extends IntentService {
         //Seleciona traduções
         loadTranslation();
         //
+        Integer filterZone = (zone_code == -1 ? null : zone_code);
+        //
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_sending_data"), "", "0");
         //
         TSO_Next_Orders_Env env = new TSO_Next_Orders_Env();
@@ -75,7 +77,7 @@ public class WS_SO_Next_Orders extends IntentService {
         env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
         env.setCustomer_code(customer_code);
         env.setSite_code(site_code);
-        env.setZone_code(zone_code);
+        env.setZone_code(filterZone);
         env.setOperation_code(operation_code);
         env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
         //

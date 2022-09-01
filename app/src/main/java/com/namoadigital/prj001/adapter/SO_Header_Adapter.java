@@ -52,6 +52,8 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
     private ValueFilter valueFilter;
     private ArrayList<HMAux> source_filtered;
     //
+    private OnRememberListState rememberListState;
+    //
     private boolean showOnlyAvailable = false;
 
 //    public SO_Header_Adapter(Context context, int resource_01, List<HMAux> source, String config_type) {
@@ -91,18 +93,19 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
 //        this.source_filtered = (ArrayList<HMAux>) source;
 //
 //        getFilter();
-        applyConstructor(context,source,config_type,resource_01,resource_02,null);
+        applyConstructor(context,source,config_type,resource_01,resource_02,null, null);
     }
 
-    public SO_Header_Adapter(Context context, List<HMAux> source, String config_type, int resource_01, int resource_02,String sFilter) {
-        applyConstructor(context,source,config_type,resource_01,resource_02,sFilter);
+    public SO_Header_Adapter(Context context, List<HMAux> source, String config_type, int resource_01, int resource_02,String sFilter, OnRememberListState rememberListState) {
+        applyConstructor(context,source,config_type,resource_01,resource_02,sFilter,rememberListState);
     }
 
-    private void applyConstructor(Context context, List<HMAux> source, String config_type, int resource_01, int resource_02,String sFilter) {
+    private void applyConstructor(Context context, List<HMAux> source, String config_type, int resource_01, int resource_02,String sFilter, OnRememberListState OnRememberListState) {
         this.context = context;
         this.resource_01 = resource_01;
         this.resource_02 = resource_02;
         this.source = source;
+        this.rememberListState = OnRememberListState;
         this.mResource_Code = ToolBox_Inf.getResourceCode(
             context,
             Constant.APP_MODULE,
@@ -747,6 +750,10 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             source = (ArrayList<HMAux>) results.values;
+            //
+            if(rememberListState != null){
+                rememberListState.emptyList(source.isEmpty());
+            }
             //
             notifyDataSetChanged();
         }

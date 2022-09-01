@@ -14,7 +14,8 @@
         android:src="@drawable/ic_qrcode_black_24dp"
         app:layout_constraintBottom_toBottomOf="@+id/tv_module_detail"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tv_module_title" />
+        app:layout_constraintTop_toTopOf="@+id/tv_module_title"
+        app:tint="#074C61" />
 
     <TextView
         android:id="@+id/tv_module_title"

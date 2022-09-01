@@ -14,11 +14,11 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.SwitchCompat;
 
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.ConstantBase;
@@ -71,9 +71,10 @@ public class Act027_Services extends BaseFragment {
 
     private boolean bStatus;
 
+
     private Context context;
     private TextView tv_filter_lbl;
-    private Switch sw_filter;
+    private SwitchCompat sw_filter;
     private ListView lv_services;
     private Act027_Services_Adapter adp;
     private SM_SO_ServiceDao sm_so_serviceDao;
@@ -93,6 +94,7 @@ public class Act027_Services extends BaseFragment {
     private TextView tv_header_add_info_4;
     private TextView tv_header_add_info_5;
     private TextView tv_header_add_info_6;
+    private TextView tv_empty_list;
     private View v_divider;
     private ImageView iv_editable_serial;
     private View listHeader;
@@ -217,10 +219,15 @@ public class Act027_Services extends BaseFragment {
         tv_product_serial_id = listHeader.findViewById(R.id.tv_product_serial_id);
         tv_product_serial_infos = listHeader.findViewById(R.id.tv_product_serial_infos);
         iv_editable_serial = listHeader.findViewById(R.id.iv_editable_serial);
-        sw_filter = view.findViewById(R.id.act027_services_content_sw_filter);
         lv_services = view.findViewById(R.id.act027_services_content_lv_services);
         btn_approval_shortcut = view.findViewById(R.id.act027_services_content_btn_quality_approval);
         btn_product_event_shortcut = view.findViewById(R.id.act027_services_content_btn_product_event_shortcut);
+
+
+        tv_empty_list = view.findViewById(R.id.act027_tv_empty_list_lbl);
+        sw_filter = view.findViewById(R.id.act027_services_content_sw_filter);
+
+
 
         iv_editable_serial.setVisibility(View.VISIBLE);
         iv_editable_serial.setImageResource(R.drawable.ic_edit_black_24dp);
@@ -263,6 +270,12 @@ public class Act027_Services extends BaseFragment {
                 btn_product_event_shortcut.setVisibility(View.GONE);
             }
         }
+
+        setLabels();
+    }
+
+    private void setLabels(){
+        tv_empty_list.setText(hmAux_Trans.get("empty_service_list_lbl"));
     }
 
     private void setAddInfo() {
@@ -319,6 +332,7 @@ public class Act027_Services extends BaseFragment {
     private CompoundButton.OnCheckedChangeListener sw_filter_listener = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            setSwitchState(isChecked);
             setServiceAdapter(isChecked);
         }
     };
@@ -334,22 +348,12 @@ public class Act027_Services extends BaseFragment {
                 //
                 //sw_filter.setChecked(true);
                 //
-                if ((!mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PENDING) &&
-                        !mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PROCESS)) ||
-                        !mMain.hasExecutionProfile()
-                ) {
-                    sw_filter.setOnCheckedChangeListener(null);
-                    sw_filter.setChecked(false);
-                    sw_filter.setEnabled(false);
-                    //
-                    if (mMain.hasExecutionProfile()) {
-                        sw_filter.setEnabled(true);
-                        sw_filter.setOnCheckedChangeListener(sw_filter_listener);
-                    }
 
-                }
+                sw_filter.setOnCheckedChangeListener(null);
+                sw_filter.setChecked(getSwitchState());
+                sw_filter.setOnCheckedChangeListener(sw_filter_listener);
                 //
-                setServiceAdapter(sw_filter.isChecked());
+                setServiceAdapter(getSwitchState());
                 setSerialInfo();
                 setAddInfo();
             } else {
@@ -454,51 +458,53 @@ public class Act027_Services extends BaseFragment {
                     mMain.hasExecutionProfile()
             );
             //
-            adp.setOnServiceSelectedListener(new Act027_Services_Adapter.IAct027_Services_Adapter() {
-                @Override
-                public void serviceSelected(HMAux sData, String selection_type) {
+            adp.setOnServiceSelectedListener((sData, selection_type) -> {
 
-                    HMAux sService = sm_so_serviceDao.getByStringHM(
-                            new SM_SO_Service_Sql_004(
-                                    Long.parseLong(sData.get("customer_code")),
-                                    Integer.parseInt(sData.get("so_prefix")),
-                                    Integer.parseInt(sData.get("so_code")),
-                                    Integer.parseInt(sData.get("price_list_code")),
-                                    Integer.parseInt(sData.get("pack_code")),
-                                    Integer.parseInt(sData.get("pack_seq")),
-                                    Integer.parseInt(sData.get("category_price_code")),
-                                    Integer.parseInt(sData.get("service_code")),
-                                    Integer.parseInt(sData.get("service_seq"))
-                            ).toSqlQuery()
-                    );
-                    //Tratativa para o nova ação do btn express é que igual ao btn normal...
-                    //Confuso ?! kkkk Senta e chora
-                    if (selection_type.equals(Act027_Main.SELECTION_EXPRESS) &&
-                            sData.get(Sql_Act027_002.YES_NO_ICON).equals("0") &&
-                            sData.get(Sql_Act027_002.START_STOP_ACTION).equals(Sql_Act027_002.ACTION_NONE)
-                    ) {
-                        selection_type = Act027_Main.SELECTION_NORMAL;
-                    }
+                HMAux sService = sm_so_serviceDao.getByStringHM(
+                        new SM_SO_Service_Sql_004(
+                                Long.parseLong(sData.get("customer_code")),
+                                Integer.parseInt(sData.get("so_prefix")),
+                                Integer.parseInt(sData.get("so_code")),
+                                Integer.parseInt(sData.get("price_list_code")),
+                                Integer.parseInt(sData.get("pack_code")),
+                                Integer.parseInt(sData.get("pack_seq")),
+                                Integer.parseInt(sData.get("category_price_code")),
+                                Integer.parseInt(sData.get("service_code")),
+                                Integer.parseInt(sData.get("service_seq"))
+                        ).toSqlQuery()
+                );
+                //Tratativa para o nova ação do btn express é que igual ao btn normal...
+                //Confuso ?! kkkk Senta e chora
+                if (selection_type.equals(Act027_Main.SELECTION_EXPRESS) &&
+                        sData.get(Sql_Act027_002.YES_NO_ICON).equals("0") &&
+                        sData.get(Sql_Act027_002.START_STOP_ACTION).equals(Sql_Act027_002.ACTION_NONE)
+                ) {
+                    selection_type = Act027_Main.SELECTION_NORMAL;
+                }
 
-                    switch (selection_type) {
-                        case Act027_Main.SELECTION_EXPRESS:
-                            serviceExpress(sData);
-                            break;
-                        case Act027_Main.SELECTION_NORMAL:
-                            if (delegate != null) {
-                                delegate.onServiceSelected(sService);
-                            }
-                            break;
-                        default:
-                            break;
-                    }
+                switch (selection_type) {
+                    case Act027_Main.SELECTION_EXPRESS:
+                        serviceExpress(sData);
+                        break;
+                    case Act027_Main.SELECTION_NORMAL:
+                        if (delegate != null) {
+                            delegate.onServiceSelected(sService);
+                        }
+                        break;
+                    default:
+                        break;
                 }
             });
             //
             lv_services.setAdapter(adp);
             //
             if (adp.getCount() == 0) {
+                tv_empty_list.setVisibility(View.VISIBLE);
+                lv_services.setVisibility(View.GONE);
                 mMain.openDrawerInternally();
+            }else{
+                lv_services.setVisibility(View.VISIBLE);
+                tv_empty_list.setVisibility(View.GONE);
             }
 
             //Se possui var indicando qual seriviço foi alterado,
@@ -933,4 +939,11 @@ public class Act027_Services extends BaseFragment {
         }
     }
 
+    private boolean getSwitchState(){
+        return ToolBox_Con.getBooleanPreferencesByKey(requireContext(), Constant.ACT027_SWITCH_STATE, true);
+    }
+
+    private void setSwitchState(boolean isChecked){
+        ToolBox_Con.setBooleanPreference(requireContext(), Constant.ACT027_SWITCH_STATE, isChecked);
+    }
 }
