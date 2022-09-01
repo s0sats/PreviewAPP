@@ -76,7 +76,6 @@
                 style="@style/NamoaFormOsRadioButton"
                 tools:drawableTint="@color/namoa_os_form_done_action_blue"
                 />
-
             <RadioButton
                 android:id="@+id/act086_verification_frg_rdo_answer_already_done"
                 android:layout_width="match_parent"

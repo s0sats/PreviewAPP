@@ -139,6 +139,8 @@ public class WS_TK_Ticket_Download extends IntentService {
             gson.toJson(env)
         );
         //
+        ToolBox_Con.setBooleanPreference(getApplicationContext(), ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false);
+        //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_receiving_data_msg"), "", "0");
         //
         T_TK_Ticket_Download_Rec rec = gson.fromJson(

@@ -13,6 +13,7 @@ import com.namoadigital.prj001.dao.TK_TicketDao
 import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.receiver.WBR_Workgroup_Member_List
 import com.namoadigital.prj001.util.Constant
+import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.io.IOException
@@ -123,6 +124,15 @@ class WSTicketCreation:
         )
         //
         ToolBox.sendBCStatus(applicationContext, "STATUS", hmAuxTrans["generic_receiving_data_msg"], "", "0")
+        /**
+         * BARRIONUEVO 2022-08-23
+         * Ao retornar do servidor com sucesso setar a preferencia de fluxo offline para false.
+         */
+        ToolBox_Con.setBooleanPreference(
+            applicationContext,
+            ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW,
+            false
+        )
         //
         val rec = gson.fromJson(resultado, T_TK_Ticket_Download_Rec::class.java)
         //

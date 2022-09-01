@@ -48,4 +48,8 @@ public interface Act008_Main_Presenter {
     void searchLocalSerial(long product_code, String serial_id);
 
     String getFormattedTicketInfo(Bundle act081Bundle);
+
+    boolean checkSerialStructureNeed();
+
+    void callWsSerialStructure(MD_Product_Serial productSerial);
 }

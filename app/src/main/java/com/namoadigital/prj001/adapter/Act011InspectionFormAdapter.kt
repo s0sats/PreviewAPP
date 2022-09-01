@@ -13,6 +13,7 @@ import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.Act011InspectionQuestionFormCellBinding
 import com.namoadigital.prj001.extensions.applyTintColor
 import com.namoadigital.prj001.model.AcessoryFormView
+import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.EXEC_TYPE_ADJUST
 import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.EXEC_TYPE_ALERT
 import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.EXEC_TYPE_ALREADY_OK
 import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.EXEC_TYPE_FIXED
@@ -189,8 +190,8 @@ class Act011InspectionFormAdapter(
 
     inner class MyInspectionFormVH(val binding: Act011InspectionQuestionFormCellBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun onBinding(inspection: InspectionCell) {
-            inspection.apply {
+        fun onBinding(inspection: InspectionCell?) {
+            inspection?.apply {
                 val context = binding.root.context
                 binding.btnInspectionOngoingAction.visibility = View.GONE
                 if (isDone) {
@@ -239,6 +240,14 @@ class Act011InspectionFormAdapter(
                                 )
 
                         }
+
+                        EXEC_TYPE_ADJUST -> {
+                            binding.btnInspectAnswered.icon =
+                                ContextCompat.getDrawable(
+                                    Objects.requireNonNull(context),
+                                    R.drawable.ic_build_black_24dp
+                                )
+                        }
                         EXEC_TYPE_ALERT -> {
                             binding.btnInspectAnswered.icon =
                                 ContextCompat.getDrawable(
@@ -281,16 +290,14 @@ class Act011InspectionFormAdapter(
                         hmAuxTrans.get("inspection_already_ok_action_lbl")
                 }
                 //
-                if (isNewItem
-                    || dayCount == null
-                ) {
+                if (isNewItem || dayCount == null) {
                     binding.tvDayCount.visibility = View.GONE
                 } else {
                     //LUCHE - 04/11/2021 - Revisado definição de lbl e cor, pois deve se olhar apenas
                     //se data maior ou menor que 0.
                     binding.tvDayCount.apply {
                         visibility = View.VISIBLE
-                        text = if(dayCount < 0){
+                        text = if(dayCount <= 0){
                             "${hmAuxTrans["inspection_alert_days"]}: ${abs(dayCount)}"
                         }else{
                             "${hmAuxTrans["inspection_missing_days"]}: ${abs(dayCount)}"

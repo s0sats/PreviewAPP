@@ -567,18 +567,19 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
 //                1
 //        );
     }
-        /*
-            07/02/2020 - Barrionuevo - Continuar fluxo via offline quando ha falha no HTTP.
-            Decidido tratar o erro de Http no metodo processError_http.
-            Para qualquer alteracao futura, considerar o sync_required do serial
-            pois o resultado da consulta de serial online atropela o serial offline
+    /*
+        07/02/2020 - Barrionuevo - Continuar fluxo via offline quando ha falha no HTTP.
+        Decidido tratar o erro de Http no metodo processError_http.
+        Para qualquer alteracao futura, considerar o sync_required do serial
+        pois o resultado da consulta de serial online atropela o serial offline
 
-        */
+    */
     @Override
     protected void processError_http() {
         //Super realiza o mesmo comportamento do error_1
 //        super.processError_http();
         progressDialog.dismiss();
+        ToolBox_Con.setBooleanPreference(getApplicationContext(), ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, true);
         //LUCHE - 17/03/2021 - Aplicado busca exata tb no offline
         //Nesse caso em especifico, de erro http, não faz exato
         mPresenter.offlineSerialSearch(false);

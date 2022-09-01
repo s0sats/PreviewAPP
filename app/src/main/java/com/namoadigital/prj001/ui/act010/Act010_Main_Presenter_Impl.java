@@ -16,11 +16,13 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
 import com.namoadigital.prj001.dao.GeOsDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_DeviceDao;
+import com.namoadigital.prj001.dao.MdOrderTypeDao;
 import com.namoadigital.prj001.dao.TkTicketTypeDao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GeOs;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device;
+import com.namoadigital.prj001.model.MdOrderType;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Ticket_Creation;
 import com.namoadigital.prj001.service.WSTicketCreation;
@@ -29,6 +31,7 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_004;
 import com.namoadigital.prj001.sql.GeOsSql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_Device_Sql_002;
+import com.namoadigital.prj001.sql.MdOrderTypeSql_002;
 import com.namoadigital.prj001.sql.Sql_Act010_001;
 import com.namoadigital.prj001.sql.Sql_Act010_002;
 import com.namoadigital.prj001.ui.act087.Act087Main;
@@ -52,6 +55,7 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
     private Act010_Main_View mView;
     private GE_Custom_FormDao custom_formDao;
     private GE_Custom_Form_DataDao customFormDataDao;
+    private MdOrderTypeDao orderTypeDao;
     private long product_code;
     private String serial_id;
     private String so_prefix;
@@ -63,7 +67,7 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
     private GeOsDao geOsDao;
     private TkTicketTypeDao tkTicketTypeDao;
 
-    public Act010_Main_Presenter_Impl(Context context, Act010_Main_View mView, GE_Custom_FormDao custom_formDao, GE_Custom_Form_DataDao customFormDataDao, long product_code, String serial_id, String so_prefix, String so_code, String site_code_form_param, HMAux hmAux_Trans, MD_Product_SerialDao serialDao, MD_Product_Serial_Tp_DeviceDao serial_tp_deviceDao, GeOsDao geOsDao, TkTicketTypeDao tkTicketTypeDao) {
+    public Act010_Main_Presenter_Impl(Context context, Act010_Main_View mView, GE_Custom_FormDao custom_formDao, GE_Custom_Form_DataDao customFormDataDao, long product_code, String serial_id, String so_prefix, String so_code, String site_code_form_param, HMAux hmAux_Trans, MD_Product_SerialDao serialDao, MD_Product_Serial_Tp_DeviceDao serial_tp_deviceDao, GeOsDao geOsDao, TkTicketTypeDao tkTicketTypeDao, MdOrderTypeDao mdOrderTypeDao) {
         this.context = context;
         this.mView = mView;
         this.custom_formDao = custom_formDao;
@@ -78,6 +82,7 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
         this.serialTpDeviceDao = serial_tp_deviceDao;
         this.geOsDao = geOsDao;
         this.tkTicketTypeDao = tkTicketTypeDao;
+        this.orderTypeDao = mdOrderTypeDao;
     }
 
     @Override
@@ -253,8 +258,18 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
                 "-1"
             )
         );
+        String orderTypeQuery = new MdOrderTypeSql_002(
+                ToolBox_Con.getPreference_Customer_Code(context)
+        ).toSqlQuery();
+        List<MdOrderType> orderTypeList = orderTypeDao.query(orderTypeQuery);
+        if(orderTypeList.isEmpty()){
+            mView.showAlertMsg(
+                    hmAux_Trans.get("alert_order_type_empty_ttl"),
+                    hmAux_Trans.get("alert_order_type_empty_msg"));
+        }else {
+            mView.callAct087();
+        }
         //
-        mView.callAct087();
     }
 
     /**

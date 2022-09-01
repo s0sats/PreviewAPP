@@ -177,6 +177,7 @@ public class WS_Serial_Save extends IntentService {
         );
         //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_receiving_serial_data"), "", "0");
+        ToolBox_Con.setBooleanPreference(getApplicationContext(), ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false);
         //
         TSerial_Save_Rec rec = gson.fromJson(
                 resultado,

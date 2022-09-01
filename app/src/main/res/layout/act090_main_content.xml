@@ -8,6 +8,53 @@
     tools:context=".ui.act090.Act090Main"
     tools:showIn="@layout/act090_main">
 
+
+    <LinearLayout
+        android:id="@+id/act090_exec_type_layout"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:paddingVertical="8dp"
+        android:paddingHorizontal="16dp"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/act090_exec_type_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="10dp"
+            android:src="@drawable/ic_build_black_24dp"
+            app:tint="@color/namoa_os_form_done_action_blue"
+            android:contentDescription="null" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/act090_exec_type_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Manutenção"
+                android:textAppearance="@style/TextAppearance.Material3.TitleMedium"/>
+
+            <TextView
+                android:id="@+id/act090_exec_type_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Troca"
+                android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
+                android:textColor="@color/namoa_os_form_done_action_blue"/>
+        </LinearLayout>
+
+
+    </LinearLayout>
+    
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/act090_gd_start"
         android:layout_width="wrap_content"
@@ -21,6 +68,8 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_end="16dp" />
+
+
 
     <TextView
         android:id="@+id/act090_tv_empty_list"
@@ -40,8 +89,7 @@
         android:id="@+id/act090_rv_material_list"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/act090_exec_type_layout"
         app:layout_constraintStart_toStartOf="@id/act090_gd_start"
         app:layout_constraintEnd_toEndOf="@id/act090_gd_end"
         app:layout_constraintBottom_toTopOf="@id/btn_apply_material"

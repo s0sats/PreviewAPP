@@ -811,5 +811,18 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         mPresenter.formButtonData = null
         progressDialog.dismiss()
     }
+
+    override fun processError_http() {
+        //Super realiza o mesmo comportamento do error_1
+//        super.processError_http();
+        ToolBox_Con.setBooleanPreference(
+            applicationContext,
+            ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW,
+            true
+        )
+        progressDialog.dismiss()
+        mPresenter.offlineSerialSearch()
+
+    }
 }
 

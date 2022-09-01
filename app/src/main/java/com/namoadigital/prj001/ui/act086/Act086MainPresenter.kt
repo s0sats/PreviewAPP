@@ -15,6 +15,7 @@ import com.namoadigital.prj001.model.GeOsDeviceItemHist
 import com.namoadigital.prj001.sql.GeOsDeviceItemHistSql_002
 import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_001
 import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_005
+import com.namoadigital.prj001.ui.act086.bottomsheet.Act086_BottomSheet
 import com.namoadigital.prj001.ui.act086.frg_historic.Act086HistoricFrg
 import com.namoadigital.prj001.ui.act086.frg_verification.Act086VerificationFrg
 import com.namoadigital.prj001.util.ConstantBaseApp
@@ -53,7 +54,10 @@ class Act086MainPresenter(
             "alert_unsaved_data_will_be_lost_confirm",
             "info_ttl",
             "new_check_item_ttl",
-            "check_item_ttl"
+            "check_item_ttl",
+            "fixed_lbl",
+            "change_lbl",
+            "adjust_lbl",
         )
         transList.addAll(
             Act086VerificationFrg.getFragTranslationsVars()
@@ -239,6 +243,7 @@ class Act086MainPresenter(
                 verification_instruction = null,
                 require_justify_problem = 0,
                 critical_item = 0,
+                change_adjust = 0,
                 order_seq = nextItemCheckSeq,
                 structure = 0,
                 manual_desc = null,
@@ -258,6 +263,7 @@ class Act086MainPresenter(
                 exec_photo4 = null,
                 status_answer = null,
                 has_expired_cycle = 0,
+                hide_days_in_alert = 0,
                 materialList = mutableListOf()
             )
         }
@@ -322,6 +328,7 @@ class Act086MainPresenter(
     ): Boolean {
         //Se for um dos "status de alerta", verdadeiro
         when(deviceItem.item_check_status){
+            GeOsDeviceItem.ITEM_CHECK_STATUS_FORCED,
             GeOsDeviceItem.ITEM_CHECK_STATUS_MANUAL_ALERT ,
             GeOsDeviceItem.ITEM_CHECK_STATUS_MEASURE_ALERT ,
             GeOsDeviceItem.ITEM_CHECK_STATUS_PROJECTED_DATE_REACHED ,

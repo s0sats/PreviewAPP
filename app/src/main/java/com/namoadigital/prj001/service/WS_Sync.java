@@ -457,7 +457,12 @@ public class WS_Sync extends IntentService {
                 gson.toJson(env),
                 connection_timeout
         );
-
+        /**
+         *  BARRIONUEVO 2022-08-23
+         *  Ao retornar do servidor com sucesso setar a preferencia de fluxo offline para false.
+         */
+        ToolBox_Con.setBooleanPreference(getApplicationContext(), ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false);
+        //
         TSync_Rec rec = gson.fromJson(
                 resultado,
                 TSync_Rec.class

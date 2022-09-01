@@ -5,13 +5,12 @@ import android.content.DialogInterface
 import android.content.Intent
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
+import com.namoadigital.prj001.dao.GeOsDao
 import com.namoadigital.prj001.dao.GeOsDeviceItemDao
 import com.namoadigital.prj001.dao.MD_All_ProductDao
 import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_ItemDao
-import com.namoadigital.prj001.model.Act086MaterialItem
-import com.namoadigital.prj001.model.GeOsDeviceItem
-import com.namoadigital.prj001.model.GeOsDeviceMaterial
-import com.namoadigital.prj001.model.toUiMaterialItem
+import com.namoadigital.prj001.model.*
+import com.namoadigital.prj001.sql.GeOsSql_001
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.io.File
@@ -21,6 +20,7 @@ class Act086VerificationFrgPresenter(
     private val context: Context,
     private val mView: Act086VerificationFrgContract.I_View,
     private val hmAuxTrans: HMAux,
+    private val geOsDao: GeOsDao,
     private val deviceItemDao: GeOsDeviceItemDao,
     private val mdProductSerialTpDeviceItemDao: MD_Product_Serial_Tp_Device_ItemDao
 ): Act086VerificationFrgContract.I_Presenter {
@@ -187,6 +187,7 @@ class Act086VerificationFrgPresenter(
     }
 
     override fun deleteManualItem(geOsDeviceItem: GeOsDeviceItem) {
+
         val daoObjReturn = deviceItemDao.removeFull(geOsDeviceItem)
         if(!daoObjReturn.hasError()){
             mView.leaveWithoutSave()
@@ -199,11 +200,6 @@ class Act086VerificationFrgPresenter(
                 }
             )
         }
-    }
-
-    override fun isCycleExpired(geOsDeviceItem: GeOsDeviceItem): Boolean {
-        return geOsDeviceItem.has_expired_cycle == 1 && !geOsDeviceItem.item_check_status.equals(
-            GeOsDeviceItem.ITEM_CHECK_STATUS_FORCED);
     }
 
     override fun hasMaterialPlanned(geOsDeviceItem: GeOsDeviceItem): Boolean {
@@ -225,6 +221,15 @@ class Act086VerificationFrgPresenter(
         }?.let {
             resetMaterialPlannedMutableInfo(it)
         }
+    }
+
+    override fun getFormattedLastMeasureInfo(
+        lastFixed: Float,
+        measureValueSufix: String?
+    ): String {
+        return "${ToolBox_Inf.convertFloatToBigDecimalString(
+            lastFixed,true
+        )}${if(measureValueSufix != null) " ".plus(measureValueSufix) else ""}"
     }
 
     /**
@@ -249,4 +254,30 @@ class Act086VerificationFrgPresenter(
     override fun deleteOldPhoto(prefixPhoto: String){
         ToolBox_Inf.deleteFileListExceptionSafe(ConstantBaseApp.CACHE_PATH_PHOTO,prefixPhoto)
     }
+
+    override fun getMaxMeasureValue(geOsDeviceItem: GeOsDeviceItem):Float{
+        val geOs = geOsDao.getByString(
+            GeOsSql_001(
+                geOsDeviceItem.customer_code,
+                geOsDeviceItem.custom_form_type,
+                geOsDeviceItem.custom_form_code,
+                geOsDeviceItem.custom_form_version,
+                geOsDeviceItem.custom_form_data
+            ).toSqlQuery()
+        )
+        return geOs?.maxMeasureValue()?:0f
+    }
+    override fun getGeOs(geOsDeviceItem: GeOsDeviceItem):GeOs{
+        val geOs = geOsDao.getByString(
+            GeOsSql_001(
+                geOsDeviceItem.customer_code,
+                geOsDeviceItem.custom_form_type,
+                geOsDeviceItem.custom_form_code,
+                geOsDeviceItem.custom_form_version,
+                geOsDeviceItem.custom_form_data
+            ).toSqlQuery()
+        )
+        return geOs!!
+    }
+
 }

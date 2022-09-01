@@ -31,11 +31,13 @@ import com.namoadigital.prj001.model.MyActionFilterParam;
 import com.namoadigital.prj001.model.Sync_Checklist;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
+import com.namoadigital.prj001.receiver.WBR_Product_Serial_Structure;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Search_Not_Focus;
+import com.namoadigital.prj001.service.WS_Product_Serial_Structure;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
@@ -282,7 +284,8 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
                 if(checkSyncChecklistV2()){
                     defineFlow();
                 }else{
-                    if (ToolBox_Con.isOnline(context)) {
+                    if (ToolBox_Con.isOnline(context)
+                    && !ToolBox_Con.getBooleanPreferencesByKey(context, ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false)) {
                         executeSyncProcess();
                     }else {
                         //LUCHE - 25/06/2021
@@ -893,6 +896,29 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     }
 
     /**
+     * Valida se serial existe e possui estrutura
+     * @return
+     */
+    @Override
+    public boolean checkSerialStructureNeed() {
+        MD_Product_Serial serial = mView.getMdProductSerial();
+        //
+        if(serial != null && serial.getHas_item_check() == 1){
+            ArrayList<MD_Product_Serial_Tp_Device> serialTpDevices = (ArrayList<MD_Product_Serial_Tp_Device>)
+                    serialTpDeviceDao.query(
+                            new MD_Product_Serial_Tp_Device_Sql_002(
+                                    serial.getCustomer_code(),
+                                    serial.getProduct_code(),
+                                    serial.getSerial_code()
+                            ).toSqlQuery()
+                    );
+            //
+            return serialTpDevices.size() == 0;
+        }
+        return false;
+    }
+
+    /**
      * LUCHE - 25/06/2021
      * <p></p>
      * Metodo que faz a validação do fluxo do form off hand, verificando se o produto ja teve form
@@ -912,7 +938,8 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         if(checkSyncChecklistV2()){
             mView.callAct009(context);
         }else{
-            if(ToolBox_Con.isOnline(context)){
+            if(ToolBox_Con.isOnline(context)
+            && !ToolBox_Con.getBooleanPreferencesByKey(context, ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false)){
                 executeSyncProcess();
             }else{
                 if(hasAnyOtherFormAvailable()){
@@ -1038,4 +1065,32 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         return  act081Bundle.getString(TK_TicketDao.TICKET_ID, "")
                 +" - "+ act081Bundle.getString(TK_Ticket_StepDao.STEP_DESC, "");
     }
+
+    @Override
+    public void callWsSerialStructure(MD_Product_Serial productSerial) {
+        //
+        if (ToolBox_Con.isOnline(context)
+        && !ToolBox_Con.getBooleanPreferencesByKey(context, ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false)) {
+            //
+            mView.setWsProcess(WS_Product_Serial_Structure.class.getName());
+            //
+            mView.showPD(
+                    hmAux_Trans.get("progress_serial_structure_ttl"),
+                    hmAux_Trans.get("progress_serial_structure_msg")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_Product_Serial_Structure.class);
+            Bundle bundle = new Bundle();
+            bundle.putLong(MD_Product_SerialDao.CUSTOMER_CODE, productSerial.getCustomer_code());
+            bundle.putLong(MD_Product_SerialDao.PRODUCT_CODE, productSerial.getProduct_code());
+            bundle.putLong(MD_Product_SerialDao.SERIAL_CODE, productSerial.getSerial_code());
+            bundle.putInt(MD_Product_SerialDao.SCN_ITEM_CHECK, productSerial.getScn_item_check());
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        }
+        //
+    }
+
 }

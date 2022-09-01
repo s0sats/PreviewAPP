@@ -1959,13 +1959,17 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         }else if(wsProcess.equals(WS_Product_Serial_Structure.class.getName())){
             wsProcess = "";
             progressDialog.dismiss();
-            StepForm stepForm = (StepForm) sources.get(lastPositionClicked);
-            mPresenter.defineAfterFormSyncProcess(mTicket, stepForm, false);
-            lastPositionClicked =-1;
+            processSerialStructure();
         }else{
             wsProcess = "";
             progressDialog.dismiss();
         }
+    }
+
+    private void processSerialStructure() {
+        StepForm stepForm = (StepForm) sources.get(lastPositionClicked);
+        mPresenter.defineAfterFormSyncProcess(mTicket, stepForm, false);
+        lastPositionClicked =-1;
     }
 
 
@@ -2035,6 +2039,16 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         preventSyncLoop = true;
         //LUCHE - 01/09/2020
         updateTicketData();
+    }
+
+    @Override
+    protected void processError_http() {
+//        super.processError_http();
+        progressDialog.dismiss();
+        if (wsProcess.equals(WS_Product_Serial_Structure.class.getName())) {
+            ToolBox_Con.setBooleanPreference(getApplicationContext(), ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, true);
+            processSerialStructure();
+        }
     }
 
     //TRATA SESSION_NOT_FOUND

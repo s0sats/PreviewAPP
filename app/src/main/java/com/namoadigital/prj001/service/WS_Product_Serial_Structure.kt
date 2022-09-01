@@ -3,6 +3,7 @@ package com.namoadigital.prj001.service
 import android.app.IntentService
 import android.content.Intent
 import com.google.gson.GsonBuilder
+import com.namoa_digital.namoa_library.util.ConstantBase
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.dao.MD_Product_SerialDao
@@ -14,7 +15,6 @@ import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
-import java.util.*
 
 class WS_Product_Serial_Structure : IntentService("WS_Product_Serial_Structure") {
 
@@ -81,7 +81,24 @@ class WS_Product_Serial_Structure : IntentService("WS_Product_Serial_Structure")
         } catch (e: Exception) {
             sb = ToolBox_Inf.wsExceptionTreatment(applicationContext, e)
             ToolBox_Inf.registerException(javaClass.name, e)
-            ToolBox_Inf.sendBCStatus(applicationContext, "CUSTOM_ERROR", sb.toString(), "", "0")
+            //
+            if (ToolBox_Con.isHttpError(e)) {
+                ToolBox_Inf.sendBCStatus(
+                    applicationContext,
+                    ConstantBase.PD_TYPE_ERROR_HTTP,
+                    sb.toString(),
+                    "",
+                    "0"
+                )
+            } else {
+                ToolBox_Inf.sendBCStatus(
+                    applicationContext,
+                    ConstantBase.PD_TYPE_ERROR_1,
+                    sb.toString(),
+                    "",
+                    "0"
+                )
+            }
         } finally {
             WBR_Product_Serial_Structure.completeWakefulIntent(intent)
         }

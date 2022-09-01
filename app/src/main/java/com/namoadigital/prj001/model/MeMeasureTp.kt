@@ -24,12 +24,14 @@ class MeMeasureTp(
 ) {
 
     fun isMeasureRestrictionInvalid(
+        bypassMinValidation: Boolean,
         measureValue: Float,
         lastMeasureValue: Float?,
         lastMeasureDate: String?,
         measureDate: String?
     ): Boolean{
         return validateMeasureRestriction(
+            bypassMinValidation,
             measureValue,
             lastMeasureValue,
             lastMeasureDate,
@@ -39,6 +41,7 @@ class MeMeasureTp(
 
 
     fun validateMeasureRestriction(
+        bypassMinValidation: Boolean,
         measureValue: Float,
         lastMeasureValue: Float?,
         lastMeasureDate: String?,
@@ -46,21 +49,24 @@ class MeMeasureTp(
     ): MeasureFF.MeasureValidationReturn {
          return when (this.restrictionType) {
             RESTRICTION_TYPE_VALUE -> isMeasureRestrictionValueValid(
+                bypassMinValidation,
                 measureValue,
                 lastMeasureValue
             )
             RESTRICTION_TYPE_VALUE_BY_DAY -> isMeasureRestrictionValueByDayValid(
+                bypassMinValidation,
                 measureValue,
                 lastMeasureValue,
                 lastMeasureDate,
                 measureDate
             )
-            RESTRICTION_TYPE_MIN_MAX -> isMeasureRestrictionMinMaxValid(measureValue)
+            RESTRICTION_TYPE_MIN_MAX -> isMeasureRestrictionMinMaxValid(bypassMinValidation, measureValue)
             else -> MeasureFF.MeasureValidationReturn(true)
         }
     }
 
     private fun isMeasureRestrictionValueValid(
+        bypassMinValidation: Boolean,
         typedMeasure: Float,
         lastMeasureValue: Float?
     ): MeasureFF.MeasureValidationReturn {
@@ -76,7 +82,7 @@ class MeMeasureTp(
                 null
             }
             //
-            return validateValues(minConsider, typedMeasure, maxConsider)
+            return validateValues(bypassMinValidation, minConsider, typedMeasure, maxConsider)
             //
 //            if (minConsider != null && maxConsider != null) {
 //                return minConsider.compareTo(typedMeasure) <= 0 && maxConsider.compareTo(
@@ -95,6 +101,7 @@ class MeMeasureTp(
     }
 
     private fun isMeasureRestrictionValueByDayValid(
+        bypassMinValidation: Boolean,
         typedMeasure: Float,
         lastMeasureValue: Float?,
         lastMeasureDate: String?,
@@ -103,7 +110,7 @@ class MeMeasureTp(
         if (lastMeasureValue != null && lastMeasureDate != null) {
             //Como considera a data e inicio para calculo, se ela for invalida, o value by day tb será, pois não há como calcular.
             measureDate?.let {
-                if (!isValidStartDate(lastMeasureDate, measureDate)) {
+                if (!isValidStartDate(lastMeasureDate, measureDate) && !bypassMinValidation) {
                     return MeasureFF.MeasureValidationReturn(false, null)
                 }
                 val valPerDay = getDiffBetweenDatesInFloatDays(lastMeasureDate!!, measureDate!!)
@@ -120,7 +127,7 @@ class MeMeasureTp(
                     lastMeasureValue!! + (max * valPerDay)
                 }
                 //
-                return validateValues(minConsider, typedMeasure, maxConsider)
+                return validateValues(bypassMinValidation, minConsider, typedMeasure, maxConsider)
                 //
 //                if (minConsider != null && maxConsider != null) {
 //                    if(minConsider.compareTo(typedMeasure) <= 0 && maxConsider.compareTo(
@@ -142,11 +149,15 @@ class MeMeasureTp(
     }
 
     private fun validateValues(
+        bypassMinValidation: Boolean,
         minConsider: Float?,
         typedMeasure: Float,
         maxConsider: Float?
     ): MeasureFF.MeasureValidationReturn {
-        if (minConsider != null && typedMeasure.compareTo(minConsider) < 0) {
+        if (minConsider != null
+            && !bypassMinValidation
+            && typedMeasure.compareTo(minConsider) < 0
+        ) {
             return MeasureFF.MeasureValidationReturn(false, UNDER_VALUE_ERROR)
         }
 
@@ -177,10 +188,12 @@ class MeMeasureTp(
     }
 
     private fun isMeasureRestrictionMinMaxValid(
+        bypassMinValidation: Boolean,
         typedMeasure: Float
     ): MeasureFF.MeasureValidationReturn {
 
-        if (restrictionMin != null){
+        if (restrictionMin != null
+        && !bypassMinValidation){
             if(restrictionMin > typedMeasure){
                 return MeasureFF.MeasureValidationReturn(false, UNDER_VALUE_ERROR)
             }

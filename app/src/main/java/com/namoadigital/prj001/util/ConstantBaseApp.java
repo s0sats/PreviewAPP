@@ -471,6 +471,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String DATETIME_LAST_VALID_TIME = "DATETIME_LAST_VALID_TIME";
     public static final String DATETIME_TOLERANCE= "DATETIME_TOLERANCE";
     public static final String PREFERENCE_PIPELINE_HEADER_FORM_INFO_TOGGLE= "PREFERENCE_PIPELINE_HEADER_FORM_INFO_TOGGLE";
+    public static final String PREFERENCE_SERIAL_OFFLINE_FLOW= "PREFERENCE_SERIAL_OFFLINE_FLOW";
 
     public static final String LOGIN_USER_NFC_TMP = "login_user_nfc_tmp";
     public static final String LOGIN_CUSTOMER_CODE_TMP = "login_customer_code_tmp";
@@ -584,6 +585,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_PRJ001_PRODUCT_SERIAL_SCHEDULE_UNTIL_TODAY = "SCHEDULE_UNTIL_TODAY";
     public static final String PROFILE_PRJ001_CHECKLIST_PARAM_DONE_NEW = "DONE_NEW";
     public static final String PROFILE_PRJ001_CHECKLIST_PARAM_ITEM_CHECK_NEW = "ITEM_CHECK_NEW";
+    public static final String PROFILE_PRJ001_CHECKLIST_PARAM_ALLOW_FORM_SO_IN_THE_PAST = "ALLOW_FORM_SO_IN_THE_PAST";
     //Profile de menus PRINCIPAIS
     public static final String PROFILE_PRJ001_CHECKLIST = "PRJ001_CHECKLIST";
     public static final String PROFILE_PRJ001_AP = "PRJ001_AP";
@@ -972,4 +974,6 @@ public class ConstantBaseApp extends ConstantBase {
      * Constante para Ordernação de produtos e grupos.
      */
     public static final String DESC_FOR_SORT = "descForSort";
+
+    //Constante para replace da tradução
 }

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="12dp"
+    android:paddingStart="24dp"
+    android:paddingEnd="24dp"
+    android:paddingBottom="24dp"
+    >
+
+    <TextView
+        android:id="@+id/tv_alert_msg"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        tools:text="Troca ou ajuste"
+        android:textColor="@color/namoa_font_color_black222"
+        android:textSize="@dimen/font_size_font_16"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/tv_next_cycle_measure_lbl"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="4dp"
+        tools:text="next_cycle_measure"
+        android:textColor="@color/namoa_font_color_black222"
+        app:layout_constraintEnd_toStartOf="@+id/br_last_cycle_val"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_alert_msg" />
+
+    <TextView
+        android:id="@+id/tv_current_measure_lb"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="4dp"
+        tools:text="current_measure"
+        android:textColor="@color/namoa_font_color_black222"
+        app:layout_constraintEnd_toStartOf="@+id/br_last_cycle_val"
+        app:layout_constraintHorizontal_bias="0.666"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_next_cycle_measure_lbl" />
+
+    <TextView
+        android:id="@+id/tv_next_cycle_limit_date_lbl"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="4dp"
+        tools:text="limit_date"
+        android:textColor="@color/namoa_font_color_black222"
+        app:layout_constraintEnd_toStartOf="@+id/br_last_cycle_val"
+        app:layout_constraintHorizontal_bias="0.666"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_current_measure_lb" />
+
+    <TextView
+        android:id="@+id/tv_os_start_date_lbl"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="4dp"
+        tools:text="start_date"
+        android:textColor="@color/namoa_font_color_black222"
+        app:layout_constraintEnd_toStartOf="@+id/br_last_cycle_val"
+        app:layout_constraintHorizontal_bias="0.666"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_next_cycle_limit_date_lbl" />
+
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/br_last_cycle_val"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="left"
+        app:constraint_referenced_ids="tv_next_cycle_measure_val,tv_current_measure_val, tv_next_cycle_limit_date_val"/>
+
+    <TextView
+        android:id="@+id/tv_next_cycle_measure_val"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        tools:text="1500 h"
+        android:textColor="@color/namoa_font_color_black222"
+        android:textSize="@dimen/font_size_font_16"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_next_cycle_measure_lbl"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_next_cycle_measure_lbl"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/tv_current_measure_val"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        tools:text="1500 h"
+        android:textColor="@color/namoa_font_color_black222"
+        android:textSize="@dimen/font_size_font_16"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_current_measure_lb"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_current_measure_lb"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/tv_next_cycle_limit_date_val"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        tools:text="00/00/0000"
+        android:textColor="@color/namoa_font_color_black222"
+        android:textSize="@dimen/font_size_font_16"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_next_cycle_limit_date_lbl"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_next_cycle_limit_date_lbl"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/tv_os_start_date_val"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        tools:text="00/00/0000"
+        android:textColor="@color/namoa_font_color_black222"
+        android:textSize="@dimen/font_size_font_16"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_os_start_date_lbl"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_os_start_date_lbl"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/gp_measure"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="tv_next_cycle_measure_lbl, tv_next_cycle_measure_val, tv_current_measure_lb, tv_current_measure_val"/>
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/gp_limit_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="tv_next_cycle_limit_date_lbl, tv_next_cycle_limit_date_val, tv_os_start_date_lbl, tv_os_start_date_val"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -58,7 +58,8 @@ class GeOsDeviceItemCreation_Sql_001(
                         null ${GeOsDeviceItemDao.EXEC_PHOTO3},
                         null ${GeOsDeviceItemDao.EXEC_PHOTO4},
                         null ${GeOsDeviceItemDao.STATUS_ANSWER},
-                        0 ${GeOsDeviceItemDao.HAS_EXPIRED_CYCLE}
+                        0 ${GeOsDeviceItemDao.HAS_EXPIRED_CYCLE},
+                        0 ${GeOsDeviceItemDao.HIDE_DAYS_IN_ALERT}
                     FROM
                         ${MD_Product_Serial_Tp_Device_ItemDao.TABLE} si,
                         ${MdItemCheckDao.TABLE} i

@@ -170,6 +170,7 @@
         <item name="iconTint">@color/padrao_WHITE</item>
         <item name="android:textColor">@color/padrao_WHITE</item>
         <item name="iconSize">18dp</item>
+        <item name="android:paddingHorizontal">15dp</item>
     </style>
 
     <style name="NamoaMaterialButtonFilledGreen" parent="Widget.Material3.Button">

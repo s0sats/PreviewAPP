@@ -1777,6 +1777,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                     if( ticketCtrl.getForm() != null
                         && ticketCtrl.getForm().getIs_so() == 1
                         && ToolBox_Con.isOnline(context)
+                        && !ToolBox_Con.getBooleanPreferencesByKey(context, ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false)
                     ){
                         callWsSerialStructure(
                             ticketCtrl.getCustomer_code(),
