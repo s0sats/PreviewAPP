@@ -30,61 +30,6 @@ class Act091_Presenter constructor(
         )
     }
 
-    private val soPackExpressPacksLocalDao by lazy {
-        SoPackExpressPacksLocalDao(
-            context,
-            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-            Constant.DB_VERSION_CUSTOM
-        )
-    }
-
-    private val soPackExpressServicesLocalDao by lazy {
-        SoPackExpressServicesLocalDao(
-            context,
-            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-            Constant.DB_VERSION_CUSTOM
-        )
-    }
-
-    private val mdSiteDao by lazy {
-        MD_SiteDao(
-            context,
-            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-            Constant.DB_VERSION_CUSTOM
-        )
-    }
-
-    private val zoneDao by lazy {
-        MD_Site_ZoneDao(
-            context,
-            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-            Constant.DB_VERSION_CUSTOM
-        )
-    }
-
-    private val mdOperationDao by lazy {
-        MD_OperationDao(
-            context,
-            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-            Constant.DB_VERSION_CUSTOM
-        )
-    }
-
-    private val mdProductDao by lazy {
-        MD_ProductDao(
-            context,
-            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-            Constant.DB_VERSION_CUSTOM
-        )
-    }
-
-    private val mSo_pack_express: SO_Pack_Express by lazy {
-        bundle.getSerializable(Constant.PARAM_KEY_TYPE_SO_EXPRESS) as SO_Pack_Express
-    }
-
-    private val serial_id by lazy {
-        bundle.getString(Constant.MAIN_MD_PRODUCT_SERIAL_ID)
-    }
     private val site_code by lazy {
         ToolBox_Con.getPreference_Site_Code(context).toLong()
     }
