@@ -153,8 +153,7 @@ class Act091_BottomSheet : BottomSheetDialogFragment(){
             //
 
             binding.onState(BottomState.HasPermissionShowPrice(
-                ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_SHOW_SERVICE_PRICE)
-                    || contentItemHeader.manual_price == 1
+                showPrice() || contentItemHeader.manual_price == 1
             ))
             //
             binding.onState(BottomState.ShowDelete(showDelete))
