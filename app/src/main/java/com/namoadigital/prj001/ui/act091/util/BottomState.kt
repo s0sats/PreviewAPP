@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act091.util
 
 import android.annotation.SuppressLint
+import android.view.View
 import com.google.android.material.textfield.TextInputLayout
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.R
@@ -8,20 +9,22 @@ import com.namoadigital.prj001.databinding.Act091BottomSheetBinding
 import com.namoadigital.prj001.model.SoPackExpressPacksLocal
 import com.namoadigital.prj001.util.ToolBox_Inf
 
-sealed class BottomEvent {
+sealed class BottomState {
 
-    data class changePriceColor(val value: Boolean, val hmAux: HMAux) : BottomEvent()
-    data class changeButtonLessQtyColor(val value: Boolean) : BottomEvent()
-    data class changeStatePrice(val value: Boolean) : BottomEvent()
-    data class OnUpdateBottomSheet(val itemHeader: SoPackExpressPacksLocal, val hmAux: HMAux) : BottomEvent()
+    data class ChangePriceColor(val value: Boolean, val hmAux: HMAux) : BottomState()
+    data class ChangeButtonLessQtyColor(val value: Boolean) : BottomState()
+    data class ChangeStatePrice(val value: Boolean) : BottomState()
+    data class OnUpdateBottomSheet(val itemHeader: SoPackExpressPacksLocal, val hmAux: HMAux) : BottomState()
+    data class HasPermissionShowPrice(val hasPermission: Boolean) : BottomState()
+    data class ShowDelete(val show: Boolean) : BottomState()
 }
 
 
 @SuppressLint("UseCompatLoadingForColorStateLists", "UseCompatLoadingForDrawables", "ResourceType")
-fun Act091BottomSheetBinding.onEvent(state: BottomEvent){
+fun Act091BottomSheetBinding.onState(state: BottomState){
 
     when(state){
-        is BottomEvent.changePriceColor -> {
+        is BottomState.ChangePriceColor -> {
             this.act091BottomSheetOk.isEnabled = state.value
             if(state.value){
                 act091BottomSheetTextLayoutPrice.changeColorTextLayout(R.color.namoa_light_blue)
@@ -33,15 +36,15 @@ fun Act091BottomSheetBinding.onEvent(state: BottomEvent){
             }
         }
 
-        is BottomEvent.changeButtonLessQtyColor -> {
+        is BottomState.ChangeButtonLessQtyColor -> {
             this.act091QtyBindings.act091BottomSheetLess.isEnabled = state.value
         }
 
-        is BottomEvent.changeStatePrice -> {
+        is BottomState.ChangeStatePrice -> {
             this.act091BottomSheetPrice.isEnabled = state.value
         }
 
-        is BottomEvent.OnUpdateBottomSheet -> {
+        is BottomState.OnUpdateBottomSheet -> {
             var total = 0.0
             val item = state.itemHeader
             act091QtyBindings.act091BottomSheetQty.setText("${item.qty}")
@@ -51,14 +54,13 @@ fun Act091BottomSheetBinding.onEvent(state: BottomEvent){
                 act091BottomSheetTextLayoutPrice.helperText = "${state.hmAux["services_below_lbl"]}"
 
                 item.serviceList.forEach { obj ->
-                    if (obj.price == null) {
+                    obj.price?.let {
+                        total += it
+                        act091BottomSheetOk.isEnabled = true
+                    } ?: let {
                         act091BottomSheetTextLayoutPrice.placeholderText = "${state.hmAux["incomplete_placeholder"]}"
                         act091BottomSheetPrice.setText("")
                         act091BottomSheetOk.isEnabled = false
-                        return
-                    } else {
-                        total += obj.price!!
-                        act091BottomSheetOk.isEnabled = true
                     }
                 }
                 act091BottomSheetOk.isEnabled = true
@@ -72,6 +74,18 @@ fun Act091BottomSheetBinding.onEvent(state: BottomEvent){
                 }
                 act091BottomSheetTextLayoutPrice.isHelperTextEnabled = true
                 act091BottomSheetTextLayoutPrice.helperText = "${state.hmAux["required_lbl"]}"
+            }
+        }
+
+        is BottomState.HasPermissionShowPrice -> {
+            if(state.hasPermission){
+                act091BottomSheetTextLayoutPrice.visibility = View.VISIBLE
+            }
+        }
+
+        is BottomState.ShowDelete -> {
+            if(state.show){
+                act091BottomSheetDelete.visibility = View.VISIBLE
             }
         }
     }

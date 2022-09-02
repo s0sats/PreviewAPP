@@ -81,7 +81,8 @@
                     app:layout_constraintEnd_toStartOf="@+id/act091_Qty_Bindings"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:placeholderText="Inserir Preço">
+                    app:placeholderText="Inserir Preço"
+                    android:visibility="invisible">
 
                     <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                         android:id="@+id/act091_bottom_sheet_price"

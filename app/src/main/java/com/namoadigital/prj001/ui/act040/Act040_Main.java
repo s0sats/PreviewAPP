@@ -97,13 +97,13 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     private String bundle_billing_info3 = "";
     private long bundle_express_tmp = -1;
     private boolean hasServiceAdded = false;
-    private String bundle_category_price_code = "";
-    private String bundle_contract_code = "";
-    private String bundle_product_code = "";
-    private ArrayList<HMAux> wsAuxResult = new ArrayList<>();
+    private final String bundle_category_price_code = "";
+    private final String bundle_contract_code = "";
+    private final String bundle_product_code = "";
+    private final ArrayList<HMAux> wsAuxResult = new ArrayList<>();
     private boolean exitProcess = false;
     public static final String LABEL_TRANS_OS_EXPRESS= "lbl_type_service_order_express";
-    private ArrayList<MKEditTextNM> trackingFields = new ArrayList<>();
+    private final ArrayList<MKEditTextNM> trackingFields = new ArrayList<>();
 
     private Act040MainContentBinding binding;
     private Act040SOExpressPackServicesAdapter mAdapter;
@@ -598,7 +598,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                     if(hasServiceAdded){
                         binding.svMain.post(new Runnable() {
                             public void run() {
-                                binding.svMain.fullScroll(binding.svMain.FOCUS_DOWN);
+                                binding.svMain.fullScroll(View.FOCUS_DOWN);
                             }
                         });
                     }
@@ -636,21 +636,18 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         Gson gson = new Gson();
 
         Act091_BottomSheet packServicesEditFragment = Act091_BottomSheet.Companion.getInstance(gson.toJson(soPackExpressPacksLocal), true, position);
-        packServicesEditFragment.setOnAddServices(new Function1<SoPackExpressPacksLocal, Unit>() {
-            @Override
-            public Unit invoke(SoPackExpressPacksLocal item) {
-                mPresenter.updateExpressPackage(
-                        item,
-                        mSo_pack_express.getCustomer_code(),
-                        mSo_pack_express.getProduct_code(),
-                        mSo_pack_express.getSite_code(),
-                        mSo_pack_express.getOperation_code(),
-                        mSo_pack_express.getExpress_code(),
-                        (int) bundle_express_tmp,
-                        position
-                );
-                return null;
-            }
+        packServicesEditFragment.setOnAddServices(item -> {
+            mPresenter.updateExpressPackage(
+                    item,
+                    mSo_pack_express.getCustomer_code(),
+                    mSo_pack_express.getProduct_code(),
+                    mSo_pack_express.getSite_code(),
+                    mSo_pack_express.getOperation_code(),
+                    mSo_pack_express.getExpress_code(),
+                    (int) bundle_express_tmp,
+                    position
+            );
+            return null;
         });
         //
         packServicesEditFragment.setOnDeleteServices(new Function1<SoPackExpressPacksLocal, Unit>() {

@@ -23,15 +23,14 @@ import com.namoadigital.prj001.adapter.onHide
 import com.namoadigital.prj001.adapter.onShow
 import com.namoadigital.prj001.databinding.Act091BottomSheetBinding
 import com.namoadigital.prj001.model.SoPackExpressPacksLocal
-import com.namoadigital.prj001.ui.act091.util.BottomEvent
-import com.namoadigital.prj001.ui.act091.util.onEvent
+import com.namoadigital.prj001.ui.act091.util.BottomState
+import com.namoadigital.prj001.ui.act091.util.onState
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 
-class Act091_BottomSheet constructor(
-) : BottomSheetDialogFragment(){
+class Act091_BottomSheet : BottomSheetDialogFragment(){
     var onAddServices: (contentItemHeader: SoPackExpressPacksLocal) -> Unit = { _ -> }
     var onDeleteServices: (contentItemHeader: SoPackExpressPacksLocal) -> Unit = { _ -> }
     private val binding: Act091BottomSheetBinding by lazy {
@@ -70,11 +69,7 @@ class Act091_BottomSheet constructor(
             contentItemHeader.serviceList,
             contentItemHeader.type_ps,
             hmAux,
-            ToolBox_Inf.profileExists(
-                context,
-                Constant.PROFILE_MENU_SO,
-                Constant.PROFILE_MENU_SO_SHOW_SERVICE_PRICE
-            ),
+            showPrice(),
             ::onUpdateList
         )
     }
@@ -105,6 +100,11 @@ class Act091_BottomSheet constructor(
         initAction()
     }
 
+    private fun showPrice() = ToolBox_Inf.profileExists(
+        context,
+        Constant.PROFILE_MENU_SO,
+        Constant.PROFILE_MENU_SO_SHOW_SERVICE_PRICE
+    )
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val bottomSheet = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
@@ -119,23 +119,15 @@ class Act091_BottomSheet constructor(
         dialog.dismiss()
     }
 
-    private fun initSetup(){
-        val mResource_Code = ToolBox_Inf.getResourceCode(
-            context,
-            ConstantBaseApp.APP_MODULE,
-            ConstantBaseApp.FRG_PACKAGE_SERVICE_SO_EXPESS
-        )
-
-    }
 
     private fun initLabels(){
         with(binding){
             contentItemHeader.let {
                 act091BottomSheetTitle.text = it.pack_service_desc_full
-                onEvent(BottomEvent.changeButtonLessQtyColor(it.qty != 1))
-                onEvent(BottomEvent.changePriceColor(it.manual_price == 0, hmAux))
-                onEvent(BottomEvent.changeStatePrice(it.manual_price != 0))
-                onEvent(BottomEvent.OnUpdateBottomSheet(it, hmAux))
+                onState(BottomState.ChangeButtonLessQtyColor(it.qty != 1))
+                onState(BottomState.ChangePriceColor(it.manual_price == 0, hmAux))
+                onState(BottomState.ChangeStatePrice(it.manual_price != 0))
+                onState(BottomState.OnUpdateBottomSheet(it, hmAux))
                 act091BottomSheetComment.setText(it.comments)
             }
 
@@ -158,22 +150,14 @@ class Act091_BottomSheet constructor(
             act091QtyBindings.act091BottomSheetQtyText.text = hmAux["qty_lbl"]
             act091BottomSheetOk.text = hmAux["sys_alert_btn_ok"]
             act091BottomSheetCancel.text = hmAux["sys_alert_btn_cancel"]
+            //
 
-            act091BottomSheetDelete.visibility = View.GONE
+            binding.onState(BottomState.HasPermissionShowPrice(
+                ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_SHOW_SERVICE_PRICE)
+                    || contentItemHeader.manual_price == 1
+            ))
             //
-            if(ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_SHOW_SERVICE_PRICE)
-                || contentItemHeader.manual_price == 1
-            ){
-                act091BottomSheetTextLayoutPrice.visibility = View.VISIBLE
-            }else{
-                act091BottomSheetTextLayoutPrice.visibility = View.INVISIBLE
-            }
-            //
-            if(showDelete){
-                act091BottomSheetDelete.visibility = View.VISIBLE
-            }else{
-                act091BottomSheetDelete.visibility = View.GONE
-            }
+            binding.onState(BottomState.ShowDelete(showDelete))
         }
     }
 
@@ -200,7 +184,7 @@ class Act091_BottomSheet constructor(
                 }
 
                 override fun reportTextChange(char: String?, p1: Boolean) {
-                    binding.onEvent(BottomEvent.changeButtonLessQtyColor(char?.toInt()!! >= 2))
+                    binding.onState(BottomState.ChangeButtonLessQtyColor(char?.toInt()!! >= 2))
                 }
 
             })
@@ -214,7 +198,7 @@ class Act091_BottomSheet constructor(
                 }
 
                 override fun onTextChanged(char: CharSequence?, start: Int, before: Int, count: Int) {
-                    onEvent(BottomEvent.changePriceColor(char?.isNotEmpty()!!, hmAux))
+                    onState(BottomState.ChangePriceColor(char?.isNotEmpty()!!, hmAux))
                 }
 
                 override fun afterTextChanged(editable: Editable) {
@@ -296,7 +280,7 @@ class Act091_BottomSheet constructor(
 
     @SuppressLint("NotifyDataSetChanged")
     private fun onUpdateList() {
-        binding.onEvent(BottomEvent.OnUpdateBottomSheet(contentItemHeader, hmAux))
+        binding.onState(BottomState.OnUpdateBottomSheet(contentItemHeader, hmAux))
     }
 
     companion object {

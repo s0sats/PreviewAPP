@@ -6,11 +6,11 @@ import android.view.View
 import android.view.WindowManager
 import com.google.gson.Gson
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
+import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.Base_Activity
 import com.namoadigital.prj001.adapter.Act091_Item_Adapter
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao
 import com.namoadigital.prj001.databinding.Act091MainBinding
-import com.namoadigital.prj001.model.SOExpressItemHeader
 import com.namoadigital.prj001.model.SO_Pack_Express_Local
 import com.namoadigital.prj001.model.SoPackExpressPacksLocal
 import com.namoadigital.prj001.model.TSO_Service_Search_Obj
@@ -44,7 +44,7 @@ class Act091_Main : Base_Activity(), Act091_Contract.I_View {
         )
     }
 
-    private val soPackExpressLocal: SO_Pack_Express_Local by lazy {
+    private val soPackExpressLocal: SO_Pack_Express_Local? by lazy {
         mPresenter.getSO_Pack_Express_Local()
     }
 
@@ -95,16 +95,25 @@ class Act091_Main : Base_Activity(), Act091_Contract.I_View {
             item.qty = 1
         }
 
-        val itemHeader = SoPackExpressPacksLocal(context, item,  soPackExpressLocal, -1)
-
-        Act091_BottomSheet.getInstance(Gson().toJson(itemHeader), false).apply {
-            onAddServices = ::onAddServicesClick
-        }.show(supportFragmentManager, "bottomSheet")
+        soPackExpressLocal?.let {
+            Act091_BottomSheet.getInstance(Gson().toJson(it), false).apply {
+                onAddServices = ::onAddServicesClick
+            }.show(supportFragmentManager, "bottomSheet")
+        } ?: ToolBox.alertMSG(
+            context,
+            "Erro",
+            "Ocorreu um erro durante a passagem de parâmetros, volte para tela de OS Expressa e tente novamente.",
+            {dialog, _ ->
+                dialog.dismiss()
+            }, 0
+        )
     }
 
-    fun onAddServicesClick(item: SoPackExpressPacksLocal){
+    private fun onAddServicesClick(item: SoPackExpressPacksLocal){
         mPresenter.savePackServices(item)
     }
+
+
 
     private fun initVars(){
 
