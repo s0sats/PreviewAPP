@@ -100,9 +100,6 @@ class Act091_Presenter constructor(
     private val express_code by lazy {
         bundle.getString(SO_Pack_ExpressDao.EXPRESS_CODE)
     }
-    private val partner_code by lazy {
-        bundle.getLong(MD_PartnerDao.PARTNER_CODE)
-    }
     //
     private val express_tmp by lazy{
         bundle.getLong(SO_Pack_Express_LocalDao.EXPRESS_TMP)
