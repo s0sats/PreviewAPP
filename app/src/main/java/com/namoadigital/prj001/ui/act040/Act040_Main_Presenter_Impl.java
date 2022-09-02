@@ -325,6 +325,8 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
         so_pack_express_local.setExpress_tmp(nTemp);
         if(md_partner != null){
             so_pack_express_local.setPartner_code(md_partner.getPartner_code());
+        }else{
+            so_pack_express_local.setPartner_code(0);
         }
         so_pack_express_local.setSerial_id(serial);
         so_pack_express_local.setStatus(Constant.SO_EXPRESS_STATUS_NEW);
