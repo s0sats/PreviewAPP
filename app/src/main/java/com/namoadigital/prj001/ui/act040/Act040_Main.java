@@ -1006,9 +1006,6 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         bundle.putInt(SO_Pack_ExpressDao.CATEGORY_PRICE_CODE, mSo_pack_express.getCategory_price_code());
         bundle.putString(Constant.MAIN_MD_PRODUCT_SERIAL_ID, binding.mketSerial.getText().toString().trim());
         bundle.putString(SO_Pack_ExpressDao.EXPRESS_CODE, mSo_pack_express.getExpress_code());
-        if(md_partner != null) {
-            bundle.putLong(MD_PartnerDao.PARTNER_CODE, md_partner.getPartner_code());
-        }
         bundle.putLong(SO_Pack_Express_LocalDao.EXPRESS_TMP, bundle_express_tmp);
         bundle.putSerializable(Constant.PARAM_KEY_TYPE_SO_EXPRESS, mSo_pack_express);
         //

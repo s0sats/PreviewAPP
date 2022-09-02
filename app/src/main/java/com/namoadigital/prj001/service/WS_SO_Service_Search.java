@@ -164,8 +164,9 @@ public class WS_SO_Service_Search extends IntentService {
             String file_name = ToolBox_Inf.getExpressSOFileName(contract_code, product_code, category_price_code, site_code, operation_code);
             //Chama metodo para criar arquivo
             createJsonFile(file_name, gson.toJson(rec), Constant.SO_EXPRESS_JSON_PATH);
-            if(gson.toJson(rec) != null){
-                SoPackExpressPacksLocal servicesPacks = gson.fromJson(edit_default_package, SoPackExpressPacksLocal.class);
+
+            SoPackExpressPacksLocal servicesPacks = gson.fromJson(edit_default_package, SoPackExpressPacksLocal.class);
+            if(servicesPacks != null){
                 List<TSO_Service_Search_Obj> packageDefault = TSoServiceSearchRecKt.getPackageDefault(
                         rec,
                         "P",
