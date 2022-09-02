@@ -12,7 +12,10 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.extensions.TSoServiceSearchRecKt;
+import com.namoadigital.prj001.model.SoPackExpressPacksLocal;
 import com.namoadigital.prj001.model.TSO_Service_Search_Env;
+import com.namoadigital.prj001.model.TSO_Service_Search_Obj;
 import com.namoadigital.prj001.model.TSO_Service_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_SO_Service_Search;
 import com.namoadigital.prj001.util.Constant;
@@ -161,7 +164,24 @@ public class WS_SO_Service_Search extends IntentService {
             String file_name = ToolBox_Inf.getExpressSOFileName(contract_code, product_code, category_price_code, site_code, operation_code);
             //Chama metodo para criar arquivo
             createJsonFile(file_name, gson.toJson(rec), Constant.SO_EXPRESS_JSON_PATH);
-            ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_proccess"), new HMAux(),edit_default_package, "0");
+            if(gson.toJson(rec) != null){
+                SoPackExpressPacksLocal servicesPacks = gson.fromJson(edit_default_package, SoPackExpressPacksLocal.class);
+                List<TSO_Service_Search_Obj> packageDefault = TSoServiceSearchRecKt.getPackageDefault(
+                        rec,
+                        "P",
+                        servicesPacks.getCustomer_code(),
+                        servicesPacks.getPrice_list_code(),
+                        servicesPacks.getPack_code(),
+                        servicesPacks.getPack_service_desc()
+                );
+                if(packageDefault!= null && packageDefault.size() == 1) {
+                    ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_proccess"), new HMAux(), gson.toJson(packageDefault.get(0)), "0");
+                }else{
+                    ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_proccess"), new HMAux(), edit_default_package, "0");
+                }
+            } else {
+                ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_proccess"), new HMAux(), edit_default_package, "0");
+            }
         }
     }
 
