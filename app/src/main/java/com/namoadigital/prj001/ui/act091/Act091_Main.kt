@@ -40,9 +40,16 @@ class Act091_Main : Base_Activity(), Act091_Contract.I_View {
         Act091_Item_Adapter(
             mPresenter.getListData(),
             ::notifyFilterApplied,
-            ::openBottomSheet
+            ::openBottomSheet,
+            showPrice()
         )
     }
+
+    private fun showPrice() = ToolBox_Inf.profileExists(
+        context,
+        Constant.PROFILE_MENU_SO,
+        Constant.PROFILE_MENU_SO_SHOW_SERVICE_PRICE
+    )
 
     private val soPackExpressLocal: SO_Pack_Express_Local? by lazy {
         mPresenter.getSO_Pack_Express_Local()
@@ -96,9 +103,11 @@ class Act091_Main : Base_Activity(), Act091_Contract.I_View {
         }
 
         soPackExpressLocal?.let {
-            Act091_BottomSheet.getInstance(Gson().toJson(it), false).apply {
-                onAddServices = ::onAddServicesClick
-            }.show(supportFragmentManager, "bottomSheet")
+            SoPackExpressPacksLocal(context, item, it, -1).let { local ->
+                Act091_BottomSheet.getInstance(Gson().toJson(local), false).apply {
+                    onAddServices = ::onAddServicesClick
+                }.show(supportFragmentManager, "bottomSheet")
+            }
         } ?: ToolBox.alertMSG(
             context,
             "Erro",

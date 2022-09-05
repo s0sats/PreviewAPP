@@ -4,10 +4,16 @@ import android.content.Context
 import android.os.Bundle
 import com.google.gson.GsonBuilder
 import com.namoa_digital.namoa_library.util.HMAux
-import com.namoa_digital.namoa_library.util.ToolBox
-import com.namoadigital.prj001.dao.*
-import com.namoadigital.prj001.model.*
-import com.namoadigital.prj001.sql.*
+import com.namoadigital.prj001.dao.MD_PartnerDao
+import com.namoadigital.prj001.dao.SO_Pack_ExpressDao
+import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao
+import com.namoadigital.prj001.model.SO_Pack_Express_Local
+import com.namoadigital.prj001.model.SoPackExpressPacksLocal
+import com.namoadigital.prj001.model.TSO_Service_Search_Obj
+import com.namoadigital.prj001.model.TSO_Service_Search_Rec
+import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_005
+import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_001
+import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_006
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -109,13 +115,13 @@ class Act091_Presenter constructor(
             it.express_code = express_code.toString()
             it.express_tmp = express_tmp
         }
-        val expressLocal = getSO_Pack_Express_Local()
 
         getSO_Pack_Express_Local()?.let {
             it.packsLocals.add(contentItemHeader)
             so_Pack_Express_LocalDao.addUpdate(it)
             mView.callAct040(it.express_tmp)
         }
+        //ADICIONAR DIALOG
     }
 
     override fun getSO_Pack_Express_Local(): SO_Pack_Express_Local? =

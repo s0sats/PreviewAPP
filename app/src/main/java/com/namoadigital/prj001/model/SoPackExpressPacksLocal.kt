@@ -16,12 +16,12 @@ data class SoPackExpressPacksLocal(
     val pack_service_desc:String,
     val pack_service_desc_full:String,
     val manual_price: Int = 0,
-    var price:Double? =0.0,
+    var price:Double?,
     var qty:Int,
     val type_ps:String,
     var comments:String?,
     @SerializedName("service")
-    val serviceList: MutableList<SoPackExpressServicesLocal> = mutableListOf()
+    var serviceList: MutableList<SoPackExpressServicesLocal> = mutableListOf()
 ) {
     constructor(
         context: Context,
@@ -78,7 +78,7 @@ data class SoPackExpressPacksLocal(
                 -1,
                 it.service_desc,
                 it.service_desc_full,
-                it.price?:0.0,
+                it.price,
                 it.manual_price,
                 it.qty,
                 it.comment

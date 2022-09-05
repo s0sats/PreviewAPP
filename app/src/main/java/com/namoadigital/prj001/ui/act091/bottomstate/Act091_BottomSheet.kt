@@ -6,7 +6,6 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.text.method.DigitsKeyListener
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +21,7 @@ import com.namoadigital.prj001.adapter.Act091_BottomSheet_Item_Adapter
 import com.namoadigital.prj001.adapter.onHide
 import com.namoadigital.prj001.adapter.onShow
 import com.namoadigital.prj001.databinding.Act091BottomSheetBinding
+import com.namoadigital.prj001.extensions.MaskOnlyNumber
 import com.namoadigital.prj001.model.SoPackExpressPacksLocal
 import com.namoadigital.prj001.ui.act091.util.BottomState
 import com.namoadigital.prj001.ui.act091.util.onState
@@ -76,11 +76,12 @@ class Act091_BottomSheet : BottomSheetDialogFragment(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         arguments?.let {
             contentItemHeader = Gson().fromJson(it.getString(SERVICE_ITEM), SoPackExpressPacksLocal::class.java)
             showDelete = it.getBoolean(UPDATE_PACKAGE_SERVICES, false)
         }
+
+
     }
 
     override fun onCreateView(
@@ -129,6 +130,10 @@ class Act091_BottomSheet : BottomSheetDialogFragment(){
                 onState(BottomState.ChangeStatePrice(it.manual_price != 0))
                 onState(BottomState.OnUpdateBottomSheet(it, hmAux))
                 act091BottomSheetComment.setText(it.comments)
+                if(it.type_ps == "S")
+                    it.price?.let { price ->
+                        act091BottomSheetPrice.setText(ToolBox_Inf.formatDoublePriceToScreen(price).toString())
+                    }
             }
 
         }
@@ -139,12 +144,13 @@ class Act091_BottomSheet : BottomSheetDialogFragment(){
     private fun initVars(){
         initLabels()
 
-
         with(binding){
             act091BottomSheetTextLayoutComment.hint = hmAux["comment_hint"]
             act091BottomSheetTextLayoutComment.placeholderText = hmAux["insert_comment_placeholder"]
             act091BottomSheetTextLayoutPrice.hint = hmAux["price_hint"]
             act091BottomSheetTextLayoutPrice.placeholderText = hmAux["insert_price_placeholder"]
+            act091BottomSheetTextLayoutPrice.placeholderTextAppearance = root.resources.getColor(R.color.namoa_color_gray_9)
+/*            act091BottomSheetTextLayoutPrice.placeholderTextColor = root.resources.getColor(R.color.namoa_color_gray_9)*/
 
             act091BottomSheetSeeMore.text = "${hmAux["services_included_lbl"]}:"
             act091QtyBindings.act091BottomSheetQtyText.text = hmAux["qty_lbl"]
@@ -153,73 +159,82 @@ class Act091_BottomSheet : BottomSheetDialogFragment(){
             //
 
             binding.onState(BottomState.HasPermissionShowPrice(
-                showPrice() || contentItemHeader.manual_price == 1
+                !showPrice() && contentItemHeader.manual_price == 0 && contentItemHeader.serviceList.isEmpty()
             ))
             //
             binding.onState(BottomState.ShowDelete(showDelete))
         }
     }
 
-    private fun initAction(){
-        with(binding.act091QtyBindings){
+    private fun initAction() {
+        with(binding.act091QtyBindings) {
             //adicionar quantidade
-            act091BottomSheetMost.setOnClickListener {
-                val currentValue = act091BottomSheetQty.text.toString().toInt() + 1
-                act091BottomSheetQty.setText(currentValue.toString())
+            act091BottomSheetMost.setOnClickListener { view ->
+                var currentValue = 0
+                act091BottomSheetQty.text?.takeIf {
+                    it.isNotEmpty()
+                }?.let { text ->
+                    currentValue = text.toString().toInt() + 1
+                    act091BottomSheetQty.setText(currentValue.toString())
+                } ?: let {
+                    currentValue += 1
+                    act091BottomSheetQty.setText(currentValue.toString())
+                }
                 contentItemHeader.qty = currentValue
             }
 
             //remover quantidade
-            act091BottomSheetLess.setOnClickListener{
-                val currentValue = act091BottomSheetQty.text.toString().toInt() -1
-                act091BottomSheetQty.setText(currentValue.toString())
+            act091BottomSheetLess.setOnClickListener { view ->
+                var currentValue = 0
+                act091BottomSheetQty.text?.takeIf {
+                    it.isNotEmpty()
+                }?.let { text ->
+                    currentValue = text.toString().toInt() - 1
+                    act091BottomSheetQty.setText(currentValue.toString())
+                } ?: let {
+                    currentValue -= 1
+                    act091BottomSheetQty.setText(currentValue.toString())
+                }
                 contentItemHeader.qty = currentValue
             }
 
             //habilita/desabilita opção de remover quantidade
-            act091BottomSheetQty.setOnReportTextChangeListner(object : MKEditTextNM.IMKEditTextChangeText {
+            act091BottomSheetQty.setOnReportTextChangeListner(object :
+                MKEditTextNM.IMKEditTextChangeText {
                 override fun reportTextChange(p0: String?) {
 
                 }
 
                 override fun reportTextChange(char: String?, p1: Boolean) {
-                    binding.onState(BottomState.ChangeButtonLessQtyColor(char?.toInt()!! >= 2))
+                    val isValid = (char?.isNotEmpty() == true) && (char.toInt() >= 2)
+                    binding.onState(BottomState.ChangeButtonLessQtyColor(isValid).also {
+                        if (it.value) {
+                            contentItemHeader.qty = char?.toInt()!!
+                        }
+                    })
                 }
-
             })
         }
 
-        with(binding){
+        with(binding) {
             //botão OK ativado quando preço do header está preenchido
-            act091BottomSheetPrice.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
-                }
-
-                override fun onTextChanged(char: CharSequence?, start: Int, before: Int, count: Int) {
-                    onState(BottomState.ChangePriceColor(char?.isNotEmpty()!!, hmAux))
-                }
-
-                override fun afterTextChanged(editable: Editable) {
-                    editable.toString().let {
-                        if (it.contains(",")) {
-                            binding.act091BottomSheetPrice.keyListener =
-                                DigitsKeyListener.getInstance("0123456789")
-                        } else {
-                            binding.act091BottomSheetPrice.keyListener =
-                                DigitsKeyListener.getInstance("0123456789,")
-                        }
-
-                        if (it.isEmpty()) {
+            act091BottomSheetPrice.apply {
+                addTextChangedListener(MaskOnlyNumber(this) {
+                    if (it.isEmpty() || it == ".") {
+                        contentItemHeader.price = null
+                    } else {
+                        try {
+                            contentItemHeader.price = it.toDouble()
+                            if(contentItemHeader.serviceList.isEmpty()){
+                                onUpdateList()
+                            }
+                        }catch (e: NumberFormatException){
                             contentItemHeader.price = null
-                        } else {
-                            contentItemHeader.price = it.toString().replace(",", ".").toDouble()
                         }
                     }
-                }
-            })
-
-            act091BottomSheetComment.addTextChangedListener(object: TextWatcher{
+                })
+            }
+            act091BottomSheetComment.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(
                     s: CharSequence?,
                     start: Int,
@@ -246,7 +261,7 @@ class Act091_BottomSheet : BottomSheetDialogFragment(){
 
             act091BottomSheetOk.setOnClickListener {
 
-                if(!contentItemHeader.comments.isNullOrEmpty()){
+                if (!contentItemHeader.comments.isNullOrEmpty()) {
                     contentItemHeader.serviceList.forEach {
                         it.comments = contentItemHeader.comments
                     }
@@ -254,7 +269,7 @@ class Act091_BottomSheet : BottomSheetDialogFragment(){
                 onAddServices(contentItemHeader)
                 dismiss()
             }
-            act091BottomSheetDelete.setOnClickListener{
+            act091BottomSheetDelete.setOnClickListener {
                 onDeleteServices(contentItemHeader)
                 dismiss()
             }

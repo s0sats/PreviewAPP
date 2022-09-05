@@ -14,6 +14,7 @@ sealed class BottomState {
     data class ChangePriceColor(val value: Boolean, val hmAux: HMAux) : BottomState()
     data class ChangeButtonLessQtyColor(val value: Boolean) : BottomState()
     data class ChangeStatePrice(val value: Boolean) : BottomState()
+    data class OnUpdateService(val itemHeader: SoPackExpressPacksLocal) : BottomState()
     data class OnUpdateBottomSheet(val itemHeader: SoPackExpressPacksLocal, val hmAux: HMAux) : BottomState()
     data class HasPermissionShowPrice(val hasPermission: Boolean) : BottomState()
     data class ShowDelete(val show: Boolean) : BottomState()
@@ -25,7 +26,7 @@ fun Act091BottomSheetBinding.onState(state: BottomState){
 
     when(state){
         is BottomState.ChangePriceColor -> {
-            this.act091BottomSheetOk.isEnabled = state.value
+            act091BottomSheetOk.isEnabled = state.value
             if(state.value){
                 act091BottomSheetTextLayoutPrice.changeColorTextLayout(R.color.namoa_light_blue)
                 act091BottomSheetTextLayoutPrice.isHelperTextEnabled = false
@@ -37,11 +38,21 @@ fun Act091BottomSheetBinding.onState(state: BottomState){
         }
 
         is BottomState.ChangeButtonLessQtyColor -> {
-            this.act091QtyBindings.act091BottomSheetLess.isEnabled = state.value
+            act091QtyBindings.act091BottomSheetLess.isEnabled = state.value
         }
 
         is BottomState.ChangeStatePrice -> {
-            this.act091BottomSheetPrice.isEnabled = state.value
+            act091BottomSheetPrice.isEnabled = state.value
+        }
+
+        is BottomState.OnUpdateService -> {
+            val item = state.itemHeader
+
+            if(item.type_ps == "S"){
+                item.price?.let {
+                    act091BottomSheetPrice.setText(ToolBox_Inf.formatDoublePriceToScreen(it).toString())
+                }
+            }
         }
 
         is BottomState.OnUpdateBottomSheet -> {
@@ -52,33 +63,33 @@ fun Act091BottomSheetBinding.onState(state: BottomState){
                 act091BottomSheetPrice.isEnabled = false
                 act091BottomSheetTextLayoutPrice.isHelperTextEnabled = true
                 act091BottomSheetTextLayoutPrice.helperText = "${state.hmAux["services_below_lbl"]}"
-
-                item.serviceList.forEach { obj ->
-                    obj.price?.let {
-                        total += it
-                        act091BottomSheetOk.isEnabled = true
-                    } ?: let {
-                        act091BottomSheetTextLayoutPrice.placeholderText = "${state.hmAux["incomplete_placeholder"]}"
-                        act091BottomSheetPrice.setText("")
-                        act091BottomSheetOk.isEnabled = false
+                item.serviceList.let { service ->
+                    if (service.isNotEmpty()) {
+                        service.map { m -> m.price == null }.let { bl ->
+                            if (bl.contains(true)) {
+                                act091BottomSheetTextLayoutPrice.editText?.setText("${state.hmAux["incomplete_placeholder"]}")
+                                act091BottomSheetOk.isEnabled = false
+                            } else {
+                                service.forEach { obj ->
+                                    obj.price?.let {
+                                        total += it
+                                        act091BottomSheetOk.isEnabled = true
+                                        act091BottomSheetPrice.setText(ToolBox_Inf.formatDoublePriceToScreen(total).toString())
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
-                act091BottomSheetOk.isEnabled = true
-                act091BottomSheetPrice.setText(
-                    ToolBox_Inf.formatDoublePriceToScreen(total).toString()
-                )
             }else{
-                item.price?.let { price ->
-                    act091BottomSheetPrice.setText(ToolBox_Inf.formatDoublePriceToScreen(price).toString())
-                    return
-                }
-                act091BottomSheetTextLayoutPrice.isHelperTextEnabled = true
-                act091BottomSheetTextLayoutPrice.helperText = "${state.hmAux["required_lbl"]}"
+                onState(BottomState.ChangePriceColor(item.price != null, state.hmAux))
             }
         }
 
         is BottomState.HasPermissionShowPrice -> {
             if(state.hasPermission){
+                act091BottomSheetTextLayoutPrice.visibility = View.GONE
+            }else{
                 act091BottomSheetTextLayoutPrice.visibility = View.VISIBLE
             }
         }
@@ -96,8 +107,8 @@ fun Act091BottomSheetBinding.onState(state: BottomState){
 
 @SuppressLint("UseCompatLoadingForColorStateLists")
 fun TextInputLayout.changeColorTextLayout(color: Int = R.color.namoa_light_blue){
-    this.boxStrokeColor = resources.getColor(color)
-    this.hintTextColor = resources.getColorStateList(color)
-    this.placeholderTextColor = resources.getColorStateList(color)
+    boxStrokeColor = resources.getColor(color)
+    hintTextColor = resources.getColorStateList(color)
+    placeholderTextColor = resources.getColorStateList(color)
 
 }

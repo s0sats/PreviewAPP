@@ -3,13 +3,13 @@ package com.namoadigital.prj001.adapter
 import android.annotation.SuppressLint
 import android.text.Editable
 import android.text.TextWatcher
-import android.text.method.DigitsKeyListener
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.databinding.Act091BottomSheetListItemBinding
+import com.namoadigital.prj001.extensions.MaskOnlyNumber
 import com.namoadigital.prj001.model.SoPackExpressServicesLocal
 import com.namoadigital.prj001.ui.act091.util.BottomListEvent
 import com.namoadigital.prj001.ui.act091.util.onEvent
@@ -27,7 +27,7 @@ class Act091_BottomSheet_Item_Adapter constructor(
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-        return holder.onBinding(dataset[position])
+        return holder.onBinding(dataset[position], position)
     }
 
     override fun getItemCount() = dataset.size
@@ -37,7 +37,7 @@ class Act091_BottomSheet_Item_Adapter constructor(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         @SuppressLint("UseCompatLoadingForDrawables")
-        fun onBinding(item: SoPackExpressServicesLocal){
+        fun onBinding(item: SoPackExpressServicesLocal, position: Int){
             with(binding) {
                 setLabels(this)
                 act091BottomSheetServiceComment.setText(item.comments)
@@ -46,70 +46,53 @@ class Act091_BottomSheet_Item_Adapter constructor(
                     onEvent(BottomListEvent.stateWhenIsPackage(item, hmAux))
                 }
                 //
-                if(showPrice
-                    || item.manual_price == 1){
-                    act091BottomSheetServicePrice.visibility = View.VISIBLE
+
+
+                if(item.manual_price == 0 && !showPrice){
+                    act091BottomSheetServicePrice.visibility = View.GONE
                 }else{
-                    act091BottomSheetServicePrice.visibility = View.INVISIBLE
+                    act091BottomSheetServicePrice.visibility = View.VISIBLE
                 }
                 //
-                act091BottomSheetServicePrice.addTextChangedListener(object : TextWatcher {
-                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
-                    }
-
-                    override fun onTextChanged(char: CharSequence?, start: Int, before: Int, count: Int) {
-                        onEvent(BottomListEvent.changePriceColor(char?.isNotEmpty()!!, hmAux))
-                    }
-
-                    override fun afterTextChanged(editable: Editable) {
-                        editable.toString().let {
-                            if (it.contains(",")) {
-                                binding.act091BottomSheetServicePrice.keyListener =
-                                    DigitsKeyListener.getInstance("0123456789")
-                            } else {
-                                binding.act091BottomSheetServicePrice.keyListener =
-                                    DigitsKeyListener.getInstance("0123456789,")
-                            }
-
-                            if (it.isEmpty()) {
-                                item.price = null
-                            } else {
-                                item.price =
-                                    it.toString().replace(",", ".").toDouble()
-                            }
-                            onUpdateList()
+                act091BottomSheetServicePrice.apply {
+                    addTextChangedListener(MaskOnlyNumber(this, {
+                        onEvent(BottomListEvent.changePriceColor(it.isNotEmpty(), hmAux))
+                    },{
+                        if (it.isEmpty() || it == ".") {
+                            item.price = null
+                        } else {
+                            item.price = it.toDouble()
                         }
-                    }
-                })
-                //
-                act091BottomSheetServiceComment.addTextChangedListener(object : TextWatcher{
-                    override fun beforeTextChanged(
-                        s: CharSequence?,
-                        start: Int,
-                        count: Int,
-                        after: Int
-                    ) {
+                        onUpdateList()
 
-                    }
+                    }))
+                    act091BottomSheetServiceComment.addTextChangedListener(object : TextWatcher{
+                        override fun beforeTextChanged(
+                            s: CharSequence?,
+                            start: Int,
+                            count: Int,
+                            after: Int
+                        ) {
 
-                    override fun onTextChanged(
-                        s: CharSequence?,
-                        start: Int,
-                        before: Int,
-                        count: Int
-                    ) {
+                        }
 
-                    }
+                        override fun onTextChanged(
+                            s: CharSequence?,
+                            start: Int,
+                            before: Int,
+                            count: Int
+                        ) {
 
-                    override fun afterTextChanged(s: Editable?) {
-                       item.comments = s.toString()
-                    }
-                })
-                //
+                        }
+
+                        override fun afterTextChanged(s: Editable?) {
+                            item.comments = s.toString()
+                        }
+                    })
+                    //
+                }
             }
         }
-
 
         private fun setLabels(binding: Act091BottomSheetListItemBinding) {
             with(binding) {
@@ -122,6 +105,7 @@ class Act091_BottomSheet_Item_Adapter constructor(
                     hmAux["insert_price_placeholder"]
 
                 act091ServiceQtyBindings.act091BottomSheetQtyText.text = hmAux["qty_lbl"]
+                act091ServiceQtyBindings.act091BottomSheetQtyText.background = null
             }
         }
 
