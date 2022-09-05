@@ -23,7 +23,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -293,6 +292,10 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                 )
         );
         //
+//        if(Constant.ACT005.equals(requestingAct)){
+//            mPresenter.deleteExpressAllPackLocal();
+//        }
+        //
         mPresenter.getLastExpressInfoInSiteOper();
         //
         binding.tilPack.setHint(hmAux_Trans.get("tv_barcode_hint"));
@@ -364,7 +367,6 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                 bundle_express_tmp = bundle.getLong(SO_Pack_Express_LocalDao.EXPRESS_TMP,-1);
                 hasServiceAdded = bundle.getBoolean(HAS_SERVICE_ADDED,false);
             }
-
         } else {
             bundle_express_pack_code = "";
             bundle_partner_code = "-1";
@@ -391,6 +393,14 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         }else{
             binding.clLastOrder.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void restoreBundle_express_tmp() {
+        /*
+            Limpa variavel da PK de SO Expressa.
+         */
+        bundle_express_tmp = -1;
     }
 
     @Override
@@ -972,7 +982,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         }
     }
 
-    private void setSoPackExpressLocal() {
+    private SO_Pack_Express_Local setSoPackExpressLocal() {
         SO_Pack_Express_Local so_pack_express_local = null;
         if(bundle_express_tmp > 0) {
             so_pack_express_local = mPresenter.getExpressPackLocal(
@@ -996,6 +1006,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             );
             bundle_express_tmp = so_pack_express_local.getExpress_tmp();
         }
+        return so_pack_express_local;
     }
 
     private void callAct091() {
@@ -1180,9 +1191,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         bundle.putString(SO_Pack_Express_LocalDao.BILLING_ADD_INF1_VALUE,binding.mketAddInfo1.getText().toString().trim());
         bundle.putString(SO_Pack_Express_LocalDao.BILLING_ADD_INF2_VALUE,binding.mketAddInfo2.getText().toString().trim());
         bundle.putString(SO_Pack_Express_LocalDao.BILLING_ADD_INF3_VALUE,binding.mketAddInfo3.getText().toString().trim());
-        if(bundle_express_tmp >0){
-            bundle.putLong(SO_Pack_Express_LocalDao.EXPRESS_TMP,bundle_express_tmp);
-        }
+        bundle.putLong(SO_Pack_Express_LocalDao.EXPRESS_TMP,bundle_express_tmp);
     }
 
     @Override
@@ -1303,14 +1312,14 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             mPresenter.executeSO_Pack_Express_Local();
         }else if(wsProcess.equals(WS_SO_Service_Search.class.getName())){
             progressDialog.dismiss();
-            Gson gson = new GsonBuilder().create();
+            SO_Pack_Express_Local so_pack_express_local = setSoPackExpressLocal();
             if(mLink.isEmpty()){
-                setSoPackExpressLocal();
                 callAct091();
             }else{
-                SoPackExpressPacksLocal soPackExpressPacksLocal = gson.fromJson(mLink, SoPackExpressPacksLocal.class);
-                if(soPackExpressPacksLocal!=null){
-                    callBottomSheet(soPackExpressPacksLocal, 0);
+                try {
+                    callBottomSheet(so_pack_express_local.getPacksLocals().get(0), 0);
+                }catch (NullPointerException e){
+                    e.printStackTrace();
                 }
             }
         }

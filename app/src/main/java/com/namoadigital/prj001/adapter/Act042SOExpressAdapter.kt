@@ -80,14 +80,16 @@ class Act042SOExpressAdapter (
         private fun getPackServiceFormatted(context: Context, soPackExpressLocal: SO_Pack_Express_Local): String? {
             var serviceList = ""
             if(soPackExpressLocal.packsLocals.size > 0) {
-                serviceList = " ${context.getString(R.string.unicode_bullet)} ${soPackExpressLocal.packsLocals[0].pack_service_desc_full}"
+                serviceList = " ${context.getString(R.string.unicode_bullet)} ${soPackExpressLocal.packsLocals[0].qty}x ${soPackExpressLocal.packsLocals[0].pack_service_desc_full}"
                 if (soPackExpressLocal.packsLocals.size == 1){
                     return serviceList
                 }
                 //
-                for (i in 1 .. soPackExpressLocal.packsLocals.size -1) {
+                for (i in 1 until soPackExpressLocal.packsLocals.size) {
                     serviceList += "\n ${context.getString(R.string.unicode_bullet)} ${soPackExpressLocal.packsLocals[i].pack_service_desc_full}"
                 }
+            }else{
+                serviceList += " ${context.getString(R.string.unicode_bullet)} 1x ${soPackExpressLocal.so_desc}"
             }
             return serviceList
         }

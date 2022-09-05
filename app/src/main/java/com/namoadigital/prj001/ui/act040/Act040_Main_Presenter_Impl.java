@@ -249,6 +249,8 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
         //
         so_pack_express_localDao.addUpdate(so_pack_express_local);
         //
+        mView.restoreBundle_express_tmp();
+        //
         executeSerialSave();
     }
 
@@ -866,8 +868,7 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
         bundle.putInt(SM_SODao.OPERATION_CODE, (int) mSo_pack_express.getOperation_code());
         bundle.putInt(WS_SO_Service_Search.WS_EXPRESS_MODE, 1);
         if(soPackExpressPacksLocal != null){
-            Gson gson = new GsonBuilder().create();
-            bundle.putString(WS_SO_Service_Search.EDIT_DEFAULT_PACKAGE, gson.toJson(soPackExpressPacksLocal));
+            bundle.putString(WS_SO_Service_Search.EDIT_DEFAULT_PACKAGE, "1");
         }
         //
         mIntent.putExtras(bundle);
