@@ -1,20 +1,22 @@
 package com.namoadigital.prj001.ui.act091.util
 
+import android.annotation.SuppressLint
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.adapter.onHide
 import com.namoadigital.prj001.databinding.Act091BottomSheetListItemBinding
-import com.namoadigital.prj001.model.SOExpressItemDetail
 import com.namoadigital.prj001.model.SoPackExpressServicesLocal
-import com.namoadigital.prj001.model.TSO_Service_Search_Detail_Obj
 import com.namoadigital.prj001.util.ToolBox_Inf
 
 sealed class BottomListEvent {
 
     data class changePriceColor(val value: Boolean, val hmAux: HMAux) : BottomListEvent()
-    data class stateWhenIsPackage(val item: SoPackExpressServicesLocal, val hmAux: HMAux) : BottomListEvent()
+    data class stateWhenIsPackage(val item: SoPackExpressServicesLocal, val hmAux: HMAux) : BottomListEvent() {
+        val manual_price = item.manual_price == 1
+    }
 }
 
+@SuppressLint("ResourceType", "UseCompatLoadingForColorStateLists")
 fun Act091BottomSheetListItemBinding.onEvent(event: BottomListEvent){
 
     when(event){
@@ -33,19 +35,26 @@ fun Act091BottomSheetListItemBinding.onEvent(event: BottomListEvent){
 
         is BottomListEvent.stateWhenIsPackage -> {
 
-            onEvent(BottomListEvent.changePriceColor(event.item.manual_price == 0, event.hmAux))
+            val item = event.item
+            onEvent(BottomListEvent.changePriceColor(!event.manual_price, event.hmAux))
 
-            act091ServiceQtyBindings.act091BottomSheetLess.onHide()
-            act091ServiceQtyBindings.act091BottomSheetMost.onHide()
-
-            event.item.price?.let {
-                act091BottomSheetServicePrice.setText(ToolBox_Inf.formatDoublePriceToScreen(it))
-                act091BottomSheetServicePrice.isEnabled = false
+            with(act091ServiceQtyBindings){
+                act091BottomSheetLess.onHide()
+                act091BottomSheetMost.onHide()
+                act091BottomSheetQty.setText("${event.item.qty}")
+                act091BottomSheetQty.background = null
+                act091BottomSheetQty.setTextColor(root.resources.getColor(R.color.namoa_color_gray_8))
+                act091BottomSheetQty.isEnabled = false
             }
-            act091ServiceQtyBindings.act091BottomSheetQty.setText("${event.item.qty}")
-            act091ServiceQtyBindings.act091BottomSheetQty.isEnabled = false
-
-
+            act091BottomSheetServiceTextLayoutPrice.placeholderTextColor = root.resources.getColorStateList(R.color.namoa_color_gray_9)
+            act091BottomSheetServicePrice.apply {
+                if(event.manual_price && item.price == null){
+                    setText("")
+                }else{
+                    setText(ToolBox_Inf.formatDoublePriceToScreen(item.price).toString())
+                }
+                isEnabled = event.manual_price
+            }
         }
 
 

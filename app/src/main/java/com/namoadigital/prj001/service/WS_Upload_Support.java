@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
@@ -35,9 +36,9 @@ public class WS_Upload_Support extends IntentService {
 
 
     private HMAux hmAux_Trans = new HMAux();
-    private String mModule_Code = Constant.APP_MODULE;
+    private final String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";
-    private String mResource_Name = "ws_upload_support";
+    private final String mResource_Name = "ws_upload_support";
 
     public WS_Upload_Support() {
         super("WS_Upload_Support");
@@ -149,6 +150,16 @@ public class WS_Upload_Support extends IntentService {
             ToolBox_Inf.copyFile(db_file,dest);
         }
 
+        //Lista OS-Express
+        File[] files_express = ToolBox_Inf.getListOfFiles_v4(Constant.SO_EXPRESS_JSON_PATH, ".json");
+        File express_list = new File(Constant.SUPPORT_PATH, "os_express_list.txt");
+
+        if(express_list.exists()){
+            express_list.delete();
+        }
+        for(File f : files_express){
+            ToolBox_Inf.writeIn(f.getName().concat("\n"), express_list);
+        }
         //Lista pdfs
         File[] files_pdf = ToolBox_Inf.getListOfFiles_v4(Constant.CACHE_PATH,".pdf");
         File pdf_list = new File(Constant.SUPPORT_PATH,"pdf_list.txt");
@@ -271,10 +282,7 @@ public class WS_Upload_Support extends IntentService {
         File[] files = fileList.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String filename) {
-                if (filename.endsWith(prefix)) {
-                    return true;
-                }
-                return false;
+                return filename.endsWith(prefix);
             }
         });
         //

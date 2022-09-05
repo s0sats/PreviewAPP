@@ -3,9 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:paddingTop="15dp"
-    android:paddingHorizontal="20dp"
+    android:paddingTop="12dp"
+    android:paddingHorizontal="14dp"
     android:orientation="vertical"
     android:id="@+id/act091_list_item">
 
@@ -25,7 +24,7 @@
 
         <View
             android:id="@+id/view"
-            android:layout_width="240dp"
+            android:layout_width="160dp"
             android:layout_height="1dp"
             android:layout_marginBottom="0.5dp"
             android:background="@android:color/darker_gray"
@@ -37,13 +36,11 @@
         <ProgressBar
             android:id="@+id/act091_list_progress"
             style="@android:style/Widget.Material.ProgressBar.Horizontal"
-            android:layout_width="240dp"
+            android:layout_width="160dp"
             android:layout_height="wrap_content"
             android:progress="100"
             android:progressTint="@color/namoa_light_blue"
             android:background="@android:color/transparent"
-            android:layout_marginTop="5dp"
-
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -60,12 +57,13 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/act091_list_progress" />
 
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="14dp"
         android:background="@android:color/darker_gray"
         />
 

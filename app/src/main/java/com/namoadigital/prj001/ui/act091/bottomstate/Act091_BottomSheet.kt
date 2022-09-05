@@ -6,7 +6,6 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.text.method.DigitsKeyListener
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,16 +21,16 @@ import com.namoadigital.prj001.adapter.Act091_BottomSheet_Item_Adapter
 import com.namoadigital.prj001.adapter.onHide
 import com.namoadigital.prj001.adapter.onShow
 import com.namoadigital.prj001.databinding.Act091BottomSheetBinding
+import com.namoadigital.prj001.extensions.MaskOnlyNumber
 import com.namoadigital.prj001.model.SoPackExpressPacksLocal
-import com.namoadigital.prj001.ui.act091.util.BottomEvent
-import com.namoadigital.prj001.ui.act091.util.onEvent
+import com.namoadigital.prj001.ui.act091.util.BottomState
+import com.namoadigital.prj001.ui.act091.util.onState
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 
-class Act091_BottomSheet constructor(
-) : BottomSheetDialogFragment(){
+class Act091_BottomSheet : BottomSheetDialogFragment(){
     var onAddServices: (contentItemHeader: SoPackExpressPacksLocal) -> Unit = { _ -> }
     var onDeleteServices: (contentItemHeader: SoPackExpressPacksLocal) -> Unit = { _ -> }
     private val binding: Act091BottomSheetBinding by lazy {
@@ -70,22 +69,19 @@ class Act091_BottomSheet constructor(
             contentItemHeader.serviceList,
             contentItemHeader.type_ps,
             hmAux,
-            ToolBox_Inf.profileExists(
-                context,
-                Constant.PROFILE_MENU_SO,
-                Constant.PROFILE_MENU_SO_SHOW_SERVICE_PRICE
-            ),
+            showPrice(),
             ::onUpdateList
         )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         arguments?.let {
             contentItemHeader = Gson().fromJson(it.getString(SERVICE_ITEM), SoPackExpressPacksLocal::class.java)
             showDelete = it.getBoolean(UPDATE_PACKAGE_SERVICES, false)
         }
+
+
     }
 
     override fun onCreateView(
@@ -105,6 +101,11 @@ class Act091_BottomSheet constructor(
         initAction()
     }
 
+    private fun showPrice() = ToolBox_Inf.profileExists(
+        context,
+        Constant.PROFILE_MENU_SO,
+        Constant.PROFILE_MENU_SO_SHOW_SERVICE_PRICE
+    )
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val bottomSheet = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
@@ -119,24 +120,20 @@ class Act091_BottomSheet constructor(
         dialog.dismiss()
     }
 
-    private fun initSetup(){
-        val mResource_Code = ToolBox_Inf.getResourceCode(
-            context,
-            ConstantBaseApp.APP_MODULE,
-            ConstantBaseApp.FRG_PACKAGE_SERVICE_SO_EXPESS
-        )
-
-    }
 
     private fun initLabels(){
         with(binding){
             contentItemHeader.let {
                 act091BottomSheetTitle.text = it.pack_service_desc_full
-                onEvent(BottomEvent.changeButtonLessQtyColor(it.qty != 1))
-                onEvent(BottomEvent.changePriceColor(it.manual_price == 0, hmAux))
-                onEvent(BottomEvent.changeStatePrice(it.manual_price != 0))
-                onEvent(BottomEvent.OnUpdateBottomSheet(it, hmAux))
+                onState(BottomState.ChangeButtonLessQtyColor(it.qty != 1))
+                onState(BottomState.ChangePriceColor(it.manual_price == 0, hmAux))
+                onState(BottomState.ChangeStatePrice(it.manual_price != 0))
+                onState(BottomState.OnUpdateBottomSheet(it, hmAux))
                 act091BottomSheetComment.setText(it.comments)
+                if(it.type_ps == "S")
+                    it.price?.let { price ->
+                        act091BottomSheetPrice.setText(ToolBox_Inf.formatDoublePriceToScreen(price).toString())
+                    }
             }
 
         }
@@ -147,96 +144,97 @@ class Act091_BottomSheet constructor(
     private fun initVars(){
         initLabels()
 
-
         with(binding){
             act091BottomSheetTextLayoutComment.hint = hmAux["comment_hint"]
             act091BottomSheetTextLayoutComment.placeholderText = hmAux["insert_comment_placeholder"]
             act091BottomSheetTextLayoutPrice.hint = hmAux["price_hint"]
             act091BottomSheetTextLayoutPrice.placeholderText = hmAux["insert_price_placeholder"]
+            act091BottomSheetTextLayoutPrice.placeholderTextAppearance = root.resources.getColor(R.color.namoa_color_gray_9)
+/*            act091BottomSheetTextLayoutPrice.placeholderTextColor = root.resources.getColor(R.color.namoa_color_gray_9)*/
 
             act091BottomSheetSeeMore.text = "${hmAux["services_included_lbl"]}:"
             act091QtyBindings.act091BottomSheetQtyText.text = hmAux["qty_lbl"]
             act091BottomSheetOk.text = hmAux["sys_alert_btn_ok"]
             act091BottomSheetCancel.text = hmAux["sys_alert_btn_cancel"]
+            //
 
-            act091BottomSheetDelete.visibility = View.GONE
+            binding.onState(BottomState.HasPermissionShowPrice(
+                !showPrice() && contentItemHeader.manual_price == 0 && contentItemHeader.serviceList.isEmpty()
+            ))
             //
-            if(ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_SHOW_SERVICE_PRICE)
-                || contentItemHeader.manual_price == 1
-            ){
-                act091BottomSheetTextLayoutPrice.visibility = View.VISIBLE
-            }else{
-                act091BottomSheetTextLayoutPrice.visibility = View.INVISIBLE
-            }
-            //
-            if(showDelete){
-                act091BottomSheetDelete.visibility = View.VISIBLE
-            }else{
-                act091BottomSheetDelete.visibility = View.GONE
-            }
+            binding.onState(BottomState.ShowDelete(showDelete))
         }
     }
 
-    private fun initAction(){
-        with(binding.act091QtyBindings){
+    private fun initAction() {
+        with(binding.act091QtyBindings) {
             //adicionar quantidade
-            act091BottomSheetMost.setOnClickListener {
-                val currentValue = act091BottomSheetQty.text.toString().toInt() + 1
-                act091BottomSheetQty.setText(currentValue.toString())
+            act091BottomSheetMost.setOnClickListener { view ->
+                var currentValue = 0
+                act091BottomSheetQty.text?.takeIf {
+                    it.isNotEmpty()
+                }?.let { text ->
+                    currentValue = text.toString().toInt() + 1
+                    act091BottomSheetQty.setText(currentValue.toString())
+                } ?: let {
+                    currentValue += 1
+                    act091BottomSheetQty.setText(currentValue.toString())
+                }
                 contentItemHeader.qty = currentValue
             }
 
             //remover quantidade
-            act091BottomSheetLess.setOnClickListener{
-                val currentValue = act091BottomSheetQty.text.toString().toInt() -1
-                act091BottomSheetQty.setText(currentValue.toString())
+            act091BottomSheetLess.setOnClickListener { view ->
+                var currentValue = 0
+                act091BottomSheetQty.text?.takeIf {
+                    it.isNotEmpty()
+                }?.let { text ->
+                    currentValue = text.toString().toInt() - 1
+                    act091BottomSheetQty.setText(currentValue.toString())
+                } ?: let {
+                    currentValue -= 1
+                    act091BottomSheetQty.setText(currentValue.toString())
+                }
                 contentItemHeader.qty = currentValue
             }
 
             //habilita/desabilita opção de remover quantidade
-            act091BottomSheetQty.setOnReportTextChangeListner(object : MKEditTextNM.IMKEditTextChangeText {
+            act091BottomSheetQty.setOnReportTextChangeListner(object :
+                MKEditTextNM.IMKEditTextChangeText {
                 override fun reportTextChange(p0: String?) {
 
                 }
 
                 override fun reportTextChange(char: String?, p1: Boolean) {
-                    binding.onEvent(BottomEvent.changeButtonLessQtyColor(char?.toInt()!! >= 2))
+                    val isValid = (char?.isNotEmpty() == true) && (char.toInt() >= 2)
+                    binding.onState(BottomState.ChangeButtonLessQtyColor(isValid).also {
+                        if (it.value) {
+                            contentItemHeader.qty = char?.toInt()!!
+                        }
+                    })
                 }
-
             })
         }
 
-        with(binding){
+        with(binding) {
             //botão OK ativado quando preço do header está preenchido
-            act091BottomSheetPrice.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
-                }
-
-                override fun onTextChanged(char: CharSequence?, start: Int, before: Int, count: Int) {
-                    onEvent(BottomEvent.changePriceColor(char?.isNotEmpty()!!, hmAux))
-                }
-
-                override fun afterTextChanged(editable: Editable) {
-                    editable.toString().let {
-                        if (it.contains(",")) {
-                            binding.act091BottomSheetPrice.keyListener =
-                                DigitsKeyListener.getInstance("0123456789")
-                        } else {
-                            binding.act091BottomSheetPrice.keyListener =
-                                DigitsKeyListener.getInstance("0123456789,")
-                        }
-
-                        if (it.isEmpty()) {
+            act091BottomSheetPrice.apply {
+                addTextChangedListener(MaskOnlyNumber(this) {
+                    if (it.isEmpty() || it == ".") {
+                        contentItemHeader.price = null
+                    } else {
+                        try {
+                            contentItemHeader.price = it.toDouble()
+                            if(contentItemHeader.serviceList.isEmpty()){
+                                onUpdateList()
+                            }
+                        }catch (e: NumberFormatException){
                             contentItemHeader.price = null
-                        } else {
-                            contentItemHeader.price = it.toString().replace(",", ".").toDouble()
                         }
                     }
-                }
-            })
-
-            act091BottomSheetComment.addTextChangedListener(object: TextWatcher{
+                })
+            }
+            act091BottomSheetComment.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(
                     s: CharSequence?,
                     start: Int,
@@ -263,7 +261,7 @@ class Act091_BottomSheet constructor(
 
             act091BottomSheetOk.setOnClickListener {
 
-                if(!contentItemHeader.comments.isNullOrEmpty()){
+                if (!contentItemHeader.comments.isNullOrEmpty()) {
                     contentItemHeader.serviceList.forEach {
                         it.comments = contentItemHeader.comments
                     }
@@ -271,7 +269,7 @@ class Act091_BottomSheet constructor(
                 onAddServices(contentItemHeader)
                 dismiss()
             }
-            act091BottomSheetDelete.setOnClickListener{
+            act091BottomSheetDelete.setOnClickListener {
                 onDeleteServices(contentItemHeader)
                 dismiss()
             }
@@ -296,7 +294,7 @@ class Act091_BottomSheet constructor(
 
     @SuppressLint("NotifyDataSetChanged")
     private fun onUpdateList() {
-        binding.onEvent(BottomEvent.OnUpdateBottomSheet(contentItemHeader, hmAux))
+        binding.onState(BottomState.OnUpdateBottomSheet(contentItemHeader, hmAux))
     }
 
     companion object {

@@ -5,8 +5,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.namoa_digital.namoa_library.util.HMAux
-import com.namoadigital.prj001.R
-import com.namoadigital.prj001.databinding.Act011InspectionQuestionFormCellBinding
 import com.namoadigital.prj001.databinding.CellAddPackServicesItemBinding
 import com.namoadigital.prj001.model.MainTagMenu
 import com.namoadigital.prj001.model.SoPackExpressPacksLocal
@@ -69,24 +67,28 @@ class Act040SOExpressPackServicesAdapter(
             }
         }
 
-        private fun hasAllCommentsNullOrEmpty(serviceList: MutableList<SoPackExpressServicesLocal>): Boolean {
-            for (services in serviceList) {
-                services.comments?.let {
-                    if(it.isNotEmpty()){
-                        return false;
+        private fun hasAllCommentsNullOrEmpty(serviceList: MutableList<SoPackExpressServicesLocal>?): Boolean {
+            serviceList?.let {
+                for (services in serviceList) {
+                    services.comments?.let {
+                        if(it.isNotEmpty()){
+                            return false
+                        }
                     }
                 }
+                return true
             }
-            return true;
+            return false
         }
 
         private fun hasMultipleComments(packServices: SoPackExpressPacksLocal): Boolean {
             var count = 0
-            for (soPackExpressServicesLocal in packServices.serviceList) {
-                if (count > 1){
+            packServices.serviceList.forEach { pack ->
+                if(count > 1){
                     return true
                 }
-                if (!soPackExpressServicesLocal.comments.isNullOrEmpty()){
+
+                if(!pack.comments.isNullOrEmpty()){
                     count++
                 }
             }
@@ -100,9 +102,9 @@ class Act040SOExpressPackServicesAdapter(
         private fun getTotalPrice(packServices: SoPackExpressPacksLocal): String {
             if(showServicePrice) {
                 var price = packServices.price?: 0.0
-                for (soPackExpressServicesLocal in packServices.serviceList) {
+                /*for (soPackExpressServicesLocal in packServices.serviceList) {
 //                    price += soPackExpressServicesLocal.price?: 0.0
-                }
+                }*/
                 return  String.format("%.2f", price)
             }
             return ""

@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
@@ -15,13 +16,14 @@ class Act091_Item_Adapter constructor(
     private val dataset: List<TSO_Service_Search_Obj>,
     private val notifyFilterApplied: (Int) -> Unit,
     private val openBottomSheet: (TSO_Service_Search_Obj) -> Unit,
+    private val showPrice: Boolean,
     ) : RecyclerView.Adapter<Act091_Item_Adapter.ItemViewHolder>(), Filterable{
 
     var filterDataSet = dataset.toMutableList()
     val mFilter = ServiceFilter()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-        return ItemViewHolder(Act091ListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        return ItemViewHolder(Act091ListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false), showPrice)
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
@@ -38,15 +40,26 @@ class Act091_Item_Adapter constructor(
 
     class ItemViewHolder constructor(
         private val binding: Act091ListItemBinding,
+        private val showPrice: Boolean,
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun onBinding(item: TSO_Service_Search_Obj?){
+        fun onBinding(item: TSO_Service_Search_Obj?) {
             with(binding) {
                 item?.let {
                     act091ListTitle.text = it.pack_service_desc_full
                     act091ListProgress.max = it.rating
                     act091ListProgress.progress = it.rating_ref.toInt()
-                    act091ListPrice.text = formatDoublePriceToScreen(it.price)
+                    act091ListPrice.apply {
+                        if (showPrice) {
+                            text = if(it.manual_price == 1){
+                                "(Especifica preço)"
+                            }else{
+                                formatDoublePriceToScreen(it.price)
+                            }
+                        } else {
+                            visibility = View.GONE
+                        }
+                    }
                 }
             }
         }
@@ -56,7 +69,7 @@ class Act091_Item_Adapter constructor(
         return mFilter
     }
 
-    inner class ServiceFilter() : Filter() {
+    inner class ServiceFilter : Filter() {
         override fun performFiltering(char: CharSequence?): FilterResults {
             var temp = mutableListOf<TSO_Service_Search_Obj>()
             var charString = ToolBox.AccentMapper(char.toString().lowercase(Locale.getDefault()))

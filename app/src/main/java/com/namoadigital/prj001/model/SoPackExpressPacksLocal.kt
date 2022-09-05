@@ -2,12 +2,6 @@ package com.namoadigital.prj001.model
 
 import android.content.Context
 import com.google.gson.annotations.SerializedName
-import com.namoadigital.prj001.dao.SoPackExpressPacksLocalDao
-import com.namoadigital.prj001.sql.SoPackExpressPacksLocalSql003
-import com.namoadigital.prj001.sql.SoPackExpressServicesLocalSql003
-import com.namoadigital.prj001.util.Constant
-import com.namoadigital.prj001.util.ToolBox_Con
-import java.util.ArrayList
 
 data class SoPackExpressPacksLocal(
     var customer_code:Long,
@@ -22,12 +16,12 @@ data class SoPackExpressPacksLocal(
     val pack_service_desc:String,
     val pack_service_desc_full:String,
     val manual_price: Int = 0,
-    var price:Double? =0.0,
+    var price:Double?,
     var qty:Int,
     val type_ps:String,
     var comments:String?,
     @SerializedName("service")
-    val serviceList: MutableList<SoPackExpressServicesLocal> = mutableListOf<SoPackExpressServicesLocal>()
+    var serviceList: MutableList<SoPackExpressServicesLocal> = mutableListOf()
 ) {
     constructor(
         context: Context,
@@ -84,7 +78,7 @@ data class SoPackExpressPacksLocal(
                 -1,
                 it.service_desc,
                 it.service_desc_full,
-                it.price?:0.0,
+                it.price,
                 it.manual_price,
                 it.qty,
                 it.comment

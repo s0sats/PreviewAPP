@@ -54,7 +54,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:mBARCODE="false"
             app:mNFC="false"
-            app:mOCR="false" />
+            app:mOCR="false"/>
 
 
         <ImageView

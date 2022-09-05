@@ -58,6 +58,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="text"
+                    android:singleLine="false"
+                    android:maxLines="10"
                     app:mBARCODE="false"
                     app:mNFC="false"
                     app:mOCR="false" />
@@ -79,17 +81,23 @@
                     app:layout_constraintEnd_toStartOf="@+id/act091_Qty_Bindings"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:placeholderText="Inserir Preço">
+                    app:placeholderText="Inserir Preço"
+                    android:visibility="visible"
+                    app:placeholderTextColor="@color/text_black"
+                    app:placeholderTextAppearance="@color/text_black">
 
-                    <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+
+                <com.namoa_digital.namoa_library.ctls.MKEditTextNMN
                         android:id="@+id/act091_bottom_sheet_price"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="number"
-                        android:digits="0123456789,"
+                        android:inputType="numberDecimal"
+                        android:digits="0123456789."
                         app:mDecimal="2"
                         android:textSize="16sp"
                         app:mBARCODE="false"
+                        app:placeholderTextColor="@color/text_black"
+                        app:placeholderTextAppearance="@color/text_black"
                         app:mInputType="number"
                         app:mNFC="false"
                         app:mOCR="false" />
@@ -130,6 +138,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:visibility="visible"
+                android:focusableInTouchMode="true"
+                android:descendantFocusability="beforeDescendants"
                 tools:listitem="@layout/act091_bottom_sheet_list_item" />
 
         </LinearLayout>
