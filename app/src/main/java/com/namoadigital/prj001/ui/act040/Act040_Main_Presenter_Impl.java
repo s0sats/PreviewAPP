@@ -249,7 +249,7 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
         //
         so_pack_express_localDao.addUpdate(so_pack_express_local);
         //
-        mView.restoreBundle_express_tmp();
+        mView.setBundle_express_tmp(-1);
         //
         executeSerialSave();
     }
@@ -307,6 +307,7 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
                             mSo_pack_express.getExpress_code()
                     ).toSqlQuery()
             ).get(SM_SO_Service_Exec_Task_File_Sql_005.NEXT_TMP));
+            mView.setBundle_express_tmp(nTemp);
         }
         //
         so_pack_express_local.setCustomer_code(mSo_pack_express.getCustomer_code());

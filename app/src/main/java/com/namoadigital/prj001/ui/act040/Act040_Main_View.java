@@ -60,5 +60,5 @@ public interface Act040_Main_View {
 
     void setLastExpressInfo(SO_Pack_Express_Local lastExpressInSiteOper);
 
-    void restoreBundle_express_tmp();
+    void setBundle_express_tmp(long bundle_express_tmp);
 }
