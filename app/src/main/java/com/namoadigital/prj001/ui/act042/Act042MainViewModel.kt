@@ -22,8 +22,7 @@ class Act042MainViewModel(val customerCode: Long, val expressLocalDao: SO_Pack_E
     suspend fun getSoExpressList(){
         withContext(Dispatchers.Default){
 
-        so_express_list.postValue(
-            expressLocalDao.query(
+            so_express_list.postValue(expressLocalDao.queryResumedPackage(
                 SO_Pack_Express_Local_Sql_009(
                     customerCode,
                     Constant.RETURN_SQL_HM_AUX

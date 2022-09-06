@@ -16,6 +16,7 @@ import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_005;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_006;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_010;
 import com.namoadigital.prj001.sql.SoPackExpressPacksLocalSql002;
+import com.namoadigital.prj001.sql.SoPackExpressPacksLocalSql004;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -395,6 +396,54 @@ public class SO_Pack_Express_LocalDao extends BaseDao implements Dao<SO_Pack_Exp
         closeDB();
 
         return so_pack_express_locals;
+    }
+
+    public List<SO_Pack_Express_Local> queryResumedPackage(String s_query) {
+        List<SO_Pack_Express_Local> so_pack_express_locals = new ArrayList<>();
+        openDB();
+
+        try {
+
+            Cursor cursor = db.rawQuery(s_query, null);
+
+            while (cursor.moveToNext()) {
+                SO_Pack_Express_Local uAux = toSO_Pack_Express_LocalMapper.map(cursor);
+                if(uAux != null){
+                    getSoPackExpressPacksResumedLocal(uAux);
+                }
+                so_pack_express_locals.add(uAux);
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        } finally {
+        }
+
+        closeDB();
+
+        return so_pack_express_locals;
+    }
+
+    private void getSoPackExpressPacksResumedLocal(SO_Pack_Express_Local so_pack_express_local) {
+        SoPackExpressPacksLocalDao soPackExpressPacksLocalDao = new SoPackExpressPacksLocalDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        List<SoPackExpressPacksLocal> packs = soPackExpressPacksLocalDao.query(
+                new SoPackExpressPacksLocalSql004(
+                        so_pack_express_local.getCustomer_code(),
+                        so_pack_express_local.getSite_code(),
+                        so_pack_express_local.getOperation_code(),
+                        so_pack_express_local.getProduct_code(),
+                        so_pack_express_local.getExpress_code(),
+                        so_pack_express_local.getExpress_tmp()
+                ).toSqlQuery()
+        );
+        //
+        so_pack_express_local.setPacksLocals(packs);
+        //
     }
 
     @Override
