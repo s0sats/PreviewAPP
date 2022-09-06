@@ -1,12 +1,11 @@
 package com.namoadigital.prj001.adapter
 
 import android.annotation.SuppressLint
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.databinding.Act091BottomSheetListItemBinding
 import com.namoadigital.prj001.extensions.MaskOnlyNumber
@@ -55,39 +54,26 @@ class Act091_BottomSheet_Item_Adapter constructor(
                 }
                 //
                 act091BottomSheetServicePrice.apply {
-                    addTextChangedListener(MaskOnlyNumber(this, {
-                        onEvent(BottomListEvent.changePriceColor(it.isNotEmpty(), hmAux))
-                    },{
+                    setOnReportTextChangeListner(MaskOnlyNumber(this) {
                         if (it.isEmpty() || it == ".") {
                             item.price = null
                         } else {
                             item.price = it.toDouble()
                         }
+                        onEvent(BottomListEvent.changePriceColor(it.isNotEmpty(), hmAux))
                         onUpdateList()
 
-                    }))
-                    act091BottomSheetServiceComment.addTextChangedListener(object : TextWatcher{
-                        override fun beforeTextChanged(
-                            s: CharSequence?,
-                            start: Int,
-                            count: Int,
-                            after: Int
-                        ) {
-
+                    })
+                    act091BottomSheetServiceComment.setOnReportTextChangeListner(object : MKEditTextNM.IMKEditTextChangeText{
+                        override fun reportTextChange(p0: String?) {
+                            TODO("Not yet implemented")
                         }
 
-                        override fun onTextChanged(
-                            s: CharSequence?,
-                            start: Int,
-                            before: Int,
-                            count: Int
-                        ) {
-
-                        }
-
-                        override fun afterTextChanged(s: Editable?) {
+                        override fun reportTextChange(s: String?, p1: Boolean) {
                             item.comments = s.toString()
+
                         }
+
                     })
                     //
                 }

@@ -1,17 +1,15 @@
 package com.namoadigital.prj001.extensions
 
-import android.text.Editable
-import android.text.TextWatcher
 import android.widget.EditText
+import com.namoa_digital.namoa_library.ctls.MKEditTextNMN
 
 class MaskOnlyNumber(
     private val editText: EditText,
-    private val OnEventCurrentTextChanged: ((String) -> Unit?)? = null,
     private val OnEventAfterTextChanged: ((String) -> Unit?)? = null
-) : TextWatcher {
+) : MKEditTextNMN.IMKEditTextChangeText {
 
 
-    override fun beforeTextChanged(char: CharSequence?, start: Int, count: Int, after: Int) {
+/*    override fun beforeTextChanged(char: CharSequence?, start: Int, count: Int, after: Int) {
 
     }
 
@@ -30,6 +28,15 @@ class MaskOnlyNumber(
             OnEventAfterTextChanged?.let { invoke -> invoke(it) }
         }
 
+    }*/
+
+    override fun reportTextChange(char: String?) {
+        char?.let {
+            if(it.contains("-")){
+                editText.text.delete(it.length - 1, it.length)
+            }
+            OnEventAfterTextChanged?.let { invoke -> invoke(it) }
+        }
     }
 }
 

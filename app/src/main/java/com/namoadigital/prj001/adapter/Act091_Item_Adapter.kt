@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
+import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.databinding.Act091ListItemBinding
 import com.namoadigital.prj001.model.TSO_Service_Search_Obj
@@ -14,9 +15,10 @@ import java.util.*
 
 class Act091_Item_Adapter constructor(
     private val dataset: List<TSO_Service_Search_Obj>,
+    private val showPrice: Boolean,
+    private val hmAux: HMAux,
     private val notifyFilterApplied: (Int) -> Unit,
     private val openBottomSheet: (TSO_Service_Search_Obj) -> Unit,
-    private val showPrice: Boolean,
     ) : RecyclerView.Adapter<Act091_Item_Adapter.ItemViewHolder>(), Filterable{
 
     var filterDataSet = dataset.toMutableList()
@@ -38,7 +40,7 @@ class Act091_Item_Adapter constructor(
     override fun getItemCount() = filterDataSet.size
 
 
-    class ItemViewHolder constructor(
+    inner class ItemViewHolder constructor(
         private val binding: Act091ListItemBinding,
         private val showPrice: Boolean,
     ) : RecyclerView.ViewHolder(binding.root) {
@@ -52,7 +54,7 @@ class Act091_Item_Adapter constructor(
                     act091ListPrice.apply {
                         if (showPrice) {
                             text = if(it.manual_price == 1){
-                                "(Especifica preço)"
+                                hmAux["specify_price_lbl"]
                             }else{
                                 formatDoublePriceToScreen(it.price)
                             }
@@ -72,7 +74,7 @@ class Act091_Item_Adapter constructor(
     inner class ServiceFilter : Filter() {
         override fun performFiltering(char: CharSequence?): FilterResults {
             var temp = mutableListOf<TSO_Service_Search_Obj>()
-            var charString = ToolBox.AccentMapper(char.toString().lowercase(Locale.getDefault()))
+            val charString = ToolBox.AccentMapper(char.toString().lowercase(Locale.getDefault()))
 
             if(charString.isNullOrEmpty()) {
                 temp = dataset.toMutableList()

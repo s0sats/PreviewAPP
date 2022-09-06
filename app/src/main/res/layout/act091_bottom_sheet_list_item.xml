@@ -81,7 +81,7 @@
                 app:placeholderTextColor="@color/text_black"
                 app:placeholderTextAppearance="@color/text_black">
 
-                <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                <com.namoa_digital.namoa_library.ctls.MKEditTextNMN
                     android:id="@+id/act091_bottom_sheet_service_price"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

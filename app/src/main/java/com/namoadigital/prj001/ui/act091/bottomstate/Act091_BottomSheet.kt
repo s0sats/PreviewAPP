@@ -4,8 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -158,9 +156,7 @@ class Act091_BottomSheet : BottomSheetDialogFragment(){
             act091BottomSheetCancel.text = hmAux["sys_alert_btn_cancel"]
             //
 
-            binding.onState(BottomState.HasPermissionShowPrice(
-                !showPrice() && contentItemHeader.manual_price == 0 && contentItemHeader.serviceList.isEmpty()
-            ))
+            binding.onState(BottomState.HasPermissionShowPrice(!showPrice()))
             //
             binding.onState(BottomState.ShowDelete(showDelete))
         }
@@ -218,40 +214,27 @@ class Act091_BottomSheet : BottomSheetDialogFragment(){
 
         with(binding) {
             //botão OK ativado quando preço do header está preenchido
-            act091BottomSheetPrice.apply {
-                addTextChangedListener(MaskOnlyNumber(this) {
-                    if (it.isEmpty() || it == ".") {
-                        contentItemHeader.price = null
-                    } else {
-                        try {
-                            contentItemHeader.price = it.toDouble()
-                            if(contentItemHeader.serviceList.isEmpty()){
-                                onUpdateList()
-                            }
-                        }catch (e: NumberFormatException){
-                            contentItemHeader.price = null
+            act091BottomSheetPrice.setOnReportTextChangeListner(MaskOnlyNumber(act091BottomSheetPrice) {
+                if (it.isEmpty() || it == ".") {
+                    contentItemHeader.price = null
+                } else {
+                    try {
+                        contentItemHeader.price = it.toDouble()
+                        if(contentItemHeader.serviceList.isEmpty()){
+                            onUpdateList()
                         }
+                    }catch (e: NumberFormatException){
+                        contentItemHeader.price = null
                     }
-                })
-            }
-            act091BottomSheetComment.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(
-                    s: CharSequence?,
-                    start: Int,
-                    count: Int,
-                    after: Int
-                ) {
-
+                }
+            })
+            act091BottomSheetComment.setOnReportTextChangeListner(object : MKEditTextNM.IMKEditTextChangeText {
+                override fun reportTextChange(text: String?) {
                 }
 
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
+                override fun reportTextChange(text: String?, p1: Boolean) {
+                    contentItemHeader.comments = text.toString()
                 }
-
-                override fun afterTextChanged(s: Editable?) {
-                    contentItemHeader.comments = s.toString()
-                }
-
             })
 
             //tirar bottom sheet
