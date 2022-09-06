@@ -56,7 +56,7 @@ class Act091_Presenter constructor(
     }
     //
     private val express_tmp by lazy{
-        bundle.getLong(SO_Pack_Express_LocalDao.EXPRESS_TMP)
+        bundle.getLong(SO_Pack_Express_LocalDao.EXPRESS_TMP, -1)
     }
     //
     private val hmAuxTrans: HMAux by lazy {
