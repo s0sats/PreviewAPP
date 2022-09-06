@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.namoa_digital.namoa_library.util.HMAux
+import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.CellAddPackServicesItemBinding
 import com.namoadigital.prj001.model.MainTagMenu
 import com.namoadigital.prj001.model.SoPackExpressPacksLocal
@@ -49,7 +50,11 @@ class Act040SOExpressPackServicesAdapter(
                 onExpressServiceSelected(packServices, position)
             }
             if(position == highlightedPosition){
-//                binding.clPackServicesCell.background = binding.root.context.getDrawable(R.color.namoa_color_light_blue6)
+                binding.clPackServicesCell.background = binding.root.context.getDrawable(R.color.namoa_color_light_blue6)
+                binding.clPackServicesCell.postDelayed(Runnable {
+                    binding.clPackServicesCell.background = binding.root.context.getDrawable(R.color.padrao_WHITE)
+                    highlightedPosition =-1
+                }, 500)
             }
             binding.tvPackServicesComment.visibility = View.VISIBLE
             if(packServices.comments.isNullOrEmpty()){
@@ -96,7 +101,7 @@ class Act040SOExpressPackServicesAdapter(
         }
 
         private fun getFormattedPackDesc(packServices: SoPackExpressPacksLocal): String {
-            return packServices.pack_service_desc_full + """(${packServices.qty} x ${getTotalPrice(packServices)})"""
+                return packServices.pack_service_desc_full + """ (${packServices.qty} x ${getTotalPrice(packServices)})"""
         }
 
         private fun getTotalPrice(packServices: SoPackExpressPacksLocal): String {

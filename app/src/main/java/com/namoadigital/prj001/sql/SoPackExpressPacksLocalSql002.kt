@@ -25,6 +25,7 @@ class SoPackExpressPacksLocalSql002 (
             AND ${SoPackExpressPacksLocalDao.PRODUCT_CODE} = '$product_code'
             AND ${SoPackExpressPacksLocalDao.EXPRESS_CODE} = '$express_code'
             AND ${SoPackExpressPacksLocalDao.EXPRESS_TMP} = '$express_tmp'
+            order by rowid
             ;                                         
        """.trimIndent()
         //
