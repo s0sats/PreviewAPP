@@ -86,7 +86,7 @@ class Act042SOExpressAdapter (
                 }
                 //
                 for (i in 1 until soPackExpressLocal.packsLocals.size) {
-                    serviceList += "\n ${context.getString(R.string.unicode_bullet)} ${soPackExpressLocal.packsLocals[i].pack_service_desc_full}"
+                    serviceList += "\n ${context.getString(R.string.unicode_bullet)} ${soPackExpressLocal.packsLocals[i].qty}x ${soPackExpressLocal.packsLocals[i].pack_service_desc_full}"
                 }
             }else{
                 serviceList += " ${context.getString(R.string.unicode_bullet)} 1x ${soPackExpressLocal.so_desc}"

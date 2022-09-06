@@ -41,7 +41,8 @@ class Act091_Main : Base_Activity(), Act091_Contract.I_View {
             mPresenter.getListData(),
             ::notifyFilterApplied,
             ::openBottomSheet,
-            showPrice()
+            showPrice(),
+            hmAux_Trans
         )
     }
 

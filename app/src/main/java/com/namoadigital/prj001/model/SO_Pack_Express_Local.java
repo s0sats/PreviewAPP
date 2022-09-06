@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
@@ -11,50 +12,54 @@ import java.util.List;
  */
 
 public class SO_Pack_Express_Local implements Serializable {
-
+    @Expose
     private long customer_code;
+    @Expose
     private long site_code;
+    @Expose
     private long operation_code;
+    @Expose
     private long product_code;
-    private String express_code;
-    private long express_tmp;
-    private String serial_id;
-    private long partner_code;
-    private Long so_prefix;
-    private Long so_code;
-    private String so_id;
-    private String so_desc;
-    private String so_status;
-    private Long contract_code;
-    private String contract_desc;
-    private Long priority_code;
-    private String priority_desc;
-    private int exec_site_code;
-    private String exec_site_id;
-    private String exec_site_desc;
-    private int exec_zone_code;
-    private String exec_zone_id;
-    private String exec_zone_desc;
-    private String operation_id;
-    private String operation_desc;
-    private String product_id;
-    private String product_desc;
-    private Long serial_code;
-    private Integer segment_code;
-    private String segment_id;
-    private String segment_desc;
-    private String billing_add_inf1_value;
-    private String billing_add_inf2_value;
-    private String billing_add_inf3_value;
-    private int billing_add_inf1_tracking;
-    private int billing_add_inf2_tracking;
-    private int billing_add_inf3_tracking;
-    private String ret_code;
-    private String ret_msg;
-    private String status;
-    private String log_date;
-    private String token;
+    @Expose private String express_code;
+    @Expose private long express_tmp;
+    @Expose private String serial_id;
+    @Expose private long partner_code;
+    @Expose private Long so_prefix;
+    @Expose private Long so_code;
+    @Expose private String so_id;
+    @Expose private String so_desc;
+    @Expose private String so_status;
+    @Expose private Long contract_code;
+    @Expose private String contract_desc;
+    @Expose private Long priority_code;
+    @Expose private String priority_desc;
+    @Expose private int exec_site_code;
+    @Expose private String exec_site_id;
+    @Expose private String exec_site_desc;
+    @Expose private int exec_zone_code;
+    @Expose private String exec_zone_id;
+    @Expose private String exec_zone_desc;
+    @Expose private String operation_id;
+    @Expose private String operation_desc;
+    @Expose private String product_id;
+    @Expose private String product_desc;
+    @Expose private Long serial_code;
+    @Expose private Integer segment_code;
+    @Expose private String segment_id;
+    @Expose private String segment_desc;
+    @Expose private String billing_add_inf1_value;
+    @Expose private String billing_add_inf2_value;
+    @Expose private String billing_add_inf3_value;
+    @Expose private int billing_add_inf1_tracking;
+    @Expose private int billing_add_inf2_tracking;
+    @Expose private int billing_add_inf3_tracking;
+    @Expose private String ret_code;
+    @Expose private String ret_msg;
+    @Expose private String status;
+    @Expose private String log_date;
+    @Expose private String token;
     @SerializedName("packs_services")
+    @Expose
     private List<SoPackExpressPacksLocal> packsLocals;
 
 

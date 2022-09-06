@@ -278,7 +278,8 @@ class Act091_BottomSheet : BottomSheetDialogFragment(){
 
     private fun initRecyclerView() {
         with(binding) {
-            if (contentItemHeader.serviceList.isNotEmpty()) {
+            if (isPackage()
+                && contentItemHeader.serviceList.isNotEmpty()) {
                 with(act091BottomSheetRecyclerView) {
                     layoutManager = LinearLayoutManager(requireContext())
                     adapter = mAdapter
@@ -291,6 +292,8 @@ class Act091_BottomSheet : BottomSheetDialogFragment(){
         }
 
     }
+
+    private fun isPackage() = "P" == contentItemHeader.type_ps
 
     @SuppressLint("NotifyDataSetChanged")
     private fun onUpdateList() {

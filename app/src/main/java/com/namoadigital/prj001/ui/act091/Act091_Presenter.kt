@@ -7,10 +7,7 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.dao.MD_PartnerDao
 import com.namoadigital.prj001.dao.SO_Pack_ExpressDao
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao
-import com.namoadigital.prj001.model.SO_Pack_Express_Local
-import com.namoadigital.prj001.model.SoPackExpressPacksLocal
-import com.namoadigital.prj001.model.TSO_Service_Search_Obj
-import com.namoadigital.prj001.model.TSO_Service_Search_Rec
+import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_005
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_001
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_006
@@ -68,7 +65,8 @@ class Act091_Presenter constructor(
             "act091_title",
             "empty_list_lbl",
             "filter_hint",
-            "insert_filter_placeholder"
+            "insert_filter_placeholder",
+            "has_manual_price_lbl"
         )
         //
         return ToolBox_Inf.setLanguage(
@@ -115,7 +113,30 @@ class Act091_Presenter constructor(
             it.express_code = express_code.toString()
             it.express_tmp = express_tmp
         }
-
+        if(contentItemHeader.type_ps == "S"){
+            contentItemHeader.serviceList.add(
+                SoPackExpressServicesLocal(
+                    contentItemHeader.customer_code,
+                    contentItemHeader.site_code,
+                    contentItemHeader.operation_code,
+                    contentItemHeader.product_code,
+                    contentItemHeader.express_code,
+                    contentItemHeader.express_tmp,
+                    contentItemHeader.price_list_code,
+                    contentItemHeader.pack_code,
+                    contentItemHeader.pack_seq,
+                    contentItemHeader.type_ps,
+                    contentItemHeader.service_code!!,
+                    -1,
+                    contentItemHeader.pack_service_desc,
+                    contentItemHeader.pack_service_desc_full,
+                    contentItemHeader.price,
+                    contentItemHeader.manual_price,
+                    contentItemHeader.qty,
+                    contentItemHeader.comments
+                )
+            )
+        }
         getSO_Pack_Express_Local()?.let {
             it.packsLocals.add(contentItemHeader)
             so_Pack_Express_LocalDao.addUpdate(it)

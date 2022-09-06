@@ -82,7 +82,7 @@ public class WS_SO_Pack_Express_Local extends IntentService {
     private void processSO_Pack_Express() throws Exception {
         loadTranslation();
 
-        Gson gsonEnv = new GsonBuilder().serializeNulls().create();
+        Gson gsonEnv = new GsonBuilder().serializeNulls().excludeFieldsWithoutExposeAnnotation().create();
         Gson gsonRec = new GsonBuilder().serializeNulls().create();
 
         repeting = 0;

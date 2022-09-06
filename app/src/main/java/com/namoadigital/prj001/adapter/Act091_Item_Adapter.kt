@@ -6,24 +6,26 @@ import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
+import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.databinding.Act091ListItemBinding
 import com.namoadigital.prj001.model.TSO_Service_Search_Obj
 import com.namoadigital.prj001.util.ToolBox_Inf.formatDoublePriceToScreen
 import java.util.*
 
-class Act091_Item_Adapter constructor(
+class Act091_Item_Adapter(
     private val dataset: List<TSO_Service_Search_Obj>,
     private val notifyFilterApplied: (Int) -> Unit,
     private val openBottomSheet: (TSO_Service_Search_Obj) -> Unit,
     private val showPrice: Boolean,
+    private val hmAux_Trans: HMAux
     ) : RecyclerView.Adapter<Act091_Item_Adapter.ItemViewHolder>(), Filterable{
 
     var filterDataSet = dataset.toMutableList()
     val mFilter = ServiceFilter()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-        return ItemViewHolder(Act091ListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false), showPrice)
+        return ItemViewHolder(Act091ListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false), showPrice, hmAux_Trans)
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
@@ -41,6 +43,7 @@ class Act091_Item_Adapter constructor(
     class ItemViewHolder constructor(
         private val binding: Act091ListItemBinding,
         private val showPrice: Boolean,
+        private val hmAux_Trans: HMAux
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun onBinding(item: TSO_Service_Search_Obj?) {
@@ -52,7 +55,7 @@ class Act091_Item_Adapter constructor(
                     act091ListPrice.apply {
                         if (showPrice) {
                             text = if(it.manual_price == 1){
-                                "(Especifica preço)"
+                                hmAux_Trans["has_manual_price_lbl"]
                             }else{
                                 formatDoublePriceToScreen(it.price)
                             }

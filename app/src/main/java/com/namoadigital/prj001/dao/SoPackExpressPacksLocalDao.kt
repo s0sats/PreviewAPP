@@ -6,6 +6,7 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import androidx.core.database.getDoubleOrNull
+import androidx.core.database.getIntOrNull
 import androidx.core.database.getStringOrNull
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
@@ -42,6 +43,7 @@ class SoPackExpressPacksLocalDao(
         const val PRICE_LIST_CODE = "price_list_code"
         const val MANUAL_PRICE = "manual_price"
         const val PRICE = "price"
+        const val SERVICE_CODE = "service_code"
         const val QTY = "qty"
         const val TYPE_PS = "type_ps"
         const val COMMENTS = "comments"
@@ -475,6 +477,7 @@ class SoPackExpressPacksLocalDao(
                         manual_price = getInt(getColumnIndex(MANUAL_PRICE)),
                         price = getDoubleOrNull(getColumnIndex(PRICE)),
                         qty = getInt(getColumnIndex(QTY)),
+                        service_code = getIntOrNull(getColumnIndex(SERVICE_CODE)),
                         type_ps = getString(getColumnIndex(TYPE_PS)),
                         comments = getStringOrNull(getColumnIndex(COMMENTS))
                     )
@@ -585,6 +588,11 @@ class SoPackExpressPacksLocalDao(
                             soPackExpressPacksLocal.qty
                         )
                     }
+                    //
+                    put(
+                        SERVICE_CODE,
+                        soPackExpressPacksLocal.service_code
+                    )
                     //
                     if (soPackExpressPacksLocal.type_ps != null) {
                         put(

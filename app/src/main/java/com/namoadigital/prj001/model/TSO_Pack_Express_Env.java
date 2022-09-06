@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.Expose;
+
 import java.util.ArrayList;
 
 /**
@@ -7,9 +9,9 @@ import java.util.ArrayList;
  */
 
 public class TSO_Pack_Express_Env extends Main_Header_Env {
-
+    @Expose
     private String token;
-
+    @Expose
     private ArrayList<SO_Pack_Express_Local> pack_express;
 
     public String getToken() {

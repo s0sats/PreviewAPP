@@ -921,6 +921,7 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
                         0,
                         (double) mSo_pack_express.getPrice(),
                         1,
+                        null,
                         "P",
                         "",
                         services

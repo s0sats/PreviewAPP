@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.model
 
 import android.content.Context
+import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 data class SoPackExpressPacksLocal(
@@ -10,17 +11,25 @@ data class SoPackExpressPacksLocal(
     var product_code:Long,
     var express_code:String,
     var express_tmp:Long,
+    @Expose
     val pack_code:Int,
+    @Expose
     var pack_seq:Int,
+    @Expose
     val price_list_code:Int,
     val pack_service_desc:String,
     val pack_service_desc_full:String,
     val manual_price: Int = 0,
     var price:Double?,
+    @Expose
     var qty:Int,
+    val service_code:Int?,
+    @Expose
     val type_ps:String,
+    @Expose
     var comments:String?,
     @SerializedName("service")
+    @Expose
     var serviceList: MutableList<SoPackExpressServicesLocal> = mutableListOf()
 ) {
     constructor(
@@ -43,6 +52,7 @@ data class SoPackExpressPacksLocal(
                 serviceSearch.manual_price,
                 serviceSearch.price,
                 if(serviceSearch.qty==0){1}else{serviceSearch.qty},
+                serviceSearch.service_code,
                 serviceSearch.type_ps,
                 serviceSearch.comment
             ){
