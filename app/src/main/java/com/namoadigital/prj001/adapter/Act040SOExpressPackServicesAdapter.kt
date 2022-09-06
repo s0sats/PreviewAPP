@@ -106,11 +106,25 @@ class Act040SOExpressPackServicesAdapter(
 
         private fun getTotalPrice(packServices: SoPackExpressPacksLocal): String {
             if(showServicePrice) {
-                var price = packServices.price?: 0.0
-                /*for (soPackExpressServicesLocal in packServices.serviceList) {
-//                    price += soPackExpressServicesLocal.price?: 0.0
-                }*/
-                return  String.format("%.2f", price)
+                return  String.format("%.2f", packServices.price?: 0.0)
+            }else{
+                var price = 0.0
+                var signPrice = false
+                var hasAnyManualPrice = false
+                for (soPackExpressServicesLocal in packServices.serviceList) {
+                    if(soPackExpressServicesLocal.manual_price == 1) {
+                        hasAnyManualPrice = true
+                        price += soPackExpressServicesLocal.price ?: 0.0
+                    }else{
+                        signPrice = true
+                    }
+                }
+                if(hasAnyManualPrice) {
+                    if (signPrice) {
+                        return String.format("%.2f+", price ?: 0.0)
+                    }
+                }
+                return ""
             }
             return ""
         }
