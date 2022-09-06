@@ -156,7 +156,7 @@ class Act091_BottomSheet : BottomSheetDialogFragment(){
             act091BottomSheetCancel.text = hmAux["sys_alert_btn_cancel"]
             //
 
-            binding.onState(BottomState.HasPermissionShowPrice(!showPrice()))
+            binding.onState(BottomState.HasPermissionShowPrice(showPrice(), contentItemHeader.manual_price == 1 && contentItemHeader.type_ps == "S"))
             //
             binding.onState(BottomState.ShowDelete(showDelete))
         }
@@ -195,8 +195,7 @@ class Act091_BottomSheet : BottomSheetDialogFragment(){
             }
 
             //habilita/desabilita opção de remover quantidade
-            act091BottomSheetQty.setOnReportTextChangeListner(object :
-                MKEditTextNM.IMKEditTextChangeText {
+            act091BottomSheetQty.setOnReportTextChangeListner(object : MKEditTextNM.IMKEditTextChangeText {
                 override fun reportTextChange(p0: String?) {
 
                 }
@@ -214,20 +213,23 @@ class Act091_BottomSheet : BottomSheetDialogFragment(){
 
         with(binding) {
             //botão OK ativado quando preço do header está preenchido
-            act091BottomSheetPrice.setOnReportTextChangeListner(MaskOnlyNumber(act091BottomSheetPrice) {
-                if (it.isEmpty() || it == ".") {
-                    contentItemHeader.price = null
-                } else {
-                    try {
-                        contentItemHeader.price = it.toDouble()
-                        if(contentItemHeader.serviceList.isEmpty()){
-                            onUpdateList()
+            act091BottomSheetPrice.apply {
+                if(showPrice())
+                    setOnReportTextChangeListner(MaskOnlyNumber(this) {
+                        if (it.isEmpty() || it == ".") {
+                            contentItemHeader.price = null
+                        } else {
+                            try {
+                                contentItemHeader.price = it.replace(",", ".").toDouble()
+                                if (contentItemHeader.serviceList.isEmpty()) {
+                                    onUpdateList()
+                                }
+                            } catch (e: NumberFormatException) {
+                                contentItemHeader.price = null
+                            }
                         }
-                    }catch (e: NumberFormatException){
-                        contentItemHeader.price = null
-                    }
-                }
-            })
+                    })
+            }
             act091BottomSheetComment.setOnReportTextChangeListner(object : MKEditTextNM.IMKEditTextChangeText {
                 override fun reportTextChange(text: String?) {
                 }

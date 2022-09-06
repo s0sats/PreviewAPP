@@ -68,7 +68,8 @@ class Act091_Presenter constructor(
             "act091_title",
             "empty_list_lbl",
             "filter_hint",
-            "insert_filter_placeholder"
+            "insert_filter_placeholder",
+            "specify_price_lbl"
         )
         //
         return ToolBox_Inf.setLanguage(

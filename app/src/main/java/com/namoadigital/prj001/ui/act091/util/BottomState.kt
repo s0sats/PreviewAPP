@@ -14,9 +14,8 @@ sealed class BottomState {
     data class ChangePriceColor(val value: Boolean, val hmAux: HMAux) : BottomState()
     data class ChangeButtonLessQtyColor(val value: Boolean) : BottomState()
     data class ChangeStatePrice(val value: Boolean) : BottomState()
-    data class OnUpdateService(val itemHeader: SoPackExpressPacksLocal) : BottomState()
     data class OnUpdateBottomSheet(val itemHeader: SoPackExpressPacksLocal, val hmAux: HMAux) : BottomState()
-    data class HasPermissionShowPrice(val hasPermission: Boolean) : BottomState()
+    data class HasPermissionShowPrice(val showPrice: Boolean, val isEnable: Boolean) : BottomState()
     data class ShowDelete(val show: Boolean) : BottomState()
 }
 
@@ -45,29 +44,21 @@ fun Act091BottomSheetBinding.onState(state: BottomState){
             act091BottomSheetPrice.isEnabled = state.value
         }
 
-        is BottomState.OnUpdateService -> {
-            val item = state.itemHeader
-
-            if(item.type_ps == "S"){
-                item.price?.let {
-                    act091BottomSheetPrice.setText(ToolBox_Inf.formatDoublePriceToScreen(it).toString())
-                }
-            }
-        }
-
         is BottomState.OnUpdateBottomSheet -> {
             var total = 0.0
             val item = state.itemHeader
             act091QtyBindings.act091BottomSheetQty.setText("${item.qty}")
             if (item.type_ps == "P") {
                 act091BottomSheetPrice.isEnabled = false
-                act091BottomSheetTextLayoutPrice.isHelperTextEnabled = true
-                act091BottomSheetTextLayoutPrice.helperText = "${state.hmAux["services_below_lbl"]}"
+                if(item.manual_price == 1){
+                    act091BottomSheetTextLayoutPrice.isHelperTextEnabled = true
+                    act091BottomSheetTextLayoutPrice.helperText = "${state.hmAux["services_below_lbl"]}"
+                }
                 item.serviceList.let { service ->
                     if (service.isNotEmpty()) {
                         service.map { m -> m.price == null }.let { bl ->
                             if (bl.contains(true)) {
-                                act091BottomSheetTextLayoutPrice.editText?.setText("${state.hmAux["incomplete_placeholder"]}")
+                                act091BottomSheetPrice.setText("${state.hmAux["incomplete_placeholder"]}")
                                 act091BottomSheetOk.isEnabled = false
                             } else {
                                 service.forEach { obj ->
@@ -87,11 +78,13 @@ fun Act091BottomSheetBinding.onState(state: BottomState){
         }
 
         is BottomState.HasPermissionShowPrice -> {
-            if(state.hasPermission){
-                act091BottomSheetTextLayoutPrice.visibility = View.GONE
-            }else{
+            if(state.showPrice){
                 act091BottomSheetTextLayoutPrice.visibility = View.VISIBLE
+            }else{
+                act091BottomSheetTextLayoutPrice.visibility = View.GONE
             }
+            act091BottomSheetTextLayoutPrice.isEnabled = state.isEnable
+            if(!state.isEnable) act091BottomSheetPrice.setTextColor(root.resources.getColor(R.color.namoa_color_gray_8))
         }
 
         is BottomState.ShowDelete -> {

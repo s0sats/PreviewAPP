@@ -52,6 +52,8 @@ fun Act091BottomSheetListItemBinding.onEvent(event: BottomListEvent){
                     setText("")
                 }else{
                     setText(ToolBox_Inf.formatDoublePriceToScreen(item.price).toString())
+                    act091BottomSheetServiceTextLayoutPrice.isEnabled = item.manual_price == 1
+                    act091BottomSheetServicePrice.setTextColor(root.resources.getColor(R.color.namoa_color_gray_7))
                 }
                 isEnabled = event.manual_price
             }

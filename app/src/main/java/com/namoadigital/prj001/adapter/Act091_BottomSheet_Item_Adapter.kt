@@ -36,20 +36,20 @@ class Act091_BottomSheet_Item_Adapter constructor(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         @SuppressLint("UseCompatLoadingForDrawables")
-        fun onBinding(item: SoPackExpressServicesLocal, position: Int){
+        fun onBinding(item: SoPackExpressServicesLocal, position: Int) {
             with(binding) {
                 setLabels(this)
                 act091BottomSheetServiceComment.setText(item.comments)
                 act091BottomSheetServiceTitle.text = item.service_desc_full
-                if(type == "P"){
+                if (type == "P") {
                     onEvent(BottomListEvent.stateWhenIsPackage(item, hmAux))
                 }
                 //
 
 
-                if(item.manual_price == 0 && !showPrice){
+                if (item.manual_price == 0 && !showPrice) {
                     act091BottomSheetServicePrice.visibility = View.GONE
-                }else{
+                } else {
                     act091BottomSheetServicePrice.visibility = View.VISIBLE
                 }
                 //
@@ -58,25 +58,25 @@ class Act091_BottomSheet_Item_Adapter constructor(
                         if (it.isEmpty() || it == ".") {
                             item.price = null
                         } else {
-                            item.price = it.toDouble()
+                            item.price = it.replace(",", ".").toDouble()
                         }
                         onEvent(BottomListEvent.changePriceColor(it.isNotEmpty(), hmAux))
                         onUpdateList()
 
                     })
-                    act091BottomSheetServiceComment.setOnReportTextChangeListner(object : MKEditTextNM.IMKEditTextChangeText{
-                        override fun reportTextChange(p0: String?) {
-                            TODO("Not yet implemented")
-                        }
-
-                        override fun reportTextChange(s: String?, p1: Boolean) {
-                            item.comments = s.toString()
-
-                        }
-
-                    })
-                    //
                 }
+
+
+                act091BottomSheetServiceComment.setOnReportTextChangeListner(object : MKEditTextNM.IMKEditTextChangeText {
+                    override fun reportTextChange(p0: String?) {
+                    }
+
+                    override fun reportTextChange(s: String?, p1: Boolean) {
+                        item.comments = s.toString()
+
+                    }
+
+                })
             }
         }
 

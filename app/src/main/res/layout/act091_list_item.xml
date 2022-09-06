@@ -27,7 +27,7 @@
             android:layout_width="160dp"
             android:layout_height="1dp"
             android:layout_marginBottom="0.5dp"
-            android:background="@android:color/darker_gray"
+            android:background="#CDD1D2"
             app:layout_constraintBottom_toBottomOf="@id/act091_list_progress"
             app:layout_constraintStart_toStartOf="@id/act091_list_progress"
             app:layout_constraintTop_toTopOf="@id/act091_list_progress" />
@@ -38,23 +38,26 @@
             style="@android:style/Widget.Material.ProgressBar.Horizontal"
             android:layout_width="160dp"
             android:layout_height="wrap_content"
-            android:progress="100"
-            android:progressTint="@color/namoa_light_blue"
-            android:background="@android:color/transparent"
+            android:progressBackgroundTint="@color/padrao_TRANSPARENT"
+            android:progress="86"
+            android:progressTint="@color/grid_line_normal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.6" />
 
         <TextView
             android:id="@+id/act091_list_price"
             style="@style/TextAppearance.MaterialComponents.Subtitle2"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="2dp"
             android:ellipsize="end"
             android:text="(Especificar preço)"
+            android:textAlignment="viewEnd"
             app:layout_constraintBottom_toBottomOf="@id/act091_list_progress"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/view"
             app:layout_constraintTop_toTopOf="@id/act091_list_progress" />
 
 

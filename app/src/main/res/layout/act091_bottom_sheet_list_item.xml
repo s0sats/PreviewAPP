@@ -81,20 +81,20 @@
                 app:placeholderTextColor="@color/text_black"
                 app:placeholderTextAppearance="@color/text_black">
 
-                <com.namoa_digital.namoa_library.ctls.MKEditTextNMN
+                <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                     android:id="@+id/act091_bottom_sheet_service_price"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="numberDecimal"
                     android:digits="0123456789."
-                    app:mDecimal="2"
+                    android:inputType="numberDecimal"
                     android:textSize="16sp"
                     app:mBARCODE="false"
+                    app:mDecimal="2"
                     app:mInputType="number"
                     app:mNFC="false"
                     app:mOCR="false"
-                    app:placeholderTextColor="@color/text_black"
-                    app:placeholderTextAppearance="@color/text_black"/>
+                    app:placeholderTextAppearance="@color/text_black"
+                    app:placeholderTextColor="@color/text_black" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
