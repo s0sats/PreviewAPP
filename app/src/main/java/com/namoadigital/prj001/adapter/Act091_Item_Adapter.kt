@@ -54,7 +54,7 @@ class Act091_Item_Adapter constructor(
                     act091ListPrice.apply {
                         if (showPrice) {
                             text = if(it.manual_price == 1){
-                                hmAux_Trans["has_manual_price_lbl"]
+                                hmAux["has_manual_price_lbl"]
                             }else{
                                 formatDoublePriceToScreen(it.price)
                             }
