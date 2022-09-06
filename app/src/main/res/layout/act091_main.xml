@@ -40,7 +40,7 @@
         android:id="@+id/act091WithoutList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Não foi encontrado nenhum Serviço/Aplicação"
+        tools:text="Não foi encontrado nenhum Serviço/Aplicação"
         android:textAlignment="center"
         android:visibility="gone"/>
 
