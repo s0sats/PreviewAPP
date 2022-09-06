@@ -423,7 +423,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                 binding.tvAddPackServicesPlaceholder.setVisibility(View.VISIBLE);
             }
         }
-
+        validateEnableFinalizeBtn();
     }
 
     @Override
@@ -1138,7 +1138,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     }
 
     private boolean isPackServiceAdditionValid() {
-        return hasPackServicesAdded() || mSo_pack_express.getAdd_pack_service() == 0;
+        return (isPackServicesAddedValid() || mSo_pack_express.getAdd_pack_service() == 0);
     }
 
     private boolean isBillingInfoValid(String billingInfoView, MKEditTextNM billingField) {
@@ -1250,6 +1250,13 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             return mAdapter!= null && mAdapter.getItemCount() > 0;
         }
         return false;
+    }
+
+    private boolean isPackServicesAddedValid() {
+        if(mSo_pack_express.getAdd_pack_service() == 1 && mAdapter!= null){
+            return  mAdapter.getItemCount() > 0;
+        }
+        return true;
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {

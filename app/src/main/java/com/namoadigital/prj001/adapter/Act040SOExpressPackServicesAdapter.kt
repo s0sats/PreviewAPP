@@ -50,7 +50,7 @@ class Act040SOExpressPackServicesAdapter(
                 onExpressServiceSelected(packServices, position)
             }
             if(position == highlightedPosition){
-                binding.clPackServicesCell.background = binding.root.context.getDrawable(R.color.namoa_color_light_blue6)
+                binding.clPackServicesCell.background = binding.root.context.getDrawable(R.color.namoa_myactions_blue_bg)
                 binding.clPackServicesCell.postDelayed(Runnable {
                     binding.clPackServicesCell.background = binding.root.context.getDrawable(R.color.padrao_WHITE)
                     highlightedPosition =-1
