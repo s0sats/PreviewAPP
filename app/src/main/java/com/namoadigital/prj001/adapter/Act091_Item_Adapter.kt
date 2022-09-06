@@ -13,19 +13,19 @@ import com.namoadigital.prj001.model.TSO_Service_Search_Obj
 import com.namoadigital.prj001.util.ToolBox_Inf.formatDoublePriceToScreen
 import java.util.*
 
-class Act091_Item_Adapter(
+class Act091_Item_Adapter constructor(
     private val dataset: List<TSO_Service_Search_Obj>,
+    private val showPrice: Boolean,
+    private val hmAux: HMAux,
     private val notifyFilterApplied: (Int) -> Unit,
     private val openBottomSheet: (TSO_Service_Search_Obj) -> Unit,
-    private val showPrice: Boolean,
-    private val hmAux_Trans: HMAux
     ) : RecyclerView.Adapter<Act091_Item_Adapter.ItemViewHolder>(), Filterable{
 
     var filterDataSet = dataset.toMutableList()
     val mFilter = ServiceFilter()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-        return ItemViewHolder(Act091ListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false), showPrice, hmAux_Trans)
+        return ItemViewHolder(Act091ListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false), showPrice)
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
@@ -40,10 +40,9 @@ class Act091_Item_Adapter(
     override fun getItemCount() = filterDataSet.size
 
 
-    class ItemViewHolder constructor(
+    inner class ItemViewHolder constructor(
         private val binding: Act091ListItemBinding,
         private val showPrice: Boolean,
-        private val hmAux_Trans: HMAux
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun onBinding(item: TSO_Service_Search_Obj?) {
@@ -75,7 +74,7 @@ class Act091_Item_Adapter(
     inner class ServiceFilter : Filter() {
         override fun performFiltering(char: CharSequence?): FilterResults {
             var temp = mutableListOf<TSO_Service_Search_Obj>()
-            var charString = ToolBox.AccentMapper(char.toString().lowercase(Locale.getDefault()))
+            val charString = ToolBox.AccentMapper(char.toString().lowercase(Locale.getDefault()))
 
             if(charString.isNullOrEmpty()) {
                 temp = dataset.toMutableList()

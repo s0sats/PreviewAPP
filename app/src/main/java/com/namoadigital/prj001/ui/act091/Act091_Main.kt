@@ -3,7 +3,6 @@ package com.namoadigital.prj001.ui.act091
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.view.WindowManager
 import com.google.gson.Gson
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.ToolBox
@@ -39,10 +38,10 @@ class Act091_Main : Base_Activity(), Act091_Contract.I_View {
     private val mAdapter: Act091_Item_Adapter? by lazy {
         Act091_Item_Adapter(
             mPresenter.getListData(),
-            ::notifyFilterApplied,
-            ::openBottomSheet,
             showPrice(),
-            hmAux_Trans
+            hmAux_Trans,
+            ::notifyFilterApplied,
+            ::openBottomSheet
         )
     }
 
@@ -99,28 +98,20 @@ class Act091_Main : Base_Activity(), Act091_Contract.I_View {
 
     override fun openBottomSheet(item: TSO_Service_Search_Obj) {
 
-        if(item.qty == 0){
-            item.qty = 1
-        }
-
         soPackExpressLocal?.let {
             SoPackExpressPacksLocal(context, item, it, -1).let { local ->
                 Act091_BottomSheet.getInstance(Gson().toJson(local), false).apply {
-                    onAddServices = ::onAddServicesClick
+                    onAddServices = { item -> mPresenter.savePackServices(item) }
                 }.show(supportFragmentManager, "bottomSheet")
             }
         } ?: ToolBox.alertMSG(
             context,
-            "Erro",
-            "Ocorreu um erro durante a passagem de parâmetros, volte para tela de OS Expressa e tente novamente.",
+            "alert_error_ttl", //Error
+            "alert_error_msg", //Ocorreu um erro durante a passagem de parâmetros, volte para tela de OS Expressa e tente novamente.
             {dialog, _ ->
                 dialog.dismiss()
             }, 0
         )
-    }
-
-    private fun onAddServicesClick(item: SoPackExpressPacksLocal){
-        mPresenter.savePackServices(item)
     }
 
 
@@ -139,10 +130,6 @@ class Act091_Main : Base_Activity(), Act091_Contract.I_View {
             context,
             mModule_Code,
             ConstantBaseApp.ACT091
-        )
-
-        window.setSoftInputMode(
-            WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN
         )
     }
 
@@ -179,11 +166,9 @@ class Act091_Main : Base_Activity(), Act091_Contract.I_View {
     }
 
     private fun notifyFilterApplied(size: Int){
-        size.takeIf { it < 1 }.apply {
-
-        }
         if(size < 1){
             binding.act091WithoutList.visibility = View.VISIBLE
+            binding.act091WithoutList.text = hmAux_Trans["empty_list_lbl"]
             binding.act091RecyclerView.visibility = View.GONE
             return
         }

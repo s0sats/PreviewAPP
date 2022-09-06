@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -369,6 +370,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
 //                Log.d("TESTES", "recoverIntentsInfo DEPOIS bundle_express_tmp: " + bundle_express_tmp);
                 hasServiceAdded = bundle.getBoolean(HAS_SERVICE_ADDED,false);
             }
+
         } else {
             bundle_express_pack_code = "";
             bundle_partner_code = "-1";
@@ -571,7 +573,6 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
                 binding.rvAddPackServices.setLayoutManager(linearLayoutManager);
                 List<SoPackExpressPacksLocal> packs = new ArrayList<>();
-//                Log.d("TESTES", "refreshAddInfoVisibility bundle_express_tmp: " + bundle_express_tmp);
                 SO_Pack_Express_Local so_pack_express_local = mPresenter.getExpressPackLocal(
                         mSo_pack_express.getCustomer_code(),
                         mSo_pack_express.getProduct_code(),
@@ -671,7 +672,6 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         packServicesEditFragment.setOnDeleteServices(new Function1<SoPackExpressPacksLocal, Unit>() {
             @Override
             public Unit invoke(SoPackExpressPacksLocal item) {
-//                Log.d("TESTES", "setOnDeleteServices bundle_express_tmp: " + bundle_express_tmp);
                 mPresenter.deleteSelectedExpressPackLocal( item,
                         mSo_pack_express.getCustomer_code(),
                         mSo_pack_express.getProduct_code(),
@@ -990,7 +990,6 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
 
     private SO_Pack_Express_Local setSoPackExpressLocal() {
         SO_Pack_Express_Local so_pack_express_local = null;
-//        Log.d("TESTES", "setSoPackExpressLocal bundle_express_tmp: " + bundle_express_tmp);
         if(bundle_express_tmp > 0) {
             so_pack_express_local = mPresenter.getExpressPackLocal(
                     mSo_pack_express.getCustomer_code(),
@@ -1027,7 +1026,6 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         bundle.putInt(SO_Pack_ExpressDao.CATEGORY_PRICE_CODE, mSo_pack_express.getCategory_price_code());
         bundle.putString(Constant.MAIN_MD_PRODUCT_SERIAL_ID, binding.mketSerial.getText().toString().trim());
         bundle.putString(SO_Pack_ExpressDao.EXPRESS_CODE, mSo_pack_express.getExpress_code());
-//        Log.d("TESTES", "callAct091 bundle_express_tmp: " + bundle_express_tmp);
         bundle.putLong(SO_Pack_Express_LocalDao.EXPRESS_TMP, bundle_express_tmp);
         bundle.putSerializable(Constant.PARAM_KEY_TYPE_SO_EXPRESS, mSo_pack_express);
         //
@@ -1041,7 +1039,6 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
      * Metodo que concentra a chamada da criação da expresso
      */
     private void prepareCreateSoPackExpress() {
-//        Log.d("TESTES", "prepareCreateSoPackExpress bundle_express_tmp: " + bundle_express_tmp);
         mPresenter.onCreateSo_Pack_Express(
                     mSo_pack_express,
                     md_partner,

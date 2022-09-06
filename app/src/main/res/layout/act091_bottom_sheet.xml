@@ -82,12 +82,11 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:placeholderText="Inserir Preço"
-                    android:visibility="visible"
                     app:placeholderTextColor="@color/text_black"
                     app:placeholderTextAppearance="@color/text_black">
 
 
-                <com.namoa_digital.namoa_library.ctls.MKEditTextNMN
+                <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                         android:id="@+id/act091_bottom_sheet_price"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -98,7 +97,7 @@
                         app:mBARCODE="false"
                         app:placeholderTextColor="@color/text_black"
                         app:placeholderTextAppearance="@color/text_black"
-                        app:mInputType="number"
+                        app:mInputType="NUMBER"
                         app:mNFC="false"
                         app:mOCR="false" />
 
@@ -139,7 +138,6 @@
                 android:layout_height="match_parent"
                 android:visibility="visible"
                 android:focusableInTouchMode="true"
-                android:descendantFocusability="beforeDescendants"
                 tools:listitem="@layout/act091_bottom_sheet_list_item" />
 
         </LinearLayout>
