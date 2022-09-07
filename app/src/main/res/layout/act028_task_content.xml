@@ -114,6 +114,17 @@
                         android:layout_height="1dp"
                         android:layout_weight="1" />
 
+                    <ImageView
+                        android:id="@+id/act028_opc_content_content_iv_not_exec"
+                        android:layout_width="wrap_content"
+                        android:layout_height="64dp"
+                        android:layout_weight="0.20"
+                        android:paddingBottom="4dp"
+                        android:paddingLeft="15dp"
+                        android:paddingRight="15dp"
+                        android:paddingTop="4dp"
+                        android:src="@drawable/ic_rejeitar_states"
+                        android:visibility="gone" />
 
                     <View
                         android:layout_width="5dp"
@@ -124,11 +135,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="64dp"
                         android:layout_weight="0.20"
-                        android:paddingBottom="4dp"
                         android:paddingLeft="15dp"
-                        android:paddingRight="15dp"
                         android:paddingTop="4dp"
-                        android:src="@drawable/ic_ok_ns_states" />
+                        android:paddingRight="15dp"
+                        android:paddingBottom="4dp"
+                        android:src="@drawable/ic_ok_ns_states"
+                        custom:visibility="gone" />
 
 
                     <ImageView
