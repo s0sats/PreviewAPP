@@ -51,7 +51,7 @@ fun Act091BottomSheetBinding.onState(state: BottomState){
         is BottomState.OnUpdateBottomSheet -> {
             var total = 0.0
             val item = state.itemHeader
-            act091QtyBindings.act091BottomSheetQty.setText("${item.qty}")
+            /*act091QtyBindings.act091BottomSheetQty.setText("${item.qty}")*/
             if (item.type_ps == "P") {
                 act091BottomSheetTextLayoutPrice.isEnabled = false
                 if(item.manual_price == 1){
@@ -68,7 +68,7 @@ fun Act091BottomSheetBinding.onState(state: BottomState){
                                 service.forEach { obj ->
                                     obj.price?.let {
                                         total += it
-                                        act091BottomSheetOk.isEnabled = true
+                                        act091BottomSheetOk.isEnabled = item.qty >= 1
                                         act091BottomSheetPrice.setText(ToolBox_Inf.formatDoublePriceToScreen(total).toString())
                                     }
                                 }

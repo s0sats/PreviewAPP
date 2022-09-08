@@ -82,7 +82,7 @@ class Act091_Item_Adapter constructor(
 
                 temp.addAll(
                     dataset.filter {
-                        val allFilter = ToolBox.AccentMapper(it.allFieldForFilter.lowercase())
+                        val allFilter = ToolBox.AccentMapper(it.getAllFieldForFilter(showPrice).lowercase())
                         allFilter.contains(charString)
                     }
                 )
