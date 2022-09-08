@@ -202,9 +202,13 @@ class Act091_BottomSheet : BottomSheetDialogFragment(){
                 override fun reportTextChange(char: String?, p1: Boolean) {
                     val isValid = (char?.isNotEmpty() == true) && (char.toInt() >= 2)
                     binding.onState(BottomState.ChangeButtonLessQtyColor(isValid).also {
-                        if (it.value) {
+                        try{
                             contentItemHeader.qty = char?.toInt()!!
+                        }catch (e: NumberFormatException){
+                            contentItemHeader.qty = 0
                         }
+
+                        onUpdateList()
                     })
                 }
             })
@@ -217,7 +221,7 @@ class Act091_BottomSheet : BottomSheetDialogFragment(){
 
                         try {
                             contentItemHeader.price = it.toDouble()
-                        }catch (number: NumberFormatException){
+                        }catch (number: NumberFormatException) {
                             contentItemHeader.price = null
                         }
 
