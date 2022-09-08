@@ -53,7 +53,7 @@
                 android:id="@+id/act091_bottom_sheet_service_comment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text"
+                android:inputType="textMultiLine"
                 android:singleLine="false"
                 android:maxLines="10"
                 app:mBARCODE="false"
