@@ -214,7 +214,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         transList.add("express_order_pack_service_empty_list_lbl");
         transList.add("dialog_service_search_ttl");
         transList.add("dialog_service_search_msg");
-        transList.add("so_express_service_various_comments");
+        transList.add("express_order_various_comments_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -1253,7 +1253,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         if(mSo_pack_express.getAdd_pack_service() == 1 && mAdapter!= null){
             return  mAdapter.getItemCount() > 0;
         }
-        return true;
+        return false;
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -64,7 +64,7 @@ class Act040SOExpressPackServicesAdapter(
                     binding.tvPackServicesComment.text = if(hasMultipleComments(packServices)){
                         packServices.comments
                     }else{
-                        hmauxTrans["so_express_service_various_comments"]
+                        hmauxTrans["express_order_various_comments_lbl"]
                     }
                 }
             }else{
