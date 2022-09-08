@@ -250,6 +250,7 @@ class Act091_BottomSheet : BottomSheetDialogFragment(){
                     contentItemHeader.serviceList.forEach {
                         it.comments = contentItemHeader.comments
                     }
+                    contentItemHeader.comments = ""
                 }
                 onAddServices(contentItemHeader)
                 dismiss()

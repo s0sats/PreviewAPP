@@ -87,7 +87,9 @@ class Act040SOExpressPackServicesAdapter(
             packServices.serviceList.forEach { pack ->
 
                 if(!pack.comments.isNullOrEmpty()){
-                    if(comment.isBlank()) {
+                    if(comment.isBlank()
+                        || comment == pack.comments
+                    ) {
                         comment = pack.comments!!
                     }else{
                         return hmauxTrans["express_order_various_comments_lbl"]!!
