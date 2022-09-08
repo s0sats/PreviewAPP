@@ -128,6 +128,7 @@ class Act091_BottomSheet : BottomSheetDialogFragment(){
                 onState(BottomState.ChangeStatePrice(it.manual_price != 0))
                 onState(BottomState.OnUpdateBottomSheet(it, hmAux))
                 act091BottomSheetComment.setText(it.comments)
+                act091QtyBindings.act091BottomSheetQty.setText("${it.qty}")
                 if(it.type_ps == "S")
                     it.price?.let { price ->
                         act091BottomSheetPrice.setText(ToolBox_Inf.formatDoublePriceToScreen(price).toString())
