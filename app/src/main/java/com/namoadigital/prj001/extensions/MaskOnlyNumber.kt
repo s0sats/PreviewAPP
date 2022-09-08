@@ -14,9 +14,11 @@ class MaskOnlyNumber(
 
     override fun reportTextChange(char: String?, p1: Boolean) {
         char?.let {
-            if(it.contains("-")){
-                editText.text.delete(it.length - 1, it.length)
-                return
+
+            it.forEachIndexed { index, c ->
+                if(c.toString() == "-") {
+                    editText.text.delete(index, index + 1)
+                }
             }
 
             OnEventAfterTextChanged?.let { invoke -> invoke(it) }

@@ -57,9 +57,9 @@
                     android:id="@+id/act091_bottom_sheet_comment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text"
+                    android:inputType="textMultiLine"
                     android:singleLine="false"
-                    android:maxLines="10"
+                    android:maxLength="100"
                     app:mBARCODE="false"
                     app:mNFC="false"
                     app:mOCR="false" />
@@ -81,9 +81,7 @@
                     app:layout_constraintEnd_toStartOf="@+id/act091_Qty_Bindings"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:placeholderText="Inserir Preço"
-                    app:placeholderTextColor="@color/text_black"
-                    app:placeholderTextAppearance="@color/text_black">
+                    app:placeholderTextColor="@android:color/darker_gray">
 
 
                 <com.namoa_digital.namoa_library.ctls.MKEditTextNM
@@ -95,8 +93,6 @@
                         app:mDecimal="2"
                         android:textSize="16sp"
                         app:mBARCODE="false"
-                        app:placeholderTextColor="@color/text_black"
-                        app:placeholderTextAppearance="@color/text_black"
                         app:mInputType="NUMBER"
                         app:mNFC="false"
                         app:mOCR="false" />
