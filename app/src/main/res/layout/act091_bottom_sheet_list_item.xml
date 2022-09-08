@@ -55,7 +55,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="textMultiLine"
                 android:singleLine="false"
-                android:maxLines="10"
+                android:maxLength="100"
                 app:mBARCODE="false"
                 app:mNFC="false"
                 app:mOCR="false" />
