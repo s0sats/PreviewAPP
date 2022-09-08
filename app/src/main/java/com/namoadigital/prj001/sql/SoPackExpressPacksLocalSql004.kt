@@ -30,6 +30,7 @@ class SoPackExpressPacksLocalSql004(
             s.${SoPackExpressPacksLocalDao.PRICE},
             SUM(s.${SoPackExpressPacksLocalDao.QTY}) ${SoPackExpressPacksLocalDao.QTY},
             s.${SoPackExpressPacksLocalDao.TYPE_PS},
+            s.${SoPackExpressPacksLocalDao.SERVICE_CODE},
             s.${SoPackExpressPacksLocalDao.COMMENTS}
           FROM
             ${SoPackExpressPacksLocalDao.TABLE} s
@@ -40,7 +41,7 @@ class SoPackExpressPacksLocalSql004(
             AND ${SoPackExpressPacksLocalDao.PRODUCT_CODE} = '$product_code'
             AND ${SoPackExpressPacksLocalDao.EXPRESS_CODE} = '$express_code'
             AND ${SoPackExpressPacksLocalDao.EXPRESS_TMP} = '$express_tmp'
-          GROUP BY ${SoPackExpressPacksLocalDao.PRICE_LIST_CODE}, ${SoPackExpressPacksLocalDao.PACK_CODE}
+          GROUP BY ${SoPackExpressPacksLocalDao.PRICE_LIST_CODE}, ${SoPackExpressPacksLocalDao.PACK_CODE}, s.${SoPackExpressPacksLocalDao.SERVICE_CODE}
             ;                                         
        """.trimIndent()
         //
