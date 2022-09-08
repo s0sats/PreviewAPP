@@ -1,11 +1,12 @@
 package com.namoadigital.prj001.ui.act028;
 
+import static com.namoa_digital.namoa_library.util.ConstantBase.HMAUX_TRANS_LIB;
+import static com.namoa_digital.namoa_library.util.ToolBox.reverseB;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.ConstantBase;
@@ -45,9 +49,6 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import static com.namoa_digital.namoa_library.util.ConstantBase.HMAUX_TRANS_LIB;
-import static com.namoa_digital.namoa_library.util.ToolBox.reverseB;
 
 /**
  * Created by neomatrix on 14/07/17.
@@ -84,6 +85,7 @@ public class Act028_Task extends BaseFragment {
     private TextView tv_additional_info_lbl;
 
     private ImageView iv_cancel_task;
+    private ImageView iv_not_exec;
 
     private ImageView iv_play_stop;
     private ImageView iv_save;
@@ -419,6 +421,7 @@ public class Act028_Task extends BaseFragment {
         iv_save = (ImageView) view.findViewById(R.id.act028_task_content_iv_save);
 
         iv_cancel_task = (ImageView) view.findViewById(R.id.act028_task_content_iv_cancel_task);
+        iv_not_exec = (ImageView) view.findViewById(R.id.act028_opc_content_content_iv_not_exec);
 
         mk_comments = (MKEditTextNM) view.findViewById(R.id.act028_task_content_mk_comments);
         iv_gallery = (ImageView) view.findViewById(R.id.act028_task_content_iv_gallery);
@@ -682,6 +685,7 @@ public class Act028_Task extends BaseFragment {
                     iv_cancel_task.setVisibility(View.GONE);
                     iv_play_stop.setVisibility(View.GONE);
                     iv_save.setVisibility(View.GONE);
+                    iv_not_exec.setVisibility(View.GONE);
 
                     mk_qty_people.setEnabled(false);
                     mk_start_date.setEnabled(false);
@@ -691,6 +695,7 @@ public class Act028_Task extends BaseFragment {
 
                     iv_play_stop.setEnabled(false);
                     iv_save.setEnabled(false);
+                    iv_not_exec.setEnabled(false);
                     rb_stepped_perc.setEnabled(false);
                     iv_gallery.setEnabled(true);
                     mk_comments.setEnabled(false);
@@ -865,6 +870,71 @@ public class Act028_Task extends BaseFragment {
                         1,
                         false
                 );
+            }
+        });
+        //
+        iv_not_exec.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mTask.setStatus(Constant.SYS_STATUS_NOT_EXECUTED);
+                mTask.setComments(mk_comments.getText().toString().trim().length() > 0 ? mk_comments.getText().toString() : null);
+//                mTask.setTask_file(recoverTaskFiles(mTask.getTask_file(), (String) iv_gallery.getTag()));
+
+                mTask.setStart_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm Z"));
+                mTask.setEnd_date(mTask.getStart_date());
+
+                mTask.setExec_time(null);
+
+                mTask.setTask_perc(100);
+
+                mTask.setQty_people(Integer.parseInt(mk_qty_people.getText().toString()));
+                //LUCHE - 18/10/2019
+                //Reseta site e zona que serão enviados para o server.
+                mTask.setSite_code(Integer.valueOf(ToolBox_Con.getPreference_Site_Code(context)));
+                mTask.setSite_id(null);
+                mTask.setSite_desc(null);
+                mTask.setZone_code(ToolBox_Con.getPreference_Zone_Code(context));
+                mTask.setZone_id(null);
+                mTask.setZone_desc(null);
+                //
+                sm_so_service_exec_task_fileDao.remove(
+                        new SM_SO_Service_Exec_Task_File_Sql_009(
+                                mTask.getCustomer_code(),
+                                mTask.getSo_prefix(),
+                                mTask.getSo_code(),
+                                mTask.getPrice_list_code(),
+                                mTask.getPack_code(),
+                                mTask.getPack_seq(),
+                                mTask.getCategory_price_code(),
+                                mTask.getService_code(),
+                                mTask.getService_seq(),
+                                mTask.getExec_tmp(),
+                                mTask.getTask_tmp()
+                        ).toSqlQuery()
+                );
+                //
+                sm_so_service_exec_taskDao.addUpdateTmp(mTask);
+
+                // Include Files to Upload
+                uploadFiles(mTask);
+
+                /**
+                 * Calling WebService
+                 */
+                SM_SO so = soDao.getByString(
+                        new SM_SO_Sql_001(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                mTask.getSo_prefix(),
+                                mTask.getSo_code()
+                        ).toSqlQuery()
+                );
+
+                so.setUpdate_required(1);
+                soDao.addUpdate(so);
+                //
+                processStatusUpdateOffLine();
+                mMain_new.setmTaskCall(true);
+                mMain_new.executeSerialSave();
             }
         });
     }
@@ -1284,6 +1354,7 @@ public class Act028_Task extends BaseFragment {
 
                     iv_play_stop.setEnabled(true);
                     iv_save.setEnabled(true);
+                    iv_not_exec.setEnabled(true);
                     rb_stepped_perc.setEnabled(false);
                     iv_gallery.setEnabled(false);
                     mk_comments.setEnabled(false);
@@ -1298,6 +1369,7 @@ public class Act028_Task extends BaseFragment {
 
                     iv_play_stop.setEnabled(false);
                     iv_save.setEnabled(false);
+                    iv_not_exec.setEnabled(false);
                     rb_stepped_perc.setEnabled(false);
 
                     if (mImgPath.trim().length() != 0) {
@@ -1317,6 +1389,7 @@ public class Act028_Task extends BaseFragment {
 
                     iv_play_stop.setEnabled(false);
                     iv_save.setEnabled(false);
+                    iv_not_exec.setEnabled(false);
                     rb_stepped_perc.setEnabled(false);
 
                     if (mImgPath.trim().length() != 0) {
@@ -1337,6 +1410,7 @@ public class Act028_Task extends BaseFragment {
 
                     iv_play_stop.setEnabled(false);
                     iv_save.setEnabled(false);
+                    iv_not_exec.setEnabled(false);
                     rb_stepped_perc.setEnabled(false);
 
                     if (mImgPath.trim().length() != 0) {
@@ -1358,6 +1432,7 @@ public class Act028_Task extends BaseFragment {
                     iv_play_stop.setOnClickListener(play_stop_listener);
 
                     iv_save.setEnabled(true);
+                    iv_not_exec.setEnabled(true);
                     iv_save.setOnClickListener(save_listener);
 
                     rb_stepped_perc.setEnabled(true);
@@ -1461,9 +1536,13 @@ public class Act028_Task extends BaseFragment {
         if (mService.getExec_type().equalsIgnoreCase(Constant.SO_SERVICE_TYPE_START_STOP)) {
             iv_play_stop.setVisibility(View.VISIBLE);
             iv_save.setVisibility(View.GONE);
+            iv_not_exec.setVisibility(View.GONE);
         } else {
             iv_play_stop.setVisibility(View.GONE);
             iv_save.setVisibility(View.VISIBLE);
+            if(checkNotExecutionAccess()) {
+                iv_not_exec.setVisibility(View.VISIBLE);
+            }
             //
             rb_stepped_perc.setEnabled(false);
             rb_stepped_perc.setProgress(100);
@@ -1473,13 +1552,19 @@ public class Act028_Task extends BaseFragment {
             if (!mTask.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PROCESS)) {
                 iv_play_stop.setVisibility(View.GONE);
                 iv_save.setVisibility(View.GONE);
+                iv_not_exec.setVisibility(View.GONE);
             }
         } else {
             iv_play_stop.setVisibility(View.GONE);
             iv_save.setVisibility(View.GONE);
+            iv_not_exec.setVisibility(View.GONE);
         }
 
         mk_comments.setTextColor(0xFF000000);
+    }
+
+    private boolean checkNotExecutionAccess() {
+        return mService!= null && mService.getOptional() == 1;
     }
 
     private View.OnClickListener play_stop_listener = new View.OnClickListener() {
