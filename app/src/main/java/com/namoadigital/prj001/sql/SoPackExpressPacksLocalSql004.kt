@@ -42,6 +42,7 @@ class SoPackExpressPacksLocalSql004(
             AND ${SoPackExpressPacksLocalDao.EXPRESS_CODE} = '$express_code'
             AND ${SoPackExpressPacksLocalDao.EXPRESS_TMP} = '$express_tmp'
           GROUP BY ${SoPackExpressPacksLocalDao.PRICE_LIST_CODE}, ${SoPackExpressPacksLocalDao.PACK_CODE}, s.${SoPackExpressPacksLocalDao.SERVICE_CODE}
+          ORDER BY rowid
             ;                                         
        """.trimIndent()
         //

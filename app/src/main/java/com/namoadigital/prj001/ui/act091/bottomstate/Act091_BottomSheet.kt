@@ -239,6 +239,21 @@ class Act091_BottomSheet : BottomSheetDialogFragment(){
                 }
             })
 
+            act091BottomSheetComment.onFocusChangeListener =
+                View.OnFocusChangeListener { v, hasFocus ->
+                    act091BottomSheetComment.post {
+                        if(!hasFocus){
+                            contentItemHeader.serviceList.forEach{
+                                it.comments = contentItemHeader.comments
+                            }
+                            //
+                            mAdapter?.notifyItemRangeChanged(0, contentItemHeader.serviceList.size)
+                            contentItemHeader.comments = ""
+                            act091BottomSheetComment.setText("")
+                        }
+                    }
+                }
+
             //tirar bottom sheet
             act091BottomSheetCancel.setOnClickListener {
                 dismiss()

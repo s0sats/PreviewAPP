@@ -613,6 +613,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                         binding.svMain.post(new Runnable() {
                             public void run() {
                                 binding.svMain.fullScroll(View.FOCUS_DOWN);
+                                hasServiceAdded = false;
                             }
                         });
                     }
