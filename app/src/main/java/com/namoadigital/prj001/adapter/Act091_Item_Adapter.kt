@@ -49,7 +49,7 @@ class Act091_Item_Adapter constructor(
             with(binding) {
                 item?.let {
                     act091ListTitle.text = it.pack_service_desc_full
-                    act091ListProgress.max = it.rating
+                    act091ListProgress.max = 100
                     act091ListProgress.progress = it.rating_ref.toInt()
                     act091ListPrice.apply {
                         if (showPrice) {

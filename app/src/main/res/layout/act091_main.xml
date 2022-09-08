@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.act091.Act091_Main">
+    tools:context=".ui.act091.mvp.ui.Act091_Main">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/act091_TopAppBar"
@@ -25,8 +25,8 @@
         android:paddingHorizontal="15dp"
         android:paddingVertical="10dp"
         app:startIconDrawable="@drawable/ic_search_black_24dp"
-        app:placeholderText="Digite para buscar..."
-        android:hint="Filtro"
+        app:placeholderText=""
+        android:hint=""
         app:placeholderTextColor="@android:color/darker_gray">
 
         <com.namoa_digital.namoa_library.ctls.MKEditTextNM
