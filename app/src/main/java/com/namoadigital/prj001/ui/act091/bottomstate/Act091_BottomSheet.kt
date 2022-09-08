@@ -214,14 +214,11 @@ class Act091_BottomSheet : BottomSheetDialogFragment(){
             //botão OK ativado quando preço do header está preenchido
             act091BottomSheetPrice.apply {
                     setOnReportTextChangeListner(MaskOnlyNumber(this) {
-                        if (it.isEmpty() || it == ".") {
+
+                        try {
+                            contentItemHeader.price = it.toDouble()
+                        }catch (number: NumberFormatException){
                             contentItemHeader.price = null
-                        } else {
-                            try {
-                                contentItemHeader.price = it.toDouble()
-                            } catch (e: NumberFormatException) {
-                                contentItemHeader.price = null
-                            }
                         }
 
                         if(contentItemHeader.serviceList.isEmpty()){

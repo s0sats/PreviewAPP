@@ -30,7 +30,7 @@ fun Act091BottomSheetBinding.onState(state: BottomState){
         is BottomState.ChangePriceColor -> {
             act091BottomSheetOk.isEnabled = state.value
             if(state.value){
-                act091BottomSheetTextLayoutPrice.changeColorTextLayout(R.color.namoa_light_blue)
+                act091BottomSheetTextLayoutPrice.changeColorTextLayout()
                 act091BottomSheetTextLayoutPrice.isHelperTextEnabled = false
             }else{
                 act091BottomSheetTextLayoutPrice.isHelperTextEnabled = true
@@ -106,6 +106,6 @@ fun Act091BottomSheetBinding.onState(state: BottomState){
 fun TextInputLayout.changeColorTextLayout(color: Int = R.color.namoa_light_blue){
     boxStrokeColor = resources.getColor(color)
     hintTextColor = resources.getColorStateList(color)
-    placeholderTextColor = resources.getColorStateList(color)
+    placeholderTextColor = resources.getColorStateList(R.color.namoa_color_gray_8)
 
 }
