@@ -61,11 +61,7 @@ class Act040SOExpressPackServicesAdapter(
                 if(hasAllCommentsNullOrEmpty(packServices.serviceList)){
                     binding.tvPackServicesComment.visibility = View.GONE
                 }else{
-                    binding.tvPackServicesComment.text = if(hasMultipleComments(packServices)){
-                        packServices.comments
-                    }else{
-                        hmauxTrans["express_order_various_comments_lbl"]
-                    }
+                    binding.tvPackServicesComment.text = getPackageMainComment(packServices)
                 }
             }else{
                 binding.tvPackServicesComment.text = packServices.comments
@@ -86,18 +82,19 @@ class Act040SOExpressPackServicesAdapter(
             return false
         }
 
-        private fun hasMultipleComments(packServices: SoPackExpressPacksLocal): Boolean {
-            var count = 0
+        private fun getPackageMainComment(packServices: SoPackExpressPacksLocal): String {
+            var comment = ""
             packServices.serviceList.forEach { pack ->
-                if(count > 1){
-                    return true
-                }
 
                 if(!pack.comments.isNullOrEmpty()){
-                    count++
+                    if(comment.isBlank()) {
+                        comment = pack.comments!!
+                    }else{
+                        return hmauxTrans["express_order_various_comments_lbl"]!!
+                    }
                 }
             }
-            return false
+            return comment
         }
 
         private fun getFormattedPackDesc(packServices: SoPackExpressPacksLocal): String {
