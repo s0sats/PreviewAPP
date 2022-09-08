@@ -38,7 +38,7 @@ fun Act091BottomSheetListItemBinding.onEvent(event: BottomListEvent) {
         is BottomListEvent.stateWhenIsPackage -> {
 
             val item = event.item
-            onEvent(BottomListEvent.changePriceColor(event.manual_price && item.price != null, event.hmAux))
+            onEvent(BottomListEvent.changePriceColor(event.manual_price && item.price != null , event.hmAux))
 
             with(act091ServiceQtyBindings) {
                 act091BottomSheetLess.onHide()
@@ -69,6 +69,7 @@ fun Act091BottomSheetListItemBinding.onEvent(event: BottomListEvent) {
                     setText("")
                 } else {
                     setText(ToolBox_Inf.formatDoublePriceToScreen(item.price).toString())
+                    setSelectAllOnFocus(true)
                     if (!event.manual_price) {
                         setTextColor(root.resources.getColor(R.color.namoa_color_gray_7))
                     }

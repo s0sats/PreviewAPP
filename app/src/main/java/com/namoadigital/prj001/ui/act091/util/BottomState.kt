@@ -18,6 +18,7 @@ sealed class BottomState {
     data class HasPermissionShowPrice(val showPrice: Boolean, val soPackExpressLocal: SoPackExpressPacksLocal) : BottomState(){
         val manual_price = soPackExpressLocal.manual_price == 1
         val type_service = soPackExpressLocal.type_ps == "S"
+        val containPrice = soPackExpressLocal.price.toString().isNotEmpty()
     }
     data class ShowDelete(val show: Boolean) : BottomState()
 }
@@ -88,7 +89,9 @@ fun Act091BottomSheetBinding.onState(state: BottomState){
             }
             act091BottomSheetTextLayoutPrice.isEnabled = state.manual_price && state.type_service
             act091BottomSheetPrice.isEnabled = state.manual_price && state.type_service
+
             if(state.manual_price && !state.type_service) act091BottomSheetPrice.setTextColor(root.resources.getColor(R.color.namoa_color_gray_8))
+            if(state.containPrice) act091BottomSheetPrice.setSelectAllOnFocus(true)
         }
 
         is BottomState.ShowDelete -> {

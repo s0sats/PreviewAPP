@@ -47,12 +47,13 @@ class Act091_BottomSheet_Item_Adapter constructor(
                 //
                 act091BottomSheetServicePrice.apply {
                     setOnReportTextChangeListner(MaskOnlyNumber(this) {
-                        if (it.isEmpty() || it == ".") {
+                        try{
+                            item.price = it.toDouble()
+                        }catch (number: NumberFormatException){
                             item.price = null
-                        } else {
-                            item.price = it.replace(",", ".").toDouble()
                         }
-                        onEvent(BottomListEvent.changePriceColor(it.isNotEmpty(), hmAux))
+
+                        onEvent(BottomListEvent.changePriceColor(it.isNotEmpty() && it != ".", hmAux))
                         onUpdateList()
 
                     })
