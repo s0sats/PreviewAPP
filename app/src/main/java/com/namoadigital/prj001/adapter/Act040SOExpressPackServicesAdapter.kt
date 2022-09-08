@@ -122,6 +122,7 @@ class Act040SOExpressPackServicesAdapter(
                     if (signPrice) {
                         return String.format("%.2f+", price ?: 0.0)
                     }
+                    return String.format("%.2f", price?: 0.0)
                 }
                 return ""
             }

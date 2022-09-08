@@ -243,9 +243,11 @@ class Act091_BottomSheet : BottomSheetDialogFragment(){
                                 it.comments = contentItemHeader.comments
                             }
                             //
-                            mAdapter?.notifyItemRangeChanged(0, contentItemHeader.serviceList.size)
-                            contentItemHeader.comments = ""
-                            act091BottomSheetComment.setText("")
+                            if(contentItemHeader.type_ps == "P") {
+                                mAdapter?.notifyItemRangeChanged(0, contentItemHeader.serviceList.size)
+                                contentItemHeader.comments = ""
+                                act091BottomSheetComment.setText("")
+                            }
                         }
                     }
                 }
@@ -261,6 +263,10 @@ class Act091_BottomSheet : BottomSheetDialogFragment(){
                     contentItemHeader.serviceList.forEach {
                         it.comments = contentItemHeader.comments
                     }
+                    if(contentItemHeader.type_ps == "P") {
+                        contentItemHeader.comments = ""
+                    }
+                }else if(contentItemHeader.type_ps == "S") {
                     contentItemHeader.comments = ""
                 }
                 onAddServices(contentItemHeader)
