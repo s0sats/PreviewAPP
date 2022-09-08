@@ -16,11 +16,11 @@ import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.adapter.Act091_BottomSheet_Item_Adapter
-import com.namoadigital.prj001.adapter.onHide
-import com.namoadigital.prj001.adapter.onShow
 import com.namoadigital.prj001.databinding.Act091BottomSheetBinding
 import com.namoadigital.prj001.extensions.MaskOnlyNumber
 import com.namoadigital.prj001.model.SoPackExpressPacksLocal
+import com.namoadigital.prj001.ui.act091.mvp.Utils.onHide
+import com.namoadigital.prj001.ui.act091.mvp.Utils.onVisible
 import com.namoadigital.prj001.ui.act091.util.BottomState
 import com.namoadigital.prj001.ui.act091.util.onState
 import com.namoadigital.prj001.util.Constant
@@ -148,7 +148,6 @@ class Act091_BottomSheet : BottomSheetDialogFragment(){
             act091BottomSheetTextLayoutPrice.hint = hmAux["price_hint"]
             act091BottomSheetTextLayoutPrice.placeholderText = hmAux["insert_price_placeholder"]
             act091BottomSheetTextLayoutPrice.placeholderTextAppearance = root.resources.getColor(R.color.namoa_color_gray_9)
-/*            act091BottomSheetTextLayoutPrice.placeholderTextColor = root.resources.getColor(R.color.namoa_color_gray_9)*/
 
             act091BottomSheetSeeMore.text = "${hmAux["services_included_lbl"]}:"
             act091QtyBindings.act091BottomSheetQtyText.text = hmAux["qty_lbl"]
@@ -156,7 +155,7 @@ class Act091_BottomSheet : BottomSheetDialogFragment(){
             act091BottomSheetCancel.text = hmAux["sys_alert_btn_cancel"]
             //
 
-            binding.onState(BottomState.HasPermissionShowPrice(showPrice(), contentItemHeader.manual_price == 1 && contentItemHeader.type_ps == "S"))
+            binding.onState(BottomState.HasPermissionShowPrice(showPrice(), contentItemHeader))
             //
             binding.onState(BottomState.ShowDelete(showDelete))
         }
@@ -214,19 +213,19 @@ class Act091_BottomSheet : BottomSheetDialogFragment(){
         with(binding) {
             //botão OK ativado quando preço do header está preenchido
             act091BottomSheetPrice.apply {
-                if(showPrice())
                     setOnReportTextChangeListner(MaskOnlyNumber(this) {
                         if (it.isEmpty() || it == ".") {
                             contentItemHeader.price = null
                         } else {
                             try {
-                                contentItemHeader.price = it.replace(",", ".").toDouble()
-                                if (contentItemHeader.serviceList.isEmpty()) {
-                                    onUpdateList()
-                                }
+                                contentItemHeader.price = it.toDouble()
                             } catch (e: NumberFormatException) {
                                 contentItemHeader.price = null
                             }
+                        }
+
+                        if(contentItemHeader.serviceList.isEmpty()){
+                            onUpdateList()
                         }
                     })
             }
@@ -270,7 +269,7 @@ class Act091_BottomSheet : BottomSheetDialogFragment(){
                     layoutManager = LinearLayoutManager(requireContext())
                     adapter = mAdapter
                 }
-                act091BottomSheetSeeMore.onShow()
+                act091BottomSheetSeeMore.onVisible()
                 return
             }
 

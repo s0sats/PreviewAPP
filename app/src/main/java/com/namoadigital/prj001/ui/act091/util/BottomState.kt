@@ -15,7 +15,10 @@ sealed class BottomState {
     data class ChangeButtonLessQtyColor(val value: Boolean) : BottomState()
     data class ChangeStatePrice(val value: Boolean) : BottomState()
     data class OnUpdateBottomSheet(val itemHeader: SoPackExpressPacksLocal, val hmAux: HMAux) : BottomState()
-    data class HasPermissionShowPrice(val showPrice: Boolean, val isEnable: Boolean) : BottomState()
+    data class HasPermissionShowPrice(val showPrice: Boolean, val soPackExpressLocal: SoPackExpressPacksLocal) : BottomState(){
+        val manual_price = soPackExpressLocal.manual_price == 1
+        val type_service = soPackExpressLocal.type_ps == "S"
+    }
     data class ShowDelete(val show: Boolean) : BottomState()
 }
 
@@ -49,7 +52,7 @@ fun Act091BottomSheetBinding.onState(state: BottomState){
             val item = state.itemHeader
             act091QtyBindings.act091BottomSheetQty.setText("${item.qty}")
             if (item.type_ps == "P") {
-                act091BottomSheetPrice.isEnabled = false
+                act091BottomSheetTextLayoutPrice.isEnabled = false
                 if(item.manual_price == 1){
                     act091BottomSheetTextLayoutPrice.isHelperTextEnabled = true
                     act091BottomSheetTextLayoutPrice.helperText = "${state.hmAux["services_below_lbl"]}"
@@ -78,13 +81,14 @@ fun Act091BottomSheetBinding.onState(state: BottomState){
         }
 
         is BottomState.HasPermissionShowPrice -> {
-            if(state.showPrice){
+            if(state.showPrice || state.manual_price){
                 act091BottomSheetTextLayoutPrice.visibility = View.VISIBLE
             }else{
                 act091BottomSheetTextLayoutPrice.visibility = View.GONE
             }
-            act091BottomSheetTextLayoutPrice.isEnabled = state.isEnable
-            if(!state.isEnable) act091BottomSheetPrice.setTextColor(root.resources.getColor(R.color.namoa_color_gray_8))
+            act091BottomSheetTextLayoutPrice.isEnabled = state.manual_price && state.type_service
+            act091BottomSheetPrice.isEnabled = state.manual_price && state.type_service
+            if(state.manual_price && !state.type_service) act091BottomSheetPrice.setTextColor(root.resources.getColor(R.color.namoa_color_gray_8))
         }
 
         is BottomState.ShowDelete -> {

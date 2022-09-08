@@ -1,17 +1,18 @@
 package com.namoadigital.prj001.ui.act091.util
 
 import android.annotation.SuppressLint
+import android.view.View
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.R
-import com.namoadigital.prj001.adapter.onHide
 import com.namoadigital.prj001.databinding.Act091BottomSheetListItemBinding
 import com.namoadigital.prj001.model.SoPackExpressServicesLocal
+import com.namoadigital.prj001.ui.act091.mvp.Utils.onHide
 import com.namoadigital.prj001.util.ToolBox_Inf
 
 sealed class BottomListEvent {
 
     data class changePriceColor(val value: Boolean, val hmAux: HMAux) : BottomListEvent()
-    data class stateWhenIsPackage(val item: SoPackExpressServicesLocal, val hmAux: HMAux) : BottomListEvent() {
+    data class stateWhenIsPackage(val item: SoPackExpressServicesLocal, val showPrice: Boolean, val hmAux: HMAux) : BottomListEvent() {
         val manual_price = item.manual_price == 1
     }
 }
@@ -48,14 +49,21 @@ fun Act091BottomSheetListItemBinding.onEvent(event: BottomListEvent){
             }
             act091BottomSheetServiceTextLayoutPrice.placeholderTextColor = root.resources.getColorStateList(R.color.namoa_color_gray_9)
             act091BottomSheetServicePrice.apply {
+                isEnabled = event.manual_price
+                act091BottomSheetServiceTextLayoutPrice.isEnabled = event.manual_price
+
+                if (item.manual_price == 0 && !event.showPrice) {
+                    act091BottomSheetServiceTextLayoutPrice.visibility = View.GONE
+                } else {
+                    act091BottomSheetServiceTextLayoutPrice.visibility = View.VISIBLE
+                }
+
                 if(event.manual_price && item.price == null){
                     setText("")
                 }else{
                     setText(ToolBox_Inf.formatDoublePriceToScreen(item.price).toString())
-                    act091BottomSheetServiceTextLayoutPrice.isEnabled = item.manual_price == 1
                     act091BottomSheetServicePrice.setTextColor(root.resources.getColor(R.color.namoa_color_gray_7))
                 }
-                isEnabled = event.manual_price
             }
         }
 

@@ -2,7 +2,6 @@ package com.namoadigital.prj001.adapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
@@ -42,16 +41,9 @@ class Act091_BottomSheet_Item_Adapter constructor(
                 act091BottomSheetServiceComment.setText(item.comments)
                 act091BottomSheetServiceTitle.text = item.service_desc_full
                 if (type == "P") {
-                    onEvent(BottomListEvent.stateWhenIsPackage(item, hmAux))
+                    onEvent(BottomListEvent.stateWhenIsPackage(item, showPrice, hmAux))
                 }
-                //
 
-
-                if (item.manual_price == 0 && !showPrice) {
-                    act091BottomSheetServicePrice.visibility = View.GONE
-                } else {
-                    act091BottomSheetServicePrice.visibility = View.VISIBLE
-                }
                 //
                 act091BottomSheetServicePrice.apply {
                     setOnReportTextChangeListner(MaskOnlyNumber(this) {
@@ -96,13 +88,4 @@ class Act091_BottomSheet_Item_Adapter constructor(
         }
 
     }
-}
-
-
-fun View.onHide() {
-    this.visibility = View.GONE
-}
-
-fun View.onShow(){
-    this.visibility = View.VISIBLE
 }
