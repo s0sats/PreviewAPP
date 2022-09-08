@@ -11,7 +11,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf
 
 sealed class BottomState {
 
-    data class ChangePriceColor(val value: Boolean, val hmAux: HMAux) : BottomState()
+    data class ChangePriceColor(val value: Boolean, val qty: Int, val hmAux: HMAux) : BottomState()
     data class ChangeButtonLessQtyColor(val value: Boolean) : BottomState()
     data class ChangeStatePrice(val value: Boolean) : BottomState()
     data class OnUpdateBottomSheet(val itemHeader: SoPackExpressPacksLocal, val hmAux: HMAux) : BottomState()
@@ -29,7 +29,7 @@ fun Act091BottomSheetBinding.onState(state: BottomState){
 
     when(state){
         is BottomState.ChangePriceColor -> {
-            act091BottomSheetOk.isEnabled = state.value
+            act091BottomSheetOk.isEnabled = state.value && state.qty >= 1
             if(state.value){
                 act091BottomSheetTextLayoutPrice.changeColorTextLayout()
                 act091BottomSheetTextLayoutPrice.isHelperTextEnabled = false
@@ -51,7 +51,7 @@ fun Act091BottomSheetBinding.onState(state: BottomState){
         is BottomState.OnUpdateBottomSheet -> {
             var total = 0.0
             val item = state.itemHeader
-            /*act091QtyBindings.act091BottomSheetQty.setText("${item.qty}")*/
+
             if (item.type_ps == "P") {
                 act091BottomSheetTextLayoutPrice.isEnabled = false
                 if(item.manual_price == 1){
@@ -77,7 +77,7 @@ fun Act091BottomSheetBinding.onState(state: BottomState){
                     }
                 }
             }else{
-                onState(BottomState.ChangePriceColor(item.price != null, state.hmAux))
+                onState(BottomState.ChangePriceColor(item.price != null, item.qty, state.hmAux))
             }
         }
 

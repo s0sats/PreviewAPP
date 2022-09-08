@@ -124,7 +124,7 @@ class Act091_BottomSheet : BottomSheetDialogFragment(){
             contentItemHeader.let {
                 act091BottomSheetTitle.text = it.pack_service_desc_full
                 onState(BottomState.ChangeButtonLessQtyColor(it.qty != 1))
-                onState(BottomState.ChangePriceColor(it.manual_price == 0, hmAux))
+                onState(BottomState.ChangePriceColor(it.manual_price == 0, it.qty, hmAux))
                 onState(BottomState.ChangeStatePrice(it.manual_price != 0))
                 onState(BottomState.OnUpdateBottomSheet(it, hmAux))
                 act091BottomSheetComment.setText(it.comments)
