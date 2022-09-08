@@ -81,18 +81,18 @@ import java.util.Map;
 
 public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
 
-    private Context context;
-    private Act040_Main mView;
-    private HMAux hmAux_Trans;
-    private SO_Pack_ExpressDao so_pack_expressDao;
-    private SO_Pack_Express_LocalDao so_pack_express_localDao;
-    private MD_ProductDao md_productDao;
-    private MD_PartnerDao md_partnerDao;
-    private MD_SiteDao mdSiteDao;
-    private MD_OperationDao mdOperationDao;
-    private MD_Product_SerialDao productSerialDao;
-    private MD_Site_ZoneDao zoneDao;
-    private SoPackExpressPacksLocalDao soPackExpressLocalDao;
+    private final Context context;
+    private final Act040_Main mView;
+    private final HMAux hmAux_Trans;
+    private final SO_Pack_ExpressDao so_pack_expressDao;
+    private final SO_Pack_Express_LocalDao so_pack_express_localDao;
+    private final MD_ProductDao md_productDao;
+    private final MD_PartnerDao md_partnerDao;
+    private final MD_SiteDao mdSiteDao;
+    private final MD_OperationDao mdOperationDao;
+    private final MD_Product_SerialDao productSerialDao;
+    private final MD_Site_ZoneDao zoneDao;
+    private final SoPackExpressPacksLocalDao soPackExpressLocalDao;
 
     public Act040_Main_Presenter_Impl(Context context, Act040_Main mView, HMAux hmAux_Trans, SO_Pack_ExpressDao so_pack_expressDao, SO_Pack_Express_LocalDao so_pack_express_localDao, MD_ProductDao md_productDao, MD_PartnerDao md_partnerDao, MD_SiteDao mdSiteDao, MD_Site_ZoneDao zoneDao, MD_OperationDao mdOperationDao, MD_Product_SerialDao productSerialDao, SoPackExpressPacksLocalDao soPackExpressLocalDao) {
         this.context = context;
@@ -287,7 +287,7 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
                     so_pack_express.getPack_desc()
             );
 
-            SoPackExpressPacksLocal soPackExpressPacksLocal = new SoPackExpressPacksLocal(context, packageDefault.get(0), so_pack_express_local, -1);
+            SoPackExpressPacksLocal soPackExpressPacksLocal = new SoPackExpressPacksLocal(packageDefault.get(0), so_pack_express_local, -1);
             so_pack_express_local.getPacksLocals().add(soPackExpressPacksLocal);
             so_pack_express_localDao.addUpdate(so_pack_express_local);
             //

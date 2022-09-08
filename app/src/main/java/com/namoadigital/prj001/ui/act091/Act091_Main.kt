@@ -1,3 +1,4 @@
+/*
 package com.namoadigital.prj001.ui.act091
 
 import android.content.Intent
@@ -15,11 +16,12 @@ import com.namoadigital.prj001.model.SoPackExpressPacksLocal
 import com.namoadigital.prj001.model.TSO_Service_Search_Obj
 import com.namoadigital.prj001.ui.act040.Act040_Main
 import com.namoadigital.prj001.ui.act091.bottomstate.Act091_BottomSheet
+import com.namoadigital.prj001.ui.act091.mvp.Act091_Contract
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
 
-class Act091_Main : Base_Activity(), Act091_Contract.I_View {
+class Act091_MainS : Base_Activity(), Act091_Contract.I_View {
 
 
     private val binding: Act091MainBinding by lazy {
@@ -114,72 +116,4 @@ class Act091_Main : Base_Activity(), Act091_Contract.I_View {
         )
     }
 
-
-
-    private fun initVars(){
-
-        with(binding){
-            act091TextLayout.hint = hmAux_Trans["filter_hint"]
-            act091TextLayout.placeholderText = hmAux_Trans["insert_filter_placeholder"]
-        }
-
-    }
-
-    private fun initSetup(){
-        mResource_Code = ToolBox_Inf.getResourceCode(
-            context,
-            mModule_Code,
-            ConstantBaseApp.ACT091
-        )
-    }
-
-    private fun initTrans(){
-        hmAux_Trans = mPresenter.getTranslation()
-    }
-
-    private fun initAction(){
-
-        binding.act091FilterText.setOnReportTextChangeListner(object : MKEditTextNM.IMKEditTextChangeText {
-            override fun reportTextChange(text: String?) {
-            }
-
-            override fun reportTextChange(text: String?, p1: Boolean) {
-                applyTextFilter(text)
-            }
-        })
-
-    }
-
-    private fun applyTextFilter(text: String?) = mAdapter?.filter?.filter(text)
-
-    private fun initRecyclerView(){
-        if(mPresenter.getListData().isNotEmpty()){
-            with(binding.act091RecyclerView){
-                adapter = mAdapter
-            }
-            return
-        }
-        binding.act091RecyclerView.visibility = View.GONE
-        binding.act091WithoutList.text = hmAux_Trans["empty_list_lbl"]
-        binding.act091WithoutList.visibility = View.VISIBLE
-
-    }
-
-    private fun notifyFilterApplied(size: Int){
-        if(size < 1){
-            binding.act091WithoutList.visibility = View.VISIBLE
-            binding.act091WithoutList.text = hmAux_Trans["empty_list_lbl"]
-            binding.act091RecyclerView.visibility = View.GONE
-            return
-        }
-        binding.act091WithoutList.visibility = View.GONE
-        binding.act091RecyclerView.visibility = View.VISIBLE
-    }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-        callAct040(-1)
-    }
-
-
-}
+*/

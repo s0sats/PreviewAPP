@@ -23,7 +23,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -58,8 +57,8 @@ import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
 import com.namoadigital.prj001.ui.act042.Act042_Main;
 import com.namoadigital.prj001.ui.act048.Act048_Main;
-import com.namoadigital.prj001.ui.act091.Act091_Main;
 import com.namoadigital.prj001.ui.act091.bottomstate.Act091_BottomSheet;
+import com.namoadigital.prj001.ui.act091.mvp.ui.Act091_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -97,13 +96,13 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     private String bundle_billing_info3 = "";
     private long bundle_express_tmp = -1;
     private boolean hasServiceAdded = false;
-    private String bundle_category_price_code = "";
-    private String bundle_contract_code = "";
-    private String bundle_product_code = "";
-    private ArrayList<HMAux> wsAuxResult = new ArrayList<>();
+    private final String bundle_category_price_code = "";
+    private final String bundle_contract_code = "";
+    private final String bundle_product_code = "";
+    private final ArrayList<HMAux> wsAuxResult = new ArrayList<>();
     private boolean exitProcess = false;
     public static final String LABEL_TRANS_OS_EXPRESS= "lbl_type_service_order_express";
-    private ArrayList<MKEditTextNM> trackingFields = new ArrayList<>();
+    private final ArrayList<MKEditTextNM> trackingFields = new ArrayList<>();
 
     private Act040MainContentBinding binding;
     private Act040SOExpressPackServicesAdapter mAdapter;
@@ -613,7 +612,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
                     if(hasServiceAdded){
                         binding.svMain.post(new Runnable() {
                             public void run() {
-                                binding.svMain.fullScroll(binding.svMain.FOCUS_DOWN);
+                                binding.svMain.fullScroll(View.FOCUS_DOWN);
                             }
                         });
                     }

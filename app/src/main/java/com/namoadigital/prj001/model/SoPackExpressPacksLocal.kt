@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.model
 
-import android.content.Context
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
@@ -33,7 +32,6 @@ data class SoPackExpressPacksLocal(
     var serviceList: MutableList<SoPackExpressServicesLocal> = mutableListOf()
 ) {
     constructor(
-        context: Context,
         serviceSearch: TSO_Service_Search_Obj,
         expressLocal:SO_Pack_Express_Local,
         pack_seq: Int) :
@@ -56,12 +54,11 @@ data class SoPackExpressPacksLocal(
                 serviceSearch.type_ps,
                 serviceSearch.comment
             ){
-                setPkAndServiceList(context, expressLocal, serviceSearch.service_list)
+                setPkAndServiceList(expressLocal, serviceSearch.service_list)
             }
 
 
     fun setPkAndServiceList(
-        context: Context,
         soExpress: SO_Pack_Express_Local,
         inputServiceList: List<TSO_Service_Search_Detail_Obj>
     ){
