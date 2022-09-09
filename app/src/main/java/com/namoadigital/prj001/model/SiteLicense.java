@@ -5,23 +5,23 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 
 public class SiteLicense implements Serializable {
-    @SerializedName("CUSTOMER_CODE")
+    @SerializedName("customer_code")
     private int customer_code;
-    @SerializedName("SITE_CODE")
+    @SerializedName("site_code")
     private int site_code;
-    @SerializedName("SITE_DESC")
+    @SerializedName("site_desc")
     private String site_desc;
-    @SerializedName("USER_LEVEL_CODE")
+    @SerializedName("user_level_code")
     private int user_level_code;
-    @SerializedName("USER_LEVEL_ID")
+    @SerializedName("user_level_id")
     private String user_level_id;
-    @SerializedName("USER_LEVEL_VALUE")
+    @SerializedName("user_level_value")
     private int user_level_value;
-    @SerializedName("LICENSE_AVAILABLE")
+    @SerializedName("license_available")
     private int license_available;
-    @SerializedName("DISTINCT_LEVEL")
+    @SerializedName("distinct_level")
     private int distinct_level;
-    @SerializedName("USER_LEVEL_CHANGED")
+    @SerializedName("user_level_changed")
     private int user_level_changed;
 
     public int getCustomer_code() {

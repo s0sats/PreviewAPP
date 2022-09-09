@@ -15,8 +15,7 @@ public class TSave_Ap_Rec {
     @SerializedName("link_url") private String link_url;
     @SerializedName("error_msg") private String error_msg;
     @SerializedName("save") private String save;
-
-    private ArrayList<ApSaveStatus> ap = new ArrayList<>();
+    @SerializedName("ap") private ArrayList<ApSaveStatus> ap = new ArrayList<>();
 
     public String getApp() {
         return app;
