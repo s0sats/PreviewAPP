@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.model
 
 import com.google.gson.annotations.Expose
+import com.google.gson.annotations.SerializedName
 
 data class SoPackExpressServicesLocal(
     var customer_code:Long,
@@ -14,17 +15,17 @@ data class SoPackExpressServicesLocal(
     var pack_seq:Int,
     var type_ps:String,
     @Expose
-    var service_code:Int,
+    @SerializedName("service_code") var service_code:Int,
     @Expose
-    var service_seq:Int,
+    @SerializedName("service_seq") var service_seq:Int,
     var service_desc:String,
     var service_desc_full:String,
     @Expose
-    var price:Double?,
+    @SerializedName("price")  var price:Double?,
     var manual_price:Int,
     @Expose
-    var qty:Int,
+    @SerializedName("qty") var qty:Int,
     @Expose
-    var comments:String?
+    @SerializedName("comments") var comments:String?
 ) {
 }

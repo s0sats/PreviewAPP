@@ -11,22 +11,22 @@ data class SoPackExpressPacksLocal(
     var express_code:String,
     var express_tmp:Long,
     @Expose
-    val pack_code:Int,
+    @SerializedName("pack_code") val pack_code:Int,
     @Expose
-    var pack_seq:Int,
+    @SerializedName("pack_seq") var pack_seq:Int,
     @Expose
-    val price_list_code:Int,
+    @SerializedName("price_list_code") val price_list_code:Int,
     val pack_service_desc:String,
     val pack_service_desc_full:String,
     val manual_price: Int = 0,
     var price:Double?,
     @Expose
-    var qty:Int,
+    @SerializedName("qty") var qty:Int,
     val service_code:Int?,
     @Expose
-    val type_ps:String,
+    @SerializedName("type_ps") val type_ps:String,
     @Expose
-    var comments:String?,
+    @SerializedName("comments") var comments:String?,
     @SerializedName("service")
     @Expose
     var serviceList: MutableList<SoPackExpressServicesLocal> = mutableListOf()
