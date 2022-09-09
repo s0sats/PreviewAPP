@@ -28,8 +28,8 @@ class GeOsDeviceMaterial(
     @Expose
     @SerializedName("material_planned_used") var material_planned_used: Int = 0,
     @Expose
-    @SerializedName("material_planned_qty") val material_planned_qty: Float? = null
-    val origin: String? = null
+    @SerializedName("material_planned_qty") val material_planned_qty: Float? = null,
+    @SerializedName("origin") val origin: String? = null
 
 
 ): Serializable

@@ -575,7 +575,8 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
     protected void processUpdateSoftware(String mLink, String mRequired) {
         super.processUpdateSoftware(mLink, mRequired);
 
-        ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+//        ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+        progressDialog.dismiss();
     }
 
     //Metodo chamado ao finalizar o download da atualização.
