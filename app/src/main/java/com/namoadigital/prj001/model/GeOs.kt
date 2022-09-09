@@ -4,41 +4,41 @@ import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 class GeOs(
-    val customer_code: Long,
-    val custom_form_type: Int,
-    val custom_form_code: Int,
-    val custom_form_version: Int,
-    var custom_form_data: Int,
-    var order_type_code: Int,
-    var order_type_id: String,
-    var order_type_desc: String,
-    var process_type: String, // MdOrderType
-    var display_option: String, // MdOrderType
+    @SerializedName("customer_code") val customer_code: Long,
+    @SerializedName("custom_form_type") val custom_form_type: Int,
+    @SerializedName("custom_form_code") val custom_form_code: Int,
+    @SerializedName("custom_form_version") val custom_form_version: Int,
+    @SerializedName("custom_form_data") var custom_form_data: Int,
+    @SerializedName("order_type_code") var order_type_code: Int,
+    @SerializedName("order_type_id") var order_type_id: String,
+    @SerializedName("order_type_desc") var order_type_desc: String,
+    @SerializedName("process_type") var process_type: String, // MdOrderType
+    @SerializedName("display_option") var display_option: String, // MdOrderType
     @SerializedName("item_check_group_code") var item_check_group_code: Int?, // MdOrderType
-    var backup_product_code: Int?,
-    var backup_product_id: String?,
-    var backup_product_desc: String?,
-    var backup_serial_code: Int?,
-    var backup_serial_id: String?,
-    var measure_tp_code: Int?,
-    var measure_tp_id: String?,
-    var measure_tp_desc: String?,
-    var measure_value: Float?,
-    var measure_cycle_value: Float?,
-    var value_sufix: String?, //MeMeasure
-    var restriction_decimal: Int?, //MeMeasure
-    var value_cycle_size: Float?,//MeMeasure
-    var cycle_tolerance: Int?,//MeMeasure
-    var date_start: String?,
-    var date_end: String? = null,
-    val last_measure_value: Float?,
-    val last_measure_date: String?,
-    val last_cycle_value: Float?,
-    val so_edit_start_end: Int,
-    val so_order_type_code_default: Int?,
-    val so_allow_change_order_type: Int,
-    val so_allow_backup: Int,
-    val device_tp_code_main: Int?
+    @SerializedName("backup_product_code") var backup_product_code: Int?,
+    @SerializedName("backup_product_id") var backup_product_id: String?,
+    @SerializedName("backup_product_desc") var backup_product_desc: String?,
+    @SerializedName("backup_serial_code") var backup_serial_code: Int?,
+    @SerializedName("backup_serial_id") var backup_serial_id: String?,
+    @SerializedName("measure_tp_code") var measure_tp_code: Int?,
+    @SerializedName("measure_tp_id") var measure_tp_id: String?,
+    @SerializedName("measure_tp_desc") var measure_tp_desc: String?,
+    @SerializedName("measure_value") var measure_value: Float?,
+    @SerializedName("measure_cycle_value") var measure_cycle_value: Float?,
+    @SerializedName("value_sufix") var value_sufix: String?, //MeMeasure
+    @SerializedName("restriction_decimal") var restriction_decimal: Int?, //MeMeasure
+    @SerializedName("value_cycle_size") var value_cycle_size: Float?,//MeMeasure
+    @SerializedName("cycle_tolerance") var cycle_tolerance: Int?,//MeMeasure
+    @SerializedName("date_start") var date_start: String?,
+    @SerializedName("date_end") var date_end: String? = null,
+    @SerializedName("last_measure_value") val last_measure_value: Float?,
+    @SerializedName("last_measure_date") val last_measure_date: String?,
+    @SerializedName("last_cycle_value") val last_cycle_value: Float?,
+    @SerializedName("so_edit_start_end") val so_edit_start_end: Int,
+    @SerializedName("so_order_type_code_default") val so_order_type_code_default: Int?,
+    @SerializedName("so_allow_change_order_type") val so_allow_change_order_type: Int,
+    @SerializedName("so_allow_backup") val so_allow_backup: Int,
+    @SerializedName("device_tp_code_main") val device_tp_code_main: Int?
 ):Serializable{
     /**
      *  BARRIONUEVO - 11-=08-2022
