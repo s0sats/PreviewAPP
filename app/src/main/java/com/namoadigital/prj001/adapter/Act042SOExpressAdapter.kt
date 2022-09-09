@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -63,6 +64,7 @@ class Act042SOExpressAdapter (
                     ToolBox_Inf.dateToMilliseconds(soPackExpressLocal.log_date),
                     ToolBox_Inf.nlsDateFormat(root.context) + " HH:mm"
                 ))
+                setViewContentAndVisibility(soExpressPackServiceList ,getPackServiceFormatted(root.context, soPackExpressLocal))
                 soExpressEndDatetime.setTextColor(root.context.getResources().getColor(R.color.namoa_lime_green_2))
                 if(SYS_STATUS_DENIED.equals(soPackExpressLocal.ret_code)){
                     soExpressIvStatus.applyVisibilityIfSourceExists(R.drawable.ic_baseline_close_24)
@@ -74,6 +76,24 @@ class Act042SOExpressAdapter (
                 }
             }
         }
+
+        private fun getPackServiceFormatted(context: Context, soPackExpressLocal: SO_Pack_Express_Local): String? {
+            var serviceList = ""
+            if(soPackExpressLocal.packsLocals.size > 0) {
+                serviceList = " ${context.getString(R.string.unicode_bullet)} ${soPackExpressLocal.packsLocals[0].qty}x ${soPackExpressLocal.packsLocals[0].pack_service_desc_full}"
+                if (soPackExpressLocal.packsLocals.size == 1){
+                    return serviceList
+                }
+                //
+                for (i in 1 until soPackExpressLocal.packsLocals.size) {
+                    serviceList += "\n ${context.getString(R.string.unicode_bullet)} ${soPackExpressLocal.packsLocals[i].qty}x ${soPackExpressLocal.packsLocals[i].pack_service_desc_full}"
+                }
+            }else{
+                serviceList += " ${context.getString(R.string.unicode_bullet)} 1x ${soPackExpressLocal.so_desc}"
+            }
+            return serviceList
+        }
+
         private fun setHeaderContentAndVisibility(soExpressTvHeader: TextView, soId: String?, soStatus: String?) {
             if(soStatus.isNullOrEmpty()
                 && soId.isNullOrEmpty()){

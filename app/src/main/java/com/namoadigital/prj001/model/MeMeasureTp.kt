@@ -24,12 +24,14 @@ class MeMeasureTp(
 ) {
 
     fun isMeasureRestrictionInvalid(
+        bypassMinValidation: Boolean,
         measureValue: Float,
         lastMeasureValue: Float?,
         lastMeasureDate: String?,
         measureDate: String?
     ): Boolean{
         return validateMeasureRestriction(
+            bypassMinValidation,
             measureValue,
             lastMeasureValue,
             lastMeasureDate,
@@ -39,11 +41,15 @@ class MeMeasureTp(
 
 
     fun validateMeasureRestriction(
+        bypassMinValidation: Boolean,
         measureValue: Float,
         lastMeasureValue: Float?,
         lastMeasureDate: String?,
         measureDate: String?
     ): MeasureFF.MeasureValidationReturn {
+        if(bypassMinValidation){
+            return MeasureFF.MeasureValidationReturn(true)
+        }
          return when (this.restrictionType) {
             RESTRICTION_TYPE_VALUE -> isMeasureRestrictionValueValid(
                 measureValue,

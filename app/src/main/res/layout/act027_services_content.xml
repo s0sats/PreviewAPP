@@ -15,78 +15,99 @@
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:padding="5dp">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="2dp">
+            android:padding="10dp">
+
             <TextView
                 android:id="@+id/act027_services_content_tv_filter_lbl"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textStyle="bold"
+                android:text="Filtrar"
                 android:textSize="@dimen/font_size_title_md"
-                android:text="Filtrar "
-                />
+                android:textStyle="bold" />
 
-            <Switch
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/act027_services_content_sw_filter"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="20dp"
                 android:checked="true"
-                />
+                android:textSize="@dimen/font_size_font_16"
+                android:thumb="@drawable/namoa_switch_states"
+                app:layout_constraintBottom_toBottomOf="@id/tv_os_machine_lbl"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/br_switch"
+                app:layout_constraintTop_toTopOf="@id/tv_os_machine_lbl"
+                app:thumbTint="@color/namoa_switch_color_states"
+                app:trackTint="@color/namoa_switch_track_color_states" />
 
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/act027_tv_empty_list_lbl"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:textAlignment="center"
+            android:paddingTop="25dp"
+            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+            android:text=""
+            android:visibility="gone"
+            />
+
 
         <ListView
             android:id="@+id/act027_services_content_lv_services"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="10"
-            android:text="Services"
-            android:textSize="25sp"
+            android:divider="@color/padrao_TRANSPARENT"
             android:dividerHeight="3dp"
-            android:divider="@color/padrao_TRANSPARENT"/>
+            android:text="Services"
+            android:textSize="25sp" />
 
 
         <FrameLayout
             android:id="@+id/act027_services_content_fl_footer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            >
-        <Button
-            android:id="@+id/act027_services_content_btn_quality_approval"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:background="@drawable/btn_namoa_main_states"
-            tools:text="Cancel - Trad"
-            android:textColor="@color/padrao_WHITE"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/gl_bottom_buttons"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
-        <Button
-            android:id="@+id/act027_services_content_btn_product_event_shortcut"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:background="@drawable/btn_namoa_main_states"
-            tools:text="Cancel - Trad"
-            android:textColor="@color/padrao_WHITE"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/gl_bottom_buttons"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
+            android:layout_gravity="bottom">
+
+            <Button
+                android:id="@+id/act027_services_content_btn_quality_approval"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/btn_namoa_main_states"
+                android:textColor="@color/padrao_WHITE"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/gl_bottom_buttons"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Cancel - Trad" />
+
+            <Button
+                android:id="@+id/act027_services_content_btn_product_event_shortcut"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/btn_namoa_main_states"
+                android:textColor="@color/padrao_WHITE"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/gl_bottom_buttons"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Cancel - Trad" />
         </FrameLayout>
     </LinearLayout>
 

@@ -23,6 +23,7 @@ class TkTicketCache(
         @SerializedName("type_id") var type_id: String,
         @SerializedName("type_desc") var type_desc: String,
         @SerializedName("user_focus") var user_focus: Int,
+        @SerializedName("main_user") var main_user: Int?,
         @SerializedName("order_by") var order_by: Long,
         @SerializedName("client_code") var client_code: Int?,
         @SerializedName("client_id") var client_id: String?,
@@ -43,6 +44,7 @@ class TkTicketCache(
         @SerializedName("ticket_status") var ticket_status: String,
         @SerializedName("origin_type") var origin_type: String,
         @SerializedName("origin_desc") var origin_desc: String,
+        @SerializedName("internal_comments") var internal_comments: String?,
         @SerializedName("step_desc") var step_desc: String?,
         @SerializedName("forecast_start") var forecast_start: String?,
         @SerializedName("forecast_end") var forecast_end: String?,
@@ -80,6 +82,7 @@ class TkTicketCache(
                 open_serial_id,
                 origin_desc,
                 type_desc,
+                internal_comments,
                 step_desc,
                 open_site_code,
                 open_site_desc,
@@ -96,7 +99,8 @@ class TkTicketCache(
                 false,
                 ToolBox_Inf.isItemLate(forecast_start),
                 ToolBox_Inf.isItemLate(forecast_end),
-                processPk == lastSelectedActionPk
+                processPk == lastSelectedActionPk,
+                main_user?.toString()?.equals(ToolBox_Con.getPreference_User_Code(context)) ?: false
         )
     }
 }

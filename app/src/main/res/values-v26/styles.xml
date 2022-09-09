@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="NamoaMaterialButtonFilled" parent="Widget.Material3.Button.Icon">
+        <item name="strokeColor">@color/namoa_color_dark_blue</item>
+        <item name="iconTint">@color/padrao_WHITE</item>
+        <item name="android:textColor">@color/padrao_WHITE</item>
+        <item name="iconSize">18dp</item>
+        <item name="android:paddingHorizontal">15dp</item>
+    </style>
+</resources>

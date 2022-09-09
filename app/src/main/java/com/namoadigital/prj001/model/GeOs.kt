@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.model
 
+import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 class GeOs(
@@ -13,6 +14,7 @@ class GeOs(
     var order_type_desc: String,
     var process_type: String, // MdOrderType
     var display_option: String, // MdOrderType
+    @SerializedName("item_check_group_code") var item_check_group_code: Int?, // MdOrderType
     var backup_product_code: Int?,
     var backup_product_id: String?,
     var backup_product_desc: String?,
@@ -37,4 +39,14 @@ class GeOs(
     val so_allow_change_order_type: Int,
     val so_allow_backup: Int,
     val device_tp_code_main: Int?
-):Serializable
+):Serializable{
+    /**
+     *  BARRIONUEVO - 11-=08-2022
+     *  METODO QUE TRAZ O MAIOR ENTRE CICLO CONSIDERADO E VALOR INSERIDO PELO USER.
+     */
+    fun maxMeasureValue():Float{
+        val mMeasure_value = measure_value?: 0f
+        val mMeasure_cycle_value = measure_cycle_value?: 0f
+        return if(mMeasure_value>mMeasure_cycle_value){mMeasure_value}else{mMeasure_cycle_value}
+    }
+}

@@ -19,4 +19,10 @@ public interface Act043_Main_View {
     TSO_Service_Search_Obj getPackDetailObj();
 
     void alertPackDetailRemoveConfirm(TSO_Service_Search_Obj packDetailObj);
+
+    void setIsSyncSerialNeeded(boolean isAddServiceFlow);
+
+    void callDownloadSerialService(String productCode, String serialId);
+
+    void callSerialService();
 }

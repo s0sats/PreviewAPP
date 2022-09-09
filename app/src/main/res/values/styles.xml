@@ -50,6 +50,8 @@
         <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.Material3.SmallComponent</item>
         <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.Material3.MediumComponent</item>
         <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.Material3.LargeComponent</item>
+
+        <item name="bottomSheetDialogTheme">@style/BottomSheetDialog_Rounded</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -168,6 +170,7 @@
         <item name="iconTint">@color/padrao_WHITE</item>
         <item name="android:textColor">@color/padrao_WHITE</item>
         <item name="iconSize">18dp</item>
+        <item name="android:paddingHorizontal">15dp</item>
     </style>
 
     <style name="NamoaMaterialButtonFilledGreen" parent="Widget.Material3.Button">
@@ -185,6 +188,24 @@
         <item name="android:textColor">@color/padrao_WHITE</item>
     </style>
 
+    <style name="NamoaNoIconMaterialButtonFilledDarkBlue" parent="Widget.Material3.Button.Icon">
+        <item name="strokeColor">@color/namoa_color_dark_blue</item>
+        <item name="backgroundTint">@color/namoa_color_dark_blue</item>
+        <item name="iconTint">@color/padrao_WHITE</item>
+        <item name="android:textColor">@color/padrao_WHITE</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+
+    <style name="NamoaNMaterialButtonFilledDarkBlue" parent="Widget.Material3.Button.Icon">
+        <item name="strokeColor">@color/namoa_color_dark_blue</item>
+        <item name="background">@color/namoa_color_dark_blue</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">24dp</item>
+        <item name="iconTint">@color/padrao_WHITE</item>
+        <item name="android:textColor">@color/padrao_WHITE</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+
     <style name="NamoaMaterialButtonFilledOrange" parent="Widget.Material3.Button.Icon">
         <item name="strokeColor">@color/namoa_color_highlight_required_item</item>
         <item name="backgroundTint">@color/namoa_color_highlight_required_item</item>
@@ -199,5 +220,31 @@
         <item name="android:textColor">@color/namoa_color_dark_blue</item>
         <item name="iconSize">18dp</item>
     </style>
+
+    <style name="BottomSheetDialog_Rounded" parent="@style/ThemeOverlay.MaterialComponents.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/BottomSheet_Rounded</item>
+    </style>
+
+    <style name="BottomSheet_Rounded" parent="Widget.MaterialComponents.BottomSheet">
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceBottomSheetDialog_Rounded</item>
+    </style>
+
+    <style name="ShapeAppearanceBottomSheetDialog_Rounded" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopRight">16dp</item>
+        <item name="cornerSizeTopLeft">16dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+    </style>
+
+
+    <style name="ShapeAppearanceCard_Rounded" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopRight">16dp</item>
+        <item name="cornerSizeTopLeft">16dp</item>
+        <item name="cornerSizeBottomRight">16dp</item>
+        <item name="cornerSizeBottomLeft">16dp</item>
+    </style>
+
 
 </resources>

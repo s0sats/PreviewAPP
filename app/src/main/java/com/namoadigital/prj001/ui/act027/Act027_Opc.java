@@ -684,7 +684,7 @@ public class Act027_Opc extends BaseFragment {
         }
     }
 
-    private boolean hasSyncRequired() {
+     boolean hasSyncRequired() {
         SM_SODao soDao = new SM_SODao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
         //
         HMAux hmAux = soDao.getByStringHM(

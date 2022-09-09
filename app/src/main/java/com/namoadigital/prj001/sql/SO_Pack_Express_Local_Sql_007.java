@@ -2,6 +2,7 @@ package com.namoadigital.prj001.sql;
 
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.database.Specification;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 
 /**
  * Created by DANIEL.LUCHE on 13/02/2017.
@@ -41,6 +42,7 @@ public class SO_Pack_Express_Local_Sql_007 implements Specification {
                                 "  WHERE " +
                                 "      S." + SO_Pack_Express_LocalDao.CUSTOMER_CODE + " = '" + s_customer_code + "'" +
                                 "      AND S." + SO_Pack_Express_LocalDao.STATUS + " = 'NEW' " +
+                                "      AND S." + SO_Pack_Express_LocalDao.SO_STATUS + " = '"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC + "' " +
                                 tokenFilter +
                                 "  ORDER BY " +
                                 "      S.customer_code,  " +

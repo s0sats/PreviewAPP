@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.util;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
+import static android.content.Context.NOTIFICATION_SERVICE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_SITE_OPTION;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ONLY_MY_ACTIONS_OPTION;
 
@@ -14,10 +15,12 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 
+import androidx.core.app.NotificationCompat;
 import androidx.work.WorkManager;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.worker.Work_Cleanning_Data;
 import com.namoadigital.prj001.worker.Work_DownLoad_Customer_Logo;
@@ -94,8 +97,8 @@ public class ToolBox_Con {
     public static String connWebService(String urlEnd, String params,Integer timeout) throws Exception {
         StringBuilder sb = new StringBuilder();
         URL url;
-        HttpsURLConnection conn = null;
-        timeout = timeout != null ? timeout : 60000 ;
+        HttpsURLConnection conn;
+        timeout = timeout != null ? timeout : 60000;
 
         url = new URL(urlEnd);
 
@@ -113,26 +116,29 @@ public class ToolBox_Con {
         conn.setRequestMethod("POST");
         conn.setDoInput(true);
         conn.setDoOutput(true);
-        OutputStream os = conn.getOutputStream();
-        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+        try {
+            OutputStream os = conn.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
 
-        writer.write(params.toCharArray());
-        writer.flush();
-        writer.close();
-        os.close();
+            writer.write(params.toCharArray());
+            writer.flush();
+            writer.close();
+            os.close();
 
         int httpStatus = conn.getResponseCode();
         if (httpStatus == HttpURLConnection.HTTP_OK) {
             sb.append(readStreamAux(conn.getInputStream()));
         } else {
-            throw new Exception(Constant.WS_EXCEPTION_HTTP_STATUS_ERROR);
+            throw new NetworkConnectionException(Constant.WS_EXCEPTION_HTTP_STATUS_ERROR);
             //sb.append("Error: " + "HTTP_STATUS " + httpStatus);
         }
 
-        if (conn != null) {
-            conn.disconnect();
-        }
+        conn.disconnect();
 
+        } catch (IOException e) {
+            conn.disconnect();
+            throw new NetworkConnectionException(e.toString());
+        }
         return sb.toString();
     }
     //Teste de chama GET "https://chat.namoadigital.com/messageDist?msg_prefix=201712&msg_code=2267"
@@ -200,6 +206,21 @@ public class ToolBox_Con {
         }
 
         return writer.toString();
+    }
+    //
+    /*
+       BARRIONUEVO - 12-02-2020
+       Avalia exception para induzir a pesquisa offline de serial utilizando ate entao os tipos
+       de exception conhecidos via arquivos de support.
+    */
+    public static boolean isHttpError(Exception e) {
+        if (e != null) {
+            return e.toString().contains(ConstantBaseApp.WS_TIMEOUT_EXCEPTION)
+                    || e.toString().contains(ConstantBaseApp.WS_EXCEPTION_HTTP_STATUS_ERROR)
+                    || e instanceof NetworkConnectionException;
+        }else{
+            return false;
+        }
     }
 
     private static class MyTrustManager implements X509TrustManager {
@@ -278,6 +299,14 @@ public class ToolBox_Con {
     public static void setBooleanPreference(Context context, String pref_key, boolean pref_value) {
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(context);
+
+        /*
+         * Notificacao para facilitar testes do modo offline.
+         */
+//        if(pref_key.equalsIgnoreCase(PREFERENCE_SERIAL_OFFLINE_FLOW)){
+//            showNotificationFlowStatus(context, pref_value);
+//        }
+
         sharedPreferences.edit().putBoolean(
                 pref_key,
                 pref_value
@@ -293,6 +322,38 @@ public class ToolBox_Con {
                 default_value
         );
     }
+
+    private static void showNotificationFlowStatus(Context context, boolean value){
+        NotificationManager nm = (NotificationManager)
+                context.getSystemService(NOTIFICATION_SERVICE);
+        //
+//        Intent mIntent = new Intent(context, WS_Notification_Sync.class);
+
+//        PendingIntent pi = PendingIntent.getService(
+//                context,
+//                0,
+//                mIntent,
+//                0
+//        );
+        //
+        NotificationCompat.Builder builder = ToolBox_Inf.getNotificationBuilder(context, nm);
+        builder.setSmallIcon(R.drawable.ic_info);
+        builder.setContentTitle("Flow Status");
+        //builder.setContentIntent(pi);
+        builder.setContentText("Your user's flow is: "+(!value ? "Online" : "Offline"));
+        builder.setPriority(NotificationCompat.PRIORITY_LOW);
+        //
+        int versao = Build.VERSION.SDK_INT;
+        //
+        if (versao >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            nm.notify(50, builder.build());
+        } else {
+            nm.notify(50, builder.getNotification());
+        }
+
+
+    }
+
     //endregion
     //region String
     //
@@ -1145,6 +1206,21 @@ public class ToolBox_Con {
 
     //endregion
 
+    public static void cleanSwitchPreferences(Context context){
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+        //filtro da tela act027 - Serviços da OS
+        sharedPreferences.edit().putBoolean(
+                Constant.ACT027_SWITCH_STATE,
+                true
+        ).apply();
+
+        //filtro da tela ACT047 - Proxima OS
+        sharedPreferences.edit().putBoolean(
+                Constant.ACT047_SWITCH_STATE,
+                true
+        ).apply();
+    }
 
     public static void cleanPreferences(Context context) {
         SharedPreferences sharedPreferences =

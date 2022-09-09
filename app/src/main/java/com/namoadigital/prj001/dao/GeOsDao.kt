@@ -4,7 +4,6 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteException
-import android.util.Log
 import androidx.core.database.getFloatOrNull
 import androidx.core.database.getIntOrNull
 import androidx.core.database.getStringOrNull
@@ -40,6 +39,7 @@ class GeOsDao(
         const val ORDER_TYPE_DESC = "order_type_desc"
         const val PROCESS_TYPE = "process_type"
         const val DISPLAY_OPTION = "display_option"
+        const val ITEM_CHECK_GROUP_CODE = "item_check_group_code"
         const val BACKUP_PRODUCT_CODE = "backup_product_code"
         const val BACKUP_PRODUCT_ID = "backup_product_id"
         const val BACKUP_PRODUCT_DESC = "backup_product_desc"
@@ -64,7 +64,6 @@ class GeOsDao(
         const val SO_ALLOW_CHANGE_ORDER_TYPE = "so_allow_change_order_type"
         const val SO_ALLOW_BACKUP = "so_allow_backup"
         const val DEVICE_TP_CODE_MAIN = "device_tp_code_main"
-
     }
 
     private val toGeOsMapper: Mapper<Cursor, GeOs>
@@ -307,6 +306,7 @@ class GeOsDao(
                         order_type_desc = getString(getColumnIndex(ORDER_TYPE_DESC)),
                         process_type = getString(getColumnIndex(PROCESS_TYPE)),
                         display_option = getString(getColumnIndex(DISPLAY_OPTION)),
+                        item_check_group_code = getIntOrNull(getColumnIndex(ITEM_CHECK_GROUP_CODE)),
                         backup_product_code = getIntOrNull(getColumnIndex(BACKUP_PRODUCT_CODE)),
                         backup_product_id = getStringOrNull(getColumnIndex(BACKUP_PRODUCT_ID)),
                         backup_product_desc = getStringOrNull(getColumnIndex(BACKUP_PRODUCT_DESC)),
@@ -366,6 +366,8 @@ class GeOsDao(
                     put(PROCESS_TYPE, it.process_type)
                     //
                     put(DISPLAY_OPTION , it.display_option)
+                    //
+                    put(ITEM_CHECK_GROUP_CODE , it.item_check_group_code)
                     //
                     put(BACKUP_PRODUCT_CODE, it.backup_product_code)
                     put(BACKUP_PRODUCT_ID, it.backup_product_id)
@@ -569,7 +571,25 @@ class GeOsDao(
         var dateStartLastMinute : String? = ToolBox_Inf.getDateLastMinute(geOs.date_start)
         //
         geOsDeviceItens.forEach { item ->
-            item.has_expired_cycle = 1
+            item.hide_days_in_alert = 0
+            item.has_expired_cycle = 0
+            if ((item.next_cycle_limit_date != null
+                && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_limit_date,dateStartLastMinute) <= 0)
+                || (item.next_cycle_measure != null && item.next_cycle_measure.compareTo(geOs.maxMeasureValue()) <= 0)
+            ) {
+                    item.has_expired_cycle = 1
+            }
+
+            if(GeOsDeviceItem.ITEM_CHECK_STATUS_MEASURE_ALERT.equals(item.item_check_status,true)){
+                //Verifica se data projetada do proximo ciclo foi atingida
+                if (item.next_cycle_measure != null
+                    && item.next_cycle_measure.compareTo(measureConsider) > 0
+                ) {
+                    item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL
+                    item.hide_days_in_alert = 1
+                }
+            }
+
             /*
              * Se Status PROJECTED_DATE_REACHED, verifica se deve alterar o status para:
              *   NORMAL:
@@ -582,8 +602,8 @@ class GeOsDao(
                 if (item.next_cycle_measure_date != null
                     && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_measure_date,dateStartLastMinute) > 0
                 ) {
-                    item.has_expired_cycle = 0
                     item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL
+                    item.hide_days_in_alert = 1
                 }
             }
 
@@ -597,8 +617,8 @@ class GeOsDao(
                 if (item.next_cycle_limit_date != null && geOs.date_start != null
                     && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_limit_date,dateStartLastMinute) > 0
                 ) {
-                    item.has_expired_cycle = 0
                     item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL
+                    item.hide_days_in_alert = 1
                 }
             }
             /*
@@ -615,21 +635,19 @@ class GeOsDao(
              */
             if(GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL.equals(item.item_check_status,true)){
                 var newCheckStatus = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL
-                item.has_expired_cycle = 0
 
-                //Verifica se data projetada do proximo ciclo foi atingida
-                if (item.next_cycle_measure_date != null
-                    && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_measure_date,dateStartLastMinute) < 0
-                ) {
-                    item.has_expired_cycle = 1
-                    newCheckStatus = GeOsDeviceItem.ITEM_CHECK_STATUS_PROJECTED_DATE_REACHED
-                }
+
+//                //Verifica se data projetada do proximo ciclo foi atingida
+//                if (item.next_cycle_measure_date != null
+//                    && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_measure_date,dateStartLastMinute) <= 0
+//                ) {
+//                    newCheckStatus = GeOsDeviceItem.ITEM_CHECK_STATUS_PROJECTED_DATE_REACHED
+//                }
 
                 //Verifica se data limite do proximo ciclo foi atingida
                 if (item.next_cycle_limit_date != null
-                    && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_limit_date,dateStartLastMinute) < 0
+                    && ToolBox_Inf.getDateDiferenceInMilliseconds(item.next_cycle_limit_date,dateStartLastMinute) <= 0
                 ) {
-                    item.has_expired_cycle = 1
                     newCheckStatus = GeOsDeviceItem.ITEM_CHECK_STATUS_LIMIT_DATE_REACHED
                 }
 
@@ -637,7 +655,6 @@ class GeOsDao(
                 if (item.next_cycle_measure != null
                     && item.next_cycle_measure.compareTo(measureConsider) <= 0
                 ) {
-                    item.has_expired_cycle = 1
                     newCheckStatus = GeOsDeviceItem.ITEM_CHECK_STATUS_MEASURE_ALERT
                 }
 
@@ -653,8 +670,8 @@ class GeOsDao(
                 if (item.next_cycle_measure != null
                     && item.next_cycle_measure.compareTo(measureConsider) > 0
                 ) {
-                    item.has_expired_cycle = 1
                     item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL
+                    item.hide_days_in_alert = 1
                 }
             }
         }
@@ -676,10 +693,16 @@ class GeOsDao(
             when(geOs.display_option){
                 //Se show all, pega os itens em status normal e
                 MdOrderType.DISPLAY_OPTION_SHOW_ALL ->{
-                    if(item.item_check_status.equals(GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL ,true)){
-                        item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_FORCED
-                        item.critical_item = 0
-                    }
+                    geOs.item_check_group_code?.let {
+                        if(item.item_check_status.equals(GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL ,true)
+                            && it.equals(item.item_check_group_code)){
+                            item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_FORCED
+                        }
+                    } ?:
+                        if(item.item_check_status.equals(GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL ,true)){
+                            item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_FORCED
+
+                        }
 
                 }
                 MdOrderType.DISPLAY_OPTION_SHOW_ONLY_CRITICAL ->{

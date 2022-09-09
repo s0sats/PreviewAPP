@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:orientation="vertical">
+
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:scrollbars="vertical"
+        android:paddingHorizontal="15dp"
+        android:paddingTop="15dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:scrollbars="vertical">
+
+            <View
+                android:layout_width="50dp"
+                android:layout_height="3dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="15dp"
+                android:alpha="0.5"
+                android:background="@android:color/darker_gray" />
+
+
+            <TextView
+                android:id="@+id/act091_bottom_sheet_title"
+                style="@style/TextAppearance.MaterialComponents.Headline6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:ellipsize="end"
+                android:padding="5dp"
+                android:text="Martelinho de Ouro"
+                android:textAlignment="center"
+                android:textColor="@color/namoa_color_black" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/act091_bottom_sheet_textLayoutComment"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Comentário"
+                android:paddingVertical="10dp"
+                app:placeholderText="Inserir Comentário..."
+                app:placeholderTextColor="@android:color/darker_gray">
+
+                <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                    android:id="@+id/act091_bottom_sheet_comment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textMultiLine"
+                    android:singleLine="false"
+                    android:maxLength="100"
+                    app:mBARCODE="false"
+                    app:mNFC="false"
+                    app:mOCR="false" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/act091_bottom_sheet_textLayoutPrice"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:hint="Preço"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/act091_Qty_Bindings"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:placeholderTextColor="@android:color/darker_gray">
+
+
+                <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                        android:id="@+id/act091_bottom_sheet_price"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="numberDecimal"
+                        android:digits="0123456789."
+                        app:mDecimal="2"
+                        android:textSize="16sp"
+                        app:mBARCODE="false"
+                        app:mInputType="NUMBER"
+                        app:mNFC="false"
+                        app:mOCR="false" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <include
+                    android:id="@+id/act091_Qty_Bindings"
+                    layout="@layout/act091_add_qty"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="@+id/act091_bottom_sheet_textLayoutPrice"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/guideline7"
+                    app:layout_constraintTop_toTopOf="@+id/act091_bottom_sheet_textLayoutPrice" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline7"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.5" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <TextView
+                android:id="@+id/act091_bottom_sheet_seeMore"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Serviços incluídos:"
+                android:padding="10dp"
+                android:visibility="gone"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/act091_bottom_sheet_recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="visible"
+                android:focusableInTouchMode="true"
+                tools:listitem="@layout/act091_bottom_sheet_list_item" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="15dp"
+        android:padding="10dp"
+        android:gravity="center"
+        android:clipToPadding="false"
+        android:background="@drawable/background_shadow">
+
+        <ImageView
+            android:id="@+id/act091_bottom_sheet_delete"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="8dp"
+            android:visibility="gone"
+            android:background="@drawable/delete_toogle_default"
+            app:tint="@color/namoa_color_red"
+            android:src="@drawable/ic_trash_bin"
+            android:layout_marginEnd="8dp"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="1dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/act091_bottom_sheet_cancel"
+            style="@style/NamoaMaterialButtonText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancelar"
+            android:layout_marginEnd="8dp"
+            />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/act091_bottom_sheet_ok"
+            style="@style/NamoaNMaterialButtonFilledDarkBlue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="OK"
+            android:textAllCaps="true"
+            />
+
+    </LinearLayout>
+
+</LinearLayout>

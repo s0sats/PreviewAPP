@@ -41,6 +41,7 @@ class GeOsDeviceItemHistDao(
         const val EXEC_DATE = "exec_date"
         const val EXEC_COMMENT = "exec_comment"
         const val EXEC_MATERIAL = "exec_material"
+        const val CHANGE_ADJUST = "change_adjust"
 
     }
 
@@ -294,7 +295,7 @@ class GeOsDeviceItemHistDao(
     class CursorToGeOsDeviceItemHistMapper : Mapper<Cursor, GeOsDeviceItemHist> {
         override fun map(cursor: Cursor?): GeOsDeviceItemHist? {
             cursor?.let {
-                with(cursor) {
+                with(it) {
                     return GeOsDeviceItemHist(
                         customer_code = getLong(getColumnIndex(CUSTOMER_CODE)),
                         custom_form_type = getInt(getColumnIndex(CUSTOM_FORM_TYPE)),
@@ -312,6 +313,7 @@ class GeOsDeviceItemHistDao(
                         exec_date = getString(getColumnIndex(EXEC_DATE)),
                         exec_comment = getStringOrNull(getColumnIndex(EXEC_COMMENT)),
                         exec_material = getInt(getColumnIndex(EXEC_MATERIAL)),
+                        change_adjust = getInt(getColumnIndex(CHANGE_ADJUST))
                     )
                 }
             }
@@ -331,6 +333,8 @@ class GeOsDeviceItemHistDao(
                     if (it.custom_form_type > -1) {
                         put(CUSTOM_FORM_TYPE, it.custom_form_type)
                     }
+                    //
+                    if(it.change_adjust > -1) put(CHANGE_ADJUST, it.change_adjust)
                     //
                     put(CUSTOM_FORM_CODE, it.custom_form_code)
                     put(CUSTOM_FORM_VERSION, it.custom_form_version)

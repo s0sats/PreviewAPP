@@ -37,6 +37,8 @@ class GeOsDeviceItem(
     val item_check_id :String,
     @SerializedName("item_check_desc")
     val item_check_desc :String,
+    @SerializedName("item_check_group_code")
+    var item_check_group_code: Int?,
     @SerializedName("apply_material")
     val apply_material :String,
     @SerializedName("verification_instruction")
@@ -45,6 +47,8 @@ class GeOsDeviceItem(
     val require_justify_problem :Int,
     @SerializedName("critical_item")
     var critical_item :Int,//Pode ser modificado pela segunda varredura
+    @SerializedName("change_adjust")
+    val change_adjust: Int,
     @SerializedName("order_seq")
     val order_seq :Int,
     @Expose
@@ -90,6 +94,7 @@ class GeOsDeviceItem(
     @SerializedName("exec_photo4") var exec_photo4 :String?,
     @SerializedName("status_answer") var status_answer :String?,
     @SerializedName("has_expired_cycle") var has_expired_cycle :Int,
+    @SerializedName("hide_days_in_alert") var hide_days_in_alert :Int,
     @Expose
     @SerializedName("material")
     val materialList: MutableList<GeOsDeviceMaterial>  = mutableListOf()
@@ -97,6 +102,11 @@ class GeOsDeviceItem(
     fun getGeOsDeviceItemCodeAndSeq(): String{
         return "${item_check_code}.${item_check_seq}"
     }
+
+    val hideDaysInAlert = hide_days_in_alert == 1
+    val isCycleExpired = has_expired_cycle == 1
+    val isCritical = critical_item == 1
+    val isNO_CYCLE = next_cycle_measure == null && next_cycle_limit_date == null
 
     companion object{
         const val ITEM_CHECK_STATUS_NO_CYCLE = "NO_CYCLE"
@@ -106,13 +116,14 @@ class GeOsDeviceItem(
         const val ITEM_CHECK_STATUS_MEASURE_ALERT = "MEASURE_ALERT"
         const val ITEM_CHECK_STATUS_MANUAL_ALERT = "MANUAL_ALERT"
         const val ITEM_CHECK_STATUS_MANUAL = "MANUAL"
-        const val ITEM_CHECK_STATUS_FORCED = "FORCED"
+        const val ITEM_CHECK_STATUS_FORCED = "STATUS_FORCED"
         //
         const val APPLY_MATERIAL_NO = "NO"
         const val APPLY_MATERIAL_OPTIONAL = "OPTIONAL"
         const val APPLY_MATERIAL_REQUIRED = "REQUIRED"
 
         const val EXEC_TYPE_FIXED = "FIXED"
+        const val EXEC_TYPE_ADJUST = "ADJUST"
         const val EXEC_TYPE_ALERT = "ALERT"
         const val EXEC_TYPE_ALREADY_OK = "ALREADY_OK"
         const val EXEC_TYPE_NOT_VERIFIED = "NOT_VERIFIED"

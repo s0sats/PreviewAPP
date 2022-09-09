@@ -167,5 +167,13 @@ public interface Act070_Main_Contract {
         boolean isFormSoConfigurationDone(TK_Ticket mTicket, TK_Ticket_Ctrl ticketCtrl);
 
         void defineAfterFormSyncProcess(TK_Ticket mTicket, StepForm stepForm, boolean callWsStructureIfNoneStructure);
+
+         ArrayList<HMAux> getJustifyItems(TK_Ticket ticket);
+
+        void defineNotExecuteFlow(TK_Ticket mTicket);
+
+        boolean hasFormInProcess(TK_Ticket mTicket);
+
+        String hasNonExecutionRestriction(TK_Ticket mTicket);
     }
 }

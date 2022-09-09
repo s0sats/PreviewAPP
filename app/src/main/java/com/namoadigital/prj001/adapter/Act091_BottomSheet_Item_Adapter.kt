@@ -1,0 +1,92 @@
+package com.namoadigital.prj001.adapter
+
+import android.annotation.SuppressLint
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM
+import com.namoa_digital.namoa_library.util.HMAux
+import com.namoadigital.prj001.databinding.Act091BottomSheetListItemBinding
+import com.namoadigital.prj001.extensions.MaskOnlyNumber
+import com.namoadigital.prj001.model.SoPackExpressServicesLocal
+import com.namoadigital.prj001.ui.act091.util.BottomListEvent
+import com.namoadigital.prj001.ui.act091.util.onEvent
+
+class Act091_BottomSheet_Item_Adapter constructor(
+    private val dataset: List<SoPackExpressServicesLocal>,
+    private val type: String,
+    private val hmAux: HMAux,
+    private val showPrice: Boolean,
+    private val onUpdateList: () -> Unit,
+) : RecyclerView.Adapter<Act091_BottomSheet_Item_Adapter.ItemViewHolder>() {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
+        return ItemViewHolder(Act091BottomSheetListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+    }
+
+    override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
+        return holder.onBinding(dataset[position], position)
+    }
+
+    override fun getItemCount() = dataset.size
+
+    inner class ItemViewHolder constructor(
+        private val binding: Act091BottomSheetListItemBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
+
+        @SuppressLint("UseCompatLoadingForDrawables")
+        fun onBinding(item: SoPackExpressServicesLocal, position: Int) {
+            with(binding) {
+                setLabels(this)
+                act091BottomSheetServiceComment.setText(item.comments)
+                act091BottomSheetServiceTitle.text = item.service_desc_full
+                if (type == "P") {
+                    onEvent(BottomListEvent.stateWhenIsPackage(item, showPrice, hmAux))
+                }
+
+                //
+                act091BottomSheetServicePrice.apply {
+                    setOnReportTextChangeListner(MaskOnlyNumber(this) {
+                        try{
+                            item.price = it.toDouble()
+                        }catch (number: NumberFormatException){
+                            item.price = null
+                        }
+
+                        onEvent(BottomListEvent.changePriceColor(it.isNotEmpty() && it != ".", hmAux))
+                        onUpdateList()
+
+                    })
+                }
+
+
+                act091BottomSheetServiceComment.setOnReportTextChangeListner(object : MKEditTextNM.IMKEditTextChangeText {
+                    override fun reportTextChange(p0: String?) {
+                    }
+
+                    override fun reportTextChange(s: String?, p1: Boolean) {
+                        item.comments = s.toString()
+
+                    }
+
+                })
+            }
+        }
+
+        private fun setLabels(binding: Act091BottomSheetListItemBinding) {
+            with(binding) {
+                act091BottomSheetServiceTextLayoutComment.hint = hmAux["comment_hint"]
+                act091BottomSheetServiceTextLayoutComment.placeholderText =
+                    hmAux["insert_comment_placeholder"]
+
+                act091BottomSheetServiceTextLayoutPrice.hint = hmAux["price_hint"]
+                act091BottomSheetServiceTextLayoutPrice.placeholderText =
+                    hmAux["insert_price_placeholder"]
+
+                act091ServiceQtyBindings.act091BottomSheetQtyText.text = hmAux["qty_lbl"]
+                act091ServiceQtyBindings.act091BottomSheetQtyText.background = null
+            }
+        }
+
+    }
+}

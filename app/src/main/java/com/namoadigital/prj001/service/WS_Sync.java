@@ -62,6 +62,7 @@ import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
 import com.namoadigital.prj001.dao.MD_UserDao;
 import com.namoadigital.prj001.dao.MdDeviceTpDao;
 import com.namoadigital.prj001.dao.MdItemCheckDao;
+import com.namoadigital.prj001.dao.MdJustifyItemDao;
 import com.namoadigital.prj001.dao.MdOrderTypeDao;
 import com.namoadigital.prj001.dao.MdTagDao;
 import com.namoadigital.prj001.dao.MeMeasureTpDao;
@@ -70,6 +71,10 @@ import com.namoadigital.prj001.dao.SO_Pack_ExpressDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TkTicketCacheDao;
+import com.namoadigital.prj001.dao.TkTicketTypeDao;
+import com.namoadigital.prj001.dao.TkTicketTypeOperationDao;
+import com.namoadigital.prj001.dao.TkTicketTypeProductDao;
+import com.namoadigital.prj001.dao.TkTicketTypeSiteDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.EV_Module_Res;
@@ -119,6 +124,7 @@ import com.namoadigital.prj001.model.MD_Site_Zone_Local;
 import com.namoadigital.prj001.model.MD_User;
 import com.namoadigital.prj001.model.MdDeviceTp;
 import com.namoadigital.prj001.model.MdItemCheck;
+import com.namoadigital.prj001.model.MdJustifyItem;
 import com.namoadigital.prj001.model.MdOrderType;
 import com.namoadigital.prj001.model.MdTag;
 import com.namoadigital.prj001.model.MeMeasureTp;
@@ -131,6 +137,10 @@ import com.namoadigital.prj001.model.T_DataPackage_MD_Product_Serial_Structure_E
 import com.namoadigital.prj001.model.T_DataPackage_SM_SO_Env;
 import com.namoadigital.prj001.model.T_DataPackage_TK_Ticket_Env;
 import com.namoadigital.prj001.model.TkTicketCache;
+import com.namoadigital.prj001.model.TkTicketType;
+import com.namoadigital.prj001.model.TkTicketTypeOperation;
+import com.namoadigital.prj001.model.TkTicketTypeProduct;
+import com.namoadigital.prj001.model.TkTicketTypeSite;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.sql.EV_Profile_Sql_Truncate;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_004;
@@ -169,6 +179,7 @@ import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_User_Sql_Truncate;
 import com.namoadigital.prj001.sql.MdDeviceTpSqlTruncate;
 import com.namoadigital.prj001.sql.MdItemCheckSqlTruncate;
+import com.namoadigital.prj001.sql.MdJustifyItemTruncate;
 import com.namoadigital.prj001.sql.MdOrderTypeSqlTruncate;
 import com.namoadigital.prj001.sql.MdTagSqlTruncate;
 import com.namoadigital.prj001.sql.MeMeasureTpSqlTruncate;
@@ -178,6 +189,9 @@ import com.namoadigital.prj001.sql.Sql_WS_Sync_Datapackage_So_001;
 import com.namoadigital.prj001.sql.Sql_WS_Sync_Datapackage_Ticket_001;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_001;
 import com.namoadigital.prj001.sql.TkTicketCacheSqlTruncate;
+import com.namoadigital.prj001.sql.TkTicketTypeOperationSqlTruncate;
+import com.namoadigital.prj001.sql.TkTicketTypeProductSqlTruncate;
+import com.namoadigital.prj001.sql.TkTicketTypeSqlTruncate;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -449,7 +463,12 @@ public class WS_Sync extends IntentService {
                 gson.toJson(env),
                 connection_timeout
         );
-
+        /**
+         *  BARRIONUEVO 2022-08-23
+         *  Ao retornar do servidor com sucesso setar a preferencia de fluxo offline para false.
+         */
+        ToolBox_Con.setBooleanPreference(getApplicationContext(), ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false);
+        //
         TSync_Rec rec = gson.fromJson(
                 resultado,
                 TSync_Rec.class
@@ -648,8 +667,13 @@ public class WS_Sync extends IntentService {
             TkTicketCacheDao tkTicketCacheDao = new TkTicketCacheDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             MdDeviceTpDao deviceTpDao = new MdDeviceTpDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             MdOrderTypeDao orderTypeDao = new MdOrderTypeDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            MdJustifyItemDao justifyItemDao = new MdJustifyItemDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             MdItemCheckDao mdItemCheckDao = new MdItemCheckDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             MeMeasureTpDao meMeasureTpDao = new MeMeasureTpDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            TkTicketTypeDao tkTicketTypeDao = new TkTicketTypeDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            TkTicketTypeSiteDao tkTicketTypeSiteDao = new TkTicketTypeSiteDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            TkTicketTypeOperationDao tkTicketTypeOperationDao = new TkTicketTypeOperationDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            TkTicketTypeProductDao tkTicketTypeProductDao = new TkTicketTypeProductDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             //
             //Apaga dados das tabelas
             operationDao.remove(new MD_Operation_Sql_Truncate().toSqlQuery());
@@ -679,8 +703,13 @@ public class WS_Sync extends IntentService {
             tkTicketCacheDao.remove(new TkTicketCacheSqlTruncate().toSqlQuery());
             deviceTpDao.remove(new MdDeviceTpSqlTruncate().toSqlQuery());
             orderTypeDao.remove(new MdOrderTypeSqlTruncate().toSqlQuery());
+            justifyItemDao.remove(new MdJustifyItemTruncate().toSqlQuery());
             mdItemCheckDao.remove(new MdItemCheckSqlTruncate().toSqlQuery());
             meMeasureTpDao.remove(new MeMeasureTpSqlTruncate().toSqlQuery());
+            tkTicketTypeDao.remove(new TkTicketTypeSqlTruncate().toSqlQuery());
+            tkTicketTypeSiteDao.remove(new TkTicketTypeSqlTruncate().toSqlQuery());
+            tkTicketTypeOperationDao.remove(new TkTicketTypeOperationSqlTruncate().toSqlQuery());
+            tkTicketTypeProductDao.remove(new TkTicketTypeProductSqlTruncate().toSqlQuery());
             //
             // Processamento Operation
             //
@@ -1558,6 +1587,22 @@ public class WS_Sync extends IntentService {
                 //
                 orderTypeDao.addUpdate(orderTypes, false);
             }
+            /**
+             * Processamento MD_ORDER_TYPE
+             */
+            File[] files_justify_item = ToolBox_Inf.getListOfFiles_v2("md_justify_item-");
+
+            for (File _file : files_justify_item) {
+                ArrayList<MdJustifyItem> justifyItem = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MdJustifyItem>>() {
+                        }.getType()
+                );
+                //
+                justifyItemDao.addUpdate(justifyItem, false);
+            }
             //Libera pro GB
             files_order_type = null;
             /**
@@ -1596,6 +1641,86 @@ public class WS_Sync extends IntentService {
             }
             //Libera pro GB
             files_measure_tp = null;
+            //
+            /**
+             * Processamento ME_MEASURE_TP
+             */
+            File[] files_tk_ticket_type = ToolBox_Inf.getListOfFiles_v2("tk_ticket_type-");
+
+            for (File _file : files_tk_ticket_type) {
+                ArrayList<TkTicketType> tkTicketType = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<TkTicketType>>() {
+                        }.getType()
+                );
+                //
+                tkTicketTypeDao.addUpdate(tkTicketType, false);
+            }
+            //Libera pro GB
+            files_tk_ticket_type = null;
+            //
+            /**
+             * Processamento TkTicketTypeOperation
+             */
+            File[] files_tk_ticket_type_operation  = ToolBox_Inf.getListOfFiles_v2("tk_ticket_type_operation-");
+
+            for (File _file : files_tk_ticket_type_operation) {
+                ArrayList<TkTicketTypeOperation> tkTicketTypeOperations = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<TkTicketTypeOperation>>() {
+                        }.getType()
+                );
+                //
+                tkTicketTypeOperationDao.addUpdate(tkTicketTypeOperations, false);
+            }
+            //
+            // Libera pro GB
+            files_tk_ticket_type_operation = null;
+            //
+            /**
+             * Processamento TkTicketTypeSite
+             */
+            File[] files_tk_ticket_type_site  = ToolBox_Inf.getListOfFiles_v2("tk_ticket_type_site-");
+
+            for (File _file : files_tk_ticket_type_site) {
+                ArrayList<TkTicketTypeSite> tkTicketTypeSites = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<TkTicketTypeSite>>() {
+                        }.getType()
+                );
+                //
+                tkTicketTypeSiteDao.addUpdate(tkTicketTypeSites, false);
+            }
+            //Libera pro GB
+            files_tk_ticket_type_site = null;
+            //
+            // Libera pro GB
+            files_tk_ticket_type_operation = null;
+            //
+            /**
+             * Processamento TkTicketTypeSite
+             */
+            File[] files_tk_ticket_type_product  = ToolBox_Inf.getListOfFiles_v2("tk_ticket_type_product-");
+
+            for (File _file : files_tk_ticket_type_product) {
+                ArrayList<TkTicketTypeProduct> tkTicketTypeProduct = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<TkTicketTypeProduct>>() {
+                        }.getType()
+                );
+                //
+                tkTicketTypeProductDao.addUpdate(tkTicketTypeProduct, false);
+            }
+            //Libera pro GB
+            files_tk_ticket_type_product = null;
 
         }
 
@@ -1949,6 +2074,9 @@ public class WS_Sync extends IntentService {
             //Libera pro GB
             files_so_pack_express = null;
         }
+        //endregion
+        //region Limpeza de diretorio de SO Express
+        ToolBox_Inf.deleteAllFOD(Constant.SO_EXPRESS_JSON_PATH);
         //endregion
 
         if (dataPackageType.contains(DataPackage.DATA_PACKAGE_CHECKLIST) && !productExist) {

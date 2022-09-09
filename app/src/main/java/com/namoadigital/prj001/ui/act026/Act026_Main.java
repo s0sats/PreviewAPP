@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
@@ -54,7 +55,7 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
     //
     private TextView tv_filter_lbl;
     private TextView tv_empty_state;
-    private Switch sw_filter;
+    private SwitchCompat sw_filter;
     private MKEditTextNM mket_filter;
     private Button btnNewOs;
     private View lv_so_footer;
@@ -158,7 +159,7 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
         mket_filter = (MKEditTextNM) findViewById(R.id.act026_mket_filter);
         mket_filter.setHint(hmAux_Trans.get("filter_hint"));
         //
-        sw_filter = (Switch) findViewById(R.id.act026_sw_filter);
+        sw_filter = findViewById(R.id.act026_sw_filter);
         //
         mPresenter.getSOListTotalCount(product_code, serial_id);
         //mPresenter.getSOList(product_code, serial_id, sw_filter.isChecked());
@@ -335,7 +336,10 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
                 configType,
                 R.layout.so_header_cell,
                 R.layout.so_header_cell,
-                mket_filter != null ? mket_filter.getText().toString().trim() : null
+                mket_filter != null ? mket_filter.getText().toString().trim() : null,
+                hasEmpty -> {
+                    tv_empty_state.setVisibility(hasEmpty ? View.VISIBLE : View.GONE);
+                }
         );
         //
         if(soList.isEmpty()) {

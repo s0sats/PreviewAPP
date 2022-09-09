@@ -1,12 +1,12 @@
 package com.namoadigital.prj001.ui.act027;
 
+import static com.namoadigital.prj001.ui.act027.Act027_Main.WS_SO_PRODUCT_EVENT_CANCEL;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import com.google.android.material.textfield.TextInputLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +18,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.ctls.ApplyRepairImageFF;
@@ -58,8 +61,6 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import static com.namoadigital.prj001.ui.act027.Act027_Main.WS_SO_PRODUCT_EVENT_CANCEL;
 
 /**
  * Created by neomatrix on 31/10/17.
@@ -687,6 +688,7 @@ public class Act027_Product_Edit extends BaseFragment {
 
     private void callProdEventDeleteService() {
         Act027_Main mMain = (Act027_Main) getActivity();
+        mMain.setSerialSyncRequired();
         mMain.setWs_process(WS_SO_PRODUCT_EVENT_CANCEL);
         //
         mMain.enableProgressDialog(
@@ -1127,6 +1129,7 @@ public class Act027_Product_Edit extends BaseFragment {
 
         if (ToolBox_Con.isOnline(context)) {
             mMain.cleanUpResults();
+            mMain.setSerialSyncRequired();
             mMain.executeSoSave();
         } else {
             //ToolBox_Inf.showNoConnectionDialog(context);

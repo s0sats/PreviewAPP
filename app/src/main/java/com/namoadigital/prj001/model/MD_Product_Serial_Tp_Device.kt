@@ -5,7 +5,8 @@ import com.google.gson.annotations.SerializedName
 class MD_Product_Serial_Tp_Device(
     @SerializedName("device_tp_code") val device_tp_code: Int,
     @SerializedName("order_seq") val order_seq: Int,
-    @SerializedName("tracking_number") val tracking_number: String? = null
+    @SerializedName("tracking_number") val tracking_number: String? = null,
+    @SerializedName("show_empty") var show_empty: Int = 0
 ) {
     @SerializedName("customer_code")
     var customer_code: Long = -1

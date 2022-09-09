@@ -20,6 +20,7 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.GENERIC_CHANNEL_ID;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_PERIOD_FILTER;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_JUSTIFY_SUFIX;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SEND_TO_STORE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_BARCODE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_FORM;
@@ -171,6 +172,7 @@ import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.model.TSO_Save_Env;
 import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.model.TSerial_Save_Env;
+import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.model.T_IO_Inbound_Item_Env;
 import com.namoadigital.prj001.model.T_IO_Outbound_Item_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Env;
@@ -255,6 +257,7 @@ import com.namoadigital.prj001.ui.AppBase;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
+import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.ui.act078.Act078_Main;
 import com.namoadigital.prj001.ui.act079.Act079_Main;
 import com.namoadigital.prj001.ui.act088.Act088Main;
@@ -315,6 +318,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 import java.util.TimeZone;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -455,6 +459,11 @@ public class ToolBox_Inf {
         File dirCustomerSiteLicenseJsonFile = new File(Constant.CUSTOMER_SITE_LICENSE_JSON_PATH);
         if (!dirCustomerSiteLicenseJsonFile.exists()) {
             dirCustomerSiteLicenseJsonFile.mkdir();
+        }
+        //BARRIONUEVO - 22/07/2022 - Dir com os arquivos json de lista de site licença do customer
+        File dirExpressSOJsonFile = new File(Constant.SO_EXPRESS_JSON_PATH);
+        if (!dirExpressSOJsonFile.exists()) {
+            dirExpressSOJsonFile.mkdir();
         }
     }
 
@@ -614,7 +623,9 @@ public class ToolBox_Inf {
         formater = new SimpleDateFormat("HHmmss");
         String curr_time = formater.format(new Date());
         //
-        String key = IMEI + "_" + curr_date + "_" + curr_time;
+        Random random = new Random();
+        int randomValue = random.nextInt(1000);
+        String key = IMEI + "_" + curr_date + "_" + curr_time + "_" + randomValue;
         //
         return key;
     }
@@ -1017,15 +1028,8 @@ public class ToolBox_Inf {
 
     public static File[] getListOfFiles_v2(final String prefix) {
         File fileList = new File(Constant.ZIP_PATH);
-        File[] files = fileList.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String filename) {
-                if (filename.startsWith(prefix)) {
-                    return true;
-                }
-
-                return false;
-            }
+        File[] files = fileList.listFiles((dir, filename) -> {
+            return filename.startsWith(prefix);
         });
         //
         if (files != null) {
@@ -4120,6 +4124,11 @@ public class ToolBox_Inf {
         }
         return false;
     }
+
+    public static String getExpressSOFileName(int contract_code, long product_code, int category_price_code, long site_code, long operation_code) {
+        return contract_code + "_" + category_price_code + "_" + product_code + "_" + site_code + "_" + operation_code + ".json";
+    }
+
     //
     private static class GenericExtFilter implements FilenameFilter {
         private String[] exts;
@@ -7156,6 +7165,15 @@ public class ToolBox_Inf {
             return null;
         }
     }
+    @Nullable
+    public static String buildTicketNotExecutedImgPath(TK_Ticket tkTicket) {
+        try {
+            return ConstantBaseApp.TK_TICKET_PREX_IMG + tkTicket.getCustomer_code() + "_" + tkTicket.getTicket_prefix() + "_" + tkTicket.getTicket_code() + TK_TICKET_JUSTIFY_SUFIX + ".jpg";
+        }catch (Exception e){
+            registerException(CLASS_NAME,e);
+            return null;
+        }
+    }
 
     /**
      * LUCHE
@@ -8441,7 +8459,8 @@ public class ToolBox_Inf {
 
     private static ArrayList<FabMenuItem> initFabMenuItens(Context context, HMAux hmAux_Trans, TK_Ticket ticket) {
         FabMenuItem fabStep;
-        FabMenuItem fabProduct;
+//        FabMenuItem fabProduct;
+        FabMenuItem fabNotExecuted;
         FabMenuItem fabOrigin;
         FabMenuItem fabEditHeader;
 
@@ -8496,15 +8515,29 @@ public class ToolBox_Inf {
         fabStep.setmButton_Resource(R.drawable.ic_baseline_assignment_24);
         fabMenuItems.add(fabStep);
         //atalaho para produto.
-        fabProduct = new FabMenuItem(context);
-        fabProduct.setTag(ConstantBaseApp.FAB_TO_PRODUCT_LBL);
-        fabProduct.setmLabel(hmAux_Trans.get("to_product_lbl"));
-        fabProduct.setmLabel_Back_Color(lblBgColor);
-        fabProduct.setmLabel_Text_Color(lblColor);
-        fabProduct.setmButton_Back_Color(btnBgColor);
-        fabProduct.setmButton_Resource_Color(iconColor);
-        fabProduct.setmButton_Resource(R.drawable.ic_baseline_build_24);
-        fabMenuItems.add(fabProduct);
+//        fabProduct = new FabMenuItem(context);
+//        fabProduct.setTag(ConstantBaseApp.FAB_TO_PRODUCT_LBL);
+//        fabProduct.setmLabel(hmAux_Trans.get("to_product_lbl"));
+//        fabProduct.setmLabel_Back_Color(lblBgColor);
+//        fabProduct.setmLabel_Text_Color(lblColor);
+//        fabProduct.setmButton_Back_Color(btnBgColor);
+//        fabProduct.setmButton_Resource_Color(iconColor);
+//        fabProduct.setmButton_Resource(R.drawable.ic_baseline_build_24);
+//        fabMenuItems.add(fabProduct);
+        //Nao executar.
+        if(!ticket.isReadOnly(context)
+        && ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_TICKET, ConstantBaseApp.PROFILE_MENU_TICKET_PARAM_NOT_EXECUTED)
+        && context instanceof Act070_Main) {
+            fabNotExecuted = new FabMenuItem(context);
+            fabNotExecuted.setTag(ConstantBaseApp.FAB_NOT_EXECUTE_LBL);
+            fabNotExecuted.setmLabel(hmAux_Trans.get("to_not_execute_lbl"));
+            fabNotExecuted.setmLabel_Back_Color(lblBgColor);
+            fabNotExecuted.setmLabel_Text_Color(lblColor);
+            fabNotExecuted.setmButton_Back_Color(btnBgColor);
+            fabNotExecuted.setmButton_Resource_Color(iconColor);
+            fabNotExecuted.setmButton_Resource(R.drawable.ic_baseline_close_24);
+            fabMenuItems.add(fabNotExecuted);
+        }
         //
         return fabMenuItems;
     }
@@ -9369,4 +9402,59 @@ public class ToolBox_Inf {
                 serialId
         ).toSqlQuery());
     }
+
+    public static void saveSerialFromJson(Context context, String result) {
+        //Transforma resposta de json para obj
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        //
+        TSerial_Search_Rec rec = gson.fromJson(
+                result,
+                TSerial_Search_Rec.class
+        );
+        //
+        try {
+            MD_Product_SerialDao serialDao = new MD_Product_SerialDao(
+                    context
+            );
+            serialDao.addUpdateTmp(rec.getRecord().get(0));
+        }catch (NullPointerException e){
+            ToolBox_Inf.registerException(context.getClass().getName(), e);
+        }
+    }
+
+    public static void saveBitmapToFile(Bitmap bitmap, File tempImageFile) {
+        try (FileOutputStream out = new FileOutputStream(tempImageFile)) {
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void copyFiles(String fromFile, String toFile) throws IOException {
+
+        File src = new File(fromFile);
+        File dst = new File(toFile);
+
+        InputStream in = new FileInputStream(src);
+        try {
+            OutputStream out = new FileOutputStream(dst);
+            try {
+                // Transfer bytes from in to out
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+            } finally {
+                out.close();
+            }
+        } finally {
+            in.close();
+        }
+
+//        Bitmap bitmap = BitmapFactory.decodeFile(fromFile);
+//        File tempImageFile = new File(toFile);
+//        saveBitmapToFile(bitmap, tempImageFile);
+    }
+
 }

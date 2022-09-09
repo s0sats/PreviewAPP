@@ -405,6 +405,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                     tkTicket.getOpen_site_code(),
                     tkTicket.getOpen_site_desc(),
                     tkTicket.getOpen_serial_id(),
+                    tkTicket.getInternal_comments(),
                     tkTicket.getOpen_product_desc(),
                     tkTicket.getOrigin_desc()
             );
@@ -421,6 +422,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                     tkTicket.getOpen_site_code(),
                     tkTicket.getOpen_site_desc(),
                     tkTicket.getOpen_serial_id(),
+                    tkTicket.getInternal_comments(),
                     tkTicket.getOpen_product_desc(),
                     tkTicket.getOrigin_desc(),
                     mPresenter.getStepColor(ticketStep,mPipelineHeaderIsCurrentStepOrder),

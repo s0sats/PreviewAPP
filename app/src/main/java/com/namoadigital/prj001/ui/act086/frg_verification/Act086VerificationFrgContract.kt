@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui.act086.frg_verification
 import android.content.DialogInterface
 import android.content.Intent
 import com.namoadigital.prj001.model.Act086MaterialItem
+import com.namoadigital.prj001.model.GeOs
 import com.namoadigital.prj001.model.GeOsDeviceItem
 import com.namoadigital.prj001.model.GeOsDeviceMaterial
 
@@ -42,14 +43,17 @@ interface Act086VerificationFrgContract {
         )
 
         fun deleteManualItem(geOsDeviceItem: GeOsDeviceItem)
-        fun isCycleExpired(geOsDeviceItem: GeOsDeviceItem): Boolean
+
         fun hasMaterialPlanned(geOsDeviceItem: GeOsDeviceItem): Boolean
         fun resetMaterialPlanned(
             materialList: MutableList<GeOsDeviceMaterial>,
             materialUIItem: Act086MaterialItem
         )
-
+        fun getFormattedLastMeasureInfo(
+            lastFixed: Float, measureValueSufix: String?): String
         fun resetMaterialPlannedList(materialList: MutableList<GeOsDeviceMaterial>)
+        fun getMaxMeasureValue(geOsDeviceItem: GeOsDeviceItem): Float
+        fun getGeOs(geOsDeviceItem: GeOsDeviceItem): GeOs
     }
 
 }

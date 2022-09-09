@@ -5,10 +5,13 @@ import android.content.DialogInterface
 import android.os.Bundle
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
+import com.namoadigital.prj001.dao.GeOsDeviceItemDao
 import com.namoadigital.prj001.dao.GeOsDeviceMaterialDao
 import com.namoadigital.prj001.model.Act086MaterialItem
+import com.namoadigital.prj001.model.GeOsDeviceItem
 import com.namoadigital.prj001.model.GeOsDeviceMaterial
 import com.namoadigital.prj001.model.toUiMaterialItem
+import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_001
 import com.namoadigital.prj001.sql.GeOsDeviceMaterialSql_003
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -20,6 +23,7 @@ class Act090MainPresenter(
     private val bundle: Bundle,
     private val mModule_Code: String,
     private val mResource_Code: String,
+    private val geOsDeviceItemDao: GeOsDeviceItemDao,
     private val geOsDeviceItemMaterialDao: GeOsDeviceMaterialDao
 ) : Act090MainContract.IPresenter {
 
@@ -33,6 +37,7 @@ class Act090MainPresenter(
             "act090_title",
             "planned_qty_lbl",
             "applied_qty_lbl",
+            "request_qty_lbl",
             "alert_form_parameter_error_ttl",
             "alert_form_parameter_error_msg",
             "btn_apply_material",
@@ -41,7 +46,12 @@ class Act090MainPresenter(
             "alert_unsaved_data_will_be_lost_confirm",
             "alert_error_on_save_material_list_msg",
             "alert_no_data_changed_msg",
-            "alert_invalid_material_qty_msg"
+            "alert_invalid_material_qty_msg",
+            "adjust_lbl",
+            "change_lbl",
+            "fixed_lbl",
+            "still_with_problem_lbl",
+            "has_problem_lbl"
         )
         //
         return ToolBox_Inf.setLanguage(
@@ -83,6 +93,32 @@ class Act090MainPresenter(
      */
     private fun validPkSize(it: String): Boolean {
         return it.split(".").size == 10
+    }
+
+    override fun getDeviceItem(): GeOsDeviceItem? {
+        val deviceItemRawPk = bundle.getBundle(ConstantBaseApp.DEVICE_BUNDLE)!!.getString(ConstantBaseApp.DEVICE_ITEM_PK)
+        deviceItemRawPk?.let {
+            try {
+                val splitedPK = it.split(".")
+                return geOsDeviceItemDao.getByString(
+                        GeOsDeviceItem_Sql_001(
+                            splitedPK[0],
+                            splitedPK[1],
+                            splitedPK[2],
+                            splitedPK[3],
+                            splitedPK[4],
+                            splitedPK[5],
+                            splitedPK[6],
+                            splitedPK[7],
+                            splitedPK[8],
+                            splitedPK[9]
+                        ).toSqlQuery()
+                )
+            }catch (e: Exception){
+                ToolBox_Inf.registerException(javaClass.name,e)
+            }
+        }
+        return null
     }
 
     /**
@@ -185,7 +221,8 @@ class Act090MainPresenter(
                     it.creationMs,
                     it.materialPlanned,
                     it.materialPlannedUsed,
-                    it.materialPlannedQty
+                    it.materialPlannedQty,
+                    it.origin
                 )
         }.toMutableList()
         //

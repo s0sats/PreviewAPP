@@ -497,6 +497,8 @@ public class Act011_Main extends Base_Activity
         transList.add("alert_gps_denied_exact_permission_msg");
         //
         transList.add("inspection_answer_fixed_lbl");
+        transList.add("inspection_answer_change_lbl");
+        transList.add("inspection_answer_adjust_lbl");
         transList.add("inspection_answer_alert_lbl");
         transList.add("inspection_answer_still_in_alert_lbl");
         transList.add("inspection_answer_already_ok_lbl");
@@ -2158,6 +2160,7 @@ public class Act011_Main extends Base_Activity
                         : null;
                     //
                     MeasureFF.MeasureValidationReturn validationReturn = measureTp.validateMeasureRestriction(
+                        false,
                         measure,
                         lastMeasureValue,
                         serialInfo.getLast_measure_date(),

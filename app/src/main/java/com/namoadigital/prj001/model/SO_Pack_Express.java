@@ -4,11 +4,13 @@ import com.google.gson.annotations.SerializedName;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.io.Serializable;
+
 /**
  * Created by neomatrix on 3/22/18.
  */
 
-public class SO_Pack_Express {
+public class SO_Pack_Express implements Serializable {
 
     @SerializedName("customer_code") private long customer_code;
     @SerializedName("site_code") private long site_code;
@@ -16,6 +18,13 @@ public class SO_Pack_Express {
     @SerializedName("product_code") private long product_code;
     @SerializedName("express_code") private String express_code;
     @SerializedName("pack_desc") private String pack_desc;
+    @SerializedName("category_price_code") private int category_price_code;
+    @SerializedName("contract_code") private int contract_code;
+    @SerializedName("segment_code") private int segment_code;
+    @SerializedName("price_list_code") private int price_list_code;
+    @SerializedName("pack_code") private int pack_code;
+    @SerializedName("add_pack_service") private int add_pack_service;
+    @SerializedName("price") private float price;
     @SerializedName("billing_add_inf1_view") private String billing_add_inf1_view;
     @Nullable
     @SerializedName("billing_add_inf1_text") private String billing_add_inf1_text;
@@ -75,6 +84,62 @@ public class SO_Pack_Express {
 
     public void setPack_desc(String pack_desc) {
         this.pack_desc = pack_desc;
+    }
+
+    public int getCategory_price_code() {
+        return category_price_code;
+    }
+
+    public void setCategory_price_code(int category_price_code) {
+        this.category_price_code = category_price_code;
+    }
+
+    public int getContract_code() {
+        return contract_code;
+    }
+
+    public void setContract_code(int contract_code) {
+        this.contract_code = contract_code;
+    }
+
+    public int getSegment_code() {
+        return segment_code;
+    }
+
+    public void setSegment_code(int segment_code) {
+        this.segment_code = segment_code;
+    }
+
+    public int getPrice_list_code() {
+        return price_list_code;
+    }
+
+    public void setPrice_list_code(int price_list_code) {
+        this.price_list_code = price_list_code;
+    }
+
+    public int getPack_code() {
+        return pack_code;
+    }
+
+    public void setPack_code(int pack_code) {
+        this.pack_code = pack_code;
+    }
+
+    public int getAdd_pack_service() {
+        return add_pack_service;
+    }
+
+    public void setAdd_pack_service(int add_pack_service) {
+        this.add_pack_service = add_pack_service;
+    }
+
+    public float getPrice() {
+        return price;
+    }
+
+    public void setPrice(float price) {
+        this.price = price;
     }
 
     public String getBilling_add_inf1_view() {

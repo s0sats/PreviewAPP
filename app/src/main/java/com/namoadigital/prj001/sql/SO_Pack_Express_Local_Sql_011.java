@@ -4,6 +4,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.ui.act014.Act014_Main;
+import com.namoadigital.prj001.util.Constant;
 
 /**
  * Query que veifica qtd de ordem express salvas no banco local
@@ -33,7 +34,8 @@ public class SO_Pack_Express_Local_Sql_011 implements Specification {
                         " FROM\n" +
                         SO_Pack_Express_LocalDao.TABLE + " l\n " +
                         " WHERE\n" +
-                        "   l." + SO_Pack_Express_LocalDao.CUSTOMER_CODE + " = '" + s_customer_code + "' \n"
+                        "   l." + SO_Pack_Express_LocalDao.CUSTOMER_CODE + " = '" + s_customer_code + "' \n"+
+                        "   and (l.so_status  != '"+ Constant.SYS_STATUS_PROCESS+"'); \n"
                 )
                 .append(";")
                 .toString();

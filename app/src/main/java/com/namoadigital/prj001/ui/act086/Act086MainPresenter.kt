@@ -15,6 +15,7 @@ import com.namoadigital.prj001.model.GeOsDeviceItemHist
 import com.namoadigital.prj001.sql.GeOsDeviceItemHistSql_002
 import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_001
 import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_005
+import com.namoadigital.prj001.ui.act086.bottomsheet.Act086_BottomSheet
 import com.namoadigital.prj001.ui.act086.frg_historic.Act086HistoricFrg
 import com.namoadigital.prj001.ui.act086.frg_verification.Act086VerificationFrg
 import com.namoadigital.prj001.util.ConstantBaseApp
@@ -53,7 +54,10 @@ class Act086MainPresenter(
             "alert_unsaved_data_will_be_lost_confirm",
             "info_ttl",
             "new_check_item_ttl",
-            "check_item_ttl"
+            "check_item_ttl",
+            "fixed_lbl",
+            "change_lbl",
+            "adjust_lbl",
         )
         transList.addAll(
             Act086VerificationFrg.getFragTranslationsVars()
@@ -222,41 +226,45 @@ class Act086MainPresenter(
         ){
             val nextItemCheckSeq = nextItemCheckSeqAux[GeOsDeviceItemDao.ITEM_CHECK_SEQ]!!.toInt()
             return GeOsDeviceItem(
-                    customer_code =  splitedPK[0].toLong(),
-                    custom_form_type = splitedPK[1].toInt(),
-                    custom_form_code = splitedPK[2].toInt(),
-                    custom_form_version = splitedPK[3].toInt(),
-                    custom_form_data = splitedPK[4].toInt(),
-                    product_code = splitedPK[5].toInt(),
-                    serial_code = splitedPK[6].toInt(),
-                    device_tp_code = splitedPK[7].toInt(),
-                    item_check_code = 0,
-                    item_check_seq = nextItemCheckSeq,
-                    item_check_id = "0",
-                    item_check_desc = GeOsDeviceItem.ITEM_CHECK_STATUS_MANUAL,
-                    apply_material = GeOsDeviceItem.APPLY_MATERIAL_OPTIONAL  ,
-                    verification_instruction = null,
-                    require_justify_problem = 0,
-                    critical_item = 0,
-                    order_seq = nextItemCheckSeq ,
-                    structure = 0 ,
-                    manual_desc = null,
-                    next_cycle_measure = null ,
-                    next_cycle_measure_date = null ,
-                    next_cycle_limit_date = null,
-                    value_sufix = null,
-                    restriction_decimal = null,
-                    item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_MANUAL,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                0
+                customer_code = splitedPK[0].toLong(),
+                custom_form_type = splitedPK[1].toInt(),
+                custom_form_code = splitedPK[2].toInt(),
+                custom_form_version = splitedPK[3].toInt(),
+                custom_form_data = splitedPK[4].toInt(),
+                product_code = splitedPK[5].toInt(),
+                serial_code = splitedPK[6].toInt(),
+                device_tp_code = splitedPK[7].toInt(),
+                item_check_code = 0,
+                item_check_seq = nextItemCheckSeq,
+                item_check_id = "0",
+                item_check_desc = GeOsDeviceItem.ITEM_CHECK_STATUS_MANUAL,
+                item_check_group_code = null,
+                apply_material = GeOsDeviceItem.APPLY_MATERIAL_OPTIONAL,
+                verification_instruction = null,
+                require_justify_problem = 0,
+                critical_item = 0,
+                change_adjust = 0,
+                order_seq = nextItemCheckSeq,
+                structure = 0,
+                manual_desc = null,
+                next_cycle_measure = null,
+                next_cycle_measure_date = null,
+                next_cycle_limit_date = null,
+                value_sufix = null,
+                restriction_decimal = null,
+                item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_MANUAL,
+                target_date = null,
+                exec_type = null,
+                exec_date = null,
+                exec_comment = null,
+                exec_photo1 = null,
+                exec_photo2 = null,
+                exec_photo3 = null,
+                exec_photo4 = null,
+                status_answer = null,
+                has_expired_cycle = 0,
+                hide_days_in_alert = 0,
+                materialList = mutableListOf()
             )
         }
         //
@@ -320,6 +328,7 @@ class Act086MainPresenter(
     ): Boolean {
         //Se for um dos "status de alerta", verdadeiro
         when(deviceItem.item_check_status){
+            GeOsDeviceItem.ITEM_CHECK_STATUS_FORCED,
             GeOsDeviceItem.ITEM_CHECK_STATUS_MANUAL_ALERT ,
             GeOsDeviceItem.ITEM_CHECK_STATUS_MEASURE_ALERT ,
             GeOsDeviceItem.ITEM_CHECK_STATUS_PROJECTED_DATE_REACHED ,

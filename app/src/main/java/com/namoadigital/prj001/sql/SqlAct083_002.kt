@@ -142,6 +142,7 @@ class SqlAct083_002(
                      ts.${TK_Ticket_StepDao.FORECAST_END},
                      max(
                             t.${TK_TicketDao.UPDATE_REQUIRED},
+                            t.${TK_TicketDao.UPDATE_REQUIRED_STATUS},
                             t.${TK_TicketDao.UPDATE_REQUIRED_PRODUCT},
                             ifnull(ts.$INNER_UPDATE_REQUIRED,0)
                      ) $TOTAL_UPDATE_REQUIRED                                           
@@ -164,7 +165,7 @@ class SqlAct083_002(
                                            s.${TK_Ticket_StepDao.STEP_ORDER},
                                            s.${TK_Ticket_StepDao.USER_FOCUS},
                                            (case when s.${TK_Ticket_StepDao.USER_FOCUS} = 0
-                                                 then null   
+                                                 then null    
                                                  when count(distinct(s.${TK_Ticket_StepDao.STEP_CODE})) = 1
                                                  then min(s.${TK_Ticket_StepDao.STEP_DESC})
                                                  else '$multStepsLbl'

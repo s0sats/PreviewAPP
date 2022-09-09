@@ -47,6 +47,7 @@ class GeOsDeviceItemCreation_Sql_001(
                         $customFormData  ${GeOsDeviceItemDao.CUSTOM_FORM_DATA} ,
                         i.${MdItemCheckDao.ITEM_CHECK_ID},
                         i.${MdItemCheckDao.ITEM_CHECK_DESC},
+                        i.${MdItemCheckDao.ITEM_CHECK_GROUP_CODE},
                         $sufix ${GeOsDeviceItemDao.VALUE_SUFIX},                                 
                         $restrictionDecimal ${GeOsDeviceItemDao.RESTRICTION_DECIMAL},                                 
                         null ${GeOsDeviceItemDao.EXEC_TYPE},
@@ -57,7 +58,8 @@ class GeOsDeviceItemCreation_Sql_001(
                         null ${GeOsDeviceItemDao.EXEC_PHOTO3},
                         null ${GeOsDeviceItemDao.EXEC_PHOTO4},
                         null ${GeOsDeviceItemDao.STATUS_ANSWER},
-                        0 ${GeOsDeviceItemDao.HAS_EXPIRED_CYCLE}
+                        0 ${GeOsDeviceItemDao.HAS_EXPIRED_CYCLE},
+                        0 ${GeOsDeviceItemDao.HIDE_DAYS_IN_ALERT}
                     FROM
                         ${MD_Product_Serial_Tp_Device_ItemDao.TABLE} si,
                         ${MdItemCheckDao.TABLE} i

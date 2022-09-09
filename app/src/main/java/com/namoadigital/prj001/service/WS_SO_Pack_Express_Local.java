@@ -82,7 +82,7 @@ public class WS_SO_Pack_Express_Local extends IntentService {
     private void processSO_Pack_Express() throws Exception {
         loadTranslation();
 
-        Gson gsonEnv = new GsonBuilder().serializeNulls().create();
+        Gson gsonEnv = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         Gson gsonRec = new GsonBuilder().serializeNulls().create();
 
         repeting = 0;
@@ -96,6 +96,15 @@ public class WS_SO_Pack_Express_Local extends IntentService {
                 //HMAux auxApReturned = new HMAux();
                 ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_no_express_save"), auxApReturned, "", "0");
                 return;
+            }
+            /*
+                Caso a lista de pacotes esteja vazia força o pacote default.
+             */
+            for (SO_Pack_Express_Local so_pack_express_local : so_pack_express_List) {
+                if (so_pack_express_local.getPacksLocals()!= null
+                && so_pack_express_local.getPacksLocals().size() == 0) {
+                    so_pack_express_local.setPacksLocals(null);
+                }
             }
             //
             TSO_Pack_Express_Env env = new TSO_Pack_Express_Env();

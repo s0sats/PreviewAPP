@@ -19,6 +19,7 @@ class MD_Product_Serial_Tp_Device_Item_Material(
         private set
     var item_check_seq: Int = -1
         private set
+    var origin: String? = null
 
     constructor(
         customer_code: Long,
@@ -28,7 +29,8 @@ class MD_Product_Serial_Tp_Device_Item_Material(
         item_check_code: Int,
         item_check_seq: Int,
         material_code: Int,
-        qty: BigDecimal
+        qty: BigDecimal,
+        origin: String?
     ) : this(
         material_code,
         qty
@@ -39,6 +41,7 @@ class MD_Product_Serial_Tp_Device_Item_Material(
         this.device_tp_code = device_tp_code
         this.item_check_code = item_check_code
         this.item_check_seq = item_check_seq
+        this.origin = origin
     }
 
     fun setPk(item: MD_Product_Serial_Tp_Device_Item){

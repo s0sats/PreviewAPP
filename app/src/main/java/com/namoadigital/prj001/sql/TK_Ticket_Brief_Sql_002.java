@@ -45,7 +45,7 @@ public class TK_Ticket_Brief_Sql_002 implements Specification {
                         "       tb.fcm,\n" +
                         "       1 user_focus,\n" +
                         "       t.sync_required,\n" +
-                        "       CASE WHEN t.update_required + t.update_required_product > 0 \n" +
+                        "       CASE WHEN t.update_required + t.update_required_product + t.update_required_status > 0 \n" +
                         "            THEN 1\n" +
                         "            ELSE 0\n" +
                         "       END update_required,\n" +

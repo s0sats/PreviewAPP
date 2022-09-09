@@ -61,6 +61,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
             prefixPhoto,
             isNewOrCreatedByApp(),
             deviceItem,
+            dateStartUntilLastMinute,
             readOnly
         )
     }
@@ -203,17 +204,17 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
     }
 
     private fun getItemCheckDesc() : String?{
-       return if(deviceItem.structure == 3){
-                   deviceItem.manual_desc
-               }else{
-                   deviceItem.item_check_desc
-               }
+        return if(deviceItem.structure == 3){
+            deviceItem.manual_desc
+        }else{
+            deviceItem.item_check_desc
+        }
     }
 
     private fun setAlertDateInfo() {
         with(binding){
             act086TvAlertDate.apply{
-                if(deviceItem.target_date.isNullOrEmpty()){
+                if(deviceItem.target_date.isNullOrEmpty() || deviceItem.hideDaysInAlert){
                     visibility = View.GONE
                     text = null
                 }else{
@@ -265,7 +266,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
      * Retorna o lbl correto baseado se a data esta atrasada ou no futuro
      */
     private fun getAlertDateLblByItemCheckStatus(dateDiff: Long) =
-        if (dateDiff < 0) {
+        if (dateDiff <= 0) {
             hmAux_Trans["inspection_alert_days_lbl"]
         } else {
             hmAux_Trans["inspection_missing_lbl"]
@@ -275,7 +276,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
      * Retorna o cor baseado se a data esta atrasada ou no futuro
      */
     private fun getAlertDateTextColor(daysDiff: Long) =
-        if (daysDiff < 0) {
+        if (daysDiff <= 0) {
             ContextCompat.getColor(context, R.color.namoa_os_form_problem_red)
         } else {
             ContextCompat.getColor(context, R.color.namoa_pipeline_header_icon)
@@ -403,7 +404,10 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
         onBackPressed()
     }
 
-    fun onMaterialPlannedInteraction(){
+
+    fun onMaterialPlannedInteraction(isPlanned: Boolean){
+        bundle.putBoolean(ConstantBaseApp.ITEM_CHECK_ANSWER, isPlanned)
+
         startActivity(
             Intent().apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -414,7 +418,6 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
         //
         finish()
     }
-
 
     override fun updateScrollPosition(newScrollTop: Int) {
         binding.act086NvMain.scrollTo(0,newScrollTop)

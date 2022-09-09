@@ -3,6 +3,7 @@ package com.namoadigital.prj001.service;
 import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
@@ -30,6 +31,10 @@ public class WS_SO_Service_Search extends IntentService {
     private String mResource_Code = "0";
     private String mResource_Name = "WS_SO_Service_Search";
     private Gson gson;
+    private String edit_default_package;
+
+    public static final String WS_EXPRESS_MODE  = "WS_EXPRESS_MODE";
+    public static final String EDIT_DEFAULT_PACKAGE  = "EDIT_DEFAULT_PACKAGE";
 
     public WS_SO_Service_Search() {
         super("WS_SO_Service_Search");
@@ -44,19 +49,24 @@ public class WS_SO_Service_Search extends IntentService {
             int contract_code = bundle.getInt(SM_SODao.CONTRACT_CODE,0);
             int product_code = bundle.getInt(SM_SODao.PRODUCT_CODE,0);
             int serial_code = bundle.getInt(SM_SODao.SERIAL_CODE,0);
+            String serial_id = bundle.getString(SM_SODao.SERIAL_ID);
             int category_price_code = bundle.getInt(SM_SODao.CATEGORY_PRICE_CODE,0);
             int segment_code = bundle.getInt(SM_SODao.SEGMENT_CODE,0);
             int site_code = bundle.getInt(SM_SODao.SITE_CODE,0);
             int operation_code = bundle.getInt(SM_SODao.OPERATION_CODE,0);
+            int express = bundle.getInt(WS_EXPRESS_MODE,0);
+            edit_default_package = bundle.getString(EDIT_DEFAULT_PACKAGE,"");
             //
             processSOSearchList(
                     contract_code,
                     product_code,
                     serial_code,
+                    serial_id,
                     category_price_code,
                     segment_code,
                     site_code,
-                    operation_code
+                    operation_code,
+                    express
             );
 
         }catch (Exception e) {
@@ -74,7 +84,7 @@ public class WS_SO_Service_Search extends IntentService {
 
     }
 
-    private void processSOSearchList(int contract_code, int product_code, int serial_code, int category_price_code, int segment_code, int site_code, int operation_code) throws Exception {
+    private void processSOSearchList(int contract_code, int product_code, int serial_code, String serial_id, int category_price_code, int segment_code, int site_code, int operation_code, int express) throws Exception {
         //Seleciona traduções
         loadTranslation();
         //
@@ -87,11 +97,17 @@ public class WS_SO_Service_Search extends IntentService {
         env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
         env.setContract_code(contract_code);
         env.setProduct_code(product_code);
-        env.setSerial_code(serial_code);
+        env.setSerial_code(null);
+        env.setSerial_id(null);
+        if(express == 0) {
+            env.setSerial_code(serial_code);
+            env.setSerial_id(serial_id);
+        }
         env.setCategory_price_code(category_price_code);
         env.setSegment_code(segment_code);
         env.setSite_code(site_code);
         env.setOperation_code(operation_code);
+        env.setExpress(express);
         env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
         //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_searching_services"), "", "0");
@@ -126,23 +142,33 @@ public class WS_SO_Service_Search extends IntentService {
         }
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_processing_list"), "", "0");
         //
-        processSOServiceSearchReturn(rec);
+        processSOServiceSearchReturn(rec, express, contract_code, product_code, category_price_code, site_code, operation_code);
     }
     //
-    private void processSOServiceSearchReturn(TSO_Service_Search_Rec rec) throws IOException {
-        //ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_proccess"), new HMAux(), gson.toJson(rec.getData()), "0");
-        //Gera nome do arquivo json
-        String file_name = Constant.PREFIX_SO_ADD_SERVICE + ".json";
-        //Chama metodo para criar arquivo
-        createJsonFile(file_name, gson.toJson(rec));
-        HMAux auxName = new HMAux();
-        auxName.put(ConstantBaseApp.WS_RETURN_FILENAME,file_name);
-        //
-        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_proccess"), auxName,"" , "0");
+    private void processSOServiceSearchReturn(TSO_Service_Search_Rec rec, int express, int contract_code, int product_code, int category_price_code, int site_code, int operation_code) throws IOException {
+
+        if(express == 0) {
+            //ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_proccess"), new HMAux(), gson.toJson(rec.getData()), "0");
+            //Gera nome do arquivo json
+            String file_name = Constant.PREFIX_SO_ADD_SERVICE + ".json";
+            //Chama metodo para criar arquivo
+            createJsonFile(file_name, gson.toJson(rec), Constant.TOKEN_PATH);
+            HMAux auxName = new HMAux();
+            auxName.put(ConstantBaseApp.WS_RETURN_FILENAME, file_name);
+            //
+            ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_proccess"), auxName,"" , "0");
+        }else{
+            String file_name = ToolBox_Inf.getExpressSOFileName(contract_code, product_code, category_price_code, site_code, operation_code);
+            //Chama metodo para criar arquivo
+            createJsonFile(file_name, gson.toJson(rec), Constant.SO_EXPRESS_JSON_PATH);
+            ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_proccess"), new HMAux(),edit_default_package, "0");
+        }
     }
 
-    private void createJsonFile(String file_name, String json) throws IOException {
-        File file = new File(Constant.TOKEN_PATH, file_name);
+
+
+    private void createJsonFile(String file_name, String json, String filePath) throws IOException {
+        File file = new File(filePath, file_name);
         //
         if(file.exists()){
             file.delete();

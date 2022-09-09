@@ -23,6 +23,7 @@ class TK_Ticket_Sql_011(
                 .append(""" 
 SELECT max( max(t.update_required),
             max(t.update_required_product),
+            max(t.update_required_status),
             max(s.update_required),
             max(c.update_required)
           )  ${TK_TicketDao.UPDATE_REQUIRED} 

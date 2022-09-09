@@ -71,7 +71,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_focus_step_desc"
-            app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_focus_step_desc"
+            app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_internal_comments"
             android:visibility="gone"
             />
 
@@ -80,13 +80,28 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/my_action_info_margin_top"
-            tools:text="Focus Step Desc"
-            android:textSize="12sp"
             android:layout_marginEnd="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toStartOf="@+id/my_actions_item_iv_main_user"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_process_desc"
-            app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_process_desc" />
+            app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_process_desc"
+            tools:text="Focus Step Desc" />
+
+        <TextView
+            android:id="@+id/my_actions_item_tv_internal_comments"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/my_action_info_margin_top"
+            android:layout_marginEnd="4dp"
+            android:textSize="12sp"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/my_actions_item_tv_focus_step_desc"
+            app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_focus_step_desc"
+            tools:text="Comentario de comentadores" />
+
 
         <TextView
             android:id="@+id/my_actions_item_tv_client"
@@ -192,10 +207,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/my_action_info_margin_top"
+            android:layout_marginEnd="8dp"
             tools:text="Origin Desc"
             android:textSize="12sp"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/my_actions_item_iv_main_user"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_prod_desc"
             app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_serial_id"
@@ -206,20 +221,20 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/my_action_info_margin_top"
-            tools:text="Process Desc"
-            android:textSize="12sp"
             android:layout_marginEnd="8dp"
+            android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_origin"
-            app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_origin" />
+            app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_origin"
+            tools:text="Process Desc" />
 
         <TextView
             android:id="@+id/my_actions_item_tv_error_msg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/my_action_info_margin_top"
-            tools:text="Site"
+            tools:text="Error Msg"
             android:textColor="@color/text_red"
             android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -246,6 +261,19 @@
             android:textColor="@color/namoa_status_done"
             android:textStyle="bold"
             />
+
+        <ImageView
+            android:id="@+id/my_actions_item_iv_main_user"
+            android:layout_width="@dimen/namoa_icon_cell_so_width"
+            android:layout_height="@dimen/namoa_icon_cell_so_height"
+            android:layout_marginEnd="8dp"
+            android:visibility="visible"
+            android:src="@drawable/ic_person_black_24dp"
+            app:tint="@color/namoa_color_cone_item"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/my_actions_item_tv_internal_comments"
+            app:layout_constraintVertical_bias="1.0" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView

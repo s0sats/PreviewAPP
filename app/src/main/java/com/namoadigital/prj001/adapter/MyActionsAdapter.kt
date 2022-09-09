@@ -32,6 +32,7 @@ class MyActionsAdapter(
 
     private var myFilteredAction: MutableList<MyActionsBase>
     private val mFilter = MyActionFilter()
+    var userMainFilterOn: Boolean = false
     init{
         myFilteredAction = myActions as MutableList<MyActionsBase>
     }
@@ -82,10 +83,14 @@ class MyActionsAdapter(
             configTvTag(myAction)
             binding.myActionsItemTvProdDesc.text = myAction.productDesc
             binding.myActionsItemTvSerialId.text = myAction.serialId
-            configTvOriginView(myAction)
+            if(ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_MANUAL != myAction.ticketOriginType){
+                configTvOriginView(myAction)
+            }else{
+                binding.myActionsItemTvOrigin.visibility = View.GONE
+            }
             binding.myActionsItemTvProcessDesc.text = myAction.processDesc
             binding.myActionsItemTvFocusStepDesc.applyVisibilityIfTextExists(
-                    getFocusStepInfo(
+                    getInfoBulletFormatted(
                             binding.myActionsItemTvFocusStepDesc.context,
                             myAction.focusStepDesc
                     )
@@ -99,6 +104,20 @@ class MyActionsAdapter(
             binding.myActionsItemTvErrorMsg.applyVisibilityIfTextExists(myAction.erroMsg)
             configDoneDate(myAction)
 
+            if(myAction.isMainUserTicket
+                && !ConstantBaseApp.SYS_STATUS_DONE.equals(myAction.processStatus)){
+                binding.myActionsItemIvMainUser.visibility = View.VISIBLE
+            }else{
+                binding.myActionsItemIvMainUser.visibility = View.GONE
+            }
+            //
+            binding.myActionsItemTvInternalComments.applyVisibilityIfTextExists(
+                getInfoBulletFormatted(
+                    binding.myActionsItemTvInternalComments.context,
+                    myAction.internalComments
+                )
+            )
+            //
             applyBackgroundStrokeColor(myAction)
         }
 
@@ -210,11 +229,11 @@ class MyActionsAdapter(
                         || ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_MANUAL == myAction.ticketOriginType))
 
         /**
-         * Formata step focado com bullet quando há informação.
+         * Formata info com bullet quando há informação.
          */
-        private fun getFocusStepInfo(context: Context, focusStepDesc: String?) : String?{
-            if(!focusStepDesc.isNullOrEmpty()){
-                return " ${context.getString(R.string.unicode_bullet)} $focusStepDesc"
+        private fun getInfoBulletFormatted(context: Context, value: String?) : String?{
+            if(!value.isNullOrEmpty()){
+                return " ${context.getString(R.string.unicode_bullet)} $value"
             }
             return null
         }
@@ -276,19 +295,35 @@ class MyActionsAdapter(
             var temp = mutableListOf<MyActionsBase>()
             var charFilter = ToolBox.AccentMapper(constraint.toString().toLowerCase())
             if(charFilter.isNullOrEmpty()){
-                temp = myActions as MutableList<MyActionsBase>
+                if(userMainFilterOn){
+                    temp = myActions.filter {
+                        if(it is MyActions){
+                            it.isMainUserTicket
+                        }else{
+                            true
+                        }
+                    } as MutableList<MyActionsBase>
+                }else{
+                    temp = myActions as MutableList<MyActionsBase>
+                }
             }else{
                 temp.addAll(
-                        myActions.filter {
-                            when(it){
-                                is MyActions ->{
-                                    val allFields = ToolBox.AccentMapper(it.getAllFieldForFilter().toLowerCase())
+                    myActions.filter {
+                        when (it) {
+                            is MyActions -> {
+                                val allFields = ToolBox.AccentMapper(
+                                    it.getAllFieldForFilter().toLowerCase()
+                                )
+                                if(userMainFilterOn){
+                                    allFields.contains(charFilter) && it.isMainUserTicket
+                                }else {
                                     allFields.contains(charFilter)
                                 }
-                                //se for o botão, sempre exibe
-                                else -> true
                             }
+                            //se for o botão, sempre exibe
+                            else -> true
                         }
+                    }
                 )
             }
             val filterResults = FilterResults()

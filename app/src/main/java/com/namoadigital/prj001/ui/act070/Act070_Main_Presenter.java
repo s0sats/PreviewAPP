@@ -13,16 +13,20 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
+import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
+import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_DeviceDao;
+import com.namoadigital.prj001.dao.MdJustifyItemDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_ActionDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
@@ -32,6 +36,7 @@ import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.GE_Custom_Form;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
+import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device;
 import com.namoadigital.prj001.model.TK_Ticket;
@@ -61,6 +66,7 @@ import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_020;
+import com.namoadigital.prj001.sql.MdJustifyItemSqlSS;
 import com.namoadigital.prj001.sql.MDProductSerialSql017;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_Device_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
@@ -69,6 +75,7 @@ import com.namoadigital.prj001.sql.Sql_Act070_002;
 import com.namoadigital.prj001.sql.Sql_Act070_003;
 import com.namoadigital.prj001.sql.Sql_Act070_006;
 import com.namoadigital.prj001.sql.Sql_Act070_007;
+import com.namoadigital.prj001.sql.Sql_Act070_009;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_006;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
@@ -82,6 +89,7 @@ import com.namoadigital.prj001.ui.act070.model.StepFooter;
 import com.namoadigital.prj001.ui.act070.model.StepForm;
 import com.namoadigital.prj001.ui.act070.model.StepMain;
 import com.namoadigital.prj001.ui.act070.model.StepNone;
+import com.namoadigital.prj001.ui.act070.model.StepNotExecuted;
 import com.namoadigital.prj001.ui.act070.model.StepProcessBtn;
 import com.namoadigital.prj001.ui.act087.Act087Main;
 import com.namoadigital.prj001.util.Constant;
@@ -110,6 +118,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     private GE_Custom_Form_DataDao formDataDao;
     private MD_Product_SerialDao mdProductSerialDao;
     private MD_Product_Serial_Tp_DeviceDao serialTpDeviceDao;
+    private MdJustifyItemDao mdJustifyItemDao;
     private ArrayList<HMAux> workgroupOptionList;
 
     public Act070_Main_Presenter(Context context, Act070_Main_Contract.I_View mView, HMAux hmAux_Trans) {
@@ -153,6 +162,11 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 Constant.DB_VERSION_CUSTOM
         );
         this.serialTpDeviceDao = new MD_Product_Serial_Tp_DeviceDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        this.mdJustifyItemDao = new MdJustifyItemDao(
             context,
             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
             Constant.DB_VERSION_CUSTOM
@@ -466,6 +480,92 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             startFormProcess(ticketCtrl);
         }
     }
+
+    @Override
+    public ArrayList<HMAux> getJustifyItems(TK_Ticket ticket) {
+        ArrayList<HMAux> justifyItems = (ArrayList<HMAux>) mdJustifyItemDao.query_HM(new MdJustifyItemSqlSS(
+                        ticket.getCustomer_code(),
+                        ticket.getJustify_group_code()
+                ).toSqlQuery()
+        );
+
+        return justifyItems != null? justifyItems : new ArrayList<>();
+    }
+
+    @Override
+    public void defineNotExecuteFlow(TK_Ticket mTicket) {
+        ticketDao.addUpdate(mTicket);
+        if(mTicket.getNot_executed_photo_name() != null) {
+            uploadNotExecutedImage(mTicket);
+        }
+        prepareSyncProcess(mTicket, true);
+    }
+
+    @Override
+    public boolean hasFormInProcess(TK_Ticket mTicket) {
+
+        TK_Ticket_Ctrl tkCtrl = ticketCtrlDao.getByString(
+                new Sql_Act070_009(
+                        mTicket.getCustomer_code(),
+                        mTicket.getTicket_prefix(),
+                        mTicket.getTicket_code()
+                ).toSqlQuery()
+        );
+        return tkCtrl != null
+                && tkCtrl.getStep_order()!= null
+                && tkCtrl.getStep_order().equals(mTicket.getCurrent_step_order());
+    }
+
+    @Override
+    public String hasNonExecutionRestriction(TK_Ticket mTicket) {
+        String errorMsg = "";
+        if(ToolBox_Inf.hasOffHandFormInProcess(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())
+                || hasFormInProcess(mTicket)){
+            errorMsg += context.getString(R.string.unicode_bullet) + " " + hmAux_Trans.get("alert_form_in_process_to_not_execute_msg") + "\n";
+        }
+        //
+        if(hasSyncRequiredByFcmScn(mTicket.getTicket_prefix(), mTicket.getTicket_code())
+                || isOfflineFinished(mTicket.getTicket_prefix(), mTicket.getTicket_code())){
+            errorMsg += context.getString(R.string.unicode_bullet) + " " + hmAux_Trans.get("alert_sync_to_not_execute_msg") + "\n";
+        }
+
+        return errorMsg;
+    }
+
+    private boolean isOfflineFinished(int ticket_prefix, int ticket_code) {
+        TK_Ticket dbTicket = getTicketObj(ticket_prefix,ticket_code);
+        if(dbTicket != null) {
+            for (TK_Ticket_Step step : dbTicket.getStep()) {
+                if (step.getStep_end_date() == null) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private void uploadNotExecutedImage(TK_Ticket mTicket) {
+        GE_FileDao geFileDao = new GE_FileDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        //
+        File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + mTicket.getNot_executed_photo_name());
+        if (sFile.exists()
+                && !sFile.isDirectory()) {
+            GE_File geFile = new GE_File();
+            geFile.setFile_code(mTicket.getNot_executed_photo_name().replace(".png", "").replace(".jpg", ""));
+            geFile.setFile_path(mTicket.getNot_executed_photo_name());
+            geFile.setFile_status("OPENED");
+            geFile.setFile_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+            //
+            geFileDao.addUpdate(geFile);
+            //
+            ToolBox_Inf.scheduleUploadImgWork(context);
+        }
+    }
+
 
     private void callWsWgSave(T_TK_Header_N_Group_Save_WG_Env.T_TK_Header_N_Group_Save_WG_Ticket wgTicket) {
         if(ToolBox_Con.isOnline(context)){
@@ -848,6 +948,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         return mTicket != null
             && (mTicket.getUpdate_required() == 1
             || mTicket.getUpdate_required_product() == 1
+            || mTicket.getUpdate_required_status() == 1
             || ToolBox_Inf.isTicketInTokenFile(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())
             || ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())
             || ToolBox_Inf.hasSerialUpdateRequiredWithinTicket(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())
@@ -1092,6 +1193,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         bundle.putInt(TK_TicketDao.OPEN_SITE_CODE, mTicket.getOpen_site_code());
         bundle.putString(TK_TicketDao.OPEN_SITE_DESC, mTicket.getOpen_site_desc());
         bundle.putString(TK_TicketDao.OPEN_SERIAL_ID, mTicket.getOpen_serial_id());
+        bundle.putString(TK_TicketDao.INTERNAL_COMMENTS, mTicket.getInternal_comments());
         bundle.putString(TK_TicketDao.OPEN_PRODUCT_DESC, mTicket.getOpen_product_desc());
         bundle.putString(TK_TicketDao.ORIGIN_DESC, mTicket.getOrigin_desc());
         bundle.putBoolean(TK_TicketDao.CURRENT_STEP_ORDER, currentStep);
@@ -1675,6 +1777,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                     if( ticketCtrl.getForm() != null
                         && ticketCtrl.getForm().getIs_so() == 1
                         && ToolBox_Con.isOnline(context)
+                        && !ToolBox_Con.getBooleanPreferencesByKey(context, ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false)
                     ){
                         callWsSerialStructure(
                             ticketCtrl.getCustomer_code(),
@@ -2550,6 +2653,21 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         ArrayList<BaseStep> baseSteps = new ArrayList<>();
         File fileWorkgroupEditionFile = getWorkgroupEditionFile();
         //
+        if(ConstantBaseApp.SYS_STATUS_NOT_EXECUTED.equals(mTicket.getTicket_status())){
+            baseSteps.add(
+                    new StepNotExecuted(
+                            hmAux_Trans.get("cell_not_execute_justify_lbl"),
+                            mTicket.getJustify_item_code() == null? "": mTicket.getJustify_item_desc(),
+                            mTicket.getNot_executed_comments(),
+                            mTicket.getClose_user_name(),
+                            mTicket.getClose_user() == null? "": mTicket.getClose_user().toString(),
+                            mTicket.getNot_executed_photo_name(),
+                            mTicket.getNot_executed_photo_url(),
+                            mTicket.getClose_date()
+                    )
+            );
+        }
+        //
         for (TK_Ticket_Step ticketStep : ticketStepList) {
             StepMain stepMain = new StepMain(
                 ticketStep.getStep_code(),
@@ -2602,7 +2720,12 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 )
             );
         }
+
         return baseSteps;
+    }
+
+    private String getJustifyFormated(TK_Ticket mTicket) {
+        return mTicket.getJustify_item_id() + " - " + mTicket.getJustify_item_desc();
     }
 
     private void loadSelectedWorkgroupFromEditionFile(File fileWorkgroupEditionFile, StepMain stepMain) {
@@ -2723,6 +2846,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
      */
     private String getFooterDate(TK_Ticket mTicket) {
         return ConstantBaseApp.SYS_STATUS_DONE.equals(mTicket.getTicket_status())
+            || ConstantBaseApp.SYS_STATUS_NOT_EXECUTED.equals(mTicket.getTicket_status())
             ? mTicket.getClose_date()
             : mTicket.getForecast_date();
     }

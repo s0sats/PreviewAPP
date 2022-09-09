@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act047;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -12,10 +13,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
@@ -45,7 +48,10 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
     private TextView tv_site;
     private TextView tv_qty;
     private TextView tv_zone;
+    private TextView tv_empty_list;
+    private TextView tv_filter;
     private ListView lv_services;
+    private SwitchCompat sw_filter;
     private Act047_SO_Next_Orders_Adapter mAdapter;
     private String requestingAct = "";
     private Act047_Main_Contract.I_Presenter mPresenter;
@@ -53,6 +59,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
     //Var tmp que armazena o item da lista clicado.
     private SO_Next_Orders_Obj wsTmpItem = null;
     private MKEditTextNM mketFilter;
+    private String filterSerial;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -84,8 +91,8 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
 
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
-        transList.add("alert_empty_order_list_ttl");
-        transList.add("alert_empty_order_list_msg");
+        transList.add("alert_error_order_list_ttl");
+        transList.add("alert_error_order_list_msg");
         transList.add("alert_no_orders_found_ttl");
         transList.add("alert_no_orders_found_msg");
         transList.add("dialog_next_orders_search_ttl");
@@ -125,6 +132,9 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         //
         transList.add("dialog_so_add_info_lbl");
         //
+        transList.add("empty_serial_list_lbl");
+        transList.add("zone_filter_lbl");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -144,9 +154,18 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         //
         tv_zone = (TextView) findViewById(R.id.act047_tv_zone_val);
         //
+        tv_filter = findViewById(R.id.act047_tv_zone_filter);
+        //
+        tv_empty_list = (TextView) findViewById(R.id.act047_list_empty);
+        //
         mketFilter = findViewById(R.id.act047_mket_filter);
         //
         lv_services = (ListView) findViewById(R.id.act047_lv_services);
+        //
+        sw_filter = findViewById(R.id.act047_sw_filter);
+        sw_filter.setOnCheckedChangeListener(null);
+        sw_filter.setChecked(getSwitchState());
+        sw_filter.setOnCheckedChangeListener(sw_filter_listener);
         //
         mPresenter = new Act047_Main_Presenter(
                 context,
@@ -158,18 +177,40 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         //
         setLabels();
         //
-        mPresenter.executeNextOrdersSearch();
+        mPresenter.executeNextOrdersSearch(getSwitchState());
     }
 
     private void setLabels() {
         mketFilter.setHint(hmAux_Trans.get("filter_hint"));
+        tv_empty_list.setText(hmAux_Trans.get("empty_serial_list_lbl"));
+        tv_filter.setText(hmAux_Trans.get("zone_filter_lbl"));
+        if(!filterSerial.isEmpty()) mketFilter.setText(filterSerial);
     }
+
+    private void checkIfContainsFilter(){
+        String text = mketFilter.getText().toString();
+        if(mAdapter != null && !text.isEmpty()){
+            mAdapter.getFilter().filter(text);
+        }
+    }
+
+    private CompoundButton.OnCheckedChangeListener sw_filter_listener = new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            setSwitchState(isChecked);
+            mPresenter.executeNextOrdersSearch(isChecked);
+        }
+    };
+
+
+
 
     private void recoverIntentsInfo() {
         Bundle bundle = getIntent().getExtras();
         //
         if (bundle != null) {
             requestingAct = bundle.getString(Constant.MAIN_REQUESTING_ACT, Constant.ACT005);
+            filterSerial = bundle.getString("FILTER_SERIAL", "");
         } else {
             requestingAct = Constant.ACT005;
         }
@@ -209,18 +250,38 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         tv_qty.setText(hmAux_Trans.get("qty_lbl") + " 0");
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void loadNextOrders(ArrayList<SO_Next_Orders_Obj> nextOrdersObjs) {
         //
-        tv_qty.setText(hmAux_Trans.get("qty_lbl") + " "+ (nextOrdersObjs == null ? "0": nextOrdersObjs.size()));
+        tv_qty.setText(hmAux_Trans.get("qty_lbl") + " " + nextOrdersObjs.size());
         //
+        setAdapter(nextOrdersObjs);
+        //Checar se o usuario está usando o filtro
+        checkIfContainsFilter();
+    }
+
+    private void setAdapter(ArrayList<SO_Next_Orders_Obj> list){
+        changeVisibilityAdapter(list.isEmpty());
+
+        if(mAdapter != null){
+            mAdapter.changeListByFilter(list);
+            return;
+        }
+
         mAdapter = new Act047_SO_Next_Orders_Adapter(
-                context,
-                nextOrdersObjs,
-                R.layout.act047_cell
+                getApplicationContext(),
+                list,
+                R.layout.act047_cell,
+                this::changeVisibilityAdapter
         );
-        //
         lv_services.setAdapter(mAdapter);
+    }
+
+
+    private void changeVisibilityAdapter(boolean b){
+        lv_services.setVisibility(b ? View.GONE : View.VISIBLE);
+        tv_empty_list.setVisibility(b ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -280,28 +341,18 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
                 context,
                 hmAux_Trans.get("alert_no_conection_ttl"),
                 hmAux_Trans.get("alert_no_conection_msg"),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        onBackPressed();
-                    }
-                },
+                (dialog, which) -> onBackPressed(),
                 0
         );
     }
 
     @Override
-    public void showEmptyLogMsg() {
+    public void showErrorMsg() {
         ToolBox.alertMSG(
                 context,
-                hmAux_Trans.get("alert_empty_order_list_ttl"),
-                hmAux_Trans.get("alert_empty_order_list_msg"),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        onBackPressed();
-                    }
-                },
+                hmAux_Trans.get("alert_error_order_list_ttl"),
+                hmAux_Trans.get("alert_error_order_list_msg"),
+                (dialog, which) -> dialog.dismiss(),
                 0
         );
     }
@@ -774,4 +825,16 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
 
         return true;
     }
+
+
+    private boolean getSwitchState(){
+        return ToolBox_Con.getBooleanPreferencesByKey(context, Constant.ACT047_SWITCH_STATE, true);
+    }
+
+    private void setSwitchState(boolean isChecked){
+        ToolBox_Con.setBooleanPreference(context, Constant.ACT047_SWITCH_STATE, isChecked);
+    }
+
+
 }
+

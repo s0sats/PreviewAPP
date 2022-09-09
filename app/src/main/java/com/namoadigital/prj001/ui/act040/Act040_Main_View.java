@@ -6,8 +6,10 @@ import android.os.Bundle;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.SO_Pack_Express;
 import com.namoadigital.prj001.model.SO_Pack_Express_Local;
+import com.namoadigital.prj001.model.SoPackExpressPacksLocal;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by d.luche on 09/03/2018.
@@ -39,6 +41,8 @@ public interface Act040_Main_View {
 
     void showMsgToast(String msg);
 
+    void refreshPackServiceList(List<SoPackExpressPacksLocal> packsLocal, SoPackExpressPacksLocal item, int position);
+
     //08/10/2018
     void setWsProcess(String wsProcess);
     //
@@ -55,4 +59,6 @@ public interface Act040_Main_View {
     void callAct005(Context context);
 
     void setLastExpressInfo(SO_Pack_Express_Local lastExpressInSiteOper);
+
+    void setBundle_express_tmp(long bundle_express_tmp);
 }

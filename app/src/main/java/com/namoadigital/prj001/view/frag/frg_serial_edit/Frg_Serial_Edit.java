@@ -217,6 +217,9 @@ public class Frg_Serial_Edit extends BaseFragment {
         }
     }
 
+    public String getSerialId() {
+        return mket_serial_id.getText().toString();
+    }
     //region Interfaces
     public interface I_Frg_Serial_Edit {
         /**

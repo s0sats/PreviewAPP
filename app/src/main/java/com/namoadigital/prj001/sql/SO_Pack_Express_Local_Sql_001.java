@@ -40,7 +40,8 @@ public class SO_Pack_Express_Local_Sql_001 implements Specification {
                         "    AND S.operation_code =    '" + operation_code + "'\n" +
                         "    AND S.product_code =  '" + product_code + "'\n" +
                         "    AND S.express_code =  '" + express_code + "'\n" +
-                        "    AND S.express_tmp =  '" + express_tmp + "' ")
+                        "    AND S.express_tmp =  '" + express_tmp + "' "
+                )
                 .toString();
     }
 }

@@ -4,16 +4,18 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -179,43 +181,70 @@ public class Act043_Frag_Service_List extends BaseFragment {
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if (ToolBox_Con.isOnline(context)) {
                     //ArrayList<HMAux> data_env = new ArrayList<>();
-                    ArrayList<TSO_SO_Service_Item> pack = new ArrayList<>();
-
-                    for (TSO_Service_Search_Obj packService : adapterData) {
-                        if(packService.isSelected()){
-                            TSO_SO_Service_Item item = createPackDetail(packService);
-                            //Verifica a necessidade de abrir os serviços para gerar itens
-                            if( Act043_Main.TYPE_PS_SERVICE.equals(packService.getType_ps())
-                                || (Act043_Main.TYPE_PS_PACK.equals(packService.getType_ps()) && packService.isDetailed())
-                            ){
-                               if(Act043_Main.TYPE_PS_SERVICE.equals(packService.getType_ps())){
-                                   item.getService().add(
-                                       createServiceDetail(packService)
-                                   );
-                               } else{
-                                   for (TSO_Service_Search_Detail_Obj detailObj : packService.getService_list()) {
-                                       item.getService().add(
-                                           createServiceDetail(detailObj)
-                                       );
-                                   }
-                               }
-                            }
-                            //
-                            pack.add(item);
+                    if(hasServiceToSend()) {
+                        //
+                        SM_SO realtimeSmSo = delegateSmSo.getRealtimeSmSo(mSO_Service.getSo_prefix(), mSO_Service.getSo_code());
+                        //
+                        if(realtimeSmSo != null){
+                            delegateMainView.setIsSyncSerialNeeded(realtimeSmSo.getSync_required() == 1);
+                        }else{
+                            delegateMainView.setIsSyncSerialNeeded(false);
                         }
-                    }
-                    //
-                    if (pack.size() > 0) {
-                        new Service_Pack_MicroService().execute(pack);
-                    } else {
+                        callServicePackService();
+                        //
+                    }else{
+                        Toast.makeText(context, hmAux_Trans.get("toast_no_service_selected"), Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     ToolBox_Inf.showNoConnectionDialog(context);
                 }
             }
         });
+    }
+
+    private boolean hasServiceToSend() {
+        for (TSO_Service_Search_Obj packService : adapterData) {
+            if (packService.isSelected()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void callServicePackService() {
+        ArrayList<TSO_SO_Service_Item> pack = new ArrayList<>();
+
+        for (TSO_Service_Search_Obj packService : adapterData) {
+            if (packService.isSelected()) {
+                TSO_SO_Service_Item item = createPackDetail(packService);
+                //Verifica a necessidade de abrir os serviços para gerar itens
+                if (Act043_Main.TYPE_PS_SERVICE.equals(packService.getType_ps())
+                        || (Act043_Main.TYPE_PS_PACK.equals(packService.getType_ps()) && packService.isDetailed())
+                ) {
+                    if (Act043_Main.TYPE_PS_SERVICE.equals(packService.getType_ps())) {
+                        item.getService().add(
+                                createServiceDetail(packService)
+                        );
+                    } else {
+                        for (TSO_Service_Search_Detail_Obj detailObj : packService.getService_list()) {
+                            item.getService().add(
+                                    createServiceDetail(detailObj)
+                            );
+                        }
+                    }
+                }
+                //
+                pack.add(item);
+            }
+        }
+        //
+        if (pack.size() > 0) {
+            new Service_Pack_MicroService().execute(pack);
+        } else {
+        }
     }
 
     /**

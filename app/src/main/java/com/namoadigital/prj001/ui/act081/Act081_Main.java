@@ -583,6 +583,13 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements
         mFrgSerialSearch.setSerialIdText(restoreSerialId);
     }
 
+    @Override
+    protected void processError_http() {
+//        super.processError_http();
+        progressDialog.dismiss();
+        ToolBox_Con.setBooleanPreference(getApplicationContext(), ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, true);
+        mPresenter.offlineSerialSearch();
+    }
 
     @Override
     public void callAct020(Context context, Bundle bundle) {

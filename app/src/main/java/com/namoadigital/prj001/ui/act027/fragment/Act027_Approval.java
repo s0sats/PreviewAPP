@@ -1,13 +1,15 @@
-package com.namoadigital.prj001.ui.act027;
+package com.namoadigital.prj001.ui.act027.fragment;
 
+import static com.namoadigital.prj001.ui.act027.Act027_Main.WS_PROCESS_APPROVAL_ON_LINE;
+import static com.namoadigital.prj001.ui.act027.Act027_Main.WS_PROCESS_APPROVAL_ON_SIGNATURE;
+
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.IBinder;
-import androidx.annotation.IdRes;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +23,11 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import androidx.annotation.IdRes;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.button.MaterialButton;
 import com.namoa_digital.namoa_library.ctls.ButtonNFC;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -29,12 +36,15 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.sql.SM_SO_Sql_012;
+import com.namoadigital.prj001.ui.act005.Act005_Main;
+import com.namoadigital.prj001.ui.act021.Act021_Main;
+import com.namoadigital.prj001.ui.act027.Act027_Main;
+import com.namoadigital.prj001.ui.act027.Act027_Main_View;
+import com.namoadigital.prj001.ui.act027.OnRecoveryFragmentState;
+import com.namoadigital.prj001.ui.act047.Act047_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
-
-import static com.namoadigital.prj001.ui.act027.Act027_Main.WS_PROCESS_APPROVAL_ON_LINE;
-import static com.namoadigital.prj001.ui.act027.Act027_Main.WS_PROCESS_APPROVAL_ON_SIGNATURE;
 
 /**
  * Created by neomatrix on 05/09/17.
@@ -101,6 +111,15 @@ public class Act027_Approval extends BaseFragment {
     private Button approvalApproval;
 
     private ImageView iv_signature;
+
+
+    //CHOICE
+    //Novos Botões de navegação
+    private TextView tv_approval_exit_os;
+    private MaterialButton btn_approval_next_os;
+    private MaterialButton btn_approval_next_os_serial;
+    private MaterialButton btn_approval_home;
+    private MaterialButton btn_approval_search_os;
 
     private boolean mNFCSupport = false;
 
@@ -289,6 +308,13 @@ public class Act027_Approval extends BaseFragment {
         rb_user = (RadioButton) view.findViewById(R.id.act027_approval_content_rb_user);
         rb_other = (RadioButton) view.findViewById(R.id.act027_approval_content_rb_other);
 
+        //new button
+        tv_approval_exit_os = view.findViewById(R.id.act027_approval_exit_os_tv);
+        btn_approval_next_os = view.findViewById(R.id.act027_approval_next_os);
+        btn_approval_next_os_serial = view.findViewById(R.id.act027_approval_next_os_serial);
+        btn_approval_home = view.findViewById(R.id.act027_approval_home);
+        btn_approval_search_os = view.findViewById(R.id.act027_approval_search_os);
+
         approvalNFC = (ButtonNFC) view.findViewById(R.id.act027_approval_content_btn_nfc);
         approvalNFC.setmLogin(true);
         approvalNFC.setmProgressClose(true);
@@ -304,9 +330,36 @@ public class Act027_Approval extends BaseFragment {
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
         );
+
+        setLabels();
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void setLabels(){
+        tv_approval_exit_os.setText(hmAux_Trans.get("approval_exit_os_lbl")+":");
+        btn_approval_next_os.setText(hmAux_Trans.get("btn_approval_next_os"));
+        btn_approval_next_os_serial.setText(hmAux_Trans.get("btn_approval_next_os_serial"));
+        btn_approval_home.setText(hmAux_Trans.get("btn_approval_home"));
+        btn_approval_search_os.setText(hmAux_Trans.get("btn_approval_search_os"));
     }
 
     private void iniAction() {
+        //new buttons
+        btn_approval_next_os.setOnClickListener(view -> {
+            callAct047("");
+        });
+
+        btn_approval_next_os_serial.setOnClickListener(view -> {
+            callAct047(mSm_so.getSerial_id());
+        });
+
+        btn_approval_home.setOnClickListener(view -> {
+            callAct005();
+        });
+
+        btn_approval_search_os.setOnClickListener(view -> {
+            callAct021();
+        });
 
         approvalApprovalUser.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -710,7 +763,8 @@ public class Act027_Approval extends BaseFragment {
                     }
 
                     if (!rb_user.isChecked() && !rb_other.isChecked()) {
-                        rb_other.setChecked(true);
+                        rg_opc.clearCheck();
+                        rb_user.setChecked(true);
                     }
 
                 } else {
@@ -767,7 +821,8 @@ public class Act027_Approval extends BaseFragment {
                 }
 
                 if (!rb_user.isChecked() && !rb_other.isChecked()) {
-                    rb_other.setChecked(true);
+                    rg_opc.clearCheck();
+                    rb_user.setChecked(true);
                 }
 
                 tv_so_approval_quality_type_lbl.setVisibility(View.GONE);
@@ -924,5 +979,28 @@ public class Act027_Approval extends BaseFragment {
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
     }
 
+
+
+    private void callAct005(){
+        Intent mIntent = new Intent(requireContext(), Act005_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        requireActivity().startActivity(mIntent);
+        requireActivity().finish();
+    }
+
+    private void callAct047(String serial){
+        Intent mIntent = new Intent(requireContext(), Act047_Main.class);
+        mIntent.putExtra("FILTER_SERIAL", serial);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        requireActivity().startActivity(mIntent);
+        requireActivity().finish();
+    }
+
+    public void callAct021(){
+        Intent mIntent = new Intent(requireContext(), Act021_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        requireActivity().startActivity(mIntent);
+        requireActivity().finish();
+    }
 
 }

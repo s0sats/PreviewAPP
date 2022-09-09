@@ -630,9 +630,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             List<GeOsDeviceItem> deviceItem =  getDeviceItem(device);
             for(GeOsDeviceItem item: deviceItem){
                 inspections.add(
-                        new InspectionCell(
-                                item.getManual_desc() == null ? item.getItem_check_desc():item.getManual_desc(),
-                                item.getTarget_date() != null ? ToolBox_Inf.getDateDiferenceInDays(item.getTarget_date(),ToolBox_Inf.getDateLastMinute(geOs.getDate_start())): null,
+                        new InspectionCell(item.getManual_desc() == null ? item.getItem_check_desc():item.getManual_desc(),
+                                getDayCount(geOs.getDate_start(), item),
                                 getPhotoCount(item),
                                 getMaterialCount(item.getMaterialList()),
                                 item.getApply_material().equals(APPLY_MATERIAL_REQUIRED),
@@ -644,11 +643,16 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                                 item.getStatus_answer(),
                                 item.getExec_type(),
                                 item.getGeOsDeviceItemCodeAndSeq(),
-                                hmAux_Trans
+                                hmAux_Trans,
+                                item.getChange_adjust()
                     )
                 );
             }
-            acessoryFormViews.add(acessoryFormView);
+            //
+            if(!inspections.isEmpty() || device.getShow_empty() == 1) {
+                acessoryFormViews.add(acessoryFormView);
+            }
+            //
         }
         return acessoryFormViews;
     }
@@ -2371,7 +2375,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         //
         return new InspectionCell(
                 deviceItem.getItem_check_desc(),
-                deviceItem.getTarget_date() != null ? ToolBox_Inf.getDateDiferenceInDays(deviceItem.getTarget_date(),ToolBox_Inf.getDateLastMinute(geOsDateStart)): null,
+                getDayCount(geOsDateStart, deviceItem),
                 getPhotoCount(deviceItem),
                 getMaterialCount(deviceItem.getMaterialList()),
                 deviceItem.getApply_material().equals(APPLY_MATERIAL_REQUIRED),
@@ -2383,8 +2387,19 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 deviceItem.getStatus_answer(),
                 deviceItem.getExec_type(),
                 deviceItem.getGeOsDeviceItemCodeAndSeq(),
-                hmAux_Trans);
+                hmAux_Trans,
+                deviceItem.getChange_adjust());
     }
+
+    @Nullable
+    private Integer getDayCount(String geOsDateStart, GeOsDeviceItem deviceItem) {
+        if(deviceItem.getHideDaysInAlert()) {
+            return null;
+        }else{
+            return deviceItem.getTarget_date() != null ? ToolBox_Inf.getDateDiferenceInDays(deviceItem.getTarget_date(),ToolBox_Inf.getDateLastMinute(geOsDateStart)): null;
+        }
+    }
+
 
     @Override
     public int getMissingForecastAnswers(GeOs geOs) {

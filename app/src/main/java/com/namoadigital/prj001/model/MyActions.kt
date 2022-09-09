@@ -16,6 +16,7 @@ data class MyActions(
         val serialId: String?,
         val originDescriptor: String,
         val processDesc: String,
+        val internalComments: String?,
         val focusStepDesc: String?,
         val siteCode: Int? = null,
         val siteDesc: String?,
@@ -29,7 +30,8 @@ data class MyActions(
         val highlightItem: Boolean,
         val periodStarted: Boolean,
         val lateItem: Boolean,
-        val isLastSelectedItem: Boolean
+        val isLastSelectedItem: Boolean,
+        val isMainUserTicket: Boolean
 ): MyActionsBase() {
     companion object{
         const val MY_ACTION_TYPE_TICKET = "TICKET"
@@ -67,6 +69,7 @@ data class MyActions(
                 "$serialId|" +
                 "$originDescriptor|" +
                 "$processDesc|" +
+                "$internalComments|" +
                 "$focusStepDesc|" +
                 "$siteDesc|" +
                 "$zoneDesc|" +

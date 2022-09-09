@@ -30,9 +30,15 @@ interface Act083_Main_Contract {
         fun callAct068(bundle: Bundle)
         fun getCurrentTab(): Int
         fun getMketFilter(): String?
-        fun setViewFiltersParam(textFilter: String?, initialTabToLoad: Int)
+        fun getMainUserFilter(): Boolean
+        fun setViewFiltersParam(
+            textFilter: String?,
+            initialTabToLoad: Int,
+            mainUserFilterState: Boolean
+        )
         fun setTabsCounters(selectedTabCounter: Int, otherTabCounter: Int)
         fun updateFooterInfos()
+        fun setPlaceholderTextAndVisibility(currentTabCounter: Int)
     }
 
     interface I_Presenter {
@@ -57,6 +63,7 @@ interface Act083_Main_Contract {
         fun processActionFormButtonClick(myActionsFormButton: MyActionsFormButton)
         fun onBackPressedClicked()
         fun processWsSyncReturn(hmAuxTicketDownload: HMAux)
+        fun getMainUserFiltersParam():Boolean
     }
 
 }

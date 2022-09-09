@@ -31,7 +31,8 @@ class GeOsDeviceCreation_Sql_001(
                         d.${MdDeviceTpDao.DEVICE_TP_ID},
                         d.${MdDeviceTpDao.DEVICE_TP_DESC},
                         sd.${MD_Product_Serial_Tp_DeviceDao.ORDER_SEQ},
-                        sd.${MD_Product_Serial_Tp_DeviceDao.TRACKING_NUMBER}                        
+                        sd.${MD_Product_Serial_Tp_DeviceDao.TRACKING_NUMBER},                    
+                        sd.${MD_Product_Serial_Tp_DeviceDao.SHOW_EMPTY}                    
                     FROM
                         ${MD_Product_Serial_Tp_DeviceDao.TABLE} sd,
                         ${MdDeviceTpDao.TABLE} d

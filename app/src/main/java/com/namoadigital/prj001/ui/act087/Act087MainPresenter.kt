@@ -205,6 +205,7 @@ class Act087MainPresenter(
             order_type_desc = orderType?.orderTypeDesc?:"",
             process_type = orderType?.processType?:"",
             display_option = orderType?.displayOption?:"",
+            item_check_group_code = orderType?.itemCheckGroupCode,
             backup_product_code = null,
             backup_product_id = null,
             backup_product_desc = null,

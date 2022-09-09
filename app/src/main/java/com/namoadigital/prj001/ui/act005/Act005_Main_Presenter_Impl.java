@@ -383,6 +383,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         context,
                         (int) ToolBox_Con.getPreference_Customer_Code(context),
                         ToolBox.getDeviceGMT(false),
+                        ToolBox_Con.getPreference_User_Code(context),
                         site_code,
                         periodFilter,
                         focusFilter

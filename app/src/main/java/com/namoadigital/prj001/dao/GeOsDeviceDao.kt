@@ -36,6 +36,7 @@ class GeOsDeviceDao(
         const val DEVICE_TP_DESC = "device_tp_desc"
         const val ORDER_SEQ = "order_seq"
         const val TRACKING_NUMBER = "tracking_number"
+        const val SHOW_EMPTY = "show_empty"
 
     }
 
@@ -300,7 +301,8 @@ class GeOsDeviceDao(
                         device_tp_id = getString(getColumnIndex(DEVICE_TP_ID)),
                         device_tp_desc = getString(getColumnIndex(DEVICE_TP_DESC)),
                         order_seq = getInt(getColumnIndex(ORDER_SEQ)),
-                        tracking_number = getStringOrNull(getColumnIndex(TRACKING_NUMBER))
+                        tracking_number = getStringOrNull(getColumnIndex(TRACKING_NUMBER)),
+                        show_empty = getInt(getColumnIndex(SHOW_EMPTY))
                     )
                 }
             }
@@ -340,6 +342,10 @@ class GeOsDeviceDao(
                     put(ORDER_SEQ, it.order_seq)
                     //
                     put(TRACKING_NUMBER, it.tracking_number)
+                    //
+                    if(it.show_empty > -1){
+                        put(SHOW_EMPTY,it.show_empty)
+                    }
                 }
             }
             return contentValues

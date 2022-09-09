@@ -1,21 +1,22 @@
 package com.namoadigital.prj001.ui.act090
 
+import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.view.WindowManager
+import android.view.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.Base_Activity
+import com.namoadigital.prj001.R
 import com.namoadigital.prj001.adapter.Act090MaterialAdapter
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
+import com.namoadigital.prj001.dao.GeOsDeviceItemDao
 import com.namoadigital.prj001.dao.GeOsDeviceMaterialDao
 import com.namoadigital.prj001.databinding.Act090MainBinding
 import com.namoadigital.prj001.databinding.Act090MainContentBinding
 import com.namoadigital.prj001.model.Act086MaterialItem
+import com.namoadigital.prj001.model.GeOsDeviceItem
 import com.namoadigital.prj001.model.GeOsDeviceMaterial
 import com.namoadigital.prj001.ui.act086.Act086Main
 import com.namoadigital.prj001.ui.act086.Act086ProductEditDialog
@@ -28,9 +29,12 @@ import kotlinx.coroutines.*
 class Act090Main : Base_Activity(), Act090MainContract.IView {
 
     private lateinit var _binding: Act090MainContentBinding
+    private var _geOsDeviceItem: GeOsDeviceItem? = null
+    private val geOsDeviceItem get() =_geOsDeviceItem!!
     private val binding get() = _binding!!
     private var bundle: Bundle = Bundle()
     private var bundleDevice: Bundle = Bundle()
+    private var isRequested = true
     private var readOnly = false
     private val mPresenter: Act090MainContract.IPresenter by lazy{
         Act090MainPresenter(
@@ -39,6 +43,7 @@ class Act090Main : Base_Activity(), Act090MainContract.IView {
             bundle,
             mModule_Code,
             mResource_Code,
+            GeOsDeviceItemDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
             GeOsDeviceMaterialDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
         )
     }
@@ -48,8 +53,8 @@ class Act090Main : Base_Activity(), Act090MainContract.IView {
         Act090MaterialAdapter(
             ::onMaterialItemClick,
             ::onSwitchStatusChange,
-            hmAux_Trans["planned_qty_lbl"]!!,
-            hmAux_Trans["applied_qty_lbl"]!!
+            hmAux_Trans,
+            isRequested
         )
     }
 
@@ -74,6 +79,7 @@ class Act090Main : Base_Activity(), Act090MainContract.IView {
     private fun recoverIntentsInfo() {
         bundle = intent?.extras?:Bundle()
         bundleDevice = bundle.getBundle(ConstantBaseApp.DEVICE_BUNDLE)!!
+        isRequested = bundle.getBoolean(ConstantBaseApp.ITEM_CHECK_ANSWER, false)
         readOnly = defineReadOnlyByStatus(bundleDevice.getString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS))
     }
 
@@ -103,8 +109,9 @@ class Act090Main : Base_Activity(), Act090MainContract.IView {
 
     private fun initVars() {
         if(mPresenter.validBundleParams()) {
-            setLabels()
             getGeOsDeviceMaterialList()
+            getDeviceItem()
+            setLabels()
             getItemPlannedMaterialList()
             initUI()
             initRecycler()
@@ -113,10 +120,48 @@ class Act090Main : Base_Activity(), Act090MainContract.IView {
         }
     }
 
+
+    private fun getDeviceItem() { _geOsDeviceItem = mPresenter.getDeviceItem() }
+
     private fun setLabels() {
         with(binding){
             btnApplyMaterial.text = hmAux_Trans ["btn_apply_material"]
             act090TvEmptyList.text = hmAux_Trans["empty_list_lbl"]
+            setIconTitleFromExecType()
+        }
+    }
+
+
+    @SuppressLint("UseCompatLoadingForDrawables")
+    private fun setIconTitleFromExecType(){
+        with(binding) {
+            when (geOsDeviceItem.exec_type) {
+                GeOsDeviceItem.EXEC_TYPE_ADJUST -> {
+                    act090ExecTypeTitle.text = hmAux_Trans["fixed_lbl"]!!
+                    act090ExecTypeDesc.text = hmAux_Trans["adjust_lbl"]!!
+                }
+
+                GeOsDeviceItem.EXEC_TYPE_FIXED -> {
+                    act090ExecTypeTitle.text = hmAux_Trans["fixed_lbl"]!!
+                    if(geOsDeviceItem.change_adjust == 1) {
+                        act090ExecTypeDesc.text = hmAux_Trans["change_lbl"]!!
+                    }else{
+                        act090ExecTypeDesc.visibility = View.GONE
+                    }
+                }
+
+                GeOsDeviceItem.EXEC_TYPE_ALERT -> {
+                    act090ExecTypeIcon.setImageDrawable(getDrawable(R.drawable.ic_outline_report_problem_24_black))
+                    act090ExecTypeIcon.setColorFilter(resources.getColor(R.color.namoa_os_form_problem_red))
+                    act090ExecTypeDesc.visibility = View.GONE
+                    act090ExecTypeTitle.gravity = Gravity.CENTER
+                    if (geOsDeviceItem.item_check_status == GeOsDeviceItem.ITEM_CHECK_STATUS_MANUAL_ALERT) {
+                        act090ExecTypeTitle.text = hmAux_Trans["still_with_problem_lbl"]!!
+                    } else {
+                        act090ExecTypeTitle.text = hmAux_Trans["has_problem_lbl"]!!
+                    }
+                }
+            }
         }
     }
 
@@ -203,14 +248,7 @@ class Act090Main : Base_Activity(), Act090MainContract.IView {
 
     private fun initActions() {
         binding.btnApplyMaterial.setOnClickListener {
-            if(mPresenter.hasAnyItemChanged(geOsDeviceMaterial,itemPlannedMaterialList)) {
-                savePlannedMaterialChanges()
-            }else{
-                ToolBox.toastMSG(
-                    context,
-                    hmAux_Trans["alert_no_data_changed_msg"]
-                )
-            }
+           onBackPressed()
         }
     }
 
@@ -314,9 +352,13 @@ class Act090Main : Base_Activity(), Act090MainContract.IView {
     }
 
     override fun onBackPressed() {
-        mPresenter.onBackPressedClicked(
-            //Se não tem alteração, não precisa do confirm.
-            !mPresenter.hasAnyItemChanged(geOsDeviceMaterial,itemPlannedMaterialList)
-        )
+        //
+        if(mPresenter.hasAnyItemChanged(geOsDeviceMaterial,itemPlannedMaterialList)) {
+            savePlannedMaterialChanges()
+        }else{
+            mPresenter.onBackPressedClicked(
+                true
+            )
+        }
     }
 }

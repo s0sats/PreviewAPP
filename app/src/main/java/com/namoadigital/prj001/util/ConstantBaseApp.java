@@ -25,6 +25,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String DEVICE_ITEM_LIST_CHECKBOX_STATUS = "DEVICE_ITEM_LIST_CHECKBOX_STATUS";
     public static final String DEVICE_ITEM_NEW_ACTION = "DEVICE_ITEM_NEW_ACTION";
     public static final String DEVICE_BUNDLE = "DEVICE_BUNDLE";
+    public static final String ITEM_CHECK_ANSWER = "ITEM_CHECK_ANSWER";
+    public static final String ACTION_NOT_EXECUTED = "NOT_EXECUTED";
     //As 3 variaveis abaixo são preenchidas pela classe AppBase
     public static String PRJ001_VERSION = "";
     public static int PRJ001_VERSION_CODE = -1;
@@ -123,6 +125,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String ACT088 = "act088";
     public static final String ACT089 = "act089";
     public static final String ACT090 = "act090";
+    public static final String ACT091 = "act091";
+    public static final String FRG_PACKAGE_SERVICE_SO_EXPESS = "frg_package_service_so_expess";
 
     public static final String title_lbl = "_title";
 
@@ -255,6 +259,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static String CACHE_CHAT_PATH;
     public static String UNSENT_IMG_PATH;
     public static String TICKET_JSON_PATH;
+    public static String SO_EXPRESS_JSON_PATH;
     public static String CUSTOMER_SITE_LICENSE_JSON_PATH;
 
     public static String ZIP_NAME;
@@ -471,6 +476,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String DATETIME_LAST_VALID_TIME = "DATETIME_LAST_VALID_TIME";
     public static final String DATETIME_TOLERANCE= "DATETIME_TOLERANCE";
     public static final String PREFERENCE_PIPELINE_HEADER_FORM_INFO_TOGGLE= "PREFERENCE_PIPELINE_HEADER_FORM_INFO_TOGGLE";
+    public static final String PREFERENCE_SERIAL_OFFLINE_FLOW= "PREFERENCE_SERIAL_OFFLINE_FLOW";
 
     public static final String LOGIN_USER_NFC_TMP = "login_user_nfc_tmp";
     public static final String LOGIN_CUSTOMER_CODE_TMP = "login_customer_code_tmp";
@@ -478,6 +484,8 @@ public class ConstantBaseApp extends ConstantBase {
 
     public static final String PROCESS_MENU_SEND = "process_menu_send";
 
+    public static final String ACT027_SWITCH_STATE = "act027_switch_state";
+    public static final String ACT047_SWITCH_STATE = "act047_switch_state";
     //ID de Notificações
     public static final int NOTIFICATION_UPLOAD = 666;
     public static final int NOTIFICATION_DOWNLOAD = 667;
@@ -565,6 +573,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_MENU_SO_PARAM_EDIT_SERVICE = "EDIT_SERVICE";
     public static final String PROFILE_MENU_SO_PARAM_DOWNLOAD_SO_HISTORIC = "DOWNLOAD_SO_HISTORIC";
     public static final String PROFILE_MENU_SO_PARAM_NEW = "NEW";
+    public static final String PROFILE_MENU_SO_SHOW_SERVICE_PRICE = "SHOW_SERVICE_PRICE";
     public static final String PROFILE_MENU_SO_PARAM_EDIT_CLIENT = "EDIT_CLIENT";
     public static final String PROFILE_MENU_SO_PARAM_DIRECT_EXPRESS_ORDER = "DIRECT_EXPRESS_ORDER";
     public static final String PROFILE_MENU_SO_PARAM_PRODUCT_EVENT_CANCEL = "PRODUCT_EVENT_CANCEL";
@@ -584,6 +593,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_PRJ001_PRODUCT_SERIAL_SCHEDULE_UNTIL_TODAY = "SCHEDULE_UNTIL_TODAY";
     public static final String PROFILE_PRJ001_CHECKLIST_PARAM_DONE_NEW = "DONE_NEW";
     public static final String PROFILE_PRJ001_CHECKLIST_PARAM_ITEM_CHECK_NEW = "ITEM_CHECK_NEW";
+    public static final String PROFILE_PRJ001_CHECKLIST_PARAM_ALLOW_FORM_SO_IN_THE_PAST = "ALLOW_FORM_SO_IN_THE_PAST";
     //Profile de menus PRINCIPAIS
     public static final String PROFILE_PRJ001_CHECKLIST = "PRJ001_CHECKLIST";
     public static final String PROFILE_PRJ001_AP = "PRJ001_AP";
@@ -620,6 +630,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_MENU_TICKET_PARAM_EDIT_HEADER = "EDIT_HEADER";
     public static final String PROFILE_MENU_TICKET_PARAM_STEP_EDIT_TIME = "STEP_EDIT_TIME";
     public static final String PROFILE_MENU_TICKET_PARAM_CLAIM_SPECIAL_EXECUTION_PERMITION = "CLAIM_SPECIAL_EXECUTION_PERMITION";
+    public static final String PROFILE_MENU_TICKET_PARAM_NOT_EXECUTED = "NOT_EXECUTED";
 
     //Modulos
     public static final String MODULE_CHECKLIST = "MODULE_CHECKLIST";
@@ -716,6 +727,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String TK_TICKET_CRTL_TYPE_APPROVAL ="OBJ_APPROVAL";
     public static final String TK_TICKET_CRTL_TYPE_NONE ="OBJ_NONE";
     public static final String TK_TICKET_PREX_IMG ="tk_";
+    public static final String TK_TICKET_JUSTIFY_SUFIX = "_justify";
     public static final String TK_TICKET_NC_PREX_IMG ="tk_nc";
     //Ticket Origin Type
     public static final String TK_TICKET_ORIGIN_TYPE_SCHEDULE ="SCHEDULE";
@@ -764,6 +776,7 @@ public class ConstantBaseApp extends ConstantBase {
      * Constantes FAB menu item
      */
     public static final String FAB_TO_PRODUCT_LBL = "to_product_lbl";
+    public static final String FAB_NOT_EXECUTE_LBL = "to_not_execute_lbl";
     public static final String FAB_TO_HEADER_EDIT_LBL = "fab_to_header_edit_lbl";
     public static final String FAB_TO_WORK_GROUP_EDIT_LBL = "fab_to_work_group_edit_lbl";
     public static final String FAB_TO_ORIGIN_LBL = "fab_to_origin_lbl";
@@ -972,4 +985,6 @@ public class ConstantBaseApp extends ConstantBase {
      * Constante para Ordernação de produtos e grupos.
      */
     public static final String DESC_FOR_SORT = "descForSort";
+
+    //Constante para replace da tradução
 }

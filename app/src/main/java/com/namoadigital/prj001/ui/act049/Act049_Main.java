@@ -370,6 +370,7 @@ public class Act049_Main extends Base_Activity_Frag implements Act049_Main_Contr
         mBundle.putString(SO_Pack_Express_LocalDao.BILLING_ADD_INF1_VALUE, bundle.getString(SO_Pack_Express_LocalDao.BILLING_ADD_INF1_VALUE));
         mBundle.putString(SO_Pack_Express_LocalDao.BILLING_ADD_INF2_VALUE, bundle.getString(SO_Pack_Express_LocalDao.BILLING_ADD_INF2_VALUE));
         mBundle.putString(SO_Pack_Express_LocalDao.BILLING_ADD_INF3_VALUE, bundle.getString(SO_Pack_Express_LocalDao.BILLING_ADD_INF3_VALUE));
+        mBundle.putLong(SO_Pack_Express_LocalDao.EXPRESS_TMP,bundle.getLong(SO_Pack_Express_LocalDao.EXPRESS_TMP, -1));
         //
         mIntent.putExtras(mBundle);
         startActivity(mIntent);

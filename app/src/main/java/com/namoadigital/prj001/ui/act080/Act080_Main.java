@@ -1,5 +1,8 @@
 package com.namoadigital.prj001.ui.act080;
 
+import static com.namoadigital.prj001.ui.act075.Act075_Main.PRODUCT_VIEW_ID;
+import static com.namoadigital.prj001.ui.act075.Act075_Main.VIEW_PROFILE;
+
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -44,9 +47,6 @@ import com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.namoadigital.prj001.ui.act075.Act075_Main.PRODUCT_VIEW_ID;
-import static com.namoadigital.prj001.ui.act075.Act075_Main.VIEW_PROFILE;
 
 public class Act080_Main extends Base_Activity_Frag implements Act080_Main_Contract.I_View {
 
@@ -208,6 +208,7 @@ public class Act080_Main extends Base_Activity_Frag implements Act080_Main_Contr
                 tkTicket.getOpen_site_code(),
                 tkTicket.getOpen_site_desc(),
                 tkTicket.getOpen_serial_id(),
+                tkTicket.getInternal_comments(),
                 tkTicket.getOpen_product_desc(),
                 originLabel,
                 context.getResources().getColor(R.color.grid_header_normal),

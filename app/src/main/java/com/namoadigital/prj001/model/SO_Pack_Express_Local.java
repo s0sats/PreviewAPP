@@ -1,56 +1,72 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by neomatrix on 3/22/18.
  */
 
-public class SO_Pack_Express_Local {
-
-    @SerializedName("customer_code") private long customer_code;
-    @SerializedName("site_code") private long site_code;
-    @SerializedName("operation_code") private long operation_code;
-    @SerializedName("product_code") private long product_code;
-    @SerializedName("express_code") private String express_code;
-    @SerializedName("express_tmp") private long express_tmp;
-    @SerializedName("serial_id") private String serial_id;
-    @SerializedName("partner_code") private long partner_code;
-
-    @SerializedName("so_prefix") private Long so_prefix;
-    @SerializedName("so_code") private Long so_code;
-    @SerializedName("so_id") private String so_id;
-    @SerializedName("so_desc") private String so_desc;
-    @SerializedName("so_status") private String so_status;
-    @SerializedName("contract_code") private Long contract_code;
-    @SerializedName("contract_desc") private String contract_desc;
-    @SerializedName("priority_code") private Long priority_code;
-    @SerializedName("priority_desc") private String priority_desc;
-    @SerializedName("exec_site_code") private int exec_site_code;
-    @SerializedName("exec_site_id") private String exec_site_id;
-    @SerializedName("exec_site_desc") private String exec_site_desc;
-    @SerializedName("exec_zone_code") private int exec_zone_code;
-    @SerializedName("exec_zone_id") private String exec_zone_id;
-    @SerializedName("exec_zone_desc") private String exec_zone_desc;
-    @SerializedName("operation_id") private String operation_id;
-    @SerializedName("operation_desc") private String operation_desc;
-    @SerializedName("product_id") private String product_id;
-    @SerializedName("product_desc") private String product_desc;
-    @SerializedName("serial_code") private Long serial_code;
-    @SerializedName("segment_code") private Integer segment_code;
-    @SerializedName("segment_id") private String segment_id;
-    @SerializedName("segment_desc") private String segment_desc;
-    @SerializedName("billing_add_inf1_value") private String billing_add_inf1_value;
-    @SerializedName("billing_add_inf2_value") private String billing_add_inf2_value;
-    @SerializedName("billing_add_inf3_value") private String billing_add_inf3_value;
-    @SerializedName("billing_add_inf1_tracking") private int billing_add_inf1_tracking;
-    @SerializedName("billing_add_inf2_tracking") private int billing_add_inf2_tracking;
-    @SerializedName("billing_add_inf3_tracking") private int billing_add_inf3_tracking;
-    @SerializedName("ret_code") private String ret_code;
-    @SerializedName("ret_msg") private String ret_msg;
-    @SerializedName("status") private String status;
-    @SerializedName("log_date") private String log_date;
-    @SerializedName("token") private String token;
+public class SO_Pack_Express_Local implements Serializable {
+    @Expose
+    @SerializedName("customer_code")
+    private long customer_code;
+    @Expose
+    @SerializedName("site_code")
+    private long site_code;
+    @Expose
+    @SerializedName("operation_code")
+    private long operation_code;
+    @Expose
+    @SerializedName("product_code")
+    private long product_code;
+    @SerializedName("express_code") @Expose private String express_code;
+    @SerializedName("express_tmp") @Expose private long express_tmp;
+    @SerializedName("serial_id") @Expose private String serial_id;
+    @SerializedName("partner_code") @Expose private long partner_code;
+    @Expose @SerializedName("so_prefix") private Long so_prefix;
+    @Expose @SerializedName("so_code") private Long so_code;
+    @Expose @SerializedName("so_id") private String so_id;
+    @Expose @SerializedName("so_desc") private String so_desc;
+    @Expose @SerializedName("so_status") private String so_status;
+    @Expose @SerializedName("contract_code") private Long contract_code;
+    @Expose @SerializedName("contract_desc") private String contract_desc;
+    @Expose @SerializedName("priority_code") private Long priority_code;
+    @Expose @SerializedName("priority_desc") private String priority_desc;
+    @Expose @SerializedName("exec_site_code") private int exec_site_code;
+    @Expose @SerializedName("exec_site_id") private String exec_site_id;
+    @Expose @SerializedName("exec_site_desc") private String exec_site_desc;
+    @Expose @SerializedName("exec_zone_code") private int exec_zone_code;
+    @Expose @SerializedName("exec_zone_id") private String exec_zone_id;
+    @Expose @SerializedName("exec_zone_desc") private String exec_zone_desc;
+    @Expose @SerializedName("operation_id") private String operation_id;
+    @Expose @SerializedName("operation_desc") private String operation_desc;
+    @Expose @SerializedName("product_id") private String product_id;
+    @Expose @SerializedName("product_desc") private String product_desc;
+    @Expose @SerializedName("serial_code") private Long serial_code;
+    @Expose @SerializedName("segment_code") private Integer segment_code;
+    @Expose @SerializedName("segment_id") private String segment_id;
+    @Expose @SerializedName("segment_desc") private String segment_desc;
+    @Expose @SerializedName("billing_add_inf1_value") private String billing_add_inf1_value;
+    @Expose @SerializedName("billing_add_inf2_value") private String billing_add_inf2_value;
+    @Expose @SerializedName("billing_add_inf3_value") private String billing_add_inf3_value;
+    @Expose @SerializedName("billing_add_inf1_tracking") private int billing_add_inf1_tracking;
+    @Expose @SerializedName("billing_add_inf2_tracking") private int billing_add_inf2_tracking;
+    @Expose @SerializedName("billing_add_inf3_tracking") private int billing_add_inf3_tracking;
+    @Expose @SerializedName("ret_code") private String ret_code;
+    @Expose @SerializedName("ret_msg") private String ret_msg;
+    @Expose @SerializedName("status") private String status;
+    @Expose @SerializedName("log_date") private String log_date;
+    @Expose @SerializedName("token") private String token;
+    @SerializedName("packs_services")
+    @Expose
+    private List<SoPackExpressPacksLocal> packsLocals;
 
 
     public SO_Pack_Express_Local() {
@@ -96,7 +112,9 @@ public class SO_Pack_Express_Local {
         this.ret_msg = null;
         this.status = "NEW";
         this.token = "";
+        this.packsLocals = new ArrayList<>();
     }
+
 
     public long getCustomer_code() {
         return customer_code;
@@ -434,6 +452,14 @@ public class SO_Pack_Express_Local {
         this.token = token;
     }
 
+    public List<SoPackExpressPacksLocal> getPacksLocals() {
+        return packsLocals;
+    }
+
+    public void setPacksLocals(List<SoPackExpressPacksLocal> packsLocals) {
+        this.packsLocals = packsLocals;
+    }
+
     public String getAllFieldForFilter(){
         return express_code
                 + so_id
@@ -447,4 +473,6 @@ public class SO_Pack_Express_Local {
                 + log_date
                         .replace("null|","");
     }
+
+
 }

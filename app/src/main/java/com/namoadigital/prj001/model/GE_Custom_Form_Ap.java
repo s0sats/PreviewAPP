@@ -8,6 +8,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.util.ConstantBaseApp;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
@@ -433,6 +434,7 @@ public class GE_Custom_Form_Ap {
             serial_id,
             custom_form_desc,
             ap_description,
+            null,
             MyActionStepFocusDesc(),
             null,
             null,
@@ -450,7 +452,8 @@ public class GE_Custom_Form_Ap {
             false,
             //Se a data usada for o when, entao valida atraso, se não, não é atrasado
             ap_when != null ? ToolBox_Inf.isItemLate(dateToUse) : false,
-            isSelectedItem
+            isSelectedItem,
+ap_who != null && ap_who.toString().equals(ToolBox_Con.getPreference_User_Code(context))
         );
     }
 

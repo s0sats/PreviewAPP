@@ -1,12 +1,15 @@
 package com.namoadigital.prj001.ui.act010;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.SimpleAdapter;
@@ -27,15 +30,21 @@ import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_DeviceDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.dao.MdOrderTypeDao;
 import com.namoadigital.prj001.dao.MdTagDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
+import com.namoadigital.prj001.dao.TkTicketTypeDao;
 import com.namoadigital.prj001.databinding.Act010MainBinding;
 import com.namoadigital.prj001.databinding.Act010MainContentBinding;
-import com.namoadigital.prj001.sql.Sql_Act010_001;
+import com.namoadigital.prj001.databinding.TicketCreationDialogBinding;
+import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.service.WSTicketCreation;
+import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.ui.act009.Act009_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
+import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.ui.act087.Act087Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -70,6 +79,12 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
     private int tagCode;
     private String tagDesc;
     private String originFlow = null;
+    private String wsProcess="";
+    public static final String CUSTOM_DESC = "custom_desc";
+    public static final String CUSTOM_PK = "custom_pk";
+    public static final String IS_FORM = "IS_FORM";
+    private String ticketInternalComments = "";
+    private int ticketTypeCode = -1;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -120,6 +135,19 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
         transList.add("alert_os_form_ttl");
         transList.add("alert_serial_undefined_or_without_structure_msg");
         //
+        transList.add("dialog_ticket_creation_ttl");
+        transList.add("dialog_ticket_creation_start");
+        transList.add("dialog_download_ticket_ttl");
+        transList.add("dialog_download_ticket_start");
+        transList.add("progress_serial_save_ttl");
+        transList.add("progress_serial_save_msg");
+        //
+        transList.add("alert_create_ticket_internal_comments_lbl");
+        transList.add("alert_create_ticket_btn_save");
+        //
+        transList.add("alert_order_type_empty_ttl");
+        transList.add("alert_order_type_empty_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -145,7 +173,13 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
                 hmAux_Trans,
                 new MD_Product_SerialDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
                 new MD_Product_Serial_Tp_DeviceDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
-                new GeOsDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
+                new GeOsDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
+                new TkTicketTypeDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
+                new MdOrderTypeDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                )
         );
         //
         setLabels();
@@ -153,7 +187,8 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
         mPresenter.setAdapterData(
             product_code,
             tagCode,
-            ToolBox_Inf.getBlockSpontaneousValueByOrigin(context, originFlow)
+            ToolBox_Inf.getBlockSpontaneousValueByOrigin(context, originFlow),
+            has_tk_ticket_is_form_off_hand
         );
         //
         if(has_tk_ticket_is_form_off_hand){
@@ -237,14 +272,72 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HMAux item = (HMAux) parent.getItemAtPosition(position);
                 //
-                mPresenter.validateOpenForm(item);
+                if ("1".equals(item.get(IS_FORM))) {
+                    mPresenter.validateOpenForm(item);
+                }else{
+                    createTicketDialog(item);
+                }
             }
         });
+    }
+    @Override
+    public void createTicketDialog(HMAux item) {
+        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+        float dmW = (float) dm.widthPixels * 0.95f;
+//        float dmH = (float) dm.heightPixels * 0.95f;
+        Dialog ticketDialog = new Dialog(context);
+        //
+        TicketCreationDialogBinding dialogBinding = TicketCreationDialogBinding.inflate(getLayoutInflater());
+        //
+        ticketDialog.setContentView(dialogBinding.getRoot());
+        //
+        setLabel(dialogBinding, item);
+        setAction(dialogBinding, ticketDialog, item);
+        ticketDialog.getWindow().setLayout((int) dmW, ViewGroup.LayoutParams.WRAP_CONTENT);
+        ticketDialog.setCancelable(false);
+        ticketDialog.show();
+        //
+    }
+
+    private void setAction(TicketCreationDialogBinding dialogBinding, Dialog ticketDialog, HMAux item) {
+        dialogBinding.act010CreateTicketDialogBtnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ticketDialog.dismiss();
+            }
+        });
+        //
+        dialogBinding.act010CreateTicketDialogBtnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ticketDialog.dismiss();
+                //
+                ticketTypeCode = Integer.parseInt(item.get(TkTicketTypeDao.TICKET_TYPE_CODE));
+                ticketInternalComments = dialogBinding.act010CreateTicketDialogInternalCommentsActv.getText().toString();
+                mPresenter.executeSerialSave();
+            }
+        });
+
+    }
+
+    private void setLabel(TicketCreationDialogBinding dialogBinding, HMAux item) {
+        dialogBinding.act010CreateTicketDialogTtl.setText(item.get(Act010_Main.CUSTOM_DESC));
+        dialogBinding.act010CreateTicketDialogTvSite.setVisibility(View.GONE);
+        if(!ToolBox_Con.getPreference_Site_Code(context).equals(site_code_form_param)){
+            String serialSiteDescription = mPresenter.getSerialSiteDescription(site_code_form_param);
+            if(!serialSiteDescription.isEmpty()) {
+                dialogBinding.act010CreateTicketDialogTvSite.setText(serialSiteDescription);
+                dialogBinding.act010CreateTicketDialogTvSite.setVisibility(View.VISIBLE);
+            }
+        }
+        dialogBinding.act010CreateTicketDialogInternalCommentsTil.setHint(hmAux_Trans.get("alert_create_ticket_internal_comments_lbl"));
+        dialogBinding.act010CreateTicketDialogBtnSave.setText(hmAux_Trans.get("alert_create_ticket_btn_save"));
+        dialogBinding.act010CreateTicketDialogBtnCancel.setText(hmAux_Trans.get("sys_alert_btn_cancel"));
     }
 
     @Override
     public void loadForms(List<HMAux> forms) {
-        String[] from = {GE_Custom_FormDao.CUSTOM_FORM_DESC, Sql_Act010_001.CUSTOM_FORM_PK};
+        String[] from = {CUSTOM_DESC, CUSTOM_PK};
         int[] to = {R.id.act010_cell_tv_desc,R.id.act010_cell_tv_id};
         binding.act010LvForm.setAdapter(
                 new SimpleAdapter(
@@ -277,7 +370,7 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
         // DIFERENTE VERIFICAR
         bundle.putString(
                 Constant.ACT010_CUSTOM_FORM_CODE_DESC,
-                item.get(GE_Custom_FormDao.CUSTOM_FORM_DESC)
+                item.get(CUSTOM_DESC)
         );
     }
 
@@ -296,6 +389,50 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
                 null,
                 0
         );
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
+        super.processCloseACT(mLink, mRequired, hmAux);
+        //
+        progressDialog.dismiss();
+        if (wsProcess.equals(WSTicketCreation.class.getName())){
+            //
+            setWsProcess("");
+            bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT010);
+            if (hmAux.hasConsistentValue(TK_TicketDao.TICKET_PREFIX)
+                    && hmAux.hasConsistentValue(TK_TicketDao.TICKET_CODE)) {
+                bundle.putInt(TK_TicketDao.TICKET_PREFIX, Integer.parseInt(hmAux.get(TK_TicketDao.TICKET_PREFIX)));
+                bundle.putInt(TK_TicketDao.TICKET_CODE, Integer.parseInt(hmAux.get(TK_TicketDao.TICKET_CODE)));
+            }
+            //
+            if(!mPresenter.verifyProductForForm(hmAux)) {
+                callAct070(bundle);
+            }
+        }else if (wsProcess.equals(WS_Serial_Save.class.getName())){
+            mPresenter.callTicketCreationService(
+                    ToolBox_Con.getPreference_Customer_Code(context),
+                    ticketTypeCode,
+                    site_code_form_param,
+                    ToolBox_Con.getPreference_Operation_Code(context),
+                    product_code,
+                    mPresenter.getSerialCode(product_code, serial_id),
+                    ticketInternalComments
+            );
+        }
+        //
+    }
+
+    private void callAct070(Bundle bundle) {
+        Intent mIntent = new Intent(context, Act070_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        mIntent.putExtras(bundle);
+        //
+        ToolBox_Inf.stopChatService(context);
+        //
+        startActivity(mIntent);
+        finish();
     }
 
     @Override
@@ -392,4 +529,72 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
         startActivity(mIntent);
         finish();
     }
+
+    @Override
+    public void setWsProcess(String wsProcess) {
+        this.wsProcess = wsProcess;
+    }
+
+    @Override
+    public void showPD(String title, String msg) {
+        enableProgressDialog(
+                title,
+                msg,
+                hmAux_Trans.get("sys_alert_btn_cancel"),
+                hmAux_Trans.get("sys_alert_btn_ok")
+        );
+    }
+
+    @Override
+    protected void processError_1(String mLink, String mRequired) {
+        super.processError_1(mLink, mRequired);
+        //
+        disableProgressDialog();
+    }
+
+    @Override
+    protected void processCustom_error(String mLink, String mRequired) {
+        super.processCustom_error(mLink, mRequired);
+        //
+        disableProgressDialog();
+    }
+    //TRATA MSG SESSION NOT FOUND
+    @Override
+    protected void processLogin() {
+        super.processLogin();
+        //
+        ToolBox_Con.cleanPreferences(context);
+        //
+        ToolBox_Inf.call_Act001_Main(context);
+        //
+        finish();
+    }
+
+    //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED OU VERSÃO INVALIDA
+    @Override
+    protected void processUpdateSoftware(String mLink, String mRequired) {
+        super.processUpdateSoftware(mLink, mRequired);
+
+        ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+    }
+
+    //Metodo chamado ao finalizar o download da atualização.
+    @Override
+    protected void processCloseAPP(String mLink, String mRequired) {
+        super.processCloseAPP(mLink, mRequired);
+        //
+        Intent mIntent = new Intent(context, WBR_Logout.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.WS_LOGOUT_CUSTOMER_LIST, String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)));
+        bundle.putString(Constant.WS_LOGOUT_USER_CODE, String.valueOf(ToolBox_Con.getPreference_User_Code(context)));
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+        //
+        ToolBox_Con.cleanPreferences(context);
+
+        finish();
+    }
+
 }

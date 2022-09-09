@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.dao
 
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
@@ -41,10 +42,12 @@ class GeOsDeviceItemDao(
         const val ITEM_CHECK_SEQ = "item_check_seq"
         const val ITEM_CHECK_ID = "item_check_id"
         const val ITEM_CHECK_DESC = "item_check_desc"
+        const val ITEM_CHECK_GROUP_CODE = "item_check_group_code"
         const val APPLY_MATERIAL = "apply_material"
         const val VERIFICATION_INSTRUCTION = "verification_instruction"
         const val REQUIRE_JUSTIFY_PROBLEM = "require_justify_problem"
         const val CRITICAL_ITEM = "critical_item"
+        const val CHANGE_ADJUST = "change_adjust"
         const val ORDER_SEQ = "order_seq"
         const val STRUCTURE = "structure"
         const val MANUAL_DESC = "manual_desc"
@@ -64,6 +67,7 @@ class GeOsDeviceItemDao(
         const val EXEC_PHOTO4 = "exec_photo4"
         const val STATUS_ANSWER = "status_answer"
         const val HAS_EXPIRED_CYCLE = "has_expired_cycle"
+        const val HIDE_DAYS_IN_ALERT = "hide_days_in_alert"
     }
 
     private val toGeOsDeviceItemMapper: Mapper<Cursor, GeOsDeviceItem>
@@ -456,10 +460,12 @@ class GeOsDeviceItemDao(
                         item_check_seq = getInt(getColumnIndex(ITEM_CHECK_SEQ)),
                         item_check_id = getString(getColumnIndex(ITEM_CHECK_ID)),
                         item_check_desc = getString(getColumnIndex(ITEM_CHECK_DESC)),
+                        item_check_group_code = getIntOrNull(getColumnIndex(ITEM_CHECK_GROUP_CODE)),
                         apply_material = getString(getColumnIndex(APPLY_MATERIAL)),
                         verification_instruction = getStringOrNull(getColumnIndex(VERIFICATION_INSTRUCTION)),
                         require_justify_problem = getInt(getColumnIndex(REQUIRE_JUSTIFY_PROBLEM)),
                         critical_item = getInt(getColumnIndex(CRITICAL_ITEM)),
+                        change_adjust = getInt(getColumnIndex(CHANGE_ADJUST)),
                         order_seq = getInt(getColumnIndex(ORDER_SEQ)),
                         structure = getInt(getColumnIndex(STRUCTURE)),
                         manual_desc = getStringOrNull(getColumnIndex(MANUAL_DESC)),
@@ -478,7 +484,8 @@ class GeOsDeviceItemDao(
                         exec_photo3 = getStringOrNull(getColumnIndex(EXEC_PHOTO3)),
                         exec_photo4 = getStringOrNull(getColumnIndex(EXEC_PHOTO4)),
                         status_answer = getStringOrNull(getColumnIndex(STATUS_ANSWER)),
-                        has_expired_cycle = getInt(getColumnIndex(HAS_EXPIRED_CYCLE))
+                        has_expired_cycle = getInt(getColumnIndex(HAS_EXPIRED_CYCLE)),
+                        hide_days_in_alert = getInt(getColumnIndex(HIDE_DAYS_IN_ALERT))
                     )
                 }
             }
@@ -520,6 +527,8 @@ class GeOsDeviceItemDao(
                     //
                     put(ITEM_CHECK_DESC, it.item_check_desc)
                     //
+                    put(ITEM_CHECK_GROUP_CODE, it.item_check_group_code)
+                    //
                     put(APPLY_MATERIAL, it.apply_material)
                     //
                     put(VERIFICATION_INSTRUCTION, it.verification_instruction)
@@ -527,6 +536,8 @@ class GeOsDeviceItemDao(
                     put(REQUIRE_JUSTIFY_PROBLEM, it.require_justify_problem)
                     //
                     put(CRITICAL_ITEM, it.critical_item)
+                    //
+                    put(CHANGE_ADJUST, it.change_adjust)
                     //
                     put(ORDER_SEQ, it.order_seq)
                     //
@@ -565,6 +576,8 @@ class GeOsDeviceItemDao(
                     put(STATUS_ANSWER, it.status_answer)
                     //
                     put(HAS_EXPIRED_CYCLE, it.has_expired_cycle)
+                    //
+                    put(HIDE_DAYS_IN_ALERT, it.hide_days_in_alert)
                 }
             }
             return contentValues
