@@ -1,14 +1,18 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by d.luche on 29/11/2019.
  */
 
 public class T_DataPackage_TK_Ticket_Env {
-    private String customer_code;
-    private String ticket_prefix;
-    private String ticket_code;
-    private String scn;
+
+
+    @SerializedName("customer_code") private String customer_code;
+    @SerializedName("ticket_prefix") private String ticket_prefix;
+    @SerializedName("ticket_code") private String ticket_code;
+    @SerializedName("scn") private String scn;
 
     public String getCustomer_code() {
         return customer_code;
