@@ -1,14 +1,16 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by d.luche on 29/11/2019.
  */
 
 public class T_DataPackage_SM_SO_Env {
-    private String customer_code;
-    private String so_prefix;
-    private String so_code;
-    private String so_scn;
+    @SerializedName("customer_code") private String customer_code;
+    @SerializedName("so_prefix") private String so_prefix;
+    @SerializedName("so_code") private String so_code;
+    @SerializedName("so_scn") private String so_scn;
 
     public String getCustomer_code() {
         return customer_code;

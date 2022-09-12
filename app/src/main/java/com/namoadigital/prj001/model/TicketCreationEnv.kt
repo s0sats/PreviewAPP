@@ -7,7 +7,7 @@ class TicketCreationEnv (
     app_version: String,
     app_type: String,
     session_app: String,
-    val token: String,
+    @SerializedName("token") val token: String,
     @SerializedName("ticket") var ticket: ArrayList<TicketCreationParams>
 ): Main_Header_Env(
     app_code,
