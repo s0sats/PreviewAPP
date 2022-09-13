@@ -95,9 +95,9 @@ public class T_TK_Header_N_Group_Save_WG_Env extends Main_Header_Env {
     }
 
     public static class T_TK_Header_N_Group_Save_WG_Step implements Serializable{
-        @SerializedName("customer_code") private int step_code;
-        @SerializedName("ticket_prefix") private Integer step_group_code;
-        @SerializedName("ticket_code") private String step_group_desc;
+        @SerializedName("step_code") private int step_code;
+        @SerializedName("step_group_code") private Integer step_group_code;
+        @SerializedName("step_group_desc") private String step_group_desc;
 
         public T_TK_Header_N_Group_Save_WG_Step() {
         }
