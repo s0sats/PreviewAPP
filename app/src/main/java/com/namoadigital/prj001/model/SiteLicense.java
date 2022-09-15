@@ -7,21 +7,21 @@ import java.io.Serializable;
 public class SiteLicense implements Serializable {
     @SerializedName("customer_code")
     private int customer_code;
-    @SerializedName("site_code")
+    @SerializedName("SITE_CODE")
     private int site_code;
-    @SerializedName("site_desc")
+    @SerializedName("SITE_DESC")
     private String site_desc;
-    @SerializedName("user_level_code")
+    @SerializedName("USER_LEVEL_CODE")
     private int user_level_code;
-    @SerializedName("user_level_id")
+    @SerializedName("USER_LEVEL_ID")
     private String user_level_id;
-    @SerializedName("user_level_value")
+    @SerializedName("USER_LEVEL_VALUE")
     private int user_level_value;
-    @SerializedName("license_available")
+    @SerializedName("LICENSE_AVAILABLE")
     private int license_available;
-    @SerializedName("distinct_level")
+    @SerializedName("DISTINCT_LEVEL")
     private int distinct_level;
-    @SerializedName("user_level_changed")
+    @SerializedName("USER_LEVEL_CHANGED")
     private int user_level_changed;
 
     public int getCustomer_code() {
