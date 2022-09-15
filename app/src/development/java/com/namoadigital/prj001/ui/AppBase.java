@@ -16,7 +16,9 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.DB_NAME_BASE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DB_NAME_CHAT;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DB_NAME_CUSTOM;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DB_PATH;
+import static com.namoadigital.prj001.util.ConstantBaseApp.DB_PREFIX_BASE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DB_PREFIX_CUSTOM;
+import static com.namoadigital.prj001.util.ConstantBaseApp.DB_SUFIX;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DB_VERSION_BASE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DB_VERSION_CHAT;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DB_VERSION_CUSTOM;
@@ -129,18 +131,19 @@ public class AppBase extends Application {
         ConstantBaseApp.APK_PATH = getApplicationContext().getExternalFilesDir(null) + "/namoa_apk";
         ConstantBaseApp.CAM_TEST_PATH = getApplicationContext().getExternalFilesDir(null) + "/camtest";
 
-        DB_NAME_BASE = "namoa_sms.db3";
+        DB_PREFIX_BASE = "namoa_sms";
+        DB_NAME_BASE = DB_PREFIX_BASE + DB_SUFIX;
         DB_VERSION_BASE = 12;
         DB_FULL_BASE = DB_PATH + "/" + DB_NAME_BASE;
 
-        DB_NAME_CUSTOM = "cc.db3";
+        DB_NAME_CUSTOM = "cc" + DB_SUFIX ;
         DB_PREFIX_CUSTOM = "namoa_app_";
         DB_VERSION_CUSTOM = 2;
         DB_FULL_CUSTOM = DB_PATH + "/" + DB_NAME_CUSTOM;
 
         //DB_NAME_CHAT = "namoa_chat.db3";
         DB_VERSION_CHAT = 6;
-        DB_FULL_CHAT = DB_PATH + "/" + DB_NAME_CHAT;
+        DB_FULL_CHAT = DB_PATH + "/" + DB_NAME_CHAT + DB_SUFIX;
 
         ConstantBaseApp.PRJ001_VERSION_CODE = BuildConfig.VERSION_CODE;
         ConstantBaseApp.PRJ001_VERSION = BuildConfig.VERSION_NAME;

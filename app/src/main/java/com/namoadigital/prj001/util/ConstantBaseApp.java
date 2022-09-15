@@ -226,8 +226,9 @@ public class ConstantBaseApp extends ConstantBase {
      */
     //public static int DB_VERSION;
     public static String DB_PATH;
-
+    public static String DB_SUFIX = ".db3";
     public static String DB_NAME_BASE;
+    public static String DB_PREFIX_BASE;
     public static String DB_FULL_BASE = DB_PATH + "/" + DB_NAME_BASE;
     public static String DB_BASE_STATUS_ERROR = "DB_BASE_STATUS_ERROR";
     public static int DB_VERSION_BASE;
@@ -238,8 +239,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static String DB_MULTI_STATUS_ERROR = "DB_MULTI_STATUS_ERROR";
     public static int DB_VERSION_CUSTOM;
 
-    public static String DB_NAME_CHAT = "namoa_chat.db3";
-    public static String DB_FULL_CHAT = DB_PATH + "/" + DB_NAME_CHAT;
+    public static String DB_NAME_CHAT = "namoa_chat";
+    public static String DB_FULL_CHAT = DB_PATH + "/" + DB_NAME_CHAT + DB_SUFIX;
     public static String DB_CHAT_STATUS_ERROR = "DB_CHAT_STATUS_ERROR";
     public static int DB_VERSION_CHAT;
 

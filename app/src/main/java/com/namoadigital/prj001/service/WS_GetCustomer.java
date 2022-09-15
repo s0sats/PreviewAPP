@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.service;
 
+import static com.namoadigital.prj001.util.ConstantBaseApp.DB_PREFIX_CUSTOM;
+
 import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
@@ -211,7 +213,7 @@ public class WS_GetCustomer extends IntentService {
                 ArrayList<File> listToDelete = new ArrayList<>();
                 //
                 File[] files_db = ToolBox_Inf.getListDB("namoa_sms");
-                File[] files_db_mult = ToolBox_Inf.getListDB("C_");
+                File[] files_db_mult = ToolBox_Inf.getListDB(DB_PREFIX_CUSTOM);
                 File[] files_db_chat = ToolBox_Inf.getListDB(Constant.DB_NAME_CHAT.substring(0,Constant.DB_NAME_CHAT.length() -4));
                 File[] files_token = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH,"");
                 File[] files_support = ToolBox_Inf.getListOfFiles_v5(Constant.SUPPORT_PATH,"");
