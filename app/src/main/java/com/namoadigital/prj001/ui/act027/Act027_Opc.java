@@ -142,7 +142,7 @@ public class Act027_Opc extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         bStatus = true;
-        Log.i("ACT027", "OPC");
+//        Log.i("ACT027", "OPC");
         //
         View view = inflater.inflate(R.layout.act027_opc_content, container, false);
         //

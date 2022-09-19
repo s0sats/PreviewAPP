@@ -109,7 +109,7 @@ public class WS_Upload_Img_Chat extends IntentService {
 
                 ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG_IMAGE_ME);
 
-                Log.d("CHFILE", rec.getResult());
+//                Log.d("CHFILE", rec.getResult());
             }
 
             //ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_MSG_IMAGE_ME);

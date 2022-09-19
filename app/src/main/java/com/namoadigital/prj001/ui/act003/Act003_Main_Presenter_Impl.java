@@ -104,12 +104,12 @@ public class Act003_Main_Presenter_Impl implements Act003_Main_Presenter {
                             ToolBox_Inf.callChatService(context, CHAT_SERVICE_MODE_LOGIN);
 
                             //ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Act003 Startou o Serviço \n", log_file);
-                            Log.d("ChatEvent", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Act003 Startou o Serviço\n");
+//                            Log.d("ChatEvent", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Act003 Startou o Serviço\n");
                         } else {
                             SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
                             singletonWebSocket.attemptSendLogin();
                             //ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " -  Act003 Rodou singletonGetInstance() e attemptLogin \n", log_file);
-                            Log.d("ChatEvent", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Act003 Rodou singletonGetInstance() e attemptLogin\n");
+//                            Log.d("ChatEvent", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Act003 Rodou singletonGetInstance() e attemptLogin\n");
                         }
                     }else{
                         //L.BARRIONUEVO - 13/08/2019
@@ -118,7 +118,7 @@ public class Act003_Main_Presenter_Impl implements Act003_Main_Presenter {
                         if(ToolBox_Inf.isMyServiceRunning(context, AppBackgroundService.class)){
                             SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
                             singletonWebSocket.attemptSendLogin();
-                            Log.d("ChatEvent", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Act003 Rodou singletonGetInstance() e attemptLogin\n");
+//                            Log.d("ChatEvent", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Act003 Rodou singletonGetInstance() e attemptLogin\n");
                         }else{
                             HMAux msgAux = messageDao.getByStringHM(
                                     new CH_Message_Sql_004().toSqlQuery()
@@ -143,10 +143,10 @@ public class Act003_Main_Presenter_Impl implements Act003_Main_Presenter {
                             ToolBox_Inf.callChatService(context, CHAT_SERVICE_MODE_LOGIN);
 
                             //ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Act003 Startou o Serviço \n", log_file);
-                            Log.d("ChatEvent", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Act003 Startou o Serviço\n");
+//                            Log.d("ChatEvent", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Act003 Startou o Serviço\n");
                         }
                         //ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " -  Act003 Usr com preferencias setadas, não faz nada \n", log_file);
-                        Log.d("ChatEvent", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Act003 Usr com preferencias setadas, não faz nada \n");
+//                        Log.d("ChatEvent", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Act003 Usr com preferencias setadas, não faz nada \n");
                     }
                 } else {
                     throw new Exception("USER_NOT_LOGGED_TRYIED_START_WEB_SOCKET");

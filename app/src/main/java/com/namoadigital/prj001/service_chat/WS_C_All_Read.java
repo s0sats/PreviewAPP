@@ -68,7 +68,7 @@ public class WS_C_All_Read extends IntentService {
         //
         for (Chat_C_All_Delivered_Read read : allReads) {
 
-            Log.d("ALL_DE_RE", " READ " + read.getMsg_code());
+//            Log.d("ALL_DE_RE", " READ " + read.getMsg_code());
 
             messageDao.addUpdate(
                     new CH_Message_Sql_010(

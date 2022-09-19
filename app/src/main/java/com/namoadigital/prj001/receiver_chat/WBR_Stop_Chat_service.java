@@ -22,7 +22,7 @@ public class WBR_Stop_Chat_service extends WakefulBroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         //region FinalGambi
-        Log.d("ChatEvent","WBR_Stop_Chat_service - Acionado");
+//        Log.d("ChatEvent","WBR_Stop_Chat_service - Acionado");
         //Intent mService = new Intent(context, WS_Stop_Chat_Service.class);
         //startWakefulService(context, mService);
         //endregion

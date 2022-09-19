@@ -624,7 +624,7 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
     protected void nfcData(boolean status, int id, String... value) {
         super.nfcData(status, id, value);
 
-        Log.d("NFC", value[0]);
+//        Log.d("NFC", value[0]);
 
         if (!status) {
             if (progressDialog != null && progressDialog.isShowing()) {

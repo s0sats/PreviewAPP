@@ -556,7 +556,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     public void reloadMessages(ArrayList<HMAux> dados) {
         this.dados = dados;
         //
-        Log.d("PROCESSOS", "ReLoad " + String.valueOf(this.dados.size()) + " Off " + String.valueOf(offSetV));
+//        Log.d("PROCESSOS", "ReLoad " + String.valueOf(this.dados.size()) + " Off " + String.valueOf(offSetV));
         //
         if (dados.size() > 0) {
 
@@ -768,11 +768,11 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
 
 //            lv_messages.setSelection(mFirstUnReadposition);
-            Log.d("VAMOS", "NN " + String.valueOf(mFirstUnReadposition));
+//            Log.d("VAMOS", "NN " + String.valueOf(mFirstUnReadposition));
 
         } else {
             lv_messages.setSelection(this.dados.size() - 1);
-            Log.d("VAMOS", "XX " + String.valueOf(this.dados.size() - 1));
+//            Log.d("VAMOS", "XX " + String.valueOf(this.dados.size() - 1));
         }
         //
         sw_messages.setRefreshing(false);
@@ -784,8 +784,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
         String pk_fields[] = pk.replace("|", "#").split("#");
 
-        Log.d("ap_pk", pk);
-        Log.d("ap_pk", String.valueOf(pk_fields.length));
+//        Log.d("ap_pk", pk);
+//        Log.d("ap_pk", String.valueOf(pk_fields.length));
 
 
         File file = new File(Constant.CACHE_PATH + "/" +
@@ -1495,9 +1495,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     private void processing_cMessage(final Context context) {
 
-        Log.d("PC", "PC ENTREI");
+//        Log.d("PC", "PC ENTREI");
 
-        Log.d("PROCESSOS", "cMessage " + String.valueOf(this.dados.size()) + " Off " + String.valueOf(offSetV));
+//        Log.d("PROCESSOS", "cMessage " + String.valueOf(this.dados.size()) + " Off " + String.valueOf(offSetV));
 
         mFirstUnReadposition = -1;
 
@@ -1521,14 +1521,14 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                                 new CH_Message_Sql_008(mRoom_code).toSqlQuery()
                         );
                         //
-                        Log.d("PC", "messages.size = " + (messages != null ? String.valueOf(messages.size()) : "null"));
+//                        Log.d("PC", "messages.size = " + (messages != null ? String.valueOf(messages.size()) : "null"));
                         if (messages != null && messages.size() > 0) {
-                            Log.d("PC", messages.get(0).get("msg_obj"));
+//                            Log.d("PC", messages.get(0).get("msg_obj"));
                         }
 
                         while (messages.size() > 0) {
                             //
-                            Log.d("PC", "PC LOOP");
+//                            Log.d("PC", "PC LOOP");
                             // Update Screen
                             synchronized (m1) {
                                 try {
@@ -1539,7 +1539,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                                 }
                             }
 
-                            Log.d("PROCESSO_ASYN", "continuei apos m1");
+//                            Log.d("PROCESSO_ASYN", "continuei apos m1");
 
                             for (HMAux message : messages) {
                                 chMessageDao.addUpdate(
@@ -1565,14 +1565,14 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                             }
                         }
 
-                        Log.d("PROCESSO_ASYN", "continuei apos m2");
+//                        Log.d("PROCESSO_ASYN", "continuei apos m2");
 
                     } catch (Exception e) {
-                        Log.d("PC", "PC Exception\n" + e.toString());
+//                        Log.d("PC", "PC Exception\n" + e.toString());
                     } finally {
                         isProcessing_C_Message = false;
                         //
-                        Log.d("PC", "PC SAI");
+//                        Log.d("PC", "PC SAI");
                     }
                 }
             });
@@ -1588,7 +1588,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             synchronized (this) {
 
                 try {
-                    Log.d("PROCESSO_ASYN", "entrei m1");
+//                    Log.d("PROCESSO_ASYN", "entrei m1");
 
                     countSize = act035_adapter_messages.getCount();
 
@@ -1608,7 +1608,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                     //
                     mTotal += act035_adapter_messages.getmSizeAddUpdate();
 
-                    Log.d("PROCESSO_ASYN", "sai m1");
+//                    Log.d("PROCESSO_ASYN", "sai m1");
                 } catch (Exception e) {
                     String erro = e.toString();
                 }
@@ -1628,7 +1628,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 int firstVisiblePosition = lv_messages.getFirstVisiblePosition();
 
                 try {
-                    Log.d("PROCESSO_ASYN", "entrei m2");
+//                    Log.d("PROCESSO_ASYN", "entrei m2");
                     if (statusReorderProcess) {
                         iv_reorder.setVisibility(View.VISIBLE);
                         //
@@ -1655,7 +1655,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                         }
                     }
 
-                    Log.d("PROCESSO_ASYN", "sai m2");
+//                    Log.d("PROCESSO_ASYN", "sai m2");
 
                 } catch (Exception e) {
                     String erro = e.toString();
@@ -1667,7 +1667,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     }
 
     private void processing_FromTo(Context context) {
-        Log.d("PROCESSOS", "DePara " + String.valueOf(dados.size()) + " Off " + String.valueOf(offSetV));
+//        Log.d("PROCESSOS", "DePara " + String.valueOf(dados.size()) + " Off " + String.valueOf(offSetV));
 
         CH_MessageDao chMessageDao = new CH_MessageDao(context);
 
@@ -1678,7 +1678,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
 
     private void processing_ImageME(Context context) {
-        Log.d("PROCESSOS", "ImageME " + String.valueOf(dados.size()) + " Off " + String.valueOf(offSetV));
+//        Log.d("PROCESSOS", "ImageME " + String.valueOf(dados.size()) + " Off " + String.valueOf(offSetV));
 
         CH_MessageDao chMessageDao = new CH_MessageDao(context);
 

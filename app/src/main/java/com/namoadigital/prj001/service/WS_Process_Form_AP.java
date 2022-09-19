@@ -122,7 +122,7 @@ public class WS_Process_Form_AP extends IntentService {
                     formApDao.addUpdate(auxAp);
                     //
                     sendFCMStatus();
-                    Log.d("FormAP", msgObjFormAp.getPk());
+//                    Log.d("FormAP", msgObjFormAp.getPk());
                 }
                 //SEMPRE ADICIONA O ARQUIVO NA LISTA DE DELETE
                 //INDEPENDENTE DELE TER APRESENTADO ERRO OU NÃO

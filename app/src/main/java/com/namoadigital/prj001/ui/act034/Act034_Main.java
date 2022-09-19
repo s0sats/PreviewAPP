@@ -117,14 +117,14 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     Runnable updateActivityData = new Runnable() {
         @Override
         public void run() {
-            Log.d("ChatProc", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + "Apos sleep");
+//            Log.d("ChatProc", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + "Apos sleep");
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     act034_room.updateRoomListAndOtherMsgInfo();
                 }
             });
-            Log.d("ChatProc", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + "Apos processamento");
+//            Log.d("ChatProc", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + "Apos processamento");
             receiverInProgress = false;
         }
     };
@@ -294,7 +294,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                 || ConstantBaseApp.CHAT_SERVICE_MODE_LOGIN.equals(AppBackgroundService.serviceChatMode)
                 || ConstantBaseApp.CHAT_SERVICE_MODE_SCHEDULED.equals(AppBackgroundService.serviceChatMode)
         ) {
-            Log.d("ChatEvent","callChatService " + ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+//            Log.d("ChatEvent","callChatService " + ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
             //callChatService();
             ToolBox_Inf.callChatService(context, CHAT_SERVICE_MODE_ACTIVED);
         }
@@ -594,7 +594,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                         //act034_room.loadRoomList();
                         if(!receiverInProgress){
                             receiverInProgress = true;
-                            Log.d("ChatProc", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + "Inicio de proc Sem OPC");
+//                            Log.d("ChatProc", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + "Inicio de proc Sem OPC");
                             updateChatMsgOnReceiver.postDelayed(updateActivityData, 500);
                         }
                     }
@@ -602,7 +602,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                         if(!receiverInProgress) {
 //                            act034_opc.loadDataToScreen();
                             receiverInProgress = true;
-                            Log.d("ChatProc", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + "Inicio de proc Com OPC");
+//                            Log.d("ChatProc", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + "Inicio de proc Com OPC");
                             updateChatMsgOnReceiver.postDelayed(updateActivityData, 500);
                         }
                     }
@@ -853,7 +853,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            Log.d("ChatEvent", "RoomAsyncTask PreExecute");
+//            Log.d("ChatEvent", "RoomAsyncTask PreExecute");
             //
             showPD(
                     hmAux_Trans.get("ws_room_info_ttl"),
@@ -863,7 +863,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
 
         @Override
         protected String doInBackground(String... params) {
-            Log.d("ChatEvent", "RoomAsyncTask DoInBackground");
+//            Log.d("ChatEvent", "RoomAsyncTask DoInBackground");
             String resultado = "";
             try {
                 String socket_id = params[0];
@@ -893,7 +893,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
 
         @Override
         protected void onPostExecute(String resultado) {
-            Log.d("ChatEvent", "RoomAsyncTask OnPost");
+//            Log.d("ChatEvent", "RoomAsyncTask OnPost");
             super.onPostExecute(resultado);
             Gson gson = new GsonBuilder().serializeNulls().create();
             //Se não retornou nada, finaliza execução.
@@ -955,7 +955,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         @Override
         protected void onCancelled() {
             super.onCancelled();
-            Log.d("ChatEvent", "RoomAsyncTask Cancelada");
+//            Log.d("ChatEvent", "RoomAsyncTask Cancelada");
             disablePD();
         }
     }
@@ -1023,7 +1023,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            Log.d("ChatEvent", "UserListInfoTask PreExecute");
+//            Log.d("ChatEvent", "UserListInfoTask PreExecute");
             //
             showPD(
                     hmAux_Trans.get("progress_user_list_ttl"),
@@ -1034,7 +1034,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
 
         @Override
         protected String doInBackground(String... params) {
-            Log.d("ChatEvent", "UserListInfoTask DoInBackground");
+//            Log.d("ChatEvent", "UserListInfoTask DoInBackground");
             String resultado = "";
             try {
                 String socket_id = params[0];
@@ -1069,7 +1069,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
 
         @Override
         protected void onPostExecute(String resultado) {
-            Log.d("ChatEvent", "UserListInfoTask OnPost");
+//            Log.d("ChatEvent", "UserListInfoTask OnPost");
             super.onPostExecute(resultado);
             Gson gson = new GsonBuilder().serializeNulls().create();
             //Se não retornou nada, finaliza execução.
@@ -1127,7 +1127,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         @Override
         protected void onCancelled() {
             super.onCancelled();
-            Log.d("ChatEvent", "UserListInfoTask Cancelada");
+//            Log.d("ChatEvent", "UserListInfoTask Cancelada");
             disablePD();
         }
     }

@@ -126,9 +126,9 @@ public class Act027_Services extends BaseFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //
-        Log.d("Permissao","onCreate - Act027_Services");
+//        Log.d("Permissao","onCreate - Act027_Services");
         if(savedInstanceState != null) {
-            Log.d("Permissao", " onCreate bundle - Act027_Services \n " + savedInstanceState.toString());
+//            Log.d("Permissao", " onCreate bundle - Act027_Services \n " + savedInstanceState.toString());
         }
         setRetainInstance(true);
     }
@@ -138,9 +138,9 @@ public class Act027_Services extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         bStatus = true;
-        Log.d("Permissao","onCreateView - Act027_Services");
+//        Log.d("Permissao","onCreateView - Act027_Services");
         if(savedInstanceState != null) {
-            Log.d("Permissao", " onCreateView bundle - Act027_Services \n " + savedInstanceState.toString());
+//            Log.d("Permissao", " onCreateView bundle - Act027_Services \n " + savedInstanceState.toString());
         }
         View view = inflater.inflate(R.layout.act027_services_content, container, false);
         //
@@ -152,9 +152,9 @@ public class Act027_Services extends BaseFragment {
 
     @Override
     public void onDestroyView() {
-        Log.d("Permissao","onDestroyView - antes do super");
+//        Log.d("Permissao","onDestroyView - antes do super");
         super.onDestroyView();
-        Log.d("Permissao","onCreateView - depois do super");
+//        Log.d("Permissao","onCreateView - depois do super");
         bStatus = false;
     }
 
@@ -167,7 +167,7 @@ public class Act027_Services extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        Log.d("Permissao","onResume");
+//        Log.d("Permissao","onResume");
         loadDataToScreen();
     }
 
@@ -568,7 +568,7 @@ public class Act027_Services extends BaseFragment {
                 if (execTaskAux != null) {
                     sendToTask(item, execTaskAux.get(SM_SO_Service_Exec_TaskDao.EXEC_TMP), execTaskAux.get(SM_SO_Service_Exec_TaskDao.TASK_TMP));
                 } else {
-                    Log.d("SHORTCUT_STOP", "Exec_tmp e task_tmp não encontrado.");
+//                    Log.d("SHORTCUT_STOP", "Exec_tmp e task_tmp não encontrado.");
                 }
             }
 
