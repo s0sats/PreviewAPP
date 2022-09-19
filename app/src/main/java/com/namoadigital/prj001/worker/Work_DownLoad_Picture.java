@@ -115,7 +115,6 @@ public class Work_DownLoad_Picture extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        Log.d("workerTsts", WORKER_TAG+" :doWork");
         try {
             Data inputData = getInputData();
             customer_code = inputData.getLong(Constant.LOGIN_CUSTOMER_CODE, -1);
@@ -168,8 +167,7 @@ public class Work_DownLoad_Picture extends Worker {
             ///
             return Result.success();
         } catch (Exception e) {
-            Log.d("workerTsts", WORKER_TAG+" : Exception\n" + e.getMessage());
-            ToolBox_Inf.registerException(getClass().getName(), e);
+             ToolBox_Inf.registerException(getClass().getName(), e);
             return Result.retry();
         } finally {
             IS_RUNNING = false;
@@ -202,8 +200,6 @@ public class Work_DownLoad_Picture extends Worker {
              ticketJustifyList.size() +
              ticketActionImgList.size() +
              ticketNcImgList.size() ;
-
-        Log.d("workerTsts", WORKER_TAG+" : Itens to download = " + i);
 
         return dados_geral.size() == 0
             && so_file_list.size() == 0
@@ -438,7 +434,6 @@ public class Work_DownLoad_Picture extends Worker {
     @Override
     public void onStopped() {
         super.onStopped();
-        Log.d("workerTsts", WORKER_TAG+" : onStopped");
     }
     private void processTicketDownloads() throws Exception {
         for (HMAux hmAux : ticketImgList) {

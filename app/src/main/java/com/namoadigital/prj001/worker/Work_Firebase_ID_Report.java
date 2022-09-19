@@ -26,8 +26,6 @@ public class Work_Firebase_ID_Report extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        Log.d("workerTsts", WORKER_TAG+" :doWork");
-
         try {
             if (!ToolBox_Con.getPreference_Session_App(getApplicationContext()).equalsIgnoreCase("")
                 && !ToolBox_Con.getPreference_Google_ID(getApplicationContext()).equalsIgnoreCase("")
@@ -70,7 +68,6 @@ public class Work_Firebase_ID_Report extends Worker {
             }
         }catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(),e);
-            Log.d("workerTsts", WORKER_TAG+" : Exception\n" + e.getMessage());
             return Result.retry();
         }
     }
@@ -78,6 +75,5 @@ public class Work_Firebase_ID_Report extends Worker {
     @Override
     public void onStopped() {
         super.onStopped();
-        Log.d("workerTsts", WORKER_TAG+" : onStopped");
     }
 }

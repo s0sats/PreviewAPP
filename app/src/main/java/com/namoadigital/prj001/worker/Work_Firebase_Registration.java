@@ -26,15 +26,13 @@ public class Work_Firebase_Registration  extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        Log.d("workerTsts", WORKER_TAG+" :doWork");
-        try {
+       try {
             FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
                     @Override
                     public void onComplete(@NonNull Task<InstanceIdResult> task) {
                         if (!task.isSuccessful()) {
                             ToolBox_Inf.registerException(getClass().getName(),task.getException());
-                            Log.d("ID_GOOGLE", "getInstanceId failed", task.getException());
                             return;
                         }
                         String sToken = task.getResult().getToken();
@@ -69,7 +67,6 @@ public class Work_Firebase_Registration  extends Worker {
             return Result.success();
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(),e);
-            Log.d("workerTsts", WORKER_TAG+" : Exception\n" + e.getMessage());
             return Result.retry();
         }
     }
@@ -77,6 +74,5 @@ public class Work_Firebase_Registration  extends Worker {
     @Override
     public void onStopped() {
         super.onStopped();
-        Log.d("workerTsts", WORKER_TAG+" : onStopped");
     }
 }

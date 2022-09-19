@@ -184,15 +184,13 @@ public class Act050_Frag_SO extends BaseFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.d("NEW_OS", "onCreate - > " + String.valueOf(savedInstanceState == null));
-        super.onCreate(savedInstanceState);
+       super.onCreate(savedInstanceState);
         isClientListRequest = true;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d("NEW_OS", "onCreateView - > " + String.valueOf(savedInstanceState == null));
 
         View view = inflater.inflate(R.layout.act050_frag_so, container, false);
         //
@@ -247,12 +245,12 @@ public class Act050_Frag_SO extends BaseFragment {
 
     @Override
     public void onResume() {
-        Log.d("NEW_OS", "onResume ");
+
         super.onResume();
     }
 
     private void recoverBundleInfo(Bundle arguments) {
-        Log.d("NEW_OS", "recoverBundleInfo - > Arguments null " + String.valueOf(arguments == null));
+
         if (arguments != null) {
             this.hmAux_Trans = HMAux.getHmAuxFromHashMap((HashMap<String, String>) arguments.getSerializable(Constant.MAIN_HMAUX_TRANS_KEY));
             this.favorite_code = arguments.getInt(FAVORITE_CODE) != -1 ? arguments.getInt(FAVORITE_CODE) : null;
@@ -1284,7 +1282,7 @@ public class Act050_Frag_SO extends BaseFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        Log.d("NEW_OS", "onAttach");
+
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         }
@@ -1299,21 +1297,20 @@ public class Act050_Frag_SO extends BaseFragment {
 
     @Override
     public void onPause() {
-        Log.d("NEW_OS", "onPause");
+
         super.onPause();
         mListener.updateSO_Creation_Obj(setSOCreationObj());
     }
 
     @Override
     public void onDestroyView() {
-        Log.d("NEW_OS", "onDestroyView");
+
         super.onDestroyView();
     }
 
     @Override
     public void onDestroy() {
-        Log.d("NEW_OS", "onDestroy");
-        super.onDestroy();
+         super.onDestroy();
     }
 
 

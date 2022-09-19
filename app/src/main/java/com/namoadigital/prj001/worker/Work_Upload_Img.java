@@ -31,7 +31,6 @@ public class Work_Upload_Img extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        Log.d("workerTsts", WORKER_TAG + ": doWork");
         long customer_code = -1L;
         try {
             customer_code = getInputData().getLong(Constant.LOGIN_CUSTOMER_CODE,-1);
@@ -58,7 +57,6 @@ public class Work_Upload_Img extends Worker {
             );
             //SE NENHUM ITEM A ENVIAR, SAI DO SERVIÇO SEM CHAMAR NOTIFICAÇÃO
             if (geFiles.size() == 0) {
-                Log.d("workerTsts", WORKER_TAG + ": Nothing to send");
                 return Result.success();
             }
             //Verifica necessida de notificação de upload

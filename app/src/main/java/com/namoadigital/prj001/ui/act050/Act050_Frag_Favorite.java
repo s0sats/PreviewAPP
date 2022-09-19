@@ -166,7 +166,6 @@ public class Act050_Frag_Favorite extends BaseFragment implements Act050_Main_Co
     }
 
     public void populatedFavoritesList(List<SO_Favorite_Item> favorites) {
-        Log.i("SO_Fav", "list size: " + favorites.size());
         List<SO_Favorite_Item> temp = new ArrayList<>();
         SO_Favorite_Item so_favorite_item_placeholder = new SO_Favorite_Item(
                 null,

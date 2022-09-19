@@ -31,7 +31,6 @@ public class Work_DownLoad_Customer_Logo extends Worker {
         long customer_code;
         String user_code;
         try {
-            Log.d("workerTsts", WORKER_TAG+" :doWork");
             Data inputData = getInputData();
             //
             customer_code = inputData.getLong(Constant.LOGIN_CUSTOMER_CODE,-1);
@@ -88,7 +87,6 @@ public class Work_DownLoad_Customer_Logo extends Worker {
             }
             return Result.success();
         } catch (Exception e) {
-            Log.d("workerTsts", WORKER_TAG+" : Exception\n" + e.getMessage());
             ToolBox_Inf.registerException(getClass().getName(), e);
             return Result.failure();
         } finally {
@@ -110,6 +108,5 @@ public class Work_DownLoad_Customer_Logo extends Worker {
     @Override
     public void onStopped() {
         super.onStopped();
-        Log.d("workerTsts", WORKER_TAG+" : onStopped");
     }
 }

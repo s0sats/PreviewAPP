@@ -1522,9 +1522,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                         );
                         //
 //                        Log.d("PC", "messages.size = " + (messages != null ? String.valueOf(messages.size()) : "null"));
-                        if (messages != null && messages.size() > 0) {
+//                        if (messages != null && messages.size() > 0) {
 //                            Log.d("PC", messages.get(0).get("msg_obj"));
-                        }
+//                        }
 
                         while (messages.size() > 0) {
                             //
