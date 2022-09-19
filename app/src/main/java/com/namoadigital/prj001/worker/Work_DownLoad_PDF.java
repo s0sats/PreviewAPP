@@ -62,8 +62,7 @@ public class Work_DownLoad_PDF extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        Log.d("workerTsts", WORKER_TAG+" :doWork");
-        //
+         //
         try{
             Data inpuData = getInputData();
             customer_code = inpuData.getLong(Constant.LOGIN_CUSTOMER_CODE, -1);
@@ -305,8 +304,7 @@ public class Work_DownLoad_PDF extends Worker {
             return Result.success();
 
         } catch (Exception e) {
-            Log.d("workerTsts", WORKER_TAG+" : Exception\n" + e.getMessage());
-            ToolBox_Inf.registerException(getClass().getName(), e);
+             ToolBox_Inf.registerException(getClass().getName(), e);
             return Result.retry();
         } finally {
             IS_RUNNING = false;
@@ -322,8 +320,6 @@ public class Work_DownLoad_PDF extends Worker {
             so_file_list.size() +
             ticket_form_list.size()
             ;
-
-        Log.d("workerTsts", WORKER_TAG+" : Itens to download = " + i);
 
         return dados_geral.size() == 0
             && formAplist.size() == 0
@@ -415,6 +411,5 @@ public class Work_DownLoad_PDF extends Worker {
     @Override
     public void onStopped() {
         super.onStopped();
-        Log.d("workerTsts", WORKER_TAG+" : onStopped");
     }
 }

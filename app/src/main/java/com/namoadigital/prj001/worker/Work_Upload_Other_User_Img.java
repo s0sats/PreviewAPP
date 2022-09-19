@@ -77,7 +77,6 @@ public class Work_Upload_Other_User_Img extends Worker {
             //
             return Result.success();
         } catch (Exception e) {
-            Log.d("workerTsts", WORKER_TAG+" : Exception\n" + e.getMessage());
             ToolBox_Inf.registerException(getClass().getName(), e);
             return  Result.retry();
         } finally {
@@ -91,6 +90,5 @@ public class Work_Upload_Other_User_Img extends Worker {
     @Override
     public void onStopped() {
         super.onStopped();
-        Log.d("workerTsts", WORKER_TAG+" : onStopped");
     }
 }

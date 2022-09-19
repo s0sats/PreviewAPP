@@ -367,7 +367,6 @@ public class Act041_Main extends Base_Activity implements Act041_Main_View {
 
     @Override
     public void callAct040(Context context, String product_code) {
-        Log.d("PRODUCT", product_code.isEmpty() ? "sem nada" : product_code);
         //
         if (product_code.isEmpty()) {
             finish();

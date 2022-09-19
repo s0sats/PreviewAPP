@@ -893,7 +893,6 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
 
         @Override
         protected void onPostExecute(String resultado) {
-            Log.d("ChatEvent", "RoomAsyncTask OnPost");
             super.onPostExecute(resultado);
             Gson gson = new GsonBuilder().serializeNulls().create();
             //Se não retornou nada, finaliza execução.
@@ -955,8 +954,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         @Override
         protected void onCancelled() {
             super.onCancelled();
-            Log.d("ChatEvent", "RoomAsyncTask Cancelada");
-            disablePD();
+           disablePD();
         }
     }
 
@@ -1023,8 +1021,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            Log.d("ChatEvent", "UserListInfoTask PreExecute");
-            //
+             //
             showPD(
                     hmAux_Trans.get("progress_user_list_ttl"),
                     hmAux_Trans.get("progress_user_list_msg"),
@@ -1034,8 +1031,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
 
         @Override
         protected String doInBackground(String... params) {
-            Log.d("ChatEvent", "UserListInfoTask DoInBackground");
-            String resultado = "";
+             String resultado = "";
             try {
                 String socket_id = params[0];
                 String customer_code = params[1];
@@ -1069,7 +1065,6 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
 
         @Override
         protected void onPostExecute(String resultado) {
-            Log.d("ChatEvent", "UserListInfoTask OnPost");
             super.onPostExecute(resultado);
             Gson gson = new GsonBuilder().serializeNulls().create();
             //Se não retornou nada, finaliza execução.
@@ -1127,8 +1122,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         @Override
         protected void onCancelled() {
             super.onCancelled();
-            Log.d("ChatEvent", "UserListInfoTask Cancelada");
-            disablePD();
+             disablePD();
         }
     }
 

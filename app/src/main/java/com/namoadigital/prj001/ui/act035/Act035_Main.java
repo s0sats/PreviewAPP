@@ -556,7 +556,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     public void reloadMessages(ArrayList<HMAux> dados) {
         this.dados = dados;
         //
-        Log.d("PROCESSOS", "ReLoad " + String.valueOf(this.dados.size()) + " Off " + String.valueOf(offSetV));
         //
         if (dados.size() > 0) {
 
@@ -768,11 +767,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
 
 //            lv_messages.setSelection(mFirstUnReadposition);
-            Log.d("VAMOS", "NN " + String.valueOf(mFirstUnReadposition));
 
         } else {
             lv_messages.setSelection(this.dados.size() - 1);
-            Log.d("VAMOS", "XX " + String.valueOf(this.dados.size() - 1));
         }
         //
         sw_messages.setRefreshing(false);
@@ -783,10 +780,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         custom_form_url_pdf = custom_form_url;
 
         String pk_fields[] = pk.replace("|", "#").split("#");
-
-        Log.d("ap_pk", pk);
-        Log.d("ap_pk", String.valueOf(pk_fields.length));
-
 
         File file = new File(Constant.CACHE_PATH + "/" +
                 "form_ap_" +

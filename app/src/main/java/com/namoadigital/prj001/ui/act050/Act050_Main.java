@@ -86,7 +86,6 @@ public class Act050_Main extends Base_Activity_Frag implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("NEW_OS", "Act050 onCreate - > "  + String.valueOf(savedInstanceState == null));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act050_main);
 
@@ -106,7 +105,6 @@ public class Act050_Main extends Base_Activity_Frag implements
     }
 
     private void restoreSavedIntance(Bundle savedInstanceState) {
-        Log.d("NEW_OS", "restoreSavedIntance: "  + savedInstanceState.toString());
         response = (SO_Favorite_Response) savedInstanceState.getSerializable(RESPONSE);
         mSOCreationObj = (SO_Creation_Obj) savedInstanceState.getSerializable(WS_SO_Creation_Save.SO_CREATION_OBJ_KEY);
         isContractSelected = savedInstanceState.getBoolean(IS_CONTRATACT_SELECTED);
@@ -528,8 +526,7 @@ public class Act050_Main extends Base_Activity_Frag implements
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        Log.d("NEW_OS", "Act050 onSaveInstanceState - > "  + String.valueOf(outState == null));
-        //
+         //
         outState.putSerializable(WS_SO_Creation_Save.SO_CREATION_OBJ_KEY,mSOCreationObj);
         outState.putSerializable(RESPONSE,response);
         outState.putBoolean(IS_CONTRATACT_SELECTED, isContractSelected);
@@ -552,8 +549,7 @@ public class Act050_Main extends Base_Activity_Frag implements
 
     @Override
     protected void onDestroy() {
-        Log.d("NEW_OS", "onDestroy");
-        super.onDestroy();
+         super.onDestroy();
     }
 
     //region callActs

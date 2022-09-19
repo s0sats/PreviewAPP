@@ -22,23 +22,17 @@ public class Work_Quarter_Chat_Refresh extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        Log.d("ChatEvent", WORKER_TAG+" :doWork");
-        try {
-            Log.d("ChatEvent"," doWork \n");
-            if (!ToolBox_Inf.isUsrAppLogged(getApplicationContext())) {
-                Log.d("ChatEvent"," notLogged \n");
+         try {
+           if (!ToolBox_Inf.isUsrAppLogged(getApplicationContext())) {
                 return Result.success();
             }
 
             if(!AppBackgroundService.isRunning){
                 ToolBox_Inf.callChatService(getApplicationContext(), CHAT_SERVICE_MODE_SCHEDULED);
             }
-            Log.d("ChatEvent"," AppBackgroundService.isRunning: " + AppBackgroundService.isRunning);
-            Log.d("ChatEvent"," success ");
 
             return Result.success();
         } catch (Exception e) {
-            Log.d("ChatEvent", WORKER_TAG + " : Exception\n" + e.getMessage());
             ToolBox_Inf.registerException(getClass().getName(),e);
             /*
                 Barrionuevo 18-02-2021

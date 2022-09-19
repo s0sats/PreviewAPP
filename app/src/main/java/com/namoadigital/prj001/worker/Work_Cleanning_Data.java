@@ -70,7 +70,6 @@ public class Work_Cleanning_Data extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        Log.d("workerTsts", WORKER_TAG+" :doWork");
         try {
             customer_code = ToolBox_Con.getPreference_Customer_Code(getApplicationContext());
             //Se parametro de customer na preferencias estiver igual a -1 não realizar a limpeza.
@@ -89,7 +88,6 @@ public class Work_Cleanning_Data extends Worker {
             return Result.success();
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
-            Log.d("workerTsts", WORKER_TAG+" : Exception\n" + e.getMessage());
             return Result.retry();
         }
     }
