@@ -160,6 +160,7 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
             script.append("create table if not exists [tk_ticket_type_operations] ([customer_code] int NOT NULL, [ticket_type_code] int NOT NULL, [operation_code] int not null, constraint pk_tk_ticket_type_operations primary key([customer_code], [ticket_type_code], [operation_code]));");
             script.append("create table if not exists [tk_ticket_type_sites] ([customer_code] int not null, [ticket_type_code] int not null, [site_code] int not null, constraint pk_tk_ticket_type_sites primary key([customer_code], [ticket_type_code], [site_code]));");
             script.append("create table if not exists [tk_ticket_type] ([customer_code] int not null, [ticket_type_code] int not null, [ticket_type_id] text not null collate nocase, [ticket_type_desc] text not null collate nocase,[all_site] int not null,[all_operation] int not null,[all_product] int not null,[tag_operational_code] int not null, constraint pk_tk_ticket_type_sites primary key([customer_code], [ticket_type_code]));");
+            script.append("CREATE TABLE IF NOT EXISTS [ge_namoa_table_test]([customer_code] int not null, [user_code] int not null, CONSTRAINT [pk_ge_namoa_table_test] PRIMARY KEY ([customer_code]) );");
             //
             String[] scripts = script.toString().split(";");
             String[] scripts_dados = script_dados.toString().split(";");
@@ -186,6 +187,8 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
         switch (oldVersion){
             case 1:
                 MigrationsKt.getMigrationV1().migrate(db);
+            case 2:
+                MigrationsKt.getMigrationV2().migrate(db);
                 break;
         }
 //        onCreate(db);

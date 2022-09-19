@@ -8,8 +8,8 @@ android {
         applicationId "com.namoadigital.prj001"
         minSdkVersion 21
         targetSdkVersion 31
-        versionCode 78
-        versionName "4.11.0.111"
+        versionCode 79
+        versionName "4.11.0.112"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
         multiDexEnabled true

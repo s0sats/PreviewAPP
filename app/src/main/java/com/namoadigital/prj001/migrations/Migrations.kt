@@ -84,4 +84,20 @@ val MigrationV1 = object : MigrationSQLite(1, 2){
     }
 }
 
+val MigrationV2 = object : MigrationSQLite(2, 3) {
+
+    override fun migrate(db: SQLiteDatabase) {
+        db.execSQL(
+            """
+              CREATE TABLE IF NOT EXISTS [ge_namoa_table_test](
+                  [customer_code] int not null, 
+                  [user_code] int not null, 
+                CONSTRAINT [pk_ge_namoa_table_test] 
+                PRIMARY KEY ([customer_code])
+              );
+            """.trimIndent()
+        )
+    }
+}
+
 
