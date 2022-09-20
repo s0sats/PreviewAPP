@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -99,8 +100,16 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
     }
 
     private void checkForAppUpdate() {
-        updateManager = AppUpdateManagerFactory.create(this);
+        Log.i("inRonaldo", "checkForAppUpdate acessado" );
         mPresenter.checkUpdateAvailable(updateManager);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.i("inRonaldo", "onResume acessado" );
+        mPresenter.checkUpdateInProgess(updateManager);
+
     }
 
     /**
@@ -167,6 +176,8 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         ToolBox_Inf.mkDirectory();
         //
         mPresenter.checkLogin();
+        //
+        updateManager = AppUpdateManagerFactory.create(this);
     }
 
     private void recoverIntentsInfo() {
