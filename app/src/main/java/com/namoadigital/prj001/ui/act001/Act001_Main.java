@@ -100,14 +100,14 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
     }
 
     private void checkForAppUpdate() {
-        Log.i("inRonaldo", "checkForAppUpdate acessado" );
+//        Log.i("inRonaldo", "checkForAppUpdate acessado" );
         mPresenter.checkUpdateAvailable(updateManager);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        Log.i("inRonaldo", "onResume acessado" );
+//        Log.i("inRonaldo", "onResume acessado" );
         mPresenter.checkUpdateInProgess(updateManager);
 
     }
