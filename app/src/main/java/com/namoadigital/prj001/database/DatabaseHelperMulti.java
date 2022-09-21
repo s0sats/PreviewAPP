@@ -178,18 +178,25 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
 
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(),e);
+            setMigrationError(true);
         }
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         //
-        switch (oldVersion){
-            case 1:
-                MigrationsKt.getMigrationV1().migrate(db);
-            case 2:
-                MigrationsKt.getMigrationV2().migrate(db);
-                break;
+        try {
+            switch (oldVersion) {
+                case 1:
+                    MigrationsKt.getMigrationV1().migrate(db);
+                case 2:
+                    MigrationsKt.getMigrationV2().migrate(db);
+                    break;
+            }
+            throw new Exception("Erro no upgrade de banco de dados");
+        }catch (Exception e){
+            setMigrationError(true);
+            ToolBox_Inf.registerException(getClass().getName(),e);
         }
 //        onCreate(db);
     }

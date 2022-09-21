@@ -47,6 +47,11 @@ class Act089MainPresenter(
                 ToolBox_Con.getPreference_Customer_Code(context)
             ));
             //
+            ToolBox_Con.setBooleanPreference(
+                context,
+                DB_MULTI_STATUS_ERROR,
+                false
+            )
         }
 
         if(ToolBox_Con.getBooleanPreferencesByKey(
@@ -59,6 +64,11 @@ class Act089MainPresenter(
                 DB_FULL_BASE
             );
             //
+            ToolBox_Con.setBooleanPreference(
+                context,
+                DB_BASE_STATUS_ERROR,
+                false
+            )
         }
 
         if(ToolBox_Con.getBooleanPreferencesByKey(
@@ -68,6 +78,11 @@ class Act089MainPresenter(
         )){
             context.deleteDatabase(DB_FULL_CHAT);
             //
+            ToolBox_Con.setBooleanPreference(
+                context,
+                DB_CHAT_STATUS_ERROR,
+                false
+            )
         }
         mView.callLogout()
     }
