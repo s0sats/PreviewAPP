@@ -133,4 +133,5 @@
     <string name="act002_ws_ticket_download_msg">Baixando tickets desatualizados.</string>
     <string name="msg_synchronizing_data">Sincronizando dados</string>
     <string name="error_on_inapp_start_update_flow">\"Error on call update app via Google Play \"</string>
+    <string name="msg_cancelled_by_user">Atualização cancelada.</string>
 </resources>

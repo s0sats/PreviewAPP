@@ -36,6 +36,7 @@
     <string name="generic_zip_not_found_msg">ZIP file not found!\nPlease try again</string>
     <string name="msg_no_forms_found">None Form found for this Product!</string>
     <string name="act002_title_">Customers List</string>
+    <string name="msg_update_canceled">Update Canceled</string>
     <!--LIB -->
     <string name="nfc_activity_title">NFC Scan</string>
     <string name="nfc_activity_desc">Approach an NFC Tag on you device</string>

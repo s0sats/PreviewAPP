@@ -193,7 +193,6 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
                     MigrationsKt.getMigrationV2().migrate(db);
                     break;
             }
-            throw new Exception("Erro no upgrade de banco de dados");
         }catch (Exception e){
             setMigrationError(true);
             ToolBox_Inf.registerException(getClass().getName(),e);

@@ -364,7 +364,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         if( requestCode == ConstantBaseApp.PLAYSTORE_UPDATE_REQUEST_CODE
             && resultCode != RESULT_OK
         ){
-            ToolBox.toastMSG(context,"Cancelado pelo usr");
+            ToolBox.toastMSG(context,getResources().getString(R.string.msg_update_canceled));
         }
     }
 
