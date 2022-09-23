@@ -41,6 +41,10 @@ android {
 
     productFlavors {
 
+        productionGP {
+            applicationId "com.namoadigital.prj001.productiongp"
+        }
+
         production {
             applicationId "com.namoadigital.prj001.production"
         }
@@ -118,6 +122,7 @@ dependencies {
 
     developmentImplementation namoaLibVersion
     productionImplementation namoaLibVersion
+    productionGPImplementation namoaLibVersion
 
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.1'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1'

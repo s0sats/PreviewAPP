@@ -1,10 +1,11 @@
 package com.namoadigital.prj001.ui;
 
 import static com.namoa_digital.namoa_library.util.ConstantBase.PKG_CLEAN;
+import static com.namoadigital.prj001.util.Constant.CACHE_PATH;
+import static com.namoadigital.prj001.util.Constant.CACHE_PATH_PHOTO;
+import static com.namoadigital.prj001.util.Constant.CACHE_PDF;
+import static com.namoadigital.prj001.util.ConstantBaseApp.DB_PREFIX_CUSTOM;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CACHE_CHAT_PATH;
-import static com.namoadigital.prj001.util.ConstantBaseApp.CACHE_PATH;
-import static com.namoadigital.prj001.util.ConstantBaseApp.CACHE_PATH_PHOTO;
-import static com.namoadigital.prj001.util.ConstantBaseApp.CACHE_PDF;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_NAME_FULL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_PREFIX;
@@ -17,7 +18,6 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.DB_NAME_CHAT;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DB_NAME_CUSTOM;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DB_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DB_PREFIX_BASE;
-import static com.namoadigital.prj001.util.ConstantBaseApp.DB_PREFIX_CUSTOM;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DB_SUFIX;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DB_VERSION_BASE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DB_VERSION_CHAT;
@@ -25,12 +25,12 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.DB_VERSION_CUSTOM;
 import static com.namoadigital.prj001.util.ConstantBaseApp.GENERIC_CHANNEL_ID;
 import static com.namoadigital.prj001.util.ConstantBaseApp.IMG_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PENDENCY_CHANNEL_ID;
+import static com.namoadigital.prj001.util.ConstantBaseApp.SO_EXPRESS_JSON_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME_FULL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.THU_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TICKET_JSON_PATH;
-import static com.namoadigital.prj001.util.ConstantBaseApp.SO_EXPRESS_JSON_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SERIAL_NAME_FULL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SERIAL_PREFIX;
@@ -50,14 +50,10 @@ import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoadigital.prj001.BuildConfig;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.receiver.WBR_Connections_Change;
+import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
-
-
-/**
- * Created by neomatrix on 09/01/17.
- */
 
 public class AppBase extends Application {
 
@@ -70,8 +66,6 @@ public class AppBase extends Application {
     public static final String CHAT_DIR = "/chat";
     public static final String UNSENT_IMGS_DIR = "/unsentImgs";
     public static final String TICKET_DIR = "/ticket";
-    public static final String SO_EXPRESS_DIR = "/expressSO";
-    public static final String CUSTOMER_SITE_LICENSE_JSON_DIR = "/customerSiteLicense";
     public static final String NAMOA_PEND_INFO = "Namoa Pend. Info.";
     public static final String NAMOA_NOTIF_INFO = "Namoa Notif. Info.";
     private static Thread.UncaughtExceptionHandler mDefaultUncaughtExceptionHandler;
@@ -95,17 +89,18 @@ public class AppBase extends Application {
         });
         //
         // Infra PATH
-        DB_PATH = getApplicationContext().getExternalFilesDir(null) + NAMOA_DIR;
-        ZIP_PATH = DB_PATH + ZIPS_DIR;
-        IMG_PATH = DB_PATH + IMGS_DIR;
-        THU_PATH = DB_PATH + THUMBNAIL_DIR;
-        SUPPORT_PATH = DB_PATH + SUPPORT_DIR;
-        TOKEN_PATH = DB_PATH + TOKEN_DIR;
-        CHAT_PATH = DB_PATH + CHAT_DIR;
-        UNSENT_IMG_PATH = IMG_PATH + UNSENT_IMGS_DIR;
-        TICKET_JSON_PATH = DB_PATH + TICKET_DIR;
-        SO_EXPRESS_JSON_PATH = DB_PATH + SO_EXPRESS_DIR;
-        CUSTOMER_SITE_LICENSE_JSON_PATH = DB_PATH + CUSTOMER_SITE_LICENSE_JSON_DIR;
+        DB_PATH = getFilesDir().getPath();
+
+        ZIP_PATH = DB_PATH + "/zips";
+        IMG_PATH = DB_PATH + "/imgs";
+        THU_PATH = DB_PATH + "/thumbnail";
+        SUPPORT_PATH = DB_PATH + "/support";
+        TOKEN_PATH = DB_PATH + "/token";
+        CHAT_PATH = DB_PATH + "/chat";
+        UNSENT_IMG_PATH = IMG_PATH + "/unsentImgs";
+        TICKET_JSON_PATH = DB_PATH + "/ticket";
+        SO_EXPRESS_JSON_PATH = DB_PATH + "/expressSO";
+        CUSTOMER_SITE_LICENSE_JSON_PATH = DB_PATH + "/customerSiteLicense";
 
         ZIP_NAME = "namoa_sms.zip";
         ZIP_NAME_FULL = ZIP_PATH + "/" + ZIP_NAME;
@@ -118,16 +113,16 @@ public class AppBase extends Application {
         TOKEN_SO_PREFIX = "so_token_";
         TOKEN_SERIAL_PREFIX = "serial_token_";
 
-        TOKEN_SO_NAME_FULL = TOKEN_PATH + "/" + TOKEN_SO_PREFIX;
-        TOKEN_SERIAL_NAME_FULL = TOKEN_PATH + "/" + TOKEN_SERIAL_PREFIX;
+        TOKEN_SO_NAME_FULL = TOKEN_PATH +"/" + TOKEN_SO_PREFIX;
+        TOKEN_SERIAL_NAME_FULL = TOKEN_PATH +"/" + TOKEN_SERIAL_PREFIX;
 
         CHAT_PREFIX = "chat_";
         CHAT_NAME_FULL = CHAT_PATH + "/" + CHAT_PREFIX;
 
-        CACHE_PATH = getApplicationContext().getExternalFilesDir(null) + "/CC_CACHE";
-        CACHE_PATH_PHOTO = getApplicationContext().getExternalFilesDir(null) + "/CC_CACHE_PHOTO";
-        CACHE_CHAT_PATH = getApplicationContext().getExternalFilesDir(null) + "/CC_CACHE_CHAT";
-        CACHE_PDF = getApplicationContext().getExternalFilesDir(null) + "/CC_CACHE_PDF";
+        CACHE_PATH = DB_PATH + "/CC_CACHE";
+        CACHE_CHAT_PATH = DB_PATH + "/CC_CACHE_CHAT";
+        CACHE_PATH_PHOTO = DB_PATH + "/CC_CACHE_PHOTO";
+        CACHE_PDF = DB_PATH + "/CC_CACHE_PDF";
         ConstantBaseApp.APK_PATH = getApplicationContext().getExternalFilesDir(null) + "/namoa_apk";
         ConstantBaseApp.CAM_TEST_PATH = getApplicationContext().getExternalFilesDir(null) + "/camtest";
 
@@ -138,17 +133,17 @@ public class AppBase extends Application {
 
         DB_NAME_CUSTOM = "cc" + DB_SUFIX ;
         DB_PREFIX_CUSTOM = "namoa_app_";
-        DB_VERSION_CUSTOM = 1;
+        DB_VERSION_CUSTOM = 3;
         DB_FULL_CUSTOM = DB_PATH + "/" + DB_NAME_CUSTOM;
 
         //DB_NAME_CHAT = "namoa_chat.db3";
         DB_VERSION_CHAT = 6;
-        DB_FULL_CHAT = DB_PATH + "/" + DB_NAME_CHAT + DB_SUFIX;
+        DB_FULL_CHAT = DB_PATH + "/" + DB_NAME_CHAT;
 
-        ConstantBaseApp.PRJ001_VERSION_CODE = BuildConfig.VERSION_CODE;
-        ConstantBaseApp.PRJ001_VERSION = BuildConfig.VERSION_NAME;
+        Constant.PRJ001_VERSION_CODE = BuildConfig.VERSION_CODE;
+        Constant.PRJ001_VERSION = BuildConfig.VERSION_NAME;
 
-        PKG_CLEAN = String.valueOf(ConstantBaseApp.PRJ001_VERSION);
+        PKG_CLEAN = String.valueOf(Constant.PRJ001_VERSION);
 
         String PGK_CLEAN_P = ToolBox_Con.getPreference_PKG_CLEAN(getApplicationContext());
         /**
@@ -158,31 +153,36 @@ public class AppBase extends Application {
          * Por hora, esse tipo, identifica se é flavor com ou sem ocr.
          * Caso esse o tipo mude, significa que o as preferencias devem ser zeradas enviado o user
          * para a tela de login.
-         * OBS: OS FLAVOR COM OCR DEVEM TER SETADO COMO PREFERENCIA  PKG_APP_TYPE O VALOR PKG_APP_TYPE_MICROBLINK_OCR_VIN
+         * OBS: OS FLAVOR COM OCR DEVEM TER SETADO COMO Constant.PKG_APP_TYPE_DEFAULT O VALOR PKG_APP_TYPE_MICROBLINK_OCR_VIN
          * ENQUANTO AS SEM OCR VALOR PKG_APP_TYPE_STANDARD
          */
-        ConstantBaseApp.PKG_APP_TYPE_DEFAULT = ConstantBaseApp.PKG_APP_TYPE_STANDARD;
+        Constant.PKG_APP_TYPE_DEFAULT = Constant.PKG_APP_TYPE_STANDARD;
         String PGK_APP_TYPE_P = ToolBox_Con.getPreference_PKG_APP_TYPE(getApplicationContext());
         //
-        if (!PKG_CLEAN.equals(PGK_CLEAN_P) || !ConstantBaseApp.PKG_APP_TYPE_DEFAULT.equals(PGK_APP_TYPE_P)) {
+        if (!PKG_CLEAN.equals(PGK_CLEAN_P) || !Constant.PKG_APP_TYPE_DEFAULT.equals(PGK_APP_TYPE_P)) {
             ToolBox_Con.cleanPreferences(getApplicationContext());
             if(!PKG_CLEAN.equals(PGK_CLEAN_P)) {
                 ToolBox_Con.setPreference_PKG_CLEAN(getApplicationContext(), PKG_CLEAN);
             }
             //
-            if(!ConstantBaseApp.PKG_APP_TYPE_DEFAULT.equals(PGK_APP_TYPE_P)) {
-                ToolBox_Con.setPreference_PKG_APP_TYPE(getApplicationContext(), ConstantBaseApp.PKG_APP_TYPE_DEFAULT);
+            if(!Constant.PKG_APP_TYPE_DEFAULT.equals(PGK_APP_TYPE_P)) {
+                ToolBox_Con.setPreference_PKG_APP_TYPE(getApplicationContext(), Constant.PKG_APP_TYPE_DEFAULT);
             }
+        }
+
+        if (!PKG_CLEAN.equals(PGK_CLEAN_P)) {
+            ToolBox_Con.cleanPreferences(getApplicationContext());
+            ToolBox_Con.setPreference_PKG_CLEAN(getApplicationContext(), PKG_CLEAN);
         }
 
         ToolBox_Inf.libTranslation(getApplicationContext());
 
-        ConstantBaseApp.DEVELOPMENT_BASE = ToolBox_Inf.isDevelopmentBase();
+        Constant.DEVELOPMENT_BASE = ToolBox_Inf.isDevelopmentBase();
 
-        ConstantBaseApp.HM_ICON_NAMOA = R.mipmap.ic_namoa;
-        ConstantBaseApp.HM_ICON_NAMOA_GO_ACT021 = "com.namoadigital.prj001.ui.act021.Act021_Main";
-        ConstantBaseApp.HM_ICON_NAMOA_SERVICES = R.drawable.ic_n_service2_24x24;
+        Constant.HM_ICON_NAMOA = R.mipmap.ic_namoa;
+        Constant.HM_ICON_NAMOA_GO_ACT021 = "com.namoadigital.prj001.ui.act021.Act021_Main";
         ConstantBase.AUTHORITIES_FOR_PROVIDER = BuildConfig.APPLICATION_ID + ".fileprovider";
+
         /**
          * Migração target28+
          */
@@ -197,10 +197,4 @@ public class AppBase extends Application {
         IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(connectionsChange,intentFilter);
     }
-
 }
-
-
-
-
-

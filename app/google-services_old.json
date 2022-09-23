@@ -8,35 +8,6 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:667926931448:android:3fe019a6cf44a4b1",
-        "android_client_info": {
-          "package_name": "com.namoadigital.gcmtest"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "667926931448-anjsa427d2lp8377kig5mk6temgq2b4q.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDppJ_Ig8PKmWVozF84YzXjP2xce82FecA"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "667926931448-anjsa427d2lp8377kig5mk6temgq2b4q.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
         "mobilesdk_app_id": "1:667926931448:android:100910a917207f09",
         "android_client_info": {
           "package_name": "com.namoadigital.prj001"
@@ -54,21 +25,23 @@
         }
       ],
       "services": {
+        "analytics_service": {
+          "status": 1
+        },
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "667926931448-anjsa427d2lp8377kig5mk6temgq2b4q.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
         }
       }
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:667926931448:android:8cac0f9c298098b1",
+        "mobilesdk_app_id": "1:667926931448:android:3fe019a6cf44a4b1",
         "android_client_info": {
-          "package_name": "com.namoadigital.prj001.development"
+          "package_name": "com.namoadigital.gcmtest"
         }
       },
       "oauth_client": [
@@ -83,13 +56,15 @@
         }
       ],
       "services": {
+        "analytics_service": {
+          "status": 1
+        },
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "667926931448-anjsa427d2lp8377kig5mk6temgq2b4q.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
         }
       }
     },
@@ -112,21 +87,23 @@
         }
       ],
       "services": {
+        "analytics_service": {
+          "status": 1
+        },
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "667926931448-anjsa427d2lp8377kig5mk6temgq2b4q.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
         }
       }
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:667926931448:android:23375dffde9d55601e580d",
+        "mobilesdk_app_id": "1:667926931448:android:8cac0f9c298098b1",
         "android_client_info": {
-          "package_name": "com.namoadigital.prj001.productiongp"
+          "package_name": "com.namoadigital.prj001.development"
         }
       },
       "oauth_client": [
@@ -141,13 +118,15 @@
         }
       ],
       "services": {
+        "analytics_service": {
+          "status": 1
+        },
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "667926931448-anjsa427d2lp8377kig5mk6temgq2b4q.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
         }
       }
     }
