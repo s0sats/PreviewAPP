@@ -4,9 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.act089.Act089Main"
+    tools:context=".ui.act089.mvp.ui.Act089Main"
     >
 
+<!--
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,8 +21,12 @@
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
     </com.google.android.material.appbar.AppBarLayout>
+-->
 
     <include
         android:id="@+id/act089_main_content"
-        layout="@layout/act089_main_content" />
+        layout="@layout/act089_main_content"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

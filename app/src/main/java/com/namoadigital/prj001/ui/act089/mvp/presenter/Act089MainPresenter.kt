@@ -1,4 +1,4 @@
-package com.namoadigital.prj001.ui.act089
+package com.namoadigital.prj001.ui.act089.mvp.presenter
 
 import android.content.Context
 import android.content.Intent
@@ -6,6 +6,8 @@ import android.os.Bundle
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.receiver.WBR_Upload_Support
 import com.namoadigital.prj001.ui.act005.Act005_Main
+import com.namoadigital.prj001.ui.act089.Act089MainContract
+import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp.*
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -37,8 +39,48 @@ class Act089MainPresenter(
         }
     }
 
-    override fun rebuildDatabase(context: Context) {
-        if(ToolBox_Con.getBooleanPreferencesByKey(
+
+    private val dbListErrors = mutableListOf<Triple<String, String, Int>>(
+        Triple(ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), DB_MULTI_STATUS_ERROR, Constant.DB_VERSION_CUSTOM),
+        Triple(DB_FULL_BASE, DB_BASE_STATUS_ERROR, Constant.DB_VERSION_BASE),
+        Triple(DB_FULL_CHAT, DB_CHAT_STATUS_ERROR, Constant.DB_VERSION_CHAT),
+    )
+
+    override fun getDbError(): String {
+
+        val dbCorrupted = mutableListOf<String>()
+        val separator = "/"
+
+        dbListErrors.forEach { (db, status_error, version) ->
+
+            if(checkIfDbCorrupted(status_error)){
+                db.split(separator).let {
+                    dbCorrupted.add("${it[it.lastIndex]} ~ |v$version|")
+                }
+            }
+        }
+
+        return dbCorrupted.joinToString()
+    }
+
+
+    private fun checkIfDbCorrupted(status_error: String) = ToolBox_Con.getBooleanPreferencesByKey(context, status_error, false)
+
+    override fun rebuildDatabase() {
+
+        dbListErrors.forEach { (db, status_error, _) ->
+            if(checkIfDbCorrupted(status_error)){
+                context.deleteDatabase(db)
+                ToolBox_Con.setBooleanPreference(
+                    context,
+                    status_error,
+                    false
+                )
+            }
+        }
+
+
+/*        if(ToolBox_Con.getBooleanPreferencesByKey(
                 context,
                 DB_MULTI_STATUS_ERROR,
                 false
@@ -83,8 +125,7 @@ class Act089MainPresenter(
                 DB_CHAT_STATUS_ERROR,
                 false
             )
-        }
-        mView.callLogout()
+        }*/
     }
 
 }

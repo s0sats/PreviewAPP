@@ -27,6 +27,7 @@ import com.namoadigital.prj001.BuildConfig;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
+import com.namoadigital.prj001.ui.act089.mvp.ui.Act089Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -58,7 +59,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        int version = BuildConfig.VERSION_CODE;
+        int version =  BuildConfig.VERSION_CODE;
         String name = BuildConfig.VERSION_NAME;
 
         //LUCHE - 22/04/2020

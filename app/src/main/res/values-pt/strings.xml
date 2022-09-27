@@ -134,4 +134,24 @@
     <string name="msg_synchronizing_data">Sincronizando dados</string>
     <string name="error_on_inapp_start_update_flow">\"Error on call update app via Google Play \"</string>
     <string name="msg_cancelled_by_user">Atualização cancelada.</string>
+    <string name="database_recovery_term_lbl">Aconteceu que o banco de dados foi corrompido e não pode ser utilizado para as
+finalidades originalmente estabelecidas. Recomenda-se a reconstrução do banco de dados,
+ para que seja feita uma nova operação de importação ou exportação de dados.</string>
+    <string name="dialog_destroy_db_ttl">Destruir o banco de dados</string>
+    <string name="dialog_confirm_delete_db">Você realmente deseja destruir o bando de dados atual?</string>
+    <string name="dialog_yes_db_lbl">Sim, quero</string>
+    <string name="dialog_cancel_db_lbl">Cancelar</string>
+
+    <string name="alert_support_finish_ttl">Dados enviados</string>
+    <string name="alert_support_finish_msg">Dados enviados com sucesso.</string>
+    <string name="progress_support_msg">Enviando os dados para o suporte...</string>
+    <string name="progress_support_ttl">Enviando suporte</string>
+    <string name="database_error_msg">Banco de dados corrompido</string>
+    <string name="recovery_database_btn">Deletar e re-construir</string>
+
+
+
+
+
+
 </resources>

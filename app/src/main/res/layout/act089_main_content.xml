@@ -4,76 +4,67 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.act089.Act089Main"
+    tools:context=".ui.act089.mvp.ui.Act089Main"
     tools:showIn="@layout/act089_main"
+    android:padding="15dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
 
     <ImageView
         android:id="@+id/iv_allert_disclaimer"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_support_disclaimer"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tv_support_disclaimer"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_warning_outline_24dp"
         app:tint="@color/namoa_cancel_red" />
 
     <TextView
         android:id="@+id/tv_support_disclaimer"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@drawable/namoa_icon_bg_states"
-        android:drawablePadding="10dp"
-        android:paddingStart="19dp"
-        android:paddingTop="10dp"
-        android:paddingEnd="10dp"
-        android:paddingBottom="10dp"
-        android:text="Enviar dados de suporte"
-        android:textSize="@dimen/font_size_font_16"
-        app:drawableTintMode="src_atop"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/iv_allert_disclaimer"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tv_support_data_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/namoa_btn_bg_states"
-        android:drawablePadding="10dp"
-        android:paddingStart="32dp"
-        android:paddingTop="10dp"
-        android:paddingEnd="32dp"
-        android:paddingBottom="10dp"
-        android:text="Enviar dados de suporte"
+        android:padding="15dp"
+        android:text="Banco de dados corrompido"
+        android:textColor="@color/namoa_cancel_red"
+        android:alpha="0.9"
+        style="@style/TextAppearance.Material3.TitleMedium"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="@+id/iv_allert_disclaimer"
+        app:layout_constraintStart_toStartOf="@+id/iv_allert_disclaimer"
+        app:layout_constraintTop_toBottomOf="@+id/iv_allert_disclaimer" />
+
+
+    <TextView
+        android:id="@+id/tv_support_accord"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:textAlignment="center"
         android:textSize="@dimen/font_size_font_16"
-        app:drawableStartCompat="@drawable/ic_file_upload_black_24dp"
-        app:drawableTint="@color/namoa_dark_blue"
-        app:drawableTintMode="src_atop"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.517"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_support_disclaimer" />
 
-    <TextView
-        android:id="@+id/tv_recovery_data_btn"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_recovery_data"
+        style="@style/MaterialButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/namoa_btn_bg_states"
-        android:drawablePadding="10dp"
-        android:paddingStart="32dp"
-        android:paddingTop="10dp"
-        android:paddingEnd="32dp"
-        android:paddingBottom="10dp"
+        android:gravity="center"
+        android:layout_margin="15dp"
         android:text="Reconstruir banco de dados"
-        android:textSize="@dimen/font_size_font_16"
-        app:drawableStartCompat="@drawable/ic_baseline_sync_24"
-        app:drawableTint="@color/namoa_dark_blue"
-        app:drawableTintMode="src_atop"
+        android:textAlignment="center"
+        android:textColor="@color/padrao_WHITE"
+        app:icon="@drawable/ic_baseline_sync_24"
+        app:iconGravity="textStart"
+        app:iconTint="@color/padrao_WHITE"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_support_data_btn" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_support_accord" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

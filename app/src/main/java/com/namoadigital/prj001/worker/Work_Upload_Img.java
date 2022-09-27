@@ -103,11 +103,9 @@ public class Work_Upload_Img extends Worker {
                 }
             }
             //
-            Log.d("workerTsts", WORKER_TAG + ": Img sent");
-            return Result.success();
+             return Result.success();
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
-            Log.d("workerTsts", WORKER_TAG + ": Error retry");
             return Result.retry();
         } finally {
             ToolBox_Inf.callPendencyNotification(getApplicationContext());
@@ -131,6 +129,5 @@ public class Work_Upload_Img extends Worker {
     @Override
     public void onStopped() {
         super.onStopped();
-        Log.d("workerTsts", WORKER_TAG + ": onStopped");
     }
 }

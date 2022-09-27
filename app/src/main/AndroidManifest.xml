@@ -608,7 +608,7 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ui.act089.Act089Main"
+            android:name=".ui.act089.mvp.ui.Act089Main"
             android:exported="false"
             android:label="@string/app_name"
             android:screenOrientation="portrait"

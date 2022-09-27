@@ -246,5 +246,8 @@
         <item name="cornerSizeBottomLeft">16dp</item>
     </style>
 
+    <style name="MaterialButtonStyle" parent="Widget.Material3.Button.Icon">
+        <item name="backgroundTint">@color/dark_gray_states</item>
+    </style>
 
 </resources>

@@ -21,8 +21,7 @@ public class Work_Quarter_Schedule_Notification extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        Log.d("workerTsts", WORKER_TAG+" :doWork");
-        try {
+       try {
             long customer_code =-1L;
             customer_code = ToolBox_Con.getPreference_Customer_Code(getApplicationContext());
             /*
@@ -38,8 +37,7 @@ public class Work_Quarter_Schedule_Notification extends Worker {
             );
             return Result.success();
         } catch (Exception e) {
-            Log.d("workerTsts", WORKER_TAG+" : Exception\n" + e.getMessage());
-            ToolBox_Inf.registerException(getClass().getName(),e);
+             ToolBox_Inf.registerException(getClass().getName(),e);
             return Result.retry();
         }
     }

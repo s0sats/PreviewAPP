@@ -148,6 +148,13 @@
     <string name="alert_support_ttl">Send Support Data.</string>
     <string name="alert_support_empty_contact">Contact is required!</string>
     <string name="alert_support_empty_msg">Message is required</string>
+    <string name="database_recovery_term_lbl">It has happened that the database has become corrupted and cannot be used for
+the intentions It is recommended to rebuild the database,
+ for a new wipe or data wipe operation to be performed.</string>
+    <string name="dialog_destroy_db_ttl">Destroy the database</string>
+    <string name="dialog_confirm_delete_db">Do you really want to destroy the current database?</string>
+    <string name="dialog_yes_db_lbl">Yes, i want</string>
+    <string name="dialog_cancel_db_lbl">Cancel</string>
 
 
 </resources>

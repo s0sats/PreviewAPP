@@ -1,6 +1,9 @@
 package com.namoadigital.prj001.ui.act005;
 
 import static com.namoadigital.prj001.ui.act005.Act005_Main_Presenter_Impl.SYNC_FOR_TICKETS_FORM;
+import static com.namoadigital.prj001.util.ConstantBaseApp.DB_BASE_STATUS_ERROR;
+import static com.namoadigital.prj001.util.ConstantBaseApp.DB_CHAT_STATUS_ERROR;
+import static com.namoadigital.prj001.util.ConstantBaseApp.DB_MULTI_STATUS_ERROR;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FCM_ACTION_TK_TICKET_UPDATE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FCM_MODULE_SYNC;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FCM_MODULE_TICKET;
@@ -101,7 +104,7 @@ import com.namoadigital.prj001.ui.act069.Act069_Main;
 import com.namoadigital.prj001.ui.act083.Act083_Main;
 import com.namoadigital.prj001.ui.act084.Act084Main;
 import com.namoadigital.prj001.ui.act085.Act085Main;
-import com.namoadigital.prj001.ui.act089.Act089Main;
+import com.namoadigital.prj001.ui.act089.mvp.ui.Act089Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -305,9 +308,23 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
          */
         mDrawerLayout.requestFocus();
         //
+
+        ToolBox_Con.setBooleanPreference(
+                context,
+                DB_CHAT_STATUS_ERROR,
+                true
+        );
+
+        ToolBox_Con.setBooleanPreference(
+                context,
+                DB_MULTI_STATUS_ERROR,
+                true
+        );
+
         if(ToolBox_Inf.hasAnyDatabaseOnUpgradeError(context)) {
             call_Act089_Main(context);
         }
+
     }
 
     private void retryGetLocation() {
