@@ -309,20 +309,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         mDrawerLayout.requestFocus();
         //
 
-        ToolBox_Con.setBooleanPreference(
-                context,
-                DB_CHAT_STATUS_ERROR,
-                true
-        );
-
-        ToolBox_Con.setBooleanPreference(
-                context,
-                DB_MULTI_STATUS_ERROR,
-                true
-        );
 
         if(ToolBox_Inf.hasAnyDatabaseOnUpgradeError(context)) {
-            call_Act089_Main(context);
+            call_Act089_Main();
         }
 
     }
@@ -3231,7 +3220,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     }
 
 
-    public void call_Act089_Main(Context context) {
+    public void call_Act089_Main() {
         Intent mIntent = new Intent(context, Act089Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 

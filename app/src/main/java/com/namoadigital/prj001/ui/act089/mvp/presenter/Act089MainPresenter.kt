@@ -54,9 +54,10 @@ class Act089MainPresenter(
         dbListErrors.forEach { (db, status_error, version) ->
 
             if(checkIfDbCorrupted(status_error)){
-                db.split(separator).let {
-                    dbCorrupted.add("${it[it.lastIndex]} ~ |v$version|")
-                }
+
+                val list = db.split(separator)
+                dbCorrupted.add("${list[list.lastIndex]} ~ |v$version|")
+
             }
         }
 
