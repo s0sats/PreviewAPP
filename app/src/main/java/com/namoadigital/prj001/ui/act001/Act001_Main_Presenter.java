@@ -14,6 +14,9 @@ public interface Act001_Main_Presenter {
 
     void checkLogin();
 
+    //checar se o antigo app esta instalado no device.
+    boolean isPackageInstalled();
+
     void checkUpdateAvailable(AppUpdateManager updateManager);
 
     void checkUpdateInProgess(AppUpdateManager updateManager);

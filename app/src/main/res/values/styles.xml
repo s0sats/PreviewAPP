@@ -248,6 +248,8 @@
 
     <style name="MaterialButtonStyle" parent="Widget.Material3.Button.Icon">
         <item name="backgroundTint">@color/dark_gray_states</item>
+        <item name="background">@color/dark_gray_states</item>
+        <item name="backgroundColor">@color/dark_gray_states</item>
     </style>
 
 </resources>

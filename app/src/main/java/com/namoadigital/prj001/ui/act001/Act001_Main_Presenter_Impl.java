@@ -1,8 +1,11 @@
 package com.namoadigital.prj001.ui.act001;
 
+import static com.namoadigital.prj001.util.ToolBox_Inf.OLD_PACKAGE_NAME;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -95,6 +98,11 @@ public class Act001_Main_Presenter_Impl implements Act001_Main_Presenter {
                 mView.call_Act002_Main(context);
             }
         }
+    }
+
+    @Override
+    public boolean isPackageInstalled() {
+        return ToolBox_Inf.isPackageInstalled(OLD_PACKAGE_NAME, context.getPackageManager());
     }
 
     @Override

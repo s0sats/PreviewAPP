@@ -2,6 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.namoadigital.prj001">
 
+    <queries>
+        <!-- Explicit apps you know in advance about: -->
+        <package android:name="com.namoadigital.prj001.production"/>
+        <package android:name="com.namoadigital.prj001.development"/>
+    </queries>
+
     <uses-permission android:name="android.permission.INTERNET" /> <!-- <uses-permission android:name="android.permission.READ_PHONE_STATE" /> -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />

@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,7 +26,6 @@ import com.namoadigital.prj001.BuildConfig;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
-import com.namoadigital.prj001.ui.act089.mvp.ui.Act089Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -216,6 +214,13 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
                 mPassWord = et_password.getText().toString().replace("\"", "'").trim();
                 mNFC = "";
 
+
+                /*if(mPresenter.isPackageInstalled()){
+                    ToolBox.alertMSG(context, "Remova o App Antigo",
+                            "Detectamos que você está com um versão antiga do aplicativo, desinstale-o aplicativo para continuar",
+                            (dialog, i) -> {}, 0);
+                    return;
+                }*/
                 mPresenter.validateLogin(mk_login.getText().toString().trim(),
                         et_password.getText().toString().replace("\"", "'").trim(),
                         ""

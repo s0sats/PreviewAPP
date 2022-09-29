@@ -36,6 +36,8 @@
     <string name="generic_zip_not_found_msg">Arquivo zip não encontrado!\nPor favor tente novamente</string>
     <string name="msg_no_forms_found">Nenhum formulário encontrado para esse produto!</string>
     <string name="act002_title_">Lista de Clientes    </string>
+	<string name="msg_update_canceled">Atualização cancelada.</string>
+	
     <!--LIB-->
     <string name="nfc_activity_title">NFC Scanner</string>
     <string name="nfc_activity_desc">Aproxime a Tag NFC do seu dispositivo</string>
@@ -108,9 +110,12 @@
     <string name="msg_customer_pendencies_list">Cliente :\n</string>
     <string name="msg_update_required_warning">Nova versão disponível!\nPara atualizar, envie os dados pendentes.</string>
 
+	<!--Licenças por Site-->
     <string name="msg_login_invalid_current_time">A data/hora do seu aparelho está incompatível com o servidor Namoa.\nAjuste a data/hora do seu aparelho e tente novamente.</string>
     <string name="act002_ws_site_license_ttl">Sites licenciados</string>
     <string name="act002_ws_site_license_msg">Carregando lista de Sites com licenças disponíveis.</string>
+    <string name="act002_ws_ticket_download_ttl">Download de Tickets</string>
+    <string name="act002_ws_ticket_download_msg">Baixando Tickets desatualizados.</string>
     <string name="license_site_dialog_ttl">Sites licenciados</string>
     <string name="license_site_dialog_filter_hint">Escolha o Site da sua licença</string>
     <string name="license_site_dialog_close">Cancelar</string>
@@ -118,7 +123,8 @@
     <string name="act002_alt_no_licenses_returned_msg">Nenhum Site licenciado disponível para o Usuário.\nFavor tentar novamente mais tarde ou entrar em contato com a sua equipe de TI interna para verificar a quantidade de licenças disponíveis.</string>
     <string name="act002_alt_license_list_not_found_ttl">Falha: Sites licenciados</string>
     <string name="act002_alt_license_list_not_found_msg">Erro ao caregar lista de sites licenciados!\nArquivo ou lista de licenças não encontradas.\nTente novamente.</string>
-    <!--Permissão da camera-->
+    
+	<!--Permissão da camera-->
     <string name="lib_alert_allow_btn">Permitir</string>
     <string name="lib_alert_deny_btn">Negar</string>
     <string name="lib_alert_settings_btn">Configurações</string>
@@ -126,32 +132,37 @@
     <string name="lib_alert_camera_never_ask_again_msg">A permissão de acesso a câmera foi negada permanentemente!\nPara permitir o uso da câmera, click no botão em Configurações, Permissões -> Câmera -> Permitir</string>
     <string name="lib_alert_rationale_camera_permission_ttl">Permissão de Câmera</string>
     <string name="lib_alert_rationale_barcode_camera_permission_msg">Para ler um código de barras é necessário acesso a câmera do celular.\nDeseja permitir o acesso ?</string>
-    <!--Text Helpers -->
+    
+	<!--Text Helpers -->
     <string name="unicode_bullet">"\u2022"</string>
     <string name="unicode_copyright">©</string>
-    <string name="act002_ws_ticket_download_ttl">Download de Tickets</string>
-    <string name="act002_ws_ticket_download_msg">Baixando tickets desatualizados.</string>
     <string name="msg_synchronizing_data">Sincronizando dados</string>
     <string name="error_on_inapp_start_update_flow">\"Error on call update app via Google Play \"</string>
     <string name="msg_cancelled_by_user">Atualização cancelada.</string>
-    <string name="database_recovery_term_lbl">Aconteceu que o banco de dados foi corrompido e não pode ser utilizado para as
-finalidades originalmente estabelecidas. Recomenda-se a reconstrução do banco de dados,
- para que seja feita uma nova operação de importação ou exportação de dados.</string>
-    <string name="dialog_destroy_db_ttl">Destruir o banco de dados</string>
-    <string name="dialog_confirm_delete_db">Você realmente deseja destruir o bando de dados atual?</string>
-    <string name="dialog_yes_db_lbl">Sim, quero</string>
-    <string name="dialog_cancel_db_lbl">Cancelar</string>
-
     <string name="alert_support_finish_ttl">Dados enviados</string>
     <string name="alert_support_finish_msg">Dados enviados com sucesso.</string>
-    <string name="progress_support_msg">Enviando os dados para o suporte...</string>
     <string name="progress_support_ttl">Enviando suporte</string>
-    <string name="database_error_msg">Banco de dados corrompido</string>
-    <string name="recovery_database_btn">Deletar e re-construir</string>
-
-
-
-
-
+	<string name="progress_support_msg">Enviando os dados para o suporte...</string>
+	<string name="alert_support_msg">Mensagem para a análise</string>
+	<string name="alert_support_contact">Contato</string>
+	<string name="alert_support_hint">Por favor descreva o motivo da análise. \nEsse campo é obrigatório!</string>
+	<string name="alert_support_contact_hint">Digite um e-mail ou telefone de contato</string>
+	<string name="alert_support_ttl">Enviar dados para análise</string>
+	<string name="alert_support_empty_contact">O campo de contato é obrigatório!</string>
+	<string name="alert_support_empty_msg">Campo de mensagem vazio.</string>
+	<string name="send_support_btn">Enviar dados</string>
+    
+	<!--Database Error and Reset -->
+    <string name="act089_database_error_ttl">Dados locais corrompidos!</string>
+    <string name="act089_database_error_msg">Os dados do App NAMOA salvos neste aparelho não podem mais ser utilizados, pois o banco de dados local está corrompido.\n\nPara você poder usar o App NAMOA novamente, será necessário apagar o banco de dados local e depois você precisará fazer login no App novamente.</string>
+	<string name="act089_database_error_reset_btn">Apagar dados locais do App</string>
+    <string name="act089_dialog_database_reset_msg">Se você prosseguir, você apagará o banco de dados atual (que está corrompido) e um novo banco de dados será criado para você começar de novo seu trabalho. \n\nOBS: Apagar o banco de dados atual significa que você apagará as informações que não foram enviadas para o Servidor até agora, pois esses dados serão perdidos e não poderão ser recuperados. \n\nDeseja prosseguir?</string>
+    <string name="act089_dialog_database_reset_ttl">Apagar dados locais do App</string>
+    <string name="act089_dialog_database_reset_cancel_btn">Cancelar</string>
+	<string name="act089_dialog_database_reset_confirm_btn">Sim, quero apagar</string>
+    
+	<!--App da Play Store simultaneamente com App Standalone (antes da Play Store)-->
+	<string name="act001_locked_standalone_namoa_app_found_ttl">Remova o App antigo!</string>
+	<string name="act001_locked_standalone_namoa_app_found_msg">Uma versão antiga do App NAMOA está instalada neste aparelho. \n\nPor favor desinstale essa versão antiga do App, para depois passar a usar esta versão mais atual. \n\nOBS: Finalize seu trabalho na versão antiga do App antes de desinstalá-lo. Para isso, abra a versão antiga do App, conclua processos em andamento, envie dados para o servidor, depois desinstale a versão antiga. </string>
 
 </resources>

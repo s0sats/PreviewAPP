@@ -1,54 +1,22 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="act005_drawer_opened">Seitenleiste auf</string>
     <string name="act005_drawer_closed">Seitenleiste zu</string>
     <string name="get_customer_alert_title">Account</string>
-    <string name="act011_label_drawer_opened">Seitenleiste auf</string>
-    <string name="act011_label_drawer_close">Seitenleiste zu</string>
-    <string name="alert_title_login_fill_field">Anmeldung</string>
-    <string name="msg_getting_master_data">Stammdaten werden geladen...</string>
-    <string name="msg_processing_customer">Accounts werden geladen...</string>
-    <string name="msg_user_invalid">Anmeldedaten bitte prüfen!</string>
-    <string name="generic_no_connection_ttl">Kein Internet!</string>
-    <string name="generic_no_connection_msg">Oh nein! Keine Internetverbindung!\nBitte versuchen Sie es erneut, sobald Sie wieder online sind.</string>
-    <string name="generic_zip_not_found_msg">Zip-Datei nicht gefunden!\nBitte versuchen Sie es erneut.</string>
-    <string name="act002_title_">Accounts</string>
-    <string name="nfc_activity_title">NFC-Leser</string>
-    <string name="alert_title_signature_validation">Unterschrift</string>
-    <string name="alert_msg_signature_validation">Fehler: Unterschrift fehlt!</string>
-    <string name="signature_hint">Name (zur Unterschrift)</string>
-    <string name="mdots_server_title">Hinweise</string>
-    <string name="mdots_user_title">Kommentar</string>
-    <string name="footer_label">Bildschirm</string>
-    <string name="msg_lost_access_to_site_or_operation">Zugang zum Standort und zur Operation verloren.\nAnmeldung bitte wiederholen.</string>
-    <string name="msg_lost_access_to_zone">Zugang zur Zone verloren.\nAnmeldung bitte wiederholen.</string>
-    <string name="generic_error_update_empty_link">Fehler bei der Aktualisierung!\nBitte versuchen Sie es erneut.</string>
-    <string name="close_app_update_process_msg">Bitte die APP schließen, um die Aktualisierung durchzuführen.</string>
-    <string name="login_dev_db_msg">Entwicklungsbasis!!!</string>
-    <string name="ws_exception_contact_admin_timeout">Fehler: Wartezeit überschritten!\nBitte Ihre Internetverbindung prüfen.</string>
-    <string name="ws_exception_connection_error">Fehler: Keine Internetverbindung!\nBitte versuchen Sie es erneut, sobald Sie wieder online sind.\nBei bestehender Fehlermeldung bitte Supportdaten senden.\nDafür bitte im Hauptmenü die Taste oben rechts drücken.</string>
-    <string name="ws_exception_unexpected_error">Fehler: Unbekannter Fehler!\nBei bestehender Fehlermeldung bitte Supportdaten senden.\nDafür bitte im Hauptmenü die Taste oben rechts drücken.</string>
-    <string name="msg_unespected_error">Fehler: Unbekannter Fehler!\nBitte Supportdaten senden.\nDafür bitte im Hauptmenü die Taste oben rechts drücken.</string>
-    <string name="notification_msg_download">Internetverbindung bitte nicht ausschalten.</string>
-    <string name="generic_drawer_opened">Seitenleiste auf</string>
-    <string name="generic_drawer_closed">Seitenleiste zu</string>
-    <string name="generic_alert_no_site_ttl">Standort</string>
-    <string name="ws_exception_server_not_found">Fehler: Verbindung zum Server nicht möglich!\nBitte versuchen Sie es erneut!\nBei bestehender Fehlermeldung bitte Supportdaten senden.\nDafür bitte im Hauptmenü die Taste oben rechts drücken.</string>
-    <string name="msg_not_sent_data_will_be_lost">VORSICHT!\nNICHT GESENDETE DATEN GEHEN VERLOREN!</string>
-    <string name="notification_ttl_upload">Hochladen...</string>
-    <string name="notification_msg_upload">Daten werden an den Server gesendet.</string>
-    <string name="alert_move_unsent_data_error_ttl">Fehler: Fotos hochladen</string>
-    <string name="alert_move_unsent_data_error_msg">Fehler beim Hochladen von Fotos!\nBitte versuchen Sie es erneut, die Fotos hochzuladen.\nSenden Sie bitte die Fotos, bevor Sie sich abmelden oder die App aktualisieren.</string>
     <string name="generic_start_processing_msg">Datenverarbeitung angefangen.</string>
     <string name="generic_msg_cancel">Abbrechen</string>
     <string name="generic_msg_ok">OK</string>
+    <string name="act011_label_drawer_opened">Seitenleiste auf</string>
+    <string name="act011_label_drawer_close">Seitenleiste zu</string>
     <string name="alert_title_get_session">Sitzung</string>
     <string name="msg_start_to_sync">Synchronisierung wird ausgeführt.</string>
+    <string name="alert_title_login_fill_field">Anmeldung</string>
     <string name="msg_login_required">Fehler: Anmeldedaten benötigt.</string>
     <string name="msg_pwd_required">Fehler: Passwort benötigt!</string>
     <string name="generic_sending_data_msg">Daten werden gesendet.</string>
     <string name="generic_receiving_data_msg">Daten werden empfangen.</string>
     <string name="generic_saving_data_msg">Daten werden gespeichert.</string>
+    <string name="msg_getting_master_data">Stammdaten werden geladen...</string>
+    <string name="msg_processing_customer">Accounts werden geladen...</string>
     <string name="msg_processing_ev_user">Benutzerliste wird verarbeitet...</string>
     <string name="msg_processing_ev_user_customer">Kundenliste wird verarbeitet...</string>
     <string name="msg_finishing_processsing">Datenverarbeitung wird abgeschlossen.</string>
@@ -60,9 +28,18 @@
     <string name="msg_version_invalid">Ungültige Version der App!</string>
     <string name="msg_version_expired">Die Version der App ist abgelaufen!</string>
     <string name="msg_update_required">Neue Version verfügbar!\nUpdate durchführen?</string>
+    <string name="msg_user_invalid">Anmeldedaten bitte prüfen!</string>
     <string name="msg_user_canceled">Stornierter Benutzer</string>
     <string name="msg_user_other_device">Achtung: Ihr Benutzer ist auf einem weiteren Gerät angemeldet.</string>
+    <string name="generic_no_connection_ttl">Kein Internet!</string>
+    <string name="generic_no_connection_msg">Oh nein! Keine Internetverbindung!\nBitte versuchen Sie es erneut, sobald Sie wieder online sind.</string>
+    <string name="generic_zip_not_found_msg">Zip-Datei nicht gefunden!\nBitte versuchen Sie es erneut.</string>
     <string name="msg_no_forms_found">Kein Formular gefunden.</string>
+    <string name="act002_title_">Accounts</string>
+    <string name="msg_update_canceled">Update cancelled.</string>
+	
+    <!--LIB-->
+	<string name="nfc_activity_title">NFC-Leser</string>
     <string name="nfc_activity_desc">Nähern Sie eine NFC-Karte an Ihr Gerät.</string>
     <string name="nfc_no_support">Fehler: das Gerät unterstützt keine NFC-Funktion.</string>
     <string name="nfc_no_data">Fehler: Informationen stehen nicht zur Verfügung.</string>
@@ -71,43 +48,74 @@
     <string name="nfc_security_violation">Fehler: Störung NFC-Karte festgestellt. Serial ist ungültig.</string>
     <string name="nfc_security_crypto_no_support">Fehler: Kodifizierung nicht zulässig.\n"</string>
     <string name="nfc_security_geral">Fehler:\n"</string>
+    <string name="alert_title_signature_validation">Unterschrift</string>
+    <string name="alert_msg_signature_validation">Fehler: Unterschrift fehlt!</string>
+    <string name="signature_hint">Name (zur Unterschrift)</string>
     <string name="sys_alert_btn_ok">OK</string>
     <string name="sys_alert_btn_cancel">Abbrechen</string>
+    <string name="mdots_server_title">Hinweise</string>
+    <string name="mdots_user_title">Kommentar</string>
     <string name="mdots_non_compliance">Problemmeldung</string>
+    <string name="footer_label">Bildschirm</string>
     <string name="act002_logout_ttl">Abmelden</string>
     <string name="act002_logout_one_customer_msg">Achtung! Wirklich Abmelden?\nDadurch werden Sie von allen aktiven Sitzungen abgemeldet.</string>
+    <string name="msg_lost_access_to_site_or_operation">Zugang zum Standort und zur Operation verloren.\nAnmeldung bitte wiederholen.</string>
+    <string name="msg_lost_access_to_zone">Zugang zur Zone verloren.\nAnmeldung bitte wiederholen.</string>
     <string name="generic_start_update_process_msg">Aktualisierung wird angefangen.</string>
+    <string name="generic_error_update_empty_link">Fehler bei der Aktualisierung!\nBitte versuchen Sie es erneut.</string>
     <string name="generic_starting_download_msg">Daten werden heruntergeladen</string>
+    <string name="close_app_update_process_msg">Bitte die APP schließen, um die Aktualisierung durchzuführen.</string>
+    <string name="login_dev_db_msg">Entwicklungsbasis!!!</string>
     <string name="act001_email_nick">E-Mail / Benutzername</string>
     <string name="act001_password">Passwort</string>
     <string name="act001_btn_login">Anmelden</string>
     <string name="ws_exception_contact_admin_json_syntax">Gesendete Daten lassen sich nicht lesen!\nBitte Ihre Supportteam kontaktieren.</string>
     <string name="ws_exception_contact_admin_oracle">Fehler in der Datenbank!\nBitte Ihr Supportteam kontaktieren.</string>
-    <string name="generic_error_lbl">Fehler:</string>
+    <string name="ws_exception_contact_admin_timeout">Fehler: Wartezeit überschritten!\nBitte Ihre Internetverbindung prüfen.</string>
+    //
+	<string name="ws_exception_connection_error">Fehler: Keine Internetverbindung!\nBitte versuchen Sie es erneut, sobald Sie wieder online sind.\nBei bestehender Fehlermeldung bitte Supportdaten senden.\nDafür bitte im Hauptmenü die Taste oben rechts drücken.</string>
+    <string name="ws_exception_unexpected_error">Fehler: Unbekannter Fehler!\nBei bestehender Fehlermeldung bitte Supportdaten senden.\nDafür bitte im Hauptmenü die Taste oben rechts drücken.</string>
+    //
+	<string name="generic_error_lbl">Fehler:</string>
     <string name="title_notification_generic">Namoa</string>
     <string name="message_notification_sync">Bitte APP synchronisieren.</string>
     <string name="message_received_notification_sync">Empfangene Nachrichten</string>
     <string name="message_full_quarter_notification_future">Mit Termin</string>
     <string name="message_full_quarter_notification_late">Im Rückstand</string>
     <string name="msg_nfc_card_blocked">NFC-Karte gesperrt!</string>
+    <string name="msg_unespected_error">Fehler: Unbekannter Fehler!\nBitte Supportdaten senden.\nDafür bitte im Hauptmenü die Taste oben rechts drücken.</string>
     <string name="notification_ttl_download">Daten werden heruntergeladen</string>
+    <string name="notification_msg_download">Internetverbindung bitte nicht ausschalten.</string>
+    <string name="generic_drawer_opened">Seitenleiste auf</string>
+    <string name="generic_drawer_closed">Seitenleiste zu</string>
     <string name="msg_device_code_not_found">Fehler: Gerätecode nicht gefunden!\nUm fortzufahren, wird ein Gerätecode benötigt.</string>
     <string name="ws_exception_server_connection_failed">Fehler: Kommunikation mit dem Server unmöglich!</string>
     <string name="generic_dialog_logout_ttl">Abmelden</string>
     <string name="generic_dialog_logout_msg">Abmeldung erfolgt</string>
+    <string name="generic_alert_no_site_ttl">Standort</string>
     <string name="generic_alert_no_site_msg">Keinen Standort gefunden!\nPrüfen Sie Ihre Benutzerberechtigungen.</string>
     <string name="act002_offline_logout_msg">Fehler: Keine Internetverbindung!\nSitzung kann auf dem Server nicht abgeschlossen werden.</string>
+    <string name="ws_exception_server_not_found">Fehler: Verbindung zum Server nicht möglich!\nBitte versuchen Sie es erneut!\nBei bestehender Fehlermeldung bitte Supportdaten senden.\nDafür bitte im Hauptmenü die Taste oben rechts drücken.</string>
     <string name="notification_user_says_lbl"> sagte</string>
     <string name="notification_rooms_lbl">Räume</string>
     <string name="notification_messages_lbl">Nachrichten</string>
     <string name="chat_fcm_offline_ttl">Offline Nachrichten</string>
     <string name="chat_fcm_offline_msg">Sie haben neue Nachrichten erhalten!\nBitte die Namoa App öffnen.</string>
+    <string name="notification_ttl_upload">Hochladen...</string>
+    <string name="notification_msg_upload">Daten werden an den Server gesendet.</string>
+    <string name="msg_not_sent_data_will_be_lost">VORSICHT!\nNICHT GESENDETE DATEN GEHEN VERLOREN!</string>
+    <string name="alert_move_unsent_data_error_ttl">Fehler: Fotos hochladen</string>
+    <string name="alert_move_unsent_data_error_msg">Fehler beim Hochladen von Fotos!\nBitte versuchen Sie es erneut, die Fotos hochzuladen.\nSenden Sie bitte die Fotos, bevor Sie sich abmelden oder die App aktualisieren.</string>
     <string name="install_app_error_msg"> Fehler bei der Aktualisierung der App!\nBitte erneut über die Synchronisation versuchen.</string>
     <string name="msg_customer_pendencies_list">Account :\n</string>
     <string name="msg_update_required_warning">Neue Version verfügbar!\nSenden Sie bitte die ausstehende Daten, um aktualisieren zu können.</string>
-    <string name="msg_login_invalid_current_time">Ihr Tablet-/Telefondatum ist nicht korrekt!\n Stellen Sie Datum und Uhrzeit bitte ein und versuchen Sie es erneut.</string>
+    
+	<!--Licenças por Site-->
+	<string name="msg_login_invalid_current_time">Ihr Tablet-/Telefondatum ist nicht korrekt!\n Stellen Sie Datum und Uhrzeit bitte ein und versuchen Sie es erneut.</string>
     <string name="act002_ws_site_license_ttl">Lizenzierte Standorte</string>
     <string name="act002_ws_site_license_msg">Standorte mit verfügbaren Lizenzen werden geladen.</string>
+    <string name="act002_ws_ticket_download_ttl">Download</string>
+    <string name="act002_ws_ticket_download_msg">Alte Tickets werden aktualisiert.</string>
     <string name="license_site_dialog_ttl">Lizenzierte Standorte</string>
     <string name="license_site_dialog_filter_hint">Standort Ihrer Lizenz auswählen</string>
     <string name="license_site_dialog_close">Abbrechen</string>
@@ -115,7 +123,8 @@
     <string name="act002_alt_no_licenses_returned_msg">Kein Standort mit verfügbarer Lizenz für diesen Benutzer gefunden.\nVersuchen Sie es bitte später erneut oder kontaktieren Sie Ihr IT-Team, um die Anzahl der verfügbaren Lizenzen zu prüfen.</string>
     <string name="act002_alt_license_list_not_found_ttl">Fehler: Lizenzierte Standorte</string>
     <string name="act002_alt_license_list_not_found_msg">Standortliste lässt sich nicht laden.\nVersuchen Sie es bitte erneut.</string>
-    <!--Permissão da camera-->
+    
+	<!--Permissão da camera-->
     <string name="lib_alert_allow_btn">Allow</string>
     <string name="lib_alert_deny_btn">Deny</string>
     <string name="lib_alert_settings_btn">Settings</string>
@@ -123,12 +132,37 @@
     <string name="lib_alert_camera_never_ask_again_msg">Permission to access the camera has been permanently denied!\nTo allow the use of the camera, click the button under Settings, Permissions -> Camera -> Allow</string>
     <string name="lib_alert_rationale_camera_permission_ttl">Camera Permission</string>
     <string name="lib_alert_rationale_barcode_camera_permission_msg">To read a barcode, access to the cell phone\'s camera is required.\nDo you want to allow access?</string>
-    <!--Text Helpers -->
+    
+	<!--Text Helpers -->
     <string name="unicode_bullet">"\u2022"</string>
     <string name="unicode_copyright">©</string>
-    <string name="act002_ws_ticket_download_ttl">Download</string>
-    <string name="act002_ws_ticket_download_msg">Alte Tickets werden aktualisiert.</string>
     <string name="msg_synchronizing_data">Daten werden synchronisiert</string>
     <string name="error_on_inapp_start_update_flow">\"Error on call update app via Google Play \"</string>
     <string name="msg_cancelled_by_user">Aktualisierung abgebrochen</string>
+	<string name="alert_support_finish_ttl">Support Daten</string>
+    <string name="alert_support_finish_msg">Datenpaket wurde erfolgreich gesendet! \nBEMERKUNG: Vergessen Sie nicht bei Ihrem Support anzufragen, den Fehlerbehebungsprozess anzustoßen.</string>
+    <string name="progress_support_ttl">Support Daten</string>
+    <string name="progress_support_msg">Daten werden vorbereitet.</string>
+    <string name="alert_support_msg">Mitteilung</string>
+    <string name="alert_support_contact">E-Mail / Tel. (Kontakt):</string>
+    <string name="alert_support_hint">Geben Sie den Grund für die Supportanfrage an. (Pflichtfeld)</string>
+    <string name="alert_support_contact_hint">Kontaktdaten bitte eingeben.</string>
+    <string name="alert_support_ttl">Daten an das Support-Team senden. Vergessen Sie nicht ein Ticket bei Ihrem Support zu öffnen, damit Ihre Anfrage bearbeitet werden kann.</string>
+    <string name="alert_support_empty_contact">Keine Kontaktdaten!</string>
+    <string name="alert_support_empty_msg">Feld Nachrichten ist leer!</string>
+	<string name="send_support_btn">Daten versenden</string>
+	
+	<!--Database Error and Reset -->
+    <string name="act089_database_error_ttl">Beschädigte lokale Daten</string>
+    <string name="act089_database_error_msg">Die auf diesem Gerät gespeicherten App-Daten können nicht mehr verwendet werden, da die lokale Datenbank beschädigt ist. \n\nDamit Sie die App wieder nutzen können, müssen Sie die lokale Datenbank löschen und sich dann erneut bei der App anmelden.</string>
+	<string name="act089_database_error_reset_btn">App-Daten löschen</string>
+    <string name="act089_dialog_database_reset_msg">Wenn Sie fortfahren, werden die aktuelle Datenbank (die beschädigt ist) gelöscht, und es wird eine neue Datenbank erstellt, mit der Sie neu beginnen können. \n\nHINWEIS: Das Löschen der aktuellen Datenbank bedeutet, dass Sie die Informationen löschen, die noch nicht auf den Server hochgeladen wurden, da diese Daten verloren gehen und nicht wiederhergestellt werden können. \nMöchten Sie fortfahren?</string>
+    <string name="act089_dialog_database_reset_ttl">App-Daten löschen</string>
+    <string name="act089_dialog_database_reset_cancel_btn">Abbrechen</string>
+	<string name="act089_dialog_database_reset_confirm_btn">Ja, bitte Daten löschen</string>
+    
+	<!--App da Play Store simultaneamente com App Standalone (antes da Play Store)-->
+	<string name="act001_locked_standalone_namoa_app_found_ttl">Alte NAMOA App gefunden!</string>
+	<string name="act001_locked_standalone_namoa_app_found_msg">Auf diesem Gerät ist eine alte Version der NAMOA-App immer noch installiert. \n\nBitte deinstallieren Sie diese alte Version der App, damit Sie  die aktuellere Version verwenden können.\n\nHINWEIS: Beenden Sie bitte Ihre Arbeit  auf der alten Version der App, bevor Sie diese deinstallieren. Öffnen Sie dazu die alte Version der App, schließen Sie laufende Prozesse ab, senden Sie Daten an den NAMOA Server und dann deinstallieren Sie die alte App Version. </string>
+
 </resources>

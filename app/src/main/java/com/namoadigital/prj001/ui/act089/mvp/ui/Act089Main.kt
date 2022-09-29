@@ -49,9 +49,9 @@ class Act089Main : Base_Activity(), Act089MainContract.I_View {
 
     private fun iniLabels() {
         binding.apply {
-            tvSupportDisclaimer.setText(R.string.database_error_msg)
-            btnRecoveryData.setText(R.string.recovery_database_btn)
-            tvSupportAccord.setText(R.string.database_recovery_term_lbl)
+            tvSupportDisclaimer.setText(R.string.act089_database_error_ttl)
+            tvSupportAccord.setText(R.string.act089_database_error_msg)
+            btnRecoveryData.setText(R.string.act089_database_error_reset_btn)
         }
     }
 
@@ -113,7 +113,7 @@ class Act089Main : Base_Activity(), Act089MainContract.I_View {
     private fun showConfirmDeleteDialog() {
         val builder = AlertDialog.Builder(context)
         val inflater = context.getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val view = inflater.inflate(R.layout.act011_dialog_delete_warning, null)
+        val view = inflater.inflate(R.layout.act089_dialog_delete_warning, null)
         var drawable_ic: Drawable? = null
         val tv_title = view.findViewById<TextView>(R.id.act011_dialog_tv_title)
         val tv_msg = view.findViewById<TextView>(R.id.act011_dialog_tv_msg)
@@ -126,10 +126,10 @@ class Act089Main : Base_Activity(), Act089MainContract.I_View {
             PorterDuff.Mode.SRC_ATOP
         )
         iv_error.setImageDrawable(drawable_ic)
-        tv_title.text = getString(R.string.dialog_destroy_db_ttl)
-        tv_msg.text = getString(R.string.dialog_confirm_delete_db)
-        btn_ok.text = getString(R.string.dialog_yes_db_lbl)
-        btn_cancel.text = getString(R.string.dialog_cancel_db_lbl)
+        tv_title.text = getString(R.string.act089_dialog_database_reset_ttl)
+        tv_msg.text = getString(R.string.act089_dialog_database_reset_msg)
+        btn_ok.text = getString(R.string.act089_dialog_database_reset_confirm_btn)
+        btn_cancel.text = getString(R.string.act089_dialog_database_reset_cancel_btn)
         builder.setView(view)
         builder.setCancelable(false)
         val show = builder.show()

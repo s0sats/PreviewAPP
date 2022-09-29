@@ -42,6 +42,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -338,6 +339,8 @@ public class ToolBox_Inf {
     public static final String RANGE_RED = "RANGE_RED";
     public static final String RANGE_YELLOW = "RANGE_YELLOW";
     public static final String RANGE_GREEN = "RANGE_GREEN";
+    /*public static String OLD_PACKAGE_NAME = "com.namoadigital.prj001.development";*/
+    public static String OLD_PACKAGE_NAME = "com.namoadigital.prj001.production";
 
 
 //    private static final Map<Character, Character> ACCENT_MAP = initAccentMap();
@@ -4884,6 +4887,15 @@ public class ToolBox_Inf {
             return null;
         }
         return null;
+    }
+
+    public static boolean isPackageInstalled(String packageName, PackageManager packageManager) {
+        try {
+            packageManager.getPackageInfo(packageName, 0);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
     }
 
     public static boolean addJsonObjAsHmAuxKey(List<HMAux> hmAuxList, String key) {
