@@ -472,6 +472,19 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
     }
 
     @Override
+    protected void processOverrideLastUser() {
+        super.processOverrideLastUser();
+        mPresenter.executeLoginProcess(
+                mEmail,
+                mPassWord,
+                mNFC,
+                1,
+                false
+        );
+
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.act001_main_menu, menu);

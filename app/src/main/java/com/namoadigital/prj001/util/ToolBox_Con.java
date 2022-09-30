@@ -631,6 +631,28 @@ public class ToolBox_Con {
     }
     //endregion
 
+    //region Last_User_Logged
+    public static void setPreference_Last_User_Nick_Logged(Context context, String user_nick) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        sharedPreferences.edit().putString(
+                Constant.LOGIN_LAST_USER_CODE_NICK_LOGGED,
+                user_nick
+        ).apply();
+    }
+
+    public static String getPreference_Last_User_Nick_Logged(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getString(
+                Constant.LOGIN_LAST_USER_CODE_NICK_LOGGED,
+                "-1"
+        );
+    }
+    //endregion
+
     //region Customer_Code
     public static void setPreference_Customer_Code(Context context, long customer_code) {
         SharedPreferences sharedPreferences =

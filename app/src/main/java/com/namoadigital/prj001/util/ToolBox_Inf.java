@@ -5814,12 +5814,16 @@ public class ToolBox_Inf {
     }
 
     public static ArrayList<HMAux> getActiveCustomerSession(Context context) {
+        return getActiveCustomerSession(context, ToolBox_Con.getPreference_User_Code(context));
+    }
+
+    public static ArrayList<HMAux> getActiveCustomerSession(Context context, String userCode) {
         EV_User_CustomerDao userCustomerDao = new EV_User_CustomerDao(context);
         //
         ArrayList<HMAux> customer_list = (ArrayList<HMAux>) userCustomerDao.
                 query_HM(
                         new EV_User_Customer_Sql_010(
-                                ToolBox_Con.getPreference_User_Code(context)
+                                userCode
                         ).toSqlQuery()
                 );
         //

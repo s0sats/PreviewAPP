@@ -3,18 +3,25 @@ package com.namoadigital.prj001.service;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DB_PREFIX_CUSTOM;
 
 import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.namoa_digital.namoa_library.util.ConstantBase;
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.Ev_User_Customer_ParameterDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.model.EV_User;
 import com.namoadigital.prj001.model.EV_User_Customer;
 import com.namoadigital.prj001.model.Ev_User_Customer_Parameter;
@@ -25,6 +32,12 @@ import com.namoadigital.prj001.sql.EV_User_Customer_Sql_001;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_Truncate;
 import com.namoadigital.prj001.sql.EV_User_Sql_Truncate;
 import com.namoadigital.prj001.sql.Ev_User_Customer_Parameter_Sql_Truncate;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_015;
+import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_010;
+import com.namoadigital.prj001.sql.Sql_Act005_002;
+import com.namoadigital.prj001.sql.Sql_Act005_007;
+import com.namoadigital.prj001.sql.Sql_Act005_008;
+import com.namoadigital.prj001.sql.Sql_Act021_003;
 import com.namoadigital.prj001.ui.act068.Act068_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -47,6 +60,7 @@ public class WS_GetCustomer extends IntentService {
     private GE_Custom_Form_LocalDao customFormLocalDao;
     //Var que controla se o arquivo zip ja foi baixado
     private boolean isZipDownloaded = false;
+    public static final String GC_USER_VALIDATION_BUNDLE_PARAM = "GC_USER_VALIDATION_BUNDLE_PARAM";
 
     public WS_GetCustomer() {
         super("WS_GetCustomer");
@@ -63,6 +77,7 @@ public class WS_GetCustomer extends IntentService {
             String user = bundle.getString(Constant.GC_USER_CODE);
             String password = bundle.getString(Constant.GC_PWD);
             String nfc = bundle.getString(Constant.GC_NFC);
+            boolean userValidation = bundle.getBoolean(GC_USER_VALIDATION_BUNDLE_PARAM, false);
 //            int statusjump = bundle.getInt(Constant.GC_STATUS_JUMP);
             /**
              * 15/02/2022 - BARRIONUEVO
@@ -71,7 +86,7 @@ public class WS_GetCustomer extends IntentService {
              */
             int statusjump = 1;
 
-            processWS_GC(user, password, nfc, statusjump);
+            processWS_GC(user, password, nfc, statusjump, userValidation);
 
         } catch (Exception e) {
 
@@ -89,7 +104,7 @@ public class WS_GetCustomer extends IntentService {
 
     }
 
-    private void processWS_GC(String user, String password, String nfc, int statusjump) throws Exception {
+    private void processWS_GC(String user, String password, String nfc, int statusjump, boolean userValidation) throws Exception {
 
         ev_userDao = new EV_UserDao(getApplicationContext(), Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
         ev_user_customerDao = new EV_User_CustomerDao(getApplicationContext(), Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
@@ -198,9 +213,24 @@ public class WS_GetCustomer extends IntentService {
                     }.getType()
             );
             userInfo = users.get(0);
+            String preference_last_user_logged = ToolBox_Con.getPreference_Last_User_Logged(getApplicationContext());
             //No primeiro loop, verifica se novo usr é diferente ultimo logado
             //Se for apaga os bancos de dados, arquivos de token, exception e support
-            if(forIdx == 0 && userInfo.getUser_code() != Long.parseLong(ToolBox_Con.getPreference_Last_User_Logged(getApplicationContext()))){
+            if(forIdx == 0
+            && userInfo.getUser_code() != Long.parseLong(preference_last_user_logged)
+            ){
+                if(userValidation
+                && hasAnyPendency(preference_last_user_logged)
+                ){
+                    ToolBox.sendBCStatus(
+                            getApplicationContext(),
+                            ConstantBase.PD_TYPE_LAST_USER_WITH_PENDENCY,
+                            getApplicationContext().getString(R.string.msg_last_user_with_pendency),
+                            ToolBox_Con.getPreference_Last_User_Nick_Logged(getApplicationContext()),
+                            "0"
+                    );
+                    return;
+                }
                 //Luche - 10/05/2019
                 //Antes de apagar tudo, caso haja arquivos pendentes de envio, move arquivos não enviados para pasta imgs/unsentImgs
                 //SE ERRO AO COPIAR, IMPEDE QUE O USUARIO CONTINUE
@@ -332,6 +362,7 @@ public class WS_GetCustomer extends IntentService {
         ToolBox_Con.setPreference_User_Pwd(getApplicationContext(), password);
         ToolBox_Con.setPreference_User_NFC(getApplicationContext(), String.valueOf(nfc));
         ToolBox_Con.setPreference_Last_User_Logged(getApplicationContext(), String.valueOf(userInfo.getUser_code()));
+        ToolBox_Con.setPreference_Last_User_Nick_Logged(getApplicationContext(), String.valueOf(userInfo.getUser_nick()));
         //LUCHE - 18/11/2020 -NOVAS PREFERENCIAS DE VALIDAÇÃO DE DATA
         ToolBox_Con.setBooleanPreference(getApplicationContext(),ConstantBaseApp.DATETIME_IS_VALID,true);
         ToolBox_Con.setLongPreference(getApplicationContext(),ConstantBaseApp.DATETIME_TOLERANCE,rec.getTolerance_time());
@@ -341,6 +372,177 @@ public class WS_GetCustomer extends IntentService {
 
         ToolBox_Inf.deleteAllFOD(Constant.ZIP_PATH);
 
+    }
+
+    private boolean hasAnyPendency(String preference_last_user_logged) {
+        Context context = getApplicationContext();
+
+        ArrayList<HMAux> openedSessions = ToolBox_Inf.getActiveCustomerSession(context, preference_last_user_logged);
+        //
+        for (int i = 0; i < openedSessions.size(); i++) {
+            if(evaluateCustomFormPendency(context, openedSessions.get(i)) > 0){
+                return true;
+            }
+            if(evaluateNServicePendency(context, openedSessions.get(i)) > 0){
+                return true;
+            }
+            if(evaluateFormApPendency(context, openedSessions.get(i)) > 0){
+                return true;
+            }
+            if(evaluateSerialPendency(context, openedSessions.get(i)) > 0){
+                return true;
+            }
+            if(evaluateSOExpressPendency(context, openedSessions.get(i)) > 0){
+                return true;
+            }
+            if(evaluateAssetsPendency(context, openedSessions.get(i)) > 0){
+                return true;
+            }
+            if(evaluateTicketPendency(context, openedSessions.get(i)) > 0){
+                return true;
+            }
+        }
+        //
+        return false;
+    }
+
+    private int evaluateTicketPendency(Context context, HMAux openedSession) {
+        int qtyTicket = 0;
+        try{
+            qtyTicket = Integer.parseInt(ToolBox_Inf.handleTicketUpdateRequired(context,Long.parseLong(openedSession.get(EV_User_CustomerDao.CUSTOMER_CODE))));
+        }catch (Exception e ){
+            qtyTicket = 0;
+        }
+        return qtyTicket;
+    }
+
+    private int evaluateAssetsPendency(Context context, HMAux openedSession) {
+        int assetsQty = 0;
+        try{
+            assetsQty  = Integer.parseInt(ToolBox_Inf.handleAssetsWaitingSync(context, Long.parseLong(openedSession.get(EV_User_CustomerDao.CUSTOMER_CODE))));
+        }catch (Exception e){
+            assetsQty = 0;
+        }
+
+        return assetsQty ;
+    }
+
+    private int evaluateSOExpressPendency(Context context, HMAux openedSession) {
+        int qtySO_Express=0;
+
+
+        SO_Pack_Express_LocalDao soPackExpressLocalDao = new SO_Pack_Express_LocalDao(
+                context,
+                ToolBox_Con.customDBPath(Long.parseLong(openedSession.get(EV_User_CustomerDao.CUSTOMER_CODE))),
+                Constant.DB_VERSION_CUSTOM
+        );
+        //
+        qtySO_Express = ToolBox_Inf.convertStringToInt(soPackExpressLocalDao.getByStringHM(
+                new SO_Pack_Express_Local_Sql_010(
+                        Long.parseLong(openedSession.get(EV_User_CustomerDao.CUSTOMER_CODE))
+                ).toSqlQuery()
+        ).get(SO_Pack_Express_Local_Sql_010.BADGE_IN_NEW_QTY));
+
+
+        return qtySO_Express;
+
+    }
+
+    private int evaluateSerialPendency(Context context, HMAux openedSession) {
+
+        int qtySerial = 0;
+        //
+
+        MD_Product_SerialDao mdSerialdao = new MD_Product_SerialDao(
+                context,
+                ToolBox_Con.customDBPath(Long.parseLong(openedSession.get(EV_User_CustomerDao.CUSTOMER_CODE))),
+                Constant.DB_VERSION_CUSTOM
+        );
+        //
+        qtySerial = ToolBox_Inf.convertStringToInt(mdSerialdao.getByStringHM(
+                new Sql_Act005_008(
+                        Long.parseLong(openedSession.get(EV_User_CustomerDao.CUSTOMER_CODE))
+                ).toSqlQuery()
+        ).get(Sql_Act005_008.BADGE_TO_SEND_QTY));
+        //
+        qtySerial = qtySerial + ToolBox_Inf.isSerialWithinTokenFile(Long.parseLong(openedSession.get(EV_User_CustomerDao.CUSTOMER_CODE)));
+
+        return qtySerial;
+    }
+
+    private int evaluateFormApPendency(Context context, HMAux openedSession) {
+        int qtyAP = 0;
+        //
+        GE_Custom_Form_ApDao customFormApDao = new GE_Custom_Form_ApDao(
+                context,
+                ToolBox_Con.customDBPath(Long.parseLong(openedSession.get(EV_User_CustomerDao.CUSTOMER_CODE))),
+                Constant.DB_VERSION_CUSTOM
+        );
+        //
+        qtyAP = ToolBox_Inf.convertStringToInt(customFormApDao.getByStringHM(
+                new Sql_Act005_007(
+                        openedSession.get(EV_User_CustomerDao.CUSTOMER_CODE)
+                ).toSqlQuery()
+        ).get(Sql_Act005_007.BADGE_TO_SEND_QTY));
+        //
+        return qtyAP;
+    }
+
+    private int evaluateNServicePendency(Context context, HMAux openedSession) {
+        SM_SODao soDao = new SM_SODao(
+                context,
+                ToolBox_Con.customDBPath(Long.parseLong(openedSession.get(EV_User_CustomerDao.CUSTOMER_CODE))),
+                Constant.DB_VERSION_CUSTOM
+        );
+        int qtySO = 0;
+        //
+        qtySO =ToolBox_Inf.convertStringToInt(
+                soDao.getByStringHM(
+                        new Sql_Act021_003(
+                                Long.parseLong(openedSession.get(EV_User_CustomerDao.CUSTOMER_CODE))
+                        ).toSqlQuery()
+                ).get(Sql_Act021_003.UPDATE_APPROVAL_REQUIRED_QTY));
+        qtySO = qtySO + ToolBox_Inf.isSoWithinTokenFile(
+                Long.parseLong(openedSession.get(EV_User_CustomerDao.CUSTOMER_CODE))
+        );
+        //
+        return qtySO;
+    }
+
+    private int evaluateCustomFormPendency(Context context, HMAux openedSession) {
+        GE_Custom_Form_LocalDao customFormLocalDao = new GE_Custom_Form_LocalDao(
+                context,
+                ToolBox_Con.customDBPath(Long.parseLong(openedSession.get(EV_User_CustomerDao.CUSTOMER_CODE))),
+                Constant.DB_VERSION_CUSTOM
+        );
+        int waitingSyncQty = ToolBox_Inf.convertStringToInt(
+                customFormLocalDao.getByStringHM(
+                        new Sql_Act005_002(
+                                openedSession.get(EV_User_CustomerDao.CUSTOMER_CODE)
+                        ).toSqlQuery()
+                ).get(Sql_Act005_002.BADGE_WAITING_SYNC_QTY)
+        );
+        //
+        int inProgressQty = 0;
+
+
+        GE_Custom_Form_LocalDao geCustomFormLocalDao = new GE_Custom_Form_LocalDao(
+                context,
+                ToolBox_Con.customDBPath(
+                        Long.parseLong(openedSession.get(EV_User_CustomerDao.CUSTOMER_CODE))
+                ),
+                Constant.DB_VERSION_CUSTOM
+        );
+        //
+        HMAux pendingTotals = geCustomFormLocalDao.getByStringHM(
+                new GE_Custom_Form_Local_Sql_015(
+                        openedSession.get(EV_User_CustomerDao.CUSTOMER_CODE)
+                ).toSqlQuery()
+        );
+        inProgressQty = pendingTotals == null ? 0 : ToolBox_Inf.convertStringToInt(pendingTotals.get(GE_Custom_Form_Local_Sql_015.PENDING_QTY));
+        //
+
+        return waitingSyncQty + inProgressQty;
     }
 
 

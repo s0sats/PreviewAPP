@@ -16,6 +16,7 @@ import com.google.android.play.core.install.model.UpdateAvailability;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.receiver.WBR_GetCustomer;
+import com.namoadigital.prj001.service.WS_GetCustomer;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -40,12 +41,18 @@ public class Act001_Main_Presenter_Impl implements Act001_Main_Presenter {
 
     @Override
     public void executeLoginProcess(String user, String password, String nfc, int status_jump) {
+        executeLoginProcess(user, password, nfc, status_jump, true);
+    }
+
+    @Override
+    public void executeLoginProcess(String user, String password, String nfc, int status_jump, boolean userValidation) {
         Intent mIntent = new Intent(context, WBR_GetCustomer.class);
         Bundle bundle = new Bundle();
         bundle.putString(Constant.GC_USER_CODE, user);
         bundle.putString(Constant.GC_PWD, ToolBox_Inf.md5(password).toUpperCase());
         bundle.putString(Constant.GC_NFC, nfc);
         bundle.putInt(Constant.GC_STATUS_JUMP, status_jump);
+        bundle.putBoolean(WS_GetCustomer.GC_USER_VALIDATION_BUNDLE_PARAM, userValidation);
         //
         mIntent.putExtras(bundle);
         //

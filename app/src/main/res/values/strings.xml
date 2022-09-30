@@ -164,5 +164,6 @@
 	<!--App da Play Store simultaneamente com App Standalone (antes da Play Store)-->
 	<string name="act001_locked_standalone_namoa_app_found_ttl">Old NAMOA App found!</string>
 	<string name="act001_locked_standalone_namoa_app_found_msg">An old version of the NAMOA App is installed on this device. \n\nPlease uninstall this old version, in order to start using the current App version.\n\nNOTE: Finish your work on the old version before uninstalling the App. To do this, open the old version of the App, complete ongoing processes, send data to the NAMOA server, then finally uninstall the old version.</string>
+    <string name="msg_last_user_with_pendency">O seguinte usuário possui dados pendentes e caso prossiga terá seus dados perdidos</string>
 
 </resources>
