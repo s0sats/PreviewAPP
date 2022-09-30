@@ -216,8 +216,8 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
 
 
                 if(mPresenter.isPackageInstalled()){
-                    ToolBox.alertMSG(context, "Remova o App Antigo",
-                            "Detectamos que você está com um versão antiga do aplicativo, desinstale-o aplicativo para continuar",
+                    ToolBox.alertMSG(context, getString(R.string.act001_locked_standalone_namoa_app_found_ttl),
+                            getString(R.string.act001_locked_standalone_namoa_app_found_msg),
                             (dialog, i) -> {}, 0);
                     return;
                 }
