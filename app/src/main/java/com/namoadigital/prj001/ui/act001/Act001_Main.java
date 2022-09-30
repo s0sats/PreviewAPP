@@ -215,12 +215,12 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
                 mNFC = "";
 
 
-                /*if(mPresenter.isPackageInstalled()){
+                if(mPresenter.isPackageInstalled()){
                     ToolBox.alertMSG(context, "Remova o App Antigo",
                             "Detectamos que você está com um versão antiga do aplicativo, desinstale-o aplicativo para continuar",
                             (dialog, i) -> {}, 0);
                     return;
-                }*/
+                }
                 mPresenter.validateLogin(mk_login.getText().toString().trim(),
                         et_password.getText().toString().replace("\"", "'").trim(),
                         ""
