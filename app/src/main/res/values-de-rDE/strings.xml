@@ -164,5 +164,6 @@
 	<!--App da Play Store simultaneamente com App Standalone (antes da Play Store)-->
 	<string name="act001_locked_standalone_namoa_app_found_ttl">Alte NAMOA App gefunden!</string>
 	<string name="act001_locked_standalone_namoa_app_found_msg">Auf diesem Gerät ist eine alte Version der NAMOA-App immer noch installiert. \n\nBitte deinstallieren Sie diese alte Version der App, damit Sie  die aktuellere Version verwenden können.\n\nHINWEIS: Beenden Sie bitte Ihre Arbeit  auf der alten Version der App, bevor Sie diese deinstallieren. Öffnen Sie dazu die alte Version der App, schließen Sie laufende Prozesse ab, senden Sie Daten an den NAMOA Server und dann deinstallieren Sie die alte App Version. </string>
+    <string name="msg_last_user_with_pendency">CUIDADO! Dados serão PERDIDOS se você fizer login neste aparelho. \\n\\nO Usuário abaixo possui dados que ainda não foram enviados ao Servidor e/ou Formulários que estão sendo preenchidos:</string>
 
 </resources>
