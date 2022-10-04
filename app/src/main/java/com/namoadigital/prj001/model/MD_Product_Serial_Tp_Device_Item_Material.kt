@@ -19,7 +19,7 @@ class MD_Product_Serial_Tp_Device_Item_Material(
         private set
     var item_check_seq: Int = -1
         private set
-    var origin: String? = null
+    @SerializedName("origin") var origin: String? = null
 
     constructor(
         customer_code: Long,
