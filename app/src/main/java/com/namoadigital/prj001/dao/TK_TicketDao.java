@@ -1164,6 +1164,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             contentValues.put(OPEN_PHOTO_LOCAL, tk_ticket.getOpen_photo_local());
             contentValues.put(OPEN_NAME, tk_ticket.getOpen_name());
             contentValues.put(OPEN_EMAIL, tk_ticket.getOpen_email());
+            contentValues.put(OPEN_PHONE, tk_ticket.getOpen_phone());
 
             contentValues.put(JUSTIFY_GROUP_CODE, tk_ticket.getJustify_group_code());
             contentValues.put(JUSTIFY_ITEM_CODE, tk_ticket.getJustify_item_code());
