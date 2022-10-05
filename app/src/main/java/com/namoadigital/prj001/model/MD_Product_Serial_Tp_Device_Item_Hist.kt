@@ -11,16 +11,22 @@ class MD_Product_Serial_Tp_Device_Item_Hist(
     @SerializedName("exec_material") val exec_material: Int,
     @SerializedName("change_adjust") val change_adjust: Int,
 ) {
+    @SerializedName("customer_code")
     var customer_code: Long = -1
         private set
+    @SerializedName("product_code")
     var product_code: Long = -1
         private set
+    @SerializedName("serial_code")
     var serial_code: Long = -1
         private set
+    @SerializedName("device_tp_code")
     var device_tp_code: Int = -1
         private set
+    @SerializedName("item_check_code")
     var item_check_code: Int = -1
         private set
+    @SerializedName("item_check_seq")
     var item_check_seq: Int = -1
         private set
 

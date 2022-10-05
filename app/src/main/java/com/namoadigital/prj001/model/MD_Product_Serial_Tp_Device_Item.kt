@@ -19,12 +19,16 @@ class MD_Product_Serial_Tp_Device_Item(
     @SerializedName("item_check_status") val item_check_status: String,
     @SerializedName("target_date") val target_date : String?
 ) {
+    @SerializedName("customer_code")
     var customer_code: Long = -1
         private set
+    @SerializedName("product_code")
     var product_code: Long = -1
         private set
+    @SerializedName("serial_code")
     var serial_code: Long = -1
         private set
+    @SerializedName("device_tp_code")
     var device_tp_code: Int = -1
         private set
     @SerializedName("hist")
