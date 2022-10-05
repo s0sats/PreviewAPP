@@ -3,11 +3,13 @@ package com.namoadigital.prj001.ui.act078;
 import static com.namoadigital.prj001.ui.act075.Act075_Main.PRODUCT_VIEW_ID;
 import static com.namoadigital.prj001.ui.act075.Act075_Main.VIEW_PROFILE;
 
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -287,38 +289,34 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
                 Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" +binding.act078TvOpenPhoneVal.getText().toString()));
                 //LUCHE - 18/03/2021 - Add trativa que verifica se existe app para resolver a ação
                 //se não houve, exibe msg
-                if (intent.resolveActivity(getPackageManager()) != null) {
+                try{
                     startActivity(intent);
-                }else{
+                }catch (ActivityNotFoundException e){
+                    ToolBox_Inf.registerException(context.getClass().getName(), e);
                     showMsg(
-                        hmAux_Trans.get("alert_no_caller_app_found_ttl"),
-                        hmAux_Trans.get("alert_no_caller_app_found_msg")
+                            hmAux_Trans.get("alert_no_caller_app_found_ttl"),
+                            hmAux_Trans.get("alert_no_caller_app_found_msg")
                     );
                 }
             }
         });
 
-        binding.act078TvOpenEmailVal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    Intent intent = new Intent(Intent.ACTION_SENDTO);
-                    intent.setData(Uri.parse("mailto:"));
-                    String[] email = new String[]{binding.act078TvOpenEmailVal.getText().toString()};
-                    intent.putExtra(Intent.EXTRA_EMAIL, email);
-                    //LUCHE - 18/03/2021 - Add trativa que verifica se existe app para resolver a ação
-                    //se não houve, exibe msg
-                    if (intent.resolveActivity(getPackageManager()) != null) {
-                        startActivity(intent);
-                    }else{
-                        showMsg(
+        binding.act078TvOpenEmailVal.setOnClickListener(v -> {
+                Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:"));
+                String[] email = new String[]{binding.act078TvOpenEmailVal.getText().toString()};
+                intent.putExtra(Intent.EXTRA_EMAIL, email);
+                try{
+                    startActivity(intent);
+                }catch(ActivityNotFoundException exception){
+                    //
+                    ToolBox_Inf.registerException(
+                            context.getClass().getName(),
+                            exception
+                    );
+                    //
+                    showMsg(
                             hmAux_Trans.get("alert_no_email_app_found_ttl"),
-                            hmAux_Trans.get("alert_no_email_app_found_msg")
-                        );
-                    }
-                }catch (Exception e){
-                    ToolBox.registerException(getClass().getName(), e);
-                }
+                            hmAux_Trans.get("alert_no_email_app_found_msg"));
             }
         });
 
@@ -509,18 +507,23 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
     }
 
     private void callNavegationIntent(String navegationInfo){
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        //Uri geoLocation = Uri.parse("geo:0,0?q=Alameda+São+Bernardo+268+09210725+Santo+André");
         Uri geoLocation = Uri.parse(navegationInfo);
-        intent.setData(geoLocation);
-        if (intent.resolveActivity(getPackageManager()) != null) {
+        Intent intent = new Intent(Intent.ACTION_VIEW, geoLocation);
+        try{
             startActivity(intent);
-        }else{
+        }catch(ActivityNotFoundException exception){
+            //
+            ToolBox_Inf.registerException(
+                    context.getClass().getName(),
+                    exception
+            );
+            //
             showMsg(
-                hmAux_Trans.get("alert_no_navegation_app_found_ttl"),
-                hmAux_Trans.get("alert_no_navegation_app_found_msg")
+                    hmAux_Trans.get("alert_no_navegation_app_found_ttl"),
+                    hmAux_Trans.get("alert_no_navegation_app_found_msg")
             );
         }
+
     }
 
     private void setOpenFields(TK_Ticket ticket) {
@@ -538,12 +541,16 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
                 binding.act078LlOpenEmail.setVisibility(View.GONE);
             }else{
                 binding.act078TvOpenEmailVal.setText(ticket.getOpen_email());
+                binding.act078TvOpenEmailVal.setLinksClickable(true);
+                binding.act078TvOpenEmailVal.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
             }
             //
-            if(ticket.getOpen_phone()==null || ticket.getOpen_phone().isEmpty()){
+            if(ticket.getOpen_phone()== null || ticket.getOpen_phone().isEmpty()){
                 binding.act078LlOpenPhone.setVisibility(View.GONE);
             }else{
                 binding.act078TvOpenPhoneVal.setText(ticket.getOpen_phone());
+                binding.act078TvOpenPhoneVal.setLinksClickable(true);
+                binding.act078TvOpenPhoneVal.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
             }
         }
         //
