@@ -143,7 +143,7 @@ public class AppBase extends Application {
 
         //DB_NAME_CHAT = "namoa_chat.db3";
         DB_VERSION_CHAT = 6;
-        DB_FULL_CHAT = DB_PATH + "/" + DB_NAME_CHAT + DB_SUFIX;
+        DB_FULL_CHAT = DB_PATH + "/" + DB_NAME_CHAT;
 
         ConstantBaseApp.PRJ001_VERSION_CODE = BuildConfig.VERSION_CODE;
         ConstantBaseApp.PRJ001_VERSION = BuildConfig.VERSION_NAME;
