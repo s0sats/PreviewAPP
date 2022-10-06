@@ -26,6 +26,7 @@ import com.namoadigital.prj001.BuildConfig;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
+import com.namoadigital.prj001.ui.act089.mvp.ui.Act089Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -53,6 +54,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
     private String mPassWord = "";
     private String mNFC = "";
     private AppUpdateManager updateManager;
+    private Button btn_check_prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +84,13 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
          */
         //A linha abaixo , em tese, faz o mesmo que o if usado.
         //if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
+        ToolBox_Inf.registerException(
+                "Act001_Main",
+                new Exception(
+                        "oncreate: \n" +
+                        "isTaskRoot(): " + isTaskRoot()
+                )
+        );
         if (!isTaskRoot()) {
             finish();
             return;
@@ -90,8 +99,6 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
             //
             initVars();
             initActions();
-            //23/08/2018
-            deleteApkFile();
             removeDeprecatedPreferences();
             //
             recoverIntentsInfo();
@@ -132,22 +139,6 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         );
     }
 
-    /**
-     * 23/08/2018
-     * Verifica se existe apk na pasta de download e deleta arquivo
-     */
-    private void deleteApkFile() {
-        try {
-            File file = new File(Constant.APK_PATH, Constant.APK_FILE_NAME);
-            //
-            if (file.exists()) {
-                file.delete();
-            }
-        }catch (Exception e){
-            ToolBox_Inf.registerException(getClass().getName(),e);
-        }
-    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -162,6 +153,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         mk_login = (MKEditTextNM) findViewById(R.id.act001_mk_login);
         et_password = (EditText) findViewById(R.id.act001_et_password);
         btn_login = (Button) findViewById(R.id.act001_btn_login);
+        btn_check_prefs = findViewById(R.id.act001_btn_check_prefs);
         tv_dev_db = (TextView) findViewById(R.id.act001_tv_dev_db);
         tv_version = (TextView) findViewById(R.id.act001_tv_version);
         //
@@ -180,9 +172,22 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
     }
 
     private void recoverIntentsInfo() {
+        ToolBox_Inf.registerException(
+                "recoverIntentsInfo",
+                new Exception(
+                        "recoverIntentsInfo: \n"
+                )
+        );
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             boolean sendToStore = bundle.getBoolean(SEND_TO_STORE);
+            ToolBox_Inf.registerException(
+                    "recoverIntentsInfo",
+                    new Exception(
+                            "recoverIntentsInfo: \n" +
+                                    "sendToStore: " + sendToStore
+                    )
+            );
             if(sendToStore){
                 callAppStore();
             }else{
@@ -225,6 +230,18 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
                         et_password.getText().toString().replace("\"", "'").trim(),
                         ""
                 );
+            }
+        });
+
+        btn_check_prefs.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent mIntent = new Intent(context, Act089Main.class);
+                mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                context.startActivity(mIntent);
+
+                finish();
             }
         });
 
@@ -367,11 +384,24 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         //
+        ToolBox_Inf.registerException(
+                "onActivityResult",
+                new Exception(
+                        "onActivityResult: \n" +
+                                "requestCode: " + requestCode +
+                                "resultCode: " + resultCode
+                        )
+        );
         if( requestCode == ConstantBaseApp.PLAYSTORE_UPDATE_REQUEST_CODE
-            && resultCode != RESULT_OK
         ){
-            ToolBox.toastMSG(context,getResources().getString(R.string.msg_update_canceled));
+            if(resultCode == RESULT_OK){
+                mPresenter.checkLogin();
+            }else{
+                mPresenter.checkLogin();
+//                ToolBox.toastMSG(context,getResources().getString(R.string.msg_update_canceled));
+            }
         }
+        ToolBox.toastMSG(context, "onActivityResult - requestCode:" + requestCode);
     }
 
     @Override

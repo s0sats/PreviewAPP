@@ -97,7 +97,14 @@ public class Act001_Main_Presenter_Impl implements Act001_Main_Presenter {
     public void checkLogin() {
         String user_code = ToolBox_Con.getPreference_User_Code(context);
         long customer_code = ToolBox_Con.getPreference_Customer_Code(context);
-
+        ToolBox_Inf.registerException(
+                "checkLogin",
+                new Exception(
+                        "checkLogin: \n" +
+                                "user_code: " + user_code +
+                                "customer_code: " + customer_code
+                )
+        );
         if (!user_code.equals("")) {
             if (customer_code != -1) {
                 mView.call_Act003_Main(context);
