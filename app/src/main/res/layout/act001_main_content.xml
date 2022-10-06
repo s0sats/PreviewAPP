@@ -76,6 +76,13 @@
                 android:textColor="@color/padrao_WHITE"
                 android:layout_margin="5dp"
                 />
+            <Button
+                android:id="@+id/act001_btn_check_prefs"
+                android:layout_width="@dimen/btn_width_default"
+                android:layout_height="wrap_content"
+                android:text="RECUPERACAO"
+                android:layout_margin="5dp"
+                />
         </LinearLayout>
 
         <TextView
