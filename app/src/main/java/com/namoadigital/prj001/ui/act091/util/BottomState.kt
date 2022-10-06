@@ -67,7 +67,7 @@ fun Act091BottomSheetBinding.onState(state: BottomState){
                             } else {
                                 service.forEach { obj ->
                                     obj.price?.let {
-                                        total += it
+                                        total += it * obj.qty
                                         act091BottomSheetOk.isEnabled = item.qty >= 1
                                         act091BottomSheetPrice.setText(ToolBox_Inf.formatDoublePriceToScreen(total).toString())
                                     }

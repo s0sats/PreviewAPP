@@ -72,10 +72,10 @@
     <string name="ws_exception_contact_admin_json_syntax">Os dados recebidos não podem ser lidos!\nContate a equipe de suporte!</string>
     <string name="ws_exception_contact_admin_oracle">Ocorreu um erro de banco de dados!\nContate a equipe de suporte!</string>
     <string name="ws_exception_contact_admin_timeout">Erro ao sincronizar dados. Verifique suas conexões e tente novamente.</string>
-    //
+
     <string name="ws_exception_connection_error">Ocorreu um erro de conexão!\nVerifique suas conexões de rede e tente novamente.\nSe o erro persistir, envie um arquivo de suporte através do menu principal.</string>
     <string name="ws_exception_unexpected_error">Ocorreu um erro não identificado!\nSe o erro persistir, envie um arquivo de suporte através do menu principal.</string>
-    //
+
     <string name="generic_error_lbl">ERRO:</string>
     <string name="title_notification_generic">Namoa</string>
     <string name="message_notification_sync">Sincronismo Necessário</string>
@@ -158,12 +158,14 @@
 	<string name="act089_database_error_reset_btn">Apagar dados locais do App</string>
     <string name="act089_dialog_database_reset_msg">Se você prosseguir, você apagará o banco de dados atual (que está corrompido) e um novo banco de dados será criado para você começar de novo seu trabalho. \n\nOBS: Apagar o banco de dados atual significa que você apagará as informações que não foram enviadas para o Servidor até agora, pois esses dados serão perdidos e não poderão ser recuperados. \n\nDeseja prosseguir?</string>
     <string name="act089_dialog_database_reset_ttl">Apagar dados locais do App</string>
-    <string name="act089_dialog_database_reset_cancel_btn">Cancelar</string>
+    <string name="act089_dialog_database_reset_cancel_btn">Cancel</string>
 	<string name="act089_dialog_database_reset_confirm_btn">Sim, quero apagar</string>
     
 	<!--App da Play Store simultaneamente com App Standalone (antes da Play Store)-->
-	<string name="act001_locked_standalone_namoa_app_found_ttl">Remova o App antigo!</string>
-	<string name="act001_locked_standalone_namoa_app_found_msg">Uma versão antiga do App NAMOA está instalada neste aparelho. \n\nPor favor desinstale essa versão antiga do App, para depois passar a usar esta versão mais atual. \n\nOBS: Finalize seu trabalho na versão antiga do App antes de desinstalá-lo. Para isso, abra a versão antiga do App, conclua processos em andamento, envie dados para o servidor, depois desinstale a versão antiga. </string>
-    <string name="msg_last_user_with_pendency">VORSICHT! Wenn Sie sich mit diesem Gerät anmelden, gehen die Daten VERLOREN. \\n\\Folgender Benutzer hat Daten, die noch nicht an den Server gesendet wurden und/oder Formulare, die noch ausgefüllt werden:</string>
+	<string name="act001_locked_standalone_namoa_app_found_ttl">Desinstale o App antigo</string>
+	<string name="act001_locked_standalone_namoa_app_found_msg">Uma versão antiga do APP NAMOA está instalada neste aparelho (Versão 4.12 ou anterior). \n\nPor favor, desinstale-a para depois passar a usar esta nova versão. \n\nATENÇÃO: Finalize os processos antes de desinstalar. Para isso, abra a versão antiga do APP, conclua processos em andamento, envie todos os dados para o servidor e depois desinstale a versão.</string>
+
+	<!--Login do Usuário B no device que tem dados pendentes do Usuário A (pendentes de envio ou Form em processo) -->
+	<string name="msg_last_user_with_pendency">CUIDADO! Dados serão PERDIDOS se você fizer login neste aparelho.\n\nO Usuário abaixo possui dados que ainda não foram enviados ao Servidor e/ou Formulários que estão sendo preenchidos:</string>
 
 </resources>

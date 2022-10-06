@@ -72,10 +72,10 @@
     <string name="ws_exception_contact_admin_json_syntax">Gesendete Daten lassen sich nicht lesen!\nBitte Ihre Supportteam kontaktieren.</string>
     <string name="ws_exception_contact_admin_oracle">Fehler in der Datenbank!\nBitte Ihr Supportteam kontaktieren.</string>
     <string name="ws_exception_contact_admin_timeout">Fehler: Wartezeit überschritten!\nBitte Ihre Internetverbindung prüfen.</string>
-    //
+
 	<string name="ws_exception_connection_error">Fehler: Keine Internetverbindung!\nBitte versuchen Sie es erneut, sobald Sie wieder online sind.\nBei bestehender Fehlermeldung bitte Supportdaten senden.\nDafür bitte im Hauptmenü die Taste oben rechts drücken.</string>
     <string name="ws_exception_unexpected_error">Fehler: Unbekannter Fehler!\nBei bestehender Fehlermeldung bitte Supportdaten senden.\nDafür bitte im Hauptmenü die Taste oben rechts drücken.</string>
-    //
+
 	<string name="generic_error_lbl">Fehler:</string>
     <string name="title_notification_generic">Namoa</string>
     <string name="message_notification_sync">Bitte APP synchronisieren.</string>
@@ -162,8 +162,10 @@
 	<string name="act089_dialog_database_reset_confirm_btn">Ja, bitte Daten löschen</string>
     
 	<!--App da Play Store simultaneamente com App Standalone (antes da Play Store)-->
-	<string name="act001_locked_standalone_namoa_app_found_ttl">Alte NAMOA App gefunden!</string>
-	<string name="act001_locked_standalone_namoa_app_found_msg">Auf diesem Gerät ist eine alte Version der NAMOA-App immer noch installiert. \n\nBitte deinstallieren Sie diese alte Version der App, damit Sie  die aktuellere Version verwenden können.\n\nHINWEIS: Beenden Sie bitte Ihre Arbeit  auf der alten Version der App, bevor Sie diese deinstallieren. Öffnen Sie dazu die alte Version der App, schließen Sie laufende Prozesse ab, senden Sie Daten an den NAMOA Server und dann deinstallieren Sie die alte App Version. </string>
-    <string name="msg_last_user_with_pendency">CUIDADO! Dados serão PERDIDOS se você fizer login neste aparelho. \\n\\nO Usuário abaixo possui dados que ainda não foram enviados ao Servidor e/ou Formulários que estão sendo preenchidos:</string>
+	<string name="act001_locked_standalone_namoa_app_found_ttl">Alte NAMOA App bitte deinstallieren</string>
+	<string name="act001_locked_standalone_namoa_app_found_msg">Auf diesem Gerät ist eine alte Version der NAMOA-App immer noch installiert (Version 4.12 oder frühere). \n\nBitte deinstallieren Sie diese alte Version der App, damit Sie  die aktuellere Version verwenden können.\n\nVORSICHT: Beenden Sie bitte Ihre Arbeit  auf der alten Version der App, bevor Sie diese deinstallieren. Öffnen Sie dazu die alte Version der App, schließen Sie laufende Prozesse ab, senden Sie Daten an den NAMOA Server und dann deinstallieren Sie die alte App Version. </string>
+
+	<!--Login do Usuário B no device que tem dados pendentes do Usuário A (pendentes de envio ou Form em processo) -->
+	<string name="msg_last_user_with_pendency">VORSICHT! Wenn Sie sich mit diesem Gerät anmelden, gehen die Daten VERLOREN.\n\nFolgender Benutzer hat Daten, die noch nicht an den Server gesendet wurden und/oder Formulare, die noch ausgefüllt werden:</string>
 
 </resources>

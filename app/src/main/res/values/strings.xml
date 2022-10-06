@@ -72,10 +72,10 @@
     <string name="ws_exception_contact_admin_json_syntax">The received data is unreadable.\nContact support team.</string>
     <string name="ws_exception_contact_admin_oracle">A database error has occurred.\nContact support team!</string>
     <string name="ws_exception_contact_admin_timeout">Time limit for server response has exceeded. \nCheck your  connections and try again!</string>
-    //
+
     <string name="ws_exception_connection_error">A connection error has occurred!\nCheck your network connections and try again.\nIf the error persists, send a support file through the main menu.</string>
     <string name="ws_exception_unexpected_error">An unexpected error has occurred!\nIf the error persists, please send a support file through the main menu.</string>
-    //
+
     <string name="generic_error_lbl">ERROR:</string>
     <string name="title_notification_generic">Namoa</string>
     <string name="message_notification_sync">Sync Required</string>
@@ -162,8 +162,10 @@
 	<string name="act089_dialog_database_reset_confirm_btn">Please erase the data</string>
     
 	<!--App da Play Store simultaneamente com App Standalone (antes da Play Store)-->
-	<string name="act001_locked_standalone_namoa_app_found_ttl">Old NAMOA App found!</string>
-	<string name="act001_locked_standalone_namoa_app_found_msg">An old version of the NAMOA App is installed on this device. \n\nPlease uninstall this old version, in order to start using the current App version.\n\nNOTE: Finish your work on the old version before uninstalling the App. To do this, open the old version of the App, complete ongoing processes, send data to the NAMOA server, then finally uninstall the old version.</string>
-    <string name="msg_last_user_with_pendency">CAUTION! Data will be LOST if you log in on this device. \\n\\nThe User below has data that has not yet been sent to the Server and/or Forms that are still being filled out:</string>
+	<string name="act001_locked_standalone_namoa_app_found_ttl">Please uninstall old NAMOA App</string>
+	<string name="act001_locked_standalone_namoa_app_found_msg">An old version of the NAMOA App is installed on this device (Version 4.12 or lower). \n\nPlease uninstall this old version, in order to start using the current App version.\n\nNOTE: Finish your work on the old version before uninstalling the App. To do this, open the old version of the App, complete ongoing processes, send data to the NAMOA server, then finally uninstall the old version.</string>
+
+	<!--Login do Usuário B no device que tem dados pendentes do Usuário A (pendentes de envio ou Form em processo) -->
+	<string name="msg_last_user_with_pendency">CAUTION! Data will be LOST if you log in on this device.\n\nThe User below has data that has not yet been sent to the Server and/or Forms that are still being filled out:</string>
 
 </resources>

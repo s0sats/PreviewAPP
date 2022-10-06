@@ -3,17 +3,12 @@ package com.namoadigital.prj001.service;
 import android.app.IntentService;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import androidx.core.content.FileProvider;
 
-import com.namoadigital.prj001.BuildConfig;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.receiver.WBR_UpdateSoftware;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
-
-import java.io.File;
 
 /**
  * Created by neomatrix on 16/01/17.
@@ -107,7 +102,7 @@ public class WS_UpdateSoftware extends IntentService {
         Intent intent;
         Uri uri;
         //
-        try {
+/*        try {
             //LUCHE - 26/12/2019
             //Após lançamento do Android 10, o esquema de atualização com Type application/vnd.android.package-archive parou de funcionar.
             //Para corrigir o problema, foi necessario adicionar a verificação da versão API do device
@@ -132,6 +127,6 @@ public class WS_UpdateSoftware extends IntentService {
             ToolBox_Inf.registerException(getClass().getName(),e);
             //
             ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", getString(R.string.install_app_error_msg), "", "0");
-        }
+        }*/
     }
 }
