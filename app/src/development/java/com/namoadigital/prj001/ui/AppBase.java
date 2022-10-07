@@ -148,7 +148,7 @@ public class AppBase extends Application {
         ConstantBaseApp.PRJ001_VERSION_CODE = BuildConfig.VERSION_CODE;
         ConstantBaseApp.PRJ001_VERSION = BuildConfig.VERSION_NAME;
 
-
+        ConstantBaseApp.PKG_APP_TYPE_DEFAULT = ConstantBaseApp.PKG_APP_TYPE_STANDARD;
 
         ToolBox_Inf.libTranslation(getApplicationContext());
 

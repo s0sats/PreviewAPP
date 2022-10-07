@@ -145,6 +145,9 @@ public class AppBase extends Application {
 
         PKG_CLEAN = String.valueOf(Constant.PRJ001_VERSION);
 
+
+        Constant.PKG_APP_TYPE_DEFAULT = Constant.PKG_APP_TYPE_STANDARD;
+
         ToolBox_Inf.libTranslation(getApplicationContext());
 
         Constant.DEVELOPMENT_BASE = ToolBox_Inf.isDevelopmentBase();
