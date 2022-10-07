@@ -157,7 +157,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         //
         ToolBox_Inf.mkDirectory();
         //
-        mPresenter.checkLogin();
+//        mPresenter.checkLogin();
         //
         updateManager = AppUpdateManagerFactory.create(this);
     }
@@ -355,11 +355,10 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
             if(resultCode == RESULT_OK){
                 mPresenter.checkLogin();
             }else{
-                mPresenter.checkLogin();
-//                ToolBox.toastMSG(context,getResources().getString(R.string.msg_update_canceled));
+//                mPresenter.checkLogin();
+                ToolBox.toastMSG(context,getResources().getString(R.string.msg_update_canceled));
             }
         }
-        ToolBox.toastMSG(context, "onActivityResult - requestCode:" + requestCode);
     }
 
     @Override
