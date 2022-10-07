@@ -54,12 +54,11 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
     private String mPassWord = "";
     private String mNFC = "";
     private AppUpdateManager updateManager;
-    private Button btn_check_prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        int version =  BuildConfig.VERSION_CODE;
+        int version = BuildConfig.VERSION_CODE;
         String name = BuildConfig.VERSION_NAME;
 
         //LUCHE - 22/04/2020
@@ -84,13 +83,6 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
          */
         //A linha abaixo , em tese, faz o mesmo que o if usado.
         //if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
-        ToolBox_Inf.registerException(
-                "Act001_Main",
-                new Exception(
-                        "oncreate: \n" +
-                        "isTaskRoot(): " + isTaskRoot()
-                )
-        );
         if (!isTaskRoot()) {
             finish();
             return;
@@ -153,7 +145,6 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         mk_login = (MKEditTextNM) findViewById(R.id.act001_mk_login);
         et_password = (EditText) findViewById(R.id.act001_et_password);
         btn_login = (Button) findViewById(R.id.act001_btn_login);
-        btn_check_prefs = findViewById(R.id.act001_btn_check_prefs);
         tv_dev_db = (TextView) findViewById(R.id.act001_tv_dev_db);
         tv_version = (TextView) findViewById(R.id.act001_tv_version);
         //
@@ -172,22 +163,9 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
     }
 
     private void recoverIntentsInfo() {
-        ToolBox_Inf.registerException(
-                "recoverIntentsInfo",
-                new Exception(
-                        "recoverIntentsInfo: \n"
-                )
-        );
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             boolean sendToStore = bundle.getBoolean(SEND_TO_STORE);
-            ToolBox_Inf.registerException(
-                    "recoverIntentsInfo",
-                    new Exception(
-                            "recoverIntentsInfo: \n" +
-                                    "sendToStore: " + sendToStore
-                    )
-            );
             if(sendToStore){
                 callAppStore();
             }else{
@@ -230,18 +208,6 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
                         et_password.getText().toString().replace("\"", "'").trim(),
                         ""
                 );
-            }
-        });
-
-        btn_check_prefs.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent mIntent = new Intent(context, Act089Main.class);
-                mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-                context.startActivity(mIntent);
-
-                finish();
             }
         });
 
@@ -384,14 +350,6 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         //
-        ToolBox_Inf.registerException(
-                "onActivityResult",
-                new Exception(
-                        "onActivityResult: \n" +
-                                "requestCode: " + requestCode +
-                                "resultCode: " + resultCode
-                        )
-        );
         if( requestCode == ConstantBaseApp.PLAYSTORE_UPDATE_REQUEST_CODE
         ){
             if(resultCode == RESULT_OK){

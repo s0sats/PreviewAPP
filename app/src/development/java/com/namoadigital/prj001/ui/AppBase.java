@@ -148,32 +148,7 @@ public class AppBase extends Application {
         ConstantBaseApp.PRJ001_VERSION_CODE = BuildConfig.VERSION_CODE;
         ConstantBaseApp.PRJ001_VERSION = BuildConfig.VERSION_NAME;
 
-        PKG_CLEAN = String.valueOf(ConstantBaseApp.PRJ001_VERSION);
 
-        String PGK_CLEAN_P = ToolBox_Con.getPreference_PKG_CLEAN(getApplicationContext());
-        /**
-         * 22/01/2019 - LUCHE
-         *
-         * Criado var PGK_APP_TYPE_P que identifica qual o "tipo" do app.
-         * Por hora, esse tipo, identifica se é flavor com ou sem ocr.
-         * Caso esse o tipo mude, significa que o as preferencias devem ser zeradas enviado o user
-         * para a tela de login.
-         * OBS: OS FLAVOR COM OCR DEVEM TER SETADO COMO PREFERENCIA  PKG_APP_TYPE O VALOR PKG_APP_TYPE_MICROBLINK_OCR_VIN
-         * ENQUANTO AS SEM OCR VALOR PKG_APP_TYPE_STANDARD
-         */
-        ConstantBaseApp.PKG_APP_TYPE_DEFAULT = ConstantBaseApp.PKG_APP_TYPE_STANDARD;
-        String PGK_APP_TYPE_P = ToolBox_Con.getPreference_PKG_APP_TYPE(getApplicationContext());
-        //
-        if (!PKG_CLEAN.equals(PGK_CLEAN_P) || !ConstantBaseApp.PKG_APP_TYPE_DEFAULT.equals(PGK_APP_TYPE_P)) {
-            ToolBox_Con.cleanPreferences(getApplicationContext());
-            if(!PKG_CLEAN.equals(PGK_CLEAN_P)) {
-                ToolBox_Con.setPreference_PKG_CLEAN(getApplicationContext(), PKG_CLEAN);
-            }
-            //
-            if(!ConstantBaseApp.PKG_APP_TYPE_DEFAULT.equals(PGK_APP_TYPE_P)) {
-                ToolBox_Con.setPreference_PKG_APP_TYPE(getApplicationContext(), ConstantBaseApp.PKG_APP_TYPE_DEFAULT);
-            }
-        }
 
         ToolBox_Inf.libTranslation(getApplicationContext());
 
