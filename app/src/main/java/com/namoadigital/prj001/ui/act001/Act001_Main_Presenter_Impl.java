@@ -119,20 +119,15 @@ public class Act001_Main_Presenter_Impl implements Act001_Main_Presenter {
             .getAppUpdateInfo()
             .addOnSuccessListener(appUpdateInfo -> {
 //                Log.i("inRonaldo", "updateAvailability =" + appUpdateInfo.updateAvailability());
-//                if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE){
-//                    if( allowUpdatePopup(appUpdateInfo.clientVersionStalenessDays())
-//                            && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
-//                    ){
-//                        callImmediateUpdateFlow(updateManager,appUpdateInfo);
-//                    }
-//                } else {
-////                    Log.i("inRonaldo", "Reseta pref por nao ter atualizacao e ao impedir o inapp na proxima atualizacao " );
-//                    updateInAppDialogShowedPreference(false);
-//                }
-                if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
-                        && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)){
-                    callImmediateUpdateFlow(updateManager,appUpdateInfo);
+                if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE){
+                    if( allowUpdatePopup(appUpdateInfo.clientVersionStalenessDays())
+                            && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
+                    ){
+                        callImmediateUpdateFlow(updateManager,appUpdateInfo);
+                    }
                 } else {
+//                    Log.i("inRonaldo", "Reseta pref por nao ter atualizacao e ao impedir o inapp na proxima atualizacao " );
+                    updateInAppDialogShowedPreference(false);
                     checkLogin();
                 }
             })
@@ -182,49 +177,49 @@ public class Act001_Main_Presenter_Impl implements Act001_Main_Presenter {
      * @param daysSinceLastUpdatePopupShowed - Qtd de dias decorridos ou null se nunca foi exibido
      * @return
      */
-//    private boolean allowUpdatePopup(Integer daysSinceLastUpdatePopupShowed) {
-////        Log.i("inRonaldo", "daysSinceLastUpdatePopupShowed =" + daysSinceLastUpdatePopupShowed);
-//        //Se daysSinceLastUpdatePopupShowed null, cairá no catch. ISSO não deveria acontecer
-//        try{
-//            if( daysSinceLastUpdatePopupShowed == 0
-//                && !ToolBox_Con.getBooleanPreferencesByKey(
-//                        context,
-//                        ConstantBaseApp.PREFERENCE_HAS_INAPP_DIALOG_ALREADY_SHOWED,
-//                        false
-//                    )
-//            ){
-////                Log.i("inRonaldo", "daysSinceLastUpdatePopupShowed 0 && pref false" );
-//                updateInAppDialogShowedPreference(true);
-//                //
-//                return true;
-//            } else {
-////                Log.i("inRonaldo", "daysSinceLastUpdatePopupShowed "+daysSinceLastUpdatePopupShowed);
-//                //Se qtd de dias maior que 0, reseta preferencia.
-//                if(daysSinceLastUpdatePopupShowed > 0){
-////                    Log.i("inRonaldo", "daysSinceLastUpdatePopupShowed > 0, rest pref && compara qtd de dias com TOLERANCE_UPDATE_DIALOG_DAYS");
-//                    updateInAppDialogShowedPreference(false);
-//                    //Se o qtd de dias for diferente da qt
-//                    return !(daysSinceLastUpdatePopupShowed == TOLERANCE_UPDATE_DIALOG_DAYS);
-//                }
-//                //Se chegou aqui, qtd de dias 0 e ja foi exibido entao , não exibe novamente.
-//                return false;
-//            }
-//        }catch (Exception e){
-////            Log.i("inRonaldo", "daysSinceLastUpdatePopupShowed Exception...");
-//            //Reseta pref pq se teve exception acho deu errado e talvez nesse caso, seja interessante
-//            //o resete
-//            updateInAppDialogShowedPreference(false);
-//            ToolBox_Inf.registerException(getClass().getName(),e);
-//            return true;
-//        }
-//    }
+    private boolean allowUpdatePopup(Integer daysSinceLastUpdatePopupShowed) {
+//        Log.i("inRonaldo", "daysSinceLastUpdatePopupShowed =" + daysSinceLastUpdatePopupShowed);
+        //Se daysSinceLastUpdatePopupShowed null, cairá no catch. ISSO não deveria acontecer
+        try{
+            if( daysSinceLastUpdatePopupShowed == 0
+                && !ToolBox_Con.getBooleanPreferencesByKey(
+                        context,
+                        ConstantBaseApp.PREFERENCE_HAS_INAPP_DIALOG_ALREADY_SHOWED,
+                        false
+                    )
+            ){
+//                Log.i("inRonaldo", "daysSinceLastUpdatePopupShowed 0 && pref false" );
+                updateInAppDialogShowedPreference(true);
+                //
+                return true;
+            } else {
+//                Log.i("inRonaldo", "daysSinceLastUpdatePopupShowed "+daysSinceLastUpdatePopupShowed);
+                //Se qtd de dias maior que 0, reseta preferencia.
+                if(daysSinceLastUpdatePopupShowed > 0){
+//                    Log.i("inRonaldo", "daysSinceLastUpdatePopupShowed > 0, rest pref && compara qtd de dias com TOLERANCE_UPDATE_DIALOG_DAYS");
+                    updateInAppDialogShowedPreference(false);
+                    //Se o qtd de dias for diferente da qt
+                    return !(daysSinceLastUpdatePopupShowed == TOLERANCE_UPDATE_DIALOG_DAYS);
+                }
+                //Se chegou aqui, qtd de dias 0 e ja foi exibido entao , não exibe novamente.
+                return false;
+            }
+        }catch (Exception e){
+//            Log.i("inRonaldo", "daysSinceLastUpdatePopupShowed Exception...");
+            //Reseta pref pq se teve exception acho deu errado e talvez nesse caso, seja interessante
+            //o resete
+            updateInAppDialogShowedPreference(false);
+            ToolBox_Inf.registerException(getClass().getName(),e);
+            return true;
+        }
+    }
 
 
-//    private void updateInAppDialogShowedPreference(boolean prefValue) {
-//        ToolBox_Con.setBooleanPreference(
-//            context,
-//            ConstantBaseApp.PREFERENCE_HAS_INAPP_DIALOG_ALREADY_SHOWED,
-//            prefValue
-//        );
-//    }
+    private void updateInAppDialogShowedPreference(boolean prefValue) {
+        ToolBox_Con.setBooleanPreference(
+            context,
+            ConstantBaseApp.PREFERENCE_HAS_INAPP_DIALOG_ALREADY_SHOWED,
+            prefValue
+        );
+    }
 }
