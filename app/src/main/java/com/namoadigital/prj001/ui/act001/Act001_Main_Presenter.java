@@ -22,4 +22,8 @@ public interface Act001_Main_Presenter {
     void checkUpdateAvailable(AppUpdateManager updateManager);
 
     void checkUpdateInProgess(AppUpdateManager updateManager);
+
+    boolean allowShowUpdate();
+
+    void showDialogNextDay();
 }

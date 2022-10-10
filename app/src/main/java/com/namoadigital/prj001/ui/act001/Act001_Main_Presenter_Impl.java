@@ -5,9 +5,7 @@ import static com.namoadigital.prj001.util.ToolBox_Inf.OLD_PACKAGE_NAME;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.google.android.play.core.appupdate.AppUpdateInfo;
 import com.google.android.play.core.appupdate.AppUpdateManager;
@@ -21,6 +19,9 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by neomatrix on 09/01/17.
@@ -119,12 +120,15 @@ public class Act001_Main_Presenter_Impl implements Act001_Main_Presenter {
             .getAppUpdateInfo()
             .addOnSuccessListener(appUpdateInfo -> {
 //                Log.i("inRonaldo", "updateAvailability =" + appUpdateInfo.updateAvailability());
+                System.out.println("UPDATE VALUE? "+appUpdateInfo.updateAvailability());
                 if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE){
-                    if( allowUpdatePopup(appUpdateInfo.clientVersionStalenessDays())
-                            && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
+                    if(allowUpdatePopup() && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
                     ){
                         callImmediateUpdateFlow(updateManager,appUpdateInfo);
+                    }else{
+                        checkLogin();
                     }
+
                 } else {
 //                    Log.i("inRonaldo", "Reseta pref por nao ter atualizacao e ao impedir o inapp na proxima atualizacao " );
                     updateInAppDialogShowedPreference(false);
@@ -168,42 +172,46 @@ public class Act001_Main_Presenter_Impl implements Act001_Main_Presenter {
         }
     }
 
+
+    public boolean allowShowUpdate(){
+        long actual = System.currentTimeMillis();
+        long prefs = ToolBox_Con.getLongPreferencesByKey(context,
+                ConstantBaseApp.PREFERENCE_HAS_INAPP_DIALOG_ALREADY_SHOW,
+                -1L);
+        long diff = new Date(actual).getTime() - new Date(prefs).getTime();
+        int diference = (int) TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+
+        if(prefs == -1){
+            return true;
+        }
+
+        return diference >= 1;
+    }
+
+    public void showDialogNextDay(){
+        ToolBox_Con.setLongPreference(context,
+                ConstantBaseApp.PREFERENCE_HAS_INAPP_DIALOG_ALREADY_SHOW,
+                System.currentTimeMillis());
+    }
     /**
      * Metodo que verifica a qtds dias foi exibido o dialog de update para saber se deve
      * ou não exibi-lo novamente.
      * Foi definido que o popup de atualização deve aparecer apenas a cada X dias onde X é o valor
      * da constante TOLERANCE_UPDATE_DIALOG_DAYS
      *
-     * @param daysSinceLastUpdatePopupShowed - Qtd de dias decorridos ou null se nunca foi exibido
      * @return
      */
-    private boolean allowUpdatePopup(Integer daysSinceLastUpdatePopupShowed) {
+    private boolean allowUpdatePopup() {
 //        Log.i("inRonaldo", "daysSinceLastUpdatePopupShowed =" + daysSinceLastUpdatePopupShowed);
         //Se daysSinceLastUpdatePopupShowed null, cairá no catch. ISSO não deveria acontecer
         try{
-            if( daysSinceLastUpdatePopupShowed == 0
-                && !ToolBox_Con.getBooleanPreferencesByKey(
-                        context,
-                        ConstantBaseApp.PREFERENCE_HAS_INAPP_DIALOG_ALREADY_SHOWED,
-                        false
-                    )
-            ){
+            if(allowShowUpdate()){
 //                Log.i("inRonaldo", "daysSinceLastUpdatePopupShowed 0 && pref false" );
                 updateInAppDialogShowedPreference(true);
                 //
                 return true;
-            } else {
-//                Log.i("inRonaldo", "daysSinceLastUpdatePopupShowed "+daysSinceLastUpdatePopupShowed);
-                //Se qtd de dias maior que 0, reseta preferencia.
-                if(daysSinceLastUpdatePopupShowed > 0){
-//                    Log.i("inRonaldo", "daysSinceLastUpdatePopupShowed > 0, rest pref && compara qtd de dias com TOLERANCE_UPDATE_DIALOG_DAYS");
-                    updateInAppDialogShowedPreference(false);
-                    //Se o qtd de dias for diferente da qt
-                    return !(daysSinceLastUpdatePopupShowed == TOLERANCE_UPDATE_DIALOG_DAYS);
-                }
-                //Se chegou aqui, qtd de dias 0 e ja foi exibido entao , não exibe novamente.
-                return false;
             }
+            return false;
         }catch (Exception e){
 //            Log.i("inRonaldo", "daysSinceLastUpdatePopupShowed Exception...");
             //Reseta pref pq se teve exception acho deu errado e talvez nesse caso, seja interessante

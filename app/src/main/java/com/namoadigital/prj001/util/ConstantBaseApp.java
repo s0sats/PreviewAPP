@@ -479,6 +479,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String DATETIME_TOLERANCE= "DATETIME_TOLERANCE";
     public static final String PREFERENCE_PIPELINE_HEADER_FORM_INFO_TOGGLE= "PREFERENCE_PIPELINE_HEADER_FORM_INFO_TOGGLE";
     public static final String PREFERENCE_HAS_INAPP_DIALOG_ALREADY_SHOWED = "PREFERENCE_HAS_INAPP_DIALOG_ALREADY_SHOWED";
+    public static final String PREFERENCE_HAS_INAPP_DIALOG_ALREADY_SHOW = "PREFERENCE_HAS_INAPP_DIALOG_ALREADY_SHOW";
     public static final String PREFERENCE_SERIAL_OFFLINE_FLOW= "PREFERENCE_SERIAL_OFFLINE_FLOW";
 
     public static final String LOGIN_USER_NFC_TMP = "login_user_nfc_tmp";

@@ -26,7 +26,6 @@ import com.namoadigital.prj001.BuildConfig;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
-import com.namoadigital.prj001.ui.act089.mvp.ui.Act089Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -67,7 +66,6 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         /*// Hugo Remover
         Intent mIntent = new Intent(getApplicationContext(), RegistrationIntentService.class);
         startService(mIntent);*/
-
         context = Act001_Main.this;
 
         super.onCreate(savedInstanceState);
@@ -356,6 +354,8 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
                 mPresenter.checkLogin();
             }else{
 //                mPresenter.checkLogin();
+                mPresenter.showDialogNextDay();
+                mPresenter.checkLogin();
                 ToolBox.toastMSG(context,getResources().getString(R.string.msg_update_canceled));
             }
         }
