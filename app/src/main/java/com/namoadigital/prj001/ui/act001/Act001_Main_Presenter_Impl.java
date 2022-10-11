@@ -20,8 +20,7 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
+import java.text.SimpleDateFormat;
 
 /**
  * Created by neomatrix on 09/01/17.
@@ -176,16 +175,15 @@ public class Act001_Main_Presenter_Impl implements Act001_Main_Presenter {
     public boolean allowShowUpdate(){
         long actual = System.currentTimeMillis();
         long prefs = ToolBox_Con.getLongPreferencesByKey(context,
-                ConstantBaseApp.PREFERENCE_HAS_INAPP_DIALOG_ALREADY_SHOW,
-                -1L);
-        long diff = new Date(actual).getTime() - new Date(prefs).getTime();
-        int diference = (int) TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+                ConstantBaseApp.PREFERENCE_HAS_INAPP_DIALOG_ALREADY_SHOW, -1L);
+        String current = new SimpleDateFormat("dd/MM").format(actual);
+        String old = new SimpleDateFormat("dd/MM").format(prefs);
 
         if(prefs == -1){
             return true;
         }
 
-        return diference >= 1;
+        return !current.equals(old);
     }
 
     public void showDialogNextDay(){
