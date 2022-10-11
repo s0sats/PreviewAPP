@@ -13,6 +13,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -53,6 +55,8 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
     private String mPassWord = "";
     private String mNFC = "";
     private AppUpdateManager updateManager;
+    private LinearLayout ll_main;
+    private ImageView iv_main;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,11 +144,15 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         //Chama metodo que cancela os alarms que eram usados antes do WorkManager.
         ToolBox_Inf.cancelAlarmsTarget21(context);
 
+        ll_main =  findViewById(R.id.ll_main);
+        iv_main =  findViewById(R.id.iv_main);
         mk_login = (MKEditTextNM) findViewById(R.id.act001_mk_login);
         et_password = (EditText) findViewById(R.id.act001_et_password);
         btn_login = (Button) findViewById(R.id.act001_btn_login);
         tv_dev_db = (TextView) findViewById(R.id.act001_tv_dev_db);
         tv_version = (TextView) findViewById(R.id.act001_tv_version);
+        //
+        setSplashScreen(true);
         //
         mPresenter = new Act001_Main_Presenter_Impl(
                 context,
@@ -158,6 +166,16 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
 //        mPresenter.checkLogin();
         //
         updateManager = AppUpdateManagerFactory.create(this);
+    }
+    @Override
+    public void setSplashScreen(boolean showIcon) {
+        if(showIcon){
+            iv_main.setVisibility(View.VISIBLE);
+            ll_main.setVisibility(View.GONE);
+        }else{
+            iv_main.setVisibility(View.GONE);
+            ll_main.setVisibility(View.VISIBLE);
+        }
     }
 
     private void recoverIntentsInfo() {

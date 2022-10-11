@@ -104,6 +104,8 @@ public class Act001_Main_Presenter_Impl implements Act001_Main_Presenter {
             } else {
                 mView.call_Act002_Main(context);
             }
+        }else{
+            mView.setSplashScreen(false);
         }
     }
 

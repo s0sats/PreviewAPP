@@ -24,4 +24,6 @@ public interface Act001_Main_View {
     void call_Act003_Main(Context context);
 
     Activity getActivity();
+
+    void setSplashScreen(boolean showIcon);
 }
