@@ -368,14 +368,13 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         //
         if( requestCode == ConstantBaseApp.PLAYSTORE_UPDATE_REQUEST_CODE
         ){
-            if(resultCode == RESULT_OK){
-                mPresenter.checkLogin();
-            }else{
-//                mPresenter.checkLogin();
+
+            if(resultCode != RESULT_OK){
                 mPresenter.showDialogNextDay();
-                mPresenter.checkLogin();
                 ToolBox.toastMSG(context,getResources().getString(R.string.msg_update_canceled));
             }
+            mPresenter.checkLogin();
+
         }
     }
 

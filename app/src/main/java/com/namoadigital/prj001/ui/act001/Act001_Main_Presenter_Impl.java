@@ -117,30 +117,32 @@ public class Act001_Main_Presenter_Impl implements Act001_Main_Presenter {
     @Override
     public void checkUpdateAvailable(AppUpdateManager updateManager) {
 //        Log.i("inRonaldo", "checkUpdateAvailable acessado" );
-        updateManager
-            .getAppUpdateInfo()
-            .addOnSuccessListener(appUpdateInfo -> {
+        if (allowShowUpdate()) {
+            updateManager
+                    .getAppUpdateInfo()
+                    .addOnSuccessListener(appUpdateInfo -> {
 //                Log.i("inRonaldo", "updateAvailability =" + appUpdateInfo.updateAvailability());
-                System.out.println("UPDATE VALUE? "+appUpdateInfo.updateAvailability());
-                if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE){
-                    if(allowUpdatePopup() && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
-                    ){
-                        callImmediateUpdateFlow(updateManager,appUpdateInfo);
-                    }else{
-                        checkLogin();
-                    }
+                        if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE) {
+                            if (appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)) {
+                                callImmediateUpdateFlow(updateManager, appUpdateInfo);
+                            } else {
+                                checkLogin();
+                            }
 
-                } else {
+                        } else {
 //                    Log.i("inRonaldo", "Reseta pref por nao ter atualizacao e ao impedir o inapp na proxima atualizacao " );
-                    updateInAppDialogShowedPreference(false);
-                    checkLogin();
-                }
-            })
-            .addOnFailureListener(
-                    appUpdateInfo -> {
-                        checkLogin();
-                    }
-            );
+                            updateInAppDialogShowedPreference(false);
+                            checkLogin();
+                        }
+                    })
+                    .addOnFailureListener(
+                            appUpdateInfo -> {
+                                checkLogin();
+                            }
+                    );
+        }else{
+            checkLogin();
+        }
     }
 
     @Override
@@ -170,6 +172,8 @@ public class Act001_Main_Presenter_Impl implements Act001_Main_Presenter {
                 context,
                 context.getString(R.string.error_on_inapp_start_update_flow)
             );
+            checkLogin();
+
         }
     }
 
@@ -205,13 +209,10 @@ public class Act001_Main_Presenter_Impl implements Act001_Main_Presenter {
 //        Log.i("inRonaldo", "daysSinceLastUpdatePopupShowed =" + daysSinceLastUpdatePopupShowed);
         //Se daysSinceLastUpdatePopupShowed null, cairá no catch. ISSO não deveria acontecer
         try{
-            if(allowShowUpdate()){
 //                Log.i("inRonaldo", "daysSinceLastUpdatePopupShowed 0 && pref false" );
                 updateInAppDialogShowedPreference(true);
                 //
                 return true;
-            }
-            return false;
         }catch (Exception e){
 //            Log.i("inRonaldo", "daysSinceLastUpdatePopupShowed Exception...");
             //Reseta pref pq se teve exception acho deu errado e talvez nesse caso, seja interessante
