@@ -282,7 +282,14 @@ public class WS_Sync extends IntentService {
             //Add param que redefine timeout da chamada.
             //Usada somente no sync full
             int connection_timeout = bundle.getInt(Constant.WS_CONNECTION_TIMEOUT, 60000);
-
+            /*
+                BARRIONUEVO - 13-10-2022
+                Limpeza de preferencia para atualizacao do app.
+             */
+            ToolBox_Con.setLongPreference(getApplicationContext(),
+                    ConstantBaseApp.PREFERENCE_HAS_INAPP_DIALOG_ALREADY_SHOW,
+                    -1L);
+            //
             processWS_Sync(session_app, dataPackageType, jumpValidation, jumpOD, product_code, loginProcess,connection_timeout);
 
             // Limpeza da Notificacao

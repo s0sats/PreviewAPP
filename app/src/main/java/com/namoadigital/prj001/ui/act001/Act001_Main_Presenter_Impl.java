@@ -126,17 +126,20 @@ public class Act001_Main_Presenter_Impl implements Act001_Main_Presenter {
                             if (appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)) {
                                 callImmediateUpdateFlow(updateManager, appUpdateInfo);
                             } else {
+                                showDialogNextDay();
                                 checkLogin();
                             }
 
                         } else {
 //                    Log.i("inRonaldo", "Reseta pref por nao ter atualizacao e ao impedir o inapp na proxima atualizacao " );
                             updateInAppDialogShowedPreference(false);
+                            showDialogNextDay();
                             checkLogin();
                         }
                     })
                     .addOnFailureListener(
                             appUpdateInfo -> {
+                                showDialogNextDay();
                                 checkLogin();
                             }
                     );
