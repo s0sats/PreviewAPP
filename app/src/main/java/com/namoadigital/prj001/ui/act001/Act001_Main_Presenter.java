@@ -1,7 +1,5 @@
 package com.namoadigital.prj001.ui.act001;
 
-import com.google.android.play.core.appupdate.AppUpdateManager;
-
 /**
  * Created by neomatrix on 29/12/16.
  */
@@ -19,11 +17,4 @@ public interface Act001_Main_Presenter {
     //checar se o antigo app esta instalado no device.
     boolean isPackageInstalled();
 
-    void checkUpdateAvailable(AppUpdateManager updateManager);
-
-    void checkUpdateInProgess(AppUpdateManager updateManager);
-
-    boolean allowShowUpdate();
-
-    void showDialogNextDay();
 }

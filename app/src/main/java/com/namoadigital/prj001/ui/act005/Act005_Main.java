@@ -1,9 +1,6 @@
 package com.namoadigital.prj001.ui.act005;
 
 import static com.namoadigital.prj001.ui.act005.Act005_Main_Presenter_Impl.SYNC_FOR_TICKETS_FORM;
-import static com.namoadigital.prj001.util.ConstantBaseApp.DB_BASE_STATUS_ERROR;
-import static com.namoadigital.prj001.util.ConstantBaseApp.DB_CHAT_STATUS_ERROR;
-import static com.namoadigital.prj001.util.ConstantBaseApp.DB_MULTI_STATUS_ERROR;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FCM_ACTION_TK_TICKET_UPDATE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FCM_MODULE_SYNC;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FCM_MODULE_TICKET;
@@ -14,6 +11,7 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_SITES
 import static com.namoadigital.prj001.view.frag.frg_main_home.FrgMainHome.OnFrgMainHomeIteract;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -46,6 +44,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.google.android.play.core.appupdate.AppUpdateManager;
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
@@ -232,7 +232,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     ArrayList<HMAux> outbound_items;
     Toolbar toolbar;
     private boolean masterDataSyncFlow = false;
-
+    private AppUpdateManager appUpdateManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -658,6 +658,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         wsProcess = "";
         wsSoProcess = "";
 
+        appUpdateManager = AppUpdateManagerFactory.create(this);
+
         mDrawerLayout = (DrawerLayout)
                 findViewById(R.id.act005_drawer);
 
@@ -698,6 +700,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 ),
                 new CH_MessageDao(context)
         );
+        //
+
+        mPresenter.checkUpdateAvailable(appUpdateManager);
+
         //
         ToolBox_Inf.mkDirectory();
         ToolBox_Inf.cleanUpApproval(
@@ -2340,6 +2346,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     }
 
     @Override
+    public Activity getActivity() {
+        return this;
+    }
+
+    @Override
     public void refreshResume(int layout_id, boolean isDone, int sucessAmount, int totalAmount) {
         try {
             sendResumeDialog.updateResumeStatus(layout_id, isDone, sucessAmount, totalAmount);
@@ -2600,6 +2611,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     }
 
     private void showSuccessDialog() {
+        DialogInterface.OnClickListener clickListener = null;
         switch (wsProcess) {
             case Act005_Main.WS_PROCESS_SEND:
                 alertTitle = hmAux_Trans.get("alert_send_finish_ttl");
@@ -2615,6 +2627,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 ToolBox_Inf.updateUserCustomerSync(getApplicationContext(), String.valueOf(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ToolBox_Con.getPreference_User_Code(getApplicationContext()), 0);
                 setFragments();
                 refreshUiData();
+                clickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        mPresenter.checkUpdateAvailable(appUpdateManager);
+                    }
+                };
                 //
                 break;
             case Act005_Main.WS_PROCESS_ENABLE_NFC:
@@ -2653,7 +2671,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 Act005_Main.this,
                 alertTitle,
                 alertMsg,
-                null,
+                clickListener,
                 0
         );
 
@@ -2925,6 +2943,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         super.onResume();
         //
         ToolBox_Inf.mkDirectory();
+
+        mPresenter.checkUpdateInProgress(appUpdateManager);
         // LUCHE - 19/12/2019
         //O comando getMenuItensV2, foi adicionado em 19 Apr 2017, commit 9ff6860d31decd335f5f2b3d40e75822fa609348
         //Aparentemente, serve apenas para quando o usuario, estando com a act005,
@@ -3257,5 +3277,16 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         transaction.replace(R.id.act005_frg_placeholder, fragment, fragment.getTag());
         transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == ConstantBaseApp.PLAYSTORE_UPDATE_REQUEST_CODE){
+            if(resultCode != RESULT_OK){
+                ToolBox.toastMSG(context,getResources().getString(R.string.msg_update_canceled));
+            }
+        }
     }
 }

@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 
+import com.google.android.play.core.appupdate.AppUpdateManager;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.EV_User;
 import com.namoadigital.prj001.model.MainTagMenu;
@@ -143,4 +144,10 @@ public interface Act005_Main_Presenter {
 
     boolean hasTicketSyncRequiredCloudRule();
 
+
+    void rememberUpdateTomorrow();
+
+    void checkUpdateAvailable(AppUpdateManager updateManager);
+
+    void checkUpdateInProgress(AppUpdateManager updateManager);
 }
