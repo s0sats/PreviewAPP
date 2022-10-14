@@ -32,6 +32,7 @@ import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_DeviceDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.MdOrderTypeDao;
 import com.namoadigital.prj001.dao.MdTagDao;
+import com.namoadigital.prj001.dao.MeMeasureTpDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
@@ -134,6 +135,7 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
         //
         transList.add("alert_os_form_ttl");
         transList.add("alert_serial_undefined_or_without_structure_msg");
+        transList.add("alert_serial_without_measure_type_msg");
         //
         transList.add("dialog_ticket_creation_ttl");
         transList.add("dialog_ticket_creation_start");
@@ -179,7 +181,13 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
+                ),
+                new MeMeasureTpDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
                 )
+
         );
         //
         setLabels();
