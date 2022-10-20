@@ -50,6 +50,12 @@ val MigrationV1 = object : MigrationSQLite(1, 2){
         //
         db.execSQL(
             """
+              DROP TABLE [me_measure_tp]
+            """.trimIndent()
+        )
+        //
+        db.execSQL(
+            """
               ALTER TABLE [me_measure_tp_temp] RENAME TO [me_measure_tp]
             """.trimIndent()
         )

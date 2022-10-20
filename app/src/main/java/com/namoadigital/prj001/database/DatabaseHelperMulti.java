@@ -185,10 +185,15 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         //
-        switch (oldVersion){
-            case 1:
-                MigrationsKt.getMigrationV1().migrate(db);
-                break;
+        try{
+            switch (oldVersion){
+                case 1:
+                    MigrationsKt.getMigrationV1().migrate(db);
+                    break;
+            }
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(),e);
+            setMigrationError(true);
         }
     }
 
