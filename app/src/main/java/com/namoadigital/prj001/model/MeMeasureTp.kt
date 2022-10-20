@@ -16,8 +16,8 @@ class MeMeasureTp(
     @SerializedName("measure_tp_desc") val measureTpDesc: String,
     @SerializedName("value_sufix") val valueSufix: String?,
     @SerializedName("restriction_type") val restrictionType: String?,
-    @SerializedName("restriction_min") val restrictionMin: Int?,
-    @SerializedName("restriction_max") val restrictionMax: Int?,
+    @SerializedName("restriction_min") val restrictionMin: Float?,
+    @SerializedName("restriction_max") val restrictionMax: Float?,
     @SerializedName("restriction_decimal") val restrictionDecimal: Int? = 4,
     @SerializedName("value_cycle_size") val valueCycleSize: Float?,
     @SerializedName("cycle_tolerance") val cycleTolerance: Int?

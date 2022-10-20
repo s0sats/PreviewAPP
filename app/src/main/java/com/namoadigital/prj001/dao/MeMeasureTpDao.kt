@@ -299,8 +299,8 @@ class MeMeasureTpDao(
                         getString(getColumnIndex(MEASURE_TP_DESC)),
                         getStringOrNull(getColumnIndex(VALUE_SUFIX)),
                         getStringOrNull(getColumnIndex(RESTRICTION_TYPE)),
-                        getIntOrNull(getColumnIndex(RESTRICTION_MIN)),
-                        getIntOrNull(getColumnIndex(RESTRICTION_MAX)),
+                        getFloatOrNull(getColumnIndex(RESTRICTION_MIN)),
+                        getFloatOrNull(getColumnIndex(RESTRICTION_MAX)),
                         getIntOrNull(getColumnIndex(RESTRICTION_DECIMAL)),
                         getFloatOrNull(getColumnIndex(VALUE_CYCLE_SIZE)),
                         getIntOrNull(getColumnIndex(CYCLE_TOLERANCE))
