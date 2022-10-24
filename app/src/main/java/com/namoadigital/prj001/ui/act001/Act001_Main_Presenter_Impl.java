@@ -4,14 +4,8 @@ import static com.namoadigital.prj001.util.ToolBox_Inf.OLD_PACKAGE_NAME;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.os.Bundle;
 
-import com.google.android.play.core.appupdate.AppUpdateInfo;
-import com.google.android.play.core.appupdate.AppUpdateManager;
-import com.google.android.play.core.install.model.AppUpdateType;
-import com.google.android.play.core.install.model.UpdateAvailability;
-import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.receiver.WBR_GetCustomer;
 import com.namoadigital.prj001.service.WS_GetCustomer;
@@ -19,8 +13,6 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
-
-import java.text.SimpleDateFormat;
 
 /**
  * Created by neomatrix on 09/01/17.
@@ -114,92 +106,6 @@ public class Act001_Main_Presenter_Impl implements Act001_Main_Presenter {
         return ToolBox_Inf.isPackageInstalled(OLD_PACKAGE_NAME, context.getPackageManager());
     }
 
-    @Override
-    public void checkUpdateAvailable(AppUpdateManager updateManager) {
-//        Log.i("inRonaldo", "checkUpdateAvailable acessado" );
-        if (allowShowUpdate()) {
-            updateManager
-                    .getAppUpdateInfo()
-                    .addOnSuccessListener(appUpdateInfo -> {
-//                Log.i("inRonaldo", "updateAvailability =" + appUpdateInfo.updateAvailability());
-                        if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE) {
-                            if (appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)) {
-                                callImmediateUpdateFlow(updateManager, appUpdateInfo);
-                            } else {
-                                showDialogNextDay();
-                                checkLogin();
-                            }
-
-                        } else {
-//                    Log.i("inRonaldo", "Reseta pref por nao ter atualizacao e ao impedir o inapp na proxima atualizacao " );
-                            updateInAppDialogShowedPreference(false);
-                            showDialogNextDay();
-                            checkLogin();
-                        }
-                    })
-                    .addOnFailureListener(
-                            appUpdateInfo -> {
-                                showDialogNextDay();
-                                checkLogin();
-                            }
-                    );
-        }else{
-            checkLogin();
-        }
-    }
-
-    @Override
-    public void checkUpdateInProgess(AppUpdateManager updateManager) {
-
-        updateManager
-            .getAppUpdateInfo()
-            .addOnSuccessListener(appUpdateInfo -> {
-                if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS)
-                {
-                    callImmediateUpdateFlow(updateManager,appUpdateInfo);
-                }
-            });
-    }
-
-    private void callImmediateUpdateFlow(AppUpdateManager updateManager, AppUpdateInfo appUpdateInfo) {
-        try {
-            updateManager.startUpdateFlowForResult(
-                appUpdateInfo,// Pass the intent that is returned by 'getAppUpdateInfo()'.
-                AppUpdateType.IMMEDIATE,
-                mView.getActivity(), // The current activity making the update request.
-                ConstantBaseApp.PLAYSTORE_UPDATE_REQUEST_CODE // Include a request code to later monitor this update request.
-            );
-        } catch (IntentSender.SendIntentException e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
-            ToolBox.toastMSG(
-                context,
-                context.getString(R.string.error_on_inapp_start_update_flow)
-            );
-            checkLogin();
-
-        }
-    }
-
-
-    public boolean allowShowUpdate(){
-        long actual = System.currentTimeMillis();
-        long prefs = ToolBox_Con.getLongPreferencesByKey(context,
-                ConstantBaseApp.PREFERENCE_HAS_INAPP_DIALOG_ALREADY_SHOW, -1L);
-        String current = new SimpleDateFormat("dd/MM").format(actual);
-        String old = new SimpleDateFormat("dd/MM").format(prefs);
-
-        if(prefs == -1){
-            return true;
-        }
-
-        return !current.equals(old);
-    }
-
-    public void showDialogNextDay(){
-        ToolBox_Con.setLongPreference(context,
-                ConstantBaseApp.PREFERENCE_HAS_INAPP_DIALOG_ALREADY_SHOW,
-                System.currentTimeMillis());
-    }
     /**
      * Metodo que verifica a qtds dias foi exibido o dialog de update para saber se deve
      * ou não exibi-lo novamente.

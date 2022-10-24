@@ -11,6 +11,7 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_SITES
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -25,6 +26,10 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
+import com.google.android.play.core.appupdate.AppUpdateInfo;
+import com.google.android.play.core.appupdate.AppUpdateManager;
+import com.google.android.play.core.install.model.AppUpdateType;
+import com.google.android.play.core.install.model.UpdateAvailability;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -127,6 +132,7 @@ import com.namoadigital.prj001.view.dialog.SupportDialog;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -182,7 +188,6 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     private int customFormPendentAmount=0;
 
 
-
     public Act005_Main_Presenter_Impl(Context context, Act005_Main_View mView, GE_Custom_Form_LocalDao customFormLocalDao, HMAux hmAux_Trans, EV_User_CustomerDao userCustomerDao, FCMMessageDao fcmMessageDao, SM_SODao soDao, GE_Custom_Form_ApDao customFormApDao, SO_Pack_Express_LocalDao soPackExpressLocalDao, MD_ProductDao mdProductDao, CH_MessageDao chMessageDao) {
         this.context = context;
         this.mView = mView;
@@ -230,6 +235,9 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
             Constant.DB_VERSION_CUSTOM
         );
+
+
+
         buildMenuList();
     }
 
@@ -524,6 +532,72 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         }
         //
         return qty > 0;
+    }
+
+    private boolean checkUpdatePlayStore() {
+        long actual = System.currentTimeMillis();
+        long prefs = ToolBox_Con.getLongPreferencesByKey(context,
+                ConstantBaseApp.PREFERENCE_HAS_INAPP_DIALOG_ALREADY_SHOW, -1L);
+        String current = new SimpleDateFormat("dd/MM").format(actual);
+        String old = new SimpleDateFormat("dd/MM").format(prefs);
+
+        if(prefs == -1){
+            return true;
+        }
+
+        return !current.equals(old);
+    }
+
+    @Override
+    public void rememberUpdateTomorrow() {
+        ToolBox_Con.setLongPreference(context,
+                ConstantBaseApp.PREFERENCE_HAS_INAPP_DIALOG_ALREADY_SHOW,
+                System.currentTimeMillis());
+    }
+
+    @Override
+    public void checkUpdateAvailable(AppUpdateManager updateManager) {
+        if(checkUpdatePlayStore()){
+            rememberUpdateTomorrow();
+            updateManager.getAppUpdateInfo().addOnSuccessListener(appUpdateInfo -> {
+                if(appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE){
+                    if(appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)){
+                        callImmediateUpdateFlow(updateManager, appUpdateInfo);
+                   }
+               }
+            });
+        }
+    }
+
+
+    private void callImmediateUpdateFlow(AppUpdateManager updateManager, AppUpdateInfo appUpdateInfo) {
+        try {
+            updateManager.startUpdateFlowForResult(
+                    appUpdateInfo,// Pass the intent that is returned by 'getAppUpdateInfo()'.
+                    AppUpdateType.IMMEDIATE,
+                    mView.getActivity(), // The current activity making the update request.
+                    ConstantBaseApp.PLAYSTORE_UPDATE_REQUEST_CODE // Include a request code to later monitor this update request.
+            );
+        } catch (IntentSender.SendIntentException e) {
+            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox.toastMSG(
+                    context,
+                    context.getString(R.string.error_on_inapp_start_update_flow)
+            );
+
+        }
+    }
+
+    @Override
+    public void checkUpdateInProgress(AppUpdateManager updateManager) {
+        updateManager
+                .getAppUpdateInfo()
+                .addOnSuccessListener(appUpdateInfo -> {
+                    if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS)
+                    {
+                        callImmediateUpdateFlow(updateManager,appUpdateInfo);
+                    }
+                });
     }
 
     @Deprecated

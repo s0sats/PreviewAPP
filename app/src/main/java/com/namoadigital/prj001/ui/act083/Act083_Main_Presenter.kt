@@ -1438,7 +1438,8 @@ class Act083_Main_Presenter(private val context: Context,
     }
 
     private fun recoverIntentsInfo() {
-        myActionFilterParam = bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM) as MyActionFilterParam
+        val filterParam = bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM)
+        myActionFilterParam = filterParam?.let { it as MyActionFilterParam } ?: MyActionFilterParam()
         originFlow = bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT005)
         siteCodeBack = ToolBox_Con.getPreference_Site_Code(context)
         zoneCodeBack = ToolBox_Con.getPreference_Zone_Code(context)

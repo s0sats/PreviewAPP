@@ -2,7 +2,6 @@ package com.namoadigital.prj001.ui.act001;
 
 import static com.namoadigital.prj001.util.ConstantBaseApp.SEND_TO_STORE;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -17,10 +16,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
-
-import com.google.android.play.core.appupdate.AppUpdateManager;
-import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_NFC;
@@ -54,7 +49,6 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
     private String mEmail = "";
     private String mPassWord = "";
     private String mNFC = "";
-    private AppUpdateManager updateManager;
     private LinearLayout ll_main;
     private ImageView iv_main;
 
@@ -96,20 +90,8 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
             removeDeprecatedPreferences();
             //
             recoverIntentsInfo();
+            mPresenter.checkLogin();
         }
-    }
-
-    private void checkForAppUpdate() {
-//        Log.i("inRonaldo", "checkForAppUpdate acessado" );
-        mPresenter.checkUpdateAvailable(updateManager);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-//        Log.i("inRonaldo", "onResume acessado" );
-        mPresenter.checkUpdateInProgess(updateManager);
-
     }
 
     /**
@@ -165,7 +147,6 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         //
 //        mPresenter.checkLogin();
         //
-        updateManager = AppUpdateManagerFactory.create(this);
     }
     @Override
     public void setSplashScreen(boolean showIcon) {
@@ -184,11 +165,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
             boolean sendToStore = bundle.getBoolean(SEND_TO_STORE);
             if(sendToStore){
                 callAppStore();
-            }else{
-                checkForAppUpdate();
             }
-        }else{
-            checkForAppUpdate();
         }
     }
 
@@ -312,11 +289,6 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         }
     }
 
-    @Override
-    public Activity getActivity() {
-        return this;
-    }
-
     //
     @Override
     protected void processCloseAPP(String mLink, String mRequired) {
@@ -360,22 +332,6 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         context.startActivity(mIntent);
 
         finish();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        //
-        if( requestCode == ConstantBaseApp.PLAYSTORE_UPDATE_REQUEST_CODE
-        ){
-
-            if(resultCode != RESULT_OK){
-                mPresenter.showDialogNextDay();
-                ToolBox.toastMSG(context,getResources().getString(R.string.msg_update_canceled));
-            }
-            mPresenter.checkLogin();
-
-        }
     }
 
     @Override

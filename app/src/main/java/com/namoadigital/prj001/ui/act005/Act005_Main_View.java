@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act005;
 
+import android.app.Activity;
 import android.content.Context;
 
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -77,4 +78,5 @@ public interface Act005_Main_View {
 
     void handleInvalidLocalDatetime();
 
+    Activity getActivity();
 }
