@@ -497,6 +497,10 @@ public class ConstantBaseApp extends ConstantBase {
     public static final int NOTIFICATION_CHAT_ROOM = 669;
     public static final int NOTIFICATION_CHAT_FOREGROUND_SERVICE = 670;
     public static final int NOTIFICATION_SYNC_ID = 671;
+    public static final int NOTIFICATION_TICKET_DOWNLOAD = 672;
+    public static final int NOTIFICATION_CUSTOMER_SITE_LICENSE = 673;
+    public static final int NOTIFICATION_CUSTOMER = 674;
+    public static final int NOTIFICATION_C_ROOM = 675;
     /**
      * Alarms
      */
