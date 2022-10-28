@@ -729,15 +729,15 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             }
             val valPerDay = getDiffBetweenDatesInFloatDays(formOsHeader.last_measure_date!!, binding.mkdtStartDate.getmValue())
             //Se o valor for menor do que 0, considerar 0
-            val minConsider : Float? = measureTp.restrictionMin?.let { min->
+            val minConsider : Double? = measureTp.restrictionMin?.let { min->
                     val minToConsider = formOsHeader.last_measure_value!! - (min * valPerDay)
                     if(minToConsider >= 0f){
                         minToConsider
                     } else {
                         0f
                     }
-            }
-            val maxConsider : Float? = measureTp.restrictionMax?.let { max->
+            } as Double?
+            val maxConsider : Double? = measureTp.restrictionMax?.let { max->
                 formOsHeader.last_measure_value!! + (max * valPerDay)
             }
             //
@@ -770,54 +770,6 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         val modDay = (diffInMs % ONE_DAY_IN_MILLISECOND.toDouble()) / ONE_DAY_IN_MILLISECOND.toDouble()
         //Soma e devolve float com 4 casas.
         return BigDecimal(calcDay + modDay).setScale( ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT,RoundingMode.HALF_DOWN).toFloat()
-    }
-
-    private fun isMeasureRestrictionValueValid(
-        typedMeasure: Float,
-        measureTp: MeMeasureTp,
-    ): Boolean {
-        formOsHeader.last_measure_value?.let { lastMeasure->
-            val tesVl = lastMeasure
-            val minConsider: Float? = if(measureTp.restrictionMin != null){
-                    lastMeasure.minus(measureTp.restrictionMin)
-                } else {
-                    null
-                }
-            val maxConsider: Float? = if(measureTp.restrictionMax != null){
-                lastMeasure.plus(measureTp.restrictionMax)
-            } else {
-                null
-            }
-            //
-            if(minConsider != null && maxConsider != null ){
-                return minConsider.compareTo(typedMeasure) <= 0 && maxConsider.compareTo(typedMeasure) >= 0
-            }else if (minConsider != null || maxConsider != null ){
-                return if(minConsider != null){
-                    minConsider.compareTo(typedMeasure) <= 0
-                }else{
-                    maxConsider!!.compareTo(typedMeasure) >= 0
-                }
-            }
-        }
-        //
-        return true
-    }
-
-    private fun isMeasureRestrictionMinMaxValid(
-        typedMeasure: Float,
-        it: MeMeasureTp,
-    ): Boolean {
-        return if (it.restrictionMin != null && it.restrictionMax != null) {
-            it.restrictionMin <= typedMeasure && typedMeasure <= it.restrictionMax
-        } else if (it.restrictionMin != null || it.restrictionMax != null) {
-            if (it.restrictionMin != null) {
-                it.restrictionMin <= typedMeasure
-            } else {
-                typedMeasure <= it.restrictionMax!!
-            }
-        } else {
-            true
-        }
     }
 
     private fun addIdxToVisibleLabels() {
