@@ -26,39 +26,52 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0"
             app:cardElevation="10dp"
+            android:backgroundTint="@color/myActionTopMenuBackground"
             >
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                >
 
 
-                <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-                    android:id="@+id/act083_mket_filter"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/act083_til_filter"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="12dp"
                     android:layout_marginEnd="8dp"
-                    android:hint="Search Desc - Trad"
-                    android:inputType="text"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     app:layout_constraintEnd_toStartOf="@+id/act083_ib_main_user_selection"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:mBARCODE="false"
-                    app:mNFC="false"
-                    app:mOCR="false" />
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                        android:id="@+id/act083_mket_filter"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Search Desc - Trad"
+                        android:inputType="text"
+                        app:layout_constraintEnd_toStartOf="@+id/act083_ib_main_user_selection"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:mBARCODE="false"
+                        app:mNFC="false"
+                        app:mOCR="false" />
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <ImageView
                     android:id="@+id/act083_ib_main_user_selection"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:padding="4dp"
+                    android:layout_marginEnd="12dp"
                     android:background="@drawable/my_action_toogle_default"
+                    android:padding="4dp"
                     android:src="@drawable/ic_person_black_24dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/act083_mket_filter"
+                    app:layout_constraintBottom_toBottomOf="@+id/act083_til_filter"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/act083_mket_filter"
+                    app:layout_constraintTop_toTopOf="@+id/act083_til_filter"
                     app:layout_constraintVertical_bias="0.7" />
 
                 <com.google.android.material.chip.ChipGroup
@@ -67,7 +80,7 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/act083_mket_filter"
+                    app:layout_constraintTop_toBottomOf="@id/act083_til_filter"
                     android:paddingTop="2dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginEnd="8dp"
@@ -105,9 +118,8 @@
                         android:button="@null"
                         android:checked="true"
                         android:gravity="center"
-                        android:textColor="@color/my_tickets_radio"
+                        android:textColor="@color/my_action_radio"
                         tools:text="ACOES"
-                        android:textAllCaps="true"
                         android:textStyle="bold"
                         />
 
@@ -123,7 +135,7 @@
                         android:background="@drawable/act074_radio_states"
                         android:button="@null"
                         android:gravity="center"
-                        android:textColor="@color/my_tickets_radio"
+                        android:textColor="@color/my_action_radio"
                         tools:text="OUTROS"
                         android:textAllCaps="true"
                         android:textStyle="bold"

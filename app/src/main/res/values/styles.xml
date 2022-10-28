@@ -14,7 +14,6 @@
         <item name="android:textColorPrimary">@color/namoa_color_dark_blue</item>
         <item name="android:statusBarColor">@color/namoa_color_dark_blue</item>
         <!--   <item name="android:textColorPrimary">@color/namoa_color_light_blue</item>-->
-
         <!-- Material3 attributes (needed if parent="Theme.MaterialComponents"). -->
         <item name="colorPrimaryInverse">@color/namoa_color_light_blue</item>
         <item name="colorPrimaryContainer">@color/namoa_color_light_blue</item>
@@ -199,6 +198,14 @@
     <style name="NamoaNMaterialButtonFilledDarkBlue" parent="Widget.Material3.Button.Icon">
         <item name="strokeColor">@color/namoa_color_dark_blue</item>
         <item name="background">@color/namoa_color_dark_blue</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">24dp</item>
+        <item name="iconTint">@color/padrao_WHITE</item>
+        <item name="android:textColor">@color/padrao_WHITE</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+
+    <style name="NamoaNMaterialButtonFilled" parent="Widget.Material3.Button.Icon">
         <item name="android:paddingLeft">16dp</item>
         <item name="android:paddingRight">24dp</item>
         <item name="iconTint">@color/padrao_WHITE</item>

@@ -266,14 +266,40 @@
             android:id="@+id/my_actions_item_iv_main_user"
             android:layout_width="@dimen/namoa_icon_cell_so_width"
             android:layout_height="@dimen/namoa_icon_cell_so_height"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="8dp"
-            android:visibility="visible"
             android:src="@drawable/ic_person_black_24dp"
-            app:tint="@color/namoa_color_cone_item"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/my_actions_item_tv_internal_comments"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintTop_toBottomOf="@+id/act083_select_action"
+            app:layout_constraintVertical_bias="1.0"
+            app:tint="@color/namoa_color_cone_item" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/act083_serial_info"
+            style="@style/NamoaMaterialButtonOutlined"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+
+            android:text="Ver Serial"
+            app:layout_constraintBottom_toBottomOf="@+id/act083_select_action"
+            app:layout_constraintEnd_toStartOf="@+id/act083_select_action"
+            app:layout_constraintTop_toTopOf="@+id/act083_select_action" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/act083_select_action"
+            style="@style/NamoaNMaterialButtonFilled"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="16dp"
+            android:backgroundTint="@color/select_action_cell_background"
+            android:text="Abrir"
+            android:textAllCaps="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/my_actions_item_tv_internal_comments" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView

@@ -7,6 +7,6 @@
         android:color="@color/namoa_color_gray_6"/>
     <!--Background -->
     <solid
-        android:color="@color/namoa_color_gray"/>
+        android:color="@color/my_action_theme_cell_background"/>
 
 </shape>
