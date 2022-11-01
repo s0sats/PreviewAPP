@@ -87,8 +87,6 @@ class TkTicketCache(
                 open_site_code,
                 open_site_desc,
                 formattedZone,
-                client_id?.let { "$client_id - $client_name" },
-                contract_id?.let { "$contract_id - $contract_desc" },
                 null,
                 null,
                 ToolBox_Inf.millisecondsToString(

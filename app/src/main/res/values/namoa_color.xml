@@ -20,6 +20,7 @@
     <color name="m3_namoa_onError">#FFFFFF</color>
     <color name="m3_namoa_onErrorContainer">#410002</color>
     <color name="m3_namoa_outline">#70787D</color>
+    <color name="m3_namoa_outlineVariant">#CAC4D0</color>
     <color name="m3_namoa_inverseOnSurface">#D7F6FF</color>
     <color name="m3_namoa_inverseSurface">#00363F</color>
     <color name="m3_namoa_surface">#F8FDFF</color>

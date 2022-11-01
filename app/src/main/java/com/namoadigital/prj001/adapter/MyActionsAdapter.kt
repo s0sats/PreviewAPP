@@ -69,7 +69,7 @@ class MyActionsAdapter(
 
     inner class MyActionVh(private val binding: MyActionsItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun onBinding(myAction: MyActions) {
-            binding.root.setOnClickListener {
+            binding.act083SelectAction.setOnClickListener {
                 myActionClickListener(myAction)
             }
             //
@@ -97,9 +97,6 @@ class MyActionsAdapter(
             )
             //
             configTvSite(myAction)
-            binding.myActionsItemTvClient.applyVisibilityIfTextExists(myAction.clientInfo)
-            binding.myActionsItemTvContract.applyVisibilityIfTextExists(myAction.contractInfo)
-            binding.myActionsItemTvContract.applyVisibilityIfTextExists(myAction.contractInfo)
             binding.myActionsItemTvOsCode.applyVisibilityIfTextExists(myAction.serviceOrderCode)
             binding.myActionsItemTvErrorMsg.applyVisibilityIfTextExists(myAction.erroMsg)
             configDoneDate(myAction)

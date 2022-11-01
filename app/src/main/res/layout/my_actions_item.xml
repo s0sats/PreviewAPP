@@ -21,287 +21,294 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/my_actions_item_cl_infos"
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/namoa_cell_default_gray_states"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_status"
         android:paddingBottom="5dp"
+        app:cardCornerRadius="5dp"
         >
 
-        <TextView
-            android:id="@+id/my_actions_item_tv_contract"
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/my_actions_item_cl_infos"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/my_action_info_margin_top"
-            tools:text="Contract Desc"
-            android:textSize="12sp"
+            android:background="@drawable/namoa_cell_default_gray_states"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_client"
-            app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_client"
-            android:visibility="gone"
-            />
-
-        <TextView
-            android:id="@+id/my_actions_item_tv_os_code"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/my_action_info_margin_top"
-            tools:text="O.S Code"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_contract"
-            app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_contract"
-            android:visibility="gone"
-            />
-
-        <TextView
-            android:id="@+id/my_actions_item_tv_site"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/my_action_info_margin_top"
-            tools:text="Site"
-            android:textColor="@color/namoa_color_danger_red"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_focus_step_desc"
-            app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_internal_comments"
-            android:visibility="gone"
-            />
-
-        <TextView
-            android:id="@+id/my_actions_item_tv_focus_step_desc"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/my_action_info_margin_top"
-            android:layout_marginEnd="8dp"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toStartOf="@+id/my_actions_item_iv_main_user"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_process_desc"
-            app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_process_desc"
-            tools:text="Focus Step Desc" />
-
-        <TextView
-            android:id="@+id/my_actions_item_tv_internal_comments"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/my_action_info_margin_top"
-            android:layout_marginEnd="4dp"
-            android:textSize="12sp"
-            android:visibility="visible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/my_actions_item_tv_focus_step_desc"
-            app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_focus_step_desc"
-            tools:text="Comentario de comentadores" />
-
-
-        <TextView
-            android:id="@+id/my_actions_item_tv_client"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/my_action_info_margin_top"
-            tools:text="Client Desc"
-            android:textSize="12sp"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_site"
-            app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_site"
-            android:visibility="gone"
-            />
-
-        <ImageView
-            android:id="@+id/my_actions_item_iv_icon_right"
-            android:layout_width="@dimen/namoa_icon_cell_so_width"
-            android:layout_height="@dimen/namoa_icon_cell_so_height"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_baseline_cloud_download_24_gray"
-            />
-
-        <TextView
-            android:id="@+id/my_actions_item_tv_planned_date"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            tools:text="22/01/2020 14:50 - 23/01/2021 15:00"
-            app:layout_constraintWidth_default="wrap"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@id/my_actions_item_iv_icon_right"
-            app:layout_constraintEnd_toStartOf="@id/my_actions_item_iv_icon_left"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_status"
+            android:paddingBottom="5dp"
+            >
 
-        <ImageView
-            android:id="@+id/my_actions_item_iv_icon_left"
-            android:layout_width="@dimen/namoa_icon_cell_so_width"
-            android:layout_height="@dimen/namoa_icon_cell_so_height"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintEnd_toStartOf="@id/my_actions_item_iv_icon_right"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_twotone_warning_24" />
 
-        <TextView
-            android:id="@+id/my_actions_item_tv_tag_desc"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/my_action_info_margin_top"
-            tools:text="Desc Tag"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            android:textColor="@color/namoa_status_pending"
-            android:layout_marginEnd="8dp"
-            android:textAllCaps="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_planned_date"
-            app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_planned_date"
-            
-            />
+            <TextView
+                android:id="@+id/my_actions_item_tv_os_code"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/my_actions_item_tv_ticket_class"
+                app:layout_constraintTop_toBottomOf="@+id/my_actions_item_tv_ticket_class"
+                tools:text="O.S Code" />
 
-        <TextView
-            android:id="@+id/my_actions_item_tv_prod_desc"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/my_action_info_margin_top"
-            tools:text="Desc Prod"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_planned_date"
-            app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_tag_desc" />
+            <TextView
+                android:id="@+id/my_actions_item_tv_site"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/my_action_info_margin_top"
+                tools:text="Site"
+                android:textColor="@color/namoa_color_danger_red"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_focus_step_desc"
+                app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_internal_comments"
+                android:visibility="gone"
+                />
 
-        <TextView
-            android:id="@+id/my_actions_item_tv_serial_id"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/my_action_info_margin_top"
-            tools:text="ID Serial"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_prod_desc"
-            app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_prod_desc" />
+            <TextView
+                android:id="@+id/my_actions_item_tv_ticket_class"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/my_action_info_margin_top"
+                android:textColor="@color/namoa_color_danger_red"
+                android:textSize="12sp"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/my_actions_item_tv_internal_comments"
+                app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_internal_comments"
+                tools:text="Ticket Class" />
 
-        <TextView
-            android:id="@+id/my_actions_item_tv_origin"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/my_action_info_margin_top"
-            android:layout_marginEnd="8dp"
-            tools:text="Origin Desc"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toStartOf="@+id/my_actions_item_iv_main_user"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_prod_desc"
-            app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_serial_id"
-            />
+            <TextView
+                android:id="@+id/my_actions_item_tv_focus_step_desc"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/my_action_info_margin_top"
+                android:layout_marginEnd="8dp"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toStartOf="@+id/my_actions_item_iv_main_user"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_process_desc"
+                app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_process_desc"
+                tools:text="Focus Step Desc" />
 
-        <TextView
-            android:id="@+id/my_actions_item_tv_process_desc"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/my_action_info_margin_top"
-            android:layout_marginEnd="8dp"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_origin"
-            app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_origin"
-            tools:text="Process Desc" />
+            <TextView
+                android:id="@+id/my_actions_item_tv_internal_comments"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/my_action_info_margin_top"
+                android:layout_marginEnd="4dp"
+                android:textSize="12sp"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/my_actions_item_tv_focus_step_desc"
+                app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_focus_step_desc"
+                tools:text="Comentario de comentadores" />
 
-        <TextView
-            android:id="@+id/my_actions_item_tv_error_msg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/my_action_info_margin_top"
-            tools:text="Error Msg"
-            android:textColor="@color/text_red"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_os_code"
-            app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_os_code"
-            android:visibility="gone"
-            />
 
-        <TextView
-            android:id="@+id/my_actions_item_tv_done_date"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/my_action_info_margin_top"
-            tools:text="Done Date"
-            android:textSize="12sp"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_error_msg"
-            app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_error_msg"
-            android:visibility="gone"
-            android:textColor="@color/namoa_status_done"
-            android:textStyle="bold"
-            />
 
-        <ImageView
-            android:id="@+id/my_actions_item_iv_main_user"
-            android:layout_width="@dimen/namoa_icon_cell_so_width"
-            android:layout_height="@dimen/namoa_icon_cell_so_height"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="8dp"
-            android:src="@drawable/ic_person_black_24dp"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/act083_select_action"
-            app:layout_constraintVertical_bias="1.0"
-            app:tint="@color/namoa_color_cone_item" />
+            <ImageView
+                android:id="@+id/my_actions_item_iv_icon_right"
+                android:layout_width="@dimen/namoa_icon_cell_so_width"
+                android:layout_height="@dimen/namoa_icon_cell_so_height"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_baseline_cloud_download_24_gray"
+                />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/act083_serial_info"
-            style="@style/NamoaMaterialButtonOutlined"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            <View
+                android:id="@+id/my_action_header_divider"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="@color/m3_namoa_outline"
+                android:layout_marginTop="5dp"
+                app:layout_constraintEnd_toEndOf="@+id/my_actions_item_iv_icon_right"
+                app:layout_constraintStart_toStartOf="@+id/my_actions_item_tv_prod_desc"
+                app:layout_constraintTop_toBottomOf="@+id/my_actions_item_tv_prod_desc"></View>
 
-            android:text="Ver Serial"
-            app:layout_constraintBottom_toBottomOf="@+id/act083_select_action"
-            app:layout_constraintEnd_toStartOf="@+id/act083_select_action"
-            app:layout_constraintTop_toTopOf="@+id/act083_select_action" />
+            <TextView
+                android:id="@+id/my_actions_item_tv_planned_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                tools:text="22/01/2020 14:50 - 23/01/2021 15:00"
+                app:layout_constraintWidth_default="wrap"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/my_actions_item_iv_icon_right"
+                app:layout_constraintEnd_toStartOf="@id/my_actions_item_iv_icon_left"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/act083_select_action"
-            style="@style/NamoaNMaterialButtonFilled"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
-            android:backgroundTint="@color/select_action_cell_background"
-            android:text="Abrir"
-            android:textAllCaps="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/my_actions_item_tv_internal_comments" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <ImageView
+                android:id="@+id/my_actions_item_iv_icon_left"
+                android:layout_width="@dimen/namoa_icon_cell_so_width"
+                android:layout_height="@dimen/namoa_icon_cell_so_height"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toStartOf="@+id/my_actions_item_iv_main_user"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_twotone_warning_24" />
 
+            <TextView
+                android:id="@+id/my_actions_item_tv_tag_desc"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="8dp"
+                android:textAllCaps="true"
+                android:textColor="@color/m3_namoa_onSurface"
+                android:textSize="16sp"
+                android:padding="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_planned_date"
+                app:layout_constraintTop_toBottomOf="@+id/my_action_header_divider"
+
+                tools:text="Desc Tag" />
+
+            <ImageView
+                android:id="@+id/my_actions_item_iv_serial_class"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginStart="20dp"
+                android:src="@drawable/ic_baseline_arrow_right_24"
+                android:tint="@color/namoa_color_danger_red"
+                app:layout_constraintBottom_toBottomOf="@+id/my_actions_item_tv_serial_id"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/my_actions_item_tv_serial_id" />
+
+            <TextView
+                android:id="@+id/my_actions_item_tv_serial_id"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="12dp"
+                android:textColor="@color/m3_namoa_onSurface"
+                android:textSize="22sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/my_actions_item_iv_serial_class"
+                app:layout_constraintTop_toBottomOf="@+id/my_actions_item_tv_planned_date"
+                tools:text="ID Serial" />
+
+            <TextView
+                android:id="@+id/my_actions_item_tv_origin"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/my_action_info_margin_top"
+                android:layout_marginEnd="8dp"
+                tools:text="Origin Desc"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toStartOf="@+id/my_actions_item_iv_main_user"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_prod_desc"
+                app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_serial_id"
+                />
+            <TextView
+                android:id="@+id/my_actions_item_tv_prod_desc"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                style="@style/TextAppearance.AppCompat.Small"
+                android:textSize="12sp"
+                android:padding="2dp"
+                android:textColor="@color/m3_namoa_onSurfaceVariant"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_planned_date"
+                app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_serial_id"
+                tools:text="Desc Prod" />
+
+
+            <TextView
+                android:id="@+id/my_actions_item_tv_process_desc"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/my_action_info_margin_top"
+                android:layout_marginEnd="8dp"
+                android:textSize="12sp"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintEnd_toStartOf="@+id/my_actions_item_iv_main_user"
+                app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_prod_desc"
+                app:layout_constraintTop_toBottomOf="@+id/my_actions_item_tv_tag_desc"
+                tools:text="Process Desc" />
+
+            <TextView
+                android:id="@+id/my_actions_item_tv_error_msg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/my_action_info_margin_top"
+                tools:text="Error Msg"
+                android:textColor="@color/text_red"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_os_code"
+                app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_os_code"
+                android:visibility="gone"
+                />
+
+            <TextView
+                android:id="@+id/my_actions_item_tv_done_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/my_action_info_margin_top"
+                android:layout_marginEnd="8dp"
+                android:textColor="@color/namoa_status_done"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_error_msg"
+                app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_error_msg"
+                tools:text="Done Date" />
+
+            <ImageView
+                android:id="@+id/my_actions_item_iv_main_user"
+                android:layout_width="@dimen/namoa_icon_cell_so_width"
+                android:layout_height="@dimen/namoa_icon_cell_so_height"
+                android:src="@drawable/ic_person_black_24dp"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="@+id/my_actions_item_iv_icon_right"
+                app:layout_constraintEnd_toStartOf="@+id/my_actions_item_iv_icon_right"
+                app:layout_constraintTop_toTopOf="@+id/my_actions_item_iv_icon_right"
+                app:tint="@color/namoa_color_cone_item" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/act083_serial_info"
+                style="@style/NamoaMaterialButtonOutlined"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                tools:text="Ver Serial"
+                app:layout_constraintBottom_toBottomOf="@+id/act083_select_action"
+                app:layout_constraintEnd_toStartOf="@+id/act083_select_action"
+                app:layout_constraintTop_toTopOf="@+id/act083_select_action" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/act083_select_action"
+                style="@style/NamoaNMaterialButtonFilled"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:backgroundTint="@color/select_action_cell_background"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/my_actions_item_tv_done_date"
+                tools:text="Abrir" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
     <TextView
         android:id="@+id/my_actions_item_tv_code"
         android:layout_width="wrap_content"

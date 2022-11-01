@@ -21,8 +21,6 @@ data class MyActions(
         val siteCode: Int? = null,
         val siteDesc: String?,
         val zoneDesc: String?,
-        val clientInfo: String?,
-        val contractInfo: String?,
         val serviceOrderCode: String?,
         val doneDate: String?,
         val orderBy: String,
@@ -73,8 +71,6 @@ data class MyActions(
                 "$focusStepDesc|" +
                 "$siteDesc|" +
                 "$zoneDesc|" +
-                "$clientInfo|" +
-                "$contractInfo|" +
                 "$serviceOrderCode"
                 .replace("null|","")
                 .replace("null","")

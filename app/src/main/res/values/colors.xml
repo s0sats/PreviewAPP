@@ -209,6 +209,7 @@
     <color name="myActionTopMenuBackground">@color/m3_namoa_surface2</color>
     <color name="my_action_theme_tab_selected">@color/m3_namoa_primary</color>
     <color name="my_action_theme_cell_background">@color/m3_namoa_surfaceVariant</color>
+    <color name="my_action_theme_cell_divider">@color/m3_namoa_outlineVariant</color>
     <color name="select_action_cell_background">@color/m3_namoa_primary</color>
 
 
