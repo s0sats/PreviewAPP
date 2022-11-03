@@ -531,6 +531,17 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
         defineFlow(serial, false);
     }
 
+    @Override
+    public void goToNextScreen(MD_Product_Serial selectedProductSerial) {
+        if(selectedProductSerial.getHas_item_check() == 1
+                && !ToolBox_Con.getBooleanPreferencesByKey(context, ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false)){
+            callWsSerialStructure(selectedProductSerial);
+        }else {
+            defineFlow(selectedProductSerial, false);
+        }
+    }
+
+
 
     /**
      * LUCHE - 30/06/2020

@@ -40,4 +40,6 @@ public interface Act020_Main_Presenter {
     void callWsSerialStructure(MD_Product_Serial productSerial);
 
     void processWSProductSerialStructureReturn(String ws_retorno);
+
+    void goToNextScreen(MD_Product_Serial selectedProductSerial);
 }
