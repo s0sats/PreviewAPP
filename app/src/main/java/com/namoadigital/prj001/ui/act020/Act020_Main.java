@@ -310,13 +310,12 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         if(listSize <= 0){
             binding.recyclerSerialList.setVisibility(View.GONE);
             binding.recyclerSerialListEmpty.setVisibility(View.VISIBLE);
-            binding.act020TextResult.setVisibility(View.VISIBLE);
+            binding.act020TextResult.setVisibility(View.GONE);
         }else{
             binding.recyclerSerialList.setVisibility(View.VISIBLE);
             binding.recyclerSerialListEmpty.setVisibility(View.GONE);
-            if(record_count > listSize) {
-                binding.act020TextResult.setVisibility(View.VISIBLE);
-            }
+            if(!binding.act020TextResult.getText().toString().isEmpty()) binding.act020TextResult.setVisibility(View.VISIBLE);
+
         }
     }
 

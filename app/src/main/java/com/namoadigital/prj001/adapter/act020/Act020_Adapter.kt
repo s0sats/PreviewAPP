@@ -48,7 +48,7 @@ class Act020_Adapter constructor(
                 newList.add(SearchSerialViewItem.ContentItem(it))
             }
         }
-        return if(newList.size == 1) emptyList<SearchSerialViewItem>().toMutableList() else newList
+        return if(newList.size == 0) emptyList<SearchSerialViewItem>().toMutableList() else newList
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -86,7 +86,7 @@ class Act020_Adapter constructor(
             holder.itemView.setOnClickListener {
                 onCardClick(item.product_serial.product_model)
             }
-            holder.onBinding(item.product_serial, context)
+            holder.onBinding(item.product_serial)
         }
     }
 
@@ -108,17 +108,12 @@ class Act020_Adapter constructor(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         @SuppressLint("SetTextI18n")
-        fun onBinding(serial: ProductSerialList?, context: Context) {
+        fun onBinding(serial: ProductSerialList?) {
             with(binding) {
                 serial?.let { item ->
                     cardSerialTitle.text = item.serial
                     productDescription.text = item.product_desc
 
-/*                    if (!item.currentSite) {
-                        cardSerial.setCardBackgroundColor(context.resources.getColor(R.color.m3_namoa_surface1))
-                    } else {
-                        cardSerial.setCardBackgroundColor(context.resources.getColor(R.color.m3_namoa_surfaceVariant))
-                    }*/
 
                     if (item.classColor.isNotEmpty()) {
                         iconClassColor.apply {
@@ -128,6 +123,8 @@ class Act020_Adapter constructor(
                             )
                             visibility = View.VISIBLE
                         }
+                    }else{
+                        iconClassColor.visibility = View.GONE
                     }
 
                     val serial_desc = item.getSerialDescription()
@@ -136,6 +133,8 @@ class Act020_Adapter constructor(
                             text = serial_desc
                             visibility = View.VISIBLE
                         }
+                    }else{
+                        serialDescription. visibility = View.GONE
                     }
 
                     val tracking = item.getTracking()
@@ -145,6 +144,9 @@ class Act020_Adapter constructor(
                             visibility = View.VISIBLE
                         }
                         spaceSite2.visibility = View.VISIBLE
+                    }else{
+                        listTrackings.visibility = View.GONE
+                        spaceSite2.visibility = View.GONE
                     }
 
                     val siteZone = item.getSiteAndZone()
@@ -153,6 +155,8 @@ class Act020_Adapter constructor(
                             text = siteZone
                             visibility = View.VISIBLE
                         }
+                    }else{
+                        siteAndZone.visibility = View.GONE
                     }
                 }
 
@@ -173,10 +177,9 @@ class Act020_Adapter constructor(
             if(charString.isNullOrEmpty()) {
                 temp = defaultList
             }else {
-
                 temp.addAll(
                     defaultList.filter {
-                        val allFilter = ToolBox.AccentMapper(it.getAllFieldForFilter().lowercase().trim())
+                        val allFilter = ToolBox.AccentMapper(it.getAllFieldForFilter().lowercase(Locale.getDefault()).trim())
                         allFilter.contains(charString)
                     }
                 )

@@ -85,7 +85,6 @@
         android:scrollbars="vertical"
         android:scrollbarStyle="outsideOverlay"
         android:fadeScrollbars="false"
-        android:paddingBottom="6dp"
         app:layout_constraintBottom_toTopOf="@+id/act020_layoutbuttons"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

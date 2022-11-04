@@ -43,23 +43,26 @@ data class ProductSerialList(
     fun getTracking() : String{
         val mlist = mutableListOf<String>()
 
-        trackings.forEach { t ->
-            trackingList().forEach {
-                if(it.isNotEmpty()) mlist.add(it)
-
-            }
+        trackingList().forEach {
+            if(it.isNotEmpty()) mlist.add(it)
         }
 
         return if(mlist.isEmpty()) "" else mlist.joinToString(SEPARATOR)
     }
 
 
-    fun getAllFieldForFilter() =
-        "$serial|$product_desc|" +
+    fun getAllFieldForFilter() : String {
+        var trackingFilter = ""
+        trackings.forEach {
+            if(it.tracking.isNotEmpty()){
+                trackingFilter += "${it.tracking}|"
+            }
+        }
+        return "$serial|$product_desc|" +
                 "${siteAndZone.first}|${siteAndZone.second}|" +
                 "${serialDescription.first}|${serialDescription.second}|${serialDescription.third}|" +
-                "$trackings"
-
+                trackingFilter
+    }
 }
 
 fun MD_Product_Serial.toAdapterList(site_preference: Int = -1) : ProductSerialList = ProductSerialList(
