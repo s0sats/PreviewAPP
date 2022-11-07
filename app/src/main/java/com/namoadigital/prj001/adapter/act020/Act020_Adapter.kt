@@ -25,7 +25,7 @@ class Act020_Adapter constructor(
     private val context: Context,
     private val hmAux: HMAux,
     private val source: ArrayList<MD_Product_Serial>,
-    private val onCardClick: (produto: MD_Product_Serial) -> Unit,
+    private val onCardClick: (product: MD_Product_Serial) -> Unit,
     private val emptyList: (listSize: Int) -> Unit,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
 
@@ -37,15 +37,30 @@ class Act020_Adapter constructor(
     private fun MutableList<ProductSerialList>.separateListByHeader(): MutableList<SearchSerialViewItem>{
         val newList = mutableListOf<SearchSerialViewItem>()
         this.map {
-            if(!it.currentSite){
-                if(newList.contains(SearchSerialViewItem.SectionItem(false))){
-                    newList.add(SearchSerialViewItem.ContentItem(it))
-                }else {
+            if (!it.currentSite) {
+                if (newList.contains(SearchSerialViewItem.SectionItem(false))) {
+                    newList.add(
+                        SearchSerialViewItem.ContentItem(
+                            it,
+                            source.find { f -> it.serial == f.serial_id }!!
+                        )
+                    )
+                } else {
                     newList.add(SearchSerialViewItem.SectionItem(false))
-                    newList.add(SearchSerialViewItem.ContentItem(it))
+                    newList.add(
+                        SearchSerialViewItem.ContentItem(
+                            it,
+                            source.find { f -> it.serial == f.serial_id }!!
+                        )
+                    )
                 }
-            }else{
-                newList.add(SearchSerialViewItem.ContentItem(it))
+            } else {
+                newList.add(
+                    SearchSerialViewItem.ContentItem(
+                        it,
+                        source.find { f -> it.serial == f.serial_id }!!
+                    )
+                )
             }
         }
         return if(newList.size == 0) emptyList<SearchSerialViewItem>().toMutableList() else newList
@@ -84,7 +99,7 @@ class Act020_Adapter constructor(
 
         if(holder is ItemViewHolder && item is SearchSerialViewItem.ContentItem){
             holder.itemView.setOnClickListener {
-                onCardClick(item.product_serial.product_model)
+                onCardClick(item.product)
             }
             holder.onBinding(item.product_serial)
         }
@@ -142,6 +157,7 @@ class Act020_Adapter constructor(
                         listTrackings.apply {
                             text = tracking
                             visibility = View.VISIBLE
+
                         }
                         spaceSite2.visibility = View.VISIBLE
                     }else{
