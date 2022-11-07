@@ -11,7 +11,6 @@ data class ProductSerialList(
     val siteAndZone: Pair<String, String>,
     val serialDescription: Triple<String, String, String>,
     val trackings: List<MD_Product_Serial_Tracking>,
-    val product_model: MD_Product_Serial
 ){
 
     private fun trackingList() = trackings.map { m -> m.tracking }
@@ -72,6 +71,5 @@ fun MD_Product_Serial.toAdapterList(site_preference: Int = -1) : ProductSerialLi
     product_desc = product_desc ?: "",
     siteAndZone = Pair(site_desc ?: "", zone_desc ?: ""),
     serialDescription = Triple(brand_desc ?: "", model_desc ?: "", color_desc ?: ""),
-    trackings = tracking_list ?: emptyList(),
-    product_model = this,
+    trackings = tracking_list ?: emptyList()
 )

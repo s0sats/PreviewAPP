@@ -88,7 +88,7 @@ class MyActionsAdapter(
             }else{
                 binding.myActionsItemTvOrigin.visibility = View.GONE
             }
-            binding.myActionsItemTvProcessDesc.text = myAction.processDesc
+            /*binding.myActionsItemTvProcessDesc.text = myAction.processDesc*/
             binding.myActionsItemTvFocusStepDesc.applyVisibilityIfTextExists(
                     getInfoBulletFormatted(
                             binding.myActionsItemTvFocusStepDesc.context,
@@ -97,11 +97,13 @@ class MyActionsAdapter(
             )
             //
             configTvSite(myAction)
+/*
             binding.myActionsItemTvClient.applyVisibilityIfTextExists(myAction.clientInfo)
+*/
             binding.myActionsItemTvContract.applyVisibilityIfTextExists(myAction.contractInfo)
             binding.myActionsItemTvContract.applyVisibilityIfTextExists(myAction.contractInfo)
-            binding.myActionsItemTvOsCode.applyVisibilityIfTextExists(myAction.serviceOrderCode)
-            binding.myActionsItemTvErrorMsg.applyVisibilityIfTextExists(myAction.erroMsg)
+/*            binding.myActionsItemTvOsCode.applyVisibilityIfTextExists(myAction.serviceOrderCode)
+            binding.myActionsItemTvErrorMsg.applyVisibilityIfTextExists(myAction.erroMsg)*/
             configDoneDate(myAction)
 
             if(myAction.isMainUserTicket

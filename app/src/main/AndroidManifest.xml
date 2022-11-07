@@ -3,9 +3,10 @@
     package="com.namoadigital.prj001">
 
     <queries>
+
         <!-- Explicit apps you know in advance about: -->
-        <package android:name="com.namoadigital.prj001.production"/>
-        <package android:name="com.namoadigital.prj001.development"/>
+        <package android:name="com.namoadigital.prj001.production" />
+        <package android:name="com.namoadigital.prj001.development" />
     </queries>
 
     <uses-permission android:name="android.permission.INTERNET" /> <!-- <uses-permission android:name="android.permission.READ_PHONE_STATE" /> -->
@@ -23,6 +24,13 @@
         android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity
+            android:name=".ui.act092.act092_Main"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -35,9 +43,9 @@
         </provider> <!-- Login -->
         <activity
             android:name=".ui.act001.Act001_Main"
+            android:exported="true"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:exported="true"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -559,21 +567,18 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".ui.act086.Act086Main"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"/>
-
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.act087.Act087Main"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"/>
-
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.act088.Act088Main"
             android:label="@string/app_name"
@@ -587,16 +592,14 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".ui.act091.mvp.ui.Act091_Main"
             android:exported="false"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize|stateHidden"
-            android:theme="@style/AppTheme.NoActionBar" />
-
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".view.act.product_selection.Act_Product_Selection"
             android:label="@string/app_name"
@@ -618,10 +621,7 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
             android:exported="false"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
-            />
-
-        <!-- Receivers -->
+            android:theme="@style/AppTheme.NoActionBar" /> <!-- Receivers -->
         <receiver android:name=".receiver.WBR_GetCustomer" />
 
         <service android:name=".service.WS_GetCustomer" />
@@ -670,13 +670,15 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
 
         <service android:name=".service.WS_Logout" />
 
-        <receiver android:name=".receiver.WBR_Connections_Change"
+        <receiver
+            android:name=".receiver.WBR_Connections_Change"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".receiver.WBR_BootCompleted"
+        <receiver
+            android:name=".receiver.WBR_BootCompleted"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -685,9 +687,11 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
             </intent-filter>
         </receiver>
 
-        <service android:name=".service.SV_LocationTracker"
-            android:foregroundServiceType="location"/>
-        <service android:name=".fcm.MyFirebaseMessagingService"
+        <service
+            android:name=".service.SV_LocationTracker"
+            android:foregroundServiceType="location" />
+        <service
+            android:name=".fcm.MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
