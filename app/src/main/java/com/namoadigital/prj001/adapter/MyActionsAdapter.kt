@@ -10,6 +10,7 @@ import android.widget.Filterable
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.MyActionsFormButtonItemBinding
@@ -23,8 +24,10 @@ import com.namoadigital.prj001.util.ToolBox_Inf
 
 class MyActionsAdapter(
         private val myActions: List<MyActionsBase>,
+        private val hmAuxTrans: HMAux,
         private val myActionClickListener: (myAction: MyActions) -> Unit,
         private val myActionFormButtonClickListener: (myActionFormButton: MyActionsFormButton) -> Unit,
+        private val mySerialClickListener: (myAction: MyActions) -> Unit,
         private val notifyFilterApplied: (qtyItensFiltered: Int) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
     private val VIEW_TYPE_MY_ACTION = 0
@@ -73,6 +76,10 @@ class MyActionsAdapter(
                 myActionClickListener(myAction)
             }
             //
+            binding.act083SerialInfo.setOnClickListener {
+                mySerialClickListener(myAction)
+            }
+            //
             binding.myActionsItemTvCode.text = myAction.processId
             binding.myActionsItemTvStatus.text = myAction.processStatusTrans
             configPlannedDate(myAction)
@@ -116,6 +123,14 @@ class MyActionsAdapter(
             )
             //
             applyBackgroundStrokeColor(myAction)
+            //
+            setButtonLabel()
+            //
+        }
+
+        private fun setButtonLabel() {
+            binding.act083SelectAction.text = hmAuxTrans["btn_select_action_lbl"]
+            binding.act083SerialInfo.text = hmAuxTrans["btn_select_serial_info_lbl"]
         }
 
         private fun configDoneDate(myAction: MyActions) {

@@ -178,7 +178,7 @@
             android:id="@+id/act083_pb_load"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:indeterminateTint="@color/namoa_amount_pipeline_background_btn"
+            android:indeterminateTint="@color/m3_namoa_surfaceTint"
             android:indeterminateTintMode="src_in"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="@+id/act083_rv_actions_list"

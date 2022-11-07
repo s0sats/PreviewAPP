@@ -149,6 +149,9 @@ class Act083_Main_Presenter(private val context: Context,
         transList.add("alert_form_os_requires_serial_ttl")
         transList.add("alert_form_os_requires_serial_msg")
         //
+        transList.add("btn_select_action_lbl")
+        transList.add("btn_select_serial_info_lbl")
+        //
         return ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -368,6 +371,10 @@ class Act083_Main_Presenter(private val context: Context,
             MyActions.MY_ACTION_TYPE_FORM_AP -> processFormApClick(myAction)
             MyActions.MY_ACTION_TYPE_FORM -> processFormClick(myAction)
         }
+    }
+
+    override fun processSerialClick(myAction: MyActions) {
+
     }
 
     private fun processLocalTicketClick(myAction: MyActions) {

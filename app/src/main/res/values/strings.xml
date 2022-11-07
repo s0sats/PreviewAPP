@@ -37,7 +37,7 @@
     <string name="msg_no_forms_found">None Form found for this Product!</string>
     <string name="act002_title_">Customers List</string>
     <string name="msg_update_canceled">Update cancelled.</string>
-	
+
     <!--LIB-->
     <string name="nfc_activity_title">NFC Scan</string>
     <string name="nfc_activity_desc">Approach an NFC Tag on you device</string>
@@ -109,9 +109,9 @@
     <string name="install_app_error_msg">Error on trying app update !\nPlease try again !</string>
     <string name="msg_customer_pendencies_list">Customer :\n</string>
     <string name="msg_update_required_warning">New version available!\nTo update, please submit pending data.</string>
-    
-	<!--Licenças por Site-->
-	<string name="msg_login_invalid_current_time">The date / time of your device is incompatible with the Namoa server. \n Set the date / time of your device and try again.</string>
+
+    <!--Licenças por Site-->
+    <string name="msg_login_invalid_current_time">The date / time of your device is incompatible with the Namoa server. \n Set the date / time of your device and try again.</string>
     <string name="act002_ws_site_license_ttl">Licenced Sites</string>
     <string name="act002_ws_site_license_msg">Loading Sites with available licences.</string>
     <string name="act002_ws_ticket_download_ttl">Download</string>
@@ -123,8 +123,8 @@
     <string name="act002_alt_no_licenses_returned_msg">No Site found with available licences for this User. \nPlease try again later or contact IT team in order to verify the amount of available licences.</string>
     <string name="act002_alt_license_list_not_found_ttl">Error: Licenced Sites</string>
     <string name="act002_alt_license_list_not_found_msg">Unable to load the list of Site with available licences for this User. \nPlease try again.</string>
-    
-	<!--Permissão da camera-->
+
+    <!--Permissão da camera-->
     <string name="lib_alert_allow_btn">Allow</string>
     <string name="lib_alert_deny_btn">Deny</string>
     <string name="lib_alert_settings_btn">Settings</string>
@@ -132,14 +132,14 @@
     <string name="lib_alert_camera_never_ask_again_msg">Permission to access the camera has been permanently denied!\nTo allow the use of the camera, click the button under Settings, Permissions -> Camera -> Allow</string>
     <string name="lib_alert_rationale_camera_permission_ttl">Camera Permission</string>
     <string name="lib_alert_rationale_barcode_camera_permission_msg">To read a barcode, access to the cell phone\'s camera is required.\nDo you want to allow access?</string>
-    
-	<!--Text Helpers -->
+
+    <!--Text Helpers -->
     <string name="unicode_bullet">"\u2022"</string>
     <string name="unicode_copyright">©</string>
     <string name="msg_synchronizing_data">Synchronizing Data</string>
     <string name="error_on_inapp_start_update_flow">\"Error on call update app via Google Play \"</string>
     <string name="msg_cancelled_by_user">Update cancelled.</string>
-	<string name="alert_support_finish_ttl">Send Support</string>
+    <string name="alert_support_finish_ttl">Send Support</string>
     <string name="alert_support_finish_msg">Data sent successfully</string>
     <string name="progress_support_ttl">Send Support Data</string>
     <string name="progress_support_msg">Send data in progress</string>
@@ -150,22 +150,22 @@
     <string name="alert_support_ttl">Send Support Data.</string>
     <string name="alert_support_empty_contact">Contact is required!</string>
     <string name="alert_support_empty_msg">Message is required</string>
-	<string name="send_support_btn">Send Data for Support</string>
-	
-	<!--Database Error and Reset -->
+    <string name="send_support_btn">Send Data for Support</string>
+
+    <!--Database Error and Reset -->
     <string name="act089_database_error_ttl">Database error</string>
     <string name="act089_database_error_msg">The NAMOA App data saved on this device can no longer be used because the local database is corrupted. \n\nTo use the NAMOA App again, will require the current local database to be erased. After that you can log into the App again.</string>
-	<string name="act089_database_error_reset_btn">Erase App data</string>
+    <string name="act089_database_error_reset_btn">Erase App data</string>
     <string name="act089_dialog_database_reset_msg">If you proceed, you will delete the current database (which is corrupted) and a new database will be created for you to start over. \n\nNote: Deleting the current database means that you will delete the information that has not been sent to the server yet, for this data will be lost and cannot be recovered. \n\nWould you like to proceed?</string>
     <string name="act089_dialog_database_reset_ttl">Erase App data</string>
     <string name="act089_dialog_database_reset_cancel_btn">Cancel</string>
-	<string name="act089_dialog_database_reset_confirm_btn">Please erase the data</string>
-    
-	<!--App da Play Store simultaneamente com App Standalone (antes da Play Store)-->
-	<string name="act001_locked_standalone_namoa_app_found_ttl">Please uninstall old NAMOA App</string>
-	<string name="act001_locked_standalone_namoa_app_found_msg">An old version of the NAMOA App is installed on this device (Version 4.12 or lower). \n\nPlease uninstall this old version, in order to start using the current App version.\n\nNOTE: Finish your work on the old version before uninstalling the App. To do this, open the old version of the App, complete ongoing processes, send data to the NAMOA server, then finally uninstall the old version.</string>
+    <string name="act089_dialog_database_reset_confirm_btn">Please erase the data</string>
 
-	<!--Login do Usuário B no device que tem dados pendentes do Usuário A (pendentes de envio ou Form em processo) -->
-	<string name="msg_last_user_with_pendency">CAUTION! Data will be LOST if you log in on this device.\n\nThe User below has data that has not yet been sent to the Server and/or Forms that are still being filled out:</string>
+    <!--App da Play Store simultaneamente com App Standalone (antes da Play Store)-->
+    <string name="act001_locked_standalone_namoa_app_found_ttl">Please uninstall old NAMOA App</string>
+    <string name="act001_locked_standalone_namoa_app_found_msg">An old version of the NAMOA App is installed on this device (Version 4.12 or lower). \n\nPlease uninstall this old version, in order to start using the current App version.\n\nNOTE: Finish your work on the old version before uninstalling the App. To do this, open the old version of the App, complete ongoing processes, send data to the NAMOA server, then finally uninstall the old version.</string>
+
+    <!--Login do Usuário B no device que tem dados pendentes do Usuário A (pendentes de envio ou Form em processo) -->
+    <string name="msg_last_user_with_pendency">CAUTION! Data will be LOST if you log in on this device.\n\nThe User below has data that has not yet been sent to the Server and/or Forms that are still being filled out:</string>
 
 </resources>

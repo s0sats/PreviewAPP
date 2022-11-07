@@ -135,8 +135,10 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
             //
             mAdapter = MyActionsAdapter(
                     myActionsList,
+                    hmAux_Trans,
                     this::onMyActionClick,
                     this::onFormButtonClick,
+                    this::onSerialButtonClick,
                     this::onAdapterFilterApplied
             )
             //
@@ -157,6 +159,10 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
                 act084RvActionsList.visibility = View.INVISIBLE
             }
         }
+    }
+
+    private fun onSerialButtonClick (myAction: MyActions) {
+        TODO("Not yet implemented")
     }
 
 

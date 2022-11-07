@@ -64,6 +64,7 @@ interface Act083_Main_Contract {
         fun onBackPressedClicked()
         fun processWsSyncReturn(hmAuxTicketDownload: HMAux)
         fun getMainUserFiltersParam():Boolean
+        fun processSerialClick(myAction: MyActions)
     }
 
 }

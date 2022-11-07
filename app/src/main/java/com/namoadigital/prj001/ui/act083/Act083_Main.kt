@@ -205,8 +205,10 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
             //
             mAdapter = MyActionsAdapter(
                     myActionsList,
+                    hmAux_Trans,
                     this::onMyActionClick,
                     this::onFormButtonClick,
+                    this::onSerialButtonClick,
                     this::onAdapterFilterApplied
             )
             //
@@ -235,6 +237,10 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 act083RvActionsList.visibility = View.INVISIBLE
             }
         }
+    }
+
+    private fun onSerialButtonClick(myAction: MyActions) {
+        mPresenter.processSerialClick(myAction)
     }
 
     private fun onFormButtonClick(myActionsFormButton: MyActionsFormButton) {
