@@ -205,8 +205,10 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
             //
             mAdapter = MyActionsAdapter(
                     myActionsList,
+                    hmAux_Trans,
                     this::onMyActionClick,
                     this::onFormButtonClick,
+                    this::onSerialButtonClick,
                     this::onAdapterFilterApplied
             )
             //
@@ -235,6 +237,10 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 act083RvActionsList.visibility = View.INVISIBLE
             }
         }
+    }
+
+    private fun onSerialButtonClick(myAction: MyActions) {
+        mPresenter.processSerialClick(myAction)
     }
 
     private fun onFormButtonClick(myActionsFormButton: MyActionsFormButton) {
@@ -415,7 +421,8 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
 
     private fun setLabels() {
         with(binding.act083MainContent){
-            act083MketFilter.hint = hmAux_Trans["filter_hint"]
+            act083TilFilter.hint = hmAux_Trans["filter_hint"]
+//            act083MketFilter.hint = hmAux_Trans["filter_hint"]
             act083TabMyActions.text = hmAux_Trans["tab_my_actions_lbl"]
             act083TabOtherActions.text = hmAux_Trans["tab_other_actions_lbl"]
             act083TvNoResult.text = hmAux_Trans["no_record_lbl"]

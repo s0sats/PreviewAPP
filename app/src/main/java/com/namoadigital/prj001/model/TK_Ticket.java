@@ -1669,8 +1669,6 @@ public class TK_Ticket implements Cloneable, Serializable {
             ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.OPEN_SITE_CODE)),
             hmAux.get(TK_TicketDao.OPEN_SITE_DESC),
             openZoneDesc,
-            clientInf,
-            contractInf,
             null,
             doneDate,
             ToolBox_Inf.millisecondsToString(

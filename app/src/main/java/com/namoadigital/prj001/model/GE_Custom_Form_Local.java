@@ -668,8 +668,6 @@ public class GE_Custom_Form_Local {
             ToolBox_Inf.convertStringToInt(hmAux.get(GE_Custom_Form_LocalDao.SITE_CODE)),
             hmAux.get(GE_Custom_Form_LocalDao.SITE_DESC),
                 formattedZone,
-            null,
-            null,
             soInfo,
             endDate,
             orderBy,

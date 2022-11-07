@@ -4,9 +4,9 @@
     <corners android:radius="0dp"/>
     <stroke
         android:width="1dp"
-        android:color="@color/namoa_color_gray_6"/>
+        android:color="@color/my_action_theme_cell_background"/>
     <!--Background -->
     <solid
-        android:color="@color/namoa_color_gray"/>
+        android:color="@color/my_action_theme_cell_background"/>
 
 </shape>

@@ -633,8 +633,6 @@ public class MD_Schedule_Exec {
                 site_desc,
                     formattedZone,
                 null,
-                null,
-                null,
                 doneDate,
                 ToolBox_Inf.millisecondsToString(
                     ToolBox_Inf.dateToMilliseconds(date_start + " " + customerGMT),
@@ -681,8 +679,6 @@ public class MD_Schedule_Exec {
                 site_code,
                 site_desc,
                     formattedZone,
-                null,
-                null,
                 null,
                 close_date,
                 ToolBox_Inf.millisecondsToString(
