@@ -49,7 +49,11 @@ class TkTicketCache(
         @SerializedName("forecast_start") var forecast_start: String?,
         @SerializedName("forecast_end") var forecast_end: String?,
         @SerializedName("step_count") var step_count: Int,
-        @SerializedName("step_order_seq") var step_order_seq: Int?
+        @SerializedName("step_order_seq") var step_order_seq: Int?,
+        @SerializedName("class_code")  var class_code: Int? = null,
+        @SerializedName("class_id") var class_id: String? = null,
+        @SerializedName("class_color")  var class_color: String? = null,
+        @SerializedName("class_available")  var class_available: Int? = null,
 ){
     fun toMyActionsObj(context: Context, lastSelectedActionPk: String?): MyActions{
         val statusTrad = ConstantBaseApp.HMAUX_TRANS_LIB?.get(ticket_status) ?: ticket_status

@@ -63,20 +63,19 @@ val MigrationV1 = object : MigrationSQLite(1, 2){
     }
 }
 
-//val MigrationV2 = object : MigrationSQLite(2, 3) {
-//
-//    override fun migrate(db: SQLiteDatabase) {
-//        db.execSQL(
-//            """
-//              CREATE TABLE IF NOT EXISTS [ge_namoa_table_test](
-//                  [customer_code] int not null,
-//                  [user_code] int not null,
-//                CONSTRAINT [pk_ge_namoa_table_test]
-//                PRIMARY KEY ([customer_code])
-//              );
-//            """.trimIndent()
-//        )
-//    }
-//}
+val MigrationV2 = object : MigrationSQLite(2, 3) {
+
+    override fun migrate(db: SQLiteDatabase) {
+        db.execSQL(""" ALTER TABLE [tk_ticket] ADD [class_code] int;""".trimIndent())
+        db.execSQL(""" ALTER TABLE [tk_ticket] ADD [class_id] text collate nocase;""".trimIndent())
+        db.execSQL(""" ALTER TABLE [tk_ticket] ADD [class_color] text collate nocase;""".trimIndent())
+        db.execSQL(""" ALTER TABLE [tk_ticket] ADD [class_available] int;""".trimIndent())
+        db.execSQL(""" ALTER TABLE [tk_ticket_cache] ADD [class_code] int;""".trimIndent())
+        db.execSQL(""" ALTER TABLE [tk_ticket_cache] ADD [class_id] text collate nocase;""".trimIndent())
+        db.execSQL(""" ALTER TABLE [tk_ticket_cache] ADD [class_color] text collate nocase;""".trimIndent())
+        db.execSQL(""" ALTER TABLE [tk_ticket_cache] ADD [class_available] int;""".trimIndent())
+        db.execSQL(""" DROP TABLE [ge_namoa_table_test];""".trimIndent())
+    }
+}
 
 

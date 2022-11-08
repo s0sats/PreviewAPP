@@ -194,6 +194,10 @@ public class TK_Ticket implements Cloneable, Serializable {
     private Integer not_executed_photo;
     @SerializedName("not_executed_date")
     private String not_executed_date;
+    @SerializedName("class_code") private Integer class_code;
+    @SerializedName("class_id") private String class_id;
+    @SerializedName("class_color") private String class_color;
+    @SerializedName("class_available") private Integer class_available;
     @Expose
     @SerializedName("step")
     private ArrayList<TK_Ticket_Step> step = new ArrayList<>();
