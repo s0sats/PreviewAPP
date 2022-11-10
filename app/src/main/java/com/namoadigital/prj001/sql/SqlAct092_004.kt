@@ -1,0 +1,79 @@
+package com.namoadigital.prj001.sql
+
+import com.namoa_digital.namoa_library.util.ToolBox
+import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
+import com.namoadigital.prj001.database.Specification
+import com.namoadigital.prj001.model.MyActions
+import com.namoadigital.prj001.util.ConstantBaseApp
+
+class SqlAct092_004(
+    private val originFlow: String,
+    private val customerCode: Int,
+    private var productCode: Int?,
+    private var serialId: String?,
+    private var formLabel: String,
+    private var userFocus: Int
+) : Specification {
+    private val deviceGMT = ToolBox.getDeviceGMT(false)
+    private var statusFilter = ""
+
+    init {
+        getStatusFilter()
+    }
+
+    private fun getStatusFilter() {
+        statusFilter = when (userFocus) {
+            1 -> """ and l.${GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS} = '${ConstantBaseApp.SYS_STATUS_IN_PROCESSING}' """
+            else -> """    and l.${GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS}  = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'"""
+        }
+    }
+
+    override fun toSqlQuery(): String {
+        val s = """ SELECT
+                     l.${GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS},
+                     d.${GE_Custom_Form_DataDao.DATE_START},
+                     l.${GE_Custom_Form_LocalDao.TAG_OPERATIONAL_DESC},
+                     l.${GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_DESC},
+                     l.${GE_Custom_Form_LocalDao.SERIAL_ID},                     
+                     '$formLabel' ${MyActions.MY_ACTION_TYPE_FORM},
+                     l.${GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC},
+                     l.${GE_Custom_Form_LocalDao.SITE_CODE},
+                     l.${GE_Custom_Form_LocalDao.SITE_DESC},
+                     l.${GE_Custom_Form_LocalDao.ZONE_CODE},
+                     l.${GE_Custom_Form_LocalDao.ZONE_DESC},
+                     d.${GE_Custom_Form_DataDao.SO_PREFIX},
+                     d.${GE_Custom_Form_DataDao.SO_CODE},
+                     d.${GE_Custom_Form_DataDao.DATE_END},                 
+                     l.${GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE} ,
+                     l.${GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE},                     
+                     l.${GE_Custom_Form_LocalDao.CUSTOM_FORM_CODE},
+                     l.${GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC},
+                     l.${GE_Custom_Form_LocalDao.CUSTOM_FORM_VERSION},
+                     l.${GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA}
+                    FROM 
+                     ${GE_Custom_Form_LocalDao.TABLE} l,
+                     ${GE_Custom_Form_DataDao.TABLE} d
+                    WHERE
+                     l.${GE_Custom_Form_LocalDao.CUSTOMER_CODE} = d.${GE_Custom_Form_DataDao.CUSTOMER_CODE}
+                     and l.${GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE} = d.${GE_Custom_Form_DataDao.CUSTOM_FORM_TYPE}
+                     and l.${GE_Custom_Form_LocalDao.CUSTOM_FORM_CODE} = d.${GE_Custom_Form_DataDao.CUSTOM_FORM_CODE}
+                     and l.${GE_Custom_Form_LocalDao.CUSTOM_FORM_VERSION} = d.${GE_Custom_Form_DataDao.CUSTOM_FORM_VERSION}
+                     and l.${GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA} = d.${GE_Custom_Form_DataDao.CUSTOM_FORM_DATA}
+                     --
+                     and l.${GE_Custom_Form_LocalDao.CUSTOMER_CODE} = $customerCode
+                     and l.${GE_Custom_Form_LocalDao.SCHEDULE_PREFIX} is null
+                     and l.${GE_Custom_Form_LocalDao.SCHEDULE_CODE} is null				
+                     and l.${GE_Custom_Form_LocalDao.SCHEDULE_EXEC} is null				
+                     and l.${GE_Custom_Form_LocalDao.TICKET_PREFIX} is null				
+                     and l.${GE_Custom_Form_LocalDao.TICKET_CODE} is null			
+                     and l.${GE_Custom_Form_LocalDao.TICKET_SEQ} is null				
+                     and l.${GE_Custom_Form_LocalDao.TICKET_SEQ_TMP} is null		
+                     and l.${GE_Custom_Form_LocalDao.STEP_CODE} is null	
+                     $statusFilter 
+                     and ($productCode is null or l.${GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE} = $productCode )
+                     and ('$serialId' is null or l.${GE_Custom_Form_LocalDao.SERIAL_ID} = '$serialId')                    
+              """.replace("'null'","null")
+        return s
+    }
+}
