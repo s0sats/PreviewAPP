@@ -15,6 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="2022.1234"
+        android:paddingEnd="10dp"
         android:textColor="@color/m3_namoa_onSurfaceVariant"
         android:gravity="end"
         android:paddingVertical="2dp" />
@@ -55,6 +56,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
+                        android:paddingBottom="2dp"
                         android:text="01/11/2022 22:00 - 02/11/2022 06:00"
                         android:textColor="@color/m3_namoa_error" />
 
@@ -63,6 +65,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
+                        android:paddingBottom="2dp"
                         android:text="01/11/2022 22:00 - 02/11/2022 06:00"
                         android:textColor="@color/m3_namoa_error" />
 
@@ -113,10 +116,12 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <LinearLayout
+                android:id="@+id/serial_detail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:gravity="center">
+                android:gravity="center"
+                android:layout_marginTop="12dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -170,8 +175,8 @@
                 <TextView
                     android:id="@+id/my_actions_item_tv_tag_desc"
                     style="@style/TextAppearance.Material3.TitleSmall"
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
+                    android:layout_width="175dp"
+                    android:layout_height="wrap_content"
                     android:gravity="start"
                     android:text="SERIAL NAME"
                     android:textColor="@color/m3_namoa_onSurface"
@@ -181,22 +186,18 @@
                     app:layout_constraintVertical_bias="0.0" />
 
                 <TextView
-                    android:id="@+id/my_actions_item_tv_status"
+                    android:id="@+id/my_actions_item_tv_class_status"
                     style="@style/TextAppearance.Material3.LabelLarge"
-                    android:layout_width="wrap_content"
+                    android:layout_width="175dp"
                     android:layout_height="wrap_content"
                     android:text="Urgente"
+                    android:textAlignment="textEnd"
                     android:textColor="@color/m3_namoa_error"
                     app:layout_constraintBottom_toBottomOf="@+id/my_actions_item_tv_tag_desc"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/my_actions_item_tv_tag_desc" />
 
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guideline"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    app:layout_constraintGuide_percent="0.5" />
+
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -239,7 +240,7 @@
                 android:paddingVertical="32dp" />
 
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="end">
@@ -250,27 +251,29 @@
                     style="@style/Widget.Material3.Button.OutlinedButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
                     android:text="OK"
-                    app:strokeColor="@color/m3_namoa_outline"
-                    android:layout_marginEnd="12dp"
                     android:textColor="@color/m3_namoa_primary"
-                    android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
-                    android:textAllCaps="true" />
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/my_action_select_serial"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0"
+                    app:strokeColor="@color/m3_namoa_outline" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/act083_select_action"
+                    android:id="@+id/my_action_select_serial"
                     style="@style/Widget.Material3.Button"
-                    android:backgroundTint="@color/m3_namoa_primary"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:backgroundTint="@color/m3_namoa_primary"
                     android:text="OK"
-                    app:strokeColor="@color/m3_namoa_outline"
-                    android:layout_marginEnd="12dp"
                     android:textColor="@color/m3_namoa_onPrimary"
-                    android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
-                    android:textAllCaps="true" />
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:strokeColor="@color/m3_namoa_outline" />
 
-            </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
 
     </com.google.android.material.card.MaterialCardView>

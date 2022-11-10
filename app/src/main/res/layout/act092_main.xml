@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.act092.act092_Main">
+    tools:context=".ui.act092.ui.Act092_Main">
 
 
     <com.google.android.material.appbar.AppBarLayout
@@ -56,7 +56,7 @@
                 android:layout_width="24dp"
                 android:layout_height="match_parent"
                 android:padding="0dp"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:src="@drawable/ic_baseline_arrow_right_24"
                 app:tint="#000000" />
 
@@ -64,6 +64,7 @@
                 android:id="@+id/serial_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="UM S3R1AL"
                 style="@style/TextAppearance.Material3.TitleLarge"
                 android:textColor="@color/m3_namoa_onSurface" />
         </LinearLayout>
@@ -74,7 +75,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/m3_namoa_onSurfaceVariant"
-            android:textStyle="normal" />
+            android:textStyle="normal"
+            android:text="empilhadeira 1" />
 
         <View
             android:layout_marginVertical="2dp"
@@ -87,14 +89,14 @@
             android:orientation="horizontal">
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/act092_text_layout"
+                android:id="@+id/act092TextLayout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 app:boxStrokeColor="@color/m3_namoa_onSurface"
                 app:hintTextColor="@color/m3_namoa_onSurface"
-                app:layout_constraintEnd_toStartOf="@+id/act083_ib_main_user_selection"
+                app:layout_constraintEnd_toStartOf="@+id/main_user_selection"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:placeholderTextColor="@color/m3_namoa_onSurface"
@@ -105,20 +107,19 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/m3_namoa_onSurface" />
-
             </com.google.android.material.textfield.TextInputLayout>
 
 
             <ImageView
-                android:id="@+id/act083_ib_main_user_selection"
+                android:id="@+id/main_user_selection"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/my_action_toogle_default"
                 android:padding="4dp"
                 android:src="@drawable/ic_person_black_24dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/act092TextLayout"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="@+id/act092TextLayout" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -130,11 +131,32 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+        android:orientation="vertical"
+        android:gravity="center">
+
+
+        <ProgressBar
+            android:id="@+id/progress_loading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:progressBackgroundTint="@color/m3_namoa_primary"
+            android:secondaryProgressTint="@color/m3_namoa_onPrimary"
+            android:visibility="visible" />
+
+        <TextView
+            android:id="@+id/empty_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:gravity="center" />
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerSerialList"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            tools:listitem="@layout/my_actions_item" />
 
     </LinearLayout>
 

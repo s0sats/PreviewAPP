@@ -3,10 +3,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_add"
+        android:id="@+id/action_info"
         android:icon="@drawable/ic_outline_info_24"
         android:iconTint="@color/m3_namoa_surface"
         app:showAsAction="ifRoom"
-        android:title="Add"
-        tools:targetApi="o"></item>
+        android:title="Info"
+        tools:targetApi="o" />
 </menu>
