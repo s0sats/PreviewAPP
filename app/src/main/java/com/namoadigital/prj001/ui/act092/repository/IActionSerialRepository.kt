@@ -6,10 +6,7 @@ import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap
 import com.namoadigital.prj001.model.MD_Schedule_Exec
 import com.namoadigital.prj001.model.TkTicketCache
-import com.namoadigital.prj001.sql.SqlAct083_001
-import com.namoadigital.prj001.sql.SqlAct083_002
-import com.namoadigital.prj001.sql.SqlAct083_004
-import com.namoadigital.prj001.sql.SqlAct083_005
+import com.namoadigital.prj001.sql.*
 import com.namoadigital.prj001.ui.act092.model.LocalTicketsModel
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -26,19 +23,12 @@ class IActionSerialRepository constructor(
     override suspend fun getLocalTickets(ticket: LocalTicketsModel): MutableList<HMAux> =
         with(ticket) {
             return ticketDao.query_HM(
-                SqlAct083_002(
+                SqlAct092_002(
                     context,
-                    originFlow ?: "",
                     customerCode ?: -1,
-                    tagOperCode,
-                    siteCode,
                     productCode,
                     serialId,
-                    clientId,
-                    contractId,
-                    ticketId,
-                    calendarDate,
-                    userFocus,
+                    userFocus ?: 1,
                     multStepsLbl
                 ).toSqlQuery()
             )
@@ -47,19 +37,11 @@ class IActionSerialRepository constructor(
     override suspend fun getTicketCache(ticket: LocalTicketsModel): MutableList<TkTicketCache> =
         with(ticket) {
             return ticketCacheDao.query(
-                SqlAct083_001(
+                SqlAct092_001(
                     context,
-                    originFlow ?: "",
                     customerCode ?: -1,
-                    tagOperCode,
-                    siteCode,
                     productCode,
                     serialId,
-                    clientId,
-                    contractId,
-                    ticketId,
-                    calendarDate,
-                    userFocus ?: 1,
                     multStepsLbl
                 ).toSqlQuery()
             )
@@ -68,15 +50,11 @@ class IActionSerialRepository constructor(
     override suspend fun getSchedules(ticket: LocalTicketsModel): MutableList<MD_Schedule_Exec> =
         with(ticket) {
             return scheduleDao.query(
-                SqlAct083_005(
+                SqlAct092_005(
                     context,
-                    originFlow ?: "",
                     customerCode ?: -1,
-                    tagOperCode,
                     productCode,
                     serialId,
-                    siteCode,
-                    calendarDate,
                     userFocus ?: 1,
                 ).toSqlQuery()
             )
@@ -85,15 +63,11 @@ class IActionSerialRepository constructor(
     override suspend fun getFormAp(ticket: LocalTicketsModel): MutableList<GE_Custom_Form_Ap> =
         with(ticket) {
             return formApDao.query(
-                SqlAct083_005(
+                SqlAct092_005(
                     context,
-                    originFlow ?: "",
                     customerCode ?: -1,
-                    tagOperCode,
                     productCode,
                     serialId,
-                    siteCode,
-                    calendarDate,
                     userFocus ?: 1,
                 ).toSqlQuery()
             )
@@ -102,13 +76,10 @@ class IActionSerialRepository constructor(
     override suspend fun getLocalForms(ticket: LocalTicketsModel): MutableList<HMAux> =
         with(ticket) {
             return localFormsDao.query_HM(
-                SqlAct083_004(
-                    originFlow ?: "",
+                SqlAct092_004(
                     customerCode ?: -1,
-                    tagOperCode,
                     productCode,
                     serialId,
-                    calendarDate,
                     hmAux?.get("form_lbl") ?: "FORMULARIO",
                     userFocus ?: 1,
                 ).toSqlQuery()

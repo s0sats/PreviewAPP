@@ -8,7 +8,6 @@ import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.util.ConstantBaseApp
 
 class SqlAct092_004(
-    private val originFlow: String,
     private val customerCode: Int,
     private var productCode: Int?,
     private var serialId: String?,
