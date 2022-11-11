@@ -6,25 +6,25 @@ import android.os.Bundle
 import android.view.View
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.ToolBox
-import com.namoa_digital.namoa_library.view.Base_Activity
 import com.namoadigital.prj001.adapter.Act091_Item_Adapter
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao
 import com.namoadigital.prj001.databinding.Act091MainBinding
 import com.namoadigital.prj001.ui.act040.Act040_Main
 import com.namoadigital.prj001.ui.act091.bottomstate.Act091_BottomSheet
 import com.namoadigital.prj001.ui.act091.mvp.Act091_Contract
+import com.namoadigital.prj001.ui.act091.mvp.Act091_Presenter
 import com.namoadigital.prj001.ui.act091.mvp.Utils.Act091_Translate
 import com.namoadigital.prj001.ui.act091.mvp.Utils.onHide
 import com.namoadigital.prj001.ui.act091.mvp.Utils.onVisible
 import com.namoadigital.prj001.ui.act091.mvp.model.Act091State
 import com.namoadigital.prj001.ui.act091.mvp.model.TranslateResource
-import com.namoadigital.prj001.ui.act091.mvp.presenter.Act091Event
-import com.namoadigital.prj001.ui.act091.mvp.presenter.Act091_Presenter
+import com.namoadigital.prj001.ui.base.BaseActivityMvp
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
 
-class Act091_Main : Base_Activity(), Act091_Contract.I_View {
+class Act091_Main : BaseActivityMvp<Act091_Contract.I_Presenter, Act091MainBinding>(),
+    Act091_Contract.I_View {
 
 
     private var bundleSaved: Bundle? = null
@@ -34,8 +34,8 @@ class Act091_Main : Base_Activity(), Act091_Contract.I_View {
             presenter.getListData(),
             presenter.hasPermissionShowPrice(),
             hmAux_Trans,
-            { size -> onState(Act091EventUI.CheckSizeList(size))},
-            { presenter.onEvent(Act091Event.OpenBottomSheet(it)) })
+            { size -> onState(Act091EventUI.CheckSizeList(size)) },
+            { presenter.openBottomSheet(it) })
     }
 
     override val presenter: Act091_Contract.I_Presenter by lazy {

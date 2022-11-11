@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.adapter
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
@@ -72,16 +73,18 @@ class MyActionsAdapter(
 
     inner class MyActionVh(private val binding: MyActionsItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun onBinding(myAction: MyActions) {
-            binding.act083SelectAction.setOnClickListener {
+            binding.myActionSelectSerial.text = /*hmAuxTrans["btn_select_action_lbl"]*/ "Abrir"
+            binding.act083SerialInfo.text = /*hmAuxTrans["btn_select_serial_info_lbl"]*/
+                "Mais Ações deste Serial"
+            binding.myActionSelectSerial.setOnClickListener {
                 myActionClickListener(myAction)
             }
-            //
             binding.act083SerialInfo.setOnClickListener {
                 mySerialClickListener(myAction)
             }
             //
             binding.myActionsItemTvCode.text = myAction.processId
-            binding.myActionsItemTvStatus.text = myAction.processStatusTrans
+            binding.myActionsItemTvClassStatus.text = myAction.processStatusTrans
             configPlannedDate(myAction)
             //
             binding.myActionsItemIvIconLeft.applyVisibilityIfSourceExists(myAction.processLeftIcon)
@@ -96,23 +99,29 @@ class MyActionsAdapter(
             }else{
                 binding.myActionsItemTvOrigin.visibility = View.GONE
             }
-            binding.myActionsItemTvProcessDesc.text = myAction.processDesc
+            /*binding.myActionsItemTvProcessDesc.text = myAction.processDesc*/
             binding.myActionsItemTvFocusStepDesc.applyVisibilityIfTextExists(
-                    getInfoBulletFormatted(
-                            binding.myActionsItemTvFocusStepDesc.context,
-                            myAction.focusStepDesc
-                    )
+                if (myAction.focusStepDesc.isNullOrEmpty()) {
+                    null
+                } else {
+                    "Etapa: ${myAction.focusStepDesc}"
+                }
             )
             //
             configTvSite(myAction)
-            binding.myActionsItemTvOsCode.applyVisibilityIfTextExists(myAction.serviceOrderCode)
-            binding.myActionsItemTvErrorMsg.applyVisibilityIfTextExists(myAction.erroMsg)
+/*
+            binding.myActionsItemTvClient.applyVisibilityIfTextExists(myAction.clientInfo)
+*/
+            binding.myActionsItemTvContract.applyVisibilityIfTextExists(myAction.actionType)
+/*            binding.myActionsItemTvOsCode.applyVisibilityIfTextExists(myAction.serviceOrderCode)
+            binding.myActionsItemTvErrorMsg.applyVisibilityIfTextExists(myAction.erroMsg)*/
             configDoneDate(myAction)
 
-            if(myAction.isMainUserTicket
-                && !ConstantBaseApp.SYS_STATUS_DONE.equals(myAction.processStatus)){
+            if (myAction.isMainUserTicket
+                && !ConstantBaseApp.SYS_STATUS_DONE.equals(myAction.processStatus)
+            ) {
                 binding.myActionsItemIvMainUser.visibility = View.VISIBLE
-            }else{
+            } else {
                 binding.myActionsItemIvMainUser.visibility = View.GONE
             }
             //
@@ -124,14 +133,6 @@ class MyActionsAdapter(
             )
             //
             applyBackgroundStrokeColor(myAction)
-            //
-            setButtonLabel()
-            //
-        }
-
-        private fun setButtonLabel() {
-            binding.act083SelectAction.text = hmAuxTrans["btn_select_action_lbl"]
-            binding.act083SerialInfo.text = hmAuxTrans["btn_select_serial_info_lbl"]
         }
 
         private fun configDoneDate(myAction: MyActions) {
@@ -157,11 +158,9 @@ class MyActionsAdapter(
                     if(ToolBox_Inf.equalsToLoggedSite(context,it.toString())){
                         visibility = View.VISIBLE
                         text = myAction.getFormattedSiteZoneDesc()
-                        setTextColor(ContextCompat.getColor(context,R.color.namoa_dark_blue))
                     }else{
                         visibility = View.VISIBLE
                         text = myAction.getFormattedSiteZoneDesc() //namoa_color_danger_red
-                        setTextColor(ContextCompat.getColor(context,R.color.namoa_color_danger_red))
                     }
                  } ?: {
                      visibility = View.GONE
@@ -192,25 +191,28 @@ class MyActionsAdapter(
         }
 
         private fun applyBackgroundStrokeColor(myAction: MyActions) {
-             binding.myActionsItemClInfos.apply {
-                 background =
-                             if(!myAction.doneDate.isNullOrEmpty() && ConstantBaseApp.SYS_STATUS_DONE.equals(myAction.processStatus)) {
-                                 if(myAction.isLastSelectedItem){
-                                     ContextCompat.getDrawable(context, R.drawable.namoa_cell_default_blue_stroke_green_states)
-                                 }else {
-                                     ContextCompat.getDrawable(context, R.drawable.namoa_cell_default_stroke_green_states)
-                                 }
-                             }else if(myAction.highlightItem) {
-                                 if(myAction.isLastSelectedItem){
-                                     ContextCompat.getDrawable(context, R.drawable.namoa_cell_default_blue_stroke_orange_states)
-                                 }else {
-                                     ContextCompat.getDrawable(context, R.drawable.namoa_cell_default_stroke_orange_states)
+            binding.myActionSelectSerial.apply {
+                backgroundTintList =
+                    if (!myAction.doneDate.isNullOrEmpty() && ConstantBaseApp.SYS_STATUS_DONE.equals(
+                            myAction.processStatus
+                        )
+                    ) {
+                        if (myAction.isLastSelectedItem) {
+                            ColorStateList.valueOf(resources.getColor(R.color.namoa_color_green_3))
+                        } else {
+                            ColorStateList.valueOf(resources.getColor(R.color.m3_namoa_primary))
+                        }
+                    } else if (myAction.highlightItem) {
+                        if (myAction.isLastSelectedItem) {
+                            ColorStateList.valueOf(resources.getColor(R.color.namoa_color_orange))
+                        } else {
+                            ColorStateList.valueOf(resources.getColor(R.color.m3_namoa_primary))
                                  }
                              }else {
                                  if(myAction.isLastSelectedItem){
-                                     ContextCompat.getDrawable(context, R.drawable.namoa_cell_default_blue_states)
+                                     ColorStateList.valueOf(resources.getColor(R.color.namoa_color_yellow_2))
                                  }else {
-                                     ContextCompat.getDrawable(context, R.drawable.namoa_cell_default_gray_states)
+                                     ColorStateList.valueOf(resources.getColor(R.color.m3_namoa_primary))
                                  }
                              }
 
@@ -227,11 +229,6 @@ class MyActionsAdapter(
                                 } else {
                                     null
                                 }
-                maxLines = if (isTicketOriginManulOrBarcode(myAction)) {
-                                1
-                            } else {
-                                Integer.MAX_VALUE
-                            }
             }
         }
 

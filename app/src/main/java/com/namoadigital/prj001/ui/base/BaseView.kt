@@ -1,20 +1,16 @@
-package com.namoadigital.prj001.ui.act091.mvp.base
+package com.namoadigital.prj001.ui.base
 
 //P = Presenter
 //B = Binding
 //S = State
-interface BaseView<P, B, S> {
+interface BaseView<S> {
 
-
-    val presenter: P
-
-    val binding: B
 
     fun onState(state: S)
 
     fun initView(
         block: () -> Unit
-    ){
+    ) {
         initSetup()
         initTrans()
         initVars()

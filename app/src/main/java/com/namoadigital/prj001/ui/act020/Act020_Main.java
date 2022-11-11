@@ -5,24 +5,21 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.SCHEDULED_PROFILE_CHE
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_NFC_Geral;
-import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.adapter.Act020_Prod_Serial_Adapter;
+import com.namoadigital.prj001.adapter.act020.Act020_Adapter;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
@@ -34,6 +31,8 @@ import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
+import com.namoadigital.prj001.databinding.Act020MainBinding;
+import com.namoadigital.prj001.databinding.Act020MainContentsBinding;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MyActionFilterParam;
@@ -79,9 +78,11 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     private LinearLayout ll_records;
     private TextView tv_records_limit;
     private TextView tv_records_count;
-    private ListView lv_prod_serial_list;
+    private RecyclerView rv_prod_serial_list;
     private TextView tv_no_result;
-    private Act020_Prod_Serial_Adapter mAdapter;
+    private Act020_Adapter mAdapter;
+    private Act020MainBinding mainBinding;
+    private Act020MainContentsBinding binding;
     private String ws_process;
     private ArrayList<MD_Product_Serial> serial_list = new ArrayList<>();
 
@@ -125,12 +126,14 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.act020_main);
 
-        vNFormSelected = findViewById(R.id.act020_nform_in_progress);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        mainBinding = Act020MainBinding.inflate(getLayoutInflater());
+
+        setContentView(mainBinding.getRoot());
+        binding = mainBinding.act020MainContent;
+
+        setSupportActionBar(mainBinding.topAppBar);
         //
         iniSetup();
         //
@@ -158,6 +161,8 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         List<String> transList = new ArrayList<String>();
         transList.add("search_prod_hint");
         transList.add("search_serial_hint");
+        transList.add("serial_found_lbl");
+        transList.add("other_sites_lbl");
 //        transList.add("drawer_product_lbl");
 //        transList.add("drawer_product_id_lbl");
 //        transList.add("drawer_serial_lbl");
@@ -242,79 +247,76 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                 requestingAct
         );
         //
-        btn_no_serial = (Button) findViewById(R.id.act020_btn_no_serial);
-        btn_no_serial.setText(hmAux_Trans.get("btn_no_serial"));
-        //
-        btn_create_serial = (Button) findViewById(R.id.act020_btn_create_serial);
-        btn_create_serial.setText(hmAux_Trans.get("btn_create_serial") + " (" + serial_id + ")");
-        //
-        tv_records = (TextView) findViewById(R.id.act020_tv_record_info);
-        //
-        ll_records = (LinearLayout) findViewById(R.id.act020_ll_limit_exceeded);
-        //
-        tv_records_limit = (TextView) findViewById(R.id.act020_tv_record_limit);
-        //
-        tv_records_count = (TextView) findViewById(R.id.act020_tv_record_count);
-        //
-        lv_prod_serial_list = (ListView) findViewById(R.id.act020_lv_prod_serial);
-        //
-        tv_no_result = (TextView) findViewById(R.id.act020_tv_no_result);
-        tv_no_result.setText(hmAux_Trans.get("no_record_found_lbl"));
-        //
+
+        binding.act020TextLayout.setHint(hmAux_Trans.get("search_serial_hint"));
+        binding.recyclerSerialListEmpty.setText(hmAux_Trans.get("no_record_found_lbl"));
+        binding.act020BtnCreateSerial.setText(hmAux_Trans.get("btn_create_serial") + " (" + serial_id + ")");
+        binding.act020BtnNoSerial.setText(hmAux_Trans.get("btn_no_serial"));
+
         if (md_product != null) {
             if (md_product.getRequire_serial() == 1) {
-                btn_no_serial.setVisibility(View.GONE);
+                binding.act020BtnNoSerial.setVisibility(View.GONE);
             } else {
-                btn_no_serial.setVisibility(View.VISIBLE);
+                binding.act020BtnNoSerial.setVisibility(View.VISIBLE);
             }
             //
             if (md_product.getAllow_new_serial_cl() == 1) {
-                btn_create_serial.setVisibility(View.VISIBLE);
+                binding.act020BtnCreateSerial.setVisibility(View.VISIBLE);
             } else {
-                btn_create_serial.setVisibility(View.GONE);
+                binding.act020BtnCreateSerial.setVisibility(View.GONE);
             }
-        } else {
-            btn_no_serial.setVisibility(View.GONE);
-            btn_create_serial.setVisibility(View.GONE);
         }
 
-        if (btn_create_serial.getVisibility() == View.VISIBLE) {
+        if (binding.act020BtnCreateSerial.getVisibility() == View.VISIBLE) {
             if (!ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_PRODUCT_SERIAL, Constant.PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_EDIT)) {
-                btn_create_serial.setVisibility(View.GONE);
+                binding.act020BtnCreateSerial.setVisibility(View.GONE);
             }
         }
 
         if (serial_id.equals("")) {
-            btn_create_serial.setVisibility(View.GONE);
+            binding.act020BtnCreateSerial.setVisibility(View.GONE);
+            binding.act020Layoutbuttons.setVisibility(View.GONE);
         } else {
-            btn_no_serial.setVisibility(View.GONE);
+            binding.act020BtnNoSerial.setVisibility(View.GONE);
         }
 
-        if (btn_create_serial.getVisibility() == View.VISIBLE){
-            btn_no_serial.setVisibility(View.GONE);
+        if (binding.act020BtnCreateSerial.getVisibility() == View.VISIBLE){
+            binding.act020BtnNoSerial.setVisibility(View.GONE);
+        }
+
+        if(binding.act020BtnCreateSerial.getVisibility() == View.VISIBLE || binding.act020BtnNoSerial.getVisibility() == View.VISIBLE){
+            binding.act020Layoutbuttons.setVisibility(View.VISIBLE);
         }
 
         if(hasNFormSelected()){
-            vNFormSelected.setVisibility(View.VISIBLE);
+            binding.act020NformInProgress.getRoot().setVisibility(View.VISIBLE);
         }else{
             //Quando a tela vier do fluxo de criação de processo espontaneo do ticket,
             //exibe card view com dados dos ticket
             if(mtk_ticket_is_form_off_hand) {
-                ImageView ivClose = vNFormSelected.findViewById(R.id.iv_nform_new_header);
-                TextView tvNFormSelected = vNFormSelected.findViewById(R.id.tv_process_new_header);
-                ivClose.setVisibility(View.GONE);
-                tvNFormSelected.setText(mPresenter.getFormattedTicketInfo(act081Bundle));
-                vNFormSelected.setVisibility(View.VISIBLE);
+                binding.act020NformInProgress.ivNformNewHeader.setVisibility(View.GONE);
+                binding.act020NformInProgress.tvProcessNewHeader.setText(mPresenter.getFormattedTicketInfo(act081Bundle));
+                binding.act020NformInProgress.getRoot().setVisibility(View.VISIBLE);
                 //LUCHE - 10/11/2020
                 //Quando a tela vier do fluxo de criação de processo espontaneo do ticket, a obj de
                 //sem serial nunca deve ser exibida.
-                btn_no_serial.setVisibility(View.GONE);
+                binding.act020BtnNoSerial.setVisibility(View.GONE);
             }
         }
     }
 
-    private void setActBarTitle() {
-        getSupportActionBar().setTitle(ToolBox_Inf.getActTitleByOrigin(context,originFlow,hmAux_Trans,mAct_Title));
+
+    private void checkListEmpty(int listSize){
+        if(listSize <= 0){
+            binding.recyclerSerialList.setVisibility(View.GONE);
+            binding.recyclerSerialListEmpty.setVisibility(View.VISIBLE);
+            binding.act020TextResult.setVisibility(View.GONE);
+        }else{
+            binding.recyclerSerialList.setVisibility(View.VISIBLE);
+            binding.recyclerSerialListEmpty.setVisibility(View.GONE);
+            if(!binding.act020TextResult.getText().toString().isEmpty()) binding.act020TextResult.setVisibility(View.VISIBLE);
+
+        }
     }
 
     private Bundle getBundleForNFormFinishPlusNew() {
@@ -474,7 +476,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         setMenuLanguage(hmAux_Trans);
         //setTitleLanguage();
         //Metodo que seta o titulo da tela baseado na origem
-        setActBarTitle();
+        //setActBarTitle();
         setFooter();
     }
 
@@ -484,24 +486,27 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         ToolBox_Inf.buildFooterDialog(context);
     }
 
-    private void initActions() {
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return super.onSupportNavigateUp();
+    }
 
-        btn_no_serial.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                /*Bundle mBundle = new Bundle();
-                mBundle.putString(Constant.ACT020_SERIAL_ID, "");
-                mBundle.putString(Constant.ACT020_PRODUCT_DESC, md_product.getProduct_desc());
-                mBundle.putString(Constant.ACT020_PRODUCT_CODE, String.valueOf(md_product.getProduct_code()));
-                callAct009(context, mBundle);*/
-                //
-                no_serial = true;
-                //
-                mPresenter.defineFlow(md_product.createNewSerialForThisProduct(Constant.KEY_NO_SERIAL),no_serial);
-            }
+    private void initActions() {
+        mainBinding.topAppBar.setNavigationOnClickListener(view -> onBackPressed());
+        binding.act020BtnNoSerial.setOnClickListener(v -> {
+            /*Bundle mBundle = new Bundle();
+            mBundle.putString(Constant.ACT020_SERIAL_ID, "");
+            mBundle.putString(Constant.ACT020_PRODUCT_DESC, md_product.getProduct_desc());
+            mBundle.putString(Constant.ACT020_PRODUCT_CODE, String.valueOf(md_product.getProduct_code()));
+            callAct009(context, mBundle);*/
+            //
+            no_serial = true;
+            //
+            mPresenter.defineFlow(md_product.createNewSerialForThisProduct(Constant.KEY_NO_SERIAL),no_serial);
         });
 
-        btn_create_serial.setOnClickListener(new View.OnClickListener() {
+        binding.act020BtnCreateSerial.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 serial_creation = true;
@@ -511,7 +516,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
             }
         });
 
-        lv_prod_serial_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+/*        lv_prod_serial_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 selectedProductSerial = (MD_Product_Serial) parent.getItemAtPosition(position);
@@ -522,37 +527,57 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                     mPresenter.defineFlow(selectedProductSerial, false);
                 }
             }
-        });
+        });*/
         //
+        loadProductSerialList(serial_list);
         if (serial_list != null && serial_list.size() != 0) {
             //fragFilters.setSerialIdText(serial_list.get(0).getSerial_id());
             //
             //tv_records.setText(hmAux_Trans.get("showing_lbl") + " " + serial_list.size() + " " + hmAux_Trans.get("records_lbl"));
             //
-            loadProductSerialList(serial_list);
             //
             if (serial_list.size() == 1 && mJump) {
-                lv_prod_serial_list.performItemClick(
+                selectedProductSerial = serial_list.get(0);
+                mPresenter.goToNextScreen(selectedProductSerial);
+/*                lv_prod_serial_list.performItemClick(
                         lv_prod_serial_list.getAdapter().getView(0, null, null),
                         0,
                         lv_prod_serial_list.getAdapter().getItemId(0)
-                );
-            } else {
+                );*/
             }
         } else {
+            binding.act020TextLayout.setEnabled(false);
+            if (serial_list != null) {
+                checkListEmpty(serial_list.size());
+            }
         }
         //
+        binding.editSerialFilter.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
+
+            @Override
+            public void reportTextChange(String s) {
+
+            }
+
+            @Override
+            public void reportTextChange(String s, boolean b) {
+                applyTextFilter(s);
+            }
+        });
         if(hasNFormSelected()){
-            ImageView ivClose = vNFormSelected.findViewById(R.id.iv_nform_new_header);
-            TextView tvNFormSelected = vNFormSelected.findViewById(R.id.tv_process_new_header);
-            ivClose.setOnClickListener(new View.OnClickListener() {
+            binding.act020NformInProgress.ivNformNewHeader.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    vNFormSelected.setVisibility(View.GONE);
+                    binding.act020NformInProgress.getRoot().setVisibility(View.GONE);
                     recoverInitialNFormState();
                 }
             });
-            tvNFormSelected.setText(customFormCodeDesc);
+            binding.act020NformInProgress.tvProcessNewHeader.setText(customFormCodeDesc);
+        }
+    }
+    private void applyTextFilter(String text) {
+        if(mAdapter != null){
+            mAdapter.getFilter().filter(text);
         }
     }
 
@@ -597,40 +622,67 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
 
     @Override
     public void setRecordInfo(long record_size, long record_page) {
-        if (record_size > 0) {
-            tv_records.setText(hmAux_Trans.get("showing_lbl") + " " + record_size + " " + hmAux_Trans.get("records_lbl"));
-        } else {
-            tv_records.setVisibility(View.GONE);
-            tv_no_result.setVisibility(View.VISIBLE);
-            ll_records.setVisibility(View.VISIBLE);
-        }
 
         if (record_count > record_page) {
-            showQtyExceededMsg(record_page, record_count);
+            getSupportActionBar().setTitle(hmAux_Trans.get("serial_found_lbl")+" ("+record_size+"/"+record_count+")");
+            binding.act020TextResult.setText(
+                    hmAux_Trans.get("alert_qty_records_exceeded_msg") + "\n" + record_count + " " + hmAux_Trans.get("alert_qty_records_founded")
+            );
+            binding.act020TextResult.setVisibility(View.VISIBLE);
+            //tv_records.setText(hmAux_Trans.get("showing_lbl") + " " + record_size + " " + hmAux_Trans.get("records_lbl"));
+        } else {
+            binding.act020TextResult.setVisibility(View.GONE);
+            getSupportActionBar().setTitle(hmAux_Trans.get("serial_found_lbl")+" ("+record_size+")");
+            //tv_records.setVisibility(View.GONE);
+            //tv_no_result.setVisibility(View.VISIBLE);
+            //ll_records.setVisibility(View.VISIBLE);
         }
+
+/*        if (record_count > record_page) {
+            showQtyExceededMsg(record_page, record_count);
+        }*/
     }
+
 
     @Override
     public void loadProductSerialList(ArrayList<MD_Product_Serial> prod_serial_list) {
         //Esconde tv com msg de nenhum busca feita
         //e ll com informações de limite de excedido.
-        tv_no_result.setVisibility(View.GONE);
-        ll_records.setVisibility(View.GONE);
+        /*tv_no_result.setVisibility(View.GONE);
+        ll_records.setVisibility(View.GONE);*/
         //
         //setRecordInfo(record_count, record_page);
         setRecordInfo(prod_serial_list.size(), record_page);
         //
-        mAdapter = new Act020_Prod_Serial_Adapter(
+
+        mAdapter = new Act020_Adapter(
+                context,
+                hmAux_Trans,
+                prod_serial_list,
+                (product_serial) -> {
+                    selectedProductSerial = product_serial;
+                    mPresenter.goToNextScreen(product_serial);
+                    return null;
+                },
+                (size) -> {
+                    checkListEmpty(size);
+                    return null;
+                }
+        );
+
+        binding.recyclerSerialList.setLayoutManager(new LinearLayoutManager(this));
+        binding.recyclerSerialList.setAdapter(mAdapter);
+        checkListEmpty(mAdapter.getItemCount());
+/*        mAdapter = new Act020_Prod_Serial_Adapter(
                 context,
                 R.layout.act020_cell,
                 prod_serial_list,
                 ToolBox_Con.getBooleanPreferencesByKey(getApplicationContext(), ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false)
-
-        );
+        );*/
         //
-        mAdapter.setSite_id_preference(ToolBox_Con.getPreference_Site_Code(context));
+        /*mAdapter.setSite_id_preference(ToolBox_Con.getPreference_Site_Code(context));*/
         //
-        lv_prod_serial_list.setAdapter(mAdapter);
+        /*lv_prod_serial_list.setAdapter(mAdapter);*/
     }
 
     @Override
@@ -922,17 +974,6 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         //super.onBackPressed();
 
         mPresenter.onBackPressedClicked();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
-
-        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
-        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
-
-        return true;
     }
 
     @Override

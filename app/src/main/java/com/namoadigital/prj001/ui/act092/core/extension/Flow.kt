@@ -1,0 +1,20 @@
+package com.namoadigital.prj001.ui.act092.core.extension
+
+import com.namoadigital.prj001.ui.act092.core.IResult
+import com.namoadigital.prj001.ui.act092.core.IResult.Companion.failed
+import com.namoadigital.prj001.ui.act092.core.IResult.Companion.loading
+import com.namoadigital.prj001.util.ToolBox_Inf
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.catch
+import java.io.IOException
+
+fun <T> Flow<IResult<T>>.namoaCatch(
+    local: String,
+    block: (FlowCollector<T>.(Throwable) -> Unit?)? = null
+): Flow<IResult<T>> =
+    this.catch { e ->
+        ToolBox_Inf.registerException(local, IOException(e.message))
+        emit(loading(false))
+        emit(failed(e))
+    }

@@ -1,4 +1,4 @@
-package com.namoadigital.prj001.ui.act091.mvp.presenter
+package com.namoadigital.prj001.ui.act091.mvp
 
 import com.google.gson.GsonBuilder
 import com.namoa_digital.namoa_library.util.HMAux
@@ -9,7 +9,6 @@ import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_005
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_001
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_006
-import com.namoadigital.prj001.ui.act091.mvp.Act091_Contract
 import com.namoadigital.prj001.ui.act091.mvp.Utils.Act091_Translate
 import com.namoadigital.prj001.ui.act091.mvp.model.Act091State
 import com.namoadigital.prj001.ui.act091.mvp.model.TranslateResource
@@ -37,36 +36,32 @@ class Act091_Presenter constructor(
         }
     }
 
+
     private lateinit var view: Act091_Contract.I_View
 
     override fun setView(view: Act091_Contract.I_View) {
         this.view = view
     }
 
-    override fun onEvent(event: Act091Event) {
-        when(event){
-
-            is Act091Event.OpenBottomSheet -> {
-                getSO_Pack_Express_Local()?.let { soPackExpressLocal ->
-                    SoPackExpressPacksLocal(event.item, soPackExpressLocal, -1).let { local ->
-                        view.onState(Act091EventUI.OpenBottomSheet(local, false))
-                    }
-                } ?: view.onState(Act091EventUI.ShowAlertDialogOk(
-                        "alert_error_ttl",
-                        "alert_error_msg") { dialog -> dialog.dismiss() }
-                )
-
+    override fun openBottomSheet(service: TSO_Service_Search_Obj) {
+        getSO_Pack_Express_Local()?.let { soPackExpressLocal ->
+            SoPackExpressPacksLocal(service, soPackExpressLocal, -1).let { local ->
+                view.onState(Act091EventUI.OpenBottomSheet(local, false))
             }
-        }
+        } ?: view.onState(Act091EventUI.ShowAlertDialogOk(
+            "alert_error_ttl",
+            "alert_error_msg"
+        ) { dialog -> dialog.dismiss() }
+        )
     }
 
     override fun loadTranslation(): HMAux = mutableListOf(
-            Act091_Translate.ACT_TITLE,
-            Act091_Translate.EMPTY_LIST,
-            Act091_Translate.FILTER_HINT,
-            Act091_Translate.FILTER_PLACEHOLDER,
-            Act091_Translate.HAS_MANUAL_PRICE
-        ).let {
+        Act091_Translate.ACT_TITLE,
+        Act091_Translate.EMPTY_LIST,
+        Act091_Translate.FILTER_HINT,
+        Act091_Translate.FILTER_PLACEHOLDER,
+        Act091_Translate.HAS_MANUAL_PRICE
+    ).let {
 
         ToolBox_Inf.setLanguage(
             translateResource.context,
