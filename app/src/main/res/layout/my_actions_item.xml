@@ -36,11 +36,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/namoa_cell_default_gray_states"
+            android:paddingBottom="5dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_status"
-            android:paddingBottom="5dp"
-            >
+            app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_status">
 
 
             <TextView
@@ -60,15 +59,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/my_action_info_margin_top"
-                tools:text="Site"
                 android:textColor="@color/namoa_color_danger_red"
                 android:textSize="12sp"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_focus_step_desc"
                 app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_internal_comments"
-                android:visibility="gone"
-                />
+                tools:text="Site" />
 
             <TextView
                 android:id="@+id/my_actions_item_tv_ticket_class"
@@ -112,7 +110,6 @@
                 tools:text="Comentario de comentadores" />
 
 
-
             <ImageView
                 android:id="@+id/my_actions_item_iv_icon_right"
                 android:layout_width="@dimen/namoa_icon_cell_so_width"
@@ -121,15 +118,14 @@
                 android:layout_marginEnd="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_baseline_cloud_download_24_gray"
-                />
+                app:srcCompat="@drawable/ic_baseline_cloud_download_24_gray" />
 
             <View
                 android:id="@+id/my_action_header_divider"
                 android:layout_width="0dp"
                 android:layout_height="1dp"
-                android:background="@color/m3_namoa_outline"
                 android:layout_marginTop="5dp"
+                android:background="@color/m3_namoa_outline"
                 app:layout_constraintEnd_toEndOf="@+id/my_actions_item_iv_icon_right"
                 app:layout_constraintStart_toStartOf="@+id/my_actions_item_tv_prod_desc"
                 app:layout_constraintTop_toBottomOf="@+id/my_actions_item_tv_prod_desc"></View>
@@ -141,15 +137,15 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                tools:text="22/01/2020 14:50 - 23/01/2021 15:00"
-                app:layout_constraintWidth_default="wrap"
                 android:textSize="12sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@id/my_actions_item_iv_icon_right"
                 app:layout_constraintEnd_toStartOf="@id/my_actions_item_iv_icon_left"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_default="wrap"
+                tools:text="22/01/2020 14:50 - 23/01/2021 15:00" />
 
             <ImageView
                 android:id="@+id/my_actions_item_iv_icon_left"
@@ -166,10 +162,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:layout_marginEnd="8dp"
+                android:padding="4dp"
                 android:textAllCaps="true"
                 android:textColor="@color/m3_namoa_onSurface"
                 android:textSize="16sp"
-                android:padding="4dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_planned_date"
@@ -207,22 +203,22 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/my_action_info_margin_top"
                 android:layout_marginEnd="8dp"
-                tools:text="Origin Desc"
                 android:textSize="12sp"
                 app:layout_constraintEnd_toStartOf="@+id/my_actions_item_iv_main_user"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_prod_desc"
-                app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_serial_id"
-                />
+                app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_tag_desc"
+                tools:text="Origin Desc" />
+
             <TextView
                 android:id="@+id/my_actions_item_tv_prod_desc"
+                style="@style/TextAppearance.AppCompat.Small"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
-                style="@style/TextAppearance.AppCompat.Small"
-                android:textSize="12sp"
                 android:padding="2dp"
                 android:textColor="@color/m3_namoa_onSurfaceVariant"
+                android:textSize="12sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_planned_date"
@@ -237,10 +233,10 @@
                 android:layout_marginTop="@dimen/my_action_info_margin_top"
                 android:layout_marginEnd="8dp"
                 android:textSize="12sp"
-                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintEnd_toStartOf="@+id/my_actions_item_iv_main_user"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_prod_desc"
-                app:layout_constraintTop_toBottomOf="@+id/my_actions_item_tv_tag_desc"
+                app:layout_constraintTop_toBottomOf="@+id/my_actions_item_tv_origin"
                 tools:text="Process Desc" />
 
             <TextView
@@ -248,15 +244,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/my_action_info_margin_top"
-                tools:text="Error Msg"
                 android:textColor="@color/text_red"
                 android:textSize="12sp"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_os_code"
                 app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_os_code"
-                android:visibility="gone"
-                />
+                tools:text="Error Msg" />
 
             <TextView
                 android:id="@+id/my_actions_item_tv_done_date"
@@ -290,20 +285,27 @@
                 style="@style/NamoaMaterialButtonOutlined"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                tools:text="Ver Serial"
-                app:layout_constraintBottom_toBottomOf="@+id/act083_select_action"
+                android:layout_marginEnd="12dp"
+                app:layout_constraintWidth_max="wrap"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/act083_select_action"
-                app:layout_constraintTop_toTopOf="@+id/act083_select_action" />
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/my_actions_item_tv_os_code"
+                tools:text="Ver Serial" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/act083_select_action"
                 style="@style/NamoaNMaterialButtonFilled"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
                 android:backgroundTint="@color/select_action_cell_background"
+                app:layout_constraintWidth_max="wrap"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/act083_serial_info"
                 app:layout_constraintTop_toBottomOf="@+id/my_actions_item_tv_done_date"
                 tools:text="Abrir" />
 
