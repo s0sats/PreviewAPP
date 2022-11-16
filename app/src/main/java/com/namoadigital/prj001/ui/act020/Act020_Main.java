@@ -452,6 +452,11 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                     GE_Custom_FormDao.IS_SO,
                     bundle.getInt(GE_Custom_FormDao.IS_SO,0)
                 );
+                if (bundle.containsKey(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW_SERIAL_OR_LOCAL)) {
+                    serial_list = (ArrayList<MD_Product_Serial>) bundle.getSerializable(Constant.MY_ACTIONS_ORIGIN_FLOW_SERIAL_OR_LOCAL);
+                    serial_id = bundle.getString(Constant.MAIN_MD_PRODUCT_SERIAL_ID);
+                    mJump = bundle.getBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP);
+                }
             }
         }
     }

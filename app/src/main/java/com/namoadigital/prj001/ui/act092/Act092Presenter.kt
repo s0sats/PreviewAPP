@@ -55,8 +55,6 @@ class Act092Presenter constructor(
             productCode = myActionFilterParam.productCode,
             serialId = myActionFilterParam.serialId,
             ticketId = myActionFilterParam.ticketId,
-            clientId = myActionFilterParam.clientId,
-            contractId = myActionFilterParam.contractId,
             calendarDate = myActionFilterParam.calendarDate,
             lastSelectedPk = myActionFilterParam.paramItemSelectedPk,
             lastSelectActionType = myActionFilterParam.paramItemSelectedType,

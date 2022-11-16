@@ -258,8 +258,6 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
             mdProduct != null ? mdProduct.getProduct_desc() : null,
             mSerial_id,
             null,
-            null,
-            null,
             null);
         //
         myActionFilterParam.setOriginFlow(ConstantBaseApp.ACT006);

@@ -72,37 +72,39 @@ class TkTicketCache(
             )
         //
         val processPk = "$ticket_prefix.$ticket_code.$scn"
-        return MyActions(
-                MyActions.MY_ACTION_TYPE_TICKET_CACHE,
-                processPk,
-                ticket_id,
-                ticket_status,
-                statusTrad,
-                null,
-                R.drawable.ic_baseline_cloud_download_24_gray,
-                ToolBox_Inf.getMyActionStartEndDateFormated (context, forecast_start, forecast_end),
-                tag_operational_desc,
-                open_product_desc,
-                open_serial_id,
-                origin_desc,
-                type_desc,
-                internal_comments,
-                step_desc,
-                open_site_code,
-                open_site_desc,
-                formattedZone,
-                null,
-                null,
-                ToolBox_Inf.millisecondsToString(
-                        ToolBox_Inf.dateToMilliseconds(forecast_start),
-                        "yyyyMMddHHmm"
-                ),
-                origin_type,
-                false,
-                ToolBox_Inf.isItemLate(forecast_start),
-                ToolBox_Inf.isItemLate(forecast_end),
-                processPk == lastSelectedActionPk,
-                main_user?.toString()?.equals(ToolBox_Con.getPreference_User_Code(context)) ?: false
+        val myActions = MyActions(
+            MyActions.MY_ACTION_TYPE_TICKET_CACHE,
+            processPk,
+            ticket_id,
+            ticket_status,
+            statusTrad,
+            null,
+            R.drawable.ic_baseline_cloud_download_24_gray,
+            ToolBox_Inf.getMyActionStartEndDateFormated(context, forecast_start, forecast_end),
+            tag_operational_desc,
+            open_product_desc,
+            open_serial_id,
+            origin_desc,
+            type_desc,
+            internal_comments,
+            step_desc,
+            open_site_code,
+            open_site_desc,
+            formattedZone,
+            null,
+            null,
+            ToolBox_Inf.millisecondsToString(
+                ToolBox_Inf.dateToMilliseconds(forecast_start),
+                "yyyyMMddHHmm"
+            ),
+            origin_type,
+            false,
+            ToolBox_Inf.isItemLate(forecast_start),
+            ToolBox_Inf.isItemLate(forecast_end),
+            processPk == lastSelectedActionPk,
+            main_user?.toString()?.equals(ToolBox_Con.getPreference_User_Code(context)) ?: false
         )
+        myActions.productCode = open_product_code
+        return myActions
     }
 }
