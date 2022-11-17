@@ -59,12 +59,13 @@ interface Act083_Main_Contract {
         fun getCacheTicketBundle(hmAuxTicketDownloaded: HMAux): Bundle
         fun processActionClick(myAction: MyActions)
         fun checkFormFlow(action: MyActions)
-        fun extractSearchResult(result: String?)
+        fun extractSearchResult(result: String?, myActionSelected: MyActions?)
         fun processActionFormButtonClick(myActionsFormButton: MyActionsFormButton)
         fun onBackPressedClicked()
         fun processWsSyncReturn(hmAuxTicketDownload: HMAux)
         fun getMainUserFiltersParam():Boolean
         fun processSerialClick(myAction: MyActions)
+        fun processLocalSearchForSerialAction(selectedActionForSerialFLow: MyActions)
     }
 
 }

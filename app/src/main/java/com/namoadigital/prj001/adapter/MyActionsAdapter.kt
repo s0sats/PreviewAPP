@@ -28,7 +28,7 @@ class MyActionsAdapter(
         private val hmAuxTrans: HMAux,
         private val myActionClickListener: (myAction: MyActions) -> Unit,
         private val myActionFormButtonClickListener: (myActionFormButton: MyActionsFormButton) -> Unit,
-        private val mySerialClickListener: (myAction: MyActions) -> Unit,
+        private val mySerialClickListener: (myAction: MyActions, position: Int) -> Unit,
         private val notifyFilterApplied: (qtyItensFiltered: Int) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
     private val VIEW_TYPE_MY_ACTION = 0
@@ -51,7 +51,7 @@ class MyActionsAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when(getItemViewType(position)){
             VIEW_TYPE_MY_ACTION -> with(holder as MyActionsAdapter.MyActionVh){
-                onBinding(myFilteredAction[position] as MyActions)
+                onBinding(myFilteredAction[position] as MyActions, position)
             }
             else -> with(holder as MyActionsAdapter.MyActionFormButtonVh){
                 onBinding(myFilteredAction[position] as MyActionsFormButton)
@@ -70,9 +70,15 @@ class MyActionsAdapter(
         }
         return VIEW_TYPE_MY_ACTION_FORM_BUTTON
     }
+    fun getMyActionByPosition(position: Int): MyActions? {
+        if(position >= 0) {
+            return myFilteredAction[position] as MyActions
+        }
+        return null
+    }
 
     inner class MyActionVh(private val binding: MyActionsItemBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun onBinding(myAction: MyActions) {
+        fun onBinding(myAction: MyActions, position: Int) {
             binding.myActionSelectSerial.text = /*hmAuxTrans["btn_select_action_lbl"]*/ "Abrir"
             binding.act083SerialInfo.text = /*hmAuxTrans["btn_select_serial_info_lbl"]*/
                 "Mais Ações deste Serial"
@@ -80,7 +86,7 @@ class MyActionsAdapter(
                 myActionClickListener(myAction)
             }
             binding.act083SerialInfo.setOnClickListener {
-                mySerialClickListener(myAction)
+                mySerialClickListener(myAction, position)
             }
             //
             binding.myActionsItemTvCode.text = myAction.processId

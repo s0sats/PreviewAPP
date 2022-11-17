@@ -161,7 +161,7 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
         }
     }
 
-    private fun onSerialButtonClick (myAction: MyActions) {
+    private fun onSerialButtonClick (myAction: MyActions, position: Int) {
         TODO("Not yet implemented")
     }
 

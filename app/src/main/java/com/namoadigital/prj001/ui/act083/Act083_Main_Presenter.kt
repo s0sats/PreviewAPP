@@ -374,7 +374,68 @@ class Act083_Main_Presenter(private val context: Context,
     }
 
     override fun processSerialClick(myAction: MyActions) {
+        //
+        myAction.serialId?.let {
+            executeSerialSearch(
+                myAction.productCode,
+                myAction.productId,
+                it,
+                true,
+                myAction
+            )
+        }
+    }
 
+    override fun processLocalSearchForSerialAction(selectedActionForSerialFLow: MyActions) {
+        selectedActionForSerialFLow?.let {
+            val serial = if (it.productCode != null && it.serialId != null) {
+                getSerial(it.productCode!!, it.serialId)
+            } else {
+                null
+            }
+            //
+            if (serial != null) {
+                var myActionFilterParam: MyActionFilterParam? = null
+                //
+                if (!bundle.containsKey(MyActionFilterParam.MY_ACTION_FILTER_PARAM)) {
+                    myActionFilterParam = MyActionFilterParam(
+                        null,
+                        null,
+                        it.productCode,
+                        it.productId,
+                        it.productDesc,
+                        it.serialId,
+                        null,
+                        null
+                    )
+                } else {
+                    myActionFilterParam = ToolBox_Inf.getMyActionFilterParam(bundle)
+                    //
+                    myActionFilterParam.productCode = it.productCode
+                    myActionFilterParam.productId = it.productId
+                    myActionFilterParam.productDesc = it.productDesc
+                    myActionFilterParam.serialId = it.serialId
+                }
+                //
+                bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
+                bundle.putInt(Constant.WS_SERIAL_SEARCH_EXACT, 1)
+                bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, originFlow)
+                bundle.putString(ConstantBaseApp.MAIN_MD_PRODUCT_SERIAL_ID, it.serialId)
+                bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, true)
+                bundle.putSerializable(
+                    Constant.MY_ACTIONS_ORIGIN_FLOW_SERIAL_OR_LOCAL,
+                    arrayListOf(serial)
+                )
+                mView.callAct020(bundle)
+            }else{
+                hmAux_Trans?.let{ hmAux ->
+                    mView.showAlertMsg(
+                        hmAux["alert_no_serial_found_ttl"]!!,
+                        hmAux["alert_no_serial_found_msg"]!!
+                    )
+                }
+            }
+        }
     }
 
     private fun processLocalTicketClick(myAction: MyActions) {
@@ -1187,6 +1248,16 @@ class Act083_Main_Presenter(private val context: Context,
     }
 
     private fun executeSerialSearch(productCode: Int?, productId: String?, serialId: String, searchExact: Boolean) {
+        executeSerialSearch(
+            productCode,
+            productId,
+            serialId,
+            searchExact,
+            null
+        )
+    }
+
+    private fun executeSerialSearch(productCode: Int?, productId: String?, serialId: String, searchExact: Boolean, myAction: MyActions?) {
         if (ToolBox_Con.isOnline(context)
             && !ToolBox_Con.getBooleanPreferencesByKey(context, ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false)) {
             mView.setProcess(WS_Serial_Search::class.java.name)
@@ -1209,11 +1280,13 @@ class Act083_Main_Presenter(private val context: Context,
             //
             context.sendBroadcast(mIntent)
         } else {
-            offlineSerialSearch()
+            myAction?.let {
+                processLocalSearchForSerialAction(it)
+            }?:offlineSerialSearch()
         }
     }
 
-    override fun extractSearchResult(result: String?) {
+    override fun extractSearchResult(result: String?, myActionSelected: MyActions?) {
         val gson = GsonBuilder().serializeNulls().create()
         val rec = gson.fromJson(
                 result,
@@ -1221,7 +1294,9 @@ class Act083_Main_Presenter(private val context: Context,
         //
         val serialList = rec.record
         //
-        defineSearchResultFlow(serialList, rec.record_count, rec.record_page)
+        myActionSelected?.let {
+            processLocalSearchForSerialAction(it)
+        }?: defineSearchResultFlow(serialList, rec.record_count, rec.record_page)
     }
 
     /**
@@ -1462,8 +1537,6 @@ class Act083_Main_Presenter(private val context: Context,
         productCode = myActionFilterParam.productCode
         serialId = myActionFilterParam.serialId
         ticketId = myActionFilterParam.ticketId
-        clientId = myActionFilterParam.clientId
-        contractId = myActionFilterParam.contractId
         calendarDate = myActionFilterParam.calendarDate
         siteCode =
         if(setSiteFilter()){

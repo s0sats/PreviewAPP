@@ -12,6 +12,7 @@ import com.namoadigital.prj001.R
 import com.namoadigital.prj001.adapter.MyActionsAdapter
 import com.namoadigital.prj001.databinding.Act092MainBinding
 import com.namoadigital.prj001.model.MyActionFilterParam
+import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.ui.act005.Act005_Main
 import com.namoadigital.prj001.ui.act006.Act006_Main
 import com.namoadigital.prj001.ui.act016.Act016_Main
@@ -148,7 +149,10 @@ class Act092_Main : BaseActivityMvp<Act092_Contract.Presenter, Act092MainBinding
                             adapter = MyActionsAdapter(
                                 state.list,
                                 hmAux_Trans,
-                                {}, {}, {}, {}
+                                {},
+                                {},
+                                { myAction: MyActions, position: Int -> },
+                                {}
                             )
                             layoutManager =
                                 LinearLayoutManager(context, RecyclerView.VERTICAL, false)
@@ -168,6 +172,9 @@ class Act092_Main : BaseActivityMvp<Act092_Contract.Presenter, Act092MainBinding
         }
     }
 
+    private fun onSerialButtonClick(i: Int) {
+        TODO("Not yet implemented")
+    }
 
     private fun toggleMainUserFilter(value: Boolean) {
         if (value) {
