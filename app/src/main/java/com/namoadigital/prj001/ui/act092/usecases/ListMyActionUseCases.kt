@@ -7,7 +7,6 @@ import com.namoadigital.prj001.ui.act092.core.IResult.Companion.failed
 import com.namoadigital.prj001.ui.act092.core.IResult.Companion.loading
 import com.namoadigital.prj001.ui.act092.core.IResult.Companion.success
 import com.namoadigital.prj001.ui.act092.core.UseCases
-import com.namoadigital.prj001.ui.act092.core.extension.namoaCatch
 import com.namoadigital.prj001.ui.act092.model.LocalTicketsModel
 import com.namoadigital.prj001.ui.act092.repository.ActionSerialRepository
 import com.namoadigital.prj001.util.ConstantBaseApp
@@ -17,14 +16,16 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
+import java.io.IOException
 
 class ListMyActionUseCases constructor(
     private val context: Context,
     private val repository: ActionSerialRepository,
 ) : UseCases<LocalTicketsModel, MutableList<MyActionsBase>> {
-    val actionList = mutableListOf<MyActionsBase>()
+    val actionBaseList = mutableListOf<MyActionsBase>()
 
     override suspend fun invoke(input: LocalTicketsModel): Flow<IResult<MutableList<MyActionsBase>>> {
+        actionBaseList.clear()
         return flow {
             with(input) {
                 copy(
@@ -35,33 +36,33 @@ class ListMyActionUseCases constructor(
                     multStepsLbl = hmAux?.get("other_steps_available_lbl")
                 ).let { localTicket ->
 
-                    emit(IResult.loading(true))
+                    emit(loading(true))
 
-                    actionList.addAll(
+                    actionBaseList.addAll(
                         repository.getLocalTickets(localTicket).map {
                             TK_Ticket.toMyActionsObj(context, it, getLastSelectedPk())
                         }
                     )
 
-                    actionList.addAll(
+                    actionBaseList.addAll(
                         repository.getTicketCache(localTicket).map {
                             it.toMyActionsObj(context, getLastSelectedPk())
                         }
                     )
 
-                    actionList.addAll(
+                    actionBaseList.addAll(
                         repository.getSchedules(localTicket).map {
                             it.toMyActionsObj(context, getLastSelectedPk())
                         }
                     )
 
-                    actionList.addAll(
+                    actionBaseList.addAll(
                         repository.getFormAp(localTicket).map {
                             it.toMyActionsObj(context, getLastSelectedPk())
                         }
                     )
 
-                    actionList.addAll(
+                    actionBaseList.addAll(
                         repository.getLocalForms(localTicket).map {
                             GE_Custom_Form_Local.toMyActionsObj(
                                 context,
@@ -72,7 +73,7 @@ class ListMyActionUseCases constructor(
                         }
                     )
 
-                    actionList.sortBy {
+                    actionBaseList.sortBy {
                         when (it) {
                             is MyActions -> it.orderBy
                             is MyActionsFormButton -> it.orderBy
@@ -80,16 +81,28 @@ class ListMyActionUseCases constructor(
                         }
                     }
 
+                    val actions = actionBaseList.map { m -> m as MyActions }
+                        .filter { f -> f.isMainUserTicket }
+
+                    val listOfficial = if (input.userFocus == 1) actions else actionBaseList
+
+                    if (listOfficial.size >= 2)
+                        listOfficial.map { m -> m as MyActions }[2].doneDate = "12/28/20222 23:23"
+                    else listOfficial
                     emit(loading(false))
-                    emit(success(actionList))
+                    emit(success(listOfficial.toMutableList()))
 
                 }
             }
 
-        }.namoaCatch(ListMyActionUseCases::class.toString()).catch { e ->
+        }.catch { e ->
+            ToolBox_Inf.registerException(
+                ListMyActionUseCases::class.toString(),
+                IOException(e.message)
+            )
             emit(loading(false))
             emit(failed(e))
-            actionList.sortBy {
+            actionBaseList.sortBy {
                 when (it) {
                     is MyActions -> it.orderBy
                     is MyActionsFormButton -> it.orderBy
@@ -97,7 +110,7 @@ class ListMyActionUseCases constructor(
                 }
             }
             delay(4000)
-            emit(success(actionList))
+            emit(success(actionBaseList))
         }
     }
 

@@ -5,7 +5,6 @@ package com.namoadigital.prj001.ui.base
 //S = State
 interface BaseView<S> {
 
-
     fun onState(state: S)
 
     fun initView(

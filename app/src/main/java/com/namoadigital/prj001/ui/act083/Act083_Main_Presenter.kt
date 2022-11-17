@@ -374,7 +374,9 @@ class Act083_Main_Presenter(private val context: Context,
     }
 
     override fun processSerialClick(myAction: MyActions) {
-
+/*        mView.callAct092(
+            myAction
+        )*/
     }
 
     private fun processLocalTicketClick(myAction: MyActions) {

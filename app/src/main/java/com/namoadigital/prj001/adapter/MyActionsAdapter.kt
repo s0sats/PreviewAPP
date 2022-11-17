@@ -88,7 +88,7 @@ class MyActionsAdapter(
             configPlannedDate(myAction)
             //
             binding.myActionsItemIvIconLeft.applyVisibilityIfSourceExists(myAction.processLeftIcon)
-            binding.myActionsItemIvIconRight.applyVisibilityIfSourceExists(myAction.processRightIcon)
+            binding.myActionsItemIvIconMid.applyVisibilityIfSourceExists(myAction.processRightIcon)
             //
             configTvTag(myAction)
             binding.myActionsItemTvProdDesc.text = myAction.productDesc
@@ -120,9 +120,9 @@ class MyActionsAdapter(
             if (myAction.isMainUserTicket
                 && !ConstantBaseApp.SYS_STATUS_DONE.equals(myAction.processStatus)
             ) {
-                binding.myActionsItemIvMainUser.visibility = View.VISIBLE
+                binding.myActionsItemIvIconMainUser.visibility = View.VISIBLE
             } else {
-                binding.myActionsItemIvMainUser.visibility = View.GONE
+                binding.myActionsItemIvIconMainUser.visibility = View.GONE
             }
             //
             binding.myActionsItemTvInternalComments.applyVisibilityIfTextExists(
