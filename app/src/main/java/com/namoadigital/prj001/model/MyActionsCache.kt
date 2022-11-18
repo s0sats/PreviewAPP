@@ -1,9 +1,22 @@
 package com.namoadigital.prj001.model
 
 import androidx.annotation.DrawableRes
+import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 class MyActionsCache(
+    @SerializedName("app")
+    @Expose
+    val app:String,
+    @SerializedName("validation")
+    @Expose
+    val validation:String,
+    @SerializedName("link_url")
+    @Expose
+    val link_url:String,
+    @SerializedName("error_msg")
+    @Expose
+    val error_msg:String,
     @SerializedName("action_type") val actionType: String,
     @SerializedName("process_id") val processPk: String,
     @SerializedName("process_id") val processId: String?,
@@ -34,4 +47,4 @@ class MyActionsCache(
     @SerializedName("has_Nc") val hasNc: Int,
     @SerializedName("pdf_url") val pdfUrl: Int,
     @SerializedName("pdf_name") val pdfName: Int
-):MyActionsBase()
+)
