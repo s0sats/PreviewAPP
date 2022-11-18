@@ -420,39 +420,42 @@ public class GE_Custom_Form_Ap {
             );
         }
         //
-        return new MyActions(
-            MyActions.MY_ACTION_TYPE_FORM_AP,
-            processPk,
-            processPk,
-            ap_status,
-            ConstantBaseApp.HMAUX_TRANS_LIB.get(ap_status),
-            null,
-            rightIcon,
-            ToolBox_Inf.getMyActionStartEndDateFormated(context,dateToUse,dateToUse),
-            tag_operational_desc,
-            product_desc,
-            serial_id,
-            custom_form_desc,
-            ap_description,
-            null,
-            MyActionStepFocusDesc(),
-            null,
-            null,
-            null,
-            null,
-            doneDate,
-            ToolBox_Inf.millisecondsToString(
-                ToolBox_Inf.dateToMilliseconds(dateToUse),
-                "yyyyMMddHHmm"
-            ),
-            null,
-            false,
-            false,
-            //Se a data usada for o when, entao valida atraso, se não, não é atrasado
-            ap_when != null ? ToolBox_Inf.isItemLate(dateToUse) : false,
-            isSelectedItem,
-ap_who != null && ap_who.toString().equals(ToolBox_Con.getPreference_User_Code(context))
+        MyActions myActions = new MyActions(
+                MyActions.MY_ACTION_TYPE_FORM_AP,
+                processPk,
+                processPk,
+                ap_status,
+                ConstantBaseApp.HMAUX_TRANS_LIB.get(ap_status),
+                null,
+                rightIcon,
+                ToolBox_Inf.getMyActionStartEndDateFormated(context, dateToUse, dateToUse),
+                tag_operational_desc,
+                product_desc,
+                serial_id,
+                custom_form_desc,
+                ap_description,
+                null,
+                MyActionStepFocusDesc(),
+                null,
+                null,
+                null,
+                null,
+                doneDate,
+                ToolBox_Inf.millisecondsToString(
+                        ToolBox_Inf.dateToMilliseconds(dateToUse),
+                        "yyyyMMddHHmm"
+                ),
+                null,
+                false,
+                false,
+                //Se a data usada for o when, entao valida atraso, se não, não é atrasado
+                ap_when != null ? ToolBox_Inf.isItemLate(dateToUse) : false,
+                isSelectedItem,
+                ap_who != null && ap_who.toString().equals(ToolBox_Con.getPreference_User_Code(context))
         );
+        myActions.setProductCode(product_code);
+        myActions.setProductId("");
+        return myActions;
     }
 
     private String MyActionStepFocusDesc() {

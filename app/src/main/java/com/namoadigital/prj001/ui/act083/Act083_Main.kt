@@ -843,8 +843,11 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         )
         progressDialog.dismiss()
         if(serialActionSelected > -1){
-            mAdapter.getMyActionByPosition(serialActionSelected)
-                ?.let { mPresenter.processLocalSearchForSerialAction(it) }
+            mAdapter
+                .getMyActionByPosition(serialActionSelected)
+                ?.let {
+                    mPresenter.processLocalSearchForSerialAction(it, null)
+                }
             //
             serialActionSelected = -1
         }else {

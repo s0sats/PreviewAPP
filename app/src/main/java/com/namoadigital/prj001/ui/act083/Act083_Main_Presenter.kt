@@ -386,14 +386,18 @@ class Act083_Main_Presenter(private val context: Context,
         }
     }
 
-    override fun processLocalSearchForSerialAction(selectedActionForSerialFLow: MyActions) {
+    override fun processLocalSearchForSerialAction(
+        selectedActionForSerialFLow: MyActions,
+        mdProductSerial: MD_Product_Serial?
+    ) {
         selectedActionForSerialFLow?.let {
-            val serial = if (it.productCode != null && it.serialId != null) {
-                getSerial(it.productCode!!, it.serialId)
-            } else {
-                null
-            }
             //
+            val serial = mdProductSerial
+                ?: if (it.productCode != null && it.serialId != null) {
+                    getSerial(it.productCode!!, it.serialId)
+                } else {
+                    null
+                }
             if (serial != null) {
                 var myActionFilterParam: MyActionFilterParam? = null
                 //
@@ -1281,7 +1285,7 @@ class Act083_Main_Presenter(private val context: Context,
             context.sendBroadcast(mIntent)
         } else {
             myAction?.let {
-                processLocalSearchForSerialAction(it)
+                processLocalSearchForSerialAction(it, getSerial(it.productCode?:0, it.serialId?:""))
             }?:offlineSerialSearch()
         }
     }
@@ -1295,7 +1299,7 @@ class Act083_Main_Presenter(private val context: Context,
         val serialList = rec.record
         //
         myActionSelected?.let {
-            processLocalSearchForSerialAction(it)
+            processLocalSearchForSerialAction(it,serialList[0])
         }?: defineSearchResultFlow(serialList, rec.record_count, rec.record_page)
     }
 
