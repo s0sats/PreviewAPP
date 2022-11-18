@@ -1,4 +1,4 @@
-package com.namoadigital.prj001.ui.act092.core.data.remote.sync
+package com.namoadigital.prj001.core.data.remote.sync
 
 import android.content.Context
 import android.content.Intent

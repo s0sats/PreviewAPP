@@ -1,7 +1,7 @@
 package com.namoadigital.prj001.ui.act092.usecases
 
 import android.content.Context
-import com.namoadigital.prj001.ui.act092.core.data.remote.sync.ISyncRepository.Companion.SyncRepositoryFactory
+import com.namoadigital.prj001.core.data.remote.sync.ISyncRepository.Companion.SyncRepositoryFactory
 import com.namoadigital.prj001.ui.act092.repository.IActionSerialRepository.Companion.ActionSerialRepositoryFactoryRepository
 import com.namoadigital.prj001.ui.base.FactoryUseCase
 

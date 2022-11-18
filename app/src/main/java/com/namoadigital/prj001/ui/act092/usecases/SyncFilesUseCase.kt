@@ -3,8 +3,8 @@ package com.namoadigital.prj001.ui.act092.usecases
 import android.content.Context
 import android.os.Bundle
 import com.namoa_digital.namoa_library.util.HMAux
+import com.namoadigital.prj001.core.data.remote.sync.SyncRepository
 import com.namoadigital.prj001.model.DataPackage
-import com.namoadigital.prj001.ui.act092.core.data.remote.sync.SyncRepository
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf

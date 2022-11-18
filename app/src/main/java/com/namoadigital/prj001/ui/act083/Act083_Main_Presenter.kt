@@ -374,9 +374,24 @@ class Act083_Main_Presenter(private val context: Context,
     }
 
     override fun processSerialClick(myAction: MyActions) {
-/*        mView.callAct092(
-            myAction
-        )*/
+        var myActionFilter: MyActionFilterParam? = null
+        myActionFilter = ToolBox_Inf.getMyActionFilterParam(bundle)
+        //
+        myActionFilter.productCode = myAction.productCode
+        myActionFilter.productId = myAction.productId
+        myActionFilter.productDesc = myAction.productDesc
+        myActionFilter.serialId = myAction.serialId
+        //
+        myActionFilter.originFlow = ConstantBaseApp.ACT083
+        //
+        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilter)
+        bundle.putString(
+            ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
+            ConstantBaseApp.ACT083
+        )
+        mView.callAct092(
+            bundle
+        )
     }
 
     private fun processLocalTicketClick(myAction: MyActions) {

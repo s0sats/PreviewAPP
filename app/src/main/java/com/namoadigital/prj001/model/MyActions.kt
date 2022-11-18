@@ -22,7 +22,7 @@ data class MyActions(
     val siteDesc: String?,
     val zoneDesc: String?,
     val serviceOrderCode: String?,
-    var doneDate: String?,
+    val doneDate: String?,
     val orderBy: String,
     val ticketOriginType: String?,
     val highlightItem: Boolean,

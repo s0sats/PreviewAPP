@@ -1,8 +1,8 @@
-package com.namoadigital.prj001.ui.act092.core.extension
+package com.namoadigital.prj001.core.extension
 
-import com.namoadigital.prj001.ui.act092.core.IResult
-import com.namoadigital.prj001.ui.act092.core.IResult.Companion.failed
-import com.namoadigital.prj001.ui.act092.core.IResult.Companion.loading
+import com.namoadigital.prj001.core.IResult
+import com.namoadigital.prj001.core.IResult.Companion.failed
+import com.namoadigital.prj001.core.IResult.Companion.loading
 import com.namoadigital.prj001.util.ToolBox_Inf
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector

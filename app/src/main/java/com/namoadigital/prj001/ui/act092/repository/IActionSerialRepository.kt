@@ -72,7 +72,7 @@ class IActionSerialRepository constructor(
                     customerCode ?: -1,
                     productCode,
                     serialId,
-                    userFocus ?: 1,
+                    userFocus,
                 ).toSqlQuery()
             )
         }

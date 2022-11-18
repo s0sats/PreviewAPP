@@ -3,22 +3,24 @@ package com.namoadigital.prj001.ui.act092
 import android.content.Context
 import android.os.Bundle
 import com.namoa_digital.namoa_library.util.HMAux
+import com.namoadigital.prj001.core.IResult.Companion.isFailed
+import com.namoadigital.prj001.core.IResult.Companion.isLoading
+import com.namoadigital.prj001.core.IResult.Companion.isSuccess
+import com.namoadigital.prj001.core.IResult.Companion.loading
 import com.namoadigital.prj001.model.MyActionFilterParam
 import com.namoadigital.prj001.model.action_serial.ActionsCache
 import com.namoadigital.prj001.ui.act005.Act005_Main
 import com.namoadigital.prj001.ui.act006.Act006_Main
 import com.namoadigital.prj001.ui.act016.Act016_Main
 import com.namoadigital.prj001.ui.act068.Act068_Main
-import com.namoadigital.prj001.ui.act092.core.IResult.Companion.isFailed
-import com.namoadigital.prj001.ui.act092.core.IResult.Companion.isLoading
-import com.namoadigital.prj001.ui.act092.core.IResult.Companion.isSuccess
-import com.namoadigital.prj001.ui.act092.core.IResult.Companion.loading
+import com.namoadigital.prj001.ui.act083.Act083_Main
 import com.namoadigital.prj001.ui.act092.model.LocalTicketsModel
 import com.namoadigital.prj001.ui.act092.usecases.ActionUseCases
 import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
+import com.namoadigital.prj001.util.ToolBox_Inf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,7 +30,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class Act092Presenter constructor(
-    private val myActionFilterParam: MyActionFilterParam,
+    private var myActionFilterParam: MyActionFilterParam,
     private val originFlow: String?,
     private val hmAux: HMAux,
     private val actionUseCases: ActionUseCases,
@@ -91,10 +93,10 @@ class Act092Presenter constructor(
         }
     }
 
-    override fun onBackPressedClicked() {
+    override fun onBackPressedClicked(bundle: Bundle) {
         when (myActionFilterParam.originFlow) {
             ConstantBaseApp.ACT006 -> {
-                view.onState(Act092UiEvent.CallAct(Act006_Main::class.java, Bundle().apply {
+                view.onState(Act092UiEvent.CallAct(Act006_Main::class.java, bundle.apply {
                     putString(
                         Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER,
                         myActionFilterParam.productId
@@ -103,11 +105,43 @@ class Act092Presenter constructor(
                 }))
             }
             ConstantBaseApp.ACT016 -> {
-                view.onState(Act092UiEvent.CallAct(Act016_Main::class.java, Bundle().apply {
+                view.onState(Act092UiEvent.CallAct(Act016_Main::class.java, bundle.apply {
                     putString(ConstantBaseApp.ACT_SELECTED_DATE, myActionFilterParam.calendarDate)
                 }))
             }
             ConstantBaseApp.ACT068 -> view.onState(Act092UiEvent.CallAct(Act068_Main::class.java))
+            ConstantBaseApp.ACT083 -> view.onState(
+                Act092UiEvent.CallAct(
+                    Act083_Main::class.java,
+                    bundle.apply {
+
+                        val productCode: Int? =
+                            if (ConstantBaseApp.ACT083 == originFlow) myActionFilterParam.productCode else null
+                        val productId: String? =
+                            if (ConstantBaseApp.ACT083 == originFlow) myActionFilterParam.productId else null
+                        val productDesc: String? =
+                            if (ConstantBaseApp.ACT083 == originFlow) myActionFilterParam.productDesc else null
+                        val serialId: String? =
+                            if (ConstantBaseApp.ACT083 == originFlow) myActionFilterParam.serialId else null
+
+
+                        myActionFilterParam = ToolBox_Inf.getMyActionFilterParam(bundle)
+
+                        myActionFilterParam.productCode = productCode
+                        myActionFilterParam.productId = productId
+                        myActionFilterParam.productDesc = productDesc
+                        myActionFilterParam.serialId = serialId
+
+                        putSerializable(
+                            MyActionFilterParam.MY_ACTION_FILTER_PARAM,
+                            myActionFilterParam
+                        )
+                        putString(
+                            getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW),
+                            ConstantBaseApp.ACT006
+                        )
+                    })
+            )
             else -> view.onState(Act092UiEvent.CallAct(Act005_Main::class.java))
         }
     }
