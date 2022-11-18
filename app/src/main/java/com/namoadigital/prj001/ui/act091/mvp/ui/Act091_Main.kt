@@ -63,7 +63,6 @@ class Act091_Main : BaseActivityMvp<Act091_Contract.I_Presenter, Act091MainBindi
             mAct_Title = Act091_Translate.ACT_TITLE
             setTitleLanguage()
             initRecyclerView()
-            presenter.setView(this)
         }
 
     }

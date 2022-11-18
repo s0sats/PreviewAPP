@@ -58,7 +58,8 @@
                         android:layout_gravity="start"
                         android:paddingBottom="2dp"
                         android:text="01/11/2022 22:00 - 02/11/2022 06:00"
-                        android:textColor="@color/m3_namoa_error" />
+                        style="@style/TextAppearance.Material3.BodyMedium"
+                        android:textColor="@color/m3_namoa_onSurfaceVariant" />
 
                     <TextView
                         android:id="@+id/my_actions_item_tv_done_date"
@@ -67,7 +68,8 @@
                         android:layout_gravity="start"
                         android:paddingBottom="2dp"
                         android:text="01/11/2022 22:00 - 02/11/2022 06:00"
-                        android:textColor="@color/m3_namoa_error" />
+                        style="@style/TextAppearance.Material3.BodyMedium"
+                        android:textColor="@color/namoa_color_done_action_pressed" />
 
                     <TextView
                         android:id="@+id/my_actions_item_tv_site"
@@ -75,6 +77,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
                         android:text="Klabin Itajaí | Galpão 1"
+                        style="@style/TextAppearance.Material3.BodyMedium"
                         android:textColor="@color/m3_namoa_onSurfaceVariant" />
 
                 </LinearLayout>
@@ -85,25 +88,25 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
                     android:src="@drawable/ic_baseline_cloud_done_24"
-                    app:layout_constraintEnd_toStartOf="@+id/my_actions_item_iv_icon_right"
+                    app:layout_constraintEnd_toStartOf="@+id/my_actions_item_iv_icon_mid"
                     app:layout_constraintTop_toTopOf="parent"
                     app:tint="@color/m3_namoa_inversePrimary"
                     android:contentDescription="null" />
 
 
                 <ImageView
-                    android:id="@+id/my_actions_item_iv_icon_right"
+                    android:id="@+id/my_actions_item_iv_icon_mid"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
                     android:contentDescription="null"
                     android:src="@drawable/ic_person_black_24dp"
-                    app:layout_constraintEnd_toStartOf="@+id/my_actions_item_iv_main_user"
+                    app:layout_constraintEnd_toStartOf="@+id/my_actions_item_iv_icon_main_user"
                     app:layout_constraintTop_toTopOf="parent"
                     app:tint="@color/m3_namoa_secondary" />
 
                 <ImageView
-                    android:id="@+id/my_actions_item_iv_main_user"
+                    android:id="@+id/my_actions_item_iv_icon_main_user"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_person_black_24dp"
@@ -236,7 +239,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Etapa: 2. Pedido de insumos"
-                android:textColor="@color/m3_namoa_onSurface"
+                android:textColor="@color/m3_namoa_onSurfaceVariant"
                 android:paddingVertical="32dp" />
 
 

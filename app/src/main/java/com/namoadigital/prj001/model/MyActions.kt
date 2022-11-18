@@ -22,7 +22,7 @@ data class MyActions(
     val siteDesc: String?,
     val zoneDesc: String?,
     val serviceOrderCode: String?,
-    val doneDate: String?,
+    var doneDate: String?,
     val orderBy: String,
     val ticketOriginType: String?,
     val highlightItem: Boolean,
@@ -31,13 +31,16 @@ data class MyActions(
     val isLastSelectedItem: Boolean,
     val isMainUserTicket: Boolean,
 ): MyActionsBase() {
-    companion object{
+
+
+    companion object {
         const val MY_ACTION_TYPE_TICKET = "TICKET"
         const val MY_ACTION_TYPE_TICKET_CACHE = "TICKET_CACHE"
         const val MY_ACTION_TYPE_SCHEDULE = "SCHEDULE"
         const val MY_ACTION_TYPE_FORM_AP = "FORM_AP"
         const val MY_ACTION_TYPE_FORM = "FORM"
     }
+
     var productCode: Int? = null
     var productId: String? = null
     var customFormDesc: String? = null

@@ -6,8 +6,12 @@ import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap
 import com.namoadigital.prj001.model.MD_Schedule_Exec
 import com.namoadigital.prj001.model.TkTicketCache
-import com.namoadigital.prj001.sql.*
+import com.namoadigital.prj001.sql.SqlAct092_001
+import com.namoadigital.prj001.sql.SqlAct092_002
+import com.namoadigital.prj001.sql.SqlAct092_004
+import com.namoadigital.prj001.sql.SqlAct092_005
 import com.namoadigital.prj001.ui.act092.model.LocalTicketsModel
+import com.namoadigital.prj001.ui.base.FactoryRepository
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
 
@@ -89,8 +93,9 @@ class IActionSerialRepository constructor(
 
     companion object {
 
-        class ActionSerialRepositoryFactory(private val context: Context) {
-            fun instance(): ActionSerialRepository =
+        class ActionSerialRepositoryFactoryRepository(private val context: Context) :
+            FactoryRepository<ActionSerialRepository>() {
+            override fun build(): ActionSerialRepository =
                 IActionSerialRepository(
                     context,
                     TK_TicketDao(

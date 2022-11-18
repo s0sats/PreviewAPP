@@ -13,5 +13,4 @@ interface ActionSerialRepository {
     suspend fun getSchedules(ticket: LocalTicketsModel): MutableList<MD_Schedule_Exec>
     suspend fun getFormAp(ticket: LocalTicketsModel): MutableList<GE_Custom_Form_Ap>
     suspend fun getLocalForms(ticket: LocalTicketsModel): MutableList<HMAux>
-
 }

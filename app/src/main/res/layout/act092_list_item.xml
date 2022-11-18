@@ -113,7 +113,7 @@
             android:visibility="gone" />
 
         <ImageView
-            android:id="@+id/my_actions_item_iv_icon_right"
+            android:id="@+id/my_actions_item_iv_icon_mid"
             android:layout_width="@dimen/namoa_icon_cell_so_width"
             android:layout_height="@dimen/namoa_icon_cell_so_height"
             android:layout_marginTop="8dp"
@@ -133,7 +133,7 @@
             app:layout_constraintWidth_default="wrap"
             android:textSize="12sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@id/my_actions_item_iv_icon_right"
+            app:layout_constraintBottom_toBottomOf="@id/my_actions_item_iv_icon_mid"
             app:layout_constraintEnd_toStartOf="@id/my_actions_item_iv_icon_left"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -145,7 +145,7 @@
             android:layout_height="@dimen/namoa_icon_cell_so_height"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            app:layout_constraintEnd_toStartOf="@id/my_actions_item_iv_icon_right"
+            app:layout_constraintEnd_toStartOf="@id/my_actions_item_iv_icon_mid"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_twotone_warning_24" />
 

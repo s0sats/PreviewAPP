@@ -14,7 +14,7 @@ data class LocalTicketsModel(
     var contractId: String? = null,
     var ticketId: String? = null,
     var calendarDate: String? = null,
-    var userFocus: Int? = null,
+    var userFocus: Int = 0,
     val multStepsLbl: String? = null,
     val hmAux: HMAux? = null,
     val lastSelectedPk: String? = null,

@@ -1,9 +1,14 @@
 package com.namoadigital.prj001.ui.act092
 
+import android.content.Context
 import android.os.Bundle
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.model.MyActionFilterParam
 import com.namoadigital.prj001.model.action_serial.ActionsCache
+import com.namoadigital.prj001.ui.act005.Act005_Main
+import com.namoadigital.prj001.ui.act006.Act006_Main
+import com.namoadigital.prj001.ui.act016.Act016_Main
+import com.namoadigital.prj001.ui.act068.Act068_Main
 import com.namoadigital.prj001.ui.act092.core.IResult.Companion.isFailed
 import com.namoadigital.prj001.ui.act092.core.IResult.Companion.isLoading
 import com.namoadigital.prj001.ui.act092.core.IResult.Companion.isSuccess
@@ -13,10 +18,13 @@ import com.namoadigital.prj001.ui.act092.usecases.ActionUseCases
 import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
+import com.namoadigital.prj001.util.ToolBox_Con
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class Act092Presenter constructor(
@@ -25,7 +33,6 @@ class Act092Presenter constructor(
     private val hmAux: HMAux,
     private val actionUseCases: ActionUseCases,
 ) : Act092_Contract.Presenter {
-
 
     private lateinit var view: Act092_Contract.View
 
@@ -37,15 +44,9 @@ class Act092Presenter constructor(
     val actionList: MutableList<ActionsCache> = _actionList
 
 
-    private var actionJob: Job? = null
-
-
     init {
         loadFilters()
-        CoroutineScope(Dispatchers.Default).launch {
-            getMyActionList()
-        }
-
+        getMyActionList()
     }
 
     private fun loadFilters() {
@@ -59,17 +60,21 @@ class Act092Presenter constructor(
             lastSelectedPk = myActionFilterParam.paramItemSelectedPk,
             lastSelectActionType = myActionFilterParam.paramItemSelectedType,
             hmAux = hmAux,
-            userFocus = 1
         )
     }
 
-    override fun getMyActionList() {
+    override fun getMyActionList(userFocus: Boolean) {
         CoroutineScope(Dispatchers.IO).launch {
-            actionUseCases.localTicket(ticketModel.value)
-                .onEach {
+            val isFocus = if (userFocus) 1 else 0
+            actionUseCases.localTicket(ticketModel.value.copy(userFocus = isFocus))
+                .catch { e ->
+                    emit(loading(false))
+                    view.onState(Act092UiEvent.ShowSnackbar(e.message ?: "not found"))
+                }
+                .collect {
 
-                    it.isSuccess {
-                        view.onState(Act092UiEvent.ListingSerialSteels(it))
+                    it.isSuccess { list ->
+                        view.onState(Act092UiEvent.ListingSerialSteels(list))
                     }
 
                     it.isFailed {
@@ -80,31 +85,54 @@ class Act092Presenter constructor(
                         view.onState(Act092UiEvent.IsLoading(isLoading, message))
                     }
 
-                }.catch { e ->
-                    emit(loading(false))
-                    view.onState(Act092UiEvent.ShowSnackbar(e.message ?: "not found"))
-                }.launchIn(CoroutineScope(Dispatchers.IO))
+                }
         }
     }
 
     override fun onBackPressedClicked() {
         when (myActionFilterParam.originFlow) {
-            ConstantBaseApp.ACT006 -> view.callAct006(getBundleToAssetsAndLocalOrigin())
-            ConstantBaseApp.ACT016 -> view.callAct016(getBundleToCalendarOrigin())
-            ConstantBaseApp.ACT068 -> view.callAct068()
-            else -> view.callAct005()
+            ConstantBaseApp.ACT006 -> {
+                view.onState(Act092UiEvent.CallAct(Act006_Main::class.java, Bundle().apply {
+                    putString(
+                        Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER,
+                        myActionFilterParam.productId
+                    )
+                    putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, myActionFilterParam.serialId)
+                }))
+            }
+            ConstantBaseApp.ACT016 -> {
+                view.onState(Act092UiEvent.CallAct(Act016_Main::class.java, Bundle().apply {
+                    putString(ConstantBaseApp.ACT_SELECTED_DATE, myActionFilterParam.calendarDate)
+                }))
+            }
+            ConstantBaseApp.ACT068 -> view.onState(Act092UiEvent.CallAct(Act068_Main::class.java))
+            else -> view.onState(Act092UiEvent.CallAct(Act005_Main::class.java))
         }
     }
 
 
-    private fun getBundleToAssetsAndLocalOrigin() = Bundle().apply {
-        putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, myActionFilterParam.productId)
-        putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, myActionFilterParam.serialId)
+    override fun syncFiles(context: Context) {
+        if (ToolBox_Con.isOnline(context)) {
+            view.wsProcess.value = Act005_Main.WS_PROCESS_SYNC
+            view.onState(
+                Act092UiEvent.OpenDialog(
+                    true,
+                    "alert_send_finish_ttl",
+                    "alert_send_finish_msg"
+                )
+            )
+            actionUseCases.syncFiles(hmAux)
+        } else {
+            view.onState(
+                Act092UiEvent.OpenDialog(
+                    title = "Sem conexão",
+                    message = "Sem conexão com a internet."
+                )
+            )
+        }
+
     }
 
-    private fun getBundleToCalendarOrigin() = Bundle().apply {
-        putString(ConstantBaseApp.ACT_SELECTED_DATE, myActionFilterParam.calendarDate)
-    }
 
     override fun setView(view: Act092_Contract.View) {
         this.view = view
