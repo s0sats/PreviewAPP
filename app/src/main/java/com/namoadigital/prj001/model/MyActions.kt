@@ -30,6 +30,9 @@ data class MyActions(
     val lateItem: Boolean,
     val isLastSelectedItem: Boolean,
     val isMainUserTicket: Boolean,
+    val hasNc: Boolean = false,
+    val pdfUrl: String? = null,
+    val pdfName: String?= null,
 ): MyActionsBase() {
 
 

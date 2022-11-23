@@ -256,9 +256,8 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
             mdProduct != null ? (int) mdProduct.getProduct_code() : null,
             mProduct_id != null && !mProduct_id.isEmpty() ? mProduct_id : null,
             mdProduct != null ? mdProduct.getProduct_desc() : null,
+                null,
             mSerial_id,
-            null,
-            null,
             null,
             null);
         //

@@ -5,13 +5,16 @@ import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.R
+import com.namoadigital.prj001.dao.MD_Product_SerialDao
 import com.namoadigital.prj001.databinding.Act092MainBinding
 import com.namoadigital.prj001.model.MyActionFilterParam
 import com.namoadigital.prj001.model.MyActionsBase
+import com.namoadigital.prj001.service.WS_UnfocusAndHistoric
 import com.namoadigital.prj001.service.WS_Sync
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download
 import com.namoadigital.prj001.ui.act005.Act005_Main
@@ -41,6 +44,10 @@ class Act092_Main : BaseActivityMvp
     Act092_Contract.View {
     private lateinit var bundle: Bundle
 
+    private val _mainUserFilter = MutableStateFlow(false)
+    private val serialCode by lazy{
+        bundle.getLong(MD_Product_SerialDao.SERIAL_CODE)
+    }
     private val _focusState = MutableStateFlow(FilterFocusUser())
     override val focusState: StateFlow<FilterFocusUser> = _focusState
 
@@ -181,7 +188,6 @@ class Act092_Main : BaseActivityMvp
 
             btnOtherSerial.setOnClickListener {
                 presenter.syncFiles(context)
-            }
 
 
             btnCreateAction.setOnClickListener {
@@ -217,6 +223,8 @@ class Act092_Main : BaseActivityMvp
                 0
             )
 
+        } else if(wsProcess.value == WS_UnfocusAndHistoric.javaClass.simpleName){
+            progressDialog.dismiss()
             onState(
                 Act092UiEvent.OpenDialog(
                     title = hmAux_Trans[Act092Translate.DIALOG_UPDATE_TTL],
@@ -230,6 +238,17 @@ class Act092_Main : BaseActivityMvp
 
         processCloseACT(mLink, mRequired, HMAux())
 
+    }
+
+    override fun processCloseACT(mLink: String?, mRequired: String?, hmAux: HMAux?) {
+        super.processCloseACT(mLink, mRequired, hmAux)
+        if(wsProcess.value == WS_UnfocusAndHistoric.javaClass.simpleName){
+            wsProcess.value = ""
+            if (progressDialog.isShowing) progressDialog.dismiss()
+
+            presenter.getMyActionList(_mainUserFilter.value)
+
+        }
     }
 
 

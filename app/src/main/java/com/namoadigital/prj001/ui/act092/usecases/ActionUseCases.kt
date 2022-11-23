@@ -13,6 +13,7 @@ data class ActionUseCases(
     val checkSyncChecklist: CheckSyncUseCase,
     val validateNewForm: ValidateNewFormUseCase,
     val updateSyncCheckist: UpdateSyncCheckListUseCase
+    val unfocusHistoricalActionUseCases: UnfocusHistoricalActionUseCases
 ) {
 
     companion object {
@@ -30,6 +31,7 @@ data class ActionUseCases(
                 return ActionUseCases(
                     localTicket = ListMyActionUseCases(context, repository),
                     syncFiles = SyncFilesUseCase(context, syncRepository),
+                    unfocusHistoricalActionUseCases = UnfocusHistoricalActionUseCases(context, repository) ,
                     syncFilesForm = SyncFilesFormUseCase(syncRepository),
                     downloadTicket = TicketDownloadUseCase(context, repository),
                     checkSyncChecklist = CheckSyncUseCase(syncRepository),

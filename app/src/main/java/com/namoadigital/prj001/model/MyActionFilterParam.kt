@@ -12,9 +12,8 @@ class MyActionFilterParam(
         var productCode: Int? = null,
         var productId: String? = null,
         var productDesc: String? = null,
+        var serialCode: Long? = null,
         var serialId: String? = null,
-        var clientId: String? = null,
-        var contractId: String? = null,
         var ticketId: String? = null,
         var calendarDate: String? = null
 ) : Serializable{
@@ -50,13 +49,7 @@ class MyActionFilterParam(
         if(!serialId.isNullOrEmpty()) {
             filters.add(serialId!!)
         }
-        if(!clientId.isNullOrEmpty()) {
-            filters.add(clientId!!)
-        }
-        if(!contractId.isNullOrEmpty()) {
-            filters.add(contractId!!)
-        }
-        if(!ticketId.isNullOrEmpty()) {
+       if(!ticketId.isNullOrEmpty()) {
             filters.add(ticketId!!)
         }
         calendarDate?.let {

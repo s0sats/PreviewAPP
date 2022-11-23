@@ -468,6 +468,11 @@ public class ToolBox_Inf {
         if (!dirExpressSOJsonFile.exists()) {
             dirExpressSOJsonFile.mkdir();
         }
+        //BARRIONUEVO - 22/07/2022 - Dir com os arquivos json de lista de site licença do customer
+        File dirOtherActionJsonFile = new File(Constant.OTHER_ACTIONS_JSON_PATH);
+        if (!dirOtherActionJsonFile.exists()) {
+            dirOtherActionJsonFile.mkdir();
+        }
     }
 
     public static String md5(String s) {
@@ -4130,6 +4135,20 @@ public class ToolBox_Inf {
 
     public static String getExpressSOFileName(int contract_code, long product_code, int category_price_code, long site_code, long operation_code) {
         return contract_code + "_" + category_price_code + "_" + product_code + "_" + site_code + "_" + operation_code + ".json";
+    }
+
+    public static String getOtherActionFileName(int product_code, long serial_code) {
+        return "other_action_" + product_code + "_" + serial_code +  ".json";
+    }
+
+    public static void createJsonFile(String file_name, String json, String filePath) throws IOException {
+        File file = new File(filePath, file_name);
+        //
+        if(file.exists()){
+            file.delete();
+        }
+        //
+        ToolBox_Inf.writeIn(json,file);
     }
 
     //
@@ -8877,7 +8896,6 @@ public class ToolBox_Inf {
         }
         if (mActionFilterParam == null) {
             mActionFilterParam = new MyActionFilterParam(
-                null,
                 null,
                 null,
                 null,

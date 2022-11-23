@@ -262,6 +262,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static String UNSENT_IMG_PATH;
     public static String TICKET_JSON_PATH;
     public static String SO_EXPRESS_JSON_PATH;
+    public static String OTHER_ACTIONS_JSON_PATH;
     public static String CUSTOMER_SITE_LICENSE_JSON_PATH;
 
     public static String ZIP_NAME;

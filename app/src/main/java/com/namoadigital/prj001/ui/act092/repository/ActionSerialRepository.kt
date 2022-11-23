@@ -4,6 +4,10 @@ import android.os.Bundle
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.ui.act092.model.SerialModel
+import com.namoadigital.prj001.model.GE_Custom_Form_Ap
+import com.namoadigital.prj001.model.MD_Schedule_Exec
+import com.namoadigital.prj001.model.MyActions
+import com.namoadigital.prj001.model.TkTicketCache
 
 interface ActionSerialRepository {
 
@@ -16,4 +20,6 @@ interface ActionSerialRepository {
     suspend fun getProductInfo(productCode: Int): MD_Product?
     fun downloadTicket(bundle: Bundle)
     suspend fun updateSyncChecklist(syncChecklist: Sync_Checklist)
+    fun callUnfocusAndHistorical(bundle: Bundle)
+    suspend fun getUnfocusAndHistorical(productCode: Int, serialCode: Long): MutableList<MyActions>
 }

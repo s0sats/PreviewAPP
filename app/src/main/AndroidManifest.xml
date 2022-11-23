@@ -972,6 +972,7 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
         <receiver android:name=".receiver.WBR_Product_Serial_Structure" />
         <receiver android:name=".receiver.WBR_Product_Serial_Backup" />
         <receiver android:name=".receiver.WBR_Ticket_Creation" />
+        <receiver android:name=".receiver.WBR_UnfocusAndHistoric" />
 
         <service android:name=".service.WS_SO_Create_Room" />
         <service android:name=".service.WS_TK_Next_Ticket" />
@@ -987,6 +988,7 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
         <service android:name=".service.WS_Product_Serial_Structure" />
         <service android:name=".service.WS_Product_Serial_Backup" />
         <service android:name=".service.WSTicketCreation" />
+        <service android:name=".service.WS_UnfocusAndHistoric" />
     </application>
 
 </manifest>

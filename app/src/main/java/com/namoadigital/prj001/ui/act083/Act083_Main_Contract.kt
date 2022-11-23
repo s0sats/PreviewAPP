@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui.act083
 import android.os.Bundle
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.HMAux
+import com.namoadigital.prj001.model.MD_Product_Serial
 import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.model.MyActionsFormButton
 
@@ -60,12 +61,13 @@ interface Act083_Main_Contract {
         fun getCacheTicketBundle(hmAuxTicketDownloaded: HMAux): Bundle
         fun processActionClick(myAction: MyActions)
         fun checkFormFlow(action: MyActions)
-        fun extractSearchResult(result: String?)
+        fun extractSearchResult(result: String?, myActionSelected: MyActions?)
         fun processActionFormButtonClick(myActionsFormButton: MyActionsFormButton)
         fun onBackPressedClicked()
         fun processWsSyncReturn(hmAuxTicketDownload: HMAux)
         fun getMainUserFiltersParam():Boolean
         fun processSerialClick(myAction: MyActions)
+        fun processLocalSearchForSerialAction(selectedActionForSerialFLow: MyActions, mdProductSerial: MD_Product_Serial?)
     }
 
 }

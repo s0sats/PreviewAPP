@@ -56,6 +56,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         const val FREE_EXECUTION_BLOCKED = "free_execution_blocked"
     }
 
+    private var serialActionSelected: Int = -1
     private lateinit var binding: Act083MainBinding
     private lateinit var mAdapter: MyActionsAdapter
     private lateinit var bundle: Bundle
@@ -240,7 +241,8 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         }
     }
 
-    private fun onSerialButtonClick(myAction: MyActions) {
+    private fun onSerialButtonClick(myAction: MyActions, position: Int) {
+        serialActionSelected = position
         mPresenter.processSerialClick(myAction)
     }
 
@@ -405,7 +407,8 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
             WS_Serial_Search::class.java.name -> {
                 wsProcess = ""
                 progressDialog.dismiss()
-                mPresenter.extractSearchResult(mLink)
+                mPresenter.extractSearchResult(mLink, mAdapter.getMyActionByPosition(serialActionSelected))
+                serialActionSelected = -1
             }
             else -> progressDialog?.dismiss()
         }
@@ -826,12 +829,18 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         super.processError_1(mLink, mRequired)
         mPresenter.formButtonData = null
         progressDialog.dismiss()
+        if(serialActionSelected > -1){
+            serialActionSelected = -1
+        }
     }
 
     override fun processCustom_error(mLink: String?, mRequired: String?) {
         super.processCustom_error(mLink, mRequired)
         mPresenter.formButtonData = null
         progressDialog.dismiss()
+        if(serialActionSelected > -1){
+            serialActionSelected = -1
+        }
     }
 
     override fun processError_http() {
@@ -843,8 +852,18 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
             true
         )
         progressDialog.dismiss()
-        mPresenter.offlineSerialSearch()
-
+        if(serialActionSelected > -1){
+            mAdapter
+                .getMyActionByPosition(serialActionSelected)
+                ?.let {
+                    mPresenter.processLocalSearchForSerialAction(it, null)
+                }
+            //
+            serialActionSelected = -1
+        }else {
+            mPresenter.offlineSerialSearch()
+        }
     }
+
 }
 

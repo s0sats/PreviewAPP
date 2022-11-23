@@ -13,6 +13,7 @@ import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.model.action_serial.ActionsCache
 import com.namoadigital.prj001.service.WS_Sync
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download
+import com.namoadigital.prj001.service.WS_UnfocusAndHistoric
 import com.namoadigital.prj001.ui.act005.Act005_Main
 import com.namoadigital.prj001.ui.act006.Act006_Main
 import com.namoadigital.prj001.ui.act009.Act009_Main
@@ -55,7 +56,12 @@ class Act092Presenter constructor(
 
 
     init {
+        cleanUnfocusAndHistoricalFile()
         loadFilters()
+    }
+
+    private fun cleanUnfocusAndHistoricalFile() {
+        ToolBox_Inf.deleteAllFOD(Constant.OTHER_ACTIONS_JSON_PATH)
     }
 
     private fun loadFilters() {
@@ -63,10 +69,9 @@ class Act092Presenter constructor(
             originFlow = originFlow,
             tagOperCode = myActionFilterParam.tagFilterCode,
             productCode = myActionFilterParam.productCode,
+            serialCode = myActionFilterParam.serialCode,
             serialId = myActionFilterParam.serialId,
             ticketId = myActionFilterParam.ticketId,
-            clientId = myActionFilterParam.clientId,
-            contractId = myActionFilterParam.contractId,
             calendarDate = myActionFilterParam.calendarDate,
             lastSelectedPk = myActionFilterParam.paramItemSelectedPk,
             lastSelectActionType = myActionFilterParam.paramItemSelectedType,
@@ -357,6 +362,18 @@ class Act092Presenter constructor(
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
         bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, originFlow)
         return bundle
+    }
+
+    override fun getUnfocusHistoricalList(context: Context, serialCode: Long) {
+        view.wsProcess.value = WS_UnfocusAndHistoric.javaClass.simpleName
+        view.onState(
+            Act092UiEvent.OpenDialog(
+                true,
+                "alert_send_finish_ttl",
+                "alert_send_finish_msg"
+            )
+        )
+        actionUseCases.unfocusHistoricalActionUseCases(myActionFilterParam.productCode!!, serialCode)
     }
 
 

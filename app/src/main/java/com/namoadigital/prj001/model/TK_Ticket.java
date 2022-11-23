@@ -1654,7 +1654,7 @@ public class TK_Ticket implements Cloneable, Serializable {
             );
         }
         //
-        return new MyActions(
+        MyActions myActions =  new MyActions(
             MyActions.MY_ACTION_TYPE_TICKET,
             processPk,
             hmAux.get(TK_TicketDao.TICKET_PREFIX)+"."+hmAux.get(TK_TicketDao.TICKET_CODE),
@@ -1684,7 +1684,13 @@ public class TK_Ticket implements Cloneable, Serializable {
             ToolBox_Inf.isItemLate(periodStartDate),
             ToolBox_Inf.isItemLate(lateDate),
             processPk.equals(lastSelectedActionPk),
-                hmAux.hasConsistentValue(TK_TicketDao.MAIN_USER) && hmAux.get(TK_TicketDao.MAIN_USER).equals(ToolBox_Con.getPreference_User_Code(context))
+                hmAux.hasConsistentValue(TK_TicketDao.MAIN_USER) && hmAux.get(TK_TicketDao.MAIN_USER).equals(ToolBox_Con.getPreference_User_Code(context)),
+                false,
+                null,
+                null
         );
+
+        myActions.setProductCode(hmAux.hasConsistentValue(TK_TicketDao.OPEN_PRODUCT_CODE)? Integer.parseInt(hmAux.get(TK_TicketDao.OPEN_PRODUCT_CODE)) : 0);
+        return myActions;
     }
 }

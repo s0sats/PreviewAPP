@@ -23,6 +23,7 @@ interface Act092_Contract {
         fun getMyActionList(mainFocus: Boolean = false)
         fun onBackPressedClicked(bundle: Bundle)
         fun syncFiles(context: Context)
+        fun getUnfocusHistoricalList(context: Context, serialId: Long)
         fun syncFilesForm(productCode: Long = 1L)
 
         //actions type

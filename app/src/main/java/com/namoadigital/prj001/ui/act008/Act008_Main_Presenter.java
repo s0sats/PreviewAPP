@@ -52,4 +52,6 @@ public interface Act008_Main_Presenter {
     boolean checkSerialStructureNeed();
 
     void callWsSerialStructure(MD_Product_Serial productSerial);
+
+    boolean checkOriginFlow(String originFlow);
 }

@@ -3,15 +3,26 @@ package com.namoadigital.prj001.ui.act092.repository
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.dao.*
+import com.namoadigital.prj001.model.*
+import com.namoadigital.prj001.receiver.WBR_UnfocusAndHistoric
+import com.namoadigital.prj001.sql.SqlAct092_001
+import com.namoadigital.prj001.sql.SqlAct092_002
+import com.namoadigital.prj001.sql.SqlAct092_004
+import com.namoadigital.prj001.sql.SqlAct092_005
 import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download
 import com.namoadigital.prj001.sql.*
 import com.namoadigital.prj001.ui.act092.model.SerialModel
 import com.namoadigital.prj001.ui.base.NamoaFactory
 import com.namoadigital.prj001.util.Constant
+import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
+import com.namoadigital.prj001.util.ToolBox_Inf
+import java.io.File
 
 class IActionSerialRepository constructor(
     private val context: Context,
@@ -119,6 +130,33 @@ class IActionSerialRepository constructor(
 
     override suspend fun updateSyncChecklist(syncChecklist: Sync_Checklist) {
         syncChecklistdao.addUpdate(syncChecklist)
+    }
+    override fun callUnfocusAndHistorical(bundle: Bundle) {
+        val mIntent = Intent(context, WBR_UnfocusAndHistoric::class.java)
+        mIntent.putExtras(bundle)
+        context.sendBroadcast(mIntent)
+    }
+
+    override suspend fun getUnfocusAndHistorical(productCode: Int, serialCode: Long): MutableList<MyActions> {
+        //
+        if(productCode>0 && serialCode>0) {
+            val fileName = ToolBox_Inf.getOtherActionFileName(productCode, serialCode)
+            val file = File(ConstantBaseApp.OTHER_ACTIONS_JSON_PATH, fileName)
+            if (file.exists()) {
+                val contents = ToolBox_Inf.getContents(file)
+                val gson = GsonBuilder().serializeNulls().create()
+                val rec = gson.fromJson<java.util.ArrayList<MyActionsCache>>(
+                    contents,
+                    object : TypeToken<java.util.ArrayList<MyActionsCache?>?>() {}.type
+                )
+                val myUnfocusActionList = mutableListOf<MyActions>()
+                for (myActions in rec) {
+                    myUnfocusActionList.add(myActions.toMyActions(context))
+                }
+                return myUnfocusActionList
+            }
+        }
+        return mutableListOf<MyActions>()
     }
 
     companion object {
