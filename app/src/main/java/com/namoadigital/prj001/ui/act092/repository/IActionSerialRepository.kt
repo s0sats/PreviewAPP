@@ -1,17 +1,15 @@
 package com.namoadigital.prj001.ui.act092.repository
 
 import android.content.Context
+import android.content.Intent
+import android.os.Bundle
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.dao.*
-import com.namoadigital.prj001.model.GE_Custom_Form_Ap
-import com.namoadigital.prj001.model.MD_Schedule_Exec
-import com.namoadigital.prj001.model.TkTicketCache
-import com.namoadigital.prj001.sql.SqlAct092_001
-import com.namoadigital.prj001.sql.SqlAct092_002
-import com.namoadigital.prj001.sql.SqlAct092_004
-import com.namoadigital.prj001.sql.SqlAct092_005
-import com.namoadigital.prj001.ui.act092.model.LocalTicketsModel
-import com.namoadigital.prj001.ui.base.FactoryRepository
+import com.namoadigital.prj001.model.*
+import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download
+import com.namoadigital.prj001.sql.*
+import com.namoadigital.prj001.ui.act092.model.SerialModel
+import com.namoadigital.prj001.ui.base.NamoaFactory
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
 
@@ -22,9 +20,12 @@ class IActionSerialRepository constructor(
     private val scheduleDao: MD_Schedule_ExecDao,
     private val formApDao: GE_Custom_Form_ApDao,
     private val localFormsDao: GE_Custom_Form_LocalDao,
+    private val serialDao: MD_Product_SerialDao,
+    private val productDao: MD_ProductDao,
+    private val syncChecklistdao: Sync_ChecklistDao
 ) : ActionSerialRepository {
 
-    override suspend fun getLocalTickets(ticket: LocalTicketsModel): MutableList<HMAux> =
+    override suspend fun getLocalTickets(ticket: SerialModel): MutableList<HMAux> =
         with(ticket) {
             return ticketDao.query_HM(
                 SqlAct092_002(
@@ -32,13 +33,13 @@ class IActionSerialRepository constructor(
                     customerCode ?: -1,
                     productCode,
                     serialId,
-                    userFocus ?: 1,
+                    userFocus,
                     multStepsLbl
                 ).toSqlQuery()
             )
         }
 
-    override suspend fun getTicketCache(ticket: LocalTicketsModel): MutableList<TkTicketCache> =
+    override suspend fun getTicketCache(ticket: SerialModel): MutableList<TkTicketCache> =
         with(ticket) {
             return ticketCacheDao.query(
                 SqlAct092_001(
@@ -51,7 +52,7 @@ class IActionSerialRepository constructor(
             )
         }
 
-    override suspend fun getSchedules(ticket: LocalTicketsModel): MutableList<MD_Schedule_Exec> =
+    override suspend fun getSchedules(ticket: SerialModel): MutableList<MD_Schedule_Exec> =
         with(ticket) {
             return scheduleDao.query(
                 SqlAct092_005(
@@ -59,12 +60,12 @@ class IActionSerialRepository constructor(
                     customerCode ?: -1,
                     productCode,
                     serialId,
-                    userFocus ?: 1,
+                    userFocus,
                 ).toSqlQuery()
             )
         }
 
-    override suspend fun getFormAp(ticket: LocalTicketsModel): MutableList<GE_Custom_Form_Ap> =
+    override suspend fun getFormAp(ticket: SerialModel): MutableList<GE_Custom_Form_Ap> =
         with(ticket) {
             return formApDao.query(
                 SqlAct092_005(
@@ -77,7 +78,7 @@ class IActionSerialRepository constructor(
             )
         }
 
-    override suspend fun getLocalForms(ticket: LocalTicketsModel): MutableList<HMAux> =
+    override suspend fun getLocalForms(ticket: SerialModel): MutableList<HMAux> =
         with(ticket) {
             return localFormsDao.query_HM(
                 SqlAct092_004(
@@ -85,16 +86,45 @@ class IActionSerialRepository constructor(
                     productCode,
                     serialId,
                     hmAux?.get("form_lbl") ?: "FORMULARIO",
-                    userFocus ?: 1,
+                    userFocus,
                 ).toSqlQuery()
             )
         }
 
+    override suspend fun getSerial(productCode: Int, serialId: String): MD_Product_Serial {
+        return serialDao.getByString(
+            MD_Product_Serial_Sql_002(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                productCode.toLong(),
+                serialId
+            ).toSqlQuery()
+        )
+    }
+
+    override suspend fun getProductInfo(productCode: Int): MD_Product {
+        return productDao.getByString(
+            MD_Product_Sql_001(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                productCode.toLong()
+            ).toSqlQuery()
+        )
+    }
+
+    override fun downloadTicket(bundle: Bundle) {
+        Intent(context, WBR_TK_Ticket_Download::class.java).also {
+            it.putExtras(bundle)
+            context.sendBroadcast(it)
+        }
+    }
+
+    override suspend fun updateSyncChecklist(syncChecklist: Sync_Checklist) {
+        syncChecklistdao.addUpdate(syncChecklist)
+    }
 
     companion object {
 
         class ActionSerialRepositoryFactoryRepository(private val context: Context) :
-            FactoryRepository<ActionSerialRepository>() {
+            NamoaFactory<ActionSerialRepository>() {
             override fun build(): ActionSerialRepository =
                 IActionSerialRepository(
                     context,
@@ -119,6 +149,21 @@ class IActionSerialRepository constructor(
                         Constant.DB_VERSION_CUSTOM
                     ),
                     GE_Custom_Form_LocalDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                    ),
+                    MD_Product_SerialDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                    ),
+                    MD_ProductDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                    ),
+                    Sync_ChecklistDao(
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM

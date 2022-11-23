@@ -70,6 +70,9 @@ public class Act009_Main_Presenter_Impl implements Act009_Main_Presenter{
     @Override
     public void onBackPressedClicked(String actResqueting) {
         switch (actResqueting){
+            case ConstantBaseApp.ACT092:
+                mView.callAct092(context);
+                break;
             case ConstantBaseApp.ACT070:
             case ConstantBaseApp.ACT068:
             case ConstantBaseApp.ACT073:

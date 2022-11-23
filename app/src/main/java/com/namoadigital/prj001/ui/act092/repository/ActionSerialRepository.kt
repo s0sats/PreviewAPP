@@ -1,16 +1,19 @@
 package com.namoadigital.prj001.ui.act092.repository
 
+import android.os.Bundle
 import com.namoa_digital.namoa_library.util.HMAux
-import com.namoadigital.prj001.model.GE_Custom_Form_Ap
-import com.namoadigital.prj001.model.MD_Schedule_Exec
-import com.namoadigital.prj001.model.TkTicketCache
-import com.namoadigital.prj001.ui.act092.model.LocalTicketsModel
+import com.namoadigital.prj001.model.*
+import com.namoadigital.prj001.ui.act092.model.SerialModel
 
 interface ActionSerialRepository {
 
-    suspend fun getLocalTickets(ticket: LocalTicketsModel): MutableList<HMAux>
-    suspend fun getTicketCache(ticket: LocalTicketsModel): MutableList<TkTicketCache>
-    suspend fun getSchedules(ticket: LocalTicketsModel): MutableList<MD_Schedule_Exec>
-    suspend fun getFormAp(ticket: LocalTicketsModel): MutableList<GE_Custom_Form_Ap>
-    suspend fun getLocalForms(ticket: LocalTicketsModel): MutableList<HMAux>
+    suspend fun getLocalTickets(ticket: SerialModel): MutableList<HMAux>
+    suspend fun getTicketCache(ticket: SerialModel): MutableList<TkTicketCache>
+    suspend fun getSchedules(ticket: SerialModel): MutableList<MD_Schedule_Exec>
+    suspend fun getFormAp(ticket: SerialModel): MutableList<GE_Custom_Form_Ap>
+    suspend fun getLocalForms(ticket: SerialModel): MutableList<HMAux>
+    suspend fun getSerial(productCode: Int, serialId: String): MD_Product_Serial?
+    suspend fun getProductInfo(productCode: Int): MD_Product?
+    fun downloadTicket(bundle: Bundle)
+    suspend fun updateSyncChecklist(syncChecklist: Sync_Checklist)
 }

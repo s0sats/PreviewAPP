@@ -7,4 +7,5 @@ interface SyncRepository {
 
     fun sync(data_package: ArrayList<String>, hmAux: HMAux, bundle: Bundle)
 
+    suspend fun checkSyncChecklistV2(productCode: Int): List<HMAux>
 }

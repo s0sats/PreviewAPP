@@ -3,7 +3,7 @@ package com.namoadigital.prj001.ui.act092.model
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.model.MyActions
 
-data class LocalTicketsModel(
+data class SerialModel(
     val originFlow: String? = null,
     val customerCode: Int? = null,
     var tagOperCode: Int? = null,
@@ -14,7 +14,7 @@ data class LocalTicketsModel(
     var contractId: String? = null,
     var ticketId: String? = null,
     var calendarDate: String? = null,
-    var userFocus: Int = 0,
+    var userFocus: Int = 1,
     val multStepsLbl: String? = null,
     val hmAux: HMAux? = null,
     val lastSelectedPk: String? = null,

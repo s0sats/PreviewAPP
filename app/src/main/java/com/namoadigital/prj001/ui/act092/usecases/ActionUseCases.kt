@@ -3,17 +3,23 @@ package com.namoadigital.prj001.ui.act092.usecases
 import android.content.Context
 import com.namoadigital.prj001.core.data.remote.sync.ISyncRepository.Companion.SyncRepositoryFactory
 import com.namoadigital.prj001.ui.act092.repository.IActionSerialRepository.Companion.ActionSerialRepositoryFactoryRepository
-import com.namoadigital.prj001.ui.base.FactoryUseCase
+import com.namoadigital.prj001.ui.base.NamoaFactory
 
 data class ActionUseCases(
     val localTicket: ListMyActionUseCases,
-    val syncFiles: SyncFilesUseCase
+    val syncFiles: SyncFilesUseCase,
+    val syncFilesForm: SyncFilesFormUseCase,
+    val downloadTicket: TicketDownloadUseCase,
+    val checkSyncChecklist: CheckSyncUseCase,
+    val validateNewForm: ValidateNewFormUseCase,
+    val updateSyncCheckist: UpdateSyncCheckListUseCase
 ) {
 
     companion object {
 
-        class ActionUseCasesFactory(private val context: Context) :
-            FactoryUseCase<ActionUseCases>() {
+        class ActionUseCasesFactory constructor(
+            private val context: Context
+        ) : NamoaFactory<ActionUseCases>() {
             override fun build(): ActionUseCases {
                 val repository = ActionSerialRepositoryFactoryRepository(
                     context
@@ -23,7 +29,12 @@ data class ActionUseCases(
 
                 return ActionUseCases(
                     localTicket = ListMyActionUseCases(context, repository),
-                    syncFiles = SyncFilesUseCase(context, syncRepository)
+                    syncFiles = SyncFilesUseCase(context, syncRepository),
+                    syncFilesForm = SyncFilesFormUseCase(syncRepository),
+                    downloadTicket = TicketDownloadUseCase(context, repository),
+                    checkSyncChecklist = CheckSyncUseCase(syncRepository),
+                    validateNewForm = ValidateNewFormUseCase(context, repository),
+                    updateSyncCheckist = UpdateSyncCheckListUseCase(context, repository)
                 )
             }
         }

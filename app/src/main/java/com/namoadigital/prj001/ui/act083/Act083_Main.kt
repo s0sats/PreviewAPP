@@ -772,7 +772,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         val mIntent = Intent(context, Act092_Main::class.java)
         mIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
 
-        mIntent.putExtras(bundle)
+        mIntent.putExtras(myActionFilterParam)
         startActivity(mIntent)
         finish()
     }

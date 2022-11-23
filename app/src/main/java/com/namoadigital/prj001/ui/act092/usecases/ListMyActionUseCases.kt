@@ -7,7 +7,7 @@ import com.namoadigital.prj001.core.IResult.Companion.loading
 import com.namoadigital.prj001.core.IResult.Companion.success
 import com.namoadigital.prj001.core.UseCases
 import com.namoadigital.prj001.model.*
-import com.namoadigital.prj001.ui.act092.model.LocalTicketsModel
+import com.namoadigital.prj001.ui.act092.model.SerialModel
 import com.namoadigital.prj001.ui.act092.repository.ActionSerialRepository
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -21,13 +21,13 @@ import java.io.IOException
 class ListMyActionUseCases constructor(
     private val context: Context,
     private val repository: ActionSerialRepository,
-) : UseCases<LocalTicketsModel, MutableList<MyActionsBase>> {
-    val actionBaseList = mutableListOf<MyActionsBase>()
+) : UseCases<Pair<SerialModel, Boolean>, MutableList<MyActionsBase>> {
+    private val actionBaseList = mutableListOf<MyActionsBase>()
 
-    override suspend fun invoke(input: LocalTicketsModel): Flow<IResult<MutableList<MyActionsBase>>> {
+    override suspend fun invoke(input: Pair<SerialModel, Boolean>): Flow<IResult<MutableList<MyActionsBase>>> {
         actionBaseList.clear()
         return flow {
-            with(input) {
+            with(input.first) {
                 copy(
                     customerCode = ToolBox_Con.getPreference_Customer_Code(context).toInt(),
                     siteCode = if (setSiteFilter(context)) ToolBox_Con.getPreference_Translate_Code(
@@ -56,11 +56,12 @@ class ListMyActionUseCases constructor(
                         }
                     )
 
+/* A Confirmar
                     actionBaseList.addAll(
                         repository.getFormAp(localTicket).map {
                             it.toMyActionsObj(context, getLastSelectedPk())
                         }
-                    )
+                    )*/
 
                     actionBaseList.addAll(
                         repository.getLocalForms(localTicket).map {
@@ -76,18 +77,18 @@ class ListMyActionUseCases constructor(
                     actionBaseList.sortBy {
                         when (it) {
                             is MyActions -> it.orderBy
-                            is MyActionsFormButton -> it.orderBy
                             else -> "190001010000"
                         }
                     }
 
-                    val actions = actionBaseList.map { m -> m as MyActions }
-                        .filter { f -> f.isMainUserTicket }
 
-                    val listOfficial = if (input.userFocus == 1) actions else actionBaseList
+                    val actions = if (input.second)
+                        actionBaseList.map { m -> m as MyActions }
+                            .filter { f -> f.isMainUserTicket } as MutableList<MyActionsBase>
+                    else actionBaseList
 
                     emit(loading(false))
-                    emit(success(listOfficial.toMutableList()))
+                    emit(success(actions.toMutableList()))
 
                 }
             }
@@ -97,8 +98,10 @@ class ListMyActionUseCases constructor(
                 ListMyActionUseCases::class.toString(),
                 IOException(e.message)
             )
+
             emit(loading(false))
             emit(failed(e))
+
             actionBaseList.sortBy {
                 when (it) {
                     is MyActions -> it.orderBy
@@ -106,6 +109,7 @@ class ListMyActionUseCases constructor(
                     else -> "190001010000"
                 }
             }
+
             delay(4000)
             emit(success(actionBaseList))
         }
@@ -116,6 +120,5 @@ class ListMyActionUseCases constructor(
             context,
             ConstantBaseApp.PREFERENCE_HOME_SITES_FILTER,
             ConstantBaseApp.PREFERENCE_HOME_ALL_SITE_OPTION
-        )
-                && !ToolBox_Inf.hasSoOrIOProfile(context)
+        ) && !ToolBox_Inf.hasSoOrIOProfile(context)
 }

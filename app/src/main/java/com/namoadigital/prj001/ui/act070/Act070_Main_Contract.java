@@ -80,6 +80,8 @@ public interface Act070_Main_Contract {
 
         void callAct087(Bundle act087Bundle);
 
+        void callAct092();
+
         void resetLastPositionClicked();
     }
 
