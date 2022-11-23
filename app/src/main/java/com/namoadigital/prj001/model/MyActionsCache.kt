@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.annotation.DrawableRes
 import com.google.gson.annotations.SerializedName
 import com.namoadigital.prj001.R
+import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 
 class MyActionsCache(
@@ -52,7 +53,7 @@ class MyActionsCache(
             processId ?: "",
             processId,
             processStatus,
-            processStatusTrans,
+            ConstantBaseApp.HMAUX_TRANS_LIB[processStatusTrans],
             processLeftIcon,
             processRightIcon,
             plannedDate ?: "",
@@ -74,7 +75,10 @@ class MyActionsCache(
             periodStarted,
             lateItem,
             isLastSelectedItem,
-            isMainUserTicket
+            isMainUserTicket,
+            hasNc == 1,
+            pdfUrl,
+            pdfName,
         )
     }
 }

@@ -643,7 +643,10 @@ public class MD_Schedule_Exec {
                 ToolBox_Inf.isItemLate(date_start + " " + customerGMT),
                 ToolBox_Inf.isItemLate(date_end + " " + customerGMT),
                 isLastSelectedItem,
-                    false
+                    false,
+                    false,
+                    null,
+                    null
             );
             myActions.setProductCode(product_code);
             myActions.setProductId(product_id);
@@ -690,7 +693,10 @@ public class MD_Schedule_Exec {
                 ToolBox_Inf.isItemLate(date_start + " " + customerGMT),
                 ToolBox_Inf.isItemLate(date_end + " " + customerGMT),
                 isLastSelectedItem,
-                    false
+                    false,
+                    false,
+                    null,
+                    null
             );
             myActions.setProductCode(product_code);
             myActions.setProductId(product_id);

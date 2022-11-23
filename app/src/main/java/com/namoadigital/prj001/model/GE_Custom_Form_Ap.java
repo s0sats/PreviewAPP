@@ -451,7 +451,10 @@ public class GE_Custom_Form_Ap {
                 //Se a data usada for o when, entao valida atraso, se não, não é atrasado
                 ap_when != null ? ToolBox_Inf.isItemLate(dateToUse) : false,
                 isSelectedItem,
-                ap_who != null && ap_who.toString().equals(ToolBox_Con.getPreference_User_Code(context))
+                ap_who != null && ap_who.toString().equals(ToolBox_Con.getPreference_User_Code(context)),
+                false,
+                null,
+                null
         );
         myActions.setProductCode(product_code);
         myActions.setProductId("");
