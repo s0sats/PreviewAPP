@@ -26,7 +26,7 @@ class MyActionsCache(
     @SerializedName("site_code") val siteCode: Int? = null,
     @SerializedName("site_desc") val siteDesc: String?,
     @SerializedName("zone_desc") val zoneDesc: String?,
-    @SerializedName("done_date") val doneDate: String?,
+    @SerializedName("process_date_end") val doneDate: String?,
     @SerializedName("data_order") val orderBy: String,
     @SerializedName("ticket_origin_type") val ticketOriginType: String?,
     @SerializedName("ticket_scn") val ticketScn: Int?,

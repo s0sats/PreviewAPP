@@ -48,8 +48,13 @@ class Act092Presenter constructor(
 
 
     init {
+        cleanUnfocusAndHistoricalFile()
         loadFilters()
         getMyActionList()
+    }
+
+    private fun cleanUnfocusAndHistoricalFile() {
+        ToolBox_Inf.deleteAllFOD(Constant.OTHER_ACTIONS_JSON_PATH)
     }
 
     private fun loadFilters() {
