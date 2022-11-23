@@ -34,8 +34,8 @@ class MyActionsCache(
     @SerializedName("main_user") val mainUser: Int?,
     @SerializedName("user_focus") val userFocus: Int,
     @SerializedName("has_Nc") val hasNc: Int,
-    @SerializedName("pdf_url") val pdfUrl: Int,
-    @SerializedName("pdf_name") val pdfName: Int
+    @SerializedName("pdf_url") val pdfUrl: String,
+    @SerializedName("pdf_name") val pdfName: String
 ) {
     fun toMyActions(context: Context): MyActions {
         val processLeftIcon = 0

@@ -468,6 +468,11 @@ public class ToolBox_Inf {
         if (!dirExpressSOJsonFile.exists()) {
             dirExpressSOJsonFile.mkdir();
         }
+        //BARRIONUEVO - 22/07/2022 - Dir com os arquivos json de lista de site licença do customer
+        File dirOtherActionJsonFile = new File(Constant.OTHER_ACTIONS_JSON_PATH);
+        if (!dirOtherActionJsonFile.exists()) {
+            dirOtherActionJsonFile.mkdir();
+        }
     }
 
     public static String md5(String s) {

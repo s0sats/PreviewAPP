@@ -18,5 +18,5 @@ class TUnfocusAndHistoricRec (
     val error_msg:String,
     @SerializedName("obj")
     @Expose
-    val obj :MyActionsCache
+    val obj :List<MyActionsCache>
 )

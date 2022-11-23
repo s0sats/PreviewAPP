@@ -107,7 +107,7 @@ class WS_UnfocusAndHistoric : IntentService("WS_UnfocusAndHistoric") {
 
     }
 
-    private fun processReturn(rec: MyActionsCache, productCode: Int, serialCode: Long) {
+    private fun processReturn(rec: List<MyActionsCache>, productCode: Int, serialCode: Long) {
         val file_name = ToolBox_Inf.getOtherActionFileName(
             productCode,
             serialCode
