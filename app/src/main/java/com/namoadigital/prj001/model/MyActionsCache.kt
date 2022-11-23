@@ -7,7 +7,7 @@ import com.namoadigital.prj001.util.ToolBox_Con
 
 class MyActionsCache(
     @SerializedName("action_type") val actionType: String,
-    val processPk: String,
+    @SerializedName("data_pk") val processPk: String,
     @SerializedName("process_id") val processId: String?,
     @SerializedName("process_status") val processStatus: String,
     val processStatusTrans: String?,
@@ -25,8 +25,9 @@ class MyActionsCache(
     @SerializedName("site_desc") val siteDesc: String?,
     @SerializedName("zone_desc") val zoneDesc: String?,
     @SerializedName("done_date") val doneDate: String?,
-    @SerializedName("order_by") val orderBy: String,
+    @SerializedName("data_order") val orderBy: String,
     @SerializedName("ticket_origin_type") val ticketOriginType: String?,
+    @SerializedName("ticket_scn") val ticketScn: Int?,
     val highlightItem: Boolean,
     val periodStarted: Boolean,
     val lateItem: Boolean,
