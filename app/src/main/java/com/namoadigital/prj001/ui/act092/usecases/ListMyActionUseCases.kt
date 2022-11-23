@@ -81,6 +81,10 @@ class ListMyActionUseCases constructor(
                         }
                     }
 
+                    actionBaseList.addAll(
+                        repository.getUnfocusAndHistorical(input.productCode?:-1, (input.serialCode?:-1).toLong())
+                    )
+
                     val actions = actionBaseList.map { m -> m as MyActions }
                         .filter { f -> f.isMainUserTicket }
 

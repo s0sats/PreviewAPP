@@ -408,6 +408,7 @@ class Act083_Main_Presenter(private val context: Context,
                         it.productCode,
                         it.productId,
                         it.productDesc,
+                        null,
                         it.serialId,
                         null,
                         null

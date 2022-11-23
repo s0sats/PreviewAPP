@@ -3,6 +3,7 @@ package com.namoadigital.prj001.model
 import android.content.Context
 import androidx.annotation.DrawableRes
 import com.google.gson.annotations.SerializedName
+import com.namoadigital.prj001.R
 import com.namoadigital.prj001.util.ToolBox_Con
 
 class MyActionsCache(
@@ -17,7 +18,7 @@ class MyActionsCache(
     @SerializedName("tag_operational_code") val tag_operational_code: Int,
     @SerializedName("tag_operational_id") val tag_operational_id: String,
     @SerializedName("tag_operational_desc") val tagOperationDesc: String,
-    @SerializedName("origin_desc") val originDescriptor: String,
+    @SerializedName("origin_desc") val originDescriptor: String?,
     @SerializedName("process_desc") val processDesc: String,
     @SerializedName("comments") val internalComments: String?,
     @SerializedName("focus_step_desc") val focusStepDesc: String?,
@@ -39,8 +40,8 @@ class MyActionsCache(
     @SerializedName("pdf_name") val pdfName: String
 ) {
     fun toMyActions(context: Context): MyActions {
-        val processLeftIcon = 0
-        val processRightIcon = 0
+        val processLeftIcon = R.drawable.ic_baseline_cloud_done_24_blue
+        val processRightIcon = R.drawable.ic_baseline_cloud_done_24_blue
         var  isMainUserTicket = false
         mainUser?.let {
             isMainUserTicket = mainUser == ToolBox_Con.getPreference_User_Code(context).toInt()
@@ -58,7 +59,7 @@ class MyActionsCache(
             tagOperationDesc,
             processDesc,
             null,
-            originDescriptor,
+            originDescriptor?:"",
             processDesc,
             internalComments,
             focusStepDesc,

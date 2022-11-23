@@ -1087,6 +1087,12 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         String productId = mPresenter.checkOriginFlow(originFlow) ? mdProductSerial.getProduct_id() : null;
         String productDesc = mPresenter.checkOriginFlow(originFlow) ? mdProductSerial.getProduct_desc() : null;
         String serialId = mPresenter.checkOriginFlow(originFlow) ? mdProductSerial.getSerial_id() : null;
+        Long serialCode = null;
+        if(mPresenter.checkOriginFlow(originFlow)){
+            serialCode = mdProductSerial.getSerial_code();
+        }else{
+            serialCode = mdProductSerial.getSerial_tmp();
+        }
         //
         if(!act083Bundle.containsKey(MyActionFilterParam.MY_ACTION_FILTER_PARAM)) {
             myActionFilterParam = new MyActionFilterParam(null,
@@ -1094,6 +1100,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                     productCode,
                     productId,
                     productDesc,
+                    serialCode,
                     serialId,
                     null,
                     null);
@@ -1104,6 +1111,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             myActionFilterParam.setProductId(productId);
             myActionFilterParam.setProductDesc(productDesc);
             myActionFilterParam.setSerialId(serialId);
+            myActionFilterParam.setSerialCode(serialCode);
         }
         //
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam);

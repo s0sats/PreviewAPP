@@ -104,21 +104,22 @@ class IActionSerialRepository constructor(
 
     override suspend fun getUnfocusAndHistorical(productCode: Int, serialCode: Long): MutableList<MyActions> {
         //
-        val fileName = ToolBox_Inf.getOtherActionFileName(productCode, serialCode)
-        val file = File(ConstantBaseApp.OTHER_ACTIONS_JSON_PATH, fileName)
-        if (file.exists()) {
-            val contents = ToolBox_Inf.getContents(file)
-            val gson = GsonBuilder().serializeNulls().create()
-            val rec = gson.fromJson<java.util.ArrayList<MyActionsCache>>(
-                contents,
-                object : TypeToken<java.util.ArrayList<MyActionsCache?>?>() {}.type
-            )
-            val myUnfocusActionList = mutableListOf<MyActions>()
-            for (myActions in rec) {
-                myUnfocusActionList.add(myActions.toMyActions(context))
+        if(productCode>0 && serialCode>0) {
+            val fileName = ToolBox_Inf.getOtherActionFileName(productCode, serialCode)
+            val file = File(ConstantBaseApp.OTHER_ACTIONS_JSON_PATH, fileName)
+            if (file.exists()) {
+                val contents = ToolBox_Inf.getContents(file)
+                val gson = GsonBuilder().serializeNulls().create()
+                val rec = gson.fromJson<java.util.ArrayList<MyActionsCache>>(
+                    contents,
+                    object : TypeToken<java.util.ArrayList<MyActionsCache?>?>() {}.type
+                )
+                val myUnfocusActionList = mutableListOf<MyActions>()
+                for (myActions in rec) {
+                    myUnfocusActionList.add(myActions.toMyActions(context))
+                }
+                return myUnfocusActionList
             }
-
-            return myUnfocusActionList
         }
         return mutableListOf<MyActions>()
     }

@@ -9,6 +9,7 @@ data class LocalTicketsModel(
     var tagOperCode: Int? = null,
     var siteCode: String? = null,
     var productCode: Int? = null,
+    var serialCode: Long? = null,
     var serialId: String? = null,
     var clientId: String? = null,
     var contractId: String? = null,

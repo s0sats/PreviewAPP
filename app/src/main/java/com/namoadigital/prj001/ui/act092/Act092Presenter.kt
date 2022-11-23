@@ -57,6 +57,7 @@ class Act092Presenter constructor(
             originFlow = originFlow,
             tagOperCode = myActionFilterParam.tagFilterCode,
             productCode = myActionFilterParam.productCode,
+            serialCode = myActionFilterParam.serialCode,
             serialId = myActionFilterParam.serialId,
             ticketId = myActionFilterParam.ticketId,
             calendarDate = myActionFilterParam.calendarDate,

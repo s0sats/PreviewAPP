@@ -12,6 +12,7 @@ class MyActionFilterParam(
         var productCode: Int? = null,
         var productId: String? = null,
         var productDesc: String? = null,
+        var serialCode: Long? = null,
         var serialId: String? = null,
         var ticketId: String? = null,
         var calendarDate: String? = null
