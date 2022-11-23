@@ -1,8 +1,8 @@
 
 package com.namoadigital.prj001.ui.act008;
 
-import static com.namoadigital.prj001.util.ConstantBaseApp.ACT005;
 import static com.namoadigital.prj001.util.ConstantBaseApp.ACT006;
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT083;
 
 import android.content.Context;
 import android.content.Intent;
@@ -1004,7 +1004,6 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
             case ConstantBaseApp.ACT006:
                 mView.callAct006(context);
                 break;
-            case ConstantBaseApp.ACT005:
             case ConstantBaseApp.ACT016:
             case ConstantBaseApp.ACT068:
                 mView.callAct083(context);
@@ -1098,7 +1097,7 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
 
     @Override
     public boolean checkOriginFlow(String originFlow) {
-        return ACT006.equals(originFlow) || ACT005.equals(originFlow);
+        return ACT006.equals(originFlow) || ACT083.equals(originFlow);
     }
 
 }
