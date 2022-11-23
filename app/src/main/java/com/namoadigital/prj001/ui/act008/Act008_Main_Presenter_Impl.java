@@ -1,6 +1,9 @@
 
 package com.namoadigital.prj001.ui.act008;
 
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT005;
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT006;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -1091,6 +1094,11 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
             context.sendBroadcast(mIntent);
         }
         //
+    }
+
+    @Override
+    public boolean checkOriginFlow(String originFlow) {
+        return ACT006.equals(originFlow) || ACT005.equals(originFlow);
     }
 
 }

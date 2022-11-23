@@ -17,5 +17,6 @@ interface Act092_Contract {
         fun getMyActionList(userFocus: Boolean = false)
         fun onBackPressedClicked()
         fun syncFiles(context: Context)
+        fun getUnfocusHistoricalList(context: Context, serialId: Long)
     }
 }

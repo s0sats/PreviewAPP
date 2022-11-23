@@ -7,11 +7,14 @@ import android.view.MenuItem
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.R
+import com.namoadigital.prj001.dao.MD_Product_SerialDao
 import com.namoadigital.prj001.databinding.Act092MainBinding
 import com.namoadigital.prj001.model.MyActionFilterParam
 import com.namoadigital.prj001.model.MyActionsBase
+import com.namoadigital.prj001.service.WS_UnfocusAndHistoric
 import com.namoadigital.prj001.ui.act005.Act005_Main
 import com.namoadigital.prj001.ui.act092.Act092Presenter
 import com.namoadigital.prj001.ui.act092.Act092_Contract
@@ -35,6 +38,9 @@ class Act092_Main : BaseActivityMvp
     private lateinit var bundle: Bundle
 
     private val _mainUserFilter = MutableStateFlow(false)
+    private val serialCode by lazy{
+        bundle.getLong(MD_Product_SerialDao.SERIAL_CODE)
+    }
 
     override var wsProcess: MutableStateFlow<String> = MutableStateFlow("")
 
@@ -126,7 +132,7 @@ class Act092_Main : BaseActivityMvp
             }
 
             btnOtherSerial.setOnClickListener {
-                presenter.syncFiles(context)
+                presenter.getUnfocusHistoricalList(context, serialCode)
 
             }
 
@@ -149,19 +155,31 @@ class Act092_Main : BaseActivityMvp
                 0
             )
 
+        } else if(wsProcess.value == WS_UnfocusAndHistoric.javaClass.simpleName){
+            progressDialog.dismiss()
             onState(
                 Act092UiEvent.OpenDialog(
                     title = "Atualizado",
                     message = "Atualizado_com_sucesso"
                 )
             )
-
             presenter.getMyActionList(_mainUserFilter.value)
         }
 
         wsProcess.value = ""
         if (progressDialog.isShowing) progressDialog.dismiss()
 
+    }
+
+    override fun processCloseACT(mLink: String?, mRequired: String?, hmAux: HMAux?) {
+        super.processCloseACT(mLink, mRequired, hmAux)
+        if(wsProcess.value == WS_UnfocusAndHistoric.javaClass.simpleName){
+            wsProcess.value = ""
+            if (progressDialog.isShowing) progressDialog.dismiss()
+
+            presenter.getMyActionList(_mainUserFilter.value)
+
+        }
     }
 
     override fun onBackPressed() {
@@ -309,6 +327,16 @@ class Act092_Main : BaseActivityMvp
             recyclerSerialList.visibility = View.GONE
             progressLoading.visibility = View.GONE
         }
+    }
+
+    override fun processError_1(mLink: String?, mRequired: String?) {
+        super.processError_1(mLink, mRequired)
+        progressDialog.dismiss()
+    }
+
+    override fun processCustom_error(mLink: String?, mRequired: String?) {
+        super.processCustom_error(mLink, mRequired)
+        progressDialog.dismiss()
     }
 
 }

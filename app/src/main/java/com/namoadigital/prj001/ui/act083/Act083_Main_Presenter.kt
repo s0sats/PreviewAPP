@@ -378,7 +378,7 @@ class Act083_Main_Presenter(private val context: Context,
         myAction.serialId?.let {
             executeSerialSearch(
                 myAction.productCode,
-                myAction.productId,
+                myAction.productId?: "",
                 it,
                 true,
                 myAction

@@ -7,7 +7,8 @@ import com.namoadigital.prj001.ui.base.FactoryUseCase
 
 data class ActionUseCases(
     val localTicket: ListMyActionUseCases,
-    val syncFiles: SyncFilesUseCase
+    val syncFiles: SyncFilesUseCase,
+    val unfocusHistoricalActionUseCases: UnfocusHistoricalActionUseCases
 ) {
 
     companion object {
@@ -23,7 +24,9 @@ data class ActionUseCases(
 
                 return ActionUseCases(
                     localTicket = ListMyActionUseCases(context, repository),
-                    syncFiles = SyncFilesUseCase(context, syncRepository)
+                    syncFiles = SyncFilesUseCase(context, syncRepository),
+                    unfocusHistoricalActionUseCases = UnfocusHistoricalActionUseCases(context, repository)
+
                 )
             }
         }

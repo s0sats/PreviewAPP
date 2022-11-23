@@ -10,7 +10,8 @@ import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.model.MyActionsCache
 import com.namoadigital.prj001.model.TUnfocusAndHistoricEnv
-import com.namoadigital.prj001.receiver.WBR_Workgroup_Member_Edit
+import com.namoadigital.prj001.model.TUnfocusAndHistoricRec
+import com.namoadigital.prj001.receiver.WBR_UnfocusAndHistoric
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -30,7 +31,7 @@ class WS_UnfocusAndHistoric : IntentService("WS_UnfocusAndHistoric") {
         try {
             val bundle = intent?.extras ?: Bundle()
             val productCode = bundle.getInt(PRODUCT_CODE,-1)
-            val serialCode = bundle.getInt(SERIAL_CODE,-1)
+            val serialCode = bundle.getLong(SERIAL_CODE,-1)
             //
             processUnfocusHistoricAction(productCode, serialCode)
 
@@ -47,11 +48,11 @@ class WS_UnfocusAndHistoric : IntentService("WS_UnfocusAndHistoric") {
                 "0"
             )
         } finally {
-            WBR_Workgroup_Member_Edit.completeWakefulIntent(intent)
+            WBR_UnfocusAndHistoric.completeWakefulIntent(intent)
         }
     }
 
-    private fun processUnfocusHistoricAction(productCode: Int, serialCode: Int) {
+    private fun processUnfocusHistoricAction(productCode: Int, serialCode: Long) {
         val env = TUnfocusAndHistoricEnv(
             productCode,
             serialCode,
@@ -71,9 +72,9 @@ class WS_UnfocusAndHistoric : IntentService("WS_UnfocusAndHistoric") {
             gson.toJson(env)
         )
         //
-        val rec: MyActionsCache = gson.fromJson(
+        val rec: TUnfocusAndHistoricRec = gson.fromJson(
             resultado,
-            MyActionsCache::class.java
+            TUnfocusAndHistoricRec::class.java
         )
         //
         if (!ToolBox_Inf.processWSCheckValidation(
@@ -102,12 +103,26 @@ class WS_UnfocusAndHistoric : IntentService("WS_UnfocusAndHistoric") {
             "0"
         )
         //
-        processReturn(rec)
+        processReturn(rec.obj, productCode, serialCode)
 
     }
 
-    private fun processReturn(rec: MyActionsCache) {
-
+    private fun processReturn(rec: MyActionsCache, productCode: Int, serialCode: Long) {
+        val file_name = ToolBox_Inf.getOtherActionFileName(
+            productCode,
+            serialCode
+        )
+        //Chama metodo para criar arquivo
+        ToolBox_Inf.createJsonFile(file_name, gson.toJson(rec), Constant.OTHER_ACTIONS_JSON_PATH)
+        //
+        ToolBox_Inf.sendBCStatus(
+            applicationContext,
+            "CLOSE_ACT",
+            hmAuxTrans["generic_process_finalized_msg"],
+            "",
+            "0"
+        )
+        //
     }
 
     private fun loadTranslation() : HMAux {

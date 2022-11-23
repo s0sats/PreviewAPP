@@ -1,24 +1,13 @@
 package com.namoadigital.prj001.model
 
+import android.content.Context
 import androidx.annotation.DrawableRes
-import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import com.namoadigital.prj001.util.ToolBox_Con
 
 class MyActionsCache(
-    @SerializedName("app")
-    @Expose
-    val app:String,
-    @SerializedName("validation")
-    @Expose
-    val validation:String,
-    @SerializedName("link_url")
-    @Expose
-    val link_url:String,
-    @SerializedName("error_msg")
-    @Expose
-    val error_msg:String,
     @SerializedName("action_type") val actionType: String,
-    @SerializedName("process_id") val processPk: String,
+    val processPk: String,
     @SerializedName("process_id") val processId: String?,
     @SerializedName("process_status") val processStatus: String,
     val processStatusTrans: String?,
@@ -42,9 +31,48 @@ class MyActionsCache(
     val periodStarted: Boolean,
     val lateItem: Boolean,
     val isLastSelectedItem: Boolean,
-    @SerializedName("main_user") val isMainUserTicket: Int?,
+    @SerializedName("main_user") val mainUser: Int?,
     @SerializedName("user_focus") val userFocus: Int,
     @SerializedName("has_Nc") val hasNc: Int,
     @SerializedName("pdf_url") val pdfUrl: Int,
     @SerializedName("pdf_name") val pdfName: Int
-)
+) {
+    fun toMyActions(context: Context): MyActions {
+        val processLeftIcon = 0
+        val processRightIcon = 0
+        var  isMainUserTicket = false
+        mainUser?.let {
+            isMainUserTicket = mainUser == ToolBox_Con.getPreference_User_Code(context).toInt()
+        }
+        //
+        return MyActions(
+            actionType,
+            processId ?: "",
+            processId,
+            processStatus,
+            processStatusTrans,
+            processLeftIcon,
+            processRightIcon,
+            plannedDate ?: "",
+            tagOperationDesc,
+            processDesc,
+            null,
+            originDescriptor,
+            processDesc,
+            internalComments,
+            focusStepDesc,
+            siteCode,
+            siteDesc,
+            zoneDesc,
+            null,
+            doneDate ?: "",
+            orderBy,
+            ticketOriginType ?: "",
+            "highlightItem" == "highlightItem",
+            periodStarted,
+            lateItem,
+            isLastSelectedItem,
+            isMainUserTicket
+        )
+    }
+}

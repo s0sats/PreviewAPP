@@ -1,8 +1,10 @@
 package com.namoadigital.prj001.ui.act092.repository
 
+import android.os.Bundle
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap
 import com.namoadigital.prj001.model.MD_Schedule_Exec
+import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.model.TkTicketCache
 import com.namoadigital.prj001.ui.act092.model.LocalTicketsModel
 
@@ -13,4 +15,6 @@ interface ActionSerialRepository {
     suspend fun getSchedules(ticket: LocalTicketsModel): MutableList<MD_Schedule_Exec>
     suspend fun getFormAp(ticket: LocalTicketsModel): MutableList<GE_Custom_Form_Ap>
     suspend fun getLocalForms(ticket: LocalTicketsModel): MutableList<HMAux>
+    fun callUnfocusAndHistorical(bundle: Bundle)
+    suspend fun getUnfocusAndHistorical(productCode: Int, serialCode: Long): MutableList<MyActions>
 }

@@ -5,6 +5,7 @@ import android.os.Bundle
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.model.MyActionFilterParam
 import com.namoadigital.prj001.model.action_serial.ActionsCache
+import com.namoadigital.prj001.service.WS_UnfocusAndHistoric
 import com.namoadigital.prj001.ui.act005.Act005_Main
 import com.namoadigital.prj001.ui.act006.Act006_Main
 import com.namoadigital.prj001.ui.act016.Act016_Main
@@ -131,6 +132,18 @@ class Act092Presenter constructor(
             )
         }
 
+    }
+
+    override fun getUnfocusHistoricalList(context: Context, serialCode: Long) {
+        view.wsProcess.value = WS_UnfocusAndHistoric.javaClass.simpleName
+        view.onState(
+            Act092UiEvent.OpenDialog(
+                true,
+                "alert_send_finish_ttl",
+                "alert_send_finish_msg"
+            )
+        )
+        actionUseCases.unfocusHistoricalActionUseCases(myActionFilterParam.productCode!!, serialCode)
     }
 
 

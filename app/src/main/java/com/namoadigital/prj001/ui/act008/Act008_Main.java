@@ -1083,10 +1083,10 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         Intent mIntent = new Intent(context, Act092_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         MyActionFilterParam myActionFilterParam = null;
-        Integer productCode = ACT006.equals(originFlow) ? (int) mdProductSerial.getProduct_code() : null;
-        String productId = ACT006.equals(originFlow) ? mdProductSerial.getProduct_id() : null;
-        String productDesc = ACT006.equals(originFlow) ? mdProductSerial.getProduct_desc() : null;
-        String serialId = ACT006.equals(originFlow) ? mdProductSerial.getSerial_id() : null;
+        Integer productCode = mPresenter.checkOriginFlow(originFlow)  ? (int) mdProductSerial.getProduct_code() : null;
+        String productId = mPresenter.checkOriginFlow(originFlow) ? mdProductSerial.getProduct_id() : null;
+        String productDesc = mPresenter.checkOriginFlow(originFlow) ? mdProductSerial.getProduct_desc() : null;
+        String serialId = mPresenter.checkOriginFlow(originFlow) ? mdProductSerial.getSerial_id() : null;
         //
         if(!act083Bundle.containsKey(MyActionFilterParam.MY_ACTION_FILTER_PARAM)) {
             myActionFilterParam = new MyActionFilterParam(null,
@@ -1108,6 +1108,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         //
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam);
         bundle.putString( act083Bundle.getString( ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW), ConstantBaseApp.ACT006);
+        bundle.putLong(MD_Product_SerialDao.SERIAL_CODE ,mdProductSerial.getSerial_code() );
         //
         mIntent.putExtras(bundle);
         startActivity(mIntent);

@@ -4132,6 +4132,20 @@ public class ToolBox_Inf {
         return contract_code + "_" + category_price_code + "_" + product_code + "_" + site_code + "_" + operation_code + ".json";
     }
 
+    public static String getOtherActionFileName(int product_code, long serial_code) {
+        return "other_action_" + product_code + "_" + serial_code +  ".json";
+    }
+
+    public static void createJsonFile(String file_name, String json, String filePath) throws IOException {
+        File file = new File(filePath, file_name);
+        //
+        if(file.exists()){
+            file.delete();
+        }
+        //
+        ToolBox_Inf.writeIn(json,file);
+    }
+
     //
     private static class GenericExtFilter implements FilenameFilter {
         private String[] exts;
