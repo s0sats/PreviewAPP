@@ -419,11 +419,12 @@ class Act083_Main_Presenter(private val context: Context,
                     myActionFilterParam.productId = it.productId
                     myActionFilterParam.productDesc = it.productDesc
                     myActionFilterParam.serialId = it.serialId
+                    myActionFilterParam.originFlow = ConstantBaseApp.ACT083
                 }
                 //
                 bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
                 bundle.putInt(Constant.WS_SERIAL_SEARCH_EXACT, 1)
-                bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, originFlow)
+                bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT083)
                 bundle.putString(ConstantBaseApp.MAIN_MD_PRODUCT_SERIAL_ID, it.serialId)
                 bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, true)
                 bundle.putSerializable(

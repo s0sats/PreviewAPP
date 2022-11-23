@@ -1,12 +1,12 @@
 package com.namoadigital.prj001.ui.act092.usecases
 
 import android.content.Context
+import com.namoadigital.prj001.core.IResult
+import com.namoadigital.prj001.core.IResult.Companion.failed
+import com.namoadigital.prj001.core.IResult.Companion.loading
+import com.namoadigital.prj001.core.IResult.Companion.success
+import com.namoadigital.prj001.core.UseCases
 import com.namoadigital.prj001.model.*
-import com.namoadigital.prj001.ui.act092.core.IResult
-import com.namoadigital.prj001.ui.act092.core.IResult.Companion.failed
-import com.namoadigital.prj001.ui.act092.core.IResult.Companion.loading
-import com.namoadigital.prj001.ui.act092.core.IResult.Companion.success
-import com.namoadigital.prj001.ui.act092.core.UseCases
 import com.namoadigital.prj001.ui.act092.model.LocalTicketsModel
 import com.namoadigital.prj001.ui.act092.repository.ActionSerialRepository
 import com.namoadigital.prj001.util.ConstantBaseApp
@@ -86,9 +86,6 @@ class ListMyActionUseCases constructor(
 
                     val listOfficial = if (input.userFocus == 1) actions else actionBaseList
 
-                    if (listOfficial.size >= 2)
-                        listOfficial.map { m -> m as MyActions }[2].doneDate = "12/28/20222 23:23"
-                    else listOfficial
                     emit(loading(false))
                     emit(success(listOfficial.toMutableList()))
 

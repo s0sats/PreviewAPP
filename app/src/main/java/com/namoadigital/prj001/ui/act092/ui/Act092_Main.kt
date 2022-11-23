@@ -184,7 +184,7 @@ class Act092_Main : BaseActivityMvp
 
     override fun onBackPressed() {
         //super.onBackPressed()
-        presenter.onBackPressedClicked()
+        presenter.onBackPressedClicked(bundle)
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")

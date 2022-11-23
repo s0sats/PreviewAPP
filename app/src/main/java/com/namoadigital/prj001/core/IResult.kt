@@ -1,4 +1,4 @@
-package com.namoadigital.prj001.ui.act092.core
+package com.namoadigital.prj001.core
 
 sealed class IResult<out DTO> {
 
