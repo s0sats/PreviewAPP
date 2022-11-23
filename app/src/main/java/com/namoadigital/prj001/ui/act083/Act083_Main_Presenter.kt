@@ -419,6 +419,7 @@ class Act083_Main_Presenter(private val context: Context,
                     myActionFilterParam.productId = it.productId
                     myActionFilterParam.productDesc = it.productDesc
                     myActionFilterParam.serialId = it.serialId
+                    //
                     myActionFilterParam.originFlow = ConstantBaseApp.ACT083
                 }
                 //
