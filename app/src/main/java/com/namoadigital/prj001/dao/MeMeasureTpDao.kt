@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteException
+import androidx.core.database.getDoubleOrNull
 import androidx.core.database.getFloatOrNull
 import androidx.core.database.getIntOrNull
 import androidx.core.database.getStringOrNull
@@ -299,8 +300,8 @@ class MeMeasureTpDao(
                         getString(getColumnIndex(MEASURE_TP_DESC)),
                         getStringOrNull(getColumnIndex(VALUE_SUFIX)),
                         getStringOrNull(getColumnIndex(RESTRICTION_TYPE)),
-                        getFloatOrNull(getColumnIndex(RESTRICTION_MIN)),
-                        getFloatOrNull(getColumnIndex(RESTRICTION_MAX)),
+                        getDoubleOrNull(getColumnIndex(RESTRICTION_MIN)),
+                        getDoubleOrNull(getColumnIndex(RESTRICTION_MAX)),
                         getIntOrNull(getColumnIndex(RESTRICTION_DECIMAL)),
                         getFloatOrNull(getColumnIndex(VALUE_CYCLE_SIZE)),
                         getIntOrNull(getColumnIndex(CYCLE_TOLERANCE))
