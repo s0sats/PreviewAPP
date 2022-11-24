@@ -9316,7 +9316,12 @@ public class ToolBox_Inf {
                     case 'ž':
                         noAccentText.append("[zžZŽ]");
                         break;
-
+                    case '[':
+                        noAccentText.append("[[]");
+                        break;
+                    case ']':
+                        noAccentText.append("[]]");
+                        break;
                     default:
                         noAccentText.append(sbText.charAt(i));
                 }
