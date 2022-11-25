@@ -3,7 +3,7 @@ package com.namoadigital.prj001.ui.act092.usecases
 import android.content.Context
 import android.os.Bundle
 import com.namoadigital.prj001.dao.TK_TicketDao
-import com.namoadigital.prj001.ui.act092.repository.ActionSerialRepository
+import com.namoadigital.prj001.ui.act092.data.repository.ActionSerialRepository
 import com.namoadigital.prj001.util.ToolBox_Con
 
 class TicketDownloadUseCase constructor(

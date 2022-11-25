@@ -383,6 +383,7 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
     public void callAct092(Context context) {
         Intent mIntent = new Intent(context, Act092_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        act083Bundle.remove(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW);
         bundle.putAll(act083Bundle);
         mIntent.putExtras(bundle);
         startActivity(mIntent);

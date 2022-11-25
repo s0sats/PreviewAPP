@@ -12,8 +12,8 @@ interface BaseView<S> {
     ) {
         initSetup()
         initTrans()
-        initVars()
         block?.invoke()
+        initVars()
         initAction()
     }
 

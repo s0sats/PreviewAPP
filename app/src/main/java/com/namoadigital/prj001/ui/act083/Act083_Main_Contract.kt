@@ -40,7 +40,6 @@ interface Act083_Main_Contract {
         fun setTabsCounters(selectedTabCounter: Int, otherTabCounter: Int)
         fun updateFooterInfos()
         fun setPlaceholderTextAndVisibility(currentTabCounter: Int)
-        fun callAct092(myActionFilterParam: Bundle)
     }
 
     interface I_Presenter {

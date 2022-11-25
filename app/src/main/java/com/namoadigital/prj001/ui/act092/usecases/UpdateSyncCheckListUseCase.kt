@@ -4,7 +4,7 @@ import android.content.Context
 import com.namoadigital.prj001.core.IResult
 import com.namoadigital.prj001.core.UseCases
 import com.namoadigital.prj001.model.Sync_Checklist
-import com.namoadigital.prj001.ui.act092.repository.ActionSerialRepository
+import com.namoadigital.prj001.ui.act092.data.repository.ActionSerialRepository
 import com.namoadigital.prj001.util.ToolBox_Con
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

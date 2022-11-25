@@ -20,4 +20,6 @@ sealed class Act092UiEvent {
 
     data class OpenDialog(val process: Boolean = false, val title: String?, val message: String?) :
         Act092UiEvent()
+
+    object UpdateTitleActionSerial : Act092UiEvent()
 }

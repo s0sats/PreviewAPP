@@ -9,17 +9,18 @@ data class SerialModel(
     var tagOperCode: Int? = null,
     var siteCode: String? = null,
     var productCode: Int? = null,
+    var productId: String? = null,
+    var productDesc: String? = null,
     var serialCode: Long? = null,
     var serialId: String? = null,
-    var clientId: String? = null,
-    var contractId: String? = null,
     var ticketId: String? = null,
     var calendarDate: String? = null,
     var userFocus: Int = 1,
     val multStepsLbl: String? = null,
     val hmAux: HMAux? = null,
     val lastSelectedPk: String? = null,
-    val lastSelectActionType: String? = null
+    val lastSelectActionType: String? = null,
+    val classColor: String = ""
 ) {
 
     fun getLastSelectedPk(actionType: String = MyActions.MY_ACTION_TYPE_FORM) =

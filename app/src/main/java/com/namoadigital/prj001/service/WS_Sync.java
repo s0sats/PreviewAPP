@@ -297,6 +297,7 @@ public class WS_Sync extends IntentService {
 
         } catch (Exception e) {
 
+
             sb = ToolBox_Inf.wsExceptionTreatment(getApplicationContext(), e);
 
             ToolBox_Inf.registerException(getClass().getName(), e);

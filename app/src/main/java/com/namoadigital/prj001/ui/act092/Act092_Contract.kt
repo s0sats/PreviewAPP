@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.model.MyActions
+import com.namoadigital.prj001.ui.act092.model.SerialModel
 import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent
 import com.namoadigital.prj001.ui.act092.utils.FilterFocusUser
 import com.namoadigital.prj001.ui.base.BasePresenter
@@ -20,10 +21,11 @@ interface Act092_Contract {
     }
 
     interface Presenter : BasePresenter<View> {
+        val serialModel: StateFlow<SerialModel>
         fun getMyActionList(mainFocus: Boolean = false)
         fun onBackPressedClicked(bundle: Bundle)
         fun syncFiles(context: Context)
-        fun getUnfocusHistoricalList(context: Context, serialId: Long)
+        fun getUnfocusHistoricalList()
         fun syncFilesForm(productCode: Long = 1L)
 
         //actions type

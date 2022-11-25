@@ -28,7 +28,7 @@ class MyActionsAdapter constructor(
     private val hmAuxTrans: HMAux,
     private val myActionClickListener: (myAction: MyActions) -> Unit,
     private val myActionFormButtonClickListener: (myActionFormButton: MyActionsFormButton) -> Unit,
-    private val mySerialClickListener: (myAction: MyActions) -> Unit,
+    private val mySerialClickListener: (myAction: MyActions, Int) -> Unit,
     private val notifyFilterApplied: (qtyItensFiltered: Int) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
     private val VIEW_TYPE_MY_ACTION = 0

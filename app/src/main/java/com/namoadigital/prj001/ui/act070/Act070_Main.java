@@ -385,7 +385,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                 context,
                 this,
                 hmAux_Trans,
-                getIntent().getExtras().getString(ConstantBaseApp.ACT092, "-1")
+                getIntent().getExtras().getString(ConstantBaseApp.ACT092, "")
         );
         //
         setActivityData();
@@ -1648,10 +1648,6 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //
         Bundle bundle = new Bundle();
-        bundle.putString(
-                ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
-                requestingBundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT005)
-        );
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, ToolBox_Inf.getMyActionFilterParam(requestingBundle));
         intent.putExtras(bundle);
         //

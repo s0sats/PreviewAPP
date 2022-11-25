@@ -1,21 +1,18 @@
-package com.namoadigital.prj001.ui.act092.repository
+package com.namoadigital.prj001.ui.act092.data.repository
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.preference.PreferenceManager
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.model.*
-import com.namoadigital.prj001.receiver.WBR_UnfocusAndHistoric
-import com.namoadigital.prj001.sql.SqlAct092_001
-import com.namoadigital.prj001.sql.SqlAct092_002
-import com.namoadigital.prj001.sql.SqlAct092_004
-import com.namoadigital.prj001.sql.SqlAct092_005
-import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download
+import com.namoadigital.prj001.receiver.WBR_UnfocusAndHistoric
 import com.namoadigital.prj001.sql.*
+import com.namoadigital.prj001.ui.act092.data.local.preferences.FilterParamPreferences
 import com.namoadigital.prj001.ui.act092.model.SerialModel
 import com.namoadigital.prj001.ui.base.NamoaFactory
 import com.namoadigital.prj001.util.Constant
@@ -33,7 +30,8 @@ class IActionSerialRepository constructor(
     private val localFormsDao: GE_Custom_Form_LocalDao,
     private val serialDao: MD_Product_SerialDao,
     private val productDao: MD_ProductDao,
-    private val syncChecklistdao: Sync_ChecklistDao
+    private val syncChecklistdao: Sync_ChecklistDao,
+    private val filterParamPreferences: FilterParamPreferences
 ) : ActionSerialRepository {
 
     override suspend fun getLocalTickets(ticket: SerialModel): MutableList<HMAux> =
@@ -131,7 +129,8 @@ class IActionSerialRepository constructor(
     override suspend fun updateSyncChecklist(syncChecklist: Sync_Checklist) {
         syncChecklistdao.addUpdate(syncChecklist)
     }
-    override fun callUnfocusAndHistorical(bundle: Bundle) {
+
+    override fun unfocusAndHistorical(bundle: Bundle) {
         val mIntent = Intent(context, WBR_UnfocusAndHistoric::class.java)
         mIntent.putExtras(bundle)
         context.sendBroadcast(mIntent)
@@ -156,7 +155,15 @@ class IActionSerialRepository constructor(
                 return myUnfocusActionList
             }
         }
-        return mutableListOf<MyActions>()
+        return mutableListOf()
+    }
+
+    override suspend fun setPreferences(model: SerialModel) {
+        filterParamPreferences.write(model)
+    }
+
+    override suspend fun getPreferences(): SerialModel {
+        return filterParamPreferences.read()
     }
 
     companion object {
@@ -205,9 +212,11 @@ class IActionSerialRepository constructor(
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
+                    ),
+                    FilterParamPreferences(
+                        PreferenceManager.getDefaultSharedPreferences(context)
                     )
                 )
-
         }
 
     }

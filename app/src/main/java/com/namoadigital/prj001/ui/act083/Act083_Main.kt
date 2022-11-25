@@ -34,7 +34,6 @@ import com.namoadigital.prj001.ui.act038.Act038_Main
 import com.namoadigital.prj001.ui.act068.Act068_Main
 import com.namoadigital.prj001.ui.act070.Act070_Main
 import com.namoadigital.prj001.ui.act071.Act071_Main
-import com.namoadigital.prj001.ui.act092.ui.Act092_Main
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -769,15 +768,6 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         } else {
             binding.act083MainContent.act083TvNoResult.text = hmAux_Trans["no_record_lbl"]
         }
-    }
-
-    override fun callAct092(myActionFilterParam: Bundle) {
-        val mIntent = Intent(context, Act092_Main::class.java)
-        mIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-
-        mIntent.putExtras(myActionFilterParam)
-        startActivity(mIntent)
-        finish()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

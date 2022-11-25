@@ -1,11 +1,11 @@
 package com.namoadigital.prj001.ui.act092.ui
 
 import android.annotation.SuppressLint
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
@@ -14,9 +14,9 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao
 import com.namoadigital.prj001.databinding.Act092MainBinding
 import com.namoadigital.prj001.model.MyActionFilterParam
 import com.namoadigital.prj001.model.MyActionsBase
-import com.namoadigital.prj001.service.WS_UnfocusAndHistoric
 import com.namoadigital.prj001.service.WS_Sync
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download
+import com.namoadigital.prj001.service.WS_UnfocusAndHistoric
 import com.namoadigital.prj001.ui.act005.Act005_Main
 import com.namoadigital.prj001.ui.act070.Act070_Main
 import com.namoadigital.prj001.ui.act091.mvp.model.TranslateResource
@@ -45,9 +45,7 @@ class Act092_Main : BaseActivityMvp
     private lateinit var bundle: Bundle
 
     private val _mainUserFilter = MutableStateFlow(false)
-    private val serialCode by lazy{
-        bundle.getLong(MD_Product_SerialDao.SERIAL_CODE)
-    }
+
     private val _focusState = MutableStateFlow(FilterFocusUser())
     override val focusState: StateFlow<FilterFocusUser> = _focusState
 
@@ -70,6 +68,7 @@ class Act092_Main : BaseActivityMvp
         Act092Presenter(
             myActionFilterParam.value,
             bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT005),
+            bundle.getString(MD_Product_SerialDao.CLASS_COLOR, ""),
             hmAux_Trans,
             ActionUseCasesFactory(context).build(),
             TranslateResource(
@@ -99,7 +98,7 @@ class Act092_Main : BaseActivityMvp
     }
 
     private fun getBundle() {
-        val filterParam = bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM)
+        val filterParam = bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM_ACT092)
         myActionFilterParam.value =
             filterParam?.let { it as MyActionFilterParam } ?: MyActionFilterParam()
 
@@ -144,9 +143,17 @@ class Act092_Main : BaseActivityMvp
                 presenter.processWsReturnSync(hmAuxTicketDownload)
             }
 
+            WS_UnfocusAndHistoric::class.java.name -> {
+                wsProcess.value = ""
+                if (progressDialog.isShowing) progressDialog.dismiss()
+
+                presenter.getMyActionList(_mainUserFilter.value)
+                return
+            }
+
             else -> {
                 wsProcess.value = ""
-                progressDialog.dismiss()
+                if (progressDialog.isShowing) progressDialog.dismiss()
             }
         }
     }
@@ -169,11 +176,20 @@ class Act092_Main : BaseActivityMvp
         hmAux_Trans = presenter.getTranslation()
     }
 
-    override fun initVars() {
+    private fun updateTitleActionSerial() {
         with(binding) {
-            serialTitle.text = myActionFilterParam.value.serialId
-            productDescription.text = myActionFilterParam.value.productDesc
+            val color = presenter.serialModel.value.classColor
+            if (color.isNotEmpty()) {
+                iconClassColor.setColorFilter(Color.parseColor(color))
+            } else {
+                iconClassColor.visibility = View.GONE
+            }
+            serialTitle.text = presenter.serialModel.value.serialId
+            productDescription.text = presenter.serialModel.value.productDesc
         }
+    }
+
+    override fun initVars() {
 
     }
 
@@ -187,9 +203,9 @@ class Act092_Main : BaseActivityMvp
             }
 
             btnOtherSerial.setOnClickListener {
-                presenter.syncFiles(context)
+                presenter.getUnfocusHistoricalList()
 
-
+            }
             btnCreateAction.setOnClickListener {
                 presenter.processNewFormClick(context)
             }
@@ -223,7 +239,7 @@ class Act092_Main : BaseActivityMvp
                 0
             )
 
-        } else if(wsProcess.value == WS_UnfocusAndHistoric.javaClass.simpleName){
+        } else if (wsProcess.value == WS_UnfocusAndHistoric::class.java.name) {
             progressDialog.dismiss()
             onState(
                 Act092UiEvent.OpenDialog(
@@ -240,17 +256,6 @@ class Act092_Main : BaseActivityMvp
 
     }
 
-    override fun processCloseACT(mLink: String?, mRequired: String?, hmAux: HMAux?) {
-        super.processCloseACT(mLink, mRequired, hmAux)
-        if(wsProcess.value == WS_UnfocusAndHistoric.javaClass.simpleName){
-            wsProcess.value = ""
-            if (progressDialog.isShowing) progressDialog.dismiss()
-
-            presenter.getMyActionList(_mainUserFilter.value)
-
-        }
-    }
-
 
     override fun onBackPressed() {
         //super.onBackPressed()
@@ -261,6 +266,10 @@ class Act092_Main : BaseActivityMvp
     override fun onState(state: Act092UiEvent) {
         CoroutineScope(Dispatchers.Main).launch {
             when (state) {
+                is Act092UiEvent.UpdateTitleActionSerial -> {
+                    updateTitleActionSerial()
+                }
+
                 is Act092UiEvent.IsLoading -> {
                     isLoading(state.isLoading, state.message)
                 }

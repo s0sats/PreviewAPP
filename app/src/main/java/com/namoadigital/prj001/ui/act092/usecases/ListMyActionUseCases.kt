@@ -7,8 +7,8 @@ import com.namoadigital.prj001.core.IResult.Companion.loading
 import com.namoadigital.prj001.core.IResult.Companion.success
 import com.namoadigital.prj001.core.UseCases
 import com.namoadigital.prj001.model.*
+import com.namoadigital.prj001.ui.act092.data.repository.ActionSerialRepository
 import com.namoadigital.prj001.ui.act092.model.SerialModel
-import com.namoadigital.prj001.ui.act092.repository.ActionSerialRepository
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -74,6 +74,13 @@ class ListMyActionUseCases constructor(
                         }
                     )
 
+                    actionBaseList.addAll(
+                        repository.getUnfocusAndHistorical(
+                            productCode ?: -1,
+                            (serialCode ?: -1).toLong()
+                        )
+                    )
+
                     actionBaseList.sortBy {
                         when (it) {
                             is MyActions -> it.orderBy
@@ -81,12 +88,6 @@ class ListMyActionUseCases constructor(
                         }
                     }
 
-                    actionBaseList.addAll(
-                        repository.getUnfocusAndHistorical(input.productCode?:-1, (input.serialCode?:-1).toLong())
-                    )
-
-                    val actions = actionBaseList.map { m -> m as MyActions }
-                        .filter { f -> f.isMainUserTicket }
 
                     val actions = if (input.second)
                         actionBaseList.map { m -> m as MyActions }
