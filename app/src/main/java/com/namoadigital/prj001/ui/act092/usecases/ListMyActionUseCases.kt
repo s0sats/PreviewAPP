@@ -88,8 +88,15 @@ class ListMyActionUseCases constructor(
                     val actions = actionBaseList.map { m -> m as MyActions }
                         .filter { f -> f.isMainUserTicket }
 
+                    actionBaseList.addAll(
+                        repository.getUnfocusAndHistorical(input.productCode?:-1, (input.serialCode?:-1).toLong())
+                    )
+
                     val listOfficial = if (input.userFocus == 1) actions else actionBaseList
 
+                    listOfficial?.let {
+
+                    }
                     emit(loading(false))
                     emit(success(listOfficial.toMutableList()))
 
