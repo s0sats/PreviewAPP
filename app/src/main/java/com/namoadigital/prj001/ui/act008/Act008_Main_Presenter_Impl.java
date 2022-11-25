@@ -673,24 +673,6 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     }
 
     @Override
-    public void executeUnfocusTicketDownload(int productCode, int serialCode) {
-        mView.setWsProcess(WS_TK_Ticket_Search_Not_Focus.class.getName());
-        //
-        mView.showPD(
-                hmAux_Trans.get("progress_unfocus_ticket_download_ttl"),
-                hmAux_Trans.get("progress_unfocus_ticket_download_msg")
-        );
-        //
-        Intent mIntent = new Intent(context, WBR_TK_Ticket_Search_Not_Focus.class);
-        Bundle bundle = new Bundle();
-        bundle.putInt(MD_Product_SerialDao.PRODUCT_CODE, productCode);
-        bundle.putInt(MD_Product_SerialDao.SERIAL_CODE, serialCode);
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
-    }
-
-    @Override
     public void processSerialSaveResult(long product_code, String serial_id, HMAux hmSaveResult) {
         if (hmSaveResult.size() > 0) {
             ArrayList<HMAux> returnList = new ArrayList<>();

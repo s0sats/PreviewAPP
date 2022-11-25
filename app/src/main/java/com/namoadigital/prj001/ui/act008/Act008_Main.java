@@ -513,21 +513,6 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                 mPresenter.checkFlow();
             }
         }else{
-            callExecuteUnfocusTicket();
-            }
-    }
-
-    private void callExecuteUnfocusTicket() {
-        if (ToolBox_Con.isOnline(context)
-        && !ToolBox_Con.getBooleanPreferencesByKey(getApplicationContext(), ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false)
-        && !isNewSerial()
-        && ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET , Constant.PROFILE_MENU_TICKET_PARAM_CLAIM_SPECIAL_EXECUTION_PERMITION)
-        && !has_tk_ticket_is_form_off_hand
-        && ACT006.equals(requesting_process)) {
-            int productCode = (int) mdProductSerial.getProduct_code();
-            int serialCode = (int) mdProductSerial.getSerial_code();
-            mPresenter.executeUnfocusTicketDownload(productCode, serialCode);
-        }else {
             mPresenter.checkFlow();
         }
     }
@@ -1164,7 +1149,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             disableProgressDialog();
         } else if (ws_process.equals(WS_Product_Serial_Structure.class.getName())) {
             disableProgressDialog();
-            callExecuteUnfocusTicket();
+            mPresenter.checkFlow();
         } else if (ws_process.equals(WS_Serial_Save.class.getName())) {
             frgSerialEdit.setNew_serial(false);
             //frgSerialEdit.refreshUi();
@@ -1178,9 +1163,6 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             }
         } else if (ws_process.equals(WS_Serial_Tracking_Search.class.getName())) {
             frgSerialEdit.processTrackingResult(hmAux);
-        }else if (ws_process.equals(WS_TK_Ticket_Search_Not_Focus.class.getName())) {
-            disableProgressDialog();
-            mPresenter.checkFlow();
         }
         //
         disableProgressDialog();
@@ -1198,7 +1180,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             disableProgressDialog();
         } else if (ws_process.equalsIgnoreCase(WS_Product_Serial_Structure.class.getName())) {
             disableProgressDialog();
-            callExecuteUnfocusTicket();
+            mPresenter.checkFlow();
         } else {
             //Atualiza data na tabela de produtos loca
             mPresenter.updateSyncChecklist();
