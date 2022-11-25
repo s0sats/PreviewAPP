@@ -16,8 +16,8 @@ class MeMeasureTp(
     @SerializedName("measure_tp_desc") val measureTpDesc: String,
     @SerializedName("value_sufix") val valueSufix: String?,
     @SerializedName("restriction_type") val restrictionType: String?,
-    @SerializedName("restriction_min") val restrictionMin: Double?,
-    @SerializedName("restriction_max") val restrictionMax: Double?,
+    @SerializedName("restriction_min") val restrictionMin: Float?,
+    @SerializedName("restriction_max") val restrictionMax: Float?,
     @SerializedName("restriction_decimal") val restrictionDecimal: Int? = 4,
     @SerializedName("value_cycle_size") val valueCycleSize: Float?,
     @SerializedName("cycle_tolerance") val cycleTolerance: Int?
@@ -71,12 +71,12 @@ class MeMeasureTp(
         lastMeasureValue: Float?
     ): MeasureFF.MeasureValidationReturn {
         lastMeasureValue?.let { lastMeasure ->
-            val minConsider: Double? = if (restrictionMin != null) {
+            val minConsider: Float? = if (restrictionMin != null) {
                 lastMeasure.minus(restrictionMin)
             } else {
                 null
             }
-            val maxConsider: Double? = if (restrictionMax != null) {
+            val maxConsider: Float? = if (restrictionMax != null) {
                 lastMeasure.plus(restrictionMax)
             } else {
                 null
@@ -114,15 +114,15 @@ class MeMeasureTp(
                 }
                 val valPerDay = getDiffBetweenDatesInFloatDays(lastMeasureDate!!, measureDate!!)
                 //Se o valor for menor do que 0, considerar 0
-                val minConsider: Double? = restrictionMin?.let { min ->
+                val minConsider: Float? = restrictionMin?.let { min ->
                     val minToConsider = lastMeasureValue!! - (min * valPerDay)
                     if (minToConsider >= 0f) {
                         minToConsider
                     } else {
-                        0.0
+                        0f
                     }
                 }
-                val maxConsider: Double? = restrictionMax?.let { max ->
+                val maxConsider: Float? = restrictionMax?.let { max ->
                     lastMeasureValue!! + (max * valPerDay)
                 }
                 //
@@ -148,9 +148,9 @@ class MeMeasureTp(
     }
 
     private fun validateValues(
-        minConsider: Double?,
+        minConsider: Float?,
         typedMeasure: Float,
-        maxConsider: Double?
+        maxConsider: Float?
     ): MeasureFF.MeasureValidationReturn {
         if (minConsider != null && typedMeasure.compareTo(minConsider) < 0) {
             return MeasureFF.MeasureValidationReturn(false, UNDER_VALUE_ERROR)

@@ -729,15 +729,15 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             }
             val valPerDay = getDiffBetweenDatesInFloatDays(formOsHeader.last_measure_date!!, binding.mkdtStartDate.getmValue())
             //Se o valor for menor do que 0, considerar 0
-            val minConsider : Double? = measureTp.restrictionMin?.let { min->
+            val minConsider : Float? = measureTp.restrictionMin?.let { min->
                     val minToConsider = formOsHeader.last_measure_value!! - (min * valPerDay)
                     if(minToConsider >= 0f){
                         minToConsider
                     } else {
-                        0.0
+                        0f
                     }
             }
-            val maxConsider : Double? = measureTp.restrictionMax?.let { max->
+            val maxConsider : Float? = measureTp.restrictionMax?.let { max->
                 formOsHeader.last_measure_value!! + (max * valPerDay)
             }
             //
@@ -778,12 +778,12 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     ): Boolean {
         formOsHeader.last_measure_value?.let { lastMeasure->
             val tesVl = lastMeasure
-            val minConsider: Double? = if(measureTp.restrictionMin != null){
+            val minConsider: Float? = if(measureTp.restrictionMin != null){
                     lastMeasure.minus(measureTp.restrictionMin)
                 } else {
                     null
                 }
-            val maxConsider: Double? = if(measureTp.restrictionMax != null){
+            val maxConsider: Float? = if(measureTp.restrictionMax != null){
                 lastMeasure.plus(measureTp.restrictionMax)
             } else {
                 null
