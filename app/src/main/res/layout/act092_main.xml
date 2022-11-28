@@ -151,7 +151,8 @@
         android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout2a"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+        app:layout_constraintVertical_bias="1.0">
 
 
         <ProgressBar
@@ -178,7 +179,6 @@
 
     </LinearLayout>
 
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/linearLayout2a"
         android:layout_width="match_parent"
@@ -194,24 +194,24 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_other_serial"
-            style="@style/Widget.Material3.Button.Icon"
+            style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:gravity="center"
             android:text="Outras ações"
             android:textAlignment="center"
-            android:textColor="@color/m3_namoa_surface2"
+            android:textColor="@color/m3_namoa_inverseSurface"
             android:visibility="visible"
-            app:backgroundTint="@color/m3_namoa_inverseSurface"
             app:icon="@drawable/ic_file_download"
+            app:iconSize="18dp"
             app:iconGravity="textStart"
-            app:iconTint="@color/m3_namoa_surface2"
+            app:iconTint="@color/m3_namoa_inverseSurface"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:strokeColor="@color/m3_namoa_primary"
-            app:strokeWidth="0dp" />
+            app:strokeColor="@color/m3_namoa_inverseSurface"
+            app:strokeWidth="0.7dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_create_action"

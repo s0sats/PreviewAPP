@@ -9,16 +9,14 @@ import com.google.gson.reflect.TypeToken
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.model.*
+import com.namoadigital.prj001.receiver.WBR_Serial_Search
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download
 import com.namoadigital.prj001.receiver.WBR_UnfocusAndHistoric
 import com.namoadigital.prj001.sql.*
 import com.namoadigital.prj001.ui.act092.data.local.preferences.FilterParamPreferences
 import com.namoadigital.prj001.ui.act092.model.SerialModel
 import com.namoadigital.prj001.ui.base.NamoaFactory
-import com.namoadigital.prj001.util.Constant
-import com.namoadigital.prj001.util.ConstantBaseApp
-import com.namoadigital.prj001.util.ToolBox_Con
-import com.namoadigital.prj001.util.ToolBox_Inf
+import com.namoadigital.prj001.util.*
 import java.io.File
 
 class IActionSerialRepository constructor(
@@ -31,6 +29,8 @@ class IActionSerialRepository constructor(
     private val serialDao: MD_Product_SerialDao,
     private val productDao: MD_ProductDao,
     private val syncChecklistdao: Sync_ChecklistDao,
+    private val siteDao: MD_SiteDao,
+    private val ticketCtrlDao: TK_Ticket_CtrlDao,
     private val filterParamPreferences: FilterParamPreferences
 ) : ActionSerialRepository {
 
@@ -100,7 +100,7 @@ class IActionSerialRepository constructor(
             )
         }
 
-    override suspend fun getSerial(productCode: Int, serialId: String): MD_Product_Serial {
+    override fun getSerial(productCode: Int, serialId: String): MD_Product_Serial {
         return serialDao.getByString(
             MD_Product_Serial_Sql_002(
                 ToolBox_Con.getPreference_Customer_Code(context),
@@ -166,6 +166,152 @@ class IActionSerialRepository constructor(
         return filterParamPreferences.read()
     }
 
+    override suspend fun getScheduleFromMyAction(
+        prefix: Int,
+        code: Int,
+        exec: Int
+    ): MD_Schedule_Exec? {
+        return scheduleDao.getByString(
+            MD_Schedule_Exec_Sql_001(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                prefix,
+                code,
+                exec
+            ).toSqlQuery()
+        )
+    }
+
+    override suspend fun getSite(site_code: String): MD_Site? {
+        return siteDao.getByString(
+            MD_Site_Sql_003(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                site_code
+            ).toSqlQuery()
+        )
+    }
+
+    override suspend fun getCustomFormLocal(
+        customer_code: String,
+        form_type: String,
+        form_code: String,
+        form_version: String,
+        product_code: String,
+        serial_id: String
+    ): GE_Custom_Form_Local? {
+        return localFormsDao.getByString(
+            GE_Custom_Form_Local_Sql_003(
+                customer_code,
+                form_type,
+                form_code,
+                form_version,
+                "0",
+                product_code,
+                serial_id
+            ).toSqlQuery()
+        )
+    }
+
+
+    override fun scheduleFormLocalExists(scheduleExec: MD_Schedule_Exec): GE_Custom_Form_Local? {
+        return localFormsDao.getByString(
+            MD_Schedule_Exec_Sql_006(
+                scheduleExec.customer_code.toString(),
+                scheduleExec.schedule_prefix.toString(),
+                scheduleExec.schedule_code.toString(),
+                scheduleExec.schedule_exec.toString()
+            ).toSqlQuery()
+        )
+    }
+
+
+    override suspend fun getTicketBySchedule(
+        schedule_prefix: Int,
+        schedule_code: Int,
+        schedule_exec: Int
+    ): TK_Ticket? {
+        return ticketDao.getByString(
+            TK_Ticket_Sql_009(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                schedule_prefix,
+                schedule_code,
+                schedule_exec
+            ).toSqlQuery()
+        )
+    }
+
+    override fun getScheduleCtrlIFExists(
+        schedulePrefix: String,
+        scheduleCode: String,
+        scheduleExec: String,
+        ticketPrefix: String,
+        ticketCode: String
+    ): TK_Ticket_Ctrl? {
+        return ticketCtrlDao.getByString(
+            Sql_Act017_005(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                schedulePrefix,
+                scheduleCode,
+                scheduleExec,
+                ticketPrefix,
+                ticketCode
+            ).toSqlQuery()
+        )
+    }
+
+
+    override fun createFormLocalForSchedule(
+        formLocalExists: Boolean,
+        scheduleExec: MD_Schedule_Exec
+    ): Boolean {
+        val custom_formDao = GE_Custom_FormDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        )
+        val custom_form_field_LocalDao = GE_Custom_Form_Field_LocalDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        )
+        val custom_form_fieldDao = GE_Custom_Form_FieldDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        )
+        val custom_form_blob_localDao = GE_Custom_Form_Blob_LocalDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        )
+        var isOkForCreation = false
+
+
+        if (formLocalExists) {
+            isOkForCreation = true
+        } else {
+            ScheduleFormFatory().buildInitialScheduleFormLocal(
+                context = context,
+                scheduleExec,
+                custom_formDao,
+                custom_form_fieldDao,
+                custom_form_field_LocalDao,
+                custom_form_blob_localDao,
+                localFormsDao
+            )?.let {
+                isOkForCreation = true
+            }
+        }
+        return isOkForCreation
+    }
+
+
+    override fun searchSerialWS(bundle: Bundle) {
+        Intent(context, WBR_Serial_Search::class.java).also {
+            it.putExtras(bundle)
+            context.sendBroadcast(it)
+        }
+    }
+
     companion object {
 
         class ActionSerialRepositoryFactoryRepository(private val context: Context) :
@@ -213,11 +359,22 @@ class IActionSerialRepository constructor(
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
                     ),
+                    MD_SiteDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                    ),
+                    TK_Ticket_CtrlDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                    ),
                     FilterParamPreferences(
                         PreferenceManager.getDefaultSharedPreferences(context)
-                    )
+                    ),
                 )
         }
 
     }
+
 }

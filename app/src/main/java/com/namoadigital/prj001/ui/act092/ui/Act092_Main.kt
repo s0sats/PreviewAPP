@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act092.ui
 
 import android.annotation.SuppressLint
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
@@ -14,6 +15,7 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao
 import com.namoadigital.prj001.databinding.Act092MainBinding
 import com.namoadigital.prj001.model.MyActionFilterParam
 import com.namoadigital.prj001.model.MyActionsBase
+import com.namoadigital.prj001.service.WS_Serial_Search
 import com.namoadigital.prj001.service.WS_Sync
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download
 import com.namoadigital.prj001.service.WS_UnfocusAndHistoric
@@ -26,6 +28,7 @@ import com.namoadigital.prj001.ui.act092.ui.adapter.Act092_Adapter
 import com.namoadigital.prj001.ui.act092.usecases.ActionUseCases.Companion.ActionUseCasesFactory
 import com.namoadigital.prj001.ui.act092.utils.Act092Translate
 import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent
+import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent.Companion.DialogType
 import com.namoadigital.prj001.ui.act092.utils.FilterFocusUser
 import com.namoadigital.prj001.ui.base.BaseActivityMvp
 import com.namoadigital.prj001.util.Constant
@@ -42,7 +45,7 @@ class Act092_Main : BaseActivityMvp
 <Act092_Contract.Presenter,
         Act092MainBinding>(),
     Act092_Contract.View {
-    private lateinit var bundle: Bundle
+    override lateinit var bundle: Bundle
 
     private val _mainUserFilter = MutableStateFlow(false)
 
@@ -147,8 +150,15 @@ class Act092_Main : BaseActivityMvp
                 wsProcess.value = ""
                 if (progressDialog.isShowing) progressDialog.dismiss()
 
-                presenter.getMyActionList(_mainUserFilter.value)
+                presenter.getMyActionList()
+
                 return
+            }
+
+            WS_Serial_Search::class.java.name -> {
+                wsProcess.value = ""
+                progressDialog.dismiss()
+                TODO("mPresenter.extractSearchResult(mLink, mAdapter.getMyActionByPosition(serialActionSelected))")
             }
 
             else -> {
@@ -193,17 +203,22 @@ class Act092_Main : BaseActivityMvp
 
     }
 
+
     override fun initAction() {
         with(binding) {
             mainUserSelection.setOnClickListener {
-                _focusState.value = focusState.value.copy(
-                    mainUser = !_focusState.value.mainUser
-                )
-                onState(Act092UiEvent.FilterMainUser)
+                if (btnOtherSerial.isEnabled) {
+                    _focusState.value = focusState.value.copy(
+                        mainUser = !_focusState.value.mainUser
+                    )
+                    onState(Act092UiEvent.FilterMainUser)
+                }
             }
 
             btnOtherSerial.setOnClickListener {
-                presenter.getUnfocusHistoricalList()
+                if (btnOtherSerial.isEnabled) {
+                    presenter.getUnfocusHistoricalList()
+                }
 
             }
             btnCreateAction.setOnClickListener {
@@ -243,12 +258,14 @@ class Act092_Main : BaseActivityMvp
             progressDialog.dismiss()
             onState(
                 Act092UiEvent.OpenDialog(
-                    title = hmAux_Trans[Act092Translate.DIALOG_UPDATE_TTL],
-                    message = hmAux_Trans[Act092Translate.DIALOG_UPDATE_MSG]
+                    DialogType.DEFAULT_OK(
+                        title = hmAux_Trans[Act092Translate.DIALOG_UPDATE_TTL],
+                        message = hmAux_Trans[Act092Translate.DIALOG_UPDATE_MSG]
+                    )
                 )
             )
 
-            presenter.getMyActionList(_focusState.value.mainUser)
+            presenter.getMyActionList()
             return
         }
 
@@ -297,14 +314,92 @@ class Act092_Main : BaseActivityMvp
                     toggleMainUserFilter()
                 }
                 is Act092UiEvent.OpenDialog -> {
-                    openDialog(
-                        state.process,
-                        state.title,
-                        state.message
-                    )
+                    when (state.dialogType) {
+                        is DialogType.PROCESS -> {
+                            enableProgressDialog(
+                                state.dialogType.title,
+                                state.dialogType.message,
+                                hmAux_Trans["sys_alert_btn_cancel"],
+                                hmAux_Trans["sys_alert_btn_ok"]
+                            )
+                        }
+
+                        is DialogType.ACTION -> {
+                            ToolBox.alertMSG(
+                                context,
+                                state.dialogType.title,
+                                state.dialogType.message,
+                                state.dialogType.action,
+                                state.dialogType.negativeBtn
+                            )
+                        }
+
+                        is DialogType.DEFAULT_OK -> {
+                            ToolBox.alertMSG(
+                                context,
+                                state.dialogType.title,
+                                state.dialogType.message,
+                                { dialog, _ ->
+                                    dialog.dismiss()
+                                }, 0
+                            )
+                        }
+                    }
                 }
                 is Act092UiEvent.CallAct -> {
                     callAct(state.classe, state.bundle)
+                }
+
+                is Act092UiEvent.CheckIfFileExists -> {
+                    disableMainAndOtherActions(state.exists)
+                }
+            }
+        }
+    }
+
+    private fun disableMainAndOtherActions(isEmpty: Boolean) {
+
+        val btnBackground =
+            if (isEmpty) ColorStateList.valueOf(resources.getColor(R.color.padrao_TRANSPARENT))
+            else ColorStateList.valueOf(resources.getColor(R.color.m3_namoa_inverseSurface))
+
+        val mainUserCircle =
+            if (isEmpty) resources.getDrawable(R.drawable.my_action_toogle_default) else resources.getDrawable(
+                R.drawable.my_action_toogle_disable
+            )
+        val mainUserPerson =
+            if (isEmpty) ColorStateList.valueOf(resources.getColor(R.color.text_black))
+            else ColorStateList.valueOf(resources.getColor(R.color.namoa_color_disabled_gray))
+
+        val textColor =
+            if (isEmpty) resources.getColor(R.color.m3_namoa_inverseSurface) else resources.getColor(
+                R.color.m3_namoa_surface
+            )
+
+        with(binding) {
+            btnOtherSerial.apply {
+                backgroundTintList = btnBackground
+                isEnabled = isEmpty
+                iconTint = ColorStateList.valueOf(textColor)
+                setTextColor(textColor)
+                strokeWidth = if (isEmpty) 1 else 0
+            }
+
+            mainUserSelection.apply {
+                background = mainUserCircle
+                imageTintList = mainUserPerson
+                isEnabled = isEmpty
+            }
+
+            mainUserSelection.isEnabled = isEmpty
+
+            if (isEmpty) {
+                if (_focusState.value.mainUser) {
+                    mainUserSelection.setImageResource(R.drawable.ic_person_white_24dp)
+                    mainUserSelection.setBackgroundDrawable(resources.getDrawable(R.drawable.my_action_toogle_pressed))
+                } else {
+                    mainUserSelection.setBackgroundDrawable(resources.getDrawable(R.drawable.my_action_toogle_default))
+                    mainUserSelection.setImageResource(R.drawable.ic_person_black_24dp)
                 }
             }
         }
@@ -314,7 +409,6 @@ class Act092_Main : BaseActivityMvp
         list: List<MyActionsBase>
     ) {
         with(binding) {
-
 
             mAdapter = Act092_Adapter(
                 list,

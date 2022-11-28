@@ -18,6 +18,7 @@ interface Act092_Contract {
         var wsProcess: MutableStateFlow<String>
         val focusState: StateFlow<FilterFocusUser>
         val filterText: MutableStateFlow<String>
+        var bundle: Bundle
     }
 
     interface Presenter : BasePresenter<View> {
@@ -27,7 +28,6 @@ interface Act092_Contract {
         fun syncFiles(context: Context)
         fun getUnfocusHistoricalList()
         fun syncFilesForm(productCode: Long = 1L)
-
         //actions type
         fun processActionClick(action: MyActions, context: Context)
         fun processNewFormClick(context: Context)

@@ -15,7 +15,17 @@ data class ActionUseCases(
     val updateSyncCheckist: UpdateSyncCheckListUseCase,
     val unfocusHistoricalAction: UnfocusHistoricalActionUseCases,
     val setPreferences: SetModelPreferencesUseCase,
-    val getPreferences: GetSerialModelPreferencesUseCase
+    val getPreferences: GetSerialModelPreferencesUseCase,
+    val checkIfFileExists: CheckFileExistsUseCase,
+    val flowScheduleFromMyAction: FlowScheduleFromMyActionUseCase,
+    val getScheduleFromMyAction: GetScheduleFromMyActionUseCase,
+    val processForm: ProcessFormUseCase,
+    val processTicket: ProcessTicketUseCase,
+    val ticketCtrl: GetScheduleCtrlIfExistsUseCase,
+    val scheduleFormLocalExists: ScheduleFormLocalExistsUseCase,
+    val createFormLocalForSchedule: CreateFormLocalForScheduleUseCase,
+    val serialSearch: SerialSearchUseCase,
+    val processLocalSearchForSerialAction: ProcessLocalSearchForSerialActionUseCase
 ) {
 
     companion object {
@@ -28,6 +38,11 @@ data class ActionUseCases(
                 val repository = ActionSerialRepositoryFactoryRepository(context).build()
                 val syncRepository = SyncRepositoryFactory(context).build()
 
+                val scheduleFormLocalExistsUseCase = ScheduleFormLocalExistsUseCase(repository)
+                val processFormUseCase =
+                    ProcessFormUseCase(context, repository, scheduleFormLocalExistsUseCase)
+                val processTicketUseCase = ProcessTicketUseCase(context, repository)
+
                 return ActionUseCases(
                     localTicket = ListMyActionUseCases(context, repository),
                     syncFiles = SyncFilesUseCase(context, syncRepository),
@@ -38,7 +53,24 @@ data class ActionUseCases(
                     validateNewForm = ValidateNewFormUseCase(context, repository),
                     updateSyncCheckist = UpdateSyncCheckListUseCase(context, repository),
                     setPreferences = SetModelPreferencesUseCase(repository),
-                    getPreferences = GetSerialModelPreferencesUseCase(repository)
+                    getPreferences = GetSerialModelPreferencesUseCase(repository),
+                    checkIfFileExists = CheckFileExistsUseCase(repository),
+                    flowScheduleFromMyAction = FlowScheduleFromMyActionUseCase(
+                        context,
+                        repository,
+                        processFormUseCase,
+                        processTicketUseCase
+                    ),
+                    getScheduleFromMyAction = GetScheduleFromMyActionUseCase(repository),
+                    ticketCtrl = GetScheduleCtrlIfExistsUseCase(repository),
+                    processForm = processFormUseCase,
+                    processTicket = processTicketUseCase,
+                    scheduleFormLocalExists = scheduleFormLocalExistsUseCase,
+                    createFormLocalForSchedule = CreateFormLocalForScheduleUseCase(repository),
+                    serialSearch = SerialSearchUseCase(repository),
+                    processLocalSearchForSerialAction = ProcessLocalSearchForSerialActionUseCase(
+                        repository
+                    )
                 )
             }
         }
