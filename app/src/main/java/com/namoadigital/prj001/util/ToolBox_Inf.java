@@ -20,8 +20,8 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.GENERIC_CHANNEL_ID;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_PERIOD_FILTER;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION;
-import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_JUSTIFY_SUFIX;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SEND_TO_STORE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_JUSTIFY_SUFIX;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_BARCODE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_FORM;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_FORM_NC;
@@ -9381,6 +9381,7 @@ public class ToolBox_Inf {
             iv_class_icon.setVisibility(View.INVISIBLE);
         }
     }
+
 
     /**
      * BARRIONUEVO 02-06-2021

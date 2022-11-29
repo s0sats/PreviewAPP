@@ -8,13 +8,13 @@ interface BaseView<S> {
     fun onState(state: S)
 
     fun initView(
-        block: () -> Unit
+        block: (() -> Unit)? = null
     ) {
         initSetup()
         initTrans()
+        block?.invoke()
         initVars()
         initAction()
-        block()
     }
 
     fun initSetup()

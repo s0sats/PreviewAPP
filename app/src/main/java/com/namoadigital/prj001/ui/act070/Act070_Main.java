@@ -87,6 +87,7 @@ import com.namoadigital.prj001.ui.act082.Act082_Main;
 import com.namoadigital.prj001.ui.act083.Act083_Main;
 import com.namoadigital.prj001.ui.act084.Act084Main;
 import com.namoadigital.prj001.ui.act087.Act087Main;
+import com.namoadigital.prj001.ui.act092.ui.Act092_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -381,9 +382,10 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         wsResult.clear();
         //
         mPresenter = new Act070_Main_Presenter(
-            context,
-            this,
-            hmAux_Trans
+                context,
+                this,
+                hmAux_Trans,
+                getIntent().getExtras().getString(ConstantBaseApp.ACT092, "")
         );
         //
         setActivityData();
@@ -1612,6 +1614,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         finish();
     }
 
+
     @Override
     public void callAct084() {
         Intent intent = new Intent(context, Act084Main.class);
@@ -1637,6 +1640,18 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         intent.putExtras(requestingBundle);
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    public void callAct092() {
+        Intent intent = new Intent(context, Act092_Main.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, ToolBox_Inf.getMyActionFilterParam(requestingBundle));
+        intent.putExtras(bundle);
+        //
+        startActivity(intent);
     }
 
     private void iniUIFooter() {

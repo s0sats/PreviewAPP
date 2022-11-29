@@ -7,8 +7,8 @@ import com.namoadigital.prj001.core.IResult.Companion.loading
 import com.namoadigital.prj001.core.IResult.Companion.success
 import com.namoadigital.prj001.core.UseCases
 import com.namoadigital.prj001.model.*
-import com.namoadigital.prj001.ui.act092.model.LocalTicketsModel
-import com.namoadigital.prj001.ui.act092.repository.ActionSerialRepository
+import com.namoadigital.prj001.ui.act092.data.repository.ActionSerialRepository
+import com.namoadigital.prj001.ui.act092.model.SerialModel
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -21,13 +21,13 @@ import java.io.IOException
 class ListMyActionUseCases constructor(
     private val context: Context,
     private val repository: ActionSerialRepository,
-) : UseCases<LocalTicketsModel, MutableList<MyActionsBase>> {
-    val actionBaseList = mutableListOf<MyActionsBase>()
+) : UseCases<Pair<SerialModel, Boolean>, MutableList<MyActionsBase>> {
+    private val actionBaseList = mutableListOf<MyActionsBase>()
 
-    override suspend fun invoke(input: LocalTicketsModel): Flow<IResult<MutableList<MyActionsBase>>> {
+    override suspend fun invoke(input: Pair<SerialModel, Boolean>): Flow<IResult<MutableList<MyActionsBase>>> {
         actionBaseList.clear()
         return flow {
-            with(input) {
+            with(input.first) {
                 copy(
                     customerCode = ToolBox_Con.getPreference_Customer_Code(context).toInt(),
                     siteCode = if (setSiteFilter(context)) ToolBox_Con.getPreference_Translate_Code(
@@ -37,32 +37,33 @@ class ListMyActionUseCases constructor(
                 ).let { localTicket ->
 
                     emit(loading(true))
-                    val focusList = mutableListOf<MyActionsBase>()
-                    focusList.addAll(
+
+                    actionBaseList.addAll(
                         repository.getLocalTickets(localTicket).map {
                             TK_Ticket.toMyActionsObj(context, it, getLastSelectedPk())
                         }
                     )
 
-                    focusList.addAll(
+                    actionBaseList.addAll(
                         repository.getTicketCache(localTicket).map {
                             it.toMyActionsObj(context, getLastSelectedPk())
                         }
                     )
 
-                    focusList.addAll(
+                    actionBaseList.addAll(
                         repository.getSchedules(localTicket).map {
                             it.toMyActionsObj(context, getLastSelectedPk())
                         }
                     )
 
-                    focusList.addAll(
+/* A Confirmar
+                    actionBaseList.addAll(
                         repository.getFormAp(localTicket).map {
                             it.toMyActionsObj(context, getLastSelectedPk())
                         }
-                    )
+                    )*/
 
-                    focusList.addAll(
+                    actionBaseList.addAll(
                         repository.getLocalForms(localTicket).map {
                             GE_Custom_Form_Local.toMyActionsObj(
                                 context,
@@ -73,51 +74,28 @@ class ListMyActionUseCases constructor(
                         }
                     )
 
-                    focusList.sortBy {
+                    actionBaseList.addAll(
+                        repository.getUnfocusAndHistorical(
+                            productCode ?: -1,
+                            (serialCode ?: -1).toLong()
+                        )
+                    )
+
+                    actionBaseList.sortBy {
                         when (it) {
                             is MyActions -> it.orderBy
-                            is MyActionsFormButton -> it.orderBy
                             else -> "190001010000"
                         }
                     }
-                    val unfocusList = mutableListOf<MyActionsBase>()
-                    unfocusList.addAll(
-                        repository.getUnfocusAndHistorical(input.productCode?:-1, (input.serialCode?:-1).toLong())
-                    )
-                    //
-                    val unfocusTemp = mutableListOf<MyActions>()
 
-                    val focusTemp = focusList.map {
-                        var action = it as MyActions
-                        for (unfocusAction in unfocusList) {
-                            if(action.processId == (unfocusAction as MyActions).processId){
-                                action.mergeUnfocusActions(unfocusAction)
-                                unfocusTemp.add(unfocusAction)
-                            }
-                        }
-                        it as MyActionsBase
-                    }
-                    //
-                    val filteredUnfocusList = unfocusList.filter {
-                        var insertItem = true
-                        for (unfocusTempAction in unfocusTemp) {
-                            if ((it as MyActions).processId == (unfocusTempAction as MyActions).processId) {
-                                insertItem = false
-                            }
-                        }
-                        //
-                        insertItem
-                    }
-                    //
-                    actionBaseList.addAll(focusTemp)
-                    actionBaseList.addAll(filteredUnfocusList)
-                    val actions = actionBaseList.map { m -> m as MyActions }
-                        .filter { f -> f.isMainUserTicket }
 
-                    val listOfficial = if (input.userFocus == 1) actions else actionBaseList
+                    val actions = if (input.second)
+                        actionBaseList.map { m -> m as MyActions }
+                            .filter { f -> f.isMainUserTicket } as MutableList<MyActionsBase>
+                    else actionBaseList
 
                     emit(loading(false))
-                    emit(success(listOfficial.toMutableList()))
+                    emit(success(actions.toMutableList()))
 
                 }
             }
@@ -127,8 +105,10 @@ class ListMyActionUseCases constructor(
                 ListMyActionUseCases::class.toString(),
                 IOException(e.message)
             )
+
             emit(loading(false))
             emit(failed(e))
+
             actionBaseList.sortBy {
                 when (it) {
                     is MyActions -> it.orderBy
@@ -136,6 +116,7 @@ class ListMyActionUseCases constructor(
                     else -> "190001010000"
                 }
             }
+
             delay(4000)
             emit(success(actionBaseList))
         }
@@ -146,6 +127,5 @@ class ListMyActionUseCases constructor(
             context,
             ConstantBaseApp.PREFERENCE_HOME_SITES_FILTER,
             ConstantBaseApp.PREFERENCE_HOME_ALL_SITE_OPTION
-        )
-                && !ToolBox_Inf.hasSoOrIOProfile(context)
+        ) && !ToolBox_Inf.hasSoOrIOProfile(context)
 }

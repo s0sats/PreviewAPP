@@ -18,7 +18,8 @@ class MyActionFilterParam(
         var calendarDate: String? = null
 ) : Serializable{
     companion object{
-        const val  MY_ACTION_FILTER_PARAM = "MY_ACTION_FILTER_PARAM"
+        const val MY_ACTION_FILTER_PARAM = "MY_ACTION_FILTER_PARAM"
+        const val MY_ACTION_FILTER_PARAM_ACT092 = "MY_ACTION_FILTER_PARAM_ACT092"
     }
 
     var paramTextFilter: String? = null

@@ -35,6 +35,7 @@ import com.namoadigital.prj001.ui.act010.Act010_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.ui.act028.Act028_Main;
 import com.namoadigital.prj001.ui.act081.Act081_Main;
+import com.namoadigital.prj001.ui.act092.ui.Act092_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -294,7 +295,6 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
     public void callAct010(Context context) {
         Intent mIntent = new Intent(context, Act010_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        bundle.putAll(act083Bundle);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
@@ -378,6 +378,18 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
         startActivity(mIntent);
         finish();
     }
+
+    @Override
+    public void callAct092(Context context) {
+        Intent mIntent = new Intent(context, Act092_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        act083Bundle.remove(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW);
+        bundle.putAll(act083Bundle);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
     @Override
     public boolean isHas_tk_ticket_is_form_off_hand() {
         return has_tk_ticket_is_form_off_hand;

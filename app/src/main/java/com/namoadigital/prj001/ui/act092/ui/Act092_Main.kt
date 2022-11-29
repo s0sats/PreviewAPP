@@ -1,12 +1,13 @@
 package com.namoadigital.prj001.ui.act092.ui
 
 import android.annotation.SuppressLint
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.R
@@ -14,13 +15,21 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao
 import com.namoadigital.prj001.databinding.Act092MainBinding
 import com.namoadigital.prj001.model.MyActionFilterParam
 import com.namoadigital.prj001.model.MyActionsBase
+import com.namoadigital.prj001.service.WS_Serial_Search
+import com.namoadigital.prj001.service.WS_Sync
+import com.namoadigital.prj001.service.WS_TK_Ticket_Download
 import com.namoadigital.prj001.service.WS_UnfocusAndHistoric
 import com.namoadigital.prj001.ui.act005.Act005_Main
+import com.namoadigital.prj001.ui.act070.Act070_Main
+import com.namoadigital.prj001.ui.act091.mvp.model.TranslateResource
 import com.namoadigital.prj001.ui.act092.Act092Presenter
 import com.namoadigital.prj001.ui.act092.Act092_Contract
 import com.namoadigital.prj001.ui.act092.ui.adapter.Act092_Adapter
 import com.namoadigital.prj001.ui.act092.usecases.ActionUseCases.Companion.ActionUseCasesFactory
+import com.namoadigital.prj001.ui.act092.utils.Act092Translate
 import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent
+import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent.Companion.DialogType
+import com.namoadigital.prj001.ui.act092.utils.FilterFocusUser
 import com.namoadigital.prj001.ui.base.BaseActivityMvp
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
@@ -29,20 +38,25 @@ import com.namoadigital.prj001.util.ToolBox_Inf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class Act092_Main : BaseActivityMvp
 <Act092_Contract.Presenter,
         Act092MainBinding>(),
     Act092_Contract.View {
-    private lateinit var bundle: Bundle
+    override lateinit var bundle: Bundle
 
     private val _mainUserFilter = MutableStateFlow(false)
-    private val serialCode by lazy{
-        bundle.getLong(MD_Product_SerialDao.SERIAL_CODE)
-    }
+
+    private val _focusState = MutableStateFlow(FilterFocusUser())
+    override val focusState: StateFlow<FilterFocusUser> = _focusState
+
+    private var hmAuxTicketDownload: HMAux = HMAux()
 
     override var wsProcess: MutableStateFlow<String> = MutableStateFlow("")
+
+    override val filterText: MutableStateFlow<String> = MutableStateFlow("")
 
     override val binding: Act092MainBinding by lazy {
         Act092MainBinding.inflate(layoutInflater)
@@ -50,19 +64,26 @@ class Act092_Main : BaseActivityMvp
 
     private var myActionFilterParam = MutableStateFlow(MyActionFilterParam())
 
+    private lateinit var mAdapter: Act092_Adapter
+
+
     override val presenter: Act092Presenter by lazy {
         Act092Presenter(
             myActionFilterParam.value,
             bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT005),
+            bundle.getString(MD_Product_SerialDao.CLASS_COLOR, ""),
             hmAux_Trans,
-            ActionUseCasesFactory(context).build()
+            ActionUseCasesFactory(context).build(),
+            TranslateResource(
+                context,
+                mModule_Code,
+                mResource_Code
+            )
         )
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         with(binding) {
             setContentView(root)
             bundle = (savedInstanceState ?: intent.extras) as Bundle
@@ -75,14 +96,76 @@ class Act092_Main : BaseActivityMvp
 
         initView {
             presenter.setView(this)
+            presenter.getMyActionList(_focusState.value.mainUser)
         }
     }
 
     private fun getBundle() {
-        val filterParam = bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM)
+        val filterParam = bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM_ACT092)
         myActionFilterParam.value =
             filterParam?.let { it as MyActionFilterParam } ?: MyActionFilterParam()
 
+    }
+
+
+    override fun processError_1(mLink: String?, mRequired: String?) {
+        super.processError_1(mLink, mRequired)
+        presenter.newActionClick = false
+        progressDialog.dismiss()
+    }
+
+    override fun processCustom_error(mLink: String?, mRequired: String?) {
+        super.processCustom_error(mLink, mRequired)
+        presenter.newActionClick = false
+        progressDialog.dismiss()
+    }
+
+
+    override fun processCloseACT(mLink: String?, mRequired: String?, hmAux: HMAux) {
+        when (wsProcess.value) {
+            WS_TK_Ticket_Download::class.java.name -> {
+                wsProcess.value = ""
+                progressDialog.dismiss()
+                if (presenter.verifyProductOutdateForForm(hmAux, context)) {
+
+                    if (ToolBox_Con.isOnline(context)) {
+                        hmAuxTicketDownload = hmAux
+                        presenter.syncFilesForm()
+                    }
+                }
+                callAct(
+                    Act070_Main::class.java,
+                    presenter.getCacheTicketBundle(hmAux)
+                )
+            }
+
+            WS_Sync::class.java.name -> {
+                wsProcess.value = ""
+                progressDialog.dismiss()
+                //
+                presenter.processWsReturnSync(hmAuxTicketDownload)
+            }
+
+            WS_UnfocusAndHistoric::class.java.name -> {
+                wsProcess.value = ""
+                if (progressDialog.isShowing) progressDialog.dismiss()
+
+                presenter.getMyActionList()
+
+                return
+            }
+
+            WS_Serial_Search::class.java.name -> {
+                wsProcess.value = ""
+                progressDialog.dismiss()
+                TODO("mPresenter.extractSearchResult(mLink, mAdapter.getMyActionByPosition(serialActionSelected))")
+            }
+
+            else -> {
+                wsProcess.value = ""
+                if (progressDialog.isShowing) progressDialog.dismiss()
+            }
+        }
     }
 
     override fun footerCreateDialog() {
@@ -90,20 +173,6 @@ class Act092_Main : BaseActivityMvp
         ToolBox_Inf.buildFooterDialog(context)
     }
 
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.act092_main_menu, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_info -> {
-                showSnackbar("Em manutenção")
-            }
-        }
-        return true
-    }
 
     override fun initSetup() {
         mResource_Code = ToolBox_Inf.getResourceCode(
@@ -114,28 +183,58 @@ class Act092_Main : BaseActivityMvp
     }
 
     override fun initTrans() {
+        hmAux_Trans = presenter.getTranslation()
+    }
+
+    private fun updateTitleActionSerial() {
+        with(binding) {
+            val color = presenter.serialModel.value.classColor
+            if (color.isNotEmpty()) {
+                iconClassColor.setColorFilter(Color.parseColor(color))
+            } else {
+                iconClassColor.visibility = View.GONE
+            }
+            serialTitle.text = presenter.serialModel.value.serialId
+            productDescription.text = presenter.serialModel.value.productDesc
+        }
     }
 
     override fun initVars() {
-        with(binding) {
-            serialTitle.text = myActionFilterParam.value.serialId
-            productDescription.text = myActionFilterParam.value.productDesc
-        }
 
     }
+
 
     override fun initAction() {
         with(binding) {
             mainUserSelection.setOnClickListener {
-                _mainUserFilter.value = !_mainUserFilter.value
-                onState(Act092UiEvent.FilterMainUser)
+                if (btnOtherSerial.isEnabled) {
+                    _focusState.value = focusState.value.copy(
+                        mainUser = !_focusState.value.mainUser
+                    )
+                    onState(Act092UiEvent.FilterMainUser)
+                }
             }
 
             btnOtherSerial.setOnClickListener {
-                presenter.getUnfocusHistoricalList(context, serialCode)
+                if (btnOtherSerial.isEnabled) {
+                    presenter.getUnfocusHistoricalList()
+                }
 
             }
+            btnCreateAction.setOnClickListener {
+                presenter.processNewFormClick(context)
+            }
 
+            editSerialFilter.setOnReportTextChangeListner(object :
+                MKEditTextNM.IMKEditTextChangeText {
+                override fun reportTextChange(text: String?) {
+                }
+
+                override fun reportTextChange(text: String?, p1: Boolean) {
+                    mAdapter.filter.filter(text)
+                    filterText.value = text ?: ""
+                }
+            })
         }
     }
 
@@ -155,32 +254,25 @@ class Act092_Main : BaseActivityMvp
                 0
             )
 
-        } else if(wsProcess.value == WS_UnfocusAndHistoric.javaClass.simpleName){
+        } else if (wsProcess.value == WS_UnfocusAndHistoric::class.java.name) {
             progressDialog.dismiss()
             onState(
                 Act092UiEvent.OpenDialog(
-                    title = "Atualizado",
-                    message = "Atualizado_com_sucesso"
+                    DialogType.DEFAULT_OK(
+                        title = hmAux_Trans[Act092Translate.DIALOG_UPDATE_TTL],
+                        message = hmAux_Trans[Act092Translate.DIALOG_UPDATE_MSG]
+                    )
                 )
             )
-            presenter.getMyActionList(_mainUserFilter.value)
+
+            presenter.getMyActionList()
+            return
         }
 
-        wsProcess.value = ""
-        if (progressDialog.isShowing) progressDialog.dismiss()
+        processCloseACT(mLink, mRequired, HMAux())
 
     }
 
-    override fun processCloseACT(mLink: String?, mRequired: String?, hmAux: HMAux?) {
-        super.processCloseACT(mLink, mRequired, hmAux)
-        if(wsProcess.value == WS_UnfocusAndHistoric.javaClass.simpleName){
-            wsProcess.value = ""
-            if (progressDialog.isShowing) progressDialog.dismiss()
-
-            presenter.getMyActionList(_mainUserFilter.value)
-
-        }
-    }
 
     override fun onBackPressed() {
         //super.onBackPressed()
@@ -191,17 +283,23 @@ class Act092_Main : BaseActivityMvp
     override fun onState(state: Act092UiEvent) {
         CoroutineScope(Dispatchers.Main).launch {
             when (state) {
+                is Act092UiEvent.UpdateTitleActionSerial -> {
+                    updateTitleActionSerial()
+                }
+
                 is Act092UiEvent.IsLoading -> {
                     isLoading(state.isLoading, state.message)
                 }
 
                 is Act092UiEvent.EmptyOrError -> {
-                    errorOrEmpty(state.isError)
+                    errorOrEmpty(
+                        state.sizeList
+                    )
                 }
 
                 is Act092UiEvent.ListingSerialSteels -> {
                     if (state.list.isEmpty()) {
-                        onState(Act092UiEvent.EmptyOrError())
+                        onState(Act092UiEvent.EmptyOrError(sizeList = state.list.size))
                         return@launch
                     }
                     initRecyclerView(state.list)
@@ -216,14 +314,92 @@ class Act092_Main : BaseActivityMvp
                     toggleMainUserFilter()
                 }
                 is Act092UiEvent.OpenDialog -> {
-                    openDialog(
-                        state.process,
-                        state.title,
-                        state.message
-                    )
+                    when (state.dialogType) {
+                        is DialogType.PROCESS -> {
+                            enableProgressDialog(
+                                state.dialogType.title,
+                                state.dialogType.message,
+                                hmAux_Trans["sys_alert_btn_cancel"],
+                                hmAux_Trans["sys_alert_btn_ok"]
+                            )
+                        }
+
+                        is DialogType.ACTION -> {
+                            ToolBox.alertMSG(
+                                context,
+                                state.dialogType.title,
+                                state.dialogType.message,
+                                state.dialogType.action,
+                                state.dialogType.negativeBtn
+                            )
+                        }
+
+                        is DialogType.DEFAULT_OK -> {
+                            ToolBox.alertMSG(
+                                context,
+                                state.dialogType.title,
+                                state.dialogType.message,
+                                { dialog, _ ->
+                                    dialog.dismiss()
+                                }, 0
+                            )
+                        }
+                    }
                 }
                 is Act092UiEvent.CallAct -> {
                     callAct(state.classe, state.bundle)
+                }
+
+                is Act092UiEvent.CheckIfFileExists -> {
+                    disableMainAndOtherActions(state.exists)
+                }
+            }
+        }
+    }
+
+    private fun disableMainAndOtherActions(isEmpty: Boolean) {
+
+        val btnBackground =
+            if (isEmpty) ColorStateList.valueOf(resources.getColor(R.color.padrao_TRANSPARENT))
+            else ColorStateList.valueOf(resources.getColor(R.color.m3_namoa_inverseSurface))
+
+        val mainUserCircle =
+            if (isEmpty) resources.getDrawable(R.drawable.my_action_toogle_default) else resources.getDrawable(
+                R.drawable.my_action_toogle_disable
+            )
+        val mainUserPerson =
+            if (isEmpty) ColorStateList.valueOf(resources.getColor(R.color.text_black))
+            else ColorStateList.valueOf(resources.getColor(R.color.namoa_color_disabled_gray))
+
+        val textColor =
+            if (isEmpty) resources.getColor(R.color.m3_namoa_inverseSurface) else resources.getColor(
+                R.color.m3_namoa_surface
+            )
+
+        with(binding) {
+            btnOtherSerial.apply {
+                backgroundTintList = btnBackground
+                isEnabled = isEmpty
+                iconTint = ColorStateList.valueOf(textColor)
+                setTextColor(textColor)
+                strokeWidth = if (isEmpty) 1 else 0
+            }
+
+            mainUserSelection.apply {
+                background = mainUserCircle
+                imageTintList = mainUserPerson
+                isEnabled = isEmpty
+            }
+
+            mainUserSelection.isEnabled = isEmpty
+
+            if (isEmpty) {
+                if (_focusState.value.mainUser) {
+                    mainUserSelection.setImageResource(R.drawable.ic_person_white_24dp)
+                    mainUserSelection.setBackgroundDrawable(resources.getDrawable(R.drawable.my_action_toogle_pressed))
+                } else {
+                    mainUserSelection.setBackgroundDrawable(resources.getDrawable(R.drawable.my_action_toogle_default))
+                    mainUserSelection.setImageResource(R.drawable.ic_person_black_24dp)
                 }
             }
         }
@@ -234,24 +410,30 @@ class Act092_Main : BaseActivityMvp
     ) {
         with(binding) {
 
+            mAdapter = Act092_Adapter(
+                list,
+                hmAux_Trans,
+                {
+                    presenter.processActionClick(it, context)
+                },
+                {
+                    onState(Act092UiEvent.EmptyOrError(sizeList = it))
+                }
+            )
+
             emptyList.visibility = View.GONE
             progressLoading.visibility = View.GONE
             recyclerSerialList.apply {
                 visibility = View.VISIBLE
-                adapter = Act092_Adapter(
-                    list,
-                    hmAux_Trans,
-                    {}
-                )
-                layoutManager =
-                    LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+                adapter = mAdapter
+                layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
             }
 
         }
     }
 
     private fun toggleMainUserFilter(
-        value: Boolean = _mainUserFilter.value
+        value: Boolean = _focusState.value.mainUser
     ) {
         with(binding) {
             if (value) {
@@ -267,14 +449,14 @@ class Act092_Main : BaseActivityMvp
 
     private fun openDialog(
         isProcess: Boolean,
-        title: String,
-        message: String
+        title: String?,
+        message: String?
     ) {
         when (isProcess) {
             true -> {
                 enableProgressDialog(
-                    hmAux_Trans[title],
-                    hmAux_Trans[message],
+                    title,
+                    message,
                     hmAux_Trans["sys_alert_btn_cancel"],
                     hmAux_Trans["sys_alert_btn_ok"]
                 )
@@ -282,8 +464,8 @@ class Act092_Main : BaseActivityMvp
             false -> {
                 ToolBox.alertMSG(
                     context,
-                    hmAux_Trans[title],
-                    hmAux_Trans[message],
+                    title,
+                    message,
                     { dialog, _ ->
                         dialog.dismiss()
                     }, 0
@@ -315,28 +497,16 @@ class Act092_Main : BaseActivityMvp
     }
 
     private fun errorOrEmpty(
-        isError: Boolean
+        sizeList: Int
     ) {
         with(binding) {
-            if (!isError) {
-                emptyList.apply {
-                    visibility = View.VISIBLE
-                    text = /*hmAux_Trans["empty_list_lbl"]*/ "Nenhum serial encontrado."
-                }
+            emptyList.apply {
+                visibility = if (sizeList == 0) View.VISIBLE else View.GONE
+                text = hmAux_Trans[Act092Translate.EMPTY_LIST]
             }
-            recyclerSerialList.visibility = View.GONE
+            recyclerSerialList.visibility = if (sizeList >= 1) View.VISIBLE else View.GONE
             progressLoading.visibility = View.GONE
         }
-    }
-
-    override fun processError_1(mLink: String?, mRequired: String?) {
-        super.processError_1(mLink, mRequired)
-        progressDialog.dismiss()
-    }
-
-    override fun processCustom_error(mLink: String?, mRequired: String?) {
-        super.processCustom_error(mLink, mRequired)
-        progressDialog.dismiss()
     }
 
 }

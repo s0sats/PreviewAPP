@@ -66,10 +66,10 @@ import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_020;
-import com.namoadigital.prj001.sql.MdJustifyItemSqlSS;
 import com.namoadigital.prj001.sql.MDProductSerialSql017;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_Device_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
+import com.namoadigital.prj001.sql.MdJustifyItemSqlSS;
 import com.namoadigital.prj001.sql.Sql_Act070_001;
 import com.namoadigital.prj001.sql.Sql_Act070_002;
 import com.namoadigital.prj001.sql.Sql_Act070_003;
@@ -120,16 +120,19 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     private MD_Product_Serial_Tp_DeviceDao serialTpDeviceDao;
     private MdJustifyItemDao mdJustifyItemDao;
     private ArrayList<HMAux> workgroupOptionList;
+    private String actRequest;
 
-    public Act070_Main_Presenter(Context context, Act070_Main_Contract.I_View mView, HMAux hmAux_Trans) {
+
+    public Act070_Main_Presenter(Context context, Act070_Main_Contract.I_View mView, HMAux hmAux_Trans, String actRequest) {
         this.context = context;
         this.mView = mView;
         this.hmAux_Trans = hmAux_Trans;
+        this.actRequest = actRequest;
         //
         this.ticketDao = new TK_TicketDao(
-            context,
-            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-            Constant.DB_VERSION_CUSTOM
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
         );
         ticketStepDao = new TK_Ticket_StepDao(
             context,
@@ -3304,7 +3307,14 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             case ConstantBaseApp.ACT084:
                 mView.callAct084();
                 break;
+            case ConstantBaseApp.ACT006:
+                mView.callAct092();
+                break;
             case ConstantBaseApp.ACT083:
+                if (!actRequest.equals("-1"))
+                    mView.callAct092();
+                else mView.callAct083();
+                break;
             default:
                 mView.callAct083();
         }

@@ -23,13 +23,13 @@ import com.namoadigital.prj001.model.MyActionsFormButton
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
 
-class MyActionsAdapter(
-        private val myActions: List<MyActionsBase>,
-        private val hmAuxTrans: HMAux,
-        private val myActionClickListener: (myAction: MyActions) -> Unit,
-        private val myActionFormButtonClickListener: (myActionFormButton: MyActionsFormButton) -> Unit,
-        private val mySerialClickListener: (myAction: MyActions, position: Int) -> Unit,
-        private val notifyFilterApplied: (qtyItensFiltered: Int) -> Unit
+class MyActionsAdapter constructor(
+    private val myActions: List<MyActionsBase>,
+    private val hmAuxTrans: HMAux,
+    private val myActionClickListener: (myAction: MyActions) -> Unit,
+    private val myActionFormButtonClickListener: (myActionFormButton: MyActionsFormButton) -> Unit,
+    private val mySerialClickListener: (myAction: MyActions, Int) -> Unit,
+    private val notifyFilterApplied: (qtyItensFiltered: Int) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
     private val VIEW_TYPE_MY_ACTION = 0
     private val VIEW_TYPE_MY_ACTION_FORM_BUTTON = 1

@@ -6,10 +6,13 @@ import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Filter
+import android.widget.Filterable
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.namoa_digital.namoa_library.util.HMAux
+import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.Act020HeaderListBinding
 import com.namoadigital.prj001.databinding.MyActionsItemBinding
@@ -23,9 +26,15 @@ class Act092_Adapter constructor(
     private val source: List<MyActionsBase>,
     private val hmAux: HMAux,
     private val myActionClickListener: (myAction: MyActions) -> Unit,
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    private val notifyFilterApplied: (qtyItensFiltered: Int) -> Unit
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
+
 
     val defaultList = (source as List<MyActions>).separateListByHeader()
+    var filterList = defaultList.toMutableList()
+    val mFilter = ServiceFilter()
+
+    var userMainFilter = false
 
     private fun List<MyActions>.separateListByHeader(): MutableList<SerialViewItem> {
         val newList = mutableListOf<SerialViewItem>()
@@ -49,7 +58,7 @@ class Act092_Adapter constructor(
     }
 
     override fun getItemViewType(position: Int): Int {
-        if (defaultList[position] is SerialViewItem.SectionItem) {
+        if (filterList[position] is SerialViewItem.SectionItem) {
             return SerialViewItem.VIEW_TYPE_SECTION
         }
         return SerialViewItem.VIEW_TYPE_ITEM
@@ -77,7 +86,7 @@ class Act092_Adapter constructor(
 
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val item = defaultList[position]
+        val item = filterList[position]
         if (holder is DoneItemHolder && item is SerialViewItem.SectionItem) {
             holder.onBinding("Finalizados")
         }
@@ -86,7 +95,7 @@ class Act092_Adapter constructor(
         }
     }
 
-    override fun getItemCount() = defaultList.size
+    override fun getItemCount() = filterList.size
 
 
     inner class DoneItemHolder constructor(
@@ -150,6 +159,22 @@ class Act092_Adapter constructor(
                 } else {
                     myActionsItemIvIconMainUser.visibility = View.GONE
                 }
+
+
+                when {
+                    item.isMainUserTicket && ConstantBaseApp.SYS_STATUS_DONE != item.processStatus -> {
+                        myActionsItemIvIconMainUser.setImageResource(R.drawable.ic_person_black_24dp)
+                        myActionsItemIvIconMainUser.visibility = View.VISIBLE
+                    }
+
+                    !item.isMainUserTicket && ConstantBaseApp.SYS_STATUS_DONE != item.processStatus -> {
+                        myActionsItemIvIconMainUser.visibility = View.VISIBLE
+                        myActionsItemIvIconMainUser.setImageResource(R.drawable.ic_baseline_group_24)
+                    }
+
+
+                }
+
                 //
                 myActionsItemTvInternalComments.applyVisibilityIfTextExists(
                     getInfoBulletFormatted(
@@ -311,5 +336,62 @@ class Act092_Adapter constructor(
             }
             return null
         }
+    }
+
+    inner class ServiceFilter() : Filter() {
+        override fun performFiltering(constraint: CharSequence?): FilterResults {
+            var temp = mutableListOf<MyActionsBase>()
+            var charFilter = ToolBox.AccentMapper(constraint.toString().toLowerCase())
+            if (charFilter.isNullOrEmpty()) {
+                if (userMainFilter) {
+                    temp = source.filter {
+                        if (it is MyActions) {
+                            it.isMainUserTicket
+                        } else {
+                            true
+                        }
+                    } as MutableList<MyActionsBase>
+                } else {
+                    temp = source as MutableList<MyActionsBase>
+                }
+            } else {
+                temp.addAll(
+                    source.filter {
+                        when (it) {
+                            is MyActions -> {
+                                val allFields = ToolBox.AccentMapper(
+                                    it.getAllFieldForFilter().toLowerCase()
+                                )
+                                if (userMainFilter) {
+                                    allFields.contains(charFilter) && it.isMainUserTicket
+                                } else {
+                                    allFields.contains(charFilter)
+                                }
+                            }
+                            //se for o botão, sempre exibe
+                            else -> true
+                        }
+                    }
+                )
+            }
+            val filterResults = FilterResults()
+            filterResults.count = temp.size
+            filterResults.values = temp
+            return filterResults
+        }
+
+        override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+            results?.let {
+                filterList = (it.values as List<MyActions>).separateListByHeader()
+                notifyDataSetChanged()
+                notifyFilterApplied(filterList.size)
+            }
+        }
+
+
+    }
+
+    override fun getFilter(): Filter {
+        return mFilter
     }
 }

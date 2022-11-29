@@ -30,5 +30,7 @@ public interface Act009_Main_View {
 
     void callAct081(Context context);
 
+    void callAct092(Context context);
+
     boolean isHas_tk_ticket_is_form_off_hand();
 }
