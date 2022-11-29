@@ -1,9 +1,11 @@
 package com.namoadigital.prj001.ui.act092.ui
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -158,6 +160,9 @@ class Act092_Main : BaseActivityMvp
             WS_Serial_Search::class.java.name -> {
                 wsProcess.value = ""
                 progressDialog.dismiss()
+
+                Log.e("WS_Serial_Search>>", "CHEGOOOOOOOOOO AQUIIIIIIIIIIIIIIII")
+
                 TODO("mPresenter.extractSearchResult(mLink, mAdapter.getMyActionByPosition(serialActionSelected))")
             }
 
@@ -353,8 +358,42 @@ class Act092_Main : BaseActivityMvp
                 is Act092UiEvent.CheckIfFileExists -> {
                     disableMainAndOtherActions(state.exists)
                 }
+
+                is Act092UiEvent.UpdateFooterInfos -> {
+                    updateFooterInfos()
+                }
+
+                is Act092UiEvent.CallActForResult -> {
+
+                }
             }
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            CHANGE_ZONE_RESULT_CODE -> processChanceZoneResult(resultCode)
+            else -> {
+            }
+        }
+    }
+
+    private fun processChanceZoneResult(code: Int) {
+        if (code == RESULT_OK) {
+            updateFooterInfos()
+            presenter.getActionSelected()?.let {
+                presenter.checkScheduleFlow(it)
+            }
+        } else {
+            ToolBox_Con.setPreference_Site_Code(context, presenter.serialModel.value.siteCode)
+            ToolBox_Con.setPreference_Zone_Code(context, presenter.serialModel.value.zoneCodeBack)
+        }
+    }
+
+    private fun updateFooterInfos() {
+        mAdapter.notifyDataSetChanged()
+        iniUIFooter(Constant.ACT092, hmAux_Trans)
     }
 
     private fun disableMainAndOtherActions(isEmpty: Boolean) {

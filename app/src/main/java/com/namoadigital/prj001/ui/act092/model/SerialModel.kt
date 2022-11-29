@@ -8,6 +8,8 @@ data class SerialModel(
     val customerCode: Int? = null,
     var tagOperCode: Int? = null,
     var siteCode: String? = null,
+    var siteCodeBack: String? = null,
+    var zoneCodeBack: Int = 0,
     var productCode: Int? = null,
     var productId: String? = null,
     var productDesc: String? = null,

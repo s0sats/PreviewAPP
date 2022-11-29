@@ -15,6 +15,9 @@ import kotlinx.coroutines.flow.StateFlow
 interface Act092_Contract {
 
     interface View : BaseView<Act092UiEvent> {
+
+        val CHANGE_ZONE_RESULT_CODE: Int
+            get() = 10
         var wsProcess: MutableStateFlow<String>
         val focusState: StateFlow<FilterFocusUser>
         val filterText: MutableStateFlow<String>
@@ -22,6 +25,7 @@ interface Act092_Contract {
     }
 
     interface Presenter : BasePresenter<View> {
+        fun getActionSelected(): MyActions?
         val serialModel: StateFlow<SerialModel>
         fun getMyActionList(mainFocus: Boolean = false)
         fun onBackPressedClicked(bundle: Bundle)
@@ -34,5 +38,6 @@ interface Act092_Contract {
         fun verifyProductOutdateForForm(hmAux: HMAux, context: Context): Boolean
         fun getCacheTicketBundle(hmAuxTicketDownloaded: HMAux): Bundle
         fun processWsReturnSync(hmAuxTicketDownload: HMAux)
+        fun checkScheduleFlow(action: MyActions)
     }
 }

@@ -1060,16 +1060,23 @@ class Act083_Main_Presenter(private val context: Context,
             //TODO REVE COMO FAZER AGORA QUE CTRL É DO STEP
             tkTicket?.let {
                 it.step?.add(
-                        createStep(it)
+                    createStep(it)
                 )
-                if (updateScheduleStatus(it.schedule_prefix!!, it.schedule_code!!, it.schedule_exec!!, ConstantBaseApp.SYS_STATUS_PROCESS)) {
+                if (updateScheduleStatus(
+                        it.schedule_prefix!!,
+                        it.schedule_code!!, it.schedule_exec!!, ConstantBaseApp.SYS_STATUS_PROCESS
+                    )
+                ) {
                     val daoObjReturn = ticketDao.addUpdate(tkTicket)
                     //
                     if (!daoObjReturn.hasError()) {
                         //LUCHE - 18/01/2021 - Implementação de licença por site.
                         //Caso o customer user licença por site, mas o site logado não controla licença,
                         // o numero de execução deve ser controlado.
-                        if (ToolBox_Inf.isConcurrentBySiteLicense(context) && ToolBox_Inf.isSiteLicenseDisabled(context)) {
+                        if (ToolBox_Inf.isConcurrentBySiteLicense(context) && ToolBox_Inf.isSiteLicenseDisabled(
+                                context
+                            )
+                        ) {
                             incrementAppExecutionCount(md_site)
                         }
                         //
