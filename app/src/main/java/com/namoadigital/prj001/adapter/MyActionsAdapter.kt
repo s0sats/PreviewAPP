@@ -98,7 +98,17 @@ class MyActionsAdapter constructor(
             //
             configTvTag(myAction)
             binding.myActionsItemTvProdDesc.text = myAction.productDesc
-            binding.myActionsItemTvSerialId.text = myAction.serialId
+            if (myAction.serialId.isNullOrEmpty()){
+                binding.myActionsItemLlSerial.visibility = View.GONE
+                binding.myActionsItemTvSerialId.visibility = View.GONE
+                binding.act083SerialInfo.visibility = View.GONE
+            }else{
+                binding.act083SerialInfo.visibility = View.VISIBLE
+                binding.myActionsItemLlSerial.visibility = View.VISIBLE
+                binding.myActionsItemTvSerialId.visibility = View.VISIBLE
+                binding.myActionsItemTvSerialId.text = myAction.serialId
+            }
+
             if(ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_MANUAL != myAction.ticketOriginType){
                 configTvOriginView(myAction)
                 binding.myActionsItemTvOrigin.visibility = View.VISIBLE

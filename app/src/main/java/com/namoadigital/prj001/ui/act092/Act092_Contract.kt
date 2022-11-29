@@ -30,7 +30,7 @@ interface Act092_Contract {
         fun getMyActionList(mainFocus: Boolean = false)
         fun onBackPressedClicked(bundle: Bundle)
         fun syncFiles(context: Context)
-        fun getUnfocusHistoricalList()
+        fun getUnfocusHistoricalList(context: Context)
         fun syncFilesForm(productCode: Long = 1L)
         //actions type
         fun processActionClick(action: MyActions, context: Context)
@@ -39,5 +39,8 @@ interface Act092_Contract {
         fun getCacheTicketBundle(hmAuxTicketDownloaded: HMAux): Bundle
         fun processWsReturnSync(hmAuxTicketDownload: HMAux)
         fun checkScheduleFlow(action: MyActions)
+        fun callFormSave(context: Context)
+        fun callTicketSave(context: Context)
+        fun otherActionFlow(context: Context)
     }
 }
