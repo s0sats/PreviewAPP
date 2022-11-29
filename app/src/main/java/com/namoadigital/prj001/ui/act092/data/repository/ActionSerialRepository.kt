@@ -21,7 +21,7 @@ interface ActionSerialRepository {
     suspend fun setPreferences(model: SerialModel)
     suspend fun getPreferences(): SerialModel
     fun getScheduleFromMyAction(prefix: Int, code: Int, exec: Int): MD_Schedule_Exec?
-    suspend fun getSite(site_code: String): MD_Site?
+    fun getSite(site_code: String): MD_Site?
     suspend fun getCustomFormLocal(
         customer_code: String,
         form_type: String,
@@ -32,7 +32,7 @@ interface ActionSerialRepository {
     ): GE_Custom_Form_Local?
 
     fun scheduleFormLocalExists(scheduleExec: MD_Schedule_Exec): GE_Custom_Form_Local?
-    suspend fun getTicketBySchedule(
+    fun getTicketBySchedule(
         schedule_prefix: Int,
         schedule_code: Int,
         schedule_exec: Int
@@ -52,4 +52,14 @@ interface ActionSerialRepository {
     ): Boolean
 
     fun searchSerialWS(bundle: Bundle)
+    fun getNextScheduleTicketCode(): HMAux?
+    fun getOperationByCode(code: Long): MD_Operation?
+    fun updateScheduleStatus(
+        schedulePrefix: Int,
+        scheduleCode: Int,
+        scheduleExec: Int,
+        status: String,
+    ): Boolean
+
+    fun updateObjReturn(tkTicket: TK_Ticket, md_site: MD_Site): Boolean
 }

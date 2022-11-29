@@ -31,6 +31,7 @@ class IActionSerialRepository constructor(
     private val syncChecklistdao: Sync_ChecklistDao,
     private val siteDao: MD_SiteDao,
     private val ticketCtrlDao: TK_Ticket_CtrlDao,
+    private val operationDao: MD_OperationDao,
     private val filterParamPreferences: FilterParamPreferences
 ) : ActionSerialRepository {
 
@@ -166,7 +167,7 @@ class IActionSerialRepository constructor(
         return filterParamPreferences.read()
     }
 
-    override suspend fun getScheduleFromMyAction(
+    override fun getScheduleFromMyAction(
         prefix: Int,
         code: Int,
         exec: Int
@@ -181,7 +182,7 @@ class IActionSerialRepository constructor(
         )
     }
 
-    override suspend fun getSite(site_code: String): MD_Site? {
+    override fun getSite(site_code: String): MD_Site? {
         return siteDao.getByString(
             MD_Site_Sql_003(
                 ToolBox_Con.getPreference_Customer_Code(context),
@@ -224,7 +225,7 @@ class IActionSerialRepository constructor(
     }
 
 
-    override suspend fun getTicketBySchedule(
+    override fun getTicketBySchedule(
         schedule_prefix: Int,
         schedule_code: Int,
         schedule_exec: Int
@@ -312,6 +313,78 @@ class IActionSerialRepository constructor(
         }
     }
 
+
+    override fun getNextScheduleTicketCode(): HMAux? {
+        return ticketDao.getByStringHM(
+            TK_Ticket_Sql_010(
+                ToolBox_Con.getPreference_Customer_Code(context)
+            ).toSqlQuery()
+        )
+    }
+
+
+    override fun getOperationByCode(code: Long): MD_Operation? {
+        return operationDao.getByString(
+            MD_Operation_Sql_004(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                code
+            ).toSqlQuery()
+        )
+    }
+
+    override fun updateScheduleStatus(
+        schedulePrefix: Int,
+        scheduleCode: Int,
+        scheduleExec: Int,
+        status: String
+    ): Boolean {
+        scheduleDao.getByString(
+            MD_Schedule_Exec_Sql_001(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                schedulePrefix,
+                scheduleCode,
+                scheduleExec
+            ).toSqlQuery()
+        )?.let {
+            if (MD_Schedule_Exec.isValidScheduleExec(it)) {
+                it.status = status
+                val daoObjReturn: DaoObjReturn = scheduleDao.addUpdate(it)
+                return !daoObjReturn.hasError()
+            }
+            return false
+        } ?: return false
+    }
+
+    override fun updateObjReturn(tkTicket: TK_Ticket, md_site: MD_Site): Boolean {
+        ticketDao.addUpdate(tkTicket)?.let { update ->
+            if (!update.hasError()) {
+                if (ToolBox_Inf.isConcurrentBySiteLicense(context) && ToolBox_Inf.isSiteLicenseDisabled(
+                        context
+                    )
+                ) {
+                    incrementAppExecutionCount(md_site)
+                }
+
+                return true
+            } else {
+                updateScheduleStatus(
+                    tkTicket.schedule_prefix!!,
+                    tkTicket.schedule_code!!,
+                    tkTicket.schedule_exec!!,
+                    ConstantBaseApp.SYS_STATUS_SCHEDULE
+                )
+                return false
+            }
+
+        } ?: return false
+    }
+
+
+    private fun incrementAppExecutionCount(md_site: MD_Site) {
+        md_site.app_executions_count = md_site.app_executions_count + 1
+        siteDao.addUpdate(md_site)
+    }
+
     companion object {
 
         class ActionSerialRepositoryFactoryRepository(private val context: Context) :
@@ -369,9 +442,14 @@ class IActionSerialRepository constructor(
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
                     ),
+                    MD_OperationDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                    ),
                     FilterParamPreferences(
                         PreferenceManager.getDefaultSharedPreferences(context)
-                    ),
+                    )
                 )
         }
 

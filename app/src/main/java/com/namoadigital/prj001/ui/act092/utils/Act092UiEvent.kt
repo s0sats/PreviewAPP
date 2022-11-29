@@ -17,6 +17,8 @@ sealed class Act092UiEvent {
     object FilterMainUser : Act092UiEvent()
 
     data class CallAct(val classe: Class<*>, val bundle: Bundle? = null) : Act092UiEvent()
+    data class CallActForResult(val classe: Class<*>, val bundle: Bundle? = null, val code: Int) :
+        Act092UiEvent()
 
     data class OpenDialog(val dialogType: DialogType) : Act092UiEvent()
 
@@ -40,4 +42,6 @@ sealed class Act092UiEvent {
         }
 
     }
+
+    object UpdateFooterInfos : Act092UiEvent()
 }

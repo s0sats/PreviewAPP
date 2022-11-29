@@ -25,7 +25,8 @@ data class ActionUseCases(
     val scheduleFormLocalExists: ScheduleFormLocalExistsUseCase,
     val createFormLocalForSchedule: CreateFormLocalForScheduleUseCase,
     val serialSearch: SerialSearchUseCase,
-    val processLocalSearchForSerialAction: ProcessLocalSearchForSerialActionUseCase
+    val processLocalSearchForSerialAction: ProcessLocalSearchForSerialActionUseCase,
+    val checkTicketFlowAndCreate: CheckTicketFlowAndCreateUseCase
 ) {
 
     companion object {
@@ -42,7 +43,7 @@ data class ActionUseCases(
                 val processFormUseCase =
                     ProcessFormUseCase(context, repository, scheduleFormLocalExistsUseCase)
                 val processTicketUseCase = ProcessTicketUseCase(context, repository)
-
+                val getScheduleFromMyActionUseCase = GetScheduleFromMyActionUseCase(repository)
                 return ActionUseCases(
                     localTicket = ListMyActionUseCases(context, repository),
                     syncFiles = SyncFilesUseCase(context, syncRepository),
@@ -59,7 +60,8 @@ data class ActionUseCases(
                         context,
                         repository,
                         processFormUseCase,
-                        processTicketUseCase
+                        processTicketUseCase,
+                        getScheduleFromMyActionUseCase
                     ),
                     getScheduleFromMyAction = GetScheduleFromMyActionUseCase(repository),
                     ticketCtrl = GetScheduleCtrlIfExistsUseCase(repository),
@@ -70,6 +72,11 @@ data class ActionUseCases(
                     serialSearch = SerialSearchUseCase(repository),
                     processLocalSearchForSerialAction = ProcessLocalSearchForSerialActionUseCase(
                         repository
+                    ),
+                    checkTicketFlowAndCreate = CheckTicketFlowAndCreateUseCase(
+                        context,
+                        repository,
+                        getScheduleFromMyActionUseCase
                     )
                 )
             }
