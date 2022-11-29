@@ -14,8 +14,16 @@ class SqlAct092_001 (
     private val customerCode: Int,
     private var productCode: Int?,
     private var serialId: String?,
-    private val multStepsLbl: String?
+    private val multStepsLbl: String?,
+    private val mainUser: Int = 0
 ) : Specification {
+    var mainUserFilter = ""
+
+    init {
+        if(mainUser == 1) {
+            mainUserFilter = "and c.${TkTicketCacheDao.MAIN_USER} = $mainUser"
+        }
+    }
 
     override fun toSqlQuery(): String {
         val s = """ SELECT
@@ -63,6 +71,7 @@ class SqlAct092_001 (
                      ${TkTicketCacheDao.TABLE} c 
                     WHERE
                      c.${TkTicketCacheDao.CUSTOMER_CODE} = $customerCode
+                     $mainUserFilter
                      and c.${TkTicketCacheDao.TICKET_STATUS} in('${ConstantBaseApp.SYS_STATUS_PENDING}','${ConstantBaseApp.SYS_STATUS_PROCESS}', '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}')                      
                      and ($productCode is null or c.${TkTicketCacheDao.OPEN_PRODUCT_CODE} = $productCode )
                      and ('$serialId' is null or c.${TkTicketCacheDao.OPEN_SERIAL_ID} = '$serialId')                     

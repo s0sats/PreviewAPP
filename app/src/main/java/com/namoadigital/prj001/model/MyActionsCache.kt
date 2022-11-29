@@ -41,7 +41,7 @@ class MyActionsCache(
     @SerializedName("pdf_name") val pdfName: String
 ) {
     fun toMyActions(context: Context): MyActions {
-        val processLeftIcon = R.drawable.ic_baseline_cloud_done_24_blue
+        val processLeftIcon = getLeftIcon()
         val processRightIcon = getRightIcon()
         var  isMainUserTicket = false
         mainUser?.let {
@@ -80,6 +80,16 @@ class MyActionsCache(
             pdfUrl,
             pdfName,
         )
+    }
+
+    private fun getLeftIcon(): Int? {
+
+        return if(actionType == ConstantBaseApp.FCM_MODULE_SCHEDULE
+            && processStatus == ConstantBaseApp.SYS_STATUS_NOT_EXECUTED){
+            null
+        }else{
+            R.drawable.ic_baseline_cloud_download_24_gray
+        }
     }
 
     private fun getRightIcon(): Int? {

@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.model
 
 import androidx.annotation.DrawableRes
+import com.namoadigital.prj001.R
 
 data class MyActions(
     val actionType: String,
@@ -8,8 +9,8 @@ data class MyActions(
     val processId: String?,
     val processStatus: String,
     val processStatusTrans: String?,
-    @DrawableRes val processLeftIcon: Int?,
-    @DrawableRes val processRightIcon: Int?,
+    @DrawableRes var processLeftIcon: Int?,
+    @DrawableRes var processRightIcon: Int?,
     val plannedDate: String,
     val tagOperationDesc: String?,
     val productDesc: String,
@@ -80,5 +81,9 @@ data class MyActions(
                 "$serviceOrderCode"
                 .replace("null|","")
                 .replace("null","")
+    }
+
+    fun mergeUnfocusActions(unfocusActionsCache: MyActionsBase){
+        this.processLeftIcon = R.drawable.ic_baseline_cloud_done_24_blue
     }
 }

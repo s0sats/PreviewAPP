@@ -37,32 +37,32 @@ class ListMyActionUseCases constructor(
                 ).let { localTicket ->
 
                     emit(loading(true))
-
-                    actionBaseList.addAll(
+                    val focusList = mutableListOf<MyActionsBase>()
+                    focusList.addAll(
                         repository.getLocalTickets(localTicket).map {
                             TK_Ticket.toMyActionsObj(context, it, getLastSelectedPk())
                         }
                     )
 
-                    actionBaseList.addAll(
+                    focusList.addAll(
                         repository.getTicketCache(localTicket).map {
                             it.toMyActionsObj(context, getLastSelectedPk())
                         }
                     )
 
-                    actionBaseList.addAll(
+                    focusList.addAll(
                         repository.getSchedules(localTicket).map {
                             it.toMyActionsObj(context, getLastSelectedPk())
                         }
                     )
 
-                    actionBaseList.addAll(
+                    focusList.addAll(
                         repository.getFormAp(localTicket).map {
                             it.toMyActionsObj(context, getLastSelectedPk())
                         }
                     )
 
-                    actionBaseList.addAll(
+                    focusList.addAll(
                         repository.getLocalForms(localTicket).map {
                             GE_Custom_Form_Local.toMyActionsObj(
                                 context,
@@ -73,30 +73,49 @@ class ListMyActionUseCases constructor(
                         }
                     )
 
-                    actionBaseList.sortBy {
+                    focusList.sortBy {
                         when (it) {
                             is MyActions -> it.orderBy
                             is MyActionsFormButton -> it.orderBy
                             else -> "190001010000"
                         }
                     }
-
-                    actionBaseList.addAll(
+                    val unfocusList = mutableListOf<MyActionsBase>()
+                    unfocusList.addAll(
                         repository.getUnfocusAndHistorical(input.productCode?:-1, (input.serialCode?:-1).toLong())
                     )
+                    //
+                    val unfocusTemp = mutableListOf<MyActions>()
 
+                    val focusTemp = focusList.map {
+                        var action = it as MyActions
+                        for (unfocusAction in unfocusList) {
+                            if(action.processId == (unfocusAction as MyActions).processId){
+                                action.mergeUnfocusActions(unfocusAction)
+                                unfocusTemp.add(unfocusAction)
+                            }
+                        }
+                        it as MyActionsBase
+                    }
+                    //
+                    val filteredUnfocusList = unfocusList.filter {
+                        var insertItem = true
+                        for (unfocusTempAction in unfocusTemp) {
+                            if ((it as MyActions).processId == (unfocusTempAction as MyActions).processId) {
+                                insertItem = false
+                            }
+                        }
+                        //
+                        insertItem
+                    }
+                    //
+                    actionBaseList.addAll(focusTemp)
+                    actionBaseList.addAll(filteredUnfocusList)
                     val actions = actionBaseList.map { m -> m as MyActions }
                         .filter { f -> f.isMainUserTicket }
 
-                    actionBaseList.addAll(
-                        repository.getUnfocusAndHistorical(input.productCode?:-1, (input.serialCode?:-1).toLong())
-                    )
-
                     val listOfficial = if (input.userFocus == 1) actions else actionBaseList
 
-                    listOfficial?.let {
-
-                    }
                     emit(loading(false))
                     emit(success(listOfficial.toMutableList()))
 

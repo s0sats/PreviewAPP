@@ -90,7 +90,6 @@
                     android:src="@drawable/ic_baseline_cloud_done_24"
                     app:layout_constraintEnd_toStartOf="@+id/my_actions_item_iv_icon_mid"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@color/m3_namoa_inversePrimary"
                     android:contentDescription="null" />
 
 
