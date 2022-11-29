@@ -30,4 +30,32 @@ object Act092Translate {
     const val ALERT_NOT_FORM_OPERATION_MSG = "alert_no_form_for_operation_msg"
     const val ALERT_NO_FORM_FOR_SITE_MSG = "alert_no_form_for_site_msg"
     const val ALERT_SITE_RESTRICTION_VIOLATION_MSG = "alert_site_restriction_violation_msg"
+
+
+    const val ALERT_FORM_SITE_RESTRICTION_TTL = "alert_form_site_restriction_ttl"
+    const val ALERT_FORM_SITE_RESTRICTION_CONFIRM = "alert_form_site_restriction_confirm"
+    const val ALERT_FORM_SITE_RESTRICTION_NO_ACCESS_MSG =
+        "alert_form_site_restriction_no_access_msg"
+    const val ALERT_TTL_EXISTS_IN_PROCESSING = "alert_ttl_exists_in_processing"
+    const val ALERT_MSG_EXISTS_IN_PROCESSING = "alert_msg_exists_in_processing"
+    const val ALERT_TTL_START_NEW_PROCESSING = "alert_ttl_start_new_processing"
+    const val ALERT_MSG_START_NEW_PROCESSING = "alert_msg_start_new_processing"
+    const val ALERT_ERROR_ON_CREATE_FORM_TTL = "alert_error_on_create_form_ttl"
+    const val ALERT_ERROR_ON_CREATE_FORM_MSG = "alert_error_on_create_form_msg"
+    const val ALERT_NO_SERIAL_FOUND_TTL = "alert_no_serial_found_ttl"
+    const val ALERT_NO_SERIAL_FOUND_MSG = "alert_no_serial_found_msg"
+    const val ALERT_PRODUCT_NO_ALLOW_NEW_SERIAL_MSG = "alert_product_no_allow_new_serial_msg"
+    const val ALERT_TICKET_ACTION_START_TTL = "alert_ticket_action_start_ttl"
+    const val ALERT_TICKET_ACTION_START_CONFIRM = "alert_ticket_action_start_confirm"
+    const val ALERT_ERROR_ON_CREATE_TICKET_ACTION_TTL = "alert_error_on_create_ticket_action_ttl"
+    const val ALERT_ERROR_ON_CREATE_TICKET_ACTION_MSG = "alert_error_on_create_ticket_action_msg"
+    const val ALERT_SCHEDULE_STATUS_PREVENTS_TO_OPEN_TTL =
+        "alert_schedule_status_prevents_to_open_ttl"
+    const val ALERT_SCHEDULE_STATUS_PREVENTS_TO_OPEN_MSG =
+        "alert_schedule_status_prevents_to_open_msg"
+    const val ALERT_MENU_APP_PROFILE_NOT_FOUND_TTL = "alert_menu_app_profile_not_found_ttl"
+    const val ALERT_FORM_AP_MENU_PROFILE_NOT_FOUND_MSG = "alert_form_ap_menu_profile_not_found_msg"
+    const val ALERT_TICKET_MENU_PROFILE_NOT_FOUND_MSG = "alert_ticket_menu_profile_not_found_msg"
+
+
 }

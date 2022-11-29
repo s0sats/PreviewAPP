@@ -62,8 +62,8 @@ import com.namoadigital.prj001.ui.act013.Act013_Main;
 import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.ui.act071.Act071_Main;
 import com.namoadigital.prj001.ui.act081.Act081_Main;
+import com.namoadigital.prj001.ui.act083.Act083_Main;
 import com.namoadigital.prj001.ui.act087.Act087Main;
-import com.namoadigital.prj001.ui.act092.ui.Act092_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -1079,8 +1079,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
 
     @Override
-    public void callAct092(Context context) {
-        Intent mIntent = new Intent(context, Act092_Main.class);
+    public void callAct083(Context context) {
+        Intent mIntent = new Intent(context, Act083_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         MyActionFilterParam myActionFilterParam = null;
         Integer productCode = mPresenter.checkOriginFlow(originFlow) ? (int) mdProductSerial.getProduct_code() : null;
@@ -1090,7 +1090,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         Long serialCode = null;
         if (mPresenter.checkOriginFlow(originFlow)) {
             serialCode = mdProductSerial.getSerial_code();
-        }else{
+        } else {
             serialCode = mdProductSerial.getSerial_tmp();
         }
         //

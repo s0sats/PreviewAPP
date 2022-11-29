@@ -1,8 +1,8 @@
 package com.namoadigital.prj001.ui.act092
 
 import android.content.Context
-import android.content.DialogInterface
 import android.os.Bundle
+import com.google.gson.GsonBuilder
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.core.IResult.Companion.isFailed
@@ -13,6 +13,7 @@ import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.model.MD_Schedule_Exec
 import com.namoadigital.prj001.model.MyActionFilterParam
 import com.namoadigital.prj001.model.MyActions
+import com.namoadigital.prj001.model.TSerial_Search_Rec
 import com.namoadigital.prj001.model.action_serial.ActionsCache
 import com.namoadigital.prj001.service.WS_Serial_Search
 import com.namoadigital.prj001.service.WS_Sync
@@ -37,11 +38,16 @@ import com.namoadigital.prj001.ui.act083.Act083_Main.Companion.PROFILE_PRJ001_AP
 import com.namoadigital.prj001.ui.act083.Act083_Main.Companion.SERIAL_CREATION_DENIED
 import com.namoadigital.prj001.ui.act091.mvp.model.TranslateResource
 import com.namoadigital.prj001.ui.act092.model.SerialModel
-import com.namoadigital.prj001.ui.act092.usecases.*
+import com.namoadigital.prj001.ui.act092.usecases.ActionUseCases
+import com.namoadigital.prj001.ui.act092.usecases.GetScheduleCtrlIfExistsUseCase
+import com.namoadigital.prj001.ui.act092.usecases.ProcessFormUseCase
 import com.namoadigital.prj001.ui.act092.usecases.ProcessFormUseCase.Companion.FREE_EXECUTION_BLOCKED
 import com.namoadigital.prj001.ui.act092.usecases.ProcessFormUseCase.Companion.MODULE_CHECKLIST_FORM_IN_PROCESSING
 import com.namoadigital.prj001.ui.act092.usecases.ProcessFormUseCase.Companion.MODULE_CHECKLIST_START_FORM
 import com.namoadigital.prj001.ui.act092.usecases.ProcessFormUseCase.Companion.MODULE_SCHEDULE_STATUS_PREVENTS_TO_OPEN
+import com.namoadigital.prj001.ui.act092.usecases.ProcessFormUseCase.Companion.SITE_RESTRICTION_NO_ACCESS
+import com.namoadigital.prj001.ui.act092.usecases.ProcessLocalSearchForSerialActionUseCase.ProcessLocalSearchForSerialParam
+import com.namoadigital.prj001.ui.act092.usecases.ScheduleFormException
 import com.namoadigital.prj001.ui.act092.usecases.ValidateNewFormUseCase.ValidateNewFormParam
 import com.namoadigital.prj001.ui.act092.utils.Act092Translate
 import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent
@@ -288,9 +294,40 @@ class Act092Presenter constructor(
             MyActions.MY_ACTION_TYPE_SCHEDULE -> {
                 checkScheduleFlow(action)
             }
+
+            MyActions.MY_ACTION_TYPE_FORM -> {
+                view.onState(
+                    Act092UiEvent.CallAct(
+                        Act011_Main::class.java,
+                        getFormBundle(action)
+                    )
+                )
+            }
         }
     }
 
+    private fun getFormBundle(myAction: MyActions): Bundle {
+        val splippedPk = myAction.getSplippedPk()
+        val bundle = Bundle()
+        //Seta dados da action selecionado no filterParam
+        setSeletedActionInfosIntoFilterParam(myAction.actionType, myAction.processPk)
+        //
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT083)
+        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
+        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, originFlow)
+        //
+        bundle.putString(MD_ProductDao.PRODUCT_CODE, myAction.productCode.toString())
+        bundle.putString(MD_ProductDao.PRODUCT_DESC, myAction.productDesc)
+        //bundle.putString(MD_ProductDao.PRODUCT_ID, myAction.productDesc)
+        bundle.putString(MD_Product_SerialDao.SERIAL_ID, myAction.serialId)
+        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, splippedPk[0])
+        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, splippedPk[1])
+        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, splippedPk[2])
+        bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, myAction.customFormDesc)
+        bundle.putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, splippedPk[3])
+        bundle.putString(Constant.ACT017_SCHEDULED_SITE, myAction.siteCode.toString())
+        return bundle
+    }
 
     override fun checkScheduleFlow(action: MyActions) {
         CoroutineScope(Dispatchers.IO).launch {
@@ -326,148 +363,201 @@ class Act092Presenter constructor(
     }
 
     private fun showMsg(type: String, item: MyActions) {
-        var title: String? = ""
-        var msg: String? = ""
-        var listener: DialogInterface.OnClickListener? = null
-        var btnNegative: Int = 0
         CoroutineScope(Dispatchers.Main).launch {
             when (type) {
+
+                SITE_RESTRICTION_NO_ACCESS -> {
+                    view.onState(
+                        Act092UiEvent.OpenDialog(
+                            DialogType.DEFAULT_OK(
+                                title = hmAux[Act092Translate.ALERT_FORM_SITE_RESTRICTION_TTL],
+                                message = hmAux[Act092Translate.ALERT_FORM_SITE_RESTRICTION_NO_ACCESS_MSG]
+                            )
+                        )
+                    )
+                }
+
                 ProcessFormUseCase.SITE_RESTRICTION_CONFIRM -> {
-                    title = hmAux["alert_form_site_restriction_ttl"]
-                    msg = hmAux["alert_form_site_restriction_confirm"]
-                    listener = DialogInterface.OnClickListener { dialogInterface, i ->
-                        if (!ToolBox_Inf.profileExists(
-                                translateResource.context,
-                                Constant.PROFILE_PRJ001_SO,
-                                null
-                            )
-                            && !ToolBox_Inf.profileExists(
-                                translateResource.context,
-                                Constant.PROFILE_PRJ001_OI,
-                                null
-                            )
-                        ) {
-                            ToolBox_Con.setPreference_Site_Code(
-                                translateResource.context,
-                                item.siteCode.toString()
-                            )
-                            ToolBox_Con.setPreference_Zone_Code(translateResource.context, -1)
-                            //
-                            view.onState(Act092UiEvent.UpdateFooterInfos)
-                            //
-                            checkScheduleFlow(item)
-                        } else {
-                            ToolBox_Con.setPreference_Site_Code(
-                                translateResource.context,
-                                item.siteCode.toString()
-                            )
-                            ToolBox_Con.setPreference_Zone_Code(translateResource.context, -1)
-                            view.onState(
-                                Act092UiEvent.CallActForResult(
-                                    Act033_Main::class.java,
-                                    Bundle().apply {
-                                        putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT017)
-                                    },
-                                    view.CHANGE_ZONE_RESULT_CODE
-                                )
-                            )
-                        }
-                    }
+                    view.onState(Act092UiEvent.OpenDialog(
+                        DialogType.ACTION(
+                            title = hmAux[Act092Translate.ALERT_FORM_SITE_RESTRICTION_TTL],
+                            message = hmAux[Act092Translate.ALERT_FORM_SITE_RESTRICTION_NO_ACCESS_MSG],
+                            { dialog, i ->
+                                noRestriction(item)
+                            }
+                        )
+                    ))
                 }
                 MODULE_CHECKLIST_FORM_IN_PROCESSING -> {
                     view.onState(
                         Act092UiEvent.OpenDialog(
                             DialogType.DEFAULT_OK(
-                                hmAux["alert_ttl_exists_in_processing"],
-                                hmAux["alert_msg_exists_in_processing"]
+                                hmAux[Act092Translate.ALERT_TTL_EXISTS_IN_PROCESSING],
+                                hmAux[Act092Translate.ALERT_MSG_EXISTS_IN_PROCESSING]
                             )
                         )
                     )
                 }
                 MODULE_CHECKLIST_START_FORM -> {
-                    title = hmAux["alert_ttl_start_new_processing"]
-                    msg = hmAux["alert_msg_start_new_processing"]
-                    btnNegative = 1
-                    listener = DialogInterface.OnClickListener { dialogInterface, i ->
-                        checkFormFlow(
-                            item,
-                            actionUseCases.getScheduleFromMyAction(item)
+                    view.onState(Act092UiEvent.OpenDialog(
+                        DialogType.ACTION(
+                            title = hmAux[Act092Translate.ALERT_TTL_START_NEW_PROCESSING],
+                            message = hmAux[Act092Translate.ALERT_MSG_START_NEW_PROCESSING],
+                            { dialog, i ->
+                                checkFormFlow(
+                                    item,
+                                    actionUseCases.getScheduleFromMyAction(item)
+                                )
+                            }
                         )
-                    }
+                    ))
                 }
                 MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR -> {
-                    title = hmAux["alert_error_on_create_form_ttl"]
-                    msg = hmAux["alert_error_on_create_form_msg"]
-                    btnNegative = 0
-                }
-                EMPTY_SERIAL_SEARCH -> {
-                    title = hmAux["alert_no_serial_found_ttl"]
-                    msg = hmAux["alert_no_serial_found_msg"]
-                    btnNegative = 0
-                }
-                SERIAL_CREATION_DENIED -> {
-                    title = hmAux["alert_no_serial_found_ttl"]
-                    msg = hmAux["alert_product_no_allow_new_serial_msg"]
-                    btnNegative = 0
-                }
-                MODULE_TICKET_EXEC_CONFIRM -> {
-                    title = hmAux["alert_ticket_action_start_ttl"]
-                    msg = hmAux["alert_ticket_action_start_confirm"]
-                    btnNegative = 1
-                    listener = DialogInterface.OnClickListener { dialog, which ->
-                        checkTicketFlow(item)
-                    }
-                }
-                MODULE_SCHEDULE_TICKET_CREATION_ERROR -> {
-                    title = hmAux["alert_error_on_create_ticket_action_ttl"]
-                    msg = hmAux["alert_error_on_create_ticket_action_msg"]
-                    btnNegative = 0
-                }
-                MODULE_SCHEDULE_STATUS_PREVENTS_TO_OPEN -> {
-                    title = hmAux["alert_schedule_status_prevents_to_open_ttl"]
-                    msg = hmAux["alert_schedule_status_prevents_to_open_msg"]
-                    btnNegative = 0
-                }
-                PROFILE_PRJ001_AP_NOT_FOUND -> {
-                    title = hmAux["alert_menu_app_profile_not_found_ttl"]
-                    msg = hmAux["alert_form_ap_menu_profile_not_found_msg"]
-                    btnNegative = 0
-                }
-                PROFILE_MENU_TICKET_NOT_FOUND -> {
-                    title = hmAux["alert_menu_app_profile_not_found_ttl"]
-                    msg = hmAux["alert_ticket_menu_profile_not_found_msg"]
-                    btnNegative = 0
-                }
-                FREE_EXECUTION_BLOCKED -> {
-                    title = hmAux["alert_free_execution_blocked_ttl"]
-                    msg = hmAux["alert_free_execution_blocked_msg"]
-                    btnNegative = 0
-                }
-            }
-
-            listener?.let { action ->
-                view.onState(
-                    Act092UiEvent.OpenDialog(
-                        DialogType.ACTION(
-                            title,
-                            msg,
-                            action = action,
-                            negativeBtn = btnNegative ?: 0
+                    view.onState(
+                        Act092UiEvent.OpenDialog(
+                            DialogType.DEFAULT_OK(
+                                hmAux[Act092Translate.ALERT_ERROR_ON_CREATE_FORM_TTL],
+                                hmAux[Act092Translate.ALERT_ERROR_ON_CREATE_FORM_MSG]
+                            )
                         )
                     )
-                )
-            }
-            view.onState(
-                Act092UiEvent.OpenDialog(
-                    DialogType.DEFAULT_OK(
-                        title,
-                        msg,
+                }
+                EMPTY_SERIAL_SEARCH -> {
+                    view.onState(
+                        Act092UiEvent.OpenDialog(
+                            DialogType.DEFAULT_OK(
+                                hmAux[Act092Translate.ALERT_NO_SERIAL_FOUND_TTL],
+                                hmAux[Act092Translate.ALERT_NO_SERIAL_FOUND_MSG]
+                            )
+                        )
                     )
+                }
+                SERIAL_CREATION_DENIED -> {
+                    view.onState(
+                        Act092UiEvent.OpenDialog(
+                            DialogType.DEFAULT_OK(
+                                hmAux[Act092Translate.ALERT_PRODUCT_OR_SERIAL_NOT_FOUND_TTL],
+                                hmAux[Act092Translate.ALERT_PRODUCT_NO_ALLOW_NEW_SERIAL_MSG]
+                            )
+                        )
+                    )
+                }
+                MODULE_TICKET_EXEC_CONFIRM -> {
+                    view.onState(Act092UiEvent.OpenDialog(
+                        DialogType.ACTION(
+                            title = hmAux[Act092Translate.ALERT_TICKET_ACTION_START_TTL],
+                            message = hmAux[Act092Translate.ALERT_TICKET_ACTION_START_CONFIRM],
+                            { dialog, i ->
+                                checkTicketFlow(item)
+
+                            }
+                        )
+                    ))
+                }
+                MODULE_SCHEDULE_TICKET_CREATION_ERROR -> {
+                    view.onState(
+                        Act092UiEvent.OpenDialog(
+                            DialogType.DEFAULT_OK(
+                                hmAux[Act092Translate.ALERT_ERROR_ON_CREATE_TICKET_ACTION_TTL],
+                                hmAux[Act092Translate.ALERT_ERROR_ON_CREATE_TICKET_ACTION_MSG]
+                            )
+                        )
+                    )
+                }
+                MODULE_SCHEDULE_STATUS_PREVENTS_TO_OPEN -> {
+                    view.onState(
+                        Act092UiEvent.OpenDialog(
+                            DialogType.DEFAULT_OK(
+                                hmAux[Act092Translate.ALERT_SCHEDULE_STATUS_PREVENTS_TO_OPEN_TTL],
+                                hmAux[Act092Translate.ALERT_SCHEDULE_STATUS_PREVENTS_TO_OPEN_MSG]
+                            )
+                        )
+                    )
+                }
+                PROFILE_PRJ001_AP_NOT_FOUND -> {
+                    view.onState(
+                        Act092UiEvent.OpenDialog(
+                            DialogType.DEFAULT_OK(
+                                hmAux[Act092Translate.ALERT_MENU_APP_PROFILE_NOT_FOUND_TTL],
+                                hmAux[Act092Translate.ALERT_FORM_AP_MENU_PROFILE_NOT_FOUND_MSG]
+                            )
+                        )
+                    )
+                }
+                PROFILE_MENU_TICKET_NOT_FOUND -> {
+                    view.onState(
+                        Act092UiEvent.OpenDialog(
+                            DialogType.DEFAULT_OK(
+                                hmAux[Act092Translate.ALERT_MENU_APP_PROFILE_NOT_FOUND_TTL],
+                                hmAux[Act092Translate.ALERT_TICKET_MENU_PROFILE_NOT_FOUND_MSG]
+                            )
+                        )
+                    )
+                }
+                FREE_EXECUTION_BLOCKED -> {
+                    view.onState(
+                        Act092UiEvent.OpenDialog(
+                            DialogType.DEFAULT_OK(
+                                hmAux[Act092Translate.ALERT_FREE_EXECUTION_BLOCKED_TTL],
+                                hmAux[Act092Translate.ALERT_FREE_EXECUTION_BLOCKED_MSG]
+                            )
+                        )
+                    )
+                }
+
+                else -> {
+                    view.onState(
+                        Act092UiEvent.OpenDialog(
+                            DialogType.DEFAULT_OK(
+                                type,
+                                "Sem dialog de variavel"
+                            )
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+
+    private fun noRestriction(item: MyActions) {
+        if (!ToolBox_Inf.profileExists(
+                translateResource.context,
+                Constant.PROFILE_PRJ001_SO,
+                null
+            )
+            && !ToolBox_Inf.profileExists(
+                translateResource.context,
+                Constant.PROFILE_PRJ001_OI,
+                null
+            )
+        ) {
+            ToolBox_Con.setPreference_Site_Code(
+                translateResource.context,
+                item.siteCode.toString()
+            )
+            ToolBox_Con.setPreference_Zone_Code(translateResource.context, -1)
+            //
+            view.onState(Act092UiEvent.UpdateFooterInfos)
+            //
+            checkScheduleFlow(item)
+        } else {
+            ToolBox_Con.setPreference_Site_Code(
+                translateResource.context,
+                item.siteCode.toString()
+            )
+            ToolBox_Con.setPreference_Zone_Code(translateResource.context, -1)
+            view.onState(
+                Act092UiEvent.CallActForResult(
+                    Act033_Main::class.java,
+                    Bundle().apply {
+                        putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT017)
+                    },
+                    view.CHANGE_ZONE_RESULT_CODE
                 )
             )
         }
     }
-
 
     private fun checkTicketFlow(
         action: MyActions
@@ -562,7 +652,7 @@ class Act092Presenter constructor(
             CoroutineScope(Dispatchers.IO).launch {
                 myAction?.let {
                     actionUseCases.processLocalSearchForSerialAction(
-                        ProcessLocalSearchForSerialActionUseCase.ProcessLocalSearchForSerialParam(
+                        ProcessLocalSearchForSerialParam(
                             it,
                             view.bundle
                         )
@@ -1006,6 +1096,43 @@ class Act092Presenter constructor(
         return actionSelected
     }
 
+
+    override fun extractSearchResult(result: String?, myActionSelected: MyActions?) {
+        CoroutineScope(Dispatchers.IO).launch {
+            GsonBuilder().serializeNulls().create()?.fromJson<TSerial_Search_Rec>(
+                result,
+                TSerial_Search_Rec::class.java
+            )?.let { rec ->
+                actionSelected?.let {
+                    actionUseCases.processLocalSearchForSerialAction(
+                        ProcessLocalSearchForSerialParam(it, view.bundle, rec.record[0])
+                    ).collect { result ->
+                        result.isSuccess { bund ->
+                            view.onState(
+                                Act092UiEvent.CallAct(
+                                    Act020_Main::class.java,
+                                    bund
+                                )
+                            )
+                        }
+
+                        result.isFailed { exception ->
+                            view.onState(
+                                Act092UiEvent.OpenDialog(
+                                    DialogType.DEFAULT_OK(
+                                        hmAux["alert_no_serial_found_ttl"],
+                                        hmAux["alert_no_serial_found_msg"]
+                                    )
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+
     override fun setView(view: Act092_Contract.View) {
         this.view = view
     }
@@ -1030,6 +1157,27 @@ class Act092Presenter constructor(
             Act092Translate.ALERT_NOT_FORM_OPERATION_MSG,
             Act092Translate.ALERT_NO_FORM_FOR_SITE_MSG,
             Act092Translate.ALERT_SITE_RESTRICTION_VIOLATION_MSG,
+            Act092Translate.ALERT_FORM_SITE_RESTRICTION_TTL,
+            Act092Translate.ALERT_FORM_SITE_RESTRICTION_CONFIRM,
+            Act092Translate.ALERT_FORM_SITE_RESTRICTION_NO_ACCESS_MSG,
+            Act092Translate.ALERT_TTL_EXISTS_IN_PROCESSING,
+            Act092Translate.ALERT_MSG_EXISTS_IN_PROCESSING,
+            Act092Translate.ALERT_TTL_START_NEW_PROCESSING,
+            Act092Translate.ALERT_MSG_START_NEW_PROCESSING,
+            Act092Translate.ALERT_ERROR_ON_CREATE_FORM_TTL,
+            Act092Translate.ALERT_ERROR_ON_CREATE_FORM_MSG,
+            Act092Translate.ALERT_NO_SERIAL_FOUND_TTL,
+            Act092Translate.ALERT_NO_SERIAL_FOUND_MSG,
+            Act092Translate.ALERT_PRODUCT_NO_ALLOW_NEW_SERIAL_MSG,
+            Act092Translate.ALERT_TICKET_ACTION_START_TTL,
+            Act092Translate.ALERT_TICKET_ACTION_START_CONFIRM,
+            Act092Translate.ALERT_ERROR_ON_CREATE_TICKET_ACTION_TTL,
+            Act092Translate.ALERT_ERROR_ON_CREATE_TICKET_ACTION_MSG,
+            Act092Translate.ALERT_SCHEDULE_STATUS_PREVENTS_TO_OPEN_TTL,
+            Act092Translate.ALERT_SCHEDULE_STATUS_PREVENTS_TO_OPEN_MSG,
+            Act092Translate.ALERT_MENU_APP_PROFILE_NOT_FOUND_TTL,
+            Act092Translate.ALERT_FORM_AP_MENU_PROFILE_NOT_FOUND_MSG,
+            Act092Translate.ALERT_TICKET_MENU_PROFILE_NOT_FOUND_MSG,
         ).let {
             return ToolBox_Inf.setLanguage(
                 translateResource.context,

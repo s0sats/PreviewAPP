@@ -39,5 +39,6 @@ interface Act092_Contract {
         fun getCacheTicketBundle(hmAuxTicketDownloaded: HMAux): Bundle
         fun processWsReturnSync(hmAuxTicketDownload: HMAux)
         fun checkScheduleFlow(action: MyActions)
+        fun extractSearchResult(result: String?, myActionSelected: MyActions?)
     }
 }

@@ -163,7 +163,8 @@ class Act092_Main : BaseActivityMvp
 
                 Log.e("WS_Serial_Search>>", "CHEGOOOOOOOOOO AQUIIIIIIIIIIIIIIII")
 
-                TODO("mPresenter.extractSearchResult(mLink, mAdapter.getMyActionByPosition(serialActionSelected))")
+
+                presenter.extractSearchResult(mLink, presenter.getActionSelected())
             }
 
             else -> {
@@ -236,8 +237,10 @@ class Act092_Main : BaseActivityMvp
                 }
 
                 override fun reportTextChange(text: String?, p1: Boolean) {
-                    mAdapter.filter.filter(text)
-                    filterText.value = text ?: ""
+                    if (editSerialFilter.isEnabled) {
+                        mAdapter.filter.filter(text)
+                        filterText.value = text ?: ""
+                    }
                 }
             })
         }
@@ -319,37 +322,7 @@ class Act092_Main : BaseActivityMvp
                     toggleMainUserFilter()
                 }
                 is Act092UiEvent.OpenDialog -> {
-                    when (state.dialogType) {
-                        is DialogType.PROCESS -> {
-                            enableProgressDialog(
-                                state.dialogType.title,
-                                state.dialogType.message,
-                                hmAux_Trans["sys_alert_btn_cancel"],
-                                hmAux_Trans["sys_alert_btn_ok"]
-                            )
-                        }
-
-                        is DialogType.ACTION -> {
-                            ToolBox.alertMSG(
-                                context,
-                                state.dialogType.title,
-                                state.dialogType.message,
-                                state.dialogType.action,
-                                state.dialogType.negativeBtn
-                            )
-                        }
-
-                        is DialogType.DEFAULT_OK -> {
-                            ToolBox.alertMSG(
-                                context,
-                                state.dialogType.title,
-                                state.dialogType.message,
-                                { dialog, _ ->
-                                    dialog.dismiss()
-                                }, 0
-                            )
-                        }
-                    }
+                    openDialog(state.dialogType)
                 }
                 is Act092UiEvent.CallAct -> {
                     callAct(state.classe, state.bundle)
@@ -487,24 +460,33 @@ class Act092_Main : BaseActivityMvp
     }
 
     private fun openDialog(
-        isProcess: Boolean,
-        title: String?,
-        message: String?
+        dialogType: DialogType,
     ) {
-        when (isProcess) {
-            true -> {
+        when (dialogType) {
+            is DialogType.PROCESS -> {
                 enableProgressDialog(
-                    title,
-                    message,
+                    dialogType.title,
+                    dialogType.message,
                     hmAux_Trans["sys_alert_btn_cancel"],
                     hmAux_Trans["sys_alert_btn_ok"]
                 )
             }
-            false -> {
+
+            is DialogType.ACTION -> {
                 ToolBox.alertMSG(
                     context,
-                    title,
-                    message,
+                    dialogType.title,
+                    dialogType.message,
+                    dialogType.action,
+                    dialogType.negativeBtn
+                )
+            }
+
+            is DialogType.DEFAULT_OK -> {
+                ToolBox.alertMSG(
+                    context,
+                    dialogType.title,
+                    dialogType.message,
                     { dialog, _ ->
                         dialog.dismiss()
                     }, 0
@@ -526,7 +508,7 @@ class Act092_Main : BaseActivityMvp
         with(binding) {
             mainUserSelection.isEnabled = !isLoading
             btnOtherSerial.isEnabled = !isLoading
-
+            editSerialFilter.isEnabled = !isLoading
             //progress
             progressLoading.visibility = progressVisible
             //
