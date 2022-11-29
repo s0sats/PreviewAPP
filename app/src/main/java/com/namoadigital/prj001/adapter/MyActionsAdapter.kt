@@ -82,6 +82,14 @@ class MyActionsAdapter constructor(
             binding.myActionSelectSerial.text = /*hmAuxTrans["btn_select_action_lbl"]*/ "Abrir"
             binding.act083SerialInfo.text = /*hmAuxTrans["btn_select_serial_info_lbl"]*/
                 "Mais Ações deste Serial"
+
+            val serialVisible =
+                if (myAction.serialId?.isEmpty() == true) View.GONE else View.VISIBLE
+
+            binding.myActionsItemIvSerialClass.visibility = serialVisible
+            binding.myActionsItemTvSerialId.visibility = serialVisible
+            binding.act083SerialInfo.visibility = serialVisible
+
             binding.myActionSelectSerial.setOnClickListener {
                 myActionClickListener(myAction)
             }
