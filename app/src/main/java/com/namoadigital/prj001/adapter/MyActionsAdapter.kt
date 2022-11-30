@@ -80,7 +80,16 @@ class MyActionsAdapter(
 
     inner class MyActionVh(private val binding: MyActionsItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun onBinding(myAction: MyActions, position: Int) {
+//            binding.myActionSelectSerial.text = /*hmAuxTrans["btn_select_action_lbl"]*/ "Abrir"
             binding.act083SerialInfo.text = hmAuxTrans["btn_select_serial_info_lbl"]
+
+            val serialVisible =
+                if (myAction.serialId?.isEmpty() == true) View.GONE else View.VISIBLE
+
+            binding.myActionsItemIvSerialClass.visibility = serialVisible
+            binding.myActionsItemTvSerialId.visibility = serialVisible
+            binding.act083SerialInfo.visibility = serialVisible
+
             binding.myActionSelectSerial.setOnClickListener {
                 myActionClickListener(myAction)
             }
@@ -98,17 +107,7 @@ class MyActionsAdapter(
             //
             configTvTag(myAction)
             binding.myActionsItemTvProdDesc.text = myAction.productDesc
-            if (myAction.serialId.isNullOrEmpty()){
-                binding.myActionsItemLlSerial.visibility = View.GONE
-                binding.myActionsItemTvSerialId.visibility = View.GONE
-                binding.act083SerialInfo.visibility = View.GONE
-            }else{
-                binding.act083SerialInfo.visibility = View.VISIBLE
-                binding.myActionsItemLlSerial.visibility = View.VISIBLE
-                binding.myActionsItemTvSerialId.visibility = View.VISIBLE
-                binding.myActionsItemTvSerialId.text = myAction.serialId
-            }
-
+            binding.myActionsItemTvSerialId.text = myAction.serialId
             if(ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_MANUAL != myAction.ticketOriginType){
                 configTvOriginView(myAction)
                 binding.myActionsItemTvOrigin.visibility = View.VISIBLE

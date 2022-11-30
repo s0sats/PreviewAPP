@@ -42,5 +42,6 @@ interface Act092_Contract {
         fun callFormSave(context: Context)
         fun callTicketSave(context: Context)
         fun otherActionFlow(context: Context)
+        fun extractSearchResult(result: String?, myActionSelected: MyActions?)
     }
 }

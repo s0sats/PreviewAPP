@@ -5,6 +5,7 @@ import com.namoadigital.prj001.core.IResult
 import com.namoadigital.prj001.core.IResult.Companion.failed
 import com.namoadigital.prj001.core.IResult.Companion.success
 import com.namoadigital.prj001.core.UseCases
+import com.namoadigital.prj001.model.MD_Product_Serial
 import com.namoadigital.prj001.model.MyActionFilterParam
 import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.ui.act092.data.repository.ActionSerialRepository
@@ -22,6 +23,7 @@ class ProcessLocalSearchForSerialActionUseCase constructor(
     data class ProcessLocalSearchForSerialParam(
         val actions: MyActions,
         val bundle: Bundle,
+        val mdProductSerial: MD_Product_Serial? = null
     )
 
     override suspend fun invoke(
@@ -29,8 +31,8 @@ class ProcessLocalSearchForSerialActionUseCase constructor(
     ): Flow<IResult<Bundle>> {
 
         val actions = input.actions
-        val mdProductSerial = repository.getSerial(
-            actions.productCode!!.toInt(),
+        val mdProductSerial = input.mdProductSerial ?: repository.getSerial(
+            actions.productCode ?: -1,
             actions.serialId.toString(),
         )
         val bundle = input.bundle

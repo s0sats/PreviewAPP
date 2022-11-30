@@ -96,17 +96,17 @@ class FlowScheduleFromMyActionUseCase constructor(
             } ?: return false
         }
 
-        suspend fun hasScheduleSiteAccess(
-            siteCode: String,
-            repository: ActionSerialRepository
-        ): Boolean {
-            var access = false
+         fun hasScheduleSiteAccess(
+             siteCode: String,
+             repository: ActionSerialRepository
+         ): Boolean {
+             var access = false
 
-            val formSite = repository.getSite(siteCode)
+             val formSite = repository.getSite(siteCode)
 
-            formSite?.let {
-                if (it.site_code.equals(siteCode)) {
-                    access = true
+             formSite?.let {
+                 if (it.site_code.equals(siteCode)) {
+                     access = true
                 }
             }
 
