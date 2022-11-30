@@ -385,6 +385,15 @@ class IActionSerialRepository constructor(
         siteDao.addUpdate(md_site)
     }
 
+    override fun scheduleIsOsForm(): Boolean {
+        return true
+    }
+
+
+    override fun serialHasStructure(): ArrayList<MD_Product_Serial_Tp_Device> {
+        TODO("Not yet implemented")
+    }
+
     companion object {
 
         class ActionSerialRepositoryFactoryRepository(private val context: Context) :

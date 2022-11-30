@@ -1,7 +1,6 @@
 package com.namoadigital.prj001.ui.act092
 
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import com.google.gson.GsonBuilder
@@ -12,10 +11,7 @@ import com.namoadigital.prj001.core.IResult.Companion.isLoading
 import com.namoadigital.prj001.core.IResult.Companion.isSuccess
 import com.namoadigital.prj001.core.IResult.Companion.loading
 import com.namoadigital.prj001.dao.*
-import com.namoadigital.prj001.model.MD_Schedule_Exec
-import com.namoadigital.prj001.model.MyActionFilterParam
-import com.namoadigital.prj001.model.MyActions
-import com.namoadigital.prj001.model.TSerial_Search_Rec
+import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.model.action_serial.ActionsCache
 import com.namoadigital.prj001.receiver.WBR_Save
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save
@@ -33,22 +29,23 @@ import com.namoadigital.prj001.ui.act070.Act070_Main
 import com.namoadigital.prj001.ui.act071.Act071_Main
 import com.namoadigital.prj001.ui.act083.Act083_Main
 import com.namoadigital.prj001.ui.act083.Act083_Main.Companion.EMPTY_SERIAL_SEARCH
+import com.namoadigital.prj001.ui.act083.Act083_Main.Companion.MODULE_CHECKLIST_START_FORM
 import com.namoadigital.prj001.ui.act083.Act083_Main.Companion.MODULE_SCHEDULE_TICKET_CREATION_ERROR
 import com.namoadigital.prj001.ui.act083.Act083_Main.Companion.MODULE_TICKET_EXEC_CONFIRM
 import com.namoadigital.prj001.ui.act083.Act083_Main.Companion.PROFILE_MENU_TICKET_NOT_FOUND
 import com.namoadigital.prj001.ui.act083.Act083_Main.Companion.PROFILE_PRJ001_AP_NOT_FOUND
 import com.namoadigital.prj001.ui.act083.Act083_Main.Companion.SERIAL_CREATION_DENIED
+import com.namoadigital.prj001.ui.act087.Act087Main
 import com.namoadigital.prj001.ui.act091.mvp.model.TranslateResource
 import com.namoadigital.prj001.ui.act092.model.SerialModel
 import com.namoadigital.prj001.ui.act092.usecases.ActionUseCases
+import com.namoadigital.prj001.ui.act092.usecases.FlowScheduleFromMyActionUseCase.Companion.MODULE_CHECKLIST_FORM_IN_PROCESSING
+import com.namoadigital.prj001.ui.act092.usecases.FlowScheduleFromMyActionUseCase.Companion.SERIAL_SITE_OUT_OF_LICENSE
+import com.namoadigital.prj001.ui.act092.usecases.FlowScheduleFromMyActionUseCase.Companion.SITE_RESTRICTION_CONFIRM
+import com.namoadigital.prj001.ui.act092.usecases.FlowScheduleFromMyActionUseCase.Companion.SITE_RESTRICTION_NO_ACCESS
 import com.namoadigital.prj001.ui.act092.usecases.GetScheduleCtrlIfExistsUseCase
-import com.namoadigital.prj001.ui.act092.usecases.ProcessFormUseCase
-import com.namoadigital.prj001.ui.act092.usecases.ProcessFormUseCase.Companion.FREE_EXECUTION_BLOCKED
-import com.namoadigital.prj001.ui.act092.usecases.ProcessFormUseCase.Companion.MODULE_CHECKLIST_FORM_IN_PROCESSING
-import com.namoadigital.prj001.ui.act092.usecases.ProcessFormUseCase.Companion.MODULE_CHECKLIST_START_FORM
-import com.namoadigital.prj001.ui.act092.usecases.ProcessFormUseCase.Companion.MODULE_SCHEDULE_STATUS_PREVENTS_TO_OPEN
-import com.namoadigital.prj001.ui.act092.usecases.ProcessFormUseCase.Companion.SITE_RESTRICTION_NO_ACCESS
 import com.namoadigital.prj001.ui.act092.usecases.ProcessLocalSearchForSerialActionUseCase.ProcessLocalSearchForSerialParam
+import com.namoadigital.prj001.ui.act092.usecases.ProcessTicketUseCase.Companion.MODULE_SCHEDULE_STATUS_PREVENTS_TO_OPEN
 import com.namoadigital.prj001.ui.act092.usecases.ScheduleFormException
 import com.namoadigital.prj001.ui.act092.usecases.ValidateNewFormUseCase.ValidateNewFormParam
 import com.namoadigital.prj001.ui.act092.utils.Act092Translate
@@ -340,12 +337,10 @@ class Act092Presenter constructor(
 
                     it.isSuccess { transform ->
                         processActSchedule(
-                            transform.action,
+                            action,
                             transform.actType,
                             transform.scheduleExec,
-                            transform.ticketCode,
-                            transform.ticketPrefix,
-                            transform.ticketSeq
+                            transform.productSerial
                         )
                     }
 
@@ -462,7 +457,7 @@ class Act092Presenter constructor(
                     )
                 }
 
-                ProcessFormUseCase.SITE_RESTRICTION_CONFIRM -> {
+                SITE_RESTRICTION_CONFIRM -> {
                     view.onState(Act092UiEvent.OpenDialog(
                         DialogType.ACTION(
                             title = hmAux[Act092Translate.ALERT_FORM_SITE_RESTRICTION_TTL],
@@ -579,7 +574,7 @@ class Act092Presenter constructor(
                         )
                     )
                 }
-                FREE_EXECUTION_BLOCKED -> {
+                SERIAL_SITE_OUT_OF_LICENSE -> {
                     view.onState(
                         Act092UiEvent.OpenDialog(
                             DialogType.DEFAULT_OK(
@@ -851,9 +846,7 @@ class Act092Presenter constructor(
         action: MyActions,
         actType: String,
         scheduleExec: MD_Schedule_Exec,
-        ticketCode: Int,
-        ticketPrefix: Int,
-        ticketSeq: Int
+        serial: MD_Product_Serial
     ) {
         when (actType) {
             Constant.ACT011 -> {
@@ -867,7 +860,35 @@ class Act092Presenter constructor(
                     )
                 )
             }
-            Constant.ACT070 -> {
+
+            Constant.ACT087 -> {
+                view.onState(
+                    Act092UiEvent.CallAct(
+                        Act087Main::class.java,
+                        Bundle().apply {
+                            putString(MD_Product_SerialDao.SERIAL_ID, serial.serial_id)
+                            putAll(view.bundle)
+                            putAll(
+                                Act087Main.getBundleInstance(
+                                    view.bundle.getString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE)
+                                        ?: "",
+                                    view.bundle.getString(GE_Custom_FormDao.CUSTOM_FORM_CODE) ?: "",
+                                    view.bundle.getString(GE_Custom_FormDao.CUSTOM_FORM_VERSION)
+                                        ?: "",
+                                    serial.product_code.toString(),
+                                    serial.serial_id,
+                                    serial.serial_code.toString(),
+                                    scheduleExec.schedule_prefix.toString(),
+                                    scheduleExec.schedule_code.toString(),
+                                    scheduleExec.toString()
+                                )
+                            )
+                        }
+                    )
+                )
+            }
+
+/*            Constant.ACT070 -> {
                 view.onState(
                     Act092UiEvent.CallAct(
                         Act070_Main::class.java,
@@ -892,7 +913,7 @@ class Act092Presenter constructor(
                         )
                     )
                 )
-            }
+            }*/
         }
     }
 

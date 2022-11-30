@@ -62,4 +62,6 @@ interface ActionSerialRepository {
     ): Boolean
 
     fun updateObjReturn(tkTicket: TK_Ticket, md_site: MD_Site): Boolean
+    fun scheduleIsOsForm(): Boolean
+    fun serialHasStructure(): ArrayList<MD_Product_Serial_Tp_Device>
 }
