@@ -813,7 +813,7 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
                             mView.callAct009(context);
                         }
                     }else {
-                        mView.callAct083(context);
+                        mView.callAct092(context);
                     }
                 }
             }
@@ -988,7 +988,7 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
                 break;
             case ConstantBaseApp.ACT016:
             case ConstantBaseApp.ACT068:
-                mView.callAct083(context);
+                mView.callAct092(context);
                 break;
         }
     }
