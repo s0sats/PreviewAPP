@@ -71,6 +71,12 @@ class TkTicketCache(
                 open_serial_id
             )
         //
+        var rightIcon: Int? = null
+        if (main_user?.toString()?.equals(ToolBox_Con.getPreference_User_Code(context)) ?: false) {
+            rightIcon = R.drawable.ic_baseline_person_24_secondary60
+        }else{
+            rightIcon = R.drawable.ic_baseline_group_24
+        }
         val processPk = "$ticket_prefix.$ticket_code.$scn"
         val myActions = MyActions(
             MyActions.MY_ACTION_TYPE_TICKET_CACHE,
@@ -80,6 +86,7 @@ class TkTicketCache(
             statusTrad,
             null,
             R.drawable.ic_baseline_cloud_download_24_gray,
+            rightIcon,
             ToolBox_Inf.getMyActionStartEndDateFormated(context, forecast_start, forecast_end),
             tag_operational_desc,
             open_product_desc,

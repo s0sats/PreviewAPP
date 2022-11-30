@@ -1591,21 +1591,24 @@ public class TK_Ticket implements Cloneable, Serializable {
 //    }
 
     public static MyActions toMyActionsObj(Context context, HMAux hmAux, String lastSelectedActionPk){
-        int rightIcon;
-        if("0".equals(hmAux.get(SqlAct083_002.TOTAL_UPDATE_REQUIRED)) && "0".equals(hmAux.get(TK_TicketDao.SYNC_REQUIRED))) {
-            rightIcon = R.drawable.ic_baseline_cloud_done_24_blue;
+        int midIcon;
+        if("0".equals(hmAux.get(SqlAct083_002.TOTAL_UPDATE_REQUIRED))
+                && "0".equals(hmAux.get(TK_TicketDao.SYNC_REQUIRED))
+                && "0".equals(hmAux.get(MyActions.MY_ACTION_TYPE_FORM))
+        ) {
+            midIcon = R.drawable.ic_baseline_cloud_done_24_blue;
         }else {
             if("1".equals(hmAux.get(SqlAct083_002.TOTAL_UPDATE_REQUIRED)) && "1".equals(hmAux.get(TK_TicketDao.SYNC_REQUIRED))){
-                rightIcon = R.drawable.ic_sync_main_menu_data;
+                midIcon = R.drawable.ic_sync_main_menu_data;
             }else if("1".equals(hmAux.get(SqlAct083_002.TOTAL_UPDATE_REQUIRED))){
-                rightIcon = R.drawable.ic_cloud_upload_24_red;
+                midIcon = R.drawable.ic_cloud_upload_24_red;
+            }else if("1".equals(hmAux.get(MyActions.MY_ACTION_TYPE_FORM))){
+                midIcon = R.drawable.ic_baseline_cloud_upload_24_gray;
             }else{
-                rightIcon = R.drawable.ic_baseline_cloud_download_24_yellow;
+                midIcon = R.drawable.ic_baseline_cloud_download_24_yellow;
             }
         }
         String processPk = hmAux.get(TK_TicketDao.TICKET_PREFIX)+"."+hmAux.get(TK_TicketDao.TICKET_CODE);
-        String clientInf = !hmAux.get(TK_TicketDao.CLIENT_ID).isEmpty() ? hmAux.get(TK_TicketDao.CLIENT_ID) +" - "+ hmAux.get(TK_TicketDao.CLIENT_NAME): null;
-        String contractInf = !hmAux.get(TK_TicketDao.CONTRACT_ID).isEmpty() ? hmAux.get(TK_TicketDao.CONTRACT_ID) +" - "+ hmAux.get(TK_TicketDao.CONTRACT_DESC): null;
         String plannedDate = ToolBox_Inf.getMyActionStartEndDateFormated(context,hmAux.get(TK_TicketDao.FORECAST_DATE),hmAux.get(TK_TicketDao.FORECAST_DATE));
         String orderByDate = hmAux.get(TK_TicketDao.FORECAST_DATE);
         String periodStartDate = hmAux.get(TK_TicketDao.FORECAST_DATE);
@@ -1623,6 +1626,7 @@ public class TK_Ticket implements Cloneable, Serializable {
         }
 
         String doneDate = null;
+        Integer rightIcon = null;
         /*
         * Quando o ticket for finalizado, as datas planejadas e de ordenação devem ser as mesmas que
         * a data de finalização.
@@ -1637,6 +1641,15 @@ public class TK_Ticket implements Cloneable, Serializable {
             //
             plannedDate = doneDate;
             orderByDate = hmAux.get(TK_TicketDao.CLOSE_DATE);
+            if(ConstantBaseApp.SYS_STATUS_DONE.equals(hmAux.get(TK_TicketDao.TICKET_STATUS))) {
+                rightIcon = R.drawable.ic_baseline_check_circle_24;
+            }else if(ConstantBaseApp.SYS_STATUS_NOT_EXECUTED.equals(hmAux.get(TK_TicketDao.TICKET_STATUS))) {
+                rightIcon = R.drawable.ic_baseline_cancel_24;
+            }else if(hmAux.hasConsistentValue(TK_TicketDao.MAIN_USER) && hmAux.get(TK_TicketDao.MAIN_USER).equals(ToolBox_Con.getPreference_User_Code(context))) {
+                rightIcon = R.drawable.ic_baseline_person_24_secondary60;
+            }else{
+                rightIcon = R.drawable.ic_baseline_group_24;
+            }
         }
 
         String openZoneDesc = null;
@@ -1661,6 +1674,7 @@ public class TK_Ticket implements Cloneable, Serializable {
             hmAux.get(TK_TicketDao.TICKET_STATUS),
             ConstantBaseApp.HMAUX_TRANS_LIB.get(hmAux.get(TK_TicketDao.TICKET_STATUS)),
             null,
+            midIcon,
             rightIcon,
             plannedDate,
             hmAux.get(TK_TicketDao.TAG_OPERATIONAL_DESC),
@@ -1669,7 +1683,7 @@ public class TK_Ticket implements Cloneable, Serializable {
             hmAux.get(TK_TicketDao.ORIGIN_DESC),
             hmAux.get(TK_TicketDao.TYPE_DESC),
             hmAux.get(TK_TicketDao.INTERNAL_COMMENTS),
-            hmAux.get(TK_Ticket_StepDao.STEP_DESC),
+                hmAux.get(TK_TicketDao.CURRENT_STEP_ORDER) + ". "+ hmAux.get(TK_Ticket_StepDao.STEP_DESC),
             ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.OPEN_SITE_CODE)),
             hmAux.get(TK_TicketDao.OPEN_SITE_DESC),
             openZoneDesc,

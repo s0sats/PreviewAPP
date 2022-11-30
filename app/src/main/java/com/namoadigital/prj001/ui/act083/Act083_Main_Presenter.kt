@@ -100,6 +100,7 @@ class Act083_Main_Presenter(private val context: Context,
         transList.add("no_record_lbl")
         transList.add("no_record_for_filter_lbl")
         transList.add("other_steps_available_lbl")
+        transList.add("cell_step_lbl")
         transList.add("dialog_download_ticket_ttl")
         transList.add("dialog_download_ticket_start")
         transList.add("progress_sync_ttl")
@@ -149,7 +150,8 @@ class Act083_Main_Presenter(private val context: Context,
         transList.add("alert_form_os_requires_serial_ttl")
         transList.add("alert_form_os_requires_serial_msg")
         //
-        transList.add("btn_select_action_lbl")
+        transList.add("btn_open_action_lbl")
+        transList.add("btn_continue_action_lbl")
         transList.add("btn_select_serial_info_lbl")
         //
         return ToolBox_Inf.setLanguage(
@@ -390,7 +392,7 @@ class Act083_Main_Presenter(private val context: Context,
         selectedActionForSerialFLow: MyActions,
         mdProductSerial: MD_Product_Serial?
     ) {
-        selectedActionForSerialFLow?.let {
+        selectedActionForSerialFLow.let {
             //
             val serial = mdProductSerial
                 ?: if (it.productCode != null && it.serialId != null) {
@@ -429,6 +431,7 @@ class Act083_Main_Presenter(private val context: Context,
                 bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT083)
                 bundle.putString(ConstantBaseApp.MAIN_MD_PRODUCT_SERIAL_ID, it.serialId)
                 bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, true)
+                bundle.remove(Constant.MAIN_MD_PRODUCT_SERIAL)
                 bundle.putSerializable(
                     Constant.MY_ACTIONS_ORIGIN_FLOW_SERIAL_OR_LOCAL,
                     arrayListOf(serial)

@@ -207,6 +207,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
             mAdapter = MyActionsAdapter(
                     myActionsList,
                     hmAux_Trans,
+                    supportActionBar?.title?.toString() ?:"",
                     this::onMyActionClick,
                     this::onFormButtonClick,
                     this::onSerialButtonClick,

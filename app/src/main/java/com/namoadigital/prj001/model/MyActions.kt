@@ -10,6 +10,7 @@ data class MyActions(
     val processStatus: String,
     val processStatusTrans: String?,
     @DrawableRes var processLeftIcon: Int?,
+    @DrawableRes var processMidIcon: Int?,
     @DrawableRes var processRightIcon: Int?,
     val plannedDate: String,
     val tagOperationDesc: String?,
@@ -84,6 +85,6 @@ data class MyActions(
     }
 
     fun mergeUnfocusActions(unfocusActionsCache: MyActionsBase){
-        this.processLeftIcon = R.drawable.ic_baseline_cloud_done_24_blue
+        this.processMidIcon = R.drawable.ic_baseline_cloud_done_24_blue
     }
 }

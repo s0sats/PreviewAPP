@@ -42,6 +42,7 @@ class MyActionsCache(
 ) {
     fun toMyActions(context: Context): MyActions {
         val processLeftIcon = getLeftIcon()
+        val processMidIcon = getMidIcon()
         val processRightIcon = getRightIcon()
         var  isMainUserTicket = false
         mainUser?.let {
@@ -55,6 +56,7 @@ class MyActionsCache(
             processStatus,
             ConstantBaseApp.HMAUX_TRANS_LIB[processStatusTrans],
             processLeftIcon,
+            processMidIcon,
             processRightIcon,
             plannedDate ?: "",
             tagOperationDesc,
@@ -82,6 +84,10 @@ class MyActionsCache(
         )
     }
 
+    private fun getMidIcon(): Int? {
+        return null
+    }
+
     private fun getLeftIcon(): Int? {
 
         return if(actionType == ConstantBaseApp.FCM_MODULE_SCHEDULE
@@ -92,7 +98,7 @@ class MyActionsCache(
         }
     }
 
-    private fun getRightIcon(): Int? {
+    private fun getRightIcon(): Int {
         return when(processStatus){
             ConstantBaseApp.SYS_STATUS_DONE ->{
                 R.drawable.ic_baseline_check_circle_24
