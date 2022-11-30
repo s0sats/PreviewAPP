@@ -337,7 +337,9 @@ class Act092_Main : BaseActivityMvp
                 }
 
                 is Act092UiEvent.CallActForResult -> {
-
+                    startActivityForResult(Intent(context, state.classe).also {
+                        it.putExtras(state.bundle ?: Bundle())
+                    }, state.code)
                 }
             }
         }

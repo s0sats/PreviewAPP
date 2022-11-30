@@ -19,7 +19,6 @@ data class ActionUseCases(
     val checkIfFileExists: CheckFileExistsUseCase,
     val flowScheduleFromMyAction: FlowScheduleFromMyActionUseCase,
     val getScheduleFromMyAction: GetScheduleFromMyActionUseCase,
-    val processTicket: ProcessTicketUseCase,
     val ticketCtrl: GetScheduleCtrlIfExistsUseCase,
     val scheduleFormLocalExists: ScheduleFormLocalExistsUseCase,
     val createFormLocalForSchedule: CreateFormLocalForScheduleUseCase,
@@ -39,7 +38,6 @@ data class ActionUseCases(
                 val syncRepository = SyncRepositoryFactory(context).build()
 
                 val scheduleFormLocalExistsUseCase = ScheduleFormLocalExistsUseCase(repository)
-                val processTicketUseCase = ProcessTicketUseCase(context, repository)
                 val getScheduleFromMyActionUseCase = GetScheduleFromMyActionUseCase(repository)
                 return ActionUseCases(
                     localTicket = ListMyActionUseCases(context, repository),
@@ -60,7 +58,6 @@ data class ActionUseCases(
                     ),
                     getScheduleFromMyAction = GetScheduleFromMyActionUseCase(repository),
                     ticketCtrl = GetScheduleCtrlIfExistsUseCase(repository),
-                    processTicket = processTicketUseCase,
                     scheduleFormLocalExists = scheduleFormLocalExistsUseCase,
                     createFormLocalForSchedule = CreateFormLocalForScheduleUseCase(repository),
                     serialSearch = SerialSearchUseCase(repository),

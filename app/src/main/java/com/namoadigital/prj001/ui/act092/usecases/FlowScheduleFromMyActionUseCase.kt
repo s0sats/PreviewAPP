@@ -32,7 +32,7 @@ class FlowScheduleFromMyActionUseCase constructor(
     override suspend fun invoke(input: MyActions): Flow<IResult<FlowScheduleParamReturn>> {
         return flow {
             val scheduleExec = getScheduleFromMyActionUseCase(input)
-            scheduleExec?.let {
+            scheduleExec?.let { schedule ->
 
                 if (isScheduleSiteDifferentThanLogged(input.siteCode, context)) {
                     if (hasScheduleSiteAccess(input.siteCode.toString(), repository)) {
@@ -40,7 +40,7 @@ class FlowScheduleFromMyActionUseCase constructor(
                     } else {
                         emit(failed(ScheduleFormException(SITE_RESTRICTION_NO_ACCESS)))
                     }
-                } else if (isAnyFormInProcessing(scheduleExec)) {
+                } else if (isAnyFormInProcessing(schedule)) {
                     emit(failed(ScheduleFormException(MODULE_CHECKLIST_FORM_IN_PROCESSING)))
                 } else {
                     if (ToolBox_Inf.isConcurrentBySiteLicense(context) && ToolBox_Inf.isSiteBlockedOrLimitExecutionReached(
@@ -49,38 +49,65 @@ class FlowScheduleFromMyActionUseCase constructor(
                     ) {
                         emit(failed(ScheduleFormException(SERIAL_SITE_OUT_OF_LICENSE)))
                     } else {
-                        if (repository.scheduleIsOsForm()) {
-                            repository.getSerial(
-                                input.productCode ?: -1,
-                                input.serialId.toString()
-                            )?.let {
-
-                                if (it.has_item_check == 1) {
-
-                                }
-
+                        if (repository.scheduleIsOsForm(
+                                schedule.custom_form_type.toString(),
+                                schedule.custom_form_code.toString(),
+                                schedule.custom_form_version.toString()
+                            )
+                        ) {
+                            if (serialHasStructure(input).first) {
                                 emit(
                                     success(
                                         FlowScheduleParamReturn(
                                             actType = Constant.ACT087,
-                                            productSerial = it,
-                                            scheduleExec = scheduleExec
+                                            productSerial = serialHasStructure(input).second!!,
+                                            scheduleExec = schedule
                                         )
                                     )
                                 )
-                                return@flow
-                            } ?: emit(failed(ScheduleFormException(SCHEDULE_PK_NOT_FOUND)))
+                            } else {
+                                emit(failed(ScheduleFormException(SERIAL_WITHOUT_STRUCTURE)))
+                            }
 
+                        } else {
+                            emit(
+                                success(
+                                    FlowScheduleParamReturn(
+                                        actType = Constant.ACT011,
+                                        productSerial = serialHasStructure(input).second!!,
+                                        scheduleExec = schedule
+                                    )
+                                )
+                            )
                         }
                     }
                 }
 
-
-            }
+            } ?: emit(failed(ScheduleFormException(SCHEDULE_PK_NOT_FOUND)))
 
         }
 
 
+    }
+
+
+    private fun serialHasStructure(actions: MyActions): Pair<Boolean, MD_Product_Serial?> {
+        var result = false
+        var productserial: MD_Product_Serial? = null
+        repository.getSerial(
+            actions.productCode ?: -1,
+            actions.serialId.toString()
+        )?.let { serial ->
+
+            if (serial.has_item_check == 1) {
+                repository.serialHasStructure(serial)?.let { list ->
+                    result = list.isNotEmpty()
+                    productserial = serial
+                }
+            }
+
+        }
+        return Pair(result, productserial)
     }
 
     private suspend fun isAnyFormInProcessing(scheduleExec: MD_Schedule_Exec): Boolean {
@@ -103,6 +130,8 @@ class FlowScheduleFromMyActionUseCase constructor(
         const val SERIAL_SITE_OUT_OF_LICENSE = "SERIAL_SITE_OUT_OF_LICENSE"
         const val MODULE_CHECKLIST_FORM_IN_PROCESSING = "MODULE_CHECKLIST_FORM_IN_PROCESSING"
         const val SCHEDULE_PK_NOT_FOUND = "SCHEDULE_PK_NOT_FOUND"
+        const val SCHEDULE_STRUCTURE_NOT_FOUND = "SCHEDULE_STRUCTURE_NOT_FOUND"
+        const val SERIAL_WITHOUT_STRUCTURE = "SERIAL_WITHOUT_STRUCTURE"
 
 
         fun isScheduleSiteDifferentThanLogged(siteCode: Int?, context: Context): Boolean {
