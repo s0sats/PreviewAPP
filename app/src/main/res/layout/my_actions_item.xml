@@ -90,7 +90,6 @@
                     android:src="@drawable/ic_baseline_cloud_done_24"
                     app:layout_constraintEnd_toStartOf="@+id/my_actions_item_iv_icon_mid"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@color/m3_namoa_inversePrimary"
                     android:contentDescription="null" />
 
 
@@ -100,19 +99,19 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
                     android:contentDescription="null"
-                    android:src="@drawable/ic_person_black_24dp"
+                    android:src="@drawable/ic_baseline_person_24_secondary60"
                     app:layout_constraintEnd_toStartOf="@+id/my_actions_item_iv_icon_main_user"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@color/m3_namoa_secondary" />
+                     />
 
                 <ImageView
                     android:id="@+id/my_actions_item_iv_icon_main_user"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_person_black_24dp"
+                    android:src="@drawable/ic_baseline_person_24_secondary60"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@color/m3_namoa_secondary60"
+
                     android:contentDescription="null" />
 
 
@@ -127,6 +126,7 @@
                 android:layout_marginTop="12dp">
 
                 <LinearLayout
+                    android:id="@+id/my_actions_item_ll_serial"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -196,9 +196,9 @@
                     android:text="Urgente"
                     android:textAlignment="textEnd"
                     android:textColor="@color/m3_namoa_error"
-                    app:layout_constraintBottom_toBottomOf="@+id/my_actions_item_tv_tag_desc"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/my_actions_item_tv_tag_desc" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
 
 
@@ -256,9 +256,12 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
                     android:text="OK"
+                    app:layout_constrainedWidth="true"
                     android:textColor="@color/m3_namoa_primary"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/my_action_select_serial"
+                    app:layout_constraintHorizontal_bias="1.0"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="0.0"
                     app:strokeColor="@color/m3_namoa_outline" />
@@ -268,6 +271,7 @@
                     style="@style/Widget.Material3.Button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    app:layout_constrainedWidth="true"
                     android:backgroundTint="@color/m3_namoa_primary"
                     android:text="OK"
                     android:textColor="@color/m3_namoa_onPrimary"

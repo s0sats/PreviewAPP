@@ -1,6 +1,8 @@
 package com.namoadigital.prj001.ui.act092
 
 import android.content.Context
+import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import com.google.gson.GsonBuilder
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
@@ -15,10 +17,10 @@ import com.namoadigital.prj001.model.MyActionFilterParam
 import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.model.TSerial_Search_Rec
 import com.namoadigital.prj001.model.action_serial.ActionsCache
-import com.namoadigital.prj001.service.WS_Serial_Search
-import com.namoadigital.prj001.service.WS_Sync
-import com.namoadigital.prj001.service.WS_TK_Ticket_Download
-import com.namoadigital.prj001.service.WS_UnfocusAndHistoric
+import com.namoadigital.prj001.receiver.WBR_Save
+import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save
+import com.namoadigital.prj001.service.*
+import com.namoadigital.prj001.sql.Sql_Act005_002
 import com.namoadigital.prj001.ui.act005.Act005_Main
 import com.namoadigital.prj001.ui.act006.Act006_Main
 import com.namoadigital.prj001.ui.act009.Act009_Main
@@ -359,6 +361,89 @@ class Act092Presenter constructor(
                     }
 
                 }
+        }
+    }
+
+    override fun callFormSave(context: Context) {
+        if(ToolBox_Con.isOnline(context)) {
+            view.wsProcess.value = WS_Save::class.java.simpleName
+
+            val mIntent = Intent(context, WBR_Save::class.java)
+            val bundle = Bundle()
+            bundle.putInt(Constant.GC_STATUS_JUMP, 1) //Pula validação Update require
+
+            bundle.putInt(Constant.GC_STATUS, 1) //Pula validação de other device
+
+            bundle.putString(Act005_Main.WS_PROCESS_SO_STATUS, "SEND")
+
+            mIntent.putExtras(bundle)
+            //
+            //
+            context.sendBroadcast(mIntent)
+            ToolBox_Inf.sendBCStatus(
+                context,
+                "STATUS",
+                hmAux.get("msg_preparing_to_send_data"),
+                "",
+                "0"
+            )
+        }else{
+            ToolBox_Inf.showNoConnectionDialog(context)
+        }
+    }
+
+    override fun callTicketSave(context: Context) {
+        if(ToolBox_Con.isOnline(context)) {
+            view.wsProcess.value  = WS_TK_Ticket_Save::class.java.simpleName
+            //
+            //
+            val mIntent = Intent(context, WBR_TK_Ticket_Save::class.java)
+            val bundle = Bundle()
+            mIntent.putExtras(bundle)
+            //
+            //
+            context.sendBroadcast(mIntent)
+        }else{
+            ToolBox_Inf.showNoConnectionDialog(context)
+        }
+    }
+
+    override fun otherActionFlow(context: Context) {
+        if(ToolBox_Con.isOnline(context)){
+            val hasFormPendency = getFormPendency(context)
+            val hasTicketPendency = getTicketPendency(context)
+            if(hasFormPendency){
+                callFormSave(context)
+            }else if (hasTicketPendency){
+                callTicketSave(context)
+            }else{
+                getUnfocusHistoricalList(context)
+            }
+        }else{
+            ToolBox_Inf.showNoConnectionDialog(context)
+        }
+    }
+
+    private fun getTicketPendency(context: Context): Boolean {
+        return ToolBox_Inf.handleTicketUpdateRequired(context, ToolBox_Con.getPreference_Customer_Code(context)).toInt() > 0
+    }
+
+    private fun getFormPendency(context: Context): Boolean {
+        val customFormLocalDao = GE_Custom_Form_LocalDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        )
+
+        return try {
+            val qty = customFormLocalDao.getByStringHM(
+                Sql_Act005_002(
+                    ToolBox_Con.getPreference_Customer_Code(context).toString()
+                ).toSqlQuery()
+            )[Sql_Act005_002.BADGE_WAITING_SYNC_QTY]
+            qty!!.toInt() > 0
+        } catch (e: Exception) {
+            false
         }
     }
 
@@ -1075,20 +1160,24 @@ class Act092Presenter constructor(
         return bundle
     }
 
-    override fun getUnfocusHistoricalList() {
-        view.wsProcess.value = WS_UnfocusAndHistoric::class.java.name
-        view.onState(
-            Act092UiEvent.OpenDialog(
-                DialogType.PROCESS(
-                    hmAux["alert_send_finish_ttl"],
-                    hmAux["alert_send_finish_msg"]
+    override fun getUnfocusHistoricalList(context: Context) {
+        if(ToolBox_Con.isOnline(context)) {
+            view.wsProcess.value = WS_UnfocusAndHistoric::class.java.name
+            view.onState(
+                Act092UiEvent.OpenDialog(
+                    DialogType.PROCESS(
+                        hmAux["alert_send_finish_ttl"],
+                        hmAux["alert_send_finish_msg"]
+                    )
                 )
             )
-        )
-        actionUseCases.unfocusHistoricalAction(
-            myActionFilterParam.productCode!!,
-            _serialModel.value.serialCode ?: 0L
-        )
+            actionUseCases.unfocusHistoricalAction(
+                myActionFilterParam.productCode!!,
+                _serialModel.value.serialCode ?: 0L
+            )
+        }else{
+            ToolBox_Inf.showNoConnectionDialog(context)
+        }
     }
 
 

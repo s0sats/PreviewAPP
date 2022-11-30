@@ -134,12 +134,13 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
             binding.act084RvActionsList.visibility = View.GONE
             //
             mAdapter = MyActionsAdapter(
-                    myActionsList,
-                    hmAux_Trans,
-                    this::onMyActionClick,
-                    this::onFormButtonClick,
-                    this::onSerialButtonClick,
-                    this::onAdapterFilterApplied
+                myActionsList,
+                hmAux_Trans,
+                "",
+                this::onMyActionClick,
+                this::onFormButtonClick,
+                this::onSerialButtonClick,
+                this::onAdapterFilterApplied
             )
             //
             with(binding.act084RvActionsList) {

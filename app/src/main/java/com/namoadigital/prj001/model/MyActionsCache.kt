@@ -41,8 +41,9 @@ class MyActionsCache(
     @SerializedName("pdf_name") val pdfName: String
 ) {
     fun toMyActions(context: Context): MyActions {
-        val processLeftIcon = R.drawable.ic_baseline_cloud_done_24_blue
-        val processRightIcon = R.drawable.ic_baseline_cloud_done_24_blue
+        val processLeftIcon = getLeftIcon()
+        val processMidIcon = getMidIcon()
+        val processRightIcon = getRightIcon()
         var  isMainUserTicket = false
         mainUser?.let {
             isMainUserTicket = mainUser == ToolBox_Con.getPreference_User_Code(context).toInt()
@@ -55,6 +56,7 @@ class MyActionsCache(
             processStatus,
             ConstantBaseApp.HMAUX_TRANS_LIB[processStatusTrans],
             processLeftIcon,
+            processMidIcon,
             processRightIcon,
             plannedDate ?: "",
             tagOperationDesc,
@@ -80,5 +82,33 @@ class MyActionsCache(
             pdfUrl,
             pdfName,
         )
+    }
+
+    private fun getMidIcon(): Int? {
+        return null
+    }
+
+    private fun getLeftIcon(): Int? {
+
+        return if(actionType == ConstantBaseApp.FCM_MODULE_SCHEDULE
+            && processStatus == ConstantBaseApp.SYS_STATUS_NOT_EXECUTED){
+            null
+        }else{
+            R.drawable.ic_baseline_cloud_download_24_gray
+        }
+    }
+
+    private fun getRightIcon(): Int {
+        return when(processStatus){
+            ConstantBaseApp.SYS_STATUS_DONE ->{
+                R.drawable.ic_baseline_check_circle_24
+            }
+            ConstantBaseApp.SYS_STATUS_NOT_EXECUTED ->{
+                R.drawable.ic_baseline_cancel_24
+            }
+            else -> {
+                R.drawable.ic_unfocus_person_off
+            }
+        }
     }
 }

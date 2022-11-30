@@ -23,9 +23,10 @@ import com.namoadigital.prj001.model.MyActionsFormButton
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
 
-class MyActionsAdapter constructor(
+class MyActionsAdapter(
     private val myActions: List<MyActionsBase>,
     private val hmAuxTrans: HMAux,
+    val tagDesc: String,
     private val myActionClickListener: (myAction: MyActions) -> Unit,
     private val myActionFormButtonClickListener: (myActionFormButton: MyActionsFormButton) -> Unit,
     private val mySerialClickListener: (myAction: MyActions, Int) -> Unit,
@@ -79,9 +80,7 @@ class MyActionsAdapter constructor(
 
     inner class MyActionVh(private val binding: MyActionsItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun onBinding(myAction: MyActions, position: Int) {
-            binding.myActionSelectSerial.text = /*hmAuxTrans["btn_select_action_lbl"]*/ "Abrir"
-            binding.act083SerialInfo.text = /*hmAuxTrans["btn_select_serial_info_lbl"]*/
-                "Mais Ações deste Serial"
+            binding.act083SerialInfo.text = hmAuxTrans["btn_select_serial_info_lbl"]
 
             val serialVisible =
                 if (myAction.serialId?.isEmpty() == true) View.GONE else View.VISIBLE
@@ -102,7 +101,8 @@ class MyActionsAdapter constructor(
             configPlannedDate(myAction)
             //
             binding.myActionsItemIvIconLeft.applyVisibilityIfSourceExists(myAction.processLeftIcon)
-            binding.myActionsItemIvIconMid.applyVisibilityIfSourceExists(myAction.processRightIcon)
+            binding.myActionsItemIvIconMid.applyVisibilityIfSourceExists(myAction.processMidIcon)
+            binding.myActionsItemIvIconMainUser.applyVisibilityIfSourceExists(myAction.processRightIcon)
             //
             configTvTag(myAction)
             binding.myActionsItemTvProdDesc.text = myAction.productDesc
@@ -118,7 +118,7 @@ class MyActionsAdapter constructor(
                 if (myAction.focusStepDesc.isNullOrEmpty()) {
                     null
                 } else {
-                    "Etapa: ${myAction.focusStepDesc}"
+                    "${hmAuxTrans["cell_step_lbl"]}: ${myAction.focusStepDesc}"
                 }
             )
             //
@@ -162,7 +162,15 @@ class MyActionsAdapter constructor(
 
         private fun configTvTag(myAction: MyActions) {
             with(binding.myActionsItemTvTagDesc) {
-                text = myAction.tagOperationDesc?.toUpperCase()?:null
+
+                text = myAction.tagOperationDesc?.let {
+                    if (it.uppercase() == tagDesc.uppercase()){
+                        ""
+                    }else{
+                        it.uppercase()
+                    }
+                }?: ""
+                this.applyVisibilityIfTextExists(text as String?)
             }
         }
 
@@ -206,31 +214,14 @@ class MyActionsAdapter constructor(
 
         private fun applyBackgroundStrokeColor(myAction: MyActions) {
             binding.myActionSelectSerial.apply {
-                backgroundTintList =
-                    if (!myAction.doneDate.isNullOrEmpty() && ConstantBaseApp.SYS_STATUS_DONE.equals(
-                            myAction.processStatus
-                        )
-                    ) {
-                        if (myAction.isLastSelectedItem) {
-                            ColorStateList.valueOf(resources.getColor(R.color.namoa_color_green_3))
-                        } else {
-                            ColorStateList.valueOf(resources.getColor(R.color.m3_namoa_primary))
-                        }
-                    } else if (myAction.highlightItem) {
-                        if (myAction.isLastSelectedItem) {
-                            ColorStateList.valueOf(resources.getColor(R.color.namoa_color_orange))
-                        } else {
-                            ColorStateList.valueOf(resources.getColor(R.color.m3_namoa_primary))
-                                 }
-                             }else {
-                                 if(myAction.isLastSelectedItem){
-                                     ColorStateList.valueOf(resources.getColor(R.color.namoa_color_yellow_2))
-                                 }else {
-                                     ColorStateList.valueOf(resources.getColor(R.color.m3_namoa_primary))
-                                 }
-                             }
-
-             }
+                if (myAction.highlightItem) {
+                    backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.namoa_color_orange))
+                    text = hmAuxTrans["btn_continue_action_lbl"]
+                }else{
+                    backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.m3_namoa_primary))
+                    text = hmAuxTrans["btn_open_action_lbl"]
+                }
+            }
         }
 
         private fun configTvOriginView(myAction: MyActions) {

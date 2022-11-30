@@ -223,7 +223,7 @@ class Act092_Main : BaseActivityMvp
 
             btnOtherSerial.setOnClickListener {
                 if (btnOtherSerial.isEnabled) {
-                    presenter.getUnfocusHistoricalList()
+                    presenter.otherActionFlow(context)
                 }
 
             }

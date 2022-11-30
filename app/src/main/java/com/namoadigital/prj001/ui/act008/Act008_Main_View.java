@@ -56,6 +56,8 @@ public interface Act008_Main_View {
 
     void callAct081(Context context);
 
+    void callAct083(Context context);
+
     boolean isOffHandForm();
 
     void callAct071(Context context, Bundle bundle);

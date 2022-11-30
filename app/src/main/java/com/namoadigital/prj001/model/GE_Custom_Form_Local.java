@@ -607,11 +607,12 @@ public class GE_Custom_Form_Local {
                 ? R.drawable.ic_alert_nc_on
                 : null;
         }
-        int rightIcon =
+        int midIcon =
             !ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS))
             ? R.drawable.ic_baseline_cloud_done_24_blue
             : R.drawable.ic_cloud_upload_24_red;
         //
+        int rightIcon = R.drawable.ic_baseline_person_24_secondary60;
         String processPk = getFormatedPk(hmAux);
         boolean isSelectedItem = processPk.equals(lastFormSelectedPk);
         String soInfo = null;
@@ -656,6 +657,7 @@ public class GE_Custom_Form_Local {
             statusToUse,
             ConstantBaseApp.HMAUX_TRANS_LIB.get(statusToUse),
             leftIcon,
+            midIcon,
             rightIcon,
             ToolBox_Inf.getMyActionStartEndDateFormated(context, hmAux.get(GE_Custom_Form_DataDao.DATE_START), hmAux.get(GE_Custom_Form_DataDao.DATE_START)),
             hmAux.get(GE_Custom_Form_LocalDao.TAG_OPERATIONAL_DESC),
