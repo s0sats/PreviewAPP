@@ -3,7 +3,6 @@ package com.namoadigital.prj001.ui.act092
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import com.google.gson.GsonBuilder
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.core.IResult.Companion.isFailed
@@ -12,11 +11,14 @@ import com.namoadigital.prj001.core.IResult.Companion.isSuccess
 import com.namoadigital.prj001.core.IResult.Companion.loading
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.model.*
+import com.namoadigital.prj001.model.MD_Schedule_Exec
+import com.namoadigital.prj001.model.MyActionFilterParam
+import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.model.action_serial.ActionsCache
-import com.namoadigital.prj001.receiver.WBR_Save
-import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save
-import com.namoadigital.prj001.service.*
-import com.namoadigital.prj001.sql.Sql_Act005_002
+import com.namoadigital.prj001.service.WS_Serial_Search
+import com.namoadigital.prj001.service.WS_Sync
+import com.namoadigital.prj001.service.WS_TK_Ticket_Download
+import com.namoadigital.prj001.service.WS_UnfocusAndHistoric
 import com.namoadigital.prj001.ui.act005.Act005_Main
 import com.namoadigital.prj001.ui.act006.Act006_Main
 import com.namoadigital.prj001.ui.act009.Act009_Main
@@ -47,6 +49,11 @@ import com.namoadigital.prj001.ui.act092.usecases.GetScheduleCtrlIfExistsUseCase
 import com.namoadigital.prj001.ui.act092.usecases.ProcessLocalSearchForSerialActionUseCase.ProcessLocalSearchForSerialParam
 import com.namoadigital.prj001.ui.act092.usecases.ProcessTicketUseCase.Companion.MODULE_SCHEDULE_STATUS_PREVENTS_TO_OPEN
 import com.namoadigital.prj001.ui.act092.usecases.ScheduleFormException
+import com.namoadigital.prj001.ui.act092.usecases.*
+import com.namoadigital.prj001.ui.act092.usecases.ProcessFormUseCase.Companion.FREE_EXECUTION_BLOCKED
+import com.namoadigital.prj001.ui.act092.usecases.ProcessFormUseCase.Companion.MODULE_CHECKLIST_FORM_IN_PROCESSING
+import com.namoadigital.prj001.ui.act092.usecases.ProcessFormUseCase.Companion.MODULE_CHECKLIST_START_FORM
+import com.namoadigital.prj001.ui.act092.usecases.ProcessFormUseCase.Companion.MODULE_SCHEDULE_STATUS_PREVENTS_TO_OPEN
 import com.namoadigital.prj001.ui.act092.usecases.ValidateNewFormUseCase.ValidateNewFormParam
 import com.namoadigital.prj001.ui.act092.utils.Act092Translate
 import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent
@@ -60,6 +67,20 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import android.content.DialogInterface
+import android.content.Intent
+import com.google.gson.GsonBuilder
+import com.namoadigital.prj001.model.TSerial_Search_Rec
+import com.namoadigital.prj001.receiver.WBR_Save
+import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save
+import com.namoadigital.prj001.service.*
+import com.namoadigital.prj001.sql.Sql_Act005_002
+import com.namoadigital.prj001.ui.act092.usecases.ActionUseCases
+import com.namoadigital.prj001.ui.act092.usecases.GetScheduleCtrlIfExistsUseCase
+import com.namoadigital.prj001.ui.act092.usecases.ProcessFormUseCase
+import com.namoadigital.prj001.ui.act092.usecases.ProcessFormUseCase.Companion.SITE_RESTRICTION_NO_ACCESS
+import com.namoadigital.prj001.ui.act092.usecases.ProcessLocalSearchForSerialActionUseCase.ProcessLocalSearchForSerialParam
+import com.namoadigital.prj001.ui.act092.usecases.ScheduleFormException
 
 class Act092Presenter constructor(
     private var myActionFilterParam: MyActionFilterParam,

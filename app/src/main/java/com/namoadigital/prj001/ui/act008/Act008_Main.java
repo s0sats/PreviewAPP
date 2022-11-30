@@ -64,6 +64,7 @@ import com.namoadigital.prj001.ui.act071.Act071_Main;
 import com.namoadigital.prj001.ui.act081.Act081_Main;
 import com.namoadigital.prj001.ui.act083.Act083_Main;
 import com.namoadigital.prj001.ui.act087.Act087Main;
+import com.namoadigital.prj001.ui.act092.ui.Act092_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -1063,16 +1064,16 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     }
 
     @Override
-    public void callAct083(Context context) {
-        Intent mIntent = new Intent(context, Act083_Main.class);
+    public void callAct092(Context context) {
+        Intent mIntent = new Intent(context, Act092_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         MyActionFilterParam myActionFilterParam = null;
-        Integer productCode = mPresenter.checkOriginFlow(originFlow)  ? (int) mdProductSerial.getProduct_code() : null;
+        Integer productCode = mPresenter.checkOriginFlow(originFlow) ? (int) mdProductSerial.getProduct_code() : null;
         String productId = mPresenter.checkOriginFlow(originFlow) ? mdProductSerial.getProduct_id() : null;
         String productDesc = mPresenter.checkOriginFlow(originFlow) ? mdProductSerial.getProduct_desc() : null;
         String serialId = mPresenter.checkOriginFlow(originFlow) ? mdProductSerial.getSerial_id() : null;
         Long serialCode = null;
-        if(mPresenter.checkOriginFlow(originFlow)){
+        if (mPresenter.checkOriginFlow(originFlow)) {
             serialCode = mdProductSerial.getSerial_code();
         }else{
             serialCode = mdProductSerial.getSerial_tmp();
@@ -1088,7 +1089,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                     serialId,
                     null,
                     null);
-        }else{
+        } else {
             myActionFilterParam = getMyActionFilterParam(bundle);
             //
             myActionFilterParam.setProductCode(productCode);
@@ -1098,9 +1099,12 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             myActionFilterParam.setSerialCode(serialCode);
         }
         //
-        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam);
-        bundle.putString( act083Bundle.getString( ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW), ConstantBaseApp.ACT006);
-        bundle.putLong(MD_Product_SerialDao.SERIAL_CODE ,mdProductSerial.getSerial_code() );
+        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM_ACT092, myActionFilterParam);
+        bundle.putString(act083Bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW), ConstantBaseApp.ACT006);
+        bundle.putLong(MD_Product_SerialDao.SERIAL_CODE, mdProductSerial.getSerial_code());
+        if (mdProductSerial.getClass_color() != null) {
+            bundle.putString(MD_Product_SerialDao.CLASS_COLOR, mdProductSerial.getClass_color());
+        }
         //
         mIntent.putExtras(bundle);
         startActivity(mIntent);
