@@ -4,6 +4,6 @@
     android:viewportWidth="48"
     android:viewportHeight="48">
   <path
-        android:fillColor="@color/m3_namoa_secondaryContainer80"
+        android:fillColor="@color/m3_namoa_secondary60"
       android:pathData="M40.65,44.95 L35.7,40L8,40v-4.7q0,-1.9 0.95,-3.25T11.4,30q3,-1.35 5.775,-2.1 2.775,-0.75 5.575,-0.85L3.05,7.35 5.2,5.2l37.6,37.6ZM36.55,30q1.55,0.7 2.5,2.05 0.95,1.35 0.95,3.25v0.4l-7.15,-7.15q0.9,0.3 1.825,0.675 0.925,0.375 1.875,0.775ZM27.5,23.2L17.25,12.95q0.95,-1.9 2.775,-2.95Q21.85,8.95 24,8.95q3.15,0 5.325,2.175Q31.5,13.3 31.5,16.45q0,2.15 -1.05,3.975Q29.4,22.25 27.5,23.2Z"/>
 </vector>

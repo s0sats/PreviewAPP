@@ -69,7 +69,7 @@
                         android:paddingBottom="2dp"
                         android:text="01/11/2022 22:00 - 02/11/2022 06:00"
                         style="@style/TextAppearance.Material3.BodyMedium"
-                        android:textColor="@color/namoa_color_done_action_pressed" />
+                        android:textColor="@color/m3_namoa_seed" />
 
                     <TextView
                         android:id="@+id/my_actions_item_tv_site"
@@ -178,12 +178,14 @@
                 <TextView
                     android:id="@+id/my_actions_item_tv_tag_desc"
                     style="@style/TextAppearance.Material3.TitleSmall"
-                    android:layout_width="175dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:gravity="start"
                     android:text="SERIAL NAME"
                     android:textColor="@color/m3_namoa_onSurface"
                     app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/my_actions_item_tv_class_status"
+                    app:layout_constraintHorizontal_bias="1.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="0.0" />
@@ -191,15 +193,16 @@
                 <TextView
                     android:id="@+id/my_actions_item_tv_class_status"
                     style="@style/TextAppearance.Material3.LabelLarge"
-                    android:layout_width="175dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="Urgente"
                     android:textAlignment="textEnd"
                     android:textColor="@color/m3_namoa_error"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/my_actions_item_tv_tag_desc"
                     app:layout_constraintTop_toTopOf="parent" />
-
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -215,7 +218,7 @@
                 android:paddingVertical="2dp" />
 
             <TextView
-                android:id="@+id/my_actions_item_tv_contract"
+                android:id="@+id/my_actions_item_tv_action_process"
                 style="@style/TextAppearance.Material3.BodyMedium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

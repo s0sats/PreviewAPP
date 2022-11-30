@@ -22,6 +22,7 @@ interface Act092_Contract {
         val focusState: StateFlow<FilterFocusUser>
         val filterText: MutableStateFlow<String>
         var bundle: Bundle
+        fun showPD(ttl: String?, msg: String?)
     }
 
     interface Presenter : BasePresenter<View> {

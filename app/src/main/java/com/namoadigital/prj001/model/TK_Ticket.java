@@ -1645,11 +1645,11 @@ public class TK_Ticket implements Cloneable, Serializable {
                 rightIcon = R.drawable.ic_baseline_check_circle_24;
             }else if(ConstantBaseApp.SYS_STATUS_NOT_EXECUTED.equals(hmAux.get(TK_TicketDao.TICKET_STATUS))) {
                 rightIcon = R.drawable.ic_baseline_cancel_24;
-            }else if(hmAux.hasConsistentValue(TK_TicketDao.MAIN_USER) && hmAux.get(TK_TicketDao.MAIN_USER).equals(ToolBox_Con.getPreference_User_Code(context))) {
-                rightIcon = R.drawable.ic_baseline_person_24_secondary60;
-            }else{
-                rightIcon = R.drawable.ic_baseline_group_24;
             }
+        }else if(hmAux.hasConsistentValue(TK_TicketDao.MAIN_USER) && hmAux.get(TK_TicketDao.MAIN_USER).equals(ToolBox_Con.getPreference_User_Code(context))) {
+            rightIcon = R.drawable.ic_baseline_person_24_secondary60;
+        }else{
+            rightIcon = R.drawable.ic_baseline_group_24;
         }
 
         String openZoneDesc = null;
@@ -1694,6 +1694,7 @@ public class TK_Ticket implements Cloneable, Serializable {
                 "yyyyMMddHHmm"
             ),
             hmAux.get(TK_TicketDao.ORIGIN_TYPE),
+            hmAux.hasConsistentValue(TK_TicketDao.SCN)?Integer.parseInt(hmAux.get(TK_TicketDao.SCN)): -1,
             !"0".equals(hmAux.get(MyActions.MY_ACTION_TYPE_FORM)),
             ToolBox_Inf.isItemLate(periodStartDate),
             ToolBox_Inf.isItemLate(lateDate),

@@ -125,11 +125,23 @@ class Act092_Adapter constructor(
                 }
                 //
                 myActionsItemTvCode.text = item.processId
-                myActionsItemTvClassStatus.text = item.processStatusTrans
-                configPlannedDate(item)
+                if(item.actionType == MyActions.MY_ACTION_TYPE_TICKET
+                    ||item.actionType == MyActions.MY_ACTION_TYPE_TICKET_CACHE ) {
+                    myActionsItemTvClassStatus.text = item.processStatusTrans
+                    myActionsItemTvClassStatus.visibility = View.VISIBLE
+                }else{
+                    myActionsItemTvClassStatus.visibility = View.GONE
+                }
+                if(ConstantBaseApp.SYS_STATUS_PENDING == item.processStatus
+                    || ConstantBaseApp.SYS_STATUS_PROCESS == item.processStatus){
+                    configPlannedDate(item)
+                }else{
+                    configDoneDate(item)
+                }
                 //
                 myActionsItemIvIconLeft.applyVisibilityIfSourceExists(item.processLeftIcon)
-                myActionsItemIvIconMid.applyVisibilityIfSourceExists(item.processRightIcon)
+                myActionsItemIvIconMid.applyVisibilityIfSourceExists(item.processMidIcon)
+                myActionsItemIvIconMainUser.applyVisibilityIfSourceExists(item.processRightIcon)
                 //
                 configTvTag(item)
                 myActionsItemTvProdDesc.text = item.productDesc
@@ -144,37 +156,13 @@ class Act092_Adapter constructor(
                     if (item.focusStepDesc.isNullOrEmpty()) {
                         null
                     } else {
-                        "Etapa: ${item.focusStepDesc}"
+                        "${hmAux["cell_step_lbl"]}: ${item.focusStepDesc}"
                     }
                 )
                 //
                 configTvSite(item)
                 myActionsItemTvDoneDate.applyVisibilityIfTextExists(item.doneDate)
-                myActionsItemTvContract.applyVisibilityIfTextExists(item.actionType)
-
-                if (item.isMainUserTicket
-                    && ConstantBaseApp.SYS_STATUS_DONE != item.processStatus
-                ) {
-                    myActionsItemIvIconMainUser.visibility = View.VISIBLE
-                } else {
-                    myActionsItemIvIconMainUser.visibility = View.GONE
-                }
-
-
-                when {
-                    item.isMainUserTicket && ConstantBaseApp.SYS_STATUS_DONE != item.processStatus -> {
-                        myActionsItemIvIconMainUser.setImageResource(R.drawable.ic_person_black_24dp)
-                        myActionsItemIvIconMainUser.visibility = View.VISIBLE
-                    }
-
-                    !item.isMainUserTicket && ConstantBaseApp.SYS_STATUS_DONE != item.processStatus -> {
-                        myActionsItemIvIconMainUser.visibility = View.VISIBLE
-                        myActionsItemIvIconMainUser.setImageResource(R.drawable.ic_baseline_group_24)
-                    }
-
-
-                }
-
+                myActionsItemTvActionProcess.applyVisibilityIfTextExists(item.processDesc)
                 //
                 myActionsItemTvInternalComments.applyVisibilityIfTextExists(
                     getInfoBulletFormatted(
@@ -246,6 +234,12 @@ class Act092_Adapter constructor(
             with(binding) {
                 myActionsItemTvPlannedDate.apply {
                     text = myAction.plannedDate
+                    if(text.isNullOrEmpty()){
+                        visibility = View.GONE
+                    }else{
+                        visibility = View.VISIBLE
+                    }
+                    //
                     if (myAction.doneDate.isNullOrEmpty()) {
                         when {
                             myAction.lateItem -> {

@@ -27,6 +27,7 @@ data class MyActions(
     val doneDate: String?,
     val orderBy: String,
     val ticketOriginType: String?,
+    val scn: Int?,
     val highlightItem: Boolean,
     val periodStarted: Boolean,
     val lateItem: Boolean,
@@ -34,8 +35,8 @@ data class MyActions(
     val isMainUserTicket: Boolean,
     val hasNc: Boolean = false,
     val pdfUrl: String? = null,
-    val pdfName: String?= null,
-): MyActionsBase() {
+    val pdfName: String? = null,
+) : MyActionsBase() {
 
 
     companion object {
@@ -57,17 +58,17 @@ data class MyActions(
     }
 
     fun getFormattedSiteZoneDesc(): String? {
-        return zoneDesc?.let{
-            if(it.isNotEmpty()) {
+        return zoneDesc?.let {
+            if (it.isNotEmpty()) {
                 "$siteDesc | $zoneDesc"
-            }else{
+            } else {
                 siteDesc
             }
-        }?: siteDesc
+        } ?: siteDesc
     }
 
-    fun getAllFieldForFilter() : String{
-        return  "$processId|" +
+    fun getAllFieldForFilter(): String {
+        return "$processId|" +
                 "$processStatusTrans|" +
                 "$plannedDate|" +
                 "$tagOperationDesc|" +
@@ -80,11 +81,28 @@ data class MyActions(
                 "$siteDesc|" +
                 "$zoneDesc|" +
                 "$serviceOrderCode"
-                .replace("null|","")
-                .replace("null","")
+                    .replace("null|", "")
+                    .replace("null", "")
     }
 
-    fun mergeUnfocusActions(unfocusActionsCache: MyActionsBase){
+    fun mergeUnfocusActions(unfocusActionsCache: MyActionsBase) {
+        val temp = unfocusActionsCache as MyActions
+        when (actionType) {
+            MY_ACTION_TYPE_TICKET -> {
+                if(scn!! < temp.scn!!){
+
+                }
+            }
+            MY_ACTION_TYPE_TICKET_CACHE -> {
+
+            }
+            MY_ACTION_TYPE_SCHEDULE -> {
+                processRightIcon = temp.processRightIcon
+            }
+            MY_ACTION_TYPE_FORM -> {
+                        
+            }
+        }
         this.processMidIcon = R.drawable.ic_baseline_cloud_done_24_blue
     }
 }

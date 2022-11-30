@@ -594,7 +594,7 @@ public class MD_Schedule_Exec {
 
         Integer leftIcon =
             has_Nc != null && has_Nc.equals(1)
-            ? R.drawable.ic_alert_nc_on
+            ? R.drawable.ic_baseline_report_24
             : null;
         String doneDate = close_date;
         if(close_date != null){
@@ -647,6 +647,7 @@ public class MD_Schedule_Exec {
                     "yyyyMMddHHmm"
                 ),
                 null,
+                -1,
                 ConstantBaseApp.SYS_STATUS_IN_PROCESSING.contentEquals(status),
                 ToolBox_Inf.isItemLate(date_start + " " + customerGMT),
                 ToolBox_Inf.isItemLate(date_end + " " + customerGMT),
@@ -698,6 +699,7 @@ public class MD_Schedule_Exec {
                     "yyyyMMddHHmm"
                 ),
                 null,
+                -1,
                 ConstantBaseApp.SYS_STATUS_IN_PROCESSING.contentEquals(status),
                 ToolBox_Inf.isItemLate(date_start + " " + customerGMT),
                 ToolBox_Inf.isItemLate(date_end + " " + customerGMT),

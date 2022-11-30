@@ -250,7 +250,7 @@ class Act092Presenter constructor(
         actionUseCases.syncFilesForm(hmAux, productCode)
     }
 
-    private suspend fun fileOtherActionExists() {
+    private fun fileOtherActionExists() {
         view.onState(
             Act092UiEvent.CheckIfFileExists(
                 actionUseCases.checkIfFileExists(
@@ -372,7 +372,11 @@ class Act092Presenter constructor(
     override fun callFormSave(context: Context) {
         if(ToolBox_Con.isOnline(context)) {
             view.wsProcess.value = WS_Save::class.java.simpleName
-
+            //
+            view.showPD(
+                hmAux.get("progress_form_save_ttl"),
+                hmAux.get("progress_form_save_msg")
+            )
             val mIntent = Intent(context, WBR_Save::class.java)
             val bundle = Bundle()
             bundle.putInt(Constant.GC_STATUS_JUMP, 1) //Pula validação Update require
@@ -401,6 +405,10 @@ class Act092Presenter constructor(
         if(ToolBox_Con.isOnline(context)) {
             view.wsProcess.value  = WS_TK_Ticket_Save::class.java.simpleName
             //
+            view.showPD(
+                hmAux.get("progress_ticket_save_ttl"),
+                hmAux.get("progress_ticket_save_msg")
+            )
             //
             val mIntent = Intent(context, WBR_TK_Ticket_Save::class.java)
             val bundle = Bundle()
@@ -1167,15 +1175,10 @@ class Act092Presenter constructor(
 
     override fun getUnfocusHistoricalList(context: Context) {
         if(ToolBox_Con.isOnline(context)) {
-            view.wsProcess.value = WS_UnfocusAndHistoric::class.java.name
-            view.onState(
-                Act092UiEvent.OpenDialog(
-                    DialogType.PROCESS(
-                        hmAux["alert_send_finish_ttl"],
-                        hmAux["alert_send_finish_msg"]
-                    )
-                )
-            )
+            view.wsProcess.value = WS_UnfocusAndHistoric::class.java.simpleName
+            //
+            view.showPD(hmAux["alert_send_finish_ttl"], hmAux["alert_send_finish_msg"])
+            //
             actionUseCases.unfocusHistoricalAction(
                 myActionFilterParam.productCode!!,
                 _serialModel.value.serialCode ?: 0L
@@ -1272,6 +1275,11 @@ class Act092Presenter constructor(
             Act092Translate.ALERT_MENU_APP_PROFILE_NOT_FOUND_TTL,
             Act092Translate.ALERT_FORM_AP_MENU_PROFILE_NOT_FOUND_MSG,
             Act092Translate.ALERT_TICKET_MENU_PROFILE_NOT_FOUND_MSG,
+            "progress_ticket_save_ttl",
+            "progress_ticket_save_msg",
+            "progress_form_save_ttl",
+            "progress_form_save_msg",
+            "cell_step_lbl"
         ).let {
             return ToolBox_Inf.setLanguage(
                 translateResource.context,

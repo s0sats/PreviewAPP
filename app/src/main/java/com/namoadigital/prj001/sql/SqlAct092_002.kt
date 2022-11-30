@@ -9,13 +9,15 @@ import com.namoadigital.prj001.dao.TK_Ticket_StepDao
 import com.namoadigital.prj001.database.Specification
 import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.util.ConstantBaseApp
+import com.namoadigital.prj001.util.ToolBox_Con
 
 class SqlAct092_002(
     private val context: Context,
     private val customerCode: Int,
     private var productCode: Int?,
     private var serialId: String?,
-    private var mainUser: Int = 0,
+    private var userFocus: Int = 0,
+    private val mainUserFilter: Boolean= false,
     private val multStepsLbl: String?
 ) : Specification {
 
@@ -48,13 +50,15 @@ class SqlAct092_002(
 
 
     private fun getStatusFilter() {
-        statusFilter = if(mainUser> 0) {
+        statusFilter = if(mainUserFilter) {
             """    and  t.${TK_TicketDao.TICKET_STATUS} in('${ConstantBaseApp.SYS_STATUS_PENDING}','${ConstantBaseApp.SYS_STATUS_PROCESS}')                 
-                            and ($mainUser is null or t.${TK_TicketDao.MAIN_USER} = $mainUser)
+                            and (t.${TK_TicketDao.MAIN_USER} = ${ToolBox_Con.getPreference_User_Code(context)})
                      """
-        }else{  """    and  t.${TK_TicketDao.TICKET_STATUS} in('${ConstantBaseApp.SYS_STATUS_PENDING}','${ConstantBaseApp.SYS_STATUS_PROCESS}')                 
-                            and ($mainUser is null or t.${TK_TicketDao.USER_FOCUS} = 1)
+        }else if (userFocus == 1){  """    and  t.${TK_TicketDao.TICKET_STATUS} in('${ConstantBaseApp.SYS_STATUS_PENDING}','${ConstantBaseApp.SYS_STATUS_PROCESS}')                 
+                            and (t.${TK_TicketDao.USER_FOCUS} = 1)
                      """
+        }else{
+            ""
         }
     }
 

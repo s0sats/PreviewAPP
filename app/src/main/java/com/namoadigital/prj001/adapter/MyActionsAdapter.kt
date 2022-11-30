@@ -127,7 +127,7 @@ class MyActionsAdapter(
 /*
             binding.myActionsItemTvClient.applyVisibilityIfTextExists(myAction.clientInfo)
 */
-            binding.myActionsItemTvContract.applyVisibilityIfTextExists(myAction.actionType)
+            binding.myActionsItemTvActionProcess.applyVisibilityIfTextExists(myAction.processDesc)
 /*            binding.myActionsItemTvOsCode.applyVisibilityIfTextExists(myAction.serviceOrderCode)
             binding.myActionsItemTvErrorMsg.applyVisibilityIfTextExists(myAction.erroMsg)*/
             configDoneDate(myAction)

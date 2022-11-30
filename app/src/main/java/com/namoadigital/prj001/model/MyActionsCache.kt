@@ -44,10 +44,6 @@ class MyActionsCache(
         val processLeftIcon = getLeftIcon()
         val processMidIcon = getMidIcon()
         val processRightIcon = getRightIcon()
-        var  isMainUserTicket = false
-        mainUser?.let {
-            isMainUserTicket = mainUser == ToolBox_Con.getPreference_User_Code(context).toInt()
-        }
         //
         return MyActions(
             actionType,
@@ -73,11 +69,12 @@ class MyActionsCache(
             doneDate ?: "",
             orderBy,
             ticketOriginType ?: "",
+            ticketScn,
             "highlightItem" == "highlightItem",
             periodStarted,
             lateItem,
             isLastSelectedItem,
-            isMainUserTicket,
+            false,
             hasNc == 1,
             pdfUrl,
             pdfName,
@@ -85,16 +82,20 @@ class MyActionsCache(
     }
 
     private fun getMidIcon(): Int? {
-        return null
-    }
-
-    private fun getLeftIcon(): Int? {
-
         return if(actionType == ConstantBaseApp.FCM_MODULE_SCHEDULE
             && processStatus == ConstantBaseApp.SYS_STATUS_NOT_EXECUTED){
             null
         }else{
             R.drawable.ic_baseline_cloud_download_24_gray
+        }
+    }
+
+    private fun getLeftIcon(): Int? {
+
+        return if(hasNc == 0){
+            null
+        }else{
+            R.drawable.ic_alert_nc_on
         }
     }
 

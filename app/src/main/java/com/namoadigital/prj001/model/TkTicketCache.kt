@@ -105,6 +105,7 @@ class TkTicketCache(
                 "yyyyMMddHHmm"
             ),
             origin_type,
+            scn,
             false,
             ToolBox_Inf.isItemLate(forecast_start),
             ToolBox_Inf.isItemLate(forecast_end),

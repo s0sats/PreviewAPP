@@ -447,6 +447,7 @@ public class GE_Custom_Form_Ap {
                         "yyyyMMddHHmm"
                 ),
                 null,
+                -1,
                 false,
                 false,
                 //Se a data usada for o when, entao valida atraso, se não, não é atrasado

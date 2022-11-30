@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
@@ -17,10 +18,7 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao
 import com.namoadigital.prj001.databinding.Act092MainBinding
 import com.namoadigital.prj001.model.MyActionFilterParam
 import com.namoadigital.prj001.model.MyActionsBase
-import com.namoadigital.prj001.service.WS_Serial_Search
-import com.namoadigital.prj001.service.WS_Sync
-import com.namoadigital.prj001.service.WS_TK_Ticket_Download
-import com.namoadigital.prj001.service.WS_UnfocusAndHistoric
+import com.namoadigital.prj001.service.*
 import com.namoadigital.prj001.ui.act005.Act005_Main
 import com.namoadigital.prj001.ui.act070.Act070_Main
 import com.namoadigital.prj001.ui.act091.mvp.model.TranslateResource
@@ -48,6 +46,14 @@ class Act092_Main : BaseActivityMvp
         Act092MainBinding>(),
     Act092_Contract.View {
     override lateinit var bundle: Bundle
+    override fun showPD(ttl: String?, msg: String?) {
+        enableProgressDialog(
+            ttl,
+            msg,
+            hmAux_Trans["sys_alert_btn_cancel"],
+            hmAux_Trans["sys_alert_btn_ok"]
+        )
+    }
 
     private val _mainUserFilter = MutableStateFlow(false)
 
@@ -148,7 +154,21 @@ class Act092_Main : BaseActivityMvp
                 presenter.processWsReturnSync(hmAuxTicketDownload)
             }
 
-            WS_UnfocusAndHistoric::class.java.name -> {
+            WS_Save::class.java.simpleName -> {
+                wsProcess.value = ""
+                progressDialog.dismiss()
+                //
+                presenter.otherActionFlow(context)
+            }
+
+            WS_TK_Ticket_Save::class.java.simpleName -> {
+                wsProcess.value = ""
+                progressDialog.dismiss()
+                //
+                presenter.otherActionFlow(context)
+            }
+
+            WS_UnfocusAndHistoric::class.java.simpleName -> {
                 wsProcess.value = ""
                 if (progressDialog.isShowing) progressDialog.dismiss()
 
@@ -262,17 +282,17 @@ class Act092_Main : BaseActivityMvp
                 0
             )
 
-        } else if (wsProcess.value == WS_UnfocusAndHistoric::class.java.name) {
+        } else if (wsProcess.value == WS_UnfocusAndHistoric::class.java.simpleName) {
             progressDialog.dismiss()
-            onState(
-                Act092UiEvent.OpenDialog(
-                    DialogType.DEFAULT_OK(
-                        title = hmAux_Trans[Act092Translate.DIALOG_UPDATE_TTL],
-                        message = hmAux_Trans[Act092Translate.DIALOG_UPDATE_MSG]
-                    )
-                )
-            )
-
+//            onState(
+//                Act092UiEvent.OpenDialog(
+//                    DialogType.DEFAULT_OK(
+//                        title = hmAux_Trans[Act092Translate.DIALOG_UPDATE_TTL],
+//                        message = hmAux_Trans[Act092Translate.DIALOG_UPDATE_MSG]
+//                    )
+//                )
+//            )
+            ToolBox.toastMSG(context, hmAux_Trans[Act092Translate.DIALOG_UPDATE_MSG])
             presenter.getMyActionList()
             return
         }
@@ -395,12 +415,14 @@ class Act092_Main : BaseActivityMvp
                 iconTint = ColorStateList.valueOf(textColor)
                 setTextColor(textColor)
                 strokeWidth = if (isEmpty) 1 else 0
+                isClickable = isEmpty
             }
 
             mainUserSelection.apply {
                 background = mainUserCircle
                 imageTintList = mainUserPerson
                 isEnabled = isEmpty
+                isClickable = isEmpty
             }
 
             mainUserSelection.isEnabled = isEmpty

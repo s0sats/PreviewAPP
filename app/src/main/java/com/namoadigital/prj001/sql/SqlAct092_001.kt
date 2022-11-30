@@ -15,13 +15,13 @@ class SqlAct092_001 (
     private var productCode: Int?,
     private var serialId: String?,
     private val multStepsLbl: String?,
-    private val mainUser: Int = 0
+    private val mainUser: Boolean = false
 ) : Specification {
     var mainUserFilter = ""
 
     init {
-        if(mainUser == 1) {
-            mainUserFilter = "and c.${TkTicketCacheDao.MAIN_USER} = $mainUser"
+        if(mainUser) {
+            mainUserFilter = "and c.${TkTicketCacheDao.MAIN_USER} = ${ToolBox_Con.getPreference_User_Code(context)}"
         }
     }
 

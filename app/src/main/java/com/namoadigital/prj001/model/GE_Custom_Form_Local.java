@@ -604,7 +604,7 @@ public class GE_Custom_Form_Local {
             //
             leftIcon =
                 hmAux.hasConsistentValue(SqlAct084_004.FIELD_NC) && "1".equals(hmAux.get(SqlAct084_004.FIELD_NC))
-                ? R.drawable.ic_alert_nc_on
+                ? R.drawable.ic_baseline_report_24
                 : null;
         }
         int midIcon =
@@ -674,6 +674,7 @@ public class GE_Custom_Form_Local {
             endDate,
             orderBy,
             null,
+            -1,
             ConstantBaseApp.SYS_STATUS_PROCESS.equals(statusToUse),
             false,
             false,
