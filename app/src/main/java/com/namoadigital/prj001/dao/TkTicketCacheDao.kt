@@ -14,7 +14,6 @@ import com.namoadigital.prj001.model.TkTicketCache
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
-import java.util.ArrayList
 
 class TkTicketCacheDao(
         val context: Context,
@@ -66,6 +65,10 @@ class TkTicketCacheDao(
         const val FORECAST_END = "forecast_end"
         const val STEP_COUNT = "step_count"
         const val STEP_ORDER_SEQ = "step_order_seq"
+        const val CLASS_CODE = "class_code"
+        const val CLASS_ID = "class_id"
+        const val CLASS_COLOR = "class_color"
+        const val CLASS_AVAILABLE = "class_available"
     }
 
     private val toTkTicketCacheMapper: Mapper<Cursor, TkTicketCache>
@@ -355,6 +358,11 @@ class TkTicketCacheDao(
                     put(STEP_DESC,ticketCache.step_desc)
                     put(FORECAST_START,ticketCache.forecast_start)
                     put(FORECAST_END,ticketCache.forecast_end)
+                    put(CLASS_CODE,ticketCache.class_code)
+                    put(CLASS_ID,ticketCache.class_id)
+                    put(CLASS_COLOR,ticketCache.class_color)
+                    put(CLASS_AVAILABLE,ticketCache.class_available)
+
                     if(ticketCache.step_count > -1){
                         put(STEP_COUNT,ticketCache.step_count)
                     }
@@ -412,7 +420,11 @@ class TkTicketCacheDao(
                             forecast_start = getStringOrNull(getColumnIndex(FORECAST_START)),
                             forecast_end = getStringOrNull(getColumnIndex(FORECAST_END)),
                             step_count = getInt(getColumnIndex(STEP_COUNT)),
-                            step_order_seq = getIntOrNull(getColumnIndex(STEP_ORDER_SEQ))
+                            step_order_seq = getIntOrNull(getColumnIndex(STEP_ORDER_SEQ)),
+                            class_code = getIntOrNull(getColumnIndex(CLASS_CODE)),
+                            class_id = getStringOrNull(getColumnIndex(CLASS_ID)),
+                            class_color = getStringOrNull(getColumnIndex(CLASS_COLOR)),
+                            class_available = getIntOrNull(getColumnIndex(CLASS_AVAILABLE))
                     )
                 }
             }

@@ -1092,6 +1092,38 @@ public class TK_Ticket implements Cloneable, Serializable {
         this.not_executed_date = not_executed_date;
     }
 
+    public Integer getClass_code() {
+        return class_code;
+    }
+
+    public void setClass_code(Integer class_code) {
+        this.class_code = class_code;
+    }
+
+    public String getClass_id() {
+        return class_id;
+    }
+
+    public void setClass_id(String class_id) {
+        this.class_id = class_id;
+    }
+
+    public String getClass_color() {
+        return class_color;
+    }
+
+    public void setClass_color(String class_color) {
+        this.class_color = class_color;
+    }
+
+    public Integer getClass_available() {
+        return class_available;
+    }
+
+    public void setClass_available(Integer class_available) {
+        this.class_available = class_available;
+    }
+
     public ArrayList<TK_Ticket_Step> getStep() {
         return step;
     }
@@ -1702,7 +1734,9 @@ public class TK_Ticket implements Cloneable, Serializable {
                 hmAux.hasConsistentValue(TK_TicketDao.MAIN_USER) && hmAux.get(TK_TicketDao.MAIN_USER).equals(ToolBox_Con.getPreference_User_Code(context)),
                 false,
                 null,
-                null
+                null,
+                hmAux.get(TK_TicketDao.CLASS_ID),
+                hmAux.get(TK_TicketDao.CLASS_COLOR)
         );
 
         myActions.setProductCode(hmAux.hasConsistentValue(TK_TicketDao.OPEN_PRODUCT_CODE)? Integer.parseInt(hmAux.get(TK_TicketDao.OPEN_PRODUCT_CODE)) : 0);

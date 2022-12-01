@@ -131,6 +131,11 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
     public static final String NOT_EXECUTED_PHOTO = "not_executed_photo";
     public static final String NOT_EXECUTED_DATE = "not_executed_date";
 
+    public static final String CLASS_CODE = "class_code";
+    public static final String CLASS_ID = "class_id";
+    public static final String CLASS_COLOR = "class_color";
+    public static final String CLASS_AVAILABLE = "class_available";
+
 
     public TK_TicketDao(Context context, String mDB_NAME, int mDB_VERSION) {
         super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI);
@@ -1094,6 +1099,30 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             } else {
                 tk_ticket.setJustify_item_desc(cursor.getString(cursor.getColumnIndex(JUSTIFY_ITEM_DESC)));
             }
+            //
+            if (cursor.isNull(cursor.getColumnIndex(CLASS_CODE))) {
+                tk_ticket.setClass_code(null);
+            } else {
+                tk_ticket.setClass_code(cursor.getInt(cursor.getColumnIndex(CLASS_CODE)));
+            }
+            //
+            if (cursor.isNull(cursor.getColumnIndex(CLASS_ID))) {
+                tk_ticket.setClass_id(null);
+            } else {
+                tk_ticket.setClass_id(cursor.getString(cursor.getColumnIndex(CLASS_ID)));
+            }
+            //
+            if (cursor.isNull(cursor.getColumnIndex(CLASS_COLOR))) {
+                tk_ticket.setClass_color(null);
+            } else {
+                tk_ticket.setClass_color(cursor.getString(cursor.getColumnIndex(CLASS_COLOR)));
+            }
+            //
+            if (cursor.isNull(cursor.getColumnIndex(CLASS_AVAILABLE))) {
+                tk_ticket.setClass_available(null);
+            } else {
+                tk_ticket.setClass_available(cursor.getInt(cursor.getColumnIndex(CLASS_AVAILABLE)));
+            }
             if (cursor.isNull(cursor.getColumnIndex(NOT_EXECUTED_COMMENTS))) {
                 tk_ticket.setNot_executed_comments(null);
             } else {
@@ -1175,6 +1204,10 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             contentValues.put(NOT_EXECUTED_PHOTO_URL, tk_ticket.getNot_executed_photo_url());
             contentValues.put(NOT_EXECUTED_PHOTO, tk_ticket.getNot_executed_photo());
             contentValues.put(NOT_EXECUTED_DATE, tk_ticket.getNot_executed_date());
+            contentValues.put(CLASS_CODE, tk_ticket.getClass_code());
+            contentValues.put(CLASS_ID, tk_ticket.getClass_id());
+            contentValues.put(CLASS_COLOR, tk_ticket.getClass_color());
+            contentValues.put(CLASS_AVAILABLE, tk_ticket.getClass_available());
 
             if (tk_ticket.getOpen_date() != null) {
                 contentValues.put(OPEN_DATE, tk_ticket.getOpen_date());

@@ -655,6 +655,8 @@ public class MD_Schedule_Exec {
                     false,
                     false,
                     null,
+                    null,
+                    null,
                     null
             );
             myActions.setProductCode(product_code);
@@ -706,6 +708,8 @@ public class MD_Schedule_Exec {
                 isLastSelectedItem,
                     false,
                     false,
+                    null,
+                    null,
                     null,
                     null
             );
