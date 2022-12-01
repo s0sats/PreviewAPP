@@ -36,6 +36,8 @@ data class MyActions(
     val hasNc: Boolean = false,
     val pdfUrl: String? = null,
     val pdfName: String? = null,
+    val classId: String? = null,
+    val classColor: String? = null,
 ) : MyActionsBase() {
 
 

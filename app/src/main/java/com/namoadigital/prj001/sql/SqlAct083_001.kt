@@ -144,7 +144,9 @@ class SqlAct083_001(
                      c.forecast_end,
                      c.step_count,
                      c.step_order_seq,
-                     c.main_user
+                     c.main_user,
+                     c.class_id,
+                     c.class_color
                     FROM
                      ${TkTicketCacheDao.TABLE} c 
                     WHERE

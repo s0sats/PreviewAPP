@@ -171,14 +171,14 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         //Desabilita os cliques nas abas, pois só serão habilitado após corroutine retornar.
         toggleTabEnableStattus(false)
         setLabels()
-        setChips()
+//        setChips()
     }
 
-    private fun setChips() {
-        mPresenter.getChipList().forEach {
-            binding.act083MainContent.act083CgFilter.addView(createTvChip(it))
-        }
-    }
+//    private fun setChips() {
+//        mPresenter.getChipList().forEach {
+//            binding.act083MainContent.act083CgFilter.addView(createTvChip(it))
+//        }
+//    }
 
     /**
      * LUCHE - 11/06/2021

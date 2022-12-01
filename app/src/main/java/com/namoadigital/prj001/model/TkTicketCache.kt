@@ -110,7 +110,12 @@ class TkTicketCache(
             ToolBox_Inf.isItemLate(forecast_start),
             ToolBox_Inf.isItemLate(forecast_end),
             processPk == lastSelectedActionPk,
-            main_user?.toString()?.equals(ToolBox_Con.getPreference_User_Code(context)) ?: false
+            main_user?.toString()?.equals(ToolBox_Con.getPreference_User_Code(context)) ?: false,
+            false,
+            null,
+            null,
+            class_id,
+            class_color
         )
         myActions.productCode = open_product_code
         return myActions

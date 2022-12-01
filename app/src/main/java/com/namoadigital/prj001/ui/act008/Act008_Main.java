@@ -1114,42 +1114,54 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
 
     @Override
-    public void callAct083(Context context) {
+    public void callAct083(Context context, boolean isScheduleFlow) {
         Intent mIntent = new Intent(context, Act083_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         MyActionFilterParam myActionFilterParam = null;
+
         Integer productCode = mPresenter.checkOriginFlow(originFlow) ? (int) mdProductSerial.getProduct_code() : null;
         String productId = mPresenter.checkOriginFlow(originFlow) ? mdProductSerial.getProduct_id() : null;
         String productDesc = mPresenter.checkOriginFlow(originFlow) ? mdProductSerial.getProduct_desc() : null;
         String serialId = mPresenter.checkOriginFlow(originFlow) ? mdProductSerial.getSerial_id() : null;
         Long serialCode = null;
-        if (mPresenter.checkOriginFlow(originFlow)) {
-            serialCode = mdProductSerial.getSerial_code();
-        } else {
-            serialCode = mdProductSerial.getSerial_tmp();
-        }
-        //
-        if(!act083Bundle.containsKey(MyActionFilterParam.MY_ACTION_FILTER_PARAM)) {
-            myActionFilterParam = new MyActionFilterParam(null,
-                    null,
-                    productCode,
-                    productId,
-                    productDesc,
-                    serialCode,
-                    serialId,
-                    null,
-                    null);
-        } else {
-            myActionFilterParam = getMyActionFilterParam(bundle);
+        if(isScheduleFlow) {
+            if (mPresenter.checkOriginFlow(originFlow)) {
+                serialCode = mdProductSerial.getSerial_code();
+            } else {
+                serialCode = mdProductSerial.getSerial_tmp();
+            }
             //
-            myActionFilterParam.setProductCode(productCode);
-            myActionFilterParam.setProductId(productId);
-            myActionFilterParam.setProductDesc(productDesc);
-            myActionFilterParam.setSerialId(serialId);
-            myActionFilterParam.setSerialCode(serialCode);
+            if (!act083Bundle.containsKey(MyActionFilterParam.MY_ACTION_FILTER_PARAM)) {
+                myActionFilterParam = new MyActionFilterParam(null,
+                        null,
+                        productCode,
+                        productId,
+                        productDesc,
+                        serialCode,
+                        serialId,
+                        null,
+                        null);
+            } else {
+                myActionFilterParam = getMyActionFilterParam(bundle);
+                //
+                myActionFilterParam.setProductCode(productCode);
+                myActionFilterParam.setProductId(productId);
+                myActionFilterParam.setProductDesc(productDesc);
+                myActionFilterParam.setSerialId(serialId);
+                myActionFilterParam.setSerialCode(serialCode);
+            }
+
+            bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM_ACT092, myActionFilterParam);
+        }else{
+            MyActionFilterParam params = getMyActionFilterParam(bundle);
+            params.setProductCode(null);
+            params.setProductId(null);
+            params.setProductDesc(null);
+            params.setSerialCode(-1L);
+            params.setSerialId(null);
+            act083Bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM,params);
         }
         //
-        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM_ACT092, myActionFilterParam);
         bundle.putString(act083Bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW), ConstantBaseApp.ACT006);
         bundle.putLong(MD_Product_SerialDao.SERIAL_CODE, mdProductSerial.getSerial_code());
         if (mdProductSerial.getClass_color() != null) {

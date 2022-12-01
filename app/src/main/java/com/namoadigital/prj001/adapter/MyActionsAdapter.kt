@@ -2,6 +2,7 @@ package com.namoadigital.prj001.adapter
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
@@ -97,7 +98,18 @@ class MyActionsAdapter(
             }
             //
             binding.myActionsItemTvCode.text = myAction.processId
-            binding.myActionsItemTvClassStatus.text = myAction.processStatusTrans
+            binding.myActionsItemTvClassStatus.visibility =View.GONE
+            //
+            if((myAction.actionType == MyActions.MY_ACTION_TYPE_TICKET
+                || myAction.actionType == MyActions.MY_ACTION_TYPE_TICKET_CACHE)
+                && !myAction.classId.isNullOrEmpty()) {
+                binding.myActionsItemTvClassStatus.apply {
+                    applyVisibilityIfTextExists(myAction.classId)
+                    setTextColor(Color.parseColor(myAction.classColor))
+                    visibility =View.VISIBLE
+                }
+            }
+            //
             configPlannedDate(myAction)
             //
             binding.myActionsItemIvIconLeft.applyVisibilityIfSourceExists(myAction.processLeftIcon)

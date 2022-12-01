@@ -74,28 +74,28 @@
                     app:layout_constraintTop_toTopOf="@+id/act083_til_filter"
                     app:layout_constraintVertical_bias="0.7" />
 
-                <com.google.android.material.chip.ChipGroup
-                    android:id="@+id/act083_cg_filter"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/act083_til_filter"
-                    android:paddingTop="2dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginTop="8dp"
-                    >
+<!--                <com.google.android.material.chip.ChipGroup-->
+<!--                    android:id="@+id/act083_cg_filter"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toBottomOf="@id/act083_til_filter"-->
+<!--                    android:paddingTop="2dp"-->
+<!--                    android:layout_marginStart="8dp"-->
+<!--                    android:layout_marginEnd="8dp"-->
+<!--                    android:layout_marginTop="8dp"-->
+<!--                    >-->
 
-                    <!--                    <TextView-->
-                    <!--                        android:id="@+id/act083_tv_filter1"-->
-                    <!--                        style="@style/TextViewChips"-->
-                    <!--                        android:layout_width="wrap_content"-->
-                    <!--                        android:layout_height="wrap_content"-->
-                    <!--                        android:text="200.SHOPPING" />-->
+<!--                    &lt;!&ndash;                    <TextView&ndash;&gt;-->
+<!--                    &lt;!&ndash;                        android:id="@+id/act083_tv_filter1"&ndash;&gt;-->
+<!--                    &lt;!&ndash;                        style="@style/TextViewChips"&ndash;&gt;-->
+<!--                    &lt;!&ndash;                        android:layout_width="wrap_content"&ndash;&gt;-->
+<!--                    &lt;!&ndash;                        android:layout_height="wrap_content"&ndash;&gt;-->
+<!--                    &lt;!&ndash;                        android:text="200.SHOPPING" />&ndash;&gt;-->
 
 
-                </com.google.android.material.chip.ChipGroup>
+<!--                </com.google.android.material.chip.ChipGroup>-->
 
 
 
@@ -107,7 +107,7 @@
                     android:layout_marginTop="4dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/act083_cg_filter">
+                    app:layout_constraintTop_toBottomOf="@id/act083_til_filter">
 
                     <RadioButton
                         android:id="@+id/act083_tab_my_actions"
