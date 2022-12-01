@@ -31,7 +31,7 @@ public class GE_Custom_Form_Sql_001_TT implements Specification {
                         " FROM " +
                         GE_Custom_FormDao.TABLE +
                         " WHERE " +
-                        GE_Custom_FormDao.CUSTOMER_CODE + "= '" + s_customer_code + "' " +
+                        GE_Custom_FormDao.CUSTOMER_CODE + " = '" + s_customer_code + "' " +
                         "     AND " + GE_Custom_FormDao.CUSTOM_FORM_TYPE + " = '" + s_formtype_code + "' " +
                         "     AND " + GE_Custom_FormDao.CUSTOM_FORM_CODE + " = '" + s_form_code + "' " +
                         "     AND " + GE_Custom_FormDao.CUSTOM_FORM_VERSION + " = '" + s_formversion_code + "' ")

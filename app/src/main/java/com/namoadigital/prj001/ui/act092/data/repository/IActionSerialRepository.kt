@@ -19,6 +19,7 @@ import com.namoadigital.prj001.ui.base.NamoaFactory
 import com.namoadigital.prj001.util.*
 import java.io.File
 
+
 class IActionSerialRepository constructor(
     private val context: Context,
     private val ticketDao: TK_TicketDao,
@@ -32,6 +33,8 @@ class IActionSerialRepository constructor(
     private val siteDao: MD_SiteDao,
     private val ticketCtrlDao: TK_Ticket_CtrlDao,
     private val operationDao: MD_OperationDao,
+    private val serialTpDeviceDao: MD_Product_Serial_Tp_DeviceDao,
+    private val custom_formDao: GE_Custom_FormDao,
     private val filterParamPreferences: FilterParamPreferences
 ) : ActionSerialRepository {
 
@@ -387,6 +390,32 @@ class IActionSerialRepository constructor(
         siteDao.addUpdate(md_site)
     }
 
+    override fun scheduleIsOsForm(
+        form_type: String,
+        form_code: String,
+        form_version: String
+    ): Boolean {
+        return custom_formDao.getByString(
+            GE_Custom_Form_Sql_001(
+                ToolBox_Con.getPreference_Customer_Code(context).toString(),
+                form_type,
+                form_code,
+                form_version
+            ).toSqlQuery()
+        ).is_so == 1
+    }
+
+
+    override fun serialHasStructure(serial: MD_Product_Serial): ArrayList<MD_Product_Serial_Tp_Device> {
+        return serialTpDeviceDao.query(
+            MD_Product_Serial_Tp_Device_Sql_002(
+                serial.customer_code,
+                serial.product_code,
+                serial.serial_code
+            ).toSqlQuery()
+        ) as ArrayList<MD_Product_Serial_Tp_Device>
+    }
+
     companion object {
 
         class ActionSerialRepositoryFactoryRepository(private val context: Context) :
@@ -445,6 +474,16 @@ class IActionSerialRepository constructor(
                         Constant.DB_VERSION_CUSTOM
                     ),
                     MD_OperationDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                    ),
+                    MD_Product_Serial_Tp_DeviceDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                    ),
+                    GE_Custom_FormDao(
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM

@@ -62,4 +62,11 @@ interface ActionSerialRepository {
     ): Boolean
 
     fun updateObjReturn(tkTicket: TK_Ticket, md_site: MD_Site): Boolean
+    fun scheduleIsOsForm(
+        form_type: String,
+        form_code: String,
+        form_version: String
+    ): Boolean
+
+    fun serialHasStructure(serial: MD_Product_Serial): ArrayList<MD_Product_Serial_Tp_Device>?
 }

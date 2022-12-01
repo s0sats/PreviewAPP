@@ -80,7 +80,6 @@ class MyActionsAdapter(
 
     inner class MyActionVh(private val binding: MyActionsItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun onBinding(myAction: MyActions, position: Int) {
-//            binding.myActionSelectSerial.text = /*hmAuxTrans["btn_select_action_lbl"]*/ "Abrir"
             binding.act083SerialInfo.text = hmAuxTrans["btn_select_serial_info_lbl"]
 
             val serialVisible =
