@@ -312,9 +312,9 @@ class Act092Presenter constructor(
         //Seta dados da action selecionado no filterParam
         setSeletedActionInfosIntoFilterParam(myAction.actionType, myAction.processPk)
         //
-        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT083)
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT092)
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
-        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, originFlow)
+        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, Constant.ACT092)
         //
         bundle.putString(MD_ProductDao.PRODUCT_CODE, myAction.productCode.toString())
         bundle.putString(MD_ProductDao.PRODUCT_ID, myAction.productId.toString())
@@ -852,100 +852,95 @@ class Act092Presenter constructor(
         }
     }
 
+
+    private fun getScheduleBundle(
+        scheduleExec: MD_Schedule_Exec,
+        serial: MD_Product_Serial
+    ): Bundle {
+        return Bundle().also { bundle ->
+            bundle.putString(MD_ProductDao.PRODUCT_CODE, scheduleExec.product_code.toString())
+            bundle.putString(MD_ProductDao.PRODUCT_DESC, scheduleExec.product_desc.toString())
+            bundle.putString(MD_ProductDao.PRODUCT_ID, scheduleExec.product_id.toString())
+            bundle.putString(MD_Product_SerialDao.SERIAL_ID, serial.serial_id)
+            bundle.putString(
+                GE_Custom_FormDao.CUSTOM_FORM_CODE,
+                scheduleExec.custom_form_code.toString()
+            )
+            bundle.putString(
+                Constant.ACT010_CUSTOM_FORM_CODE_DESC,
+                scheduleExec.custom_form_desc
+            )
+            bundle.putString(
+                GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE,
+                scheduleExec.custom_form_type.toString()
+            )
+            bundle.putString(
+                GE_Custom_FormDao.CUSTOM_FORM_VERSION,
+                scheduleExec.custom_form_version.toString()
+            )
+            view.bundle.putString(
+                ConstantBaseApp.MAIN_REQUESTING_ACT,
+                Constant.ACT092
+            )
+            view.bundle.putString(
+                ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
+                Constant.ACT092
+            )
+            bundle.putAll(view.bundle)
+        }
+    }
+
+
     private fun processActSchedule(
         action: MyActions,
         actType: String,
         scheduleExec: MD_Schedule_Exec,
         serial: MD_Product_Serial
     ) {
-        when (actType) {
-            Constant.ACT011 -> {
-                view.onState(
-                    Act092UiEvent.CallAct(
-                        Act011_Main::class.java,
-                        Bundle().apply {
-                            putString(MD_Product_SerialDao.SERIAL_ID, serial.serial_id)
-                            putString(
-                                GE_Custom_FormDao.CUSTOM_FORM_CODE,
-                                scheduleExec.custom_form_code.toString()
-                            )
-                            putString(
-                                Constant.ACT010_CUSTOM_FORM_CODE_DESC,
-                                scheduleExec.custom_form_desc
-                            )
-                            putString(
-                                GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE,
-                                scheduleExec.custom_form_type.toString()
-                            )
-                            putString(
-                                GE_Custom_FormDao.CUSTOM_FORM_VERSION,
-                                scheduleExec.custom_form_version.toString()
-                            )
-                            view.bundle.putString(
-                                ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
-                                Constant.ACT092
-                            )
-                            putAll(view.bundle)
-                        }
+        CoroutineScope(Dispatchers.Main).launch {
+            when (actType) {
+                Constant.ACT011 -> {
+                    view.onState(
+                        Act092UiEvent.CallAct(
+                            Act011_Main::class.java,
+                            getScheduleBundle(scheduleExec, serial)
+                        )
                     )
-                )
-            }
+                }
 
-            Constant.ACT087 -> {
-                view.onState(
-                    Act092UiEvent.CallAct(
-                        Act087Main::class.java,
-                        Bundle().apply {
-                            putString(MD_Product_SerialDao.SERIAL_ID, serial.serial_id)
-                            view.bundle.putString(
-                                ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
-                                Constant.ACT092
-                            )
-                            putAll(view.bundle)
-                            putAll(
-                                Act087Main.getBundleInstance(
-                                    scheduleExec.custom_form_type.toString(),
-                                    scheduleExec.custom_form_code.toString(),
-                                    scheduleExec.custom_form_version.toString(),
-                                    serial.product_code.toString(),
-                                    serial.serial_id.toString(),
-                                    serial.serial_code.toString(),
-                                    scheduleExec.schedule_prefix.toString(),
-                                    scheduleExec.schedule_code.toString(),
-                                    scheduleExec.schedule_exec.toString()
+                Constant.ACT087 -> {
+                    view.onState(
+                        Act092UiEvent.CallAct(
+                            Act087Main::class.java,
+                            Bundle().apply {
+                                putString(MD_Product_SerialDao.SERIAL_ID, serial.serial_id)
+                                view.bundle.putString(
+                                    ConstantBaseApp.MAIN_REQUESTING_ACT,
+                                    Constant.ACT092
                                 )
-                            )
-                        }
-                    )
-                )
-            }
-
-/*            Constant.ACT070 -> {
-                view.onState(
-                    Act092UiEvent.CallAct(
-                        Act070_Main::class.java,
-                        getTicketFlowBundle(
-                            action,
-                            ticketPrefix,
-                            ticketCode
+                                view.bundle.putString(
+                                    ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
+                                    Constant.ACT092
+                                )
+                                putAll(view.bundle)
+                                putAll(
+                                    Act087Main.getBundleInstance(
+                                        scheduleExec.custom_form_type.toString(),
+                                        scheduleExec.custom_form_code.toString(),
+                                        scheduleExec.custom_form_version.toString(),
+                                        serial.product_code.toString(),
+                                        serial.serial_id.toString(),
+                                        serial.serial_code.toString(),
+                                        scheduleExec.schedule_prefix.toString(),
+                                        scheduleExec.schedule_code.toString(),
+                                        scheduleExec.schedule_exec.toString()
+                                    )
+                                )
+                            }
                         )
                     )
-                )
+                }
             }
-            Constant.ACT071 -> {
-                view.onState(
-                    Act092UiEvent.CallAct(
-                        Act071_Main::class.java,
-                        getTicketActionFlowBundle(
-                            action,
-                            scheduleExec,
-                            ticketPrefix,
-                            ticketCode,
-                            ticketSeq
-                        )
-                    )
-                )
-            }*/
         }
     }
 
@@ -963,7 +958,14 @@ class Act092Presenter constructor(
         //
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT092)
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
-        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, originFlow)
+        bundle.putString(
+            ConstantBaseApp.MAIN_REQUESTING_ACT,
+            Constant.ACT092
+        )
+        bundle.putString(
+            ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
+            Constant.ACT092
+        )
         bundle.putInt(MD_Schedule_ExecDao.SCHEDULE_PREFIX, scheduleExec.schedule_prefix)
         bundle.putInt(MD_Schedule_ExecDao.SCHEDULE_CODE, scheduleExec.schedule_code)
         bundle.putInt(MD_Schedule_ExecDao.SCHEDULE_EXEC, scheduleExec.schedule_exec)
@@ -1012,32 +1014,19 @@ class Act092Presenter constructor(
         return bundle
     }
 
-    private fun getTicketFlowBundle(
-        action: MyActions,
-        ticketPrefix: Int,
-        ticketCode: Int
-    ): Bundle {
-        val bundle = Bundle()
-        //Seta dados da action selecionado no filterParam
-        setSeletedActionInfosIntoFilterParam(action.actionType, action.processPk)
-        //
-        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT092)
-        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
-        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, originFlow)
-        //
-        bundle.putInt(TK_TicketDao.TICKET_PREFIX, ticketPrefix)
-        bundle.putInt(TK_TicketDao.TICKET_CODE, ticketCode)
-        //bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ, ToolBox_Inf.convertStringToInt(item.get(TK_Ticket_CtrlDao.TICKET_SEQ)))
-        bundle.putString(Constant.ACT_SELECTED_DATE, _serialModel.value.calendarDate)
-        bundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK, action.processPk)
-        return bundle
-    }
-
     private fun getFormFlowBundle(
         action: MyActions,
         scheduleExec: MD_Schedule_Exec
     ): Bundle {
         val bundle = Bundle()
+        bundle.putString(
+            ConstantBaseApp.MAIN_REQUESTING_ACT,
+            Constant.ACT092
+        )
+        bundle.putString(
+            ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
+            Constant.ACT092
+        )
         bundle.putString(MD_ProductDao.PRODUCT_CODE, scheduleExec.product_code.toString())
         bundle.putString(MD_ProductDao.PRODUCT_DESC, scheduleExec.product_desc.toString())
         bundle.putString(MD_ProductDao.PRODUCT_ID, scheduleExec.product_id.toString())

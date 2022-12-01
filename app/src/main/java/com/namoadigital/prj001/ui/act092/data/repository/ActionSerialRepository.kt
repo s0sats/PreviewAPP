@@ -22,7 +22,7 @@ interface ActionSerialRepository {
     suspend fun getPreferences(): SerialModel
     fun getScheduleFromMyAction(prefix: Int, code: Int, exec: Int): MD_Schedule_Exec?
     fun getSite(site_code: String): MD_Site?
-    suspend fun getCustomFormLocal(
+    fun getCustomFormLocal(
         customer_code: String,
         form_type: String,
         form_code: String,
