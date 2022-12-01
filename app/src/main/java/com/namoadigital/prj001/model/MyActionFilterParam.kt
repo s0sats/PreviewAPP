@@ -44,12 +44,12 @@ class MyActionFilterParam(
 //        tagFilterDesc?.let {
 //            filters.add(it)
 //        }
-        productDesc?.let {
-            filters.add(it)
-        }
-        if(!serialId.isNullOrEmpty()) {
-            filters.add(serialId!!)
-        }
+//        productDesc?.let {
+//            filters.add(it)
+//        }
+//        if(!serialId.isNullOrEmpty()) {
+//            filters.add(serialId!!)
+//        }
        if(!ticketId.isNullOrEmpty()) {
             filters.add(ticketId!!)
         }
