@@ -69,4 +69,6 @@ public interface Act011_Main_View {
     CustomFF cfg_Measure(HMAux cf, MD_Product_Serial serialInfo, MeMeasureTp measureTp);
 
     CustomFF cfg_Number(HMAux cf);
+
+    void callAct092();
 }

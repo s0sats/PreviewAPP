@@ -1786,12 +1786,14 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     public void onBackPressedClicked() {
         if (isaTicketFlowForm()) {
             mView.callAct070();
-        } else if(ConstantBaseApp.ACT027.equals(mView.getRequestingAct())
-                    || ConstantBaseApp.ACT028.equals(mView.getRequestingAct())
-        ){
+        } else if (ConstantBaseApp.ACT027.equals(mView.getRequestingAct())
+                || ConstantBaseApp.ACT028.equals(mView.getRequestingAct())
+        ) {
             mView.nservCall();
-        } else if(ConstantBaseApp.ACT084.equals(mView.getRequestingAct())){
+        } else if (ConstantBaseApp.ACT084.equals(mView.getRequestingAct())) {
             mView.callAct084();
+        } else if (ConstantBaseApp.ACT092.equals(mView.getRequestingAct())) {
+            mView.callAct092();
         } else {
             mView.callAct083();
         }
