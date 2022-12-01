@@ -78,6 +78,8 @@ class MyActionsCache(
             hasNc == 1,
             pdfUrl,
             pdfName,
+            null,
+            null
         )
     }
 
@@ -95,7 +97,7 @@ class MyActionsCache(
         return if(hasNc == 0){
             null
         }else{
-            R.drawable.ic_alert_nc_on
+            R.drawable.ic_baseline_report_24
         }
     }
 

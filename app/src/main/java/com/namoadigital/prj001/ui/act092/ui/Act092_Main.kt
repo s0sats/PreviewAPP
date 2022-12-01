@@ -171,9 +171,12 @@ class Act092_Main : BaseActivityMvp
             WS_UnfocusAndHistoric::class.java.simpleName -> {
                 wsProcess.value = ""
                 if (progressDialog.isShowing) progressDialog.dismiss()
-
-                presenter.getMyActionList()
-
+                if(hmAux.get(WS_UnfocusAndHistoric.RESULT_LIST_SIZE).equals("0")){
+                    ToolBox.toastMSG(context, hmAux_Trans[Act092Translate.DIALOG_OTHER_ACTIONS_EMPTY_LIST_MSG])
+                }else {
+                    ToolBox.toastMSG(context, hmAux_Trans[Act092Translate.DIALOG_UPDATE_MSG])
+                    presenter.getMyActionList()
+                }
                 return
             }
 
@@ -282,19 +285,6 @@ class Act092_Main : BaseActivityMvp
                 0
             )
 
-        } else if (wsProcess.value == WS_UnfocusAndHistoric::class.java.simpleName) {
-            progressDialog.dismiss()
-//            onState(
-//                Act092UiEvent.OpenDialog(
-//                    DialogType.DEFAULT_OK(
-//                        title = hmAux_Trans[Act092Translate.DIALOG_UPDATE_TTL],
-//                        message = hmAux_Trans[Act092Translate.DIALOG_UPDATE_MSG]
-//                    )
-//                )
-//            )
-            ToolBox.toastMSG(context, hmAux_Trans[Act092Translate.DIALOG_UPDATE_MSG])
-            presenter.getMyActionList()
-            return
         }
 
         processCloseACT(mLink, mRequired, HMAux())
