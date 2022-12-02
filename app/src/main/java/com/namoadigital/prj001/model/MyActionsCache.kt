@@ -38,7 +38,9 @@ class MyActionsCache(
     @SerializedName("user_focus") val userFocus: Int,
     @SerializedName("has_Nc") val hasNc: Int,
     @SerializedName("pdf_url") val pdfUrl: String,
-    @SerializedName("pdf_name") val pdfName: String
+    @SerializedName("pdf_name") val pdfName: String,
+    @SerializedName("ticket_class_id") val ticketClassId: String,
+    @SerializedName("ticket_class_color") val ticketClassColor: String
 ) {
     fun toMyActions(context: Context): MyActions {
         val processLeftIcon = getLeftIcon()
@@ -78,8 +80,8 @@ class MyActionsCache(
             hasNc == 1,
             pdfUrl,
             pdfName,
-            null,
-            null
+            ticketClassId,
+            ticketClassColor
         )
     }
 

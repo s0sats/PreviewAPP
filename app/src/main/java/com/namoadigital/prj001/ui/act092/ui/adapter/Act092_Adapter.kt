@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act092.ui.adapter
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
@@ -25,7 +26,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf
 class Act092_Adapter constructor(
     private val source: List<MyActionsBase>,
     private val hmAux: HMAux,
-    private val myActionClickListener: (myAction: MyActions) -> Unit,
+    private val myActionClickListener: (myAction: MyActions, position: Int) -> Unit,
     private val notifyFilterApplied: (qtyItensFiltered: Int) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
 
@@ -121,17 +122,19 @@ class Act092_Adapter constructor(
 
 
                 myActionSelectSerial.setOnClickListener {
-                    myActionClickListener(item)
+                    myActionClickListener(item, adapterPosition)
                 }
                 //
                 myActionsItemTvCode.text = item.processId
-                if(item.actionType == MyActions.MY_ACTION_TYPE_TICKET
-                    ||item.actionType == MyActions.MY_ACTION_TYPE_TICKET_CACHE ) {
-                    myActionsItemTvClassStatus.text = item.processStatusTrans
+                myActionsItemTvClassStatus.visibility = View.GONE
+                if((item.actionType == MyActions.MY_ACTION_TYPE_TICKET
+                    ||item.actionType == MyActions.MY_ACTION_TYPE_TICKET_CACHE)
+                    && !item.classId.isNullOrEmpty()) {
+                    myActionsItemTvClassStatus.text = item.classId
+                    myActionsItemTvClassStatus.setTextColor(Color.parseColor(item.classColor))
                     myActionsItemTvClassStatus.visibility = View.VISIBLE
-                }else{
-                    myActionsItemTvClassStatus.visibility = View.GONE
                 }
+                //
                 if(ConstantBaseApp.SYS_STATUS_PENDING == item.processStatus
                     || ConstantBaseApp.SYS_STATUS_PROCESS == item.processStatus){
                     configPlannedDate(item)

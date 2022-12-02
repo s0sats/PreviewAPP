@@ -1,11 +1,13 @@
 package com.namoadigital.prj001.ui.act092
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import com.google.gson.GsonBuilder
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.HMAux
+import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.core.IResult.Companion.isFailed
 import com.namoadigital.prj001.core.IResult.Companion.isLoading
 import com.namoadigital.prj001.core.IResult.Companion.isSuccess
@@ -54,13 +56,12 @@ import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent
 import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent.Companion.DialogType
 import com.namoadigital.prj001.util.*
 import com.namoadigital.prj001.view.dialog.ScheduleRequestSerialDialog2
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
+import java.io.File
 
 class Act092Presenter constructor(
     private var myActionFilterParam: MyActionFilterParam,
@@ -77,6 +78,7 @@ class Act092Presenter constructor(
 
     private var serialDialog: ScheduleRequestSerialDialog2? = null
 
+    private var launch : Job? = null
 
     private var _serialModel = MutableStateFlow(SerialModel())
     override val serialModel: StateFlow<SerialModel> = _serialModel
@@ -254,7 +256,7 @@ class Act092Presenter constructor(
         )
     }
 
-    override fun processActionClick(action: MyActions, context: Context) {
+    override fun processActionClick(action: MyActions, context: Context, position: Int) {
         when (action.actionType) {
             MyActions.MY_ACTION_TYPE_TICKET -> {
                 val slippedPk = action.getSplippedPk()
@@ -296,12 +298,15 @@ class Act092Presenter constructor(
             }
 
             MyActions.MY_ACTION_TYPE_FORM -> {
-                view.onState(
+                action.pdfUrl?.let{
+                    executeNFormPDFGeneration(context, action, position)
+                }?: view.onState(
                     Act092UiEvent.CallAct(
                         Act011_Main::class.java,
                         getFormBundle(action)
                     )
                 )
+
             }
         }
     }
@@ -1320,7 +1325,11 @@ class Act092Presenter constructor(
             "progress_ticket_save_msg",
             "progress_form_save_ttl",
             "progress_form_save_msg",
-            "cell_step_lbl"
+            "cell_step_lbl",
+            "alert_starting_pdf_not_supported_ttl",
+            "alert_starting_pdf_not_supported_msg",
+            "alert_form_pdf_download_error_ttl",
+            "alert_form_pdf_download_error_msg"
         ).let {
             return ToolBox_Inf.setLanguage(
                 translateResource.context,
@@ -1331,6 +1340,106 @@ class Act092Presenter constructor(
             )
         }
     }
+
+    fun executeNFormPDFGeneration(context: Context, myAction: MyActions, position: Int) {
+
+        if (ToolBox_Con.isOnline(context)) {
+            launch?.let {
+                if(it.isActive){
+                    it.cancel()
+                }
+            }
+//
+            view.wsProcess.value = WS_Generate_NForm_PDF::class.java.name
+            //
+            view.showPD(
+                hmAux.get("dialog_generate_form_pdf_ttl"),
+                hmAux.get("dialog_generate_form_pdf_start")
+            )
+            //
+            launch = CoroutineScope(Dispatchers.IO).launch {
+
+                try {
+                    if (!ToolBox_Inf.verifyDownloadFileInf(
+                            Constant.CACHE_PATH + "/" +
+                                    myAction.pdfName
+                        )
+                    ) {
+                        val temp = myAction.pdfName!!.split(".")
+                        ToolBox_Inf.deleteDownloadFileInf(
+                            (Constant.CACHE_PATH + "/" +
+                                    temp[0] + ".tmp")
+                        )
+                        //
+                        ToolBox_Inf.downloadImagePDF(
+                            myAction.pdfUrl,
+                            (Constant.CACHE_PATH + "/" +
+                                    temp[0] + ".tmp")
+                        )
+                        //
+                        ToolBox_Inf.renameDownloadFileInf(temp[0], ".pdf")
+                    }
+                    //
+
+                } catch (e: java.lang.Exception) {
+                    e.printStackTrace()
+                }
+
+                withContext(Dispatchers.Main) {
+                    //Atualiza views do Adapter
+                    view.setItemAsDownloaded(position)
+                    //Remove progress da act
+                    view.disablePD()
+                    //
+                    if (myAction.pdfName != null) {
+                        openPDF(context, myAction.pdfName)
+                    } else {
+                        ToolBox.alertMSG(
+                            context,
+                            hmAux.get("alert_form_pdf_download_error_ttl"),
+                            hmAux.get("alert_form_pdf_download_error_msg"),
+                            null,
+                            0
+                        )
+                    }
+                }
+            }
+        } else {
+            ToolBox_Inf.showNoConnectionDialog(context)
+        }
+    }
+
+    private fun openPDF(context: Context, pdfName: String) {
+        val pdfFile = File(ConstantBaseApp.CACHE_PATH + "/" + pdfName)
+        try {
+            ToolBox_Inf.deleteAllFOD(Constant.CACHE_PDF)
+            ToolBox_Inf.copyFile(
+                pdfFile,
+                File(Constant.CACHE_PDF)
+            )
+        } catch (e: java.lang.Exception) {
+            ToolBox_Inf.registerException(javaClass.name, e)
+        }
+
+        val pdfIntent =
+            ToolBox_Inf.getOpenPdfIntent(context, ConstantBaseApp.CACHE_PDF + "/" + pdfName)
+        //
+        //
+        try {
+            context.startActivity(pdfIntent)
+        } catch (e: ActivityNotFoundException) {
+            ToolBox_Inf.registerException(javaClass.name, e)
+            //
+            ToolBox.alertMSG(
+                context,
+                hmAux.get("alert_starting_pdf_not_supported_ttl"),
+                hmAux.get("alert_starting_pdf_not_supported_msg"),
+                null,
+                0
+            )
+        }
+    }
+
 
     companion object {
         const val MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR =

@@ -55,6 +55,14 @@ class Act092_Main : BaseActivityMvp
         )
     }
 
+    override fun disablePD() {
+        progressDialog.dismiss()
+    }
+
+    override fun setItemAsDownloaded(position: Int) {
+        mAdapter.notifyItemChanged(position)
+    }
+
     private val _mainUserFilter = MutableStateFlow(false)
 
     private val _focusState = MutableStateFlow(FilterFocusUser())
@@ -439,12 +447,11 @@ class Act092_Main : BaseActivityMvp
             mAdapter = Act092_Adapter(
                 list,
                 hmAux_Trans,
-                {
-                    presenter.processActionClick(it, context)
-                },
+                myActionClickListener = { myAction, position -> presenter.processActionClick(myAction, context, position) },
                 {
                     onState(Act092UiEvent.EmptyOrError(sizeList = it))
                 }
+
             )
 
             emptyList.visibility = View.GONE
