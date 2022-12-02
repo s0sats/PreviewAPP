@@ -191,10 +191,6 @@ class Act092_Main : BaseActivityMvp
             WS_Serial_Search::class.java.name -> {
                 wsProcess.value = ""
                 progressDialog.dismiss()
-
-                Log.e("WS_Serial_Search>>", "CHEGOOOOOOOOOO AQUIIIIIIIIIIIIIIII")
-
-
                 presenter.extractSearchResult(mLink, presenter.getActionSelected())
             }
 

@@ -89,7 +89,7 @@ class Act092_Adapter constructor(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = filterList[position]
         if (holder is DoneItemHolder && item is SerialViewItem.SectionItem) {
-            holder.onBinding("Finalizados")
+            holder.onBinding(hmAux["done_action_list_limiter_lbl"])
         }
         if (holder is ViewHolder && item is SerialViewItem.ContentItem) {
             holder.onBinding(item.item as MyActions)
@@ -117,10 +117,15 @@ class Act092_Adapter constructor(
 
                 act083SerialInfo.visibility = View.GONE
                 serialDetail.visibility = View.GONE
-
-                myActionSelectSerial.text = "Abrir"
-
-
+                myActionSelectSerial.apply {
+                    if(!item.pdfUrl.isNullOrEmpty()
+                        || MyActions.MY_ACTION_TYPE_TICKET_CACHE == item.actionType){
+                        text = hmAux["cell_download_action_lbl"]
+                    }else {
+                        text = hmAux["cell_open_action"]
+                    }
+                }
+                //
                 myActionSelectSerial.setOnClickListener {
                     myActionClickListener(item, adapterPosition)
                 }

@@ -306,7 +306,6 @@ class Act092Presenter constructor(
                         getFormBundle(action)
                     )
                 )
-
             }
         }
     }
@@ -1326,10 +1325,15 @@ class Act092Presenter constructor(
             "progress_form_save_ttl",
             "progress_form_save_msg",
             "cell_step_lbl",
+            "cell_open_action_lbl",
+            "cell_download_action_lbl",
             "alert_starting_pdf_not_supported_ttl",
             "alert_starting_pdf_not_supported_msg",
             "alert_form_pdf_download_error_ttl",
-            "alert_form_pdf_download_error_msg"
+            "alert_form_pdf_download_error_msg",
+            "alert_starting_pdf_not_supported_ttl",
+            "alert_starting_pdf_not_supported_msg",
+            "done_action_list_limiter_lbl"
         ).let {
             return ToolBox_Inf.setLanguage(
                 translateResource.context,
