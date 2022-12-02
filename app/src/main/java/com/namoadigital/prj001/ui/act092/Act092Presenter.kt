@@ -980,7 +980,7 @@ class Act092Presenter constructor(
             )
             //
             actionUseCases.unfocusHistoricalAction(
-                myActionFilterParam.productCode!!,
+                _serialModel.value.productCode ?: -1,
                 _serialModel.value.serialCode ?: 0L
             )
         }else{
