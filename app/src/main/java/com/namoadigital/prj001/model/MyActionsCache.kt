@@ -5,7 +5,6 @@ import androidx.annotation.DrawableRes
 import com.google.gson.annotations.SerializedName
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.util.ConstantBaseApp
-import com.namoadigital.prj001.util.ToolBox_Con
 
 class MyActionsCache(
     @SerializedName("action_type") val actionType: String,
@@ -100,7 +99,7 @@ class MyActionsCache(
         return if(hasNc == 0){
             null
         }else{
-            R.drawable.ic_baseline_report_24
+            R.drawable.ic_baseline_report_24_yellow
         }
     }
 
