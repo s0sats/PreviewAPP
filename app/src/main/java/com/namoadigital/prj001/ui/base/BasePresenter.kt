@@ -4,9 +4,13 @@ import com.namoa_digital.namoa_library.util.HMAux
 
 interface BasePresenter<T> {
 
+    val hmAux_Trans: HMAux
+        get() = loadTranslation()
+
     fun setView(view: T)
+
 
     fun loadTranslation(): HMAux
 
-    fun getTranslation() = loadTranslation()
+    fun getTranslation() = hmAux_Trans
 }

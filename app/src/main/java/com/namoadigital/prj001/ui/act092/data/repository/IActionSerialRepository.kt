@@ -196,7 +196,7 @@ class IActionSerialRepository constructor(
         )
     }
 
-    override suspend fun getCustomFormLocal(
+    override fun getCustomFormLocal(
         customer_code: String,
         form_type: String,
         form_code: String,

@@ -145,6 +145,7 @@ import com.namoadigital.prj001.ui.act083.Act083_Main;
 import com.namoadigital.prj001.ui.act084.Act084Main;
 import com.namoadigital.prj001.ui.act086.Act086Main;
 import com.namoadigital.prj001.ui.act087.FormOsHeaderFrg;
+import com.namoadigital.prj001.ui.act092.ui.Act092_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -1204,16 +1205,17 @@ public class Act011_Main extends Base_Activity
             callAct070();
         }else if(ConstantBaseApp.ACT084.equals(requestingAct)){
             callAct084();
-        }else if( ConstantBaseApp.ACT027.equals(requestingAct) || ConstantBaseApp.ACT028.equals(requestingAct)){
+        }else if (ConstantBaseApp.ACT027.equals(requestingAct) || ConstantBaseApp.ACT028.equals(requestingAct)) {
             nservCall();
-        }else{
-            if(serial_id != null && !serial_id.isEmpty()){
-                callAct083();
-            }else{
+        } else {
+            if (serial_id != null && !serial_id.isEmpty()) {
+                //callAct083();
+                onBackPressed();
+            } else {
                 //LUCHE - 22/06/2021
                 //Modificado fluxo para voltar act006
-               // callAct005(context);
-                callAct006(context,false);
+                // callAct005(context);
+                callAct006(context, false);
             }
         }
     }
@@ -2914,15 +2916,30 @@ public class Act011_Main extends Base_Activity
         finish();
     }
 
+
+    @Override
+    public void callAct092() {
+        Intent intent = new Intent(context, Act092_Main.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        Bundle mBundle = new Bundle();
+        getMyActionsParam(mBundle);
+        intent.putExtras(mBundle);
+        //
+        startActivity(intent);
+        finish();
+    }
+
     private void getMyActionsParam(Bundle mBundle) {
-        if(act083Bundle != null) {
-            mBundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT083);
+        if (act083Bundle != null) {
+            String actReturn = requestingAct.equals(ConstantBaseApp.ACT083) ? ConstantBaseApp.ACT083 : ConstantBaseApp.ACT092;
+            mBundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, actReturn);
             MyActionFilterParam myActionFilterParam = ToolBox_Inf.getMyActionFilterParam(act083Bundle);
             //Se não tinha dados é pq é um novo form, seta então a nova pk
-            if(myActionFilterParam.getParamItemSelectedPk() == null || myActionFilterParam.getParamItemSelectedPk().isEmpty() ){
+            if (myActionFilterParam.getParamItemSelectedPk() == null || myActionFilterParam.getParamItemSelectedPk().isEmpty()) {
                 myActionFilterParam.setParamItemSelectedPk(formLocal.getFormatedPk());
                 myActionFilterParam.setParamItemSelectedType(MyActions.MY_ACTION_TYPE_FORM);
-                act083Bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM,myActionFilterParam);
+                act083Bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam);
             }
             mBundle.putAll(act083Bundle);
         }
@@ -2973,12 +2990,14 @@ public class Act011_Main extends Base_Activity
      *
      */
     private void checkBackFlow() {
-        if(mPresenter.isaTicketFlowForm()) {
+        if (mPresenter.isaTicketFlowForm()) {
             callAct070();
-        }else if(ConstantBaseApp.ACT084.equals(requestingAct)
-            || ConstantBaseApp.SYS_STATUS_DONE.equals(formData.getCustom_form_status())){
+        } else if (ConstantBaseApp.ACT084.equals(requestingAct)
+                || ConstantBaseApp.SYS_STATUS_DONE.equals(formData.getCustom_form_status())) {
             callAct084();
-        }else {
+        } else if (requestingAct.equals(ConstantBaseApp.ACT092)) {
+            callAct092();
+        } else {
             callAct083();
         }
     }

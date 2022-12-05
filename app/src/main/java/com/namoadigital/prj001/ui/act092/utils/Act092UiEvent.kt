@@ -20,17 +20,11 @@ sealed class Act092UiEvent {
     data class CallActForResult(val classe: Class<*>, val bundle: Bundle? = null, val code: Int) :
         Act092UiEvent()
 
-    data class OpenDialog(val dialogType: DialogType) : Act092UiEvent()
-
-    object UpdateTitleActionSerial : Act092UiEvent()
-
-    data class CheckIfFileExists(val exists: Boolean) : Act092UiEvent()
-
-
-    companion object {
+    data class OpenDialog(val dialogType: DialogType) : Act092UiEvent() {
 
         sealed class DialogType {
             data class PROCESS(val title: String?, val message: String?) : DialogType()
+
             data class ACTION(
                 val title: String?,
                 val message: String?,
@@ -40,8 +34,11 @@ sealed class Act092UiEvent {
 
             data class DEFAULT_OK(val title: String?, val message: String?) : DialogType()
         }
-
     }
+
+    object UpdateTitleActionSerial : Act092UiEvent()
+
+    data class CheckIfFileExists(val exists: Boolean) : Act092UiEvent()
 
     object UpdateFooterInfos : Act092UiEvent()
 }

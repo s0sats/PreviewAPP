@@ -7,7 +7,6 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
@@ -28,7 +27,8 @@ import com.namoadigital.prj001.ui.act092.ui.adapter.Act092_Adapter
 import com.namoadigital.prj001.ui.act092.usecases.ActionUseCases.Companion.ActionUseCasesFactory
 import com.namoadigital.prj001.ui.act092.utils.Act092Translate
 import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent
-import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent.Companion.DialogType
+import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent.OpenDialog
+import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent.OpenDialog.DialogType
 import com.namoadigital.prj001.ui.act092.utils.FilterFocusUser
 import com.namoadigital.prj001.ui.base.BaseActivityMvp
 import com.namoadigital.prj001.util.Constant
@@ -88,7 +88,6 @@ class Act092_Main : BaseActivityMvp
             myActionFilterParam.value,
             bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT005),
             bundle.getString(MD_Product_SerialDao.CLASS_COLOR, ""),
-            hmAux_Trans,
             ActionUseCasesFactory(context).build(),
             TranslateResource(
                 context,
@@ -104,8 +103,8 @@ class Act092_Main : BaseActivityMvp
             setContentView(root)
             bundle = (savedInstanceState ?: intent.extras) as Bundle
             setSupportActionBar(topAppBar)
-            mAct_Title = "act92_title"
             setTitleLanguage()
+            mAct_Title = "act92_title"
             getBundle()
             iniUIFooter(Constant.ACT092, hmAux_Trans)
         }
@@ -114,6 +113,11 @@ class Act092_Main : BaseActivityMvp
             presenter.setView(this)
             presenter.getMyActionList(_focusState.value.mainUser)
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return super.onSupportNavigateUp()
     }
 
     private fun getBundle() {
@@ -239,6 +243,8 @@ class Act092_Main : BaseActivityMvp
 
     override fun initAction() {
         with(binding) {
+
+
             mainUserSelection.setOnClickListener {
                 if (btnOtherSerial.isEnabled) {
                     _focusState.value = focusState.value.copy(
@@ -335,7 +341,7 @@ class Act092_Main : BaseActivityMvp
                 is Act092UiEvent.FilterMainUser -> {
                     toggleMainUserFilter()
                 }
-                is Act092UiEvent.OpenDialog -> {
+                is OpenDialog -> {
                     openDialog(state.dialogType)
                 }
                 is Act092UiEvent.CallAct -> {
@@ -388,50 +394,41 @@ class Act092_Main : BaseActivityMvp
     private fun disableMainAndOtherActions(isEmpty: Boolean) {
 
         val btnBackground =
-            if (isEmpty) ColorStateList.valueOf(resources.getColor(R.color.padrao_TRANSPARENT))
+            if (!isEmpty) ColorStateList.valueOf(resources.getColor(R.color.padrao_TRANSPARENT))
             else ColorStateList.valueOf(resources.getColor(R.color.m3_namoa_inverseSurface))
 
         val mainUserCircle =
-            if (isEmpty) resources.getDrawable(R.drawable.my_action_toogle_default) else resources.getDrawable(
+            if (!isEmpty) resources.getDrawable(R.drawable.my_action_toogle_default) else resources.getDrawable(
                 R.drawable.my_action_toogle_disable
             )
         val mainUserPerson =
-            if (isEmpty) ColorStateList.valueOf(resources.getColor(R.color.text_black))
-            else ColorStateList.valueOf(resources.getColor(R.color.namoa_color_disabled_gray))
+            if (isEmpty) R.drawable.ic_person_disable_24dp
+            else R.drawable.ic_person_black_24dp
 
         val textColor =
-            if (isEmpty) resources.getColor(R.color.m3_namoa_inverseSurface) else resources.getColor(
+            if (!isEmpty) resources.getColor(R.color.m3_namoa_inverseSurface) else resources.getColor(
                 R.color.m3_namoa_surface
             )
 
         with(binding) {
             btnOtherSerial.apply {
                 backgroundTintList = btnBackground
-                isEnabled = isEmpty
+                isEnabled = !isEmpty
                 iconTint = ColorStateList.valueOf(textColor)
                 setTextColor(textColor)
-                strokeWidth = if (isEmpty) 1 else 0
-                isClickable = isEmpty
+                strokeWidth = if (!isEmpty) 1 else 0
+                isClickable = !isEmpty
             }
 
             mainUserSelection.apply {
+                isEnabled = !isEmpty
                 background = mainUserCircle
-                imageTintList = mainUserPerson
-                isEnabled = isEmpty
-                isClickable = isEmpty
+                setImageResource(mainUserPerson)
+                isClickable = !isEmpty
             }
 
-            mainUserSelection.isEnabled = isEmpty
+            mainUserSelection.isEnabled = !isEmpty
 
-            if (isEmpty) {
-                if (_focusState.value.mainUser) {
-                    mainUserSelection.setImageResource(R.drawable.ic_person_white_24dp)
-                    mainUserSelection.setBackgroundDrawable(resources.getDrawable(R.drawable.my_action_toogle_pressed))
-                } else {
-                    mainUserSelection.setBackgroundDrawable(resources.getDrawable(R.drawable.my_action_toogle_default))
-                    mainUserSelection.setImageResource(R.drawable.ic_person_black_24dp)
-                }
-            }
         }
     }
 
@@ -447,7 +444,6 @@ class Act092_Main : BaseActivityMvp
                 {
                     onState(Act092UiEvent.EmptyOrError(sizeList = it))
                 }
-
             )
 
             emptyList.visibility = View.GONE
@@ -464,16 +460,16 @@ class Act092_Main : BaseActivityMvp
     private fun toggleMainUserFilter(
         value: Boolean = _focusState.value.mainUser
     ) {
-        with(binding) {
+        with(binding.mainUserSelection) {
             if (value) {
-                mainUserSelection.setImageResource(R.drawable.ic_person_white_24dp)
-                mainUserSelection.setBackgroundDrawable(resources.getDrawable(R.drawable.my_action_toogle_pressed))
+                setImageResource(R.drawable.ic_person_white_24dp)
+                background = resources.getDrawable(R.drawable.my_action_toogle_pressed)
             } else {
-                mainUserSelection.setBackgroundDrawable(resources.getDrawable(R.drawable.my_action_toogle_default))
-                mainUserSelection.setImageResource(R.drawable.ic_person_black_24dp)
+                background = resources.getDrawable(R.drawable.my_action_toogle_default)
+                setImageResource(R.drawable.ic_person_black_24dp)
             }
-            presenter.getMyActionList(value)
         }
+        presenter.getMyActionList(value)
     }
 
     private fun openDialog(
@@ -482,8 +478,8 @@ class Act092_Main : BaseActivityMvp
         when (dialogType) {
             is DialogType.PROCESS -> {
                 enableProgressDialog(
-                    dialogType.title,
-                    dialogType.message,
+                    hmAux_Trans[dialogType.title],
+                    hmAux_Trans[dialogType.message],
                     hmAux_Trans["sys_alert_btn_cancel"],
                     hmAux_Trans["sys_alert_btn_ok"]
                 )
@@ -492,8 +488,8 @@ class Act092_Main : BaseActivityMvp
             is DialogType.ACTION -> {
                 ToolBox.alertMSG(
                     context,
-                    dialogType.title,
-                    dialogType.message,
+                    hmAux_Trans[dialogType.title],
+                    hmAux_Trans[dialogType.message],
                     dialogType.action,
                     dialogType.negativeBtn
                 )
@@ -502,8 +498,8 @@ class Act092_Main : BaseActivityMvp
             is DialogType.DEFAULT_OK -> {
                 ToolBox.alertMSG(
                     context,
-                    dialogType.title,
-                    dialogType.message,
+                    hmAux_Trans[dialogType.title],
+                    hmAux_Trans[dialogType.message],
                     { dialog, _ ->
                         dialog.dismiss()
                     }, 0

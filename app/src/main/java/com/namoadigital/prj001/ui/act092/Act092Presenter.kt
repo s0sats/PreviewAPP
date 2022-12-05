@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import com.google.gson.GsonBuilder
-import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.core.IResult.Companion.isFailed
@@ -18,7 +17,6 @@ import com.namoadigital.prj001.model.action_serial.ActionsCache
 import com.namoadigital.prj001.receiver.WBR_Save
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save
 import com.namoadigital.prj001.service.*
-import com.namoadigital.prj001.service.WS_UnfocusAndHistoric
 import com.namoadigital.prj001.sql.Sql_Act005_002
 import com.namoadigital.prj001.ui.act005.Act005_Main
 import com.namoadigital.prj001.ui.act006.Act006_Main
@@ -32,7 +30,6 @@ import com.namoadigital.prj001.ui.act070.Act070_Main
 import com.namoadigital.prj001.ui.act071.Act071_Main
 import com.namoadigital.prj001.ui.act083.Act083_Main
 import com.namoadigital.prj001.ui.act083.Act083_Main.Companion.EMPTY_SERIAL_SEARCH
-import com.namoadigital.prj001.ui.act083.Act083_Main.Companion.MODULE_CHECKLIST_START_FORM
 import com.namoadigital.prj001.ui.act083.Act083_Main.Companion.MODULE_SCHEDULE_STATUS_PREVENTS_TO_OPEN
 import com.namoadigital.prj001.ui.act083.Act083_Main.Companion.MODULE_SCHEDULE_TICKET_CREATION_ERROR
 import com.namoadigital.prj001.ui.act083.Act083_Main.Companion.MODULE_TICKET_EXEC_CONFIRM
@@ -53,8 +50,10 @@ import com.namoadigital.prj001.ui.act092.usecases.ScheduleFormException
 import com.namoadigital.prj001.ui.act092.usecases.ValidateNewFormUseCase.ValidateNewFormParam
 import com.namoadigital.prj001.ui.act092.utils.Act092Translate
 import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent
-import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent.Companion.DialogType
+import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent.OpenDialog.DialogType
 import com.namoadigital.prj001.util.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import com.namoadigital.prj001.view.dialog.ScheduleRequestSerialDialog2
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -67,7 +66,6 @@ class Act092Presenter constructor(
     private var myActionFilterParam: MyActionFilterParam,
     private val originFlow: String?,
     private val iconColor: String,
-    private val hmAux: HMAux,
     private val actionUseCases: ActionUseCases,
     private val translateResource: TranslateResource,
 ) : Act092_Contract.Presenter {
@@ -122,13 +120,13 @@ class Act092Presenter constructor(
             )
         }
 
-        _serialModel.value = actionUseCases.getPreferences().copy(hmAux = hmAux)
+        _serialModel.value = actionUseCases.getPreferences().copy(hmAux = hmAux_Trans)
         view.onState(Act092UiEvent.UpdateTitleActionSerial)
     }
 
     override fun verifyProductOutdateForForm(hmAux: HMAux, context: Context): Boolean {
-        val ticketPrefix = hmAux[TK_TicketDao.TICKET_PREFIX]?.let { Integer.valueOf(it) } ?: -1
-        val ticketCode = hmAux[TK_TicketDao.TICKET_CODE]?.let { Integer.valueOf(it) } ?: -1
+        val ticketPrefix = TK_TicketDao.TICKET_PREFIX.let { Integer.valueOf(it) } ?: -1
+        val ticketCode = TK_TicketDao.TICKET_CODE.let { Integer.valueOf(it) } ?: -1
         //
         return ToolBox_Inf.hasFormProductOutdate(context, ticketPrefix, ticketCode)
     }
@@ -229,12 +227,12 @@ class Act092Presenter constructor(
             view.onState(
                 Act092UiEvent.OpenDialog(
                     DialogType.PROCESS(
-                        hmAux[Act092Translate.ALERT_SEND_FINISH_TTL],
-                        hmAux[Act092Translate.ALERT_SEND_FINISH_MSG]
+                        Act092Translate.ALERT_SEND_FINISH_TTL,
+                        Act092Translate.ALERT_SEND_FINISH_MSG
                     )
                 )
             )
-            actionUseCases.syncFiles(hmAux)
+            actionUseCases.syncFiles(hmAux_Trans)
         } else {
             ToolBox_Inf.showNoConnectionDialog(context)
         }
@@ -242,18 +240,19 @@ class Act092Presenter constructor(
     }
 
     override fun syncFilesForm(productCode: Long) {
-        actionUseCases.syncFilesForm(hmAux, productCode)
+        actionUseCases.syncFilesForm(hmAux_Trans, productCode)
     }
 
     private fun fileOtherActionExists() {
-        view.onState(
-            Act092UiEvent.CheckIfFileExists(
-                actionUseCases.checkIfFileExists(
-                    _serialModel.value.productCode ?: -1,
-                    _serialModel.value.serialCode ?: -1L
-                )
+        if (actionUseCases.checkIfFileExists(
+                _serialModel.value.productCode ?: -1,
+                _serialModel.value.serialCode ?: -1L
             )
-        )
+        ) {
+            view.onState(
+                Act092UiEvent.CheckIfFileExists(true)
+            )
+        }
     }
 
     override fun processActionClick(action: MyActions, context: Context, position: Int) {
@@ -280,8 +279,8 @@ class Act092Presenter constructor(
                     view.onState(
                         Act092UiEvent.OpenDialog(
                             DialogType.PROCESS(
-                                hmAux[Act092Translate.DIALOG_DOWNLOAD_TICKET_TTL],
-                                hmAux[Act092Translate.DIALOG_DOWNLOAD_TICKET_START]
+                                Act092Translate.DIALOG_DOWNLOAD_TICKET_TTL,
+                                Act092Translate.DIALOG_DOWNLOAD_TICKET_START
                             )
                         )
                     )
@@ -316,9 +315,9 @@ class Act092Presenter constructor(
         //Seta dados da action selecionado no filterParam
         setSeletedActionInfosIntoFilterParam(myAction.actionType, myAction.processPk)
         //
-        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT083)
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT092)
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
-        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, originFlow)
+        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, Constant.ACT092)
         //
         bundle.putString(MD_ProductDao.PRODUCT_CODE, myAction.productCode.toString())
         bundle.putString(MD_ProductDao.PRODUCT_ID, myAction.productId.toString())
@@ -369,9 +368,14 @@ class Act092Presenter constructor(
         if(ToolBox_Con.isOnline(context)) {
             view.wsProcess.value = WS_Save::class.java.simpleName
             //
-            view.showPD(
-                hmAux["progress_form_save_ttl"],
-                hmAux["progress_form_save_msg"]
+
+            view.onState(
+                Act092UiEvent.OpenDialog(
+                    DialogType.PROCESS(
+                        "progress_form_save_ttl",
+                        "progress_form_save_msg"
+                    )
+                )
             )
             val mIntent = Intent(context, WBR_Save::class.java)
             val bundle = Bundle()
@@ -388,7 +392,7 @@ class Act092Presenter constructor(
             ToolBox_Inf.sendBCStatus(
                 context,
                 "STATUS",
-                hmAux["msg_preparing_to_send_data"],
+                hmAux_Trans["msg_preparing_to_send_data"],
                 "",
                 "0"
             )
@@ -399,11 +403,16 @@ class Act092Presenter constructor(
 
     override fun callTicketSave(context: Context) {
         if(ToolBox_Con.isOnline(context)) {
-            view.wsProcess.value  = WS_TK_Ticket_Save::class.java.simpleName
+            view.wsProcess.value = WS_TK_Ticket_Save::class.java.simpleName
             //
-            view.showPD(
-                hmAux["progress_ticket_save_ttl"],
-                hmAux["progress_ticket_save_msg"]
+            view.onState(
+                Act092UiEvent.OpenDialog(
+                    DialogType.PROCESS(
+                        "progress_ticket_save_ttl",
+                        "progress_ticket_save_msg"
+
+                    )
+                )
             )
             //
             val mIntent = Intent(context, WBR_TK_Ticket_Save::class.java)
@@ -463,9 +472,12 @@ class Act092Presenter constructor(
                 SITE_RESTRICTION_NO_ACCESS -> {
                     view.onState(
                         Act092UiEvent.OpenDialog(
-                            DialogType.DEFAULT_OK(
-                                title = hmAux[Act092Translate.ALERT_FORM_SITE_RESTRICTION_TTL],
-                                message = hmAux[Act092Translate.ALERT_FORM_SITE_RESTRICTION_NO_ACCESS_MSG]
+                            DialogType.ACTION(
+                                title = Act092Translate.ALERT_FORM_SITE_RESTRICTION_TTL,
+                                message = Act092Translate.ALERT_FORM_SITE_RESTRICTION_NO_ACCESS_MSG,
+                                action = { dialog, i ->
+
+                                }
                             )
                         )
                     )
@@ -474,11 +486,11 @@ class Act092Presenter constructor(
                 SITE_RESTRICTION_CONFIRM -> {
                     view.onState(Act092UiEvent.OpenDialog(
                         DialogType.ACTION(
-                            title = hmAux[Act092Translate.ALERT_FORM_SITE_RESTRICTION_TTL],
-                            message = hmAux[Act092Translate.ALERT_FORM_SITE_RESTRICTION_NO_ACCESS_MSG],
+                            title = Act092Translate.ALERT_FORM_SITE_RESTRICTION_TTL,
+                            message = Act092Translate.ALERT_FORM_SITE_RESTRICTION_NO_ACCESS_MSG,
                             { dialog, i ->
                                 noRestriction(item)
-                            }
+                            }, negativeBtn = 1
                         )
                     ))
                 }
@@ -486,32 +498,18 @@ class Act092Presenter constructor(
                     view.onState(
                         Act092UiEvent.OpenDialog(
                             DialogType.DEFAULT_OK(
-                                hmAux[Act092Translate.ALERT_TTL_EXISTS_IN_PROCESSING],
-                                hmAux[Act092Translate.ALERT_MSG_EXISTS_IN_PROCESSING]
+                                Act092Translate.ALERT_TTL_EXISTS_IN_PROCESSING,
+                                Act092Translate.ALERT_MSG_EXISTS_IN_PROCESSING
                             )
                         )
                     )
-                }
-                MODULE_CHECKLIST_START_FORM -> {
-                    view.onState(Act092UiEvent.OpenDialog(
-                        DialogType.ACTION(
-                            title = hmAux[Act092Translate.ALERT_TTL_START_NEW_PROCESSING],
-                            message = hmAux[Act092Translate.ALERT_MSG_START_NEW_PROCESSING],
-                            { dialog, i ->
-                                checkFormFlow(
-                                    item,
-                                    actionUseCases.getScheduleFromMyAction(item)
-                                )
-                            }
-                        )
-                    ))
                 }
                 MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR -> {
                     view.onState(
                         Act092UiEvent.OpenDialog(
                             DialogType.DEFAULT_OK(
-                                hmAux[Act092Translate.ALERT_ERROR_ON_CREATE_FORM_TTL],
-                                hmAux[Act092Translate.ALERT_ERROR_ON_CREATE_FORM_MSG]
+                                Act092Translate.ALERT_ERROR_ON_CREATE_FORM_TTL,
+                                Act092Translate.ALERT_ERROR_ON_CREATE_FORM_MSG
                             )
                         )
                     )
@@ -520,8 +518,8 @@ class Act092Presenter constructor(
                     view.onState(
                         Act092UiEvent.OpenDialog(
                             DialogType.DEFAULT_OK(
-                                hmAux[Act092Translate.ALERT_NO_SERIAL_FOUND_TTL],
-                                hmAux[Act092Translate.ALERT_NO_SERIAL_FOUND_MSG]
+                                Act092Translate.ALERT_NO_SERIAL_FOUND_TTL,
+                                Act092Translate.ALERT_NO_SERIAL_FOUND_MSG
                             )
                         )
                     )
@@ -530,8 +528,8 @@ class Act092Presenter constructor(
                     view.onState(
                         Act092UiEvent.OpenDialog(
                             DialogType.DEFAULT_OK(
-                                hmAux[Act092Translate.ALERT_PRODUCT_OR_SERIAL_NOT_FOUND_TTL],
-                                hmAux[Act092Translate.ALERT_PRODUCT_NO_ALLOW_NEW_SERIAL_MSG]
+                                Act092Translate.ALERT_PRODUCT_OR_SERIAL_NOT_FOUND_TTL,
+                                Act092Translate.ALERT_PRODUCT_NO_ALLOW_NEW_SERIAL_MSG
                             )
                         )
                     )
@@ -539,8 +537,8 @@ class Act092Presenter constructor(
                 MODULE_TICKET_EXEC_CONFIRM -> {
                     view.onState(Act092UiEvent.OpenDialog(
                         DialogType.ACTION(
-                            title = hmAux[Act092Translate.ALERT_TICKET_ACTION_START_TTL],
-                            message = hmAux[Act092Translate.ALERT_TICKET_ACTION_START_CONFIRM],
+                            title = Act092Translate.ALERT_TICKET_ACTION_START_TTL,
+                            message = Act092Translate.ALERT_TICKET_ACTION_START_CONFIRM,
                             { dialog, i ->
                                 checkTicketFlow(item)
 
@@ -552,8 +550,8 @@ class Act092Presenter constructor(
                     view.onState(
                         Act092UiEvent.OpenDialog(
                             DialogType.DEFAULT_OK(
-                                hmAux[Act092Translate.ALERT_ERROR_ON_CREATE_TICKET_ACTION_TTL],
-                                hmAux[Act092Translate.ALERT_ERROR_ON_CREATE_TICKET_ACTION_MSG]
+                                Act092Translate.ALERT_ERROR_ON_CREATE_TICKET_ACTION_TTL,
+                                Act092Translate.ALERT_ERROR_ON_CREATE_TICKET_ACTION_MSG
                             )
                         )
                     )
@@ -562,8 +560,8 @@ class Act092Presenter constructor(
                     view.onState(
                         Act092UiEvent.OpenDialog(
                             DialogType.DEFAULT_OK(
-                                hmAux[Act092Translate.ALERT_SCHEDULE_STATUS_PREVENTS_TO_OPEN_TTL],
-                                hmAux[Act092Translate.ALERT_SCHEDULE_STATUS_PREVENTS_TO_OPEN_MSG]
+                                Act092Translate.ALERT_SCHEDULE_STATUS_PREVENTS_TO_OPEN_TTL,
+                                Act092Translate.ALERT_SCHEDULE_STATUS_PREVENTS_TO_OPEN_MSG
                             )
                         )
                     )
@@ -572,8 +570,8 @@ class Act092Presenter constructor(
                     view.onState(
                         Act092UiEvent.OpenDialog(
                             DialogType.DEFAULT_OK(
-                                hmAux[Act092Translate.ALERT_MENU_APP_PROFILE_NOT_FOUND_TTL],
-                                hmAux[Act092Translate.ALERT_FORM_AP_MENU_PROFILE_NOT_FOUND_MSG]
+                                Act092Translate.ALERT_MENU_APP_PROFILE_NOT_FOUND_TTL,
+                                Act092Translate.ALERT_FORM_AP_MENU_PROFILE_NOT_FOUND_MSG
                             )
                         )
                     )
@@ -582,8 +580,8 @@ class Act092Presenter constructor(
                     view.onState(
                         Act092UiEvent.OpenDialog(
                             DialogType.DEFAULT_OK(
-                                hmAux[Act092Translate.ALERT_MENU_APP_PROFILE_NOT_FOUND_TTL],
-                                hmAux[Act092Translate.ALERT_TICKET_MENU_PROFILE_NOT_FOUND_MSG]
+                                Act092Translate.ALERT_MENU_APP_PROFILE_NOT_FOUND_TTL,
+                                Act092Translate.ALERT_TICKET_MENU_PROFILE_NOT_FOUND_MSG
                             )
                         )
                     )
@@ -592,8 +590,8 @@ class Act092Presenter constructor(
                     view.onState(
                         Act092UiEvent.OpenDialog(
                             DialogType.DEFAULT_OK(
-                                hmAux[Act092Translate.ALERT_FREE_EXECUTION_BLOCKED_TTL],
-                                hmAux[Act092Translate.ALERT_FREE_EXECUTION_BLOCKED_MSG]
+                                Act092Translate.ALERT_FREE_EXECUTION_BLOCKED_TTL,
+                                Act092Translate.ALERT_FREE_EXECUTION_BLOCKED_MSG
                             )
                         )
                     )
@@ -672,189 +670,44 @@ class Act092Presenter constructor(
         }
     }
 
-    private fun checkFormFlow(
-        action: MyActions,
-        scheduleExec: MD_Schedule_Exec?
-    ) {
-        scheduleExec?.let {
-            if (Constant.SYS_STATUS_SCHEDULE != it.status) {
-                view.onState(
-                    Act092UiEvent.CallAct(
-                        Act011_Main::class.java,
-                        getFormFlowBundle(action, scheduleExec)
-                    )
-                )
-            } else if (!it.serial_id.isNullOrBlank() &&
-                !it.serial_id.isNullOrEmpty()
-            ) {
-                buildRequestSerialDialog(
-                    scheduleExec,
-                    action,
-                    false
-                )
 
-                executeSerialSearch(
-                    action.productCode,
-                    action.productId,
-                    action.serialId ?: "",
-                    true
-                )
-            } else {
-                buildRequestSerialDialog(
-                    scheduleExec,
-                    action,
-                    true
-                )
-            }
-        }
-    }
-
-
-    private fun executeSerialSearch(
-        productCode: Int?,
-        productId: String?,
-        serialId: String,
-        searchExact: Boolean,
-        myAction: MyActions? = null
-    ) {
-        if (ToolBox_Con.isOnline(translateResource.context)
-            && !ToolBox_Con.getBooleanPreferencesByKey(
-                translateResource.context,
-                ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW,
-                false
-            )
-        ) {
-            view.wsProcess.value = WS_Serial_Search::class.java.name
-            //
-
-            view.onState(
-                Act092UiEvent.OpenDialog(
-                    DialogType.PROCESS(
-                        hmAux["dialog_serial_search_ttl"],
-                        hmAux["dialog_serial_search_start"]
-                    )
-                )
-            )
-
-            actionUseCases.serialSearch(
-                productCode.toString(),
-                productId.toString(),
-                serialId,
-                if (searchExact) 1 else 0
-            )
-        } else {
-            CoroutineScope(Dispatchers.IO).launch {
-                myAction?.let {
-                    actionUseCases.processLocalSearchForSerialAction(
-                        ProcessLocalSearchForSerialParam(
-                            it,
-                            view.bundle
-                        )
-                    ).collect { result ->
-
-                        result.isSuccess { bund ->
-                            view.onState(
-                                Act092UiEvent.CallAct(
-                                    Act020_Main::class.java,
-                                    bund
-                                )
-                            )
-                        }
-
-                        result.isFailed { exception ->
-                            view.onState(
-                                Act092UiEvent.OpenDialog(
-                                    DialogType.DEFAULT_OK(
-                                        hmAux["alert_no_serial_found_ttl"],
-                                        hmAux["alert_no_serial_found_msg"]
-                                    )
-                                )
-                            )
-                        }
-
-                    }
-                } ?: TODO("offlineSerialSearch()")
-            }
-        }
-    }
-
-
-    private fun buildRequestSerialDialog(
+    private fun getScheduleBundle(
         scheduleExec: MD_Schedule_Exec,
-        action: MyActions,
-        showDialog: Boolean
-    ) {
-        //
-        serialDialog = ScheduleRequestSerialDialog2(
-            translateResource.context,
-            scheduleExec,
-            object : ScheduleRequestSerialDialog2.OnScheduleRequestSerialDialogListeners {
-                override fun processToForm() {
-                    val bundle = Bundle()
-                    //LUCHE - 09/06/2021
-                    //Como esse metodo só é chamado quando o usr prosegue SEM SERIAL,serial id
-                    //será mudado de null para ""
-                    if (scheduleExec.is_so == 0) {
-                        scheduleExec.serial_id = scheduleExec.serial_id ?: ""
-
-                        val scheduleLocalExists =
-                            actionUseCases.scheduleFormLocalExists(scheduleExec)
-                        if (actionUseCases.createFormLocalForSchedule(
-                                scheduleLocalExists.first,
-                                scheduleExec
-                            )
-                        ) {
-                            action.scheduleCustomFormData =
-                                scheduleLocalExists.second?.custom_form_data.toString()
-                            //Atualiza fomr_data no item
-                            action.scheduleCustomFormData =
-                                bundle.getString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, "0")
-                            //
-                            view.onState(
-                                Act092UiEvent.CallAct(
-                                    Act011_Main::class.java,
-                                    getFormFlowBundle(action, scheduleExec)
-                                )
-                            )
-                        } else {
-                            showMsg(MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR, action)
-
-                        }
-                    } else {
-                        view.onState(
-                            Act092UiEvent.OpenDialog(
-                                DialogType.DEFAULT_OK(
-                                    hmAux["alert_form_os_requires_serial_ttl"],
-                                    hmAux["alert_form_os_requires_serial_msg"]
-                                )
-                            )
-                        )
-                    }
-                }
-
-                override fun processToSearchSerial(serialID: String) {
-                    executeSerialSearch(
-                        action.productCode,
-                        action.productId,
-                        serialID,
-                        false
-                    )
-                }
-
-                override fun addMketControl(mketSerial: MKEditTextNM) {
-                    /* mView.addControlToActivity(mketSerial)*/
-                }
-
-                override fun removeMketControl(mketSerial: MKEditTextNM) {
-                    /*mView.removeControlFromActivity(mketSerial)*/
-                }
-            }
-        )
-        //
-        if (showDialog) {
-            serialDialog?.show()
+        serial: MD_Product_Serial
+    ): Bundle {
+        return Bundle().also { bundle ->
+            bundle.putString(MD_ProductDao.PRODUCT_CODE, scheduleExec.product_code.toString())
+            bundle.putString(MD_ProductDao.PRODUCT_DESC, scheduleExec.product_desc.toString())
+            bundle.putString(MD_ProductDao.PRODUCT_ID, scheduleExec.product_id.toString())
+            bundle.putString(MD_Product_SerialDao.SERIAL_ID, serial.serial_id)
+            bundle.putString(
+                GE_Custom_FormDao.CUSTOM_FORM_CODE,
+                scheduleExec.custom_form_code.toString()
+            )
+            bundle.putString(
+                Constant.ACT010_CUSTOM_FORM_CODE_DESC,
+                scheduleExec.custom_form_desc
+            )
+            bundle.putString(
+                GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE,
+                scheduleExec.custom_form_type.toString()
+            )
+            bundle.putString(
+                GE_Custom_FormDao.CUSTOM_FORM_VERSION,
+                scheduleExec.custom_form_version.toString()
+            )
+            view.bundle.putString(
+                ConstantBaseApp.MAIN_REQUESTING_ACT,
+                Constant.ACT092
+            )
+            view.bundle.putString(
+                ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
+                Constant.ACT092
+            )
+            bundle.putAll(view.bundle)
         }
     }
+
 
     private fun processActSchedule(
         action: MyActions,
@@ -862,94 +715,50 @@ class Act092Presenter constructor(
         scheduleExec: MD_Schedule_Exec,
         serial: MD_Product_Serial
     ) {
-        when (actType) {
-            Constant.ACT011 -> {
-                view.onState(
-                    Act092UiEvent.CallAct(
-                        Act011_Main::class.java,
-                        Bundle().apply {
-                            putString(MD_Product_SerialDao.SERIAL_ID, serial.serial_id)
-                            putString(
-                                GE_Custom_FormDao.CUSTOM_FORM_CODE,
-                                scheduleExec.custom_form_code.toString()
-                            )
-                            putString(
-                                Constant.ACT010_CUSTOM_FORM_CODE_DESC,
-                                scheduleExec.custom_form_desc
-                            )
-                            putString(
-                                GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE,
-                                scheduleExec.custom_form_type.toString()
-                            )
-                            putString(
-                                GE_Custom_FormDao.CUSTOM_FORM_VERSION,
-                                scheduleExec.custom_form_version.toString()
-                            )
-                            view.bundle.putString(
-                                ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
-                                Constant.ACT092
-                            )
-                            putAll(view.bundle)
-                        }
+        CoroutineScope(Dispatchers.Main).launch {
+            when (actType) {
+                Constant.ACT011 -> {
+                    view.onState(
+                        Act092UiEvent.CallAct(
+                            Act011_Main::class.java,
+                            getScheduleBundle(scheduleExec, serial)
+                        )
                     )
-                )
-            }
+                }
 
-            Constant.ACT087 -> {
-                view.onState(
-                    Act092UiEvent.CallAct(
-                        Act087Main::class.java,
-                        Bundle().apply {
-                            putString(MD_Product_SerialDao.SERIAL_ID, serial.serial_id)
-                            view.bundle.putString(
-                                ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
-                                Constant.ACT092
-                            )
-                            putAll(view.bundle)
-                            putAll(
-                                Act087Main.getBundleInstance(
-                                    scheduleExec.custom_form_type.toString(),
-                                    scheduleExec.custom_form_code.toString(),
-                                    scheduleExec.custom_form_version.toString(),
-                                    serial.product_code.toString(),
-                                    serial.serial_id.toString(),
-                                    serial.serial_code.toString(),
-                                    scheduleExec.schedule_prefix.toString(),
-                                    scheduleExec.schedule_code.toString(),
-                                    scheduleExec.schedule_exec.toString()
+                Constant.ACT087 -> {
+                    view.onState(
+                        Act092UiEvent.CallAct(
+                            Act087Main::class.java,
+                            Bundle().apply {
+                                putString(MD_Product_SerialDao.SERIAL_ID, serial.serial_id)
+                                view.bundle.putString(
+                                    ConstantBaseApp.MAIN_REQUESTING_ACT,
+                                    Constant.ACT092
                                 )
-                            )
-                        }
-                    )
-                )
-            }
-
-/*            Constant.ACT070 -> {
-                view.onState(
-                    Act092UiEvent.CallAct(
-                        Act070_Main::class.java,
-                        getTicketFlowBundle(
-                            action,
-                            ticketPrefix,
-                            ticketCode
+                                view.bundle.putString(
+                                    ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
+                                    Constant.ACT092
+                                )
+                                putAll(view.bundle)
+                                putAll(
+                                    Act087Main.getBundleInstance(
+                                        scheduleExec.custom_form_type.toString(),
+                                        scheduleExec.custom_form_code.toString(),
+                                        scheduleExec.custom_form_version.toString(),
+                                        serial.product_code.toString(),
+                                        serial.serial_id.toString(),
+                                        serial.serial_code.toString(),
+                                        scheduleExec.schedule_prefix.toString(),
+                                        scheduleExec.schedule_code.toString(),
+                                        scheduleExec.schedule_exec.toString()
+                                    )
+                                )
+                            }
                         )
                     )
-                )
+                }
             }
-            Constant.ACT071 -> {
-                view.onState(
-                    Act092UiEvent.CallAct(
-                        Act071_Main::class.java,
-                        getTicketActionFlowBundle(
-                            action,
-                            scheduleExec,
-                            ticketPrefix,
-                            ticketCode,
-                            ticketSeq
-                        )
-                    )
-                )
-            }*/
         }
     }
 
@@ -967,7 +776,14 @@ class Act092Presenter constructor(
         //
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT092)
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
-        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, originFlow)
+        bundle.putString(
+            ConstantBaseApp.MAIN_REQUESTING_ACT,
+            Constant.ACT092
+        )
+        bundle.putString(
+            ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
+            Constant.ACT092
+        )
         bundle.putInt(MD_Schedule_ExecDao.SCHEDULE_PREFIX, scheduleExec.schedule_prefix)
         bundle.putInt(MD_Schedule_ExecDao.SCHEDULE_CODE, scheduleExec.schedule_code)
         bundle.putInt(MD_Schedule_ExecDao.SCHEDULE_EXEC, scheduleExec.schedule_exec)
@@ -1016,70 +832,6 @@ class Act092Presenter constructor(
         return bundle
     }
 
-    private fun getTicketFlowBundle(
-        action: MyActions,
-        ticketPrefix: Int,
-        ticketCode: Int
-    ): Bundle {
-        val bundle = Bundle()
-        //Seta dados da action selecionado no filterParam
-        setSeletedActionInfosIntoFilterParam(action.actionType, action.processPk)
-        //
-        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT092)
-        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
-        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, originFlow)
-        //
-        bundle.putInt(TK_TicketDao.TICKET_PREFIX, ticketPrefix)
-        bundle.putInt(TK_TicketDao.TICKET_CODE, ticketCode)
-        //bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ, ToolBox_Inf.convertStringToInt(item.get(TK_Ticket_CtrlDao.TICKET_SEQ)))
-        bundle.putString(Constant.ACT_SELECTED_DATE, _serialModel.value.calendarDate)
-        bundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK, action.processPk)
-        return bundle
-    }
-
-    private fun getFormFlowBundle(
-        action: MyActions,
-        scheduleExec: MD_Schedule_Exec
-    ): Bundle {
-        val bundle = Bundle()
-        bundle.putString(MD_ProductDao.PRODUCT_CODE, scheduleExec.product_code.toString())
-        bundle.putString(MD_ProductDao.PRODUCT_DESC, scheduleExec.product_desc.toString())
-        bundle.putString(MD_ProductDao.PRODUCT_ID, scheduleExec.product_id.toString())
-        bundle.putString(MD_Product_SerialDao.SERIAL_ID, scheduleExec.serial_id.toString())
-        bundle.putString(
-            GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE,
-            scheduleExec.custom_form_type.toString()
-        )
-
-        bundle.putString(
-            GE_Custom_FormDao.CUSTOM_FORM_CODE,
-            scheduleExec.custom_form_code.toString()
-        )
-        bundle.putString(
-            GE_Custom_FormDao.CUSTOM_FORM_VERSION,
-            scheduleExec.custom_form_version.toString()
-        )
-        bundle.putString(
-            Constant.ACT010_CUSTOM_FORM_CODE_DESC,
-            scheduleExec.custom_form_desc.toString()
-        )
-        //
-        action.scheduleCustomFormData?.let {
-            bundle.putString(
-                GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA,
-                action.scheduleCustomFormData
-            )
-        }
-        bundle.putString(Constant.ACT017_SCHEDULED_SITE, scheduleExec.site_code.toString())
-        //Seta dados da action selecionado no filterParam
-        setSeletedActionInfosIntoFilterParam(action.actionType, action.processPk)
-        //
-        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT092)
-        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
-        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, originFlow)
-        return bundle
-    }
-
 
     override fun processWsReturnSync(hmAuxTicketDownload: HMAux) {
         CoroutineScope(Dispatchers.Main).launch {
@@ -1103,8 +855,8 @@ class Act092Presenter constructor(
             view.onState(
                 Act092UiEvent.OpenDialog(
                     DialogType.DEFAULT_OK(
-                        hmAux[Act092Translate.ALERT_FREE_EXECUTION_BLOCKED_TTL],
-                        hmAux[Act092Translate.ALERT_FREE_EXECUTION_BLOCKED_MSG]
+                        Act092Translate.ALERT_FREE_EXECUTION_BLOCKED_TTL,
+                        Act092Translate.ALERT_FREE_EXECUTION_BLOCKED_MSG
                     )
                 )
             )
@@ -1126,15 +878,15 @@ class Act092Presenter constructor(
                     view.onState(
                         Act092UiEvent.OpenDialog(
                             DialogType.DEFAULT_OK(
-                                hmAux[Act092Translate.PROGRESS_SYNC_TTL],
-                                hmAux[Act092Translate.PROGRESS_SYNC_MSG]
+                                Act092Translate.PROGRESS_SYNC_TTL,
+                                Act092Translate.PROGRESS_SYNC_MSG
                             )
                         )
                     )
                     newActionClick = true
                     view.wsProcess.value = WS_Sync::class.java.name
                     actionUseCases.syncFilesForm(
-                        hmAux,
+                        hmAux_Trans,
                         _serialModel.value.productCode?.toLong() ?: -1L
                     )
                 }
@@ -1144,23 +896,25 @@ class Act092Presenter constructor(
     }
 
     private suspend fun validateCreateNewForm() {
-        actionUseCases.validateNewForm(ValidateNewFormParam(_serialModel.value, hmAux)).collect {
-            it.isSuccess { bundle ->
-                myActionFilterParam.paramTextFilter = view.filterText.value
-                myActionFilterParam.mainUserFilterState = view.focusState.value.mainUser
-                myActionFilterParam.paramItemSelectedTab = view.focusState.value.userFocusInt
-                myActionFilterParam.paramItemSelectedPk = null
-                myActionFilterParam.paramItemSelectedType = null
+        actionUseCases.validateNewForm(ValidateNewFormParam(_serialModel.value, hmAux_Trans))
+            .collect {
+                it.isSuccess { bundle ->
+                    myActionFilterParam.paramTextFilter = view.filterText.value
+                    myActionFilterParam.mainUserFilterState = view.focusState.value.mainUser
+                    myActionFilterParam.paramItemSelectedTab = view.focusState.value.userFocusInt
+                    myActionFilterParam.paramItemSelectedPk = null
+                    myActionFilterParam.paramItemSelectedType = null
 
-                view.onState(Act092UiEvent.CallAct(
-                    Act009_Main::class.java,
-                    bundle.apply {
-                        putSerializable(
-                            MyActionFilterParam.MY_ACTION_FILTER_PARAM,
-                            myActionFilterParam
-                        )
-                    }
-                ))
+                    view.onState(
+                        Act092UiEvent.CallAct(
+                            Act009_Main::class.java,
+                            bundle.apply {
+                                putSerializable(
+                                    MyActionFilterParam.MY_ACTION_FILTER_PARAM,
+                                    myActionFilterParam
+                                )
+                            }
+                        ))
             }
 
             it.isFailed { exception ->
@@ -1170,7 +924,7 @@ class Act092Presenter constructor(
                             view.onState(
                                 Act092UiEvent.OpenDialog(
                                     DialogType.DEFAULT_OK(
-                                        title = hmAux[Act092Translate.ALERT_NO_FORM_TTL],
+                                        title = Act092Translate.ALERT_NO_FORM_TTL,
                                         message = exception.message
                                     )
                                 )
@@ -1179,8 +933,8 @@ class Act092Presenter constructor(
                             view.onState(
                                 Act092UiEvent.OpenDialog(
                                     DialogType.DEFAULT_OK(
-                                        title = hmAux[Act092Translate.ALERT_PRODUCT_OR_SERIAL_NOT_FOUND_TTL],
-                                        message = hmAux[Act092Translate.ALERT_PRODUCT_OR_SERIAL_NOT_FOUND_MSG]
+                                        title = Act092Translate.ALERT_PRODUCT_OR_SERIAL_NOT_FOUND_TTL,
+                                        message = Act092Translate.ALERT_PRODUCT_OR_SERIAL_NOT_FOUND_MSG
                                     )
                                 )
                             )
@@ -1221,10 +975,18 @@ class Act092Presenter constructor(
         if(ToolBox_Con.isOnline(context)) {
             view.wsProcess.value = WS_UnfocusAndHistoric::class.java.simpleName
             //
-            view.showPD(hmAux["alert_send_finish_ttl"], hmAux["alert_send_finish_msg"])
+            view.onState(
+                Act092UiEvent.OpenDialog(
+                    DialogType.PROCESS(
+                        Act092Translate.ALERT_SEND_FINISH_TTL,
+                        Act092Translate.ALERT_SEND_FINISH_MSG
+
+                    )
+                )
+            )
             //
             actionUseCases.unfocusHistoricalAction(
-                myActionFilterParam.productCode!!,
+                _serialModel.value.productCode ?: -1,
                 _serialModel.value.serialCode ?: 0L
             )
         }else{
@@ -1261,8 +1023,8 @@ class Act092Presenter constructor(
                             view.onState(
                                 Act092UiEvent.OpenDialog(
                                     DialogType.DEFAULT_OK(
-                                        hmAux["alert_no_serial_found_ttl"],
-                                        hmAux["alert_no_serial_found_msg"]
+                                        "alert_no_serial_found_ttl",
+                                        "alert_no_serial_found_msg"
                                     )
                                 )
                             )
@@ -1324,6 +1086,8 @@ class Act092Presenter constructor(
             "progress_ticket_save_msg",
             "progress_form_save_ttl",
             "progress_form_save_msg",
+            "cell_step_lbl",
+            "msg_preparing_to_send_data"
             "cell_step_lbl",
             "cell_open_action_lbl",
             "cell_download_action_lbl",

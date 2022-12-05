@@ -1786,12 +1786,14 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     public void onBackPressedClicked() {
         if (isaTicketFlowForm()) {
             mView.callAct070();
-        } else if(ConstantBaseApp.ACT027.equals(mView.getRequestingAct())
-                    || ConstantBaseApp.ACT028.equals(mView.getRequestingAct())
-        ){
+        } else if (ConstantBaseApp.ACT027.equals(mView.getRequestingAct())
+                || ConstantBaseApp.ACT028.equals(mView.getRequestingAct())
+        ) {
             mView.nservCall();
-        } else if(ConstantBaseApp.ACT084.equals(mView.getRequestingAct())){
+        } else if (ConstantBaseApp.ACT084.equals(mView.getRequestingAct())) {
             mView.callAct084();
+        } else if (ConstantBaseApp.ACT092.equals(mView.getRequestingAct())) {
+            mView.callAct092();
         } else {
             mView.callAct083();
         }
@@ -2156,7 +2158,15 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             //FLUXO DO TICKET ESTA EM OUTRO LUGAR.
             String origin = act083Bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, "");
             if(bAgendado || !ConstantBaseApp.ACT006.equals(origin)){
-                mView.callAct083();
+                switch (origin) {
+                    case ConstantBaseApp.ACT092:
+                        mView.callAct092();
+                        break;
+
+                    case ConstantBaseApp.ACT083:
+                        mView.callAct083();
+                        break;
+                }
             }else{
                 mView.callAct006(context,false);
             }

@@ -12,7 +12,7 @@ class CheckFileExistsUseCase constructor(
     operator fun invoke(productCode: Int, serialCode: Long): Boolean {
         val fileName = ToolBox_Inf.getOtherActionFileName(productCode, serialCode)
         val file = File(ConstantBaseApp.OTHER_ACTIONS_JSON_PATH, fileName)
-        return !file.exists()
+        return file.exists()
     }
 
 }
