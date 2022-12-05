@@ -69,17 +69,17 @@
                     app:mBARCODE="false"
                     app:mNFC="false"
                     app:mOCR="false" />
-
-                <CheckBox
+                <ImageView
                     android:id="@+id/act084_chk_nc_filter"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:button="@drawable/namoa_ic_nc_states"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="12dp"
+                    android:background="@drawable/my_action_toogle_default"
+                    android:padding="4dp"
+                    android:src="@drawable/ic_baseline_report_24"
                     app:layout_constraintTop_toTopOf="@id/act084_mket_filter"
                     app:layout_constraintBottom_toBottomOf="@id/act084_mket_filter"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginEnd="8dp"
-                    />
+                    app:layout_constraintEnd_toEndOf="parent" />
 
                 <RadioGroup
                     android:id="@+id/act084_tabs"

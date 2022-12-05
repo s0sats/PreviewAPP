@@ -79,6 +79,9 @@ class Act084MainPresenter(
         transList.add("tab_discard_lbl")
         transList.add("no_record_lbl")
         transList.add("form_lbl")
+        transList.add("btn_open_action_lbl")
+        transList.add("btn_select_serial_info_lbl")
+        transList.add("cell_step_lbl")
         transList.add("other_steps_available_lbl")
         transList.add("alert_schedule_status_prevents_to_open_ttl")
         transList.add("alert_schedule_status_prevents_to_open_msg")
@@ -88,7 +91,7 @@ class Act084MainPresenter(
         transList.add("alert_schedule_ticket_not_found_msg")
         //
         return ToolBox_Inf.setLanguage(
-                context,
+            context,
                 mModule_Code,
                 mResource_Code,
                 ToolBox_Con.getPreference_Translate_Code(context),
@@ -255,6 +258,7 @@ class Act084MainPresenter(
             MyActions.MY_ACTION_TYPE_FORM -> processFormClick(myAction)
         }
     }
+
 
     private fun processLocalTicketClick(myAction: MyActions) {
         mView.callAct070(

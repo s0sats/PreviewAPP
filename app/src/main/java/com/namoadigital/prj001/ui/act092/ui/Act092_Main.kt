@@ -93,8 +93,8 @@ class Act092_Main : BaseActivityMvp
             setContentView(root)
             bundle = (savedInstanceState ?: intent.extras) as Bundle
             setSupportActionBar(topAppBar)
-            mAct_Title = "act92_title"
             setTitleLanguage()
+            mAct_Title = "act92_title"
             getBundle()
             iniUIFooter(Constant.ACT092, hmAux_Trans)
         }
@@ -103,6 +103,11 @@ class Act092_Main : BaseActivityMvp
             presenter.setView(this)
             presenter.getMyActionList(_focusState.value.mainUser)
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return super.onSupportNavigateUp()
     }
 
     private fun getBundle() {
@@ -232,6 +237,8 @@ class Act092_Main : BaseActivityMvp
 
     override fun initAction() {
         with(binding) {
+
+
             mainUserSelection.setOnClickListener {
                 if (btnOtherSerial.isEnabled) {
                     _focusState.value = focusState.value.copy(

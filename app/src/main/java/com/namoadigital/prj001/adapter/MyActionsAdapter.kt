@@ -30,7 +30,7 @@ class MyActionsAdapter(
     val tagDesc: String,
     private val myActionClickListener: (myAction: MyActions) -> Unit,
     private val myActionFormButtonClickListener: (myActionFormButton: MyActionsFormButton) -> Unit,
-    private val mySerialClickListener: (myAction: MyActions, Int) -> Unit,
+    private val mySerialClickListener: ((myAction: MyActions, Int) -> Unit)? = null,
     private val notifyFilterApplied: (qtyItensFiltered: Int) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
     private val VIEW_TYPE_MY_ACTION = 0
@@ -83,26 +83,31 @@ class MyActionsAdapter(
         fun onBinding(myAction: MyActions, position: Int) {
             binding.act083SerialInfo.text = hmAuxTrans["btn_select_serial_info_lbl"]
 
-            val serialVisible =
-                if (myAction.serialId?.isEmpty() == true) View.GONE else View.VISIBLE
 
-            binding.myActionsItemIvSerialClass.visibility = serialVisible
-            binding.myActionsItemTvSerialId.visibility = serialVisible
-            binding.act083SerialInfo.visibility = serialVisible
+
+            binding.myActionsItemIvSerialClass.visibility =
+                if (myAction.classColor == null) View.GONE else View.VISIBLE
+            binding.myActionsItemTvSerialId.visibility =
+                if (myAction.serialId?.isEmpty() == true) View.GONE else View.VISIBLE
+            binding.act083SerialInfo.visibility =
+                if (mySerialClickListener == null) View.GONE else View.VISIBLE
 
             binding.myActionSelectSerial.setOnClickListener {
                 myActionClickListener(myAction)
             }
-            binding.act083SerialInfo.setOnClickListener {
-                mySerialClickListener(myAction, position)
+            mySerialClickListener?.let { mySerial ->
+                binding.act083SerialInfo.setOnClickListener {
+                    mySerial(myAction, position)
+                }
             }
             //
             binding.myActionsItemTvCode.text = myAction.processId
-            binding.myActionsItemTvClassStatus.visibility =View.GONE
+            binding.myActionsItemTvClassStatus.visibility = View.GONE
             //
-            if((myAction.actionType == MyActions.MY_ACTION_TYPE_TICKET
-                || myAction.actionType == MyActions.MY_ACTION_TYPE_TICKET_CACHE)
-                && !myAction.classId.isNullOrEmpty()) {
+            if ((myAction.actionType == MyActions.MY_ACTION_TYPE_TICKET
+                        || myAction.actionType == MyActions.MY_ACTION_TYPE_TICKET_CACHE)
+                && !myAction.classId.isNullOrEmpty()
+            ) {
                 binding.myActionsItemTvClassStatus.apply {
                     applyVisibilityIfTextExists(myAction.classId)
                     setTextColor(Color.parseColor(myAction.classColor))
@@ -227,11 +232,13 @@ class MyActionsAdapter(
         private fun applyBackgroundStrokeColor(myAction: MyActions) {
             binding.myActionSelectSerial.apply {
                 if (myAction.highlightItem) {
-                    backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.namoa_color_orange))
+                    backgroundTintList = ColorStateList.valueOf(Color.parseColor("#FFB95C"))
                     text = hmAuxTrans["btn_continue_action_lbl"]
+                    setTextColor(Color.parseColor("#462A00"))
                 }else{
                     backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.m3_namoa_primary))
                     text = hmAuxTrans["btn_open_action_lbl"]
+                    setTextColor(resources.getColor(R.color.m3_namoa_surface))
                 }
             }
         }

@@ -50,7 +50,6 @@ import com.namoadigital.prj001.ui.act092.utils.Act092Translate
 import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent
 import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent.OpenDialog.DialogType
 import com.namoadigital.prj001.util.*
-import com.namoadigital.prj001.view.dialog.ScheduleRequestSerialDialog2
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -70,8 +69,6 @@ class Act092Presenter constructor(
     private var actionSelected: MyActions? = null
 
     private lateinit var view: Act092_Contract.View
-
-    private var serialDialog: ScheduleRequestSerialDialog2? = null
 
 
     private var _serialModel = MutableStateFlow(SerialModel())
@@ -121,8 +118,8 @@ class Act092Presenter constructor(
     }
 
     override fun verifyProductOutdateForForm(hmAux: HMAux, context: Context): Boolean {
-        val ticketPrefix = TK_TicketDao.TICKET_PREFIX?.let { Integer.valueOf(it) } ?: -1
-        val ticketCode = TK_TicketDao.TICKET_CODE?.let { Integer.valueOf(it) } ?: -1
+        val ticketPrefix = TK_TicketDao.TICKET_PREFIX.let { Integer.valueOf(it) } ?: -1
+        val ticketCode = TK_TicketDao.TICKET_CODE.let { Integer.valueOf(it) } ?: -1
         //
         return ToolBox_Inf.hasFormProductOutdate(context, ticketPrefix, ticketCode)
     }
@@ -972,8 +969,8 @@ class Act092Presenter constructor(
             view.onState(
                 Act092UiEvent.OpenDialog(
                     DialogType.PROCESS(
-                        "alert_send_finish_ttl",
-                        "alert_send_finish_msg"
+                        Act092Translate.ALERT_SEND_FINISH_TTL,
+                        Act092Translate.ALERT_SEND_FINISH_MSG
 
                     )
                 )
@@ -1080,7 +1077,8 @@ class Act092Presenter constructor(
             "progress_ticket_save_msg",
             "progress_form_save_ttl",
             "progress_form_save_msg",
-            "cell_step_lbl"
+            "cell_step_lbl",
+            "msg_preparing_to_send_data"
         ).let {
             return ToolBox_Inf.setLanguage(
                 translateResource.context,

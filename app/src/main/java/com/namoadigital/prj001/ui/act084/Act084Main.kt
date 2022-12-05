@@ -8,8 +8,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.Base_Activity
+import com.namoadigital.prj001.R
 import com.namoadigital.prj001.adapter.MyActionsAdapter
-import com.namoadigital.prj001.dao.*
+import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
+import com.namoadigital.prj001.dao.MD_Schedule_ExecDao
+import com.namoadigital.prj001.dao.TK_TicketDao
 import com.namoadigital.prj001.databinding.Act084MainBinding
 import com.namoadigital.prj001.databinding.Act084MainContentBinding
 import com.namoadigital.prj001.model.MyActions
@@ -22,23 +26,24 @@ import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
-import java.lang.Exception
 
 class Act084Main : Base_Activity(), Act084MainContract.I_View {
     private lateinit var binding: Act084MainContentBinding
     private lateinit var mAdapter: MyActionsAdapter
     private lateinit var bundle: Bundle
     private var firstScroll = true
+    private var isReportClick = false
+    private var wsProcess = ""
     private val mPresenter by lazy {
         Act084MainPresenter(
+            context,
+            this,
+            bundle,
+            mModule_Code,
+            mResource_Code,
+            TK_TicketDao(
                 context,
-                this,
-                bundle,
-                mModule_Code,
-                mResource_Code,
-                TK_TicketDao(
-                        context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
                 ),
                 MD_Schedule_ExecDao(
@@ -128,6 +133,7 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
         }
     }
 
+
     override fun iniRecycler() {
         val myActionsList = mPresenter.myActionsList
         if(myActionsList.size > 0) {
@@ -139,8 +145,7 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
                 "",
                 this::onMyActionClick,
                 this::onFormButtonClick,
-                this::onSerialButtonClick,
-                this::onAdapterFilterApplied
+                notifyFilterApplied = this::onAdapterFilterApplied
             )
             //
             with(binding.act084RvActionsList) {
@@ -162,9 +167,6 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
         }
     }
 
-    private fun onSerialButtonClick (myAction: MyActions, position: Int) {
-        TODO("Not yet implemented")
-    }
 
 
     fun onMyActionClick(myAction: MyActions){
@@ -251,27 +253,47 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
         })
         binding.act084Tabs.setOnCheckedChangeListener { _, checkedId ->
             binding.act084RvActionsList.stopScroll();
-            with(binding){
-                when(checkedId){
-                    act084TabMyActions.id -> updateMyActionList(1,binding.act084ChkNcFilter.isChecked)
-                    else -> updateMyActionList(0,binding.act084ChkNcFilter.isChecked)
+            with(binding) {
+                when (checkedId) {
+                    act084TabMyActions.id -> updateReportAction(1, isReportClick)
+                    else -> updateReportAction(0, isReportClick)
                 }
             }
         }
-        binding.act084ChkNcFilter.setOnCheckedChangeListener{
-            _, isChecked ->
-            val doneTab = if(binding.act084Tabs.checkedRadioButtonId == binding.act084TabMyActions.id){
-                1
-            }else{
-                0
-            }
-            updateMyActionList(doneTab,isChecked)
+
+
+        binding.act084ChkNcFilter.setOnClickListener {
+            isReportClick = !isReportClick
+            val doneTab =
+                if (binding.act084Tabs.checkedRadioButtonId == binding.act084TabMyActions.id) {
+                    1
+                } else {
+                    0
+                }
+            updateReportAction(doneTab)
         }
 
     }
-    private fun updateMyActionList(userFocusFilter: Int, ncFilterOn:Boolean) {
+
+
+    private fun updateReportAction(doneTab: Int, value: Boolean = isReportClick) {
+        with(binding) {
+            if (value) {
+                act084ChkNcFilter.setImageResource(R.drawable.ic_baseline_report_24_white)
+                act084ChkNcFilter.background =
+                    resources.getDrawable(R.drawable.backgroud_toggle_select)
+            } else {
+                act084ChkNcFilter.setImageResource(R.drawable.ic_baseline_report_24)
+                act084ChkNcFilter.background =
+                    resources.getDrawable(R.drawable.my_action_toogle_default)
+            }
+        }
+        updateMyActionList(doneTab, isReportClick)
+    }
+
+    private fun updateMyActionList(userFocusFilter: Int, ncFilterOn: Boolean) {
         //Reseta visibilidade das views
-        with(binding){
+        with(binding) {
             act084TvNoResult.visibility = View.GONE
             act084RvActionsList.visibility = View.GONE
         }
@@ -316,7 +338,7 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
     }
 
     override fun getNcFilterStatus() : Boolean{
-        return binding.act084ChkNcFilter.isChecked
+        return isReportClick
     }
 
     /**
@@ -330,7 +352,7 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
         }
         //
         if(ncFilter){
-            binding.act084ChkNcFilter.isChecked = ncFilter
+            isReportClick = ncFilter
         }
     }
 
