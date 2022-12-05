@@ -1087,7 +1087,7 @@ class Act092Presenter constructor(
             "progress_form_save_ttl",
             "progress_form_save_msg",
             "cell_step_lbl",
-            "msg_preparing_to_send_data"
+            "msg_preparing_to_send_data",
             "cell_step_lbl",
             "cell_open_action_lbl",
             "cell_download_action_lbl",
@@ -1121,8 +1121,8 @@ class Act092Presenter constructor(
             view.wsProcess.value = WS_Generate_NForm_PDF::class.java.name
             //
             view.showPD(
-                hmAux["dialog_generate_form_pdf_ttl"],
-                hmAux["dialog_generate_form_pdf_start"]
+                hmAux_Trans["dialog_generate_form_pdf_ttl"],
+                hmAux_Trans["dialog_generate_form_pdf_start"]
             )
             //
             launch = CoroutineScope(Dispatchers.IO).launch {
@@ -1164,8 +1164,8 @@ class Act092Presenter constructor(
                     } else {
                         ToolBox.alertMSG(
                             context,
-                            hmAux["alert_form_pdf_download_error_ttl"],
-                            hmAux["alert_form_pdf_download_error_msg"],
+                            hmAux_Trans["alert_form_pdf_download_error_ttl"],
+                            hmAux_Trans["alert_form_pdf_download_error_msg"],
                             null,
                             0
                         )
@@ -1206,8 +1206,8 @@ class Act092Presenter constructor(
             //
             ToolBox.alertMSG(
                 context,
-                hmAux["alert_starting_pdf_not_supported_ttl"],
-                hmAux["alert_starting_pdf_not_supported_msg"],
+                hmAux_Trans["alert_starting_pdf_not_supported_ttl"],
+                hmAux_Trans["alert_starting_pdf_not_supported_msg"],
                 null,
                 0
             )

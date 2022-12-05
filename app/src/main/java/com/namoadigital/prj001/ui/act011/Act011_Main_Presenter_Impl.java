@@ -2166,6 +2166,9 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                     case ConstantBaseApp.ACT083:
                         mView.callAct083();
                         break;
+                    default:
+                        mView.callAct005(context);
+                        break;
                 }
             }else{
                 mView.callAct006(context,false);

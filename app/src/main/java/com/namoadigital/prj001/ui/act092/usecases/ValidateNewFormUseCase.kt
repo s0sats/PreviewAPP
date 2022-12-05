@@ -79,6 +79,10 @@ class ValidateNewFormUseCase constructor(
                                     ConstantBaseApp.ACT092
                                 )
                                 putString(
+                                    ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
+                                    ConstantBaseApp.ACT092
+                                )
+                                putString(
                                     MD_ProductDao.PRODUCT_CODE,
                                     mdProductSerial.product_code.toString()
                                 )
