@@ -81,7 +81,8 @@ class MyActionsCache(
             pdfUrl,
             pdfName,
             ticketClassId,
-            ticketClassColor
+            ticketClassColor,
+            false
         )
     }
 

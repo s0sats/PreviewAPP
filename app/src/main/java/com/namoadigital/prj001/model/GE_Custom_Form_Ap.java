@@ -458,7 +458,8 @@ public class GE_Custom_Form_Ap {
                 null,
                 null,
                 null,
-                null
+                null,
+                true
         );
         myActions.setProductCode(product_code);
         myActions.setProductId("");

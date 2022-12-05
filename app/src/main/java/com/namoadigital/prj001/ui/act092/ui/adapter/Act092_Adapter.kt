@@ -118,11 +118,14 @@ class Act092_Adapter constructor(
                 act083SerialInfo.visibility = View.GONE
                 serialDetail.visibility = View.GONE
                 myActionSelectSerial.apply {
-                    if(!item.pdfUrl.isNullOrEmpty()
+                    visibility = View.VISIBLE
+                    if(item.actionType == MyActions.MY_ACTION_TYPE_SCHEDULE && !item.hasUserFocus){
+                        visibility = View.GONE
+                    }else if(!item.pdfUrl.isNullOrEmpty()
                         || MyActions.MY_ACTION_TYPE_TICKET_CACHE == item.actionType){
                         text = hmAux["cell_download_action_lbl"]
                     }else {
-                        text = hmAux["cell_open_action"]
+                        text = hmAux["cell_open_action_lbl"]
                     }
                 }
                 //
