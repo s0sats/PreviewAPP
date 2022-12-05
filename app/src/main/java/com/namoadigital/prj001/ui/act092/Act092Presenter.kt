@@ -370,8 +370,8 @@ class Act092Presenter constructor(
             view.wsProcess.value = WS_Save::class.java.simpleName
             //
             view.showPD(
-                hmAux.get("progress_form_save_ttl"),
-                hmAux.get("progress_form_save_msg")
+                hmAux["progress_form_save_ttl"],
+                hmAux["progress_form_save_msg"]
             )
             val mIntent = Intent(context, WBR_Save::class.java)
             val bundle = Bundle()
@@ -388,7 +388,7 @@ class Act092Presenter constructor(
             ToolBox_Inf.sendBCStatus(
                 context,
                 "STATUS",
-                hmAux.get("msg_preparing_to_send_data"),
+                hmAux["msg_preparing_to_send_data"],
                 "",
                 "0"
             )
@@ -402,8 +402,8 @@ class Act092Presenter constructor(
             view.wsProcess.value  = WS_TK_Ticket_Save::class.java.simpleName
             //
             view.showPD(
-                hmAux.get("progress_ticket_save_ttl"),
-                hmAux.get("progress_ticket_save_msg")
+                hmAux["progress_ticket_save_ttl"],
+                hmAux["progress_ticket_save_msg"]
             )
             //
             val mIntent = Intent(context, WBR_TK_Ticket_Save::class.java)
@@ -1331,9 +1331,9 @@ class Act092Presenter constructor(
             "alert_starting_pdf_not_supported_msg",
             "alert_form_pdf_download_error_ttl",
             "alert_form_pdf_download_error_msg",
-            "alert_starting_pdf_not_supported_ttl",
-            "alert_starting_pdf_not_supported_msg",
-            "done_action_list_limiter_lbl"
+            "done_action_list_limiter_lbl",
+            "dialog_generate_form_pdf_ttl",
+            "dialog_generate_form_pdf_start",
         ).let {
             return ToolBox_Inf.setLanguage(
                 translateResource.context,
@@ -1357,8 +1357,8 @@ class Act092Presenter constructor(
             view.wsProcess.value = WS_Generate_NForm_PDF::class.java.name
             //
             view.showPD(
-                hmAux.get("dialog_generate_form_pdf_ttl"),
-                hmAux.get("dialog_generate_form_pdf_start")
+                hmAux["dialog_generate_form_pdf_ttl"],
+                hmAux["dialog_generate_form_pdf_start"]
             )
             //
             launch = CoroutineScope(Dispatchers.IO).launch {
@@ -1400,8 +1400,8 @@ class Act092Presenter constructor(
                     } else {
                         ToolBox.alertMSG(
                             context,
-                            hmAux.get("alert_form_pdf_download_error_ttl"),
-                            hmAux.get("alert_form_pdf_download_error_msg"),
+                            hmAux["alert_form_pdf_download_error_ttl"],
+                            hmAux["alert_form_pdf_download_error_msg"],
                             null,
                             0
                         )
@@ -1409,7 +1409,14 @@ class Act092Presenter constructor(
                 }
             }
         } else {
-            ToolBox_Inf.showNoConnectionDialog(context)
+            myAction.pdfName?.let {
+                val pdfFile = File(ConstantBaseApp.CACHE_PATH + "/" + myAction.pdfName)
+                if(pdfFile.exists() && pdfFile.isFile){
+                    openPDF(context, myAction.pdfName)
+                }else {
+                    ToolBox_Inf.showNoConnectionDialog(context)
+                }
+            }?: ToolBox_Inf.showNoConnectionDialog(context)
         }
     }
 
@@ -1428,7 +1435,6 @@ class Act092Presenter constructor(
         val pdfIntent =
             ToolBox_Inf.getOpenPdfIntent(context, ConstantBaseApp.CACHE_PDF + "/" + pdfName)
         //
-        //
         try {
             context.startActivity(pdfIntent)
         } catch (e: ActivityNotFoundException) {
@@ -1436,8 +1442,8 @@ class Act092Presenter constructor(
             //
             ToolBox.alertMSG(
                 context,
-                hmAux.get("alert_starting_pdf_not_supported_ttl"),
-                hmAux.get("alert_starting_pdf_not_supported_msg"),
+                hmAux["alert_starting_pdf_not_supported_ttl"],
+                hmAux["alert_starting_pdf_not_supported_msg"],
                 null,
                 0
             )
