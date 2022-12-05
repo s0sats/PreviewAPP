@@ -89,33 +89,34 @@ class ListMyActionUseCases constructor(
                     )
 
                     //
-                    val unfocusTemp = mutableListOf<MyActions>()
+                    if(unfocusList.size >0) {
+                        val unfocusTemp = mutableListOf<MyActions>()
 
-                    val focusTemp = focusList.map {
-                        var action = it as MyActions
-                        for (unfocusAction in unfocusList) {
-                            if(action.processId == (unfocusAction as MyActions).processId){
-                                action.mergeUnfocusActions(unfocusAction)
-                                unfocusTemp.add(unfocusAction)
+                        val focusTemp = focusList.map {
+                            var action = it as MyActions
+                            for (unfocusAction in unfocusList) {
+                                if (action.processId == (unfocusAction as MyActions).processId) {
+                                    action.mergeUnfocusActions(unfocusAction)
+                                    unfocusTemp.add(unfocusAction)
+                                }
                             }
-                        }
-                        it as MyActionsBase
-                    }
-                    //
-                    val filteredUnfocusList = unfocusList.filter {
-                        var insertItem = true
-                        for (unfocusTempAction in unfocusTemp) {
-                            if ((it as MyActions).processId == (unfocusTempAction as MyActions).processId) {
-                                insertItem = false
-                            }
+                            it as MyActionsBase
                         }
                         //
-                        insertItem
+                        val filteredUnfocusList = unfocusList.filter {
+                            var insertItem = true
+                            for (unfocusTempAction in unfocusTemp) {
+                                if ((it as MyActions).processId == (unfocusTempAction as MyActions).processId) {
+                                    insertItem = false
+                                }
+                            }
+                            //
+                            insertItem
+                        }
+                        //
+                        actionBaseList.addAll(focusTemp)
+                        actionBaseList.addAll(filteredUnfocusList)
                     }
-                    //
-                    actionBaseList.addAll(focusTemp)
-                    actionBaseList.addAll(filteredUnfocusList)
-
 
                     val actions = if (input.second)
                         actionBaseList.map { m -> m as MyActions }
