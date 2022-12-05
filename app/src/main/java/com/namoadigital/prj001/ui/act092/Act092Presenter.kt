@@ -52,8 +52,6 @@ import com.namoadigital.prj001.ui.act092.utils.Act092Translate
 import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent
 import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent.OpenDialog.DialogType
 import com.namoadigital.prj001.util.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import com.namoadigital.prj001.view.dialog.ScheduleRequestSerialDialog2
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -125,8 +123,8 @@ class Act092Presenter constructor(
     }
 
     override fun verifyProductOutdateForForm(hmAux: HMAux, context: Context): Boolean {
-        val ticketPrefix = TK_TicketDao.TICKET_PREFIX.let { Integer.valueOf(it) } ?: -1
-        val ticketCode = TK_TicketDao.TICKET_CODE.let { Integer.valueOf(it) } ?: -1
+        val ticketPrefix = hmAux[TK_TicketDao.TICKET_PREFIX].let { Integer.valueOf(it) } ?: -1
+        val ticketCode = hmAux[TK_TicketDao.TICKET_CODE].let { Integer.valueOf(it) } ?: -1
         //
         return ToolBox_Inf.hasFormProductOutdate(context, ticketPrefix, ticketCode)
     }
@@ -297,14 +295,16 @@ class Act092Presenter constructor(
             }
 
             MyActions.MY_ACTION_TYPE_FORM -> {
-                action.pdfUrl?.let{
+                if(!action.pdfUrl.isNullOrEmpty()){
                     executeNFormPDFGeneration(context, action, position)
-                }?: view.onState(
-                    Act092UiEvent.CallAct(
-                        Act011_Main::class.java,
-                        getFormBundle(action)
+                }else{
+                    view.onState(
+                        Act092UiEvent.CallAct(
+                            Act011_Main::class.java,
+                            getFormBundle(action)
+                        )
                     )
-                )
+                }
             }
         }
     }

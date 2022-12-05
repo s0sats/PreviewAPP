@@ -85,7 +85,7 @@ class ListMyActionUseCases constructor(
                     //
                     val unfocusList = mutableListOf<MyActionsBase>()
                     unfocusList.addAll(
-                        repository.getUnfocusAndHistorical(input.first.productCode?:-1, (input.first.serialCode?:-1).toLong())
+                        repository.getUnfocusAndHistorical(input.first.productCode?:-1, (input.first.serialCode?:-1).toLong(), input.first.serialId?: "")
                     )
 
                     //

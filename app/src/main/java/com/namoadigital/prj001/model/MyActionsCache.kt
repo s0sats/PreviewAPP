@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.annotation.DrawableRes
 import com.google.gson.annotations.SerializedName
 import com.namoadigital.prj001.R
+import com.namoadigital.prj001.model.MyActions.Companion.MY_ACTION_TYPE_TICKET_CACHE
 import com.namoadigital.prj001.util.ConstantBaseApp
 
 class MyActionsCache(
@@ -41,13 +42,17 @@ class MyActionsCache(
     @SerializedName("ticket_class_id") val ticketClassId: String,
     @SerializedName("ticket_class_color") val ticketClassColor: String
 ) {
-    fun toMyActions(context: Context): MyActions {
+    fun toMyActions(context: Context, productCode: Int, serialId: String): MyActions {
         val processLeftIcon = getLeftIcon()
         val processMidIcon = getMidIcon()
         val processRightIcon = getRightIcon()
         //
-        return MyActions(
-            actionType,
+        var type = actionType
+        if(type == MyActions.MY_ACTION_TYPE_TICKET){
+            type = MY_ACTION_TYPE_TICKET_CACHE
+        }
+        var myActions = MyActions(
+            type,
             processId ?: "",
             processId,
             processStatus,
@@ -58,8 +63,8 @@ class MyActionsCache(
             plannedDate ?: "",
             tagOperationDesc,
             processDesc,
-            null,
-            originDescriptor?:"",
+            serialId,
+            originDescriptor ?: "",
             processDesc,
             internalComments,
             focusStepDesc,
@@ -83,6 +88,8 @@ class MyActionsCache(
             ticketClassColor,
             false
         )
+        myActions.productCode = productCode
+        return myActions
     }
 
     private fun getMidIcon(): Int? {
