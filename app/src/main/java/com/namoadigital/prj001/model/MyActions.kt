@@ -38,6 +38,7 @@ data class MyActions(
     val pdfName: String? = null,
     val classId: String? = null,
     val classColor: String? = null,
+    val hasUserFocus: Boolean = true,
 ) : MyActionsBase() {
 
 

@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act083
 
+import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
@@ -171,14 +172,14 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         //Desabilita os cliques nas abas, pois só serão habilitado após corroutine retornar.
         toggleTabEnableStattus(false)
         setLabels()
-        setChips()
+//        setChips()
     }
 
-    private fun setChips() {
-        mPresenter.getChipList().forEach {
-            binding.act083MainContent.act083CgFilter.addView(createTvChip(it))
-        }
-    }
+//    private fun setChips() {
+//        mPresenter.getChipList().forEach {
+//            binding.act083MainContent.act083CgFilter.addView(createTvChip(it))
+//        }
+//    }
 
     /**
      * LUCHE - 11/06/2021
@@ -201,6 +202,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
 
     override fun iniRecycler() {
         val myActionsList = mPresenter.myActionsList
+        changeProgressBarVisility(false)
         if(myActionsList.size > 0) {
             binding.act083MainContent.act083TvNoResult.visibility = View.GONE
             //
@@ -468,8 +470,8 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         })
         binding.act083MainContent.act083Tabs.setOnCheckedChangeListener { _, checkedId ->
             binding.act083MainContent.act083RvActionsList.stopScroll()
-            with(binding.act083MainContent){
-                when(checkedId){
+            with(binding.act083MainContent) {
+                when (checkedId) {
                     act083TabMyActions.id -> updateMyActionList(1)
                     else -> updateMyActionList(0)
                 }
@@ -479,11 +481,12 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         binding.act083MainContent.act083IbMainUserSelection.setOnClickListener {
             applyMainUserFilter = !applyMainUserFilter
             setIvMainUserSelection()
-            if(::mAdapter.isInitialized) {
+            if (::mAdapter.isInitialized) {
                 mAdapter.userMainFilterOn = applyMainUserFilter
             }
             applyTextFilter(binding.act083MainContent.act083MketFilter.text.toString())
         }
+
     }
 
     private fun setIvMainUserSelection() {
@@ -532,10 +535,43 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
      * LUCHE
      * Fun que controla a visibilidade do progress e também o estado de habilitado ou não das tabs
      */
+    @SuppressLint("UseCompatLoadingForDrawables")
     override fun changeProgressBarVisility(show: Boolean) {
-        with(binding.act083MainContent.act083PbLoad){
-            visibility = if(show) View.VISIBLE else View.GONE
+
+        val isLoading = if (show) View.VISIBLE else View.GONE
+        val removeLoading = if (!show) View.VISIBLE else View.GONE
+
+
+        val mainUserCircle =
+            if (!show) resources.getDrawable(R.drawable.my_action_toogle_default) else resources.getDrawable(
+                R.drawable.my_action_toogle_disable
+            )
+
+        val mainUserPerson =
+            if (!show) R.color.my_action_toogle_circle
+            else R.color.namoa_color_disabled_gray
+
+
+
+        with(binding.act083MainContent) {
+            act083PbLoad.apply {
+                visibility = isLoading
+            }
+
+            act083RvActionsList.apply {
+                visibility = removeLoading
+            }
+
+            act083IbMainUserSelection.apply {
+                isEnabled = !show
+            }
+
+            act083MketFilter.apply {
+                isEnabled = !show
+            }
         }
+
+
         //
         toggleTabEnableStattus(!show)
     }

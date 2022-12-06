@@ -42,7 +42,7 @@ public interface Act008_Main_View {
 
     void refreshUI();
 
-    void callAct083(Context context);
+    void callAct083(Context context, boolean isScheduleFlow);
 
     void reApplySerialIdToFrag();
 

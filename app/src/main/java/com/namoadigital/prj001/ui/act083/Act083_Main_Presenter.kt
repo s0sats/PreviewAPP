@@ -196,6 +196,7 @@ class Act083_Main_Presenter(private val context: Context,
             ConstantBaseApp.ACT006 -> hmAux_Trans!!["sys_main_menu_assets_local_lbl"]!!
             ConstantBaseApp.ACT016 -> hmAux_Trans!!["sys_main_menu_calendar_lbl"]!!
             ConstantBaseApp.ACT068 -> hmAux_Trans!!["sys_main_menu_search_lbl"]!!
+            ConstantBaseApp.ACT083 -> myActionFilterParam.tagFilterDesc ?: hmAux_Trans!!["act083_title"]!!
             else -> hmAux_Trans!!["act083_title"]!!
         }
     }

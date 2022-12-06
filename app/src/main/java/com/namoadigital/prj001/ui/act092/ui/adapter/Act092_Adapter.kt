@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act092.ui.adapter
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
@@ -25,7 +26,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf
 class Act092_Adapter constructor(
     private val source: List<MyActionsBase>,
     private val hmAux: HMAux,
-    private val myActionClickListener: (myAction: MyActions) -> Unit,
+    private val myActionClickListener: (myAction: MyActions, position: Int) -> Unit,
     private val notifyFilterApplied: (qtyItensFiltered: Int) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
 
@@ -88,7 +89,7 @@ class Act092_Adapter constructor(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = filterList[position]
         if (holder is DoneItemHolder && item is SerialViewItem.SectionItem) {
-            holder.onBinding("Finalizados")
+            holder.onBinding(hmAux["done_action_list_limiter_lbl"])
         }
         if (holder is ViewHolder && item is SerialViewItem.ContentItem) {
             holder.onBinding(item.item as MyActions)
@@ -116,28 +117,34 @@ class Act092_Adapter constructor(
 
                 act083SerialInfo.visibility = View.GONE
                 serialDetail.visibility = View.GONE
-
-                myActionSelectSerial.text = "Abrir"
-
-
+                myActionSelectSerial.apply {
+                    visibility = View.VISIBLE
+                    if(item.actionType == MyActions.MY_ACTION_TYPE_SCHEDULE && !item.hasUserFocus){
+                        visibility = View.GONE
+                    }else if(!item.pdfUrl.isNullOrEmpty()
+                        || MyActions.MY_ACTION_TYPE_TICKET_CACHE == item.actionType){
+                        text = hmAux["cell_download_action_lbl"]
+                    }else {
+                        text = hmAux["cell_open_action_lbl"]
+                    }
+                }
+                //
                 myActionSelectSerial.setOnClickListener {
-                    myActionClickListener(item)
+                    myActionClickListener(item, adapterPosition)
                 }
                 //
                 myActionsItemTvCode.text = item.processId
-                if(item.actionType == MyActions.MY_ACTION_TYPE_TICKET
-                    ||item.actionType == MyActions.MY_ACTION_TYPE_TICKET_CACHE ) {
-                    myActionsItemTvClassStatus.text = item.processStatusTrans
+                myActionsItemTvClassStatus.visibility = View.GONE
+                if((item.actionType == MyActions.MY_ACTION_TYPE_TICKET
+                    ||item.actionType == MyActions.MY_ACTION_TYPE_TICKET_CACHE)
+                    && !item.classId.isNullOrEmpty()) {
+                    myActionsItemTvClassStatus.text = item.classId
+                    myActionsItemTvClassStatus.setTextColor(Color.parseColor(item.classColor))
                     myActionsItemTvClassStatus.visibility = View.VISIBLE
-                }else{
-                    myActionsItemTvClassStatus.visibility = View.GONE
                 }
-                if(ConstantBaseApp.SYS_STATUS_PENDING == item.processStatus
-                    || ConstantBaseApp.SYS_STATUS_PROCESS == item.processStatus){
-                    configPlannedDate(item)
-                }else{
-                    configDoneDate(item)
-                }
+                //
+                configPlannedDate(item)
+                configDoneDate(item)
                 //
                 myActionsItemIvIconLeft.applyVisibilityIfSourceExists(item.processLeftIcon)
                 myActionsItemIvIconMid.applyVisibilityIfSourceExists(item.processMidIcon)

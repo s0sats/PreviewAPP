@@ -2158,7 +2158,18 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             //FLUXO DO TICKET ESTA EM OUTRO LUGAR.
             String origin = act083Bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, "");
             if(bAgendado || !ConstantBaseApp.ACT006.equals(origin)){
-                mView.callAct083();
+                switch (origin) {
+                    case ConstantBaseApp.ACT092:
+                        mView.callAct092();
+                        break;
+
+                    case ConstantBaseApp.ACT083:
+                        mView.callAct083();
+                        break;
+                    default:
+                        mView.callAct005(context);
+                        break;
+                }
             }else{
                 mView.callAct006(context,false);
             }

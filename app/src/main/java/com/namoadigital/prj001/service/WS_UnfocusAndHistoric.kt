@@ -107,18 +107,24 @@ class WS_UnfocusAndHistoric : IntentService("WS_UnfocusAndHistoric") {
 
     }
 
-    private fun processReturn(rec: List<MyActionsCache>, productCode: Int, serialCode: Long) {
+    private fun processReturn(rec: List<MyActionsCache>?, productCode: Int, serialCode: Long) {
         val file_name = ToolBox_Inf.getOtherActionFileName(
             productCode,
             serialCode
         )
         //Chama metodo para criar arquivo
-        ToolBox_Inf.createJsonFile(file_name, gson.toJson(rec), Constant.OTHER_ACTIONS_JSON_PATH)
+//        val listSize = rec?.let{
+            ToolBox_Inf.createJsonFile(file_name, gson.toJson(rec), Constant.OTHER_ACTIONS_JSON_PATH)
+//            it.size
+//        } ?: 0
         //
-        ToolBox_Inf.sendBCStatus(
+        var hmAux = HMAux()
+//        hmAux.put(RESULT_LIST_SIZE, listSize.toString())
+        ToolBox.sendBCStatus(
             applicationContext,
             "CLOSE_ACT",
             hmAuxTrans["generic_process_finalized_msg"],
+            hmAux,
             "",
             "0"
         )
@@ -152,5 +158,6 @@ class WS_UnfocusAndHistoric : IntentService("WS_UnfocusAndHistoric") {
     companion object{
         const val PRODUCT_CODE = "PRODUCT_CODE"
         const val SERIAL_CODE = "SERIAL_CODE"
+        const val RESULT_LIST_SIZE = "RESULT_LIST_SIZE"
     }
 }

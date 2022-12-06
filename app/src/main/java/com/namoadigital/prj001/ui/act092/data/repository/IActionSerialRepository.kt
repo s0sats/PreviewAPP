@@ -142,7 +142,7 @@ class IActionSerialRepository constructor(
         context.sendBroadcast(mIntent)
     }
 
-    override suspend fun getUnfocusAndHistorical(productCode: Int, serialCode: Long): MutableList<MyActions> {
+    override suspend fun getUnfocusAndHistorical(productCode: Int, serialCode: Long, serialId: String): MutableList<MyActions> {
         //
         if(productCode>0 && serialCode>0) {
             val fileName = ToolBox_Inf.getOtherActionFileName(productCode, serialCode)
@@ -155,8 +155,16 @@ class IActionSerialRepository constructor(
                     object : TypeToken<java.util.ArrayList<MyActionsCache?>?>() {}.type
                 )
                 val myUnfocusActionList = mutableListOf<MyActions>()
-                for (myActions in rec) {
-                    myUnfocusActionList.add(myActions.toMyActions(context))
+                if(rec != null) {
+                    for (myActions in rec) {
+                        myUnfocusActionList.add(
+                            myActions.toMyActions(
+                                context,
+                                productCode,
+                                serialId
+                            )
+                        )
+                    }
                 }
                 return myUnfocusActionList
             }
