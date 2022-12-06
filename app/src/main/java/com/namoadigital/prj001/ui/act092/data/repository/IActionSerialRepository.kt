@@ -155,8 +155,16 @@ class IActionSerialRepository constructor(
                     object : TypeToken<java.util.ArrayList<MyActionsCache?>?>() {}.type
                 )
                 val myUnfocusActionList = mutableListOf<MyActions>()
-                for (myActions in rec) {
-                    myUnfocusActionList.add(myActions.toMyActions(context, productCode, serialId))
+                if(rec != null) {
+                    for (myActions in rec) {
+                        myUnfocusActionList.add(
+                            myActions.toMyActions(
+                                context,
+                                productCode,
+                                serialId
+                            )
+                        )
+                    }
                 }
                 return myUnfocusActionList
             }
