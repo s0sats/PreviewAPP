@@ -104,7 +104,7 @@ class SqlAct092_005(
     private fun getStatusFilter() {
         statusFilter = when (userFocus) {
             1 -> """    and     s.${MD_Schedule_ExecDao.STATUS} in('${ConstantBaseApp.SYS_STATUS_SCHEDULE}','${ConstantBaseApp.SYS_STATUS_PENDING}','${ConstantBaseApp.SYS_STATUS_PROCESS}','${ConstantBaseApp.SYS_STATUS_IN_PROCESSING}') """
-            else -> """    and     s.${MD_Schedule_ExecDao.STATUS}  = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'"""
+            else -> """"""
         }
     }
 

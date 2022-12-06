@@ -596,7 +596,7 @@ public class MD_Schedule_Exec {
             has_Nc != null && has_Nc.equals(1)
                     ? R.drawable.ic_baseline_report_24_yellow
                     : null;
-        String doneDate = close_date;
+        String doneDate = null;
         if(close_date != null){
             doneDate = ToolBox_Inf.millisecondsToString(
                 ToolBox_Inf.dateToMilliseconds(close_date),

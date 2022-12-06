@@ -1681,7 +1681,12 @@ public class TK_Ticket implements Cloneable, Serializable {
         }else if(hmAux.hasConsistentValue(TK_TicketDao.MAIN_USER) && hmAux.get(TK_TicketDao.MAIN_USER).equals(ToolBox_Con.getPreference_User_Code(context))) {
             rightIcon = R.drawable.ic_baseline_person_24_secondary60;
         }else{
-            rightIcon = R.drawable.ic_baseline_group_24;
+            if(hmAux.hasConsistentValue(TK_TicketDao.USER_FOCUS)
+                    && hmAux.get(TK_TicketDao.USER_FOCUS).equals("1")) {
+                rightIcon = R.drawable.ic_baseline_group_24;
+            }else{
+                rightIcon = R.drawable.ic_unfocus_person_off;
+            }
         }
 
         String openZoneDesc = null;
@@ -1697,6 +1702,11 @@ public class TK_Ticket implements Cloneable, Serializable {
                     hmAux.hasConsistentValue(TK_TicketDao.OPEN_PRODUCT_CODE)? Long.parseLong(hmAux.get(TK_TicketDao.OPEN_PRODUCT_CODE)) : 0,
                     hmAux.get(TK_TicketDao.OPEN_SERIAL_ID)
             );
+        }
+        //
+        String focusStepDesc = "";
+        if (hmAux.hasConsistentValue(TK_Ticket_StepDao.STEP_DESC)) {
+            focusStepDesc = hmAux.get(TK_TicketDao.CURRENT_STEP_ORDER) + ". "+ hmAux.get(TK_Ticket_StepDao.STEP_DESC);
         }
         //
         MyActions myActions =  new MyActions(
@@ -1715,7 +1725,7 @@ public class TK_Ticket implements Cloneable, Serializable {
             hmAux.get(TK_TicketDao.ORIGIN_DESC),
             hmAux.get(TK_TicketDao.TYPE_DESC),
             hmAux.get(TK_TicketDao.INTERNAL_COMMENTS),
-                hmAux.get(TK_TicketDao.CURRENT_STEP_ORDER) + ". "+ hmAux.get(TK_Ticket_StepDao.STEP_DESC),
+                focusStepDesc,
             ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.OPEN_SITE_CODE)),
             hmAux.get(TK_TicketDao.OPEN_SITE_DESC),
             openZoneDesc,

@@ -7,6 +7,7 @@ import android.os.Bundle
 import com.google.gson.GsonBuilder
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
+import com.namoadigital.prj001.R
 import com.namoadigital.prj001.core.IResult.Companion.isFailed
 import com.namoadigital.prj001.core.IResult.Companion.isLoading
 import com.namoadigital.prj001.core.IResult.Companion.isSuccess
@@ -1112,63 +1113,72 @@ class Act092Presenter constructor(
     fun executeNFormPDFGeneration(context: Context, myAction: MyActions, position: Int) {
 
         if (ToolBox_Con.isOnline(context)) {
-            launch?.let {
-                if(it.isActive){
-                    it.cancel()
-                }
-            }
-//
-            view.wsProcess.value = WS_Generate_NForm_PDF::class.java.name
-            //
-            view.showPD(
-                hmAux_Trans["dialog_generate_form_pdf_ttl"],
-                hmAux_Trans["dialog_generate_form_pdf_start"]
-            )
-            //
-            launch = CoroutineScope(Dispatchers.IO).launch {
-
-                try {
-                    if (!ToolBox_Inf.verifyDownloadFileInf(
-                            Constant.CACHE_PATH + "/" +
-                                    myAction.pdfName
-                        )
-                    ) {
-                        val temp = myAction.pdfName!!.split(".")
-                        ToolBox_Inf.deleteDownloadFileInf(
-                            (Constant.CACHE_PATH + "/" +
-                                    temp[0] + ".tmp")
-                        )
-                        //
-                        ToolBox_Inf.downloadImagePDF(
-                            myAction.pdfUrl,
-                            (Constant.CACHE_PATH + "/" +
-                                    temp[0] + ".tmp")
-                        )
-                        //
-                        ToolBox_Inf.renameDownloadFileInf(temp[0], ".pdf")
+            val pdfFile = File(ConstantBaseApp.CACHE_PATH + "/" + myAction.pdfName)
+            if(pdfFile.exists() && pdfFile.isFile){
+                openPDF(context, myAction.pdfName!!)
+            }else {
+                launch?.let {
+                    if (it.isActive) {
+                        it.cancel()
                     }
-                    //
-
-                } catch (e: java.lang.Exception) {
-                    e.printStackTrace()
                 }
+//
+                view.wsProcess.value = WS_Generate_NForm_PDF::class.java.name
+                //
+                view.showPD(
+                    hmAux_Trans["dialog_generate_form_pdf_ttl"],
+                    hmAux_Trans["dialog_generate_form_pdf_start"]
+                )
+                //
+                launch = CoroutineScope(Dispatchers.IO).launch {
 
-                withContext(Dispatchers.Main) {
-                    //Atualiza views do Adapter
-                    view.setItemAsDownloaded(position)
-                    //Remove progress da act
-                    view.disablePD()
-                    //
-                    if (myAction.pdfName != null) {
-                        openPDF(context, myAction.pdfName)
-                    } else {
-                        ToolBox.alertMSG(
-                            context,
-                            hmAux_Trans["alert_form_pdf_download_error_ttl"],
-                            hmAux_Trans["alert_form_pdf_download_error_msg"],
-                            null,
-                            0
-                        )
+                    try {
+                        if (!ToolBox_Inf.verifyDownloadFileInf(
+                                Constant.CACHE_PATH + "/" +
+                                        myAction.pdfName
+                            )
+                        ) {
+                            val temp = myAction.pdfName!!.split(".")
+                            ToolBox_Inf.deleteDownloadFileInf(
+                                (Constant.CACHE_PATH + "/" +
+                                        temp[0] + ".tmp")
+                            )
+                            //
+                            ToolBox_Inf.downloadImagePDF(
+                                myAction.pdfUrl,
+                                (Constant.CACHE_PATH + "/" +
+                                        temp[0] + ".tmp")
+                            )
+                            //
+                            ToolBox_Inf.renameDownloadFileInf(temp[0], ".pdf")
+                        }
+                        //
+
+                    } catch (e: java.lang.Exception) {
+                        e.printStackTrace()
+                    }
+
+                    withContext(Dispatchers.Main) {
+                        //Remove progress da act
+                        view.disablePD()
+                        //
+                        if (myAction.pdfName != null) {
+                            val pdfFile = File(ConstantBaseApp.CACHE_PATH + "/" + myAction.pdfName)
+                            if(pdfFile.exists() && pdfFile.isFile){
+                                myAction.processMidIcon =  R.drawable.ic_baseline_cloud_done_24_blue
+                                view.setItemAsDownloaded(position, myAction)
+                            }
+                            //
+                            openPDF(context, myAction.pdfName)
+                        } else {
+                            ToolBox.alertMSG(
+                                context,
+                                hmAux_Trans["alert_form_pdf_download_error_ttl"],
+                                hmAux_Trans["alert_form_pdf_download_error_msg"],
+                                null,
+                                0
+                            )
+                        }
                     }
                 }
             }

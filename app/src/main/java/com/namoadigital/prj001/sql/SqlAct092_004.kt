@@ -24,7 +24,7 @@ class SqlAct092_004(
     private fun getStatusFilter() {
         statusFilter = when (userFocus) {
             1 -> """ and l.${GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS} = '${ConstantBaseApp.SYS_STATUS_IN_PROCESSING}' """
-            else -> """    """
+            else -> """ and l.${GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS} = '${ConstantBaseApp.SYS_STATUS_IN_PROCESSING}' """
         }
     }
 

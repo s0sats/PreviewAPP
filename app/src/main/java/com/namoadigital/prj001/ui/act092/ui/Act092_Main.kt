@@ -16,6 +16,7 @@ import com.namoadigital.prj001.R
 import com.namoadigital.prj001.dao.MD_Product_SerialDao
 import com.namoadigital.prj001.databinding.Act092MainBinding
 import com.namoadigital.prj001.model.MyActionFilterParam
+import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.model.MyActionsBase
 import com.namoadigital.prj001.service.*
 import com.namoadigital.prj001.ui.act005.Act005_Main
@@ -24,6 +25,7 @@ import com.namoadigital.prj001.ui.act091.mvp.model.TranslateResource
 import com.namoadigital.prj001.ui.act092.Act092Presenter
 import com.namoadigital.prj001.ui.act092.Act092_Contract
 import com.namoadigital.prj001.ui.act092.ui.adapter.Act092_Adapter
+import com.namoadigital.prj001.ui.act092.ui.adapter.SerialViewItem
 import com.namoadigital.prj001.ui.act092.usecases.ActionUseCases.Companion.ActionUseCasesFactory
 import com.namoadigital.prj001.ui.act092.utils.Act092Translate
 import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent
@@ -59,7 +61,8 @@ class Act092_Main : BaseActivityMvp
         progressDialog.dismiss()
     }
 
-    override fun setItemAsDownloaded(position: Int) {
+    override fun setItemAsDownloaded(position: Int, myActions: MyActions) {
+        mAdapter.filterList[position] = SerialViewItem.ContentItem(myActions)
         mAdapter.notifyItemChanged(position)
     }
 
@@ -104,7 +107,7 @@ class Act092_Main : BaseActivityMvp
             bundle = (savedInstanceState ?: intent.extras) as Bundle
             setSupportActionBar(topAppBar)
             setTitleLanguage()
-            mAct_Title = "act92_title"
+            mAct_Title =  Constant.ACT092 + "_title"
             getBundle()
             iniUIFooter(Constant.ACT092, hmAux_Trans)
         }

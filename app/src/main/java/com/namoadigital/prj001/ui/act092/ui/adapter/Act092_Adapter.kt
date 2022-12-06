@@ -143,12 +143,8 @@ class Act092_Adapter constructor(
                     myActionsItemTvClassStatus.visibility = View.VISIBLE
                 }
                 //
-                if(ConstantBaseApp.SYS_STATUS_PENDING == item.processStatus
-                    || ConstantBaseApp.SYS_STATUS_PROCESS == item.processStatus){
-                    configPlannedDate(item)
-                }else{
-                    configDoneDate(item)
-                }
+                configPlannedDate(item)
+                configDoneDate(item)
                 //
                 myActionsItemIvIconLeft.applyVisibilityIfSourceExists(item.processLeftIcon)
                 myActionsItemIvIconMid.applyVisibilityIfSourceExists(item.processMidIcon)

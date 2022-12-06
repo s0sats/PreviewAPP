@@ -596,16 +596,18 @@ public class GE_Custom_Form_Local {
         String endDate = null;
         Integer leftIcon = null;
         String statusToUse = ConstantBaseApp.SYS_STATUS_IN_PROCESSING.equals(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)) ? ConstantBaseApp.SYS_STATUS_PROCESS : hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS);
-        if(ConstantBaseApp.SYS_STATUS_DONE.equals(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS))){
+        if(hmAux.hasConsistentValue(GE_Custom_Form_DataDao.DATE_END)){
             endDate = ToolBox_Inf.millisecondsToString(
                 ToolBox_Inf.dateToMilliseconds(hmAux.get(GE_Custom_Form_DataDao.DATE_END)),
                 ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
             );
             //
-            leftIcon =
-                hmAux.hasConsistentValue(SqlAct084_004.FIELD_NC) && "1".equals(hmAux.get(SqlAct084_004.FIELD_NC))
-                        ? R.drawable.ic_baseline_report_24_yellow
-                        : null;
+            if(ConstantBaseApp.SYS_STATUS_DONE.equals(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS))) {
+                leftIcon =
+                        hmAux.hasConsistentValue(SqlAct084_004.FIELD_NC) && "1".equals(hmAux.get(SqlAct084_004.FIELD_NC))
+                                ? R.drawable.ic_baseline_report_24_yellow
+                                : null;
+            }
         }
         int midIcon =
             !ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS))

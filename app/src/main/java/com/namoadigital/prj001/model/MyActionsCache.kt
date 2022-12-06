@@ -6,6 +6,8 @@ import com.google.gson.annotations.SerializedName
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.model.MyActions.Companion.MY_ACTION_TYPE_TICKET_CACHE
 import com.namoadigital.prj001.util.ConstantBaseApp
+import com.namoadigital.prj001.util.ToolBox_Inf
+import java.io.File
 
 class MyActionsCache(
     @SerializedName("action_type") val actionType: String,
@@ -51,6 +53,14 @@ class MyActionsCache(
         if(type == MyActions.MY_ACTION_TYPE_TICKET){
             type = MY_ACTION_TYPE_TICKET_CACHE
         }
+        var formattedDoneDate = doneDate?.let {
+            ToolBox_Inf.millisecondsToString(
+                ToolBox_Inf.dateToMilliseconds(it),
+                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+            ) ?: ""
+        }
+
+
         var myActions = MyActions(
             type,
             processId ?: "",
@@ -72,7 +82,7 @@ class MyActionsCache(
             siteDesc,
             zoneDesc,
             null,
-            doneDate ?: "",
+            formattedDoneDate,
             orderBy,
             ticketOriginType ?: "",
             ticketScn,
@@ -93,9 +103,13 @@ class MyActionsCache(
     }
 
     private fun getMidIcon(): Int? {
-        return if(actionType == ConstantBaseApp.FCM_MODULE_SCHEDULE
-            && processStatus == ConstantBaseApp.SYS_STATUS_NOT_EXECUTED){
-            null
+        return if(actionType == MyActions.MY_ACTION_TYPE_FORM){
+            val pdfFile = File(ConstantBaseApp.CACHE_PATH + "/" + pdfName)
+            if(pdfFile.exists() && pdfFile.isFile){
+                R.drawable.ic_baseline_cloud_done_24_blue
+            }else {
+                R.drawable.ic_baseline_cloud_download_24_gray
+            }
         }else{
             R.drawable.ic_baseline_cloud_download_24_gray
         }

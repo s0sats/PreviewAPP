@@ -24,7 +24,7 @@ interface Act092_Contract {
         var bundle: Bundle
         fun showPD(ttl: String?, msg: String?)
         fun disablePD()
-        fun setItemAsDownloaded(position: Int)
+        fun setItemAsDownloaded(position: Int, myActions: MyActions)
     }
 
     interface Presenter : BasePresenter<View> {

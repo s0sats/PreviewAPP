@@ -113,13 +113,13 @@ class WS_UnfocusAndHistoric : IntentService("WS_UnfocusAndHistoric") {
             serialCode
         )
         //Chama metodo para criar arquivo
-        val listSize = rec?.let{
+//        val listSize = rec?.let{
             ToolBox_Inf.createJsonFile(file_name, gson.toJson(rec), Constant.OTHER_ACTIONS_JSON_PATH)
-            it.size
-        } ?: 0
+//            it.size
+//        } ?: 0
         //
         var hmAux = HMAux()
-        hmAux.put(RESULT_LIST_SIZE, listSize.toString())
+//        hmAux.put(RESULT_LIST_SIZE, listSize.toString())
         ToolBox.sendBCStatus(
             applicationContext,
             "CLOSE_ACT",
