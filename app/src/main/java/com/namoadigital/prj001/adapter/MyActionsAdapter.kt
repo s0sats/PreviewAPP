@@ -84,7 +84,6 @@ class MyActionsAdapter(
             binding.act083SerialInfo.text = hmAuxTrans["btn_select_serial_info_lbl"]
 
 
-
             binding.myActionsItemIvSerialClass.visibility =
                 if (myAction.classColor == null) View.GONE else View.VISIBLE
             binding.myActionsItemTvSerialId.visibility =
