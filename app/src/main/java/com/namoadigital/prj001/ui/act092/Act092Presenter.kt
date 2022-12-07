@@ -964,11 +964,10 @@ class Act092Presenter constructor(
 
     private fun ticketBundle(ticketPrefix: Int, ticketCode: Int): Bundle {
         val bundle = Bundle()
-        bundle.putString(ConstantBaseApp.ACT092, ConstantBaseApp.ACT092)
         bundle.putInt(TK_TicketDao.TICKET_PREFIX, ticketPrefix)
         bundle.putInt(TK_TicketDao.TICKET_CODE, ticketCode)
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
-        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, _serialModel.value.originFlow)
+        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT092)
         return bundle
     }
 
