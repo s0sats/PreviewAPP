@@ -83,9 +83,6 @@ class MyActionsAdapter(
         fun onBinding(myAction: MyActions, position: Int) {
             binding.act083SerialInfo.text = hmAuxTrans["btn_select_serial_info_lbl"]
 
-
-            binding.myActionsItemIvSerialClass.visibility =
-                if (myAction.classColor == null) View.GONE else View.VISIBLE
             binding.myActionsItemTvSerialId.visibility =
                 if (myAction.serialId?.isEmpty() == true) View.GONE else View.VISIBLE
             binding.act083SerialInfo.visibility =
