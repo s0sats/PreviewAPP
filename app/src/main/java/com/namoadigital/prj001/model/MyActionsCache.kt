@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.annotation.DrawableRes
 import com.google.gson.annotations.SerializedName
 import com.namoadigital.prj001.R
+import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
 import com.namoadigital.prj001.model.MyActions.Companion.MY_ACTION_TYPE_TICKET_CACHE
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -17,7 +18,8 @@ class MyActionsCache(
     val processStatusTrans: String?,
     @DrawableRes val processLeftIcon: Int?,
     @DrawableRes val processRightIcon: Int?,
-    @SerializedName("planned_date") val plannedDate: String?,
+    @SerializedName("planned_date_start") val plannedDateStart: String?,
+    @SerializedName("planned_date_end") val plannedDateEnd: String?,
     @SerializedName("tag_operational_code") val tag_operational_code: Int,
     @SerializedName("tag_operational_id") val tag_operational_id: String,
     @SerializedName("tag_operational_desc") val tagOperationDesc: String,
@@ -28,7 +30,8 @@ class MyActionsCache(
     @SerializedName("site_code") val siteCode: Int? = null,
     @SerializedName("site_desc") val siteDesc: String?,
     @SerializedName("zone_desc") val zoneDesc: String?,
-    @SerializedName("process_date_end") val doneDate: String?,
+    @SerializedName("process_date_start") val doneDateStart: String?,
+    @SerializedName("process_date_end") val doneDateEnd: String?,
     @SerializedName("data_order") val orderBy: String,
     @SerializedName("ticket_origin_type") val ticketOriginType: String?,
     @SerializedName("ticket_scn") val ticketScn: Int?,
@@ -50,17 +53,20 @@ class MyActionsCache(
         val processRightIcon = getRightIcon()
         //
         var type = actionType
-        if(type == MyActions.MY_ACTION_TYPE_TICKET){
+        if (type == MyActions.MY_ACTION_TYPE_TICKET) {
             type = MY_ACTION_TYPE_TICKET_CACHE
         }
-        var formattedDoneDate = doneDate?.let {
-            ToolBox_Inf.millisecondsToString(
-                ToolBox_Inf.dateToMilliseconds(it),
-                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-            ) ?: ""
+        var formattedPlannedDate:String? = null
+        var formattedDoneDate:String? = null
+        //
+        if (plannedDateStart != null && plannedDateEnd != null){
+            formattedPlannedDate =ToolBox_Inf.getMyActionStartEndDateFormated(context, plannedDateStart, plannedDateEnd)
         }
-
-
+        //
+        if (doneDateStart != null && doneDateEnd != null){
+            formattedDoneDate = ToolBox_Inf.getMyActionStartEndDateFormated(context, doneDateStart,doneDateEnd)
+        }
+        //
         var myActions = MyActions(
             type,
             processId ?: "",
@@ -70,7 +76,7 @@ class MyActionsCache(
             processLeftIcon,
             processMidIcon,
             processRightIcon,
-            plannedDate ?: "",
+            formattedPlannedDate ?: "",
             tagOperationDesc,
             processDesc,
             serialId,
