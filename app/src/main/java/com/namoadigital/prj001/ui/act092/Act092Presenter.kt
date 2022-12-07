@@ -1090,6 +1090,7 @@ class Act092Presenter constructor(
             "msg_preparing_to_send_data",
             "cell_step_lbl",
             "cell_open_action_lbl",
+            "cell_continue_action_lbl",
             "cell_download_action_lbl",
             "alert_starting_pdf_not_supported_ttl",
             "alert_starting_pdf_not_supported_msg",

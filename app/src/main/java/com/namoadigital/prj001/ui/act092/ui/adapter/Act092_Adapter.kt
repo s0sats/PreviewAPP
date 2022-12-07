@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.ui.act092.ui.adapter
 
-import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.text.TextUtils
@@ -119,13 +118,20 @@ class Act092_Adapter constructor(
                 serialDetail.visibility = View.GONE
                 myActionSelectSerial.apply {
                     visibility = View.VISIBLE
-                    if(item.actionType == MyActions.MY_ACTION_TYPE_SCHEDULE && !item.hasUserFocus){
+                    if (item.actionType == MyActions.MY_ACTION_TYPE_SCHEDULE && !item.hasUserFocus) {
                         visibility = View.GONE
-                    }else if(!item.pdfUrl.isNullOrEmpty()
-                        || MyActions.MY_ACTION_TYPE_TICKET_CACHE == item.actionType){
+                    } else if (!item.pdfUrl.isNullOrEmpty()
+                        || MyActions.MY_ACTION_TYPE_TICKET_CACHE == item.actionType
+                    ) {
                         text = hmAux["cell_download_action_lbl"]
-                    }else {
+                        setTextColor(resources.getColor(R.color.m3_namoa_surface))
+                    } else if (item.highlightItem) {
+                        text = hmAux["cell_continue_action_lbl"]
+                        setTextColor(Color.parseColor("#462A00"))
+                    } else {
                         text = hmAux["cell_open_action_lbl"]
+                        setTextColor(resources.getColor(R.color.m3_namoa_surface))
+
                     }
                 }
                 //
@@ -172,8 +178,7 @@ class Act092_Adapter constructor(
                 myActionsItemTvActionProcess.applyVisibilityIfTextExists(item.processDesc)
                 //
                 myActionsItemTvInternalComments.applyVisibilityIfTextExists(
-                    getInfoBulletFormatted(
-                        myActionsItemTvInternalComments.context,
+                    getInfoQuotesFormatted(
                         item.internalComments
                     )
                 )
@@ -264,13 +269,18 @@ class Act092_Adapter constructor(
                                 setTextColor(
                                     ContextCompat.getColor(
                                         context,
-                                        R.color.namoa_color_dark_blue
+                                        R.color.m3_namoa_onSurfaceVariant
                                     )
                                 )
                             }
                         }
                     } else {
-                        setTextColor(ContextCompat.getColor(context, R.color.namoa_color_dark_blue))
+                        setTextColor(
+                            ContextCompat.getColor(
+                                context,
+                                R.color.m3_namoa_onSurfaceVariant
+                            )
+                        )
                     }
                 }
             }
@@ -278,30 +288,22 @@ class Act092_Adapter constructor(
 
         private fun applyBackgroundStrokeColor(myAction: MyActions) {
             with(binding) {
+
+/*                myActionsItemTvFormNoFinish.apply {
+                    visibility = if(myAction.highlightItem) View.VISIBLE else View.GONE
+                    text = "Contém formulário não concluído!"
+                }*/
+
                 myActionSelectSerial.apply {
-                    backgroundTintList =
-                        if (!myAction.doneDate.isNullOrEmpty() && ConstantBaseApp.SYS_STATUS_DONE.equals(
-                                myAction.processStatus
-                            )
-                        ) {
-                            if (myAction.isLastSelectedItem) {
-                                ColorStateList.valueOf(resources.getColor(R.color.namoa_color_green_3))
-                            } else {
-                                ColorStateList.valueOf(resources.getColor(R.color.m3_namoa_primary))
-                            }
-                        } else if (myAction.highlightItem) {
-                            if (myAction.isLastSelectedItem) {
-                                ColorStateList.valueOf(resources.getColor(R.color.namoa_color_orange))
-                            } else {
-                                ColorStateList.valueOf(resources.getColor(R.color.m3_namoa_primary))
-                            }
+                    backgroundTintList = if (myAction.highlightItem) {
+                        ColorStateList.valueOf(resources.getColor(R.color.namoa_color_orange))
+                    } else {
+                        if (myAction.isLastSelectedItem) {
+                            ColorStateList.valueOf(resources.getColor(R.color.namoa_color_yellow_2))
                         } else {
-                            if (myAction.isLastSelectedItem) {
-                                ColorStateList.valueOf(resources.getColor(R.color.namoa_color_yellow_2))
-                            } else {
-                                ColorStateList.valueOf(resources.getColor(R.color.m3_namoa_primary))
-                            }
+                            ColorStateList.valueOf(resources.getColor(R.color.m3_namoa_primary))
                         }
+                    }
 
                 }
             }
@@ -331,12 +333,13 @@ class Act092_Adapter constructor(
         /**
          * Formata info com bullet quando há informação.
          */
-        private fun getInfoBulletFormatted(context: Context, value: String?): String? {
+        private fun getInfoQuotesFormatted(value: String?): String? {
             if (!value.isNullOrEmpty()) {
-                return " ${context.getString(R.string.unicode_bullet)} $value"
+                return "\"$value\""
             }
             return null
         }
+
     }
 
     inner class ServiceFilter() : Filter() {

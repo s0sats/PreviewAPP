@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.annotation.DrawableRes
 import com.google.gson.annotations.SerializedName
 import com.namoadigital.prj001.R
-import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
 import com.namoadigital.prj001.model.MyActions.Companion.MY_ACTION_TYPE_TICKET_CACHE
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -56,15 +55,20 @@ class MyActionsCache(
         if (type == MyActions.MY_ACTION_TYPE_TICKET) {
             type = MY_ACTION_TYPE_TICKET_CACHE
         }
-        var formattedPlannedDate:String? = null
-        var formattedDoneDate:String? = null
+        var formattedPlannedDate: String? = null
+        var formattedDoneDate: String? = null
         //
-        if (plannedDateStart != null && plannedDateEnd != null){
-            formattedPlannedDate =ToolBox_Inf.getMyActionStartEndDateFormated(context, plannedDateStart, plannedDateEnd)
+        if (plannedDateStart != null && plannedDateEnd != null) {
+            formattedPlannedDate = ToolBox_Inf.getMyActionStartEndDateFormated(
+                context,
+                plannedDateStart,
+                plannedDateEnd
+            )
         }
         //
-        if (doneDateStart != null && doneDateEnd != null){
-            formattedDoneDate = ToolBox_Inf.getMyActionStartEndDateFormated(context, doneDateStart,doneDateEnd)
+        if (doneDateStart != null && doneDateEnd != null) {
+            formattedDoneDate =
+                ToolBox_Inf.getMyActionStartEndDateFormated(context, doneDateStart, doneDateEnd)
         }
         //
         var myActions = MyActions(

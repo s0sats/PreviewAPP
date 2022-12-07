@@ -96,6 +96,12 @@ class MyActionsAdapter(
                     mySerial(myAction, position)
                 }
             }
+
+            if (myAction.tagOperationDesc.isNullOrEmpty() && myAction.classId.isNullOrEmpty()) {
+                binding.layoutTagDesc.visibility = View.GONE
+            } else {
+                binding.layoutTagDesc.visibility = View.VISIBLE
+            }
             //
             binding.myActionsItemTvCode.text = myAction.processId
             binding.myActionsItemTvClassStatus.visibility = View.GONE
@@ -145,19 +151,16 @@ class MyActionsAdapter(
             configDoneDate(myAction)
 
             if (myAction.isMainUserTicket
-                && !ConstantBaseApp.SYS_STATUS_DONE.equals(myAction.processStatus)
+                && ConstantBaseApp.SYS_STATUS_DONE != myAction.processStatus
             ) {
                 binding.myActionsItemIvIconMainUser.visibility = View.VISIBLE
             } else {
                 binding.myActionsItemIvIconMainUser.visibility = View.GONE
             }
             //
-            binding.myActionsItemTvInternalComments.applyVisibilityIfTextExists(
-                getInfoBulletFormatted(
-                    binding.myActionsItemTvInternalComments.context,
-                    myAction.internalComments
-                )
-            )
+            binding.myActionsItemTvInternalComments.apply {
+                applyVisibilityIfTextExists(getInfoQuotesFormatted(myAction.internalComments))
+            }
             //
             applyBackgroundStrokeColor(myAction)
         }
@@ -167,19 +170,26 @@ class MyActionsAdapter(
                 this.applyVisibilityIfTextExists(myAction.doneDate)
                 if (ConstantBaseApp.SYS_STATUS_DONE.equals(myAction.processStatus)) {
                     this.setTextColor(ToolBox_Inf.getStatusColorV2(context, myAction.processStatus))
-                }else{
+                } else {
                     this.setTextColor(context.getResources().getColor(R.color.namoa_color_gray_8))
                 }
             }
+        }
+
+        private fun getInfoQuotesFormatted(value: String?): String? {
+            if (!value.isNullOrEmpty()) {
+                return "\"$value\""
+            }
+            return null
         }
 
         private fun configTvTag(myAction: MyActions) {
             with(binding.myActionsItemTvTagDesc) {
 
                 text = myAction.tagOperationDesc?.let {
-                    if (it.uppercase() == tagDesc.uppercase()){
+                    if (it.uppercase() == tagDesc.uppercase()) {
                         ""
-                    }else{
+                    } else {
                         it.uppercase()
                     }
                 }?: ""
@@ -231,10 +241,15 @@ class MyActionsAdapter(
                     backgroundTintList = ColorStateList.valueOf(Color.parseColor("#FFB95C"))
                     text = hmAuxTrans["btn_continue_action_lbl"]
                     setTextColor(Color.parseColor("#462A00"))
+                    /*binding.myActionsItemTvFormNoFinish.apply {
+                        visibility = View.VISIBLE
+                        text = "Contém formulário não concluído!"
+                    }*/
                 }else{
                     backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.m3_namoa_primary))
                     text = hmAuxTrans["btn_open_action_lbl"]
                     setTextColor(resources.getColor(R.color.m3_namoa_surface))
+                    /*binding.myActionsItemTvFormNoFinish.visibility = View.GONE*/
                 }
             }
         }
