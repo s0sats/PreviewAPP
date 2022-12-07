@@ -66,7 +66,9 @@ class SqlAct092_001 (
                      c.forecast_start,
                      c.forecast_end,
                      c.step_count,
-                     c.step_order_seq
+                     c.step_order_seq,
+                     c.class_id,
+                     c.class_color
                     FROM
                      ${TkTicketCacheDao.TABLE} c 
                     WHERE
