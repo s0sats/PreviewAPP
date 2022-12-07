@@ -3311,10 +3311,10 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 mView.callAct092();
                 break;
             case ConstantBaseApp.ACT083:
-                if (!actRequest.equals("-1"))
-                    mView.callAct092();
-                else mView.callAct083();
+                mView.callAct083();
                 break;
+            case ConstantBaseApp.ACT005:
+                mView.callAct005();
             default:
                 mView.callAct083();
         }

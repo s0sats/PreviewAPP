@@ -83,6 +83,8 @@ public interface Act070_Main_Contract {
         void callAct092();
 
         void resetLastPositionClicked();
+
+        void callAct005();
     }
 
     interface I_Presenter{
