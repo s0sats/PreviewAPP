@@ -92,7 +92,7 @@ class MyActionsCache(
             orderBy,
             ticketOriginType ?: "",
             ticketScn,
-            "highlightItem" == "highlightItem",
+            false,
             periodStarted,
             lateItem,
             isLastSelectedItem,

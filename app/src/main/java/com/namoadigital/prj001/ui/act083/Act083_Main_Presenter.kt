@@ -486,7 +486,7 @@ class Act083_Main_Presenter(private val context: Context,
     }
 
     private fun insertSerial(productSerial: MD_Product_Serial) {
-        serialDao.addUpdate(productSerial)
+        serialDao.addUpdateTmp(productSerial)
     }
 
     private fun processLocalTicketClick(myAction: MyActions) {
