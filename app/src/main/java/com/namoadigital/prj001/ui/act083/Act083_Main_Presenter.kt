@@ -9,9 +9,11 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.model.*
+import com.namoadigital.prj001.receiver.WBR_Product_Serial_Structure
 import com.namoadigital.prj001.receiver.WBR_Serial_Search
 import com.namoadigital.prj001.receiver.WBR_Sync
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download
+import com.namoadigital.prj001.service.WS_Product_Serial_Structure
 import com.namoadigital.prj001.service.WS_Serial_Search
 import com.namoadigital.prj001.service.WS_Sync
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download
@@ -402,42 +404,26 @@ class Act083_Main_Presenter(private val context: Context,
                     null
                 }
             if (serial != null) {
-                var myActionFilterParam: MyActionFilterParam? = null
                 //
-                if (!bundle.containsKey(MyActionFilterParam.MY_ACTION_FILTER_PARAM)) {
-                    myActionFilterParam = MyActionFilterParam(
-                        null,
-                        null,
-                        it.productCode,
-                        it.productId,
-                        it.productDesc,
-                        null,
-                        it.serialId,
-                        null,
-                        null
-                    )
-                } else {
-                    myActionFilterParam = ToolBox_Inf.getMyActionFilterParam(bundle)
+                if(mdProductSerial != null){
+                    insertSerial(mdProductSerial)
                     //
-                    myActionFilterParam.productCode = it.productCode
-                    myActionFilterParam.productId = it.productId
-                    myActionFilterParam.productDesc = it.productDesc
-                    myActionFilterParam.serialId = it.serialId
-                    //
-                    myActionFilterParam.originFlow = ConstantBaseApp.ACT083
+                    if(serial.has_item_check == 1
+                        && !ToolBox_Con.getBooleanPreferencesByKey(context, ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false)
+                        && ToolBox_Con.isOnline(context)) {
+                        callWSSerialStructure(serial)
+                    }else{
+                        //
+                        extractStructureResult(serial, selectedActionForSerialFLow)
+                    }
+                }else{
+                    hmAux_Trans?.let{ hmAux ->
+                        mView.showAlertMsg(
+                            hmAux["alert_no_serial_found_ttl"]!!,
+                            hmAux["alert_no_serial_found_msg"]!!
+                        )
+                    }
                 }
-                //
-                bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
-                bundle.putInt(Constant.WS_SERIAL_SEARCH_EXACT, 1)
-                bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT083)
-                bundle.putString(ConstantBaseApp.MAIN_MD_PRODUCT_SERIAL_ID, it.serialId)
-                bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, true)
-                bundle.remove(Constant.MAIN_MD_PRODUCT_SERIAL)
-                bundle.putSerializable(
-                    Constant.MY_ACTIONS_ORIGIN_FLOW_SERIAL_OR_LOCAL,
-                    arrayListOf(serial)
-                )
-                mView.callAct020(bundle)
             }else{
                 hmAux_Trans?.let{ hmAux ->
                     mView.showAlertMsg(
@@ -447,6 +433,60 @@ class Act083_Main_Presenter(private val context: Context,
                 }
             }
         }
+    }
+
+    override fun extractStructureResult(serial: MD_Product_Serial, myAction: MyActions?){
+        //
+        insertSerial(serial)
+        //
+        myActionFilterParam = ToolBox_Inf.getMyActionFilterParam(bundle)
+        //
+        myActionFilterParam.productCode = serial.product_code.toInt()
+        myActionFilterParam.productId = serial.product_id
+        myActionFilterParam.productDesc = serial.product_desc
+        myActionFilterParam.serialId = serial.serial_id
+        myActionFilterParam.serialCode = serial.serial_code
+        myActionFilterParam.originFlow = ConstantBaseApp.ACT083
+
+        setSeletedActionInfosIntoFilterParam(myAction!!.actionType, myAction.processPk)
+
+        bundle.putSerializable(
+            MyActionFilterParam.MY_ACTION_FILTER_PARAM_ACT092,
+            myActionFilterParam
+        )
+        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT083)
+        bundle.putLong(MD_Product_SerialDao.SERIAL_CODE, serial.serial_code)
+        if (serial.class_color != null) {
+            bundle.putString(MD_Product_SerialDao.CLASS_COLOR, serial.class_color)
+        }
+        //
+        mView.callAct092(bundle)
+        mView.resetActionPosition()
+    }
+
+    private fun callWSSerialStructure(productSerial: MD_Product_Serial) {
+        //
+        mView.setProcess(WS_Product_Serial_Structure::class.java.name)
+        //
+        mView.showPD(
+            hmAux_Trans!!["progress_serial_structure_ttl"],
+            hmAux_Trans!!["progress_serial_structure_msg"]
+        )
+        //
+        val mIntent = Intent(context, WBR_Product_Serial_Structure::class.java)
+        val bundle = Bundle()
+        bundle.putLong(MD_Product_SerialDao.CUSTOMER_CODE, productSerial.customer_code)
+        bundle.putLong(MD_Product_SerialDao.PRODUCT_CODE, productSerial.product_code)
+        bundle.putLong(MD_Product_SerialDao.SERIAL_CODE, productSerial.serial_code)
+        bundle.putInt(MD_Product_SerialDao.SCN_ITEM_CHECK, productSerial.scn_item_check)
+        //
+        mIntent.putExtras(bundle)
+        //
+        context.sendBroadcast(mIntent)
+    }
+
+    private fun insertSerial(productSerial: MD_Product_Serial) {
+        serialDao.addUpdate(productSerial)
     }
 
     private fun processLocalTicketClick(myAction: MyActions) {
@@ -1291,6 +1331,7 @@ class Act083_Main_Presenter(private val context: Context,
             bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE, productCode.toString())
             bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_ID, productId.toString())
             bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, serialId)
+            bundle.putBoolean(Constant.WS_SERIAL_SEARCH_SITE_RESTRICTION, false)
             bundle.putInt(Constant.WS_SERIAL_SEARCH_EXACT, if (searchExact) 1 else 0)
             bundle.putBoolean(ConstantBaseApp.SCHEDULED_PROFILE_CHECK, false)
             //
@@ -1312,9 +1353,16 @@ class Act083_Main_Presenter(private val context: Context,
         //
         val serialList = rec.record
         //
-        myActionSelected?.let {
-            processLocalSearchForSerialAction(it,serialList[0])
-        }?: defineSearchResultFlow(serialList, rec.record_count, rec.record_page)
+        if(serialList.size > 0 ) {
+            myActionSelected?.let {
+                processLocalSearchForSerialAction(it, serialList[0])
+            }
+        }else{
+            mView.showAlertMsg(
+                hmAux_Trans!!["alert_no_serial_found_ttl"]!!,
+                hmAux_Trans!!["alert_no_serial_found_msg"]!!
+            )
+        }
     }
 
     /**

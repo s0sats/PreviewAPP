@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.gson.GsonBuilder
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
@@ -19,8 +20,10 @@ import com.namoadigital.prj001.R
 import com.namoadigital.prj001.adapter.MyActionsAdapter
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.databinding.Act083MainBinding
+import com.namoadigital.prj001.model.MD_Product_Serial
 import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.model.MyActionsFormButton
+import com.namoadigital.prj001.service.WS_Product_Serial_Structure
 import com.namoadigital.prj001.service.WS_Serial_Search
 import com.namoadigital.prj001.service.WS_Sync
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download
@@ -35,6 +38,7 @@ import com.namoadigital.prj001.ui.act038.Act038_Main
 import com.namoadigital.prj001.ui.act068.Act068_Main
 import com.namoadigital.prj001.ui.act070.Act070_Main
 import com.namoadigital.prj001.ui.act071.Act071_Main
+import com.namoadigital.prj001.ui.act092.ui.Act092_Main
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -410,7 +414,19 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 wsProcess = ""
                 progressDialog.dismiss()
                 mPresenter.extractSearchResult(mLink, mAdapter.getMyActionByPosition(serialActionSelected))
-                serialActionSelected = -1
+            }
+            WS_Product_Serial_Structure::class.java.name -> {
+                wsProcess = ""
+                progressDialog.dismiss()
+                //
+                val gson = GsonBuilder().serializeNulls().create()
+                val serial = gson.fromJson(
+                    mLink,
+                    MD_Product_Serial::class.java
+                )
+                //
+                mPresenter.extractStructureResult(serial, mAdapter.getMyActionByPosition(serialActionSelected))
+                resetActionPosition()
             }
             else -> progressDialog?.dismiss()
         }
@@ -857,7 +873,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         mPresenter.formButtonData = null
         progressDialog.dismiss()
         if(serialActionSelected > -1){
-            serialActionSelected = -1
+            resetActionPosition()
         }
     }
 
@@ -866,7 +882,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         mPresenter.formButtonData = null
         progressDialog.dismiss()
         if(serialActionSelected > -1){
-            serialActionSelected = -1
+            resetActionPosition()
         }
     }
 
@@ -886,11 +902,23 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                     mPresenter.processLocalSearchForSerialAction(it, null)
                 }
             //
-            serialActionSelected = -1
+            resetActionPosition()
         }else {
             mPresenter.offlineSerialSearch()
         }
     }
 
-}
+    override fun resetActionPosition() {
+        serialActionSelected = -1
+    }
 
+    override fun callAct092(bundle: Bundle) {
+        val mIntent = Intent(context, Act092_Main::class.java)
+        mIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        //
+        mIntent.putExtras(bundle)
+        startActivity(mIntent)
+        finish()
+    }
+
+}

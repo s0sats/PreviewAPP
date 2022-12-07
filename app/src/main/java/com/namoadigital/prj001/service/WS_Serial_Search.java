@@ -54,10 +54,11 @@ public class WS_Serial_Search extends IntentService {
             String product_id = bundle.getString(Constant.WS_SERIAL_SEARCH_PRODUCT_ID);
             String serial_id = bundle.getString(Constant.WS_SERIAL_SEARCH_SERIAL_ID);
             String tracking = bundle.getString(Constant.WS_SERIAL_SEARCH_TRACKING);
+            boolean site_restriction = bundle.getBoolean(Constant.WS_SERIAL_SEARCH_SITE_RESTRICTION, true);
             int serial_exact = bundle.getInt(Constant.WS_SERIAL_SEARCH_EXACT, 1);
             boolean scheduled_profile_check = bundle.getBoolean(ConstantBaseApp.SCHEDULED_PROFILE_CHECK, true);
 
-            processWSSerialSearch(product_code, product_id, serial_id, tracking, serial_exact, scheduled_profile_check);
+            processWSSerialSearch(product_code, product_id, serial_id, tracking, serial_exact, scheduled_profile_check, site_restriction);
 
         } catch (Exception e) {
 
@@ -78,7 +79,7 @@ public class WS_Serial_Search extends IntentService {
 
     }
 
-    private void processWSSerialSearch(String product_code, String product_id, String serial_id, String tracking, int serial_exact, boolean scheduled_profile_check) throws Exception {
+    private void processWSSerialSearch(String product_code, String product_id, String serial_id, String tracking, int serial_exact, boolean scheduled_profile_check, boolean site_restriction) throws Exception {
         //Seleciona traduções
         loadTranslation();
 
@@ -97,7 +98,13 @@ public class WS_Serial_Search extends IntentService {
         }else{
             env.setProfile_check(0);
         }
-        env.setSite_code(ToolBox_Con.getPreference_Site_Code(getApplicationContext()));
+        //
+        if(site_restriction) {
+            env.setSite_code(ToolBox_Con.getPreference_Site_Code(getApplicationContext()));
+        }else{
+            env.setSite_code("");
+        }
+        //
         env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
 
         ToolBox_Inf.sendBCStatus(getApplicationContext(), ConstantBase.PD_TYPE_STATUS, hmAux_Trans.get("msg_receving_data"), "", "0");

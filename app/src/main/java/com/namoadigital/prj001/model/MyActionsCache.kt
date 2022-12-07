@@ -41,7 +41,7 @@ class MyActionsCache(
     val isLastSelectedItem: Boolean,
     @SerializedName("main_user") val mainUser: Int?,
     @SerializedName("user_focus") val userFocus: Int,
-    @SerializedName("has_Nc") val hasNc: Int,
+    @SerializedName("has_nc") val hasNc: Int,
     @SerializedName("pdf_url") val pdfUrl: String,
     @SerializedName("pdf_name") val pdfName: String,
     @SerializedName("ticket_class_id") val ticketClassId: String,

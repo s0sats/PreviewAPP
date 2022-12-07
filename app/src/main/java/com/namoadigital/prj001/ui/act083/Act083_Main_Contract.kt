@@ -40,6 +40,8 @@ interface Act083_Main_Contract {
         fun setTabsCounters(selectedTabCounter: Int, otherTabCounter: Int)
         fun updateFooterInfos()
         fun setPlaceholderTextAndVisibility(currentTabCounter: Int)
+        fun resetActionPosition()
+        fun callAct092(bundle: Bundle)
     }
 
     interface I_Presenter {
@@ -67,6 +69,7 @@ interface Act083_Main_Contract {
         fun getMainUserFiltersParam():Boolean
         fun processSerialClick(myAction: MyActions)
         fun processLocalSearchForSerialAction(selectedActionForSerialFLow: MyActions, mdProductSerial: MD_Product_Serial?)
+        fun extractStructureResult(serial: MD_Product_Serial, myAction: MyActions?)
     }
 
 }
