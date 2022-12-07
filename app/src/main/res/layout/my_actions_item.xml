@@ -133,15 +133,6 @@
                     android:gravity="center"
                     tools:ignore="UseCompoundDrawables">
 
-                    <ImageView
-                        android:id="@+id/my_actions_item_iv_serial_class"
-                        android:layout_width="24dp"
-                        android:layout_height="match_parent"
-                        android:padding="0dp"
-                        android:visibility="visible"
-                        android:src="@drawable/ic_baseline_arrow_right_24"
-                        app:tint="#000000"
-                        android:contentDescription="null" />
 
                     <TextView
                         android:id="@+id/my_actions_item_tv_serial_id"
