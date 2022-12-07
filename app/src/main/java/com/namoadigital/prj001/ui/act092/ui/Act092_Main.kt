@@ -106,10 +106,7 @@ class Act092_Main : BaseActivityMvp
             setContentView(root)
             bundle = (savedInstanceState ?: intent.extras) as Bundle
             setSupportActionBar(topAppBar)
-            setTitleLanguage()
-            mAct_Title =  Constant.ACT092 + "_title"
             getBundle()
-            iniUIFooter(Constant.ACT092, hmAux_Trans)
         }
 
         initView {
@@ -240,7 +237,8 @@ class Act092_Main : BaseActivityMvp
     }
 
     override fun initVars() {
-
+        binding.topAppBar.title = hmAux_Trans["act092_title"]
+        iniUIFooter(Constant.ACT092, hmAux_Trans)
     }
 
 

@@ -40,6 +40,7 @@ abstract class BaseActivityMvp<PRESENTER, BINDING : ViewBinding> : Base_Activity
         mSite_Value = mFooter[Constant.FOOTER_SITE]
         mOperation_Value = mFooter[Constant.FOOTER_OPERATION]
         //
+        setTitleLanguage()
         setUILanguage(hmAux)
         setMenuLanguage(hmAux)
         setFooter()

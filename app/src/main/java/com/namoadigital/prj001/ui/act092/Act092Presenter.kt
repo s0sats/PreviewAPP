@@ -1042,6 +1042,7 @@ class Act092Presenter constructor(
 
     override fun loadTranslation(): HMAux {
         mutableListOf(
+            "act092_title",
             Act092Translate.DIALOG_UPDATE_TTL,
             Act092Translate.DIALOG_UPDATE_MSG,
             Act092Translate.EMPTY_LIST,
