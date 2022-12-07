@@ -156,6 +156,9 @@ class Act083_Main_Presenter(private val context: Context,
         transList.add("btn_continue_action_lbl")
         transList.add("btn_select_serial_info_lbl")
         //
+        transList.add("progress_serial_structure_ttl")
+        transList.add("progress_serial_structure_msg")
+
         return ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
