@@ -17,7 +17,8 @@ class MyActionsCache(
     val processStatusTrans: String?,
     @DrawableRes val processLeftIcon: Int?,
     @DrawableRes val processRightIcon: Int?,
-    @SerializedName("planned_date") val plannedDate: String?,
+    @SerializedName("planned_date_start") val plannedDateStart: String?,
+    @SerializedName("planned_date_end") val plannedDateEnd: String?,
     @SerializedName("tag_operational_code") val tag_operational_code: Int,
     @SerializedName("tag_operational_id") val tag_operational_id: String,
     @SerializedName("tag_operational_desc") val tagOperationDesc: String,
@@ -28,7 +29,8 @@ class MyActionsCache(
     @SerializedName("site_code") val siteCode: Int? = null,
     @SerializedName("site_desc") val siteDesc: String?,
     @SerializedName("zone_desc") val zoneDesc: String?,
-    @SerializedName("process_date_end") val doneDate: String?,
+    @SerializedName("process_date_start") val doneDateStart: String?,
+    @SerializedName("process_date_end") val doneDateEnd: String?,
     @SerializedName("data_order") val orderBy: String,
     @SerializedName("ticket_origin_type") val ticketOriginType: String?,
     @SerializedName("ticket_scn") val ticketScn: Int?,
@@ -38,7 +40,7 @@ class MyActionsCache(
     val isLastSelectedItem: Boolean,
     @SerializedName("main_user") val mainUser: Int?,
     @SerializedName("user_focus") val userFocus: Int,
-    @SerializedName("has_Nc") val hasNc: Int,
+    @SerializedName("has_nc") val hasNc: Int,
     @SerializedName("pdf_url") val pdfUrl: String,
     @SerializedName("pdf_name") val pdfName: String,
     @SerializedName("ticket_class_id") val ticketClassId: String,
@@ -50,17 +52,25 @@ class MyActionsCache(
         val processRightIcon = getRightIcon()
         //
         var type = actionType
-        if(type == MyActions.MY_ACTION_TYPE_TICKET){
+        if (type == MyActions.MY_ACTION_TYPE_TICKET) {
             type = MY_ACTION_TYPE_TICKET_CACHE
         }
-        var formattedDoneDate = doneDate?.let {
-            ToolBox_Inf.millisecondsToString(
-                ToolBox_Inf.dateToMilliseconds(it),
-                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-            ) ?: ""
+        var formattedPlannedDate: String? = null
+        var formattedDoneDate: String? = null
+        //
+        if (plannedDateStart != null && plannedDateEnd != null) {
+            formattedPlannedDate = ToolBox_Inf.getMyActionStartEndDateFormated(
+                context,
+                plannedDateStart,
+                plannedDateEnd
+            )
         }
-
-
+        //
+        if (doneDateStart != null && doneDateEnd != null) {
+            formattedDoneDate =
+                ToolBox_Inf.getMyActionStartEndDateFormated(context, doneDateStart, doneDateEnd)
+        }
+        //
         var myActions = MyActions(
             type,
             processId ?: "",
@@ -70,7 +80,7 @@ class MyActionsCache(
             processLeftIcon,
             processMidIcon,
             processRightIcon,
-            plannedDate ?: "",
+            formattedPlannedDate ?: "",
             tagOperationDesc,
             processDesc,
             serialId,
@@ -86,7 +96,7 @@ class MyActionsCache(
             orderBy,
             ticketOriginType ?: "",
             ticketScn,
-            "highlightItem" == "highlightItem",
+            false,
             periodStarted,
             lateItem,
             isLastSelectedItem,
