@@ -65,6 +65,7 @@ import com.namoadigital.prj001.service.WS_TK_Header_N_Group_Save;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Checkin;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
+import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
 import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
@@ -1866,7 +1867,16 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
 
     @Override
     public void resetLastPositionClicked() {
-        lastPositionClicked =-1;
+        lastPositionClicked = -1;
+    }
+
+    @Override
+    public void callAct005() {
+        Intent intent = new Intent(context, Act005_Main.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        startActivity(intent);
+        finish();
     }
 
     class FCMReceiver extends BroadcastReceiver {
@@ -1877,7 +1887,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                     && bundle.containsKey(ConstantBaseApp.SW_TYPE)
             ) {
                 //
-                if(bundle.getString(ConstantBaseApp.SW_TYPE).equals(ConstantBaseApp.FCM_ACTION_TK_TICKET_UPDATE)) {
+                if (bundle.getString(ConstantBaseApp.SW_TYPE).equals(ConstantBaseApp.FCM_ACTION_TK_TICKET_UPDATE)) {
                     if (mPresenter.checkSyncRequireNeedsChange(mTicket.getTicket_prefix(), mTicket.getTicket_code())) {
                         updateSyncRequiredByFCM();
                     }
