@@ -1086,7 +1086,6 @@ class Act092Presenter constructor(
             "progress_ticket_save_msg",
             "progress_form_save_ttl",
             "progress_form_save_msg",
-            "cell_step_lbl",
             "msg_preparing_to_send_data",
             "cell_step_lbl",
             "cell_open_action_lbl",
