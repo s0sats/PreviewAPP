@@ -183,6 +183,13 @@ class Act092_Adapter constructor(
                     )
                 )
                 //
+                binding.myActionsItemTvJustifyId.apply {
+                    applyVisibilityIfTextExists(item.justify_item_id)
+                }
+                //
+                binding.myActionsItemTvJustifyDesc.apply {
+                    applyVisibilityIfTextExists(item.justify_item_desc)
+                }
                 applyBackgroundStrokeColor(item)
             }
         }

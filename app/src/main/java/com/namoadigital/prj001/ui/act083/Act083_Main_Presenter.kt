@@ -1359,7 +1359,7 @@ class Act083_Main_Presenter(private val context: Context,
         if(serialList.size > 0 ) {
             myActionSelected?.let {
                 processLocalSearchForSerialAction(it, serialList[0])
-            }
+            }?:defineSearchResultFlow(serialList, rec.record_count, rec.record_page)
         }else{
             mView.showAlertMsg(
                 hmAux_Trans!!["alert_no_serial_found_ttl"]!!,

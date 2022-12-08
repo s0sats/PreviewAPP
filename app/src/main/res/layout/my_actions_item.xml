@@ -247,6 +247,22 @@
                 android:text="&quot;Comentario&quot;"
                 android:textColor="@color/m3_namoa_onSurfaceVariant"
                 android:paddingTop="16dp" />
+            <TextView
+                android:id="@+id/my_actions_item_tv_justify_id"
+                style="@style/TextAppearance.Material3.BodySmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="&quot;Comentario&quot;"
+                android:textColor="@color/m3_namoa_onSurfaceVariant"
+                android:paddingTop="16dp" />
+            <TextView
+                android:id="@+id/my_actions_item_tv_justify_desc"
+                style="@style/TextAppearance.Material3.BodySmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="&quot;Comentario&quot;"
+                android:textColor="@color/m3_namoa_onSurfaceVariant"
+                 />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"

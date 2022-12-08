@@ -44,7 +44,10 @@ class MyActionsCache(
     @SerializedName("pdf_url") val pdfUrl: String,
     @SerializedName("pdf_name") val pdfName: String,
     @SerializedName("ticket_class_id") val ticketClassId: String,
-    @SerializedName("ticket_class_color") val ticketClassColor: String
+    @SerializedName("ticket_class_color") val ticketClassColor: String,
+    @SerializedName("justify_item_id") val justify_item_id: String,
+    @SerializedName("justify_item_desc") val justify_item_desc: String
+
 ) {
     fun toMyActions(context: Context, productCode: Int, serialId: String): MyActions {
         val processLeftIcon = getLeftIcon()
@@ -106,7 +109,9 @@ class MyActionsCache(
             pdfName,
             ticketClassId,
             ticketClassColor,
-            false
+            false,
+            justify_item_id,
+            justify_item_desc
         )
         myActions.productCode = productCode
         return myActions

@@ -658,7 +658,9 @@ public class MD_Schedule_Exec {
                     null,
                     null,
                     null,
-                    true
+                    true,
+                    null,
+                    null
             );
             myActions.setProductCode(product_code);
             myActions.setProductId(product_id);
@@ -713,7 +715,9 @@ public class MD_Schedule_Exec {
                     null,
                     null,
                     null,
-                    true
+                    true,
+                    null,
+                    null
             );
             myActions.setProductCode(product_code);
             myActions.setProductId(product_id);

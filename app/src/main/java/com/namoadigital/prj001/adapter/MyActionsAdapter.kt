@@ -162,6 +162,14 @@ class MyActionsAdapter(
                 applyVisibilityIfTextExists(getInfoQuotesFormatted(myAction.internalComments))
             }
             //
+            binding.myActionsItemTvJustifyId.apply {
+                applyVisibilityIfTextExists(myAction.justify_item_id)
+            }
+            //
+            binding.myActionsItemTvJustifyDesc.apply {
+                applyVisibilityIfTextExists(myAction.justify_item_desc)
+            }
+            //
             applyBackgroundStrokeColor(myAction)
         }
 

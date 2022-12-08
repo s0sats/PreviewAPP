@@ -687,7 +687,9 @@ public class GE_Custom_Form_Local {
                 null,
                 null,
                 null,
-                true
+                true,
+                null,
+                null
         );
         myActions.setProductCode(Integer.parseInt(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE)));
         myActions.setCustomFormDesc(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC));
