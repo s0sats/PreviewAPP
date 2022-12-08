@@ -1098,6 +1098,7 @@ class Act092Presenter constructor(
             "done_action_list_limiter_lbl",
             "dialog_generate_form_pdf_ttl",
             "dialog_generate_form_pdf_start",
+            "cell_item_in_process_lbl",
         ).let {
             return ToolBox_Inf.setLanguage(
                 translateResource.context,

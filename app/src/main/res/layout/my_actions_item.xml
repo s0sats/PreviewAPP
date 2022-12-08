@@ -235,7 +235,6 @@
                 android:layout_height="wrap_content"
                 android:text="Contém form nao concluido!"
                 android:textStyle="bold"
-                android:visibility="gone"
                 android:textColor="#855400" />
 
 

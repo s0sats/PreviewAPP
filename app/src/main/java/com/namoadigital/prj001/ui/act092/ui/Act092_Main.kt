@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -106,8 +105,8 @@ class Act092_Main : BaseActivityMvp
             setContentView(root)
             bundle = (savedInstanceState ?: intent.extras) as Bundle
             setSupportActionBar(topAppBar)
-            setTitleLanguage()
             mAct_Title =  Constant.ACT092 + "_title"
+            setTitleLanguage()
             getBundle()
             iniUIFooter(Constant.ACT092, hmAux_Trans)
         }
@@ -186,9 +185,12 @@ class Act092_Main : BaseActivityMvp
             WS_UnfocusAndHistoric::class.java.simpleName -> {
                 wsProcess.value = ""
                 if (progressDialog.isShowing) progressDialog.dismiss()
-                if(hmAux.get(WS_UnfocusAndHistoric.RESULT_LIST_SIZE).equals("0")){
-                    ToolBox.toastMSG(context, hmAux_Trans[Act092Translate.DIALOG_OTHER_ACTIONS_EMPTY_LIST_MSG])
-                }else {
+                if (hmAux[WS_UnfocusAndHistoric.RESULT_LIST_SIZE].equals("0")) {
+                    ToolBox.toastMSG(
+                        context,
+                        hmAux_Trans[Act092Translate.DIALOG_OTHER_ACTIONS_EMPTY_LIST_MSG]
+                    )
+                } else {
                     ToolBox.toastMSG(context, hmAux_Trans[Act092Translate.DIALOG_UPDATE_MSG])
                     presenter.getMyActionList()
                 }

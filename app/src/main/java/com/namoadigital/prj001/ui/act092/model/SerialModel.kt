@@ -17,7 +17,7 @@ data class SerialModel(
     var serialId: String? = null,
     var ticketId: String? = null,
     var calendarDate: String? = null,
-    var userFocus: Int = 1,
+    var userFocus: Int = 1, //Toggle ativado: User Focus = 1, desativado = 0
     val multStepsLbl: String? = null,
     val hmAux: HMAux? = null,
     val lastSelectedPk: String? = null,

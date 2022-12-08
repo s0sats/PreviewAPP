@@ -139,14 +139,23 @@ class Act092_Adapter constructor(
                     myActionClickListener(item, adapterPosition)
                 }
                 //
+
+                if (item.highlightItem) {
+                    myActionsItemTvFormNoFinish
+                }
+
+                //
                 myActionsItemTvCode.text = item.processId
-                myActionsItemTvClassStatus.visibility = View.GONE
-                if((item.actionType == MyActions.MY_ACTION_TYPE_TICKET
-                    ||item.actionType == MyActions.MY_ACTION_TYPE_TICKET_CACHE)
-                    && !item.classId.isNullOrEmpty()) {
+                myActionsItemTvCode.applyVisibilityIfTextExists(item.processId)
+                if ((item.actionType == MyActions.MY_ACTION_TYPE_TICKET
+                            || item.actionType == MyActions.MY_ACTION_TYPE_TICKET_CACHE)
+                    && !item.classId.isNullOrEmpty()
+                ) {
                     myActionsItemTvClassStatus.text = item.classId
                     myActionsItemTvClassStatus.setTextColor(Color.parseColor(item.classColor))
                     myActionsItemTvClassStatus.visibility = View.VISIBLE
+                } else {
+                    myActionsItemTvClassStatus.visibility = View.GONE
                 }
                 //
                 configPlannedDate(item)
@@ -158,7 +167,9 @@ class Act092_Adapter constructor(
                 //
                 configTvTag(item)
                 myActionsItemTvProdDesc.text = item.productDesc
+                myActionsItemTvProdDesc.applyVisibilityIfTextExists(item.productDesc)
                 myActionsItemTvSerialId.text = item.serialId
+                myActionsItemTvSerialId.applyVisibilityIfTextExists(item.serialId)
                 if (ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_MANUAL != item.ticketOriginType) {
                     configTvOriginView(item)
                     myActionsItemTvOrigin.visibility = View.VISIBLE
@@ -289,10 +300,10 @@ class Act092_Adapter constructor(
         private fun applyBackgroundStrokeColor(myAction: MyActions) {
             with(binding) {
 
-/*                myActionsItemTvFormNoFinish.apply {
-                    visibility = if(myAction.highlightItem) View.VISIBLE else View.GONE
-                    text = "Contém formulário não concluído!"
-                }*/
+                myActionsItemTvFormNoFinish.apply {
+                    visibility = if (myAction.highlightItem) View.VISIBLE else View.GONE
+                    text = hmAux["cell_item_in_process_lbl"]
+                }
 
                 myActionSelectSerial.apply {
                     backgroundTintList = if (myAction.highlightItem) {

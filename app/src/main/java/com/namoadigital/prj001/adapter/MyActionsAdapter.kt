@@ -236,20 +236,21 @@ class MyActionsAdapter(
         }
 
         private fun applyBackgroundStrokeColor(myAction: MyActions) {
+
             binding.myActionSelectSerial.apply {
                 if (myAction.highlightItem) {
                     backgroundTintList = ColorStateList.valueOf(Color.parseColor("#FFB95C"))
                     text = hmAuxTrans["btn_continue_action_lbl"]
                     setTextColor(Color.parseColor("#462A00"))
-                    /*binding.myActionsItemTvFormNoFinish.apply {
+                    binding.myActionsItemTvFormNoFinish.apply {
                         visibility = View.VISIBLE
-                        text = "Contém formulário não concluído!"
-                    }*/
+                        text = hmAuxTrans["item_in_process_lbl"]
+                    }
                 }else{
                     backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.m3_namoa_primary))
                     text = hmAuxTrans["btn_open_action_lbl"]
                     setTextColor(resources.getColor(R.color.m3_namoa_surface))
-                    /*binding.myActionsItemTvFormNoFinish.visibility = View.GONE*/
+                    binding.myActionsItemTvFormNoFinish.visibility = View.GONE
                 }
             }
         }
