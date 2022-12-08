@@ -1671,7 +1671,7 @@ public class TK_Ticket implements Cloneable, Serializable {
                 ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
             );
             //
-            plannedDate = doneDate;
+            plannedDate = "";
             orderByDate = hmAux.get(TK_TicketDao.CLOSE_DATE);
             if(ConstantBaseApp.SYS_STATUS_DONE.equals(hmAux.get(TK_TicketDao.TICKET_STATUS))) {
                 rightIcon = R.drawable.ic_baseline_check_circle_24;

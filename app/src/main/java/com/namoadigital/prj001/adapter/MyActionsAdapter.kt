@@ -177,7 +177,7 @@ class MyActionsAdapter(
             binding.myActionsItemTvDoneDate.apply {
                 this.applyVisibilityIfTextExists(myAction.doneDate)
                 if (ConstantBaseApp.SYS_STATUS_DONE.equals(myAction.processStatus)) {
-                    this.setTextColor(ToolBox_Inf.getStatusColorV2(context, myAction.processStatus))
+                    this.setTextColor(context.getResources().getColor(R.color.m3_namoa_seed))
                 } else {
                     this.setTextColor(context.getResources().getColor(R.color.namoa_color_gray_8))
                 }
@@ -224,21 +224,41 @@ class MyActionsAdapter(
 
         private fun configPlannedDate(myAction: MyActions) {
             binding.myActionsItemTvPlannedDate.apply {
-                text = myAction.plannedDate
-                if(myAction.doneDate.isNullOrEmpty()) {
-                    when {
-                        myAction.lateItem -> {
-                            setTextColor(ContextCompat.getColor(context, R.color.text_red))
+                if(myAction.plannedDate.isNullOrEmpty()){
+                    visibility = View.GONE
+                }else {
+                    visibility = View.VISIBLE
+                    text = myAction.plannedDate
+                    if (myAction.doneDate.isNullOrEmpty()) {
+                        when {
+                            myAction.lateItem -> {
+                                setTextColor(ContextCompat.getColor(context, R.color.text_red))
+                            }
+                            myAction.periodStarted -> {
+                                setTextColor(
+                                    ContextCompat.getColor(
+                                        context,
+                                        R.color.namoa_status_process
+                                    )
+                                )
+                            }
+                            else -> {
+                                setTextColor(
+                                    ContextCompat.getColor(
+                                        context,
+                                        R.color.m3_namoa_onSurfaceVariant
+                                    )
+                                )
+                            }
                         }
-                        myAction.periodStarted -> {
-                            setTextColor(ContextCompat.getColor(context, R.color.namoa_status_process))
-                        }
-                        else -> {
-                            setTextColor(ContextCompat.getColor(context, R.color.namoa_color_dark_blue))
-                        }
+                    } else {
+                        setTextColor(
+                            ContextCompat.getColor(
+                                context,
+                                R.color.m3_namoa_onSurfaceVariant
+                            )
+                        )
                     }
-                }else{
-                    setTextColor(ContextCompat.getColor(context, R.color.namoa_color_dark_blue))
                 }
             }
         }
