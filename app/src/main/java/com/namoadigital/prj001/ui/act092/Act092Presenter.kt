@@ -1043,6 +1043,7 @@ class Act092Presenter constructor(
 
     override fun loadTranslation(): HMAux {
         mutableListOf(
+            "act092_title",
             Act092Translate.DIALOG_UPDATE_TTL,
             Act092Translate.DIALOG_UPDATE_MSG,
             Act092Translate.EMPTY_LIST,
@@ -1099,6 +1100,7 @@ class Act092Presenter constructor(
             "done_action_list_limiter_lbl",
             "dialog_generate_form_pdf_ttl",
             "dialog_generate_form_pdf_start",
+            "cell_justify_lbl",
             "cell_item_in_process_lbl",
         ).let {
             return ToolBox_Inf.setLanguage(

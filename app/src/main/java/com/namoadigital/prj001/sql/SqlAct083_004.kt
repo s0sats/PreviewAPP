@@ -15,7 +15,6 @@ class SqlAct083_004(
         private var productCode: Int?,
         private var serialId: String?,
         private var calendarDate: String?,
-        private var formLabel: String,
         private var userFocus: Int
 ) : Specification {
     private val deviceGMT = ToolBox.getDeviceGMT(false)
@@ -67,7 +66,6 @@ class SqlAct083_004(
                      l.${GE_Custom_Form_LocalDao.TAG_OPERATIONAL_DESC},
                      l.${GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_DESC},
                      l.${GE_Custom_Form_LocalDao.SERIAL_ID},                     
-                     '$formLabel' ${MyActions.MY_ACTION_TYPE_FORM},
                      l.${GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC},
                      l.${GE_Custom_Form_LocalDao.SITE_CODE},
                      l.${GE_Custom_Form_LocalDao.SITE_DESC},

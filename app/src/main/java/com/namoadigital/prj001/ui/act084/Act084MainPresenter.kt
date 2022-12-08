@@ -89,6 +89,7 @@ class Act084MainPresenter(
         transList.add("alert_schedule_form_not_found_msg")
         transList.add("alert_schedule_ticket_not_found_ttl")
         transList.add("alert_schedule_ticket_not_found_msg")
+        transList.add("cell_justify_lbl")
         //
         return ToolBox_Inf.setLanguage(
             context,
@@ -238,12 +239,11 @@ class Act084MainPresenter(
     }
 
     private fun getLocalForms(tabDone: Int, ncFilterOn: Boolean): MutableList<HMAux> {
-        val lbl = hmAuxTrans["form_lbl"] ?: "FORMULARIO"
+//        val lbl = hmAuxTrans["form_lbl"] ?: "FORMULARIO"
 
         return formLocalDao.query_HM(
                 SqlAct084_004(
                         ToolBox_Con.getPreference_Customer_Code(context),
-                        lbl,
                         ncFilterOn,
                         tabDone
                 ).toSqlQuery()

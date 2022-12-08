@@ -3,6 +3,7 @@ package com.namoadigital.prj001.extensions
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.ForegroundColorSpan
+import android.view.View
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.namoadigital.prj001.R
@@ -52,5 +53,23 @@ fun TextView.setPrefix(preffix: String){
 fun TextView.removePrefix(preffix: String){
     if(this.text.startsWith(preffix)){
         this.text = this.text.toString().substring(preffix.lastIndex)
+    }
+}
+
+fun TextView.applyVisibilityIfTextExists(text: String?) {
+    this.text = text
+    this.visibility = if (!this.text.isNullOrEmpty()) {
+        View.VISIBLE
+    } else {
+        View.GONE
+    }
+}
+
+fun TextView.applyVisibilityIfTextExists(text: String?, lbl: String){
+    this.visibility = if (!text.isNullOrEmpty()){
+        this.text = "$lbl: $text"
+        View.VISIBLE
+    }else{
+        View.GONE
     }
 }

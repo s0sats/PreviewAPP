@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
-import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.namoa_digital.namoa_library.util.HMAux
@@ -18,6 +17,7 @@ import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.MyActionsFormButtonItemBinding
 import com.namoadigital.prj001.databinding.MyActionsItemBinding
 import com.namoadigital.prj001.extensions.applyVisibilityIfSourceExists
+import com.namoadigital.prj001.extensions.applyVisibilityIfTextExists
 import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.model.MyActionsBase
 import com.namoadigital.prj001.model.MyActionsFormButton
@@ -150,16 +150,24 @@ class MyActionsAdapter(
             binding.myActionsItemTvErrorMsg.applyVisibilityIfTextExists(myAction.erroMsg)*/
             configDoneDate(myAction)
 
-            if (myAction.isMainUserTicket
-                && ConstantBaseApp.SYS_STATUS_DONE != myAction.processStatus
-            ) {
-                binding.myActionsItemIvIconMainUser.visibility = View.VISIBLE
-            } else {
-                binding.myActionsItemIvIconMainUser.visibility = View.GONE
-            }
+//            if (myAction.isMainUserTicket
+//                && ConstantBaseApp.SYS_STATUS_DONE != myAction.processStatus
+//            ) {
+//                binding.myActionsItemIvIconMainUser.visibility = View.VISIBLE
+//            } else {
+//                binding.myActionsItemIvIconMainUser.visibility = View.GONE
+//            }
             //
             binding.myActionsItemTvInternalComments.apply {
                 applyVisibilityIfTextExists(getInfoQuotesFormatted(myAction.internalComments))
+            }
+            //
+            binding.myActionsItemTvJustify.apply {
+                applyVisibilityIfTextExists(myAction.justify_item_desc, hmAuxTrans["cell_justify_lbl"]!!)
+            }
+            //
+            binding.myActionsItemTvNotExecutedComments.apply {
+                applyVisibilityIfTextExists(getInfoQuotesFormatted(myAction.not_exec_comments))
             }
             //
             applyBackgroundStrokeColor(myAction)
@@ -169,7 +177,7 @@ class MyActionsAdapter(
             binding.myActionsItemTvDoneDate.apply {
                 this.applyVisibilityIfTextExists(myAction.doneDate)
                 if (ConstantBaseApp.SYS_STATUS_DONE.equals(myAction.processStatus)) {
-                    this.setTextColor(ToolBox_Inf.getStatusColorV2(context, myAction.processStatus))
+                    this.setTextColor(context.getResources().getColor(R.color.m3_namoa_extended_verdeDone_seed))
                 } else {
                     this.setTextColor(context.getResources().getColor(R.color.namoa_color_gray_8))
                 }
@@ -216,26 +224,69 @@ class MyActionsAdapter(
 
         private fun configPlannedDate(myAction: MyActions) {
             binding.myActionsItemTvPlannedDate.apply {
-                text = myAction.plannedDate
-                if(myAction.doneDate.isNullOrEmpty()) {
-                    when {
-                        myAction.lateItem -> {
-                            setTextColor(ContextCompat.getColor(context, R.color.text_red))
+                if(myAction.plannedDate.isNullOrEmpty()){
+                    visibility = View.GONE
+                }else {
+                    visibility = View.VISIBLE
+                    text = myAction.plannedDate
+                    if (myAction.doneDate.isNullOrEmpty()) {
+                        when {
+                            myAction.lateItem -> {
+                                setTextColor(ContextCompat.getColor(context, R.color.text_red))
+                            }
+                            myAction.periodStarted -> {
+                                setTextColor(
+                                    ContextCompat.getColor(
+                                        context,
+                                        R.color.namoa_status_process
+                                    )
+                                )
+                            }
+                            else -> {
+                                if (myAction.highlightItem){
+                                    setTextColor(
+                                        ContextCompat.getColor(
+                                            context,
+                                            R.color.m3_namoa_extended_LaranjaObrigatorio_color
+                                        )
+                                    )
+                                }else {
+                                    setTextColor(
+                                        ContextCompat.getColor(
+                                            context,
+                                            R.color.m3_namoa_onSurfaceVariant
+                                        )
+                                    )
+                                }
+                            }
                         }
-                        myAction.periodStarted -> {
-                            setTextColor(ContextCompat.getColor(context, R.color.namoa_status_process))
-                        }
-                        else -> {
-                            setTextColor(ContextCompat.getColor(context, R.color.namoa_color_dark_blue))
+                    } else {
+                        if (myAction.highlightItem){
+                            setTextColor(
+                                ContextCompat.getColor(
+                                    context,
+                                    R.color.m3_namoa_extended_LaranjaObrigatorio_color
+                                )
+                            )
+                        }else {
+                            setTextColor(
+                                ContextCompat.getColor(
+                                    context,
+                                    R.color.m3_namoa_onSurfaceVariant
+                                )
+                            )
                         }
                     }
-                }else{
-                    setTextColor(ContextCompat.getColor(context, R.color.namoa_color_dark_blue))
                 }
             }
         }
 
         private fun applyBackgroundStrokeColor(myAction: MyActions) {
+
+            binding.myActionsItemTvFormNoFinish.apply {
+                visibility = if (myAction.highlightItem) View.VISIBLE else View.GONE
+                text = hmAuxTrans["cell_item_in_process_lbl"]
+            }
 
             binding.myActionSelectSerial.apply {
                 if (myAction.highlightItem) {
@@ -293,20 +344,6 @@ class MyActionsAdapter(
             binding.myActionsFormButtonItemTvLbl.text = myActionFormButton.label
         }
     }
-
-    /**
-     * Kotlin extension para TextView e filhos para setar visibilidade apenas se o text existir
-     */
-    fun TextView.applyVisibilityIfTextExists(text: String?){
-        this.text = text
-        this.visibility = if (!this.text.isNullOrEmpty()){
-            View.VISIBLE
-        }else{
-            View.GONE
-        }
-    }
-
-
 
     /**
      * Busca o item do qual o usr acabou de voltar na lista.

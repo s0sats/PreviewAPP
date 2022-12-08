@@ -596,7 +596,8 @@ public class GE_Custom_Form_Local {
         String endDate = null;
         Integer leftIcon = null;
         String statusToUse = ConstantBaseApp.SYS_STATUS_IN_PROCESSING.equals(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)) ? ConstantBaseApp.SYS_STATUS_PROCESS : hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS);
-        if(hmAux.hasConsistentValue(GE_Custom_Form_DataDao.DATE_END)){
+        if(hmAux.hasConsistentValue(GE_Custom_Form_DataDao.DATE_END)
+        && !hmAux.get(GE_Custom_Form_DataDao.DATE_END).contains("1900-01-01")){
             endDate = ToolBox_Inf.millisecondsToString(
                 ToolBox_Inf.dateToMilliseconds(hmAux.get(GE_Custom_Form_DataDao.DATE_END)),
                 ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
@@ -665,7 +666,7 @@ public class GE_Custom_Form_Local {
             hmAux.get(GE_Custom_Form_LocalDao.TAG_OPERATIONAL_DESC),
             hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_DESC),
             hmAux.get(GE_Custom_Form_LocalDao.SERIAL_ID),
-            hmAux.get(MyActions.MY_ACTION_TYPE_FORM),
+            "",
             hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC),
                 "",
             null,
@@ -687,7 +688,10 @@ public class GE_Custom_Form_Local {
                 null,
                 null,
                 null,
-                true
+                true,
+                null,
+                null,
+                null
         );
         myActions.setProductCode(Integer.parseInt(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE)));
         myActions.setCustomFormDesc(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC));

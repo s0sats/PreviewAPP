@@ -1671,7 +1671,7 @@ public class TK_Ticket implements Cloneable, Serializable {
                 ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
             );
             //
-            plannedDate = doneDate;
+            plannedDate = "";
             orderByDate = hmAux.get(TK_TicketDao.CLOSE_DATE);
             if(ConstantBaseApp.SYS_STATUS_DONE.equals(hmAux.get(TK_TicketDao.TICKET_STATUS))) {
                 rightIcon = R.drawable.ic_baseline_check_circle_24;
@@ -1705,7 +1705,8 @@ public class TK_Ticket implements Cloneable, Serializable {
         }
         //
         String focusStepDesc = "";
-        if (hmAux.hasConsistentValue(TK_Ticket_StepDao.STEP_DESC)) {
+        if (hmAux.hasConsistentValue(TK_Ticket_StepDao.STEP_DESC)
+        && !hmAux.get(TK_Ticket_StepDao.STEP_DESC).isEmpty()) {
             focusStepDesc = hmAux.get(TK_TicketDao.CURRENT_STEP_ORDER) + ". "+ hmAux.get(TK_Ticket_StepDao.STEP_DESC);
         }
         //
@@ -1747,7 +1748,11 @@ public class TK_Ticket implements Cloneable, Serializable {
                 null,
                 hmAux.get(TK_TicketDao.CLASS_ID),
                 hmAux.get(TK_TicketDao.CLASS_COLOR),
-                true
+                true,
+                hmAux.get(TK_TicketDao.JUSTIFY_ITEM_ID),
+                hmAux.get(TK_TicketDao.JUSTIFY_ITEM_DESC),
+                hmAux.get(TK_TicketDao.NOT_EXECUTED_COMMENTS)
+
         );
 
         myActions.setProductCode(hmAux.hasConsistentValue(TK_TicketDao.OPEN_PRODUCT_CODE)? Integer.parseInt(hmAux.get(TK_TicketDao.OPEN_PRODUCT_CODE)) : 0);

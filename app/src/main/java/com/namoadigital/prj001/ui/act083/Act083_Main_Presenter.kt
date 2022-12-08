@@ -160,13 +160,15 @@ class Act083_Main_Presenter(private val context: Context,
         transList.add("progress_serial_structure_msg")
         //
         transList.add("item_in_process_lbl")
+        //
+        transList.add("cell_justify_lbl")
 
         return ToolBox_Inf.setLanguage(
-            context,
-            mModule_Code,
-            mResource_Code,
-            ToolBox_Con.getPreference_Translate_Code(context),
-            transList
+                context,
+                mModule_Code,
+                mResource_Code,
+                ToolBox_Con.getPreference_Translate_Code(context),
+                transList
         )
     }
 
@@ -1361,7 +1363,7 @@ class Act083_Main_Presenter(private val context: Context,
         if(serialList.size > 0 ) {
             myActionSelected?.let {
                 processLocalSearchForSerialAction(it, serialList[0])
-            }
+            }?:defineSearchResultFlow(serialList, rec.record_count, rec.record_page)
         }else{
             mView.showAlertMsg(
                 hmAux_Trans!!["alert_no_serial_found_ttl"]!!,
@@ -1820,7 +1822,7 @@ class Act083_Main_Presenter(private val context: Context,
     }
 
     private fun getLocalForms(userFocus: Int): MutableList<HMAux> {
-        val lbl = hmAux_Trans?.get("form_lbl") ?: "FORMULARIO"
+//        val lbl = hmAux_Trans?.get("form_lbl") ?: "FORMULARIO"
 
         return formLocalDao.query_HM(
                 SqlAct083_004(
@@ -1830,7 +1832,6 @@ class Act083_Main_Presenter(private val context: Context,
                         productCode,
                         serialId,
                         calendarDate,
-                        lbl,
                         userFocus
                 ).toSqlQuery()
         )
