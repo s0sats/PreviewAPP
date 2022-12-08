@@ -94,7 +94,7 @@ class TkTicketCache(
             origin_desc,
             type_desc,
             internal_comments,
-            step_desc,
+            if(!step_desc.isNullOrEmpty()) "$current_step_order.  $step_desc" else null,
             open_site_code,
             open_site_desc,
             formattedZone,

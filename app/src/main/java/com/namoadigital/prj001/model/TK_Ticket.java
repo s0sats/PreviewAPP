@@ -1705,7 +1705,8 @@ public class TK_Ticket implements Cloneable, Serializable {
         }
         //
         String focusStepDesc = "";
-        if (hmAux.hasConsistentValue(TK_Ticket_StepDao.STEP_DESC)) {
+        if (hmAux.hasConsistentValue(TK_Ticket_StepDao.STEP_DESC)
+        && !hmAux.get(TK_Ticket_StepDao.STEP_DESC).isEmpty()) {
             focusStepDesc = hmAux.get(TK_TicketDao.CURRENT_STEP_ORDER) + ". "+ hmAux.get(TK_Ticket_StepDao.STEP_DESC);
         }
         //
