@@ -118,6 +118,7 @@ class TkTicketCache(
             class_color,
             true,
             null,
+            null,
             null
         )
         myActions.productCode = open_product_code

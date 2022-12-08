@@ -158,6 +158,8 @@ class Act083_Main_Presenter(private val context: Context,
         //
         transList.add("progress_serial_structure_ttl")
         transList.add("progress_serial_structure_msg")
+        //
+        transList.add("cell_justify_lbl")
 
         return ToolBox_Inf.setLanguage(
                 context,

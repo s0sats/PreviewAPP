@@ -39,16 +39,17 @@ class MyActionsCache(
     val lateItem: Boolean,
     val isLastSelectedItem: Boolean,
     @SerializedName("main_user") val mainUser: Int?,
-    @SerializedName("user_focus") val userFocus: Int,
-    @SerializedName("has_nc") val hasNc: Int,
-    @SerializedName("pdf_url") val pdfUrl: String,
-    @SerializedName("pdf_name") val pdfName: String,
-    @SerializedName("ticket_class_id") val ticketClassId: String,
-    @SerializedName("ticket_class_color") val ticketClassColor: String,
-    @SerializedName("justify_item_id") val justify_item_id: String,
-    @SerializedName("justify_item_desc") val justify_item_desc: String
+    @SerializedName("user_focus") val userFocus: Int?,
+    @SerializedName("has_nc") val hasNc: Int?,
+    @SerializedName("pdf_url") val pdfUrl: String?,
+    @SerializedName("pdf_name") val pdfName: String?,
+    @SerializedName("ticket_class_id") val ticketClassId: String?,
+    @SerializedName("ticket_class_color") val ticketClassColor: String?,
+    @SerializedName("justify_item_id") val justify_item_id: String?,
+    @SerializedName("justify_item_desc") val justify_item_desc: String?,
+    @SerializedName("not_executed_comments") val not_executed_comments: String?,
 
-) {
+    ) {
     fun toMyActions(context: Context, productCode: Int, serialId: String): MyActions {
         val processLeftIcon = getLeftIcon()
         val processMidIcon = getMidIcon()
@@ -111,7 +112,8 @@ class MyActionsCache(
             ticketClassColor,
             false,
             justify_item_id,
-            justify_item_desc
+            justify_item_desc,
+            not_executed_comments
         )
         myActions.productCode = productCode
         return myActions

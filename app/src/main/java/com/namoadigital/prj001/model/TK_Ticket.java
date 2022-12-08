@@ -1749,7 +1749,9 @@ public class TK_Ticket implements Cloneable, Serializable {
                 hmAux.get(TK_TicketDao.CLASS_COLOR),
                 true,
                 hmAux.get(TK_TicketDao.JUSTIFY_ITEM_ID),
-                hmAux.get(TK_TicketDao.JUSTIFY_ITEM_DESC)
+                hmAux.get(TK_TicketDao.JUSTIFY_ITEM_DESC),
+                hmAux.get(TK_TicketDao.NOT_EXECUTED_COMMENTS)
+
         );
 
         myActions.setProductCode(hmAux.hasConsistentValue(TK_TicketDao.OPEN_PRODUCT_CODE)? Integer.parseInt(hmAux.get(TK_TicketDao.OPEN_PRODUCT_CODE)) : 0);

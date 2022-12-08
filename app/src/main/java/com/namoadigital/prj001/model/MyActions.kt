@@ -41,6 +41,7 @@ data class MyActions(
     val hasUserFocus: Boolean = true,
     val justify_item_id: String?,
     val justify_item_desc: String?,
+    val not_exec_comments: String?,
 ) : MyActionsBase() {
 
 

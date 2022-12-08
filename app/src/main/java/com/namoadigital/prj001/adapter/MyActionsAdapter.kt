@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
-import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.namoa_digital.namoa_library.util.HMAux
@@ -18,6 +17,7 @@ import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.MyActionsFormButtonItemBinding
 import com.namoadigital.prj001.databinding.MyActionsItemBinding
 import com.namoadigital.prj001.extensions.applyVisibilityIfSourceExists
+import com.namoadigital.prj001.extensions.applyVisibilityIfTextExists
 import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.model.MyActionsBase
 import com.namoadigital.prj001.model.MyActionsFormButton
@@ -162,12 +162,12 @@ class MyActionsAdapter(
                 applyVisibilityIfTextExists(getInfoQuotesFormatted(myAction.internalComments))
             }
             //
-            binding.myActionsItemTvJustifyId.apply {
-                applyVisibilityIfTextExists(myAction.justify_item_id)
+            binding.myActionsItemTvJustify.apply {
+                applyVisibilityIfTextExists(myAction.justify_item_desc, hmAuxTrans["cell_justify_lbl"]!!)
             }
             //
-            binding.myActionsItemTvJustifyDesc.apply {
-                applyVisibilityIfTextExists(myAction.justify_item_desc)
+            binding.myActionsItemTvNotExecutedComments.apply {
+                applyVisibilityIfTextExists(getInfoQuotesFormatted(myAction.not_exec_comments))
             }
             //
             applyBackgroundStrokeColor(myAction)
@@ -300,20 +300,6 @@ class MyActionsAdapter(
             binding.myActionsFormButtonItemTvLbl.text = myActionFormButton.label
         }
     }
-
-    /**
-     * Kotlin extension para TextView e filhos para setar visibilidade apenas se o text existir
-     */
-    fun TextView.applyVisibilityIfTextExists(text: String?){
-        this.text = text
-        this.visibility = if (!this.text.isNullOrEmpty()){
-            View.VISIBLE
-        }else{
-            View.GONE
-        }
-    }
-
-
 
     /**
      * Busca o item do qual o usr acabou de voltar na lista.
