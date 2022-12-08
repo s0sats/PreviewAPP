@@ -666,7 +666,7 @@ public class GE_Custom_Form_Local {
             hmAux.get(GE_Custom_Form_LocalDao.TAG_OPERATIONAL_DESC),
             hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_DESC),
             hmAux.get(GE_Custom_Form_LocalDao.SERIAL_ID),
-            hmAux.get(MyActions.MY_ACTION_TYPE_FORM),
+            "",
             hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC),
                 "",
             null,

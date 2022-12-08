@@ -177,7 +177,7 @@ class MyActionsAdapter(
             binding.myActionsItemTvDoneDate.apply {
                 this.applyVisibilityIfTextExists(myAction.doneDate)
                 if (ConstantBaseApp.SYS_STATUS_DONE.equals(myAction.processStatus)) {
-                    this.setTextColor(context.getResources().getColor(R.color.m3_namoa_seed))
+                    this.setTextColor(context.getResources().getColor(R.color.m3_namoa_extended_verdeDone_seed))
                 } else {
                     this.setTextColor(context.getResources().getColor(R.color.namoa_color_gray_8))
                 }
@@ -243,27 +243,50 @@ class MyActionsAdapter(
                                 )
                             }
                             else -> {
-                                setTextColor(
-                                    ContextCompat.getColor(
-                                        context,
-                                        R.color.m3_namoa_onSurfaceVariant
+                                if (myAction.highlightItem){
+                                    setTextColor(
+                                        ContextCompat.getColor(
+                                            context,
+                                            R.color.m3_namoa_extended_LaranjaObrigatorio_color
+                                        )
                                     )
-                                )
+                                }else {
+                                    setTextColor(
+                                        ContextCompat.getColor(
+                                            context,
+                                            R.color.m3_namoa_onSurfaceVariant
+                                        )
+                                    )
+                                }
                             }
                         }
                     } else {
-                        setTextColor(
-                            ContextCompat.getColor(
-                                context,
-                                R.color.m3_namoa_onSurfaceVariant
+                        if (myAction.highlightItem){
+                            setTextColor(
+                                ContextCompat.getColor(
+                                    context,
+                                    R.color.m3_namoa_extended_LaranjaObrigatorio_color
+                                )
                             )
-                        )
+                        }else {
+                            setTextColor(
+                                ContextCompat.getColor(
+                                    context,
+                                    R.color.m3_namoa_onSurfaceVariant
+                                )
+                            )
+                        }
                     }
                 }
             }
         }
 
         private fun applyBackgroundStrokeColor(myAction: MyActions) {
+
+            binding.myActionsItemTvFormNoFinish.apply {
+                visibility = if (myAction.highlightItem) View.VISIBLE else View.GONE
+                text = hmAuxTrans["cell_item_in_process_lbl"]
+            }
 
             binding.myActionSelectSerial.apply {
                 if (myAction.highlightItem) {

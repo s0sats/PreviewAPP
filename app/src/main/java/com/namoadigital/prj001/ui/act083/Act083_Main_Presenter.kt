@@ -1822,7 +1822,7 @@ class Act083_Main_Presenter(private val context: Context,
     }
 
     private fun getLocalForms(userFocus: Int): MutableList<HMAux> {
-        val lbl = hmAux_Trans?.get("form_lbl") ?: "FORMULARIO"
+//        val lbl = hmAux_Trans?.get("form_lbl") ?: "FORMULARIO"
 
         return formLocalDao.query_HM(
                 SqlAct083_004(
@@ -1832,7 +1832,6 @@ class Act083_Main_Presenter(private val context: Context,
                         productCode,
                         serialId,
                         calendarDate,
-                        lbl,
                         userFocus
                 ).toSqlQuery()
         )

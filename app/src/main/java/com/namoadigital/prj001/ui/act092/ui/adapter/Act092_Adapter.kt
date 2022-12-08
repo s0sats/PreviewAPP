@@ -275,21 +275,39 @@ class Act092_Adapter constructor(
                                 )
                             }
                             else -> {
-                                setTextColor(
-                                    ContextCompat.getColor(
-                                        context,
-                                        R.color.m3_namoa_onSurfaceVariant
+                                if (myAction.highlightItem){
+                                    setTextColor(
+                                        ContextCompat.getColor(
+                                            context,
+                                            R.color.m3_namoa_extended_LaranjaObrigatorio_color
+                                        )
                                     )
-                                )
+                                }else {
+                                    setTextColor(
+                                        ContextCompat.getColor(
+                                            context,
+                                            R.color.m3_namoa_onSurfaceVariant
+                                        )
+                                    )
+                                }
                             }
                         }
                     } else {
-                        setTextColor(
-                            ContextCompat.getColor(
-                                context,
-                                R.color.m3_namoa_onSurfaceVariant
+                        if (myAction.highlightItem){
+                            setTextColor(
+                                ContextCompat.getColor(
+                                    context,
+                                    R.color.m3_namoa_extended_LaranjaObrigatorio_color
+                                )
                             )
-                        )
+                        }else {
+                            setTextColor(
+                                ContextCompat.getColor(
+                                    context,
+                                    R.color.m3_namoa_onSurfaceVariant
+                                )
+                            )
+                        }
                     }
                 }
             }

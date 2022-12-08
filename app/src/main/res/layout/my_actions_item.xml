@@ -69,7 +69,7 @@
                         android:paddingBottom="2dp"
                         android:text="01/11/2022 22:00 - 02/11/2022 06:00"
                         style="@style/TextAppearance.Material3.TitleSmall"
-                        android:textColor="@color/m3_namoa_seed" />
+                        android:textColor="@color/m3_namoa_extended_verdeDone_seed" />
 
                     <TextView
                         android:id="@+id/my_actions_item_tv_site"
