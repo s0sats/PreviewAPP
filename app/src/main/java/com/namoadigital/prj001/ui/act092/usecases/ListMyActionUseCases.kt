@@ -16,7 +16,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
-import java.io.File
 import java.io.IOException
 
 class ListMyActionUseCases constructor(
@@ -28,7 +27,9 @@ class ListMyActionUseCases constructor(
     override suspend fun invoke(input: Pair<SerialModel, Boolean>): Flow<IResult<MutableList<MyActionsBase>>> {
         actionBaseList.clear()
         return flow {
-            with(input.first) {
+            val serialModel = input.first
+            val mainUser = input.second
+            with(serialModel) {
                 copy(
                     customerCode = ToolBox_Con.getPreference_Customer_Code(context).toInt(),
                     siteCode = if (setSiteFilter(context)) ToolBox_Con.getPreference_Translate_Code(
@@ -40,26 +41,21 @@ class ListMyActionUseCases constructor(
                     emit(loading(true))
 
                     val focusList = mutableListOf<MyActionsBase>()
-                    val fileName = ToolBox_Inf.getOtherActionFileName(input.first.productCode?:-1, (input.first.serialCode?:-1).toLong())
-                    val file = File(ConstantBaseApp.OTHER_ACTIONS_JSON_PATH, fileName)
-                    if (file.exists()) {
-                        localTicket.userFocus = 0
-                    }
 
                     focusList.addAll(
-                        repository.getLocalTickets(localTicket, input.second).map {
+                        repository.getLocalTickets(localTicket, mainUser).map {
                             TK_Ticket.toMyActionsObj(context, it, getLastSelectedPk())
                         }
                     )
 
                     focusList.addAll(
-                        repository.getTicketCache(localTicket, input.second).map {
+                        repository.getTicketCache(localTicket, mainUser).map {
                             it.toMyActionsObj(context, getLastSelectedPk())
                         }
                     )
 
                     focusList.addAll(
-                        repository.getSchedules(localTicket, input.second).map {
+                        repository.getSchedules(localTicket, mainUser).map {
                             it.toMyActionsObj(context, getLastSelectedPk())
                         }
                     )
@@ -91,11 +87,15 @@ class ListMyActionUseCases constructor(
                     //
                     val unfocusList = mutableListOf<MyActionsBase>()
                     unfocusList.addAll(
-                        repository.getUnfocusAndHistorical(input.first.productCode?:-1, (input.first.serialCode?:-1).toLong(), input.first.serialId?: "")
+                        repository.getUnfocusAndHistorical(
+                            serialModel.productCode ?: -1,
+                            (serialModel.serialCode ?: -1).toLong(),
+                            serialModel.serialId ?: ""
+                        )
                     )
 
                     //
-                    if(unfocusList.size >0) {
+                    if (unfocusList.size > 0 && serialModel.userFocus == 1) {
                         val unfocusTemp = mutableListOf<MyActions>()
 
                         val focusTemp = focusList.map {
@@ -129,11 +129,11 @@ class ListMyActionUseCases constructor(
                         //
                         actionBaseList.addAll(focusTemp)
                         actionBaseList.addAll(filteredUnfocusList)
-                    }else{
+                    } else {
                         actionBaseList.addAll(focusList)
                     }
 
-                    val actions = if (input.second)
+                    val actions = if (mainUser)
                         actionBaseList.map { m -> m as MyActions }
                             .filter { f -> f.isMainUserTicket } as MutableList<MyActionsBase>
                     else actionBaseList

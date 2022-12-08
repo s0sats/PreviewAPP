@@ -86,7 +86,7 @@ class MyActionsAdapter(
             binding.myActionsItemTvSerialId.visibility =
                 if (myAction.serialId?.isEmpty() == true) View.GONE else View.VISIBLE
             binding.act083SerialInfo.visibility =
-                if (mySerialClickListener == null) View.GONE else View.VISIBLE
+                if (mySerialClickListener == null || myAction.serialId?.isNullOrEmpty() == true) View.GONE else View.VISIBLE
 
             binding.myActionSelectSerial.setOnClickListener {
                 myActionClickListener(myAction)

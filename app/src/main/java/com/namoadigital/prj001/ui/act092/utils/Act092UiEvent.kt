@@ -38,7 +38,5 @@ sealed class Act092UiEvent {
 
     object UpdateTitleActionSerial : Act092UiEvent()
 
-    data class CheckIfFileExists(val exists: Boolean) : Act092UiEvent()
-
     object UpdateFooterInfos : Act092UiEvent()
 }

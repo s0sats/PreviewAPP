@@ -143,15 +143,14 @@ class Act092Presenter constructor(
         return ticketBundle(ticketPrefix, ticketCode)
     }
 
-    override fun getMyActionList(mainFocus: Boolean) {
+    override fun getMyActionList(isFocus: Boolean) {
         CoroutineScope(Dispatchers.IO).launch {
             loadFilters()
-            fileOtherActionExists()
             actionUseCases.localTicket(
                 Pair(
                     _serialModel.value.copy(
                         userFocus = view.focusState.value.userFocusInt
-                    ), mainFocus
+                    ), view.focusState.value.mainUser
                 )
             )
                 .catch { e ->
@@ -240,18 +239,6 @@ class Act092Presenter constructor(
 
     override fun syncFilesForm(productCode: Long) {
         actionUseCases.syncFilesForm(hmAux_Trans, productCode)
-    }
-
-    private fun fileOtherActionExists() {
-        if (actionUseCases.checkIfFileExists(
-                _serialModel.value.productCode ?: -1,
-                _serialModel.value.serialCode ?: -1L
-            )
-        ) {
-            view.onState(
-                Act092UiEvent.CheckIfFileExists(true)
-            )
-        }
     }
 
     override fun processActionClick(action: MyActions, context: Context, position: Int) {
@@ -422,23 +409,37 @@ class Act092Presenter constructor(
             //
             //
             context.sendBroadcast(mIntent)
-        }else{
+        } else {
             ToolBox_Inf.showNoConnectionDialog(context)
         }
     }
 
     override fun otherActionFlow(context: Context) {
-        if(ToolBox_Con.isOnline(context)){
+        val fileExists = actionUseCases.checkIfFileExists(
+            _serialModel.value.productCode ?: -1,
+            _serialModel.value.serialCode ?: -1L
+        )
+
+        if (fileExists) {
+            getMyActionList(true)
+        } else {
+            getFileOnline(context)
+        }
+
+    }
+
+    private fun getFileOnline(context: Context) {
+        if (ToolBox_Con.isOnline(context)) {
             val hasFormPendency = getFormPendency(context)
             val hasTicketPendency = getTicketPendency(context)
-            if(hasFormPendency){
+            if (hasFormPendency) {
                 callFormSave(context)
-            }else if (hasTicketPendency){
+            } else if (hasTicketPendency) {
                 callTicketSave(context)
-            }else{
+            } else {
                 getUnfocusHistoricalList(context)
             }
-        }else{
+        } else {
             ToolBox_Inf.showNoConnectionDialog(context)
         }
     }

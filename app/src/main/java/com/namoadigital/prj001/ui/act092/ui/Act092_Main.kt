@@ -39,7 +39,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class Act092_Main : BaseActivityMvp
@@ -68,7 +68,7 @@ class Act092_Main : BaseActivityMvp
     private val _mainUserFilter = MutableStateFlow(false)
 
     private val _focusState = MutableStateFlow(FilterFocusUser())
-    override val focusState: StateFlow<FilterFocusUser> = _focusState
+    override val focusState = _focusState.asStateFlow()
 
     private var hmAuxTicketDownload: HMAux = HMAux()
 
@@ -113,7 +113,7 @@ class Act092_Main : BaseActivityMvp
 
         initView {
             presenter.setView(this)
-            presenter.getMyActionList(_focusState.value.mainUser)
+            presenter.getMyActionList()
         }
     }
 
@@ -192,7 +192,8 @@ class Act092_Main : BaseActivityMvp
                     )
                 } else {
                     ToolBox.toastMSG(context, hmAux_Trans[Act092Translate.DIALOG_UPDATE_MSG])
-                    presenter.getMyActionList()
+                    _focusState.value.mainUser = false
+                    presenter.getMyActionList(true)
                 }
                 return
             }
@@ -251,7 +252,7 @@ class Act092_Main : BaseActivityMvp
 
 
             mainUserSelection.setOnClickListener {
-                if (btnOtherSerial.isEnabled) {
+                if (mainUserSelection.isEnabled) {
                     _focusState.value = focusState.value.copy(
                         mainUser = !_focusState.value.mainUser
                     )
@@ -260,10 +261,16 @@ class Act092_Main : BaseActivityMvp
             }
 
             btnOtherSerial.setOnClickListener {
-                if (btnOtherSerial.isEnabled) {
+                _focusState.value = focusState.value.copy(
+                    mainUser = false,
+                    userFocus = !focusState.value.userFocus
+                )
+                disableMainAndOtherActions()
+                if (_focusState.value.userFocus) {
                     presenter.otherActionFlow(context)
+                } else {
+                    presenter.getMyActionList()
                 }
-
             }
             btnCreateAction.setOnClickListener {
                 presenter.processNewFormClick(context)
@@ -353,10 +360,6 @@ class Act092_Main : BaseActivityMvp
                     callAct(state.classe, state.bundle)
                 }
 
-                is Act092UiEvent.CheckIfFileExists -> {
-                    disableMainAndOtherActions(state.exists)
-                }
-
                 is Act092UiEvent.UpdateFooterInfos -> {
                     updateFooterInfos()
                 }
@@ -396,43 +399,42 @@ class Act092_Main : BaseActivityMvp
         iniUIFooter(Constant.ACT092, hmAux_Trans)
     }
 
-    private fun disableMainAndOtherActions(isEmpty: Boolean) {
+    private fun disableMainAndOtherActions() {
+
+
+        val focusState = _focusState.value
 
         val btnBackground =
-            if (!isEmpty) ColorStateList.valueOf(resources.getColor(R.color.padrao_TRANSPARENT))
+            if (!focusState.userFocus) ColorStateList.valueOf(resources.getColor(R.color.padrao_TRANSPARENT))
             else ColorStateList.valueOf(resources.getColor(R.color.m3_namoa_inverseSurface))
 
         val mainUserCircle =
-            if (!isEmpty) resources.getDrawable(R.drawable.my_action_toogle_default) else resources.getDrawable(
+            if (!focusState.userFocus) resources.getDrawable(R.drawable.my_action_toogle_default) else resources.getDrawable(
                 R.drawable.my_action_toogle_disable
             )
         val mainUserPerson =
-            if (isEmpty) R.drawable.ic_person_disable_24dp
+            if (focusState.userFocus) R.drawable.ic_person_disable_24dp
             else R.drawable.ic_person_black_24dp
 
         val textColor =
-            if (!isEmpty) resources.getColor(R.color.m3_namoa_inverseSurface) else resources.getColor(
+            if (!focusState.userFocus) resources.getColor(R.color.m3_namoa_inverseSurface) else resources.getColor(
                 R.color.m3_namoa_surface
             )
 
         with(binding) {
             btnOtherSerial.apply {
                 backgroundTintList = btnBackground
-                isEnabled = !isEmpty
                 iconTint = ColorStateList.valueOf(textColor)
                 setTextColor(textColor)
-                strokeWidth = if (!isEmpty) 1 else 0
-                isClickable = !isEmpty
+                strokeWidth = if (focusState.userFocus) 0 else 1
             }
 
             mainUserSelection.apply {
-                isEnabled = !isEmpty
+                isEnabled = !focusState.userFocus
                 background = mainUserCircle
                 setImageResource(mainUserPerson)
-                isClickable = !isEmpty
+                isClickable = !focusState.userFocus
             }
-
-            mainUserSelection.isEnabled = !isEmpty
 
         }
     }
@@ -474,7 +476,7 @@ class Act092_Main : BaseActivityMvp
                 setImageResource(R.drawable.ic_person_black_24dp)
             }
         }
-        presenter.getMyActionList(value)
+        presenter.getMyActionList()
     }
 
     private fun openDialog(
