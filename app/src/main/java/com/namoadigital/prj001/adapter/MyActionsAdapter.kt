@@ -150,13 +150,13 @@ class MyActionsAdapter(
             binding.myActionsItemTvErrorMsg.applyVisibilityIfTextExists(myAction.erroMsg)*/
             configDoneDate(myAction)
 
-            if (myAction.isMainUserTicket
-                && ConstantBaseApp.SYS_STATUS_DONE != myAction.processStatus
-            ) {
-                binding.myActionsItemIvIconMainUser.visibility = View.VISIBLE
-            } else {
-                binding.myActionsItemIvIconMainUser.visibility = View.GONE
-            }
+//            if (myAction.isMainUserTicket
+//                && ConstantBaseApp.SYS_STATUS_DONE != myAction.processStatus
+//            ) {
+//                binding.myActionsItemIvIconMainUser.visibility = View.VISIBLE
+//            } else {
+//                binding.myActionsItemIvIconMainUser.visibility = View.GONE
+//            }
             //
             binding.myActionsItemTvInternalComments.apply {
                 applyVisibilityIfTextExists(getInfoQuotesFormatted(myAction.internalComments))

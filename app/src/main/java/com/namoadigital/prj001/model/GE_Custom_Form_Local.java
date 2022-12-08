@@ -596,7 +596,8 @@ public class GE_Custom_Form_Local {
         String endDate = null;
         Integer leftIcon = null;
         String statusToUse = ConstantBaseApp.SYS_STATUS_IN_PROCESSING.equals(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)) ? ConstantBaseApp.SYS_STATUS_PROCESS : hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS);
-        if(hmAux.hasConsistentValue(GE_Custom_Form_DataDao.DATE_END)){
+        if(hmAux.hasConsistentValue(GE_Custom_Form_DataDao.DATE_END)
+        && !hmAux.get(GE_Custom_Form_DataDao.DATE_END).contains("1900-01-01")){
             endDate = ToolBox_Inf.millisecondsToString(
                 ToolBox_Inf.dateToMilliseconds(hmAux.get(GE_Custom_Form_DataDao.DATE_END)),
                 ToolBox_Inf.nlsDateFormat(context) + " HH:mm"

@@ -570,13 +570,15 @@ public class MD_Schedule_Exec {
         String customerGMT = ToolBox_Con.getPreference_Customer_TMZ(context);
         String statusToUse = ConstantBaseApp.SYS_STATUS_IN_PROCESSING.equals(status) ? ConstantBaseApp.SYS_STATUS_PROCESS : status;
         Integer midIcon = R.drawable.ic_baseline_cloud_done_24_blue;
+        Integer rightIcon = null;
         if (status != null){
             switch (status) {
                 case ConstantBaseApp.SYS_STATUS_WAITING_SYNC:
                     midIcon = R.drawable.ic_cloud_upload_24_red;
                     break;
-                case ConstantBaseApp.SYS_STATUS_NOT_EXECUTED:C:
-                midIcon = null;
+                case ConstantBaseApp.SYS_STATUS_NOT_EXECUTED:
+                case ConstantBaseApp.SYS_STATUS_CANCELLED:
+                    rightIcon = R.drawable.ic_baseline_cancel_24;
                     break;
                 case ConstantBaseApp.SYS_STATUS_ERROR:
                 case ConstantBaseApp.SYS_STATUS_IGNORED:
@@ -585,6 +587,10 @@ public class MD_Schedule_Exec {
                 case ConstantBaseApp.SYS_STATUS_IN_PROCESSING:
                 case ConstantBaseApp.SYS_STATUS_PROCESS:
                     midIcon = R.drawable.ic_baseline_cloud_upload_24_gray;
+                    rightIcon = R.drawable.ic_baseline_group_24;
+                    break;
+                case ConstantBaseApp.SYS_STATUS_SCHEDULE:
+                    rightIcon = R.drawable.ic_baseline_group_24;
                     break;
                 default:
                     midIcon = R.drawable.ic_baseline_cloud_done_24_blue;
@@ -627,7 +633,7 @@ public class MD_Schedule_Exec {
                 ConstantBaseApp.HMAUX_TRANS_LIB.get(statusToUse),
                 leftIcon,
                 midIcon,
-                R.drawable.ic_baseline_group_24,
+                rightIcon,
                 //LUCHE - getStepStartEndDateFormated ao inves do metodo scheduled, pois la espera da formtada igual exibição
                 ToolBox_Inf.getMyActionStartEndDateFormated(context, date_start + " " + customerGMT, date_end + " " + customerGMT),
                 tag_operational_desc,
@@ -682,9 +688,9 @@ public class MD_Schedule_Exec {
                 processPk,
                 statusToUse,
                 ConstantBaseApp.HMAUX_TRANS_LIB.get(statusToUse),
-                    leftIcon,
+                leftIcon,
                 midIcon,
-                    R.drawable.ic_baseline_group_24,
+                rightIcon,
                 //LUCHE - getStepStartEndDateFormated ao inves do metodo scheduled, pois la espera da formtada igual exibição
                 ToolBox_Inf.getMyActionStartEndDateFormated(context, date_start + " " + customerGMT, date_end + " " + customerGMT),
                 tag_operational_desc,
