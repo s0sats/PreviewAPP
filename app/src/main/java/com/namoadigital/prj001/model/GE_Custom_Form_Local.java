@@ -616,7 +616,13 @@ public class GE_Custom_Form_Local {
             ? R.drawable.ic_baseline_cloud_done_24_blue
             : R.drawable.ic_cloud_upload_24_red;
         //
-        int rightIcon = R.drawable.ic_baseline_person_24_secondary60;
+        Integer rightIcon = null;
+        if(ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS))
+        || ConstantBaseApp.SYS_STATUS_DONE.equals(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS))){
+            rightIcon = R.drawable.ic_baseline_check_circle_24;
+        }else {
+            rightIcon = R.drawable.ic_baseline_person_24_secondary60;
+        }
         String processPk = getFormatedPk(hmAux);
         boolean isSelectedItem = processPk.equals(lastFormSelectedPk);
         String soInfo = null;
