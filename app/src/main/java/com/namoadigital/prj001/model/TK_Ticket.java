@@ -1741,7 +1741,7 @@ public class TK_Ticket implements Cloneable, Serializable {
             !"0".equals(hmAux.get(MyActions.MY_ACTION_TYPE_FORM)),
             ToolBox_Inf.isItemLate(periodStartDate),
             ToolBox_Inf.isItemLate(lateDate),
-            processPk.equals(lastSelectedActionPk),
+                processPk.equals(lastSelectedActionPk),
                 hmAux.hasConsistentValue(TK_TicketDao.MAIN_USER) && hmAux.get(TK_TicketDao.MAIN_USER).equals(ToolBox_Con.getPreference_User_Code(context)),
                 false,
                 null,
@@ -1751,8 +1751,8 @@ public class TK_Ticket implements Cloneable, Serializable {
                 true,
                 hmAux.get(TK_TicketDao.JUSTIFY_ITEM_ID),
                 hmAux.get(TK_TicketDao.JUSTIFY_ITEM_DESC),
-                hmAux.get(TK_TicketDao.NOT_EXECUTED_COMMENTS)
-
+                hmAux.get(TK_TicketDao.NOT_EXECUTED_COMMENTS),
+                null
         );
 
         myActions.setProductCode(hmAux.hasConsistentValue(TK_TicketDao.OPEN_PRODUCT_CODE)? Integer.parseInt(hmAux.get(TK_TicketDao.OPEN_PRODUCT_CODE)) : 0);

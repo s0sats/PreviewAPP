@@ -19,6 +19,7 @@ import com.namoadigital.prj001.extensions.applyVisibilityIfSourceExists
 import com.namoadigital.prj001.extensions.applyVisibilityIfTextExists
 import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.model.MyActionsBase
+import com.namoadigital.prj001.ui.act092.utils.Act092Translate
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
 
@@ -138,6 +139,10 @@ class Act092_Adapter constructor(
                 myActionSelectSerial.setOnClickListener {
                     myActionClickListener(item, adapterPosition)
                 }
+
+                myActionsItemClInfos.setOnClickListener {
+                    myActionClickListener(item, adapterPosition)
+                }
                 //
 
                 if (item.highlightItem) {
@@ -145,6 +150,12 @@ class Act092_Adapter constructor(
                 }
 
                 //
+
+                myActionsItemWaitApprove.apply {
+                    text = hmAux[Act092Translate.CELL_WAITING_APPROVAL]
+                    visibility = if (item.containWaitingApproval) View.VISIBLE else View.GONE
+                }
+                binding.myActionsItemTvProdDesc.applyVisibilityIfTextExists(item.productDesc)
                 myActionsItemTvCode.text = item.processId
                 myActionsItemTvCode.applyVisibilityIfTextExists(item.processId)
                 if ((item.actionType == MyActions.MY_ACTION_TYPE_TICKET
@@ -229,11 +240,15 @@ class Act092_Adapter constructor(
         private fun configTvTag(myAction: MyActions) {
             with(binding) {
                 myActionsItemTvTagDesc.text = myAction.tagOperationDesc?.toUpperCase() ?: null
+                myActionsItemTvProdDesc.applyVisibilityIfTextExists(
+                    myAction.tagOperationDesc?.toUpperCase() ?: null
+                )
             }
         }
 
         fun configTvSite(myAction: MyActions) {
             with(binding) {
+                myActionsItemTvSite.applyVisibilityIfTextExists(myAction.getFormattedSiteZoneDesc())
                 myActionsItemTvSite.apply {
                     myAction.siteCode?.let {
                         if (ToolBox_Inf.equalsToLoggedSite(context, it.toString())) {
@@ -255,10 +270,10 @@ class Act092_Adapter constructor(
             with(binding) {
                 myActionsItemTvPlannedDate.apply {
                     text = myAction.plannedDate
-                    if(text.isNullOrEmpty()){
-                        visibility = View.GONE
-                    }else{
-                        visibility = View.VISIBLE
+                    visibility = if (text.isNullOrEmpty()) {
+                        View.GONE
+                    } else {
+                        View.VISIBLE
                     }
                     //
                     if (myAction.doneDate.isNullOrEmpty()) {

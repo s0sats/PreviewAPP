@@ -30,7 +30,7 @@ interface Act092_Contract {
     interface Presenter : BasePresenter<View> {
         fun getActionSelected(): MyActions?
         val serialModel: StateFlow<SerialModel>
-        fun getMyActionList(mainFocus: Boolean = false)
+        fun getMyActionList()
         fun onBackPressedClicked(bundle: Bundle)
         fun syncFiles(context: Context)
         fun getUnfocusHistoricalList(context: Context)

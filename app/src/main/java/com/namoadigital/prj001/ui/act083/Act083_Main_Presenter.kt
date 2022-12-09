@@ -108,6 +108,7 @@ class Act083_Main_Presenter(private val context: Context,
         transList.add("progress_sync_ttl")
         transList.add("progress_sync_msg")
         transList.add("site_desc_not_found_lbl")
+        transList.add("cell_waiting_approval")
         //
         transList.add("alert_ttl_exists_in_processing")
         transList.add("alert_msg_exists_in_processing")

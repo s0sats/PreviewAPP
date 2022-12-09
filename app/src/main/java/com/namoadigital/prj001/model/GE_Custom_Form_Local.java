@@ -656,20 +656,22 @@ public class GE_Custom_Form_Local {
                 new MD_Product_SerialDao(context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM),
-                hmAux.hasConsistentValue(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE) ? Long.parseLong(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE)): 0,
+                hmAux.hasConsistentValue(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE) ? Long.parseLong(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE)) : 0,
                 hmAux.get(GE_Custom_Form_LocalDao.SERIAL_ID)
         );
         //
+        boolean waiting_approve = ConstantBaseApp.SYS_STATUS_WAITING_APPROVAL.equals(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS));
+        //
         MyActions myActions = new MyActions(
-            MyActions.MY_ACTION_TYPE_FORM,
-            processPk,
-            null,
-            statusToUse,
-            ConstantBaseApp.HMAUX_TRANS_LIB.get(statusToUse),
-            leftIcon,
-            midIcon,
-            rightIcon,
-            ToolBox_Inf.getMyActionStartEndDateFormated(context, hmAux.get(GE_Custom_Form_DataDao.DATE_START), hmAux.get(GE_Custom_Form_DataDao.DATE_START)),
+                MyActions.MY_ACTION_TYPE_FORM,
+                processPk,
+                null,
+                statusToUse,
+                ConstantBaseApp.HMAUX_TRANS_LIB.get(statusToUse),
+                leftIcon,
+                midIcon,
+                rightIcon,
+                ToolBox_Inf.getMyActionStartEndDateFormated(context, hmAux.get(GE_Custom_Form_DataDao.DATE_START), hmAux.get(GE_Custom_Form_DataDao.DATE_START)),
             hmAux.get(GE_Custom_Form_LocalDao.TAG_OPERATIONAL_DESC),
             hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_DESC),
             hmAux.get(GE_Custom_Form_LocalDao.SERIAL_ID),
@@ -688,7 +690,7 @@ public class GE_Custom_Form_Local {
             ConstantBaseApp.SYS_STATUS_PROCESS.equals(statusToUse),
             false,
             false,
-            isSelectedItem,
+                isSelectedItem,
                 true,
                 false,
                 null,
@@ -698,7 +700,8 @@ public class GE_Custom_Form_Local {
                 true,
                 null,
                 null,
-                null
+                null,
+                waiting_approve
         );
         myActions.setProductCode(Integer.parseInt(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE)));
         myActions.setCustomFormDesc(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC));

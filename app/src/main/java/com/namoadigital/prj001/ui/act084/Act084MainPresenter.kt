@@ -90,6 +90,7 @@ class Act084MainPresenter(
         transList.add("alert_schedule_ticket_not_found_ttl")
         transList.add("alert_schedule_ticket_not_found_msg")
         transList.add("cell_justify_lbl")
+        transList.add("cell_waiting_approval")
         //
         return ToolBox_Inf.setLanguage(
             context,

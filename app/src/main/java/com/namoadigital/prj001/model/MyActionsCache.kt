@@ -48,7 +48,6 @@ class MyActionsCache(
     @SerializedName("justify_item_id") val justify_item_id: String?,
     @SerializedName("justify_item_desc") val justify_item_desc: String?,
     @SerializedName("not_executed_comments") val not_executed_comments: String?,
-
     ) {
     fun toMyActions(context: Context, productCode: Int, serialId: String): MyActions {
         val processLeftIcon = getLeftIcon()
@@ -74,6 +73,9 @@ class MyActionsCache(
             formattedDoneDate =
                 ToolBox_Inf.getMyActionStartEndDateFormated(context, doneDateStart, doneDateEnd)
         }
+        //
+        //
+        val waiting_approve = processStatus == ConstantBaseApp.SYS_STATUS_WAITING_APPROVAL
         //
         var myActions = MyActions(
             type,
@@ -113,7 +115,8 @@ class MyActionsCache(
             false,
             justify_item_id,
             justify_item_desc,
-            not_executed_comments
+            not_executed_comments,
+            waiting_approve
         )
         myActions.productCode = productCode
         return myActions
