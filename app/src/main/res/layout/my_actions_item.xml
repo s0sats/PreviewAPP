@@ -165,7 +165,8 @@
                 android:id="@+id/layout_tag_desc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp">
+                android:visibility="visible"
+                android:paddingTop="12dp">
 
                 <TextView
                     android:id="@+id/my_actions_item_tv_tag_desc"
@@ -196,24 +197,24 @@
                     app:layout_constraintStart_toEndOf="@+id/my_actions_item_tv_tag_desc"
                     app:layout_constraintTop_toTopOf="parent" />
 
-
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="12dp" />
-
-            <TextView
-                android:id="@+id/my_actions_item_tv_origin"
-                style="@style/TextAppearance.Material3.BodySmall"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Abertura de Chamado de Avaria"
-                android:textColor="@color/m3_namoa_onSurfaceVariant" />
+                android:paddingTop="12dp"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/my_actions_item_tv_action_process"
+                <TextView
+                    android:id="@+id/my_actions_item_tv_origin"
+                    style="@style/TextAppearance.Material3.BodySmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Abertura de Chamado de Avaria"
+                    android:textColor="@color/m3_namoa_onSurfaceVariant" />
+
+                <TextView
+                    android:id="@+id/my_actions_item_tv_action_process"
                 style="@style/TextAppearance.Material3.BodyMedium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -228,41 +229,51 @@
                 android:text="Etapa: 2. Pedido de insumos"
                 android:textColor="@color/m3_namoa_onSurface" />
 
-            <TextView
-                android:id="@+id/my_actions_item_tv_form_no_finish"
-                style="@style/TextAppearance.Material3.BodySmall"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Contém form nao concluido!"
-                android:textStyle="bold"
-                android:textColor="#855400" />
+                <TextView
+                    android:id="@+id/my_actions_item_tv_form_no_finish"
+                    style="@style/TextAppearance.Material3.BodySmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Contém form nao concluido!"
+                    android:textStyle="bold"
+                    android:textColor="#855400" />
+
+                <TextView
+                    android:id="@+id/my_actions_item_wait_approve"
+                    style="@style/TextAppearance.Material3.BodySmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Aguardando aprovacao"
+                    android:visibility="visible"
+                    android:textColor="@color/m3_namoa_onSurfaceVariant" />
 
 
-            <TextView
-                android:id="@+id/my_actions_item_tv_internal_comments"
-                style="@style/TextAppearance.Material3.BodySmall"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="&quot;Comentario&quot;"
-                android:textColor="@color/m3_namoa_onSurfaceVariant"
-                android:paddingTop="16dp" />
+                <TextView
+                    android:id="@+id/my_actions_item_tv_internal_comments"
+                    style="@style/TextAppearance.Material3.BodySmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="&quot;Comentario&quot;"
+                    android:textColor="@color/m3_namoa_onSurfaceVariant"
+                    android:paddingTop="16dp" />
             <TextView
                 android:id="@+id/my_actions_item_tv_justify"
                 style="@style/TextAppearance.Material3.BodySmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="&quot;Comentario&quot;"
+                android:text="Justificativa: Descricao da justificatia"
                 android:textColor="@color/m3_namoa_onSurfaceVariant"
                 android:paddingTop="16dp" />
-            <TextView
-                android:id="@+id/my_actions_item_tv_not_executed_comments"
-                style="@style/TextAppearance.Material3.BodySmall"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="&quot;Comentario&quot;"
-                android:textColor="@color/m3_namoa_onSurfaceVariant"
-                 />
 
+                <TextView
+                    android:id="@+id/my_actions_item_tv_not_executed_comments"
+                    style="@style/TextAppearance.Material3.BodySmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Comentario da justificativa"
+                    android:textColor="@color/m3_namoa_onSurfaceVariant" />
+
+            </LinearLayout>
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -190,7 +190,7 @@ class Act092_Main : BaseActivityMvp
                 } else {
                     ToolBox.toastMSG(context, hmAux_Trans[Act092Translate.DIALOG_UPDATE_MSG])
                     _focusState.value.mainUser = false
-                    presenter.getMyActionList(true)
+                    presenter.getMyActionList()
                 }
                 return
             }
@@ -265,9 +265,9 @@ class Act092_Main : BaseActivityMvp
                 )
                 disableMainAndOtherActions()
                 if (_focusState.value.userFocus) {
-                    presenter.otherActionFlow(context)
-                } else {
                     presenter.getMyActionList()
+                } else {
+                    presenter.otherActionFlow(context)
                 }
             }
             btnCreateAction.setOnClickListener {
@@ -403,35 +403,49 @@ class Act092_Main : BaseActivityMvp
         val focusState = _focusState.value
 
         val btnBackground =
-            if (!focusState.userFocus) ColorStateList.valueOf(resources.getColor(R.color.padrao_TRANSPARENT))
-            else ColorStateList.valueOf(resources.getColor(R.color.m3_namoa_inverseSurface))
+            if (!focusState.userFocus) {
+                ColorStateList.valueOf(resources.getColor(R.color.m3_namoa_inverseSurface))
+            } else {
+                ColorStateList.valueOf(resources.getColor(R.color.padrao_TRANSPARENT))
+            }
 
         val mainUserCircle =
-            if (!focusState.userFocus) resources.getDrawable(R.drawable.my_action_toogle_default) else resources.getDrawable(
-                R.drawable.my_action_toogle_disable
-            )
+            if (!focusState.userFocus) {
+                resources.getDrawable(
+                    R.drawable.my_action_toogle_disable
+                )
+            } else {
+                resources.getDrawable(R.drawable.my_action_toogle_default)
+            }
         val mainUserPerson =
-            if (focusState.userFocus) R.drawable.ic_person_disable_24dp
-            else R.drawable.ic_person_black_24dp
+            if (focusState.userFocus) {
+                R.drawable.ic_person_black_24dp
+            } else {
+                R.drawable.ic_person_disable_24dp
+            }
 
         val textColor =
-            if (!focusState.userFocus) resources.getColor(R.color.m3_namoa_inverseSurface) else resources.getColor(
-                R.color.m3_namoa_surface
-            )
+            if (!focusState.userFocus) {
+                resources.getColor(
+                    R.color.m3_namoa_surface
+                )
+            } else {
+                resources.getColor(R.color.m3_namoa_inverseSurface)
+            }
 
         with(binding) {
             btnOtherSerial.apply {
                 backgroundTintList = btnBackground
                 iconTint = ColorStateList.valueOf(textColor)
                 setTextColor(textColor)
-                strokeWidth = if (focusState.userFocus) 0 else 1
+                strokeWidth = if (focusState.userFocus) 1 else 0
             }
 
             mainUserSelection.apply {
-                isEnabled = !focusState.userFocus
+                isEnabled = focusState.userFocus
                 background = mainUserCircle
                 setImageResource(mainUserPerson)
-                isClickable = !focusState.userFocus
+                isClickable = focusState.userFocus
             }
 
         }

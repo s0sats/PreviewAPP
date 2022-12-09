@@ -24,7 +24,7 @@ import com.namoadigital.prj001.model.MyActionsFormButton
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
 
-class MyActionsAdapter(
+class MyActionsAdapter constructor(
     private val myActions: List<MyActionsBase>,
     private val hmAuxTrans: HMAux,
     val tagDesc: String,
@@ -91,6 +91,16 @@ class MyActionsAdapter(
             binding.myActionSelectSerial.setOnClickListener {
                 myActionClickListener(myAction)
             }
+
+            binding.myActionsItemClInfos.setOnClickListener {
+                myActionClickListener(myAction)
+            }
+
+            binding.myActionsItemWaitApprove.apply {
+                text = hmAuxTrans["cell_waiting_approval"]
+                visibility = if (myAction.containWaitingApproval) View.VISIBLE else View.GONE
+            }
+
             mySerialClickListener?.let { mySerial ->
                 binding.act083SerialInfo.setOnClickListener {
                     mySerial(myAction, position)
@@ -124,7 +134,7 @@ class MyActionsAdapter(
             binding.myActionsItemIvIconMainUser.applyVisibilityIfSourceExists(myAction.processRightIcon)
             //
             configTvTag(myAction)
-            binding.myActionsItemTvProdDesc.text = myAction.productDesc
+            binding.myActionsItemTvProdDesc.applyVisibilityIfTextExists(myAction.productDesc)
             binding.myActionsItemTvSerialId.text = myAction.serialId
             if(ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_MANUAL != myAction.ticketOriginType){
                 configTvOriginView(myAction)

@@ -143,7 +143,7 @@ class Act092Presenter constructor(
         return ticketBundle(ticketPrefix, ticketCode)
     }
 
-    override fun getMyActionList(isFocus: Boolean) {
+    override fun getMyActionList() {
         CoroutineScope(Dispatchers.IO).launch {
             loadFilters()
             actionUseCases.localTicket(
@@ -421,7 +421,7 @@ class Act092Presenter constructor(
         )
 
         if (fileExists) {
-            getMyActionList(true)
+            getMyActionList()
         } else {
             getFileOnline(context)
         }

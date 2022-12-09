@@ -42,6 +42,7 @@ data class MyActions(
     val justify_item_id: String?,
     val justify_item_desc: String?,
     val not_exec_comments: String?,
+    val waiting_approve: Boolean? = null,
 ) : MyActionsBase() {
 
 
@@ -62,6 +63,8 @@ data class MyActions(
     fun getSplippedPk(): List<String> {
         return processPk.split(".")
     }
+
+    val containWaitingApproval = waiting_approve ?: false
 
     fun getFormattedSiteZoneDesc(): String? {
         return zoneDesc?.let {
