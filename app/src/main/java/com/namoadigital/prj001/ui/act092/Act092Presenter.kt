@@ -1084,6 +1084,7 @@ class Act092Presenter constructor(
             Act092Translate.ALERT_FORM_AP_MENU_PROFILE_NOT_FOUND_MSG,
             Act092Translate.ALERT_TICKET_MENU_PROFILE_NOT_FOUND_MSG,
             Act092Translate.DIALOG_OTHER_ACTIONS_EMPTY_LIST_MSG,
+            Act092Translate.CELL_WAITING_APPROVAL,
             "progress_ticket_save_ttl",
             "progress_ticket_save_msg",
             "progress_form_save_ttl",

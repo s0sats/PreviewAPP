@@ -183,7 +183,6 @@ class Act092_Adapter constructor(
                 myActionsItemTvSerialId.applyVisibilityIfTextExists(item.serialId)
                 if (ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_MANUAL != item.ticketOriginType) {
                     configTvOriginView(item)
-                    myActionsItemTvOrigin.visibility = View.VISIBLE
                 } else {
                     myActionsItemTvOrigin.visibility = View.GONE
                 }
@@ -355,6 +354,7 @@ class Act092_Adapter constructor(
             with(binding) {
                 myActionsItemTvOrigin.apply {
                     text = myAction.originDescriptor
+                    applyVisibilityIfTextExists(myAction.originDescriptor)
 //                Log.d("TESTE_ORIGEM", """isTicketOriginManulOrBarcode: ${isTicketOriginManulOrBarcode(myAction)}""" )
 //                Log.d("TESTE_ORIGEM", """originDescriptor: ${myAction.originDescriptor}""" )
                     ellipsize = if (isTicketOriginManulOrBarcode(myAction)) {
