@@ -603,7 +603,8 @@ public class GE_Custom_Form_Local {
                 ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
             );
             //
-            if(ConstantBaseApp.SYS_STATUS_DONE.equals(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS))) {
+            if(ConstantBaseApp.SYS_STATUS_DONE.equals(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS))
+            || ConstantBaseApp.SYS_STATUS_WAITING_APPROVAL.equals(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS))) {
                 leftIcon =
                         hmAux.hasConsistentValue(SqlAct084_004.FIELD_NC) && "1".equals(hmAux.get(SqlAct084_004.FIELD_NC))
                                 ? R.drawable.ic_baseline_report_24_yellow

@@ -134,10 +134,10 @@ class MyActionsCache(
 
     private fun getLeftIcon(): Int? {
 
-        return if(hasNc == 0){
-            null
-        }else{
+        return if(hasNc == 1){
             R.drawable.ic_baseline_report_24_yellow
+        }else{
+            null
         }
     }
 
