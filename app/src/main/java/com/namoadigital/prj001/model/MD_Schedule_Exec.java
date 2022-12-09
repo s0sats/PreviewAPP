@@ -592,6 +592,9 @@ public class MD_Schedule_Exec {
                 case ConstantBaseApp.SYS_STATUS_SCHEDULE:
                     rightIcon = R.drawable.ic_baseline_group_24;
                     break;
+                case ConstantBaseApp.SYS_STATUS_DONE:
+                    rightIcon = R.drawable.ic_baseline_check_circle_24;
+                    break;
                 default:
                     midIcon = R.drawable.ic_baseline_cloud_done_24_blue;
                     break;

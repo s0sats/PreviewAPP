@@ -86,7 +86,7 @@ class MyActionsCache(
             processRightIcon,
             formattedPlannedDate ?: "",
             tagOperationDesc,
-            processDesc,
+            "",
             serialId,
             originDescriptor ?: "",
             processDesc,
