@@ -32,53 +32,39 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <com.google.android.material.chip.ChipGroup
-                    android:id="@+id/act084_cg_filter"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:paddingTop="2dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginTop="8dp"
-                    >
-
-<!--                    <TextView-->
-<!--                        android:id="@+id/act084_tv_filter1"-->
-<!--                        style="@style/TextViewChips"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:text="200.SHOPPING" />-->
-
-
-                </com.google.android.material.chip.ChipGroup>
-
-                <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-                    android:id="@+id/act084_mket_filter"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/act084_til_filter"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="12dp"
                     android:layout_marginEnd="8dp"
-                    android:hint="Search Desc - Trad"
-                    android:inputType="text"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     app:layout_constraintEnd_toStartOf="@id/act084_chk_nc_filter"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/act084_cg_filter"
-                    app:mBARCODE="false"
-                    app:mNFC="false"
-                    app:mOCR="false" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    >
+
+                    <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                        android:id="@+id/act084_mket_filter"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        app:mBARCODE="false"
+                        app:mNFC="false"
+                        app:mOCR="false" />
+                </com.google.android.material.textfield.TextInputLayout>
+
                 <ImageView
                     android:id="@+id/act084_chk_nc_filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="12dp"
                     android:background="@drawable/my_action_toogle_default"
-                    android:padding="4dp"
+                    android:padding="8dp"
                     android:src="@drawable/ic_baseline_report_24"
-                    app:layout_constraintTop_toTopOf="@id/act084_mket_filter"
-                    app:layout_constraintBottom_toBottomOf="@id/act084_mket_filter"
+                    app:layout_constraintTop_toTopOf="@id/act084_til_filter"
+                    app:layout_constraintBottom_toBottomOf="@id/act084_til_filter"
                     app:layout_constraintEnd_toEndOf="parent" />
 
                 <RadioGroup
@@ -88,7 +74,7 @@
                     android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/act084_mket_filter">
+                    app:layout_constraintTop_toBottomOf="@id/act084_til_filter">
 
                     <RadioButton
                         android:id="@+id/act084_tab_my_actions"
@@ -101,7 +87,6 @@
                         android:gravity="center"
                         android:textColor="@color/my_tickets_radio"
                         tools:text="concluidos"
-                        android:textAllCaps="true"
                         android:textStyle="bold"
                         />
 
@@ -119,7 +104,6 @@
                         android:gravity="center"
                         android:textColor="@color/my_tickets_radio"
                         tools:text="descartados"
-                        android:textAllCaps="true"
                         android:textStyle="bold"
                         />
 
@@ -160,7 +144,7 @@
             android:id="@+id/act084_pb_load"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:indeterminateTint="@color/namoa_amount_pipeline_background_btn"
+            android:indeterminateTint="@color/my_action_theme_tab_selected"
             android:indeterminateTintMode="src_in"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="@+id/act084_rv_actions_list"

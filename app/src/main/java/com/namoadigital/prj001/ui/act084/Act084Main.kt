@@ -107,7 +107,7 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
 
     private fun setLabels() {
         with(binding) {
-            act084MketFilter.hint = hmAux_Trans["filter_hint"]
+            act084TilFilter.hint = hmAux_Trans["filter_hint"]
             act084TabMyActions.text = hmAux_Trans["tab_done_lbl"]
             act084TabOtherActions.text = hmAux_Trans["tab_discard_lbl"]
             act084TvNoResult.text = hmAux_Trans["no_record_lbl"]
