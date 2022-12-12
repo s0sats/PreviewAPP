@@ -119,7 +119,9 @@ class Act092_Adapter constructor(
                 serialDetail.visibility = View.GONE
                 myActionSelectSerial.apply {
                     visibility = View.VISIBLE
-                    if (item.actionType == MyActions.MY_ACTION_TYPE_SCHEDULE && !item.hasUserFocus) {
+                    if (item.actionType == MyActions.MY_ACTION_TYPE_SCHEDULE && !item.hasUserFocus
+                        || item.waiting_approve == true
+                    ) {
                         visibility = View.GONE
                     } else if (!item.pdfUrl.isNullOrEmpty()
                         || MyActions.MY_ACTION_TYPE_TICKET_CACHE == item.actionType
@@ -141,7 +143,9 @@ class Act092_Adapter constructor(
                 }
 
                 myActionsItemClInfos.setOnClickListener {
-                    myActionClickListener(item, adapterPosition)
+                    if(myActionSelectSerial.visibility == View.VISIBLE) {
+                        myActionClickListener(item, adapterPosition)
+                    }
                 }
                 //
 

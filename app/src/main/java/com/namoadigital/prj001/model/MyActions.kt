@@ -88,6 +88,7 @@ data class MyActions(
                 "$internalComments|" +
                 "$focusStepDesc|" +
                 "$siteDesc|" +
+                "$classId|" +
                 "$zoneDesc|" +
                 "$serviceOrderCode"
                     .replace("null|", "")
