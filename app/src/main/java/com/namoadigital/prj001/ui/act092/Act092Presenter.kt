@@ -886,7 +886,7 @@ class Act092Presenter constructor(
                 ) {
                     view.onState(
                         Act092UiEvent.OpenDialog(
-                            DialogType.DEFAULT_OK(
+                            DialogType.PROCESS(
                                 Act092Translate.PROGRESS_SYNC_TTL,
                                 Act092Translate.PROGRESS_SYNC_MSG
                             )
@@ -898,6 +898,8 @@ class Act092Presenter constructor(
                         hmAux_Trans,
                         _serialModel.value.productCode?.toLong() ?: -1L
                     )
+                }else{
+                    validateCreateNewForm()
                 }
             }
         }
