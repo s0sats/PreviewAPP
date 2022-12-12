@@ -86,16 +86,17 @@ class ListMyActionUseCases constructor(
                     }
                     //
                     val unfocusList = mutableListOf<MyActionsBase>()
-                    unfocusList.addAll(
-                        repository.getUnfocusAndHistorical(
-                            serialModel.productCode ?: -1,
-                            (serialModel.serialCode ?: -1).toLong(),
-                            serialModel.serialId ?: ""
+                    if(serialModel.userFocus == 0) {
+                        unfocusList.addAll(
+                            repository.getUnfocusAndHistorical(
+                                serialModel.productCode ?: -1,
+                                (serialModel.serialCode ?: -1).toLong(),
+                                serialModel.serialId ?: ""
+                            )
                         )
-                    )
-
+                    }
                     //
-                    if (unfocusList.size > 0 && serialModel.userFocus == 1) {
+                    if (unfocusList.size > 0) {
                         val unfocusTemp = mutableListOf<MyActions>()
 
                         val focusTemp = focusList.map {

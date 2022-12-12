@@ -4,6 +4,6 @@ data class FilterFocusUser(
     var mainUser: Boolean = false,
     var userFocus: Boolean = true,
 ) {
-    val userFocusInt = if (userFocus) 0 else 1
+    val userFocusInt = if (userFocus) 1 else 0
 
 }
