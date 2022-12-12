@@ -12,6 +12,7 @@ import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.R
+import com.namoadigital.prj001.dao.GE_Custom_Form_BlobDao
 import com.namoadigital.prj001.dao.MD_Product_SerialDao
 import com.namoadigital.prj001.databinding.Act092MainBinding
 import com.namoadigital.prj001.model.MyActionFilterParam
@@ -130,12 +131,14 @@ class Act092_Main : BaseActivityMvp
     override fun processError_1(mLink: String?, mRequired: String?) {
         super.processError_1(mLink, mRequired)
         presenter.newActionClick = false
+        presenter.actionSelectedPosition = -1
         progressDialog.dismiss()
     }
 
     override fun processCustom_error(mLink: String?, mRequired: String?) {
         super.processCustom_error(mLink, mRequired)
         presenter.newActionClick = false
+        presenter.actionSelectedPosition = -1
         progressDialog.dismiss()
     }
 
@@ -200,7 +203,45 @@ class Act092_Main : BaseActivityMvp
                 progressDialog.dismiss()
                 presenter.extractSearchResult(mLink, presenter.getActionSelected())
             }
-
+            WS_Generate_NForm_PDF::class.java.name ->{
+                //
+                progressDialog.dismiss()
+                if (hmAux != null && hmAux.hasConsistentValue(WS_Generate_NForm_PDF.NFORM_PK_KEY)
+                    && hmAux.hasConsistentValue(GE_Custom_Form_BlobDao.BLOB_URL)
+                ) {
+                    //
+                    val position = presenter.actionSelectedPosition
+                    if(position >0) {
+                        var myActionSelected = mAdapter.getActionByPosition(position)
+                        myActionSelected?.let{
+                            myActionSelected.pdfUrl = hmAux[GE_Custom_Form_BlobDao.BLOB_URL]
+                            presenter.executeNFormPDFDownload(context,myActionSelected,position)
+                        }?: ToolBox.alertMSG(
+                                context,
+                                hmAux_Trans["alert_generate_form_pdf_error_ttl"],
+                                hmAux_Trans["alert_generate_form_pdf_error_msg"],
+                                null,
+                                0
+                            )
+                    }else{
+                        ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans["alert_generate_form_pdf_error_ttl"],
+                            hmAux_Trans["alert_generate_form_pdf_error_msg"],
+                            null,
+                            0
+                        )
+                    }
+                } else {
+                    ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans["alert_generate_form_pdf_error_ttl"],
+                        hmAux_Trans["alert_generate_form_pdf_error_msg"],
+                        null,
+                        0
+                    )
+                }
+            }
             else -> {
                 wsProcess.value = ""
                 if (progressDialog.isShowing) progressDialog.dismiss()

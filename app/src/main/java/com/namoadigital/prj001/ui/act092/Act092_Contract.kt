@@ -46,5 +46,6 @@ interface Act092_Contract {
         fun callTicketSave(context: Context)
         fun otherActionFlow(context: Context)
         fun extractSearchResult(result: String?, myActionSelected: MyActions?)
+        fun executeNFormPDFGeneration(context: Context, action: MyActions, position: Int)
     }
 }

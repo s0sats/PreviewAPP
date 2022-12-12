@@ -440,4 +440,12 @@ class Act092_Adapter constructor(
     override fun getFilter(): Filter {
         return mFilter
     }
+
+    fun getActionByPosition(position: Int):MyActions?{
+        val item = filterList[position]
+        if (item is SerialViewItem.ContentItem) {
+            return item.item as MyActions
+        }
+        return null
+    }
 }

@@ -15,6 +15,7 @@ import com.namoadigital.prj001.core.IResult.Companion.loading
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.model.action_serial.ActionsCache
+import com.namoadigital.prj001.receiver.WBR_Generate_NForm_PDF
 import com.namoadigital.prj001.receiver.WBR_Save
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save
 import com.namoadigital.prj001.service.*
@@ -69,6 +70,7 @@ class Act092Presenter constructor(
     private val translateResource: TranslateResource,
 ) : Act092_Contract.Presenter {
 
+    var actionSelectedPosition: Int = -1
     private var actionSelected: MyActions? = null
 
     private lateinit var view: Act092_Contract.View
@@ -283,8 +285,13 @@ class Act092Presenter constructor(
             }
 
             MyActions.MY_ACTION_TYPE_FORM -> {
-                if(!action.pdfUrl.isNullOrEmpty()){
-                    executeNFormPDFGeneration(context, action, position)
+                if(!action.pdfName.isNullOrEmpty()){
+                    if(!action.pdfUrl.isNullOrEmpty()) {
+                        executeNFormPDFDownload(context, action, position)
+                    }else{
+                        actionSelectedPosition = position
+                        executeNFormPDFGeneration(context, action, position)
+                    }
                 }else{
                     view.onState(
                         Act092UiEvent.CallAct(
@@ -1037,6 +1044,30 @@ class Act092Presenter constructor(
         }
     }
 
+    override fun executeNFormPDFGeneration(context: Context, action: MyActions, position: Int) {
+
+        if (ToolBox_Con.isOnline(context)) {
+            view.wsProcess.value = WS_Generate_NForm_PDF::class.java.name
+            //
+            view.showPD(
+                hmAux_Trans["dialog_generate_form_pdf_ttl"],
+                hmAux_Trans["dialog_generate_form_pdf_start"]
+            )
+            //
+            val mIntent = Intent(context, WBR_Generate_NForm_PDF::class.java)
+            val bundle = Bundle()
+            //
+            val nformPkFormatted = """${ToolBox_Con.getPreference_Customer_Code(context)}|${action.processPk.replace(".", "|")}"""
+            bundle.putString(WS_Generate_NForm_PDF.NFORM_PK_KEY, nformPkFormatted)
+            //
+            mIntent.putExtras(bundle)
+            //
+            context.sendBroadcast(mIntent)
+        } else {
+            ToolBox_Inf.showNoConnectionDialog(context)
+        }
+    }
+
     override fun setView(view: Act092_Contract.View) {
         this.view = view
     }
@@ -1114,8 +1145,8 @@ class Act092Presenter constructor(
         }
     }
 
-    fun executeNFormPDFGeneration(context: Context, myAction: MyActions, position: Int) {
-
+    fun executeNFormPDFDownload(context: Context, myAction: MyActions, position: Int) {
+        actionSelectedPosition = -1
         if (ToolBox_Con.isOnline(context)) {
             val pdfFile = File(ConstantBaseApp.CACHE_PATH + "/" + myAction.pdfName)
             if(pdfFile.exists() && pdfFile.isFile){
