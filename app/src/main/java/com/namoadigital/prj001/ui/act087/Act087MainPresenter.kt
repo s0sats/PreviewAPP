@@ -611,20 +611,20 @@ class Act087MainPresenter(
      * @param anyDataChanged Flag que indica se houve alteracao nas infos
      *
      */
-    override fun onBackPressedClicked(anyDataChanged: Boolean) {
+    override fun onBackPressedClicked(anyDataChanged: Boolean, actRequest: String) {
         when(anyDataChanged){
             true ->{
                 mView.showAlert(
                     hmAuxTrans["alert_unsaved_data_will_be_lost_ttl"],
                     hmAuxTrans["alert_unsaved_data_will_be_lost_confirm"],
                     DialogInterface.OnClickListener { _, _ ->
-                        checkBackFLow()
+                        checkBackFLow(actRequest)
                     },
                     1
                 )
             }
             else ->{
-                checkBackFLow()
+                checkBackFLow(actRequest)
                 }
         }
 
@@ -633,11 +633,15 @@ class Act087MainPresenter(
     /**
      * Fun que valida qual o fluxo de volta e o executa
      */
-    private fun checkBackFLow() {
+    private fun checkBackFLow(actRequest: String) {
         if (mView.isTicketBackFLow()) {
             mView.callAct070()
         } else {
-            mView.callAct083()
+            when(actRequest){
+                ConstantBaseApp.ACT083 -> mView.callAct083()
+                ConstantBaseApp.ACT092 -> mView.callAct092()
+                else -> mView.callAct005()
+            }
         }
     }
 }

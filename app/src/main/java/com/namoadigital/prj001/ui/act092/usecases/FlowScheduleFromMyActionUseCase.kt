@@ -10,6 +10,7 @@ import com.namoadigital.prj001.model.MD_Schedule_Exec
 import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.ui.act092.data.repository.ActionSerialRepository
 import com.namoadigital.prj001.util.Constant
+import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 import kotlinx.coroutines.flow.Flow
@@ -33,52 +34,68 @@ class FlowScheduleFromMyActionUseCase constructor(
         return flow {
             val scheduleExec = getScheduleFromMyActionUseCase(input)
             scheduleExec?.let { schedule ->
-
-                if (isScheduleSiteDifferentThanLogged(input.siteCode, context)) {
-                    if (hasScheduleSiteAccess(input.siteCode.toString(), repository)) {
-                        emit(failed(ScheduleFormException(SITE_RESTRICTION_CONFIRM))) //fazer acao na tela principal
-                    } else {
-                        emit(failed(ScheduleFormException(SITE_RESTRICTION_NO_ACCESS)))
-                    }
-                } else if (isAnyFormInProcessing(schedule)) {
-                    emit(failed(ScheduleFormException(MODULE_CHECKLIST_FORM_IN_PROCESSING)))
-                } else {
-                    if (ToolBox_Inf.isConcurrentBySiteLicense(context) && ToolBox_Inf.isSiteBlockedOrLimitExecutionReached(
-                            context
+                if(scheduleExec.status != null
+                && scheduleExec.status != ConstantBaseApp.SYS_STATUS_SCHEDULE
+                && scheduleExec.status != ConstantBaseApp.SYS_STATUS_CANCELLED
+                && scheduleExec.status != ConstantBaseApp.SYS_STATUS_REJECTED
+                && scheduleExec.status != ConstantBaseApp.SYS_STATUS_IGNORED
+                && scheduleExec.status != ConstantBaseApp.SYS_STATUS_NOT_EXECUTED){
+                    emit(
+                        success(
+                            FlowScheduleParamReturn(
+                                actType = Constant.ACT011,
+                                productSerial = serialHasStructure(input).second!!,
+                                scheduleExec = schedule
+                            )
                         )
-                    ) {
-                        emit(failed(ScheduleFormException(SERIAL_SITE_OUT_OF_LICENSE)))
+                    )
+                }else {
+                    if (isScheduleSiteDifferentThanLogged(input.siteCode, context)) {
+                        if (hasScheduleSiteAccess(input.siteCode.toString(), repository)) {
+                            emit(failed(ScheduleFormException(SITE_RESTRICTION_CONFIRM))) //fazer acao na tela principal
+                        } else {
+                            emit(failed(ScheduleFormException(SITE_RESTRICTION_NO_ACCESS)))
+                        }
+                    } else if (isAnyFormInProcessing(schedule)) {
+                        emit(failed(ScheduleFormException(MODULE_CHECKLIST_FORM_IN_PROCESSING)))
                     } else {
-                        if (repository.scheduleIsOsForm(
-                                schedule.custom_form_type.toString(),
-                                schedule.custom_form_code.toString(),
-                                schedule.custom_form_version.toString()
+                        if (ToolBox_Inf.isConcurrentBySiteLicense(context) && ToolBox_Inf.isSiteBlockedOrLimitExecutionReached(
+                                context
                             )
                         ) {
-                            if (serialHasStructure(input).first) {
+                            emit(failed(ScheduleFormException(SERIAL_SITE_OUT_OF_LICENSE)))
+                        } else {
+                            if (repository.scheduleIsOsForm(
+                                    schedule.custom_form_type.toString(),
+                                    schedule.custom_form_code.toString(),
+                                    schedule.custom_form_version.toString()
+                                )
+                            ) {
+                                if (serialHasStructure(input).first) {
+                                    emit(
+                                        success(
+                                            FlowScheduleParamReturn(
+                                                actType = Constant.ACT087,
+                                                productSerial = serialHasStructure(input).second!!,
+                                                scheduleExec = schedule
+                                            )
+                                        )
+                                    )
+                                } else {
+                                    emit(failed(ScheduleFormException(SERIAL_WITHOUT_STRUCTURE)))
+                                }
+
+                            } else {
                                 emit(
                                     success(
                                         FlowScheduleParamReturn(
-                                            actType = Constant.ACT087,
+                                            actType = Constant.ACT011,
                                             productSerial = serialHasStructure(input).second!!,
                                             scheduleExec = schedule
                                         )
                                     )
                                 )
-                            } else {
-                                emit(failed(ScheduleFormException(SERIAL_WITHOUT_STRUCTURE)))
                             }
-
-                        } else {
-                            emit(
-                                success(
-                                    FlowScheduleParamReturn(
-                                        actType = Constant.ACT011,
-                                        productSerial = serialHasStructure(input).second!!,
-                                        scheduleExec = schedule
-                                    )
-                                )
-                            )
                         }
                     }
                 }

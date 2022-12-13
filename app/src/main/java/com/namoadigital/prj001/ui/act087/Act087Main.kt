@@ -24,6 +24,7 @@ import com.namoadigital.prj001.ui.act011.frags.Act011BaseFrgInteraction
 import com.namoadigital.prj001.ui.act011.frags.Act011BaseFrgInteractionNavegation
 import com.namoadigital.prj001.ui.act070.Act070_Main
 import com.namoadigital.prj001.ui.act083.Act083_Main
+import com.namoadigital.prj001.ui.act092.ui.Act092_Main
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -92,6 +93,7 @@ class Act087Main : Base_Activity_Frag(),
         )
     }
 
+    private var actRequest: String = ConstantBaseApp.ACT005
     private var customFormCode: Int = -1
     private var customFormType: Int = -1
     private var customFormVersion: Int = -1
@@ -236,6 +238,10 @@ class Act087Main : Base_Activity_Frag(),
                     act083Bundle?.putSerializable(
                         MyActionFilterParam.MY_ACTION_FILTER_PARAM,
                         ToolBox_Inf.getMyActionFilterParam(bundle)
+                    )
+                    actRequest = bundle.getString(
+                        ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
+                        ConstantBaseApp.ACT005
                     )
                 }
             }
@@ -433,7 +439,7 @@ class Act087Main : Base_Activity_Frag(),
         }else{
             mFormHeaderFragListener.isAnyDataChanged()
         }
-        mPresenter.onBackPressedClicked(anyDataChanged)
+        mPresenter.onBackPressedClicked(anyDataChanged, actRequest)
     }
 
     override fun callAct083() {
@@ -486,7 +492,18 @@ class Act087Main : Base_Activity_Frag(),
         }
     }
 
-    private fun callAct005() {
+
+    override fun callAct092() {
+        val mIntent = Intent(context, Act092_Main::class.java)
+        mIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        act083Bundle!!.remove(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW)
+        bundle.putAll(act083Bundle)
+        mIntent.putExtras(bundle)
+        startActivity(mIntent)
+        finish()
+    }
+
+    override fun callAct005() {
         startActivity(
             Intent().apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
