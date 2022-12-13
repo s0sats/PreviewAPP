@@ -14,6 +14,7 @@ import com.namoadigital.prj001.core.IResult.Companion.isSuccess
 import com.namoadigital.prj001.core.IResult.Companion.loading
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.model.*
+import com.namoadigital.prj001.model.MyActionFilterParam.Companion.toSerialModel
 import com.namoadigital.prj001.model.action_serial.ActionsCache
 import com.namoadigital.prj001.receiver.WBR_Generate_NForm_PDF
 import com.namoadigital.prj001.receiver.WBR_Save
@@ -54,7 +55,6 @@ import com.namoadigital.prj001.ui.act092.utils.Act092Translate
 import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent
 import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent.OpenDialog.DialogType
 import com.namoadigital.prj001.util.*
-import com.namoadigital.prj001.view.dialog.ScheduleRequestSerialDialog2
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -75,17 +75,12 @@ class Act092Presenter constructor(
 
     private lateinit var view: Act092_Contract.View
 
-    private var serialDialog: ScheduleRequestSerialDialog2? = null
-
     private var launch : Job? = null
 
     private var _serialModel = MutableStateFlow(SerialModel())
     override val serialModel: StateFlow<SerialModel> = _serialModel
 
     var newActionClick = false
-
-    private val _actionList = mutableListOf<ActionsCache>()
-    val actionList: MutableList<ActionsCache> = _actionList
 
 
     init {
@@ -98,29 +93,18 @@ class Act092Presenter constructor(
         ToolBox_Inf.deleteAllFOD(Constant.OTHER_ACTIONS_JSON_PATH)
     }
 
-    private suspend fun loadFilters() {
+    private suspend fun saveFilters() {
 
         if (originFlow == ConstantBaseApp.ACT006 || originFlow == ConstantBaseApp.ACT083) {
             actionUseCases.setPreferences(
-                SerialModel(
+                myActionFilterParam.toSerialModel().copy(
                     originFlow = originFlow,
                     siteCodeBack = ToolBox_Con.getPreference_Site_Code(translateResource.context),
                     zoneCodeBack = ToolBox_Con.getPreference_Zone_Code(translateResource.context),
-                    tagOperCode = myActionFilterParam.tagFilterCode,
-                    productId = myActionFilterParam.productId,
-                    productCode = myActionFilterParam.productCode,
-                    productDesc = myActionFilterParam.productDesc,
-                    serialCode = myActionFilterParam.serialCode,
-                    serialId = myActionFilterParam.serialId,
-                    ticketId = myActionFilterParam.ticketId,
-                    calendarDate = myActionFilterParam.calendarDate,
-                    lastSelectedPk = myActionFilterParam.paramItemSelectedPk,
-                    lastSelectActionType = myActionFilterParam.paramItemSelectedType,
                     classColor = iconColor
                 )
             )
         }
-
         _serialModel.value = actionUseCases.getPreferences().copy(hmAux = hmAux_Trans)
         view.onState(Act092UiEvent.UpdateTitleActionSerial)
     }
@@ -147,7 +131,7 @@ class Act092Presenter constructor(
 
     override fun getMyActionList() {
         CoroutineScope(Dispatchers.IO).launch {
-            loadFilters()
+            saveFilters()
             actionUseCases.localTicket(
                 Pair(
                     _serialModel.value.copy(
@@ -205,14 +189,12 @@ class Act092Presenter constructor(
                         myActionFilterParam.productId = null
                         myActionFilterParam.productDesc = null
                         myActionFilterParam.serialId = null
+                        myActionFilterParam.originFlow =
+                            _serialModel.value.originFlow ?: ConstantBaseApp.ACT005
 
                         putSerializable(
                             MyActionFilterParam.MY_ACTION_FILTER_PARAM,
                             myActionFilterParam
-                        )
-                        putString(
-                            getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW),
-                            ConstantBaseApp.ACT006
                         )
                     })
             )

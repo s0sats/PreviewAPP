@@ -37,7 +37,8 @@ class Act087MainPresenter(
     private val schedulePrefix: Int?,
     private val scheduleCode: Int?,
     private val scheduleExec: Int?,
-    private val scheduleDao: MD_Schedule_ExecDao
+    private val scheduleDao: MD_Schedule_ExecDao,
+    private val originFlow: String = ConstantBaseApp.ACT005
 ): Act087MainContract.I_Presenter {
 
     private val hmAuxTrans: HMAux by lazy {
@@ -611,20 +612,20 @@ class Act087MainPresenter(
      * @param anyDataChanged Flag que indica se houve alteracao nas infos
      *
      */
-    override fun onBackPressedClicked(anyDataChanged: Boolean, actRequest: String) {
+    override fun onBackPressedClicked(anyDataChanged: Boolean) {
         when(anyDataChanged){
             true ->{
                 mView.showAlert(
                     hmAuxTrans["alert_unsaved_data_will_be_lost_ttl"],
                     hmAuxTrans["alert_unsaved_data_will_be_lost_confirm"],
                     DialogInterface.OnClickListener { _, _ ->
-                        checkBackFLow(actRequest)
+                        checkBackFLow()
                     },
                     1
                 )
             }
             else ->{
-                checkBackFLow(actRequest)
+                checkBackFLow()
                 }
         }
 
@@ -633,14 +634,21 @@ class Act087MainPresenter(
     /**
      * Fun que valida qual o fluxo de volta e o executa
      */
-    private fun checkBackFLow(actRequest: String) {
+    private fun checkBackFLow() {
         if (mView.isTicketBackFLow()) {
             mView.callAct070()
         } else {
-            when(actRequest){
-                ConstantBaseApp.ACT083 -> mView.callAct083()
-                ConstantBaseApp.ACT092 -> mView.callAct092()
-                else -> mView.callAct005()
+            when (originFlow) {
+                ConstantBaseApp.ACT083 -> {
+                    mView.callAct083()
+                }
+                ConstantBaseApp.ACT092 -> {
+                    mView.callAct092()
+                }
+
+                else -> {
+                    mView.callAct083()
+                }
             }
         }
     }

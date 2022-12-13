@@ -51,10 +51,9 @@
                         android:id="@+id/act083_mket_filter"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Search Desc - Trad"
-                        android:inputType="text"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
+                        android:hint="Search Desc - Trad"
                         app:mBARCODE="false"
                         app:mNFC="false"
                         app:mOCR="false" />

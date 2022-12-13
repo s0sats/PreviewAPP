@@ -1,6 +1,8 @@
 package com.namoadigital.prj001.model
 
 import android.content.Context
+import com.namoadigital.prj001.ui.act083.model.SaveActionFilterModel
+import com.namoadigital.prj001.ui.act092.model.SerialModel
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.io.Serializable
@@ -17,10 +19,37 @@ class MyActionFilterParam(
         var ticketId: String? = null,
         var calendarDate: String? = null
 ) : Serializable{
-    companion object{
+    companion object {
         const val MY_ACTION_FILTER_PARAM = "MY_ACTION_FILTER_PARAM"
-        const val MY_ACTION_FILTER_PARAM_ACT092 = "MY_ACTION_FILTER_PARAM_ACT092"
+
+        fun MyActionFilterParam.toSerialModel() = SerialModel(
+            productCode = productCode,
+            productId = productId,
+            productDesc = productDesc,
+            serialId = serialId,
+            serialCode = serialCode,
+            ticketId = ticketId,
+            calendarDate = calendarDate
+        )
+
+        fun MyActionFilterParam.toActionFilter() = SaveActionFilterModel(
+            initialTextFilter = paramTextFilter,
+            initialTabToLoad = paramItemSelectedTab ?: 1,
+            lastSelectActionPk = paramItemSelectedPk,
+            lastSelectedActionType = paramItemSelectedType,
+            mainUserFilterState = mainUserFilterState ?: false,
+            tagFilter = tagFilterCode,
+            tagFilterDesc = tagFilterDesc,
+            productCode = productCode,
+            productDesc = productDesc,
+            productId = productId,
+            serialId = serialId,
+            serialCode = serialCode,
+            ticketId = ticketId,
+            calendarDate = calendarDate
+        )
     }
+
 
     var paramTextFilter: String? = null
     var paramItemSelectedTab: Int? = null

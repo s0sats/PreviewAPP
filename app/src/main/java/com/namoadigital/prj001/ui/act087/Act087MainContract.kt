@@ -23,10 +23,9 @@ interface Act087MainContract {
             serialBkpMachineList: List<FormOsHeaderFrgSerialBkpItemAbs>,
             onlineSearch: Boolean)
 
-        fun callAct005()
-        fun callAct070()
         fun callAct083()
         fun callAct092()
+        fun callAct070()
         fun isTicketBackFLow(): Boolean
     }
 
@@ -42,7 +41,7 @@ interface Act087MainContract {
         fun createOsHeader(formOsHeader: GeOs)
         fun executeWsBkpMachine(bkpProductCode: Long, bkpSerialId: String)
         fun processWsBkpMachineResult(mLink: String?)
-        fun onBackPressedClicked(anyDataChanged: Boolean, actRequest: String)
+        fun onBackPressedClicked(anyDataChanged: Boolean)
         fun isSchedule(): Boolean
         fun getScheduleExecObj(): MD_Schedule_Exec?
         fun getFormRequiresGPSInfo(): Boolean

@@ -1099,7 +1099,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             myActionFilterParam.setSerialCode(serialCode);
         }
         //
-        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM_ACT092, myActionFilterParam);
+        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam);
         bundle.putString(act083Bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW), ConstantBaseApp.ACT006);
         bundle.putLong(MD_Product_SerialDao.SERIAL_CODE, mdProductSerial.getSerial_code());
         if (mdProductSerial.getClass_color() != null) {
@@ -1151,7 +1151,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                 myActionFilterParam.setSerialCode(serialCode);
             }
 
-            bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM_ACT092, myActionFilterParam);
+            bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam);
         }else{
             MyActionFilterParam params = getMyActionFilterParam(bundle);
             params.setProductCode(null);

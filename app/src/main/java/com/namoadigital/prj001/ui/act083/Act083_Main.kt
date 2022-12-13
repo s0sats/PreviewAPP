@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.view.ContextThemeWrapper
 import android.view.View
 import android.view.WindowManager
@@ -38,6 +39,7 @@ import com.namoadigital.prj001.ui.act038.Act038_Main
 import com.namoadigital.prj001.ui.act068.Act068_Main
 import com.namoadigital.prj001.ui.act070.Act070_Main
 import com.namoadigital.prj001.ui.act071.Act071_Main
+import com.namoadigital.prj001.ui.act083.data.local.preferences.MyActionsFilterParamPreferences
 import com.namoadigital.prj001.ui.act092.ui.Act092_Main
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
@@ -115,18 +117,21 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
                 ),
-                MD_ProductDao(
-                        context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-                ),
-                Sync_ChecklistDao(
-                        context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-                ),
-                mModule_Code,
-                mResource_Code
+            MD_ProductDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+            ),
+            Sync_ChecklistDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+            ),
+            MyActionsFilterParamPreferences(
+                PreferenceManager.getDefaultSharedPreferences(context)
+            ),
+            mModule_Code,
+            mResource_Code
         )
     }
 
@@ -137,6 +142,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         //
         setSupportActionBar(binding.toolbar)
         //
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
         initBundle(savedInstanceState)
         iniSetup()
         iniTrans()
@@ -249,6 +255,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
 
     private fun onSerialButtonClick(myAction: MyActions, position: Int) {
         serialActionSelected = position
+        mPresenter.updateSharedPrefs()
         mPresenter.processSerialClick(myAction)
     }
 
@@ -257,6 +264,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     }
 
     private fun onMyActionClick(myAction: MyActions){
+        mPresenter.updateSharedPrefs()
         mPresenter.processActionClick(myAction)
     }
 

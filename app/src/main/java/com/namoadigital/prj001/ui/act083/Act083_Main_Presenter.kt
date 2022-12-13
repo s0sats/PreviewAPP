@@ -9,6 +9,7 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.model.*
+import com.namoadigital.prj001.model.MyActionFilterParam.Companion.toActionFilter
 import com.namoadigital.prj001.receiver.WBR_Product_Serial_Structure
 import com.namoadigital.prj001.receiver.WBR_Serial_Search
 import com.namoadigital.prj001.receiver.WBR_Sync
@@ -19,27 +20,33 @@ import com.namoadigital.prj001.service.WS_Sync
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download
 import com.namoadigital.prj001.sql.*
 import com.namoadigital.prj001.ui.act070.Act070_Main
+import com.namoadigital.prj001.ui.act083.data.local.preferences.MyActionsFilterParamPreferences
+import com.namoadigital.prj001.ui.act083.model.SaveActionFilterModel
+import com.namoadigital.prj001.ui.act083.model.SaveActionFilterModel.Companion.toMyActionFilter
 import com.namoadigital.prj001.util.*
 import com.namoadigital.prj001.view.dialog.ScheduleRequestSerialDialog2
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableStateFlow
 import java.text.SimpleDateFormat
 import java.util.*
 
-class Act083_Main_Presenter(private val context: Context,
-                            private val mView: Act083_Main_Contract.I_View,
-                            private val bundle: Bundle,
-                            private val ticketDao: TK_TicketDao,
-                            private val ticketCacheDao: TkTicketCacheDao,
-                            private val scheduleDao: MD_Schedule_ExecDao,
-                            private val formApDao: GE_Custom_Form_ApDao,
-                            private val formLocalDao: GE_Custom_Form_LocalDao,
-                            private val siteDao: MD_SiteDao,
-                            private val ticketCtrlDao: TK_Ticket_CtrlDao,
-                            private val serialDao: MD_Product_SerialDao,
-                            private val productDao: MD_ProductDao,
-                            private val syncChecklistDao: Sync_ChecklistDao,
-                            private val mModule_Code: String,
-                            private val mResource_Code: String
+class Act083_Main_Presenter constructor(
+    private val context: Context,
+    private val mView: Act083_Main_Contract.I_View,
+    private val bundle: Bundle,
+    private val ticketDao: TK_TicketDao,
+    private val ticketCacheDao: TkTicketCacheDao,
+    private val scheduleDao: MD_Schedule_ExecDao,
+    private val formApDao: GE_Custom_Form_ApDao,
+    private val formLocalDao: GE_Custom_Form_LocalDao,
+    private val siteDao: MD_SiteDao,
+    private val ticketCtrlDao: TK_Ticket_CtrlDao,
+    private val serialDao: MD_Product_SerialDao,
+    private val productDao: MD_ProductDao,
+    private val syncChecklistDao: Sync_ChecklistDao,
+    private val sharedPreferences: MyActionsFilterParamPreferences,
+    private val mModule_Code: String,
+    private val mResource_Code: String
 ) : Act083_Main_Contract.I_Presenter{
 
     private lateinit var myActionFilterParam : MyActionFilterParam
@@ -66,15 +73,17 @@ class Act083_Main_Presenter(private val context: Context,
     var actionSelected : MyActions? = null
     private var serialDialog : ScheduleRequestSerialDialog2? = null
     private var launch : Job? = null
-    private var initialTabToLoad : Int = 1
-    private var initialTextFilter : String? = null
-    private var _lastSelectedActionPk : String? = null
-    private var _lastSelectedActionType : String? = null
-    val lastSelectedActionPk :String?
+    private var initialTabToLoad: Int = 1
+    private var initialTextFilter: String? = null
+    private var _lastSelectedActionPk: String? = null
+    private var _lastSelectedActionType: String? = null
+    val lastSelectedActionPk: String?
         get() = _lastSelectedActionPk
-    val lastSelectedActionType :String?
+    val lastSelectedActionType: String?
         get() = _lastSelectedActionType
     var formButtonData: MyActionsFormButton? = null
+
+    private var _actionModel = MutableStateFlow(SaveActionFilterModel())
 
     init {
         recoverIntentsInfo()
@@ -179,7 +188,7 @@ class Act083_Main_Presenter(private val context: Context,
                 myActionFilterParam.getFilledFilters(context)
         )
         if(!ToolBox_Inf.hasSoOrIOProfile(context)) {
-            when (originFlow) {
+            when (myActionFilterParam.originFlow) {
                 ConstantBaseApp.ACT005 -> setPreferenceChips(chipList)
             }
         }
@@ -200,13 +209,14 @@ class Act083_Main_Presenter(private val context: Context,
     }
 
     override fun getActTitle(): String {
-        return when(originFlow){
+        return when (myActionFilterParam.originFlow) {
             ConstantBaseApp.ACT005 -> myActionFilterParam.tagFilterDesc
-                    ?: hmAux_Trans!!["act083_title"]!!
+                ?: hmAux_Trans!!["act083_title"]!!
             ConstantBaseApp.ACT006 -> hmAux_Trans!!["sys_main_menu_assets_local_lbl"]!!
             ConstantBaseApp.ACT016 -> hmAux_Trans!!["sys_main_menu_calendar_lbl"]!!
             ConstantBaseApp.ACT068 -> hmAux_Trans!!["sys_main_menu_search_lbl"]!!
-            ConstantBaseApp.ACT083 -> myActionFilterParam.tagFilterDesc ?: hmAux_Trans!!["act083_title"]!!
+            ConstantBaseApp.ACT083 -> myActionFilterParam.tagFilterDesc
+                ?: hmAux_Trans!!["act083_title"]!!
             else -> hmAux_Trans!!["act083_title"]!!
         }
     }
@@ -459,7 +469,7 @@ class Act083_Main_Presenter(private val context: Context,
         setSeletedActionInfosIntoFilterParam(myAction!!.actionType, myAction.processPk)
 
         bundle.putSerializable(
-            MyActionFilterParam.MY_ACTION_FILTER_PARAM_ACT092,
+            MyActionFilterParam.MY_ACTION_FILTER_PARAM,
             myActionFilterParam
         )
         bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT083)
@@ -617,7 +627,7 @@ class Act083_Main_Presenter(private val context: Context,
         //
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT083)
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
-        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, originFlow)
+        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, myActionFilterParam.originFlow)
         return bundle
     }
 
@@ -842,7 +852,7 @@ class Act083_Main_Presenter(private val context: Context,
         //
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT083)
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
-        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, originFlow)
+        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, myActionFilterParam.originFlow)
         bundle.putInt(MD_Schedule_ExecDao.SCHEDULE_PREFIX, scheduleExec.schedule_prefix)
         bundle.putInt(MD_Schedule_ExecDao.SCHEDULE_CODE, scheduleExec.schedule_code)
         bundle.putInt(MD_Schedule_ExecDao.SCHEDULE_EXEC, scheduleExec.schedule_exec)
@@ -904,7 +914,6 @@ class Act083_Main_Presenter(private val context: Context,
 
     fun setSeletedActionInfosIntoFilterParam(myActionType: String, myActionPk: String){
         if(::myActionFilterParam.isInitialized){
-            myActionFilterParam.originFlow = originFlow
             myActionFilterParam.setSelectedItemParams(
                     mView.getMketFilter(),
                     mView.getCurrentTab(),
@@ -932,7 +941,7 @@ class Act083_Main_Presenter(private val context: Context,
         //
         bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT083)
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
-        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, originFlow)
+        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, myActionFilterParam.originFlow)
         //
         bundle.putString(GE_Custom_Form_ApDao.CUSTOMER_CODE, ToolBox_Con.getPreference_Customer_Code(context).toString())
         bundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE, splippedPk[0])
@@ -951,7 +960,7 @@ class Act083_Main_Presenter(private val context: Context,
         //
         bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT083)
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
-        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, originFlow)
+        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, myActionFilterParam.originFlow)
         //
         bundle.putString(MD_ProductDao.PRODUCT_CODE, myAction.productCode.toString())
         bundle.putString(MD_ProductDao.PRODUCT_DESC, myAction.productDesc)
@@ -999,7 +1008,7 @@ class Act083_Main_Presenter(private val context: Context,
         //
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT083)
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
-        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, originFlow)
+        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, myActionFilterParam.originFlow)
         //
         bundle.putInt(TK_TicketDao.TICKET_PREFIX, ticketPrefix)
         bundle.putInt(TK_TicketDao.TICKET_CODE, ticketCode)
@@ -1487,7 +1496,10 @@ class Act083_Main_Presenter(private val context: Context,
             actionSelected!!.processPk
         )
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
-        bundle.putSerializable(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, originFlow)
+        bundle.putSerializable(
+            ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
+            myActionFilterParam.originFlow
+        )
         //
         mView.callAct020(bundle)
     }
@@ -1595,29 +1607,55 @@ class Act083_Main_Presenter(private val context: Context,
 
     private fun recoverIntentsInfo() {
         val filterParam = bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM)
-        myActionFilterParam = filterParam?.let { it as MyActionFilterParam } ?: MyActionFilterParam()
-        originFlow = bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT005)
-        siteCodeBack = ToolBox_Con.getPreference_Site_Code(context)
-        zoneCodeBack = ToolBox_Con.getPreference_Zone_Code(context)
+        originFlow = bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, "")
+        loadPreferences(filterParam?.let { it as MyActionFilterParam } ?: MyActionFilterParam())
+    }
+
+    private fun loadPreferences(filterParam: MyActionFilterParam) {
+
+
+        if (originFlow == ConstantBaseApp.ACT005 ||
+            originFlow == ConstantBaseApp.ACT016 ||
+            originFlow == ConstantBaseApp.ACT068
+        ) {
+            filterParam.toActionFilter().copy(
+                originFlow = originFlow,
+                siteCodeBack = ToolBox_Con.getPreference_Site_Code(context),
+                zoneCodeBack = ToolBox_Con.getPreference_Zone_Code(context),
+                siteCode =
+                if (setSiteFilter()) {
+                    ToolBox_Con.getPreference_Site_Code(context)
+                } else {
+                    null
+                }
+            ).also {
+                sharedPreferences.write(it)
+                myActionFilterParam = it.toMyActionFilter()
+            }
+        } else {
+            _actionModel.value = sharedPreferences.read()
+            myActionFilterParam = _actionModel.value.toMyActionFilter()
+        }
+
+        siteCodeBack = _actionModel.value.siteCodeBack
+        zoneCodeBack = _actionModel.value.zoneCodeBack ?: 0
         initialTextFilter = myActionFilterParam.paramTextFilter
         initialTabToLoad = myActionFilterParam.paramItemSelectedTab ?: 1
         _lastSelectedActionPk = myActionFilterParam.paramItemSelectedPk
         _lastSelectedActionType = myActionFilterParam.paramItemSelectedType
         mainUserFilterState = myActionFilterParam.mainUserFilterState ?: false
+
+
     }
 
     private fun loadFilters() {
+
         tagFilter = myActionFilterParam.tagFilterCode
         productCode = myActionFilterParam.productCode
         serialId = myActionFilterParam.serialId
         ticketId = myActionFilterParam.ticketId
         calendarDate = myActionFilterParam.calendarDate
-        siteCode =
-        if(setSiteFilter()){
-            ToolBox_Con.getPreference_Site_Code(context)
-        }else{
-            null
-        }
+        siteCode = _actionModel.value.siteCode
     }
 
     private fun setSiteFilter(): Boolean {
@@ -1653,30 +1691,31 @@ class Act083_Main_Presenter(private val context: Context,
                     }
             )
             //
-            if (!ConstantBaseApp.ACT068.equals(originFlow, true)) {
+            if (!ConstantBaseApp.ACT068.equals(myActionFilterParam.originFlow, true)) {
                 _myActionsList.addAll(
-                        getSchedules(tabUserFocusFilter).map {
-                            val lastScheduleSelected = getLastSelectedPk(MyActions.MY_ACTION_TYPE_SCHEDULE)
-                            it.toMyActionsObj(context, lastScheduleSelected)
-                        }
+                    getSchedules(tabUserFocusFilter).map {
+                        val lastScheduleSelected =
+                            getLastSelectedPk(MyActions.MY_ACTION_TYPE_SCHEDULE)
+                        it.toMyActionsObj(context, lastScheduleSelected)
+                    }
                 )
             }
             //
-            if (!ConstantBaseApp.ACT068.equals(originFlow, true)) {
+            if (!ConstantBaseApp.ACT068.equals(myActionFilterParam.originFlow, true)) {
                 _myActionsList.addAll(
-                        getFormAp(tabUserFocusFilter).map {
-                            val lastFormApSelected = getLastSelectedPk(MyActions.MY_ACTION_TYPE_FORM_AP)
-                            it.toMyActionsObj(context, lastFormApSelected)
-                        }
+                    getFormAp(tabUserFocusFilter).map {
+                        val lastFormApSelected = getLastSelectedPk(MyActions.MY_ACTION_TYPE_FORM_AP)
+                        it.toMyActionsObj(context, lastFormApSelected)
+                    }
                 )
             }
             //
-            if (!ConstantBaseApp.ACT068.equals(originFlow, true)) {
+            if (!ConstantBaseApp.ACT068.equals(myActionFilterParam.originFlow, true)) {
                 myActionsList.addAll(
-                        getLocalForms(tabUserFocusFilter).map {
-                            val lastFormSelected = getLastSelectedPk(MyActions.MY_ACTION_TYPE_FORM)
-                            GE_Custom_Form_Local.toMyActionsObj(context, it, lastFormSelected, false)
-                        }
+                    getLocalForms(tabUserFocusFilter).map {
+                        val lastFormSelected = getLastSelectedPk(MyActions.MY_ACTION_TYPE_FORM)
+                        GE_Custom_Form_Local.toMyActionsObj(context, it, lastFormSelected, false)
+                    }
                 )
             }
             //LUCHE - 11/06/2021
@@ -1684,9 +1723,13 @@ class Act083_Main_Presenter(private val context: Context,
             //form no fluxo de serial
             val currentTabCounter = _myActionsList.size
             //
-            if (ConstantBaseApp.ACT006.equals(originFlow, true) && tabUserFocusFilter == 1 && ::myActionFilterParam.isInitialized) {
+            if (ConstantBaseApp.ACT006.equals(
+                    myActionFilterParam.originFlow,
+                    true
+                ) && tabUserFocusFilter == 1 && ::myActionFilterParam.isInitialized
+            ) {
                 _myActionsList.add(
-                        createMyActionFormCreation()
+                    createMyActionFormCreation()
                 )
             }
             //
@@ -1720,7 +1763,7 @@ class Act083_Main_Presenter(private val context: Context,
         counter += getLocalTickets(otherTab).size
         counter += getCachedTickets(otherTab).size
         //Se o fluxo de origem for o da pesquisa, só devem ser contabilizados os tickets.
-        if (!ConstantBaseApp.ACT068.equals(originFlow, true)) {
+        if (!ConstantBaseApp.ACT068.equals(myActionFilterParam.originFlow, true)) {
             counter += getSchedules(otherTab).size
             counter += getFormAp(otherTab).size
             counter += getLocalForms(otherTab).size
@@ -1754,18 +1797,18 @@ class Act083_Main_Presenter(private val context: Context,
         //
         return ticketDao.query_HM(
                 SqlAct083_002(
-                        context,
-                        originFlow,
-                        ToolBox_Con.getPreference_Customer_Code(context).toInt(),
-                        tagFilter,
-                        siteCode,
-                        productCode,
-                        serialId,
-                        clientId,
-                        contractId,
-                        ticketId,
-                        calendarDate,
-                        userFocus,
+                    context,
+                    myActionFilterParam.originFlow,
+                    ToolBox_Con.getPreference_Customer_Code(context).toInt(),
+                    tagFilter,
+                    siteCode,
+                    productCode,
+                    serialId,
+                    clientId,
+                    contractId,
+                    ticketId,
+                    calendarDate,
+                    userFocus,
                         hmAux_Trans?.get("other_steps_available_lbl")
                 ).toSqlQuery()
         )
@@ -1774,18 +1817,18 @@ class Act083_Main_Presenter(private val context: Context,
     private fun getCachedTickets(userFocus: Int): MutableList<TkTicketCache> {
         return ticketCacheDao.query(
                 SqlAct083_001(
-                        context,
-                        originFlow,
-                        ToolBox_Con.getPreference_Customer_Code(context).toInt(),
-                        tagFilter,
-                        siteCode,
-                        productCode,
-                        serialId,
-                        clientId,
-                        contractId,
-                        ticketId,
-                        calendarDate,
-                        userFocus,
+                    context,
+                    myActionFilterParam.originFlow,
+                    ToolBox_Con.getPreference_Customer_Code(context).toInt(),
+                    tagFilter,
+                    siteCode,
+                    productCode,
+                    serialId,
+                    clientId,
+                    contractId,
+                    ticketId,
+                    calendarDate,
+                    userFocus,
                         hmAux_Trans?.get("other_steps_available_lbl")
                 ).toSqlQuery()
         )
@@ -1794,15 +1837,15 @@ class Act083_Main_Presenter(private val context: Context,
     fun getSchedules(userFocus: Int): MutableList<MD_Schedule_Exec> {
         return scheduleDao.query(
                 SqlAct083_005(
-                        context,
-                        originFlow,
-                        ToolBox_Con.getPreference_Customer_Code(context).toInt(),
-                        tagFilter,
-                        productCode,
-                        serialId,
-                        siteCode,
-                        calendarDate,
-                        userFocus
+                    context,
+                    myActionFilterParam.originFlow,
+                    ToolBox_Con.getPreference_Customer_Code(context).toInt(),
+                    tagFilter,
+                    productCode,
+                    serialId,
+                    siteCode,
+                    calendarDate,
+                    userFocus
                 ).toSqlQuery()
         )
     }
@@ -1810,14 +1853,14 @@ class Act083_Main_Presenter(private val context: Context,
     private fun getFormAp(userFocus: Int): MutableList<GE_Custom_Form_Ap> {
         return formApDao.query(
                 SqlAct083_003(
-                        context,
-                        originFlow,
-                        ToolBox_Con.getPreference_Customer_Code(context).toInt(),
-                        tagFilter,
-                        productCode,
-                        serialId,
-                        calendarDate,
-                        userFocus
+                    context,
+                    myActionFilterParam.originFlow,
+                    ToolBox_Con.getPreference_Customer_Code(context).toInt(),
+                    tagFilter,
+                    productCode,
+                    serialId,
+                    calendarDate,
+                    userFocus
                 ).toSqlQuery()
         )
     }
@@ -1827,13 +1870,13 @@ class Act083_Main_Presenter(private val context: Context,
 
         return formLocalDao.query_HM(
                 SqlAct083_004(
-                        originFlow,
-                        ToolBox_Con.getPreference_Customer_Code(context).toInt(),
-                        tagFilter,
-                        productCode,
-                        serialId,
-                        calendarDate,
-                        userFocus
+                    myActionFilterParam.originFlow,
+                    ToolBox_Con.getPreference_Customer_Code(context).toInt(),
+                    tagFilter,
+                    productCode,
+                    serialId,
+                    calendarDate,
+                    userFocus
                 ).toSqlQuery()
         )
     }
@@ -1850,11 +1893,11 @@ class Act083_Main_Presenter(private val context: Context,
     }
 
     override fun onBackPressedClicked() {
-        when(originFlow){
+        when (myActionFilterParam.originFlow) {
             ConstantBaseApp.ACT006 -> mView.callAct006(getBundleToAssetsAndLocalOrigin())
             ConstantBaseApp.ACT016 -> mView.callAct016(getBundleToCalendarOrigin())
             ConstantBaseApp.ACT068 -> mView.callAct068(getBundleToSearchOrigin())
-            else ->  mView.callAct005()
+            else -> mView.callAct005()
         }
 
     }
@@ -1875,6 +1918,16 @@ class Act083_Main_Presenter(private val context: Context,
 
     private fun getBundleToSearchOrigin(): Bundle {
         return Bundle()
+    }
+
+    fun updateSharedPrefs() {
+        sharedPreferences.write(
+            sharedPreferences.read().copy(
+                initialTextFilter = mView.getMketFilter(),
+                mainUserFilterState = mView.getMainUserFilter(),
+                initialTabToLoad = mView.getCurrentTab(),
+            )
+        )
     }
 
 
