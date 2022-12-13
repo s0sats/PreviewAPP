@@ -37,7 +37,8 @@ class Act087MainPresenter(
     private val schedulePrefix: Int?,
     private val scheduleCode: Int?,
     private val scheduleExec: Int?,
-    private val scheduleDao: MD_Schedule_ExecDao
+    private val scheduleDao: MD_Schedule_ExecDao,
+    private val originFlow: String = ConstantBaseApp.ACT005
 ): Act087MainContract.I_Presenter {
 
     private val hmAuxTrans: HMAux by lazy {
@@ -637,7 +638,18 @@ class Act087MainPresenter(
         if (mView.isTicketBackFLow()) {
             mView.callAct070()
         } else {
-            mView.callAct083()
+            when (originFlow) {
+                ConstantBaseApp.ACT083 -> {
+                    mView.callAct083()
+                }
+                ConstantBaseApp.ACT092 -> {
+                    mView.callAct092()
+                }
+
+                else -> {
+                    mView.callAct083()
+                }
+            }
         }
     }
 }

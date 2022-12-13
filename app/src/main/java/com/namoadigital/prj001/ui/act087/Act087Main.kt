@@ -24,6 +24,7 @@ import com.namoadigital.prj001.ui.act011.frags.Act011BaseFrgInteraction
 import com.namoadigital.prj001.ui.act011.frags.Act011BaseFrgInteractionNavegation
 import com.namoadigital.prj001.ui.act070.Act070_Main
 import com.namoadigital.prj001.ui.act083.Act083_Main
+import com.namoadigital.prj001.ui.act092.ui.Act092_Main
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -88,7 +89,8 @@ class Act087Main : Base_Activity_Frag(),
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
-            )
+            ),
+            originFlow
         )
     }
 
@@ -101,6 +103,7 @@ class Act087Main : Base_Activity_Frag(),
     private var schedulePrefix: Int? = null
     private var scheduleCode: Int? = null
     private var scheduleExec: Int? = null
+    private var originFlow: String = ConstantBaseApp.ACT005
     private lateinit var bundle: Bundle
     private var act083Bundle: Bundle? = null
     private val mFormHeaderFragListener: FormOsHeaderFrgInfr by lazy{
@@ -221,6 +224,8 @@ class Act087Main : Base_Activity_Frag(),
                 schedulePrefix = getInt(MD_Schedule_ExecDao.SCHEDULE_PREFIX)
                 scheduleCode = getInt(MD_Schedule_ExecDao.SCHEDULE_CODE)
                 scheduleExec = getInt(MD_Schedule_ExecDao.SCHEDULE_EXEC)
+                originFlow =
+                    getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT005)
                 //
                 if (bundle.containsKey(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW)
                     || bundle.containsKey(MyActionFilterParam.MY_ACTION_FILTER_PARAM)
@@ -438,6 +443,18 @@ class Act087Main : Base_Activity_Frag(),
 
     override fun callAct083() {
         val intent = Intent(context, Act083_Main::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        //
+        val mBundle = Bundle()
+        getMyActionsParam(mBundle)
+        intent.putExtras(mBundle)
+        //
+        startActivity(intent)
+        finish()
+    }
+
+    override fun callAct092() {
+        val intent = Intent(context, Act092_Main::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         //
         val mBundle = Bundle()

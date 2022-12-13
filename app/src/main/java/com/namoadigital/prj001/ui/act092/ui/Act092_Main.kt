@@ -120,7 +120,7 @@ class Act092_Main : BaseActivityMvp
     }
 
     private fun getBundle() {
-        val filterParam = bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM_ACT092)
+        val filterParam = bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM)
         myActionFilterParam.value =
             filterParam?.let { it as MyActionFilterParam } ?: MyActionFilterParam()
 
