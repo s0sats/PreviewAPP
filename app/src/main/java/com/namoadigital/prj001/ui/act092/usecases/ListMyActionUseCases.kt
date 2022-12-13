@@ -94,6 +94,12 @@ class ListMyActionUseCases constructor(
                                 serialModel.serialId ?: ""
                             )
                         )
+                        //
+                        unfocusList.addAll(
+                            repository.getUnfocusSchedules(localTicket).map {
+                                it.toMyActionsObj(context, getLastSelectedPk())
+                            }
+                        )
                     }
                     //
                     if (unfocusList.size > 0) {

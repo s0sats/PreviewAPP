@@ -119,10 +119,20 @@ class Act092_Adapter constructor(
                 serialDetail.visibility = View.GONE
                 myActionSelectSerial.apply {
                     visibility = View.VISIBLE
-                    if (item.actionType == MyActions.MY_ACTION_TYPE_SCHEDULE && !item.hasUserFocus
+                    isEnabled = true
+                    setBackgroundColor(resources.getColor(R.color.m3_namoa_primary))
+                    setTextColor(resources.getColor(R.color.m3_namoa_onPrimary))
+                    if (
+                        (item.actionType == MyActions.MY_ACTION_TYPE_SCHEDULE
+                                && !item.hasUserFocus
+                                && item.processStatus != ConstantBaseApp.SYS_STATUS_DONE
+                                )
                         || item.waiting_approve == true
                     ) {
-                        visibility = View.GONE
+                        isEnabled = false
+                        text = hmAux["cell_download_action_lbl"]
+                        setBackgroundColor(resources.getColor(R.color.m3_namoa_surfaceVariant))
+                        setTextColor(resources.getColor(R.color.m3_namoa_onSurfaceVariant))
                     } else if (!item.pdfUrl.isNullOrEmpty()
                         || MyActions.MY_ACTION_TYPE_TICKET_CACHE == item.actionType
                     ) {
@@ -130,11 +140,11 @@ class Act092_Adapter constructor(
                         setTextColor(resources.getColor(R.color.m3_namoa_surface))
                     } else if (item.highlightItem) {
                         text = hmAux["cell_continue_action_lbl"]
+                        setBackgroundColor(resources.getColor(R.color.namoa_color_orange))
                         setTextColor(Color.parseColor("#462A00"))
                     } else {
                         text = hmAux["cell_open_action_lbl"]
                         setTextColor(resources.getColor(R.color.m3_namoa_surface))
-
                     }
                 }
                 //
@@ -143,7 +153,7 @@ class Act092_Adapter constructor(
                 }
 
                 myActionsItemClInfos.setOnClickListener {
-                    if(myActionSelectSerial.visibility == View.VISIBLE) {
+                    if(myActionSelectSerial.isEnabled) {
                         myActionClickListener(item, adapterPosition)
                     }
                 }
@@ -343,18 +353,18 @@ class Act092_Adapter constructor(
                     text = hmAux["cell_item_in_process_lbl"]
                 }
 
-                myActionSelectSerial.apply {
-                    backgroundTintList = if (myAction.highlightItem) {
-                        ColorStateList.valueOf(resources.getColor(R.color.namoa_color_orange))
-                    } else {
-                        if (myAction.isLastSelectedItem) {
-                            ColorStateList.valueOf(resources.getColor(R.color.namoa_color_yellow_2))
-                        } else {
-                            ColorStateList.valueOf(resources.getColor(R.color.m3_namoa_primary))
-                        }
-                    }
-
-                }
+//                myActionSelectSerial.apply {
+//                    backgroundTintList = if (myAction.highlightItem) {
+//                        ColorStateList.valueOf(resources.getColor(R.color.namoa_color_orange))
+//                    } else {
+//                        if (myAction.isLastSelectedItem) {
+//                            ColorStateList.valueOf(resources.getColor(R.color.namoa_color_yellow_2))
+//                        } else {
+//                            ColorStateList.valueOf(resources.getColor(R.color.m3_namoa_primary))
+//                        }
+//                    }
+//
+//                }
             }
         }
 

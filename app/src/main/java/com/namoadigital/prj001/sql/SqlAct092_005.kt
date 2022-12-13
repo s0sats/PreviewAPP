@@ -102,10 +102,8 @@ class SqlAct092_005(
     }
 
     private fun getStatusFilter() {
-        statusFilter = when (userFocus) {
-            1 -> """    and     s.${MD_Schedule_ExecDao.STATUS} in('${ConstantBaseApp.SYS_STATUS_SCHEDULE}','${ConstantBaseApp.SYS_STATUS_PENDING}','${ConstantBaseApp.SYS_STATUS_PROCESS}','${ConstantBaseApp.SYS_STATUS_IN_PROCESSING}') """
-            else -> """"""
-        }
+        statusFilter = """    and     s.${MD_Schedule_ExecDao.STATUS} in('${ConstantBaseApp.SYS_STATUS_SCHEDULE}','${ConstantBaseApp.SYS_STATUS_PENDING}','${ConstantBaseApp.SYS_STATUS_PROCESS}','${ConstantBaseApp.SYS_STATUS_IN_PROCESSING}') """
+
     }
 
     private fun setSerialFilterConfg() {

@@ -75,7 +75,16 @@ class IActionSerialRepository constructor(
                     customerCode ?: -1,
                     productCode,
                     serialId,
-                    userFocus,
+                    1,
+                ).toSqlQuery()
+            )
+        }
+
+    override suspend fun getUnfocusSchedules(ticket: SerialModel): MutableList<MD_Schedule_Exec> =
+        with(ticket) {
+            return scheduleDao.query(
+                SqlAct092_006(
+                    customerCode ?: -1
                 ).toSqlQuery()
             )
         }
