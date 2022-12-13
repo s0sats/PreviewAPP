@@ -281,7 +281,16 @@ class Act092Presenter constructor(
             }
 
             MyActions.MY_ACTION_TYPE_SCHEDULE -> {
-                checkScheduleFlow(action)
+                if(!action.pdfName.isNullOrEmpty()){
+                    if(!action.pdfUrl.isNullOrEmpty()) {
+                        executeNFormPDFDownload(context, action, position)
+                    }else{
+                        actionSelectedPosition = position
+                        executeNFormPDFGeneration(context, action, position)
+                    }
+                }else {
+                    checkScheduleFlow(action)
+                }
             }
 
             MyActions.MY_ACTION_TYPE_FORM -> {
