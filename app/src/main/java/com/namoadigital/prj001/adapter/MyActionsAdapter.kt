@@ -174,6 +174,10 @@ class MyActionsAdapter constructor(
             //
             binding.myActionsItemTvJustify.apply {
                 applyVisibilityIfTextExists(myAction.justify_item_desc, hmAuxTrans["cell_justify_lbl"]!!)
+                if(myAction.justify_item_desc.isNullOrEmpty() &&
+                    !myAction.not_exec_comments.isNullOrEmpty()){
+                    applyVisibilityIfTextExists(hmAuxTrans["cell_justify_lbl"]!! + ":")
+                }
             }
             //
             binding.myActionsItemTvNotExecutedComments.apply {
