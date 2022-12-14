@@ -486,7 +486,7 @@ class Act092Presenter constructor(
                     view.onState(Act092UiEvent.OpenDialog(
                         DialogType.ACTION(
                             title = Act092Translate.ALERT_FORM_SITE_RESTRICTION_TTL,
-                            message = Act092Translate.ALERT_FORM_SITE_RESTRICTION_NO_ACCESS_MSG,
+                            message = Act092Translate.ALERT_FORM_SITE_RESTRICTION_CONFIRM,
                             { dialog, i ->
                                 noRestriction(item)
                             }, negativeBtn = 1

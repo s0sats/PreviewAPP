@@ -32,6 +32,7 @@ class MyActionsCache(
     @SerializedName("process_date_start") val doneDateStart: String?,
     @SerializedName("process_date_end") val doneDateEnd: String?,
     @SerializedName("data_order") val orderBy: String,
+    @SerializedName("data_type") val data_type: String,
     @SerializedName("ticket_origin_type") val ticketOriginType: String?,
     @SerializedName("ticket_scn") val ticketScn: Int?,
     val highlightItem: Boolean,
@@ -75,7 +76,7 @@ class MyActionsCache(
         }
         //
         //
-        val waiting_approve = processStatus == ConstantBaseApp.SYS_STATUS_WAITING_APPROVAL
+        val waitingApprove = processStatus == ConstantBaseApp.SYS_STATUS_WAITING_APPROVAL
         //
         var myActions = MyActions(
             type,
@@ -116,7 +117,7 @@ class MyActionsCache(
             justify_item_id,
             justify_item_desc,
             not_executed_comments,
-            waiting_approve
+            waitingApprove
         )
         myActions.productCode = productCode
         return myActions

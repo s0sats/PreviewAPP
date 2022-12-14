@@ -40,21 +40,21 @@ class ListMyActionUseCases constructor(
 
                     emit(loading(true))
 
-                    val focusList = mutableListOf<MyActionsBase>()
+                    val actionList = mutableListOf<MyActionsBase>()
 
-                    focusList.addAll(
+                    actionList.addAll(
                         repository.getLocalTickets(localTicket, mainUser).map {
                             TK_Ticket.toMyActionsObj(context, it, getLastSelectedPk())
                         }
                     )
 
-                    focusList.addAll(
+                    actionList.addAll(
                         repository.getTicketCache(localTicket, mainUser).map {
                             it.toMyActionsObj(context, getLastSelectedPk())
                         }
                     )
 
-                    focusList.addAll(
+                    actionList.addAll(
                         repository.getSchedules(localTicket, mainUser).map {
                             it.toMyActionsObj(context, getLastSelectedPk())
                         }
@@ -67,7 +67,7 @@ class ListMyActionUseCases constructor(
                         }
                     )*/
 
-                    focusList.addAll(
+                    actionList.addAll(
                         repository.getLocalForms(localTicket).map {
                             GE_Custom_Form_Local.toMyActionsObj(
                                 context,
@@ -77,37 +77,48 @@ class ListMyActionUseCases constructor(
                             )
                         }
                     )
+                    if(serialModel.userFocus == 0) {
+                        actionList.addAll(
+                            repository.getUnfocusAndHistorical(
+                                serialModel.productCode ?: -1,
+                                (serialModel.serialCode ?: -1).toLong(),
+                                serialModel.serialId ?: "",
+                                "OPEN"
+                            )
+                        )
+                    }
                     //
-                    focusList.sortBy {
+                    actionList.sortBy {
                         when (it) {
                             is MyActions -> it.orderBy
                             else -> "190001010000"
                         }
                     }
                     //
-                    val unfocusList = mutableListOf<MyActionsBase>()
+                    val historicalList = mutableListOf<MyActionsBase>()
                     if(serialModel.userFocus == 0) {
-                        unfocusList.addAll(
+                        historicalList.addAll(
                             repository.getUnfocusAndHistorical(
                                 serialModel.productCode ?: -1,
                                 (serialModel.serialCode ?: -1).toLong(),
-                                serialModel.serialId ?: ""
+                                serialModel.serialId ?: "",
+                                "HIST"
                             )
                         )
                         //
-                        unfocusList.addAll(
+                        historicalList.addAll(
                             repository.getUnfocusSchedules(localTicket).map {
                                 it.toMyActionsObj(context, getLastSelectedPk())
                             }
                         )
                     }
                     //
-                    if (unfocusList.size > 0) {
+                    if (historicalList.size > 0) {
                         val unfocusTemp = mutableListOf<MyActions>()
 
-                        val focusTemp = focusList.map {
+                        val focusTemp = actionList.map {
                             var action = it as MyActions
-                            for (unfocusAction in unfocusList) {
+                            for (unfocusAction in historicalList) {
                                 if (action.processId == (unfocusAction as MyActions).processId) {
                                     action.mergeUnfocusActions(unfocusAction)
                                     unfocusTemp.add(unfocusAction)
@@ -116,14 +127,14 @@ class ListMyActionUseCases constructor(
                             it as MyActionsBase
                         }
                         //
-                        unfocusList.sortByDescending {
+                        historicalList.sortByDescending {
                             when (it) {
                                 is MyActions -> it.orderBy
                                 else -> "190001010000"
                             }
                         }
                         //
-                        val filteredUnfocusList = unfocusList.filter {
+                        val filteredUnfocusList = historicalList.filter {
                             var insertItem = true
                             for (unfocusTempAction in unfocusTemp) {
                                 if ((it as MyActions).processId == (unfocusTempAction as MyActions).processId) {
@@ -137,7 +148,7 @@ class ListMyActionUseCases constructor(
                         actionBaseList.addAll(focusTemp)
                         actionBaseList.addAll(filteredUnfocusList)
                     } else {
-                        actionBaseList.addAll(focusList)
+                        actionBaseList.addAll(actionList)
                     }
 
                     val actions = if (mainUser)

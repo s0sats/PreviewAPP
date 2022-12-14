@@ -125,8 +125,7 @@ class Act092_Adapter constructor(
                     if (
                         (item.actionType == MyActions.MY_ACTION_TYPE_SCHEDULE
                                 && !item.hasUserFocus
-                                && item.processStatus != ConstantBaseApp.SYS_STATUS_DONE
-                                )
+                                && item.processStatus != ConstantBaseApp.SYS_STATUS_DONE)
                         || item.waiting_approve == true
                     ) {
                         isEnabled = false
@@ -158,13 +157,6 @@ class Act092_Adapter constructor(
                     }
                 }
                 //
-
-                if (item.highlightItem) {
-                    myActionsItemTvFormNoFinish
-                }
-
-                //
-
                 myActionsItemWaitApprove.apply {
                     text = hmAux[Act092Translate.CELL_WAITING_APPROVAL]
                     visibility = if (item.containWaitingApproval) View.VISIBLE else View.GONE

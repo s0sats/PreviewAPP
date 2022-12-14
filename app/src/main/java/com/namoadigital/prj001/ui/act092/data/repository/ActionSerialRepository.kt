@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act092.data.repository
 
+import android.location.Criteria
 import android.os.Bundle
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.model.*
@@ -18,7 +19,7 @@ interface ActionSerialRepository {
     fun downloadTicket(bundle: Bundle)
     suspend fun updateSyncChecklist(syncChecklist: Sync_Checklist)
     fun unfocusAndHistorical(bundle: Bundle)
-    suspend fun getUnfocusAndHistorical(productCode: Int, serialCode: Long, serialId: String): MutableList<MyActions>
+    suspend fun getUnfocusAndHistorical(productCode: Int, serialCode: Long, serialId: String,filterCriteria: String): MutableList<MyActions>
     suspend fun setPreferences(model: SerialModel)
     suspend fun getPreferences(): SerialModel
     fun getScheduleFromMyAction(prefix: Int, code: Int, exec: Int): MD_Schedule_Exec?
