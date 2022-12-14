@@ -3,10 +3,10 @@ package com.namoadigital.prj001.ui.act092.data.repository
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.preference.PreferenceManager
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.namoa_digital.namoa_library.util.HMAux
+import com.namoa_digital.namoa_library.view.Base_Activity
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.receiver.WBR_Serial_Search
@@ -506,7 +506,7 @@ class IActionSerialRepository constructor(
                         Constant.DB_VERSION_CUSTOM
                     ),
                     FilterParamPreferences(
-                        PreferenceManager.getDefaultSharedPreferences(context)
+                        context.getSharedPreferences("Act092_Filter", Base_Activity.MODE_PRIVATE)
                     )
                 )
         }

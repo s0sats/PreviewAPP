@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.view.ContextThemeWrapper
 import android.view.View
 import android.view.WindowManager
@@ -41,6 +40,7 @@ import com.namoadigital.prj001.ui.act070.Act070_Main
 import com.namoadigital.prj001.ui.act071.Act071_Main
 import com.namoadigital.prj001.ui.act083.data.local.preferences.MyActionsFilterParamPreferences
 import com.namoadigital.prj001.ui.act092.ui.Act092_Main
+import com.namoadigital.prj001.ui.act092.utils.Act092Translate
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -128,7 +128,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 Constant.DB_VERSION_CUSTOM
             ),
             MyActionsFilterParamPreferences(
-                PreferenceManager.getDefaultSharedPreferences(context)
+                getSharedPreferences("Act083_Filter", MODE_PRIVATE)
             ),
             mModule_Code,
             mResource_Code
@@ -142,7 +142,6 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         //
         setSupportActionBar(binding.toolbar)
         //
-        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
         initBundle(savedInstanceState)
         iniSetup()
         iniTrans()
@@ -172,6 +171,10 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
 
     private fun initVars() {
         supportActionBar?.title = mPresenter.getActTitle()
+        binding.act083MainContent.act083TilFilter.apply {
+            hint = Act092Translate.HINT_FILTER
+            placeholderText = Act092Translate.PLACEHOLDER_FILTER
+        }
         //reseta preferencia do toggle da origem
         ToolBox_Con.setBooleanPreference(
             context,
@@ -217,13 +220,13 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
             binding.act083MainContent.act083TvNoResult.visibility = View.GONE
             //
             mAdapter = MyActionsAdapter(
-                    myActionsList,
-                    hmAux_Trans,
-                    supportActionBar?.title?.toString() ?:"",
-                    this::onMyActionClick,
-                    this::onFormButtonClick,
-                    this::onSerialButtonClick,
-                    this::onAdapterFilterApplied
+                myActionsList,
+                hmAux_Trans,
+                supportActionBar?.title?.toString(),
+                this::onMyActionClick,
+                null,
+                this::onSerialButtonClick,
+                this::onAdapterFilterApplied
             )
             //
             with(binding.act083MainContent.act083RvActionsList) {
@@ -702,9 +705,11 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         finish()
     }
 
+
     override fun onBackPressed() {
         //super.onBackPressed()
         mPresenter.onBackPressedClicked()
+
     }
 
     override fun showMsg(type: String, item: MyActions) {

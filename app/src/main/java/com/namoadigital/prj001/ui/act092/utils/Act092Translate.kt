@@ -7,6 +7,8 @@ object Act092Translate {
     const val DIALOG_OTHER_ACTIONS_EMPTY_LIST_MSG = "dialog_other_actions_empty_list_msg"
 
     const val EMPTY_LIST = "empty_list_lbl"
+    const val HINT_FILTER = "hint_filter_lbl"
+    const val PLACEHOLDER_FILTER = "placeholder_filter_lbl"
 
 
     //presenter

@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.ui.act092.ui.adapter
 
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -117,6 +116,9 @@ class Act092_Adapter constructor(
 
                 act083SerialInfo.visibility = View.GONE
                 serialDetail.visibility = View.GONE
+
+
+
                 myActionSelectSerial.apply {
                     visibility = View.VISIBLE
                     isEnabled = true
@@ -165,6 +167,13 @@ class Act092_Adapter constructor(
 
                 //
 
+                binding.layoutTagDesc.apply {
+                    visibility =
+                        if (item.tagOperationDesc.isNullOrEmpty() && item.classId.isNullOrEmpty()) View.GONE else View.VISIBLE
+                }
+
+                //
+
                 myActionsItemWaitApprove.apply {
                     text = hmAux[Act092Translate.CELL_WAITING_APPROVAL]
                     visibility = if (item.containWaitingApproval) View.VISIBLE else View.GONE
@@ -180,6 +189,10 @@ class Act092_Adapter constructor(
                     myActionsItemTvClassStatus.setTextColor(Color.parseColor(item.classColor))
                     myActionsItemTvClassStatus.visibility = View.VISIBLE
                 } else {
+                    binding.layoutTagDesc.apply {
+                        visibility =
+                            if (item.tagOperationDesc.isNullOrEmpty() && item.classId.isNullOrEmpty()) View.GONE else View.VISIBLE
+                    }
                     myActionsItemTvClassStatus.visibility = View.GONE
                 }
                 //
@@ -245,9 +258,7 @@ class Act092_Adapter constructor(
                             )
                         )
                     } else {
-                        this.setTextColor(
-                            context.resources.getColor(R.color.namoa_color_gray_8)
-                        )
+                        this.setTextColor(context.resources.getColor(R.color.namoa_color_gray_8))
                     }
                 }
 

@@ -23,6 +23,7 @@ import com.namoadigital.prj001.ui.act070.Act070_Main
 import com.namoadigital.prj001.ui.act083.data.local.preferences.MyActionsFilterParamPreferences
 import com.namoadigital.prj001.ui.act083.model.SaveActionFilterModel
 import com.namoadigital.prj001.ui.act083.model.SaveActionFilterModel.Companion.toMyActionFilter
+import com.namoadigital.prj001.ui.act092.utils.Act092Translate
 import com.namoadigital.prj001.util.*
 import com.namoadigital.prj001.view.dialog.ScheduleRequestSerialDialog2
 import kotlinx.coroutines.*
@@ -172,13 +173,15 @@ class Act083_Main_Presenter constructor(
         transList.add("item_in_process_lbl")
         //
         transList.add("cell_justify_lbl")
-
+        //
+        transList.add(Act092Translate.HINT_FILTER)
+        transList.add(Act092Translate.PLACEHOLDER_FILTER)
         return ToolBox_Inf.setLanguage(
-                context,
-                mModule_Code,
-                mResource_Code,
-                ToolBox_Con.getPreference_Translate_Code(context),
-                transList
+            context,
+            mModule_Code,
+            mResource_Code,
+            ToolBox_Con.getPreference_Translate_Code(context),
+            transList
         )
     }
 
@@ -1643,8 +1646,7 @@ class Act083_Main_Presenter constructor(
         initialTabToLoad = myActionFilterParam.paramItemSelectedTab ?: 1
         _lastSelectedActionPk = myActionFilterParam.paramItemSelectedPk
         _lastSelectedActionType = myActionFilterParam.paramItemSelectedType
-        mainUserFilterState = myActionFilterParam.mainUserFilterState ?: false
-
+        mainUserFilterState = myActionFilterParam.mainUserFilterState
 
     }
 
@@ -1920,7 +1922,7 @@ class Act083_Main_Presenter constructor(
         return Bundle()
     }
 
-    fun updateSharedPrefs() {
+    override fun updateSharedPrefs() {
         sharedPreferences.write(
             sharedPreferences.read().copy(
                 initialTextFilter = mView.getMketFilter(),

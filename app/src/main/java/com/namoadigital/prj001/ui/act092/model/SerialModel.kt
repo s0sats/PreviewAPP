@@ -22,8 +22,11 @@ data class SerialModel(
     val hmAux: HMAux? = null,
     val lastSelectedPk: String? = null,
     val lastSelectActionType: String? = null,
-    val classColor: String = ""
-) {
+    val classColor: String? = null,
+    val mainUserFocus: Boolean = false,
+    val editFilter: String? = null,
+
+    ) {
 
     fun getLastSelectedPk(actionType: String = MyActions.MY_ACTION_TYPE_FORM) =
         if (lastSelectedPk == actionType) {

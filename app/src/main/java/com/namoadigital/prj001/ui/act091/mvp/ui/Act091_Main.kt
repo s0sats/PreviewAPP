@@ -29,7 +29,7 @@ class Act091_Main : BaseActivityMvp<Act091_Contract.I_Presenter, Act091MainBindi
 
     private var bundleSaved: Bundle? = null
 
-    private val mAdapter: Act091_Item_Adapter? by lazy {
+    private val mAdapter: Act091_Item_Adapter by lazy {
         Act091_Item_Adapter(
             presenter.getListData(),
             presenter.hasPermissionShowPrice(),
@@ -40,7 +40,7 @@ class Act091_Main : BaseActivityMvp<Act091_Contract.I_Presenter, Act091MainBindi
 
     override val presenter: Act091_Contract.I_Presenter by lazy {
         Act091_Presenter(
-            Act091State(bundleSaved!!),
+            Act091State(bundleSaved),
             TranslateResource(
                 context,
                 mModule_Code,
@@ -60,6 +60,7 @@ class Act091_Main : BaseActivityMvp<Act091_Contract.I_Presenter, Act091MainBindi
         bundleSaved = intent?.extras
 
         initView {
+            presenter.setView(this)
             mAct_Title = Act091_Translate.ACT_TITLE
             setTitleLanguage()
             initRecyclerView()

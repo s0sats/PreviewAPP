@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -27,9 +28,9 @@ import com.namoadigital.prj001.util.ToolBox_Inf
 class MyActionsAdapter constructor(
     private val myActions: List<MyActionsBase>,
     private val hmAuxTrans: HMAux,
-    val tagDesc: String,
+    val tagDesc: String?,
     private val myActionClickListener: (myAction: MyActions) -> Unit,
-    private val myActionFormButtonClickListener: (myActionFormButton: MyActionsFormButton) -> Unit,
+    private val myActionFormButtonClickListener: ((myActionFormButton: MyActionsFormButton) -> Unit)? = null,
     private val mySerialClickListener: ((myAction: MyActions, Int) -> Unit)? = null,
     private val notifyFilterApplied: (qtyItensFiltered: Int) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
@@ -80,6 +81,7 @@ class MyActionsAdapter constructor(
     }
 
     inner class MyActionVh(private val binding: MyActionsItemBinding) : RecyclerView.ViewHolder(binding.root) {
+        @SuppressLint("NewApi")
         fun onBinding(myAction: MyActions, position: Int) {
             binding.act083SerialInfo.text = hmAuxTrans["btn_select_serial_info_lbl"]
 
@@ -107,11 +109,6 @@ class MyActionsAdapter constructor(
                 }
             }
 
-            if (myAction.tagOperationDesc.isNullOrEmpty() && myAction.classId.isNullOrEmpty()) {
-                binding.layoutTagDesc.visibility = View.GONE
-            } else {
-                binding.layoutTagDesc.visibility = View.VISIBLE
-            }
             //
             binding.myActionsItemTvCode.text = myAction.processId
             binding.myActionsItemTvClassStatus.visibility = View.GONE
@@ -123,7 +120,6 @@ class MyActionsAdapter constructor(
                 binding.myActionsItemTvClassStatus.apply {
                     applyVisibilityIfTextExists(myAction.classId)
                     setTextColor(Color.parseColor(myAction.classColor))
-                    visibility =View.VISIBLE
                 }
             }
             //
@@ -135,11 +131,16 @@ class MyActionsAdapter constructor(
             //
             configTvTag(myAction)
             binding.myActionsItemTvProdDesc.applyVisibilityIfTextExists(myAction.productDesc)
-            binding.myActionsItemTvSerialId.text = myAction.serialId
-            if(ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_MANUAL != myAction.ticketOriginType){
+            binding.myActionsItemTvSerialId.applyVisibilityIfTextExists(myAction.serialId)
+
+            if (myAction.serialId.isNullOrEmpty() && myAction.productDesc.isNotEmpty()) {
+                binding.myActionsItemTvSerialId.text = myAction.productDesc
+                binding.myActionsItemTvSerialId.visibility = View.VISIBLE
+                binding.myActionsItemTvProdDesc.visibility = View.GONE
+            }
+            if (ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_MANUAL != myAction.ticketOriginType) {
                 configTvOriginView(myAction)
-                binding.myActionsItemTvOrigin.visibility = View.VISIBLE
-            }else{
+            } else {
                 binding.myActionsItemTvOrigin.visibility = View.GONE
             }
             /*binding.myActionsItemTvProcessDesc.text = myAction.processDesc*/
@@ -175,7 +176,8 @@ class MyActionsAdapter constructor(
             binding.myActionsItemTvJustify.apply {
                 applyVisibilityIfTextExists(myAction.justify_item_desc, hmAuxTrans["cell_justify_lbl"]!!)
                 if(myAction.justify_item_desc.isNullOrEmpty() &&
-                    !myAction.not_exec_comments.isNullOrEmpty()){
+                    !myAction.not_exec_comments.isNullOrEmpty()
+                ) {
                     applyVisibilityIfTextExists(hmAuxTrans["cell_justify_lbl"]!! + ":")
                 }
             }
@@ -185,6 +187,11 @@ class MyActionsAdapter constructor(
             }
             //
             applyBackgroundStrokeColor(myAction)
+
+            binding.layoutTagDesc.apply {
+                visibility =
+                    if (checkIfTitleThemeEqualsLabelCardTheme(myAction.tagOperationDesc).isNullOrEmpty() && myAction.classId.isNullOrEmpty()) View.GONE else View.VISIBLE
+            }
         }
 
         private fun configDoneDate(myAction: MyActions) {
@@ -205,23 +212,24 @@ class MyActionsAdapter constructor(
             return null
         }
 
+
+        private fun checkIfTitleThemeEqualsLabelCardTheme(tagOper: String?) = tagOper?.let {
+            if (it.isEmpty() || it.uppercase() == tagDesc?.uppercase()) {
+                null
+            } else {
+                it.uppercase()
+            }
+        }
+
         private fun configTvTag(myAction: MyActions) {
             with(binding.myActionsItemTvTagDesc) {
-
-                text = myAction.tagOperationDesc?.let {
-                    if (it.uppercase() == tagDesc.uppercase()) {
-                        ""
-                    } else {
-                        it.uppercase()
-                    }
-                }?: ""
-                this.applyVisibilityIfTextExists(text as String?)
+                this.applyVisibilityIfTextExists(checkIfTitleThemeEqualsLabelCardTheme(myAction.tagOperationDesc))
             }
         }
 
         private fun configTvSite(myAction: MyActions) {
-            with(binding.myActionsItemTvSite){
-                 myAction.siteCode?.let {
+            with(binding.myActionsItemTvSite) {
+                myAction.siteCode?.let {
                     if(ToolBox_Inf.equalsToLoggedSite(context,it.toString())){
                         visibility = View.VISIBLE
                         text = myAction.getFormattedSiteZoneDesc()
@@ -322,7 +330,7 @@ class MyActionsAdapter constructor(
 
         private fun configTvOriginView(myAction: MyActions) {
             binding.myActionsItemTvOrigin.apply {
-                text = myAction.originDescriptor
+                applyVisibilityIfTextExists(myAction.originDescriptor)
 //                Log.d("TESTE_ORIGEM", """isTicketOriginManulOrBarcode: ${isTicketOriginManulOrBarcode(myAction)}""" )
 //                Log.d("TESTE_ORIGEM", """originDescriptor: ${myAction.originDescriptor}""" )
                 ellipsize = if (isTicketOriginManulOrBarcode(myAction)) {
@@ -353,7 +361,9 @@ class MyActionsAdapter constructor(
     inner class MyActionFormButtonVh(private val binding: MyActionsFormButtonItemBinding): RecyclerView.ViewHolder(binding.root){
         fun onBinding(myActionFormButton: MyActionsFormButton) {
             binding.root.setOnClickListener {
-                myActionFormButtonClickListener(myActionFormButton)
+                myActionFormButtonClickListener?.let {
+                    it(myActionFormButton)
+                }
             }
             binding.myActionsFormButtonItemTvLbl.text = myActionFormButton.label
         }

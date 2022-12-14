@@ -66,8 +66,6 @@ class Act092_Main : BaseActivityMvp
         mAdapter.notifyItemChanged(position)
     }
 
-    private val _mainUserFilter = MutableStateFlow(false)
-
     private val _focusState = MutableStateFlow(FilterFocusUser())
     override val focusState = _focusState.asStateFlow()
 
@@ -99,6 +97,7 @@ class Act092_Main : BaseActivityMvp
             )
         )
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -270,18 +269,35 @@ class Act092_Main : BaseActivityMvp
     private fun updateTitleActionSerial() {
         with(binding) {
             val color = presenter.serialModel.value.classColor
-            if (color.isNotEmpty()) {
-                iconClassColor.setColorFilter(Color.parseColor(color))
-            } else {
+            if (color.isNullOrEmpty()) {
                 iconClassColor.visibility = View.GONE
+            } else {
+                iconClassColor.visibility = View.VISIBLE
+                iconClassColor.setColorFilter(Color.parseColor(color))
             }
             serialTitle.text = presenter.serialModel.value.serialId
             productDescription.text = presenter.serialModel.value.productDesc
+
+            _focusState.value = focusState.value.copy(
+                mainUser = presenter.serialModel.value.mainUserFocus
+            )
+
+            onState(Act092UiEvent.FilterMainUser)
+
+            filterText.value = presenter.serialModel.value.editFilter ?: ""
+            if (filterText.value.isNotEmpty()) binding.editSerialFilter.setText(filterText.value)
+
         }
     }
 
     override fun initVars() {
-        binding.topAppBar.title = hmAux_Trans["act092_title"]
+        with(binding) {
+            topAppBar.title = hmAux_Trans["act092_title"]
+            act092TextLayout.apply {
+                hint = Act092Translate.HINT_FILTER
+                placeholderText = Act092Translate.PLACEHOLDER_FILTER
+            }
+        }
         iniUIFooter(Constant.ACT092, hmAux_Trans)
     }
 
@@ -321,7 +337,7 @@ class Act092_Main : BaseActivityMvp
                 }
 
                 override fun reportTextChange(text: String?, p1: Boolean) {
-                    if (editSerialFilter.isEnabled) {
+                    if (editSerialFilter.isEnabled && ::mAdapter.isInitialized) {
                         mAdapter.filter.filter(text)
                         filterText.value = text ?: ""
                     }
@@ -354,8 +370,10 @@ class Act092_Main : BaseActivityMvp
 
 
     override fun onBackPressed() {
-        //super.onBackPressed()
+        super.onBackPressed()
         presenter.onBackPressedClicked(bundle)
+
+
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
@@ -407,6 +425,14 @@ class Act092_Main : BaseActivityMvp
                     startActivityForResult(Intent(context, state.classe).also {
                         it.putExtras(state.bundle ?: Bundle())
                     }, state.code)
+                }
+
+                is Act092UiEvent.UpdateOtherAction -> {
+                    _focusState.value = focusState.value.copy(
+                        mainUser = false,
+                        userFocus = !focusState.value.userFocus
+                    )
+                    disableMainAndOtherActions()
                 }
             }
         }
@@ -493,7 +519,8 @@ class Act092_Main : BaseActivityMvp
     }
 
     private fun initRecyclerView(
-        list: List<MyActionsBase>
+        list: List<MyActionsBase>,
+        mainUser: Boolean = _focusState.value.mainUser
     ) {
         with(binding) {
 
@@ -508,11 +535,14 @@ class Act092_Main : BaseActivityMvp
 
             emptyList.visibility = View.GONE
             progressLoading.visibility = View.GONE
+            mAdapter.userMainFilter = mainUser
             recyclerSerialList.apply {
                 visibility = View.VISIBLE
                 adapter = mAdapter
                 layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
             }
+
+            if (filterText.value.isNotEmpty()) mAdapter.filter.filter(filterText.value)
 
         }
     }
@@ -520,6 +550,7 @@ class Act092_Main : BaseActivityMvp
     private fun toggleMainUserFilter(
         value: Boolean = _focusState.value.mainUser
     ) {
+
         with(binding.mainUserSelection) {
             if (value) {
                 setImageResource(R.drawable.ic_person_white_24dp)

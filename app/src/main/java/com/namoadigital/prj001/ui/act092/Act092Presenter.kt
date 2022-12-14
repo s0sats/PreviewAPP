@@ -81,7 +81,6 @@ class Act092Presenter constructor(
 
     var newActionClick = false
 
-
     init {
         if (originFlow == ConstantBaseApp.ACT006 || originFlow == ConstantBaseApp.ACT083) {
             cleanUnfocusAndHistoricalFile()
@@ -92,21 +91,30 @@ class Act092Presenter constructor(
         ToolBox_Inf.deleteAllFOD(Constant.OTHER_ACTIONS_JSON_PATH)
     }
 
-    private suspend fun saveFilters() {
-
-        if (originFlow == ConstantBaseApp.ACT006 || originFlow == ConstantBaseApp.ACT083) {
-            actionUseCases.setPreferences(
-                myActionFilterParam.toSerialModel().copy(
-                    originFlow = originFlow,
-                    siteCodeBack = ToolBox_Con.getPreference_Site_Code(translateResource.context),
-                    zoneCodeBack = ToolBox_Con.getPreference_Zone_Code(translateResource.context),
-                    classColor = iconColor
+    private fun saveFilter() {
+        CoroutineScope(Dispatchers.IO).launch {
+            if (originFlow == ConstantBaseApp.ACT006 || originFlow == ConstantBaseApp.ACT083) {
+                actionUseCases.setPreferences(
+                    myActionFilterParam.toSerialModel().copy(
+                        originFlow = originFlow,
+                        siteCodeBack = ToolBox_Con.getPreference_Site_Code(translateResource.context),
+                        zoneCodeBack = ToolBox_Con.getPreference_Zone_Code(translateResource.context),
+                        classColor = iconColor ?: "",
+                        mainUserFocus = view.focusState.value.mainUser,
+                        editFilter = view.filterText.value
+                    )
                 )
-            )
+            }
         }
-        _serialModel.value = actionUseCases.getPreferences().copy(hmAux = hmAux_Trans)
-        view.onState(Act092UiEvent.UpdateTitleActionSerial)
     }
+
+    private fun loadFilter() {
+        CoroutineScope(Dispatchers.Main).launch {
+            _serialModel.value = actionUseCases.getPreferences().copy(hmAux = hmAux_Trans)
+            view.onState(Act092UiEvent.UpdateTitleActionSerial)
+        }
+    }
+
 
     override fun verifyProductOutdateForForm(hmAux: HMAux, context: Context): Boolean {
         val ticketPrefix = hmAux[TK_TicketDao.TICKET_PREFIX].let { Integer.valueOf(it) } ?: -1
@@ -130,7 +138,6 @@ class Act092Presenter constructor(
 
     override fun getMyActionList() {
         CoroutineScope(Dispatchers.IO).launch {
-            saveFilters()
             actionUseCases.localTicket(
                 Pair(
                     _serialModel.value.copy(
@@ -182,8 +189,6 @@ class Act092Presenter constructor(
                     Act083_Main::class.java,
                     bundle.apply {
 
-                        myActionFilterParam = ToolBox_Inf.getMyActionFilterParam(bundle)
-
                         myActionFilterParam.productCode = null
                         myActionFilterParam.productId = null
                         myActionFilterParam.productDesc = null
@@ -225,6 +230,7 @@ class Act092Presenter constructor(
     }
 
     override fun processActionClick(action: MyActions, context: Context, position: Int) {
+        saveFilter()
         when (action.actionType) {
             MyActions.MY_ACTION_TYPE_TICKET -> {
                 val slippedPk = action.getSplippedPk()
@@ -438,6 +444,7 @@ class Act092Presenter constructor(
             }
         } else {
             ToolBox_Inf.showNoConnectionDialog(context)
+            view.onState(Act092UiEvent.UpdateOtherAction)
         }
     }
 
@@ -1062,6 +1069,8 @@ class Act092Presenter constructor(
 
     override fun setView(view: Act092_Contract.View) {
         this.view = view
+        saveFilter()
+        loadFilter()
     }
 
     override fun loadTranslation(): HMAux {
@@ -1126,6 +1135,8 @@ class Act092Presenter constructor(
             "dialog_generate_form_pdf_start",
             "cell_justify_lbl",
             "cell_item_in_process_lbl",
+            Act092Translate.HINT_FILTER,
+            Act092Translate.PLACEHOLDER_FILTER
         ).let {
             return ToolBox_Inf.setLanguage(
                 translateResource.context,

@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act091.mvp
 
+import android.os.Bundle
 import com.google.gson.GsonBuilder
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.dao.MD_PartnerDao
@@ -24,7 +25,7 @@ class Act091_Presenter constructor(
     private val translateResource: TranslateResource,
 ) : Act091_Contract.I_Presenter {
 
-    private val bundle = act091State.bundle
+    private val bundle = act091State.bundle ?: Bundle()
 
     private val so_pack_express_localDao by lazy {
         translateResource.context.let { context ->
