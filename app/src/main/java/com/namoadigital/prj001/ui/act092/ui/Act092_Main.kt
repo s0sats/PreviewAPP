@@ -370,7 +370,7 @@ class Act092_Main : BaseActivityMvp
 
 
     override fun onBackPressed() {
-        super.onBackPressed()
+        //super.onBackPressed()
         presenter.onBackPressedClicked(bundle)
 
 
@@ -541,8 +541,13 @@ class Act092_Main : BaseActivityMvp
                 adapter = mAdapter
                 layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
             }
+            //
+            if (!editSerialFilter.text.isNullOrEmpty()){
+                if (filterText.value.isNotEmpty()) mAdapter.filter.filter(filterText.value)
+                mAdapter.notifyDataSetChanged()
+            }
+            //
 
-            if (filterText.value.isNotEmpty()) mAdapter.filter.filter(filterText.value)
 
         }
     }

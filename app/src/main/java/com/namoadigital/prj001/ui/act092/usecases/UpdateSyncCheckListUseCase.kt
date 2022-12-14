@@ -14,18 +14,14 @@ import java.util.*
 class UpdateSyncCheckListUseCase constructor(
     private val context: Context,
     private val repository: ActionSerialRepository
-) : UseCases<Long, Unit> {
-    override suspend fun invoke(input: Long): Flow<IResult<Unit>> {
-        return flow {
-
-            Sync_Checklist().apply {
-                customer_code = ToolBox_Con.getPreference_Customer_Code(context)
-                product_code = input
-                last_update = SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance())
-            }.let {
-                repository.updateSyncChecklist(it)
-            }
-
+){
+    suspend operator fun invoke(input: Long) {
+        Sync_Checklist().apply {
+            customer_code = ToolBox_Con.getPreference_Customer_Code(context)
+            product_code = input
+            last_update = SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().time)
+        }.let {
+            repository.updateSyncChecklist(it)
         }
     }
 
