@@ -513,7 +513,12 @@ class Act092_Main : BaseActivityMvp
                 adapter = mAdapter
                 layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
             }
-
+            //
+            if (!editSerialFilter.text.isNullOrEmpty()){
+                mAdapter.filter.filter(editSerialFilter.text)
+                mAdapter.notifyDataSetChanged()
+            }
+            //
         }
     }
 
