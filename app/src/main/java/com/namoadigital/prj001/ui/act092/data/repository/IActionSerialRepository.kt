@@ -84,7 +84,9 @@ class IActionSerialRepository constructor(
         with(ticket) {
             return scheduleDao.query(
                 SqlAct092_006(
-                    customerCode ?: -1
+                    customerCode ?: -1,
+                    productCode,
+                    serialId
                 ).toSqlQuery()
             )
         }
@@ -285,7 +287,8 @@ class IActionSerialRepository constructor(
 
     override fun createFormLocalForSchedule(
         formLocalExists: Boolean,
-        scheduleExec: MD_Schedule_Exec
+        scheduleExec: MD_Schedule_Exec,
+        action: MyActions
     ): Boolean {
         val custom_formDao = GE_Custom_FormDao(
             context,
@@ -322,6 +325,7 @@ class IActionSerialRepository constructor(
                 custom_form_blob_localDao,
                 localFormsDao
             )?.let {
+                action.scheduleCustomFormData = it.custom_form_data.toString()
                 isOkForCreation = true
             }
         }

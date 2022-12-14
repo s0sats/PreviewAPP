@@ -50,7 +50,8 @@ interface ActionSerialRepository {
 
     fun createFormLocalForSchedule(
         formLocalExists: Boolean,
-        scheduleExec: MD_Schedule_Exec
+        scheduleExec: MD_Schedule_Exec,
+        actions: MyActions
     ): Boolean
 
     fun searchSerialWS(bundle: Bundle)

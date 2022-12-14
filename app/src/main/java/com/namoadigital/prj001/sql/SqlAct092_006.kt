@@ -7,17 +7,16 @@ import com.namoadigital.prj001.database.Specification
 import com.namoadigital.prj001.util.ConstantBaseApp
 
 class SqlAct092_006(
-    private val customerCode: Int
+    private val customerCode: Int,
+    private var productCode: Int?,
+    private var serialId: String?,
 ) : Specification {
     private val statusFilter: String = getStatusFilter()
 
 
     private fun getStatusFilter() :String {
-        return  """    and s.${MD_Schedule_ExecDao.STATUS} in('${ConstantBaseApp.SYS_STATUS_NOT_EXECUTED}',
-                                                                   '${ConstantBaseApp.SYS_STATUS_CANCELLED}',
-                                                                   '${ConstantBaseApp.SYS_STATUS_ERROR}',          
-                                                                   '${ConstantBaseApp.SYS_STATUS_DONE}',          
-                                                                   '${ConstantBaseApp.SYS_STATUS_IGNORED}'          
+        return  """    and s.${MD_Schedule_ExecDao.STATUS} in('${ConstantBaseApp.SYS_STATUS_NOT_EXECUTED}', 
+                                                                   '${ConstantBaseApp.SYS_STATUS_DONE}',                    
                                                                   ) """.trimMargin()
 
     }
@@ -65,6 +64,8 @@ class SqlAct092_006(
                            and d.${GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS} = '${ConstantBaseApp.SYS_STATUS_DONE}'
                     WHERE
                      s.${MD_Schedule_ExecDao.CUSTOMER_CODE} = $customerCode   
+                     s.${MD_Schedule_ExecDao.PRODUCT_CODE} = $productCode   
+                     s.${MD_Schedule_ExecDao.SERIAL_ID} = $serialId   
                      $statusFilter           
                       """.replace("'null'","null")
         return s

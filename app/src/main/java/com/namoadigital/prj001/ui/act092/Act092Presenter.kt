@@ -672,7 +672,8 @@ class Act092Presenter constructor(
 
     private fun getScheduleBundle(
         scheduleExec: MD_Schedule_Exec,
-        serial: MD_Product_Serial
+        serial: MD_Product_Serial,
+        action: MyActions
     ): Bundle {
         return Bundle().also { bundle ->
             bundle.putString(MD_ProductDao.PRODUCT_CODE, scheduleExec.product_code.toString())
@@ -703,6 +704,7 @@ class Act092Presenter constructor(
                 ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
                 Constant.ACT092
             )
+            bundle.putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, action.scheduleCustomFormData)
             bundle.putAll(view.bundle)
         }
     }
@@ -717,12 +719,24 @@ class Act092Presenter constructor(
         CoroutineScope(Dispatchers.Main).launch {
             when (actType) {
                 Constant.ACT011 -> {
-                    view.onState(
-                        Act092UiEvent.CallAct(
-                            Act011_Main::class.java,
-                            getScheduleBundle(scheduleExec, serial)
+                    if(actionUseCases.createFormLocalForSchedule(actionUseCases.scheduleFormLocalExists(scheduleExec).first, scheduleExec, action)){
+                        view.onState(
+                            Act092UiEvent.CallAct(
+                                Act011_Main::class.java,
+                                getScheduleBundle(scheduleExec, serial, action)
+                            )
                         )
-                    )
+                    }else{
+                        view.onState(
+                            Act092UiEvent.OpenDialog(
+                                DialogType.DEFAULT_OK(
+                                    hmAux_Trans[""],
+                                    hmAux_Trans[""]
+                                )
+                            )
+                        )
+                    }
+
                 }
 
                 Constant.ACT087 -> {
@@ -1126,6 +1140,7 @@ class Act092Presenter constructor(
             "dialog_generate_form_pdf_start",
             "cell_justify_lbl",
             "cell_item_in_process_lbl",
+            "other_steps_available_lbl",
         ).let {
             return ToolBox_Inf.setLanguage(
                 translateResource.context,

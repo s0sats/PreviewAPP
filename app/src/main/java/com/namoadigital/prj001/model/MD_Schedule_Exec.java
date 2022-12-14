@@ -577,11 +577,11 @@ public class MD_Schedule_Exec {
                     midIcon = R.drawable.ic_cloud_upload_24_red;
                     break;
                 case ConstantBaseApp.SYS_STATUS_NOT_EXECUTED:
-                case ConstantBaseApp.SYS_STATUS_CANCELLED:
                     rightIcon = R.drawable.ic_baseline_cancel_24;
                     break;
                 case ConstantBaseApp.SYS_STATUS_ERROR:
                 case ConstantBaseApp.SYS_STATUS_IGNORED:
+                case ConstantBaseApp.SYS_STATUS_CANCELLED:
                     midIcon = R.drawable.ic_baseline_clear_24dp_red;
                     break;
                 case ConstantBaseApp.SYS_STATUS_IN_PROCESSING:
