@@ -25,8 +25,8 @@ data class SerialModel(
     val classColor: String? = null,
     val mainUserFocus: Boolean = false,
     val editFilter: String? = null,
-
-    ) {
+    val otherSerialIsFiltered: Boolean = false,
+) {
 
     fun getLastSelectedPk(actionType: String = MyActions.MY_ACTION_TYPE_FORM) =
         if (lastSelectedPk == actionType) {
@@ -34,5 +34,6 @@ data class SerialModel(
         } else {
             null
         }
+
 
 }

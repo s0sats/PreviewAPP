@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui.act092.utils
 import android.content.DialogInterface
 import android.os.Bundle
 import com.namoadigital.prj001.model.MyActionsBase
+import com.namoadigital.prj001.ui.act092.model.SerialModel
 
 sealed class Act092UiEvent {
 
@@ -36,8 +37,8 @@ sealed class Act092UiEvent {
         }
     }
 
-    object UpdateTitleActionSerial : Act092UiEvent()
+    data class UpdateTitleActionSerial(val serialModel: SerialModel) : Act092UiEvent()
 
     object UpdateFooterInfos : Act092UiEvent()
-    object UpdateOtherAction : Act092UiEvent()
+    data class UpdateOtherAction(val isOnline: Boolean = true) : Act092UiEvent()
 }

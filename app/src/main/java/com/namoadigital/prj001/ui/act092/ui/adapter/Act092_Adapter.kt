@@ -418,8 +418,8 @@ class Act092_Adapter constructor(
             var temp = mutableListOf<MyActionsBase>()
             var charFilter = ToolBox.AccentMapper(constraint.toString().toLowerCase())
             if (charFilter.isNullOrEmpty()) {
-                if (userMainFilter) {
-                    temp = source.filter {
+                temp = if (userMainFilter) {
+                    source.filter {
                         if (it is MyActions) {
                             it.isMainUserTicket
                         } else {
@@ -427,7 +427,7 @@ class Act092_Adapter constructor(
                         }
                     } as MutableList<MyActionsBase>
                 } else {
-                    temp = source as MutableList<MyActionsBase>
+                    source as MutableList<MyActionsBase>
                 }
             } else {
                 temp.addAll(

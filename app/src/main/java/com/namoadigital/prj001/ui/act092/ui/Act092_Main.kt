@@ -24,6 +24,7 @@ import com.namoadigital.prj001.ui.act070.Act070_Main
 import com.namoadigital.prj001.ui.act091.mvp.model.TranslateResource
 import com.namoadigital.prj001.ui.act092.Act092Presenter
 import com.namoadigital.prj001.ui.act092.Act092_Contract
+import com.namoadigital.prj001.ui.act092.model.SerialModel
 import com.namoadigital.prj001.ui.act092.ui.adapter.Act092_Adapter
 import com.namoadigital.prj001.ui.act092.ui.adapter.SerialViewItem
 import com.namoadigital.prj001.ui.act092.usecases.ActionUseCases.Companion.ActionUseCasesFactory
@@ -110,7 +111,6 @@ class Act092_Main : BaseActivityMvp
 
         initView {
             presenter.setView(this)
-            presenter.getMyActionList()
         }
     }
 
@@ -266,25 +266,19 @@ class Act092_Main : BaseActivityMvp
         hmAux_Trans = presenter.getTranslation()
     }
 
-    private fun updateTitleActionSerial() {
+    private fun updateTitleActionSerial(serialModel: SerialModel) {
         with(binding) {
-            val color = presenter.serialModel.value.classColor
-            if (color.isNullOrEmpty()) {
+            if (serialModel.classColor.isNullOrEmpty()) {
                 iconClassColor.visibility = View.GONE
             } else {
                 iconClassColor.visibility = View.VISIBLE
-                iconClassColor.setColorFilter(Color.parseColor(color))
+                iconClassColor.setColorFilter(Color.parseColor(serialModel.classColor))
             }
-            serialTitle.text = presenter.serialModel.value.serialId
-            productDescription.text = presenter.serialModel.value.productDesc
+            serialTitle.text = serialModel.serialId
+            productDescription.text = serialModel.productDesc
 
-            _focusState.value = focusState.value.copy(
-                mainUser = presenter.serialModel.value.mainUserFocus
-            )
 
-            onState(Act092UiEvent.FilterMainUser)
-
-            filterText.value = presenter.serialModel.value.editFilter ?: ""
+            filterText.value = serialModel.editFilter ?: ""
             if (filterText.value.isNotEmpty()) binding.editSerialFilter.setText(filterText.value)
 
         }
@@ -295,7 +289,6 @@ class Act092_Main : BaseActivityMvp
             topAppBar.title = hmAux_Trans["act092_title"]
             act092TextLayout.apply {
                 hint = Act092Translate.HINT_FILTER
-                placeholderText = Act092Translate.PLACEHOLDER_FILTER
             }
         }
         iniUIFooter(Constant.ACT092, hmAux_Trans)
@@ -312,6 +305,7 @@ class Act092_Main : BaseActivityMvp
                         mainUser = !_focusState.value.mainUser
                     )
                     onState(Act092UiEvent.FilterMainUser)
+                    presenter.getMyActionList()
                 }
             }
 
@@ -320,12 +314,19 @@ class Act092_Main : BaseActivityMvp
                     mainUser = false,
                     userFocus = !focusState.value.userFocus
                 )
+
+                if (::mAdapter.isInitialized) {
+                    mAdapter.userMainFilter = _focusState.value.mainUser
+                }
+
                 disableMainAndOtherActions()
+
                 if (_focusState.value.userFocus) {
                     presenter.getMyActionList()
                 } else {
                     presenter.otherActionFlow(context)
                 }
+
             }
             btnCreateAction.setOnClickListener {
                 presenter.processNewFormClick(context)
@@ -381,7 +382,9 @@ class Act092_Main : BaseActivityMvp
         CoroutineScope(Dispatchers.Main).launch {
             when (state) {
                 is Act092UiEvent.UpdateTitleActionSerial -> {
-                    updateTitleActionSerial()
+                    updateTitleActionSerial(
+                        state.serialModel
+                    )
                 }
 
                 is Act092UiEvent.IsLoading -> {
@@ -428,10 +431,12 @@ class Act092_Main : BaseActivityMvp
                 }
 
                 is Act092UiEvent.UpdateOtherAction -> {
-                    _focusState.value = focusState.value.copy(
-                        mainUser = false,
-                        userFocus = !focusState.value.userFocus
-                    )
+                    if (!state.isOnline) {
+                        _focusState.value = _focusState.value.copy(
+                            mainUser = focusState.value.mainUser,
+                            userFocus = !focusState.value.userFocus
+                        )
+                    }
                     disableMainAndOtherActions()
                 }
             }
@@ -520,7 +525,6 @@ class Act092_Main : BaseActivityMvp
 
     private fun initRecyclerView(
         list: List<MyActionsBase>,
-        mainUser: Boolean = _focusState.value.mainUser
     ) {
         with(binding) {
 
@@ -535,7 +539,6 @@ class Act092_Main : BaseActivityMvp
 
             emptyList.visibility = View.GONE
             progressLoading.visibility = View.GONE
-            mAdapter.userMainFilter = mainUser
             recyclerSerialList.apply {
                 visibility = View.VISIBLE
                 adapter = mAdapter
@@ -543,7 +546,7 @@ class Act092_Main : BaseActivityMvp
             }
             //
             if (!editSerialFilter.text.isNullOrEmpty()){
-                if (filterText.value.isNotEmpty()) mAdapter.filter.filter(filterText.value)
+                mAdapter.filter.filter(editSerialFilter.text)
                 mAdapter.notifyDataSetChanged()
             }
             //
@@ -565,7 +568,6 @@ class Act092_Main : BaseActivityMvp
                 setImageResource(R.drawable.ic_person_black_24dp)
             }
         }
-        presenter.getMyActionList()
     }
 
     private fun openDialog(

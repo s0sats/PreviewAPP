@@ -21,8 +21,9 @@ class FilterParamPreferences constructor(
             .putString(SERIAL_MODEL_LAST_SELECT_PK, model.lastSelectedPk)
             .putString(SERIAL_MODEL_LAST_SELECT_ACTION_TYPE, model.lastSelectActionType)
             .putString(SERIAL_MODEL_CLASS_COLOR, model.classColor)
-            .putString(SERIAL_MODEL_TEXT_FILTER, model.editFilter)
+            .putString(SERIAL_MODEL_TEXT_FILTER, model.editFilter ?: "")
             .putBoolean(SERIAL_MODEL_MAIN_USER_FILTER, model.mainUserFocus)
+            .putBoolean(SERIAL_MODEL_OTHER_ACTION_FILTER, model.otherSerialIsFiltered)
             .apply()
     }
 
@@ -42,6 +43,9 @@ class FilterParamPreferences constructor(
                 -1
             )
 
+            val editFilter = if (getString(SERIAL_MODEL_TEXT_FILTER, "") == "") null else
+                getString(SERIAL_MODEL_TEXT_FILTER, "")
+
             return SerialModel(
                 originFlow = getString(SERIAL_MODEL_ORIGIN_FLOW, null),
                 tagOperCode = tagOperCode,
@@ -56,7 +60,8 @@ class FilterParamPreferences constructor(
                 lastSelectActionType = getString(SERIAL_MODEL_LAST_SELECT_ACTION_TYPE, null),
                 classColor = getString(SERIAL_MODEL_CLASS_COLOR, null),
                 mainUserFocus = getBoolean(SERIAL_MODEL_MAIN_USER_FILTER, false),
-                editFilter = getString(SERIAL_MODEL_TEXT_FILTER, null)
+                editFilter = editFilter,
+                otherSerialIsFiltered = getBoolean(SERIAL_MODEL_OTHER_ACTION_FILTER, false),
             )
         }
     }
@@ -77,5 +82,6 @@ class FilterParamPreferences constructor(
         const val SERIAL_MODEL_CLASS_COLOR = "act092_serial_model_class_color"
         const val SERIAL_MODEL_MAIN_USER_FILTER = "act092_serial_model_main_user_filter"
         const val SERIAL_MODEL_TEXT_FILTER = "act092_serial_model_text_filter"
+        const val SERIAL_MODEL_OTHER_ACTION_FILTER = "act092_serial_model_other_action_filter"
     }
 }

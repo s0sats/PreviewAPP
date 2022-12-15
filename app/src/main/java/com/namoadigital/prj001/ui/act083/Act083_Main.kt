@@ -128,7 +128,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 Constant.DB_VERSION_CUSTOM
             ),
             MyActionsFilterParamPreferences(
-                getSharedPreferences("Act083_Filter", MODE_PRIVATE)
+                getSharedPreferences("act083_filter", MODE_PRIVATE)
             ),
             mModule_Code,
             mResource_Code
@@ -173,7 +173,6 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         supportActionBar?.title = mPresenter.getActTitle()
         binding.act083MainContent.act083TilFilter.apply {
             hint = Act092Translate.HINT_FILTER
-            placeholderText = Act092Translate.PLACEHOLDER_FILTER
         }
         //reseta preferencia do toggle da origem
         ToolBox_Con.setBooleanPreference(
@@ -454,7 +453,6 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
 
     private fun setLabels() {
         with(binding.act083MainContent){
-            act083TilFilter.hint = hmAux_Trans["filter_hint"]
 //            act083MketFilter.hint = hmAux_Trans["filter_hint"]
             act083TabMyActions.text = hmAux_Trans["tab_my_actions_lbl"]
             act083TabOtherActions.text = hmAux_Trans["tab_other_actions_lbl"]

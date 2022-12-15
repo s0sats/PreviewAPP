@@ -25,132 +25,129 @@ class ListMyActionUseCases constructor(
     private val actionBaseList = mutableListOf<MyActionsBase>()
 
     override suspend fun invoke(input: Pair<SerialModel, Boolean>): Flow<IResult<MutableList<MyActionsBase>>> {
-        actionBaseList.clear()
         return flow {
+            actionBaseList.clear()
             val serialModel = input.first
             val mainUser = input.second
-            with(serialModel) {
-                copy(
-                    customerCode = ToolBox_Con.getPreference_Customer_Code(context).toInt(),
-                    siteCode = if (setSiteFilter(context)) ToolBox_Con.getPreference_Translate_Code(
-                        context
-                    ) else null,
-                    multStepsLbl = hmAux?.get("other_steps_available_lbl")
-                ).let { localTicket ->
+            serialModel.copy(
+                customerCode = ToolBox_Con.getPreference_Customer_Code(context).toInt(),
+                siteCode = if (setSiteFilter(context)) ToolBox_Con.getPreference_Translate_Code(
+                    context
+                ) else null,
+                multStepsLbl = serialModel.hmAux?.get("other_steps_available_lbl")
+            ).let { serial ->
 
-                    emit(loading(true))
+                emit(loading(true))
 
-                    val focusList = mutableListOf<MyActionsBase>()
+                val focusList = mutableListOf<MyActionsBase>()
 
-                    focusList.addAll(
-                        repository.getLocalTickets(localTicket, mainUser).map {
-                            TK_Ticket.toMyActionsObj(context, it, getLastSelectedPk())
-                        }
-                    )
+                focusList.addAll(
+                    repository.getLocalTickets(serial, mainUser).map {
+                        TK_Ticket.toMyActionsObj(context, it, serial.getLastSelectedPk())
+                    }
+                )
 
-                    focusList.addAll(
-                        repository.getTicketCache(localTicket, mainUser).map {
-                            it.toMyActionsObj(context, getLastSelectedPk())
-                        }
-                    )
+                focusList.addAll(
+                    repository.getTicketCache(serial, mainUser).map {
+                        it.toMyActionsObj(context, serial.getLastSelectedPk())
+                    }
+                )
 
-                    focusList.addAll(
-                        repository.getSchedules(localTicket, mainUser).map {
-                            it.toMyActionsObj(context, getLastSelectedPk())
-                        }
-                    )
+                focusList.addAll(
+                    repository.getSchedules(serial, mainUser).map {
+                        it.toMyActionsObj(context, serial.getLastSelectedPk())
+                    }
+                )
 
 /* A Confirmar
                     actionBaseList.addAll(
-                        repository.getFormAp(localTicket).map {
+                        repository.getFormAp(serial).map {
                             it.toMyActionsObj(context, getLastSelectedPk())
                         }
                     )*/
 
-                    focusList.addAll(
-                        repository.getLocalForms(localTicket).map {
-                            GE_Custom_Form_Local.toMyActionsObj(
-                                context,
-                                it,
-                                getLastSelectedPk(),
-                                false
-                            )
-                        }
+                focusList.addAll(
+                    repository.getLocalForms(serial).map {
+                        GE_Custom_Form_Local.toMyActionsObj(
+                            context,
+                            it,
+                            serial.getLastSelectedPk(),
+                            false
+                        )
+                    }
+                )
+                //
+                focusList.sortBy {
+                    when (it) {
+                        is MyActions -> it.orderBy
+                        else -> "190001010000"
+                    }
+                }
+                //
+                val unfocusList = mutableListOf<MyActionsBase>()
+                if (serial.userFocus == 0) {
+                    unfocusList.addAll(
+                        repository.getUnfocusAndHistorical(
+                            serial.productCode ?: -1,
+                            (serial.serialCode ?: -1).toLong(),
+                            serial.serialId ?: ""
+                        )
                     )
                     //
-                    focusList.sortBy {
+                    unfocusList.addAll(
+                        repository.getUnfocusSchedules(serial).map {
+                            it.toMyActionsObj(context, serial.getLastSelectedPk())
+                        }
+                    )
+                }
+                //
+                if (unfocusList.size > 0) {
+                    val unfocusTemp = mutableListOf<MyActions>()
+
+                    val focusTemp = focusList.map {
+                        var action = it as MyActions
+                        for (unfocusAction in unfocusList) {
+                            if (action.processId == (unfocusAction as MyActions).processId) {
+                                action.mergeUnfocusActions(unfocusAction)
+                                unfocusTemp.add(unfocusAction)
+                            }
+                        }
+                        it as MyActionsBase
+                    }
+                    //
+                    unfocusList.sortByDescending {
                         when (it) {
                             is MyActions -> it.orderBy
                             else -> "190001010000"
                         }
                     }
                     //
-                    val unfocusList = mutableListOf<MyActionsBase>()
-                    if(serialModel.userFocus == 0) {
-                        unfocusList.addAll(
-                            repository.getUnfocusAndHistorical(
-                                serialModel.productCode ?: -1,
-                                (serialModel.serialCode ?: -1).toLong(),
-                                serialModel.serialId ?: ""
-                            )
-                        )
-                        //
-                        unfocusList.addAll(
-                            repository.getUnfocusSchedules(localTicket).map {
-                                it.toMyActionsObj(context, getLastSelectedPk())
+                    val filteredUnfocusList = unfocusList.filter {
+                        var insertItem = true
+                        for (unfocusTempAction in unfocusTemp) {
+                            if ((it as MyActions).processId == (unfocusTempAction as MyActions).processId) {
+                                insertItem = false
                             }
-                        )
+                        }
+                        //
+                        insertItem
                     }
                     //
-                    if (unfocusList.size > 0) {
-                        val unfocusTemp = mutableListOf<MyActions>()
-
-                        val focusTemp = focusList.map {
-                            var action = it as MyActions
-                            for (unfocusAction in unfocusList) {
-                                if (action.processId == (unfocusAction as MyActions).processId) {
-                                    action.mergeUnfocusActions(unfocusAction)
-                                    unfocusTemp.add(unfocusAction)
-                                }
-                            }
-                            it as MyActionsBase
-                        }
-                        //
-                        unfocusList.sortByDescending {
-                            when (it) {
-                                is MyActions -> it.orderBy
-                                else -> "190001010000"
-                            }
-                        }
-                        //
-                        val filteredUnfocusList = unfocusList.filter {
-                            var insertItem = true
-                            for (unfocusTempAction in unfocusTemp) {
-                                if ((it as MyActions).processId == (unfocusTempAction as MyActions).processId) {
-                                    insertItem = false
-                                }
-                            }
-                            //
-                            insertItem
-                        }
-                        //
-                        actionBaseList.addAll(focusTemp)
-                        actionBaseList.addAll(filteredUnfocusList)
-                    } else {
-                        actionBaseList.addAll(focusList)
-                    }
-
-                    val actions = if (mainUser)
-                        actionBaseList.map { m -> m as MyActions }
-                            .filter { f -> f.isMainUserTicket } as MutableList<MyActionsBase>
-                    else actionBaseList
-
-                    emit(loading(false))
-                    emit(success(actions.toMutableList()))
-
+                    actionBaseList.addAll(focusTemp)
+                    actionBaseList.addAll(filteredUnfocusList)
+                } else {
+                    actionBaseList.addAll(focusList)
                 }
-            }
 
+                val actions = if (mainUser)
+                    actionBaseList.map { m -> m as MyActions }
+                        .filter { f -> f.isMainUserTicket } as MutableList<MyActionsBase>
+                else actionBaseList
+
+                emit(loading(false))
+                emit(success(actions.toMutableList()))
+
+            }
         }.catch { e ->
             ToolBox_Inf.registerException(
                 ListMyActionUseCases::class.toString(),

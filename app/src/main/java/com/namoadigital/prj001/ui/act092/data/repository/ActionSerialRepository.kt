@@ -9,7 +9,11 @@ interface ActionSerialRepository {
 
     suspend fun getLocalTickets(ticket: SerialModel, mainUserFilter: Boolean): MutableList<HMAux>
     suspend fun getTicketCache(ticket: SerialModel, mainUserFilter: Boolean): MutableList<TkTicketCache>
-    suspend fun getSchedules(ticket: SerialModel, mainUserFilter: Boolean): MutableList<MD_Schedule_Exec>
+    suspend fun getSchedules(
+        ticket: SerialModel,
+        mainUserFilter: Boolean
+    ): MutableList<MD_Schedule_Exec>
+
     suspend fun getUnfocusSchedules(ticket: SerialModel): MutableList<MD_Schedule_Exec>
     suspend fun getFormAp(ticket: SerialModel): MutableList<GE_Custom_Form_Ap>
     suspend fun getLocalForms(ticket: SerialModel): MutableList<HMAux>
@@ -18,9 +22,14 @@ interface ActionSerialRepository {
     fun downloadTicket(bundle: Bundle)
     suspend fun updateSyncChecklist(syncChecklist: Sync_Checklist)
     fun unfocusAndHistorical(bundle: Bundle)
-    suspend fun getUnfocusAndHistorical(productCode: Int, serialCode: Long, serialId: String): MutableList<MyActions>
-    suspend fun setPreferences(model: SerialModel)
-    suspend fun getPreferences(): SerialModel
+    suspend fun getUnfocusAndHistorical(
+        productCode: Int,
+        serialCode: Long,
+        serialId: String
+    ): MutableList<MyActions>
+
+    fun setPreferences(model: SerialModel)
+    fun getPreferences(): SerialModel
     fun getScheduleFromMyAction(prefix: Int, code: Int, exec: Int): MD_Schedule_Exec?
     fun getSite(site_code: String): MD_Site?
     fun getCustomFormLocal(
