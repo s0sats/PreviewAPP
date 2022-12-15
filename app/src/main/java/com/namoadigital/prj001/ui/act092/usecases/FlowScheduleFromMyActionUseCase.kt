@@ -71,12 +71,13 @@ class FlowScheduleFromMyActionUseCase constructor(
                                     schedule.custom_form_version.toString()
                                 )
                             ) {
-                                if (serialHasStructure(input).first) {
+                                val serialHasStructure = serialHasStructure(input)
+                                if (serialHasStructure.first) {
                                     emit(
                                         success(
                                             FlowScheduleParamReturn(
                                                 actType = Constant.ACT087,
-                                                productSerial = serialHasStructure(input).second!!,
+                                                productSerial = serialHasStructure.second!!,
                                                 scheduleExec = schedule
                                             )
                                         )
@@ -121,8 +122,9 @@ class FlowScheduleFromMyActionUseCase constructor(
                     result = list.isNotEmpty()
                     productserial = serial
                 }
+            }else{
+                productserial = serial
             }
-
         }
         return Pair(result, productserial)
     }

@@ -12,6 +12,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_Form_BlobDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.model.MyActions;
 import com.namoadigital.prj001.model.TNForm_PDF_Env;
 import com.namoadigital.prj001.model.TNForm_PDF_Rec;
 import com.namoadigital.prj001.receiver.WBR_Generate_NForm_PDF;
@@ -24,6 +25,7 @@ import java.util.List;
 
 public class WS_Generate_NForm_PDF extends IntentService {
     public static final String NFORM_PK_KEY = "NFORM_PK_KEY";
+    public static final String TYPE_KEY = "TYPE_KEY";
 
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
@@ -43,9 +45,10 @@ public class WS_Generate_NForm_PDF extends IntentService {
 
             long customer_code = bundle.getLong(MD_Product_SerialDao.CUSTOMER_CODE);
             String sys_pk = bundle.getString(NFORM_PK_KEY);
+            String sys_type = bundle.getString(TYPE_KEY, MyActions.MY_ACTION_TYPE_FORM);
 
 
-            processGenerateNFormPDF(customer_code,sys_pk);
+            processGenerateNFormPDF(customer_code,sys_pk, sys_type);
 
         } catch (Exception e) {
 
@@ -61,7 +64,7 @@ public class WS_Generate_NForm_PDF extends IntentService {
         }
     }
 
-    private void processGenerateNFormPDF(long customer_code, String sys_pk) throws Exception {
+    private void processGenerateNFormPDF(long customer_code, String sys_pk, String sys_type) throws Exception {
         //Seleciona traduções
         loadTranslation();
         //
@@ -76,6 +79,7 @@ public class WS_Generate_NForm_PDF extends IntentService {
         env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
         env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
         env.setSys_pk(sys_pk);
+        env.setSys_type(sys_type);
         //
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_generating_pdf"), "", "0");
         //

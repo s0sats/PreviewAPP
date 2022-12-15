@@ -135,7 +135,6 @@ class ListMyActionUseCases constructor(
                         )
                         historicalList.addAll(historicalLocalList)
                         if (historicalRemoteList.size > 0) {
-                            val unfocusTemp = mutableListOf<MyActions>()
 
                             historicalRemoteList.forEach {
                                 var found = false

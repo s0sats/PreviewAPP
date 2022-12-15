@@ -1065,6 +1065,7 @@ class Act092Presenter constructor(
             //
             val nformPkFormatted = """${ToolBox_Con.getPreference_Customer_Code(context)}|${action.processPk.replace(".", "|")}"""
             bundle.putString(WS_Generate_NForm_PDF.NFORM_PK_KEY, nformPkFormatted)
+            bundle.putString(WS_Generate_NForm_PDF.TYPE_KEY, action.actionType)
             //
             mIntent.putExtras(bundle)
             //
