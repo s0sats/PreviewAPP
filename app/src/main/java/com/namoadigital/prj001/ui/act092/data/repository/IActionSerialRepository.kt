@@ -38,7 +38,7 @@ class IActionSerialRepository constructor(
     private val filterParamPreferences: FilterParamPreferences
 ) : ActionSerialRepository {
 
-    override suspend fun getLocalTickets(ticket: SerialModel, mainUserFilter: Boolean): MutableList<HMAux> =
+    override suspend fun getLocalOpenTickets(ticket: SerialModel, mainUserFilter: Boolean): MutableList<HMAux> =
         with(ticket) {
             return ticketDao.query_HM(
                 SqlAct092_002(
@@ -49,6 +49,17 @@ class IActionSerialRepository constructor(
                     userFocus,
                     mainUserFilter,
                     multStepsLbl
+                ).toSqlQuery()
+            )
+        }
+
+    override suspend fun getLocalHistoricalTickets(ticket: SerialModel): MutableList<HMAux> =
+        with(ticket) {
+            return ticketDao.query_HM(
+                SqlAct092_007(
+                    customerCode ?: -1,
+                    productCode,
+                    serialId
                 ).toSqlQuery()
             )
         }

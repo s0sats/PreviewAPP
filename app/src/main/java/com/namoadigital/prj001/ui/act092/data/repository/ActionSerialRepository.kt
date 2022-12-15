@@ -8,7 +8,8 @@ import com.namoadigital.prj001.ui.act092.model.SerialModel
 
 interface ActionSerialRepository {
 
-    suspend fun getLocalTickets(ticket: SerialModel, mainUserFilter: Boolean): MutableList<HMAux>
+    suspend fun getLocalOpenTickets(ticket: SerialModel, mainUserFilter: Boolean): MutableList<HMAux>
+    suspend fun getLocalHistoricalTickets(ticket: SerialModel): MutableList<HMAux>
     suspend fun getTicketCache(ticket: SerialModel, mainUserFilter: Boolean): MutableList<TkTicketCache>
     suspend fun getSchedules(ticket: SerialModel, mainUserFilter: Boolean): MutableList<MD_Schedule_Exec>
     suspend fun getUnfocusSchedules(ticket: SerialModel): MutableList<MD_Schedule_Exec>

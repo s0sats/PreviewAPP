@@ -53,12 +53,13 @@ class SqlAct092_002(
         statusFilter = if(mainUserFilter) {
             """    and  t.${TK_TicketDao.TICKET_STATUS} in('${ConstantBaseApp.SYS_STATUS_PENDING}','${ConstantBaseApp.SYS_STATUS_PROCESS}')                 
                             and (t.${TK_TicketDao.MAIN_USER} = ${ToolBox_Con.getPreference_User_Code(context)})
+                            and (t.${TK_TicketDao.USER_FOCUS} = 1)
                      """
         }else if (userFocus == 1){  """    and  t.${TK_TicketDao.TICKET_STATUS} in('${ConstantBaseApp.SYS_STATUS_PENDING}','${ConstantBaseApp.SYS_STATUS_PROCESS}')                 
                             and (t.${TK_TicketDao.USER_FOCUS} = 1)
                      """
         }else{
-            ""
+            """    and  t.${TK_TicketDao.TICKET_STATUS} in('${ConstantBaseApp.SYS_STATUS_PENDING}','${ConstantBaseApp.SYS_STATUS_PROCESS}') """
         }
     }
 

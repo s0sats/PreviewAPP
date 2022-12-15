@@ -15,9 +15,7 @@ class SqlAct092_006(
 
 
     private fun getStatusFilter() :String {
-        return  """    and s.${MD_Schedule_ExecDao.STATUS} in('${ConstantBaseApp.SYS_STATUS_NOT_EXECUTED}', 
-                                                                   '${ConstantBaseApp.SYS_STATUS_DONE}',                    
-                                                                  ) """.trimMargin()
+        return  """    and s.${MD_Schedule_ExecDao.STATUS} in('${ConstantBaseApp.SYS_STATUS_NOT_EXECUTED}', '${ConstantBaseApp.SYS_STATUS_DONE}') """.trimMargin()
 
     }
 
@@ -64,8 +62,8 @@ class SqlAct092_006(
                            and d.${GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS} = '${ConstantBaseApp.SYS_STATUS_DONE}'
                     WHERE
                      s.${MD_Schedule_ExecDao.CUSTOMER_CODE} = $customerCode   
-                     s.${MD_Schedule_ExecDao.PRODUCT_CODE} = $productCode   
-                     s.${MD_Schedule_ExecDao.SERIAL_ID} = $serialId   
+                     and s.${MD_Schedule_ExecDao.PRODUCT_CODE} = $productCode   
+                     and s.${MD_Schedule_ExecDao.SERIAL_ID} = '$serialId'   
                      $statusFilter           
                       """.replace("'null'","null")
         return s

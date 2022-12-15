@@ -2992,12 +2992,12 @@ public class Act011_Main extends Base_Activity
     private void checkBackFlow() {
         if (mPresenter.isaTicketFlowForm()) {
             callAct070();
+        } else if (requestingAct.equals(ConstantBaseApp.ACT092)) {
+            callAct092();
         } else if (ConstantBaseApp.ACT084.equals(requestingAct)
                 || ConstantBaseApp.SYS_STATUS_DONE.equals(formData.getCustom_form_status())) {
             callAct084();
-        } else if (requestingAct.equals(ConstantBaseApp.ACT092)) {
-            callAct092();
-        } else {
+        }  else {
             callAct083();
         }
     }

@@ -43,7 +43,7 @@ class ListMyActionUseCases constructor(
                     val actionList = mutableListOf<MyActionsBase>()
 
                     actionList.addAll(
-                        repository.getLocalTickets(localTicket, mainUser).map {
+                        repository.getLocalOpenTickets(localTicket, mainUser).map {
                             TK_Ticket.toMyActionsObj(context, it, getLastSelectedPk())
                         }
                     )
@@ -59,14 +59,7 @@ class ListMyActionUseCases constructor(
                             it.toMyActionsObj(context, getLastSelectedPk())
                         }
                     )
-
-/* A Confirmar
-                    actionBaseList.addAll(
-                        repository.getFormAp(localTicket).map {
-                            it.toMyActionsObj(context, getLastSelectedPk())
-                        }
-                    )*/
-
+                    //
                     actionList.addAll(
                         repository.getLocalForms(localTicket).map {
                             GE_Custom_Form_Local.toMyActionsObj(
@@ -77,8 +70,13 @@ class ListMyActionUseCases constructor(
                             )
                         }
                     )
+                    //
+
+                    val processActionList = mutableListOf<MyActionsBase>()
+                    processActionList.addAll(actionList)
                     if(serialModel.userFocus == 0) {
-                        actionList.addAll(
+                        val processRemoteActionList = mutableListOf<MyActionsBase>()
+                        processRemoteActionList.addAll(
                             repository.getUnfocusAndHistorical(
                                 serialModel.productCode ?: -1,
                                 (serialModel.serialCode ?: -1).toLong(),
@@ -86,9 +84,24 @@ class ListMyActionUseCases constructor(
                                 "OPEN"
                             )
                         )
+                        if(processRemoteActionList.size >0) {
+                            processRemoteActionList.forEach {
+                                var found = false
+                                var myActions = it as MyActions
+                                for (action in actionList as List<MyActions>) {
+                                    if (myActions.processId == action.processId) {
+                                        found = true
+                                        break
+                                    }
+                                }
+                                if(!found){
+                                    processActionList.add(myActions)
+                                }
+                            }
+                        }
                     }
                     //
-                    actionList.sortBy {
+                    processActionList.sortBy {
                         when (it) {
                             is MyActions -> it.orderBy
                             else -> "190001010000"
@@ -96,8 +109,11 @@ class ListMyActionUseCases constructor(
                     }
                     //
                     val historicalList = mutableListOf<MyActionsBase>()
+                    val historicalRemoteList = mutableListOf<MyActionsBase>()
+                    val historicalLocalList = mutableListOf<MyActionsBase>()
+
                     if(serialModel.userFocus == 0) {
-                        historicalList.addAll(
+                        historicalRemoteList.addAll(
                             repository.getUnfocusAndHistorical(
                                 serialModel.productCode ?: -1,
                                 (serialModel.serialCode ?: -1).toLong(),
@@ -106,59 +122,60 @@ class ListMyActionUseCases constructor(
                             )
                         )
                         //
-                        historicalList.addAll(
+                        historicalLocalList.addAll(
                             repository.getUnfocusSchedules(localTicket).map {
                                 it.toMyActionsObj(context, getLastSelectedPk())
                             }
                         )
-                    }
-                    //
-                    if (historicalList.size > 0) {
-                        val unfocusTemp = mutableListOf<MyActions>()
+                        //
+                        historicalLocalList.addAll(
+                            repository.getLocalHistoricalTickets(localTicket).map {
+                                TK_Ticket.toMyActionsObj(context, it, getLastSelectedPk())
+                            }
+                        )
+                        historicalList.addAll(historicalLocalList)
+                        if (historicalRemoteList.size > 0) {
+                            val unfocusTemp = mutableListOf<MyActions>()
 
-                        val focusTemp = actionList.map {
-                            var action = it as MyActions
-                            for (unfocusAction in historicalList) {
-                                if (action.processId == (unfocusAction as MyActions).processId) {
-                                    action.mergeUnfocusActions(unfocusAction)
-                                    unfocusTemp.add(unfocusAction)
+                            historicalRemoteList.forEach {
+                                var found = false
+                                var action = it as MyActions
+                                //
+                                for (unfocusAction in historicalLocalList) {
+                                    if (action.processId == (unfocusAction as MyActions).processId) {
+//                                        action = action.mergeUnfocusActions(unfocusAction)
+                                        found = true
+                                        break
+                                    }
                                 }
-                            }
-                            it as MyActionsBase
-                        }
-                        //
-                        historicalList.sortByDescending {
-                            when (it) {
-                                is MyActions -> it.orderBy
-                                else -> "190001010000"
-                            }
-                        }
-                        //
-                        val filteredUnfocusList = historicalList.filter {
-                            var insertItem = true
-                            for (unfocusTempAction in unfocusTemp) {
-                                if ((it as MyActions).processId == (unfocusTempAction as MyActions).processId) {
-                                    insertItem = false
+                                //
+                                if(!found){
+                                    historicalList.add(action)
                                 }
                             }
                             //
-                            insertItem
+                            historicalList.sortByDescending {
+                                when (it) {
+                                    is MyActions -> it.orderBy
+                                    else -> "190001010000"
+                                }
+                            }
+                            //
+                            actionBaseList.addAll(processActionList)
+                            actionBaseList.addAll(historicalList)
                         }
-                        //
-                        actionBaseList.addAll(focusTemp)
-                        actionBaseList.addAll(filteredUnfocusList)
                     } else {
-                        actionBaseList.addAll(actionList)
+                        actionBaseList.addAll(processActionList)
                     }
-
+                    //
                     val actions = if (mainUser)
                         actionBaseList.map { m -> m as MyActions }
                             .filter { f -> f.isMainUserTicket } as MutableList<MyActionsBase>
                     else actionBaseList
-
+                    //
                     emit(loading(false))
                     emit(success(actions.toMutableList()))
-
+                    //
                 }
             }
 

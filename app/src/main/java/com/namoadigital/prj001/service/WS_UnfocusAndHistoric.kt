@@ -8,10 +8,12 @@ import com.namoa_digital.namoa_library.util.ConstantBase
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.R
-import com.namoadigital.prj001.model.MyActionsCache
-import com.namoadigital.prj001.model.TUnfocusAndHistoricEnv
-import com.namoadigital.prj001.model.TUnfocusAndHistoricRec
+import com.namoadigital.prj001.dao.MD_Schedule_ExecDao
+import com.namoadigital.prj001.dao.TK_TicketDao
+import com.namoadigital.prj001.dao.TkTicketCacheDao
+import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.receiver.WBR_UnfocusAndHistoric
+import com.namoadigital.prj001.sql.*
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -108,6 +110,24 @@ class WS_UnfocusAndHistoric : IntentService("WS_UnfocusAndHistoric") {
     }
 
     private fun processReturn(rec: List<MyActionsCache>?, productCode: Int, serialCode: Long) {
+
+        rec?.forEach {
+            when (it.actionType) {
+                MyActions.MY_ACTION_TYPE_TICKET -> {
+                    processTicket(it.processPk)
+                }
+                MyActions.MY_ACTION_TYPE_TICKET_CACHE -> {
+                    removeTicketCache(it.processPk)
+                }
+                MyActions.MY_ACTION_TYPE_SCHEDULE -> {
+                    processSchedule(it)
+                }
+                MyActions.MY_ACTION_TYPE_FORM -> {
+
+                }
+            }
+        }
+
         val file_name = ToolBox_Inf.getOtherActionFileName(
             productCode,
             serialCode
@@ -129,6 +149,87 @@ class WS_UnfocusAndHistoric : IntentService("WS_UnfocusAndHistoric") {
             "0"
         )
         //
+    }
+
+    private fun processSchedule(actionsCache: MyActionsCache) {
+        val schedulePk = actionsCache.processPk.split("|").toTypedArray()
+        val customerCode = schedulePk[0].toLong()
+        val schedulePrefix = schedulePk[1].toInt()
+        val scheduleCode = schedulePk[2].toInt()
+        val scheduleExec = schedulePk[3].toInt()
+        //
+        val mdScheduleExecdao = MD_Schedule_ExecDao(
+            applicationContext,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(applicationContext)),
+            Constant.DB_VERSION_CUSTOM
+        )
+        //
+//        val schedule = mdScheduleExecdao.getByString(
+//            MD_Schedule_Exec_Sql_010(
+//                customerCode,
+//                schedulePrefix,
+//                scheduleCode,
+//                scheduleExec
+//            ).toSqlQuery()
+//        )
+//        //
+//        schedule?.let{
+//            mdScheduleExecdao.remove(
+//                MD_Schedule_Exec_Sql_011(
+//                    it.customer_code,
+//                    it.schedule_prefix,
+//                    it.schedule_code
+//                ).toSqlQuery()
+//            )
+//        }
+    }
+
+    private fun processTicket(processPk: String) {
+        val ticketPk: Array<String> = processPk.split("|").toTypedArray()
+        val customerCode = ticketPk[0].toLong()
+        val ticketPrefix = ticketPk[1].toInt()
+        val ticketCode = ticketPk[2].toInt()
+
+        val ticketDao = TK_TicketDao(
+            applicationContext,
+            ToolBox_Con.customDBPath(customerCode),
+            Constant.DB_VERSION_CUSTOM
+        )
+        //
+        val ticket = ticketDao.getByString(
+            TK_Ticket_Sql_001(
+                customerCode,
+                ticketPrefix,
+                ticketCode
+            ).toSqlQuery()
+        )
+        //
+        if (ticket != null) {
+//            ticket.user_focus = 0
+            ticket.sync_required = 1
+            ticketDao.addUpdate(ticket)
+        }
+    }
+
+    private fun removeTicketCache(processPk: String) {
+        val ticketPk: Array<String> = processPk.split("|").toTypedArray()
+        val customerCode = ticketPk[0].toLong()
+        val ticketPrefix = ticketPk[1].toInt()
+        val ticketCode = ticketPk[2].toInt()
+        //
+        val ticketCacheDao = TkTicketCacheDao(
+            applicationContext,
+            ToolBox_Con.customDBPath(customerCode),
+            Constant.DB_VERSION_CUSTOM
+        )
+        //
+        ticketCacheDao.remove(
+            TKTicketCacheSql002(
+                customerCode,
+                ticketPrefix,
+                ticketCode
+            ).toSqlQuery()
+        )
     }
 
     private fun loadTranslation() : HMAux {

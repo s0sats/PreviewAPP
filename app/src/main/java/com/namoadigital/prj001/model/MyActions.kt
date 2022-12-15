@@ -94,25 +94,4 @@ data class MyActions(
                     .replace("null|", "")
                     .replace("null", "")
     }
-
-    fun mergeUnfocusActions(unfocusActionsCache: MyActionsBase) {
-        val temp = unfocusActionsCache as MyActions
-        when (actionType) {
-            MY_ACTION_TYPE_TICKET -> {
-                if(scn!! < temp.scn!!){
-
-                }
-            }
-            MY_ACTION_TYPE_TICKET_CACHE -> {
-
-            }
-            MY_ACTION_TYPE_SCHEDULE -> {
-                processRightIcon = temp.processRightIcon
-            }
-            MY_ACTION_TYPE_FORM -> {
-                        
-            }
-        }
-        this.processMidIcon = R.drawable.ic_baseline_cloud_done_24_blue
-    }
 }
