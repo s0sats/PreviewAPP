@@ -69,7 +69,10 @@ fun MD_Product_Serial.toAdapterList(site_preference: Int = -1) : ProductSerialLi
     classColor = class_color ?: "",
     serial = serial_id ?: "",
     product_desc = product_desc ?: "",
-    siteAndZone = Pair(site_desc ?: "", zone_desc ?: ""),
+    siteAndZone = if (site_desc == zone_desc) Pair(site_desc ?: "", "") else Pair(
+        site_desc ?: "",
+        zone_desc ?: ""
+    ),
     serialDescription = Triple(brand_desc ?: "", model_desc ?: "", color_desc ?: ""),
     trackings = tracking_list ?: emptyList()
 )
