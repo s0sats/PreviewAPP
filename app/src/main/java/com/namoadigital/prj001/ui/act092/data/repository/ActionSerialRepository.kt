@@ -25,8 +25,8 @@ interface ActionSerialRepository {
     suspend fun updateSyncChecklist(syncChecklist: Sync_Checklist)
     fun unfocusAndHistorical(bundle: Bundle)
     suspend fun getUnfocusAndHistorical(productCode: Int, serialCode: Long, serialId: String,filterCriteria: String?): MutableList<MyActions>
-    suspend fun setPreferences(model: SerialModel)
-    suspend fun getPreferences(): SerialModel
+    fun setPreferences(model: SerialModel)
+    fun getPreferences(): SerialModel
     fun getScheduleFromMyAction(prefix: Int, code: Int, exec: Int): MD_Schedule_Exec?
     fun getSite(site_code: String): MD_Site?
     fun getCustomFormLocal(
