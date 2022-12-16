@@ -31,7 +31,7 @@ data class MyActions(
     val highlightItem: Boolean,
     val periodStarted: Boolean,
     val lateItem: Boolean,
-    val isLastSelectedItem: Boolean,
+    var isLastSelectedItem: Boolean,
     val isMainUserTicket: Boolean,
     val hasNc: Boolean = false,
     var pdfUrl: String? = null,

@@ -6,7 +6,7 @@ import com.namoadigital.prj001.ui.act092.model.SerialModel
 class SetModelPreferencesUseCase constructor(
     private val repository: ActionSerialRepository
 ) {
-    suspend operator fun invoke(input: SerialModel) {
+    operator fun invoke(input: SerialModel) {
         repository.setPreferences(input)
     }
 

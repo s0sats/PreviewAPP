@@ -207,11 +207,11 @@ class IActionSerialRepository constructor(
         return mutableListOf()
     }
 
-    override suspend fun setPreferences(model: SerialModel) {
+    override fun setPreferences(model: SerialModel) {
         filterParamPreferences.write(model)
     }
 
-    override suspend fun getPreferences(): SerialModel {
+    override fun getPreferences(): SerialModel {
         return filterParamPreferences.read()
     }
 
@@ -534,7 +534,7 @@ class IActionSerialRepository constructor(
                         Constant.DB_VERSION_CUSTOM
                     ),
                     FilterParamPreferences(
-                        context.getSharedPreferences("Act092_Filter", Base_Activity.MODE_PRIVATE)
+                        context.getSharedPreferences("act092_filter", Base_Activity.MODE_PRIVATE)
                     )
                 )
         }

@@ -319,12 +319,24 @@ class MyActionsAdapter constructor(
                         visibility = View.VISIBLE
                         text = hmAuxTrans["item_in_process_lbl"]
                     }
-                }else{
-                    backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.m3_namoa_primary))
+                } else {
+                    backgroundTintList =
+                        ColorStateList.valueOf(resources.getColor(R.color.m3_namoa_primary))
                     text = hmAuxTrans["btn_open_action_lbl"]
                     setTextColor(resources.getColor(R.color.m3_namoa_surface))
                     binding.myActionsItemTvFormNoFinish.visibility = View.GONE
                 }
+            }
+
+
+            binding.myActionsItemClInfos.apply {
+                setCardBackgroundColor(
+                    if (myAction.isLastSelectedItem) {
+                        resources.getColor(R.color.namoa_color_light_blue5)
+                    } else {
+                        resources.getColor(R.color.m3_namoa_surface1)
+                    }
+                )
             }
         }
 

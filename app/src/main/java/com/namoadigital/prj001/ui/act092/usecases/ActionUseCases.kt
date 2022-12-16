@@ -6,7 +6,7 @@ import com.namoadigital.prj001.ui.act092.data.repository.IActionSerialRepository
 import com.namoadigital.prj001.ui.base.NamoaFactory
 
 data class ActionUseCases(
-    val localTicket: ListMyActionUseCases,
+    val listMyActionUseCases: ListMyActionUseCases,
     val syncFiles: SyncFilesUseCase,
     val syncFilesForm: SyncFilesFormUseCase,
     val downloadTicket: TicketDownloadUseCase,
@@ -40,7 +40,7 @@ data class ActionUseCases(
                 val scheduleFormLocalExistsUseCase = ScheduleFormLocalExistsUseCase(repository)
                 val getScheduleFromMyActionUseCase = GetScheduleFromMyActionUseCase(repository)
                 return ActionUseCases(
-                    localTicket = ListMyActionUseCases(context, repository),
+                    listMyActionUseCases = ListMyActionUseCases(context, repository),
                     syncFiles = SyncFilesUseCase(context, syncRepository),
                     unfocusHistoricalAction = UnfocusHistoricalActionUseCases(repository),
                     syncFilesForm = SyncFilesFormUseCase(syncRepository),

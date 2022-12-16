@@ -7,7 +7,6 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
@@ -24,6 +23,7 @@ import com.namoadigital.prj001.ui.act070.Act070_Main
 import com.namoadigital.prj001.ui.act091.mvp.model.TranslateResource
 import com.namoadigital.prj001.ui.act092.Act092Presenter
 import com.namoadigital.prj001.ui.act092.Act092_Contract
+import com.namoadigital.prj001.ui.act092.model.SerialModel
 import com.namoadigital.prj001.ui.act092.ui.adapter.Act092_Adapter
 import com.namoadigital.prj001.ui.act092.ui.adapter.SerialViewItem
 import com.namoadigital.prj001.ui.act092.usecases.ActionUseCases.Companion.ActionUseCasesFactory
@@ -69,6 +69,8 @@ class Act092_Main : BaseActivityMvp
     private val _focusState = MutableStateFlow(FilterFocusUser())
     override val focusState = _focusState.asStateFlow()
 
+    private var firstScroll = true
+
     private var hmAuxTicketDownload: HMAux = HMAux()
 
     override var wsProcess: MutableStateFlow<String> = MutableStateFlow("")
@@ -109,7 +111,6 @@ class Act092_Main : BaseActivityMvp
 
         initView {
             presenter.setView(this)
-            presenter.getMyActionList()
         }
     }
 
@@ -265,25 +266,19 @@ class Act092_Main : BaseActivityMvp
         hmAux_Trans = presenter.getTranslation()
     }
 
-    private fun updateTitleActionSerial() {
+    private fun updateTitleActionSerial(serialModel: SerialModel) {
         with(binding) {
-            val color = presenter.serialModel.value.classColor
-            if (color.isNullOrEmpty()) {
+            if (serialModel.classColor.isNullOrEmpty()) {
                 iconClassColor.visibility = View.GONE
             } else {
                 iconClassColor.visibility = View.VISIBLE
-                iconClassColor.setColorFilter(Color.parseColor(color))
+                iconClassColor.setColorFilter(Color.parseColor(serialModel.classColor))
             }
-            serialTitle.text = presenter.serialModel.value.serialId
-            productDescription.text = presenter.serialModel.value.productDesc
+            serialTitle.text = serialModel.serialId
+            productDescription.text = serialModel.productDesc
 
-            _focusState.value = focusState.value.copy(
-                mainUser = presenter.serialModel.value.mainUserFocus
-            )
 
-            onState(Act092UiEvent.FilterMainUser)
-
-            filterText.value = presenter.serialModel.value.editFilter ?: ""
+            filterText.value = serialModel.editFilter ?: ""
             if (filterText.value.isNotEmpty()) binding.editSerialFilter.setText(filterText.value)
 
         }
@@ -294,7 +289,6 @@ class Act092_Main : BaseActivityMvp
             topAppBar.title = hmAux_Trans["act092_title"]
             act092TextLayout.apply {
                 hint = Act092Translate.HINT_FILTER
-                placeholderText = Act092Translate.PLACEHOLDER_FILTER
             }
         }
         iniUIFooter(Constant.ACT092, hmAux_Trans)
@@ -311,6 +305,7 @@ class Act092_Main : BaseActivityMvp
                         mainUser = !_focusState.value.mainUser
                     )
                     onState(Act092UiEvent.FilterMainUser)
+                    presenter.getMyActionList()
                 }
             }
 
@@ -319,12 +314,19 @@ class Act092_Main : BaseActivityMvp
                     mainUser = false,
                     userFocus = !focusState.value.userFocus
                 )
+
+                if (::mAdapter.isInitialized) {
+                    mAdapter.userMainFilter = _focusState.value.mainUser
+                }
+
                 disableMainAndOtherActions()
+
                 if (_focusState.value.userFocus) {
                     presenter.getMyActionList()
                 } else {
                     presenter.otherActionFlow(context)
                 }
+
             }
             btnCreateAction.setOnClickListener {
                 presenter.processNewFormClick(context)
@@ -378,7 +380,9 @@ class Act092_Main : BaseActivityMvp
         CoroutineScope(Dispatchers.Main).launch {
             when (state) {
                 is Act092UiEvent.UpdateTitleActionSerial -> {
-                    updateTitleActionSerial()
+                    updateTitleActionSerial(
+                        state.serialModel
+                    )
                 }
 
                 is Act092UiEvent.IsLoading -> {
@@ -386,9 +390,7 @@ class Act092_Main : BaseActivityMvp
                 }
 
                 is Act092UiEvent.EmptyOrError -> {
-                    errorOrEmpty(
-                        state.sizeList
-                    )
+                    emptyList(state.sizeList)
                 }
 
                 is Act092UiEvent.ListingSerialSteels -> {
@@ -425,10 +427,12 @@ class Act092_Main : BaseActivityMvp
                 }
 
                 is Act092UiEvent.UpdateOtherAction -> {
-                    _focusState.value = focusState.value.copy(
-                        mainUser = false,
-                        userFocus = !focusState.value.userFocus
-                    )
+                    if (!state.isOnline) {
+                        _focusState.value = _focusState.value.copy(
+                            mainUser = focusState.value.mainUser,
+                            userFocus = !focusState.value.userFocus
+                        )
+                    }
                     disableMainAndOtherActions()
                 }
             }
@@ -535,8 +539,10 @@ class Act092_Main : BaseActivityMvp
             mAdapter.userMainFilter = mainUser
             recyclerSerialList.apply {
                 visibility = View.VISIBLE
-                adapter = mAdapter
-                layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+                adapter = mAdapter.also {
+                    scrollToLastSelectedItem()
+                }
+                layoutManager = LinearLayoutManager(context)
             }
             //
             if (!editSerialFilter.text.isNullOrEmpty()){
@@ -544,6 +550,8 @@ class Act092_Main : BaseActivityMvp
                 mAdapter.notifyDataSetChanged()
             }
             //
+
+
         }
     }
 
@@ -560,7 +568,6 @@ class Act092_Main : BaseActivityMvp
                 setImageResource(R.drawable.ic_person_black_24dp)
             }
         }
-        presenter.getMyActionList()
     }
 
     private fun openDialog(
@@ -621,7 +628,7 @@ class Act092_Main : BaseActivityMvp
         }
     }
 
-    private fun errorOrEmpty(
+    private fun emptyList(
         sizeList: Int
     ) {
         with(binding) {
@@ -634,4 +641,26 @@ class Act092_Main : BaseActivityMvp
         }
     }
 
+    private fun scrollToLastSelectedItem() {
+        if (firstScroll) {
+            firstScroll = false
+            val actionPkPosition = mAdapter.getActionPkPosition(
+                presenter.serialModel.value.lastSelectActionType,
+                presenter.serialModel.value.lastSelectedPk,
+            )
+            if (actionPkPosition >= 0) {
+                //Tenta fazer scroll com offset, se crashar, tenta scroll sem offset
+                try {
+                    val linearLayoutManager =
+                        binding.recyclerSerialList.layoutManager as LinearLayoutManager
+                    val offset = ToolBox.dbToPixel(context, 50)
+                    linearLayoutManager.scrollToPositionWithOffset(actionPkPosition, offset)
+                } catch (e: Exception) {
+                    binding.recyclerSerialList.scrollToPosition(
+                        actionPkPosition
+                    )
+                }
+            }
+        }
+    }
 }

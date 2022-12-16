@@ -14,7 +14,6 @@ import com.namoadigital.prj001.core.IResult.Companion.isSuccess
 import com.namoadigital.prj001.core.IResult.Companion.loading
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.model.*
-import com.namoadigital.prj001.model.MyActionFilterParam.Companion.toSerialModel
 import com.namoadigital.prj001.receiver.WBR_Generate_NForm_PDF
 import com.namoadigital.prj001.receiver.WBR_Save
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save
@@ -91,28 +90,63 @@ class Act092Presenter constructor(
         ToolBox_Inf.deleteAllFOD(Constant.OTHER_ACTIONS_JSON_PATH)
     }
 
-    private fun saveFilter() {
-        CoroutineScope(Dispatchers.IO).launch {
-            if (originFlow == ConstantBaseApp.ACT006 || originFlow == ConstantBaseApp.ACT083) {
-                actionUseCases.setPreferences(
-                    myActionFilterParam.toSerialModel().copy(
-                        originFlow = originFlow,
-                        siteCodeBack = ToolBox_Con.getPreference_Site_Code(translateResource.context),
-                        zoneCodeBack = ToolBox_Con.getPreference_Zone_Code(translateResource.context),
-                        classColor = iconColor ?: "",
-                        mainUserFocus = view.focusState.value.mainUser,
-                        editFilter = view.filterText.value
-                    )
-                )
-            }
-        }
+    private fun firstSave() {
+        val origin =
+            if (originFlow?.isEmpty() == true) actionUseCases.getPreferences().originFlow else originFlow
+        val iColor =
+            if (iconColor.isEmpty()) actionUseCases.getPreferences().classColor else iconColor
+
+        actionUseCases.setPreferences(
+            SerialModel(
+                originFlow = origin,
+                siteCodeBack = ToolBox_Con.getPreference_Site_Code(translateResource.context),
+                zoneCodeBack = ToolBox_Con.getPreference_Zone_Code(translateResource.context),
+                classColor = iColor,
+                mainUserFocus = view.focusState.value.mainUser,
+                editFilter = view.filterText.value,
+                otherSerialIsFiltered = !view.focusState.value.userFocus,
+                productCode = myActionFilterParam.productCode,
+                productId = myActionFilterParam.productId,
+                productDesc = myActionFilterParam.productDesc,
+                serialId = myActionFilterParam.serialId,
+                serialCode = myActionFilterParam.serialCode,
+                ticketId = myActionFilterParam.ticketId,
+                calendarDate = myActionFilterParam.calendarDate
+            )
+        )
+    }
+
+    private fun saveFilterLeftActivity() {
+        val serialModel = _serialModel.value
+        actionUseCases.setPreferences(
+            actionUseCases.getPreferences().copy(
+                mainUserFocus = view.focusState.value.mainUser,
+                editFilter = view.filterText.value,
+                otherSerialIsFiltered = !view.focusState.value.userFocus,
+                lastSelectActionType = serialModel.lastSelectActionType,
+                lastSelectedPk = serialModel.lastSelectedPk,
+            )
+        )
     }
 
     private fun loadFilter() {
-        CoroutineScope(Dispatchers.Main).launch {
-            _serialModel.value = actionUseCases.getPreferences().copy(hmAux = hmAux_Trans)
-            view.onState(Act092UiEvent.UpdateTitleActionSerial)
+        _serialModel.value = actionUseCases.getPreferences().copy(hmAux = hmAux_Trans)
+        view.focusState.value.userFocus = !_serialModel.value.otherSerialIsFiltered
+        view.focusState.value.mainUser = _serialModel.value.mainUserFocus
+
+
+        if (view.focusState.value.mainUser) {
+            view.onState(Act092UiEvent.FilterMainUser)
+        } else if (_serialModel.value.otherSerialIsFiltered) {
+            view.onState(Act092UiEvent.UpdateOtherAction())
         }
+
+
+        view.onState(
+            Act092UiEvent.UpdateTitleActionSerial(
+                _serialModel.value
+            )
+        )
     }
 
 
@@ -137,11 +171,12 @@ class Act092Presenter constructor(
     }
 
     override fun getMyActionList() {
+        val userFocus = if (view.focusState.value.userFocus) 1 else 0
         CoroutineScope(Dispatchers.IO).launch {
-            actionUseCases.localTicket(
+            actionUseCases.listMyActionUseCases(
                 Pair(
-                    _serialModel.value.copy(
-                        userFocus = view.focusState.value.userFocusInt
+                    serialModel.value.copy(
+                        userFocus = userFocus
                     ), view.focusState.value.mainUser
                 )
             )
@@ -230,7 +265,6 @@ class Act092Presenter constructor(
     }
 
     override fun processActionClick(action: MyActions, context: Context, position: Int) {
-        saveFilter()
         when (action.actionType) {
             MyActions.MY_ACTION_TYPE_TICKET -> {
                 val slippedPk = action.getSplippedPk()
@@ -444,7 +478,7 @@ class Act092Presenter constructor(
             }
         } else {
             ToolBox_Inf.showNoConnectionDialog(context)
-            view.onState(Act092UiEvent.UpdateOtherAction)
+            view.onState(Act092UiEvent.UpdateOtherAction(false))
         }
     }
 
@@ -751,6 +785,9 @@ class Act092Presenter constructor(
                         Act092UiEvent.CallAct(
                             Act087Main::class.java,
                             Bundle().apply {
+                                setSeletedActionInfosIntoFilterParam(
+                                    action.actionType, action.processPk,
+                                )
                                 putString(MD_Product_SerialDao.SERIAL_ID, serial.serial_id)
                                 view.bundle.putString(
                                     ConstantBaseApp.MAIN_REQUESTING_ACT,
@@ -923,7 +960,8 @@ class Act092Presenter constructor(
                 it.isSuccess { bundle ->
                     myActionFilterParam.paramTextFilter = view.filterText.value
                     myActionFilterParam.mainUserFilterState = view.focusState.value.mainUser
-                    myActionFilterParam.paramItemSelectedTab = view.focusState.value.userFocusInt
+                    myActionFilterParam.paramItemSelectedTab =
+                        if (view.focusState.value.userFocus) 1 else 0
                     myActionFilterParam.paramItemSelectedPk = null
                     myActionFilterParam.paramItemSelectedType = null
 
@@ -972,15 +1010,22 @@ class Act092Presenter constructor(
         myActionPk: String,
         mainFocus: Boolean = view.focusState.value.mainUser
     ) {
-        myActionFilterParam.originFlow = originFlow ?: ConstantBaseApp.ACT005
+
         myActionFilterParam.setSelectedItemParams(
             view.filterText.value,
-            view.focusState.value.userFocusInt,
+            if (view.focusState.value.userFocus) 1 else 0,
             myActionType,
             myActionPk,
             null,
             mainFocus
         )
+
+        _serialModel.value = serialModel.value.copy(
+            mainUserFocus = mainFocus,
+            lastSelectActionType = myActionType,
+            lastSelectedPk = myActionPk,
+        )
+        saveFilterLeftActivity()
     }
 
     private fun ticketBundle(ticketPrefix: Int, ticketCode: Int): Bundle {
@@ -1084,8 +1129,11 @@ class Act092Presenter constructor(
 
     override fun setView(view: Act092_Contract.View) {
         this.view = view
-        saveFilter()
+        if (originFlow == ConstantBaseApp.ACT006 || originFlow == ConstantBaseApp.ACT083) {
+            firstSave()
+        }
         loadFilter()
+        getMyActionList()
     }
 
     override fun loadTranslation(): HMAux {

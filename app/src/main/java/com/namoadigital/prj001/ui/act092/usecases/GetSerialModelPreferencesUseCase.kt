@@ -7,7 +7,7 @@ class GetSerialModelPreferencesUseCase constructor(
     private val repository: ActionSerialRepository
 ) {
 
-    suspend operator fun invoke(): SerialModel {
+    operator fun invoke(): SerialModel {
         return repository.getPreferences()
     }
 

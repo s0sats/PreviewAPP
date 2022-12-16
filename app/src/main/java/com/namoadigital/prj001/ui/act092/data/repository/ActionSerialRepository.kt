@@ -11,7 +11,11 @@ interface ActionSerialRepository {
     suspend fun getLocalOpenTickets(ticket: SerialModel, mainUserFilter: Boolean): MutableList<HMAux>
     suspend fun getLocalHistoricalTickets(ticket: SerialModel): MutableList<HMAux>
     suspend fun getTicketCache(ticket: SerialModel, mainUserFilter: Boolean): MutableList<TkTicketCache>
-    suspend fun getSchedules(ticket: SerialModel, mainUserFilter: Boolean): MutableList<MD_Schedule_Exec>
+    suspend fun getSchedules(
+        ticket: SerialModel,
+        mainUserFilter: Boolean
+    ): MutableList<MD_Schedule_Exec>
+
     suspend fun getUnfocusSchedules(ticket: SerialModel): MutableList<MD_Schedule_Exec>
     suspend fun getFormAp(ticket: SerialModel): MutableList<GE_Custom_Form_Ap>
     suspend fun getLocalForms(ticket: SerialModel): MutableList<HMAux>
