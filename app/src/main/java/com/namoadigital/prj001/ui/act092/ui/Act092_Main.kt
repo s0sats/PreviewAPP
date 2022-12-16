@@ -602,6 +602,18 @@ class Act092_Main : BaseActivityMvp
                     }, 0
                 )
             }
+
+            is DialogType.CUSTOM_OK -> {
+                ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans[dialogType.title],
+                    dialogType.message,
+                    { dialog, _ ->
+                        dialog.dismiss()
+                    }, 0
+                )
+            }
+
         }
 
     }

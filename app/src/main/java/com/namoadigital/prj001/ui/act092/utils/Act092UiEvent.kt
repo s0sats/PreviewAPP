@@ -34,6 +34,7 @@ sealed class Act092UiEvent {
             ) : DialogType()
 
             data class DEFAULT_OK(val title: String?, val message: String?) : DialogType()
+            data class CUSTOM_OK(val title: String?, val message: String?) : DialogType()
         }
     }
 

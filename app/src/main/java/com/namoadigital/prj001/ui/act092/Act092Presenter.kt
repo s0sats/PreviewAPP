@@ -997,7 +997,7 @@ class Act092Presenter constructor(
                         if (exception.message != "ALERT_PRODUCT_OR_SERIAL") {
                             view.onState(
                                 Act092UiEvent.OpenDialog(
-                                    DialogType.DEFAULT_OK(
+                                    DialogType.CUSTOM_OK(
                                         title = Act092Translate.ALERT_NO_FORM_TTL,
                                         message = exception.message
                                     )
