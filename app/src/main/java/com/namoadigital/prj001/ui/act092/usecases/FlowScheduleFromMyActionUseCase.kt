@@ -121,6 +121,8 @@ class FlowScheduleFromMyActionUseCase constructor(
                     result = list.isNotEmpty()
                     productserial = serial
                 }
+            } else {
+                productserial = serial
             }
 
         }

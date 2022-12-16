@@ -7,7 +7,6 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
@@ -69,6 +68,8 @@ class Act092_Main : BaseActivityMvp
 
     private val _focusState = MutableStateFlow(FilterFocusUser())
     override val focusState = _focusState.asStateFlow()
+
+    private var firstScroll = true
 
     private var hmAuxTicketDownload: HMAux = HMAux()
 
@@ -392,9 +393,7 @@ class Act092_Main : BaseActivityMvp
                 }
 
                 is Act092UiEvent.EmptyOrError -> {
-                    errorOrEmpty(
-                        state.sizeList
-                    )
+                    emptyList(state.sizeList)
                 }
 
                 is Act092UiEvent.ListingSerialSteels -> {
@@ -541,8 +540,10 @@ class Act092_Main : BaseActivityMvp
             progressLoading.visibility = View.GONE
             recyclerSerialList.apply {
                 visibility = View.VISIBLE
-                adapter = mAdapter
-                layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+                adapter = mAdapter.also {
+                    scrollToLastSelectedItem()
+                }
+                layoutManager = LinearLayoutManager(context)
             }
             //
             if (!editSerialFilter.text.isNullOrEmpty()){
@@ -628,7 +629,7 @@ class Act092_Main : BaseActivityMvp
         }
     }
 
-    private fun errorOrEmpty(
+    private fun emptyList(
         sizeList: Int
     ) {
         with(binding) {
@@ -641,4 +642,26 @@ class Act092_Main : BaseActivityMvp
         }
     }
 
+    private fun scrollToLastSelectedItem() {
+        if (firstScroll) {
+            firstScroll = false
+            val actionPkPosition = mAdapter.getActionPkPosition(
+                presenter.serialModel.value.lastSelectActionType,
+                presenter.serialModel.value.lastSelectedPk,
+            )
+            if (actionPkPosition >= 0) {
+                //Tenta fazer scroll com offset, se crashar, tenta scroll sem offset
+                try {
+                    val linearLayoutManager =
+                        binding.recyclerSerialList.layoutManager as LinearLayoutManager
+                    val offset = ToolBox.dbToPixel(context, 50)
+                    linearLayoutManager.scrollToPositionWithOffset(actionPkPosition, offset)
+                } catch (e: Exception) {
+                    binding.recyclerSerialList.scrollToPosition(
+                        actionPkPosition
+                    )
+                }
+            }
+        }
+    }
 }

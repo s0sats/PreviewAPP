@@ -925,6 +925,7 @@ class Act083_Main_Presenter constructor(
                 null,
                     mView.getMainUserFilter()
             )
+            updateSharedPrefs()
         }
     }
 
@@ -1611,10 +1612,19 @@ class Act083_Main_Presenter constructor(
     private fun recoverIntentsInfo() {
         val filterParam = bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM)
         originFlow = bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, "")
-        loadPreferences(filterParam?.let { it as MyActionFilterParam } ?: MyActionFilterParam())
+        saveAndloadPreferences(filterParam?.let { it as MyActionFilterParam }
+            ?: MyActionFilterParam())
     }
 
-    private fun loadPreferences(filterParam: MyActionFilterParam) {
+
+    private fun saveFilter(filterParam: MyActionFilterParam) {
+        filterParam.toActionFilter().also {
+            sharedPreferences.write(it)
+            myActionFilterParam = it.toMyActionFilter()
+        }
+    }
+
+    private fun saveAndloadPreferences(filterParam: MyActionFilterParam) {
 
 
         if (originFlow == ConstantBaseApp.ACT005 ||
@@ -1926,6 +1936,8 @@ class Act083_Main_Presenter constructor(
         sharedPreferences.write(
             sharedPreferences.read().copy(
                 initialTextFilter = mView.getMketFilter(),
+                lastSelectActionPk = myActionFilterParam.paramItemSelectedPk,
+                lastSelectedActionType = myActionFilterParam.paramItemSelectedType,
                 mainUserFilterState = mView.getMainUserFilter(),
                 initialTabToLoad = mView.getCurrentTab(),
             )

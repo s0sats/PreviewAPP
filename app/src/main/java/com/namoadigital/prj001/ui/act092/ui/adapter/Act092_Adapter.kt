@@ -36,6 +36,29 @@ class Act092_Adapter constructor(
 
     var userMainFilter = false
 
+
+    fun getActionPkPosition(processType: String?, processPk: String?): Int {
+        if (processType.isNullOrEmpty() || processPk.isNullOrEmpty()) {
+            return -1
+        }
+        //
+        filterList.forEachIndexed { index, myActionsBase ->
+            if (myActionsBase is SerialViewItem.ContentItem) {
+                val item = myActionsBase.item
+                if (item is MyActions) {
+                    if (item.actionType == processType
+                        && item.processPk == processPk
+                    ) {
+                        item.isLastSelectedItem = true
+                        return index
+                    }
+                }
+            }
+        }
+        return -1
+        //Se não encontrar 0
+    }
+
     private fun List<MyActions>.separateListByHeader(): MutableList<SerialViewItem> {
         val newList = mutableListOf<SerialViewItem>()
         sortedBy {
@@ -364,6 +387,15 @@ class Act092_Adapter constructor(
                     text = hmAux["cell_item_in_process_lbl"]
                 }
 
+                binding.myActionsItemClInfos.apply {
+                    setCardBackgroundColor(
+                        if (myAction.isLastSelectedItem) {
+                            resources.getColor(R.color.namoa_color_light_blue5)
+                        } else {
+                            resources.getColor(R.color.m3_namoa_surface1)
+                        }
+                    )
+                }
 //                myActionSelectSerial.apply {
 //                    backgroundTintList = if (myAction.highlightItem) {
 //                        ColorStateList.valueOf(resources.getColor(R.color.namoa_color_orange))

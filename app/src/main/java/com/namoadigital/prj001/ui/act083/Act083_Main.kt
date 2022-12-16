@@ -257,7 +257,6 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
 
     private fun onSerialButtonClick(myAction: MyActions, position: Int) {
         serialActionSelected = position
-        mPresenter.updateSharedPrefs()
         mPresenter.processSerialClick(myAction)
     }
 
@@ -266,7 +265,6 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     }
 
     private fun onMyActionClick(myAction: MyActions){
-        mPresenter.updateSharedPrefs()
         mPresenter.processActionClick(myAction)
     }
 

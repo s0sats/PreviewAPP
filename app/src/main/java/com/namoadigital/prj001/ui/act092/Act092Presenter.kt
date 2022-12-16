@@ -117,11 +117,14 @@ class Act092Presenter constructor(
     }
 
     private fun saveFilterLeftActivity() {
+        val serialModel = _serialModel.value
         actionUseCases.setPreferences(
             actionUseCases.getPreferences().copy(
                 mainUserFocus = view.focusState.value.mainUser,
                 editFilter = view.filterText.value,
                 otherSerialIsFiltered = !view.focusState.value.userFocus,
+                lastSelectActionType = serialModel.lastSelectActionType,
+                lastSelectedPk = serialModel.lastSelectedPk,
             )
         )
     }
@@ -262,7 +265,6 @@ class Act092Presenter constructor(
     }
 
     override fun processActionClick(action: MyActions, context: Context, position: Int) {
-        saveFilterLeftActivity()
         when (action.actionType) {
             MyActions.MY_ACTION_TYPE_TICKET -> {
                 val slippedPk = action.getSplippedPk()
@@ -769,6 +771,9 @@ class Act092Presenter constructor(
                         Act092UiEvent.CallAct(
                             Act087Main::class.java,
                             Bundle().apply {
+                                setSeletedActionInfosIntoFilterParam(
+                                    action.actionType, action.processPk,
+                                )
                                 putString(MD_Product_SerialDao.SERIAL_ID, serial.serial_id)
                                 view.bundle.putString(
                                     ConstantBaseApp.MAIN_REQUESTING_ACT,
@@ -991,7 +996,7 @@ class Act092Presenter constructor(
         myActionPk: String,
         mainFocus: Boolean = view.focusState.value.mainUser
     ) {
-        myActionFilterParam.originFlow = originFlow ?: ConstantBaseApp.ACT005
+
         myActionFilterParam.setSelectedItemParams(
             view.filterText.value,
             if (view.focusState.value.userFocus) 1 else 0,
@@ -1000,6 +1005,13 @@ class Act092Presenter constructor(
             null,
             mainFocus
         )
+
+        _serialModel.value = serialModel.value.copy(
+            mainUserFocus = mainFocus,
+            lastSelectActionType = myActionType,
+            lastSelectedPk = myActionPk,
+        )
+        saveFilterLeftActivity()
     }
 
     private fun ticketBundle(ticketPrefix: Int, ticketCode: Int): Bundle {
