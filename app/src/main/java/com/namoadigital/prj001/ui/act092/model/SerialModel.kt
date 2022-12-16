@@ -28,8 +28,8 @@ data class SerialModel(
     val otherSerialIsFiltered: Boolean = false,
 ) {
 
-    fun getLastSelectedPk(actionType: String = MyActions.MY_ACTION_TYPE_FORM) =
-        if (lastSelectedPk == actionType) {
+    fun getLastSelectedPk(actionType: String) =
+        if (lastSelectActionType == actionType) {
             lastSelectedPk
         } else {
             null

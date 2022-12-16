@@ -64,6 +64,7 @@ import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.MdOrderType;
 import com.namoadigital.prj001.model.MdTag;
 import com.namoadigital.prj001.model.MeMeasureTp;
+import com.namoadigital.prj001.model.MyActionFilterParam;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Form;
@@ -2157,10 +2158,15 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         }else{
             //FLUXO DO TICKET ESTA EM OUTRO LUGAR.
             String origin = act083Bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, "");
+            MyActionFilterParam myActionFilterParam = (MyActionFilterParam) act083Bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM);
             if(bAgendado || !ConstantBaseApp.ACT006.equals(origin)){
                 switch (origin) {
                     case ConstantBaseApp.ACT092:
-                        mView.callAct092();
+                        if(myActionFilterParam.getParamItemSelectedPk() == null || myActionFilterParam.getParamItemSelectedPk().isEmpty()){
+                            mView.callAct006(context,false);
+                        }else {
+                            mView.callAct092();
+                        }
                         break;
 
                     case ConstantBaseApp.ACT083:

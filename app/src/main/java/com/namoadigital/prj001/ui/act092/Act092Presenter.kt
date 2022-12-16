@@ -43,6 +43,7 @@ import com.namoadigital.prj001.ui.act092.model.SerialModel
 import com.namoadigital.prj001.ui.act092.usecases.ActionUseCases
 import com.namoadigital.prj001.ui.act092.usecases.FlowScheduleFromMyActionUseCase.Companion.MODULE_CHECKLIST_FORM_IN_PROCESSING
 import com.namoadigital.prj001.ui.act092.usecases.FlowScheduleFromMyActionUseCase.Companion.SERIAL_SITE_OUT_OF_LICENSE
+import com.namoadigital.prj001.ui.act092.usecases.FlowScheduleFromMyActionUseCase.Companion.SERIAL_WITHOUT_STRUCTURE
 import com.namoadigital.prj001.ui.act092.usecases.FlowScheduleFromMyActionUseCase.Companion.SITE_RESTRICTION_CONFIRM
 import com.namoadigital.prj001.ui.act092.usecases.FlowScheduleFromMyActionUseCase.Companion.SITE_RESTRICTION_NO_ACCESS
 import com.namoadigital.prj001.ui.act092.usecases.GetScheduleCtrlIfExistsUseCase
@@ -636,6 +637,16 @@ class Act092Presenter constructor(
                         )
                     )
                 }
+                SERIAL_WITHOUT_STRUCTURE -> {
+                    view.onState(
+                        Act092UiEvent.OpenDialog(
+                            DialogType.DEFAULT_OK(
+                                Act092Translate.ALERT_SERIAL_WITHOUT_STRUCTURE_TTL,
+                                Act092Translate.ALERT_SERIAL_WITHOUT_STRUCTURE_MSG
+                            )
+                        )
+                    )
+                }
 
                 else -> {
                     view.onState(
@@ -761,6 +772,9 @@ class Act092Presenter constructor(
             when (actType) {
                 Constant.ACT011 -> {
                     if(actionUseCases.createFormLocalForSchedule(actionUseCases.scheduleFormLocalExists(scheduleExec, action).first, scheduleExec, action)){
+                        setSeletedActionInfosIntoFilterParam(
+                            action.actionType, action.processPk,
+                        )
                         view.onState(
                             Act092UiEvent.CallAct(
                                 Act011_Main::class.java,
@@ -1180,7 +1194,8 @@ class Act092Presenter constructor(
             Act092Translate.ALERT_TICKET_MENU_PROFILE_NOT_FOUND_MSG,
             Act092Translate.DIALOG_OTHER_ACTIONS_EMPTY_LIST_MSG,
             Act092Translate.CELL_WAITING_APPROVAL,
-            Act092Translate.SERIAL_WITHOUT_STRUCTURE,
+            Act092Translate.ALERT_SERIAL_WITHOUT_STRUCTURE_TTL,
+            Act092Translate.ALERT_SERIAL_WITHOUT_STRUCTURE_MSG,
             "progress_ticket_save_ttl",
             "progress_ticket_save_msg",
             "progress_form_save_ttl",

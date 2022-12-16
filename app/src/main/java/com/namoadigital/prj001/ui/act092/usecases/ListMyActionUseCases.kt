@@ -123,7 +123,7 @@ class ListMyActionUseCases constructor(
                 GE_Custom_Form_Local.toMyActionsObj(
                     context,
                     it,
-                    serialModel.getLastSelectedPk(),
+                    serialModel.getLastSelectedPk(MyActions.MY_ACTION_TYPE_FORM),
                     false
                 )
             }
@@ -172,7 +172,7 @@ class ListMyActionUseCases constructor(
         val localList = mutableListOf<MyActionsBase>()
         localList.addAll(
             repository.getSchedules(localTicket, mainUser).map {
-                it.toMyActionsObj(context, serialModel.getLastSelectedPk())
+                it.toMyActionsObj(context, serialModel.getLastSelectedPk(MyActions.MY_ACTION_TYPE_SCHEDULE))
             }
         )
         val processScheduleList = mutableListOf<MyActionsBase>()
@@ -181,7 +181,7 @@ class ListMyActionUseCases constructor(
             //
             localList.addAll(
                 repository.getUnfocusSchedules(localTicket).map {
-                    it.toMyActionsObj(context, serialModel.getLastSelectedPk())
+                    it.toMyActionsObj(context, serialModel.getLastSelectedPk(MyActions.MY_ACTION_TYPE_SCHEDULE))
                 }
             )
             //
@@ -225,20 +225,28 @@ class ListMyActionUseCases constructor(
         val localList = mutableListOf<MyActionsBase>()
         localList.addAll(
             repository.getLocalOpenTickets(localTicket, mainUser).map {
-                TK_Ticket.toMyActionsObj(context, it, serialModel.getLastSelectedPk())
+                TK_Ticket.toMyActionsObj(context, it, serialModel.getLastSelectedPk(MyActions.MY_ACTION_TYPE_TICKET))
             }
         )
         //
         localList.addAll(
             repository.getTicketCache(localTicket, mainUser).map {
-                it.toMyActionsObj(context, serialModel.getLastSelectedPk())
+                it.toMyActionsObj(context, serialModel.getLastSelectedPk(MyActions.MY_ACTION_TYPE_TICKET))
             }
         )
         //
         val processTicketList = mutableListOf<MyActionsBase>()
-        processTicketList.addAll(localList)
+
         if (serialModel.userFocus == 0) {
             val remoteList = mutableListOf<MyActionsBase>()
+            //
+            localList.addAll(
+                repository.getLocalHistoricalTickets(localTicket).map {
+                    TK_Ticket.toMyActionsObj(context, it, serialModel.getLastSelectedPk(MyActions.MY_ACTION_TYPE_TICKET))
+                }
+            )
+            processTicketList.addAll(localList)
+            //
             remoteList.addAll(
                 repository.getUnfocusAndHistorical(
                     serialModel.productCode ?: -1,
@@ -265,6 +273,8 @@ class ListMyActionUseCases constructor(
                 }
             }
 
+        }else{
+            processTicketList.addAll(localList)
         }
         return processTicketList
     }

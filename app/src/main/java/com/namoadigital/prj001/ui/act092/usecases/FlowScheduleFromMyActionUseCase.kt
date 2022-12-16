@@ -9,7 +9,6 @@ import com.namoadigital.prj001.model.MD_Product_Serial
 import com.namoadigital.prj001.model.MD_Schedule_Exec
 import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.ui.act092.data.repository.ActionSerialRepository
-import com.namoadigital.prj001.ui.act092.utils.Act092Translate.SERIAL_WITHOUT_STRUCTURE
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -151,6 +150,7 @@ class FlowScheduleFromMyActionUseCase constructor(
         const val MODULE_CHECKLIST_FORM_IN_PROCESSING = "MODULE_CHECKLIST_FORM_IN_PROCESSING"
         const val SCHEDULE_PK_NOT_FOUND = "SCHEDULE_PK_NOT_FOUND"
         const val SCHEDULE_STRUCTURE_NOT_FOUND = "SCHEDULE_STRUCTURE_NOT_FOUND"
+        const val SERIAL_WITHOUT_STRUCTURE = "SERIAL_WITHOUT_STRUCTURE"
 
 
 

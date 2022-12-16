@@ -539,11 +539,10 @@ class Act092_Main : BaseActivityMvp
             mAdapter.userMainFilter = mainUser
             recyclerSerialList.apply {
                 visibility = View.VISIBLE
-                adapter = mAdapter.also {
-                    scrollToLastSelectedItem()
-                }
+                adapter = mAdapter
                 layoutManager = LinearLayoutManager(context)
             }
+            scrollToLastSelectedItem()
             //
             if (!editSerialFilter.text.isNullOrEmpty()){
                 mAdapter.filter.filter(editSerialFilter.text)

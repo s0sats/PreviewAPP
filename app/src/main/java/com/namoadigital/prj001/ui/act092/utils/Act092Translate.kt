@@ -2,7 +2,8 @@ package com.namoadigital.prj001.ui.act092.utils
 
 object Act092Translate {
     const val CELL_WAITING_APPROVAL = "cell_waiting_approval"
-    const val SERIAL_WITHOUT_STRUCTURE = "alert_serial_without_structure_msg"
+    const val ALERT_SERIAL_WITHOUT_STRUCTURE_TTL = "alert_serial_without_structure_ttl"
+    const val ALERT_SERIAL_WITHOUT_STRUCTURE_MSG = "alert_serial_without_structure_msg"
     const val DIALOG_UPDATE_TTL = "dialog_update_list_ttl"
     const val DIALOG_UPDATE_MSG = "dialog_update_list_msg"
     const val DIALOG_OTHER_ACTIONS_EMPTY_LIST_MSG = "dialog_other_actions_empty_list_msg"
