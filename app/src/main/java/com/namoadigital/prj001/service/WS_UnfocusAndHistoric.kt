@@ -15,6 +15,7 @@ import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.receiver.WBR_UnfocusAndHistoric
 import com.namoadigital.prj001.sql.*
 import com.namoadigital.prj001.util.Constant
+import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 
@@ -110,20 +111,25 @@ class WS_UnfocusAndHistoric : IntentService("WS_UnfocusAndHistoric") {
     }
 
     private fun processReturn(rec: List<MyActionsCache>?, productCode: Int, serialCode: Long) {
-
+        val processList =  mutableListOf<MyActionsCache>()
         rec?.forEach {
             when (it.actionType) {
                 MyActions.MY_ACTION_TYPE_TICKET -> {
                     processTicket(it.processPk)
+                    processList.add(it)
                 }
                 MyActions.MY_ACTION_TYPE_TICKET_CACHE -> {
                     removeTicketCache(it.processPk)
+                    processList.add(it)
                 }
                 MyActions.MY_ACTION_TYPE_SCHEDULE -> {
-                    processSchedule(it)
+                    val scheduleCache = processSchedule(it)
+                    scheduleCache?.let{
+                        processList.add(scheduleCache)
+                    }?: processList.add(it)
                 }
                 MyActions.MY_ACTION_TYPE_FORM -> {
-
+                    processList.add(it)
                 }
             }
         }
@@ -132,11 +138,20 @@ class WS_UnfocusAndHistoric : IntentService("WS_UnfocusAndHistoric") {
             productCode,
             serialCode
         )
-        //Chama metodo para criar arquivo
-//        val listSize = rec?.let{
-            ToolBox_Inf.createJsonFile(file_name, gson.toJson(rec), Constant.OTHER_ACTIONS_JSON_PATH)
-//            it.size
-//        } ?: 0
+        if(processList.isNullOrEmpty()) {
+            ToolBox_Inf.createJsonFile(
+                file_name,
+                gson.toJson(rec),
+                Constant.OTHER_ACTIONS_JSON_PATH
+            )
+        }else{
+            ToolBox_Inf.createJsonFile(
+                file_name,
+                gson.toJson(processList),
+                Constant.OTHER_ACTIONS_JSON_PATH
+            )
+        }
+
         //
         var hmAux = HMAux()
 //        hmAux.put(RESULT_LIST_SIZE, listSize.toString())
@@ -151,7 +166,7 @@ class WS_UnfocusAndHistoric : IntentService("WS_UnfocusAndHistoric") {
         //
     }
 
-    private fun processSchedule(actionsCache: MyActionsCache) {
+    private fun processSchedule(actionsCache: MyActionsCache): MyActionsCache?{
         val schedulePk = actionsCache.processPk.split("|").toTypedArray()
         val customerCode = schedulePk[0].toLong()
         val schedulePrefix = schedulePk[1].toInt()
@@ -164,24 +179,62 @@ class WS_UnfocusAndHistoric : IntentService("WS_UnfocusAndHistoric") {
             Constant.DB_VERSION_CUSTOM
         )
         //
-//        val schedule = mdScheduleExecdao.getByString(
-//            MD_Schedule_Exec_Sql_010(
-//                customerCode,
-//                schedulePrefix,
-//                scheduleCode,
-//                scheduleExec
-//            ).toSqlQuery()
-//        )
-//        //
-//        schedule?.let{
-//            mdScheduleExecdao.remove(
-//                MD_Schedule_Exec_Sql_011(
-//                    it.customer_code,
-//                    it.schedule_prefix,
-//                    it.schedule_code
-//                ).toSqlQuery()
-//            )
-//        }
+        val schedule = mdScheduleExecdao.getByString(
+            MD_Schedule_Exec_Sql_001(
+                customerCode,
+                schedulePrefix,
+                scheduleCode,
+                scheduleExec
+            ).toSqlQuery()
+        )
+        //
+        schedule?.let{
+           if(it.status == ConstantBaseApp.SYS_STATUS_DONE){
+               return MyActionsCache(
+                   actionsCache.actionType,
+                   actionsCache.processPk,
+                   actionsCache.processId,
+                   ConstantBaseApp.SYS_STATUS_DONE,
+                   ConstantBaseApp.SYS_STATUS_DONE,
+                   actionsCache.processLeftIcon,
+                   actionsCache.processRightIcon,
+                   actionsCache.plannedDateStart,
+                   actionsCache.plannedDateEnd,
+                   schedule.tag_operational_code,
+                   schedule.tag_operational_id,
+                   actionsCache.tagOperationDesc,
+                   actionsCache.originDescriptor,
+                   actionsCache.processDesc,
+                   actionsCache.internalComments,
+                   actionsCache.focusStepDesc,
+                   actionsCache.siteCode,
+                   actionsCache.siteDesc,
+                   actionsCache.zoneDesc,
+                   actionsCache.doneDateStart,
+                   actionsCache.plannedDateEnd,
+                   actionsCache.orderBy,
+                   actionsCache.data_type,
+                   actionsCache.ticketOriginType,
+                   actionsCache.ticketScn,
+                   actionsCache.highlightItem,
+                   actionsCache.periodStarted,
+                   actionsCache.lateItem,
+                   actionsCache.isLastSelectedItem,
+                   actionsCache.mainUser,
+                   actionsCache.userFocus,
+                   actionsCache.hasNc,
+                   null,
+                   null,
+                   actionsCache.ticketClassId,
+                   actionsCache.ticketClassColor,
+                   actionsCache.justify_item_id,
+                   actionsCache.justify_item_desc,
+                   actionsCache.not_executed_comments
+               )
+           }
+        }
+        //
+        return null
     }
 
     private fun processTicket(processPk: String) {

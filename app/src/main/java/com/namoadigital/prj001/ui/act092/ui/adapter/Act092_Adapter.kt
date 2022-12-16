@@ -132,7 +132,7 @@ class Act092_Adapter constructor(
                         text = hmAux["cell_download_action_lbl"]
                         setBackgroundColor(resources.getColor(R.color.m3_namoa_surfaceVariant))
                         setTextColor(resources.getColor(R.color.m3_namoa_onSurfaceVariant))
-                    } else if (!item.pdfUrl.isNullOrEmpty()
+                    } else if (!item.pdfName.isNullOrEmpty()
                         || MyActions.MY_ACTION_TYPE_TICKET_CACHE == item.actionType
                     ) {
                         text = hmAux["cell_download_action_lbl"]

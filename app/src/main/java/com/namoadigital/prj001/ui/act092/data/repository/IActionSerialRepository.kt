@@ -164,7 +164,7 @@ class IActionSerialRepository constructor(
         context.sendBroadcast(mIntent)
     }
 
-    override suspend fun getUnfocusAndHistorical(productCode: Int, serialCode: Long, serialId: String,filterCriteria: String): MutableList<MyActions> {
+    override suspend fun getUnfocusAndHistorical(productCode: Int, serialCode: Long, serialId: String,filterCriteria: String?): MutableList<MyActions> {
         //
         if(productCode>0 && serialCode>0) {
             val fileName = ToolBox_Inf.getOtherActionFileName(productCode, serialCode)
@@ -178,15 +178,27 @@ class IActionSerialRepository constructor(
                 )
                 val myUnfocusActionList = mutableListOf<MyActions>()
                 if(rec != null) {
-                    val filter = rec.filter { it.data_type == filterCriteria }
-                    for (myActions in filter) {
-                        myUnfocusActionList.add(
-                            myActions.toMyActions(
-                                context,
-                                productCode,
-                                serialId
+                    filterCriteria?.let {
+                        val filter = rec.filter { it.data_type == filterCriteria }
+                        for (myActions in filter) {
+                            myUnfocusActionList.add(
+                                myActions.toMyActions(
+                                    context,
+                                    productCode,
+                                    serialId
+                                )
                             )
-                        )
+                        }
+                    }?: run {
+                        for (myActions in rec) {
+                            myUnfocusActionList.add(
+                                myActions.toMyActions(
+                                    context,
+                                    productCode,
+                                    serialId
+                                )
+                            )
+                        }
                     }
                 }
                 return myUnfocusActionList
