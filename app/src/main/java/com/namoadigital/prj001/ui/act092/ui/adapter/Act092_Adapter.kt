@@ -49,7 +49,6 @@ class Act092_Adapter constructor(
                     if (item.actionType == processType
                         && item.processPk == processPk
                     ) {
-                        item.isLastSelectedItem = true
                         return index
                     }
                 }
@@ -154,10 +153,11 @@ class Act092_Adapter constructor(
                         text = hmAux["cell_download_action_lbl"]
                         setBackgroundColor(resources.getColor(R.color.m3_namoa_surfaceVariant))
                         setTextColor(resources.getColor(R.color.m3_namoa_onSurfaceVariant))
-                    } else if (!item.pdfName.isNullOrEmpty()
-                        || MyActions.MY_ACTION_TYPE_TICKET_CACHE == item.actionType
-                    ) {
+                    } else if (MyActions.MY_ACTION_TYPE_TICKET_CACHE == item.actionType) {
                         text = hmAux["cell_download_action_lbl"]
+                        setTextColor(resources.getColor(R.color.m3_namoa_surface))
+                    } else if (!item.pdfName.isNullOrEmpty()) {
+                        text = hmAux["cell_download_action_pdf_lbl"]
                         setTextColor(resources.getColor(R.color.m3_namoa_surface))
                     } else if (item.highlightItem) {
                         text = hmAux["cell_continue_action_lbl"]
