@@ -43,7 +43,10 @@
                     app:layout_constraintEnd_toStartOf="@id/act084_chk_nc_filter"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    >
+                    app:placeholderTextColor="@color/m3_namoa_onSurface"
+                    android:focusable="false"
+                    android:focusableInTouchMode="true"
+                    app:startIconDrawable="@drawable/ic_search_black_24dp">
 
                     <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                         android:id="@+id/act084_mket_filter"

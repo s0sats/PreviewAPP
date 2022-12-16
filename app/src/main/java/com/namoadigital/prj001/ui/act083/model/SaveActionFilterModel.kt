@@ -4,7 +4,7 @@ import com.namoadigital.prj001.model.MyActionFilterParam
 import com.namoadigital.prj001.util.ConstantBaseApp
 
 data class SaveActionFilterModel(
-    var originFlow: String = ConstantBaseApp.ACT005,
+    val originFlow: String = ConstantBaseApp.ACT005,
     val siteCodeBack: String? = null,
     val initialTextFilter: String? = null,
     val tagFilterDesc: String? = null,
@@ -21,7 +21,7 @@ data class SaveActionFilterModel(
     val initialTabToLoad: Int = 1,
     val tagFilter: Int? = null,
     val productCode: Int? = null,
-    var mainUserFilterState: Boolean = false
+    val mainUserFilterState: Boolean = false
 ) {
 
     companion object {

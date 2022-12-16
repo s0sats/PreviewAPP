@@ -70,6 +70,7 @@ interface Act083_Main_Contract {
         fun processSerialClick(myAction: MyActions)
         fun processLocalSearchForSerialAction(selectedActionForSerialFLow: MyActions, mdProductSerial: MD_Product_Serial?)
         fun extractStructureResult(serial: MD_Product_Serial, myAction: MyActions?)
+        fun updateSharedPrefs()
     }
 
 }

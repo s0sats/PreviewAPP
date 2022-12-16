@@ -50,6 +50,7 @@ class MyActionsFilterParamPreferences constructor(
                 originFlow = getString(ACTION_FILTER_ORIGIN_FLOW, null) ?: ConstantBaseApp.ACT005,
                 siteCode = getString(ACTION_FILTER_SITE_CODE, null),
                 initialTextFilter = getString(ACTION_FILTER_INITIAL_TEXT_FILTER, null),
+                mainUserFilterState = getBoolean(ACTION_FILTER_MAIN_USER_FILTER_STATE, false),
                 tagFilterDesc = getString(ACTION_FILTER_TAG_FILTER_DESC, null),
                 productDesc = getString(ACTION_FILTER_PRODUCT_DESC, null),
                 productId = getString(ACTION_FILTER_PRODUCT_ID, null),
@@ -63,7 +64,7 @@ class MyActionsFilterParamPreferences constructor(
                 zoneCodeBack = getInt(ACTION_FILTER_ZONE_CODE_BACK, 0),
                 initialTabToLoad = getInt(ACTION_FILTER_INITIAL_TAB_LOAD, 1),
                 tagFilter = tagFilter,
-                productCode = productCode
+                productCode = productCode,
             )
         }
     }

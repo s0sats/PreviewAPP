@@ -21,24 +21,42 @@ class FilterParamPreferences constructor(
             .putString(SERIAL_MODEL_LAST_SELECT_PK, model.lastSelectedPk)
             .putString(SERIAL_MODEL_LAST_SELECT_ACTION_TYPE, model.lastSelectActionType)
             .putString(SERIAL_MODEL_CLASS_COLOR, model.classColor)
+            .putString(SERIAL_MODEL_TEXT_FILTER, model.editFilter)
+            .putBoolean(SERIAL_MODEL_MAIN_USER_FILTER, model.mainUserFocus)
             .apply()
     }
 
     override fun read(): SerialModel {
         with(preferences) {
+
+            val serialCode = if (getLong(SERIAL_MODEL_SERIAL_CODE, -1L) == -1L) null else getLong(
+                SERIAL_MODEL_SERIAL_CODE,
+                -1L
+            )
+            val tagOperCode = if (getInt(SERIAL_MODEL_TAG_OPER_CODE, -1) == -1) null else getInt(
+                SERIAL_MODEL_TAG_OPER_CODE,
+                -1
+            )
+            val productCode = if (getInt(SERIAL_MODEL_PRODUCT_CODE, -1) == -1) null else getInt(
+                SERIAL_MODEL_PRODUCT_CODE,
+                -1
+            )
+
             return SerialModel(
-                originFlow = getString(SERIAL_MODEL_ORIGIN_FLOW, ""),
-                tagOperCode = getInt(SERIAL_MODEL_TAG_OPER_CODE, -1),
-                productCode = getInt(SERIAL_MODEL_PRODUCT_CODE, -1),
-                productId = getString(SERIAL_MODEL_PRODUCT_ID, ""),
-                productDesc = getString(SERIAL_MODEL_PRODUCT_DESC, ""),
-                serialCode = getLong(SERIAL_MODEL_SERIAL_CODE, -1L),
-                serialId = getString(SERIAL_MODEL_SERIAL_ID, ""),
-                ticketId = getString(SERIAL_MODEL_TICKET_ID, ""),
-                calendarDate = getString(SERIAL_MODEL_CALENDAR_DATE, ""),
-                lastSelectedPk = getString(SERIAL_MODEL_LAST_SELECT_PK, ""),
-                lastSelectActionType = getString(SERIAL_MODEL_LAST_SELECT_ACTION_TYPE, ""),
-                classColor = getString(SERIAL_MODEL_CLASS_COLOR, "") ?: ""
+                originFlow = getString(SERIAL_MODEL_ORIGIN_FLOW, null),
+                tagOperCode = tagOperCode,
+                productCode = productCode,
+                productId = getString(SERIAL_MODEL_PRODUCT_ID, null),
+                productDesc = getString(SERIAL_MODEL_PRODUCT_DESC, null),
+                serialCode = serialCode,
+                serialId = getString(SERIAL_MODEL_SERIAL_ID, null),
+                ticketId = getString(SERIAL_MODEL_TICKET_ID, null),
+                calendarDate = getString(SERIAL_MODEL_CALENDAR_DATE, null),
+                lastSelectedPk = getString(SERIAL_MODEL_LAST_SELECT_PK, null),
+                lastSelectActionType = getString(SERIAL_MODEL_LAST_SELECT_ACTION_TYPE, null),
+                classColor = getString(SERIAL_MODEL_CLASS_COLOR, null),
+                mainUserFocus = getBoolean(SERIAL_MODEL_MAIN_USER_FILTER, false),
+                editFilter = getString(SERIAL_MODEL_TEXT_FILTER, null)
             )
         }
     }
@@ -57,5 +75,7 @@ class FilterParamPreferences constructor(
         const val SERIAL_MODEL_LAST_SELECT_ACTION_TYPE =
             "act092_serial_model_last_select_action_type"
         const val SERIAL_MODEL_CLASS_COLOR = "act092_serial_model_class_color"
+        const val SERIAL_MODEL_MAIN_USER_FILTER = "act092_serial_model_main_user_filter"
+        const val SERIAL_MODEL_TEXT_FILTER = "act092_serial_model_text_filter"
     }
 }

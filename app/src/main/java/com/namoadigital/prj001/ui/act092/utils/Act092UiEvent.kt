@@ -39,4 +39,5 @@ sealed class Act092UiEvent {
     object UpdateTitleActionSerial : Act092UiEvent()
 
     object UpdateFooterInfos : Act092UiEvent()
+    object UpdateOtherAction : Act092UiEvent()
 }

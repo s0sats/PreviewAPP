@@ -55,7 +55,6 @@
                 android:layout_gravity="start"
                 android:padding="0dp"
                 android:src="@drawable/ic_baseline_arrow_right_24"
-                android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -66,7 +65,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
-                android:text="UM S3R1AL"
                 android:layout_marginEnd="10dp"
                 android:textColor="@color/m3_namoa_onSurface"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -95,8 +93,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/m3_namoa_onSurfaceVariant"
-            android:textStyle="normal"
-            android:text="empilhadeira 1" />
+            android:textStyle="normal" />
 
         <View
             android:layout_marginVertical="2dp"
@@ -114,6 +111,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
+                android:hint="Filtro"
+                app:placeholderText="Filtre Tema/Data/Status"
                 app:boxStrokeColor="@color/m3_namoa_onSurface"
                 app:hintTextColor="@color/m3_namoa_onSurface"
                 app:layout_constraintEnd_toStartOf="@+id/main_user_selection"
@@ -126,6 +125,7 @@
                     android:id="@+id/edit_serial_filter"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:singleLine="true"
                     android:textColor="@color/m3_namoa_onSurface" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -160,9 +160,11 @@
 
         <ProgressBar
             android:id="@+id/progress_loading"
+            style="@android:style/Widget.DeviceDefault.Light.ProgressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:progressBackgroundTint="@color/m3_namoa_primary"
+            android:indeterminate="true"
+            android:progressTint="@color/m3_namoa_primary"
             android:secondaryProgressTint="@color/m3_namoa_onPrimary"
             android:visibility="visible" />
 

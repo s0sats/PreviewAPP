@@ -56,20 +56,20 @@ fun TextView.removePrefix(preffix: String){
     }
 }
 
-fun TextView.applyVisibilityIfTextExists(text: String?) {
-    this.text = text
-    this.visibility = if (!this.text.isNullOrEmpty()) {
-        View.VISIBLE
-    } else {
+fun TextView.applyVisibilityIfTextExists(value: String?) {
+    this.visibility = if (value.isNullOrEmpty()) {
         View.GONE
+    } else {
+        this.text = value
+        View.VISIBLE
     }
 }
 
-fun TextView.applyVisibilityIfTextExists(text: String?, lbl: String){
-    this.visibility = if (!text.isNullOrEmpty()){
+fun TextView.applyVisibilityIfTextExists(text: String?, lbl: String) {
+    this.visibility = if (text.isNullOrEmpty()) {
+        View.GONE
+    } else {
         this.text = "$lbl: $text"
         View.VISIBLE
-    }else{
-        View.GONE
     }
 }

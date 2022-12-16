@@ -37,7 +37,7 @@ class MyActionFilterParam(
             initialTabToLoad = paramItemSelectedTab ?: 1,
             lastSelectActionPk = paramItemSelectedPk,
             lastSelectedActionType = paramItemSelectedType,
-            mainUserFilterState = mainUserFilterState ?: false,
+            mainUserFilterState = mainUserFilterState,
             tagFilter = tagFilterCode,
             tagFilterDesc = tagFilterDesc,
             productCode = productCode,
@@ -57,7 +57,7 @@ class MyActionFilterParam(
     var paramItemSelectedPk: String? = null
     var paramNcFilter: Boolean? = null
     var originFlow: String = ConstantBaseApp.ACT005
-    var mainUserFilterState: Boolean? = null
+    var mainUserFilterState: Boolean = false
 
     fun setSelectedItemParams(textFilter: String? = null, selectedTab: Int, selectedType: String, selectedPk: String,ncFilterOn: Boolean? = null, mainUserFilter: Boolean = false){
         paramTextFilter = textFilter
