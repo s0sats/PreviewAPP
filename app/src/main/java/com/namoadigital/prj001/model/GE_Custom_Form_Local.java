@@ -613,7 +613,7 @@ public class GE_Custom_Form_Local {
         }
         int midIcon =
             !ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS))
-            ? R.drawable.ic_baseline_cloud_done_24_blue
+            ? R.drawable.ic_baseline_cloud_upload_24_gray
             : R.drawable.ic_cloud_upload_24_red;
         //
         Integer rightIcon = null;
