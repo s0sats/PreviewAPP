@@ -277,9 +277,8 @@ class Act092_Adapter constructor(
 
         private fun configTvTag(myAction: MyActions) {
             with(binding) {
-                myActionsItemTvTagDesc.text = myAction.tagOperationDesc?.toUpperCase() ?: null
-                myActionsItemTvProdDesc.applyVisibilityIfTextExists(
-                    myAction.tagOperationDesc?.toUpperCase() ?: null
+                myActionsItemTvTagDesc.applyVisibilityIfTextExists(
+                    myAction.tagOperationDesc
                 )
             }
         }

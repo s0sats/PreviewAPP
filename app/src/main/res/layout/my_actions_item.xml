@@ -176,6 +176,7 @@
                     android:gravity="start"
                     android:visibility="gone"
                     android:text="TAG NAME"
+                    android:textAllCaps="true"
                     android:textColor="@color/m3_namoa_onSurface"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/my_actions_item_tv_class_status"
