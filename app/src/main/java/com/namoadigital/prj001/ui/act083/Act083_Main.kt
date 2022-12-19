@@ -172,7 +172,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     private fun initVars() {
         supportActionBar?.title = mPresenter.getActTitle()
         binding.act083MainContent.act083TilFilter.apply {
-            hint = Act092Translate.HINT_FILTER
+            hint = hmAux_Trans[Act092Translate.HINT_FILTER]
         }
         //reseta preferencia do toggle da origem
         ToolBox_Con.setBooleanPreference(

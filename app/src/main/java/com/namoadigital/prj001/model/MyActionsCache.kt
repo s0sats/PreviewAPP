@@ -132,7 +132,12 @@ class MyActionsCache(
                 R.drawable.ic_baseline_cloud_download_24_gray
             }
         }else{
-            R.drawable.ic_baseline_cloud_download_24_gray
+            if(actionType == MyActions.MY_ACTION_TYPE_SCHEDULE
+                && processStatus ==  ConstantBaseApp.SYS_STATUS_NOT_EXECUTED){
+                null
+            }else {
+                R.drawable.ic_baseline_cloud_download_24_gray
+            }
         }
     }
 
