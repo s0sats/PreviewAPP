@@ -232,7 +232,6 @@ class Act092_Adapter constructor(
                 )
                 //
                 configTvSite(item)
-                myActionsItemTvDoneDate.applyVisibilityIfTextExists(item.doneDate)
                 myActionsItemTvActionProcess.applyVisibilityIfTextExists(item.processDesc)
                 //
                 myActionsItemTvInternalComments.applyVisibilityIfTextExists(
@@ -259,13 +258,14 @@ class Act092_Adapter constructor(
         private fun configDoneDate(myAction: MyActions) {
             with(binding) {
                 myActionsItemTvDoneDate.apply {
-                    applyVisibilityIfTextExists(myAction.doneDate)
+                    if(ConstantBaseApp.SYS_STATUS_NOT_EXECUTED == myAction.processStatus){
+                        applyVisibilityIfTextExists(null)
+                    }else {
+                        applyVisibilityIfTextExists(myAction.doneDate)
+                    }
                     if (ConstantBaseApp.SYS_STATUS_DONE == myAction.processStatus) {
                         this.setTextColor(
-                            ToolBox_Inf.getStatusColorV2(
-                                context,
-                                myAction.processStatus
-                            )
+                            context.resources.getColor(R.color.m3_namoa_extended_verdeDone_seed)
                         )
                     } else {
                         this.setTextColor(context.resources.getColor(R.color.namoa_color_gray_8))
@@ -277,9 +277,8 @@ class Act092_Adapter constructor(
 
         private fun configTvTag(myAction: MyActions) {
             with(binding) {
-                myActionsItemTvTagDesc.text = myAction.tagOperationDesc?.toUpperCase() ?: null
-                myActionsItemTvProdDesc.applyVisibilityIfTextExists(
-                    myAction.tagOperationDesc?.toUpperCase() ?: null
+                myActionsItemTvTagDesc.applyVisibilityIfTextExists(
+                    myAction.tagOperationDesc
                 )
             }
         }

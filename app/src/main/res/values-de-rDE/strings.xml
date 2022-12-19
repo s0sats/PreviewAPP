@@ -36,7 +36,7 @@
     <string name="generic_zip_not_found_msg">Zip-Datei nicht gefunden!\nBitte versuchen Sie es erneut.</string>
     <string name="msg_no_forms_found">Kein Formular gefunden.</string>
     <string name="act002_title_">Accounts</string>
-    <string name="msg_update_canceled">Update cancelled.</string>
+    <string name="msg_update_canceled">App-Update abgebrochen.</string>
 	
     <!--LIB-->
 	<string name="nfc_activity_title">NFC-Leser</string>
