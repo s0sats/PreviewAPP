@@ -27,25 +27,28 @@ class FlowScheduleFromMyActionUseCase constructor(
     data class FlowScheduleParamReturn(
         val actType: String = Constant.ACT005,
         var scheduleExec: MD_Schedule_Exec,
-        val productSerial: MD_Product_Serial
+        val productSerial: MD_Product_Serial,
+        val isProcess: Boolean = false
     )
 
     override suspend fun invoke(input: MyActions): Flow<IResult<FlowScheduleParamReturn>> {
         return flow {
             val scheduleExec = getScheduleFromMyActionUseCase(input)
             scheduleExec?.let { schedule ->
-                if(scheduleExec.status != null
-                && scheduleExec.status != ConstantBaseApp.SYS_STATUS_SCHEDULE
-                && scheduleExec.status != ConstantBaseApp.SYS_STATUS_CANCELLED
-                && scheduleExec.status != ConstantBaseApp.SYS_STATUS_REJECTED
-                && scheduleExec.status != ConstantBaseApp.SYS_STATUS_IGNORED
-                && scheduleExec.status != ConstantBaseApp.SYS_STATUS_NOT_EXECUTED){
+                if (schedule.status != null
+                    && schedule.status != ConstantBaseApp.SYS_STATUS_SCHEDULE
+                    && schedule.status != ConstantBaseApp.SYS_STATUS_CANCELLED
+                    && schedule.status != ConstantBaseApp.SYS_STATUS_REJECTED
+                    && schedule.status != ConstantBaseApp.SYS_STATUS_IGNORED
+                    && schedule.status != ConstantBaseApp.SYS_STATUS_NOT_EXECUTED
+                ) {
                     emit(
                         success(
                             FlowScheduleParamReturn(
                                 actType = Constant.ACT011,
                                 productSerial = serialHasStructure(input).second!!,
-                                scheduleExec = schedule
+                                scheduleExec = schedule,
+                                isProcess = schedule.status == ConstantBaseApp.SYS_STATUS_IN_PROCESSING
                             )
                         )
                     )
@@ -78,7 +81,8 @@ class FlowScheduleFromMyActionUseCase constructor(
                                             FlowScheduleParamReturn(
                                                 actType = Constant.ACT087,
                                                 productSerial = serialHasStructure.second!!,
-                                                scheduleExec = schedule
+                                                scheduleExec = schedule,
+                                                isProcess = schedule.status == ConstantBaseApp.SYS_STATUS_IN_PROCESSING
                                             )
                                         )
                                     )
@@ -92,7 +96,7 @@ class FlowScheduleFromMyActionUseCase constructor(
                                         FlowScheduleParamReturn(
                                             actType = Constant.ACT011,
                                             productSerial = serialHasStructure(input).second!!,
-                                            scheduleExec = schedule
+                                            scheduleExec = schedule,
                                         )
                                     )
                                 )
@@ -129,7 +133,7 @@ class FlowScheduleFromMyActionUseCase constructor(
         return Pair(result, productserial)
     }
 
-    private suspend fun isAnyFormInProcessing(scheduleExec: MD_Schedule_Exec): Boolean {
+    private fun isAnyFormInProcessing(scheduleExec: MD_Schedule_Exec): Boolean {
         with(scheduleExec) {
             return repository.getCustomFormLocal(
                 customer_code.toString(),

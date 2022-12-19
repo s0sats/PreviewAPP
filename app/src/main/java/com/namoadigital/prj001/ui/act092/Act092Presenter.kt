@@ -31,6 +31,7 @@ import com.namoadigital.prj001.ui.act070.Act070_Main
 import com.namoadigital.prj001.ui.act071.Act071_Main
 import com.namoadigital.prj001.ui.act083.Act083_Main
 import com.namoadigital.prj001.ui.act083.Act083_Main.Companion.EMPTY_SERIAL_SEARCH
+import com.namoadigital.prj001.ui.act083.Act083_Main.Companion.MODULE_CHECKLIST_START_FORM
 import com.namoadigital.prj001.ui.act083.Act083_Main.Companion.MODULE_SCHEDULE_STATUS_PREVENTS_TO_OPEN
 import com.namoadigital.prj001.ui.act083.Act083_Main.Companion.MODULE_SCHEDULE_TICKET_CREATION_ERROR
 import com.namoadigital.prj001.ui.act083.Act083_Main.Companion.MODULE_TICKET_EXEC_CONFIRM
@@ -367,11 +368,32 @@ class Act092Presenter constructor(
 
 
                     it.isSuccess { transform ->
-                        processActSchedule(
-                            action,
-                            transform.actType,
-                            transform.scheduleExec,
-                            transform.productSerial
+                        if (transform.isProcess) {
+                            processActSchedule(
+                                action,
+                                transform.actType,
+                                transform.scheduleExec,
+                                transform.productSerial
+                            )
+                            return@isSuccess
+                        }
+                        //
+                        view.onState(
+                            Act092UiEvent.OpenDialog(
+                                DialogType.ACTION(
+                                    title = Act092Translate.ALERT_TTL_START_NEW_PROCESSING,
+                                    message = Act092Translate.ALERT_MSG_START_NEW_PROCESSING,
+                                    negativeBtn = 1,
+                                    action = { dialog, i ->
+                                        processActSchedule(
+                                            action,
+                                            transform.actType,
+                                            transform.scheduleExec,
+                                            transform.productSerial
+                                        )
+                                    }
+                                )
+                            )
                         )
                     }
 
@@ -524,16 +546,34 @@ class Act092Presenter constructor(
                     )
                 }
 
-                SITE_RESTRICTION_CONFIRM -> {
-                    view.onState(Act092UiEvent.OpenDialog(
-                        DialogType.ACTION(
-                            title = Act092Translate.ALERT_FORM_SITE_RESTRICTION_TTL,
-                            message = Act092Translate.ALERT_FORM_SITE_RESTRICTION_CONFIRM,
-                            { dialog, i ->
-                                noRestriction(item)
-                            }, negativeBtn = 1
+                MODULE_CHECKLIST_START_FORM -> {
+                    view.onState(
+                        Act092UiEvent.OpenDialog(
+                            DialogType.ACTION(
+                                title = Act092Translate.ALERT_TTL_START_NEW_PROCESSING,
+                                message = Act092Translate.ALERT_MSG_START_NEW_PROCESSING,
+                                action = { dialog, i ->
+                                    actionSelected?.let {
+                                        checkScheduleFlow(it)
+                                    }
+                                }
+                            )
                         )
-                    ))
+                    )
+                }
+
+                SITE_RESTRICTION_CONFIRM -> {
+                    view.onState(
+                        Act092UiEvent.OpenDialog(
+                            DialogType.ACTION(
+                                title = Act092Translate.ALERT_FORM_SITE_RESTRICTION_TTL,
+                                message = Act092Translate.ALERT_FORM_SITE_RESTRICTION_CONFIRM,
+                                { dialog, i ->
+                                    noRestriction(item)
+                                }, negativeBtn = 1
+                            )
+                        )
+                    )
                 }
                 MODULE_CHECKLIST_FORM_IN_PROCESSING -> {
                     view.onState(
@@ -775,6 +815,7 @@ class Act092Presenter constructor(
                         setSeletedActionInfosIntoFilterParam(
                             action.actionType, action.processPk,
                         )
+
                         view.onState(
                             Act092UiEvent.CallAct(
                                 Act011_Main::class.java,
