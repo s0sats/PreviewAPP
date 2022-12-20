@@ -48,6 +48,7 @@ class Act092_Main : BaseActivityMvp
         Act092MainBinding>(),
     Act092_Contract.View {
     override lateinit var bundle: Bundle
+    var clearDueToOtherActionBtn = false
     override fun showPD(ttl: String?, msg: String?) {
         enableProgressDialog(
             ttl,
@@ -319,6 +320,8 @@ class Act092_Main : BaseActivityMvp
                     mAdapter.userMainFilter = _focusState.value.mainUser
                 }
 
+                clearTextFilter()
+
                 disableMainAndOtherActions()
 
                 if (_focusState.value.userFocus) {
@@ -338,6 +341,7 @@ class Act092_Main : BaseActivityMvp
                 }
 
                 override fun reportTextChange(text: String?, p1: Boolean) {
+
                     if (editSerialFilter.isEnabled && ::mAdapter.isInitialized) {
                         mAdapter.filter.filter(text)
                         filterText.value = text ?: ""
@@ -345,6 +349,16 @@ class Act092_Main : BaseActivityMvp
                 }
             })
         }
+    }
+
+    /*
+        BARRRIONUEVO 20-12-2022
+        Desabilita antes de limpar para não forçar o filtro do adapter.
+     */
+    private fun Act092MainBinding.clearTextFilter() {
+        editSerialFilter.isEnabled = false
+        editSerialFilter.text?.clear()
+        editSerialFilter.isEnabled = true
     }
 
     override fun processCloseACT(mLink: String?, mRequired: String?) {
