@@ -49,7 +49,6 @@ class Act092_Adapter constructor(
                     if (item.actionType == processType
                         && item.processPk == processPk
                     ) {
-                        item.isLastSelectedItem = true
                         return index
                     }
                 }
@@ -154,10 +153,11 @@ class Act092_Adapter constructor(
                         text = hmAux["cell_download_action_lbl"]
                         setBackgroundColor(resources.getColor(R.color.m3_namoa_surfaceVariant))
                         setTextColor(resources.getColor(R.color.m3_namoa_onSurfaceVariant))
-                    } else if (!item.pdfName.isNullOrEmpty()
-                        || MyActions.MY_ACTION_TYPE_TICKET_CACHE == item.actionType
-                    ) {
+                    } else if (MyActions.MY_ACTION_TYPE_TICKET_CACHE == item.actionType) {
                         text = hmAux["cell_download_action_lbl"]
+                        setTextColor(resources.getColor(R.color.m3_namoa_surface))
+                    } else if (!item.pdfName.isNullOrEmpty()) {
+                        text = hmAux["cell_download_action_pdf_lbl"]
                         setTextColor(resources.getColor(R.color.m3_namoa_surface))
                     } else if (item.highlightItem) {
                         text = hmAux["cell_continue_action_lbl"]
@@ -232,7 +232,6 @@ class Act092_Adapter constructor(
                 )
                 //
                 configTvSite(item)
-                myActionsItemTvDoneDate.applyVisibilityIfTextExists(item.doneDate)
                 myActionsItemTvActionProcess.applyVisibilityIfTextExists(item.processDesc)
                 //
                 myActionsItemTvInternalComments.applyVisibilityIfTextExists(
@@ -259,13 +258,14 @@ class Act092_Adapter constructor(
         private fun configDoneDate(myAction: MyActions) {
             with(binding) {
                 myActionsItemTvDoneDate.apply {
-                    applyVisibilityIfTextExists(myAction.doneDate)
+                    if(ConstantBaseApp.SYS_STATUS_NOT_EXECUTED == myAction.processStatus){
+                        applyVisibilityIfTextExists(null)
+                    }else {
+                        applyVisibilityIfTextExists(myAction.doneDate)
+                    }
                     if (ConstantBaseApp.SYS_STATUS_DONE == myAction.processStatus) {
                         this.setTextColor(
-                            ToolBox_Inf.getStatusColorV2(
-                                context,
-                                myAction.processStatus
-                            )
+                            context.resources.getColor(R.color.m3_namoa_extended_verdeDone_seed)
                         )
                     } else {
                         this.setTextColor(context.resources.getColor(R.color.namoa_color_gray_8))
@@ -277,9 +277,8 @@ class Act092_Adapter constructor(
 
         private fun configTvTag(myAction: MyActions) {
             with(binding) {
-                myActionsItemTvTagDesc.text = myAction.tagOperationDesc?.toUpperCase() ?: null
-                myActionsItemTvProdDesc.applyVisibilityIfTextExists(
-                    myAction.tagOperationDesc?.toUpperCase() ?: null
+                myActionsItemTvTagDesc.applyVisibilityIfTextExists(
+                    myAction.tagOperationDesc
                 )
             }
         }

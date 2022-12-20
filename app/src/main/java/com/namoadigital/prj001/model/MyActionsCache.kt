@@ -4,8 +4,11 @@ import android.content.Context
 import androidx.annotation.DrawableRes
 import com.google.gson.annotations.SerializedName
 import com.namoadigital.prj001.R
+import com.namoadigital.prj001.model.MyActions.Companion.MY_ACTION_TYPE_FORM
+import com.namoadigital.prj001.model.MyActions.Companion.MY_ACTION_TYPE_SCHEDULE
 import com.namoadigital.prj001.model.MyActions.Companion.MY_ACTION_TYPE_TICKET_CACHE
 import com.namoadigital.prj001.util.ConstantBaseApp
+import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.io.File
 
@@ -71,8 +74,41 @@ class MyActionsCache(
         }
         //
         if (doneDateStart != null && doneDateEnd != null) {
-            formattedDoneDate =
-                ToolBox_Inf.getMyActionStartEndDateFormated(context, doneDateStart, doneDateEnd)
+
+            when(type){
+                MY_ACTION_TYPE_TICKET_CACHE ->{
+                    if(processStatus == ConstantBaseApp.SYS_STATUS_DONE) {
+                        formattedPlannedDate = null
+                    }
+
+                    formattedDoneDate =ToolBox_Inf.millisecondsToString(
+                        ToolBox_Inf.dateToMilliseconds(doneDateEnd),
+                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                    )
+                }
+                MY_ACTION_TYPE_SCHEDULE ->{
+                    formattedDoneDate =ToolBox_Inf.millisecondsToString(
+                        ToolBox_Inf.dateToMilliseconds(doneDateEnd),
+                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                    )
+                }
+                MY_ACTION_TYPE_FORM ->{
+                    //
+                    formattedPlannedDate = ToolBox_Inf.millisecondsToString(
+                        ToolBox_Inf.dateToMilliseconds(doneDateStart),
+                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                    )
+                    //
+                    formattedDoneDate =ToolBox_Inf.millisecondsToString(
+                        ToolBox_Inf.dateToMilliseconds(doneDateEnd),
+                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                    )
+                }
+                else ->{
+                    formattedDoneDate =
+                        ToolBox_Inf.getMyActionStartEndDateFormated(context, doneDateStart, doneDateEnd)
+                }
+            }
         }
         //
         //
@@ -132,7 +168,12 @@ class MyActionsCache(
                 R.drawable.ic_baseline_cloud_download_24_gray
             }
         }else{
-            R.drawable.ic_baseline_cloud_download_24_gray
+            if(actionType == MyActions.MY_ACTION_TYPE_SCHEDULE
+                && processStatus ==  ConstantBaseApp.SYS_STATUS_NOT_EXECUTED){
+                null
+            }else {
+                R.drawable.ic_baseline_cloud_download_24_gray
+            }
         }
     }
 

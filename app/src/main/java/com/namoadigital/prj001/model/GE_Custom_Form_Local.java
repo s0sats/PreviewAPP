@@ -613,7 +613,7 @@ public class GE_Custom_Form_Local {
         }
         int midIcon =
             !ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS))
-            ? R.drawable.ic_baseline_cloud_done_24_blue
+            ? R.drawable.ic_baseline_cloud_upload_24_gray
             : R.drawable.ic_cloud_upload_24_red;
         //
         Integer rightIcon = null;
@@ -671,7 +671,10 @@ public class GE_Custom_Form_Local {
                 leftIcon,
                 midIcon,
                 rightIcon,
-                ToolBox_Inf.getMyActionStartEndDateFormated(context, hmAux.get(GE_Custom_Form_DataDao.DATE_START), hmAux.get(GE_Custom_Form_DataDao.DATE_START)),
+                ToolBox_Inf.millisecondsToString(
+                        ToolBox_Inf.dateToMilliseconds(hmAux.get(GE_Custom_Form_DataDao.DATE_START)),
+                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                ),
             hmAux.get(GE_Custom_Form_LocalDao.TAG_OPERATIONAL_DESC),
             hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_DESC),
             hmAux.get(GE_Custom_Form_LocalDao.SERIAL_ID),
