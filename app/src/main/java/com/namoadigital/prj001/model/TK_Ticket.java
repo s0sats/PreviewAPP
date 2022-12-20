@@ -1677,6 +1677,8 @@ public class TK_Ticket implements Cloneable, Serializable {
                 plannedDate = "";
             }else if(ConstantBaseApp.SYS_STATUS_NOT_EXECUTED.equals(hmAux.get(TK_TicketDao.TICKET_STATUS))) {
                 rightIcon = R.drawable.ic_baseline_cancel_24;
+                plannedDate = ToolBox_Inf.getMyActionStartEndDateFormated(context,hmAux.get(TK_TicketDao.START_DATE),hmAux.get(TK_TicketDao.FORECAST_DATE));
+                orderByDate = hmAux.get(TK_TicketDao.START_DATE);
             }
         }else if(hmAux.hasConsistentValue(TK_TicketDao.MAIN_USER) && hmAux.get(TK_TicketDao.MAIN_USER).equals(ToolBox_Con.getPreference_User_Code(context))) {
             rightIcon = R.drawable.ic_baseline_person_24_secondary60;

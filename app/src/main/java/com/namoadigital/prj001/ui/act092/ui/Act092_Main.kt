@@ -288,7 +288,7 @@ class Act092_Main : BaseActivityMvp
         with(binding) {
             topAppBar.title = hmAux_Trans["act092_title"]
             act092TextLayout.apply {
-                hint = Act092Translate.HINT_FILTER
+                hint = hmAux_Trans[Act092Translate.HINT_FILTER]
             }
         }
         iniUIFooter(Constant.ACT092, hmAux_Trans)

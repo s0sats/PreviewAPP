@@ -4,11 +4,11 @@ import android.content.Context
 import androidx.annotation.DrawableRes
 import com.google.gson.annotations.SerializedName
 import com.namoadigital.prj001.R
-import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
 import com.namoadigital.prj001.model.MyActions.Companion.MY_ACTION_TYPE_FORM
 import com.namoadigital.prj001.model.MyActions.Companion.MY_ACTION_TYPE_SCHEDULE
 import com.namoadigital.prj001.model.MyActions.Companion.MY_ACTION_TYPE_TICKET_CACHE
 import com.namoadigital.prj001.util.ConstantBaseApp
+import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.io.File
 
@@ -75,10 +75,17 @@ class MyActionsCache(
         //
         if (doneDateStart != null && doneDateEnd != null) {
 
-            when(actionType){
-//                MY_ACTION_TYPE_TICKET_CACHE ->{
-//
-//                }
+            when(type){
+                MY_ACTION_TYPE_TICKET_CACHE ->{
+                    if(processStatus == ConstantBaseApp.SYS_STATUS_DONE) {
+                        formattedPlannedDate = null
+                    }
+
+                    formattedDoneDate =ToolBox_Inf.millisecondsToString(
+                        ToolBox_Inf.dateToMilliseconds(doneDateEnd),
+                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                    )
+                }
                 MY_ACTION_TYPE_SCHEDULE ->{
                     formattedDoneDate =ToolBox_Inf.millisecondsToString(
                         ToolBox_Inf.dateToMilliseconds(doneDateEnd),
