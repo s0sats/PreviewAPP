@@ -54,12 +54,12 @@ import com.namoadigital.prj001.ui.act092.usecases.ValidateNewFormUseCase.Validat
 import com.namoadigital.prj001.ui.act092.utils.Act092Translate
 import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent
 import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent.OpenDialog.DialogType
+import com.namoadigital.prj001.ui.act093.ui.Act093_Main
 import com.namoadigital.prj001.util.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import java.io.File
 
 class Act092Presenter constructor(
@@ -96,7 +96,7 @@ class Act092Presenter constructor(
         val origin =
             if (originFlow?.isEmpty() == true) actionUseCases.getPreferences().originFlow else originFlow
         val iColor =
-            if (iconColor.isEmpty()) actionUseCases.getPreferences().classColor else iconColor
+            iconColor.ifEmpty { actionUseCases.getPreferences().classColor }
 
         actionUseCases.setPreferences(
             SerialModel(
@@ -151,6 +151,16 @@ class Act092Presenter constructor(
         )
     }
 
+
+    override fun goToInfoSerial() {
+
+        view.onState(Act092UiEvent.CallAct(Act093_Main::class.java, Bundle().apply {
+            putSerializable(
+                MyActionFilterParam.MY_ACTION_FILTER_PARAM,
+                myActionFilterParam
+            )
+        }))
+    }
 
     override fun verifyProductOutdateForForm(hmAux: HMAux, context: Context): Boolean {
         val ticketPrefix = hmAux[TK_TicketDao.TICKET_PREFIX].let { Integer.valueOf(it) } ?: -1

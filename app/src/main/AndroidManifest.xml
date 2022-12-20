@@ -622,6 +622,14 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".ui.act093.ui.Act093_Main"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden"
+            android:theme="@style/AppTheme.NoActionBar" />
         <!-- Receivers -->
         <receiver android:name=".receiver.WBR_GetCustomer" />
 

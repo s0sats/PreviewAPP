@@ -47,5 +47,6 @@ interface Act092_Contract {
         fun otherActionFlow(context: Context)
         fun extractSearchResult(result: String?, myActionSelected: MyActions?)
         fun executeNFormPDFGeneration(context: Context, action: MyActions, position: Int)
+        fun goToInfoSerial()
     }
 }
