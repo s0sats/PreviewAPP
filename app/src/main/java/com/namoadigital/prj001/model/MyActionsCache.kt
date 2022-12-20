@@ -172,7 +172,11 @@ class MyActionsCache(
                 && processStatus ==  ConstantBaseApp.SYS_STATUS_NOT_EXECUTED){
                 null
             }else {
-                R.drawable.ic_baseline_cloud_download_24_gray
+                if(actionType == MyActions.MY_ACTION_TYPE_SCHEDULE && pdfName.isNullOrEmpty() && pdfUrl.isNullOrEmpty() && processStatus == ConstantBaseApp.SYS_STATUS_DONE){
+                    R.drawable.ic_baseline_cloud_done_24_blue
+                }else {
+                    R.drawable.ic_baseline_cloud_download_24_gray
+                }
             }
         }
     }

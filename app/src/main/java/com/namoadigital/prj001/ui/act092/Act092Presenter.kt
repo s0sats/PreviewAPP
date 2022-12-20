@@ -378,23 +378,32 @@ class Act092Presenter constructor(
                             return@isSuccess
                         }
                         //
-                        view.onState(
-                            Act092UiEvent.OpenDialog(
-                                DialogType.ACTION(
-                                    title = Act092Translate.ALERT_TTL_START_NEW_PROCESSING,
-                                    message = Act092Translate.ALERT_MSG_START_NEW_PROCESSING,
-                                    negativeBtn = 1,
-                                    action = { dialog, i ->
-                                        processActSchedule(
-                                            action,
-                                            transform.actType,
-                                            transform.scheduleExec,
-                                            transform.productSerial
-                                        )
-                                    }
+                        if(action.processStatus == ConstantBaseApp.SYS_STATUS_DONE){
+                            processActSchedule(
+                                action,
+                                transform.actType,
+                                transform.scheduleExec,
+                                transform.productSerial
+                            )
+                        }else {
+                            view.onState(
+                                Act092UiEvent.OpenDialog(
+                                    DialogType.ACTION(
+                                        title = Act092Translate.ALERT_TTL_START_NEW_PROCESSING,
+                                        message = Act092Translate.ALERT_MSG_START_NEW_PROCESSING,
+                                        negativeBtn = 1,
+                                        action = { dialog, i ->
+                                            processActSchedule(
+                                                action,
+                                                transform.actType,
+                                                transform.scheduleExec,
+                                                transform.productSerial
+                                            )
+                                        }
+                                    )
                                 )
                             )
-                        )
+                        }
                     }
 
 
