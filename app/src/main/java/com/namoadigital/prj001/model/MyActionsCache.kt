@@ -73,6 +73,8 @@ class MyActionsCache(
             )
         }
         //
+        val waitingApprove = processStatus == ConstantBaseApp.SYS_STATUS_WAITING_APPROVAL
+        //
         if (doneDateStart != null && doneDateEnd != null) {
 
             when(type){
@@ -94,15 +96,24 @@ class MyActionsCache(
                 }
                 MY_ACTION_TYPE_FORM ->{
                     //
-                    formattedPlannedDate = ToolBox_Inf.millisecondsToString(
-                        ToolBox_Inf.dateToMilliseconds(doneDateStart),
-                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-                    )
-                    //
-                    formattedDoneDate =ToolBox_Inf.millisecondsToString(
-                        ToolBox_Inf.dateToMilliseconds(doneDateEnd),
-                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-                    )
+                    if(waitingApprove){
+                        formattedPlannedDate = ToolBox_Inf.millisecondsToString(
+                            ToolBox_Inf.dateToMilliseconds(doneDateEnd),
+                            ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                        )
+                        formattedDoneDate = null
+                    }else {
+                        formattedPlannedDate = ToolBox_Inf.millisecondsToString(
+                            ToolBox_Inf.dateToMilliseconds(doneDateStart),
+                            ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                        )
+                        //
+                        formattedDoneDate =ToolBox_Inf.millisecondsToString(
+                            ToolBox_Inf.dateToMilliseconds(doneDateEnd),
+                            ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                        )
+                    }
+
                 }
                 else ->{
                     formattedDoneDate =
@@ -110,9 +121,6 @@ class MyActionsCache(
                 }
             }
         }
-        //
-        //
-        val waitingApprove = processStatus == ConstantBaseApp.SYS_STATUS_WAITING_APPROVAL
         //
         var myActions = MyActions(
             type,
