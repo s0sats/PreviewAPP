@@ -13,6 +13,8 @@ import com.namoadigital.prj001.model.DaoObjReturn
 import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device
 import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device_Item
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_DeviceDao_Sql_001
+import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_Device_Item_Sql_003
+import com.namoadigital.prj001.ui.act093.model.DeviceTpModel
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -317,6 +319,17 @@ class MD_Product_Serial_Tp_DeviceDao(
         return mdProductSerialTpDevices
     }
 
+    fun getDeviceForSerialInfo(customerCode:Long, productCode: Long, serialCode:Long): List<DeviceTpModel> {
+        val queryHm = query_HM(
+            MD_Product_Serial_Tp_Device_Item_Sql_003(
+                customerCode,
+                productCode,
+                serialCode
+            ).toSqlQuery()
+        )
+
+        return listOf()
+    }
 
     /**
      * Fun que tenta o insert dos items.

@@ -8,9 +8,10 @@ data class DeviceTpModel(
     val device_tp_desc: String,
     val item_check_code: Int,
     val item_check_seq: Int,
+    val item_check_desc: String,
     val item_check_status: String,
     val critical_item: Int,
-    val device_product: List<String>
+    val materialListFormatted: String
 )
 
 /*

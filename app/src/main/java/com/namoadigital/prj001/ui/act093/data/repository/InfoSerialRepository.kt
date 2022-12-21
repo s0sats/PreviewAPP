@@ -5,6 +5,7 @@ import com.namoadigital.prj001.model.MD_Product_Serial
 import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device
 import com.namoadigital.prj001.model.MdDeviceTp
 import com.namoadigital.prj001.ui.act092.model.SerialModel
+import com.namoadigital.prj001.ui.act093.model.DeviceTpModel
 import kotlinx.coroutines.flow.Flow
 
 interface InfoSerialRepository {
@@ -13,6 +14,6 @@ interface InfoSerialRepository {
 
     suspend fun getPreferences(): Flow<IResult<SerialModel>>
     suspend fun getValueSuffixProduct(customerCode: Long, code: Int): Flow<IResult<String?>>
-    suspend fun getListItems(): Flow<IResult<List<MD_Product_Serial_Tp_Device>>>
+    suspend fun getListItems(): Flow<IResult<List<DeviceTpModel>>>
     suspend fun getListDeviceTp(): Flow<IResult<List<MdDeviceTp>>>
 }
