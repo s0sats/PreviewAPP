@@ -10,8 +10,9 @@ data class Act093State(
         val product: String? = null,
         val model: String? = null,
         val trackings: String? = null,
-        val last_measure_value: String? = null,
+        val value_suffix: String? = null,
+        val last_measure_value: Int? = null,
         val last_measure_date: String? = null,
-        val last_cycle_value: String? = null,
+        val last_cycle_value: Int? = null,
     )
 }

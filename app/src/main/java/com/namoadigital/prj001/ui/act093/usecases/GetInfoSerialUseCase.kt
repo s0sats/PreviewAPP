@@ -46,21 +46,17 @@ class GetInfoSerialUseCase constructor(
                                 value_suffix = suffix
                             }
 
-                        emit(
-                            success(
-                                serial.toInfoSerialModel().copy(
-                                    iconColor = serialModel?.classColor,
-                                    value_suffix = value_suffix,
-                                    last_measure_date = ToolBox_Inf.millisecondsToString(
-                                        ToolBox_Inf.dateToMilliseconds(serial.last_measure_date),
-                                        ToolBox_Inf.nlsDateFormat(context)
-                                    )
-                                )
+                        val infoModel = serial.toInfoSerialModel().copy(
+                            iconColor = serialModel?.classColor,
+                            value_suffix = value_suffix,
+                            last_measure_date = ToolBox_Inf.millisecondsToString(
+                                ToolBox_Inf.dateToMilliseconds(serial.last_measure_date),
+                                ToolBox_Inf.nlsDateFormat(context)
                             )
                         )
-                    }
 
-                    emit(
+                        emit(success(infoModel))
+                    } ?: emit(
                         success(
                             serial.toInfoSerialModel().copy(iconColor = serialModel?.classColor)
                         )

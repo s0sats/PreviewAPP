@@ -1,40 +1,36 @@
 package com.namoadigital.prj001.ui.act093
 
 
+import android.content.Context
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.core.IResult.Companion.isFailed
 import com.namoadigital.prj001.core.IResult.Companion.isLoading
 import com.namoadigital.prj001.core.IResult.Companion.isSuccess
+import com.namoadigital.prj001.ui.act091.mvp.model.TranslateResource
 import com.namoadigital.prj001.ui.act093.usecases.InfoSerialUseCase
+import com.namoadigital.prj001.ui.act093.usecases.InfoSerialUseCase.Companion.InfoSerialUseCasesFactory
 import com.namoadigital.prj001.ui.act093.util.Act093Event
 import com.namoadigital.prj001.ui.act093.util.Act093State
+import com.namoadigital.prj001.ui.base.NamoaFactory
+import com.namoadigital.prj001.util.ToolBox_Con
+import com.namoadigital.prj001.util.ToolBox_Inf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class Act093Presenter constructor(
     private val infoUseCase: InfoSerialUseCase,
+    private val translateResource: TranslateResource,
 ) : Contract.Presenter {
 
     private lateinit var view: Contract.View
 
-    private var infoJob: Job? = null
-
-    init {
-        CoroutineScope(Dispatchers.IO).launch {
-            getInfoSerial()
-        }
-    }
-
 
     private suspend fun getInfoSerial() {
-        infoJob?.cancel()
-        infoJob = infoUseCase.getInfoSerial(Unit).onEach {
+        infoUseCase.getInfoSerial(Unit).collect {
 
             it.isLoading { isLoading, message ->
                 _state.value = _state.value.copy(isLoading = isLoading)
@@ -49,9 +45,10 @@ class Act093Presenter constructor(
                         product = serial.productDesc,
                         model = serial.convertForBrandModelColor(),
                         trackings = serial.tracklist,
-                        last_measure_value = serial.formatMeasureValue,
+                        value_suffix = serial.value_suffix,
+                        last_measure_value = serial.last_measure_value,
                         last_measure_date = serial.last_measure_date,
-                        last_cycle_value = serial.formatCycleValue
+                        last_cycle_value = serial.last_cycle_value
                     ),
                 )
 
@@ -60,12 +57,9 @@ class Act093Presenter constructor(
             }
 
             it.isFailed { exception ->
-
+                view.onState(Act093Event.Toast(exception.message ?: ""))
             }
-
-
-        }.launchIn(CoroutineScope(Dispatchers.IO))
-
+        }
     }
 
     private var _state = MutableStateFlow(Act093State())
@@ -74,9 +68,49 @@ class Act093Presenter constructor(
 
     override fun setView(view: Contract.View) {
         this.view = view
+
+        CoroutineScope(Dispatchers.IO).launch {
+            getInfoSerial()
+        }
     }
 
     override fun loadTranslation(): HMAux {
-        return HMAux()
+        mutableListOf(
+            "act09e_title",
+            "last_measure_lbl",
+            "last_cycle_lbl",
+        ).let {
+            return ToolBox_Inf.setLanguage(
+                translateResource.context,
+                translateResource.mModule_code,
+                translateResource.nResoure_code,
+                ToolBox_Con.getPreference_Translate_Code(translateResource.context),
+                it
+            )
+        }
+    }
+
+
+    companion object {
+
+
+        class Act093PresenterFactory(
+            val context: Context,
+            val mModule_code: String,
+            val mResource_code: String,
+        ) : NamoaFactory<Act093Presenter>() {
+            override fun build(): Act093Presenter {
+                return Act093Presenter(
+                    InfoSerialUseCasesFactory(context).build(),
+                    TranslateResource(
+                        context,
+                        mModule_code,
+                        mResource_code
+                    )
+                )
+            }
+        }
+
+
     }
 }
