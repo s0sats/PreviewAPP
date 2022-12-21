@@ -611,10 +611,17 @@ public class GE_Custom_Form_Local {
                                 : null;
             }
         }
-        int midIcon =
-            !ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS))
-            ? R.drawable.ic_baseline_cloud_upload_24_gray
-            : R.drawable.ic_cloud_upload_24_red;
+
+        Integer midIcon = null;
+        if(ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS))){
+            midIcon = R.drawable.ic_cloud_upload_24_red;
+        }else{
+            if(forHistoric){
+                midIcon = R.drawable.ic_baseline_cloud_done_24_blue;
+            }else {
+                midIcon = R.drawable.ic_baseline_cloud_upload_24_gray;
+            }
+        }
         //
         Integer rightIcon = null;
         if(ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS))
