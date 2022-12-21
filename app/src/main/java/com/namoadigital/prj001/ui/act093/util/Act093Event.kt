@@ -4,4 +4,6 @@ sealed class Act093Event {
 
     object onUpdateScreen : Act093Event()
 
+    data class Toast(val message: String) : Act093Event()
+
 }

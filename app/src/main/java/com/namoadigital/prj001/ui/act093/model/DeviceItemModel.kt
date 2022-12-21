@@ -5,6 +5,7 @@ data class DeviceItemModel(
     val item_check_desc: String,
     val material_desc: String,
     val material_id: String,
+    val showMaterialId: Boolean,
     val qty: Int,
     val unit: String
 )

@@ -20,6 +20,26 @@ data class InfoSerialModel(
 
     companion object {
         const val SEPARATOR = " | "
+
+
+        fun Int?.formatMeasureValue(value_suffix: String?): String? = when {
+            this != null -> {
+                if (!value_suffix.isNullOrEmpty()) {
+                    "$this $value_suffix"
+                } else {
+                    "$this"
+                }
+            }
+            else -> null
+        }
+
+        fun Int?.formatCycleValue(value_suffix: String?): String? = when {
+            this != null -> {
+                if (!value_suffix.isNullOrEmpty()) "$this  $value_suffix"
+                else "$this"
+            }
+            else -> null
+        }
     }
 
     fun convertForBrandModelColor(): String? {
@@ -31,27 +51,6 @@ data class InfoSerialModel(
 
         return if (list.isEmpty()) null else list.joinToString(SEPARATOR)
     }
-
-
-    val formatMeasureValue: String? = when {
-        last_measure_value != null -> {
-            if (!value_suffix.isNullOrEmpty()) {
-                "${last_measure_value.toInt()} $value_suffix"
-            } else {
-                "$last_measure_value"
-            }
-        }
-        else -> null
-    }
-
-    val formatCycleValue: String? = when {
-        last_cycle_value != null -> {
-            if (!value_suffix.isNullOrEmpty()) "${last_cycle_value.toInt()}  $value_suffix"
-            else "${last_cycle_value.toInt()}"
-        }
-        else -> null
-    }
-
 
 }
 

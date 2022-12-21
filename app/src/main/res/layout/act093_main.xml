@@ -107,9 +107,9 @@
             <TextView
                 android:id="@+id/titleMeasure"
                 style="@style/TextAppearance.Material3.BodySmall"
-                android:textColor="@color/m3_namoa_onBackground"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/m3_namoa_onBackground" />
 
             <TextView
                 android:id="@+id/measureValue"

@@ -4,11 +4,14 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import com.namoadigital.prj001.databinding.Act093MainBinding
 import com.namoadigital.prj001.ui.act092.ui.Act092_Main
 import com.namoadigital.prj001.ui.act093.Act093Presenter
+import com.namoadigital.prj001.ui.act093.Act093Presenter.Companion.Act093PresenterFactory
 import com.namoadigital.prj001.ui.act093.Contract
-import com.namoadigital.prj001.ui.act093.usecases.InfoSerialUseCase.Companion.InfoSerialUseCasesFactory
+import com.namoadigital.prj001.ui.act093.model.InfoSerialModel.Companion.formatCycleValue
+import com.namoadigital.prj001.ui.act093.model.InfoSerialModel.Companion.formatMeasureValue
 import com.namoadigital.prj001.ui.act093.util.Act093Event
 import com.namoadigital.prj001.ui.base.BaseActivityMvp
 import com.namoadigital.prj001.util.Constant
@@ -45,9 +48,7 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
     }
 
     override val presenter: Act093Presenter by lazy {
-        Act093Presenter(
-            InfoSerialUseCasesFactory(context).build()
-        )
+        Act093PresenterFactory(context, mModule_Code, mResource_Code).build()
     }
     override val binding: Act093MainBinding by lazy {
         Act093MainBinding.inflate(layoutInflater)
@@ -59,6 +60,10 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
 
                 is Act093Event.onUpdateScreen -> {
                     onUpdateHeader()
+                }
+
+                is Act093Event.Toast -> {
+                    Toast.makeText(context, state.message, Toast.LENGTH_LONG).show()
                 }
 
             }
@@ -115,14 +120,15 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
                 }
             }
 
-            val measureFormatted = if (!state.last_measure_value.isNullOrEmpty()) {
+
+            val measureFormatted = if (state.last_measure_value != null) {
                 if (!state.last_measure_date.isNullOrEmpty()) {
-                    "${state.last_measure_value} ${state.last_measure_date}"
+                    "${state.last_measure_value.formatMeasureValue(state.value_suffix)} (${state.last_measure_date})"
                 } else {
-                    state.last_measure_value
+                    state.last_measure_value.formatMeasureValue(state.value_suffix)
                 }
             } else {
-                state.last_measure_value
+                null
             }
 
             if (measureFormatted.isNullOrEmpty()) {
@@ -140,11 +146,11 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
                 View.VISIBLE
             }
 
-            if (state.last_cycle_value.isNullOrEmpty()) {
+            if (state.last_cycle_value.formatCycleValue(state.value_suffix).isNullOrEmpty()) {
                 View.GONE
             } else {
                 cycleValue.apply {
-                    text = state.last_cycle_value
+                    text = state.last_cycle_value.formatCycleValue(state.value_suffix)
                     visibility = View.VISIBLE
                 }
             }
@@ -157,7 +163,7 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
         mResource_Code = ToolBox_Inf.getResourceCode(
             context,
             mModule_Code,
-            ConstantBaseApp.ACT092
+            ConstantBaseApp.ACT093
         )
     }
 
@@ -167,6 +173,10 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
 
     override fun initVars() {
         with(binding) {
+
+            titleMeasure.text = hmAux_Trans["last_measure_lbl"]
+            titleCycle.text = hmAux_Trans["last_cycle_lbl"]
+
         }
     }
 
