@@ -127,6 +127,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String ACT090 = "act090";
     public static final String ACT091 = "act091";
     public static final String ACT092 = "act092";
+    public static final String ACT093 = "act093";
     public static final String FRG_PACKAGE_SERVICE_SO_EXPESS = "frg_package_service_so_expess";
 
     public static final String title_lbl = "_title";

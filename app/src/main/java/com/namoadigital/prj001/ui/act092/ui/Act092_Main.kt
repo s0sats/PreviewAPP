@@ -105,8 +105,8 @@ class Act092_Main : BaseActivityMvp
         super.onCreate(savedInstanceState)
         with(binding) {
             setContentView(root)
-            bundle = (savedInstanceState ?: intent.extras) as Bundle
             setSupportActionBar(topAppBar)
+            bundle = (savedInstanceState ?: intent.extras ?: Bundle())
             getBundle()
         }
 
@@ -299,6 +299,9 @@ class Act092_Main : BaseActivityMvp
     override fun initAction() {
         with(binding) {
 
+            infoSerial.setOnClickListener {
+                presenter.goToInfoSerial()
+            }
 
             mainUserSelection.setOnClickListener {
                 if (mainUserSelection.isEnabled) {

@@ -54,6 +54,7 @@ import com.namoadigital.prj001.ui.act092.usecases.ValidateNewFormUseCase.Validat
 import com.namoadigital.prj001.ui.act092.utils.Act092Translate
 import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent
 import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent.OpenDialog.DialogType
+import com.namoadigital.prj001.ui.act093.ui.Act093_Main
 import com.namoadigital.prj001.util.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -96,7 +97,7 @@ class Act092Presenter constructor(
         val origin =
             if (originFlow?.isEmpty() == true) actionUseCases.getPreferences().originFlow else originFlow
         val iColor =
-            if (iconColor.isEmpty()) actionUseCases.getPreferences().classColor else iconColor
+            iconColor.ifEmpty { actionUseCases.getPreferences().classColor }
 
         actionUseCases.setPreferences(
             SerialModel(
@@ -152,6 +153,16 @@ class Act092Presenter constructor(
     }
 
 
+    override fun goToInfoSerial() {
+
+        view.onState(Act092UiEvent.CallAct(Act093_Main::class.java, Bundle().apply {
+            putSerializable(
+                MyActionFilterParam.MY_ACTION_FILTER_PARAM,
+                myActionFilterParam
+            )
+        }))
+    }
+
     override fun verifyProductOutdateForForm(hmAux: HMAux, context: Context): Boolean {
         val ticketPrefix = hmAux[TK_TicketDao.TICKET_PREFIX].let { Integer.valueOf(it) } ?: -1
         val ticketCode = hmAux[TK_TicketDao.TICKET_CODE].let { Integer.valueOf(it) } ?: -1
@@ -181,22 +192,20 @@ class Act092Presenter constructor(
                         userFocus = userFocus
                     ), view.focusState.value.mainUser
                 )
-            )
-                .catch { e ->
-                    emit(loading(false))
-                    view.onState(Act092UiEvent.ShowSnackbar(e.message ?: "not found"))
+            ).catch { e ->
+                emit(loading(false))
+                view.onState(Act092UiEvent.ShowSnackbar(e.message ?: "not found"))
+            }.collect {
+
+                it.isSuccess { list ->
+                    view.onState(Act092UiEvent.ListingSerialSteels(list))
                 }
-                .collect {
 
-                    it.isSuccess { list ->
-                        view.onState(Act092UiEvent.ListingSerialSteels(list))
-                    }
+                it.isFailed { throwable ->
+                    view.onState(Act092UiEvent.ShowSnackbar(throwable.toString()))
+                }
 
-                    it.isFailed { throwable ->
-                        view.onState(Act092UiEvent.ShowSnackbar(throwable.toString()))
-                    }
-
-                    it.isLoading { isLoading, message ->
+                it.isLoading { isLoading, message ->
                         view.onState(Act092UiEvent.IsLoading(isLoading, message))
                     }
 

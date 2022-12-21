@@ -20,26 +20,25 @@ sealed class IResult<out DTO> {
         fun loading(isLoading: Boolean, message: String = "Waiting...") =
             isLoading(isLoading, message)
 
-        suspend fun <DTO> IResult<DTO>.isSuccess(block: suspend (DTO) -> Unit) {
+        suspend fun <DTO> IResult<DTO>.isSuccess(block: suspend (DTO) -> Unit) = apply {
             if (this is isSuccess) {
                 block(this.response)
             }
-            return
         }
 
-        suspend fun <DTO> IResult<DTO>.isFailed(block: suspend (exception: Throwable) -> Unit) {
-            if (this is isFailed) {
-                block(this.exceptionError)
+        suspend fun <DTO> IResult<DTO>.isFailed(block: suspend (exception: Throwable) -> Unit) =
+            apply {
+                if (this is isFailed) {
+                    block(this.exceptionError)
+                }
             }
-            return
-        }
 
-        suspend fun <DTO> IResult<DTO>.isLoading(block: suspend (isLoading: Boolean, message: String) -> Unit) {
-            if (this is isLoading) {
-                block(this.isLoading, this.message)
+        suspend fun <DTO> IResult<DTO>.isLoading(block: suspend (isLoading: Boolean, message: String) -> Unit) =
+            apply {
+                if (this is isLoading) {
+                    block(this.isLoading, this.message)
+                }
             }
-            return
-        }
 
     }
 }

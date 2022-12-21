@@ -151,7 +151,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     }
 
     private fun initBundle(savedInstanceState: Bundle?) {
-        bundle = (savedInstanceState?: intent.extras) as Bundle
+        bundle = (savedInstanceState ?: intent.extras) as Bundle
     }
 
     private fun iniTrans() {

@@ -340,7 +340,7 @@ class Act090Main : Base_Activity(), Act090MainContract.IView {
         finish()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         return super.onCreateOptionsMenu(menu)
     }
 
