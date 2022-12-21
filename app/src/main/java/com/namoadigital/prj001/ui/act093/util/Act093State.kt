@@ -1,4 +1,4 @@
-package com.namoadigital.prj001.ui.act093.ui.util
+package com.namoadigital.prj001.ui.act093.util
 
 data class Act093State(
     val isLoading: Boolean = false,

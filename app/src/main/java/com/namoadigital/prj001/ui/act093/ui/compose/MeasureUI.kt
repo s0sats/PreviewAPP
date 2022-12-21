@@ -24,41 +24,43 @@ fun MeasureUI(
     lastCicle: String? = null,
 ) {
 
-    Row(
-        modifier = modifier
-            .padding(16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
+    if (lastMeasure != null) {
+        Row(
+            modifier = modifier
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
 
-        Column {
-            Text(
-                text = hmAux["last_measure_lbl"] ?: "last measure",
-                style = MaterialTheme.typography.bodySmall,
-                color = Color(context.resources.getColor(R.color.m3_namoa_onBackground))
-            )
+            Column {
+                Text(
+                    text = hmAux["last_measure_lbl"]!!,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color(context.resources.getColor(R.color.m3_namoa_onBackground))
+                )
 
-            Text(
-                text = (lastMeasure ?: "-") + " " + (lastDate ?: "-"),
-                style = MaterialTheme.typography.bodyLarge,
-                color = Color(context.resources.getColor(R.color.m3_namoa_onBackground))
-            )
+                Text(
+                    text = lastMeasure + " " + (lastDate ?: "-"),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color(context.resources.getColor(R.color.m3_namoa_onBackground))
+                )
+            }
+
+
+            Column {
+                Text(
+                    text = hmAux["last_cycle_lbl"]!!,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color(context.resources.getColor(R.color.m3_namoa_onBackground))
+                )
+
+                Text(
+                    text = lastCicle ?: "-",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color(context.resources.getColor(R.color.m3_namoa_onBackground))
+                )
+            }
+
         }
-
-
-        Column {
-            Text(
-                text = hmAux["last_cicle_lbl"] ?: "last cicle",
-                style = MaterialTheme.typography.bodySmall,
-                color = Color(context.resources.getColor(R.color.m3_namoa_onBackground))
-            )
-
-            Text(
-                text = lastCicle ?: "-",
-                style = MaterialTheme.typography.bodyLarge,
-                color = Color(context.resources.getColor(R.color.m3_namoa_onBackground))
-            )
-        }
-
     }
 
 }

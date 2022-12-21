@@ -12,9 +12,9 @@ data class InfoSerialModel(
     val model: String? = null,
     val color: String? = null,
     val tracklist: String? = null,
-    val last_measure_value: String? = null,
+    val last_measure_value: Int? = null,
     val last_measure_date: String? = null,
-    val last_cycle_value: String? = null,
+    val last_cycle_value: Int? = null,
     val value_suffix: String? = null,
 ) {
 
@@ -34,9 +34,9 @@ data class InfoSerialModel(
 
 
     val formatMeasureValue: String? = when {
-        !last_measure_value.isNullOrEmpty() -> {
+        last_measure_value != null -> {
             if (!value_suffix.isNullOrEmpty()) {
-                "$last_measure_value $value_suffix"
+                "${last_measure_value.toInt()} $value_suffix"
             } else {
                 "$last_measure_value"
             }
@@ -45,9 +45,9 @@ data class InfoSerialModel(
     }
 
     val formatCycleValue: String? = when {
-        !last_cycle_value.isNullOrEmpty() -> {
-            if (!value_suffix.isNullOrEmpty()) last_cycle_value + value_suffix
-            else null
+        last_cycle_value != null -> {
+            if (!value_suffix.isNullOrEmpty()) "${last_cycle_value.toInt()}  $value_suffix"
+            else "${last_cycle_value.toInt()}"
         }
         else -> null
     }
@@ -61,9 +61,9 @@ fun MD_Product_Serial.toInfoSerialModel() = InfoSerialModel(
     brand = brand_desc,
     model = model_desc,
     color = color_desc,
-    tracklist = tracking_list.toInfoSerial(),
-    last_measure_value = last_measure_value.toInt().toString(),
-    last_cycle_value = last_cycle_value.toInt().toString()
+    tracklist = tracking_list?.toInfoSerial(),
+    last_measure_value = last_measure_value?.toInt(),
+    last_cycle_value = last_cycle_value?.toInt()
 )
 
 private fun List<MD_Product_Serial_Tracking>.toInfoSerial(): String? {

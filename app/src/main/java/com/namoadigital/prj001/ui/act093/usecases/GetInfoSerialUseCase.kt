@@ -33,21 +33,32 @@ class GetInfoSerialUseCase constructor(
                         serialModel = model
                     }
 
-                    repository.getValueSuffixProduct(serial.customer_code, serial.measure_tp_code)
-                        .first().isSuccess { suffix ->
-                        value_suffix = suffix
+                    serial.measure_tp_code?.let { code ->
+                        repository.getValueSuffixProduct(
+                            serial.customer_code,
+                            code
+                        ).first()
+                            .isSuccess { suffix ->
+                                value_suffix = suffix
+                            }
+
+                        emit(
+                            success(
+                                serial.toInfoSerialModel().copy(
+                                    iconColor = serialModel?.classColor,
+                                    value_suffix = value_suffix,
+                                    last_measure_date = ToolBox_Inf.millisecondsToString(
+                                        ToolBox_Inf.dateToMilliseconds(serial.last_measure_date),
+                                        ToolBox_Inf.nlsDateFormat(context)
+                                    )
+                                )
+                            )
+                        )
                     }
 
                     emit(
                         success(
-                            serial.toInfoSerialModel().copy(
-                                iconColor = serialModel?.classColor,
-                                value_suffix = value_suffix,
-                                last_measure_date = ToolBox_Inf.millisecondsToString(
-                                    ToolBox_Inf.dateToMilliseconds(serial.last_measure_date),
-                                    ToolBox_Inf.nlsDateFormat(context)
-                                )
-                            )
+                            serial.toInfoSerialModel().copy(iconColor = serialModel?.classColor)
                         )
                     )
 

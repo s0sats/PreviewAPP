@@ -10,10 +10,10 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.namoadigital.prj001.core.IResult.Companion.isFailed
 import com.namoadigital.prj001.core.IResult.Companion.isLoading
 import com.namoadigital.prj001.core.IResult.Companion.isSuccess
-import com.namoadigital.prj001.ui.act093.ui.util.Act093Event
-import com.namoadigital.prj001.ui.act093.ui.util.Act093State
 import com.namoadigital.prj001.ui.act093.usecases.InfoSerialUseCase
 import com.namoadigital.prj001.ui.act093.usecases.InfoSerialUseCase.Companion.InfoSerialUseCasesFactory
+import com.namoadigital.prj001.ui.act093.util.Act093Event
+import com.namoadigital.prj001.ui.act093.util.Act093State
 import com.namoadigital.prj001.ui.base.BaseViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
@@ -68,6 +68,10 @@ class InfoSerialViewModel constructor(
 
 
         }.launchIn(viewModelScope)
+
+    }
+
+    suspend fun getItemsWithProblem() {
 
     }
 
