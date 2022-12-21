@@ -34,11 +34,6 @@ class GetListDeviceUseCase constructor(
                     it.isSuccess { device ->
 
                         val itemList = mutableListOf<MD_Product_Serial_Tp_Device_Item>()
-                        device.map { m -> m.item }.forEach { list ->
-                            list.forEach { item ->
-                                itemList.add(item)
-                            }
-                        }
 
                         val materialList =
                             mutableListOf<MD_Product_Serial_Tp_Device_Item_Material>()

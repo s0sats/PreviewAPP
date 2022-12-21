@@ -3738,6 +3738,7 @@ public class Act011_Main extends Base_Activity
             binding.act011DialogCheckMkdateFormStart.setmEnabled(false);
             binding.act011DialogCheckMkdateFormStart.setmLabel(hmAux_Trans.get("dialog_finalize_os_form_start_date_lbl"));
             binding.act011DialogCheckMkdateFormStart.setmValue(formData.getDate_start());
+            binding.act011DialogCheckMkdateFormStart.setMk_hourEnable(geOs.getSo_edit_start_end() == 1);
             binding.act011DialogCheckMkdateFormEnd.setmCanClean(false);
             binding.act011DialogCheckMkdateFormEnd.setmLabel(hmAux_Trans.get("dialog_finalize_os_form_end_date_lbl"));
             if(geOs.getSo_edit_start_end() == 0) {

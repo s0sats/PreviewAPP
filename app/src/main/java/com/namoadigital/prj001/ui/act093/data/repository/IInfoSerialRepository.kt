@@ -13,13 +13,12 @@ import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_DeviceDao
 import com.namoadigital.prj001.dao.MdDeviceTpDao
 import com.namoadigital.prj001.dao.MeMeasureTpDao
 import com.namoadigital.prj001.model.MD_Product_Serial
-import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device
 import com.namoadigital.prj001.model.MdDeviceTp
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002
-import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_Device_Sql_002
 import com.namoadigital.prj001.sql.MeMeasureTpSql_001
 import com.namoadigital.prj001.ui.act092.data.local.preferences.FilterParamPreferences
 import com.namoadigital.prj001.ui.act092.model.SerialModel
+import com.namoadigital.prj001.ui.act093.model.DeviceTpModel
 import com.namoadigital.prj001.ui.base.NamoaFactory
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -86,23 +85,20 @@ class IInfoSerialRepository constructor(
     }
 
 
-    override suspend fun getListItems(): Flow<IResult<List<MD_Product_Serial_Tp_Device>>> {
+    override suspend fun getListItems(): Flow<IResult<List<DeviceTpModel>>> {
         var serial: MD_Product_Serial? = null
         getInfoSerial().last().isSuccess { product_serial ->
             serial = product_serial
         }
 
-        return flow<IResult<List<MD_Product_Serial_Tp_Device>>> {
+        return flow {
 
             emit(loading(true))
 
-
-            val serialTpDevices = serialTpDeviceDao.query(
-                MD_Product_Serial_Tp_Device_Sql_002(
-                    serial?.customer_code ?: -1L,
-                    serial?.product_code ?: -1L,
-                    serial?.serial_code ?: -1L
-                ).toSqlQuery()
+            val serialTpDevices = serialTpDeviceDao.getDeviceForSerialInfo(
+                serial!!.customer_code,
+                serial!!.product_code,
+                serial!!.serial_code
             )
 
 

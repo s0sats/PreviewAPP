@@ -211,7 +211,7 @@ class WS_UnfocusAndHistoric : IntentService("WS_UnfocusAndHistoric") {
                    actionsCache.siteDesc,
                    actionsCache.zoneDesc,
                    actionsCache.doneDateStart,
-                   actionsCache.plannedDateEnd,
+                   actionsCache.doneDateEnd,
                    actionsCache.orderBy,
                    actionsCache.data_type,
                    actionsCache.ticketOriginType,

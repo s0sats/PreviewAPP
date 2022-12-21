@@ -2272,6 +2272,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     public void updateGeOsItems(GeOs geOs, int missingJustifyCounter, String comments, String dateStart, String dateEnd) {
 
         geOs.setDate_end(dateEnd);
+        geOs.setDate_start(dateStart);
 
         if(missingJustifyCounter > 0) {
             List<GeOsDevice> devices = getDeviceList(geOs);
