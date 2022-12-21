@@ -14,8 +14,10 @@ import com.namoadigital.prj001.model.MdDeviceTp
 import com.namoadigital.prj001.ui.act093.data.repository.InfoSerialRepository
 import com.namoadigital.prj001.ui.act093.model.DeviceTpModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.last
+
 
 class GetListDeviceUseCase constructor(
     private val repository: InfoSerialRepository

@@ -12,15 +12,19 @@ import com.namoadigital.prj001.ui.act093.data.repository.InfoSerialRepository
 import com.namoadigital.prj001.ui.act093.model.InfoSerialModel
 import com.namoadigital.prj001.ui.act093.model.toInfoSerialModel
 import com.namoadigital.prj001.util.ToolBox_Inf
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
+
 
 class GetInfoSerialUseCase constructor(
     private val repository: InfoSerialRepository,
     private val context: Context
 ) : UseCases<Unit, InfoSerialModel> {
 
+    @OptIn(InternalCoroutinesApi::class)
     override suspend fun invoke(input: Unit): Flow<IResult<InfoSerialModel>> {
         return flow {
             repository.getInfoSerial().collect {

@@ -60,6 +60,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
 import java.io.File
 
 class Act092Presenter constructor(
@@ -191,22 +192,20 @@ class Act092Presenter constructor(
                         userFocus = userFocus
                     ), view.focusState.value.mainUser
                 )
-            )
-                .catch { e ->
-                    emit(loading(false))
-                    view.onState(Act092UiEvent.ShowSnackbar(e.message ?: "not found"))
+            ).catch { e ->
+                emit(loading(false))
+                view.onState(Act092UiEvent.ShowSnackbar(e.message ?: "not found"))
+            }.collect {
+
+                it.isSuccess { list ->
+                    view.onState(Act092UiEvent.ListingSerialSteels(list))
                 }
-                .collect {
 
-                    it.isSuccess { list ->
-                        view.onState(Act092UiEvent.ListingSerialSteels(list))
-                    }
+                it.isFailed { throwable ->
+                    view.onState(Act092UiEvent.ShowSnackbar(throwable.toString()))
+                }
 
-                    it.isFailed { throwable ->
-                        view.onState(Act092UiEvent.ShowSnackbar(throwable.toString()))
-                    }
-
-                    it.isLoading { isLoading, message ->
+                it.isLoading { isLoading, message ->
                         view.onState(Act092UiEvent.IsLoading(isLoading, message))
                     }
 
