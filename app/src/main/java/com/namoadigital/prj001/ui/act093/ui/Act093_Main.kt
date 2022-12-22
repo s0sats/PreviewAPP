@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.databinding.Act093MainBinding
 import com.namoadigital.prj001.ui.act092.ui.Act092_Main
 import com.namoadigital.prj001.ui.act093.Act093Presenter
@@ -57,6 +58,10 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
         Act093MainBinding.inflate(layoutInflater)
     }
 
+    override fun onBack() {
+        onBackPressed()
+    }
+
     override fun onState(state: Act093Event) {
         CoroutineScope(Dispatchers.Main).launch {
             when (state) {
@@ -77,8 +82,61 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
                     Toast.makeText(context, state.message, Toast.LENGTH_LONG).show()
                 }
 
+                is Act093Event.OpenDialog -> {
+                    openDialog(state.dialogType)
+                }
+
             }
         }
+    }
+
+    private fun openDialog(
+        dialogType: Act093Event.OpenDialog.DialogType,
+    ) {
+        when (dialogType) {
+            is Act093Event.OpenDialog.DialogType.PROCESS -> {
+                enableProgressDialog(
+                    hmAux_Trans[dialogType.title],
+                    hmAux_Trans[dialogType.message],
+                    hmAux_Trans["sys_alert_btn_cancel"],
+                    hmAux_Trans["sys_alert_btn_ok"]
+                )
+            }
+
+            is Act093Event.OpenDialog.DialogType.ACTION -> {
+                ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans[dialogType.title],
+                    hmAux_Trans[dialogType.message],
+                    dialogType.action,
+                    dialogType.negativeBtn
+                )
+            }
+
+            is Act093Event.OpenDialog.DialogType.DEFAULT_OK -> {
+                ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans[dialogType.title],
+                    hmAux_Trans[dialogType.message],
+                    { dialog, _ ->
+                        dialog.dismiss()
+                    }, 0
+                )
+            }
+
+            is Act093Event.OpenDialog.DialogType.CUSTOM_OK -> {
+                ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans[dialogType.title],
+                    dialogType.message,
+                    { dialog, _ ->
+                        dialog.dismiss()
+                    }, 0
+                )
+            }
+
+        }
+
     }
 
     private fun recyclerViewLoading(

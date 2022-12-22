@@ -97,6 +97,21 @@ class Act093Presenter constructor(
         CoroutineScope(Dispatchers.IO).launch {
             getInfoSerial()
             getDeviceList()
+
+            if (_state.value.list.isEmpty() &&
+                _state.value.serialInfo.last_measure_value == null &&
+                _state.value.serialInfo.model == null &&
+                _state.value.serialInfo.trackings == null
+            ) {
+                view.onState(Act093Event.OpenDialog(
+                    Act093Event.OpenDialog.DialogType.ACTION(
+                        "alert_no_data_warning_title",
+                        "alert_no_data_warning_msg",
+                        action = { dialog, i ->
+                            view.onBack()
+                        }
+                    )))
+            }
         }
     }
 
@@ -107,7 +122,9 @@ class Act093Presenter constructor(
             "last_cycle_lbl",
             "last_update_serial_lbl",
             "item_with_problem_lbl",
-            "item_with_change_expired_lbl"
+            "item_with_change_expired_lbl",
+            "alert_no_data_warning_title",
+            "alert_no_data_warning_msg"
         ).let {
             return ToolBox_Inf.setLanguage(
                 translateResource.context,

@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 interface Contract {
 
     interface View : BaseView<Act093Event> {
+        fun onBack()
     }
 
     interface Presenter : BasePresenter<View> {

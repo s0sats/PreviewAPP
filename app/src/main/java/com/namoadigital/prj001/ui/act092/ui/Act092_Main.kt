@@ -280,7 +280,9 @@ class Act092_Main : BaseActivityMvp
 
 
             filterText.value = serialModel.editFilter ?: ""
-            if (filterText.value.isNotEmpty()) binding.editSerialFilter.setText(filterText.value)
+            if (filterText.value.isNotEmpty()) {
+                binding.editSerialFilter.setText(filterText.value)
+            }
 
         }
     }
@@ -344,8 +346,7 @@ class Act092_Main : BaseActivityMvp
                 }
 
                 override fun reportTextChange(text: String?, p1: Boolean) {
-
-                    if (editSerialFilter.isEnabled && ::mAdapter.isInitialized) {
+                    if (::mAdapter.isInitialized) {
                         mAdapter.filter.filter(text)
                         filterText.value = text ?: ""
                     }
@@ -413,7 +414,7 @@ class Act092_Main : BaseActivityMvp
 
                 is Act092UiEvent.ListingSerialSteels -> {
                     if (state.list.isEmpty()) {
-                        onState(Act092UiEvent.EmptyOrError(sizeList = state.list.size))
+                        emptyList(state.list.size)
                         return@launch
                     }
                     initRecyclerView(state.list)
