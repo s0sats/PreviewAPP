@@ -14,16 +14,16 @@ class MD_Product_Serial_Tp_Device_Item_Sql_003(
     override fun toSqlQuery(): String {
 
         var query = """SELECT
-                          tdi.customer_code,
-                          tdi.product_code,
-                          tdi.serial_code,
-                          tdi.device_tp_code,
-                          tdi.item_check_code,
-                          tdi.item_check_seq,
-                          tdi.item_check_status,
-                          tdi.critical_item,
-                          mic.device_tp_desc,
-                          mdt.item_check_desc
+                          tdi.${MD_Product_Serial_Tp_Device_ItemDao.CUSTOMER_CODE},
+                          tdi.${MD_Product_Serial_Tp_Device_ItemDao.PRODUCT_CODE},
+                          tdi.${MD_Product_Serial_Tp_Device_ItemDao.SERIAL_CODE},
+                          tdi.${MD_Product_Serial_Tp_Device_ItemDao.DEVICE_TP_CODE},
+                          tdi.${MD_Product_Serial_Tp_Device_ItemDao.ITEM_CHECK_CODE},
+                          tdi.${MD_Product_Serial_Tp_Device_ItemDao.ITEM_CHECK_SEQ},
+                          tdi.${MD_Product_Serial_Tp_Device_ItemDao.ITEM_CHECK_STATUS},
+                          tdi.${MD_Product_Serial_Tp_Device_ItemDao.CRITICAL_ITEM},
+                          mdt.${MdDeviceTpDao.DEVICE_TP_DESC},
+                          mic.${MdItemCheckDao.ITEM_CHECK_DESC}
                        FROM
                             ${MD_Product_Serial_Tp_Device_ItemDao.TABLE} tdi     
                        INNER JOIN  ${MdItemCheckDao.TABLE} mic 
@@ -33,9 +33,9 @@ class MD_Product_Serial_Tp_Device_Item_Sql_003(
                                ON  tp.${MD_Product_Serial_Tp_Device_ItemDao.CUSTOMER_CODE} = mdt.${MdDeviceTpDao.CUSTOMER_CODE}
                               AND  tp.${MD_Product_Serial_Tp_Device_ItemDao.DEVICE_TP_CODE} = mdt.${MdDeviceTpDao.DEVICE_TP_CODE}
                        WHERE
-                             i.${MD_Product_Serial_Tp_Device_ItemDao.CUSTOMER_CODE} = '$customerCode'  
-                            AND i.${MD_Product_Serial_Tp_Device_ItemDao.PRODUCT_CODE} = '$productCode'                           
-                            AND i.${MD_Product_Serial_Tp_Device_ItemDao.SERIAL_CODE} = '$serialCode'                                                            
+                             i.${MD_Product_Serial_Tp_Device_ItemDao.CUSTOMER_CODE} = $customerCode  
+                            AND i.${MD_Product_Serial_Tp_Device_ItemDao.PRODUCT_CODE} = $productCode                           
+                            AND i.${MD_Product_Serial_Tp_Device_ItemDao.SERIAL_CODE} = $serialCode                                                            
                     """.trimMargin()
 
         return query
