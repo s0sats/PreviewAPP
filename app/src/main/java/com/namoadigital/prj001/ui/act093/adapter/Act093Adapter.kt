@@ -27,26 +27,36 @@ class Act093Adapter constructor(
 
         forEach { item ->
             if (item.item_check_status == ITEM_CHECK_STATUS_MANUAL_ALERT) {
-                if (listWithProblem.contains(DeviceViewItem.SectionItem(R.color.m3_namoa_error))) {
-                    listWithProblem.add(DeviceViewItem.ContentItem(item, R.color.m3_namoa_error))
-                } else {
-                    listWithProblem.add(DeviceViewItem.SectionItem(R.color.m3_namoa_error))
-                    listWithProblem.add(DeviceViewItem.ContentItem(item, R.color.m3_namoa_error))
-                }
-            } else if (item.critical_item == 1 && item.item_check_status != ITEM_CHECK_STATUS_NORMAL) {
-                if (listChangeReached.contains(DeviceViewItem.SectionItem(R.color.namoa_color_yellow_2))) {
-                    listChangeReached.add(
+                if (listWithProblem.contains(DeviceViewItem.SectionItem(R.color.namoa_os_form_problem_red))) {
+                    listWithProblem.add(
                         DeviceViewItem.ContentItem(
                             item,
-                            R.color.namoa_color_yellow_2
+                            R.color.namoa_os_form_problem_red
                         )
                     )
                 } else {
-                    listChangeReached.add(DeviceViewItem.SectionItem(R.color.namoa_color_yellow_2))
+                    listWithProblem.add(DeviceViewItem.SectionItem(R.color.namoa_os_form_problem_red))
+                    listWithProblem.add(
+                        DeviceViewItem.ContentItem(
+                            item,
+                            R.color.namoa_os_form_problem_red
+                        )
+                    )
+                }
+            } else if (item.critical_item == 1 && item.item_check_status != ITEM_CHECK_STATUS_NORMAL) {
+                if (listChangeReached.contains(DeviceViewItem.SectionItem(R.color.namoa_os_form_critical_forecast_yellow))) {
                     listChangeReached.add(
                         DeviceViewItem.ContentItem(
                             item,
-                            R.color.namoa_color_yellow_2
+                            R.color.namoa_os_form_critical_forecast_yellow
+                        )
+                    )
+                } else {
+                    listChangeReached.add(DeviceViewItem.SectionItem(R.color.namoa_os_form_critical_forecast_yellow))
+                    listChangeReached.add(
+                        DeviceViewItem.ContentItem(
+                            item,
+                            R.color.namoa_os_form_critical_forecast_yellow
                         )
                     )
                 }
@@ -99,7 +109,7 @@ class Act093Adapter constructor(
         val item = defaultList[position]
         if (holder is DoneItemHolder && item is DeviceViewItem.SectionItem) {
             var header: String? = null
-            if (item.color == R.color.m3_namoa_error) {
+            if (item.color == R.color.namoa_os_form_problem_red) {
                 header = hmAux["item_with_problem_lbl"]
             } else {
                 header = hmAux["item_with_change_reached_lbl"]
