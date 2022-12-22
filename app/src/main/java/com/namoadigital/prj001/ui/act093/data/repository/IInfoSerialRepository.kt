@@ -93,12 +93,15 @@ class IInfoSerialRepository constructor(
 
         return flow {
 
+            emit(loading(true))
+
             val serialTpDevices = serialTpDeviceDao.getDeviceForSerialInfo(
                 serial?.customer_code ?: -1L,
                 serial?.product_code ?: -1L,
                 serial?.serial_code ?: -1L
             )
 
+            emit(loading(false))
             emit(success(serialTpDevices.toMutableList()))
 
         }.namoaCatch(IInfoSerialRepository::class.java.simpleName)

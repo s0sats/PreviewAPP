@@ -163,7 +163,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:indeterminate="true"
-            android:progressTint="@color/m3_namoa_primary"
+            android:indeterminateTint="@color/m3_namoa_surfaceTint"
+            android:indeterminateTintMode="src_in"
             android:secondaryProgressTint="@color/m3_namoa_onPrimary"
             android:visibility="visible" />
 

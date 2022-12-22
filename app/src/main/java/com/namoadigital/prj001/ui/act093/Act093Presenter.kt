@@ -6,7 +6,6 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.core.IResult.Companion.isFailed
 import com.namoadigital.prj001.core.IResult.Companion.isLoading
 import com.namoadigital.prj001.core.IResult.Companion.isSuccess
-import com.namoadigital.prj001.core.extension.namoaCatch
 import com.namoadigital.prj001.ui.act091.mvp.model.TranslateResource
 import com.namoadigital.prj001.ui.act093.usecases.InfoSerialUseCase
 import com.namoadigital.prj001.ui.act093.usecases.InfoSerialUseCase.Companion.InfoSerialUseCasesFactory
@@ -19,6 +18,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -32,17 +32,18 @@ class Act093Presenter constructor(
 
     private suspend fun getDeviceList() {
         infoUseCase.getDeviceList(Unit)
-            .namoaCatch("GetListDeviceUseCase")
+            .catch { e ->
+                view.onState(Act093Event.Toast(e.message ?: ""))
+            }
             .collect {
-                it.isLoading { isLoading, _ ->
+                it.isLoading { isLoading, message ->
                     _state.value = _state.value.copy(isLoading = isLoading)
+                    state = _state
+                    view.onState(Act093Event.OnLoading)
                 }
 
                 it.isSuccess { response ->
-                    _state.value = _state.value.copy(
-                        list = response
-                    )
-
+                    _state.value = _state.value.copy(list = response)
                     state = _state
                     view.onState(Act093Event.OnUpdateList)
                 }
@@ -56,12 +57,9 @@ class Act093Presenter constructor(
 
     private suspend fun getInfoSerial() {
         infoUseCase.getInfoSerial(Unit)
-            .namoaCatch("GetInfoSerialUseCase")
-            .collect {
-
-                it.isLoading { isLoading, message ->
-                    _state.value = _state.value.copy(isLoading = isLoading)
-                }
+            .catch { e ->
+                view.onState(Act093Event.Toast(e.message ?: ""))
+            }.collect {
 
                 it.isSuccess { serial ->
 

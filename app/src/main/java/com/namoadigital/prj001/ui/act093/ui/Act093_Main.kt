@@ -69,12 +69,31 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
                     initRecyclerView()
                 }
 
+                is Act093Event.OnLoading -> {
+                    recyclerViewLoading()
+                }
+
                 is Act093Event.Toast -> {
                     Toast.makeText(context, state.message, Toast.LENGTH_LONG).show()
                 }
 
             }
         }
+    }
+
+    private fun recyclerViewLoading(
+        isLoading: Boolean = presenter.state.value.isLoading
+    ) {
+        with(binding) {
+            if (isLoading) {
+                progressLoading.visibility = View.VISIBLE
+                recyclerViewList.visibility = View.GONE
+            } else {
+                progressLoading.visibility = View.GONE
+                recyclerViewList.visibility = View.VISIBLE
+            }
+        }
+
     }
 
 
@@ -178,11 +197,12 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
                 View.VISIBLE
             }
 
-            linearLayout5.visibility = if (measureFormatted.isNullOrEmpty()) {
-                View.GONE
-            } else {
-                View.VISIBLE
-            }
+            linearLayout5.visibility =
+                if (state.last_cycle_value.formatCycleValue(state.value_suffix).isNullOrEmpty()) {
+                    View.GONE
+                } else {
+                    View.VISIBLE
+                }
 
             if (state.last_cycle_value.formatCycleValue(state.value_suffix).isNullOrEmpty()) {
                 cycleValue.visibility = View.GONE
