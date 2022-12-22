@@ -543,7 +543,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
             //
             if (serial_list.size() == 1 && mJump) {
                 selectedProductSerial = serial_list.get(0);
-                mPresenter.goToNextScreen(selectedProductSerial);
+                defineSerialFlow(selectedProductSerial);
 /*                lv_prod_serial_list.performItemClick(
                         lv_prod_serial_list.getAdapter().getView(0, null, null),
                         0,
@@ -666,7 +666,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                 prod_serial_list,
                 (product_serial) -> {
                     selectedProductSerial = product_serial;
-                    mPresenter.goToNextScreen(product_serial);
+                    defineSerialFlow(product_serial);
                     return null;
                 },
                 (size) -> {
@@ -688,6 +688,13 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         /*mAdapter.setSite_id_preference(ToolBox_Con.getPreference_Site_Code(context));*/
         //
         /*lv_prod_serial_list.setAdapter(mAdapter);*/
+    }
+
+    private void defineSerialFlow(MD_Product_Serial product_serial) {
+        if (!ToolBox_Con.getBooleanPreferencesByKey(getApplicationContext(), ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false)) {
+            selectedProductSerial.setLog_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+        }
+        mPresenter.goToNextScreen(product_serial);
     }
 
     @Override

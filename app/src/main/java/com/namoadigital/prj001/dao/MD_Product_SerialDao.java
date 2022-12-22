@@ -564,6 +564,7 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
                                 md_product_serial.getSerial_id()
                         ).toSqlQuery(),db);
                 //
+                md_product_serial.setLog_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
                 if(dbSerial != null && dbSerial.getSerial_code() > 0){
                     md_product_serial.setSerial_tmp(dbSerial.getSerial_tmp());
                     md_product_serial.setSync_process(1);

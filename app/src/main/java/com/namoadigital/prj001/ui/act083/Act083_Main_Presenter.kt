@@ -1377,6 +1377,9 @@ class Act083_Main_Presenter constructor(
         //
         if(serialList.size > 0 ) {
             myActionSelected?.let {
+                if(serialList[0] != null){
+                    serialList[0].log_date = ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")
+                }
                 processLocalSearchForSerialAction(it, serialList[0])
             }?:defineSearchResultFlow(serialList, rec.record_count, rec.record_page)
         }else{

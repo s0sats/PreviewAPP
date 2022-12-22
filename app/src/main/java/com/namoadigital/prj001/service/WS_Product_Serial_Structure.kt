@@ -252,6 +252,7 @@ class WS_Product_Serial_Structure : IntentService("WS_Product_Serial_Structure")
             it.last_measure_value = serialStructure.last_measure_value
             it.last_measure_date = serialStructure.last_measure_date
             it.last_cycle_value = serialStructure.last_cycle_value
+            it.log_date = ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")
             //
             serialDao.addUpdate(it)
         }
