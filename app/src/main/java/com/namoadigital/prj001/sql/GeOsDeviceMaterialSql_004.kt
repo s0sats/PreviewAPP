@@ -35,7 +35,8 @@ class GeOsDeviceMaterialSql_004(
                             AND mtp.${MD_Product_Serial_Tp_Device_Item_MaterialDao.DEVICE_TP_CODE} = $deviceTpCode                                                            
                             AND mtp.${MD_Product_Serial_Tp_Device_Item_MaterialDao.ITEM_CHECK_CODE} = $itemCheckCode                                                            
                             AND mtp.${MD_Product_Serial_Tp_Device_Item_MaterialDao.ITEM_CHECK_SEQ} = $itemCheckSeq                                                                                                                        
-                            AND mdp.${MD_All_ProductDao.SPARE_PART} = 1                                                                                                                        
+                            AND mdp.${MD_All_ProductDao.SPARE_PART} = 1      
+                      ORDER BY ${MD_All_ProductDao.PRODUCT_DESC}   
                     """.trimMargin()
 
         return query
