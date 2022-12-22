@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act020;
 
+import static com.namoadigital.prj001.util.ConstantBaseApp.FROM_OFFLINE_SOURCE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SCHEDULED_PROFILE_CHECK;
 
 import android.content.Context;
@@ -122,6 +123,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     private String originFlow = null;
     private int isSoForm = 0;
     private MD_Product_Serial selectedProductSerial;
+    private boolean fromOfflineSource=false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -359,6 +361,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                 record_count = bundle.getLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_COUNT);
                 record_page = bundle.getLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_PAGE);
                 serial_id = bundle.getString(Constant.MAIN_MD_PRODUCT_SERIAL_ID);
+                fromOfflineSource = bundle.getBoolean(FROM_OFFLINE_SOURCE, false);;
 
                 fragProduct_ID = bundle.getString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, "");
                 fragSerial_ID = bundle.getString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, "");
@@ -691,7 +694,8 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     }
 
     private void defineSerialFlow(MD_Product_Serial product_serial) {
-        if (!ToolBox_Con.getBooleanPreferencesByKey(getApplicationContext(), ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false)) {
+        if (!ToolBox_Con.getBooleanPreferencesByKey(getApplicationContext(), ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false)
+        && !fromOfflineSource) {
             selectedProductSerial.setLog_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
         }
         mPresenter.goToNextScreen(product_serial);
