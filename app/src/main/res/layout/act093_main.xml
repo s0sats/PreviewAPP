@@ -175,6 +175,22 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+
+    <ProgressBar
+        android:id="@+id/progress_loading"
+        style="@android:style/Widget.DeviceDefault.Light.ProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:indeterminate="true"
+        android:progressTint="@color/m3_namoa_primary"
+        android:secondaryProgressTint="@color/m3_namoa_onPrimary"
+        android:progressBackgroundTint="@color/m3_namoa_primary"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/measureUI" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewList"
         android:layout_width="match_parent"
@@ -183,7 +199,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/measureUI"
-        tools:listitem="@layout/act093_adapter_item" />
+        tools:listitem="@layout/act093_adapter_item"
+        android:visibility="gone" />
 
     <include
         android:id="@+id/ui_footer"

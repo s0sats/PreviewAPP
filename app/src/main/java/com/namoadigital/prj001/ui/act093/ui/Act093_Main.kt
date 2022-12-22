@@ -69,12 +69,31 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
                     initRecyclerView()
                 }
 
+                is Act093Event.OnLoading -> {
+                    recyclerViewLoading()
+                }
+
                 is Act093Event.Toast -> {
                     Toast.makeText(context, state.message, Toast.LENGTH_LONG).show()
                 }
 
             }
         }
+    }
+
+    private fun recyclerViewLoading(
+        isLoading: Boolean = presenter.state.value.isLoading
+    ) {
+        with(binding) {
+            if (isLoading) {
+                progressLoading.visibility = View.VISIBLE
+                recyclerViewList.visibility = View.GONE
+            } else {
+                progressLoading.visibility = View.GONE
+                recyclerViewList.visibility = View.VISIBLE
+            }
+        }
+
     }
 
 
