@@ -1,18 +1,167 @@
 package com.namoadigital.prj001.ui.act093.model
 
+import com.namoadigital.prj001.model.GeOsDeviceItem
+
 data class DeviceTpModel(
-    val customer_code: Int,
-    val product_code: Int,
-    val serial_code: Int,
-    val device_tp_code: Int,
-    val device_tp_desc: String,
-    val item_check_code: Int,
-    val item_check_seq: Int,
-    val item_check_desc: String,
-    val item_check_status: String,
-    val critical_item: Int,
-    val materialListFormatted: String
-)
+    val customer_code: Int = 0,
+    val product_code: Int = 0,
+    val serial_code: Int = 0,
+    val device_tp_code: Int = 0,
+    val device_tp_desc: String = "",
+    val item_check_code: Int = 0,
+    val item_check_seq: Int = 0,
+    val item_check_desc: String = "",
+    val item_check_status: String = "",
+    val critical_item: Int = 0,
+    val materialListFormatted: String = ""
+) {
+
+
+    companion object {
+
+        val example_list = listOf(
+            DeviceTpModel(
+                device_tp_desc = "Freio",
+                item_check_desc = "ITEM_CHECK_STATUS_NO_CYCLE",
+                item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NO_CYCLE,
+                critical_item = 1,
+                materialListFormatted = "" +
+                        "Oleo diferencial (OL393273) 150ml \n" +
+                        "Coisas aqui (ADFS393273) 1%0ml \n",
+            ),
+            DeviceTpModel(
+                device_tp_desc = "Freio",
+                item_check_desc = "ITEM_CHECK_STATUS_NORMAL",
+                item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL,
+                critical_item = 1,
+                materialListFormatted = "" +
+                        "Oleo diferencial (OL393273) 150ml \n" +
+                        "Coisas aqui (ADFS393273) 1%0ml \n"
+            ),
+            DeviceTpModel(
+                device_tp_desc = "Freio",
+                item_check_desc = "ITEM_CHECK_STATUS_MANUAL_ALERT",
+                item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_MANUAL_ALERT,
+                critical_item = 1,
+                materialListFormatted = "" +
+                        "Oleo diferencial (OL393273) 150ml \n" +
+                        "Coisas aqui (ADFS393273) 1%0ml \n"
+            ),
+            DeviceTpModel(
+                device_tp_desc = "Freio",
+                item_check_desc = "ITEM_CHECK_STATUS_NO_CYCLE",
+                item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NO_CYCLE,
+                critical_item = 1,
+                materialListFormatted = "" +
+                        "Oleo diferencial (OL393273) 150ml \n" +
+                        "Coisas aqui (ADFS393273) 1%0ml \n",
+            ),
+            DeviceTpModel(
+                device_tp_desc = "Freio",
+                item_check_desc = "ITEM_CHECK_STATUS_NORMAL",
+                item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL,
+                critical_item = 1,
+                materialListFormatted = "" +
+                        "Oleo diferencial (OL393273) 150ml \n" +
+                        "Coisas aqui (ADFS393273) 1%0ml \n"
+            ),
+            DeviceTpModel(
+                device_tp_desc = "Freio",
+                item_check_desc = "ITEM_CHECK_STATUS_MANUAL_ALERT",
+                item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_MANUAL_ALERT,
+                critical_item = 1,
+                materialListFormatted = "" +
+                        "Oleo diferencial (OL393273) 150ml \n" +
+                        "Coisas aqui (ADFS393273) 1%0ml \n"
+            ),
+            DeviceTpModel(
+                device_tp_desc = "Freio",
+                item_check_desc = "ITEM_CHECK_STATUS_NO_CYCLE",
+                item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NO_CYCLE,
+                critical_item = 1,
+                materialListFormatted = "" +
+                        "Oleo diferencial (OL393273) 150ml \n" +
+                        "Coisas aqui (ADFS393273) 1%0ml \n",
+            ),
+            DeviceTpModel(
+                device_tp_desc = "Freio",
+                item_check_desc = "ITEM_CHECK_STATUS_NORMAL",
+                item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL,
+                critical_item = 1,
+                materialListFormatted = "" +
+                        "Oleo diferencial (OL393273) 150ml \n" +
+                        "Coisas aqui (ADFS393273) 1%0ml \n"
+            ),
+            DeviceTpModel(
+                device_tp_desc = "Freio",
+                item_check_desc = "ITEM_CHECK_STATUS_MANUAL_ALERT",
+                item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_MANUAL_ALERT,
+                critical_item = 1,
+                materialListFormatted = "" +
+                        "Oleo diferencial (OL393273) 150ml \n" +
+                        "Coisas aqui (ADFS393273) 1%0ml \n"
+            ),
+            DeviceTpModel(
+                device_tp_desc = "Freio",
+                item_check_desc = "ITEM_CHECK_STATUS_NO_CYCLE",
+                item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NO_CYCLE,
+                critical_item = 1,
+                materialListFormatted = "" +
+                        "Oleo diferencial (OL393273) 150ml \n" +
+                        "Coisas aqui (ADFS393273) 1%0ml \n",
+            ),
+            DeviceTpModel(
+                device_tp_desc = "Freio",
+                item_check_desc = "ITEM_CHECK_STATUS_NORMAL",
+                item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL,
+                critical_item = 1,
+                materialListFormatted = "" +
+                        "Oleo diferencial (OL393273) 150ml \n" +
+                        "Coisas aqui (ADFS393273) 1%0ml \n"
+            ),
+            DeviceTpModel(
+                device_tp_desc = "Freio",
+                item_check_desc = "ITEM_CHECK_STATUS_MANUAL_ALERT",
+                item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_MANUAL_ALERT,
+                critical_item = 1,
+                materialListFormatted = "" +
+                        "Oleo diferencial (OL393273) 150ml \n" +
+                        "Coisas aqui (ADFS393273) 1%0ml \n"
+            ),
+            DeviceTpModel(
+                device_tp_desc = "Freio",
+                item_check_desc = "ITEM_CHECK_STATUS_NO_CYCLE",
+                item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NO_CYCLE,
+                critical_item = 1,
+                materialListFormatted = "" +
+                        "Oleo diferencial (OL393273) 150ml \n" +
+                        "Coisas aqui (ADFS393273) 1%0ml \n",
+            ),
+            DeviceTpModel(
+                device_tp_desc = "Freio",
+                item_check_desc = "ITEM_CHECK_STATUS_NORMAL",
+                item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL,
+                critical_item = 1,
+                materialListFormatted = "" +
+                        "Oleo diferencial (OL393273) 150ml \n" +
+                        "Coisas aqui (ADFS393273) 1%0ml \n"
+            ),
+            DeviceTpModel(
+                device_tp_desc = "Freio",
+                item_check_desc = "ITEM_CHECK_STATUS_MANUAL_ALERT",
+                item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_MANUAL_ALERT,
+                critical_item = 1,
+                materialListFormatted = "" +
+                        "Oleo diferencial (OL393273) 150ml \n" +
+                        "Coisas aqui (ADFS393273) 1%0ml \n"
+            ),
+
+            )
+
+
+    }
+
+}
 
 /*
 customer_code

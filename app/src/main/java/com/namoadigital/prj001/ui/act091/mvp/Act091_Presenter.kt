@@ -67,7 +67,7 @@ class Act091_Presenter constructor(
         ToolBox_Inf.setLanguage(
             translateResource.context,
             translateResource.mModule_code,
-            translateResource.nResoure_code,
+            translateResource.mResoure_code,
             ToolBox_Con.getPreference_Translate_Code(translateResource.context),
             it
         )

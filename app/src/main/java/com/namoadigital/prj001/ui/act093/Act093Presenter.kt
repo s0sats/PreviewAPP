@@ -6,6 +6,7 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.core.IResult.Companion.isFailed
 import com.namoadigital.prj001.core.IResult.Companion.isLoading
 import com.namoadigital.prj001.core.IResult.Companion.isSuccess
+import com.namoadigital.prj001.core.extension.namoaCatch
 import com.namoadigital.prj001.ui.act091.mvp.model.TranslateResource
 import com.namoadigital.prj001.ui.act093.usecases.InfoSerialUseCase
 import com.namoadigital.prj001.ui.act093.usecases.InfoSerialUseCase.Companion.InfoSerialUseCasesFactory
@@ -29,32 +30,58 @@ class Act093Presenter constructor(
     private lateinit var view: Contract.View
 
 
+    private suspend fun getDeviceList() {
+        infoUseCase.getDeviceList(Unit)
+            .namoaCatch("GetListDeviceUseCase")
+            .collect {
+                it.isLoading { isLoading, _ ->
+                    _state.value = _state.value.copy(isLoading = isLoading)
+                }
+
+                it.isSuccess { response ->
+                    _state.value = _state.value.copy(
+                        list = response
+                    )
+
+                    state = _state
+                    view.onState(Act093Event.OnUpdateList)
+                }
+
+                it.isFailed { exception ->
+                    view.onState(Act093Event.Toast(exception.message ?: ""))
+                }
+            }
+    }
+
+
     private suspend fun getInfoSerial() {
-        infoUseCase.getInfoSerial(Unit).collect {
+        infoUseCase.getInfoSerial(Unit)
+            .namoaCatch("GetInfoSerialUseCase")
+            .collect {
 
-            it.isLoading { isLoading, message ->
-                _state.value = _state.value.copy(isLoading = isLoading)
-            }
+                it.isLoading { isLoading, message ->
+                    _state.value = _state.value.copy(isLoading = isLoading)
+                }
 
-            it.isSuccess { serial ->
+                it.isSuccess { serial ->
 
-                _state.value = _state.value.copy(
-                    serialInfo = Act093State.SerialInfo(
-                        iconColor = serial.iconColor,
-                        serialId = serial.serialId,
-                        product = serial.productDesc,
-                        model = serial.convertForBrandModelColor(),
-                        trackings = serial.tracklist,
-                        value_suffix = serial.value_suffix,
-                        last_measure_value = serial.last_measure_value,
-                        last_measure_date = serial.last_measure_date,
-                        last_cycle_value = serial.last_cycle_value
-                    ),
-                )
+                    _state.value = _state.value.copy(
+                        serialInfo = Act093State.SerialInfo(
+                            iconColor = serial.iconColor,
+                            serialId = serial.serialId,
+                            product = serial.productDesc,
+                            model = serial.convertForBrandModelColor(),
+                            trackings = serial.tracklist,
+                            value_suffix = serial.value_suffix,
+                            last_measure_value = serial.last_measure_value,
+                            last_measure_date = serial.last_measure_date,
+                            last_cycle_value = serial.last_cycle_value
+                        ),
+                    )
 
-                state = _state
-                view.onState(Act093Event.onUpdateScreen)
-            }
+                    state = _state
+                    view.onState(Act093Event.OnUpdateScreen)
+                }
 
             it.isFailed { exception ->
                 view.onState(Act093Event.Toast(exception.message ?: ""))
@@ -71,19 +98,22 @@ class Act093Presenter constructor(
 
         CoroutineScope(Dispatchers.IO).launch {
             getInfoSerial()
+            getDeviceList()
         }
     }
 
     override fun loadTranslation(): HMAux {
         mutableListOf(
-            "act09e_title",
+            "act093_title",
             "last_measure_lbl",
             "last_cycle_lbl",
+            "item_with_problem_lbl",
+            "item_with_change_reached_lbl"
         ).let {
             return ToolBox_Inf.setLanguage(
                 translateResource.context,
                 translateResource.mModule_code,
-                translateResource.nResoure_code,
+                translateResource.mResoure_code,
                 ToolBox_Con.getPreference_Translate_Code(translateResource.context),
                 it
             )

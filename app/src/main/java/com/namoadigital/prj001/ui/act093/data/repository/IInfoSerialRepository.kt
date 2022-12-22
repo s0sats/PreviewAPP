@@ -85,7 +85,7 @@ class IInfoSerialRepository constructor(
     }
 
 
-    override suspend fun getListItems(): Flow<IResult<List<DeviceTpModel>>> {
+    override suspend fun getListItems(): Flow<IResult<MutableList<DeviceTpModel>>> {
         var serial: MD_Product_Serial? = null
         getInfoSerial().last().isSuccess { product_serial ->
             serial = product_serial
@@ -103,7 +103,7 @@ class IInfoSerialRepository constructor(
 
 
             emit(loading(false))
-            emit(success(serialTpDevices))
+            emit(success(serialTpDevices.toMutableList()))
 
         }.namoaCatch(IInfoSerialRepository::class.java.simpleName)
     }

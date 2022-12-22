@@ -5,11 +5,14 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.namoadigital.prj001.databinding.Act093MainBinding
 import com.namoadigital.prj001.ui.act092.ui.Act092_Main
 import com.namoadigital.prj001.ui.act093.Act093Presenter
 import com.namoadigital.prj001.ui.act093.Act093Presenter.Companion.Act093PresenterFactory
 import com.namoadigital.prj001.ui.act093.Contract
+import com.namoadigital.prj001.ui.act093.adapter.Act093Adapter
+import com.namoadigital.prj001.ui.act093.model.DeviceTpModel
 import com.namoadigital.prj001.ui.act093.model.InfoSerialModel.Companion.formatCycleValue
 import com.namoadigital.prj001.ui.act093.model.InfoSerialModel.Companion.formatMeasureValue
 import com.namoadigital.prj001.ui.act093.util.Act093Event
@@ -58,8 +61,12 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
         CoroutineScope(Dispatchers.Main).launch {
             when (state) {
 
-                is Act093Event.onUpdateScreen -> {
+                is Act093Event.OnUpdateScreen -> {
                     onUpdateHeader()
+                }
+
+                is Act093Event.OnUpdateList -> {
+                    initRecyclerView()
                 }
 
                 is Act093Event.Toast -> {
@@ -70,13 +77,38 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
         }
     }
 
+
+    private fun initRecyclerView(
+        list: List<DeviceTpModel> = presenter.state.value.list
+    ) {
+        if (list.isNotEmpty()) {
+
+            val mAdapter = Act093Adapter(
+                list,
+                hmAux_Trans
+            )
+
+            binding.recyclerViewList.apply {
+                adapter = mAdapter
+                visibility = View.VISIBLE
+                layoutManager = LinearLayoutManager(context)
+            }
+
+        } else {
+            binding.recyclerViewList.apply {
+                visibility = View.GONE
+            }
+        }
+
+    }
+
     private fun onUpdateHeader() {
         with(binding) {
 
             val state = presenter.state.value.serialInfo
 
             if (state.iconColor.isNullOrEmpty()) {
-                View.GONE
+                iconSerialColor.visibility = View.GONE
             } else {
                 iconSerialColor.apply {
                     setColorFilter(Color.parseColor(state.iconColor))
@@ -85,7 +117,7 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
             }
 
             if (state.serialId.isNullOrEmpty()) {
-                View.GONE
+                serialId.visibility = View.GONE
             } else {
                 serialId.apply {
                     text = state.serialId
@@ -94,7 +126,7 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
             }
 
             if (state.product.isNullOrEmpty()) {
-                View.GONE
+                productId.visibility = View.GONE
             } else {
                 productId.apply {
                     text = state.product
@@ -103,7 +135,7 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
             }
 
             if (state.model.isNullOrEmpty()) {
-                View.GONE
+                brandModel.visibility = View.GONE
             } else {
                 brandModel.apply {
                     text = state.model
@@ -112,7 +144,7 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
             }
 
             if (state.trackings.isNullOrEmpty()) {
-                View.GONE
+                trackingsText.visibility = View.GONE
             } else {
                 trackingsText.apply {
                     text = state.trackings
@@ -132,7 +164,7 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
             }
 
             if (measureFormatted.isNullOrEmpty()) {
-                View.GONE
+                measureValue.visibility = View.GONE
             } else {
                 measureValue.apply {
                     text = measureFormatted
@@ -140,14 +172,20 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
                 }
             }
 
-            measureUI.visibility = if (measureFormatted.isNullOrEmpty()) {
+            linearLayout6.visibility = if (measureFormatted.isNullOrEmpty()) {
+                View.GONE
+            } else {
+                View.VISIBLE
+            }
+
+            linearLayout5.visibility = if (measureFormatted.isNullOrEmpty()) {
                 View.GONE
             } else {
                 View.VISIBLE
             }
 
             if (state.last_cycle_value.formatCycleValue(state.value_suffix).isNullOrEmpty()) {
-                View.GONE
+                cycleValue.visibility = View.GONE
             } else {
                 cycleValue.apply {
                     text = state.last_cycle_value.formatCycleValue(state.value_suffix)
@@ -159,6 +197,11 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
 
     }
 
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
+    }
+
     override fun initSetup() {
         mResource_Code = ToolBox_Inf.getResourceCode(
             context,
@@ -168,15 +211,26 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
     }
 
     override fun initTrans() {
-        presenter.loadTranslation()
+        hmAux_Trans = presenter.loadTranslation()
     }
 
     override fun initVars() {
         with(binding) {
+            val state = presenter.state.value.serialInfo
 
-            titleMeasure.text = hmAux_Trans["last_measure_lbl"]
-            titleCycle.text = hmAux_Trans["last_cycle_lbl"]
+            if (state.last_cycle_value != null) {
+                titleCycle.text = hmAux_Trans["last_cycle_lbl"]
+                titleCycle.visibility = View.VISIBLE
+            } else {
+                titleCycle.visibility = View.GONE
+            }
 
+            if (state.last_measure_value != null) {
+                titleMeasure.text = hmAux_Trans["last_measure_lbl"]
+                titleMeasure.visibility = View.VISIBLE
+            } else {
+                titleMeasure.visibility = View.GONE
+            }
         }
     }
 

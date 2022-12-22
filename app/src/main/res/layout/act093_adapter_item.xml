@@ -3,10 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:padding="12dp">
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/ballColor"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:src="@drawable/circle_item"
@@ -20,15 +21,16 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView2"
+        app:layout_constraintBottom_toBottomOf="@+id/ballColor"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageView2"
-        app:layout_constraintTop_toTopOf="@+id/imageView2">
+        app:layout_constraintStart_toEndOf="@+id/ballColor"
+        app:layout_constraintTop_toTopOf="@+id/ballColor">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="16dp">
+            android:paddingHorizontal="16dp"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/item_overlined"
@@ -41,13 +43,18 @@
             <TextView
                 android:id="@+id/item_title"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                tools:text="UM TITULO AI" />
 
 
             <TextView
-                android:id="@+id/item_"
+                android:id="@+id/item_support"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                tools:text="Material"
+                style="@style/TextAppearance.Material3.LabelMedium"
+                android:textColor="@color/m3_namoa_onSurfaceVariant" />
+
         </LinearLayout>
 
     </LinearLayout>
