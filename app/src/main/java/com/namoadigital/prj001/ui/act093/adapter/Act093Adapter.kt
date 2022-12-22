@@ -112,7 +112,7 @@ class Act093Adapter constructor(
             if (item.color == R.color.namoa_os_form_problem_red) {
                 header = hmAux["item_with_problem_lbl"]
             } else {
-                header = hmAux["item_with_change_reached_lbl"]
+                header = hmAux["item_with_change_expired_lbl"]
             }
             holder.onBinding(header)
         }

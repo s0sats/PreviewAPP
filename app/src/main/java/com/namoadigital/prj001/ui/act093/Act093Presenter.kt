@@ -107,7 +107,7 @@ class Act093Presenter constructor(
             "last_cycle_lbl",
             "last_update_serial_lbl",
             "item_with_problem_lbl",
-            "item_with_change_reached_lbl"
+            "item_with_change_expired_lbl"
         ).let {
             return ToolBox_Inf.setLanguage(
                 translateResource.context,
