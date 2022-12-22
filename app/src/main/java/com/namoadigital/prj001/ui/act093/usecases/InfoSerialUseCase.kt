@@ -5,7 +5,8 @@ import com.namoadigital.prj001.ui.act093.data.repository.IInfoSerialRepository.C
 import com.namoadigital.prj001.ui.base.NamoaFactory
 
 data class InfoSerialUseCase(
-    val getInfoSerial: GetInfoSerialUseCase
+    val getInfoSerial: GetInfoSerialUseCase,
+    val getDeviceList: GetListDeviceUseCase
 ) {
 
     companion object {
@@ -17,7 +18,8 @@ data class InfoSerialUseCase(
                 val repository = InfoSerialRepositoryFactory(context).build()
 
                 return InfoSerialUseCase(
-                    getInfoSerial = GetInfoSerialUseCase(repository, context)
+                    getInfoSerial = GetInfoSerialUseCase(repository, context),
+                    getDeviceList = GetListDeviceUseCase(repository)
                 )
             }
         }

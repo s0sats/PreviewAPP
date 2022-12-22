@@ -12,6 +12,7 @@ import com.namoadigital.prj001.database.Mapper
 import com.namoadigital.prj001.model.DaoObjReturn
 import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device
 import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device_Item
+import com.namoadigital.prj001.sql.GeOsDeviceMaterialSql_004
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_DeviceDao_Sql_001
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_Device_Item_Sql_003
 import com.namoadigital.prj001.ui.act093.model.DeviceTpModel
@@ -319,8 +320,9 @@ class MD_Product_Serial_Tp_DeviceDao(
         return mdProductSerialTpDevices
     }
 
-    fun getDeviceForSerialInfo(customerCode:Long, productCode: Long, serialCode:Long): List<DeviceTpModel> {
-        val queryHm = query_HM(
+    fun getDeviceForSerialInfo(customerCode:Long, productCode: Long, serialCode:Long): MutableList<DeviceTpModel> {
+        val deviceTpModelList = mutableListOf<DeviceTpModel>()
+        val deviceItemList = query_HM(
             MD_Product_Serial_Tp_Device_Item_Sql_003(
                 customerCode,
                 productCode,
@@ -328,7 +330,45 @@ class MD_Product_Serial_Tp_DeviceDao(
             ).toSqlQuery()
         )
 
-        return listOf()
+        for (item in deviceItemList) {
+
+            val materialList = query_HM(
+                GeOsDeviceMaterialSql_004(
+                    customerCode,
+                    productCode,
+                    serialCode,
+                    item[MD_Product_Serial_Tp_Device_ItemDao.DEVICE_TP_CODE] ?: "",
+                    item[MD_Product_Serial_Tp_Device_ItemDao.ITEM_CHECK_CODE] ?: "",
+                    item[MD_Product_Serial_Tp_Device_ItemDao.ITEM_CHECK_SEQ] ?: ""
+                ).toSqlQuery()
+            )
+            //
+            val deviceTpModel = DeviceTpModel(
+                item[MD_Product_Serial_Tp_Device_ItemDao.CUSTOMER_CODE]!!.toInt(),
+                item[MD_Product_Serial_Tp_Device_ItemDao.PRODUCT_CODE]!!.toInt(),
+                item[MD_Product_Serial_Tp_Device_ItemDao.SERIAL_CODE]!!.toInt(),
+                item[MD_Product_Serial_Tp_Device_ItemDao.DEVICE_TP_CODE]!!.toInt(),
+                item[MdDeviceTpDao.DEVICE_TP_DESC]!!,
+                item[MD_Product_Serial_Tp_Device_ItemDao.ITEM_CHECK_CODE]!!.toInt(),
+                item[MD_Product_Serial_Tp_Device_ItemDao.ITEM_CHECK_SEQ]!!.toInt(),
+                item[MdItemCheckDao.ITEM_CHECK_DESC]!!,
+                item[MD_Product_Serial_Tp_Device_ItemDao.ITEM_CHECK_STATUS]!!,
+                item[MD_Product_Serial_Tp_Device_ItemDao.CRITICAL_ITEM]!!.toInt(),
+                getMaterialList(materialList)
+            )
+            //
+            deviceTpModelList.add(deviceTpModel)
+        }
+
+        return deviceTpModelList
+    }
+
+    private fun getMaterialList(materialList: MutableList<HMAux>): String {
+        var formattedMaterialList = ""
+        materialList.forEach {
+            formattedMaterialList += "${it[MD_All_ProductDao.PRODUCT_DESC]}: ${it[MD_Product_Serial_Tp_Device_Item_MaterialDao.QTY]} ${it[MD_All_ProductDao.UN]}\n"
+        }
+        return formattedMaterialList.replaceAfterLast("\n", "")
     }
 
     /**

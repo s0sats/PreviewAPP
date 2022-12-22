@@ -14,6 +14,6 @@ interface InfoSerialRepository {
 
     suspend fun getPreferences(): Flow<IResult<SerialModel>>
     suspend fun getValueSuffixProduct(customerCode: Long, code: Int): Flow<IResult<String?>>
-    suspend fun getListItems(): Flow<IResult<List<DeviceTpModel>>>
+    suspend fun getListItems(): Flow<IResult<MutableList<DeviceTpModel>>>
     suspend fun getListDeviceTp(): Flow<IResult<List<MdDeviceTp>>>
 }

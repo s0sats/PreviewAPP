@@ -21,42 +21,8 @@ import kotlinx.coroutines.flow.last
 
 class GetListDeviceUseCase constructor(
     private val repository: InfoSerialRepository
-) : UseCases<Unit, DeviceTpModel> {
-    override suspend fun invoke(input: Unit): Flow<IResult<DeviceTpModel>> {
-        return flow {
-
-            repository.getListItems()
-                .collect {
-                    it.isLoading { loading, message ->
-                        emit(loading(loading, message))
-                    }
-
-                    it.isSuccess { device ->
-
-                        val itemList = mutableListOf<MD_Product_Serial_Tp_Device_Item>()
-
-                        val materialList =
-                            mutableListOf<MD_Product_Serial_Tp_Device_Item_Material>()
-                        itemList.map { m -> m.material }.forEach { list ->
-                            list.forEach { material ->
-                                materialList.add(material)
-                            }
-                        }
-                        var deviceTpList: List<MdDeviceTp>? = null
-                        repository.getListDeviceTp().last().isSuccess { md ->
-                            deviceTpList = md
-                        }
-
-                        var newList = mutableListOf<DeviceTpModel>()
-
-
-                    }
-
-                    it.isFailed { exception ->
-                        emit(failed(exception))
-                    }
-
-                }
-        }.namoaCatch("GetListDeviceUseCase")
+) : UseCases<Unit, MutableList<DeviceTpModel>> {
+    override suspend fun invoke(input: Unit): Flow<IResult<MutableList<DeviceTpModel>>> {
+        return repository.getListItems()
     }
 }
