@@ -175,6 +175,7 @@ class WSTicketCreation:
                     }
                     if (!tkTicket.getSerial().isEmpty()) {
                         for (serial in tkTicket.getSerial()) {
+                            serial.log_date = ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")
                             serialDao.addUpdateTmp(serial)
                             if (!serial.structure.isEmpty()) {
                                 serialDao.addFullStructure(serial)

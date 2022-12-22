@@ -32,7 +32,6 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         setSupportActionBar(binding.topAppBar)
-        iniUIFooter(Constant.ACT093, hmAux_Trans)
         initView {
             presenter.setView(this)
         }
@@ -52,6 +51,11 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
     }
 
     override val presenter: Act093Presenter by lazy {
+        mResource_Code = ToolBox_Inf.getResourceCode(
+            context,
+            mModule_Code,
+            ConstantBaseApp.ACT093
+        )
         Act093PresenterFactory(context, mModule_Code, mResource_Code).build()
     }
     override val binding: Act093MainBinding by lazy {
@@ -283,11 +287,7 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
     }
 
     override fun initSetup() {
-        mResource_Code = ToolBox_Inf.getResourceCode(
-            context,
-            mModule_Code,
-            ConstantBaseApp.ACT093
-        )
+
     }
 
     override fun initTrans() {
@@ -320,6 +320,7 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
                 titleMeasure.visibility = View.GONE
             }
         }
+        iniUIFooter(Constant.ACT093, hmAux_Trans)
     }
 
     override fun initAction() {

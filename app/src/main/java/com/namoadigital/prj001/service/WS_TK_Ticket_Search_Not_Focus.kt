@@ -252,6 +252,7 @@ public class WS_TK_Ticket_Search_Not_Focus : IntentService("WS_TK_Ticket_Search_
                     }
                     if (!tkTicket.getSerial().isEmpty()) {
                         for (serial in tkTicket.getSerial()) {
+                            serial.log_date = ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")
                             serialDao.addUpdateTmp(serial)
                             if (!serial.structure.isEmpty()) {
                                 serialDao.addFullStructure(serial)

@@ -247,6 +247,7 @@ public class WS_TK_Ticket_Download extends IntentService {
                 //tratativa para serial e sua estrutura.
                 if(!tkTicket.getSerial().isEmpty()){
                     for(MD_Product_Serial serial: tkTicket.getSerial()){
+                        serial.setLog_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
                         serialDao.addUpdateTmp(serial);
                         if(!serial.getStructure().isEmpty()) {
                             serialDao.addFullStructure(serial);

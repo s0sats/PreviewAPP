@@ -822,6 +822,7 @@ public class WS_TK_Ticket_Save extends IntentService {
                 }
                 if(!tk_ticket.getSerial().isEmpty()){
                     for(MD_Product_Serial serial: tk_ticket.getSerial()){
+                        serial.setLog_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
                         serialDao.addUpdateTmp(serial);
                         if(!serial.getStructure().isEmpty()) {
                             serialDao.addFullStructure(serial);
