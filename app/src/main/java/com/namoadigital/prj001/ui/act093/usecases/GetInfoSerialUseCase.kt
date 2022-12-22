@@ -12,7 +12,6 @@ import com.namoadigital.prj001.ui.act093.data.repository.InfoSerialRepository
 import com.namoadigital.prj001.ui.act093.model.InfoSerialModel
 import com.namoadigital.prj001.ui.act093.model.toInfoSerialModel
 import com.namoadigital.prj001.util.ToolBox_Inf
-import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
@@ -24,7 +23,6 @@ class GetInfoSerialUseCase constructor(
     private val context: Context
 ) : UseCases<Unit, InfoSerialModel> {
 
-    @OptIn(InternalCoroutinesApi::class)
     override suspend fun invoke(input: Unit): Flow<IResult<InfoSerialModel>> {
         return flow {
             repository.getInfoSerial().collect {
@@ -46,7 +44,7 @@ class GetInfoSerialUseCase constructor(
                                 value_suffix = suffix
                             }
 
-                        val infoModel = serial.toInfoSerialModel().copy(
+                        val infoModel = serial.toInfoSerialModel(context).copy(
                             iconColor = serialModel?.classColor,
                             value_suffix = value_suffix,
                             last_measure_date = ToolBox_Inf.millisecondsToString(
@@ -58,7 +56,8 @@ class GetInfoSerialUseCase constructor(
                         emit(success(infoModel))
                     } ?: emit(
                         success(
-                            serial.toInfoSerialModel().copy(iconColor = serialModel?.classColor)
+                            serial.toInfoSerialModel(context)
+                                .copy(iconColor = serialModel?.classColor)
                         )
                     )
 

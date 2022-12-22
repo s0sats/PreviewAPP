@@ -297,12 +297,11 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
     override fun initVars() {
         with(binding) {
             val state = presenter.state.value.serialInfo
-            val lastUpdate = presenter.state.value.lastUpdateSerial
-            if (lastUpdate.isNullOrEmpty()) {
+            if (state.lastUpdateSerial.isNullOrEmpty()) {
                 lastUpdateSerial.visibility = View.GONE
             } else {
                 lastUpdateSerial.apply {
-                    text = "${hmAux_Trans["last_update_serial_lbl"]}: $lastUpdate"
+                    text = "${hmAux_Trans["last_update_serial_lbl"]}: ${state.lastUpdateSerial}"
                     visibility = View.VISIBLE
                 }
             }
