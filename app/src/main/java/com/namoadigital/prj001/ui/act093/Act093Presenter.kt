@@ -107,6 +107,7 @@ class Act093Presenter constructor(
             "act093_title",
             "last_measure_lbl",
             "last_cycle_lbl",
+            "last_update_serial_lbl",
             "item_with_problem_lbl",
             "item_with_change_reached_lbl"
         ).let {

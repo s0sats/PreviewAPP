@@ -4,6 +4,7 @@ import com.namoadigital.prj001.ui.act093.model.DeviceTpModel
 
 data class Act093State(
     val isLoading: Boolean = false,
+    val lastUpdateSerial: String? = null,
     val list: List<DeviceTpModel> = emptyList(),
     val serialInfo: SerialInfo = SerialInfo()
 ) {

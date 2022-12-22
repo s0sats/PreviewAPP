@@ -195,6 +195,8 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
 
         }
 
+        initVars()
+
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -217,6 +219,15 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
     override fun initVars() {
         with(binding) {
             val state = presenter.state.value.serialInfo
+            val lastUpdate = presenter.state.value.lastUpdateSerial
+            if (lastUpdate.isNullOrEmpty()) {
+                lastUpdateSerial.visibility = View.GONE
+            } else {
+                lastUpdateSerial.apply {
+                    text = "${hmAux_Trans["last_update_serial_lbl"]}: $lastUpdate"
+                    visibility = View.VISIBLE
+                }
+            }
 
             if (state.last_cycle_value != null) {
                 titleCycle.text = hmAux_Trans["last_cycle_lbl"]
