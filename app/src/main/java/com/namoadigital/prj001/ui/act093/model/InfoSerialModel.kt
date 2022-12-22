@@ -14,6 +14,7 @@ data class InfoSerialModel(
     val model: String? = null,
     val color: String? = null,
     val tracklist: String? = null,
+    val infoAdd: String? = null,
     val last_measure_value: Int? = null,
     val last_measure_date: String? = null,
     val last_cycle_value: Int? = null,
@@ -42,6 +43,15 @@ data class InfoSerialModel(
                 else "$this"
             }
             else -> null
+        }
+
+        fun MutableList<String?>.formatInfoAdd(): String? {
+            val list = mutableListOf<String>()
+            forEach {
+                if (!it.isNullOrEmpty()) list.add(it)
+            }
+
+            return if (list.isEmpty()) null else list.joinToString(SEPARATOR)
         }
     }
 

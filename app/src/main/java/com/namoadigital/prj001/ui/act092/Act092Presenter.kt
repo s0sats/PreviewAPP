@@ -330,6 +330,10 @@ class Act092Presenter constructor(
                         executeNFormPDFGeneration(context, action, position)
                     }
                 }else{
+                    setSeletedActionInfosIntoFilterParam(
+                        action.actionType,
+                        "",
+                    )
                     view.onState(
                         Act092UiEvent.CallAct(
                             Act011_Main::class.java,
@@ -344,8 +348,6 @@ class Act092Presenter constructor(
     private fun getFormBundle(myAction: MyActions): Bundle {
         val splippedPk = myAction.getSplippedPk()
         val bundle = Bundle()
-        //Seta dados da action selecionado no filterParam
-        setSeletedActionInfosIntoFilterParam(myAction.actionType, myAction.processPk)
         //
         bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT092)
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)

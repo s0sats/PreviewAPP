@@ -10,6 +10,7 @@ import com.namoadigital.prj001.core.UseCases
 import com.namoadigital.prj001.ui.act092.model.SerialModel
 import com.namoadigital.prj001.ui.act093.data.repository.InfoSerialRepository
 import com.namoadigital.prj001.ui.act093.model.InfoSerialModel
+import com.namoadigital.prj001.ui.act093.model.InfoSerialModel.Companion.formatInfoAdd
 import com.namoadigital.prj001.ui.act093.model.toInfoSerialModel
 import com.namoadigital.prj001.util.ToolBox_Inf
 import kotlinx.coroutines.flow.Flow
@@ -30,10 +31,16 @@ class GetInfoSerialUseCase constructor(
                 it.isSuccess { serial ->
                     var serialModel: SerialModel? = null
                     var value_suffix: String? = null
+                    var infoAdd = mutableListOf<String?>()
 
                     repository.getPreferences().first().isSuccess { model ->
                         serialModel = model
                     }
+
+
+                    infoAdd.add(serial.add_inf1)
+                    infoAdd.add(serial.add_inf2)
+                    infoAdd.add(serial.add_inf3)
 
                     serial.measure_tp_code?.let { code ->
                         repository.getValueSuffixProduct(
@@ -50,14 +57,18 @@ class GetInfoSerialUseCase constructor(
                             last_measure_date = ToolBox_Inf.millisecondsToString(
                                 ToolBox_Inf.dateToMilliseconds(serial.last_measure_date),
                                 ToolBox_Inf.nlsDateFormat(context)
-                            )
+                            ),
+                            infoAdd = infoAdd.formatInfoAdd()
                         )
 
                         emit(success(infoModel))
                     } ?: emit(
                         success(
                             serial.toInfoSerialModel(context)
-                                .copy(iconColor = serialModel?.classColor)
+                                .copy(
+                                    iconColor = serialModel?.classColor,
+                                    infoAdd = infoAdd.formatInfoAdd()
+                                )
                         )
                     )
 
