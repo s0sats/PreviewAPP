@@ -368,7 +368,7 @@ class MD_Product_Serial_Tp_DeviceDao(
         materialList.forEach {
             formattedMaterialList += "${it[MD_All_ProductDao.PRODUCT_DESC]}: ${it[MD_Product_Serial_Tp_Device_Item_MaterialDao.QTY]} ${it[MD_All_ProductDao.UN]}\n"
         }
-        return formattedMaterialList.replaceAfterLast("\n", "")
+        return formattedMaterialList.removeSuffix("\n")
     }
 
     /**
