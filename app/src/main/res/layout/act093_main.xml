@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.act092.ui.Act092_Main">
+    tools:context=".ui.act093.ui.Act093_Main">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
@@ -35,7 +35,7 @@
         android:layout_height="wrap_content"
         android:background="@color/m3_namoa_surface2"
         android:orientation="vertical"
-        android:padding="16dp"
+        android:padding="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
@@ -57,6 +57,7 @@
             <TextView
                 android:id="@+id/serialId"
                 style="@style/TextAppearance.Material3.TitleLarge"
+                android:textColor="@color/m3_namoa_onSurface"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:text="UM SERIAL" />
@@ -77,103 +78,130 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <TextView
-            android:id="@+id/trackingsText"
-            style="@style/TextAppearance.Material3.BodySmall"
-            android:textColor="@color/m3_namoa_onSurfaceVariant"
+        <LinearLayout
+            android:id="@+id/info_and_tracking_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="12dp" />
+            android:orientation="vertical"
+            android:paddingTop="12dp">
 
+            <TextView
+                android:id="@+id/infosAddText"
+                style="@style/TextAppearance.Material3.BodySmall"
+                android:textColor="@color/m3_namoa_onSurfaceVariant"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/trackingsText"
+                style="@style/TextAppearance.Material3.BodySmall"
+                android:textColor="@color/m3_namoa_onSurfaceVariant"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
     </LinearLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/measureUI"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="16dp"
-        android:paddingBottom="16dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/ui_footer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout4">
 
         <LinearLayout
-            android:id="@+id/last_update_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:gravity="end">
+            android:layout_height="0dp"
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/last_update_serial"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/measureUI"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAlignment="textEnd"
-                android:textColor="@color/m3_namoa_outline"
-                style="@style/TextAppearance.Material3.LabelSmall"
-                tools:text="Last Updated In:" />
+                android:paddingHorizontal="16dp"
+                android:paddingBottom="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout4">
 
-        </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/last_update_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:paddingBottom="16dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
-            android:id="@+id/linearLayout6"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/linearLayout5"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/last_update_layout">
+                    <TextView
+                        android:id="@+id/last_update_serial"
+                        style="@style/TextAppearance.Material3.LabelSmall"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="textEnd"
+                        android:textColor="@color/m3_namoa_outline"
+                        tools:text="Last Updated In:" />
 
-            <TextView
-                android:id="@+id/titleMeasure"
-                style="@style/TextAppearance.Material3.BodySmall"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:text="lastText"
-                android:textColor="@color/m3_namoa_onBackground" />
+                </LinearLayout>
 
-            <TextView
-                android:id="@+id/measureValue"
-                style="@style/TextAppearance.Material3.BodyLarge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/m3_namoa_onBackground" />
-        </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/linearLayout6"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/linearLayout5"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/last_update_layout">
+
+                    <TextView
+                        android:id="@+id/titleMeasure"
+                        style="@style/TextAppearance.Material3.BodySmall"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/m3_namoa_onBackground"
+                        tools:text="lastText" />
+
+                    <TextView
+                        android:id="@+id/measureValue"
+                        style="@style/TextAppearance.Material3.BodyLarge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/m3_namoa_onBackground" />
+                </LinearLayout>
 
 
-        <LinearLayout
-            android:id="@+id/linearLayout5"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/linearLayout6"
-            app:layout_constraintTop_toBottomOf="@+id/last_update_layout">
+                <LinearLayout
+                    android:id="@+id/linearLayout5"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/linearLayout6"
+                    app:layout_constraintTop_toBottomOf="@+id/last_update_layout">
 
-            <TextView
-                android:id="@+id/titleCycle"
-                style="@style/TextAppearance.Material3.BodySmall"
-                tools:text="lastCycle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/m3_namoa_onBackground" />
+                    <TextView
+                        android:id="@+id/titleCycle"
+                        style="@style/TextAppearance.Material3.BodySmall"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/m3_namoa_onBackground"
+                        tools:text="lastCycle" />
 
-            <TextView
-                android:id="@+id/cycleValue"
-                style="@style/TextAppearance.Material3.BodyLarge"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/m3_namoa_onBackground" />
-        </LinearLayout>
+                    <TextView
+                        android:id="@+id/cycleValue"
+                        style="@style/TextAppearance.Material3.BodyLarge"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/m3_namoa_onBackground" />
+                </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     <ProgressBar
@@ -186,20 +214,23 @@
         android:indeterminateTint="@color/m3_namoa_surfaceTint"
         android:indeterminateTintMode="src_in"
         android:visibility="visible"
+        android:layout_gravity="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/measureUI" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewList"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/ui_footer"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/measureUI"
-        tools:listitem="@layout/act093_adapter_item"
-        android:visibility="gone" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_constraintBottom_toTopOf="@+id/ui_footer"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/measureUI"
+                tools:listitem="@layout/act093_adapter_item"
+                android:visibility="gone" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
     <include
         android:id="@+id/ui_footer"

@@ -70,6 +70,7 @@ class Act093Presenter constructor(
                             product = serial.productDesc,
                             model = serial.convertForBrandModelColor(),
                             trackings = serial.tracklist,
+                            infoAdd = serial.infoAdd,
                             value_suffix = serial.value_suffix,
                             last_measure_value = serial.last_measure_value,
                             last_measure_date = serial.last_measure_date,

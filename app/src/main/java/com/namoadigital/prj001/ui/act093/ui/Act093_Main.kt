@@ -220,6 +220,18 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
                 }
             }
 
+            infoAndTrackingLayout.visibility =
+                if (state.trackings.isNullOrEmpty() && state.infoAdd.isNullOrEmpty()) View.GONE else View.VISIBLE
+
+            if (state.infoAdd.isNullOrEmpty()) {
+                infosAddText.visibility = View.GONE
+            } else {
+                infosAddText.apply {
+                    visibility = View.VISIBLE
+                    text = state.infoAdd
+                }
+            }
+
             if (state.trackings.isNullOrEmpty()) {
                 trackingsText.visibility = View.GONE
             } else {
