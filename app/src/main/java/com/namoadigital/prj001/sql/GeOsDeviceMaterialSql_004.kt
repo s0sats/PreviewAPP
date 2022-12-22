@@ -20,9 +20,9 @@ class GeOsDeviceMaterialSql_004(
                           mtp.${MD_Product_Serial_Tp_Device_Item_MaterialDao.DEVICE_TP_CODE},
                           mtp.${MD_Product_Serial_Tp_Device_Item_MaterialDao.ITEM_CHECK_CODE},
                           mtp.${MD_Product_Serial_Tp_Device_Item_MaterialDao.ITEM_CHECK_SEQ},
-                          mdp.${MD_Product_Serial_Tp_Device_Item_MaterialDao.QTY},
+                          mtp.${MD_Product_Serial_Tp_Device_Item_MaterialDao.QTY},
                           mdp.${MD_All_ProductDao.UN},
-                          mdt.${MD_All_ProductDao.PRODUCT_DESC}
+                          mdp.${MD_All_ProductDao.PRODUCT_DESC}
                        FROM
                             ${MD_Product_Serial_Tp_Device_Item_MaterialDao.TABLE} mtp     
                        INNER JOIN  ${MD_All_ProductDao.TABLE} mdp 

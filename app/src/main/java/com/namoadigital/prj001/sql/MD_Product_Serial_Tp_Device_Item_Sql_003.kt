@@ -27,15 +27,15 @@ class MD_Product_Serial_Tp_Device_Item_Sql_003(
                        FROM
                             ${MD_Product_Serial_Tp_Device_ItemDao.TABLE} tdi     
                        INNER JOIN  ${MdItemCheckDao.TABLE} mic 
-                               ON  tp.${MD_Product_Serial_Tp_Device_ItemDao.CUSTOMER_CODE} = mic.${MdItemCheckDao.CUSTOMER_CODE}
-                              AND  tp.${MD_Product_Serial_Tp_Device_ItemDao.ITEM_CHECK_CODE} = mic.${MdItemCheckDao.ITEM_CHECK_CODE}
+                               ON  tdi.${MD_Product_Serial_Tp_Device_ItemDao.CUSTOMER_CODE} = mic.${MdItemCheckDao.CUSTOMER_CODE}
+                              AND  tdi.${MD_Product_Serial_Tp_Device_ItemDao.ITEM_CHECK_CODE} = mic.${MdItemCheckDao.ITEM_CHECK_CODE}
                        INNER JOIN  ${MdDeviceTpDao.TABLE} mdt 
-                               ON  tp.${MD_Product_Serial_Tp_Device_ItemDao.CUSTOMER_CODE} = mdt.${MdDeviceTpDao.CUSTOMER_CODE}
-                              AND  tp.${MD_Product_Serial_Tp_Device_ItemDao.DEVICE_TP_CODE} = mdt.${MdDeviceTpDao.DEVICE_TP_CODE}
+                               ON  tdi.${MD_Product_Serial_Tp_Device_ItemDao.CUSTOMER_CODE} = mdt.${MdDeviceTpDao.CUSTOMER_CODE}
+                              AND  tdi.${MD_Product_Serial_Tp_Device_ItemDao.DEVICE_TP_CODE} = mdt.${MdDeviceTpDao.DEVICE_TP_CODE}
                        WHERE
-                             i.${MD_Product_Serial_Tp_Device_ItemDao.CUSTOMER_CODE} = $customerCode  
-                            AND i.${MD_Product_Serial_Tp_Device_ItemDao.PRODUCT_CODE} = $productCode                           
-                            AND i.${MD_Product_Serial_Tp_Device_ItemDao.SERIAL_CODE} = $serialCode                                                            
+                             tdi.${MD_Product_Serial_Tp_Device_ItemDao.CUSTOMER_CODE} = $customerCode  
+                            AND tdi.${MD_Product_Serial_Tp_Device_ItemDao.PRODUCT_CODE} = $productCode                           
+                            AND tdi.${MD_Product_Serial_Tp_Device_ItemDao.SERIAL_CODE} = $serialCode                                                            
                     """.trimMargin()
 
         return query
