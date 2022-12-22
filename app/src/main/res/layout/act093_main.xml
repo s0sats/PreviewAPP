@@ -112,6 +112,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAlignment="textEnd"
+                android:textColor="@color/m3_namoa_outline"
+                style="@style/TextAppearance.Material3.LabelSmall"
                 tools:text="Last Updated In:" />
 
         </LinearLayout>

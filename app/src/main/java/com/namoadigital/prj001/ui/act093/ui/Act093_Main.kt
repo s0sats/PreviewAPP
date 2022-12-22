@@ -178,11 +178,12 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
                 View.VISIBLE
             }
 
-            linearLayout5.visibility = if (measureFormatted.isNullOrEmpty()) {
-                View.GONE
-            } else {
-                View.VISIBLE
-            }
+            linearLayout5.visibility =
+                if (state.last_cycle_value.formatCycleValue(state.value_suffix).isNullOrEmpty()) {
+                    View.GONE
+                } else {
+                    View.VISIBLE
+                }
 
             if (state.last_cycle_value.formatCycleValue(state.value_suffix).isNullOrEmpty()) {
                 cycleValue.visibility = View.GONE

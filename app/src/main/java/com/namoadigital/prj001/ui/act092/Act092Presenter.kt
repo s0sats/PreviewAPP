@@ -154,7 +154,6 @@ class Act092Presenter constructor(
 
 
     override fun goToInfoSerial() {
-        saveFilterLeftActivity()
         view.onState(Act092UiEvent.CallAct(Act093_Main::class.java, Bundle().apply {
             putSerializable(
                 MyActionFilterParam.MY_ACTION_FILTER_PARAM,
@@ -980,7 +979,15 @@ class Act092Presenter constructor(
         }
     }
 
+    override fun saveFilterWhenLeftActivity() {
+        saveFilterLeftActivity()
+    }
+
     override fun processNewFormClick(context: Context) {
+        _serialModel.value = _serialModel.value.copy(
+            lastSelectedPk = null,
+            lastSelectActionType = null
+        )
         if (ToolBox_Inf.isSiteBlockedOrLimitExecutionReached(context)) {
             view.onState(
                 Act092UiEvent.OpenDialog(

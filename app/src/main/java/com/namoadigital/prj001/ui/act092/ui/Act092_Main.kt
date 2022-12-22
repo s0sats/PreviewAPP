@@ -361,6 +361,7 @@ class Act092_Main : BaseActivityMvp
     private fun Act092MainBinding.clearTextFilter() {
         editSerialFilter.isEnabled = false
         editSerialFilter.text?.clear()
+        filterText.value = ""
         editSerialFilter.isEnabled = true
     }
 
@@ -430,6 +431,7 @@ class Act092_Main : BaseActivityMvp
                     openDialog(state.dialogType)
                 }
                 is Act092UiEvent.CallAct -> {
+                    presenter.saveFilterWhenLeftActivity()
                     callAct(state.classe, state.bundle)
                 }
 
