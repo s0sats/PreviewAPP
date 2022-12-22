@@ -365,8 +365,13 @@ class MD_Product_Serial_Tp_DeviceDao(
 
     private fun getMaterialList(materialList: MutableList<HMAux>): String {
         var formattedMaterialList = ""
+
         materialList.forEach {
-            formattedMaterialList += "${it[MD_All_ProductDao.PRODUCT_DESC]}: ${it[MD_Product_Serial_Tp_Device_Item_MaterialDao.QTY]} ${it[MD_All_ProductDao.UN]}\n"
+            val fQty = it[MD_Product_Serial_Tp_Device_Item_MaterialDao.QTY]?.toFloat()?: 0.0f
+            formattedMaterialList += "${it[MD_All_ProductDao.PRODUCT_DESC]}: ${ToolBox_Inf.convertFloatToBigDecimalString(
+                fQty,
+                true
+            )} ${it[MD_All_ProductDao.UN]}\n"
         }
         return formattedMaterialList.removeSuffix("\n")
     }
