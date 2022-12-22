@@ -322,7 +322,11 @@ class MyActionsAdapter constructor(
                 } else {
                     backgroundTintList =
                         ColorStateList.valueOf(resources.getColor(R.color.m3_namoa_primary))
-                    text = hmAuxTrans["btn_open_action_lbl"]
+                    if (MyActions.MY_ACTION_TYPE_TICKET_CACHE == myAction.actionType) {
+                        text = hmAuxTrans["btn_download_action_lbl"]
+                    }else {
+                        text = hmAuxTrans["btn_open_action_lbl"]
+                    }
                     setTextColor(resources.getColor(R.color.m3_namoa_surface))
                     binding.myActionsItemTvFormNoFinish.visibility = View.GONE
                 }

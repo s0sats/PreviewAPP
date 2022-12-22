@@ -164,6 +164,7 @@ class Act083_Main_Presenter constructor(
         transList.add("alert_form_os_requires_serial_msg")
         //
         transList.add("btn_open_action_lbl")
+        transList.add("btn_download_action_lbl")
         transList.add("btn_continue_action_lbl")
         transList.add("btn_select_serial_info_lbl")
         //
