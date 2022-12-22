@@ -22,12 +22,12 @@ class GeOsDeviceMaterialSql_004(
                           mtp.${MD_Product_Serial_Tp_Device_Item_MaterialDao.ITEM_CHECK_SEQ},
                           mtp.${MD_Product_Serial_Tp_Device_Item_MaterialDao.QTY},
                           mdp.${MD_All_ProductDao.UN},
-                          mdp.${MD_All_ProductDao.PRODUCT_DESC}
+                          case when mdp.${MD_All_ProductDao.PRODUCT_CODE} == mdp.${MD_All_ProductDao.PRODUCT_ID} then mdp.${MD_All_ProductDao.PRODUCT_DESC} else mdp.${MD_All_ProductDao.PRODUCT_DESC} || ' (' || mdp.${MD_All_ProductDao.PRODUCT_ID} || ')'  end ${MD_All_ProductDao.PRODUCT_DESC}
                        FROM
                             ${MD_Product_Serial_Tp_Device_Item_MaterialDao.TABLE} mtp     
-                       INNER JOIN  ${MD_All_ProductDao.TABLE} mdp 
+                       LEFT JOIN  ${MD_All_ProductDao.TABLE} mdp 
                                ON  mtp.${MD_Product_Serial_Tp_Device_Item_MaterialDao.CUSTOMER_CODE} = mdp.${MD_All_ProductDao.CUSTOMER_CODE}
-                              AND  mtp.${MD_Product_Serial_Tp_Device_Item_MaterialDao.PRODUCT_CODE} = mdp.${MD_All_ProductDao.PRODUCT_CODE}
+                              AND  mtp.${MD_Product_Serial_Tp_Device_Item_MaterialDao.MATERIAL_CODE} = mdp.${MD_All_ProductDao.PRODUCT_CODE}
                        WHERE
                              mtp.${MD_Product_Serial_Tp_Device_Item_MaterialDao.CUSTOMER_CODE} = $customerCode  
                             AND mtp.${MD_Product_Serial_Tp_Device_Item_MaterialDao.PRODUCT_CODE} = $productCode                           
@@ -35,6 +35,7 @@ class GeOsDeviceMaterialSql_004(
                             AND mtp.${MD_Product_Serial_Tp_Device_Item_MaterialDao.DEVICE_TP_CODE} = $deviceTpCode                                                            
                             AND mtp.${MD_Product_Serial_Tp_Device_Item_MaterialDao.ITEM_CHECK_CODE} = $itemCheckCode                                                            
                             AND mtp.${MD_Product_Serial_Tp_Device_Item_MaterialDao.ITEM_CHECK_SEQ} = $itemCheckSeq                                                                                                                        
+                            AND mdp.${MD_All_ProductDao.SPARE_PART} = 1                                                                                                                        
                     """.trimMargin()
 
         return query

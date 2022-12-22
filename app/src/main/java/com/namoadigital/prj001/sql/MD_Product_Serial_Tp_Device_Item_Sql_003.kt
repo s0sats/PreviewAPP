@@ -23,7 +23,8 @@ class MD_Product_Serial_Tp_Device_Item_Sql_003(
                           tdi.${MD_Product_Serial_Tp_Device_ItemDao.ITEM_CHECK_STATUS},
                           tdi.${MD_Product_Serial_Tp_Device_ItemDao.CRITICAL_ITEM},
                           mdt.${MdDeviceTpDao.DEVICE_TP_DESC},
-                          mic.${MdItemCheckDao.ITEM_CHECK_DESC}
+                          case when tdi.${MD_Product_Serial_Tp_Device_ItemDao.ITEM_CHECK_CODE} == 0 then tdi.${MD_Product_Serial_Tp_Device_ItemDao.MANUAL_DESC} else mic.${MdItemCheckDao.ITEM_CHECK_DESC} end ${MdItemCheckDao.ITEM_CHECK_DESC}
+                          
                        FROM
                             ${MD_Product_Serial_Tp_Device_ItemDao.TABLE} tdi     
                        INNER JOIN  ${MdItemCheckDao.TABLE} mic 
