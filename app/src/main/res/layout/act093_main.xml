@@ -19,7 +19,7 @@
             style="@style/Widget.Material3.Toolbar.Surface"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/m3_namoa_primary"
+            android:background="?attr/colorPrimaryDark"
             android:ellipsize="end"
             app:navigationIcon="?attr/homeAsUpIndicator"
             app:navigationIconTint="@color/m3_namoa_surface"
@@ -227,6 +227,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/measureUI"
+                android:overScrollMode="never"
                 tools:listitem="@layout/act093_adapter_item"
                 android:visibility="gone" />
         </LinearLayout>

@@ -6,7 +6,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item> -->
-
+        <item name="android:windowBackground">@color/m3_namoa_background</item>
         <item name="colorPrimary">@color/namoa_color_light_blue</item>
         <item name="colorPrimaryDark">@color/namoa_color_dark_blue</item>
         <item name="colorAccent">@color/namoa_color_light_green3</item>

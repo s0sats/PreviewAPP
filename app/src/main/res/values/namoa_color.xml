@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="m3_namoa_background">#F8FDFF</color>
+    <color name="m3_namoa_background">#FDFCFC</color>
     <color name="m3_namoa_onBackground">#001F26</color>
     <color name="m3_namoa_inversePrimary">#61D4FF</color>
     <color name="m3_namoa_onPrimary">#FFFFFF</color>
@@ -39,4 +39,6 @@
     <color name="m3_namoa_secondary60">#7E949F</color>
     <color name="m3_namoa_extended_verdeDone_seed">#808D0A</color>
     <color name="m3_namoa_extended_LaranjaObrigatorio_color">#855400</color>
+    <color name="m3_namoa_secondary80">#B4CAD5</color>
+    <color name="m3_namoa_sys_color_inverse_primary">#9ECDE3</color>
 </resources>
