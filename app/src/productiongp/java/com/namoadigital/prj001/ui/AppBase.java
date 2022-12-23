@@ -26,6 +26,7 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.GENERIC_CHANNEL_ID;
 import static com.namoadigital.prj001.util.ConstantBaseApp.IMG_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PENDENCY_CHANNEL_ID;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SO_EXPRESS_JSON_PATH;
+import static com.namoadigital.prj001.util.ConstantBaseApp.OTHER_ACTIONS_JSON_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME_FULL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_PATH;
@@ -100,6 +101,7 @@ public class AppBase extends Application {
         UNSENT_IMG_PATH = IMG_PATH + "/unsentImgs";
         TICKET_JSON_PATH = DB_PATH + "/ticket";
         SO_EXPRESS_JSON_PATH = DB_PATH + "/expressSO";
+        OTHER_ACTIONS_JSON_PATH = DB_PATH +  "/otherActions";
         CUSTOMER_SITE_LICENSE_JSON_PATH = DB_PATH + "/customerSiteLicense";
 
         ZIP_NAME = "namoa_sms.zip";
