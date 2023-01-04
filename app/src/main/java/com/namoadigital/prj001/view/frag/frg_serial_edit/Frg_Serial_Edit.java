@@ -2412,7 +2412,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         //
         mdProductSerial.setEdit_mode(viewMode);
         //
-//        mdProductSerial.setLog_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+       mdProductSerial.setLog_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
         //
         if(ss_site_reason.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
             mdProductSerial.setReason_code(Integer.parseInt(ss_site_reason.getmValue().get(SearchableSpinner.CODE)));
@@ -3394,6 +3394,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         transListFrag.add("alert_no_site_option_ttl");
         transListFrag.add("alert_no_site_option_msg");
         transListFrag.add("to_top_ttl");
+        transListFrag.add("class_lbl");
         transListFrag.add("class_ttl");
         transListFrag.add("alert_serial_edition_not_allowed_ttl");
         transListFrag.add("alert_serial_edition_not_allowed_msg");

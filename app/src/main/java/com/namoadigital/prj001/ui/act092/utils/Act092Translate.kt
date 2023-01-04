@@ -12,6 +12,9 @@ object Act092Translate {
     const val HINT_FILTER = "hint_filter_lbl"
     const val PLACEHOLDER_FILTER = "placeholder_filter_lbl"
 
+    const val OTHER_ACTIONS = "btn_other_actions"
+    const val NEW_ACTION = "btn_new_action"
+
 
     //presenter
     const val ALERT_SEND_FINISH_TTL = "alert_send_finish_ttl"

@@ -1282,7 +1282,9 @@ class Act092Presenter constructor(
             "other_steps_available_lbl",
             "cell_download_action_pdf_lbl",
             Act092Translate.HINT_FILTER,
-            Act092Translate.PLACEHOLDER_FILTER
+            Act092Translate.PLACEHOLDER_FILTER,
+            Act092Translate.OTHER_ACTIONS,
+            Act092Translate.NEW_ACTION
         ).let {
             return ToolBox_Inf.setLanguage(
                 translateResource.context,
