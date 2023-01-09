@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.migrations
 
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.database.MigrationSQLite
@@ -66,15 +67,44 @@ val MigrationV1 = object : MigrationSQLite(1, 2){
 val MigrationV2 = object : MigrationSQLite(2, 3) {
 
     override fun migrate(db: SQLiteDatabase) {
-        db.execSQL(""" ALTER TABLE [tk_ticket] ADD [class_code] int;""".trimIndent())
-        db.execSQL(""" ALTER TABLE [tk_ticket] ADD [class_id] text collate nocase;""".trimIndent())
-        db.execSQL(""" ALTER TABLE [tk_ticket] ADD [class_color] text collate nocase;""".trimIndent())
-        db.execSQL(""" ALTER TABLE [tk_ticket] ADD [class_available] int;""".trimIndent())
-        db.execSQL(""" ALTER TABLE [tk_ticket_cache] ADD [class_code] int;""".trimIndent())
-        db.execSQL(""" ALTER TABLE [tk_ticket_cache] ADD [class_id] text collate nocase;""".trimIndent())
-        db.execSQL(""" ALTER TABLE [tk_ticket_cache] ADD [class_color] text collate nocase;""".trimIndent())
-        db.execSQL(""" ALTER TABLE [tk_ticket_cache] ADD [class_available] int;""".trimIndent())
-        db.execSQL(""" DROP TABLE [ge_namoa_table_test];""".trimIndent())
+        if(!isFieldExist(db,"tk_ticket", "class_code")){
+            db.execSQL(""" ALTER TABLE [tk_ticket] ADD [class_code] int;""".trimIndent())
+        }
+        if(!isFieldExist(db,"tk_ticket", "class_id")){
+            db.execSQL(""" ALTER TABLE [tk_ticket] ADD [class_id] text collate nocase;""".trimIndent())
+        }
+        if(!isFieldExist(db,"tk_ticket", "class_color")){
+            db.execSQL(""" ALTER TABLE [tk_ticket] ADD [class_color] text collate nocase;""".trimIndent())
+        }
+        if(!isFieldExist(db,"tk_ticket", "class_available")){
+            db.execSQL(""" ALTER TABLE [tk_ticket] ADD [class_available] int;""".trimIndent())
+        }
+
+        if(!isFieldExist(db,"tk_ticket_cache", "class_code")){
+            db.execSQL(""" ALTER TABLE [tk_ticket_cache] ADD [class_code] int;""".trimIndent())
+        }
+        if(!isFieldExist(db,"tk_ticket_cache", "class_id")){
+            db.execSQL(""" ALTER TABLE [tk_ticket_cache] ADD [class_id] text collate nocase;""".trimIndent())
+        }
+        if(!isFieldExist(db,"tk_ticket_cache", "class_color")){
+            db.execSQL(""" ALTER TABLE [tk_ticket_cache] ADD [class_color] text collate nocase;""".trimIndent())
+        }
+        if(!isFieldExist(db,"tk_ticket_cache", "class_available")){
+            db.execSQL(""" ALTER TABLE [tk_ticket_cache] ADD [class_available] int;""".trimIndent())
+        }
+    }
+
+    fun isFieldExist(db: SQLiteDatabase, tableName: String, fieldName: String): Boolean {
+        var isExist = false
+        val res: Cursor = db.rawQuery("PRAGMA table_info($tableName)", null)
+        res.moveToFirst()
+        do {
+            val currentColumn: String = res.getString(1)
+            if (currentColumn == fieldName) {
+                isExist = true
+            }
+        } while (res.moveToNext())
+        return isExist
     }
 }
 
