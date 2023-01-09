@@ -293,6 +293,8 @@ class Act092_Main : BaseActivityMvp
             act092TextLayout.apply {
                 hint = hmAux_Trans[Act092Translate.HINT_FILTER]
             }
+            btnOtherSerial.text = hmAux_Trans["btn_other_actions"]
+            btnCreateAction.text = hmAux_Trans["btn_new_action"]
         }
         iniUIFooter(Constant.ACT092, hmAux_Trans)
     }

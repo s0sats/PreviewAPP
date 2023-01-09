@@ -1281,6 +1281,8 @@ class Act092Presenter constructor(
             "cell_item_in_process_lbl",
             "other_steps_available_lbl",
             "cell_download_action_pdf_lbl",
+            "btn_other_actions",
+            "btn_new_action",
             Act092Translate.HINT_FILTER,
             Act092Translate.PLACEHOLDER_FILTER
         ).let {
