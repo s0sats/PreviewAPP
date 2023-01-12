@@ -324,10 +324,10 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         //
         binding.tvServiceListLbl.setText(hmAux_Trans.get("express_order_pack_service_list_lbl"));
         binding.tvAddPackServicesPlaceholder.setText(hmAux_Trans.get("express_order_pack_service_empty_list_lbl"));
-        binding.tvPartner.setText(hmAux_Trans.get("ss_partner_hint"));
-        binding.ssPartner.setmShowLabel(false);
+        binding.ssPartner.setmShowLabel(true);
         binding.ssPartner.setmCanClean(false);
-        binding.ssPartner.setmHint(hmAux_Trans.get("ss_partner_hint"));
+        binding.ssPartner.setmRequired(true);
+        binding.ssPartner.setmLabel(hmAux_Trans.get("ss_partner_hint"));
         binding.ssPartner.setmTitle(hmAux_Trans.get("ss_partner_ttl"));
         //
         //Add controles no array list.
@@ -504,8 +504,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     public void setPartner(HMAux partner) {
         this.md_partner = getMdPartnerFromHMAux(partner);
         binding.ssPartner.setmValue(partner);
-        binding.tilPartner.setBackground(ContextCompat.getDrawable(context,R.drawable.shape_ok));
-        binding.tvPartner.setVisibility(View.VISIBLE);
+
     }
 
     private MD_Partner getMdPartnerFromHMAux(HMAux partner) {
@@ -529,7 +528,9 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     @Override
     public void setPartnerList(ArrayList<HMAux> partnerList) {
         binding.ssPartner.setmOption(partnerList);
-        binding.ssPartner.requestFocus();
+        if (partnerList.size() == 1) {
+            binding.ssPartner.requestFocus();
+        }
     }
 
     private void refreshAddInfoVisibility(){
@@ -831,12 +832,8 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
             public void onItemPostSelected(HMAux hmAux) {
                 if (hmAux.size() > 0) {
                     md_partner = getMdPartnerFromHMAux(hmAux);
-                    binding.tilPartner.setBackground(ContextCompat.getDrawable(context, R.drawable.shape_ok));
-                    binding.tvPartner.setVisibility(View.VISIBLE);
                 }else{
                     md_partner = null;
-                    binding.tilPartner.setBackground(ContextCompat.getDrawable(context, R.drawable.shape_error));
-                    binding.tvPartner.setVisibility(View.GONE);
                 }
                 //Valida liberação do botão
                 validateEnableFinalizeBtn();
@@ -1158,7 +1155,6 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     @Override
     public void disablePartnerSelector() {
         binding.ssPartner.setmEnabled(false);
-        binding.tilPartner.setVisibility(View.GONE);
         binding.mketPack.requestFocus();
     }
 

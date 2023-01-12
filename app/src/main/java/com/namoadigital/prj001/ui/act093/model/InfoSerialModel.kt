@@ -18,6 +18,7 @@ data class InfoSerialModel(
     val last_measure_value: Int? = null,
     val last_measure_date: String? = null,
     val last_cycle_value: Int? = null,
+    val last_cycle_date: String? = null,
     val value_suffix: String? = null,
     val lastUpdateSerial: String? = null,
 ) {

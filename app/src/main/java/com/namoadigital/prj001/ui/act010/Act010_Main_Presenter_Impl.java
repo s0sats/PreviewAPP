@@ -24,7 +24,6 @@ import com.namoadigital.prj001.model.GeOs;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device;
 import com.namoadigital.prj001.model.MdOrderType;
-import com.namoadigital.prj001.model.MeMeasureTp;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Ticket_Creation;
 import com.namoadigital.prj001.service.WSTicketCreation;
@@ -308,7 +307,7 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
             return measureTpDao.getByString(
                     new MeMeasureTpSql_001(
                             serial.getCustomer_code(),
-                            serial.getMeasure_tp_code()
+                            serial.getMeasure_tp_code() != null ? serial.getMeasure_tp_code() : -1
                     ).toSqlQuery()
             ) != null ;
         }

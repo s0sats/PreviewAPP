@@ -156,7 +156,7 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@color/m3_namoa_outline_variant" />
+                    android:background="@color/m3_namoa_outlineVariant" />
 
             </LinearLayout>
 

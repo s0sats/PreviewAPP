@@ -278,11 +278,22 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
                     View.VISIBLE
                 }
 
-            if (state.last_cycle_value.formatCycleValue(state.value_suffix).isNullOrEmpty()) {
+
+            val cycleFormatted = if (state.last_cycle_value != null) {
+                if (!state.last_cycle_date.isNullOrEmpty()) {
+                    "${state.last_measure_value.formatMeasureValue(state.value_suffix)} (${state.last_measure_date})"
+                } else {
+                    state.last_measure_value.formatMeasureValue(state.value_suffix)
+                }
+            } else {
+                null
+            }
+
+            if (cycleFormatted.isNullOrEmpty()) {
                 cycleValue.visibility = View.GONE
             } else {
                 cycleValue.apply {
-                    text = state.last_cycle_value.formatCycleValue(state.value_suffix)
+                    text = cycleFormatted
                     visibility = View.VISIBLE
                 }
             }

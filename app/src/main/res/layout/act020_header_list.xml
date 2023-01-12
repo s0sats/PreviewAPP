@@ -10,7 +10,7 @@
         android:id="@+id/lineSeparator"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/m3_namoa_outline_variant"
+        android:background="@color/m3_namoa_outlineVariant"
         android:layout_marginBottom="4dp"/>
 
     <TextView

@@ -113,8 +113,12 @@ public class MD_Product_Serial implements Serializable {
     @SerializedName("last_measure_value") private Double last_measure_value;
     @Nullable
     @SerializedName("last_measure_date") private String last_measure_date;
-    @SerializedName("last_cycle_value") private Float last_cycle_value;
-    @SerializedName("device_tp_code_main") private Integer device_tp_code_main;
+    @SerializedName("last_cycle_value")
+    private Float last_cycle_value;
+    @SerializedName("last_cycle_date")
+    private String last_cycle_date;
+    @SerializedName("device_tp_code_main")
+    private Integer device_tp_code_main;
     @Expose
     @SerializedName("structure")
     private List<MD_Product_Serial_Structure> structure = new ArrayList<>();
@@ -704,6 +708,16 @@ public class MD_Product_Serial implements Serializable {
     public void setLast_measure_date(@Nullable String last_measure_date) {
         this.last_measure_date = last_measure_date;
     }
+
+    @Nullable
+    public String getLast_cycle_date() {
+        return last_cycle_date;
+    }
+
+    public void setLast_cycle_date(@Nullable String last_cycle_date) {
+        this.last_cycle_date = last_cycle_date;
+    }
+
 
     public Float getLast_cycle_value() {
         return last_cycle_value;

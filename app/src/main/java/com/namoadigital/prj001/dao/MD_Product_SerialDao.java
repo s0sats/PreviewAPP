@@ -116,17 +116,18 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
     public static final String LAST_MEASURE_VALUE = "last_measure_value";
     public static final String LAST_MEASURE_DATE = "last_measure_date";
     public static final String LAST_CYCLE_VALUE = "last_cycle_value";
+    public static final String LAST_CYCLE_DATE = "last_cycle_date";
 
 
     public static String[] columns = {CUSTOMER_CODE, PRODUCT_CODE, PRODUCT_ID, PRODUCT_DESC, SERIAL_CODE, SERIAL_TMP,
             SERIAL_ID, SITE_CODE, ZONE_CODE, LOCAL_CODE, SITE_CODE_OWNER, BRAND_CODE,
             MODEL_CODE, COLOR_CODE, SEGMENT_CODE, CATEGORY_PRICE_CODE, ADD_INF1,
             ADD_INF2, ADD_INF3, ONLY_POSITION, UPDATE_REQUIRED, FLAG_OFFLINE,
-            SYNC_PROCESS, SITE_ID, SITE_DESC,SITE_REASON_CODE, ZONE_ID, ZONE_DESC, LOCAL_ID, BRAND_ID, BRAND_DESC, MODEL_ID, MODEL_DESC, COLOR_ID,
+            SYNC_PROCESS, SITE_ID, SITE_DESC, SITE_REASON_CODE, ZONE_ID, ZONE_DESC, LOCAL_ID, BRAND_ID, BRAND_DESC, MODEL_ID, MODEL_DESC, COLOR_ID,
             COLOR_DESC, SEGMENT_ID, SEGMENT_DESC, CATEGORY_PRICE_ID, CATEGORY_PRICE_DESC, CLASS_CODE, CLASS_ID, CLASS_TYPE,
             CLASS_COLOR, CLASS_AVAILABLE, INBOUND_PREFIX, INBOUND_CODE, INBOUND_ID, INBOUND_CONF_DATE, MOVE_PREFIX, MOVE_CODE, MOVE_GROUP_CODE,
             OUTBOUND_PREFIX, OUTBOUND_CODE, OUTBOUND_ID, PRODUCT_IO_CONTROL, LOCAL_CONTROL, SITE_IO_CONTROL, INBOUND_AUTO_CREATE, SITE_RESTRICTION,
-            EDIT_MODE, PROFILE, LOG_DATE, REASON_CODE,LAST_CYCLE_VALUE
+            EDIT_MODE, PROFILE, LOG_DATE, REASON_CODE, LAST_CYCLE_VALUE, LAST_CYCLE_DATE
     };
 
     public MD_Product_SerialDao(Context context, String DB_NAME, int DB_VERSION) {
@@ -1347,15 +1348,20 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             }else{
                 md_product_serial.setLast_measure_value(cursor.getDouble(cursor.getColumnIndex(LAST_MEASURE_VALUE)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(LAST_MEASURE_DATE))){
+            if (cursor.isNull(cursor.getColumnIndex(LAST_MEASURE_DATE))) {
                 md_product_serial.setLast_measure_date(null);
-            }else{
+            } else {
                 md_product_serial.setLast_measure_date(cursor.getString(cursor.getColumnIndex(LAST_MEASURE_DATE)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(LAST_CYCLE_VALUE))){
+            if (cursor.isNull(cursor.getColumnIndex(LAST_CYCLE_VALUE))) {
                 md_product_serial.setLast_cycle_value(null);
-            }else{
+            } else {
                 md_product_serial.setLast_cycle_value(cursor.getFloat(cursor.getColumnIndex(LAST_CYCLE_VALUE)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(LAST_CYCLE_DATE))) {
+                md_product_serial.setLast_cycle_date(null);
+            } else {
+                md_product_serial.setLast_cycle_date(cursor.getString(cursor.getColumnIndex(LAST_CYCLE_DATE)));
             }
 
             //
@@ -1471,6 +1477,7 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             contentValues.put(MEASURE_TP_CODE, md_product_serial.getMeasure_tp_code());
             contentValues.put(DEVICE_TP_CODE_MAIN, md_product_serial.getDevice_tp_code_main());
             contentValues.put(LAST_CYCLE_VALUE, md_product_serial.getLast_cycle_value());
+            contentValues.put(LAST_CYCLE_DATE, md_product_serial.getLast_measure_date());
             contentValues.put(LAST_MEASURE_VALUE, md_product_serial.getLast_measure_value());
             contentValues.put(LAST_MEASURE_DATE, md_product_serial.getLast_measure_date());
 

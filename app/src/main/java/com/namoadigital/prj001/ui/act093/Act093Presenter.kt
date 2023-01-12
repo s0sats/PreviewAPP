@@ -75,6 +75,7 @@ class Act093Presenter constructor(
                             last_measure_value = serial.last_measure_value,
                             last_measure_date = serial.last_measure_date,
                             last_cycle_value = serial.last_cycle_value,
+                            last_cycle_date = serial.last_cycle_date,
                             lastUpdateSerial = serial.lastUpdateSerial,
                         ),
                     )

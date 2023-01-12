@@ -58,6 +58,7 @@
                 android:id="@+id/serialId"
                 style="@style/TextAppearance.Material3.TitleLarge"
                 android:textColor="@color/m3_namoa_onSurface"
+                android:layout_marginEnd="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:text="UM SERIAL" />

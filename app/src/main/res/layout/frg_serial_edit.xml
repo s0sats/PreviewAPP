@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,12 +9,100 @@
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+    <LinearLayout
+        android:id="@+id/serial_layout_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/m3_namoa_surface5"
+        android:orientation="vertical"
+        android:padding="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <LinearLayout
+                android:id="@+id/exists_serial_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/iconSerialColor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="null"
+                    android:src="@drawable/ic_baseline_arrow_right_24"
+                    app:tint="@color/text_black" />
+
+                <TextView
+                    android:id="@+id/frg_serial_edit_tv_serial_ttl"
+                    style="@style/TextAppearance.Material3.TitleLarge"
+                    android:textColor="@color/m3_namoa_onSurface"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp" />
+
+            </LinearLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/text_input_serial_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                style="@style/NamoaTheme3.TextInputLayout.Outlined"
+                android:paddingHorizontal="8dp"
+                android:visibility="visible">
+
+                <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                    android:id="@+id/frg_serial_edit_mket_serial"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textMultiLine"
+                    app:mBARCODE="true"
+                    app:mNFC="false"
+                    app:mOCR="false" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/frg_serial_edit_tv_product_desc_value"
+                style="@style/TextAppearance.Material3.BodySmall"
+                android:textColor="@color/m3_namoa_onSurfaceVariant"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/frg_serial_edit_tv_brand_model_color"
+                style="@style/TextAppearance.Material3.BodySmall"
+                android:textColor="@color/m3_namoa_onSurfaceVariant"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/frg_serial_edit_tv_trackings"
+                style="@style/TextAppearance.Material3.BodySmall"
+                android:paddingTop="16dp"
+                android:textColor="@color/m3_namoa_onSurfaceVariant"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+    </LinearLayout>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:paddingHorizontal="16dp">
 
-        <ScrollView
+        <androidx.core.widget.NestedScrollView
             android:id="@+id/frg_serial_edit_sv_serial"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -21,8 +110,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="10dp">
+                android:orientation="vertical">
+
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -30,7 +119,8 @@
                     android:layout_marginBottom="5dp"
                     android:background="@color/namoa_color_gray"
                     android:orientation="vertical"
-                    android:paddingBottom="5dp">
+                    android:paddingBottom="5dp"
+                    android:visibility="gone">
 
 
                     <!--Product Info LL -->
@@ -105,7 +195,7 @@
                             </LinearLayout>
 
                             <TextView
-                                android:id="@+id/frg_serial_edit_tv_product_desc_value"
+                                android:id="@+id/frg_serial_edit_tv_product_desc_value_old"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:paddingBottom="2dp"
@@ -124,7 +214,7 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:id="@+id/frg_serial_edit_tv_brand_model_color"
+                            android:id="@+id/frg_serial_edit_tv_brand_model_color_old"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
@@ -141,7 +231,7 @@
                         android:orientation="horizontal"
                         >
                         <TextView
-                            android:id="@+id/frg_serial_edit_tv_serial_ttl"
+                            android:id="@+id/frg_serial_edit_tv_serial_ttl_old"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -153,15 +243,15 @@
                             android:textSize="@dimen/font_size_title_md" />
 
                         <ImageView
-                            android:id="@+id/frg_serial_edit_iv_serial_dialog_log"
+                            android:id="@+id/frg_serial_edit_iv_serial_dialog_log_old"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="end|center_vertical"
                             android:layout_marginEnd="13dp"
                             android:layout_marginStart="2dp"
                             android:src="@drawable/ic_clock_chat"
-                            android:tint="@color/light_to_dark_blue_color"
-                            android:visibility="visible" />
+                            android:visibility="visible"
+                            app:tint="@color/light_to_dark_blue_color" />
                      <ImageView
                             android:id="@+id/frg_serial_edit_iv_offline"
                             android:layout_width="wrap_content"
@@ -178,20 +268,6 @@
                         android:orientation="horizontal"
                         android:paddingEnd="5dp"
                         android:paddingStart="5dp">
-
-                        <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-                            android:id="@+id/frg_serial_edit_mket_serial"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:background="@drawable/namoa_bg_1"
-                            android:inputType="textMultiLine"
-                            android:padding="10dp"
-                            android:textSize="@dimen/font_size_title"
-                            android:textStyle="bold"
-                            app:mBARCODE="true"
-                            app:mNFC="false"
-                            app:mOCR="false" />
 
                         <ImageView
                             android:id="@+id/frg_serial_edit_iv_serial_dialog_info"
@@ -216,7 +292,7 @@
                         android:padding="5dp">
 
                         <Button
-                            android:id="@+id/frg_serial_edit_btn_action"
+                            android:id="@+id/frg_serial_edit_btn_action_old"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="5dp"
@@ -236,40 +312,223 @@
                     android:id="@+id/frg_serial_edit_ll_serial_full_desc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
                     android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/frg_header_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/measureUI"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingTop="16dp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/linearLayout4">
+
+                            <LinearLayout
+                                android:id="@+id/measure_layout"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toStartOf="@+id/cycleLayout"
+                                app:layout_constraintHorizontal_bias="0.5"
+                                app:layout_constraintStart_toStartOf="parent">
+
+                                <TextView
+                                    android:id="@+id/titleMeasure"
+                                    style="@style/TextAppearance.Material3.BodySmall"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/m3_namoa_onBackground"
+                                    tools:text="lastText" />
+
+                                <TextView
+                                    android:id="@+id/measureValue"
+                                    style="@style/TextAppearance.Material3.BodyLarge"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/m3_namoa_onBackground" />
+                            </LinearLayout>
+
+
+                            <LinearLayout
+                                android:id="@+id/cycleLayout"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintHorizontal_bias="0.5"
+                                app:layout_constraintStart_toEndOf="@+id/measure_layout">
+
+                                <TextView
+                                    android:id="@+id/titleCycle"
+                                    style="@style/TextAppearance.Material3.BodySmall"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/m3_namoa_onBackground"
+                                    tools:text="lastCycle" />
+
+                                <TextView
+                                    android:id="@+id/cycleValue"
+                                    style="@style/TextAppearance.Material3.BodyLarge"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/m3_namoa_onBackground" />
+                            </LinearLayout>
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/frg_serial_edit_ll_io_info"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:paddingTop="16dp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/linearLayout4">
+
+
+                            <LinearLayout
+                                android:id="@+id/inbound_date_layout"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintHorizontal_bias="0.5"
+                                app:layout_constraintStart_toEndOf="@+id/inboud_layout"
+                                app:layout_constraintTop_toTopOf="parent">
+
+                                <TextView
+                                    android:id="@+id/frg_serial_edit_tv_inbound_date_conf_lbl"
+                                    style="@style/TextAppearance.Material3.BodySmall"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/m3_namoa_onBackground"
+                                    tools:text="lastCycle" />
+
+                                <TextView
+                                    android:id="@+id/frg_serial_edit_mket_inbound_date_conf_val"
+                                    style="@style/TextAppearance.Material3.BodyLarge"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/m3_namoa_onBackground" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/inboud_layout"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical"
+                                app:layout_constraintEnd_toStartOf="@+id/inbound_date_layout"
+                                app:layout_constraintHorizontal_bias="0.5"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent">
+
+                                <TextView
+                                    android:id="@+id/frg_serial_edit_tv_inbound_lbl"
+                                    style="@style/TextAppearance.Material3.BodySmall"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/m3_namoa_onBackground"
+                                    tools:text="lastText" />
+
+                                <TextView
+                                    android:id="@+id/frg_serial_edit_mket_inbound_id"
+                                    style="@style/TextAppearance.Material3.BodyLarge"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/m3_namoa_onBackground" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/move_code_io_layout"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical"
+                                android:paddingTop="16dp"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/inboud_layout">
+
+                                <TextView
+                                    android:id="@+id/frg_serial_edit_tv_move_code_lbl"
+                                    style="@style/TextAppearance.Material3.BodySmall"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/m3_namoa_onBackground"
+                                    tools:text="lastText" />
+
+                                <TextView
+                                    android:id="@+id/frg_serial_edit_mket_move_code_val"
+                                    style="@style/TextAppearance.Material3.BodyLarge"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/m3_namoa_onBackground" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/outbound_layout"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical"
+                                android:paddingTop="16dp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/move_code_io_layout">
+
+                                <TextView
+                                    android:id="@+id/frg_serial_edit_tv_outbound_lbl"
+                                    style="@style/TextAppearance.Material3.BodySmall"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/m3_namoa_onBackground"
+                                    tools:text="lastText" />
+
+                                <TextView
+                                    android:id="@+id/frg_serial_edit_mket_outbound_id"
+                                    style="@style/TextAppearance.Material3.BodyLarge"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/m3_namoa_onBackground" />
+                            </LinearLayout>
+
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/m3_namoa_outlineVariant"
+                            android:layout_marginVertical="16dp" />
+                    </LinearLayout>
 
                     <LinearLayout
                         android:id="@+id/frg_serial_edit_ll_class"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="15dp"
-                        android:background="@color/namoa_color_gray"
-                        android:orientation="vertical"
-                        android:padding="5dp">
+                        android:orientation="vertical">
 
                         <TextView
                             android:id="@+id/frg_serial_edit_tv_class_ttl"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:padding="5dp"
+                            android:paddingVertical="5dp"
                             android:text="Class - Trad"
-                            android:textSize="@dimen/font_size_item_md"
-                            android:textStyle="bold" />
+                            style="@style/TextAppearance.Material3.TitleSmall"
+                            android:textColor="@color/m3_namoa_onSurfaceVariant" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
-
-                            <ImageView
-                                android:id="@+id/frg_serial_edit_iv_class_icon"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:padding="5dp"
-                                android:src="@drawable/ic_archive_black_24dp" />
 
                             <com.namoa_digital.namoa_library.ctls.SearchableSpinner
                                 android:id="@+id/frg_serial_edit_ss_class"
@@ -277,7 +536,6 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginBottom="2dp"
                                 android:gravity="center_vertical"
-                                style="@style/TextAppearance.Material3.BodyLarge"
                                 android:text="Class -Trad" />
 
                         </LinearLayout>
@@ -288,25 +546,51 @@
                         android:id="@+id/frg_serial_edit_ll_serial_location"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/namoa_color_gray"
-                        android:orientation="vertical"
-                        android:padding="5dp">
+                        android:orientation="vertical">
 
-                        <TextView
-                            android:id="@+id/frg_serial_edit_tv_serial_location_ttl"
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/m3_namoa_outlineVariant"
+                            android:layout_marginVertical="16dp" />
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:padding="5dp"
-                            android:text="Location"
-                            android:textSize="@dimen/font_size_item_md"
-                            android:textStyle="bold"
-                            />
+                            android:paddingBottom="8dp">
+
+                            <TextView
+                                android:id="@+id/frg_serial_edit_tv_serial_location_ttl"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:paddingVertical="5dp"
+                                android:text="Location"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                android:textColor="@color/m3_namoa_onSurfaceVariant"
+                                style="@style/TextAppearance.Material3.TitleSmall" />
+
+                            <ImageView
+                                android:id="@+id/frg_serial_edit_iv_serial_dialog_log"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="end|center_vertical"
+                                android:layout_marginEnd="10dp"
+                                android:background="@drawable/my_action_toogle_default"
+                                android:padding="10dp"
+                                android:src="@drawable/ic_clock_chat"
+                                app:tint="@color/m3_namoa_onSurfaceVariant"
+                                android:visibility="visible"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <com.namoa_digital.namoa_library.ctls.SearchableSpinner
                             android:id="@+id/frg_serial_edit_ss_site"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="2dp"
                             android:gravity="center_vertical"
                             android:text="Site" />
 
@@ -353,14 +637,13 @@
                             android:id="@+id/frg_serial_edit_ss_site_zone"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="5dp"
+                            android:paddingVertical="8dp"
                             android:text="Zone" />
 
                         <com.namoa_digital.namoa_library.ctls.SearchableSpinner
                             android:id="@+id/frg_serial_edit_ss_site_zone_local"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="5dp"
                             android:text="Local" />
 
                         <com.namoa_digital.namoa_library.ctls.SearchableSpinner
@@ -373,38 +656,52 @@
 
                     </LinearLayout>
 
+
                     <LinearLayout
-                            android:id="@+id/frg_serial_edit_ll_serial_tracking"
+                        android:id="@+id/frg_serial_edit_ll_serial_tracking"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <View
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:background="@color/namoa_color_gray"
-                            android:paddingBottom="8dp">
-                        <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal">
+                            android:layout_height="1dp"
+                            android:background="@color/m3_namoa_outlineVariant"
+                            android:layout_marginVertical="16dp" />
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
                             <TextView
-                                    android:id="@+id/frg_serial_edit_tv_serial_tracking_ttl"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:padding="5dp"
-                                    android:text="Tracking"
-                                    android:textSize="@dimen/font_size_item_md" />
+                                android:id="@+id/frg_serial_edit_tv_serial_tracking_ttl"
+                                style="@style/TextAppearance.Material3.TitleSmall"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:paddingVertical="5dp"
+                                android:text="Tracking"
+                                android:textColor="@color/m3_namoa_onSurfaceVariant"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
 
                             <ImageView
-                                    android:id="@+id/frg_serial_edit_iv_add_tracking"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginEnd="12dp"
-                                    android:paddingBottom="4dp"
-                                    android:paddingLeft="15dp"
-                                    android:paddingRight="15dp"
-                                    android:paddingTop="4dp"
-                                    android:src="@drawable/ic_adicionar_tracking_number_states" />
+                                android:id="@+id/frg_serial_edit_iv_add_tracking"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="end|center_vertical"
+                                android:layout_marginEnd="10dp"
+                                android:background="@drawable/my_action_toogle_default"
+                                android:padding="10dp"
+                                android:src="@drawable/ic_add_black_24px"
+                                android:visibility="visible"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:tint="@color/m3_namoa_onSurfaceVariant" />
 
-                        </LinearLayout>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <LinearLayout
                                 android:id="@+id/frg_serial_edit_ll_tracking_container"
@@ -419,50 +716,29 @@
                         android:id="@+id/frg_serial_edit_ll_serial_properties"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="15dp"
-                        android:layout_marginBottom="15dp"
-                        android:background="@color/namoa_color_gray"
-                        android:orientation="vertical"
-                        android:padding="5dp">
+                        android:orientation="vertical">
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/m3_namoa_outlineVariant"
+                            android:layout_marginVertical="16dp" />
 
                         <TextView
                             android:id="@+id/frg_serial_edit_tv_serial_properties_ttl"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:padding="5dp"
-                            android:text="Properties"
-                            android:textSize="@dimen/font_size_item_md"
-                            android:textStyle="bold"
-                            />
-
-                        <com.namoa_digital.namoa_library.ctls.SearchableSpinner
-                            android:id="@+id/frg_serial_edit_ss_brand"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="5dp"
-                            android:gravity="center_vertical"
-                            android:hint="Brand" />
-
-                        <com.namoa_digital.namoa_library.ctls.SearchableSpinner
-                            android:id="@+id/frg_serial_edit_ss_brand_model"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="5dp"
-                            android:gravity="center_vertical"
-                            android:hint="Model" />
-
-                        <com.namoa_digital.namoa_library.ctls.SearchableSpinner
-                            android:id="@+id/frg_serial_edit_ss_brand_color"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="5dp"
-                            android:hint="Color" />
+                            style="@style/TextAppearance.Material3.TitleSmall"
+                            android:textColor="@color/m3_namoa_onSurfaceVariant"
+                            android:paddingVertical="5dp"
+                            android:text="Properties" />
 
                         <com.namoa_digital.namoa_library.ctls.SearchableSpinner
                             android:id="@+id/frg_serial_edit_ss_segment"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="5dp"
+                            android:paddingVertical="8dp"
+
                             android:gravity="center_vertical"
                             android:hint="Segment" />
 
@@ -470,17 +746,15 @@
                             android:id="@+id/frg_serial_edit_ss_category_price"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="5dp"
                             android:hint="Category Price" />
 
+                        <!--NAO USA-->
                         <LinearLayout
                             android:id="@+id/frg_serial_edit_ll_product_properties"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="5dp"
-                            android:layout_marginLeft="5dp"
                             android:orientation="vertical"
-                            android:visibility="visible">
+                            android:visibility="gone">
 
                             <LinearLayout
                                 android:id="@+id/frg_serial_edit_ll_require_serial"
@@ -508,16 +782,16 @@
 
                             </LinearLayout>
 
-                            <View
-                                android:layout_width="2dp"
-                                android:layout_height="match_parent" />
-
                             <LinearLayout
                                 android:id="@+id/frg_serial_edit_ll_allow_new"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:orientation="horizontal"
                                 android:paddingTop="2dp">
+
+                                <View
+                                    android:layout_width="2dp"
+                                    android:layout_height="match_parent" />
 
                                 <TextView
                                     android:id="@+id/frg_serial_edit_tv_allow_lbl"
@@ -537,153 +811,156 @@
                                     android:textColor="@color/namoa_color_orange" />
                             </LinearLayout>
                         </LinearLayout>
-
+                        <!--NAO USA-->
                     </LinearLayout>
+
+
+                    <LinearLayout
+                        android:id="@+id/brand_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/m3_namoa_outlineVariant"
+                            android:layout_marginVertical="16dp" />
+
+                        <TextView
+                            android:id="@+id/frg_serial_edit_tv_serial_brand_model_color_ttl"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingBottom="9dp"
+                            android:text="Marca, Modelo e Cor"
+                            android:textColor="@color/m3_namoa_onSurfaceVariant"
+                            style="@style/TextAppearance.Material3.TitleSmall" />
+
+                        <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+                            android:id="@+id/frg_serial_edit_ss_brand"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:hint="Brand" />
+
+                        <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+                            android:id="@+id/frg_serial_edit_ss_brand_model"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:paddingVertical="8dp"
+                            android:hint="Model" />
+
+                        <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+                            android:id="@+id/frg_serial_edit_ss_brand_color"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Color" />
+                    </LinearLayout>
+
 
                     <LinearLayout
                         android:id="@+id/frg_serial_edit_ll_serial_add_info"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="15dp"
-                        android:background="@color/namoa_color_gray"
-                        android:orientation="vertical"
-                        android:padding="5dp">
+                        android:paddingBottom="15dp"
+                        android:orientation="vertical">
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/m3_namoa_outlineVariant"
+                            android:layout_marginVertical="16dp" />
 
                         <TextView
                             android:id="@+id/frg_serial_edit_tv_serial_add_info_ttl"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:padding="5dp"
-                            android:text="Additional Info"
-                            android:textSize="@dimen/font_size_item_md"
-                            android:textStyle="bold"/>
+                            android:paddingVertical="5dp"
+                            android:textColor="@color/m3_namoa_onSurfaceVariant"
+                            style="@style/TextAppearance.Material3.TitleSmall"
+                            android:text="Additional Info" />
 
-
-                        <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                        <com.google.android.material.textfield.TextInputLayout
                             android:id="@+id/frg_serial_edit_et_info1"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="5dp"
-                            android:gravity="center_vertical"
-                            android:hint=""
-                            android:inputType="text"
-                            android:minHeight="30dp"
-                            android:padding="10dp"
-                            app:mBARCODE="false"
-                            app:mNFC="false"
-                            app:mOCR="false"
-                            android:maxLength="100"
-                        />
+                            android:layout_height="match_parent"
+                            style="@style/NamoaTheme3.TextInputLayout.Outlined"
+                            android:paddingHorizontal="2dp">
 
-                        <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                            <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:inputType="text"
+                                android:textColorHint="@color/m3_namoa_onSurface"
+                                app:mBARCODE="false"
+                                app:mNFC="false"
+                                app:mOCR="false"
+                                android:maxLength="100" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
                             android:id="@+id/frg_serial_edit_et_info2"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="5dp"
-                            android:clickable="true"
-                            android:gravity="center_vertical"
-                            android:hint=""
-                            android:inputType="text"
-                            android:minHeight="30dp"
-                            android:padding="10dp"
-                            app:mBARCODE="false"
-                            app:mNFC="false"
-                            app:mOCR="false"
-                            android:maxLength="100"
-                        />
+                            android:layout_height="match_parent"
+                            style="@style/NamoaTheme3.TextInputLayout.Outlined"
+                            android:paddingVertical="8dp"
+                            android:paddingHorizontal="2dp">
 
-                        <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                            <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:textColorHint="@color/m3_namoa_onSurface"
+                                android:inputType="text"
+                                app:mBARCODE="false"
+                                app:mNFC="false"
+                                app:mOCR="false"
+                                android:maxLength="100" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
                             android:id="@+id/frg_serial_edit_et_info3"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="5dp"
-                            android:gravity="center_vertical"
-                            android:hint=""
-                            android:inputType="text"
-                            android:minHeight="30dp"
-                            android:padding="10dp"
-                            app:mBARCODE="false"
-                            app:mNFC="false"
-                            app:mOCR="false"
-                            android:maxLength="100"
-                        />
+                            android:layout_height="match_parent"
+                            style="@style/NamoaTheme3.TextInputLayout.Outlined"
+                            android:paddingHorizontal="2dp">
+
+                            <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:textColorHint="@color/m3_namoa_onSurface"
+                                android:inputType="text"
+                                app:mBARCODE="false"
+                                app:mNFC="false"
+                                app:mOCR="false"
+                                android:maxLength="100" />
+                        </com.google.android.material.textfield.TextInputLayout>
                     </LinearLayout>
 
+
                     <LinearLayout
-                        android:id="@+id/frg_serial_edit_ll_io_info"
+                        android:id="@+id/frg_serial_edit_ll_io_infos"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_marginBottom="15dp"
-                        android:background="@color/namoa_color_gray"
+                        android:visibility="visible"
                         android:orientation="vertical"
                         android:padding="5dp">
 
-                        <TextView
-                            android:id="@+id/frg_serial_edit_tv_io_info_ttl"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:padding="5dp"
-                            android:text="IO Info - Trad"
-                            android:textSize="@dimen/font_size_item_md"
-                            android:textStyle="bold"/>
 
                         <TextView
-                            android:id="@+id/frg_serial_edit_tv_inbound_lbl"
+                            android:id="@+id/frg_serial_edit_tv_move_code_lbls"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:padding="5dp"
-                            android:text="Inbound - Trad"
-                            android:textSize="@dimen/font_size_item" />
-
-
-                        <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-                            android:id="@+id/frg_serial_edit_mket_inbound_id"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="5dp"
-                            android:gravity="center_vertical"
-                            android:hint=""
-                            android:inputType="text"
-                            android:minHeight="30dp"
-                            android:padding="10dp"
-                            app:mBARCODE="false"
-                            app:mNFC="false"
-                            app:mOCR="false" />
-
-                        <TextView
-                            android:id="@+id/frg_serial_edit_tv_inbound_date_conf_lbl"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:padding="5dp"
-                            android:text="Inbound Date Conf - Trad"
-                            android:textSize="@dimen/font_size_item" />
-
-
-                        <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-                            android:id="@+id/frg_serial_edit_mket_inbound_date_conf_val"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="5dp"
-                            android:gravity="center_vertical"
-                            android:hint=""
-                            android:inputType="text"
-                            android:minHeight="30dp"
-                            android:padding="10dp"
-                            app:mBARCODE="false"
-                            app:mNFC="false"
-                            app:mOCR="false" />
-
-                        <TextView
-                            android:id="@+id/frg_serial_edit_tv_move_code_lbl"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:visibility="gone"
                             android:padding="5dp"
                             android:text="Move - Trad"
                             android:textSize="@dimen/font_size_item" />
 
 
                         <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-                            android:id="@+id/frg_serial_edit_mket_move_code_val"
+                            android:id="@+id/frg_serial_edit_mket_move_code_vals"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="5dp"
@@ -691,19 +968,21 @@
                             android:hint=""
                             android:inputType="text"
                             android:minHeight="30dp"
+                            android:visibility="gone"
                             android:padding="10dp"
                             app:mBARCODE="false"
                             app:mNFC="false"
                             app:mOCR="false" />
+
 
                         <TextView
                             android:id="@+id/frg_serial_edit_tv_move_group_lbl"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:padding="5dp"
+                            android:visibility="gone"
                             android:text="Move Group - Trad"
                             android:textSize="@dimen/font_size_item" />
-
 
                         <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                             android:id="@+id/frg_serial_edit_mket_move_group_val"
@@ -717,47 +996,46 @@
                             android:padding="10dp"
                             app:mBARCODE="false"
                             app:mNFC="false"
+                            android:visibility="gone"
                             app:mOCR="false" />
 
                         <TextView
-                            android:id="@+id/frg_serial_edit_tv_outbound_lbl"
+                            android:id="@+id/frg_serial_edit_tv_outbound_lbsl"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:padding="5dp"
+                            android:visibility="gone"
                             android:text="OutBond - Trad"
                             android:textSize="@dimen/font_size_item" />
 
 
                         <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-                            android:id="@+id/frg_serial_edit_mket_outbound_id"
+                            android:id="@+id/frg_serial_edit_mket_outbound_ids"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="5dp"
                             android:gravity="center_vertical"
                             android:hint=""
                             android:inputType="text"
+                            android:visibility="gone"
                             android:minHeight="30dp"
                             android:padding="10dp"
                             app:mBARCODE="false"
                             app:mNFC="false"
                             app:mOCR="false" />
                     </LinearLayout>
-                    <View
-                        android:id="@+id/frg_serial_edit_view_footer"
-                        android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        />
                 </LinearLayout>
             </LinearLayout>
-        </ScrollView>
+
+        </androidx.core.widget.NestedScrollView>
+
         <View
             android:id="@+id/frg_serial_edit_view_bg"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/namoa_color_white_alpha"
             android:visibility="gone"
-            android:clickable="true"
-            />
+            android:clickable="true" />
 
         <!--<android.support.design.widget.FloatingActionButton-->
         <!--android:id="@+id/frg_serial_edit_fab_anchor"-->
@@ -772,20 +1050,38 @@
         <!--android:visibility="gone"-->
         <!--/>-->
 
-        <com.namoa_digital.namoa_library.ctls.FabMenu
-            android:id="@+id/frg_serial_edit_fabMenu_anchor"
+    </FrameLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/linearLayout2a"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/m3_namoa_surface5"
+        android:gravity="start"
+        android:orientation="horizontal"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="10dp"
+        android:layout_gravity="bottom">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/frg_serial_edit_btn_action"
+            style="@style/Widget.Material3.Button.Icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_marginTop="15dp"
-            android:layout_marginStart="15dp"
-            android:layout_marginBottom="15dp"
-            android:layout_marginEnd="0dp"
-            app:mButton_Back_Color="@color/namoa_lime_green"
-            app:mButton_Resource="@drawable/ic_swap_vert_black_25dp"
-            app:mButton_Resource_Color="@color/padrao_WHITE"
-            >
-
-        </com.namoa_digital.namoa_library.ctls.FabMenu>
-    </FrameLayout>
+            android:layout_gravity="left"
+            android:gravity="center"
+            android:text="Salvar e continuar"
+            android:textAlignment="center"
+            android:textColor="@color/m3_namoa_surface2"
+            android:visibility="visible"
+            app:backgroundTint="@color/m3_namoa_primary"
+            app:icon="@drawable/ic_save_black_24px"
+            app:iconGravity="textStart"
+            app:iconTint="@color/m3_namoa_surface2"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:strokeColor="@color/m3_namoa_primary"
+            app:strokeWidth="0dp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

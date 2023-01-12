@@ -31,7 +31,7 @@ class GetInfoSerialUseCase constructor(
                 it.isSuccess { serial ->
                     var serialModel: SerialModel? = null
                     var value_suffix: String? = null
-                    var infoAdd = mutableListOf<String?>()
+                    val infoAdd = mutableListOf<String?>()
 
                     repository.getPreferences().first().isSuccess { model ->
                         serialModel = model
@@ -56,6 +56,10 @@ class GetInfoSerialUseCase constructor(
                             value_suffix = value_suffix,
                             last_measure_date = ToolBox_Inf.millisecondsToString(
                                 ToolBox_Inf.dateToMilliseconds(serial.last_measure_date),
+                                ToolBox_Inf.nlsDateFormat(context)
+                            ),
+                            last_cycle_date = ToolBox_Inf.millisecondsToString(
+                                ToolBox_Inf.dateToMilliseconds(serial.last_cycle_date),
                                 ToolBox_Inf.nlsDateFormat(context)
                             ),
                             infoAdd = infoAdd.formatInfoAdd()

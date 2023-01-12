@@ -258,6 +258,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:padding="5dp"
+                        android:visibility="gone"
                         android:src="@drawable/ic_archive_black_24dp" />
 
                     <com.namoa_digital.namoa_library.ctls.SearchableSpinner

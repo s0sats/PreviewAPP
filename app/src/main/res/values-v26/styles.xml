@@ -8,4 +8,10 @@
         <item name="iconSize">18dp</item>
         <item name="android:paddingHorizontal">15dp</item>
     </style>
+
+    <style name="NamoaTheme3.TextInputLayout.Outlined" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="hintTextColor">@color/m3_namoa_onSurface</item>
+        <item name="boxStrokeColor">@color/m3_namoa_outline</item>
+        <item name="android:paddingVertical">8dp</item>
+    </style>
 </resources>

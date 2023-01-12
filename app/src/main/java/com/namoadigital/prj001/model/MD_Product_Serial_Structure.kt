@@ -12,6 +12,7 @@ class MD_Product_Serial_Structure(
     @SerializedName("last_measure_value") val last_measure_value: Double?,
     @SerializedName("last_measure_date") val last_measure_date: String?,
     @SerializedName("last_cycle_value") val last_cycle_value: Float?,
+    @SerializedName("last_cycle_date") val last_cycle_date: String?,
     @SerializedName("device_tp") val device_tp: MutableList<MD_Product_Serial_Tp_Device> = mutableListOf()
 ){
     fun setPk(md_product_serial: MD_Product_Serial) {

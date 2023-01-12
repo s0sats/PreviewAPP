@@ -71,7 +71,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RemoteViews;
 import android.widget.Switch;
@@ -94,6 +93,7 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -3226,7 +3226,7 @@ public class ToolBox_Inf {
         return sqlite_format
                 .replace("DD", "dd")
                 .replace("MM", "MM")
-                .replace("RRRR", "yyyy");
+                .replace("RRRR", "yy");
     }
 
     public static void cleanningFormLocal(Context context) {
@@ -9084,11 +9084,13 @@ public class ToolBox_Inf {
             return hasSoOrIOProfile(context) ? null : 0;
         }
         //
-        switch (originFlow){
-            case ConstantBaseApp.ACT006 :
+        switch (originFlow) {
+            case ConstantBaseApp.ACT006:
                 return 0;
-            case ConstantBaseApp.ACT016 :
-            case ConstantBaseApp.ACT068 :
+            case ConstantBaseApp.ACT092:
+                return 0;
+            case ConstantBaseApp.ACT016:
+            case ConstantBaseApp.ACT068:
             default:
                 return null;
         }
@@ -9364,21 +9366,46 @@ public class ToolBox_Inf {
         Collections.sort(itemsForSort, comparator);
     }
 
-    public static void setClassIcon(Context context, HMAux item, ImageView iv_class_icon) {
+    public static void setClassIcon(Context context, HMAux item, SearchableSpinner iv_class_icon) {
+        if (item != null && item.containsKey(MD_ClassDao.CLASS_AVAILABLE) && item.get(MD_ClassDao.CLASS_AVAILABLE) != null && item.containsKey(SearchableSpinner.RIGHT_ICON_COLOR) && item.get(SearchableSpinner.RIGHT_ICON_COLOR) != null) {
+            //iv_class_icon.setVisibility(View.VISIBLE);
+            if (item.get(MD_ClassDao.CLASS_TYPE).equals(MD_ClassDao.CLASS_SERIAL_VALUE)) {
+                /*Drawable drawable = context.getDrawable(R.drawable.ic_baseline_arrow_right_24);
+                drawable.setColorFilter(Color.parseColor(item.get(MD_ClassDao.CLASS_COLOR)), PorterDuff.Mode.SRC_ATOP);
+                iv_class_icon.setImageDrawable(drawable);*/
+                iv_class_icon.setSearchableIcon(item, R.drawable.ic_baseline_arrow_right_24);
+            } else {
+/*
+                Drawable drawable = context.getDrawable(R.drawable.ic_tag_black_24dp);
+                drawable.setColorFilter(Color.parseColor(item.get(MD_ClassDao.CLASS_COLOR)), PorterDuff.Mode.SRC_ATOP);
+                iv_class_icon.setImageDrawable(drawable);
+*/
+                iv_class_icon.setSearchableIcon(item, R.drawable.ic_tag_black_24dp);
+            }
+        } else {
+/*
+            iv_class_icon.setImageDrawable(null);
+            iv_class_icon.setVisibility(View.INVISIBLE);
+*/
+            iv_class_icon.setSearchableIcon(new HMAux(), 0);
+
+        }
+    }
+
+    public static void setClassIcon(Context context, HMAux item, TextInputLayout iv_class_icon) {
         if (item != null && item.containsKey(MD_ClassDao.CLASS_AVAILABLE) && item.get(MD_ClassDao.CLASS_AVAILABLE) != null && item.containsKey(MD_ClassDao.CLASS_COLOR) && item.get(MD_ClassDao.CLASS_COLOR) != null) {
             iv_class_icon.setVisibility(View.VISIBLE);
             if (item.get(MD_ClassDao.CLASS_TYPE).equals(MD_ClassDao.CLASS_SERIAL_VALUE)) {
                 Drawable drawable = context.getDrawable(R.drawable.ic_baseline_arrow_right_24);
                 drawable.setColorFilter(Color.parseColor(item.get(MD_ClassDao.CLASS_COLOR)), PorterDuff.Mode.SRC_ATOP);
-                iv_class_icon.setImageDrawable(drawable);
+                iv_class_icon.setStartIconDrawable(drawable);
             } else {
                 Drawable drawable = context.getDrawable(R.drawable.ic_tag_black_24dp);
                 drawable.setColorFilter(Color.parseColor(item.get(MD_ClassDao.CLASS_COLOR)), PorterDuff.Mode.SRC_ATOP);
-                iv_class_icon.setImageDrawable(drawable);
+                iv_class_icon.setStartIconDrawable(drawable);
             }
         } else {
-            iv_class_icon.setImageDrawable(null);
-            iv_class_icon.setVisibility(View.INVISIBLE);
+            iv_class_icon.setStartIconDrawable(null);
         }
     }
 
@@ -9386,9 +9413,10 @@ public class ToolBox_Inf {
     /**
      * BARRIONUEVO 02-06-2021
      * Define a opcao default mediante ao profile.
+     *
      * @return
      */
-    public static String getActionTimeDefaultOption(Context context){
+    public static String getActionTimeDefaultOption(Context context) {
         if(!ToolBox_Inf.hasSoOrIOProfile(context)) {
             if (ToolBox_Inf.profileExists(
                     context,

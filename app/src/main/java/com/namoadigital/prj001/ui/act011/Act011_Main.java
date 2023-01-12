@@ -3657,7 +3657,7 @@ public class Act011_Main extends Base_Activity
 
             @Override
             public void onItemPostSelected(HMAux hmAux) {
-                ToolBox_Inf.setClassIcon(context, hmAux, binding.ivSerialClassIcon);
+                ToolBox_Inf.setClassIcon(context, hmAux, binding.ssSerialClass);
             }
         });
     }
@@ -3814,11 +3814,11 @@ public class Act011_Main extends Base_Activity
                     true,
                     MD_ClassDao.CLASS_ID, mdProductSerial.getClass_id(),
                     MD_ClassDao.CLASS_TYPE, mdProductSerial.getClass_type(),
-                    MD_ClassDao.CLASS_COLOR, mdProductSerial.getClass_color(),
+                    SearchableSpinner.RIGHT_ICON_COLOR, mdProductSerial.getClass_color(),
                     MD_ClassDao.CLASS_AVAILABLE, String.valueOf(mdProductSerial.getClass_available())
             );
             //
-            ToolBox_Inf.setClassIcon(context, ssSerialClass.getmValue(), binding.ivSerialClassIcon);
+            ToolBox_Inf.setClassIcon(context, ssSerialClass.getmValue(), ssSerialClass);
         }
     }
 

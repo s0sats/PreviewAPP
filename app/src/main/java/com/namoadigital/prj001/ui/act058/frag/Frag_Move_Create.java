@@ -4,14 +4,8 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +15,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.MkDateTime;
@@ -963,10 +961,9 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
                 true,
                 MD_ClassDao.CLASS_ID, class_id,
                 MD_ClassDao.CLASS_TYPE, class_type,
-                MD_ClassDao.CLASS_COLOR, class_color,
+                SearchableSpinner.RIGHT_ICON_COLOR, class_color,
                 MD_ClassDao.CLASS_AVAILABLE, String.valueOf(class_available)
         );
-
         ss_class.setmShowLabel(false);
         ss_class.setmOption(mPresenter.getClassList());
         setClassIcon(ss_class.getmValue());
@@ -1059,20 +1056,23 @@ public class Frag_Move_Create extends BaseFragment implements Frag_Move_Create_C
     }
 
     private void setClassIcon(HMAux item) {
-        if (item != null && item.containsKey(MD_ClassDao.CLASS_AVAILABLE) && item.get(MD_ClassDao.CLASS_AVAILABLE) != null && item.containsKey(MD_ClassDao.CLASS_COLOR) && item.get(MD_ClassDao.CLASS_COLOR) != null) {
-            iv_class_icon.setVisibility(View.VISIBLE);
+        if (item != null && item.containsKey(MD_ClassDao.CLASS_AVAILABLE) && item.get(MD_ClassDao.CLASS_AVAILABLE) != null && item.containsKey(SearchableSpinner.RIGHT_ICON_COLOR) && item.get(SearchableSpinner.RIGHT_ICON_COLOR) != null) {
+            //iv_class_icon.setVisibility(View.VISIBLE);
             if (item.get(MD_ClassDao.CLASS_AVAILABLE).equals("1")) {
-                Drawable drawable = getContext().getDrawable(R.drawable.ic_tag_black_24dp);
-                drawable.setColorFilter(Color.parseColor(item.get(MD_ClassDao.CLASS_COLOR)), PorterDuff.Mode.SRC_ATOP);
-                iv_class_icon.setImageDrawable(drawable);
+                //Drawable drawable = getContext().getDrawable(R.drawable.ic_tag_black_24dp);
+                ss_class.setSearchableIcon(item, R.drawable.ic_tag_black_24dp);
+                /*drawable.setColorFilter(Color.parseColor(item.get(MD_ClassDao.CLASS_COLOR)), PorterDuff.Mode.SRC_ATOP);
+                iv_class_icon.setImageDrawable(drawable);*/
             } else {
-                Drawable drawable = getContext().getDrawable(R.drawable.ic_ban_black_24dp);
+                ss_class.setSearchableIcon(item, R.drawable.ic_ban_black_24dp);
+                /*Drawable drawable = getContext().getDrawable(R.drawable.ic_ban_black_24dp);
                 drawable.setColorFilter(Color.parseColor(item.get(MD_ClassDao.CLASS_COLOR)), PorterDuff.Mode.SRC_ATOP);
-                iv_class_icon.setImageDrawable(drawable);
+                iv_class_icon.setImageDrawable(drawable);*/
             }
         } else {
-            iv_class_icon.setImageDrawable(null);
-            iv_class_icon.setVisibility(View.INVISIBLE);
+            ss_class.setSearchableIcon(new HMAux(), 0);
+            /*iv_class_icon.setImageDrawable(null);
+            iv_class_icon.setVisibility(View.INVISIBLE);*/
         }
     }
 

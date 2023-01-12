@@ -27,19 +27,19 @@ public class MD_Class_Sql_SS implements Specification {
         return sb
                 .append(
                         " SELECT " +
-                        "   class_code "+ SearchableSpinner.CODE +", \n" +
-                        "   class_id "+ SearchableSpinner.ID +", \n" +
-                        "   class_type ,\n " +
-                        "   class_color , \n" +
-                        "   class_available ,\n " +
-                        "   class_id "+ SearchableSpinner.DESCRIPTION + "\n"+
-                        " FROM " +
-                        MD_ClassDao.TABLE +
-                        " WHERE " +
-                                MD_ClassDao.CUSTOMER_CODE +" = '"+s_customer_code+"' "+
+                                "   class_code " + SearchableSpinner.CODE + ", \n" +
+                                "   class_id " + SearchableSpinner.ID + ", \n" +
+                                "   class_type ,\n " +
+                                "   class_color " + SearchableSpinner.RIGHT_ICON_COLOR + ", \n" +
+                                "   class_available ,\n " +
+                                "   class_id " + SearchableSpinner.DESCRIPTION + "\n" +
+                                " FROM " +
+                                MD_ClassDao.TABLE +
+                                " WHERE " +
+                                MD_ClassDao.CUSTOMER_CODE + " = '" + s_customer_code + "' " +
                                 filter +
-                       " ORDER BY " +
-                        "      class_id")
+                                " ORDER BY " +
+                                "      class_id")
                 .append(";")
 //                .append(
 //                        SearchableSpinner.ID + "#" +

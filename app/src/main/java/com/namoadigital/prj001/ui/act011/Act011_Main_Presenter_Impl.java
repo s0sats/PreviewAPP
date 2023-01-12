@@ -2524,7 +2524,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         mdProductSerial.setClass_id(ssSerialClass.getmValue().get(SearchableSpinner.DESCRIPTION));
         mdProductSerial.setClass_type(ssSerialClass.getmValue().get(MD_ClassDao.CLASS_TYPE));
         mdProductSerial.setClass_available(ToolBox_Inf.mIntegerParse(ssSerialClass.getmValue().get(MD_ClassDao.CLASS_AVAILABLE)));
-        mdProductSerial.setClass_color(ssSerialClass.getmValue().get(MD_ClassDao.CLASS_COLOR));
+        mdProductSerial.setClass_color(ssSerialClass.getmValue().get(SearchableSpinner.RIGHT_ICON_COLOR));
         //
         md_product_serialDao.addUpdate(mdProductSerial);
     }

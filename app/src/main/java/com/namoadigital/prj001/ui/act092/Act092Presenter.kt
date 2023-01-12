@@ -94,17 +94,12 @@ class Act092Presenter constructor(
     }
 
     private fun firstSave() {
-        val origin =
-            if (originFlow?.isEmpty() == true) actionUseCases.getPreferences().originFlow else originFlow
-        val iColor =
-            iconColor.ifEmpty { actionUseCases.getPreferences().classColor }
-
         actionUseCases.setPreferences(
             SerialModel(
-                originFlow = origin,
+                originFlow = originFlow,
                 siteCodeBack = ToolBox_Con.getPreference_Site_Code(translateResource.context),
                 zoneCodeBack = ToolBox_Con.getPreference_Zone_Code(translateResource.context),
-                classColor = iColor,
+                classColor = iconColor,
                 productCode = myActionFilterParam.productCode,
                 productId = myActionFilterParam.productId,
                 productDesc = myActionFilterParam.productDesc,
