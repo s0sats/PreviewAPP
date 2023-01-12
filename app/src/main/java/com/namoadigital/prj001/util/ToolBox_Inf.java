@@ -9087,10 +9087,8 @@ public class ToolBox_Inf {
         switch (originFlow){
             case ConstantBaseApp.ACT006:
                 return 0;
-            break;
             case ConstantBaseApp.ACT092:
                 return 0;
-            break;
             case ConstantBaseApp.ACT016:
             case ConstantBaseApp.ACT068:
             default:
