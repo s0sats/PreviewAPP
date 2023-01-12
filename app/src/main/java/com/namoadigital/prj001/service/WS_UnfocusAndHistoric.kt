@@ -11,9 +11,14 @@ import com.namoadigital.prj001.R
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao
 import com.namoadigital.prj001.dao.TK_TicketDao
 import com.namoadigital.prj001.dao.TkTicketCacheDao
-import com.namoadigital.prj001.model.*
+import com.namoadigital.prj001.model.MyActions
+import com.namoadigital.prj001.model.MyActionsCache
+import com.namoadigital.prj001.model.TUnfocusAndHistoricEnv
+import com.namoadigital.prj001.model.TUnfocusAndHistoricRec
 import com.namoadigital.prj001.receiver.WBR_UnfocusAndHistoric
-import com.namoadigital.prj001.sql.*
+import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001
+import com.namoadigital.prj001.sql.TKTicketCacheSql002
+import com.namoadigital.prj001.sql.TK_Ticket_Sql_001
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -72,7 +77,8 @@ class WS_UnfocusAndHistoric : IntentService("WS_UnfocusAndHistoric") {
         //
         val resultado: String = ToolBox_Con.connWebService(
             Constant.WS_DOWNLOAD_NOT_FOCUS_AND_HISTORIC,
-            gson.toJson(env)
+            gson.toJson(env),
+            60000 * 5
         )
         //
         val rec: TUnfocusAndHistoricRec = gson.fromJson(
