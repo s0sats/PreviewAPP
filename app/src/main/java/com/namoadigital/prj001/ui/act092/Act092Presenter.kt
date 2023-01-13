@@ -207,7 +207,7 @@ class Act092Presenter constructor(
     override fun onBackPressedClicked(bundle: Bundle) {
         when (_serialModel.value.originFlow) {
             ConstantBaseApp.ACT006 -> {
-                view.onState(Act092UiEvent.CallAct(Act006_Main::class.java, bundle.apply {
+                view.onState(Act092UiEvent.CallAct(Act006_Main::class.java, Bundle().apply {
                     putString(
                         Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER,
                         _serialModel.value.productId
@@ -1276,6 +1276,8 @@ class Act092Presenter constructor(
             "cell_item_in_process_lbl",
             "other_steps_available_lbl",
             "cell_download_action_pdf_lbl",
+            "btn_other_actions",
+            "btn_new_action",
             Act092Translate.HINT_FILTER,
             Act092Translate.PLACEHOLDER_FILTER,
             Act092Translate.OTHER_ACTIONS,
