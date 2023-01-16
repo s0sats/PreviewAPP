@@ -5,41 +5,16 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="10dp">
-    <LinearLayout
+
+    <TextView
+        android:id="@+id/namoa_dialog_add_tracking_tv_lbl"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop ="2dp"
-        android:layout_marginBottom="20dp"
-        >
-        <TextView
-            android:id="@+id/namoa_dialog_add_tracking_tv_lbl"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textSize="@dimen/font_size_title_dialog"
-            android:gravity="center"
-            android:textStyle="bold"
-            />
-
-        <View
-            android:layout_width="5dp"
-            android:layout_height="match_parent" />
-
-        <ImageView
-            android:id="@+id/namoa_dialog_add_tracking_iv_close"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:paddingBottom="4dp"
-            android:paddingLeft="15dp"
-            android:paddingRight="5dp"
-            android:paddingTop="4dp"
-            android:src="@drawable/ic_close_circle_outline"
-            android:tint="@color/namoa_color_danger_red"
-            android:layout_gravity="right"/>
-
-    </LinearLayout>
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:textAlignment="center"
+        android:layout_marginTop="24dp"
+        android:textColor="@color/m3_namoa_onBackground"
+        android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -48,33 +23,84 @@
         android:layout_marginTop="20dp"
         android:layout_marginBottom="20dp">
 
-        <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-            android:id="@+id/namoa_dialog_add_tracking_mket_tracking"
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/text_input_serial_id"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:inputType="text"
-            android:textSize="@dimen/font_size_item_md"
-            app:mBARCODE="true"
-            app:mNFC="false"
-            app:mOCR="false" />
+            style="@style/NamoaTheme3.TextInputLayout.Outlined"
+            android:paddingHorizontal="8dp"
+            android:visibility="visible">
+
+            <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                android:id="@+id/namoa_dialog_add_tracking_mket_tracking"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:inputType="text"
+                android:textSize="@dimen/font_size_item_md"
+                app:mBARCODE="true"
+                app:mNFC="false"
+                app:mOCR="false" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <View
             android:layout_width="2dp"
             android:layout_height="match_parent" />
 
-        <ImageView
-            android:id="@+id/namoa_dialog_add_tracking_iv_action"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:paddingBottom="7dp"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            android:paddingTop="7dp"
-            android:src="@drawable/ic_adicionar_states"/>
 
     </LinearLayout>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp">
+
+        <TextView
+            android:id="@+id/namoa_dialog_add_tracking_iv_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:padding="10dp"
+            android:text="Cancelar"
+            android:textColor="@color/m3_namoa_primary"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline8"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/namoa_dialog_add_tracking_iv_action"
+            style="@style/Widget.Material3.Button.Icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:gravity="center"
+            android:text="Adicionar"
+            android:textAlignment="center"
+            android:textColor="@color/m3_namoa_surface2"
+            android:visibility="visible"
+            app:backgroundTint="@color/m3_namoa_primary"
+            app:icon="@drawable/ic_add_black_24px"
+            app:iconGravity="textStart"
+            app:iconTint="@color/m3_namoa_surface2"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:strokeColor="@color/m3_namoa_primary"
+            app:strokeWidth="0dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline8"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toStartOf="@+id/namoa_dialog_add_tracking_iv_action"
+            app:layout_constraintStart_toEndOf="@+id/namoa_dialog_add_tracking_iv_close" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </LinearLayout>

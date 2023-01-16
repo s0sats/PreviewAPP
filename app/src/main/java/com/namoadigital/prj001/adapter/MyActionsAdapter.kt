@@ -338,7 +338,7 @@ class MyActionsAdapter constructor(
                     if (myAction.isLastSelectedItem) {
                         resources.getColor(R.color.namoa_color_light_blue5)
                     } else {
-                        resources.getColor(R.color.m3_namoa_surface1)
+                        resources.getColor(R.color.m3_namoa_neutral95)
                     }
                 )
             }

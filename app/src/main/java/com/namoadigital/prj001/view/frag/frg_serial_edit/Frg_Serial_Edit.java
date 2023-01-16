@@ -25,6 +25,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.widget.NestedScrollView;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputLayout;
 import com.namoa_digital.namoa_library.ctls.FabMenu;
 import com.namoa_digital.namoa_library.ctls.FabMenuItem;
@@ -1351,11 +1352,10 @@ public class Frg_Serial_Edit extends BaseFragment {
 
         }
 
-        if (mket_inbound_id == null || mket_inbound_id.getText().toString().isEmpty() && last_measure == null || last_measure.toString().isEmpty()) {
-            frg_header_layout.setVisibility(View.GONE);
-        } else {
-            frg_header_layout.setVisibility(View.VISIBLE);
-        }
+        //show Header
+        frg_header_layout.setVisibility(
+                cycle_layout.getVisibility() == View.VISIBLE || outbound_layout.getVisibility() == View.VISIBLE ? View.VISIBLE : View.GONE
+        );
         //endregion
         //
         applyProfile();
@@ -2129,15 +2129,18 @@ public class Frg_Serial_Edit extends BaseFragment {
         View view = inflater.inflate(R.layout.namoa_dialog_add_tracking, null);
 
         final MKEditTextNM mket_tracking = view.findViewById(R.id.namoa_dialog_add_tracking_mket_tracking);
-        //mket_tracking.setHint(hmAux_Trans.get("tracking_hint_lbl"));
+        mket_tracking.setHint(hmAux_Trans.get("tracking_hint_lbl"));
         //controls_sta.add(mket_tracking);
         if (delegate != null) {
             delegate.onAddOrRemoveControl(mket_tracking, true);
         }
         //
         TextView tv_tracking_ttl = view.findViewById(R.id.namoa_dialog_add_tracking_tv_lbl);
-        ImageView iv_action = view.findViewById(R.id.namoa_dialog_add_tracking_iv_action);
-        final ImageView iv_close = view.findViewById(R.id.namoa_dialog_add_tracking_iv_close);
+        MaterialButton iv_action = view.findViewById(R.id.namoa_dialog_add_tracking_iv_action);
+        final TextView iv_close = view.findViewById(R.id.namoa_dialog_add_tracking_iv_close);
+        //
+        iv_action.setText(hmAux_Trans.get("btn_add_tracking"));
+        iv_close.setText(hmAux_Trans.get("btn_cancel_tracking"));
         //
         tv_tracking_ttl.setText(hmAux_Trans.get("dialog_tracking_ttl"));
 
@@ -3503,6 +3506,9 @@ public class Frg_Serial_Edit extends BaseFragment {
         //
         transListFrag.add("alert_tracking_add_info_validation_ttl");
         transListFrag.add("alert_tracking_add_info_duplicated_msg");
+        transListFrag.add("btn_add_tracking");
+        transListFrag.add("btn_cancel_tracking");
+        transListFrag.add("tracking_hint_lbl");
         //
         return transListFrag;
     }

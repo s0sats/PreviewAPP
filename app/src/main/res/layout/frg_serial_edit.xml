@@ -13,12 +13,17 @@
         android:id="@+id/serial_layout_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/m3_namoa_surface5"
+        android:background="@color/m3_namoa_surface2"
         android:orientation="vertical"
         android:padding="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
+
+        <include
+            android:id="@+id/act008_nform_in_progress"
+            layout="@layout/process_in_progress"
+            android:visibility="gone" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -576,15 +581,15 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="end|center_vertical"
-                                android:layout_marginEnd="10dp"
+                                android:layout_marginEnd="4dp"
                                 android:background="@drawable/my_action_toogle_default"
                                 android:padding="10dp"
                                 android:src="@drawable/ic_clock_chat"
-                                app:tint="@color/m3_namoa_onSurfaceVariant"
                                 android:visibility="visible"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintTop_toTopOf="parent" />
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:tint="@color/m3_namoa_onSurfaceVariant" />
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <com.namoa_digital.namoa_library.ctls.SearchableSpinner
@@ -1056,7 +1061,7 @@
         android:id="@+id/linearLayout2a"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/m3_namoa_surface5"
+        android:background="@color/m3_namoa_surface2"
         android:gravity="start"
         android:orientation="horizontal"
         android:paddingHorizontal="10dp"

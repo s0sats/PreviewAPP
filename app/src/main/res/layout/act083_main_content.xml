@@ -26,7 +26,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0"
             app:cardElevation="10dp"
-            android:backgroundTint="@color/m3_namoa_surface5"
+            android:backgroundTint="@color/m3_namoa_surface2"
             >
 
             <androidx.constraintlayout.widget.ConstraintLayout
