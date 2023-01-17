@@ -482,10 +482,19 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
             @Override
             public void onAddOrRemoveControl(MKEditTextNM mket_control, boolean add) {
-                if(add) {
+                if (add) {
                     controls_sta.add(mket_control);
-                }else{
+                } else {
                     controls_sta.remove(mket_control);
+                }
+            }
+
+            @Override
+            public void onAddOrRemoveControlSS(SearchableSpinner ss, boolean add) {
+                if (!controls_ss.contains(ss)) {
+                    controls_ss.add(ss);
+                } else {
+                    controls_ss.remove(ss);
                 }
             }
 
@@ -496,7 +505,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
             @Override
             public void onHideSerialInfoErrorListner() {
-                if(contentMain.getVisibility() == View.INVISIBLE){
+                if (contentMain.getVisibility() == View.INVISIBLE) {
                     mPresenter.onBackPressedClicked();
                 }
             }

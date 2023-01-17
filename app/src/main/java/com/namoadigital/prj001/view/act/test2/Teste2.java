@@ -3,14 +3,16 @@ package com.namoadigital.prj001.view.act.test2;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.fragment.app.FragmentManager;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.fragment.app.FragmentManager;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
@@ -276,9 +278,15 @@ public class Teste2 extends Base_Activity {
             }
 
             @Override
+            public void onAddOrRemoveControlSS(SearchableSpinner ss, boolean add) {
+
+            }
+
+            @Override
             public void onAddressSuggestionRequired(String site_code, long product_code) {
 
             }
+
             @Override
             public void onHideSerialInfoErrorListner() {
 

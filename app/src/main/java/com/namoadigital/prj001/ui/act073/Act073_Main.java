@@ -19,6 +19,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
@@ -267,20 +268,26 @@ public class Act073_Main extends Base_Activity_Frag implements Act073_Main_Contr
 
             @Override
             public void onAddOrRemoveControl(MKEditTextNM mket_control, boolean add) {
-                if(add) {
+                if (add) {
                     controls_sta.add(mket_control);
-                }else{
+                } else {
                     controls_sta.remove(mket_control);
                 }
+            }
+
+            @Override
+            public void onAddOrRemoveControlSS(SearchableSpinner ss, boolean add) {
+
             }
 
             @Override
             public void onAddressSuggestionRequired(String site_code, long product_code) {
                 //sem ação nesse caso
             }
+
             @Override
             public void onHideSerialInfoErrorListner() {
-                if(contentMain.getVisibility() == View.INVISIBLE){
+                if (contentMain.getVisibility() == View.INVISIBLE) {
                     mPresenter.onBackPressedClicked();
                 }
             }

@@ -887,13 +887,13 @@
                             android:text="Additional Info" />
 
                         <com.google.android.material.textfield.TextInputLayout
-                            android:id="@+id/frg_serial_edit_et_info1"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             style="@style/NamoaTheme3.TextInputLayout.Outlined"
                             android:paddingHorizontal="2dp">
 
                             <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                                android:id="@+id/frg_serial_edit_et_info1"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:inputType="text"
@@ -906,7 +906,6 @@
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.textfield.TextInputLayout
-                            android:id="@+id/frg_serial_edit_et_info2"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             style="@style/NamoaTheme3.TextInputLayout.Outlined"
@@ -914,6 +913,7 @@
                             android:paddingHorizontal="2dp">
 
                             <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                                android:id="@+id/frg_serial_edit_et_info2"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:textColorHint="@color/m3_namoa_onSurface"
@@ -925,13 +925,13 @@
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.textfield.TextInputLayout
-                            android:id="@+id/frg_serial_edit_et_info3"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             style="@style/NamoaTheme3.TextInputLayout.Outlined"
                             android:paddingHorizontal="2dp">
 
                             <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                                android:id="@+id/frg_serial_edit_et_info3"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:textColorHint="@color/m3_namoa_onSurface"

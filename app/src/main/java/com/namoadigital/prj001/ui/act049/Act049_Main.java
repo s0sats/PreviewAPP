@@ -18,6 +18,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
@@ -256,25 +257,30 @@ public class Act049_Main extends Base_Activity_Frag implements Act049_Main_Contr
                     mPresenter.onBackPressedClicked();
                 }
 
-                @Override
-                public void onAddOrRemoveControl(MKEditTextNM mket_control, boolean add) {
-                    if(add) {
-                        controls_sta.add(mket_control);
-                    }else{
-                        controls_sta.remove(mket_control);
-                    }
-                }
+                                      @Override
+                                      public void onAddOrRemoveControl(MKEditTextNM mket_control, boolean add) {
+                                          if (add) {
+                                              controls_sta.add(mket_control);
+                                          } else {
+                                              controls_sta.remove(mket_control);
+                                          }
+                                      }
 
-                  @Override
-                  public void onAddressSuggestionRequired(String site_code, long product_code) {
+                                      @Override
+                                      public void onAddOrRemoveControlSS(SearchableSpinner ss, boolean add) {
 
-                  }
+                                      }
 
-                @Override
-                public void onHideSerialInfoErrorListner() {
+                                      @Override
+                                      public void onAddressSuggestionRequired(String site_code, long product_code) {
 
-                }
-              }
+                                      }
+
+                                      @Override
+                                      public void onHideSerialInfoErrorListner() {
+
+                                      }
+                                  }
         );
     }
 

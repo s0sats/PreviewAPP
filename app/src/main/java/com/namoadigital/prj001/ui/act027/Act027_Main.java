@@ -904,9 +904,15 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             }
 
             @Override
+            public void onAddOrRemoveControlSS(SearchableSpinner ss, boolean add) {
+
+            }
+
+            @Override
             public void onAddressSuggestionRequired(String site_code, long product_code) {
 
             }
+
             @Override
             public void onHideSerialInfoErrorListner() {
 

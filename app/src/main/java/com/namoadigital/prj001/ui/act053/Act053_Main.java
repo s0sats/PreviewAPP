@@ -4,9 +4,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.fragment.app.FragmentManager;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -15,7 +12,12 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentManager;
+
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
@@ -310,20 +312,26 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
 
             @Override
             public void onAddOrRemoveControl(MKEditTextNM mket_control, boolean add) {
-                if(add) {
+                if (add) {
                     controls_sta.add(mket_control);
-                }else{
+                } else {
                     controls_sta.remove(mket_control);
                 }
             }
 
             @Override
+            public void onAddOrRemoveControlSS(SearchableSpinner ss, boolean add) {
+
+            }
+
+            @Override
             public void onAddressSuggestionRequired(String site_code, long product_code) {
-                if(ToolBox_Con.isOnline(context)) {
+                if (ToolBox_Con.isOnline(context)) {
                     mPresenter.executeAddressSuggestion(site_code, product_code);
                 }
 
             }
+
             @Override
             public void onHideSerialInfoErrorListner() {
                 if(contentMain.getVisibility() == View.INVISIBLE){

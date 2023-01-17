@@ -3,13 +3,14 @@ package com.namoadigital.prj001.ui.act064;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -316,7 +317,6 @@ public class Act064_Main extends Base_Activity implements Act064_Main_Contract.I
         iv_offline_mode = serialLayout.findViewById(R.id.iv_offline_mode);
         iv_serial_history = serialLayout.findViewById(R.id.iv_serial_history);
         controls_ss.add(ss_zone);
-        controls_ss.add(ss_local);
         controls_ss.add(ss_reason);
     }
 
