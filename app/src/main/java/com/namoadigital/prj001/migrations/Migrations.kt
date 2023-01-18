@@ -2,7 +2,6 @@ package com.namoadigital.prj001.migrations
 
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
-import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.database.MigrationSQLite
 
 val MigrationV1 = object : MigrationSQLite(1, 2){
@@ -83,14 +82,36 @@ val MigrationV2 = object : MigrationSQLite(2, 3) {
         if(!isFieldExist(db,"tk_ticket_cache", "class_code")){
             db.execSQL(""" ALTER TABLE [tk_ticket_cache] ADD [class_code] int;""".trimIndent())
         }
-        if(!isFieldExist(db,"tk_ticket_cache", "class_id")){
+        if (!isFieldExist(db, "tk_ticket_cache", "class_id")) {
             db.execSQL(""" ALTER TABLE [tk_ticket_cache] ADD [class_id] text collate nocase;""".trimIndent())
         }
-        if(!isFieldExist(db,"tk_ticket_cache", "class_color")){
+        if (!isFieldExist(db, "tk_ticket_cache", "class_color")) {
             db.execSQL(""" ALTER TABLE [tk_ticket_cache] ADD [class_color] text collate nocase;""".trimIndent())
         }
-        if(!isFieldExist(db,"tk_ticket_cache", "class_available")){
+        if (!isFieldExist(db, "tk_ticket_cache", "class_available")) {
             db.execSQL(""" ALTER TABLE [tk_ticket_cache] ADD [class_available] int;""".trimIndent())
+        }
+    }
+
+    fun isFieldExist(db: SQLiteDatabase, tableName: String, fieldName: String): Boolean {
+        var isExist = false
+        val res: Cursor = db.rawQuery("PRAGMA table_info($tableName)", null)
+        res.moveToFirst()
+        do {
+            val currentColumn: String = res.getString(1)
+            if (currentColumn == fieldName) {
+                isExist = true
+            }
+        } while (res.moveToNext())
+        return isExist
+    }
+}
+
+val MigrationV3 = object : MigrationSQLite(3, 4) {
+
+    override fun migrate(db: SQLiteDatabase) {
+        if (!isFieldExist(db, "md_product_serials", "last_cycle_date")) {
+            db.execSQL(""" ALTER TABLE [md_product_serials] ADD [last_cycle_date] text collate nocase;""".trimIndent())
         }
     }
 

@@ -35,8 +35,7 @@
                 android:id="@+id/exists_serial_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <ImageView
                     android:id="@+id/iconSerialColor"
@@ -62,7 +61,6 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 style="@style/NamoaTheme3.TextInputLayout.Outlined"
-                android:paddingHorizontal="8dp"
                 android:visibility="visible">
 
                 <com.namoa_digital.namoa_library.ctls.MKEditTextNM
@@ -70,6 +68,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textMultiLine"
+                    android:textColor="@drawable/edittext_theme_text"
                     app:mBARCODE="true"
                     app:mNFC="false"
                     app:mOCR="false" />
@@ -329,7 +328,7 @@
                             android:id="@+id/measureUI"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:paddingTop="16dp"
+                            android:paddingTop="5dp"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/linearLayout4">
@@ -393,7 +392,7 @@
                             android:id="@+id/frg_serial_edit_ll_io_info"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:paddingTop="16dp"
+                            android:paddingTop="5dp"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/linearLayout4">
@@ -887,17 +886,17 @@
                             android:text="Additional Info" />
 
                         <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/frg_serial_edit_et_info1"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             style="@style/NamoaTheme3.TextInputLayout.Outlined"
                             android:paddingHorizontal="2dp">
 
                             <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-                                android:id="@+id/frg_serial_edit_et_info1"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:inputType="text"
-                                android:textColorHint="@color/m3_namoa_onSurface"
+                                android:textColor="@drawable/edittext_theme_text"
                                 app:mBARCODE="false"
                                 app:mNFC="false"
                                 app:mOCR="false"
@@ -906,6 +905,7 @@
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/frg_serial_edit_et_info2"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             style="@style/NamoaTheme3.TextInputLayout.Outlined"
@@ -913,10 +913,9 @@
                             android:paddingHorizontal="2dp">
 
                             <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-                                android:id="@+id/frg_serial_edit_et_info2"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:textColorHint="@color/m3_namoa_onSurface"
+                                android:textColor="@drawable/edittext_theme_text"
                                 android:inputType="text"
                                 app:mBARCODE="false"
                                 app:mNFC="false"
@@ -925,16 +924,16 @@
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/frg_serial_edit_et_info3"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             style="@style/NamoaTheme3.TextInputLayout.Outlined"
                             android:paddingHorizontal="2dp">
 
                             <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-                                android:id="@+id/frg_serial_edit_et_info3"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:textColorHint="@color/m3_namoa_onSurface"
+                                android:textColor="@drawable/edittext_theme_text"
                                 android:inputType="text"
                                 app:mBARCODE="false"
                                 app:mNFC="false"

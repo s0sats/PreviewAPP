@@ -1,0 +1,8 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/m3_namoa_onSurface" android:state_focused="true" />
+    <item android:color="@color/m3_namoa_outline" android:state_focused="false" />
+    <item android:color="@color/m3_namoa_onSurface" android:state_enabled="true" />
+    <item android:color="@android:color/darker_gray" android:state_hovered="true" />
+    <item android:color="@android:color/darker_gray" android:state_enabled="false" />
+    <item android:color="@color/m3_namoa_onSurface" />
+</selector>

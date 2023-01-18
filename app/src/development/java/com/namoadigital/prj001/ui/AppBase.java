@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.ui;
 
-import static com.namoa_digital.namoa_library.util.ConstantBase.PKG_CLEAN;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CACHE_CHAT_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CACHE_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CACHE_PATH_PHOTO;
@@ -24,14 +23,14 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.DB_VERSION_CHAT;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DB_VERSION_CUSTOM;
 import static com.namoadigital.prj001.util.ConstantBaseApp.GENERIC_CHANNEL_ID;
 import static com.namoadigital.prj001.util.ConstantBaseApp.IMG_PATH;
+import static com.namoadigital.prj001.util.ConstantBaseApp.OTHER_ACTIONS_JSON_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PENDENCY_CHANNEL_ID;
+import static com.namoadigital.prj001.util.ConstantBaseApp.SO_EXPRESS_JSON_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME_FULL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.THU_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TICKET_JSON_PATH;
-import static com.namoadigital.prj001.util.ConstantBaseApp.SO_EXPRESS_JSON_PATH;
-import static com.namoadigital.prj001.util.ConstantBaseApp.OTHER_ACTIONS_JSON_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SERIAL_NAME_FULL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SERIAL_PREFIX;
@@ -52,7 +51,6 @@ import com.namoadigital.prj001.BuildConfig;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.receiver.WBR_Connections_Change;
 import com.namoadigital.prj001.util.ConstantBaseApp;
-import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 
@@ -141,7 +139,7 @@ public class AppBase extends Application {
 
         DB_NAME_CUSTOM = "cc" + DB_SUFIX ;
         DB_PREFIX_CUSTOM = "namoa_app_";
-        DB_VERSION_CUSTOM = 3;
+        DB_VERSION_CUSTOM = 4;
         DB_FULL_CUSTOM = DB_PATH + "/" + DB_NAME_CUSTOM;
 
         //DB_NAME_CHAT = "namoa_chat.db3";

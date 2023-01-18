@@ -107,6 +107,7 @@ public class Frg_Serial_Edit extends BaseFragment {
     private TextView tv_allow_new_lbl;
     private TextView tv_allow_new_val;
     private LinearLayout measure_layout;
+    private ConstraintLayout measureUI_layout;
     private LinearLayout cycle_layout;
     private TextView tv_last_measure_ttl;
     private TextView tv_last_measure_lbl;
@@ -125,9 +126,9 @@ public class Frg_Serial_Edit extends BaseFragment {
     private SearchableSpinner ss_site_reason;
     private LinearLayout ll_serial_add_info;
     private TextView tv_serial_add_info_ttl;
-    private MKEditTextNM mket_info1;
-    private MKEditTextNM mket_info2;
-    private MKEditTextNM mket_info3;
+    private TextInputLayout mket_info1;
+    private TextInputLayout mket_info2;
+    private TextInputLayout mket_info3;
     private TextView tv_serial_properties_ttl;
     private LinearLayout ll_serial_properties;
     private LinearLayout ll_brand_layout;
@@ -233,7 +234,7 @@ public class Frg_Serial_Edit extends BaseFragment {
     //LUCHE - 03/12/2021
     //Se o customer usar tracking, será aplicada regra que somente a mosolf usa. Será validado se alguma dos campos
     //de informação adicional esta repitido.
-    private final ArrayList<MKEditTextNM> addInfoTrackingList = new ArrayList<>();
+    private final ArrayList<TextInputLayout> addInfoTrackingList = new ArrayList<>();
 
     public void setShowOffline(boolean showOffline) {
         //Quando serial eh acessado offline
@@ -778,6 +779,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         btn_action = view.findViewById(R.id.frg_serial_edit_btn_action);
         //
         measure_layout = view.findViewById(R.id.measure_layout);
+        measureUI_layout = view.findViewById(R.id.measureUI);
         cycle_layout = view.findViewById(R.id.cycleLayout);
         //
         tv_last_measure_ttl = view.findViewById(R.id.titleMeasure);
@@ -1109,7 +1111,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         }
         //
 
-        Integer last_measure = mdProductSerial.getLast_measure_value() != null && mdProductSerial.getLast_measure_value() != 0.0 ? Integer.parseInt(mdProductSerial.getLast_measure_value().toString().replace(".", "")) : null;
+        String last_measure = mdProductSerial.getLast_measure_value() != null && mdProductSerial.getLast_measure_value() != 0.0 ? mdProductSerial.getLast_measure_value().toString().replace(".", "") : null;
         String last_measure_date = mdProductSerial.getLast_measure_date() != null && !mdProductSerial.getLast_measure_date().isEmpty() ? mdProductSerial.getLast_measure_date() : null;
 
         String measureFormatted;
@@ -1152,6 +1154,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         } else {
             cycle_layout.setVisibility(View.GONE);
         }
+        measureUI_layout.setVisibility(measure_layout.getVisibility());
 
         //
         //Processa lista de trackings
@@ -1308,17 +1311,17 @@ public class Frg_Serial_Edit extends BaseFragment {
         );
         //endregion
         //region Add Info
-        mket_info1.setText(mdProductSerial.getAdd_inf1());
+        mket_info1.getEditText().setText(mdProductSerial.getAdd_inf1());
         mket_info1.setTag(mdProductSerial.getAdd_inf1());
-        mket_info2.setText(mdProductSerial.getAdd_inf2());
+        mket_info2.getEditText().setText(mdProductSerial.getAdd_inf2());
         mket_info2.setTag(mdProductSerial.getAdd_inf2());
-        mket_info3.setText(mdProductSerial.getAdd_inf3());
+        mket_info3.getEditText().setText(mdProductSerial.getAdd_inf3());
         mket_info3.setTag(mdProductSerial.getAdd_inf3());
         //endregion
         //region I/O Info
         if (mdProduct.getIo_control() == 1) {
             mket_inbound_id.setText(mdProductSerial.getInbound_id());
-            mket_inbound_id.setVisibility(mdProductSerial.getInbound_id() == null ? View.GONE : View.VISIBLE);
+            mket_inbound_id.setVisibility(mdProductSerial.getInbound_id() == null || mdProductSerial.getInbound_id().isEmpty() ? View.GONE : View.VISIBLE);
             tv_inbound_lbl.setVisibility(mket_inbound_id.getVisibility());
             inboud_layout.setVisibility(mket_inbound_id.getVisibility());
             if (mdProductSerial.getInbound_conf_date() != null) {
@@ -1331,21 +1334,21 @@ public class Frg_Serial_Edit extends BaseFragment {
             } else {
                 mket_inbound_date_conf_val.setText(null);
             }
-            mket_inbound_date_conf_val.setVisibility(mdProductSerial.getInbound_conf_date() == null ? View.GONE : View.VISIBLE);
+            mket_inbound_date_conf_val.setVisibility(mdProductSerial.getInbound_conf_date() == null || mdProductSerial.getInbound_conf_date().isEmpty() ? View.GONE : View.VISIBLE);
             tv_inbound_date_conf_lbl.setVisibility(mket_inbound_date_conf_val.getVisibility());
             inbound_date_layout.setVisibility(mket_inbound_date_conf_val.getVisibility());
 
             mket_move_code_val.setText(mdProductSerial.getMove_prefix() + "." + mdProductSerial.getMove_code());
-            mket_move_code_val.setVisibility(mdProductSerial.getMove_prefix() == null ? View.GONE : View.VISIBLE);
+            mket_move_code_val.setVisibility(mdProductSerial.getMove_prefix() == null || mdProductSerial.getMove_prefix() <= 0 ? View.GONE : View.VISIBLE);
             tv_move_code_lbl.setVisibility(mket_move_code_val.getVisibility());
             move_code_io_layout.setVisibility(mket_move_code_val.getVisibility());
 
             mket_move_group_val.setText(String.valueOf(mdProductSerial.getMove_group_code()));
-            mket_move_group_val.setVisibility(mdProductSerial.getMove_group_code() == null ? View.GONE : View.VISIBLE);
+            mket_move_group_val.setVisibility(mdProductSerial.getMove_group_code() == null || mdProductSerial.getMove_group_code() <= 0 ? View.GONE : View.VISIBLE);
             tv_move_group_lbl.setVisibility(mket_move_group_val.getVisibility());
 
             mket_outbound_id.setText(mdProductSerial.getOutbound_id());
-            mket_outbound_id.setVisibility(mdProductSerial.getOutbound_id() == null ? View.GONE : View.VISIBLE);
+            mket_outbound_id.setVisibility(mdProductSerial.getOutbound_id() == null || mdProductSerial.getOutbound_id().isEmpty() ? View.GONE : View.VISIBLE);
             tv_outbound_lbl.setVisibility(mket_outbound_id.getVisibility());
             outbound_layout.setVisibility(mket_outbound_id.getVisibility());
             //
@@ -1358,7 +1361,7 @@ public class Frg_Serial_Edit extends BaseFragment {
 
         //show Header
         frg_header_layout.setVisibility(
-                cycle_layout.getVisibility() == View.VISIBLE || outbound_layout.getVisibility() == View.VISIBLE ? View.VISIBLE : View.GONE
+                measureUI_layout.getVisibility() == View.VISIBLE || ll_io_info.getVisibility() == View.VISIBLE ? View.VISIBLE : View.GONE
         );
         //endregion
         //
@@ -1630,9 +1633,9 @@ public class Frg_Serial_Edit extends BaseFragment {
         }
         ArrayList<String> addInfoList = new ArrayList<>();
         //Valida item a item vericando se o texto entre eles ja existe.
-        for (MKEditTextNM addInfo : addInfoTrackingList) {
-            if (addInfo.getText() != null) {
-                String tracking = addInfo.getText().toString().trim();
+        for (TextInputLayout addInfo : addInfoTrackingList) {
+            if (addInfo.getEditText().getText() != null) {
+                String tracking = addInfo.getEditText().getText().toString().trim();
                 if (tracking != null && !tracking.isEmpty()) {
                     if (!addInfoList.contains(tracking)) {
                         addInfoList.add(tracking);
@@ -2498,9 +2501,9 @@ public class Frg_Serial_Edit extends BaseFragment {
         mdProductSerial.setLocal_code(ToolBox_Inf.mIntegerParse(ss_site_zone_local.getmValue().get(SearchableSpinner.CODE)));
         mdProductSerial.setLocal_id(ss_site_zone_local.getmValue().get(SearchableSpinner.DESCRIPTION));
         //
-        mdProductSerial.setAdd_inf1(mket_info1.getText().toString().trim());
-        mdProductSerial.setAdd_inf2(mket_info2.getText().toString().trim());
-        mdProductSerial.setAdd_inf3(mket_info3.getText().toString().trim());
+        mdProductSerial.setAdd_inf1(mket_info1.getEditText().getText().toString().trim());
+        mdProductSerial.setAdd_inf2(mket_info2.getEditText().getText().toString().trim());
+        mdProductSerial.setAdd_inf3(mket_info3.getEditText().getText().toString().trim());
         //
         mdProductSerial.setBrand_code(ToolBox_Inf.mIntegerParse(ss_brand.getmValue().get(SearchableSpinner.CODE)));
         mdProductSerial.setBrand_id(ss_brand.getmValue().get(SearchableSpinner.ID));
@@ -3540,6 +3543,8 @@ public class Frg_Serial_Edit extends BaseFragment {
         transListFrag.add("btn_add_tracking");
         transListFrag.add("btn_cancel_tracking");
         transListFrag.add("tracking_hint_lbl");
+        transListFrag.add("spinner_empty_list_lbl");
+        transListFrag.add("spinner_hint_lbl");
         //
         return transListFrag;
     }

@@ -38,6 +38,17 @@ data class InfoSerialModel(
             else -> null
         }
 
+        fun String?.formatMeasureValue(value_suffix: String?): String? = when {
+            this != null -> {
+                if (!value_suffix.isNullOrEmpty()) {
+                    "$this $value_suffix"
+                } else {
+                    "$this"
+                }
+            }
+            else -> null
+        }
+
         fun Int?.formatCycleValue(value_suffix: String?): String? = when {
             this != null -> {
                 if (!value_suffix.isNullOrEmpty()) "$this  $value_suffix"

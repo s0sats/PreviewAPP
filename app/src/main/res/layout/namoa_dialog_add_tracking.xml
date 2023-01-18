@@ -62,13 +62,13 @@
             android:id="@+id/namoa_dialog_add_tracking_iv_close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="16dp"
             android:padding="10dp"
             android:text="Cancelar"
             android:textColor="@color/m3_namoa_primary"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/guideline8"
+            app:layout_constraintEnd_toStartOf="@+id/namoa_dialog_add_tracking_iv_action"
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.button.MaterialButton
@@ -91,14 +91,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:strokeColor="@color/m3_namoa_primary"
             app:strokeWidth="0dp" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline8"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            app:layout_constraintEnd_toStartOf="@+id/namoa_dialog_add_tracking_iv_action"
-            app:layout_constraintStart_toEndOf="@+id/namoa_dialog_add_tracking_iv_close" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
