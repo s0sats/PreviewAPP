@@ -11,7 +11,7 @@
 
     <style name="NamoaTheme3.TextInputLayout.Outlined" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="hintTextColor">@drawable/edittext_theme</item>
-        <item name="boxStrokeColor">@drawable/edittext_theme</item>
+        <item name="boxStrokeColor">@drawable/edittext_theme_outlined</item>
         <item name="android:textColor">@drawable/edittext_theme_text</item>
         <item name="android:paddingVertical">8dp</item>
     </style>

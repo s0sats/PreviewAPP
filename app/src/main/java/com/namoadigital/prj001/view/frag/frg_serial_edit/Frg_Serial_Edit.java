@@ -713,7 +713,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         //
         ss_site_zone_local = view.findViewById(R.id.frg_serial_edit_ss_site_zone_local);
         ss_site_zone_local.setmShowLabel(false);//Não exibe ID no option do spinner.
-        ss_site_zone_local.setmShowBarcode(true);
+        ss_site_zone_local.setmShowBarcode(false);
         //
         ss_site_reason = view.findViewById(R.id.frg_serial_edit_ss_site_reason);
 
@@ -1861,13 +1861,6 @@ public class Frg_Serial_Edit extends BaseFragment {
                 }
 
                 handleMoveReasonSS();
-            }
-        });
-        //
-        ss_site_zone_local.setOnValueChangeListner(hmAux -> {
-            loadLocalSS(false);
-            if (hmAux != null && hmAux.size() > 0 && ss_site_zone_local.getmOption().size() == 1) {
-                ss_site_zone_local.setmValue(ss_site_zone_local.getmOption().get(0));
             }
         });
         //
@@ -3376,11 +3369,8 @@ public class Frg_Serial_Edit extends BaseFragment {
             }
         }
 
-        if (delegate != null && !reset_val) {
-            delegate.onAddOrRemoveControlSS(ss_site_zone_local, true);
-        }
-
     }
+
 
     /**
      * Chama Act007, especializada em exibir o log do serial.

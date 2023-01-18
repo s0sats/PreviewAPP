@@ -15,7 +15,8 @@
         android:layout_height="wrap_content"
         android:background="@color/m3_namoa_surface2"
         android:orientation="vertical"
-        android:padding="10dp"
+        android:paddingHorizontal="10dp"
+        android:paddingBottom="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
@@ -35,6 +36,7 @@
                 android:id="@+id/exists_serial_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingTop="10dp"
                 android:visibility="visible">
 
                 <ImageView
@@ -540,6 +542,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginBottom="2dp"
                                 android:gravity="center_vertical"
+                                style="@style/NamoaTheme3.TextInputLayout.Outlined"
                                 android:text="Class -Trad" />
 
                         </LinearLayout>
@@ -595,6 +598,7 @@
                             android:id="@+id/frg_serial_edit_ss_site"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            style="@style/NamoaTheme3.TextInputLayout.Outlined"
                             android:gravity="center_vertical"
                             android:text="Site" />
 
