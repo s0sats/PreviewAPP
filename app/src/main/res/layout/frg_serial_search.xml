@@ -10,16 +10,16 @@
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:padding="16dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="10dp">
+            android:orientation="vertical">
 
             <!--<View-->
             <!--android:layout_width="match_parent"-->
@@ -36,66 +36,48 @@
 
 
             <!--android:background="@drawable/border_back"-->
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/frg_serial_search_ll_product_id"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:orientation="horizontal"
-                android:paddingBottom="5dp"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:paddingTop="5dp">
+                android:layout_height="wrap_content">
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/frg_serial_search_til_prod"
+                    style="@style/NamoaTheme3.TextInputLayout.Outlined.Transparent"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
                     android:layout_weight="1"
-                    app:hintEnabled="false"
-                    app:helperTextEnabled="true"
-                    tools:helperText="FAHRZEUG / CARRO"
-                    app:helperTextTextAppearance="@color/namoa_dark_blue"
-                    >
+                    android:enabled="false"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/frg_serial_search_iv_product_id"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
-                <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-                    android:id="@+id/frg_serial_search_mket_product_id"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:paddingLeft="10dp"
-                    app:mBARCODE="false"
-                    app:mNFC="false"
-                    app:mOCR="false" />
+                    <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                        android:id="@+id/frg_serial_search_mket_product_id"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:mBARCODE="false"
+                        app:mNFC="false"
+                        app:mOCR="false"
+                        style="@style/NamoaTheme3.TextInputLayout.Outlined.Transparent"
+                        tools:text="saaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                        android:textColor="@drawable/edittext_theme_text_transparent_text" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <ImageView
-                    android:id="@+id/frg_serial_search_iv_product_change"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="7dp"
-                    android:focusable="false"
-                    android:paddingBottom="4dp"
-                    android:paddingLeft="15dp"
-                    android:paddingRight="15dp"
-                    android:paddingTop="4dp"
-                    android:src="@drawable/ic_arrow_drop_down_24px" />
 
-
-                <ImageView
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:id="@+id/frg_serial_search_iv_product_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="7dp"
-                    android:focusable="false"
-                    android:paddingBottom="4dp"
-                    android:paddingLeft="15dp"
-                    android:paddingRight="15dp"
-                    android:paddingTop="4dp"
-                    android:src="@drawable/ic_lupa_states"
-                    android:visibility="gone" />
+                    android:src="@drawable/baseline_swap_horiz_24"
+                    style="@style/ButtonCircleWithIcon"
+                    app:layout_constraintBottom_toBottomOf="@+id/frg_serial_search_til_prod"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/frg_serial_search_til_prod" />
 
-            </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <View
                 android:layout_width="match_parent"
@@ -110,38 +92,26 @@
                 android:textSize="@dimen/font_size_title_md"
                 android:visibility="gone" />
 
-            <LinearLayout
-                android:id="@+id/frg_serial_search_ll_serial"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/frg_serial_search_til_serial"
+                style="@style/NamoaTheme3.TextInputLayout.Outlined"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/border_back"
-                android:orientation="vertical"
-                android:padding="5dp"
-                >
+                android:layout_weight="1"
+                app:helperTextEnabled="true"
+                tools:helperText="Regra CHASSI(mín.7; máx.17)"
+                app:helperTextTextColor="@color/m3_namoa_secondary">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/frg_serial_search_til_serial"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    app:hintEnabled="false"
-                    app:helperTextEnabled="true"
-                    tools:helperText="Regra CHASSI(mín.7; máx.17)"
-                    >
                 <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                     android:id="@+id/frg_serial_search_mket_serial"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textMultiLine"
-                    android:paddingLeft="10dp"
-                    android:layout_margin="0dp"
                     app:mBARCODE="true"
                     app:mNFC="false"
                     app:mOCR="false" />
 
-                </com.google.android.material.textfield.TextInputLayout>
-
-            </LinearLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <View
                 android:layout_width="match_parent"
@@ -156,80 +126,83 @@
                 android:textSize="@dimen/font_size_title_md"
                 android:visibility="gone" />
 
-            <LinearLayout
-                android:id="@+id/frg_serial_search_ll_tracking"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/frg_serial_search_til_tracking"
+                style="@style/NamoaTheme3.TextInputLayout.Outlined"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/border_back"
-                android:orientation="vertical"
-                android:padding="5dp">
+                android:layout_weight="1">
 
                 <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                     android:id="@+id/frg_serial_search_mket_tracking"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:paddingLeft="10dp"
+                    android:inputType="textMultiLine"
                     app:mBARCODE="true"
                     app:mNFC="false"
                     app:mOCR="false" />
 
-            </LinearLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="5dp" />
 
-            <CheckBox
-                android:id="@+id/frg_serial_search_chk_hide_serial_info"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Ocultar Detalhes do Serial"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp"
-                />
+                android:paddingVertical="16dp">
 
 
-            <Button
-                android:id="@+id/frg_serial_search_btn_option_01"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:background="@drawable/namoa_cell_2_states"
-                android:gravity="left"
-                android:padding="20dp"
-                android:text="Option 01"
-                android:textColor="@color/padrao_WHITE" />
+                <TextView
+                    android:id="@+id/frg_serial_search_tv_hide_serial_info"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    style="@style/TextAppearance.Material3.BodyLarge"
+                    android:textColor="@color/m3_namoa_onSurfaceVariant"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/frg_serial_search_chk_hide_serial_info"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/frg_serial_search_chk_hide_serial_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:thumb="@drawable/namoa_switch_states"
+                    app:thumbTint="@color/namoa_switch_color_states"
+                    app:trackTint="@color/namoa_switch_track_color_states"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="5dp" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.Material3.Button"
+                app:shapeAppearance="@style/ShapeAppearance.Material3.SmallComponent"
                 android:id="@+id/frg_serial_search_btn_option_02"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
-                android:background="@drawable/namoa_cell_2_states"
-                android:gravity="left"
-                android:padding="20dp"
-                android:text="Option 02"
-                android:textColor="@color/padrao_WHITE" />
+                android:text="Option 02" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="5dp" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/frg_serial_search_btn_option_03"
+                style="@style/Widget.Material3.Button"
+                app:shapeAppearance="@style/ShapeAppearance.Material3.SmallComponent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
-                android:background="@drawable/namoa_cell_2_states"
-                android:gravity="left"
-                android:padding="20dp"
-                android:text="Option 03"
-                android:textColor="@color/padrao_WHITE" />
+                android:text="Option 03" />
 
             <View
                 android:layout_width="match_parent"
@@ -241,16 +214,14 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <Button
+                <com.google.android.material.button.MaterialButton
+                    style="@style/Widget.Material3.Button"
+                    app:shapeAppearance="@style/ShapeAppearance.Material3.SmallComponent"
                     android:id="@+id/frg_serial_search_btn_option_04"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
-                    android:background="@drawable/namoa_cell_2_states"
-                    android:gravity="left"
-                    android:padding="20dp"
-                    android:text="Option 04"
-                    android:textColor="@color/padrao_WHITE" />
+                    android:text="Option 04" />
 
                 <View
                     android:layout_width="match_parent"
@@ -264,33 +235,78 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.Material3.Button"
+                app:shapeAppearance="@style/ShapeAppearance.Material3.SmallComponent"
                 android:id="@+id/frg_serial_search_btn_option_05"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
-                android:background="@drawable/namoa_cell_2_states"
-                android:gravity="left"
-                android:padding="20dp"
-                android:text="Option 05"
-                android:textColor="@color/padrao_WHITE" />
+                android:text="Option 05" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="5dp" />
 
-            <com.namoa_digital.namoa_library.ctls.ButtonNFC
-                android:id="@+id/frg_serial_search_btn_nfc_reader"
-                style="@style/ButtonNFC_Style"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="NFC" />
-
 
         </LinearLayout>
 
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/linearLayout2a"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/m3_namoa_surface2"
+        android:gravity="start"
+        android:orientation="horizontal"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="10dp"
+        app:layout_constraintBottom_toTopOf="@id/ui_footer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.namoa_digital.namoa_library.ctls.ButtonNFC
+            android:id="@+id/frg_serial_search_btn_nfc_reader"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:textColor="@color/m3_namoa_onSecondaryContainer"
+            android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+            android:visibility="visible"
+            app:icon="@drawable/outline_contactless_24"
+            app:iconSize="18dp"
+            app:iconGravity="textStart"
+            app:iconTint="@color/m3_namoa_onSecondaryContainer"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:backgroundTint="@color/m3_namoa_secondaryContainer"
+            app:layout_constraintTop_toTopOf="parent"
+            app:strokeWidth="0dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/frg_serial_search_btn_option_01"
+            style="@style/Widget.Material3.Button.Icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            tools:text="Nova Ação"
+            android:textAlignment="center"
+            android:textColor="@color/m3_namoa_surface2"
+            android:visibility="visible"
+            android:backgroundTint="@drawable/button_theme_primary"
+            app:icon="@drawable/ic_search_black_24dp"
+            app:iconGravity="textStart"
+            app:iconTint="@color/m3_namoa_surface2"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:strokeColor="@color/m3_namoa_primary"
+            app:strokeWidth="0dp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>
 

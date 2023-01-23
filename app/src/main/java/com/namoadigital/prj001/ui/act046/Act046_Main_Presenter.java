@@ -6,6 +6,8 @@ import com.namoa_digital.namoa_library.ctls.CalendarView;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.sql.MD_Product_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act046_001;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -29,15 +31,28 @@ public class Act046_Main_Presenter implements Act046_Main_Contract.I_Presenter {
         this.mdProductDao = mdProductDao;
     }
 
+
+    public MD_Product getProduct(String product_id) {
+        MD_Product md_product = mdProductDao.getByString(
+                new MD_Product_Sql_003(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        "",
+                        product_id
+                ).toSqlQuery()
+        );
+        //
+        return md_product;
+    }
+
     @Override
     public int getTotalDelay(boolean filter_form, boolean filter_form_ap) {
-        boolean formApMenuAccess = ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_AP,null);
+        boolean formApMenuAccess = ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_AP, null);
         ArrayList<HMAux> results = (ArrayList<HMAux>) mdProductDao.query_HM(
                 new Sql_Act046_001(
                         context,
                         String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
                         filter_form,
-                    formApMenuAccess && filter_form_ap
+                        formApMenuAccess && filter_form_ap
                 ).toSqlQuery()
         );
 

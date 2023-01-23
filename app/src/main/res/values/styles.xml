@@ -259,5 +259,34 @@
         <item name="backgroundColor">@color/dark_gray_states</item>
     </style>
 
+    <style name="NamoaTheme3.TextInputLayout.Outlined.Transparent">
+        <item name="hintTextColor">@drawable/edittext_theme_text_transparent_hint</item>
+        <item name="hintTextAppearance">@style/TextAppearance.Material3.LabelMedium</item>
+        <item name="boxStrokeColor">@android:color/transparent</item>
+        <item name="boxStrokeWidth">0dp</item>
+        <item name="android:textColor">@drawable/edittext_theme_text_transparent_text</item>
+        <item name="android:textAppearance">@style/TextAppearance.Material3.BodyLarge</item>
+        <item name="android:paddingVertical">8dp</item>
+    </style>
 
+
+    <style name="NamoaTheme3.Button.Outlined" parent="Widget.Material3.Button.Icon">
+        <item name="strokeColor">@color/m3_namoa_outline</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="android:textColor">@color/m3_namoa_primary</item>
+        <item name="startIconTint">@color/m3_namoa_primary</item>
+        <item name="iconTint">@color/m3_namoa_primary</item>
+        <item name="backgroundColor">@drawable/namoa_theme_button_outlined</item>
+        <item name="backgroundTint">@drawable/namoa_theme_button_outlined</item>
+    </style>
+
+
+    <style name="NamoaTheme3.Button.Icon" parent="Widget.Material3.Button.Icon">
+        <item name="strokeColor">@color/m3_namoa_outline</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="startIconTint">@color/m3_namoa_onSurface</item>
+        <item name="iconTint">@color/m3_namoa_onSurface</item>
+        <item name="backgroundTint">@drawable/icon_button_theme</item>
+        <item name="backgroundColor">@drawable/icon_button_theme</item>
+    </style>
 </resources>

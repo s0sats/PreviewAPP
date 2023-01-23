@@ -3,9 +3,10 @@ package com.namoadigital.prj001.view.act.test;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentManager;
-import android.util.Log;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -173,7 +174,7 @@ public class Test extends Base_Activity_Frag_NFC_Geral implements On_Frg_Serial_
                     //frgSearch.setProductCodeText(value[2]);
                     //frgSearch.setProductIdText(product_id);
                     //frgSearch.setSerialIdText(value[3]);
-                    frgSearch.setProductIdText(value[2]);
+                    frgSearch.setProductIdText(value[2], value[2]);
                     frgSearch.setSerialIdText(value[1]);
                     frgSearch.setTrackingText("nada");
                     //mPresenter.executeSerialSearch(product_id,value[3],"");

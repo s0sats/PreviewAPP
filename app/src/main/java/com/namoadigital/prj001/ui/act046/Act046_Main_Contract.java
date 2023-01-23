@@ -2,6 +2,8 @@ package com.namoadigital.prj001.ui.act046;
 
 import android.content.Context;
 
+import com.namoadigital.prj001.model.MD_Product;
+
 public interface Act046_Main_Contract {
 
     interface I_View {
@@ -16,6 +18,8 @@ public interface Act046_Main_Contract {
     }
 
     interface I_Presenter {
+
+        MD_Product getProduct(String productId);
 
         int getTotalDelay(boolean filter_form, boolean filter_form_ap);
 

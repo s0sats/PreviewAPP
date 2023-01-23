@@ -403,7 +403,7 @@ public class Act030_Main_Presenter_Impl implements Act030_Main_Presenter {
         );
         //
         if (md_product != null) {
-            return md_product.getProduct_id();
+            return md_product.getProduct_desc();
         }
         //
         return "";

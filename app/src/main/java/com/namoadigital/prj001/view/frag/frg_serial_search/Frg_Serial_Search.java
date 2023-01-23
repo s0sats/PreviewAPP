@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -15,8 +13,11 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputLayout;
 import com.namoa_digital.namoa_library.ctls.ButtonNFC;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
@@ -52,15 +53,17 @@ public class Frg_Serial_Search extends Fragment {
     private TextInputLayout til_product;
     private TextView tv_product_id;
     private MKEditTextNM mket_product_id;
-    private ImageView iv_product_change;
+    private String productId = "";
     private ImageView iv_product_id;
-    private LinearLayout ll_product_id;
+    private ConstraintLayout ll_product_id;
+    private ConstraintLayout cl_bottom_buttons;
     private TextView tv_serial;
     private LinearLayout ll_serial;
     private TextInputLayout til_serial;
+    private TextInputLayout til_tracking;
     private MKEditTextNM mket_serial;
     private TextView tv_tracking;
-    private LinearLayout ll_tracking;
+    private TextInputLayout ll_tracking;
     private MKEditTextNM mket_tracking;
 
     private HMAux hmAux_Trans;
@@ -70,13 +73,15 @@ public class Frg_Serial_Search extends Fragment {
 
     private boolean bTokenPendenciesCheck = true;
 
-    private CheckBox chk_hide_serial_info;
+    private SwitchCompat sw_hide_serial_info;
 
-    private Button btn_option_01;
-    private Button btn_option_02;
-    private Button btn_option_03;
-    private Button btn_option_04;
-    private Button btn_option_05;
+    private TextView tv_hide_serial_info;
+
+    private MaterialButton btn_option_01;
+    private MaterialButton btn_option_02;
+    private MaterialButton btn_option_03;
+    private MaterialButton btn_option_04;
+    private MaterialButton btn_option_05;
     private LinearLayout ll_btn_option_04;
 
     private LinearLayout ll_options;
@@ -86,7 +91,7 @@ public class Frg_Serial_Search extends Fragment {
     private Frg_Serial_Search_Presenter mPresenter;
     private On_Frg_Serial_Search mFragListener;
     private On_Frg_Serial_Search.onProductSelectionReturnListener mFragOnProductSelectionReturnListener;
-    private On_Frg_Serial_Search.onProductTypingListener mFragOnProductTypingListener ;
+    private On_Frg_Serial_Search.onProductTypingListener mFragOnProductTypingListener;
     //LUCHE - 08/06/2021 - Var que define se deve performar o click ao retornar do barcode.
     private boolean performClickOnEspecialistReturn = true;
 
@@ -100,12 +105,13 @@ public class Frg_Serial_Search extends Fragment {
     }
 
     public void handleChkForHideSerialInfo(boolean status) {
-        chk_hide_serial_info.setChecked(status);
-        chk_hide_serial_info.setVisibility(View.VISIBLE);
+        sw_hide_serial_info.setChecked(status);
+        sw_hide_serial_info.setVisibility(View.VISIBLE);
+        tv_hide_serial_info.setVisibility(View.VISIBLE);
     }
 
     public void allowChkForHideSerialInfo(boolean status) {
-        chk_hide_serial_info.setEnabled(status);
+        sw_hide_serial_info.setEnabled(status);
     }
 
     public void setPerformClickOnEspecialistReturn(boolean performClickOnEspecialistReturn) {
@@ -205,15 +211,14 @@ public class Frg_Serial_Search extends Fragment {
         til_product = view.findViewById(R.id.frg_serial_search_til_prod);
         tv_product_id = (TextView) view.findViewById(R.id.frg_serial_search_tv_product_id);
         mket_product_id = (MKEditTextNM) view.findViewById(R.id.frg_serial_search_mket_product_id);
-        iv_product_change = (ImageView) view.findViewById(R.id.frg_serial_search_iv_product_change);
         iv_product_id = (ImageView) view.findViewById(R.id.frg_serial_search_iv_product_id);
-        ll_product_id = (LinearLayout) view.findViewById(R.id.frg_serial_search_ll_product_id);
+        ll_product_id = view.findViewById(R.id.frg_serial_search_ll_product_id);
         //
         controls_sta.add(mket_product_id);
         //
         tv_serial = (TextView) view.findViewById(R.id.frg_serial_search_tv_serial);
-        ll_serial = (LinearLayout) view.findViewById(R.id.frg_serial_search_ll_serial);
         til_serial = view.findViewById(R.id.frg_serial_search_til_serial);
+        til_tracking = view.findViewById(R.id.frg_serial_search_til_tracking);
         mket_serial = (MKEditTextNM) view.findViewById(R.id.frg_serial_search_mket_serial);
         //07/01/18 - Luche
         //Nos campos mket referentes a serial, o valores de mOcr e mBarcode serão preenchidos
@@ -229,72 +234,84 @@ public class Frg_Serial_Search extends Fragment {
 
         mket_serial.setmOCR(ToolBox_Inf.profileExists(
             getActivity(),
-            Constant.PROFILE_MENU_PROFILE,
-            Constant.PROFILE_MENU_PROFILE_SERIAL_OCR_MOSOLF
+                Constant.PROFILE_MENU_PROFILE,
+                Constant.PROFILE_MENU_PROFILE_SERIAL_OCR_MOSOLF
         ));
         controls_sta.add(mket_serial);
         //
         tv_tracking = (TextView) view.findViewById(R.id.frg_serial_search_tv_tracking);
-        ll_tracking = (LinearLayout) view.findViewById(R.id.frg_serial_search_ll_tracking);
+        ll_tracking = view.findViewById(R.id.frg_serial_search_til_tracking);
         mket_tracking = (MKEditTextNM) view.findViewById(R.id.frg_serial_search_mket_tracking);
         controls_sta.add(mket_tracking);
         //
-        chk_hide_serial_info = view.findViewById(R.id.frg_serial_search_chk_hide_serial_info);
+        sw_hide_serial_info = view.findViewById(R.id.frg_serial_search_chk_hide_serial_info);
+        tv_hide_serial_info = view.findViewById(R.id.frg_serial_search_tv_hide_serial_info);
         //LUCHE - 10/01/2020
         configChk();
         //
-        btn_option_01 = (Button) view.findViewById(R.id.frg_serial_search_btn_option_01);
-        btn_option_02 = (Button) view.findViewById(R.id.frg_serial_search_btn_option_02);
-        btn_option_03 = (Button) view.findViewById(R.id.frg_serial_search_btn_option_03);
-        btn_option_04 = (Button) view.findViewById(R.id.frg_serial_search_btn_option_04);
-        btn_option_05 = (Button) view.findViewById(R.id.frg_serial_search_btn_option_05);
+        cl_bottom_buttons = view.findViewById(R.id.linearLayout2a);
+        btn_option_01 = view.findViewById(R.id.frg_serial_search_btn_option_01);
+        btn_option_02 = view.findViewById(R.id.frg_serial_search_btn_option_02);
+        btn_option_03 = view.findViewById(R.id.frg_serial_search_btn_option_03);
+        btn_option_04 = view.findViewById(R.id.frg_serial_search_btn_option_04);
+        btn_option_05 = view.findViewById(R.id.frg_serial_search_btn_option_05);
         //
         ll_btn_option_04 = (LinearLayout) view.findViewById(R.id.frg_serial_search_ll_btn_option_04);
 
         if (supportNFC) {
             btn_nfc_reader.setVisibility(View.VISIBLE);
+
         } else {
             btn_nfc_reader.setVisibility(View.GONE);
         }
     }
 
+
+    public void setVisibilityBtnOption01(int visibility) {
+        btn_option_01.setVisibility(visibility);
+        chekBottomButtonsVisibility();
+    }
+
+    private void chekBottomButtonsVisibility() {
+        if (btn_nfc_reader.getVisibility() == View.VISIBLE || btn_option_01.getVisibility() == View.VISIBLE) {
+            cl_bottom_buttons.setVisibility(View.VISIBLE);
+        } else {
+            cl_bottom_buttons.setVisibility(View.GONE);
+        }
+
+    }
+
     /**
      * LUCHE - 10/01/2020
-     *
+     * <p>
      * Consolidado logica de configuração do checkbox de hide serial
      * Modificado logica para que, caso não exista nenhum do profiles de hide serial, o valor da
      * preferencia seja resetado para false.
-     *
      */
     private void configChk() {
         if (mFragListener.hasHideSerialInfoChk()) {
             if (!mPresenter.getProfileForHideSerialInfo()
                 && !mPresenter.getProfileForceNotShowSerialInfo()) {
-                chk_hide_serial_info.setVisibility(View.GONE);
-                chk_hide_serial_info.setChecked(false);
+                sw_hide_serial_info.setVisibility(View.GONE);
+                tv_hide_serial_info.setVisibility(View.GONE);
+                sw_hide_serial_info.setChecked(false);
                 mPresenter.setChkForHideSerialInfoPreference(false);
             } else {
                 if (mPresenter.getProfileForHideSerialInfo()) {
-                    chk_hide_serial_info.setVisibility(View.VISIBLE);
+                    sw_hide_serial_info.setVisibility(View.VISIBLE);
+                    tv_hide_serial_info.setVisibility(View.VISIBLE);
                 }
-                chk_hide_serial_info.setChecked(mPresenter.getChkForForceNotShowSerialInfo());
+                sw_hide_serial_info.setChecked(mPresenter.getChkForForceNotShowSerialInfo());
             }
             //Se profile force not show, desabilita o chk
-            chk_hide_serial_info.setEnabled(!mPresenter.getProfileForceNotShowSerialInfo());
+            sw_hide_serial_info.setEnabled(!mPresenter.getProfileForceNotShowSerialInfo());
         } else {
-            chk_hide_serial_info.setVisibility(View.GONE);
+            sw_hide_serial_info.setVisibility(View.GONE);
+            tv_hide_serial_info.setVisibility(View.GONE);
         }
     }
 
     private void iniAction() {
-        iv_product_change.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setShowTree(true);
-                setShowAll(false);
-                mket_product_id.setText("");
-            }
-        });
 
         iv_product_id.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -344,38 +361,41 @@ public class Frg_Serial_Search extends Fragment {
 
             @Override
             public void reportTextChange(String text, boolean hasText) {
-                if(mFragOnProductTypingListener != null){
+                if (mFragOnProductTypingListener != null) {
                     mFragOnProductTypingListener.onProductTyping(
-                        text.trim()
+                            text.trim()
                     );
                 }
-                if (hasText) {
-                    MD_Product mdProduct = productValidCheck(text);
-                    //
-                    setProductDesc(mdProduct != null ? mdProduct.getProduct_desc() : null);
-                    if (mdProduct != null) {
-                        setSerialRule(
-                            mdProduct.getSerial_rule(),
-                            mdProduct.getSerial_min_length(),
-                            mdProduct.getSerial_max_length()
-                        );
-                    } else {
-                        setSerialRule(null, null, null);
-                    }
-                } else {
-                    setProductDesc(null);
-                    setSerialRule(null, null, null);
-                }
+
             }
         });
         //LUCHE - 10/01/2020
         //Adicionado set da preferencia ao trocar o valor do checkbox.
-        chk_hide_serial_info.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        sw_hide_serial_info.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 mPresenter.setChkForHideSerialInfoPreference(isChecked);
             }
         });
+    }
+
+
+    private void checkRulesForHintSerial(boolean hasText) {
+        if (hasText) {
+            MD_Product mdProduct = productValidCheck(productId);
+            //
+            if (mdProduct != null) {
+                setSerialRule(
+                        mdProduct.getSerial_rule(),
+                        mdProduct.getSerial_min_length(),
+                        mdProduct.getSerial_max_length()
+                );
+            } else {
+                setSerialRule(null, null, null);
+            }
+        } else {
+            setSerialRule(null, null, null);
+        }
     }
 
     /**
@@ -493,16 +513,27 @@ public class Frg_Serial_Search extends Fragment {
         btn_nfc_reader.setText(text.toString());
     }
 
-    public void setProductIdText(String text) {
-        if (text.length() != 0) {
-            iv_product_change.performClick();
-        }
+    public void setProductIdText(String text, String productId) {
         //
         mket_product_id.setText(text.toString());
+        setProductId(productId);
+        setProductIdHint("");
+    }
+
+    public void setProductId(String productId) {
+        this.productId = productId;
+    }
+
+    public String getProductId() {
+        return productId;
     }
 
     public void setProductIdHint(String hint) {
-        mket_product_id.setHint(hint.toString());
+        if (mket_product_id.getText().toString().isEmpty()) {
+            til_product.setHint(hmAux_Trans.get("product_all_lbl"));
+        } else {
+            til_product.setHint(hmAux_Trans.get("product_contain_id_lbl"));
+        }
     }
 
     public void setSerialIdText(String text) {
@@ -530,7 +561,7 @@ public class Frg_Serial_Search extends Fragment {
     }
 
     public void setBtn_Option_01_BackGround(int status) {
-        btn_option_01.setBackground(getActivity().getDrawable(status));
+        //btn_option_01.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(status)));
     }
 
     public void setBtn_Option_01_Visibility(int status) {
@@ -542,7 +573,7 @@ public class Frg_Serial_Search extends Fragment {
     }
 
     public void setBtn_Option_02_BackGround(int status) {
-        btn_option_02.setBackground(getActivity().getDrawable(status));
+       // btn_option_02.setBackgroundColor(ContextCompat.getColor(getActivity(), status));
     }
 
     public void setBtn_Option_02_Visibility(int status) {
@@ -554,7 +585,7 @@ public class Frg_Serial_Search extends Fragment {
     }
 
     public void setBtn_Option_03_BackGround(int status) {
-        btn_option_03.setBackground(getActivity().getDrawable(status));
+       // btn_option_03.setBackgroundColor(ContextCompat.getColor(getActivity(), status));
     }
 
     public void setBtn_Option_03_Visibility(int status) {
@@ -566,7 +597,7 @@ public class Frg_Serial_Search extends Fragment {
     }
 
     public void setBtn_Option_04_BackGround(int status) {
-        btn_option_04.setBackground(getActivity().getDrawable(status));
+      //  btn_option_04.setBackgroundColor(ContextCompat.getColor(getActivity(), status));
     }
 
     public void setBtn_Option_04_Visibility(int status) {
@@ -579,7 +610,7 @@ public class Frg_Serial_Search extends Fragment {
     }
 
     public void setBtn_Option_05_BackGround(int status) {
-        btn_option_05.setBackground(getActivity().getDrawable(status));
+       // btn_option_05.setBackground(getActivity().getDrawable(status));
     }
 
     public void setBtn_Option_05_Visibility(int status) {
@@ -588,7 +619,7 @@ public class Frg_Serial_Search extends Fragment {
 
     public HMAux getHMAuxValues() {
         HMAux values = new HMAux();
-        values.put(PRODUCT_ID, (mket_product_id.getText().toString().trim().isEmpty() || iv_product_change.getVisibility() == View.VISIBLE) ? "" : mket_product_id.getText().toString().trim());
+        values.put(PRODUCT_ID, (mket_product_id.getText().toString().trim().isEmpty()) ? "" : productId.trim());
         //LUCHE - 27/10/2020
         //Como o setOnReportTextChangeListner reseta a var de busca exata, foi removido o listener nesse momento.
         String serial_id = ToolBox_Inf.removeForbidenChars(mket_serial.getText().toString().trim()).toUpperCase();
@@ -611,19 +642,18 @@ public class Frg_Serial_Search extends Fragment {
     private void setTranslation() {
         btn_nfc_reader.setText(hmAux_Trans.get("btn_enable_nfc"));
         tv_product_id.setText(hmAux_Trans.get("product_lbl"));
-        tv_serial.setText(hmAux_Trans.get("serial_lbl"));
-        tv_tracking.setText(hmAux_Trans.get("tracking_lbl"));
-        chk_hide_serial_info.setText(hmAux_Trans.get("chk_hide_serial_info_lbl"));
+        til_serial.setHint(hmAux_Trans.get("serial_lbl"));
+        til_tracking.setHint(hmAux_Trans.get("tracking_lbl"));
+        tv_hide_serial_info.setText(hmAux_Trans.get("chk_hide_serial_info_lbl"));
         //
-        if (showHint) {
-            mket_product_id.setHint(hmAux_Trans.get("product_hint"));
-            mket_serial.setHint(hmAux_Trans.get("serial_hint"));
-            mket_tracking.setHint(hmAux_Trans.get("tracking_hint"));
+/*        if (showHint) {
+            til_product.setHint(hmAux_Trans.get("product_hint"));
+            til_serial.setHint(hmAux_Trans.get("serial_hint"));
+            til_tracking.setHint(hmAux_Trans.get("tracking_hint"));
         } else {
-            mket_product_id.setHint("");
-            mket_serial.setHint("");
-            mket_tracking.setHint("");
-        }
+            til_serial.setHint(hmAux_Trans.get("serial_hint"));
+            til_tracking.setHint(hmAux_Trans.get("tracking_hint"));
+        }*/
     }
 
     public void setShowTree(boolean showTree) {
@@ -646,14 +676,6 @@ public class Frg_Serial_Search extends Fragment {
         }
     }
 
-    public void setShowHideSerial(boolean status) {
-        if (status) {
-            ll_serial.setVisibility(View.VISIBLE);
-        } else {
-            ll_serial.setVisibility(View.GONE);
-        }
-    }
-
     public void setShowHideTracking(boolean status) {
         if (status) {
             ll_tracking.setVisibility(View.VISIBLE);
@@ -664,27 +686,14 @@ public class Frg_Serial_Search extends Fragment {
 
     private void customSettings() {
         if (showTree) {
-            iv_product_change.setVisibility(View.GONE);
-            iv_product_id.setVisibility(View.VISIBLE);
-            mket_product_id.setmBARCODE(true);
-            mket_product_id.setEnabled(true);
-            ll_product_id.setBackground(getActivity().getDrawable(R.drawable.border_back));
+            mket_product_id.setmBARCODE(false);
         } else {
             if (showAll) {
-                iv_product_change.setVisibility(View.VISIBLE);
-                iv_product_id.setVisibility(View.GONE);
                 mket_product_id.setmBARCODE(false);
-                mket_product_id.setEnabled(false);
             } else {
-                iv_product_change.setVisibility(View.GONE);
-                iv_product_id.setVisibility(View.GONE);
                 mket_product_id.setmBARCODE(false);
-                mket_product_id.setEnabled(false);
             }
         }
-        //LUCHE - 07/11/2019
-        //Chama metodo que define a visibilidade do textHelper do produto.
-        setProductHelperVisibility();
     }
 
     public void setLl_options(View ll_options) {
@@ -725,13 +734,16 @@ public class Frg_Serial_Search extends Fragment {
             //LUCHE - 10/11/2020
             //Ao retornar da seleção de produto, dispara interface com valor do product id atual + o
             //retornado.
-            if(mFragOnProductSelectionReturnListener != null){
+            if (mFragOnProductSelectionReturnListener != null) {
                 mFragOnProductSelectionReturnListener.onProductSelectionReturn(
-                    mket_product_id.getText().toString().trim(),
-                    pAux.getProduct_id()
+                        mket_product_id.getText().toString().trim(),
+                        pAux.getProduct_id()
                 );
             }
-            mket_product_id.setText(String.valueOf(pAux.getProduct_id()));
+            til_product.setHint(hmAux_Trans.get("product_contain_id_lbl"));
+            mket_product_id.setText(String.valueOf(pAux.getProduct_desc()));
+            productId = pAux.getProduct_id();
+            checkRulesForHintSerial(productId != null || !productId.isEmpty());
             //LUCHE - 08/11/2019
             //Comentado o codigo abaixo pois, o setText acima ja dispara a chamada
             //do metodo setSerialRule().
@@ -762,7 +774,7 @@ public class Frg_Serial_Search extends Fragment {
         String mProductId = null;
 
         if (product_id == null || product_id.isEmpty()) {
-            mProductId = mket_product_id.getText().toString().trim();
+            mProductId = productId;
         } else {
             mProductId = product_id;
         }

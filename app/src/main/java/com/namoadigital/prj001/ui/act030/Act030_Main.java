@@ -212,7 +212,10 @@ public class Act030_Main extends Base_Activity_Frag_NFC_Geral implements Act030_
         mPresenter.getMD_Products();
 
         if (!fragProduct_ID.isEmpty()) {
-            mFrgSerialSearch.setProductIdText(fragProduct_ID);
+            MD_Product product = mPresenter.searchProduct(fragProduct_ID);
+            mFrgSerialSearch.setProductIdText(product.getProduct_desc(), product.getProduct_id());
+            mFrgSerialSearch.setProductIdHint(hmAux_Trans_frg_serial_search.get("product_contain_id_lbl"));
+
 
             if (fragIsOnlyOne) {
                 mFrgSerialSearch.setShowTree(false);
@@ -298,17 +301,18 @@ public class Act030_Main extends Base_Activity_Frag_NFC_Geral implements Act030_
     @Override
     public void setProduto(ArrayList<MD_Product> list) {
         if (list.size() > 1) {
-            mFrgSerialSearch.setProductIdText(hmAux_Trans_frg_serial_search.get("product_all_lbl"));
+            mFrgSerialSearch.setProductIdHint(hmAux_Trans_frg_serial_search.get("product_all_lbl"));
             mFrgSerialSearch.setShowTree(false);
             mFrgSerialSearch.setShowAll(true);
             fragIsOnlyOne = false;
         } else if (list.size() == 1) {
-            mFrgSerialSearch.setProductIdText(list.get(0).getProduct_id());
+            mFrgSerialSearch.setProductIdHint(hmAux_Trans_frg_serial_search.get("product_contain_id_lbl"));
+            mFrgSerialSearch.setProductIdText(list.get(0).getProduct_desc(), list.get(0).getProduct_id());
             mFrgSerialSearch.setShowTree(false);
             mFrgSerialSearch.setShowAll(false);
             fragIsOnlyOne = true;
         } else {
-            mFrgSerialSearch.setProductIdText("");
+            mFrgSerialSearch.setProductIdHint(hmAux_Trans_frg_serial_search.get("nothing_product_found_lbl"));
         }
     }
 
@@ -446,10 +450,13 @@ public class Act030_Main extends Base_Activity_Frag_NFC_Geral implements Act030_
                     product_id = mPresenter.searchProductInfo(value[2], "");
 
                     if (!product_id.equals("")) {
-                        mFrgSerialSearch.setProductIdText(product_id);
+                        MD_Product product = mPresenter.searchProduct(product_id);
+                        mFrgSerialSearch.setProductIdText(product.getProduct_desc(), product.getProduct_id());
+                        mFrgSerialSearch.setProductIdHint(hmAux_Trans_frg_serial_search.get("product_contain_id_lbl"));
+
                         mFrgSerialSearch.setSerialIdText("");
                         mFrgSerialSearch.setTrackingText("");
-                        mPresenter.executeSerialSearch(product_id, "", "");
+                        mPresenter.executeSerialSearch(product.getProduct_id(), "", "");
                     } else {
                         ToolBox.alertMSG(
                                 context,
@@ -467,9 +474,11 @@ public class Act030_Main extends Base_Activity_Frag_NFC_Geral implements Act030_
                     product_id = mFrgSerialSearch.searchProductInfo(value[2], "");
 
                     if (!product_id.equals("") || value[2].equalsIgnoreCase("")) {
-
                         if (!product_id.equals("")) {
-                            mFrgSerialSearch.setProductIdText(product_id);
+                            MD_Product product = mPresenter.searchProduct(product_id);
+                            mFrgSerialSearch.setProductIdText(product.getProduct_desc(), product.getProduct_id());
+                            mFrgSerialSearch.setProductIdHint(hmAux_Trans_frg_serial_search.get("product_contain_id_lbl"));
+
                         }
                         mFrgSerialSearch.setSerialIdText(value[3]);
                         mFrgSerialSearch.setTrackingText("");

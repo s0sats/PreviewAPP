@@ -88,7 +88,7 @@ public class Act081_Main_Presenter implements Act081_Main_Contract.I_Presenter{
         }
     }
 
-    private MD_Product searchProduct(String product_id) {
+    public MD_Product searchProduct(String product_id) {
         MD_Product md_product = productDao.getByString(
                 new MD_Product_Sql_003(
                         ToolBox_Con.getPreference_Customer_Code(context),

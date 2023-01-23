@@ -15,6 +15,7 @@ public class Frg_Serial_Search_Presenter implements Frg_Serial_Search_Contract.P
         this.context = context;
     }
 
+
     @Override
     public void setChkForHideSerialInfoPreference(boolean status) {
         ToolBox_Con.setPreference_HideSerialInfo(context, status);

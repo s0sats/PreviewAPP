@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -96,6 +95,7 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements
         setContentView(R.layout.act081_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //
         iniSetup();
         //
@@ -107,6 +107,12 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements
 
     }
 
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return super.onSupportNavigateUp();
+    }
+
     private void initActions() {
         mFrgSerialSearch.setOnSearchClickListener(new Frg_Serial_Search.I_Frg_Serial_Search() {
             @Override
@@ -115,11 +121,11 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements
                 fragSerial_ID = optionsInfo.get(Frg_Serial_Search.SERIAL);
                 fragTracking = optionsInfo.get(Frg_Serial_Search.TRACKING);
                 switch (btn_Action) {
-                    case Frg_Serial_Search.BTN_OPTION_01:
+                    case Frg_Serial_Search.BTN_OPTION_02:
                         isForm = false;
                         processSerialSearch(optionsInfo);
                         break;
-                    case Frg_Serial_Search.BTN_OPTION_02:
+                    case Frg_Serial_Search.BTN_OPTION_03:
 //                        Toast.makeText(context, "Função em Desenvolvimento", Toast.LENGTH_SHORT).show();
                         isForm = true;
                         processSerialSearch(optionsInfo);
@@ -168,11 +174,11 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements
         mFrgSerialSearch.setClickListener(actionBTN);
         //
         mFrgSerialSearch.setShowHideTracking(ToolBox_Con.getPreference_Customer_Uses_Tracking(context) == 1 ? true : false);
-        mFrgSerialSearch.setBtn_Option_01_BackGround(R.drawable.namoa_cell_3_states);
-        mFrgSerialSearch.setBtn_Option_01_Label(hmAux_Trans.get("btn_start_action"));
+        mFrgSerialSearch.setVisibilityBtnOption01(View.GONE);
         mFrgSerialSearch.setBtn_Option_02_BackGround(R.drawable.namoa_cell_3_states);
-        mFrgSerialSearch.setBtn_Option_02_Label(hmAux_Trans.get("btn_start_form"));
-        mFrgSerialSearch.setBtn_Option_03_Visibility(View.GONE);
+        mFrgSerialSearch.setBtn_Option_02_Label(hmAux_Trans.get("btn_start_action"));
+        mFrgSerialSearch.setBtn_Option_03_BackGround(R.drawable.namoa_cell_3_states);
+        mFrgSerialSearch.setBtn_Option_03_Label(hmAux_Trans.get("btn_start_form"));
         mFrgSerialSearch.setBtn_Option_04_Visibility(View.GONE);
         mFrgSerialSearch.setBtn_Option_05_Visibility(View.GONE);
         //LUCHE - 08/06/2021 - evita que ao ler barcode, seja disparado o click no btn principal.
@@ -185,7 +191,8 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         
         if (!fragProduct_ID.isEmpty()) {
-            mFrgSerialSearch.setProductIdText(fragProduct_ID);
+            MD_Product product = mPresenter.searchProduct(fragProduct_ID);
+            mFrgSerialSearch.setProductIdText(product.getProduct_desc(), product.getProduct_id());
             mFrgSerialSearch.setShowTree(true);
             fragIsOnlyOne = false;
         }
@@ -403,10 +410,6 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
-
-        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
-        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         return true;
     }
@@ -444,7 +447,8 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements
                     product_id = mFrgSerialSearch.searchProductInfo(value[2], "");
                     //
                     if (!product_id.equals("")) {
-                        mFrgSerialSearch.setProductIdText(product_id);
+                        MD_Product product = mPresenter.searchProduct(product_id);
+                        mFrgSerialSearch.setProductIdText(product.getProduct_desc(), product.getProduct_id());
                         mFrgSerialSearch.setSerialIdText("");
                         mFrgSerialSearch.setTrackingText("");
                         forceExactSearch = false;
@@ -465,7 +469,8 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements
                     if (!product_id.equals("") || value[2].equalsIgnoreCase("")) {
 
                         if (!product_id.equals("")) {
-                            mFrgSerialSearch.setProductIdText(product_id);
+                            MD_Product product = mPresenter.searchProduct(product_id);
+                            mFrgSerialSearch.setProductIdText(product.getProduct_desc(), product.getProduct_id());
                         }
                         mFrgSerialSearch.setSerialIdText(value[3]);
                         mFrgSerialSearch.setTrackingText("");
@@ -544,7 +549,7 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements
 
         if (productList.size() > 1) {
             if(fragProduct_ID.isEmpty() && productId.isEmpty()) {
-                mFrgSerialSearch.setProductIdText(hmAux_Trans_frg_serial_search.get("product_all_lbl"));
+                mFrgSerialSearch.setProductIdHint(hmAux_Trans_frg_serial_search.get("product_all_lbl"));
                 mFrgSerialSearch.setShowTree(false);
             }else{
                 restoreProductIdValue();
@@ -558,17 +563,19 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements
             mFrgSerialSearch.setShowAll(false);
             fragIsOnlyOne = true;
         } else {
-            mFrgSerialSearch.setProductIdText("");
+            mFrgSerialSearch.setProductIdHint(hmAux_Trans_frg_serial_search.get("product_not_found_lbl"));
+
         }
 
     }
 
     private void restoreProductIdValue() {
         String restoredProductId = productId;
-        if(!fragProduct_ID.isEmpty()){
+        if (!fragProduct_ID.isEmpty()) {
             restoredProductId = fragProduct_ID;
         }
-        mFrgSerialSearch.setProductIdText(restoredProductId);
+        MD_Product product = mPresenter.searchProduct(restoredProductId);
+        mFrgSerialSearch.setProductIdText(product.getProduct_desc(), product.getProduct_id());
     }
 
     /**

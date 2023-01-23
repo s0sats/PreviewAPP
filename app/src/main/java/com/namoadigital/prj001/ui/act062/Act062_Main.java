@@ -4,7 +4,6 @@ import static com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Sea
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -175,7 +174,10 @@ public class Act062_Main extends Base_Activity_Frag_NFC_Geral implements Act062_
 
     private void defineProdutcTree() {
         if (!fragProduct_ID.isEmpty()) {
-            mFrgSerialSearch.setProductIdText(fragProduct_ID);
+            MD_Product product = mPresenter.searchProduct(fragProduct_ID);
+            mFrgSerialSearch.setProductIdText(product.getProduct_desc(), product.getProduct_id());
+            mFrgSerialSearch.setProductIdHint(hmAux_Trans_frg_serial_search.get("product_contain_id_lbl"));
+
             if (fragIsOnlyOne) {
                 mFrgSerialSearch.setShowTree(false);
                 mFrgSerialSearch.setShowAll(false);
@@ -238,17 +240,20 @@ public class Act062_Main extends Base_Activity_Frag_NFC_Geral implements Act062_
     @Override
     public void setProduct(ArrayList<MD_Product> productList) {
         if (productList.size() > 1) {
-            mFrgSerialSearch.setProductIdText(hmAux_Trans_frg_serial_search.get("product_all_lbl"));
+            mFrgSerialSearch.setProductIdHint(hmAux_Trans_frg_serial_search.get("product_all_lbl"));
             mFrgSerialSearch.setShowTree(false);
             mFrgSerialSearch.setShowAll(true);
             fragIsOnlyOne = false;
         } else if (productList.size() == 1) {
-            mFrgSerialSearch.setProductIdText(productList.get(0).getProduct_id());
+            mFrgSerialSearch.setProductIdText(productList.get(0).getProduct_desc(), productList.get(0).getProduct_id());
+            mFrgSerialSearch.setProductIdHint(hmAux_Trans_frg_serial_search.get("product_contain_id_lbl"));
+
             mFrgSerialSearch.setShowTree(false);
             mFrgSerialSearch.setShowAll(false);
             fragIsOnlyOne = true;
         } else {
-            mFrgSerialSearch.setProductIdText("");
+            mFrgSerialSearch.setProductIdHint(hmAux_Trans_frg_serial_search.get("product_not_found_lbl"));
+
         }
 
     }
@@ -372,7 +377,8 @@ public class Act062_Main extends Base_Activity_Frag_NFC_Geral implements Act062_
                     product_id = mFrgSerialSearch.searchProductInfo(value[2], "");
                     //
                     if (!product_id.equals("")) {
-                        mFrgSerialSearch.setProductIdText(product_id);
+                        MD_Product product = mPresenter.searchProduct(product_id);
+                        mFrgSerialSearch.setProductIdText(product.getProduct_desc(), product.getProduct_id());
                         mFrgSerialSearch.setSerialIdText("");
                         mFrgSerialSearch.setTrackingText("");
                         mPresenter.executeSerialSearch(product_id, "", "");
@@ -392,7 +398,8 @@ public class Act062_Main extends Base_Activity_Frag_NFC_Geral implements Act062_
                     if (!product_id.equals("") || value[2].equalsIgnoreCase("")) {
 
                         if (!product_id.equals("")) {
-                            mFrgSerialSearch.setProductIdText(product_id);
+                            MD_Product product = mPresenter.searchProduct(product_id);
+                            mFrgSerialSearch.setProductIdText(product.getProduct_desc(), product.getProduct_id());
                         }
                         mFrgSerialSearch.setSerialIdText(value[3]);
                         mFrgSerialSearch.setTrackingText("");

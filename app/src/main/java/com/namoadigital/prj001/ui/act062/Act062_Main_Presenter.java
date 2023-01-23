@@ -73,7 +73,7 @@ public class Act062_Main_Presenter implements Act062_Main_Contract.I_Presenter {
         }
     }
 
-    private MD_Product searchProduct(String product_id) {
+    public MD_Product searchProduct(String product_id) {
         MD_Product md_product = mdProductDao.getByString(
                 new MD_Product_Sql_003(
                         ToolBox_Con.getPreference_Customer_Code(context),

@@ -578,20 +578,17 @@
                                 android:textColor="@color/m3_namoa_onSurfaceVariant"
                                 style="@style/TextAppearance.Material3.TitleSmall" />
 
-                            <ImageView
+                            <com.google.android.material.button.MaterialButton
                                 android:id="@+id/frg_serial_edit_iv_serial_dialog_log"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="end|center_vertical"
-                                android:layout_marginEnd="4dp"
-                                android:background="@drawable/my_action_toogle_default"
-                                android:padding="10dp"
-                                android:src="@drawable/ic_clock_chat"
-                                android:visibility="visible"
+                                style="@style/NamoaTheme3.Button.Icon"
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                app:icon="@drawable/ic_clock_chat"
+                                app:iconGravity="start"
+                                app:iconSize="24dp"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:tint="@color/m3_namoa_onSurfaceVariant" />
+                                app:layout_constraintTop_toTopOf="parent" />
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <com.namoa_digital.namoa_library.ctls.SearchableSpinner

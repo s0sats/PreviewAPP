@@ -72,15 +72,16 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
         mView.setPendenciesQty(qty);
     }
 
+    private ArrayList<MD_Product> productsList;
     @Override
     public void getMD_Products() {
-        ArrayList<MD_Product> productList = (ArrayList<MD_Product>) productDao.query(
+        productsList = (ArrayList<MD_Product>) productDao.query(
                 new MD_Product_Sql_002(
                         ToolBox_Con.getPreference_Customer_Code(context)
                 ).toSqlQuery()
         );
         //
-        mView.setProduto(productList);
+        mView.setProduto(productsList);
     }
 
     @Override

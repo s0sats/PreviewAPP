@@ -1,12 +1,12 @@
 package com.namoadigital.prj001.ui.act046;
 
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT046;
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_LATE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_SELECTED_DATE;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentManager;
-import androidx.appcompat.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,6 +16,10 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentManager;
+
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -23,6 +27,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity_Frag_NFC_Geral;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act016.Act016_Main;
@@ -37,10 +42,6 @@ import com.namoadigital.prj001.view.frag.frg_serial_search.On_Frg_Serial_Search;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.namoadigital.prj001.util.ConstantBaseApp.ACT046;
-import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_LATE;
-import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_SELECTED_DATE;
 
 public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_Main_Contract.I_View, On_Frg_Serial_Search {
 
@@ -307,8 +308,13 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
         }
 
         if (!fragProduct_ID.isEmpty()) {
-            mFrgSerialSearch.setProductIdText(fragProduct_ID);
+            MD_Product product = mPresenter.getProduct(fragProduct_ID);
+            if (product != null) {
+                mFrgSerialSearch.setProductIdText(product.getProduct_desc(), product.getProduct_id());
+                mFrgSerialSearch.setProductIdHint(hmAux_Trans_frg_serial_search.get("product_contain_id_lbl"));
 
+
+            }
             if (fragIsOnlyOne) {
                 mFrgSerialSearch.setShowTree(false);
                 mFrgSerialSearch.setShowAll(false);

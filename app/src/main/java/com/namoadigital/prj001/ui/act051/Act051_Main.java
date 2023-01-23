@@ -1,20 +1,22 @@
 package com.namoadigital.prj001.ui.act051;
 
+import static com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search.PRODUCT_ID;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.fragment.app.FragmentManager;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentManager;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -44,8 +46,6 @@ import com.namoadigital.prj001.view.frag.frg_serial_search.On_Frg_Serial_Search;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search.PRODUCT_ID;
-
 public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_Main_Contract.I_View, On_Frg_Serial_Search {
 
     private FragmentManager fm;
@@ -73,11 +73,18 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         initSetup();
         initVars();
         initFooter();
         initAction();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return super.onSupportNavigateUp();
     }
 
     private void initSetup() {
@@ -210,8 +217,9 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
         mPresenter.getPendencies();
 
         if (!fragProduct_ID.isEmpty()) {
-            mFrgSerialSearch.setProductIdText(fragProduct_ID);
-
+            MD_Product product = mPresenter.searchProduct(fragSerial_ID);
+            mFrgSerialSearch.setProductIdText(product.getProduct_desc(), product.getProduct_id());
+            mFrgSerialSearch.setProductIdHint(hmAux_Trans_frg_serial_search.get("product_contain_id_lbl"));
             if (fragIsOnlyOne) {
                 mFrgSerialSearch.setShowTree(false);
                 mFrgSerialSearch.setShowAll(false);
@@ -366,17 +374,18 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
     @Override
     public void setProduto(ArrayList<MD_Product> list) {
         if (list.size() > 1) {
-            mFrgSerialSearch.setProductIdText(hmAux_Trans_frg_serial_search.get("product_all_lbl"));
+            mFrgSerialSearch.setProductIdHint(hmAux_Trans_frg_serial_search.get("product_all_lbl"));
             mFrgSerialSearch.setShowTree(false);
             mFrgSerialSearch.setShowAll(true);
             fragIsOnlyOne = false;
         } else if (list.size() == 1) {
-            mFrgSerialSearch.setProductIdText(list.get(0).getProduct_id());
+            mFrgSerialSearch.setProductIdHint(hmAux_Trans_frg_serial_search.get("product_contain_id_lbl"));
+            mFrgSerialSearch.setProductIdText(list.get(0).getProduct_desc(), list.get(0).getProduct_id());
             mFrgSerialSearch.setShowTree(false);
             mFrgSerialSearch.setShowAll(false);
             fragIsOnlyOne = true;
         } else {
-            mFrgSerialSearch.setProductIdText("");
+            mFrgSerialSearch.setProductIdHint(hmAux_Trans_frg_serial_search.get("nothing_product_found_lbl"));
         }
     }
 
@@ -429,7 +438,9 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
                     product_id = mFrgSerialSearch.searchProductInfo(value[2], "");
                     //
                     if (!product_id.equals("")) {
-                        mFrgSerialSearch.setProductIdText(product_id);
+                        MD_Product product = mPresenter.searchProduct(product_id);
+                        mFrgSerialSearch.setProductIdText(product.getProduct_desc(), product.getProduct_id());
+                        mFrgSerialSearch.setProductIdHint(hmAux_Trans_frg_serial_search.get("product_contain_id_lbl"));
                         mFrgSerialSearch.setSerialIdText("");
                         mFrgSerialSearch.setTrackingText("");
                         mPresenter.executeSerialProcessSearch(product_id, "", "");
@@ -449,7 +460,10 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
                     if (!product_id.equals("") || value[2].equalsIgnoreCase("")) {
 
                         if (!product_id.equals("")) {
-                            mFrgSerialSearch.setProductIdText(product_id);
+                            MD_Product product = mPresenter.searchProduct(product_id);
+                            mFrgSerialSearch.setProductIdText(product.getProduct_desc(), product.getProduct_id());
+                            mFrgSerialSearch.setProductIdHint(hmAux_Trans_frg_serial_search.get("product_contain_id_lbl"));
+
                         }
                         mFrgSerialSearch.setSerialIdText(value[3]);
                         mFrgSerialSearch.setTrackingText("");
@@ -636,10 +650,6 @@ public class Act051_Main extends Base_Activity_Frag_NFC_Geral implements Act051_
 
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
-
-        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
-        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         return true;
     }

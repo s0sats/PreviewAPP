@@ -5,6 +5,8 @@ import com.namoa_digital.namoa_library.util.HMAux;
 public interface Frg_Serial_Search_Contract {
 
     interface Presenter{
+
+
         void setChkForHideSerialInfoPreference(boolean status);
 
         boolean getChkForForceNotShowSerialInfo();
