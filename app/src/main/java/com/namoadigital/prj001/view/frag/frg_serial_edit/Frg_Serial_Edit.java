@@ -101,7 +101,7 @@ public class Frg_Serial_Edit extends BaseFragment {
     private TextView tv_product_desc_value;
     private TextView tv_trackings_value;
     private MKEditTextNM mket_serial_id;
-    private ImageView iv_serial_log;
+    private MaterialButton iv_serial_log;
     private TextView tv_required_lbl;
     private TextView tv_required_val;
     private TextView tv_allow_new_lbl;
@@ -163,7 +163,7 @@ public class Frg_Serial_Edit extends BaseFragment {
     private DialogInterface.OnClickListener hideSerialInfoErrorListner;
     private LinearLayout ll_tracking;
     private TextView tv_tracking;
-    private ImageView iv_add_tracking;
+    private MaterialButton iv_add_tracking;
     private LinearLayout ll_tracking_content;
     private TextViewCT.ITextViewCT tvCtListner;
     private String searched_tracking = "";
@@ -577,7 +577,7 @@ public class Frg_Serial_Edit extends BaseFragment {
     //endregion
 
     private void setTranslation() {
-        mket_serial_id.setHint(hmAux_Trans.get("mket_search_hint"));
+        textInputLayoutSerial.setHint(hmAux_Trans.get("mket_search_hint"));
         ss_site.setmLabel(hmAux_Trans.get("site_lbl"));
         ss_site.setmTitle(hmAux_Trans.get("searchable_spinner_lbl"));
         ss_site_zone.setmLabel(hmAux_Trans.get("site_zone_lbl"));
@@ -2135,7 +2135,8 @@ public class Frg_Serial_Edit extends BaseFragment {
         View view = inflater.inflate(R.layout.namoa_dialog_add_tracking, null);
 
         final MKEditTextNM mket_tracking = view.findViewById(R.id.namoa_dialog_add_tracking_mket_tracking);
-        mket_tracking.setHint(hmAux_Trans.get("tracking_hint_lbl"));
+        final TextInputLayout ll_tracking = view.findViewById(R.id.text_input_tracking);
+        ll_tracking.setHint(hmAux_Trans.get("tracking_hint_lbl"));
         //controls_sta.add(mket_tracking);
         if (delegate != null) {
             delegate.onAddOrRemoveControl(mket_tracking, true);
@@ -2143,7 +2144,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         //
         TextView tv_tracking_ttl = view.findViewById(R.id.namoa_dialog_add_tracking_tv_lbl);
         MaterialButton iv_action = view.findViewById(R.id.namoa_dialog_add_tracking_iv_action);
-        final TextView iv_close = view.findViewById(R.id.namoa_dialog_add_tracking_iv_close);
+        final MaterialButton iv_close = view.findViewById(R.id.namoa_dialog_add_tracking_iv_close);
         //
         iv_action.setText(hmAux_Trans.get("btn_add_tracking"));
         iv_close.setText(hmAux_Trans.get("btn_cancel_tracking"));

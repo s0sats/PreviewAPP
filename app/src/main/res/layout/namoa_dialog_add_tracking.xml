@@ -25,7 +25,7 @@
 
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/text_input_serial_id"
+            android:id="@+id/text_input_tracking"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -58,14 +58,11 @@
         android:layout_height="wrap_content"
         android:padding="5dp">
 
-        <TextView
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/namoa_dialog_add_tracking_iv_close"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/NamoaTheme3.Button.Text"
             android:layout_marginEnd="16dp"
-            android:padding="10dp"
             android:text="Cancelar"
-            android:textColor="@color/m3_namoa_primary"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/namoa_dialog_add_tracking_iv_action"

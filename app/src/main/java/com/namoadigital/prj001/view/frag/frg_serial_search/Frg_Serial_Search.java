@@ -522,6 +522,7 @@ public class Frg_Serial_Search extends Fragment {
 
     public void setProductId(String productId) {
         this.productId = productId;
+        checkRulesForHintSerial(!mket_product_id.getText().toString().isEmpty() || !productId.isEmpty());
     }
 
     public String getProductId() {
@@ -645,10 +646,10 @@ public class Frg_Serial_Search extends Fragment {
         til_serial.setHint(hmAux_Trans.get("serial_lbl"));
         til_tracking.setHint(hmAux_Trans.get("tracking_lbl"));
         tv_hide_serial_info.setText(hmAux_Trans.get("chk_hide_serial_info_lbl"));
+        til_serial.setHint(hmAux_Trans.get("serial_hint"));
         //
 /*        if (showHint) {
             til_product.setHint(hmAux_Trans.get("product_hint"));
-            til_serial.setHint(hmAux_Trans.get("serial_hint"));
             til_tracking.setHint(hmAux_Trans.get("tracking_hint"));
         } else {
             til_serial.setHint(hmAux_Trans.get("serial_hint"));

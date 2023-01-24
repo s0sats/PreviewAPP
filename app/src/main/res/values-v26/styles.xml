@@ -16,6 +16,7 @@
         <item name="android:paddingVertical">8dp</item>
     </style>
 
+
     <style name="NamoaTheme3.TextInputLayout.Outlined.Transparent">
         <item name="android:textColorHint">@drawable/edittext_theme_text_transparent_hint</item>
         <item name="hintTextAppearance">@style/TextAppearance.Material3.LabelMedium</item>

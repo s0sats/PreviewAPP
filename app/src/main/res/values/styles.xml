@@ -271,6 +271,8 @@
 
 
     <style name="NamoaTheme3.Button.Outlined" parent="Widget.Material3.Button.Icon">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
         <item name="strokeColor">@color/m3_namoa_outline</item>
         <item name="strokeWidth">1dp</item>
         <item name="android:textColor">@color/m3_namoa_primary</item>
@@ -281,9 +283,27 @@
     </style>
 
 
-    <style name="NamoaTheme3.Button.Icon" parent="Widget.Material3.Button.Icon">
+    <style name="NamoaTheme3.Button.Text" parent="NamoaTheme3.Button.Outlined">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
         <item name="strokeColor">@color/m3_namoa_outline</item>
-        <item name="strokeWidth">1dp</item>
+        <item name="strokeWidth">0dp</item>
+        <item name="android:paddingLeft">24dp</item>
+        <item name="android:textColor">@color/m3_namoa_primary</item>
+        <item name="startIconTint">@color/m3_namoa_primary</item>
+        <item name="iconTint">@color/m3_namoa_primary</item>
+        <item name="backgroundColor">@drawable/namoa_theme_button_outlined</item>
+        <item name="backgroundTint">@drawable/namoa_theme_button_outlined</item>
+    </style>
+
+
+    <style name="NamoaTheme3.Button.Icon" parent="NamoaTheme3.Button.Outlined">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="iconPadding">0dp</item>
+        <item name="iconSize">24dp</item>
+        <item name="android:padding">12dp</item>
         <item name="startIconTint">@color/m3_namoa_onSurface</item>
         <item name="iconTint">@color/m3_namoa_onSurface</item>
         <item name="backgroundTint">@drawable/icon_button_theme</item>

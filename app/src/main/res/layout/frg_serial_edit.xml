@@ -581,11 +581,7 @@
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/frg_serial_edit_iv_serial_dialog_log"
                                 style="@style/NamoaTheme3.Button.Icon"
-                                android:layout_width="48dp"
-                                android:layout_height="48dp"
                                 app:icon="@drawable/ic_clock_chat"
-                                app:iconGravity="start"
-                                app:iconSize="24dp"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
@@ -691,20 +687,14 @@
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
 
-                            <ImageView
+                            <com.google.android.material.button.MaterialButton
                                 android:id="@+id/frg_serial_edit_iv_add_tracking"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="end|center_vertical"
-                                android:layout_marginEnd="10dp"
-                                android:background="@drawable/my_action_toogle_default"
-                                android:padding="10dp"
-                                android:src="@drawable/ic_add_black_24px"
+                                style="@style/NamoaTheme3.Button.Icon"
+                                app:icon="@drawable/ic_add_black_24px"
                                 android:visibility="visible"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:tint="@color/m3_namoa_onSurfaceVariant" />
+                                app:layout_constraintTop_toTopOf="parent" />
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -945,12 +935,12 @@
 
 
                     <LinearLayout
-                        android:id="@+id/frg_serial_edit_ll_io_infos"
+                        android:id="@+id/frg_seria_edit_ll_io_infos"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginBottom="15dp"
-                        android:visibility="visible"
                         android:orientation="vertical"
+                        android:visibility="gone"
                         android:padding="5dp">
 
 
