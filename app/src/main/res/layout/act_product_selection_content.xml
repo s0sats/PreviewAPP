@@ -20,26 +20,42 @@
         android:orientation="vertical"
         android:padding="10dp">
 
-        <TextView
+
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Product"
-            android:textColor="@color/bootstrap_brand_secondary_text"
-            android:textSize="20sp"
-            android:visibility="gone" />
+            style="@style/NamoaTheme3.TextInputLayout.Outlined">
 
-        <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-            android:id="@+id/act_product_selection_mket_product_search"
+            <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                android:id="@+id/act_product_selection_mket_product_search"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:imeOptions="actionDone"
+                app:mNFC="false"
+                app:mOCR="false" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <LinearLayout
+            android:id="@+id/act_product_selection_path_url_layout"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@drawable/namoa_bg_1"
-            android:imeOptions="actionDone"
-            android:inputType="text"
-            android:padding="10dp"
-            app:mNFC="false"
-            app:mOCR="false" />
-        android:textSize="@dimen/font_size_title"
-        />
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/act_product_selection_btn_back"
+                style="@style/NamoaTheme3.Button.Icon"
+                android:layout_width="wrap_content"
+                app:strokeWidth="0dp"
+                app:icon="@drawable/baseline_arrow_left_24" />
+
+            <TextView
+                android:id="@+id/act_product_selection_page_url"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/TextAppearance.Material3.BodyLarge" />
+
+        </LinearLayout>
 
         <ListView
             android:id="@+id/act_product_selection_lv_groups_products"
@@ -56,14 +72,6 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/act_product_selection_btn_back"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="15dp"
-                android:layout_weight="1"
-                android:background="@drawable/btn_namoa_main_states"
-                android:textColor="@color/padrao_WHITE" />
 
             <Button
                 android:id="@+id/act_product_selection_btn_home"
