@@ -2833,9 +2833,9 @@ public class Frg_Serial_Edit extends BaseFragment {
                 }
             } else {
                 //Se for EditText
-                if (propertie instanceof MKEditTextNM) {
-                    String tag = (String) ((MKEditTextNM) propertie).getTag() == null ? "" : (String) ((MKEditTextNM) propertie).getTag();
-                    String text = ((MKEditTextNM) propertie).getText().toString();
+                if (propertie instanceof TextInputLayout) {
+                    String tag = ((TextInputLayout) propertie).getTag() == null ? "" : (String) ((TextInputLayout) propertie).getTag();
+                    String text = ((TextInputLayout) propertie).getEditText().getText().toString();
 
                     if (!text.equals(tag)) {
                         // if (!((EditText) propertie).getText().toString().equals((String)((EditText) propertie).getTag())) {
