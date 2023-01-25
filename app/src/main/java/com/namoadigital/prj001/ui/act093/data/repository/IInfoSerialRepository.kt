@@ -7,11 +7,11 @@ import com.namoadigital.prj001.core.IResult.Companion.failed
 import com.namoadigital.prj001.core.IResult.Companion.isSuccess
 import com.namoadigital.prj001.core.IResult.Companion.loading
 import com.namoadigital.prj001.core.IResult.Companion.success
-import com.namoadigital.prj001.core.extension.namoaCatch
 import com.namoadigital.prj001.dao.MD_Product_SerialDao
 import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_DeviceDao
 import com.namoadigital.prj001.dao.MdDeviceTpDao
 import com.namoadigital.prj001.dao.MeMeasureTpDao
+import com.namoadigital.prj001.extensions.coroutines.namoaCatch
 import com.namoadigital.prj001.model.MD_Product_Serial
 import com.namoadigital.prj001.model.MdDeviceTp
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002
