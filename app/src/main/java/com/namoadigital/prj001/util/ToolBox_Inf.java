@@ -9220,6 +9220,15 @@ public class ToolBox_Inf {
         return convertedValue;
     }
 
+    public static String convertDoubleToBigDecimalString(double valor, boolean applyDecimalSeparatorByLocale){
+        String convertedValue =  new DecimalFormat("#.####").format(new BigDecimal(String.valueOf(valor)));
+        if(applyDecimalSeparatorByLocale){
+            return  applyDecimalSeparatorByUserLocale(convertedValue);
+        }
+        //
+        return convertedValue;
+    }
+
     /**
      * LUCHE - 25/10/2021
      * Metodo que recebe um data no formato full timestamp tz e joga o horario

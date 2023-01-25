@@ -8,14 +8,13 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.databinding.Act093MainBinding
+import com.namoadigital.prj001.extensions.formatForDisplay
 import com.namoadigital.prj001.ui.act092.ui.Act092_Main
 import com.namoadigital.prj001.ui.act093.Act093Presenter
 import com.namoadigital.prj001.ui.act093.Act093Presenter.Companion.Act093PresenterFactory
 import com.namoadigital.prj001.ui.act093.Contract
 import com.namoadigital.prj001.ui.act093.adapter.Act093Adapter
 import com.namoadigital.prj001.ui.act093.model.DeviceTpModel
-import com.namoadigital.prj001.ui.act093.model.InfoSerialModel.Companion.formatCycleValue
-import com.namoadigital.prj001.ui.act093.model.InfoSerialModel.Companion.formatMeasureValue
 import com.namoadigital.prj001.ui.act093.util.Act093Event
 import com.namoadigital.prj001.ui.base.BaseActivityMvp
 import com.namoadigital.prj001.util.Constant
@@ -248,9 +247,9 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
 
             val measureFormatted = if (state.last_measure_value != null) {
                 if (!state.last_measure_date.isNullOrEmpty()) {
-                    "${state.last_measure_value.formatMeasureValue(state.value_suffix)} (${state.last_measure_date})"
+                    "${ToolBox_Inf.convertDoubleToBigDecimalString(state.last_measure_value, true)} ${state.value_suffix.formatForDisplay()} (${state.last_measure_date})"
                 } else {
-                    state.last_measure_value.formatMeasureValue(state.value_suffix)
+                    "${ToolBox_Inf.convertDoubleToBigDecimalString(state.last_measure_value, true)} ${state.value_suffix.formatForDisplay()}"
                 }
             } else {
                 null
@@ -272,7 +271,8 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
             }
 
             linearLayout5.visibility =
-                if (state.last_cycle_value.formatCycleValue(state.value_suffix).isNullOrEmpty()) {
+                if (state.last_cycle_value == null
+                    || state.last_cycle_value == 0.0f) {
                     View.GONE
                 } else {
                     View.VISIBLE
@@ -281,9 +281,9 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
 
             val cycleFormatted = if (state.last_cycle_value != null) {
                 if (!state.last_cycle_date.isNullOrEmpty()) {
-                    "${state.last_measure_value.formatMeasureValue(state.value_suffix)} (${state.last_measure_date})"
+                    "${ToolBox_Inf.convertDoubleToBigDecimalString(state.last_cycle_value.toDouble(), true)} ${state.value_suffix.formatForDisplay()}  (${state.last_cycle_date})"
                 } else {
-                    state.last_measure_value.formatMeasureValue(state.value_suffix)
+                    "${ToolBox_Inf.convertDoubleToBigDecimalString(state.last_cycle_value.toDouble(), true)} ${state.value_suffix.formatForDisplay()}"
                 }
             } else {
                 null

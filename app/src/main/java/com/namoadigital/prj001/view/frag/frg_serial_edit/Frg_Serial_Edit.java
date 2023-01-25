@@ -49,6 +49,7 @@ import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
 import com.namoadigital.prj001.dao.MeMeasureTpDao;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.extensions.StringHelperKt;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
@@ -531,7 +532,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                 mdProductSerial.getMeasure_tp_code() != null ? mdProductSerial.getMeasure_tp_code() : -1
         ).toSqlQuery());
 
-        return meMeasureTp.getValueSufix();
+        return StringHelperKt.formatForDisplay(meMeasureTp.getValueSufix());
     }
 
     //
@@ -1111,7 +1112,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         }
         //
 
-        String last_measure = mdProductSerial.getLast_measure_value() != null && mdProductSerial.getLast_measure_value() != 0.0 ? mdProductSerial.getLast_measure_value().toString().replace(".", "") : null;
+        String last_measure = mdProductSerial.getLast_measure_value() != null && mdProductSerial.getLast_measure_value() != 0.0 ? ToolBox_Inf.convertDoubleToBigDecimalString(mdProductSerial.getLast_measure_value(), true) : null;
         String last_measure_date = mdProductSerial.getLast_measure_date() != null && !mdProductSerial.getLast_measure_date().isEmpty() ? mdProductSerial.getLast_measure_date() : null;
 
         String measureFormatted;
@@ -1134,19 +1135,19 @@ public class Frg_Serial_Edit extends BaseFragment {
         }
         //
 
-        Integer last_cycle = mdProductSerial.getLast_cycle_value() != null && mdProductSerial.getLast_cycle_value() != 0.0 ? Integer.parseInt(mdProductSerial.getLast_cycle_value().toString().replace(".", "")) : null;
         String last_cycle_date = mdProductSerial.getLast_cycle_date() != null && !mdProductSerial.getLast_cycle_date().isEmpty() ? mdProductSerial.getLast_cycle_date() : null;
 
         String cycleFormatted;
 
-        if (last_cycle != null) {
+        if (mdProductSerial.getLast_cycle_value() != null) {
+            String lastCycleFormatted = ToolBox_Inf.convertDoubleToBigDecimalString(mdProductSerial.getLast_cycle_value(), true);
             if (last_cycle_date != null && !last_cycle_date.isEmpty()) {
-                cycleFormatted = InfoSerialModel.Companion.formatMeasureValue(last_cycle, getMeasureValueSuffix()) + " (" + ToolBox_Inf.millisecondsToString(
+                cycleFormatted = InfoSerialModel.Companion.formatMeasureValue(lastCycleFormatted, getMeasureValueSuffix()) + " (" + ToolBox_Inf.millisecondsToString(
                         ToolBox_Inf.dateToMilliseconds(last_cycle_date),
                         ToolBox_Inf.nlsDateFormat(context)
                 ) + ")";
             } else {
-                cycleFormatted = InfoSerialModel.Companion.formatMeasureValue(last_cycle, getMeasureValueSuffix());
+                cycleFormatted = InfoSerialModel.Companion.formatMeasureValue(lastCycleFormatted, getMeasureValueSuffix());
             }
             cycle_layout.setVisibility(View.VISIBLE);
             tv_last_cycle_lbl.setText(cycleFormatted);

@@ -15,9 +15,9 @@ data class InfoSerialModel(
     val color: String? = null,
     val tracklist: String? = null,
     val infoAdd: String? = null,
-    val last_measure_value: Int? = null,
+    val last_measure_value: Double? = null,
     val last_measure_date: String? = null,
-    val last_cycle_value: Int? = null,
+    val last_cycle_value: Float? = null,
     val last_cycle_date: String? = null,
     val value_suffix: String? = null,
     val lastUpdateSerial: String? = null,
@@ -27,7 +27,7 @@ data class InfoSerialModel(
         const val SEPARATOR = " | "
 
 
-        fun Int?.formatMeasureValue(value_suffix: String?): String? = when {
+        fun Double?.formatMeasureValue(value_suffix: String?): String? = when {
             this != null -> {
                 if (!value_suffix.isNullOrEmpty()) {
                     "$this $value_suffix"
@@ -86,8 +86,8 @@ fun MD_Product_Serial.toInfoSerialModel(context: Context) = InfoSerialModel(
     model = model_desc,
     color = color_desc,
     tracklist = tracking_list?.toInfoSerial(),
-    last_measure_value = last_measure_value?.toInt(),
-    last_cycle_value = last_cycle_value?.toInt(),
+    last_measure_value = last_measure_value,
+    last_cycle_value = last_cycle_value,
     lastUpdateSerial = ToolBox_Inf.millisecondsToString(
         ToolBox_Inf.dateToMilliseconds(log_date),
         ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
