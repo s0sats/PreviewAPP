@@ -27,14 +27,45 @@
         <item name="android:paddingVertical">8dp</item>
     </style>
 
-    <style name="ButtonCircleWithIcon">
-        <item name="android:layout_width">40dp</item>
-        <item name="android:layout_height">40dp</item>
-        <item name="android:background">@color/m3_namoa_secondaryContainer</item>
-        <item name="android:padding">1dp</item>
-        <item name="android:layout_marginStart">16dp</item>
-        <item name="shapeAppearanceOverlay">@style/RoundedImageView</item>
-        <item name="android:scaleType">center</item>
-        <item name="android:tint">@color/m3_namoa_onSurfaceVariant</item>
+    <style name="NamoaTheme3.Button.Icon.Tonal" parent="NamoaTheme3.Button.Outlined">
+        <item name="android:layout_height">48dp</item>
+        <item name="android:layout_width">48dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="iconPadding">8dp</item>
+        <item name="iconSize">24dp</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:layout_margin">4dp</item>
+        <item name="startIconTint">@color/m3_namoa_onSecondaryContainer</item>
+        <item name="iconTint">@color/m3_namoa_onSecondaryContainer</item>
+        <item name="backgroundTint">@drawable/icon_button_theme_tonal</item>
+        <item name="backgroundColor">@drawable/icon_button_theme_tonal</item>
+        <item name="boxStrokeWidth">0dp</item>
+        <item name="strokeWidth">0dp</item>
+        <item name="boxBackgroundMode">none</item>
+        <item name="android:insetTop">4dp</item>
+        <item name="android:insetBottom">4dp</item>
+        <item name="android:insetLeft">4dp</item>
+        <item name="android:insetRight">4dp</item>
+    </style>
+
+    <style name="NamoaTheme3.Button.Icon.Filled" parent="NamoaTheme3.Button.Outlined">
+        <item name="android:layout_height">48dp</item>
+        <item name="android:layout_width">48dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="iconPadding">8dp</item>
+        <item name="iconSize">24dp</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:layout_margin">4dp</item>
+        <item name="startIconTint">@color/m3_namoa_onPrimary</item>
+        <item name="iconTint">@color/m3_namoa_onPrimary</item>
+        <item name="backgroundTint">@drawable/icon_button_theme_filled</item>
+        <item name="backgroundColor">@drawable/icon_button_theme_filled</item>
+        <item name="boxStrokeWidth">0dp</item>
+        <item name="strokeWidth">0dp</item>
+        <item name="boxBackgroundMode">none</item>
+        <item name="android:insetTop">4dp</item>
+        <item name="android:insetBottom">4dp</item>
+        <item name="android:insetLeft">4dp</item>
+        <item name="android:insetRight">4dp</item>
     </style>
 </resources>
