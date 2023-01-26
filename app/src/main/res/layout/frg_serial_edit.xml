@@ -581,6 +581,7 @@
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/frg_serial_edit_iv_serial_dialog_log"
                                 style="@style/NamoaTheme3.Button.Icon"
+                                android:layout_marginEnd="16dp"
                                 app:icon="@drawable/ic_clock_chat"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
@@ -900,7 +901,6 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             style="@style/NamoaTheme3.TextInputLayout.Outlined"
-                            android:paddingVertical="8dp"
                             android:paddingHorizontal="2dp">
 
                             <com.namoa_digital.namoa_library.ctls.MKEditTextNM
@@ -1048,7 +1048,7 @@
     </FrameLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/linearLayout2a"
+        android:id="@+id/bottom_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/m3_namoa_surface2"

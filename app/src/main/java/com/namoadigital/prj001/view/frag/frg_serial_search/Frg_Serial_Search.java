@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -54,11 +53,13 @@ public class Frg_Serial_Search extends Fragment {
     private TextView tv_product_id;
     private MKEditTextNM mket_product_id;
     private String productId = "";
-    private ImageView iv_product_id;
+    private MaterialButton iv_product_id;
     private ConstraintLayout ll_product_id;
     private ConstraintLayout cl_bottom_buttons;
     private TextView tv_serial;
     private LinearLayout ll_serial;
+
+    private ConstraintLayout constraintLayout_jump_edit;
     private TextInputLayout til_serial;
     private TextInputLayout til_tracking;
     private MKEditTextNM mket_serial;
@@ -179,12 +180,12 @@ public class Frg_Serial_Search extends Fragment {
         }
     }
 
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frg_serial_search, container, false);
         mPresenter = new Frg_Serial_Search_Presenter(getContext());
-
         iniVar(view);
 
         if(load_delegate != null){
@@ -211,7 +212,7 @@ public class Frg_Serial_Search extends Fragment {
         til_product = view.findViewById(R.id.frg_serial_search_til_prod);
         tv_product_id = (TextView) view.findViewById(R.id.frg_serial_search_tv_product_id);
         mket_product_id = (MKEditTextNM) view.findViewById(R.id.frg_serial_search_mket_product_id);
-        iv_product_id = (ImageView) view.findViewById(R.id.frg_serial_search_iv_product_id);
+        iv_product_id = view.findViewById(R.id.frg_serial_search_iv_product_id);
         ll_product_id = view.findViewById(R.id.frg_serial_search_ll_product_id);
         //
         controls_sta.add(mket_product_id);
@@ -247,9 +248,11 @@ public class Frg_Serial_Search extends Fragment {
         sw_hide_serial_info = view.findViewById(R.id.frg_serial_search_chk_hide_serial_info);
         tv_hide_serial_info = view.findViewById(R.id.frg_serial_search_tv_hide_serial_info);
         //LUCHE - 10/01/2020
+        constraintLayout_jump_edit = view.findViewById(R.id.frg_serial_search_clayout);
         configChk();
         //
-        cl_bottom_buttons = view.findViewById(R.id.linearLayout2a);
+        cl_bottom_buttons = view.findViewById(R.id.bottom_bar_layout);
+        til_serial = view.findViewById(R.id.frg_serial_search_til_serial);
         btn_option_01 = view.findViewById(R.id.frg_serial_search_btn_option_01);
         btn_option_02 = view.findViewById(R.id.frg_serial_search_btn_option_02);
         btn_option_03 = view.findViewById(R.id.frg_serial_search_btn_option_03);
@@ -309,6 +312,7 @@ public class Frg_Serial_Search extends Fragment {
             sw_hide_serial_info.setVisibility(View.GONE);
             tv_hide_serial_info.setVisibility(View.GONE);
         }
+        constraintLayout_jump_edit.setVisibility(tv_hide_serial_info.getVisibility());
     }
 
     private void iniAction() {
@@ -497,16 +501,6 @@ public class Frg_Serial_Search extends Fragment {
         }
     };
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        //
-        loadDataToScreen();
-    }
-
-    private void loadDataToScreen() {
-        customSettings();
-    }
 
     // General Methods
     public void setNFCText(String text) {
@@ -660,13 +654,13 @@ public class Frg_Serial_Search extends Fragment {
     public void setShowTree(boolean showTree) {
         this.showTree = showTree;
         //
-        customSettings();
+
     }
 
     public void setShowAll(boolean showAll) {
         this.showAll = showAll;
         //
-        customSettings();
+
     }
 
     public void setShowHideProduct(boolean status) {
@@ -685,17 +679,11 @@ public class Frg_Serial_Search extends Fragment {
         }
     }
 
-    private void customSettings() {
-        if (showTree) {
-            mket_product_id.setmBARCODE(false);
-        } else {
-            if (showAll) {
-                mket_product_id.setmBARCODE(false);
-            } else {
-                mket_product_id.setmBARCODE(false);
-            }
-        }
+
+    public void displayChangeProduct(boolean value) {
+        iv_product_id.setVisibility(value ? View.VISIBLE : View.GONE);
     }
+
 
     public void setLl_options(View ll_options) {
         this.ll_options.addView(ll_options);

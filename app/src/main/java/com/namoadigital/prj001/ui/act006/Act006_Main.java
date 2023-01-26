@@ -469,10 +469,12 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         } else if (list.size() == 1) {
             mFrgSerialSearch.setProductIdHint(hmAux_Trans_frg_serial_search.get("product_contain_id_lbl"));
             mFrgSerialSearch.setProductIdText(list.get(0).getProduct_desc(), list.get(0).getProduct_id());
+            mFrgSerialSearch.displayChangeProduct(false);
             mFrgSerialSearch.setShowTree(false);
             mFrgSerialSearch.setShowAll(false);
             fragIsOnlyOne = true;
         } else {
+            mFrgSerialSearch.displayChangeProduct(false);
             mFrgSerialSearch.setProductIdHint(hmAux_Trans_frg_serial_search.get("nothing_product_found_lbl"));
         }
     }
