@@ -92,19 +92,6 @@ val MigrationV2 = object : MigrationSQLite(2, 3) {
             db.execSQL(""" ALTER TABLE [tk_ticket_cache] ADD [class_available] int;""".trimIndent())
         }
     }
-
-    fun isFieldExist(db: SQLiteDatabase, tableName: String, fieldName: String): Boolean {
-        var isExist = false
-        val res: Cursor = db.rawQuery("PRAGMA table_info($tableName)", null)
-        res.moveToFirst()
-        do {
-            val currentColumn: String = res.getString(1)
-            if (currentColumn == fieldName) {
-                isExist = true
-            }
-        } while (res.moveToNext())
-        return isExist
-    }
 }
 
 val MigrationV3 = object : MigrationSQLite(3, 4) {
@@ -114,19 +101,20 @@ val MigrationV3 = object : MigrationSQLite(3, 4) {
             db.execSQL(""" ALTER TABLE [md_product_serials] ADD [last_cycle_date] text collate nocase;""".trimIndent())
         }
     }
+}
 
-    fun isFieldExist(db: SQLiteDatabase, tableName: String, fieldName: String): Boolean {
-        var isExist = false
-        val res: Cursor = db.rawQuery("PRAGMA table_info($tableName)", null)
-        res.moveToFirst()
-        do {
-            val currentColumn: String = res.getString(1)
-            if (currentColumn == fieldName) {
-                isExist = true
-            }
-        } while (res.moveToNext())
-        return isExist
-    }
+fun isFieldExist(db: SQLiteDatabase, tableName: String, fieldName: String): Boolean {
+
+    val res: Cursor = db.rawQuery("PRAGMA table_info($tableName)", null)
+    res.moveToFirst()
+    do {
+        val currentColumn: String = res.getString(1)
+        if (currentColumn == fieldName) {
+            res.close()
+            return true
+        }
+    } while (res.moveToNext())
+    return false
 }
 
 
