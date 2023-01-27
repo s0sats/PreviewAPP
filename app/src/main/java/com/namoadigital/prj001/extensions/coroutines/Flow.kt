@@ -1,4 +1,4 @@
-package com.namoadigital.prj001.core.extension
+package com.namoadigital.prj001.extensions.coroutines
 
 import com.namoadigital.prj001.core.IResult
 import com.namoadigital.prj001.core.IResult.Companion.failed
