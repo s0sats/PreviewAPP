@@ -15,6 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputLayout;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -38,12 +39,13 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
 
     public static final String INDEX_GROUP_CODE = "index_group_code";
     public static final String INDEX_RECURSIVE_CODE = "index_recursive_code";
-    public static final String INDEX_GROUP_DESC = "descForSort";
+    public static final String INDEX_GROUP_DESC = "index_group_desc";
     public static final String IS_ADD_PRODUCT_LIST = "IS_ADD_PRODUCT_LIST";
     public static final String PRODUCT_LIST = "PRODUCT_LIST";
 
     private Act_Product_Selection_Contract.I_Presenter mPresenter;
     private MKEditTextNM mket_product_search;
+    private TextInputLayout mket_product_layout;
     private ListView lv_groups_products;
     private MaterialButton btn_back;
     private TextView tv_path_url;
@@ -64,6 +66,7 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setElevation(0);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //
         iniSetup();
@@ -126,7 +129,8 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
 //        );
         //
         mket_product_search = (MKEditTextNM) findViewById(R.id.act_product_selection_mket_product_search);
-        mket_product_search.setHint(hmAux_Trans.get("mket_hint_msg"));
+        mket_product_layout = findViewById(R.id.act027_product_selection_mket_product_llayout);
+        mket_product_layout.setHint(hmAux_Trans.get("mket_hint_msg"));
         //
         ll_path_url = findViewById(R.id.act_product_selection_path_url_layout);
         tv_path_url = findViewById(R.id.act_product_selection_page_url);
@@ -240,11 +244,19 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
                 pathUrl.remove(path);
             }
         }
-        if (!pathUrl.isEmpty()) {
+
+
+        if (pathUrl.size() == 1) {
+            tv_path_url.setText(pathUrl.get(0));
+        } else if (!pathUrl.isEmpty()) {
             tv_path_url.setText(String.join("/", pathUrl));
         }
-        tv_path_url.setVisibility(pathUrl.isEmpty() ? View.GONE : View.VISIBLE);
-        ll_path_url.setVisibility(pathUrl.isEmpty() ? View.GONE : View.VISIBLE);
+
+        if (!pathUrl.isEmpty()) {
+            ll_path_url.setVisibility(View.VISIBLE);
+        } else {
+            ll_path_url.setVisibility(View.GONE);
+        }
 
     }
 
@@ -360,6 +372,7 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
     }
 
     private void setProductForResult(HMAux item) {
+        pathUrl.clear();
         //
         if (isProductAddProcess) {
             MD_All_Product pAux = mPresenter.getProductFromAll(String.valueOf(
