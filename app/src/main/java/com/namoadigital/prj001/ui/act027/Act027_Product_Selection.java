@@ -311,7 +311,8 @@ public class Act027_Product_Selection extends BaseFragment {
                 item.put("code", aux.get("group_code"));
                 item.put("desc", aux.get("group_desc"));
                 item.put("id", aux.get("group_id"));
-                item.put("full_desc", aux.get("full_group_desc"));
+                // para grupos apenas a descricao sera exibida.
+                item.put("full_desc", aux.get("group_desc"));
                 item.put("type", aux.get("type"));
                 // Hugo
                 item.put("recursive", aux.get("recursive_code"));

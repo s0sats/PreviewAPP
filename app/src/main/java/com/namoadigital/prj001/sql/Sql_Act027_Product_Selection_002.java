@@ -46,7 +46,7 @@ public class Sql_Act027_Product_Selection_002 implements Specification {
                             "    p.product_code,\n" +
                             "    p.product_id,\n" +
                             "    p.product_desc,\n" +
-                            "    p.product_id || ' - ' || p.product_desc full_product_desc ,\n" +
+                            "    CASE WHEN p.product_id != p.product_code THEN p.product_desc || ' (' || p.product_id || ') ' ELSE p.product_desc END full_product_desc, \n" +
                             "    'product' type \n" +
                             " FROM\n" +
                             "    "+ MD_All_ProductDao.TABLE+" p\n" +
