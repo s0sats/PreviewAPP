@@ -5,8 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginTop="10dp"
-    android:background="@color/padrao_WHITE"
-    android:gravity="center_vertical"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
@@ -61,18 +59,15 @@
                         app:mBARCODE="false"
                         app:mNFC="false"
                         app:mOCR="false"
-                        style="@style/NamoaTheme3.TextInputLayout.Outlined.Transparent"
                         tools:text="saaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
                         android:textColor="@drawable/edittext_theme_text_transparent_text" />
                 </com.google.android.material.textfield.TextInputLayout>
 
 
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/frg_serial_search_iv_product_id"
-                    android:src="@drawable/baseline_swap_horiz_24"
-                    style="@style/ButtonCircleWithIcon"
+                    app:icon="@drawable/baseline_manage_search_24"
+                    style="@style/NamoaTheme3.Button.Icon.Tonal"
                     app:layout_constraintBottom_toBottomOf="@+id/frg_serial_search_til_prod"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/frg_serial_search_til_prod" />
@@ -149,6 +144,7 @@
                 android:layout_height="5dp" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/frg_serial_search_clayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingVertical="16dp">
@@ -156,9 +152,9 @@
 
                 <TextView
                     android:id="@+id/frg_serial_search_tv_hide_serial_info"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
                     style="@style/TextAppearance.Material3.BodyLarge"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:textColor="@color/m3_namoa_onSurfaceVariant"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/frg_serial_search_chk_hide_serial_info"
@@ -254,7 +250,7 @@
     </androidx.core.widget.NestedScrollView>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/linearLayout2a"
+        android:id="@+id/bottom_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/m3_namoa_surface2"
@@ -271,7 +267,6 @@
             style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:gravity="center"
             android:textAlignment="center"
             android:textColor="@color/m3_namoa_onSecondaryContainer"
