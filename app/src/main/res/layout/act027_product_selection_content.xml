@@ -1,57 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/content_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_vertical"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/m3_namoa_surface1"
+        android:orientation="vertical"
+        android:paddingVertical="5dp">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/act027_product_selection_mket_product_llayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/NamoaTheme3.TextInputLayout.Outlined"
+            android:paddingHorizontal="16dp">
+
+            <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                android:id="@+id/act027_product_selection_mket_product_search"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:imeOptions="actionDone"
+                app:mNFC="false"
+                app:mOCR="false" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <LinearLayout
+            android:id="@+id/act_product_selection_path_url_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:background="@color/m3_namoa_surface1"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/act027_product_selection_btn_back"
+                style="@style/NamoaTheme3.Button.Icon"
+                app:strokeWidth="0dp"
+                app:icon="@drawable/baseline_arrow_left_24" />
+
+            <TextView
+                android:layout_gravity="center"
+                android:id="@+id/act_product_selection_page_url"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/m3_namoa_onSurface"
+                style="@style/TextAppearance.Material3.BodyLarge" />
+
+        </LinearLayout>
+    </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="@android:color/white"
         android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:padding="10dp">
-
-        <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-            android:id="@+id/act027_product_selection_mket_product_search"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@drawable/namoa_bg_1"
-            android:imeOptions="actionDone"
-            android:inputType="text"
-            android:padding="10dp"
-            app:mNFC="false"
-            app:mOCR="false"
-            android:textSize="@dimen/font_size_title"
-        />
+        android:orientation="vertical">
 
         <ListView
             android:id="@+id/act027_product_selection_lv_groups_products"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="10dp"
             android:layout_weight="1"
-            android:divider="@color/namoa_color_light_blue7"
-            android:dividerHeight="1dp"
-            android:padding="5dp" />
+            android:divider="@color/m3_namoa_outline_variant"
+            android:dividerHeight="1dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
 
-            <Button
-                android:id="@+id/act027_product_selection_btn_back"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="15dp"
-                android:layout_weight="1"
-                android:background="@drawable/btn_namoa_main_states"
-                android:textColor="@color/padrao_WHITE" />
 
             <Button
                 android:id="@+id/act027_product_selection_btn_home"
@@ -59,6 +86,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="15dp"
                 android:layout_weight="1"
+                android:visibility="gone"
                 android:background="@drawable/btn_namoa_main_states"
                 android:textColor="@color/padrao_WHITE" />
 
@@ -66,4 +94,5 @@
 
 
     </LinearLayout>
+
 </LinearLayout>

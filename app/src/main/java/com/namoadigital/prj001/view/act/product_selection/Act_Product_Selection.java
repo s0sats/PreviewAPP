@@ -3,16 +3,19 @@ package com.namoadigital.prj001.view.act.product_selection;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputLayout;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -36,13 +39,17 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
 
     public static final String INDEX_GROUP_CODE = "index_group_code";
     public static final String INDEX_RECURSIVE_CODE = "index_recursive_code";
+    public static final String INDEX_GROUP_DESC = "index_group_desc";
     public static final String IS_ADD_PRODUCT_LIST = "IS_ADD_PRODUCT_LIST";
     public static final String PRODUCT_LIST = "PRODUCT_LIST";
 
     private Act_Product_Selection_Contract.I_Presenter mPresenter;
     private MKEditTextNM mket_product_search;
+    private TextInputLayout mket_product_layout;
     private ListView lv_groups_products;
-    private Button btn_back;
+    private MaterialButton btn_back;
+    private TextView tv_path_url;
+    private LinearLayout ll_path_url;
     private Button btn_home;
     private Stack<HMAux> mStack = new Stack<>();
     private HMAux currentIndex = new HMAux();
@@ -59,6 +66,8 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setElevation(0);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //
         iniSetup();
         //
@@ -67,6 +76,12 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
         iniUIFooter();
         //
         initActions();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return super.onSupportNavigateUp();
     }
 
     private void iniSetup() {
@@ -114,18 +129,22 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
 //        );
         //
         mket_product_search = (MKEditTextNM) findViewById(R.id.act_product_selection_mket_product_search);
-        mket_product_search.setHint(hmAux_Trans.get("mket_hint_msg"));
+        mket_product_layout = findViewById(R.id.act027_product_selection_mket_product_llayout);
+        mket_product_layout.setHint(hmAux_Trans.get("mket_hint_msg"));
+        //
+        ll_path_url = findViewById(R.id.act_product_selection_path_url_layout);
+        tv_path_url = findViewById(R.id.act_product_selection_page_url);
         //
         lv_groups_products = (ListView) findViewById(R.id.act_product_selection_lv_groups_products);
         //
-        btn_back = (Button) findViewById(R.id.act_product_selection_btn_back);
-        btn_back.setTag("btn_back");
-        btn_back.setVisibility(View.INVISIBLE);
+        btn_back = findViewById(R.id.act_product_selection_btn_back);
+        //btn_back.setTag("btn_back");
+        btn_back.setVisibility(View.GONE);
         //
         btn_home = (Button) findViewById(R.id.act_product_selection_btn_home);
         btn_home.setTag("btn_home");
         //
-        views.add(btn_back);
+        //views.add(btn_back);
         views.add(btn_home);
         //
         controls_sta.add(mket_product_search);
@@ -159,6 +178,7 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
     }
 
     private void callSetAdapterData(String search) {
+
         if(isProductAddProcess){
             mPresenter.setAdapterDataForProductInsert(
                     Long.parseLong(currentIndex.get(INDEX_GROUP_CODE)),
@@ -212,6 +232,35 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
         ToolBox_Inf.buildFooterDialog(context);
     }
 
+    ArrayList<String> pathUrl = new ArrayList<>();
+
+    private void updatePathUrl(String path) {
+        if (currentIndex.get(INDEX_GROUP_CODE).equals("0")) {
+            pathUrl.clear();
+        } else {
+            if (!pathUrl.contains(path)) {
+                pathUrl.add(path);
+            } else {
+                pathUrl.remove(path);
+            }
+        }
+
+
+        if (pathUrl.size() == 1) {
+            tv_path_url.setText(pathUrl.get(0));
+        } else if (!pathUrl.isEmpty()) {
+            tv_path_url.setText(String.join("/", pathUrl));
+        }
+
+        if (!pathUrl.isEmpty()) {
+            ll_path_url.setVisibility(View.VISIBLE);
+        } else {
+            ll_path_url.setVisibility(View.GONE);
+        }
+
+    }
+
+
     private void initActions() {
 
         mket_product_search.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
@@ -233,6 +282,7 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
             @Override
             public void onClick(View v) {
                 try {
+                    updatePathUrl(currentIndex.get(INDEX_GROUP_DESC));
                     currentIndex.putAll(mStack.pop());
                     //
                     mkUpdate = false;
@@ -280,6 +330,7 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
                     //
                     currentIndex.put(INDEX_GROUP_CODE, item.get("code"));
                     currentIndex.put(INDEX_RECURSIVE_CODE, item.get("recursive"));
+                    currentIndex.put(INDEX_GROUP_DESC, item.get("desc"));
                     //
                     mkUpdate = false;
                     mket_product_search.setText("");
@@ -287,6 +338,7 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
                     //
                     btn_back.setVisibility(View.VISIBLE);
                     //
+                    updatePathUrl(currentIndex.get(INDEX_GROUP_DESC));
                     callSetAdapterData(mket_product_search.getText().toString());
 
                 } else {
@@ -320,6 +372,7 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
     }
 
     private void setProductForResult(HMAux item) {
+        pathUrl.clear();
         //
         if (isProductAddProcess) {
             MD_All_Product pAux = mPresenter.getProductFromAll(String.valueOf(
@@ -386,11 +439,6 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
-
-        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
-        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         return true;
     }

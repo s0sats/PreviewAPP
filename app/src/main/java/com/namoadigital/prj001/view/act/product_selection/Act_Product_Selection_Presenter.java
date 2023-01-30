@@ -68,7 +68,8 @@ public class Act_Product_Selection_Presenter implements Act_Product_Selection_Co
             item.put("code", aux.get("group_code"));
             item.put("desc", aux.get("group_desc"));
             item.put("id", aux.get("group_id"));
-            item.put("full_desc", aux.get("full_group_desc"));
+            // para grupos apenas a descricao sera exibida.
+            item.put("full_desc", aux.get("group_desc"));
             item.put("type", aux.get("type"));
             String group_desc = Normalizer.normalize(aux.get("group_desc"), Normalizer.Form.NFD);
             item.put(DESC_FOR_SORT, group_desc);
@@ -86,7 +87,8 @@ public class Act_Product_Selection_Presenter implements Act_Product_Selection_Co
             item.put("code", aux.get("product_code"));
             item.put("desc", aux.get("product_desc"));
             item.put("id", aux.get("product_id"));
-            item.put("full_desc", aux.get("full_product_desc"));
+            // para produtos(nao insumos) apenas a descricao sera exibida.
+            item.put("full_desc", aux.get("product_desc"));
             item.put("type", aux.get("type"));
             item.put("recursive", aux.get(""));
             String product_desc = Normalizer.normalize(aux.get("product_desc"), Normalizer.Form.NFD);
@@ -162,7 +164,8 @@ public class Act_Product_Selection_Presenter implements Act_Product_Selection_Co
             item.put("code", aux.get("group_code"));
             item.put("desc", aux.get("group_desc"));
             item.put("id", aux.get("group_id"));
-            item.put("full_desc", aux.get("full_group_desc"));
+            // para grupos apenas a descricao sera exibida.
+            item.put("full_desc", aux.get("group_desc"));
             item.put("type", aux.get("type"));
             String group_desc = Normalizer.normalize(aux.get("group_desc"), Normalizer.Form.NFD);
             item.put(DESC_FOR_SORT, group_desc);

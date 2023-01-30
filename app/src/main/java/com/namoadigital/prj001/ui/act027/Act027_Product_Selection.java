@@ -9,10 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
+import com.google.android.material.textfield.TextInputLayout;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.BaseFragment;
@@ -42,12 +45,19 @@ public class Act027_Product_Selection extends BaseFragment {
     public static final String INDEX_GROUP_CODE = "index_group_code";
     public static final String INDEX_RECURSIVE_CODE = "index_recursive_code";
 
+    public static final String INDEX_GROUP_DESC = "index_group_desc";
+
+
     private boolean bStatus = false;
     private Context context;
     private SM_SO mSm_so;
     private MKEditTextNM mket_product_search;
+    private TextInputLayout mket_product_layout;
     private ListView lv_groups_products;
     private Button btn_back;
+
+    private TextView tv_path_url;
+    private LinearLayout ll_path_url;
     private Button btn_home;
     private Stack<HMAux> mStack = new Stack<>();
     private HMAux currentIndex = new HMAux();
@@ -90,6 +100,34 @@ public class Act027_Product_Selection extends BaseFragment {
         return view;
     }
 
+    ArrayList<String> pathUrl = new ArrayList<>();
+
+    private void updatePathUrl(String path) {
+        if (currentIndex.get(INDEX_GROUP_CODE).equals("0")) {
+            pathUrl.clear();
+        } else {
+            if (!pathUrl.contains(path)) {
+                pathUrl.add(path);
+            } else {
+                pathUrl.remove(path);
+            }
+        }
+
+
+        if (pathUrl.size() == 1) {
+            tv_path_url.setText(pathUrl.get(0));
+        } else if (!pathUrl.isEmpty()) {
+            tv_path_url.setText(String.join("/", pathUrl));
+        }
+
+        if (!pathUrl.isEmpty()) {
+            ll_path_url.setVisibility(View.VISIBLE);
+        } else {
+            ll_path_url.setVisibility(View.GONE);
+        }
+
+    }
+
     private void iniVar(View view) {
         context = getActivity();
         //
@@ -101,12 +139,16 @@ public class Act027_Product_Selection extends BaseFragment {
         //
         mket_product_search = (MKEditTextNM) view.findViewById(R.id.act027_product_selection_mket_product_search);
         //
+        mket_product_layout = view.findViewById(R.id.act027_product_selection_mket_product_llayout);
+        //
         lv_groups_products = (ListView) view.findViewById(R.id.act027_product_selection_lv_groups_products);
         //
         btn_back = (Button) view.findViewById(R.id.act027_product_selection_btn_back);
         //
         btn_home = (Button) view.findViewById(R.id.act027_product_selection_btn_home);
         //
+        ll_path_url = view.findViewById(R.id.act_product_selection_path_url_layout);
+        tv_path_url = view.findViewById(R.id.act_product_selection_page_url);
         controls_sta.add(mket_product_search);
     }
 
@@ -131,6 +173,7 @@ public class Act027_Product_Selection extends BaseFragment {
             @Override
             public void onClick(View v) {
                 try {
+                    updatePathUrl(currentIndex.get(INDEX_GROUP_DESC));
                     //Recupera ultimo HMAux da pilha
                     currentIndex.putAll(mStack.pop());
                     //
@@ -172,6 +215,7 @@ public class Act027_Product_Selection extends BaseFragment {
                     //
                     currentIndex.put(INDEX_GROUP_CODE, item.get("code"));
                     currentIndex.put(INDEX_RECURSIVE_CODE, item.get("recursive"));
+                    currentIndex.put(INDEX_GROUP_DESC, item.get("desc"));
                     //
                     mkUpdate = false;
                     mket_product_search.setText("");
@@ -179,9 +223,11 @@ public class Act027_Product_Selection extends BaseFragment {
                     //
                     btn_back.setVisibility(View.VISIBLE);
                     //
+                    updatePathUrl(currentIndex.get(INDEX_GROUP_DESC));
                     callSetAdapterData(mket_product_search.getText().toString());
 
                 } else {
+                    pathUrl.clear();
                     if (onProductClickListner != null) {
                         onProductClickListner.onProductClick(ToolBox_Inf.convertStringToInt(item.get("code")));
                     }
@@ -265,7 +311,8 @@ public class Act027_Product_Selection extends BaseFragment {
                 item.put("code", aux.get("group_code"));
                 item.put("desc", aux.get("group_desc"));
                 item.put("id", aux.get("group_id"));
-                item.put("full_desc", aux.get("full_group_desc"));
+                // para grupos apenas a descricao sera exibida.
+                item.put("full_desc", aux.get("group_desc"));
                 item.put("type", aux.get("type"));
                 // Hugo
                 item.put("recursive", aux.get("recursive_code"));
@@ -346,7 +393,7 @@ public class Act027_Product_Selection extends BaseFragment {
                     delegate.callAct005();
                 } else {
                     //
-                    mket_product_search.setHint(hmAux_Trans.get("mket_hint_msg"));
+                    mket_product_layout.setHint(hmAux_Trans.get("mket_hint_msg"));
                     //
                     btn_back.setText(hmAux_Trans.get("btn_back"));
                     btn_back.setVisibility(View.INVISIBLE);
