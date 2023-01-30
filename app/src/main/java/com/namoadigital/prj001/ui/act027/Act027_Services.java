@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -889,14 +888,14 @@ public class Act027_Services extends BaseFragment {
             ss_partner.setmTitle(hmAux_Trans.get("partner_search_lbl"));
 
 
-            if (partners.size() > 0) {
+           /* if (partners.size() > 0) {
                 HMAux hmAux = new HMAux();
                 hmAux.put(SearchableSpinner.CODE, "0");
                 hmAux.put(SearchableSpinner.ID, "0");
-                hmAux.put(SearchableSpinner.DESCRIPTION, hmAux_Trans.get("select_partner_lbl"));
+                hmAux.put(SearchableSpinner., hmAux_Trans.get("select_partner_lbl"));
 
                 ss_partner.setmValue(hmAux);
-            }
+            }*/
 
             ss_partner.setmOption(partners);
 

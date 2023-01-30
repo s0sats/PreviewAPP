@@ -17,13 +17,13 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.widget.NestedScrollView;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputLayout;
@@ -95,7 +95,7 @@ public class Frg_Serial_Edit extends BaseFragment {
     private String viewMode = "";
     private LinearLayout existsSerialLayout;
     private TextInputLayout textInputLayoutSerial;
-    private NestedScrollView sv_serial;
+    private ScrollView sv_serial;
     private TextView tv_product_code_label;
     private TextView tv_product_id_label;
     private TextView tv_product_desc_value;
@@ -156,7 +156,7 @@ public class Frg_Serial_Edit extends BaseFragment {
     private boolean skip_validation = false;
     private boolean serialInfoChanges = false;
     private boolean new_serial = false;
-    private Button btn_action;
+    private MaterialButton btn_action;
     private View.OnClickListener checkExistSerialListner;
     private View.OnClickListener saveSerialListner;
     private DialogInterface.OnClickListener productOrSerialNullListner;
@@ -355,6 +355,7 @@ public class Frg_Serial_Edit extends BaseFragment {
     public void setBtnActionLabel(String label) {
         btn_action_translation = label;
         if (bStatus) {
+            btn_action.setIcon(getResources().getDrawable(R.drawable.ic_save_black_24px));
             btn_action.setText(btn_action_translation);
         }
     }
@@ -437,6 +438,8 @@ public class Frg_Serial_Edit extends BaseFragment {
         ) {
             mket_serial_id.setTag(mket_serial_id.getText().toString());
             btn_action.setText(btn_action_translation);
+            btn_action.setIcon(getResources().getDrawable(R.drawable.ic_save_black_24px));
+
             //
             mdProductSerial.setSerial_code(0);
             mdProductSerial.setSerial_tmp(0);
@@ -484,6 +487,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         setNew_serial(false);
         setMdProductSerial(received_serial);
         btn_action.setText(btn_action_translation);
+        btn_action.setIcon(getResources().getDrawable(R.drawable.ic_save_black_24px));
         //
         showAlertDialog(
                 hmAux_Trans.get("alert_serial_exists_ttl"),
@@ -1371,6 +1375,7 @@ public class Frg_Serial_Edit extends BaseFragment {
             forceCheckExistences = false;
             blockAllProperties();
             btn_action.setText(hmAux_Trans.get("btn_check_exists"));
+            btn_action.setIcon(getResources().getDrawable(R.drawable.baseline_search_24));
             btn_action.setOnClickListener(checkExistSerialListner);
         }
         //
@@ -1688,6 +1693,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                 if (!serialIdChanged && !s.equalsIgnoreCase((String) mket_serial_id.getTag())) {
                     serialIdChanged = true;
                     btn_action.setText(hmAux_Trans.get("btn_check_exists"));
+                    btn_action.setIcon(getResources().getDrawable(R.drawable.baseline_search_24));
                     btn_action.setOnClickListener(checkExistSerialListner);
                     blockAllProperties();
                 }
@@ -2439,7 +2445,7 @@ public class Frg_Serial_Edit extends BaseFragment {
 
     //
     public void scrollToTop() {
-        sv_serial.fullScroll(NestedScrollView.FOCUS_UP);
+        sv_serial.fullScroll(ScrollView.FOCUS_UP);
     }
     //endregion
 

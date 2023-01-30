@@ -420,6 +420,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
             @Override
             public void onFragIsReady() {
+                controls_sta.addAll(frgSerialEdit.getControlsSta());
                 //Regras só se aplicam ao agendamento
                 if(isSchedule){
                     if (mdProduct.getSite_restriction() == 1 && frgSerialEdit.getSS_SiteOption() != null) {

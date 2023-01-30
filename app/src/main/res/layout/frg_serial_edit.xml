@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content_main"
@@ -7,116 +7,120 @@
     android:layout_height="match_parent"
     android:gravity="center_vertical"
     android:orientation="vertical"
+
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <LinearLayout
-        android:id="@+id/serial_layout_header"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/m3_namoa_surface2"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:paddingHorizontal="10dp"
-        android:paddingBottom="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
-
-        <include
-            android:id="@+id/act008_nform_in_progress"
-            layout="@layout/process_in_progress"
-            android:visibility="gone" />
+        android:paddingBottom="56dp">
 
         <LinearLayout
+            android:id="@+id/serial_layout_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/m3_namoa_surface2"
             android:orientation="vertical"
-            android:visibility="visible">
+            android:paddingHorizontal="10dp"
+            android:paddingBottom="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
+
+            <include
+                android:id="@+id/act008_nform_in_progress"
+                layout="@layout/process_in_progress"
+                android:visibility="gone" />
 
             <LinearLayout
-                android:id="@+id/exists_serial_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="10dp"
+                android:orientation="vertical"
                 android:visibility="visible">
 
-                <ImageView
-                    android:id="@+id/iconSerialColor"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:id="@+id/exists_serial_layout"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:contentDescription="null"
-                    android:src="@drawable/ic_baseline_arrow_right_24"
-                    app:tint="@color/text_black" />
+                    android:paddingTop="10dp"
+                    android:visibility="visible">
+
+                    <ImageView
+                        android:id="@+id/iconSerialColor"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="null"
+                        android:src="@drawable/ic_baseline_arrow_right_24"
+                        app:tint="@color/text_black" />
+
+                    <TextView
+                        android:id="@+id/frg_serial_edit_tv_serial_ttl"
+                        style="@style/TextAppearance.Material3.TitleLarge"
+                        android:textColor="@color/m3_namoa_onSurface"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp" />
+
+                </LinearLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/text_input_serial_id"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    style="@style/NamoaTheme3.TextInputLayout.Outlined"
+                    android:visibility="visible">
+
+                    <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                        android:id="@+id/frg_serial_edit_mket_serial"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textMultiLine"
+                        android:textColor="@drawable/edittext_theme_text"
+                        app:mBARCODE="true"
+                        app:mNFC="false"
+                        app:mOCR="false" />
+
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView
-                    android:id="@+id/frg_serial_edit_tv_serial_ttl"
-                    style="@style/TextAppearance.Material3.TitleLarge"
-                    android:textColor="@color/m3_namoa_onSurface"
+                    android:id="@+id/frg_serial_edit_tv_product_desc_value"
+                    style="@style/TextAppearance.Material3.BodySmall"
+                    android:textColor="@color/m3_namoa_onSurfaceVariant"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp" />
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/frg_serial_edit_tv_brand_model_color"
+                    style="@style/TextAppearance.Material3.BodySmall"
+                    android:textColor="@color/m3_namoa_onSurfaceVariant"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/frg_serial_edit_tv_trackings"
+                    style="@style/TextAppearance.Material3.BodySmall"
+                    android:paddingTop="16dp"
+                    android:textColor="@color/m3_namoa_onSurfaceVariant"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
             </LinearLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/text_input_serial_id"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                style="@style/NamoaTheme3.TextInputLayout.Outlined"
-                android:visibility="visible">
-
-                <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-                    android:id="@+id/frg_serial_edit_mket_serial"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textMultiLine"
-                    android:textColor="@drawable/edittext_theme_text"
-                    app:mBARCODE="true"
-                    app:mNFC="false"
-                    app:mOCR="false" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <TextView
-                android:id="@+id/frg_serial_edit_tv_product_desc_value"
-                style="@style/TextAppearance.Material3.BodySmall"
-                android:textColor="@color/m3_namoa_onSurfaceVariant"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:id="@+id/frg_serial_edit_tv_brand_model_color"
-                style="@style/TextAppearance.Material3.BodySmall"
-                android:textColor="@color/m3_namoa_onSurfaceVariant"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:id="@+id/frg_serial_edit_tv_trackings"
-                style="@style/TextAppearance.Material3.BodySmall"
-                android:paddingTop="16dp"
-                android:textColor="@color/m3_namoa_onSurfaceVariant"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
         </LinearLayout>
-    </LinearLayout>
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:paddingHorizontal="16dp">
 
-        <androidx.core.widget.NestedScrollView
+        <ScrollView
             android:id="@+id/frg_serial_edit_sv_serial"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:fillViewport="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:paddingHorizontal="16dp">
 
 
                 <LinearLayout
@@ -231,11 +235,12 @@
                             android:visibility="gone" />
 
                     </LinearLayout>
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        >
+                        android:orientation="horizontal">
+
                         <TextView
                             android:id="@+id/frg_serial_edit_tv_serial_ttl_old"
                             android:layout_width="0dp"
@@ -258,7 +263,8 @@
                             android:src="@drawable/ic_clock_chat"
                             android:visibility="visible"
                             app:tint="@color/light_to_dark_blue_color" />
-                     <ImageView
+
+                        <ImageView
                             android:id="@+id/frg_serial_edit_iv_offline"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -268,6 +274,7 @@
                             android:src="@drawable/ic_signal_wifi_off_black_24dp"
                             android:visibility="gone" />
                     </LinearLayout>
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -306,8 +313,7 @@
                             android:background="@drawable/btn_namoa_main_states"
                             android:text="NEW"
                             android:textColor="@color/padrao_WHITE"
-                            android:focusable="true"
-                            />
+                            android:focusable="true" />
 
 
                     </LinearLayout>
@@ -597,40 +603,38 @@
                             android:text="Site" />
 
                         <LinearLayout
-                                android:id="@+id/frg_serial_edit_ll_suggested_location"
-                                android:layout_width="match_parent"
+                            android:id="@+id/frg_serial_edit_ll_suggested_location"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="15dp"
+                            android:background="@color/namoa_color_gray"
+                            android:orientation="horizontal"
+                            android:padding="5dp"
+                            android:visibility="gone">
+
+                            <TextView
+                                android:id="@+id/frg_serial_edit_tv_suggested_location_ttl"
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_marginBottom="15dp"
-                                android:background="@color/namoa_color_gray"
-                                android:orientation="horizontal"
+                                android:layout_weight="1"
                                 android:padding="5dp"
+                                android:text="Suggested"
+                                android:textSize="@dimen/font_size_item_md"
+                                android:textStyle="bold"
                                 android:visibility="gone"
-                        >
+
+                                />
 
                             <TextView
-                                    android:id="@+id/frg_serial_edit_tv_suggested_location_ttl"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:padding="5dp"
-                                    android:text="Suggested"
-                                    android:textSize="@dimen/font_size_item_md"
-                                    android:textStyle="bold"
-                                    android:visibility="gone"
-
-                            />
-
-                            <TextView
-                                    android:id="@+id/frg_serial_edit_tv_suggested_location"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="2"
-                                    android:gravity="center"
-                                    android:padding="5dp"
-                                    android:text="Zona | Local"
-                                    android:textSize="@dimen/font_size_item_md"
-                                    android:textStyle="bold"
-                            />
+                                android:id="@+id/frg_serial_edit_tv_suggested_location"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="2"
+                                android:gravity="center"
+                                android:padding="5dp"
+                                android:text="Zona | Local"
+                                android:textSize="@dimen/font_size_item_md"
+                                android:textStyle="bold" />
 
 
                         </LinearLayout>
@@ -700,10 +704,10 @@
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <LinearLayout
-                                android:id="@+id/frg_serial_edit_ll_tracking_container"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="vertical">
+                            android:id="@+id/frg_serial_edit_ll_tracking_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
 
                         </LinearLayout>
                     </LinearLayout>
@@ -1020,17 +1024,18 @@
                             app:mOCR="false" />
                     </LinearLayout>
                 </LinearLayout>
+
+                <View
+                    android:id="@+id/frg_serial_edit_view_bg"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/namoa_color_white_alpha"
+                    android:visibility="gone"
+                    android:clickable="true" />
             </LinearLayout>
 
-        </androidx.core.widget.NestedScrollView>
+        </ScrollView>
 
-        <View
-            android:id="@+id/frg_serial_edit_view_bg"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/namoa_color_white_alpha"
-            android:visibility="gone"
-            android:clickable="true" />
 
         <!--<android.support.design.widget.FloatingActionButton-->
         <!--android:id="@+id/frg_serial_edit_fab_anchor"-->
@@ -1045,7 +1050,7 @@
         <!--android:visibility="gone"-->
         <!--/>-->
 
-    </FrameLayout>
+    </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/bottom_bar_layout"
@@ -1079,4 +1084,4 @@
             app:strokeColor="@color/m3_namoa_primary"
             app:strokeWidth="0dp" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-</LinearLayout>
+</FrameLayout>
