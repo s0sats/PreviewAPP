@@ -1480,11 +1480,14 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         val bundle = Bundle()
         //
         bundle.putBoolean(Act_Product_Selection.IS_ADD_PRODUCT_LIST, true)
-        bundle.putSerializable(Act_Product_Selection.PRODUCT_LIST, listOfProduct)
+        bundle.putSerializable(Act_Product_Selection.PRODUCT_LIST, listOfProduct);
         mIntent.putExtras(bundle)
         //LUCHE - 02/11/2021 - Para funcionar no não manter act, foi necessario usar o contexto da act
         //para a chamada todo avaliar se melhor criar interface para chamar via act....
-        requireActivity().startActivityForResult(mIntent, ConstantBaseApp.ACT_PRODUCT_SELECTION_REQUEST_CODE)
+        requireActivity().startActivityForResult(
+            mIntent,
+            ConstantBaseApp.ACT_PRODUCT_SELECTION_REQUEST_CODE
+        )
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

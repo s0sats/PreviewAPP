@@ -37,9 +37,10 @@
     <string name="msg_no_forms_found">Kein Formular gefunden.</string>
     <string name="act002_title_">Accounts</string>
     <string name="msg_update_canceled">App-Update abgebrochen.</string>
-	
+    <string name="act002_mket_edit_hint">Freitext Filter</string>
+
     <!--LIB-->
-	<string name="nfc_activity_title">NFC-Leser</string>
+    <string name="nfc_activity_title">NFC-Leser</string>
     <string name="nfc_activity_desc">Nähern Sie eine NFC-Karte an Ihr Gerät.</string>
     <string name="nfc_no_support">Fehler: das Gerät unterstützt keine NFC-Funktion.</string>
     <string name="nfc_no_data">Fehler: Informationen stehen nicht zur Verfügung.</string>

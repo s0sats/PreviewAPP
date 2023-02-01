@@ -15,14 +15,43 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="@android:color/white"
         android:orientation="vertical">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/m3_namoa_surface1"
+            android:orientation="vertical"
+            android:paddingVertical="5dp">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/act027_product_selection_mket_product_llayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:startIconDrawable="@drawable/ic_search_black_24dp"
+                app:startIconTint="@color/m3_namoa_onSurfaceVariant"
+                style="@style/NamoaTheme3.TextInputLayout.Outlined"
+                android:paddingHorizontal="16dp">
+
+                <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                    android:id="@+id/act_product_selection_mket_product_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:imeOptions="actionDone"
+                    app:mNFC="false"
+                    app:mOCR="false"
+                    app:mBARCODE="false" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
 
         <ListView
             android:id="@+id/act002_lv_customers"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:divider="@color/padrao_TRANSPARENT"/>
+            android:divider="@color/m3_namoa_outlineVariant"
+            android:dividerHeight="1dp" />
 
     </LinearLayout>
 

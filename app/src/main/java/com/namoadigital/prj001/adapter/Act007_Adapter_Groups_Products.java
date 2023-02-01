@@ -1,6 +1,9 @@
 package com.namoadigital.prj001.adapter;
 
 import android.content.Context;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.TextAppearanceSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +28,7 @@ public class Act007_Adapter_Groups_Products extends BaseAdapter {
     private List<HMAux> data;
     private HMAux hmAux_Trans;
 
-    public Act007_Adapter_Groups_Products(Context context, int resource, List<HMAux> data ,HMAux hmAux_Trans) {
+    public Act007_Adapter_Groups_Products(Context context, int resource, List<HMAux> data, HMAux hmAux_Trans) {
         this.context = context;
         this.resource = resource;
         this.data = data;
@@ -84,10 +87,8 @@ public class Act007_Adapter_Groups_Products extends BaseAdapter {
             icon_paste.setVisibility(View.VISIBLE);
             //
             //codeText += item.get("code");
-            //
             //tv_code.setText(codeText);
             tv_desc.setText(item.get("full_desc"));
-
         } else {
             iv_001.setVisibility(View.GONE);
             icon_paste.setVisibility(View.GONE);
@@ -96,10 +97,27 @@ public class Act007_Adapter_Groups_Products extends BaseAdapter {
             //
             //
             //tv_code.setText(codeText);
-            tv_desc.setText(item.get("full_desc"));
+            String customId = item.get("full_desc").replace(item.get("desc"), "").trim();
+            if (customId.contains("(")) {
+                SpannableString id_string = new SpannableString(item.get("full_desc"));
+                id_string.setSpan(
+                        new TextAppearanceSpan(context, R.style.Base_TextAppearance_Material3_LabelSmall),
+                        item.get("full_desc").indexOf("("),
+                        item.get("full_desc").length(),
+                        0
+                );
+                id_string.setSpan(
+                        new ForegroundColorSpan(context.getResources().getColor(R.color.m3_namoa_onSurface)),
+                        item.get("full_desc").indexOf("("),
+                        item.get("full_desc").length(),
+                        0
+                );
+                tv_desc.setText(id_string);
+            } else {
+                tv_desc.setText(item.get("full_desc"));
+            }
 
         }
-
         return convertView;
     }
 }
