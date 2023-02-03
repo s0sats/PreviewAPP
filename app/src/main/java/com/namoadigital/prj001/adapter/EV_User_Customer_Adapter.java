@@ -18,6 +18,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
+import com.namoadigital.prj001.design.list.OnRememberListState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,12 +35,14 @@ public class EV_User_Customer_Adapter extends BaseAdapter implements Filterable 
     private ArrayList<HMAux> sourceFilter = new ArrayList<>();
     private ItemFilter itemFilter;
 
-    public EV_User_Customer_Adapter(Context context, int resource, List<HMAux> source) {
+    private OnRememberListState<HMAux> onListViewActions;
+
+    public EV_User_Customer_Adapter(Context context, int resource, List<HMAux> source, OnRememberListState<HMAux> onListViewActions) {
         this.context = context;
         this.resource = resource;
         this.source = source;
         this.sourceFilter.addAll(source);
-
+        this.onListViewActions = onListViewActions;
         getFilter();
     }
 
@@ -179,6 +182,7 @@ public class EV_User_Customer_Adapter extends BaseAdapter implements Filterable 
         @Override
         protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
             sourceFilter = (ArrayList<HMAux>) filterResults.values;
+            onListViewActions.dataChanged(sourceFilter);
             notifyDataSetChanged();
         }
     }

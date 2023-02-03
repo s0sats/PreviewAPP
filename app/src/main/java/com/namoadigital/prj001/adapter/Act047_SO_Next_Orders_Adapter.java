@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.design.list.OnRememberListState;
 import com.namoadigital.prj001.model.SO_Next_Orders_Obj;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -26,7 +27,7 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
 
     private Context context;
     private ArrayList<SO_Next_Orders_Obj> mValues;
-    private OnRememberListState rememberSO_next_listState;
+    private OnRememberListState<SO_Next_Orders_Obj> rememberSO_next_listState;
     private int resource;
     private String mResource_Code;
     private String mResource_Name = "act047_next_orders_adapter";
@@ -34,7 +35,7 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
     private ArrayList<SO_Next_Orders_Obj> mFilteredValues;
     private NextOrdersFilter mFilter;
 
-    public Act047_SO_Next_Orders_Adapter(Context context, ArrayList<SO_Next_Orders_Obj> mValues, int resource, OnRememberListState listState) {
+    public Act047_SO_Next_Orders_Adapter(Context context, ArrayList<SO_Next_Orders_Obj> mValues, int resource, OnRememberListState<SO_Next_Orders_Obj> listState) {
         this.context = context;
         this.mValues = mValues;
         this.resource = resource;
@@ -282,7 +283,7 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
         @Override
         protected void publishResults(CharSequence charSequence, FilterResults results) {
             mFilteredValues = ((ArrayList<SO_Next_Orders_Obj>) results.values);
-            rememberSO_next_listState.emptyList(mFilteredValues.isEmpty());
+            rememberSO_next_listState.dataChanged(mFilteredValues);
             notifyDataSetChanged();
         }
     }

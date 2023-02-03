@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/m3_namoa_surface1"
+    android:orientation="vertical">
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/filter_edit_text_llayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:startIconDrawable="@drawable/ic_search_black_24dp"
+        app:startIconTint="@color/m3_namoa_onSurfaceVariant"
+        style="@style/NamoaTheme3.TextInputLayout.Outlined">
+
+        <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+            android:id="@+id/filter_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:imeOptions="actionDone"
+            android:textColor="@drawable/edittext_theme_text"
+            app:mNFC="false"
+            app:mOCR="false"
+            app:mBARCODE="false" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+</LinearLayout>

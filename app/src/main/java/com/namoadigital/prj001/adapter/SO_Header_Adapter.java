@@ -21,6 +21,7 @@ import com.namoadigital.prj001.dao.MD_Brand_ColorDao;
 import com.namoadigital.prj001.dao.MD_Brand_ModelDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
+import com.namoadigital.prj001.design.list.OnRememberListState;
 import com.namoadigital.prj001.sql.Sql_Act026_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -52,7 +53,7 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
     private ValueFilter valueFilter;
     private ArrayList<HMAux> source_filtered;
     //
-    private OnRememberListState rememberListState;
+    private OnRememberListState<HMAux> rememberListState;
     //
     private boolean showOnlyAvailable = false;
 
@@ -96,20 +97,20 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
         applyConstructor(context,source,config_type,resource_01,resource_02,null, null);
     }
 
-    public SO_Header_Adapter(Context context, List<HMAux> source, String config_type, int resource_01, int resource_02,String sFilter, OnRememberListState rememberListState) {
-        applyConstructor(context,source,config_type,resource_01,resource_02,sFilter,rememberListState);
+    public SO_Header_Adapter(Context context, List<HMAux> source, String config_type, int resource_01, int resource_02, String sFilter, OnRememberListState<HMAux> rememberListState) {
+        applyConstructor(context, source, config_type, resource_01, resource_02, sFilter, rememberListState);
     }
 
-    private void applyConstructor(Context context, List<HMAux> source, String config_type, int resource_01, int resource_02,String sFilter, OnRememberListState OnRememberListState) {
+    private void applyConstructor(Context context, List<HMAux> source, String config_type, int resource_01, int resource_02, String sFilter, OnRememberListState<HMAux> OnRememberListState) {
         this.context = context;
         this.resource_01 = resource_01;
         this.resource_02 = resource_02;
         this.source = source;
         this.rememberListState = OnRememberListState;
         this.mResource_Code = ToolBox_Inf.getResourceCode(
-            context,
-            Constant.APP_MODULE,
-            "so_header_adapter"
+                context,
+                Constant.APP_MODULE,
+                "so_header_adapter"
         );
         this.config_type = config_type;
         this.checkedStatus = new boolean[source.size()];
@@ -752,7 +753,7 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
             source = (ArrayList<HMAux>) results.values;
             //
             if(rememberListState != null){
-                rememberListState.emptyList(source.isEmpty());
+                rememberListState.dataChanged((ArrayList<HMAux>) source);
             }
             //
             notifyDataSetChanged();

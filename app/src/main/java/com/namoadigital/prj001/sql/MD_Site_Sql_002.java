@@ -24,17 +24,17 @@ public class MD_Site_Sql_002 implements Specification {
                         "   site_code, " +
                         "   site_id, " +
                         "   site_desc,    " +
-                        MD_SiteDao.LICENSE_ENABLED + ", \n" +
-                        MD_SiteDao.FREE_EXECUTIONS_MAX + ", \n" +
-                        MD_SiteDao.FREE_EXECUTIONS_COUNT + ", \n" +
-                        MD_SiteDao.APP_EXECUTIONS_COUNT + ", \n" +
-                        MD_SiteDao.LICENSE_BLOCKED + " \n" +
-                        " FROM " +
-                        MD_SiteDao.TABLE +
-                        " WHERE " +
-                        MD_SiteDao.CUSTOMER_CODE +" = '"+s_customer_code+"' "+
-                       " ORDER BY " +
-                        "      site_id,site_desc;")
+                                MD_SiteDao.LICENSE_ENABLED + ", \n" +
+                                MD_SiteDao.FREE_EXECUTIONS_MAX + ", \n" +
+                                MD_SiteDao.FREE_EXECUTIONS_COUNT + ", \n" +
+                                MD_SiteDao.APP_EXECUTIONS_COUNT + ", \n" +
+                                MD_SiteDao.LICENSE_BLOCKED + " \n" +
+                                " FROM " +
+                                MD_SiteDao.TABLE +
+                                " WHERE " +
+                                MD_SiteDao.CUSTOMER_CODE + " = '" + s_customer_code + "' " +
+                                " ORDER BY " +
+                                "      site_desc;")
                 //.append("site_code#site_id#site_desc")
                 .toString();
     }
