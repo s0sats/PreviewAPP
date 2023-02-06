@@ -3567,7 +3567,9 @@ public class Act011_Main extends Base_Activity
             @Override
             public void onClick(View v) {
                 if(isFormOs) {
-                    String errorMsg = isFinalizeDialogInputValid(binding);
+                    String startDate = binding.act011DialogCheckMkdateFormStart.getmValue();
+                    String endDate = binding.act011DialogCheckMkdateFormEnd.getmValue();
+                    String errorMsg = isFinalizeDialogInputValid(binding, startDate, endDate);
                     if(errorMsg.isEmpty()) {
                         String missingAnswer = binding.act011DialogCheckTilJustifyMissingAnswerVal.getEditText().getText().toString();
                         //LUCHE - 08/11/2021 - resgata contador antes para ser usado na validação
@@ -3579,8 +3581,8 @@ public class Act011_Main extends Base_Activity
                             geOs,
                             missingAnswersCounter,
                             missingAnswer,
-                            binding.act011DialogCheckMkdateFormStart.getmValue(),
-                            binding.act011DialogCheckMkdateFormEnd.getmValue()
+                            startDate,
+                            endDate
                         );
                         //
                         mPresenter.saveSerialClass(ToolBox_Con.getPreference_Customer_Code(context),
@@ -3634,8 +3636,9 @@ public class Act011_Main extends Base_Activity
             @Override
             public void onChangeValue(String s) {
                 clearMkEdtJustifyMissingAnswerValFocus(binding.act011DialogCheckMkedtJustifyMissingAnswerVal);
-                if(validEndDate(binding)){
-                    binding.act011DialogCheckTvElapsedTimeVal.setText(getFormElapsedTimeFormatted(s));
+                String startDate = binding.act011DialogCheckMkdateFormStart.getmValue();
+                if(validEndDate(startDate, s)){
+                    binding.act011DialogCheckTvElapsedTimeVal.setText(getFormElapsedTimeFormatted(binding.act011DialogCheckMkdateFormStart.getmValue(), s));
                 }else{
                     ToolBox.alertMSG(
                             context,
@@ -3648,6 +3651,26 @@ public class Act011_Main extends Base_Activity
                 }
             }
         });
+        binding.act011DialogCheckMkdateFormStart.setOnSelectedValue(new MkDateTime.IMKDateTimeValueChange() {
+            @Override
+            public void onChangeValue(String s) {
+                clearMkEdtJustifyMissingAnswerValFocus(binding.act011DialogCheckMkedtJustifyMissingAnswerVal);
+                String endDate = binding.act011DialogCheckMkdateFormEnd.getmValue();
+                if(validEndDate(s, endDate)){
+                    binding.act011DialogCheckTvElapsedTimeVal.setText(getFormElapsedTimeFormatted(s, endDate));
+                }else{
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("dialog_finalize_os_form_invalid_end_date_ttl"),
+                            hmAux_Trans.get("dialog_finalize_os_form_invalid_end_date_end"),
+                            null,
+                            0
+                    );
+                    binding.act011DialogCheckTvElapsedTimeVal.setText("--:--");
+                }
+            }
+        });
+
         //
         binding.ssSerialClass.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
             @Override
@@ -3668,10 +3691,10 @@ public class Act011_Main extends Base_Activity
         }
     }
 
-    private String isFinalizeDialogInputValid(com.namoadigital.prj001.databinding.Act011CheckDialogBinding binding) {
+    private String isFinalizeDialogInputValid(Act011CheckDialogBinding binding, String startDate, String endDate) {
         String errorMsg = "";
         //
-        if(!validEndDate(binding)){
+        if(!validEndDate(startDate, endDate)){
             errorMsg = getString(R.string.unicode_bullet) + " " + hmAux_Trans.get("dialog_finalize_os_form_invalid_end_date_end") + "\n";
         }
         //
@@ -3707,9 +3730,7 @@ public class Act011_Main extends Base_Activity
         }
     }
 
-    private boolean validEndDate(Act011CheckDialogBinding binding) {
-        String startDate = binding.act011DialogCheckMkdateFormStart.getmValue();
-        String endDate = binding.act011DialogCheckMkdateFormEnd.getmValue();
+    private boolean validEndDate(String startDate, String endDate) {
         //todo colocar valida com data atual apos tratar fluxo de assinatura.
         return ToolBox_Inf.getDateDiferenceInMilliseconds(startDate, endDate) <= 0
                      && ToolBox_Inf.getDateDiferenceInMilliseconds(endDate, ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT)) <= 0;
@@ -3732,7 +3753,6 @@ public class Act011_Main extends Base_Activity
                 }
             }
             binding.act011DialogCheckTvMissingAnswerVal.setText(String.valueOf(missingAnswersAmount));
-            binding.act011DialogCheckTvElapsedTimeVal.setText(getFormElapsedTimeFormatted(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")));
             binding.act011DialogCheckMkdateFormStart.setClickable(false);
             binding.act011DialogCheckMkdateFormStart.setmCanClean(false);
             binding.act011DialogCheckMkdateFormStart.setmEnabled(false);
@@ -3752,6 +3772,9 @@ public class Act011_Main extends Base_Activity
             }else{
                 binding.act011DialogCheckMkdateFormEnd.setmValue(geOs.getDate_end(), true);
             }
+            //
+            binding.act011DialogCheckTvElapsedTimeVal.setText(getFormElapsedTimeFormatted(binding.act011DialogCheckMkdateFormStart.getmValue(), binding.act011DialogCheckMkdateFormEnd.getmValue()));
+            //
             binding.act011DialogFinalizeLbl.setText(hmAux_Trans.get("dialog_finalize_os_form_lbl"));
             binding.act011DialogCheckTvMissingAnswerLbl.setText(hmAux_Trans.get("dialog_finalize_os_form_missing_answer_count_lbl"));
             binding.act011DialogCheckTvElapsedTimeLbl.setText(hmAux_Trans.get("dialog_finalize_os_form_elapsed_time_lbl"));
@@ -3822,8 +3845,8 @@ public class Act011_Main extends Base_Activity
         }
     }
 
-    private String getFormElapsedTimeFormatted(String endDate) {
-        return ToolBox_Inf.getDateDiferenceInHHMM(endDate, formData.getDate_start());
+    private String getFormElapsedTimeFormatted(String startDate, String endDate) {
+        return ToolBox_Inf.getDateDiferenceInHHMM(endDate, startDate);
     }
 
     private int missingAnswersCounter() {

@@ -37,18 +37,17 @@ import java.util.Stack;
 
 public class Act_Product_Selection extends Base_Activity_NFC implements Act_Product_Selection_Contract.I_View {
 
-
     public static final String INDEX_GROUP_CODE = "index_group_code";
     public static final String INDEX_RECURSIVE_CODE = "index_recursive_code";
     public static final String INDEX_GROUP_DESC = "index_group_desc";
     public static final String IS_ADD_PRODUCT_LIST = "IS_ADD_PRODUCT_LIST";
     public static final String PRODUCT_LIST = "PRODUCT_LIST";
 
-
     private Act_Product_Selection_Contract.I_Presenter mPresenter;
     private MKEditTextNM mket_product_search;
     private TextInputLayout mket_product_layout;
     private ListView lv_groups_products;
+    private TextView tv_empty_list;
     private MaterialButton btn_back;
     private TextView tv_path_url;
     private LinearLayout ll_path_url;
@@ -106,6 +105,7 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
         transList.add("lbl_id");
         transList.add("lbl_desc");
         transList.add("mket_hint_msg");
+        transList.add("product_list_empty_lbl");
         transList.add("mket_hint_input_msg");
         transList.add("btn_back");
         transList.add("btn_home");
@@ -141,6 +141,8 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
         tv_path_url = findViewById(R.id.act_product_selection_page_url);
         //
         lv_groups_products = (ListView) findViewById(R.id.act_product_selection_lv_groups_products);
+        tv_empty_list = findViewById(R.id.act_product_selection_tv_empty_list);
+        tv_empty_list.setText(hmAux_Trans.get("product_list_empty_lbl"));
         //
         btn_back = findViewById(R.id.act_product_selection_btn_back);
         //btn_back.setTag("btn_back");
@@ -435,15 +437,21 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
 
     @Override
     public void loadGroups_Products(List<HMAux> groups_products) {
-
-        lv_groups_products.setAdapter(
-                new Act_Product_Selectio_Adapter_Groups_Products(
-                        context,
-                        R.layout.act_product_selection_content_cell_01,
-                        groups_products,
-                        hmAux_Trans
-                )
-        );
+        if(groups_products.isEmpty()){
+            tv_empty_list.setVisibility(View.VISIBLE);
+            lv_groups_products.setVisibility(View.GONE);
+        }else {
+            tv_empty_list.setVisibility(View.GONE);
+            lv_groups_products.setVisibility(View.VISIBLE);
+            lv_groups_products.setAdapter(
+                    new Act_Product_Selectio_Adapter_Groups_Products(
+                            context,
+                            R.layout.act_product_selection_content_cell_01,
+                            groups_products,
+                            hmAux_Trans
+                    )
+            );
+        }
     }
 
     @Override

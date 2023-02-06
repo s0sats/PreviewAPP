@@ -54,6 +54,7 @@ public class Act027_Product_Selection extends BaseFragment {
     private MKEditTextNM mket_product_search;
     private TextInputLayout mket_product_layout;
     private ListView lv_groups_products;
+    private TextView tv_empty_list;
     private Button btn_back;
 
     private TextView tv_path_url;
@@ -142,6 +143,7 @@ public class Act027_Product_Selection extends BaseFragment {
         mket_product_layout = view.findViewById(R.id.filter_edit_text_llayout);
         //
         lv_groups_products = (ListView) view.findViewById(R.id.act027_product_selection_lv_groups_products);
+        tv_empty_list = view.findViewById(R.id.act027_product_selection_tv_empty_list);
         //
         btn_back = (Button) view.findViewById(R.id.act027_product_selection_btn_back);
         //
@@ -363,16 +365,21 @@ public class Act027_Product_Selection extends BaseFragment {
         return listProducts;
     }
 
-    public void loadGroups_Products(List<HMAux> groups_products) {
-
-        lv_groups_products.setAdapter(
-                new Act007_Adapter_Groups_Products(
-                        context,
-                        R.layout.act007_main_content_cell_01,
-                        groups_products,
-                        hmAux_Trans
-                )
-        );
+    public void loadGroups_Products(List<HMAux> groups_products) {if(groups_products.isEmpty()){
+            tv_empty_list.setVisibility(View.VISIBLE);
+            lv_groups_products.setVisibility(View.GONE);
+        }else {
+            tv_empty_list.setVisibility(View.GONE);
+            lv_groups_products.setVisibility(View.VISIBLE);
+            lv_groups_products.setAdapter(
+                    new Act007_Adapter_Groups_Products(
+                            context,
+                            R.layout.act007_main_content_cell_01,
+                            groups_products,
+                            hmAux_Trans
+                    )
+            );
+        }
     }
 
     private void callSetAdapterData(String search) {
@@ -399,6 +406,8 @@ public class Act027_Product_Selection extends BaseFragment {
                     btn_back.setVisibility(View.INVISIBLE);
                     //
                     btn_home.setText(hmAux_Trans.get("btn_home"));
+                    //
+                    tv_empty_list.setText(hmAux_Trans.get("material_list_empty_lbl"));
                     //
                     if (mStack.size() == 0) {
                         setAdapterData(0, 0L, mket_product_search.getText().toString().trim());

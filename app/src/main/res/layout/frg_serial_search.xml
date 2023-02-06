@@ -1,22 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginTop="10dp"
     android:orientation="vertical"
+    android:gravity="center_vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <androidx.core.widget.NestedScrollView
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:padding="16dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingBottom="56dp"
+        android:fillViewport="true"
+        >
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:padding="16dp"
             android:orientation="vertical">
 
             <!--<View-->
@@ -45,7 +50,6 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
-                    android:layout_weight="1"
                     android:enabled="false"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/frg_serial_search_iv_product_id"
@@ -92,7 +96,6 @@
                 style="@style/NamoaTheme3.TextInputLayout.Outlined"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 app:helperTextEnabled="true"
                 tools:helperText="Regra CHASSI(mín.7; máx.17)"
                 app:helperTextTextColor="@color/m3_namoa_secondary">
@@ -125,8 +128,7 @@
                 android:id="@+id/frg_serial_search_til_tracking"
                 style="@style/NamoaTheme3.TextInputLayout.Outlined"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
+                android:layout_height="wrap_content">
 
                 <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                     android:id="@+id/frg_serial_search_mket_tracking"
@@ -247,20 +249,19 @@
 
         </LinearLayout>
 
-    </androidx.core.widget.NestedScrollView>
+
+    </ScrollView>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/bottom_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/m3_namoa_surface2"
-        android:gravity="start"
         android:orientation="horizontal"
+        android:gravity="start"
+        android:layout_gravity="bottom"
         android:paddingHorizontal="10dp"
-        android:paddingVertical="10dp"
-        app:layout_constraintBottom_toTopOf="@id/ui_footer"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        android:paddingVertical="10dp">
 
         <com.namoa_digital.namoa_library.ctls.ButtonNFC
             android:id="@+id/frg_serial_search_btn_nfc_reader"
@@ -303,5 +304,6 @@
             app:strokeWidth="0dp" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</LinearLayout>
+
+</FrameLayout>
 

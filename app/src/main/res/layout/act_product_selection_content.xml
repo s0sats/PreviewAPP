@@ -75,8 +75,19 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:visibility="gone"
             android:divider="@color/m3_namoa_outline_variant"
             android:dividerHeight="1dp" />
+
+        <TextView
+            android:id="@+id/act_product_selection_tv_empty_list"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            tools:text="Nenhum produto encontrado."
+            android:divider="@color/m3_namoa_outline_variant"
+            android:dividerHeight="1dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
