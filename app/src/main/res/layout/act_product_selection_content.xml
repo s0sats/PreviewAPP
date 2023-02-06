@@ -20,7 +20,7 @@
         android:paddingVertical="5dp">
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/act027_product_selection_mket_product_llayout"
+            android:id="@+id/filter_edit_text_llayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/NamoaTheme3.TextInputLayout.Outlined"
@@ -31,6 +31,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:imeOptions="actionDone"
+                android:drawableStart="@drawable/ic_search_black_24dp"
                 app:mNFC="false"
                 app:mOCR="false" />
         </com.google.android.material.textfield.TextInputLayout>

@@ -4,15 +4,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+
+import com.google.android.material.textfield.TextInputLayout;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -40,7 +41,9 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
     private Context context;
     private TextView tv_customer_val;
     private MKEditTextNM mk_search_sites;
+    private TextInputLayout mk_search_layout;
     private ListView lv_sites;
+    private TextView lv_sites_empty_list;
     private Act003_Main_Presenter mPresenter;
     private Lib_Custom_Cell_Adapter mAdapter;
 
@@ -51,11 +54,19 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         //
         iniSetup();
         initVars();
         iniUIFooter();
         initActions();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return super.onSupportNavigateUp();
     }
 
     private void iniSetup() {
@@ -94,8 +105,9 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
         //
         tv_customer_val = (TextView) findViewById(R.id.act003_tv_customer_val);
         //
-        mk_search_sites = (MKEditTextNM) findViewById(R.id.act003_mket_search_sites);
-        mk_search_sites.setHint(hmAux_Trans.get("lbl_search_sites_hint"));
+        mk_search_sites = (MKEditTextNM) findViewById(R.id.filter_edit_text);
+        mk_search_layout = findViewById(R.id.filter_edit_text_llayout);
+        mk_search_layout.setHint(hmAux_Trans.get("lbl_search_sites_hint"));
         mk_search_sites.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
             @Override
             public void reportTextChange(String s) {
@@ -108,6 +120,10 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
         });
         //
         lv_sites = (ListView) findViewById(R.id.act003_lv_sites);
+        lv_sites_empty_list = findViewById(R.id.empty_list_textview);
+        lv_sites_empty_list.setText(
+                getAuxTranslation("empty_list_lbl", R.string.act002_empty_list)
+        );
         //
         if (mPresenter.checkPreferenceIsSet()) {
             //callAct004(context);
@@ -158,11 +174,17 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
         setTitleLanguage();
     }
 
+    private String getAuxTranslation(String var, int textOffline) {
+        return !hmAux_Trans.containsKey(var) || hmAux_Trans.get(var).contains(Constant.APP_MODULE + "/") ? getString(textOffline) : hmAux_Trans.get(var);
+    }
+
     @Override
     public void loadSites(List<HMAux> sites) {
-        if (sites.size() == 0) {
+        if (sites.isEmpty()) {
             String title = !hmAux_Trans.containsKey("alert_no_site_title") || hmAux_Trans.get("alert_no_site_title").contains(Constant.APP_MODULE + "/") ? getString(R.string.generic_alert_no_site_ttl) : hmAux_Trans.get("alert_no_site_title");
             String msg = !hmAux_Trans.containsKey("alert_no_site_msg") || hmAux_Trans.get("alert_no_site_msg").contains(Constant.APP_MODULE + "/") ? getString(R.string.generic_alert_no_site_msg) : hmAux_Trans.get("alert_no_site_msg");
+
+            mk_search_layout.setVisibility(View.GONE);
 
             ToolBox.alertMSG(
                     Act003_Main.this,
@@ -182,6 +204,7 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
             // callAct002
 
         } else if (sites.size() == 1) {
+            mk_search_layout.setVisibility(View.VISIBLE);
             Bundle bundle = getIntent().getExtras();
             //Bundle é passado quando o btn voltar da act 004 foi clicado.
             if (bundle != null && bundle.getInt(Constant.BACK_ACTION) == 1) {
@@ -190,6 +213,7 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
                 mPresenter.setSiteCode(sites.get(0));
             }
         } else {
+            mk_search_layout.setVisibility(View.VISIBLE);
             if(ToolBox_Inf.isConcurrentBySiteLicense(context)) {
                 sites = ToolBox_Inf.getSiteLicenseAvailability(sites, Lib_Custom_Cell_Adapter.IMV_002);
             }
@@ -201,7 +225,11 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
                     MD_SiteDao.SITE_CODE,
                     MD_SiteDao.SITE_ID,
                     MD_SiteDao.SITE_DESC,
-                    Lib_Custom_Cell_Adapter.IMV_002
+                    Lib_Custom_Cell_Adapter.IMV_002,
+                    list -> {
+                        lv_sites.setVisibility(list.isEmpty() ? View.GONE : View.VISIBLE);
+                        lv_sites_empty_list.setVisibility(list.isEmpty() ? View.VISIBLE : View.GONE);
+                    }
             );
 
             lv_sites.setAdapter(mAdapter);
@@ -211,6 +239,7 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
         transList.add("lbl_customer");
+        transList.add("empty_list_lbl");
         transList.add("alert_no_site_title");
         transList.add("alert_no_site_msg");
         transList.add("alert_logout_ttl");
@@ -269,11 +298,6 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
-
-        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
-        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
-
         return true;
     }
 

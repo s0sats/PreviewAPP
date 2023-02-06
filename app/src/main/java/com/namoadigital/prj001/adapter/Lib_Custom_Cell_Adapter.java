@@ -1,9 +1,6 @@
 package com.namoadigital.prj001.adapter;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
-import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +14,7 @@ import android.widget.TextView;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.design.list.OnRememberListState;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -57,7 +55,9 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter implements Filterable {
     private HMAux hmAux_Trans;
     private String iconType;
 
-    public Lib_Custom_Cell_Adapter(Context context, int resource, List<HMAux> data, String config, String key_code, String key_id, String key_desc) {
+    private OnRememberListState<HMAux> onRememberListState;
+
+    public Lib_Custom_Cell_Adapter(Context context, int resource, List<HMAux> data, String config, String key_code, String key_id, String key_desc, OnRememberListState<HMAux> onRememberListState) {
         this.context = context;
         this.resource = resource;
         //
@@ -69,13 +69,13 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter implements Filterable {
         this.key_code = key_code;
         this.key_id = key_id;
         this.key_desc = key_desc;
-
+        this.onRememberListState = onRememberListState;
         loadTranslation();
 
         getFilter();
     }
 
-    public Lib_Custom_Cell_Adapter(Context context, int resource, List<HMAux> data, String config, String key_code, String key_id, String key_desc, String key_icon) {
+    public Lib_Custom_Cell_Adapter(Context context, int resource, List<HMAux> data, String config, String key_code, String key_id, String key_desc, String key_icon, OnRememberListState<HMAux> onRememberListState) {
         this.context = context;
         this.resource = resource;
         //
@@ -88,13 +88,14 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter implements Filterable {
         this.key_id = key_id;
         this.key_desc = key_desc;
         this.key_icon = key_icon;
+        this.onRememberListState = onRememberListState;
         //
         loadTranslation();
 
         getFilter();
     }
 
-    public Lib_Custom_Cell_Adapter(Context context, int resource, List<HMAux> data, String config, String key_code, String key_id, String key_desc, String trans_lbl_code, String trans_lbl_id, String trans_lbl_desc) {
+    public Lib_Custom_Cell_Adapter(Context context, int resource, List<HMAux> data, String config, String key_code, String key_id, String key_desc, String trans_lbl_code, String trans_lbl_id, String trans_lbl_desc, OnRememberListState<HMAux> onRememberListState) {
         this.context = context;
         this.resource = resource;
         //
@@ -109,7 +110,7 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter implements Filterable {
         this.trans_lbl_code = trans_lbl_code;
         this.trans_lbl_id = trans_lbl_id;
         this.trans_lbl_desc = trans_lbl_desc;
-
+        this.onRememberListState = onRememberListState;
         loadTranslation();
 
         getFilter();
@@ -143,37 +144,27 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter implements Filterable {
         //Inicializa variaveis do layout da celula
         LinearLayout llBackground = (LinearLayout) convertView.findViewById(R.id.lib_custom_cell_ll_background);
         //
-        TextView tv_code = (TextView) convertView.findViewById(R.id.lib_custom_cell_tv_code);
         //
         TextView tv_id = (TextView) convertView.findViewById(R.id.lib_custom_cell_tv_id);
         //
-        TextView tv_desc = (TextView) convertView.findViewById(R.id.lib_custom_cell_tv_desc);
+        TextView tv_desc = (TextView) convertView.findViewById(R.id.lib_custom_cell_tv_code);
         //
         ImageView iv_001 = (ImageView) convertView.findViewById(R.id.lib_custom_cell_iv_001);
 
         ImageView iv_002 = (ImageView) convertView.findViewById(R.id.lib_custom_cell_iv_002);
 
         //Inicia configuraçõa dos elementos
-        Drawable llDrawable = context.getResources().getDrawable(R.drawable.lib_custom_cell_bg_base);
-        llBackground.setBackground(llDrawable);
-        //
-        iv_001.setVisibility(View.GONE);
-        //
-        ColorStateList filterColor = context.getResources().getColorStateList(R.color.lib_custom_cell_font_color);
-        tv_code.setTextColor(filterColor);
-        tv_id.setTextColor(filterColor);
-        tv_desc.setTextColor(filterColor);
-
+/*
         tv_desc.setTypeface(tv_desc.getTypeface(), Typeface.BOLD);
 
         String codeText = (trans_lbl_code != "" ? trans_lbl_code : hmAux_Trans.get("lbl_code")) + " ";
-        String idText = (trans_lbl_id != "" ? trans_lbl_id : hmAux_Trans.get("lbl_id")) + " ";
+        String idText = (trans_lbl_id != "" ? trans_lbl_id : hmAux_Trans.get("lbl_id")) + " ";*/
         String descText = (trans_lbl_desc != "" ? trans_lbl_desc : ""/*hmAux_Trans.get("lbl_desc")*/) + "";
 
         switch (config) {
             case CFG_ID_CODE_DESC:
                 //
-                try {
+/*                try {
                     if (item.get(key_code).trim().length() > 0) {
                         codeText += item.get(key_code);
                     }
@@ -186,7 +177,7 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter implements Filterable {
                     }
                 } catch (Exception e) {
                     idText = "";
-                }
+                }*/
                 try {
                     if (item.get(key_desc).trim().length() > 0) {
                         descText = item.get(key_desc);
@@ -203,23 +194,23 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter implements Filterable {
                     iconType = "";
                 }
                 //
-                Drawable drawable = null;
+                Integer drawableId;
+
                 try {
-                    int drawableId = Integer.valueOf(iconType);
-                    drawable = context.getResources().getDrawable(drawableId);
-                }catch (Exception e ){
+                    drawableId = Integer.valueOf(iconType);
+                } catch (Exception e) {
                     e.printStackTrace();
-                    drawable = null;
+                    drawableId = null;
                 }
-                if(drawable != null){
-                    iv_002.setBackground(drawable);
+                if (drawableId != null) {
+                    iv_002.setImageResource(drawableId);
                     iv_002.setVisibility(View.VISIBLE);
-                }else{
+                } else {
                     iv_002.setVisibility(View.GONE);
                 }
                 //
-                tv_code.setText(codeText);
-                tv_id.setText(idText);
+                //tv_code.setText(codeText);
+                //tv_id.setText(idText);
                 tv_desc.setText(descText);
 
                 break;
@@ -288,11 +279,8 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter implements Filterable {
                 constraint = ToolBox.AccentMapper(constraint.toString().toLowerCase());
                 //
                 for (int i = 0; i < data.size(); i++) {
-                    String mKey_ID = ToolBox.AccentMapper(data.get(i).get(key_id).toLowerCase());
                     String mKey_DESC = ToolBox.AccentMapper(data.get(i).get(key_desc).toLowerCase());
-                    if (mKey_ID.contains(constraint.toString().toLowerCase()) ||
-                            mKey_DESC.contains(constraint.toString().toLowerCase())
-                            ) {
+                    if (mKey_DESC.contains(constraint.toString().toLowerCase())) {
 
                         filterList.add(data.get(i));
                     }
@@ -309,7 +297,7 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter implements Filterable {
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             data_filtered = (ArrayList<HMAux>) results.values;
-
+            onRememberListState.dataChanged(data_filtered);
             notifyDataSetChanged();
         }
     }

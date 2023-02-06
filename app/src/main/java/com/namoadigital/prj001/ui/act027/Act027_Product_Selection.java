@@ -139,7 +139,7 @@ public class Act027_Product_Selection extends BaseFragment {
         //
         mket_product_search = (MKEditTextNM) view.findViewById(R.id.act027_product_selection_mket_product_search);
         //
-        mket_product_layout = view.findViewById(R.id.act027_product_selection_mket_product_llayout);
+        mket_product_layout = view.findViewById(R.id.filter_edit_text_llayout);
         //
         lv_groups_products = (ListView) view.findViewById(R.id.act027_product_selection_lv_groups_products);
         //

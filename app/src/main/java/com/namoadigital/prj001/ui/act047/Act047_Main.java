@@ -262,7 +262,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
     }
 
     private void setAdapter(ArrayList<SO_Next_Orders_Obj> list){
-        changeVisibilityAdapter(list.isEmpty());
+        changeVisibilityAdapter(list);
 
         if(mAdapter != null){
             mAdapter.changeListByFilter(list);
@@ -279,14 +279,14 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
     }
 
 
-    private void changeVisibilityAdapter(boolean b){
-        lv_services.setVisibility(b ? View.GONE : View.VISIBLE);
-        tv_empty_list.setVisibility(b ? View.VISIBLE : View.GONE);
+    private void changeVisibilityAdapter(ArrayList<SO_Next_Orders_Obj> list) {
+        lv_services.setVisibility(list.isEmpty() ? View.GONE : View.VISIBLE);
+        tv_empty_list.setVisibility(list.isEmpty() ? View.VISIBLE : View.GONE);
     }
 
     @Override
     public void showAlert(String ttl, String msg) {
-        showAlert(ttl, msg,null);
+        showAlert(ttl, msg, null);
     }
 
     @Override

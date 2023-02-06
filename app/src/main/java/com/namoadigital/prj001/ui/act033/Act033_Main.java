@@ -3,13 +3,15 @@ package com.namoadigital.prj001.ui.act033;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+
+import com.google.android.material.textfield.TextInputLayout;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -42,7 +44,9 @@ public class Act033_Main extends Base_Activity implements Act033_Main_View {
     private TextView tv_site_val;
     private TextView tv_no_site;
     private MKEditTextNM mk_search_zones;
+    private TextInputLayout mk_search_llayout;
     private ListView lv_zone;
+    private TextView lv_zone_empty_list;
     private Act033_Main_Presenter mPresenter;
     private Lib_Custom_Cell_Adapter mAdapter;
     private Bundle bundle;
@@ -57,6 +61,8 @@ public class Act033_Main extends Base_Activity implements Act033_Main_View {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         //
         iniSetup();
         //
@@ -65,6 +71,12 @@ public class Act033_Main extends Base_Activity implements Act033_Main_View {
         iniUIFooter();
         //
         initActions();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return super.onSupportNavigateUp();
     }
 
     private void iniSetup() {
@@ -84,6 +96,7 @@ public class Act033_Main extends Base_Activity implements Act033_Main_View {
         transList.add("alert_no_zone_msg");
         transList.add("lbl_customer");
         transList.add("lbl_site");
+        transList.add("empty_list_lbl");
         transList.add("alert_no_zone_found");
         transList.add("lbl_search_zones_hint");
         //
@@ -118,8 +131,9 @@ public class Act033_Main extends Base_Activity implements Act033_Main_View {
         tv_site_val = (TextView) findViewById(R.id.act033_tv_site_val);
         tv_no_site = (TextView) findViewById(R.id.act033_tv_no_zone);
         //
-        mk_search_zones = (MKEditTextNM) findViewById(R.id.act033_mket_search_zones);
-        mk_search_zones.setHint(hmAux_Trans.get("lbl_search_zones_hint"));
+        mk_search_zones = (MKEditTextNM) findViewById(R.id.filter_edit_text);
+        mk_search_llayout = findViewById(R.id.filter_edit_text_llayout);
+        mk_search_llayout.setHint(hmAux_Trans.get("lbl_search_zones_hint"));
         mk_search_zones.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
             @Override
             public void reportTextChange(String s) {
@@ -132,6 +146,8 @@ public class Act033_Main extends Base_Activity implements Act033_Main_View {
         });
         //
         lv_zone = (ListView) findViewById(R.id.act033_lv_zone);
+        lv_zone_empty_list = findViewById(R.id.empty_list_textview);
+        lv_zone_empty_list.setText(hmAux_Trans.get("empty_list_lbl"));
         //
         mPresenter.accessToSoModule(backAction);
         //mPresenter.getZones();
@@ -178,10 +194,9 @@ public class Act033_Main extends Base_Activity implements Act033_Main_View {
         String siteDesc = hmAux_Trans.get("lbl_external_site");
         //
         if(site != null){
-            siteDesc = site.getSite_id() + " - "  + site.getSite_desc()  ;
+            tv_site_val.setText(site.getSite_desc() + "/");
         }
         //
-        tv_site_val.setText(siteDesc);
         //
         lv_zone.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -203,7 +218,11 @@ public class Act033_Main extends Base_Activity implements Act033_Main_View {
                 Lib_Custom_Cell_Adapter.CFG_ID_CODE_DESC,
                 MD_Site_ZoneDao.ZONE_CODE,
                 MD_Site_ZoneDao.ZONE_ID,
-                MD_Site_ZoneDao.ZONE_DESC
+                MD_Site_ZoneDao.ZONE_DESC,
+                list -> {
+                    lv_zone.setVisibility(list.isEmpty() ? View.GONE : View.VISIBLE);
+                    lv_zone_empty_list.setVisibility(list.isEmpty() ? View.VISIBLE : View.GONE);
+                }
         );
         //
         lv_zone.setAdapter(mAdapter);
@@ -225,12 +244,15 @@ public class Act033_Main extends Base_Activity implements Act033_Main_View {
                 context,
                 hmAux_Trans.get("alert_no_zone_title"),
                 hmAux_Trans.get("alert_no_zone_msg"),
-                null,
+                (dialog, n) -> {
+                    onBackPressed();
+                },
                 0
         );
         //
         tv_no_site.setText(hmAux_Trans.get("alert_no_zone_found"));
         tv_no_site.setVisibility(View.VISIBLE);
+        mk_search_llayout.setVisibility(View.GONE);
         //
         lv_zone.setVisibility(View.GONE);
         mk_search_zones.setVisibility(View.GONE);

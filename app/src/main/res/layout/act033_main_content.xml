@@ -15,15 +15,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="15dp">
+        android:padding="15dp"
+        android:visibility="gone">
 
         <ImageView
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_gravity="center"
             android:src="@drawable/ic_site"
-            android:padding="5dp"
-            />
+            android:padding="5dp" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -57,28 +58,9 @@
                 android:textStyle="bold"
                 android:visibility="gone" />
 
-            <TextView
-                android:id="@+id/act033_tv_site_val"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Site"
-                android:textSize="@dimen/font_size_item_md"
-                android:textStyle="bold" />
 
         </LinearLayout>
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/act033_tv_no_zone"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:textStyle="bold"
-        android:textSize="@dimen/font_size_title_md"
-        android:gravity="center"
-        android:layout_margin="5dp"
-        android:visibility="gone"
-        />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -86,23 +68,55 @@
         android:layout_weight="1"
         android:orientation="vertical">
 
-        <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-            android:id="@+id/act033_mket_search_zones"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:inputType="text"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            app:mBARCODE="false"
-            app:mNFC="false"
-            app:mOCR="false" />
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingBottom="12dp"
+            android:background="@color/m3_namoa_surface1">
+
+            <include layout="@layout/layout_text_input_layout" />
+
+            <TextView
+                android:id="@+id/act033_tv_site_val"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="Site"
+                android:textColor="@color/m3_namoa_onSurfaceVariant"
+                style="@style/TextAppearance.Material3.TitleSmall" />
+
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/empty_list_textview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:text="algo aqui"
+            android:visibility="gone"
+            android:textAlignment="center"
+            android:gravity="center"
+            style="@style/TextAppearance.Material3.BodyLarge"
+            android:textColor="@color/m3_namoa_onSurfaceVariant" />
+
+        <TextView
+            android:id="@+id/act033_tv_no_zone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:text="algo aqui"
+            android:visibility="gone"
+            android:textAlignment="center"
+            android:gravity="center"
+            style="@style/TextAppearance.Material3.BodyLarge"
+            android:textColor="@color/m3_namoa_onSurfaceVariant" />
 
         <ListView
             android:id="@+id/act033_lv_zone"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:divider="@color/padrao_TRANSPARENT" />
+            android:dividerHeight="1dp"
+            android:divider="@color/m3_namoa_outlineVariant" />
 
 
     </LinearLayout>

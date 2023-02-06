@@ -37,11 +37,13 @@ import java.util.Stack;
 
 public class Act_Product_Selection extends Base_Activity_NFC implements Act_Product_Selection_Contract.I_View {
 
+
     public static final String INDEX_GROUP_CODE = "index_group_code";
     public static final String INDEX_RECURSIVE_CODE = "index_recursive_code";
     public static final String INDEX_GROUP_DESC = "index_group_desc";
     public static final String IS_ADD_PRODUCT_LIST = "IS_ADD_PRODUCT_LIST";
     public static final String PRODUCT_LIST = "PRODUCT_LIST";
+
 
     private Act_Product_Selection_Contract.I_Presenter mPresenter;
     private MKEditTextNM mket_product_search;
@@ -58,6 +60,8 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
     private boolean returnOnFound;
     private boolean isProductAddProcess;
     private ArrayList<Integer> receivedProducts = new ArrayList<>();
+
+    private String titleAppBar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -102,10 +106,12 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
         transList.add("lbl_id");
         transList.add("lbl_desc");
         transList.add("mket_hint_msg");
+        transList.add("mket_hint_input_msg");
         transList.add("btn_back");
         transList.add("btn_home");
         transList.add("alert_product_already_choosen_ttl");
         transList.add("alert_product_already_choosen_msg");
+        transList.add("title_appbar_inputs");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -129,8 +135,7 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
 //        );
         //
         mket_product_search = (MKEditTextNM) findViewById(R.id.act_product_selection_mket_product_search);
-        mket_product_layout = findViewById(R.id.act027_product_selection_mket_product_llayout);
-        mket_product_layout.setHint(hmAux_Trans.get("mket_hint_msg"));
+        mket_product_layout = findViewById(R.id.filter_edit_text_llayout);
         //
         ll_path_url = findViewById(R.id.act_product_selection_path_url_layout);
         tv_path_url = findViewById(R.id.act_product_selection_page_url);
@@ -150,6 +155,11 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
         controls_sta.add(mket_product_search);
         //
         recoverIntentsInfo();
+        if (!isProductAddProcess) {
+            mket_product_layout.setHint(hmAux_Trans.get("mket_hint_msg"));
+        } else {
+            mket_product_layout.setHint(hmAux_Trans.get("mket_hint_input_msg"));
+        }
         //
         mPresenter = new Act_Product_Selection_Presenter(
                 context,
@@ -215,7 +225,12 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
         //
         mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
         mAct_Info = Constant.ACT_PRODUCT_SELECTION;
-        mAct_Title = Constant.ACT_PRODUCT_SELECTION + "_" + "title";
+        if (!isProductAddProcess) {
+            mAct_Title = Constant.ACT_PRODUCT_SELECTION + "_" + "title";
+            setTitleLanguage();
+        } else {
+            getSupportActionBar().setTitle(hmAux_Trans.get("title_appbar_inputs"));
+        }
         //
         HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
         mSite_Value = mFooter.get(Constant.FOOTER_SITE);
@@ -223,7 +238,6 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
         //
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
-        setTitleLanguage();
         setFooter();
     }
 
