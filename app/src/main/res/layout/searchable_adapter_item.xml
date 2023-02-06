@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:elevation="0dp"
+    app:cardElevation="0dp"
+    android:background="@drawable/ev_user_customer_background">
 
     <LinearLayout
         android:id="@+id/searchable_background"
@@ -33,7 +37,8 @@
     <View
         android:id="@+id/searchable_divider"
         android:layout_width="match_parent"
+        android:layout_gravity="bottom"
         android:background="@color/m3_namoa_outline_variant"
         android:layout_height="1dp" />
 
-</LinearLayout>
+</com.google.android.material.card.MaterialCardView>

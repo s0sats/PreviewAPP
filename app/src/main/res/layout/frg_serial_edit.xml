@@ -598,7 +598,6 @@
                             android:id="@+id/frg_serial_edit_ss_site"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            style="@style/NamoaTheme3.TextInputLayout.Outlined"
                             android:gravity="center_vertical"
                             android:text="Site" />
 

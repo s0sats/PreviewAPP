@@ -6,6 +6,9 @@ data class MyItemSearchableAdapter(
     val code: String? = null,
     val text: String? = null
 ) {
+    fun getAllFieldForFilter(showPrice: Boolean): String? {
+        return text
+    }
 
     companion object {
         fun List<HMAux>.convertToMyItemSearchable(
