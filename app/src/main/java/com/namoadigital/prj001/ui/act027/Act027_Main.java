@@ -578,6 +578,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         transList.add("mket_hint_msg");
         transList.add("btn_back");
         transList.add("btn_home");
+        transList.add("material_list_empty_lbl");
         //Product Event Edit Fragment
         transList.add("alert_product_edit_error_ttl");
         transList.add("opc_selection_error_msg");
