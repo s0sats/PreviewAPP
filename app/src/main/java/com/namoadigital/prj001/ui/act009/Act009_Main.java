@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act009;
 
+import static com.namoadigital.prj001.adapter.searchableitem.MyItemSearchableAdapter.Companion;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -7,18 +9,18 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.adapter.searchableitem.ItemSearchableAdapter;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
@@ -215,7 +217,7 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
 
     private void initActions() {
         //
-        binding.act009LvTags.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+/*        binding.act009LvTags.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HMAux item = (HMAux) parent.getItemAtPosition(position);
@@ -224,7 +226,7 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
                 //
                 callAct010(context);
             }
-        });
+        });*/
     }
 
     @Override
@@ -243,17 +245,21 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
     @Override
     public void loadTagList(List<HMAux> tagList) {
         if (tagList.size() > 0) {
-            String[] from = {MdTagDao.TAG_DESC};
-            int[] to = {R.id.act009_cell_tv_desc};
+            binding.act009LvTags.setLayoutManager(new LinearLayoutManager(this));
             binding.act009LvTags.setAdapter(
-                    new SimpleAdapter(
-                            context,
-                            tagList,
-                            R.layout.act009_cell,
-                            from,
-                            to
+                    new ItemSearchableAdapter(Companion.convertToMyItemSearchable(tagList, MdTagDao.TAG_CODE, MdTagDao.TAG_DESC),
+                            item -> {
+
+                                addFormTypeInfoToBundle(item);
+                                //
+                                callAct010(context);
+                                return null;
+                            }
                     )
             );
+            String[] from = {MdTagDao.TAG_DESC};
+            int[] to = {R.id.act009_cell_tv_desc};
+
         } else {
             //Se lista vazia exibe alert e volta pra tela anterior
             ToolBox.alertMSG(
