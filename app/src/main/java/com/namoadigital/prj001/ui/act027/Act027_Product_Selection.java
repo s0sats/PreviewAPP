@@ -411,6 +411,14 @@ public class Act027_Product_Selection extends BaseFragment {
                     //
                     if (mStack.size() == 0) {
                         setAdapterData(0, 0L, mket_product_search.getText().toString().trim());
+                    }else{
+                        btn_back.setVisibility(View.VISIBLE);
+
+                        setAdapterData(
+                                Long.parseLong(currentIndex.get(INDEX_GROUP_CODE)),
+                                Long.parseLong(currentIndex.get(INDEX_RECURSIVE_CODE)),
+                                mket_product_search.getText().toString().trim()
+                        );
                     }
                 }
             }
