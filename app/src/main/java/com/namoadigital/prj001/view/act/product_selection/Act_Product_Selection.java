@@ -106,6 +106,7 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
         transList.add("lbl_desc");
         transList.add("mket_hint_msg");
         transList.add("product_list_empty_lbl");
+        transList.add("material_list_empty_lbl");
         transList.add("mket_hint_input_msg");
         transList.add("btn_back");
         transList.add("btn_home");
@@ -142,7 +143,6 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
         //
         lv_groups_products = (ListView) findViewById(R.id.act_product_selection_lv_groups_products);
         tv_empty_list = findViewById(R.id.act_product_selection_tv_empty_list);
-        tv_empty_list.setText(hmAux_Trans.get("product_list_empty_lbl"));
         //
         btn_back = findViewById(R.id.act_product_selection_btn_back);
         //btn_back.setTag("btn_back");
@@ -159,8 +159,10 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
         recoverIntentsInfo();
         if (!isProductAddProcess) {
             mket_product_layout.setHint(hmAux_Trans.get("mket_hint_msg"));
+            tv_empty_list.setText(hmAux_Trans.get("product_list_empty_lbl"));
         } else {
             mket_product_layout.setHint(hmAux_Trans.get("mket_hint_input_msg"));
+            tv_empty_list.setText(hmAux_Trans.get("material_list_empty_lbl"));
         }
         //
         mPresenter = new Act_Product_Selection_Presenter(
