@@ -29,9 +29,9 @@ public class MD_Operation_Sql_001 implements Specification {
                         "FROM ")
                 .append(MD_OperationDao.TABLE)
                 .append(" WHERE " +
-                        MD_OperationDao.CUSTOMER_CODE +" = '"+s_customer_code+"' " +
+                        MD_OperationDao.CUSTOMER_CODE + " = '" + s_customer_code + "' " +
                         " ORDER BY " +
-                        "      operation_id")
+                        "      operation_desc")
                 .append(";")
                 //.append("operation_code#operation_id#operation_desc#alias_service_oper#alias_service_com")
                 .toString();

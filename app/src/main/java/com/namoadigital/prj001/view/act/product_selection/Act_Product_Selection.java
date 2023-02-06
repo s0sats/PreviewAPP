@@ -135,7 +135,7 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
 //        );
         //
         mket_product_search = (MKEditTextNM) findViewById(R.id.act_product_selection_mket_product_search);
-        mket_product_layout = findViewById(R.id.act027_product_selection_mket_product_llayout);
+        mket_product_layout = findViewById(R.id.filter_edit_text_llayout);
         //
         ll_path_url = findViewById(R.id.act_product_selection_path_url_layout);
         tv_path_url = findViewById(R.id.act_product_selection_page_url);

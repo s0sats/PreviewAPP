@@ -98,7 +98,7 @@ public class Act_Product_Selectio_Adapter_Groups_Products extends BaseAdapter {
             //
             //tv_code.setText(codeText);
             String customId = item.get("full_desc").replace(item.get("desc"), "").trim();
-            if (!customId.isEmpty()) {
+            if (customId.contains("(")) {
                 SpannableString id_string = new SpannableString(item.get("full_desc"));
                 id_string.setSpan(
                         new TextAppearanceSpan(context, R.style.Base_TextAppearance_Material3_LabelSmall),
@@ -114,7 +114,7 @@ public class Act_Product_Selectio_Adapter_Groups_Products extends BaseAdapter {
                 );
                 tv_desc.setText(id_string);
             } else {
-                tv_desc.setText(item.get("full_desc"));
+                tv_desc.setText(item.get("desc"));
             }
             //tv_id.setText(" ("+item.get("id")+")");
 

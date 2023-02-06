@@ -21,30 +21,24 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/m3_namoa_surface1"
             android:orientation="vertical"
-            android:paddingVertical="5dp">
+            android:paddingHorizontal="16dp"
+            android:paddingBottom="4dp"
+            android:background="@color/m3_namoa_surface1">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/act027_product_selection_mket_product_llayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:startIconDrawable="@drawable/ic_search_black_24dp"
-                app:startIconTint="@color/m3_namoa_onSurfaceVariant"
-                style="@style/NamoaTheme3.TextInputLayout.Outlined"
-                android:paddingHorizontal="16dp">
-
-                <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-                    android:id="@+id/act_product_selection_mket_product_search"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:imeOptions="actionDone"
-                    app:mNFC="false"
-                    app:mOCR="false"
-                    app:mBARCODE="false" />
-            </com.google.android.material.textfield.TextInputLayout>
-
+            <include layout="@layout/layout_text_input_layout" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/empty_list_textview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:text="algo aqui"
+            android:visibility="gone"
+            android:textAlignment="center"
+            android:gravity="center"
+            style="@style/TextAppearance.Material3.BodyLarge"
+            android:textColor="@color/m3_namoa_onSurfaceVariant" />
 
         <ListView
             android:id="@+id/act002_lv_customers"

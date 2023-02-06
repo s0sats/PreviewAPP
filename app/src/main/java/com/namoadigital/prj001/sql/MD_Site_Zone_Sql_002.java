@@ -25,14 +25,14 @@ public class MD_Site_Zone_Sql_002 implements Specification {
         return sb
                 .append(
                         " SELECT \n" +
-                        "   * \n" +
-                        " FROM \n" +
-                        MD_Site_ZoneDao.TABLE +"\n" +
-                        " WHERE " +
-                         MD_Site_ZoneDao.CUSTOMER_CODE +" = '"+ customer_code +"' "+
-                        " and " + MD_Site_ZoneDao.SITE_CODE +" = '"+ site_code +"' "+
-                        " ORDER BY " +
-                        "      zone_id,zone_desc")
+                                "   * \n" +
+                                " FROM \n" +
+                                MD_Site_ZoneDao.TABLE + "\n" +
+                                " WHERE " +
+                                MD_Site_ZoneDao.CUSTOMER_CODE + " = '" + customer_code + "' " +
+                                " and " + MD_Site_ZoneDao.SITE_CODE + " = '" + site_code + "' " +
+                                " ORDER BY " +
+                                "      zone_desc")
                 .append(";")
                 //.append(HmAuxFields)
                 .toString();

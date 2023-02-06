@@ -35,9 +35,10 @@
     <string name="generic_no_connection_msg">Connection not found!\nPlease try again when the connection is established</string>
     <string name="generic_zip_not_found_msg">ZIP file not found!\nPlease try again</string>
     <string name="msg_no_forms_found">None Form found for this Product!</string>
-    <string name="act002_title_">Customers List</string>
+    <string name="act002_title_">Choose an Account</string>
     <string name="msg_update_canceled">Update cancelled.</string>
     <string name="act002_mket_edit_hint">Type to search</string>
+    <string name="act002_empty_list">No item found! Please check filters.</string>
 
     <!--LIB-->
     <string name="nfc_activity_title">NFC Scan</string>

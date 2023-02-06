@@ -4,16 +4,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.SwitchCompat;
-import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ListView;
-import android.widget.Switch;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.appcompat.widget.Toolbar;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -337,8 +337,8 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
                 R.layout.so_header_cell,
                 R.layout.so_header_cell,
                 mket_filter != null ? mket_filter.getText().toString().trim() : null,
-                hasEmpty -> {
-                    tv_empty_state.setVisibility(hasEmpty ? View.VISIBLE : View.GONE);
+                list -> {
+                    tv_empty_state.setVisibility(list.isEmpty() ? View.VISIBLE : View.GONE);
                 }
         );
         //

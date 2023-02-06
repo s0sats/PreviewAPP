@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -14,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 
+import com.google.android.material.textfield.TextInputLayout;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -52,7 +52,9 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
     private TextView tv_site_val;
     private TextView tv_zone_val;
     private MKEditTextNM mk_search_operations;
+    private TextInputLayout mk_search_layout;
     private ListView lv_operations;
+    private TextView lv_operations_empty_list;
     private Act004_Main_Presenter mPresenter;
     private Lib_Custom_Cell_Adapter mAdapter;
     private Bundle bundle;
@@ -64,11 +66,18 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //
         iniSetup();
         initVars();
         iniUIFooter();
         initActions();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return super.onSupportNavigateUp();
     }
 
     private void iniSetup() {
@@ -83,6 +92,7 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
         transList.add("act004_title");
+        transList.add("empty_list_lbl");
         transList.add("alert_no_operation_title");
         transList.add("alert_no_operation_msg");
         transList.add("lbl_customer");
@@ -109,8 +119,9 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
         tv_site_val = (TextView) findViewById(R.id.act004_tv_site_val);
         tv_zone_val = (TextView) findViewById(R.id.act004_tv_zone_val);
         //
-        mk_search_operations = (MKEditTextNM) findViewById(R.id.act004_mket_search_operations);
-        mk_search_operations.setHint(hmAux_Trans.get("lbl_search_operations_hint"));
+        mk_search_operations = (MKEditTextNM) findViewById(R.id.filter_edit_text);
+        mk_search_layout = findViewById(R.id.filter_edit_text_llayout);
+        mk_search_layout.setHint(hmAux_Trans.get("lbl_search_operations_hint"));
         mk_search_operations.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
             @Override
             public void reportTextChange(String s) {
@@ -123,6 +134,8 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
         });
         //
         lv_operations = (ListView) findViewById(R.id.act004_lv_operations);
+        lv_operations_empty_list = findViewById(R.id.empty_list_textview);
+        lv_operations_empty_list.setText(hmAux_Trans.get("empty_list_lbl"));
         //
         if (mPresenter.checkPreferenceIsSet()) {
             callAct005(context);
@@ -217,9 +230,11 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
             //No futuro, deixar a caixa cancelable false ou capturar a caixa
             // e no evento setOnDismissListener , rodar o metodo que chamada
             // callAct002
+            mk_search_layout.setVisibility(View.GONE);
         }
         //Se so existe uma operação, seleciona ela e pula para proxima tela
         else if (operations.size() == 1) {
+            mk_search_layout.setVisibility(View.VISIBLE);
             Bundle bundle = getIntent().getExtras();
             //Bundle é passado quando o btn voltar da act 004 foi clicado.
             if(bundle != null && bundle.getInt(Constant.BACK_ACTION) == 1){
@@ -229,6 +244,7 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
                 mPresenter.setOperationCode(operations.get(0));
             }
         } else {
+            mk_search_layout.setVisibility(View.VISIBLE);
             mAdapter = new Lib_Custom_Cell_Adapter(
                     context,
                     R.layout.lib_custom_cell,
@@ -236,7 +252,11 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
                     Lib_Custom_Cell_Adapter.CFG_ID_CODE_DESC,
                     MD_OperationDao.OPERATION_CODE,
                     MD_OperationDao.OPERATION_ID,
-                    MD_OperationDao.OPERATION_DESC
+                    MD_OperationDao.OPERATION_DESC,
+                    list -> {
+                        lv_operations.setVisibility(list.isEmpty() ? View.GONE : View.VISIBLE);
+                        lv_operations_empty_list.setVisibility(list.isEmpty() ? View.VISIBLE : View.GONE);
+                    }
             );
 
             lv_operations.setAdapter(mAdapter);
@@ -334,10 +354,6 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
-
-        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
-        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         return true;
     }

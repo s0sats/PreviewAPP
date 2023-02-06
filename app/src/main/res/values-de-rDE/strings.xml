@@ -35,9 +35,10 @@
     <string name="generic_no_connection_msg">Oh nein! Keine Internetverbindung!\nBitte versuchen Sie es erneut, sobald Sie wieder online sind.</string>
     <string name="generic_zip_not_found_msg">Zip-Datei nicht gefunden!\nBitte versuchen Sie es erneut.</string>
     <string name="msg_no_forms_found">Kein Formular gefunden.</string>
-    <string name="act002_title_">Accounts</string>
+    <string name="act002_title_">Account auswählen</string>
     <string name="msg_update_canceled">App-Update abgebrochen.</string>
     <string name="act002_mket_edit_hint">Freitext Filter</string>
+    <string name="act002_empty_list">Eintrag gefunden. Versuchen Sie bitte die Filter zu ändern. </string>
 
     <!--LIB-->
     <string name="nfc_activity_title">NFC-Leser</string>
@@ -151,22 +152,22 @@
     <string name="alert_support_ttl">Daten an das Support-Team senden. Vergessen Sie nicht ein Ticket bei Ihrem Support zu öffnen, damit Ihre Anfrage bearbeitet werden kann.</string>
     <string name="alert_support_empty_contact">Keine Kontaktdaten!</string>
     <string name="alert_support_empty_msg">Feld Nachrichten ist leer!</string>
-	<string name="send_support_btn">Daten versenden</string>
-	
-	<!--Database Error and Reset -->
+    <string name="send_support_btn">Daten versenden</string>
+
+    <!--Database Error and Reset -->
     <string name="act089_database_error_ttl">Beschädigte lokale Daten</string>
     <string name="act089_database_error_msg">Die auf diesem Gerät gespeicherten App-Daten können nicht mehr verwendet werden, da die lokale Datenbank beschädigt ist. \n\nDamit Sie die App wieder nutzen können, müssen Sie die lokale Datenbank löschen und sich dann erneut bei der App anmelden.</string>
-	<string name="act089_database_error_reset_btn">App-Daten löschen</string>
+    <string name="act089_database_error_reset_btn">App-Daten löschen</string>
     <string name="act089_dialog_database_reset_msg">Wenn Sie fortfahren, werden die aktuelle Datenbank (die beschädigt ist) gelöscht, und es wird eine neue Datenbank erstellt, mit der Sie neu beginnen können. \n\nHINWEIS: Das Löschen der aktuellen Datenbank bedeutet, dass Sie die Informationen löschen, die noch nicht auf den Server hochgeladen wurden, da diese Daten verloren gehen und nicht wiederhergestellt werden können. \nMöchten Sie fortfahren?</string>
     <string name="act089_dialog_database_reset_ttl">App-Daten löschen</string>
     <string name="act089_dialog_database_reset_cancel_btn">Abbrechen</string>
-	<string name="act089_dialog_database_reset_confirm_btn">Ja, bitte Daten löschen</string>
-    
-	<!--App da Play Store simultaneamente com App Standalone (antes da Play Store)-->
-	<string name="act001_locked_standalone_namoa_app_found_ttl">Alte NAMOA App bitte deinstallieren</string>
-	<string name="act001_locked_standalone_namoa_app_found_msg">Auf diesem Gerät ist eine alte Version der NAMOA-App immer noch installiert (Version 4.12 oder frühere). \n\nBitte deinstallieren Sie diese alte Version der App, damit Sie  die aktuellere Version verwenden können.\n\nVORSICHT: Beenden Sie bitte Ihre Arbeit  auf der alten Version der App, bevor Sie diese deinstallieren. Öffnen Sie dazu die alte Version der App, schließen Sie laufende Prozesse ab, senden Sie Daten an den NAMOA Server und dann deinstallieren Sie die alte App Version. </string>
+    <string name="act089_dialog_database_reset_confirm_btn">Ja, bitte Daten löschen</string>
 
-	<!--Login do Usuário B no device que tem dados pendentes do Usuário A (pendentes de envio ou Form em processo) -->
-	<string name="msg_last_user_with_pendency">VORSICHT! Wenn Sie sich mit diesem Gerät anmelden, gehen die Daten VERLOREN.\n\nFolgender Benutzer hat Daten, die noch nicht an den Server gesendet wurden und/oder Formulare, die noch ausgefüllt werden:</string>
+    <!--App da Play Store simultaneamente com App Standalone (antes da Play Store)-->
+    <string name="act001_locked_standalone_namoa_app_found_ttl">Alte NAMOA App bitte deinstallieren</string>
+    <string name="act001_locked_standalone_namoa_app_found_msg">Auf diesem Gerät ist eine alte Version der NAMOA-App immer noch installiert (Version 4.12 oder frühere). \n\nBitte deinstallieren Sie diese alte Version der App, damit Sie  die aktuellere Version verwenden können.\n\nVORSICHT: Beenden Sie bitte Ihre Arbeit  auf der alten Version der App, bevor Sie diese deinstallieren. Öffnen Sie dazu die alte Version der App, schließen Sie laufende Prozesse ab, senden Sie Daten an den NAMOA Server und dann deinstallieren Sie die alte App Version. </string>
+
+    <!--Login do Usuário B no device que tem dados pendentes do Usuário A (pendentes de envio ou Form em processo) -->
+    <string name="msg_last_user_with_pendency">VORSICHT! Wenn Sie sich mit diesem Gerät anmelden, gehen die Daten VERLOREN.\n\nFolgender Benutzer hat Daten, die noch nicht an den Server gesendet wurden und/oder Formulare, die noch ausgefüllt werden:</string>
 
 </resources>

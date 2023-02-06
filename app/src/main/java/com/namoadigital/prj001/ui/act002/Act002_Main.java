@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
@@ -43,6 +44,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
     private final String PROCESS_WS_LOGOUT = "ws_logout";
     public static final String PROCESS_WS_GET_CUSTOMER_SITE = "get_customer_site";
     private ListView lv_customers;
+    private TextView lv_empty_list;
     private MKEditTextNM mket_customers_search;
     private TextInputLayout layout_customers_search;
     private Act002_Main_Presenter mPresenter;
@@ -75,8 +77,11 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
         mPresenter.deleteEnvSiteLicenseFile();
         //
         lv_customers = (ListView) findViewById(R.id.act002_lv_customers);
-        mket_customers_search = findViewById(R.id.act_product_selection_mket_product_search);
-        layout_customers_search = findViewById(R.id.act027_product_selection_mket_product_llayout);
+        lv_empty_list = findViewById(R.id.empty_list_textview);
+        lv_empty_list.setText(R.string.act002_empty_list);
+
+        mket_customers_search = findViewById(R.id.filter_edit_text);
+        layout_customers_search = findViewById(R.id.filter_edit_text_llayout);
         layout_customers_search.setHint(context.getString(R.string.act002_mket_edit_hint));
         //Tenta pegar bundle - Enviado pela Act001 ou Act005
         mBundle = getIntent().getExtras();
@@ -126,7 +131,22 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
     public void loadCustomers(List<HMAux> customers) {
 
         if(customers != null) {
-            mAdapter = new EV_User_Customer_Adapter(context, R.layout.ev_user_customer_cell, customers);
+            mAdapter = new EV_User_Customer_Adapter(
+                    context,
+                    R.layout.ev_user_customer_cell,
+                    customers,
+                    list -> {
+                        if (list.isEmpty()) {
+                            lv_empty_list.setVisibility(View.VISIBLE);
+                            lv_customers.setVisibility(View.GONE);
+                            return;
+                        }
+
+                        lv_empty_list.setVisibility(View.GONE);
+                        lv_customers.setVisibility(View.VISIBLE);
+                    }
+            );
+
             lv_customers.setAdapter(mAdapter);
 
             mket_customers_search.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
@@ -145,18 +165,30 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
              *  Verifica necessidade de notificacao de modulos pendentes
              */
             ToolBox_Inf.callPendencyNotification(context);
+
+            if (customers.isEmpty()) {
+                lv_empty_list.setVisibility(View.VISIBLE);
+                lv_customers.setVisibility(View.GONE);
+                return;
+            }
+
+            if (customers.size() == 1) {
+                //Bundle é passado quando o btn voltar da act 004 foi clicado.
+                if (mBundle != null && mBundle.getInt(Constant.BACK_ACTION) == 1) {
+                    //
+                    callAct001();
+                } else {
+                    //prepareExecSessionProcess(customers.get(0), 0, 1, 0);
+                    mPresenter.defineClickFlow(customers.get(0));
+                }
+            }
+        } else {
+            lv_empty_list.setVisibility(View.VISIBLE);
+            lv_customers.setVisibility(View.GONE);
+            layout_customers_search.setVisibility(View.GONE);
         }
 
-        if (customers.size() == 1) {
-            //Bundle é passado quando o btn voltar da act 004 foi clicado.
-            if (mBundle != null && mBundle.getInt(Constant.BACK_ACTION) == 1) {
-                //
-                callAct001();
-            } else {
-                //prepareExecSessionProcess(customers.get(0), 0, 1, 0);
-                mPresenter.defineClickFlow(customers.get(0));
-            }
-        }
+
     }
 
     @Override
