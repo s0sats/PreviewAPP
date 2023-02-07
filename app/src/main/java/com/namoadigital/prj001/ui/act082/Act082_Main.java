@@ -318,7 +318,7 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         rb_start_date.setText(hmAux_Trans.get("start_service_datetime_opt"));
         rb_end_date.setText(hmAux_Trans.get("end_service_datetime_opt"));
         rb_time.setText(hmAux_Trans.get("service_duration_time_opt"));
-        ss_main_user.setmTitle(hmAux_Trans.get("main_user_lbl"));
+        ss_main_user.setmLabel(hmAux_Trans.get("main_user_lbl"));
         tv_main_user_no_profile_lbl.setText(hmAux_Trans.get("main_user_lbl"));
         //
         tv_start_date_lbl.setText(hmAux_Trans.get("start_date_lbl"));

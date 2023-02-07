@@ -122,7 +122,7 @@
                 android:orientation="vertical"
                 android:paddingHorizontal="16dp">
 
-
+                <!--TALVEZ NAO SEJA USADO-->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -514,18 +514,14 @@
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="@color/m3_namoa_outlineVariant"
-                            android:layout_marginVertical="16dp" />
                     </LinearLayout>
 
                     <LinearLayout
                         android:id="@+id/frg_serial_edit_ll_class"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:paddingTop="32dp">
 
                         <TextView
                             android:id="@+id/frg_serial_edit_tv_class_ttl"
@@ -534,6 +530,7 @@
                             android:layout_weight="1"
                             android:paddingVertical="5dp"
                             android:text="Class - Trad"
+                            android:visibility="gone"
                             style="@style/TextAppearance.Material3.TitleSmall"
                             android:textColor="@color/m3_namoa_onSurfaceVariant" />
 
@@ -565,7 +562,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
                             android:background="@color/m3_namoa_outlineVariant"
-                            android:layout_marginVertical="16dp" />
+                            android:layout_marginTop="40dp" />
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
@@ -672,7 +669,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
                             android:background="@color/m3_namoa_outlineVariant"
-                            android:layout_marginVertical="16dp" />
+                            android:layout_marginTop="40dp" />
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
@@ -721,7 +718,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
                             android:background="@color/m3_namoa_outlineVariant"
-                            android:layout_marginVertical="16dp" />
+                            android:layout_marginTop="40dp"
+                            android:layout_marginBottom="12dp" />
 
                         <TextView
                             android:id="@+id/frg_serial_edit_tv_serial_properties_ttl"
@@ -824,7 +822,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
                             android:background="@color/m3_namoa_outlineVariant"
-                            android:layout_marginVertical="16dp" />
+                            android:layout_marginTop="40dp"
+                            android:layout_marginBottom="12dp" />
 
                         <TextView
                             android:id="@+id/frg_serial_edit_tv_serial_brand_model_color_ttl"
@@ -869,7 +868,9 @@
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
                             android:background="@color/m3_namoa_outlineVariant"
-                            android:layout_marginVertical="16dp" />
+                            android:layout_marginTop="40dp"
+                            android:layout_marginBottom="12dp" />
+
 
                         <TextView
                             android:id="@+id/frg_serial_edit_tv_serial_add_info_ttl"

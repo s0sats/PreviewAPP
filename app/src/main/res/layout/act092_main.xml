@@ -72,6 +72,18 @@
                 app:layout_constraintStart_toEndOf="@+id/iconClassColor"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <TextView
+                android:id="@+id/product_description"
+                style="@style/TextAppearance.Material3.BodySmall"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="@color/m3_namoa_onSurfaceVariant"
+                android:textStyle="normal"
+                app:layout_constraintEnd_toEndOf="@+id/serial_title"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/serial_title" />
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/infoSerial"
                 android:layout_gravity="end"
@@ -82,14 +94,6 @@
                 style="@style/NamoaTheme3.Button.Icon.Filled" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <TextView
-            android:id="@+id/product_description"
-            style="@style/TextAppearance.Material3.BodySmall"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/m3_namoa_onSurfaceVariant"
-            android:textStyle="normal" />
 
         <View
             android:layout_marginVertical="2dp"

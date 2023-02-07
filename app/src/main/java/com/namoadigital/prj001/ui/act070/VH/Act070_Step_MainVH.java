@@ -52,13 +52,16 @@ public class Act070_Step_MainVH extends RecyclerView.ViewHolder{
     private boolean statusAllowEdition = false;
     private boolean inReadOnlyMode = false;
 
-    public Act070_Step_MainVH(Context context, @NonNull View itemView, Act070_Steps_Adapter.OnMainClickListener onClickListener, Act070_Steps_Adapter.OnWorkgroupSpinnerListeners onWorkgroupSpinnerClickListener, boolean isInWgEditMode, boolean inReadOnlyMode) {
+    private HMAux hmAux_Trans;
+
+    public Act070_Step_MainVH(Context context, @NonNull View itemView, Act070_Steps_Adapter.OnMainClickListener onClickListener, Act070_Steps_Adapter.OnWorkgroupSpinnerListeners onWorkgroupSpinnerClickListener, boolean isInWgEditMode, boolean inReadOnlyMode, HMAux hmAux) {
         super(itemView);
         this.context = context;
         this.onClickListener = onClickListener;
         this.onWorkgroupSpinnerClickListener = onWorkgroupSpinnerClickListener;
         this.isInWgEditMode = isInWgEditMode;
         this.inReadOnlyMode = inReadOnlyMode;
+        this.hmAux_Trans = hmAux;
         bindViews();
     }
 
@@ -102,18 +105,18 @@ public class Act070_Step_MainVH extends RecyclerView.ViewHolder{
     }
 
     private void configSSWorkgroup() {
-         ssWorkgroup.setmShowBarcode(false);
-         ssWorkgroup.setmShowLabel(false);
-         ssWorkgroup.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
-             @Override
-             public void onItemPreSelected(HMAux hmAux) {
+        ssWorkgroup.setmShowBarcode(false);
+        ssWorkgroup.setmLabel(hmAux_Trans.get("select_ss_workgroup_hint"));
+        ssWorkgroup.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+            @Override
+            public void onItemPreSelected(HMAux hmAux) {
 
-             }
+            }
 
-             @Override
-             public void onItemPostSelected(HMAux hmAux) {
+            @Override
+            public void onItemPostSelected(HMAux hmAux) {
                 onWorkgroupSpinnerClickListener.notifySpinnerItemSelected(getAdapterPosition(), hmAux, ssWorkgroup.hasChangedBD());
-             }
+            }
          });
     }
 

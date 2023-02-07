@@ -30,6 +30,7 @@
                 android:id="@+id/act_product_selection_mket_product_search"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:textColor="@drawable/edittext_theme_text"
                 android:imeOptions="actionDone"
                 android:drawableStart="@drawable/ic_search_black_24dp"
                 app:mNFC="false"
