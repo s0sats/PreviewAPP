@@ -18,7 +18,8 @@ private val justifyGroupCode: Int
                             ${MdJustifyItemDao.TABLE}                   
                        WHERE
                              ${MdJustifyItemDao.CUSTOMER_CODE} = '$customerCode'  
-                            AND ${MdJustifyItemDao.JUSTIFY_GROUP_CODE} = '$justifyGroupCode'                               
+                            AND ${MdJustifyItemDao.JUSTIFY_GROUP_CODE} = '$justifyGroupCode'
+                       ORDER BY justify_item_desc;                                
                     """.trimMargin()
         return query
     }

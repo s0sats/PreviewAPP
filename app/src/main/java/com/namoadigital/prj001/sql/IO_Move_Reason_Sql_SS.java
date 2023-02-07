@@ -24,7 +24,9 @@ public class IO_Move_Reason_Sql_SS implements Specification {
                         "  f.reason_desc "+ SearchableSpinner.DESCRIPTION +
                         " FROM\n" +
                         IO_Move_ReasonDao.TABLE +"  f\n" +
-                        " WHERE customer_code=" + customer_code
+                        " WHERE customer_code=" + customer_code + " \n" +
+                        " order by reason_desc;"
+
                 )
                 .toString();
     }

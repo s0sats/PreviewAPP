@@ -31,7 +31,7 @@ public class MD_Department_Sql_001 implements Specification {
                                 " WHERE " +
                                 MD_DepartmentDao.CUSTOMER_CODE + " = '" + s_customer_code + "' " +
                                 " ORDER BY " +
-                                "      department_id,department_desc")
+                                "      department_desc")
                 .append(";")
                 //.append(SearchableSpinner.ID + "#department_id#" + SearchableSpinner.DESCRIPTION)
                 .toString();

@@ -39,7 +39,7 @@ public class MD_Category_Price_Sql_SS implements Specification {
                                 "   and pc.product_code = '"+ product_code +"'" +
 
                                 " ORDER BY " +
-                                "     c.category_price_id,c.category_price_desc;")
+                                "     c.category_price_desc;")
                 //.append(SearchableSpinner.ID + "#category_price_id#"+SearchableSpinner.DESCRIPTION )
                 .toString();
     }

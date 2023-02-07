@@ -39,7 +39,7 @@ public class MD_Segment_Sql_SS implements Specification {
                                 "   and ps.product_code = '"+ product_code +"'" +
 
                                 " ORDER BY " +
-                                "     s.segment_id,s.segment_desc;")
+                                "     s.segment_desc;")
                 //.append(SearchableSpinner.ID + "#segment_id#"+SearchableSpinner.DESCRIPTION )
                 .toString();
     }

@@ -37,6 +37,6 @@ public class MD_Site_Sql_SS_002 implements Specification {
                         " WHERE \n" +
                         MD_SiteDao.CUSTOMER_CODE + " = '" + s_customer_code + "' \n" +
                         " ORDER BY \n" +
-                        "      site_id,site_desc;").toString();
+                        "      site_desc;").toString();
     }
 }

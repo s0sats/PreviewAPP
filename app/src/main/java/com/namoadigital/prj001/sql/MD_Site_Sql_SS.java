@@ -34,7 +34,7 @@ public class MD_Site_Sql_SS implements Specification {
                         " WHERE \n" +
                         MD_SiteDao.CUSTOMER_CODE + " = '" + s_customer_code + "' \n" +
                         " ORDER BY \n" +
-                        "      site_id,site_desc;")
+                        "      site_desc;")
 //                .append(SearchableSpinner.ID + "#" +
 //                        MD_SiteDao.SITE_ID + "#" +
 //                        SearchableSpinner.DESCRIPTION + "#" +

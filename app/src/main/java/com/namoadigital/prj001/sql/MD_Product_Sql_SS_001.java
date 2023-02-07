@@ -44,8 +44,6 @@ public class MD_Product_Sql_SS_001 implements Specification {
                         " AND (p." + MD_ProductDao.REQUIRE_SERIAL + " = '0' OR\n" +
                         "      p."+ MD_ProductDao.PRODUCT_CODE +" = '"+product_code+"')\n" +
                         "  ORDER BY \n" +
-                        "     prod_order,\n" +
-                        "     p.product_id,\n" +
                         "     p.product_desc \n")
                 .append(";")
                 //.append(SearchableSpinner.ID + "#product_code#product_id#product_desc#"+SearchableSpinner.DESCRIPTION)

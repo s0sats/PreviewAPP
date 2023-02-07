@@ -43,7 +43,7 @@ public class MD_Brand_Color_Sql_SS implements Specification {
                                 "                                       " +
                                 "   and c.brand_code = '"+ brand_code +"'" +
                                 " ORDER BY " +
-                                "      c.color_id,c.color_desc;")
+                                "      c.color_desc;")
                 //.append(SearchableSpinner.ID + "#color_id#"+SearchableSpinner.DESCRIPTION )
                 .toString();
     }

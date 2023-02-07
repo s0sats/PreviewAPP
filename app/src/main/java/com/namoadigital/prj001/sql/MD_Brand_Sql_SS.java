@@ -39,7 +39,7 @@ public class MD_Brand_Sql_SS implements Specification {
                                 "   and b.customer_code = '"+ customer_code +"'" +
                                 "   and  pb.product_code = '"+ product_code +"'" +
                                 " ORDER BY " +
-                                "      brand_id,brand_desc;")
+                                "      brand_desc;")
                 //.append(SearchableSpinner.ID + "#brand_id#"+SearchableSpinner.DESCRIPTION )
                 .toString();
     }
