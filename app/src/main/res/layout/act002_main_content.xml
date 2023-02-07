@@ -33,10 +33,11 @@
             android:id="@+id/empty_list_textview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:text="algo aqui"
-            android:visibility="gone"
+            tools:text="Eintrag gefunden. Versuchen Sie bitte die Filter zu andern."
+            android:visibility="visible"
             android:textAlignment="center"
             android:gravity="center"
+            android:paddingHorizontal="16dp"
             style="@style/TextAppearance.Material3.BodyLarge"
             android:textColor="@color/m3_namoa_onSurfaceVariant" />
 
@@ -45,7 +46,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:divider="@color/m3_namoa_outlineVariant"
-            android:dividerHeight="1dp" />
+            android:dividerHeight="1dp"
+            tools:listitem="@layout/ev_user_customer_cell" />
 
     </LinearLayout>
 

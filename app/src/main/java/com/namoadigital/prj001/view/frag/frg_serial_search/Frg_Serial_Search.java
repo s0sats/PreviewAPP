@@ -493,14 +493,24 @@ public class Frg_Serial_Search extends Fragment {
             } else {
                 if (delegate != null) {
                     delegate.onSearchClick(
-                        btnAction,
-                        values
+                            btnAction,
+                            values
                     );
                 }
             }
         }
     };
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        //
+        loadDataToScreen();
+    }
+
+    private void loadDataToScreen() {
+        customSettings();
+    }
 
     // General Methods
     public void setNFCText(String text) {
@@ -654,13 +664,13 @@ public class Frg_Serial_Search extends Fragment {
     public void setShowTree(boolean showTree) {
         this.showTree = showTree;
         //
-
+        customSettings();
     }
 
     public void setShowAll(boolean showAll) {
         this.showAll = showAll;
         //
-
+        customSettings();
     }
 
     public void setShowHideProduct(boolean status) {
@@ -679,9 +689,19 @@ public class Frg_Serial_Search extends Fragment {
         }
     }
 
-
-    public void displayChangeProduct(boolean value) {
-        iv_product_id.setVisibility(value ? View.VISIBLE : View.GONE);
+    private void customSettings() {
+        if (showTree) {
+            iv_product_id.setVisibility(View.VISIBLE);
+        } else {
+            if (showAll) {
+                iv_product_id.setVisibility(View.VISIBLE);
+            } else {
+                iv_product_id.setVisibility(View.GONE);
+            }
+        }
+        //LUCHE - 07/11/2019
+        //Chama metodo que define a visibilidade do textHelper do produto.
+        setProductHelperVisibility();
     }
 
 

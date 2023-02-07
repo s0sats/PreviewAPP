@@ -126,6 +126,7 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
         transList.add("review_process_btn");
         transList.add("review_rejection_btn");
         transList.add("approved_lbl");
+        transList.add("select_ss_workgroup_hint");
         transList.add("continue_process_btn");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
@@ -145,13 +146,14 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
             case VIEW_TYPE_STEP_MAIN:
                 view = LayoutInflater.from(context).inflate(R.layout.act070_step_main_cell, viewGroup, false);
                 return new Act070_Step_MainVH(
-                    context,
-                    view,
-                    onMainClickListener,
-                    onWorkgroupSpinnerClickListener,
-                    isInWgEditMode,
-                    inReadOnlyMode
-                    );
+                        context,
+                        view,
+                        onMainClickListener,
+                        onWorkgroupSpinnerClickListener,
+                        isInWgEditMode,
+                        inReadOnlyMode,
+                        hmAux_Trans
+                );
             case VIEW_TYPE_STEP_ACTION:
                 view = LayoutInflater.from(context).inflate(R.layout.act070_step_action_cell, viewGroup, false);
                 return new Act070_Step_ActionVH(

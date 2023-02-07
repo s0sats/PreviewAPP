@@ -1,24 +1,26 @@
 package com.namoadigital.prj001.ui.act009;
 
+import static com.namoadigital.prj001.adapter.searchableitem.MyItemSearchableAdapter.Companion;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.adapter.searchableitem.ItemSearchableAdapter;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
@@ -29,6 +31,7 @@ import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.databinding.Act009MainBinding;
 import com.namoadigital.prj001.databinding.Act009MainContentBinding;
+import com.namoadigital.prj001.design.list.IOnRememberListState;
 import com.namoadigital.prj001.model.MyActionFilterParam;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
 import com.namoadigital.prj001.ui.act010.Act010_Main;
@@ -79,6 +82,8 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
         //
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         //
         iniSetup();
         //
@@ -87,6 +92,12 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
         iniUIFooter();
         //
         initActions();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return super.onSupportNavigateUp();
     }
 
     private void iniSetup() {
@@ -103,6 +114,8 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
         List<String> transList = new ArrayList<String>();
         transList.add("lbl_type");
         transList.add("tag_selection_ttl");
+        transList.add("theme_search_hint");
+        transList.add("empty_list_lbl");
         transList.add("alert_ttl_no_form_found");
         transList.add("alert_msg_no_form_found");
         //
@@ -128,8 +141,6 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
                 site_code_form_param
         );
         //
-        setLabels();
-        //
         mPresenter.setAdapterData(
             product_code,
             serial_id,
@@ -137,14 +148,16 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
                 has_tk_ticket_is_form_off_hand
         );
         //
-        if(has_tk_ticket_is_form_off_hand){
+        if (has_tk_ticket_is_form_off_hand) {
             vStepSelected = findViewById(R.id.act009_process_in_progress);
             ImageView ivClose = vStepSelected.findViewById(R.id.iv_nform_new_header);
             TextView tvNFormSelected = vStepSelected.findViewById(R.id.tv_process_new_header);
             ivClose.setVisibility(View.GONE);
-            tvNFormSelected.setText( mTkTicketId + " - " + mStepDesc);
+            tvNFormSelected.setText(mTkTicketId + " - " + mStepDesc);
             vStepSelected.setVisibility(View.VISIBLE);
         }
+
+        setLabels();
     }
 
     private void setActBarTitle() {
@@ -152,7 +165,8 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
     }
 
     private void setLabels() {
-        binding.act009TvTagTtl.setText(hmAux_Trans.get("tag_selection_ttl") + ":");
+        binding.searchItem.filterEditTextLlayout.setHint(hmAux_Trans.get("theme_search_hint"));
+        binding.emptyListTextview.setText(hmAux_Trans.get("empty_list_lbl"));
     }
 
     private void recoverIntentsInfo() {
@@ -215,7 +229,7 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
 
     private void initActions() {
         //
-        binding.act009LvTags.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+/*        binding.act009LvTags.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HMAux item = (HMAux) parent.getItemAtPosition(position);
@@ -224,7 +238,7 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
                 //
                 callAct010(context);
             }
-        });
+        });*/
     }
 
     @Override
@@ -243,19 +257,44 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
     @Override
     public void loadTagList(List<HMAux> tagList) {
         if (tagList.size() > 0) {
-            String[] from = {MdTagDao.TAG_DESC};
-            int[] to = {R.id.act009_cell_tv_desc};
-            binding.act009LvTags.setAdapter(
-                    new SimpleAdapter(
-                            context,
-                            tagList,
-                            R.layout.act009_cell,
-                            from,
-                            to
-                    )
+
+            ItemSearchableAdapter adapter = new ItemSearchableAdapter(Companion.convertToMyItemSearchable(tagList, MdTagDao.TAG_CODE, MdTagDao.TAG_DESC),
+                    item -> {
+                        HMAux toConvert = new HMAux();
+                        toConvert.put(MdTagDao.TAG_CODE, item.getCode());
+                        toConvert.put(MdTagDao.TAG_DESC, item.getText());
+                        addFormTypeInfoToBundle(toConvert);
+                        //
+                        callAct010(context);
+                        return null;
+                    },
+                    new IOnRememberListState<>(binding.act009LvTags, binding.emptyListTextview)
             );
+
+            binding.act009LvTags.setLayoutManager(new LinearLayoutManager(this));
+            binding.act009LvTags.setAdapter(adapter);
+
+            binding.searchItem.filterEditText.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
+                @Override
+                public void reportTextChange(String s) {
+
+                }
+
+                @Override
+                public void reportTextChange(String s, boolean b) {
+                    if (s != null) {
+                        adapter.getFilter().filter(s);
+                    }
+                }
+            });
+
         } else {
             //Se lista vazia exibe alert e volta pra tela anterior
+
+            binding.act009LvTags.setVisibility(View.GONE);
+            binding.searchItem.filterEditTextLlayout.setVisibility(View.GONE);
+            binding.emptyListTextview.setVisibility(View.VISIBLE);
+
             ToolBox.alertMSG(
                     Act009_Main.this,
                     hmAux_Trans.get("alert_ttl_no_form_found"),
@@ -403,10 +442,6 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
-
-        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
-        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         return true;
     }

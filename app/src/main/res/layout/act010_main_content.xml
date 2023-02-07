@@ -5,37 +5,12 @@
     android:id="@+id/content_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:baselineAligned="false"
     android:gravity="center_vertical"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ui.act010.Act010_Main"
     tools:showIn="@layout/act010_main">
 
-    <include
-        android:id="@+id/act010_process_in_progress"
-        layout="@layout/process_in_progress"
-        android:visibility="gone" />
-
-    <TextView
-        android:id="@+id/act010_tv_tag_ttl"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:textStyle="bold"
-        tools:text="Tema: TEMA ESCOLHIDO" />
-
-    <TextView
-        android:id="@+id/act010_tv_form_ttl"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:textStyle="bold"
-        tools:text="Seleção de form" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -44,18 +19,52 @@
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
-        <ListView
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingBottom="4dp"
+            android:background="@color/m3_namoa_surface1">
+
+            <include
+                android:id="@+id/act010_process_in_progress"
+                layout="@layout/process_in_progress"
+                android:visibility="gone" />
+
+            <include
+                android:id="@+id/search_item"
+                layout="@layout/layout_text_input_layout" />
+
+            <TextView
+                android:id="@+id/path_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="Site"
+                android:textColor="@color/m3_namoa_onSurfaceVariant"
+                style="@style/TextAppearance.Material3.TitleSmall" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/empty_list_textview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:text="algo aqui"
+            android:visibility="gone"
+            android:textAlignment="center"
+            android:gravity="center"
+            style="@style/TextAppearance.Material3.BodyLarge"
+            android:textColor="@color/m3_namoa_onSurfaceVariant" />
+
+
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/act010_lv_form"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:background="@color/m3_namoa_surface"
             android:layout_weight="1"
-            android:divider="@color/padrao_TRANSPARENT"
-            android:dividerHeight="10dp"
-            android:padding="16dp"
-            tools:listitem="@layout/act010_cell"
-            />
+            tools:listitem="@layout/searchable_adapter_item" />
+        <!--android:background="@drawable/border_back"-->
 
     </LinearLayout>
 

@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -481,8 +480,9 @@ public class Act050_Frag_SO extends BaseFragment {
 
     private void setPackageDefaultSearchableSpinner(SO_Creation_Obj my_so_creation_obj) {
 
-        ssPackageDefault.setmTitle(hmAux_Trans.get("pack_default_lbl"));
-        ssPackageDefault.setmShowLabel(false);
+        ssPackageDefault.setmShowLabel(true);
+        ssPackageDefault.setmCanClean(false);
+        ssPackageDefault.setmLabel(hmAux_Trans.get("pack_default_lbl"));
         ArrayList<HMAux> mPackageDefaultOptions = new ArrayList<>();
 
         HMAux packageDefaultWith = new HMAux();

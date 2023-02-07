@@ -332,7 +332,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         ss_status.setmShowLabel(false);
         ss_status.setmCanClean(false);
         //ss_status.setmLabel(hmAux_Trans.get("status_lbl"));
-        ss_status.setmTitle(hmAux_Trans.get("status_search_lbl"));
+        ss_status.setmLabel(hmAux_Trans.get("status_search_lbl"));
         properties.add(ss_status);
         //
         editable_views_list.add(ss_status);

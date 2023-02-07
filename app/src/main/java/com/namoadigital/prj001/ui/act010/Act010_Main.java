@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act010;
 
+import static com.namoadigital.prj001.adapter.searchableitem.MyItemSearchableAdapter.Companion;
+
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -7,21 +9,21 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.adapter.searchableitem.ItemSearchableAdapter;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
@@ -40,6 +42,7 @@ import com.namoadigital.prj001.dao.TkTicketTypeDao;
 import com.namoadigital.prj001.databinding.Act010MainBinding;
 import com.namoadigital.prj001.databinding.Act010MainContentBinding;
 import com.namoadigital.prj001.databinding.TicketCreationDialogBinding;
+import com.namoadigital.prj001.design.list.IOnRememberListState;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WSTicketCreation;
 import com.namoadigital.prj001.service.WS_Serial_Save;
@@ -54,6 +57,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -97,6 +101,8 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
         //
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         //
         iniSetup();
         //
@@ -105,6 +111,12 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
         iniUIFooter();
         //
         initActions();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return super.onSupportNavigateUp();
     }
 
     private void iniSetup() {
@@ -120,6 +132,8 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
         transList.add("lbl_version");
+        transList.add("forms_search_hint");
+        transList.add("empty_list_lbl");
         transList.add("alert_more_than_one_form_ttl");
         transList.add("alert_more_than_one_form_msg");
         transList.add("alert_so_form_exits_no_so_ttl");
@@ -214,8 +228,9 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
     }
 
     private void setLabels() {
-        binding.act010TvTagTtl.setText(mPresenter.getTagLblText(hmAux_Trans.get("tag_lbl"),tagDesc));
-        binding.act010TvFormTtl.setText(hmAux_Trans.get("form_selection_lbl") + ":");
+        binding.pathName.setText(tagDesc + "/");
+        binding.searchItem.filterEditTextLlayout.setHint(hmAux_Trans.get("forms_search_hint"));
+        binding.emptyListTextview.setText(hmAux_Trans.get("empty_list_lbl"));
     }
 
     private void recoverIntentsInfo() {
@@ -275,18 +290,7 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
     }
 
     private void initActions() {
-        binding.act010LvForm.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                HMAux item = (HMAux) parent.getItemAtPosition(position);
-                //
-                if ("1".equals(item.get(IS_FORM))) {
-                    mPresenter.validateOpenForm(item);
-                }else{
-                    createTicketDialog(item);
-                }
-            }
-        });
+
     }
     @Override
     public void createTicketDialog(HMAux item) {
@@ -346,16 +350,51 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
     @Override
     public void loadForms(List<HMAux> forms) {
         String[] from = {CUSTOM_DESC, CUSTOM_PK};
-        int[] to = {R.id.act010_cell_tv_desc,R.id.act010_cell_tv_id};
-        binding.act010LvForm.setAdapter(
-                new SimpleAdapter(
-                        context,
-                        forms,
-                        R.layout.act010_cell,
-                        from,
-                        to
-                )
-        );
+        int[] to = {R.id.act010_cell_tv_desc, R.id.act010_cell_tv_id};
+
+        if (forms != null && !forms.isEmpty()) {
+
+            ItemSearchableAdapter adapter = new ItemSearchableAdapter(Companion.convertToMyItemSearchable(forms, CUSTOM_PK, CUSTOM_DESC),
+                    item -> {
+
+                        for (HMAux form : forms) {
+                            if (Objects.equals(form.get(CUSTOM_PK), item.getCode())) {
+                                if ("1".equals(form.get(IS_FORM))) {
+                                    mPresenter.validateOpenForm(form);
+                                } else {
+                                    createTicketDialog(form);
+                                }
+                                return null;
+                            }
+                        }
+                        return null;
+                    },
+                    new IOnRememberListState<>(binding.act010LvForm, binding.emptyListTextview)
+            );
+
+            binding.act010LvForm.setLayoutManager(new LinearLayoutManager(this));
+
+            binding.act010LvForm.setAdapter(adapter);
+
+            binding.searchItem.filterEditText.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
+                @Override
+                public void reportTextChange(String s) {
+
+                }
+
+                @Override
+                public void reportTextChange(String s, boolean b) {
+                    if (s != null) {
+                        adapter.getFilter().filter(s);
+                    }
+                }
+            });
+            return;
+        }
+
+        binding.act010LvForm.setVisibility(View.GONE);
+        binding.searchItem.filterEditTextLlayout.setVisibility(View.GONE);
+        binding.emptyListTextview.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -505,11 +544,6 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
-
-        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
-        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         return true;
     }

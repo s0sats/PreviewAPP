@@ -131,11 +131,16 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
     public void loadCustomers(List<HMAux> customers) {
 
         if(customers != null) {
+            lv_empty_list.setVisibility(View.GONE);
+            lv_customers.setVisibility(View.VISIBLE);
+            layout_customers_search.setVisibility(View.VISIBLE);
+
             mAdapter = new EV_User_Customer_Adapter(
                     context,
                     R.layout.ev_user_customer_cell,
                     customers,
                     list -> {
+
                         if (list.isEmpty()) {
                             lv_empty_list.setVisibility(View.VISIBLE);
                             lv_customers.setVisibility(View.GONE);

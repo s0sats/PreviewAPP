@@ -104,6 +104,7 @@
                     android:id="@+id/frg_serial_search_mket_serial"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textColor="@drawable/edittext_theme_text"
                     android:inputType="textMultiLine"
                     app:mBARCODE="true"
                     app:mNFC="false"
@@ -133,6 +134,7 @@
                 <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                     android:id="@+id/frg_serial_search_mket_tracking"
                     android:layout_width="match_parent"
+                    android:textColor="@drawable/edittext_theme_text"
                     android:layout_height="wrap_content"
                     android:inputType="textMultiLine"
                     app:mBARCODE="true"

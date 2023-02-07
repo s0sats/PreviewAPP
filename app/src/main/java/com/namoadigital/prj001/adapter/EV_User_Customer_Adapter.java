@@ -113,26 +113,30 @@ public class EV_User_Customer_Adapter extends BaseAdapter implements Filterable 
             if (item.get(EV_User_CustomerDao.SESSION_APP).trim().length() > 0) {
                 iv001.setVisibility(View.VISIBLE);
                 iv001.setImageResource(R.drawable.ic_cloud_off_black_24dp);
-                iv001.setColorFilter(context.getResources().getColor(R.color.namoa_color_disabled_gray));
+                iv001.setColorFilter(context.getResources().getColor(R.color.m3_namoa_outline_variant));
                 //
-                iv002.setColorFilter(context.getResources().getColor(R.color.namoa_color_success_green));
+                iv002.setVisibility(View.VISIBLE);
+                iv002.setColorFilter(context.getResources().getColor(R.color.m3_namoa_primary));
             } else {
                 iv001.setVisibility(View.GONE);
+                iv002.setVisibility(View.VISIBLE);
                 iv002.setImageResource(R.drawable.ic_lock_black_24dp);
-                iv002.setColorFilter(context.getResources().getColor(R.color.namoa_color_light_blue));
+                iv002.setColorFilter(context.getResources().getColor(R.color.m3_namoa_error));
             }
         }else{
             //Configura icone de sessession baseado no valor.
-            if(item.get(EV_User_CustomerDao.SESSION_APP).trim().length() > 0) {
+            if (item.get(EV_User_CustomerDao.SESSION_APP).trim().length() > 0) {
                 iv001.setVisibility(View.GONE);
                 iv002.setVisibility(View.VISIBLE);
-                iv002.setColorFilter(context.getResources().getColor(R.color.namoa_color_success_green));
+                iv002.setColorFilter(context.getResources().getColor(R.color.m3_namoa_primary));
+            } else {
+                iv002.setVisibility(View.GONE);
             }
             //Se existe itens pendente de envio, exibe icone e seta qtd no tvTop
             if (!item.get(EV_User_CustomerDao.PENDING).equals("0")) {
                 iv001.setVisibility(View.VISIBLE);
                 iv001.setImageResource(R.drawable.ic_cloud_upload);
-                iv001.setColorFilter(context.getResources().getColor(R.color.namoa_color_light_blue));
+                iv001.setColorFilter(context.getResources().getColor(R.color.m3_namoa_outline));
                 //03/03/2017  -  Comentado a exibição da qtd
                 // tvTopQty.setVisibility(View.VISIBLE);
                 // tvTopQty.setText(item.get(EV_User_CustomerDao.PENDING));
