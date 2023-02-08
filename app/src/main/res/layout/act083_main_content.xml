@@ -43,17 +43,20 @@
                     android:layout_marginTop="12dp"
                     android:layout_marginEnd="8dp"
                     android:hint="Filtro"
-                    app:startIconDrawable="@drawable/ic_search_black_24dp"
                     app:placeholderTextColor="@color/m3_namoa_onSurface"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     app:layout_constraintEnd_toStartOf="@+id/act083_ib_main_user_selection"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    app:layout_constraintTop_toTopOf="parent"
+
+                    app:startIconDrawable="@drawable/ic_search_black_24dp"
+                    app:startIconTint="@color/m3_namoa_onSurfaceVariant"
+                    style="@style/NamoaTheme3.TextInputLayout.Outlined">
 
                     <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                         android:id="@+id/act083_mket_filter"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:textColor="@drawable/edittext_theme_text"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:mBARCODE="false"

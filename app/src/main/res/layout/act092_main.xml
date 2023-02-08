@@ -107,18 +107,15 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/act092TextLayout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                app:startIconDrawable="@drawable/ic_search_black_24dp"
+                app:startIconTint="@color/m3_namoa_onSurfaceVariant"
+                style="@style/NamoaTheme3.TextInputLayout.Outlined"
                 android:layout_marginEnd="16dp"
-                android:hint="Filtro"
-                app:boxStrokeColor="@color/m3_namoa_onSurface"
-                app:hintTextColor="@color/m3_namoa_onSurface"
                 app:layout_constraintEnd_toStartOf="@+id/main_user_selection"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:placeholderTextColor="@color/m3_namoa_onSurface"
-                app:startIconDrawable="@drawable/ic_search_black_24dp">
+                app:layout_constraintTop_toTopOf="parent">
 
                 <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                     android:id="@+id/edit_serial_filter"

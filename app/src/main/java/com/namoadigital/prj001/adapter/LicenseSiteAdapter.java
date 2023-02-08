@@ -1,8 +1,6 @@
 package com.namoadigital.prj001.adapter;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
@@ -12,6 +10,9 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
@@ -57,38 +58,45 @@ public class LicenseSiteAdapter extends RecyclerView.Adapter<LicenseSiteAdapter.
     public class LicenseSiteVh extends RecyclerView.ViewHolder{
         private View itemView;
         private TextView tvSiteDesc;
+        private TextView tvSiteMeta;
 
         public LicenseSiteVh(@NonNull View itemView) {
             super(itemView);
             this.itemView = itemView;
             this.tvSiteDesc = itemView.findViewById(R.id.license_site_dialog_row_tv_site_desc);
+            this.tvSiteMeta = itemView.findViewById(R.id.license_site_dialog_row_tv_site_meta);
+
             this.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(onSiteClickListener != null){
+                    if (onSiteClickListener != null) {
                         onSiteClickListener.onSiteClick(mFilteredSource.get(getAdapterPosition()));
                     }
                 }
             });
         }
 
-        public void bindData(SiteLicense siteLicense){
+        public void bindData(SiteLicense siteLicense) {
             tvSiteDesc.setText(
-                getFormattedSiteDesc(siteLicense)
+                    siteLicense.getSite_desc()
+            );
+
+            tvSiteMeta.setText(
+                    getFormattedSiteDesc(siteLicense)
             );
         }
 
         private SpannableString getFormattedSiteDesc(SiteLicense siteLicense) {
-            String separator = " / ";
-            String siteDescInfo = siteLicense.getSite_desc() + " (" +siteLicense.getUser_level_id() + separator +siteLicense.getLicense_available()+")";
+            String seprator = " / ";
+            String siteDescInfo = siteLicense.getUser_level_id() + seprator + siteLicense.getLicense_available();
             SpannableString spannableString = new SpannableString(siteDescInfo);
             //
-            if(siteLicense.getUser_level_changed() == 1){
+            if (siteLicense.getUser_level_changed() == 1) {
                 spannableString.setSpan(
-                    new ForegroundColorSpan(context.getResources().getColor(R.color.namoa_color_danger_red)),
-                    (siteDescInfo.indexOf(" ("+siteLicense.getUser_level_id()) + 2),
-                    siteDescInfo.indexOf(separator),
-                    Spanned.SPAN_INCLUSIVE_INCLUSIVE
+                        new ForegroundColorSpan(context.getResources().getColor(R.color.m3_namoa_error)),
+                        0,
+                        siteLicense.getUser_level_id().length(),
+                        Spanned.SPAN_INCLUSIVE_INCLUSIVE
                 );
             }
             //

@@ -40,19 +40,21 @@
                     android:layout_marginStart="12dp"
                     android:layout_marginTop="12dp"
                     android:layout_marginEnd="8dp"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     app:layout_constraintEnd_toStartOf="@id/act084_chk_nc_filter"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:placeholderTextColor="@color/m3_namoa_onSurface"
                     android:focusable="false"
                     android:focusableInTouchMode="true"
-                    app:startIconDrawable="@drawable/ic_search_black_24dp">
+                    app:startIconDrawable="@drawable/ic_search_black_24dp"
+                    app:startIconTint="@color/m3_namoa_onSurfaceVariant"
+                    style="@style/NamoaTheme3.TextInputLayout.Outlined">
 
                     <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                         android:id="@+id/act084_mket_filter"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:textColor="@drawable/edittext_theme_text"
                         android:inputType="text"
                         app:mBARCODE="false"
                         app:mNFC="false"

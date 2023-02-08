@@ -38,7 +38,7 @@
     <string name="act002_title_">Account auswählen</string>
     <string name="msg_update_canceled">App-Update abgebrochen.</string>
     <string name="act002_mket_edit_hint">Freitext Filter</string>
-    <string name="act002_empty_list">Eintrag gefunden. Versuchen Sie bitte die Filter zu ändern. </string>
+    <string name="act002_empty_list">Eintrag gefunden.\nVersuchen Sie bitte die Filter zu ändern. </string>
 
     <!--LIB-->
     <string name="nfc_activity_title">NFC-Leser</string>
@@ -118,7 +118,7 @@
     <string name="act002_ws_site_license_msg">Standorte mit verfügbaren Lizenzen werden geladen.</string>
     <string name="act002_ws_ticket_download_ttl">Download</string>
     <string name="act002_ws_ticket_download_msg">Alte Tickets werden aktualisiert.</string>
-    <string name="license_site_dialog_ttl">Lizenzierte Standorte</string>
+    <string name="license_site_dialog_ttl">Auswahl: Standort mit Lizenz</string>
     <string name="license_site_dialog_filter_hint">Standort Ihrer Lizenz auswählen</string>
     <string name="license_site_dialog_close">Abbrechen</string>
     <string name="act002_alt_no_licenses_returned_ttl">Lizenz nicht verfügbar!</string>

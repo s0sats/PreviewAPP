@@ -2,23 +2,19 @@ package com.namoadigital.prj001.adapter.searchableitem
 
 import com.namoa_digital.namoa_library.util.HMAux
 
-data class MyItemSearchableAdapter(
+data class ItemSearchableModel(
     val code: String? = null,
     val text: String? = null
 ) {
-    fun getAllFieldForFilter(showPrice: Boolean): String? {
-        return text
-    }
-
     companion object {
-        fun List<HMAux>.convertToMyItemSearchable(
+        fun List<HMAux>.convertToItemSearchable(
             code: String,
             desc: String
-        ): List<MyItemSearchableAdapter> {
-            val newList = mutableListOf<MyItemSearchableAdapter>()
+        ): List<ItemSearchableModel> {
+            val newList = mutableListOf<ItemSearchableModel>()
             this.map { list ->
                 if (list.containsKey(code) && list.containsKey(desc)) {
-                    newList.add(MyItemSearchableAdapter(list[code], list[desc]))
+                    newList.add(ItemSearchableModel(list[code], list[desc]))
                 }
             }
             return newList

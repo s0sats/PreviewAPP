@@ -2,16 +2,17 @@ package com.namoadigital.prj001.view.dialog;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import com.google.android.material.textfield.TextInputLayout;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.textfield.TextInputLayout;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.LicenseSiteAdapter;
@@ -57,8 +58,8 @@ public class LicenseSiteDialog extends AlertDialog {
 
     private void bindViews() {
         tvTtl = findViewById(R.id.license_site_dialog_tv_ttl);
-        tilFilter = findViewById(R.id.license_site_dialog_til_filter);
-        mketFilter = findViewById(R.id.license_site_dialog_et_filter);
+        tilFilter = findViewById(R.id.filter_edit_text_llayout);
+        mketFilter = findViewById(R.id.filter_edit_text);
         rvSites = findViewById(R.id.license_site_dialog_rv_sites);
         tvClose = findViewById(R.id.license_site_dialog_tv_close);
     }

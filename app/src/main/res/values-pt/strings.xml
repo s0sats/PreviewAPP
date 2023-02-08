@@ -38,7 +38,7 @@
     <string name="act002_title_">Selecione uma Conta</string>
     <string name="msg_update_canceled">Atualização cancelada.</string>
     <string name="act002_mket_edit_hint">Digite para buscar</string>
-    <string name="act002_empty_list">Nenhuma opção encontrada para seleção. Tente alterar os filtros.</string>
+    <string name="act002_empty_list">Nenhuma opção encontrada para seleção.\nTente alterar os filtros.</string>
 
     <!--LIB-->
     <string name="nfc_activity_title">NFC Scanner</string>
@@ -118,7 +118,7 @@
     <string name="act002_ws_site_license_msg">Carregando lista de Sites com licenças disponíveis.</string>
     <string name="act002_ws_ticket_download_ttl">Download de Tickets</string>
     <string name="act002_ws_ticket_download_msg">Baixando Tickets desatualizados.</string>
-    <string name="license_site_dialog_ttl">Sites licenciados</string>
+    <string name="license_site_dialog_ttl">Seleção: Site licenciado</string>
     <string name="license_site_dialog_filter_hint">Escolha o Site da sua licença</string>
     <string name="license_site_dialog_close">Cancelar</string>
     <string name="act002_alt_no_licenses_returned_ttl">Licença indisponível!</string>

@@ -11,14 +11,14 @@ import com.namoadigital.prj001.databinding.SearchableAdapterItemBinding
 import com.namoadigital.prj001.design.list.OnRememberListState
 
 class ItemSearchableAdapter constructor(
-    private val source: List<MyItemSearchableAdapter>,
-    private val onItemClick: (MyItemSearchableAdapter) -> Unit,
-    private val onRememberListState: OnRememberListState<MyItemSearchableAdapter>
+    private val source: List<ItemSearchableModel>,
+    private val onItemClick: (ItemSearchableModel) -> Unit,
+    private val onRememberListState: OnRememberListState<ItemSearchableModel>
 ) : RecyclerView.Adapter<ItemSearchableAdapter.ItemViewHolder>(), Filterable {
 
 
     private var sourceFilter = source.toMutableList()
-    val itemFilter = ItemFilter()
+    private val itemFilter = ItemFilter()
 
     override fun getFilter(): Filter {
         return itemFilter
@@ -27,7 +27,7 @@ class ItemSearchableAdapter constructor(
 
     inner class ItemFilter : Filter() {
         override fun performFiltering(char: CharSequence?): FilterResults {
-            var filter = mutableListOf<MyItemSearchableAdapter>()
+            var filter = mutableListOf<ItemSearchableModel>()
             val charString = ToolBox.AccentMapper(char.toString().toLowerCase())
 
             if (charString.isNullOrEmpty()) {
@@ -50,8 +50,8 @@ class ItemSearchableAdapter constructor(
 
         override fun publishResults(p0: CharSequence?, filter: FilterResults?) {
             filter?.let {
-                sourceFilter = it.values as MutableList<MyItemSearchableAdapter>
-                onRememberListState.dataChanged(sourceFilter as ArrayList<MyItemSearchableAdapter>)
+                sourceFilter = it.values as MutableList<ItemSearchableModel>
+                onRememberListState.dataChanged(sourceFilter as ArrayList<ItemSearchableModel>)
                 notifyDataSetChanged()
             }
         }
@@ -62,7 +62,7 @@ class ItemSearchableAdapter constructor(
         private val binding: SearchableAdapterItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun onBind(item: MyItemSearchableAdapter) {
+        fun onBind(item: ItemSearchableModel) {
             with(binding) {
                 searchableDescrip.text = item.text
                 searchableDivider.visibility = View.VISIBLE

@@ -38,7 +38,7 @@
     <string name="act002_title_">Choose an Account</string>
     <string name="msg_update_canceled">Update cancelled.</string>
     <string name="act002_mket_edit_hint">Type to search</string>
-    <string name="act002_empty_list">No item found! Please check filters.</string>
+    <string name="act002_empty_list">No item found!\nPlease check filters.</string>
 
     <!--LIB-->
     <string name="nfc_activity_title">NFC Scan</string>
@@ -118,7 +118,7 @@
     <string name="act002_ws_site_license_msg">Loading Sites with available licences.</string>
     <string name="act002_ws_ticket_download_ttl">Download</string>
     <string name="act002_ws_ticket_download_msg">Downloading outdated tickets.</string>
-    <string name="license_site_dialog_ttl">Licenced Sites</string>
+    <string name="license_site_dialog_ttl">Choose Site with licence</string>
     <string name="license_site_dialog_filter_hint">Select the Site of your licence</string>
     <string name="license_site_dialog_close">Cancel</string>
     <string name="act002_alt_no_licenses_returned_ttl">Licence unavailable!</string>

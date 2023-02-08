@@ -1,6 +1,6 @@
 package com.namoadigital.prj001.ui.act009;
 
-import static com.namoadigital.prj001.adapter.searchableitem.MyItemSearchableAdapter.Companion;
+import static com.namoadigital.prj001.adapter.searchableitem.ItemSearchableModel.Companion;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -258,7 +258,7 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
     public void loadTagList(List<HMAux> tagList) {
         if (tagList.size() > 0) {
 
-            ItemSearchableAdapter adapter = new ItemSearchableAdapter(Companion.convertToMyItemSearchable(tagList, MdTagDao.TAG_CODE, MdTagDao.TAG_DESC),
+            ItemSearchableAdapter adapter = new ItemSearchableAdapter(Companion.convertToItemSearchable(tagList, MdTagDao.TAG_CODE, MdTagDao.TAG_DESC),
                     item -> {
                         HMAux toConvert = new HMAux();
                         toConvert.put(MdTagDao.TAG_CODE, item.getCode());

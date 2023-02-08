@@ -1,6 +1,6 @@
 package com.namoadigital.prj001.ui.act010;
 
-import static com.namoadigital.prj001.adapter.searchableitem.MyItemSearchableAdapter.Companion;
+import static com.namoadigital.prj001.adapter.searchableitem.ItemSearchableModel.Companion;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -354,7 +354,7 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
 
         if (forms != null && !forms.isEmpty()) {
 
-            ItemSearchableAdapter adapter = new ItemSearchableAdapter(Companion.convertToMyItemSearchable(forms, CUSTOM_PK, CUSTOM_DESC),
+            ItemSearchableAdapter adapter = new ItemSearchableAdapter(Companion.convertToItemSearchable(forms, CUSTOM_PK, CUSTOM_DESC),
                     item -> {
 
                         for (HMAux form : forms) {

@@ -5,73 +5,68 @@
     android:id="@+id/license_site_dialog_cl_main"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:paddingVertical="16dp"
     >
 
     <TextView
         android:id="@+id/license_site_dialog_tv_ttl"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_weight="1"
-        tools:text="Seleção de licença"
-        android:textSize="@dimen/font_size_title_dialog"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/license_site_dialog_til_filter"
+        style="@style/TextAppearance.Material3.HeadlineSmall"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:textColorHint="@color/namoa_dark_blue"
-        app:boxStrokeColor="@color/namoa_dark_blue"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_weight="1"
+        android:textColor="@color/m3_namoa_onSurface"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Seleção de licença" />
+
+    <LinearLayout
+        android:id="@+id/layout_search_license"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingBottom="4dp"
         app:layout_constraintTop_toBottomOf="@+id/license_site_dialog_tv_ttl">
 
-        <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-            android:id="@+id/license_site_dialog_et_filter"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="hint"
-            app:mBARCODE="false"
-            app:mNFC="false"
-            app:mOCR="false"
-            app:mOCRVin="false" />
+        <include layout="@layout/layout_text_input_layout" />
+    </LinearLayout>
 
-    </com.google.android.material.textfield.TextInputLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/license_site_dialog_rv_sites"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintHeight_default="wrap"
         android:layout_margin="8dp"
-        app:layout_constraintBottom_toTopOf="@id/license_site_dialog_tv_close"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_default="wrap"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_search_license"
+        tools:itemCount="2"
+        tools:listitem="@layout/license_site_dialog_row" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/license_site_dialog_tv_close"
+        style="@style/Widget.Material3.Button.Icon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:backgroundTint="@drawable/button_theme_primary"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:textColor="@color/m3_namoa_surface2"
+        android:visibility="gone"
+        app:icon="@drawable/ic_close_circle_outline"
+        app:iconGravity="textStart"
+        app:iconTint="@color/m3_namoa_surface2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/license_site_dialog_til_filter"
-        tools:itemCount="2"
-        tools:listitem="@layout/license_site_dialog_row"
-        />
-
-    <TextView
-        android:id="@+id/license_site_dialog_tv_close"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@drawable/border_gray"
-        android:gravity="center"
-        android:paddingStart="20dp"
-        android:paddingTop="10dp"
-        android:paddingEnd="20dp"
-        android:paddingBottom="10dp"
-        android:text="Fechar"
-        android:textAllCaps="true"
-        android:textColor="@color/namoa_status_pending"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/license_site_dialog_rv_sites"
+        app:strokeColor="@color/m3_namoa_primary"
+        app:strokeWidth="0dp"
+        tools:text="Nova Ação" />
 </androidx.constraintlayout.widget.ConstraintLayout>

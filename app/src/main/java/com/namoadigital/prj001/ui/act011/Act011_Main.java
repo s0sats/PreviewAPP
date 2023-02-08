@@ -518,6 +518,7 @@ public class Act011_Main extends Base_Activity
         transList.add("dialog_finalize_os_form_invalid_end_date_end");
         transList.add("dialog_finalize_so_form_serial_empty_class_error");
         transList.add("dialog_finalize_serial_class_lbl");
+        transList.add("ss_class_hint");
         //
         transList.add("alert_error_order_or_structure_not_found_ttl");
         transList.add("alert_error_order_or_structure_not_found_msg");
@@ -3824,6 +3825,7 @@ public class Act011_Main extends Base_Activity
             ssSerialClass.setmShowLabel(false);
             ssSerialClass.setmRequired(true);
             ssSerialClass.setmCanClean(false);
+            ssSerialClass.setmLabel(hmAux_Trans.get("ss_class_hint"));
             //
             ssSerialClass.setmOption(serialClassList);
             binding.tvSerialClassTtl.setText(hmAux_Trans.get("dialog_finalize_serial_class_lbl"));
