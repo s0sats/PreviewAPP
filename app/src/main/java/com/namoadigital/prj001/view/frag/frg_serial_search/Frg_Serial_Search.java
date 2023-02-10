@@ -900,6 +900,7 @@ public class Frg_Serial_Search extends Fragment {
         transListFrag.add("serial_hint");
         transListFrag.add("tracking_hint");
         transListFrag.add("product_all_lbl");
+        transListFrag.add("product_contain_id_lbl");
         transListFrag.add("alert_no_product_ttl");
         transListFrag.add("alert_no_product_msg");
         transListFrag.add("alert_serial_pendencies_ttl");
