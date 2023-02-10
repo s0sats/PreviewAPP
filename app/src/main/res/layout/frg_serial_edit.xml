@@ -514,6 +514,11 @@
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
+
+                        <View
+                            android:layout_height="16dp"
+                            android:layout_width="match_parent" />
+
                     </LinearLayout>
 
                     <LinearLayout
@@ -521,7 +526,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:paddingTop="32dp">
+                        android:paddingTop="4dp">
 
                         <TextView
                             android:id="@+id/frg_serial_edit_tv_class_ttl"
@@ -886,7 +891,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             style="@style/NamoaTheme3.TextInputLayout.Outlined"
-                            android:paddingHorizontal="2dp">
+                            android:paddingVertical="0dp">
 
                             <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                                 android:layout_width="match_parent"
@@ -905,7 +910,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             style="@style/NamoaTheme3.TextInputLayout.Outlined"
-                            android:paddingHorizontal="2dp">
+                            android:paddingVertical="8dp">
 
                             <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                                 android:layout_width="match_parent"
@@ -923,7 +928,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             style="@style/NamoaTheme3.TextInputLayout.Outlined"
-                            android:paddingHorizontal="2dp">
+                            android:paddingVertical="0dp">
 
                             <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                                 android:layout_width="match_parent"
