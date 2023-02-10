@@ -75,7 +75,7 @@
                     app:layout_constraintBottom_toBottomOf="@+id/act083_til_filter"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/act083_til_filter"
-                    app:layout_constraintVertical_bias="0.7" />
+                    app:layout_constraintVertical_bias="0.5" />
 
 <!--                <com.google.android.material.chip.ChipGroup-->
 <!--                    android:id="@+id/act083_cg_filter"-->
