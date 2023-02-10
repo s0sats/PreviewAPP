@@ -169,5 +169,6 @@
 
 	<!--Login do Usuário B no device que tem dados pendentes do Usuário A (pendentes de envio ou Form em processo) -->
 	<string name="msg_last_user_with_pendency">CUIDADO! Dados serão PERDIDOS se você fizer login neste aparelho.\n\nO Usuário abaixo possui dados que ainda não foram enviados ao Servidor e/ou Formulários que estão sendo preenchidos:</string>
+    <string name="empty_list_license">Sem opções para seleção. Tente alterar os filtros...</string>
 
 </resources>
