@@ -161,13 +161,39 @@
                     android:id="@+id/act050_frag_param_ss_contract"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="-5dp"
                     app:layout_constraintBottom_toTopOf="@id/act050_frag_param_ss_po"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/act050_frag_param_tv_segment_val"
 
                     />
+                <LinearLayout
+                    android:id="@+id/act050_ll_contract_placeholder"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toTopOf="@id/act050_frag_param_ss_po"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/act050_frag_param_ss_contract"
+                    >
+                    <TextView
+                        android:id="@+id/act050_tv_contract_placeholder_lbl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/font_size_title_md"
+                        android:textStyle="bold"
+                        tools:text="label contrato "
+                        />
+
+                    <TextView
+                        android:id="@+id/act050_tv_contract_placeholder_val"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:text="label contrato "/>
+
+                </LinearLayout>
+
 
                 <!--Contrat_PO-->
 
@@ -175,13 +201,38 @@
                     android:id="@+id/act050_frag_param_ss_po"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="-5dp"
                     app:layout_constraintBottom_toTopOf="@id/act050_frag_param_ll_contract_po"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/act050_frag_param_ss_contract"
 
                     />
+                <LinearLayout
+                    android:id="@+id/act050_ll_so_placeholder"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toTopOf="@id/act050_frag_param_ll_contract_po"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/act050_frag_param_ss_po"
+                    >
+                    <TextView
+                        android:id="@+id/act050_tv_so_placeholder_lbl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/font_size_title_md"
+                        android:textStyle="bold"
+                        tools:text="label contrato "
+                        />
+
+                    <TextView
+                        android:id="@+id/act050_tv_so_placeholder_val"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:text="label contrato "/>
+
+                </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/act050_frag_param_ll_contract_po"
@@ -191,7 +242,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/act050_frag_param_ss_po"
                     app:layout_constraintBottom_toTopOf="@id/act050_frag_param_ss_site_exec"
-                    android:visibility="gone"
+                    android:visibility="invisible"
                     android:orientation="vertical"
                     >
 

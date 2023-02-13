@@ -434,8 +434,10 @@ public class Act050_Frag_Parameters extends BaseFragment {
 
                     if(favorite_contract_code != null
                     && favorite_contract_code > 0){
+                        ss_contract.setVisibility(View.GONE);
                         ss_contract.setmValue(getSelectedValue(options, favorite_contract_code));
-                        ss_contract.setmEnabled(false);
+//                        ss_contract.setmEnabled(false);
+
                     }else {
                         if (options.size() == 1) {
                             ss_contract.setmValue(options.get(0));
@@ -458,8 +460,9 @@ public class Act050_Frag_Parameters extends BaseFragment {
                 if (ss_contract.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
                     if(favorite_po_code != null
                     && favorite_po_code > 0){
+                        ss_po.setVisibility(View.GONE);
                         ArrayList<HMAux> options = generatePOOptionForSS(contracts, favorite_contract_code);
-                        ss_po.setmOption(options);
+//                        ss_po.setmOption(options);
 
                         for (HMAux poValue : options) {
                             if (favorite_po_code.equals(Integer.valueOf(poValue.get(SearchableSpinner.CODE)))){
