@@ -25,8 +25,10 @@
             android:paddingEnd="5dp"
             app:layout_constraintBottom_toTopOf="@id/act050_frag_param_iv_next"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -45,8 +47,7 @@
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <!--Product-->
                 <TextView
@@ -167,6 +168,7 @@
                     app:layout_constraintTop_toBottomOf="@id/act050_frag_param_tv_segment_val"
 
                     />
+
                 <LinearLayout
                     android:id="@+id/act050_ll_contract_placeholder"
                     android:layout_width="0dp"
@@ -175,22 +177,23 @@
                     app:layout_constraintBottom_toTopOf="@id/act050_frag_param_ss_po"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/act050_frag_param_ss_contract"
-                    >
-                    <TextView
+                    app:layout_constraintTop_toBottomOf="@id/act050_frag_param_ss_contract">
+
+                    <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/act050_tv_contract_placeholder_lbl"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/font_size_title_md"
                         android:textStyle="bold"
-                        tools:text="label contrato "
-                        />
+                        tools:text="label contrato ">
 
-                    <TextView
-                        android:id="@+id/act050_tv_contract_placeholder_val"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        tools:text="label contrato "/>
+                        <EditText
+                            android:id="@+id/act050_tv_contract_placeholder_val"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            tools:text="label contrato " />
+                    </com.google.android.material.textfield.TextInputLayout>
+
 
                 </LinearLayout>
 
@@ -204,9 +207,10 @@
                     app:layout_constraintBottom_toTopOf="@id/act050_frag_param_ll_contract_po"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/act050_frag_param_ss_contract"
+                    app:layout_constraintTop_toBottomOf="@id/act050_ll_contract_placeholder"
 
                     />
+
                 <LinearLayout
                     android:id="@+id/act050_ll_so_placeholder"
                     android:layout_width="0dp"
@@ -215,22 +219,23 @@
                     app:layout_constraintBottom_toTopOf="@id/act050_frag_param_ll_contract_po"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/act050_frag_param_ss_po"
-                    >
-                    <TextView
+                    app:layout_constraintTop_toBottomOf="@id/act050_frag_param_ss_po">
+
+                    <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/act050_tv_so_placeholder_lbl"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/font_size_title_md"
                         android:textStyle="bold"
-                        tools:text="label contrato "
-                        />
+                        tools:text="label contrato " >
 
-                    <TextView
-                        android:id="@+id/act050_tv_so_placeholder_val"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        tools:text="label contrato "/>
+                        <EditText
+                            android:id="@+id/act050_tv_so_placeholder_val"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            tools:text="label contrato " />
+                    </com.google.android.material.textfield.TextInputLayout>
+
 
                 </LinearLayout>
 
@@ -238,13 +243,12 @@
                     android:id="@+id/act050_frag_param_ll_contract_po"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="invisible"
+                    app:layout_constraintBottom_toTopOf="@id/act050_frag_param_ss_site_exec"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/act050_frag_param_ss_po"
-                    app:layout_constraintBottom_toTopOf="@id/act050_frag_param_ss_site_exec"
-                    android:visibility="invisible"
-                    android:orientation="vertical"
-                    >
+                    app:layout_constraintTop_toBottomOf="@id/act050_ll_so_placeholder">
 
                     <TextView
                         android:id="@+id/act050_frag_param_tv_info_erp_lbl"
@@ -356,10 +360,9 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="-5dp"
-                    app:layout_constraintTop_toBottomOf="@id/act050_frag_param_ll_contract_po"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    />
+                    app:layout_constraintTop_toBottomOf="@id/act050_frag_param_ll_contract_po" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
