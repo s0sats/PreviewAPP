@@ -112,18 +112,18 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     private String customFormVersion;
     private String customFormCodeDesc;
     //LUCHE - 03/03/2020 - Novo Agendamento
-    private Bundle scheduleBundle = new Bundle();
-    private Bundle act013Bundle = new Bundle();
-    private Bundle act081Bundle = new Bundle();
+    private final Bundle scheduleBundle = new Bundle();
+    private final Bundle act013Bundle = new Bundle();
+    private final Bundle act081Bundle = new Bundle();
     private String requestingAct;
     private boolean scheduled_profile_check;
     private boolean isOffHandForm;
     private boolean mtk_ticket_is_form_off_hand;
-    private Bundle act083Bundle = new Bundle();
+    private final Bundle act083Bundle = new Bundle();
     private String originFlow = null;
     private int isSoForm = 0;
     private MD_Product_Serial selectedProductSerial;
-    private boolean fromOfflineSource=false;
+    private boolean fromOfflineSource = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -338,10 +338,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     }
 
     private boolean hasNFormSelected() {
-        if(customFormCodeDesc.isEmpty()) {
-            return false;
-        }
-        return true;
+        return !customFormCodeDesc.isEmpty();
     }
 
     private void recoverIntentsInfo() {
@@ -361,7 +358,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                 record_count = bundle.getLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_COUNT);
                 record_page = bundle.getLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_PAGE);
                 serial_id = bundle.getString(Constant.MAIN_MD_PRODUCT_SERIAL_ID);
-                fromOfflineSource = bundle.getBoolean(FROM_OFFLINE_SOURCE, false);;
+                fromOfflineSource = bundle.getBoolean(FROM_OFFLINE_SOURCE, false);
 
                 fragProduct_ID = bundle.getString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, "");
                 fragSerial_ID = bundle.getString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, "");
@@ -538,27 +535,24 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         });*/
         //
         loadProductSerialList(serial_list);
-        if (serial_list != null && serial_list.size() != 0) {
-            //fragFilters.setSerialIdText(serial_list.get(0).getSerial_id());
-            //
-            //tv_records.setText(hmAux_Trans.get("showing_lbl") + " " + serial_list.size() + " " + hmAux_Trans.get("records_lbl"));
-            //
-            //
-            if (serial_list.size() == 1 && mJump) {
-                selectedProductSerial = serial_list.get(0);
-                defineSerialFlow(selectedProductSerial);
+        if (serial_list != null) {
+            binding.editSerialFilter.setEnabled(serial_list.size() != 1 && !serial_list.isEmpty());
+            binding.act020TextLayout.setEnabled(serial_list.size() != 1 && !serial_list.isEmpty());
+            checkListEmpty(serial_list.size());
+
+            if (!serial_list.isEmpty()) {
+                if (serial_list.size() == 1 && mJump) {
+                    selectedProductSerial = serial_list.get(0);
+                    defineSerialFlow(selectedProductSerial);
 /*                lv_prod_serial_list.performItemClick(
                         lv_prod_serial_list.getAdapter().getView(0, null, null),
                         0,
                         lv_prod_serial_list.getAdapter().getItemId(0)
                 );*/
-            }
-        } else {
-            binding.act020TextLayout.setEnabled(false);
-            if (serial_list != null) {
-                checkListEmpty(serial_list.size());
+                }
             }
         }
+
         //
         binding.editSerialFilter.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
 
