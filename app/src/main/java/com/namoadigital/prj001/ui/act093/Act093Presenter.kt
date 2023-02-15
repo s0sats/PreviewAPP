@@ -104,6 +104,7 @@ class Act093Presenter constructor(
             if (_state.value.list.isEmpty() &&
                 _state.value.serialInfo.last_measure_value == null &&
                 _state.value.serialInfo.model == null &&
+                _state.value.serialInfo.infoAdd.isNullOrEmpty() &&
                 _state.value.serialInfo.trackings == null
             ) {
                 view.onState(Act093Event.OpenDialog(
