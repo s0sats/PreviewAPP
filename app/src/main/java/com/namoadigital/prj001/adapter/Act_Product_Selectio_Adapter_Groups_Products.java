@@ -97,22 +97,27 @@ public class Act_Product_Selectio_Adapter_Groups_Products extends BaseAdapter {
             //
             //
             //tv_code.setText(codeText);
-            String customId = item.get("full_desc").replace(item.get("desc"), "").trim();
-            if (customId.contains("(")) {
-                SpannableString id_string = new SpannableString(item.get("full_desc"));
-                id_string.setSpan(
-                        new TextAppearanceSpan(context, R.style.Base_TextAppearance_Material3_LabelSmall),
-                        item.get("full_desc").indexOf("("),
-                        item.get("full_desc").length(),
-                        0
-                );
-                id_string.setSpan(
-                        new ForegroundColorSpan(context.getResources().getColor(R.color.m3_namoa_onSurface)),
-                        item.get("full_desc").indexOf("("),
-                        item.get("full_desc").length(),
-                        0
-                );
-                tv_desc.setText(id_string);
+            String customId;
+            if (!item.get("full_desc").isEmpty()) {
+                customId = item.get("full_desc").replace(item.get("desc"), "").trim();
+                if (customId.contains("(")) {
+                    SpannableString id_string = new SpannableString(item.get("full_desc"));
+                    id_string.setSpan(
+                            new TextAppearanceSpan(context, R.style.Base_TextAppearance_Material3_LabelSmall),
+                            item.get("full_desc").indexOf("("),
+                            item.get("full_desc").length(),
+                            0
+                    );
+                    id_string.setSpan(
+                            new ForegroundColorSpan(context.getResources().getColor(R.color.m3_namoa_onSurface)),
+                            item.get("full_desc").indexOf("("),
+                            item.get("full_desc").length(),
+                            0
+                    );
+                    tv_desc.setText(id_string);
+                } else {
+                    tv_desc.setText(item.get("desc"));
+                }
             } else {
                 tv_desc.setText(item.get("desc"));
             }

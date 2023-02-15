@@ -196,6 +196,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String ACT028_SERVICE_UPDATED = "ACT028_SERVICE_UPDATED";
 
     public static final String ACT_PRODUCT_SELECTION_PRODUCT_SEARCH = "product_search";
+    public static final String ACT_PRODUCT_SELECTION_PRODUCT_ALL_PRODUCT = "product_all";
     public static final String ACT_PRODUCT_SELECTION_PRODUCT_FOUND_JUMP = "product_search_found_jump";
 
     public static final String MAIN_REQUESTING_PROCESS = "main_requesting_process";

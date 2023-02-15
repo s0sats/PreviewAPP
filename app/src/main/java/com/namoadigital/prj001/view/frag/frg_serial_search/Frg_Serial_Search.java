@@ -739,6 +739,14 @@ public class Frg_Serial_Search extends Fragment {
 
     private void processResult(int resultCode, Intent data) {
         if (resultCode == AppCompatActivity.RESULT_OK) {
+            if (data.getBooleanExtra(Constant.ACT_PRODUCT_SELECTION_PRODUCT_ALL_PRODUCT, false)) {
+                mket_product_id.getText().clear();
+                til_product.setHint(hmAux_Trans.get("product_all_lbl"));
+                productId = "";
+                checkRulesForHintSerial(false);
+                return;
+            }
+
             MD_Product pAux = (MD_Product) data.getSerializableExtra(MD_Product.class.getName());
             //LUCHE - 10/11/2020
             //Ao retornar da seleção de produto, dispara interface com valor do product id atual + o
@@ -769,6 +777,9 @@ public class Frg_Serial_Search extends Fragment {
         Intent mIntent = new Intent(context, Act_Product_Selection.class);
         //
         Bundle bundle = new Bundle();
+        //
+
+        bundle.putBoolean(Constant.ACT_PRODUCT_SELECTION_PRODUCT_ALL_PRODUCT, !mket_product_id.getText().toString().isEmpty());
         //
         mIntent.putExtras(bundle);
         //
