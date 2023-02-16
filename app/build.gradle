@@ -10,7 +10,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 31
         versionCode 132
-        versionName "5.1.2.10"
+        versionName "5.1.2.11"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
         multiDexEnabled true
