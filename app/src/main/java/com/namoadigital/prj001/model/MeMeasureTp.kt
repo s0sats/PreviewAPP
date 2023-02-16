@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName
 import com.namoa_digital.namoa_library.ctls.MeasureFF
 import com.namoa_digital.namoa_library.util.ConstantBase.DATEFORMATDB
 import com.namoa_digital.namoa_library.util.ToolBox
+import com.namoadigital.prj001.extensions.roundByRestrictionMeasure
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.math.BigDecimal
@@ -47,17 +48,18 @@ class MeMeasureTp(
         lastMeasureDate: String?,
         measureDate: String?
     ): MeasureFF.MeasureValidationReturn {
+        val consideredLastMeasureValue = lastMeasureValue?.roundByRestrictionMeasure(restrictionDecimal?:ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT)
         if(bypassMinValidation){
             return MeasureFF.MeasureValidationReturn(true)
         }
          return when (this.restrictionType) {
             RESTRICTION_TYPE_VALUE -> isMeasureRestrictionValueValid(
                 measureValue,
-                lastMeasureValue
+                consideredLastMeasureValue
             )
             RESTRICTION_TYPE_VALUE_BY_DAY -> isMeasureRestrictionValueByDayValid(
                 measureValue,
-                lastMeasureValue,
+                consideredLastMeasureValue,
                 lastMeasureDate,
                 measureDate
             )
@@ -152,12 +154,19 @@ class MeMeasureTp(
         typedMeasure: Float,
         maxConsider: Double?
     ): MeasureFF.MeasureValidationReturn {
-        if (minConsider != null && typedMeasure.compareTo(minConsider) < 0) {
-            return MeasureFF.MeasureValidationReturn(false, UNDER_VALUE_ERROR)
+
+        minConsider?.let{
+            val minConsiderRound = it.roundByRestrictionMeasure(restrictionDecimal?:ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT)
+            if (typedMeasure.compareTo(minConsiderRound) < 0) {
+                return MeasureFF.MeasureValidationReturn(false, UNDER_VALUE_ERROR)
+            }
         }
 
-        if (maxConsider != null && typedMeasure.compareTo(maxConsider) > 0) {
-            return MeasureFF.MeasureValidationReturn(false, OVER_VALUE_ERROR)
+        maxConsider?.let{
+            val maxConsiderRound = it.roundByRestrictionMeasure(restrictionDecimal?:ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT)
+            if (typedMeasure.compareTo(maxConsiderRound) > 0) {
+                return MeasureFF.MeasureValidationReturn(false, OVER_VALUE_ERROR)
+            }
         }
 
         return MeasureFF.MeasureValidationReturn(true, null)

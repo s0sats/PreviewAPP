@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.Flow
 interface InfoSerialRepository {
 
     suspend fun getInfoSerial(): Flow<IResult<MD_Product_Serial>>
+    suspend fun geMeasureRestrictionDecimal(customerCode: Long, measureTpCode: Int): Int
 
     suspend fun getPreferences(): Flow<IResult<SerialModel>>
     suspend fun getValueSuffixProduct(customerCode: Long, code: Int): Flow<IResult<String?>>

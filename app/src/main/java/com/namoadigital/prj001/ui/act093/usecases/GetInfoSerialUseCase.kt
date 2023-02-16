@@ -7,6 +7,7 @@ import com.namoadigital.prj001.core.IResult.Companion.isSuccess
 import com.namoadigital.prj001.core.IResult.Companion.loading
 import com.namoadigital.prj001.core.IResult.Companion.success
 import com.namoadigital.prj001.core.UseCases
+import com.namoadigital.prj001.extensions.roundByRestrictionMeasure
 import com.namoadigital.prj001.ui.act092.model.SerialModel
 import com.namoadigital.prj001.ui.act093.data.repository.InfoSerialRepository
 import com.namoadigital.prj001.ui.act093.model.InfoSerialModel
@@ -62,7 +63,9 @@ class GetInfoSerialUseCase constructor(
                                 ToolBox_Inf.dateToMilliseconds(serial.last_cycle_date),
                                 ToolBox_Inf.nlsDateFormat(context)
                             ),
-                            infoAdd = infoAdd.formatInfoAdd()
+                            infoAdd = infoAdd.formatInfoAdd(),
+                            last_measure_value = serial.last_measure_value?.roundByRestrictionMeasure(repository.geMeasureRestrictionDecimal(serial.customer_code, code)),
+                            last_cycle_value =  serial.last_cycle_value?.roundByRestrictionMeasure(repository.geMeasureRestrictionDecimal(serial.customer_code, code))
                         )
 
                         emit(success(infoModel))

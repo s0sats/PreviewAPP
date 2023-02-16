@@ -9,6 +9,7 @@ import android.os.Bundle
 import com.google.gson.GsonBuilder
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.dao.*
+import com.namoadigital.prj001.extensions.roundByRestrictionMeasure
 import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.receiver.WBR_Product_Serial_Backup
 import com.namoadigital.prj001.service.SO_PRODUCT_CODE
@@ -186,6 +187,8 @@ class Act087MainPresenter(
     override fun getOsHeaderObj(): GeOs {
         var orderType : MdOrderType? = null
         var measureTp : MeMeasureTp? = null
+        var lastMeasureValueConsider : Double? = null
+        var lastCycleValueConsider : Float? = null
         //
         mCustomForm.so_order_type_code_default?.let {
             orderType = getOrderType(mCustomForm.customer_code,mCustomForm.so_order_type_code_default)
@@ -193,6 +196,19 @@ class Act087MainPresenter(
         getSerialInfo()
         serialObj.measure_tp_code?.let {
             measureTp = getMeasureTp(serialObj.customer_code,serialObj.measure_tp_code)
+        }
+        serialObj.last_measure_value?.let{
+            val decimal = measureTp?.let { measureTp->
+                measureTp.restrictionDecimal ?:ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT
+            }
+            lastMeasureValueConsider = it.roundByRestrictionMeasure(decimal)
+        }
+        //
+        serialObj.last_cycle_value?.let{
+            val decimal = measureTp?.let { measureTp->
+                measureTp.restrictionDecimal ?:ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT
+            }
+            lastCycleValueConsider = it.roundByRestrictionMeasure(decimal)
         }
         //
         return GeOs(
@@ -216,14 +232,14 @@ class Act087MainPresenter(
             measure_tp_id = measureTp?.measureTpId,
             measure_tp_desc = measureTp?.measureTpDesc,
             measure_value = null,
-            measure_cycle_value = serialObj.last_cycle_value,
+            measure_cycle_value = lastCycleValueConsider,
             value_sufix = measureTp?.valueSufix,
             restriction_decimal = measureTp?.restrictionDecimal,
             value_cycle_size = measureTp?.valueCycleSize,
             cycle_tolerance = measureTp?.cycleTolerance,
             date_start = null,
-            last_cycle_value = serialObj.last_cycle_value,
-            last_measure_value = serialObj.last_measure_value?.toFloat(),
+            last_cycle_value = lastCycleValueConsider,
+            last_measure_value = lastMeasureValueConsider?.toFloat(),
             last_measure_date = serialObj.last_measure_date,
             so_edit_start_end = mCustomForm.so_edit_start_end,
             so_order_type_code_default = mCustomForm.so_order_type_code_default,

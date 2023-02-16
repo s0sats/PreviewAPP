@@ -49,6 +49,8 @@ import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
 import com.namoadigital.prj001.dao.MeMeasureTpDao;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.extensions.DoubleHelperKt;
+import com.namoadigital.prj001.extensions.FloatHelperKt;
 import com.namoadigital.prj001.extensions.StringHelperKt;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
@@ -73,6 +75,7 @@ import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.ui.act032.Act032_Main;
 import com.namoadigital.prj001.ui.act093.model.InfoSerialModel;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -537,6 +540,39 @@ public class Frg_Serial_Edit extends BaseFragment {
         ).toSqlQuery());
 
         return StringHelperKt.formatForDisplay(meMeasureTp.getValueSufix());
+    }
+
+    private double getMeasureValueRounded(Double lastMeasure) {
+
+        MeMeasureTp meMeasureTp = measureTpDao.getByString(new MeMeasureTpSql_001(
+                mdProductSerial.getCustomer_code(),
+                mdProductSerial.getMeasure_tp_code() != null ? mdProductSerial.getMeasure_tp_code() : -1
+        ).toSqlQuery());
+        int restrictionDecimal = ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT;
+        //
+        if(meMeasureTp != null
+        && meMeasureTp.getRestrictionDecimal() != null){
+            restrictionDecimal = meMeasureTp.getRestrictionDecimal();
+        }
+        //
+        return DoubleHelperKt.roundByRestrictionMeasure(lastMeasure,restrictionDecimal);
+
+    }
+    private double getMeasureValueRounded(float value) {
+
+        MeMeasureTp meMeasureTp = measureTpDao.getByString(new MeMeasureTpSql_001(
+                mdProductSerial.getCustomer_code(),
+                mdProductSerial.getMeasure_tp_code() != null ? mdProductSerial.getMeasure_tp_code() : -1
+        ).toSqlQuery());
+        int restrictionDecimal = ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT;
+        //
+        if(meMeasureTp != null
+                && meMeasureTp.getRestrictionDecimal() != null){
+            restrictionDecimal = meMeasureTp.getRestrictionDecimal();
+        }
+        //
+        return FloatHelperKt.roundByRestrictionMeasure(value,restrictionDecimal);
+
     }
 
     //
@@ -1116,7 +1152,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         }
         //
 
-        String last_measure = mdProductSerial.getLast_measure_value() != null && mdProductSerial.getLast_measure_value() != 0.0 ? ToolBox_Inf.convertDoubleToBigDecimalString(mdProductSerial.getLast_measure_value(), true) : null;
+        String last_measure = mdProductSerial.getLast_measure_value() != null && mdProductSerial.getLast_measure_value() != 0.0 ? ToolBox_Inf.convertDoubleToBigDecimalString( getMeasureValueRounded(mdProductSerial.getLast_measure_value()), true) : null;
         String last_measure_date = mdProductSerial.getLast_measure_date() != null && !mdProductSerial.getLast_measure_date().isEmpty() ? mdProductSerial.getLast_measure_date() : null;
 
         String measureFormatted;
@@ -1144,7 +1180,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         String cycleFormatted;
 
         if (mdProductSerial.getLast_cycle_value() != null) {
-            String lastCycleFormatted = ToolBox_Inf.convertDoubleToBigDecimalString(mdProductSerial.getLast_cycle_value(), true);
+            String lastCycleFormatted = ToolBox_Inf.convertDoubleToBigDecimalString(getMeasureValueRounded(mdProductSerial.getLast_cycle_value()), true);
             if (last_cycle_date != null && !last_cycle_date.isEmpty()) {
                 cycleFormatted = InfoSerialModel.Companion.formatMeasureValue(lastCycleFormatted, getMeasureValueSuffix()) + " (" + ToolBox_Inf.millisecondsToString(
                         ToolBox_Inf.dateToMilliseconds(last_cycle_date),

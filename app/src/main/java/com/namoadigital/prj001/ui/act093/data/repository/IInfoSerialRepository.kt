@@ -21,6 +21,7 @@ import com.namoadigital.prj001.ui.act092.model.SerialModel
 import com.namoadigital.prj001.ui.act093.model.DeviceTpModel
 import com.namoadigital.prj001.ui.base.NamoaFactory
 import com.namoadigital.prj001.util.Constant
+import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -59,6 +60,21 @@ class IInfoSerialRepository constructor(
             } ?: emit(failed(InfoSerialRepositoryException("MD_Product_Serial not found")))
 
         }.namoaCatch(IInfoSerialRepository::class.java.simpleName)
+    }
+
+    override suspend fun geMeasureRestrictionDecimal(
+        customerCode: Long,
+        measureTpCode: Int
+    ): Int {
+        val meMeasureTp = measureTpDao.getByString(
+            MeMeasureTpSql_001(
+                customerCode,
+                measureTpCode
+            ).toSqlQuery()
+        )
+        return meMeasureTp?.let{
+            it.restrictionDecimal?:ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT
+        }?: ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT
     }
 
 
