@@ -57,6 +57,7 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
     private Bundle bundle;
     private boolean mkUpdate = true;
     private boolean returnOnFound;
+    private boolean showAllProducts;
     private boolean isProductAddProcess;
     private ArrayList<Integer> receivedProducts = new ArrayList<>();
 
@@ -106,6 +107,7 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
         transList.add("lbl_desc");
         transList.add("mket_hint_msg");
         transList.add("product_list_empty_lbl");
+        transList.add("product_all_lbl");
         transList.add("material_list_empty_lbl");
         transList.add("mket_hint_input_msg");
         transList.add("btn_back");
@@ -182,7 +184,9 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
         resetSearch();
 
         if (bundle != null) {
+
             returnOnFound = Boolean.parseBoolean(bundle.getString(Constant.ACT_PRODUCT_SELECTION_PRODUCT_FOUND_JUMP));
+            showAllProducts = bundle.getBoolean(Constant.ACT_PRODUCT_SELECTION_PRODUCT_ALL_PRODUCT, false);
             mket_product_search.setText(bundle.getString(Constant.ACT_PRODUCT_SELECTION_PRODUCT_SEARCH));
             isProductAddProcess = bundle.getBoolean(IS_ADD_PRODUCT_LIST, false);
             receivedProducts = (ArrayList<Integer>) bundle.getSerializable(PRODUCT_LIST);
@@ -250,7 +254,7 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
         ToolBox_Inf.buildFooterDialog(context);
     }
 
-    ArrayList<String> pathUrl = new ArrayList<>();
+    private final ArrayList<String> pathUrl = new ArrayList<>();
 
     private void updatePathUrl(String path) {
         if (currentIndex.get(INDEX_GROUP_CODE).equals("0")) {
@@ -394,20 +398,26 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
         //
         if (isProductAddProcess) {
             MD_All_Product pAux = mPresenter.getProductFromAll(String.valueOf(
-                    ToolBox_Con.getPreference_Customer_Code(context)),
+                            ToolBox_Con.getPreference_Customer_Code(context)),
                     String.valueOf(item.get("code"))
             );
             if (pAux != null) {
                 sendAllProductResult(pAux);
             }
-        }else{
-            MD_Product pAux = mPresenter.getProduct(
-                    String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
-                    String.valueOf(item.get("code"))
-            );
-            if (pAux != null) {
-                sendResult(pAux);
+        } else {
+            if (!item.get("code").equals("-9")) {
+                MD_Product pAux = mPresenter.getProduct(
+                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                        String.valueOf(item.get("code"))
+                );
+                if (pAux != null) {
+                    sendResult(pAux);
+                }
+                return;
             }
+
+            sendResult(null);
+
         }
         //
 
@@ -418,9 +428,9 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
         Bundle bundle = new Bundle();
 
         bundle.putInt(MD_All_ProductDao.PRODUCT_CODE, (int) md_all_product.getProduct_code());
-        bundle.putString(MD_All_ProductDao.PRODUCT_ID,md_all_product.getProduct_id());
-        bundle.putString(MD_All_ProductDao.PRODUCT_DESC,md_all_product.getProduct_desc());
-        bundle.putString(MD_All_ProductDao.UN,md_all_product.getUn());
+        bundle.putString(MD_All_ProductDao.PRODUCT_ID, md_all_product.getProduct_id());
+        bundle.putString(MD_All_ProductDao.PRODUCT_DESC, md_all_product.getProduct_desc());
+        bundle.putString(MD_All_ProductDao.UN, md_all_product.getUn());
 
         data.putExtras(bundle);
         setResult(RESULT_OK, data);
@@ -431,7 +441,11 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
     public void sendResult(MD_Product md_product) {
         Intent data = new Intent();
         Bundle bundle = new Bundle();
-        bundle.putSerializable(MD_Product.class.getName(), md_product);
+        if (md_product != null) {
+            bundle.putSerializable(MD_Product.class.getName(), md_product);
+        } else {
+            bundle.putBoolean(Constant.ACT_PRODUCT_SELECTION_PRODUCT_ALL_PRODUCT, true);
+        }
         data.putExtras(bundle);
         setResult(RESULT_OK, data);
         finish();
@@ -439,21 +453,33 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
 
     @Override
     public void loadGroups_Products(List<HMAux> groups_products) {
-        if(groups_products.isEmpty()){
+        if (groups_products.isEmpty()) {
             tv_empty_list.setVisibility(View.VISIBLE);
             lv_groups_products.setVisibility(View.GONE);
-        }else {
-            tv_empty_list.setVisibility(View.GONE);
-            lv_groups_products.setVisibility(View.VISIBLE);
-            lv_groups_products.setAdapter(
-                    new Act_Product_Selectio_Adapter_Groups_Products(
-                            context,
-                            R.layout.act_product_selection_content_cell_01,
-                            groups_products,
-                            hmAux_Trans
-                    )
-            );
+            return;
         }
+
+        List<HMAux> listWithAllProducts = null;
+        if (showAllProducts) {
+            listWithAllProducts = new ArrayList<>();
+            HMAux itemAllProducts = new HMAux();
+            itemAllProducts.put("code", "-9");
+            itemAllProducts.put("full_desc", "");
+            itemAllProducts.put("type", "other");
+            itemAllProducts.put("desc", hmAux_Trans.get("product_all_lbl"));
+            listWithAllProducts.add(itemAllProducts);
+            listWithAllProducts.addAll(groups_products);
+        }
+        tv_empty_list.setVisibility(View.GONE);
+        lv_groups_products.setVisibility(View.VISIBLE);
+        lv_groups_products.setAdapter(
+                new Act_Product_Selectio_Adapter_Groups_Products(
+                        context,
+                        R.layout.act_product_selection_content_cell_01,
+                        showAllProducts && listWithAllProducts != null ? listWithAllProducts : groups_products,
+                        hmAux_Trans
+                )
+        );
     }
 
     @Override
