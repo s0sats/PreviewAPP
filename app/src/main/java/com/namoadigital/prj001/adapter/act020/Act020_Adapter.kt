@@ -46,7 +46,9 @@ class Act020_Adapter constructor(
                         )
                     )
                 } else {
-                    newList.add(SearchSerialViewItem.SectionItem(false))
+                    if (it.local_control == 1) {
+                        newList.add(SearchSerialViewItem.SectionItem(false))
+                    }
                     newList.add(
                         SearchSerialViewItem.ContentItem(
                             it,
