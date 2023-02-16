@@ -16,6 +16,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.LicenseSiteAdapter;
+import com.namoadigital.prj001.design.list.IOnRememberListState;
 import com.namoadigital.prj001.model.SiteLicense;
 
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ public class LicenseSiteDialog extends AlertDialog {
     private MKEditTextNM mketFilter;
     private TextView tvClose;
     private RecyclerView rvSites;
+    private TextView emptyList;
     private LicenseSiteAdapter mAdapter;
     private ArrayList<SiteLicense> siteList = new ArrayList<>();
     private LicenseSiteAdapter.OnSiteClickListener onSiteClickListener;
@@ -61,6 +63,7 @@ public class LicenseSiteDialog extends AlertDialog {
         tilFilter = findViewById(R.id.filter_edit_text_llayout);
         mketFilter = findViewById(R.id.filter_edit_text);
         rvSites = findViewById(R.id.license_site_dialog_rv_sites);
+        emptyList = findViewById(R.id.empty_list_license);
         tvClose = findViewById(R.id.license_site_dialog_tv_close);
     }
 
@@ -68,18 +71,27 @@ public class LicenseSiteDialog extends AlertDialog {
         tvTtl.setText(R.string.license_site_dialog_ttl);
         tilFilter.setHint(getContext().getString(R.string.license_site_dialog_filter_hint));
         tvClose.setText(R.string.license_site_dialog_close);
+        emptyList.setText(R.string.empty_list_license);
     }
 
     private void setConfig() {
-        mAdapter = new LicenseSiteAdapter(
-            getContext(),
-            siteList,
-            onSiteClickListener);
-        //
-        rvSites.setLayoutManager(new LinearLayoutManager(getContext()));
-        rvSites.addItemDecoration(new DividerItemDecoration(getContext(),DividerItemDecoration.VERTICAL));
-        rvSites.setAdapter(mAdapter);
-        mAdapter.getFilter().filter(mketFilter.getText().toString().trim());
+        if (!siteList.isEmpty()) {
+            rvSites.setVisibility(View.VISIBLE);
+            emptyList.setVisibility(View.GONE);
+            mAdapter = new LicenseSiteAdapter(
+                    getContext(),
+                    siteList,
+                    onSiteClickListener,
+                    new IOnRememberListState<>(rvSites, emptyList));
+            //
+            rvSites.setLayoutManager(new LinearLayoutManager(getContext()));
+            rvSites.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+            rvSites.setAdapter(mAdapter);
+            mAdapter.getFilter().filter(mketFilter.getText().toString().trim());
+        } else {
+            rvSites.setVisibility(View.GONE);
+            emptyList.setVisibility(View.VISIBLE);
+        }
     }
 
     private void initValues() {
