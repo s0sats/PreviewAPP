@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="10dp"
     android:orientation="vertical"
     android:gravity="center_vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
@@ -21,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:padding="16dp"
+            android:paddingHorizontal="16dp"
             android:orientation="vertical">
 
             <!--<View-->
@@ -60,11 +59,11 @@
                         android:id="@+id/frg_serial_search_mket_product_id"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:textColor="@drawable/edittext_theme_text_transparent_text"
                         app:mBARCODE="false"
                         app:mNFC="false"
                         app:mOCR="false"
-                        tools:text="saaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-                        android:textColor="@drawable/edittext_theme_text_transparent_text" />
+                        tools:text="saaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" />
                 </com.google.android.material.textfield.TextInputLayout>
 
 
