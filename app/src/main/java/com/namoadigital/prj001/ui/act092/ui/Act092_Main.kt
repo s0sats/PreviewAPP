@@ -6,6 +6,7 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.setPadding
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.HMAux
@@ -502,10 +503,10 @@ class Act092_Main : BaseActivityMvp
         val mainUserCircle =
             if (!focusState.userFocus) {
                 resources.getDrawable(
-                    R.drawable.my_action_toogle_disable
+                    R.drawable.my_action_toogle_disable_inset
                 )
             } else {
-                resources.getDrawable(R.drawable.my_action_toogle_default)
+                resources.getDrawable(R.drawable.my_action_toogle_default_inset)
             }
         val mainUserPerson =
             if (focusState.userFocus) {
@@ -583,10 +584,12 @@ class Act092_Main : BaseActivityMvp
         with(binding.mainUserSelection) {
             if (value) {
                 setImageResource(R.drawable.ic_person_white_24dp)
-                background = resources.getDrawable(R.drawable.my_action_toogle_pressed)
+                background = resources.getDrawable(R.drawable.my_action_toogle_pressed_inset)
+                setPadding(ToolBox.convertPixelsToDpIndeed(context, 12f).toInt())
             } else {
-                background = resources.getDrawable(R.drawable.my_action_toogle_default)
+                background = resources.getDrawable(R.drawable.my_action_toogle_default_inset)
                 setImageResource(R.drawable.ic_person_black_24dp)
+                setPadding(ToolBox.convertPixelsToDpIndeed(context, 12f).toInt())
             }
         }
     }
