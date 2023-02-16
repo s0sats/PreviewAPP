@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.design.list.OnRememberListState;
 import com.namoadigital.prj001.model.SiteLicense;
 
 import java.util.ArrayList;
@@ -25,17 +26,19 @@ public class LicenseSiteAdapter extends RecyclerView.Adapter<LicenseSiteAdapter.
     private ArrayList<SiteLicense> source = new ArrayList<>();
     private ArrayList<SiteLicense> mFilteredSource = new ArrayList<>();
     private OnSiteClickListener onSiteClickListener;
+    private OnRememberListState<SiteLicense> onRememberListState;
     private LicenseSiteFilter valueFilter;
 
     public interface OnSiteClickListener {
         void onSiteClick(SiteLicense siteLicense);
     }
 
-    public LicenseSiteAdapter(Context context, ArrayList<SiteLicense> source, OnSiteClickListener onSiteClickListener) {
+    public LicenseSiteAdapter(Context context, ArrayList<SiteLicense> source, OnSiteClickListener onSiteClickListener, OnRememberListState<SiteLicense> onRememberListState) {
         this.context = context;
         this.source = source;
         this.mFilteredSource = source;
         this.onSiteClickListener = onSiteClickListener;
+        this.onRememberListState = onRememberListState;
     }
 
     @NonNull
@@ -140,6 +143,7 @@ public class LicenseSiteAdapter extends RecyclerView.Adapter<LicenseSiteAdapter.
         @Override
         protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
             mFilteredSource = (ArrayList<SiteLicense>) filterResults.values;
+            onRememberListState.dataChanged(mFilteredSource);
             notifyDataSetChanged();
         }
     }
