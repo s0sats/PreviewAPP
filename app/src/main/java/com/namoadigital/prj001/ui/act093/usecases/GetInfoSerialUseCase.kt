@@ -64,8 +64,7 @@ class GetInfoSerialUseCase constructor(
                                 ToolBox_Inf.nlsDateFormat(context)
                             ),
                             infoAdd = infoAdd.formatInfoAdd(),
-                            last_measure_value = serial.last_measure_value?.roundByRestrictionMeasure(repository.geMeasureRestrictionDecimal(serial.customer_code, code)),
-                            last_cycle_value =  serial.last_cycle_value?.roundByRestrictionMeasure(repository.geMeasureRestrictionDecimal(serial.customer_code, code))
+                            last_measure_value = serial.last_measure_value?.roundByRestrictionMeasure(repository.geMeasureRestrictionDecimal(serial.customer_code, code))
                         )
 
                         emit(success(infoModel))

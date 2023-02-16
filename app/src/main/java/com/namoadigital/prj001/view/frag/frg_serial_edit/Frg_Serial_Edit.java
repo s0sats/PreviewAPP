@@ -1180,7 +1180,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         String cycleFormatted;
 
         if (mdProductSerial.getLast_cycle_value() != null) {
-            String lastCycleFormatted = ToolBox_Inf.convertDoubleToBigDecimalString(getMeasureValueRounded(mdProductSerial.getLast_cycle_value()), true);
+            String lastCycleFormatted = ToolBox_Inf.convertDoubleToBigDecimalString(mdProductSerial.getLast_cycle_value(), true);
             if (last_cycle_date != null && !last_cycle_date.isEmpty()) {
                 cycleFormatted = InfoSerialModel.Companion.formatMeasureValue(lastCycleFormatted, getMeasureValueSuffix()) + " (" + ToolBox_Inf.millisecondsToString(
                         ToolBox_Inf.dateToMilliseconds(last_cycle_date),

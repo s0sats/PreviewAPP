@@ -188,7 +188,6 @@ class Act087MainPresenter(
         var orderType : MdOrderType? = null
         var measureTp : MeMeasureTp? = null
         var lastMeasureValueConsider : Double? = null
-        var lastCycleValueConsider : Float? = null
         //
         mCustomForm.so_order_type_code_default?.let {
             orderType = getOrderType(mCustomForm.customer_code,mCustomForm.so_order_type_code_default)
@@ -202,13 +201,6 @@ class Act087MainPresenter(
                 measureTp.restrictionDecimal ?:ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT
             }
             lastMeasureValueConsider = it.roundByRestrictionMeasure(decimal)
-        }
-        //
-        serialObj.last_cycle_value?.let{
-            val decimal = measureTp?.let { measureTp->
-                measureTp.restrictionDecimal ?:ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT
-            }
-            lastCycleValueConsider = it.roundByRestrictionMeasure(decimal)
         }
         //
         return GeOs(
@@ -232,13 +224,13 @@ class Act087MainPresenter(
             measure_tp_id = measureTp?.measureTpId,
             measure_tp_desc = measureTp?.measureTpDesc,
             measure_value = null,
-            measure_cycle_value = lastCycleValueConsider,
+            measure_cycle_value = serialObj.last_cycle_value,
             value_sufix = measureTp?.valueSufix,
             restriction_decimal = measureTp?.restrictionDecimal,
             value_cycle_size = measureTp?.valueCycleSize,
             cycle_tolerance = measureTp?.cycleTolerance,
             date_start = null,
-            last_cycle_value = lastCycleValueConsider,
+            last_cycle_value = serialObj.last_cycle_value,
             last_measure_value = lastMeasureValueConsider?.toFloat(),
             last_measure_date = serialObj.last_measure_date,
             so_edit_start_end = mCustomForm.so_edit_start_end,
