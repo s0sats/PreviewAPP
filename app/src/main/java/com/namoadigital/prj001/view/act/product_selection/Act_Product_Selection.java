@@ -460,7 +460,7 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
         }
 
         List<HMAux> listWithAllProducts = null;
-        if (showAllProducts) {
+        if (showAllProducts && currentIndex.get(INDEX_GROUP_CODE).equals("0")) {
             listWithAllProducts = new ArrayList<>();
             HMAux itemAllProducts = new HMAux();
             itemAllProducts.put("code", "-9");
