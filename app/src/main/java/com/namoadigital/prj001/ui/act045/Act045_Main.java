@@ -149,7 +149,8 @@ public class Act045_Main extends Base_Activity_NFC_Geral implements Act045_Main_
          * DEVERIAM TER ESSE ACESSO.
          */
         if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_PRODUCT_SERIAL, Constant.PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_EDIT)
-                && md_product != null) {
+                && md_product != null
+                && !ToolBox_Inf.hasSerialOnList(serial_list , serial_id)) {
             btn_create_serial.setVisibility(View.VISIBLE);
         } else {
             btn_create_serial.setVisibility(View.GONE);
