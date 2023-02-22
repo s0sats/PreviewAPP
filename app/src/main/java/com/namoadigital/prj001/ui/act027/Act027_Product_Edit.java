@@ -951,18 +951,7 @@ public class Act027_Product_Edit extends BaseFragment {
 
             if (isValid()) {
 
-                ToolBox.alertMSG(
-                        context,
-                        hmAux_Trans.get("alert_product_edit_save_ttl"),
-                        hmAux_Trans.get("alert_product_edit_msg"),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                informEventActiveClosed();
-                            }
-                        },
-                        1
-                );
+                informEventActiveClosed();
             } else {
                 informEventError(mErrorMSG);
             }

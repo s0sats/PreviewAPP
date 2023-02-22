@@ -1,9 +1,7 @@
 package com.namoadigital.prj001.ui.act027;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,9 +11,10 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act027_Product_List_Adapter;
@@ -178,21 +177,9 @@ public class Act027_Product_List extends BaseFragment {
             btn_add_event.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
-                    ToolBox.alertMSG(
-                        context,
-                        hmAux_Trans.get("new_product_event_ttl"),
-                        hmAux_Trans.get("new_product_event_msg"),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                if (onNewEventClickListner != null) {
-                                    onNewEventClickListner.onNewEventClick();
-                                }
-                            }
-                        },
-                        1
-                    );
+                    if (onNewEventClickListner != null) {
+                        onNewEventClickListner.onNewEventClick();
+                    }
                 }
             });
             //

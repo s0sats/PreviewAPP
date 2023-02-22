@@ -1843,27 +1843,17 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                     progressDialog.dismiss();
                     only_save = false;
                     //
-                    ToolBox.alertMSG(
-                            context,
-                            hmAux_Trans.get("alert_so_ttl"),
-                            hmAux_Trans.get("msg_so_save_ok"),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    refreshUI();
-                                    if(isSoCreateRoomCall) {
-                                        executeSoCreateRoom();
-                                    }else{
-                                        boolean hasSerialPendency = getMd_product_serialsPendency(serialDao);
+                    Toast.makeText(context, hmAux_Trans.get("msg_so_save_ok"), Toast.LENGTH_LONG).show();
+                    refreshUI();
+                    if (isSoCreateRoomCall) {
+                        executeSoCreateRoom();
+                    } else {
+                        boolean hasSerialPendency = getMd_product_serialsPendency(serialDao);
 
-                                        if ( hasSerialPendency || isSerialOutdated){
-                                            executeSerialSave(false);
-                                        }
-                                    }
-                                }
-                            },
-                            0
-                    );
+                        if (hasSerialPendency || isSerialOutdated) {
+                            executeSerialSave(false);
+                        }
+                    }
                     //refreshUI();
                 } else {
                     progressDialog.dismiss();
