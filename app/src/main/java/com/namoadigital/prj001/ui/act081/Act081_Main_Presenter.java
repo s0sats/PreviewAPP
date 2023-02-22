@@ -129,24 +129,24 @@ public class Act081_Main_Presenter implements Act081_Main_Contract.I_Presenter{
                     hmAux_Trans.get("alert_no_serial_found_msg")
             );
         } else {
-            ArrayList<MD_Product_Serial> results = processEqualCheck(serial_list);
+//            ArrayList<MD_Product_Serial> results = processEqualCheck(serial_list);
 
             Bundle bundle = new Bundle();
             bundle.putBoolean(FROM_OFFLINE_SOURCE, from_offline_source);
             bundle.putString(MD_ProductDao.PRODUCT_ID, mdProduct != null ? mdProduct.getProduct_id() : "");
 
-            if (results.size() != 0) {
+//            if (results.size() != 0) {
+//                bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, true);
+//                bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, results);
+//            } else {
+            if (serial_list!= null && serial_list.size() == 1 && serial_list.get(0).getSerial_id().equalsIgnoreCase(mSerial_id)) {
                 bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, true);
-                bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, results);
+                bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serial_list);
             } else {
-                if (serial_list!= null && serial_list.size() == 1 && serial_list.get(0).getSerial_id().equalsIgnoreCase(mSerial_id)) {
-                    bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, true);
-                    bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serial_list);
-                } else {
-                    bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, false);
-                    bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serial_list);
-                }
+                bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, false);
+                bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serial_list);
             }
+//            }
 
             bundle.putString(Constant.MAIN_MD_PRODUCT_SERIAL_ID, mSerial_id);
             bundle.putLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_COUNT, record_count);
