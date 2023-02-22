@@ -2140,7 +2140,7 @@ public class Act011_Main extends Base_Activity
 
     @Override
     public CustomFF cfg_Measure(HMAux cf, MD_Product_Serial serialInfo, MeMeasureTp measureTp) {
-        String historicalInfo = mPresenter.getLastMeasureInfo(measureTp,serialInfo);
+        String historicalInfo = mPresenter.getLastMeasureInfo(measureTp,serialInfo, getDecimalFromContent(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_CONTENT)) );
         //
         MeasureFF measureFF = new MeasureFF(Act011_Main.this);
         measureFF.setLastMeasureValue(historicalInfo);

@@ -92,7 +92,7 @@ public interface Act011_Main_Presenter {
     CustomFF checkNumberOrMeasureCtrl(HMAux cf, MD_Product_Serial serialInfo);
 
     @Nullable
-    String getLastMeasureInfo(MeMeasureTp measureTp, MD_Product_Serial serialInfo);
+    String getLastMeasureInfo(MeMeasureTp measureTp, MD_Product_Serial serialInfo, int decimalFromContent);
 
     ArrayList<HMAux> getSerialClassList();
 

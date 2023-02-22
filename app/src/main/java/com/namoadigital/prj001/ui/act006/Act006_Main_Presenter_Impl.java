@@ -211,7 +211,7 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
             );
         } else {
 
-            ArrayList<MD_Product_Serial> results = processEqualCheck(serial_list);
+//            ArrayList<MD_Product_Serial> results = processEqualCheck(serial_list);
             //LUCHE - 03/05/2021 - Aplicado corte limite de 100 item para evitar crash ao passar
             //lista via bundle e compatibilizar o comportamento com o da busca online.
             if(serial_list != null && serial_list.size() > 101){
@@ -223,10 +223,10 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
             bundle.putBoolean(FROM_OFFLINE_SOURCE, from_offline_source);
             bundle.putString(MD_ProductDao.PRODUCT_ID, mdProduct != null ? mdProduct.getProduct_id() : "");
 
-            if (results.size() != 0) {
-                bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, true);
-                bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, results);
-            } else {
+//            if (results.size() != 0) {
+//                bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, true);
+//                bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, results);
+//            } else {
                 if (serial_list.size() == 1 && serial_list.get(0).getSerial_id().equalsIgnoreCase(mSerial_id)) {
                     bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, true);
                     bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serial_list);
@@ -234,7 +234,7 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
                     bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, false);
                     bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serial_list);
                 }
-            }
+//            }
 
             bundle.putString(Constant.MAIN_MD_PRODUCT_SERIAL_ID, mSerial_id);
             bundle.putLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_COUNT, record_count);

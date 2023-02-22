@@ -44,6 +44,7 @@ import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.dao.TK_Ticket_FormDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
+import com.namoadigital.prj001.extensions.FloatHelperKt;
 import com.namoadigital.prj001.model.AcessoryFormView;
 import com.namoadigital.prj001.model.Act011FormTab;
 import com.namoadigital.prj001.model.Act011FormTabStatus;
@@ -110,7 +111,6 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -2489,21 +2489,28 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
 
     /**
      * Metodo que retorna ultima medição formatada ou null caso não exista medição.
+     *
      * @param measureTp
      * @param serialInfo
+     * @param decimalFromContent
      * @return
      */
     @Nullable
     @Override
-    public String getLastMeasureInfo(MeMeasureTp measureTp, MD_Product_Serial serialInfo) {
+    public String getLastMeasureInfo(MeMeasureTp measureTp, MD_Product_Serial serialInfo, int decimalFromContent) {
         if(serialInfo.getLast_measure_value() == null ){
             return null;
+        }
+        //
+        int decimalRestriction = decimalFromContent;
+        if(measureTp.getRestrictionDecimal() != null){
+            decimalRestriction = measureTp.getRestrictionDecimal();
         }
         //
        return ToolBox_Inf.formatLastMeaseureInfo(
             context,
             measureTp.getValueSufix(),
-            new BigDecimal(serialInfo.getLast_measure_value()).floatValue(),
+            FloatHelperKt.roundByRestrictionMeasure(serialInfo.getLast_measure_value().floatValue(), decimalRestriction),
             serialInfo.getLast_measure_date()
        );
     }

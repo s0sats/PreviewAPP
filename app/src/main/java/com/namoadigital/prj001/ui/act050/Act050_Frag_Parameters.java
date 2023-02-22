@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -15,7 +14,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.google.android.material.textfield.TextInputLayout;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.BaseFragment;
@@ -59,11 +57,6 @@ public class Act050_Frag_Parameters extends BaseFragment {
 
     private ScrollView sv_main;
     private TextView tv_favorite_val;
-    private TextInputLayout contract_lbl;
-    private EditText contract_val;
-    private TextInputLayout so_lbl;
-    private EditText so_val;
-
     private SearchableSpinner ss_contract;
     private SearchableSpinner ss_po;
     private TextView tv_product_lbl;
@@ -236,7 +229,6 @@ public class Act050_Frag_Parameters extends BaseFragment {
                 if(mFragListner != null) {
                     Integer contract_code = hmAux.hasConsistentValue(SearchableSpinner.CODE) ? ToolBox_Inf.mIntegerParse(hmAux.get(SearchableSpinner.CODE)) : -1;
                     selected_contract_code = contract_code;
-                    contract_val.setText(hmAux.get(SearchableSpinner.DESCRIPTION));
                     mFragListner.onContractSelected(contract_code);
                     if(contract_code >0) {
                         ArrayList<HMAux> poOptions = generatePOOptionForSS(contracts, selected_contract_code);
@@ -244,7 +236,6 @@ public class Act050_Frag_Parameters extends BaseFragment {
                         if(poOptions.size() == 1){
                             ss_po.setmEnabled(false);
                             ss_po.setmValue(poOptions.get(0));
-                            so_val.setText(poOptions.get(0).get(SearchableSpinner.DESCRIPTION));
                             setContractPoInfo(poOptions.get(0));
                         }else{
                             ss_po.setmEnabled(true);
@@ -270,7 +261,6 @@ public class Act050_Frag_Parameters extends BaseFragment {
                     selected_po_code = po_code;
                     mFragListner.onPOSelected(po_code,hmAux);
                     setContractPoInfo(hmAux);
-                    so_val.setText(hmAux.get(SearchableSpinner.DESCRIPTION));
                 }else {
                     clearPOValueAndInfo();
                 }
@@ -379,13 +369,8 @@ public class Act050_Frag_Parameters extends BaseFragment {
 
     private void iniVars(View view) {
         sv_main = view.findViewById(R.id.act050_frag_param_sv_main);
-        contract_lbl = view.findViewById(R.id.act050_tv_contract_placeholder_lbl);
-        contract_val = view.findViewById(R.id.act050_tv_contract_placeholder_val);
-        so_lbl = view.findViewById(R.id.act050_tv_so_placeholder_lbl);
-        so_val = view.findViewById(R.id.act050_tv_so_placeholder_val);
         tv_favorite_val = view.findViewById(R.id.act050_frag_param_tv_favorite_val);
         ss_contract = view.findViewById(R.id.act050_frag_param_ss_contract);
-        contract_lbl.setHint(hmAux_Trans.get("contract_lbl"));
         ss_contract.setmLabel(hmAux_Trans.get("contract_lbl"));
         ss_contract.setmShowLabel(true);
         ss_contract.setmStyle(1);
@@ -393,7 +378,6 @@ public class Act050_Frag_Parameters extends BaseFragment {
         ss_contract.setmCanClean(false);
         ss_contract.setmRequired(true);
         ss_po = view.findViewById(R.id.act050_frag_param_ss_po);
-        so_lbl.setHint(hmAux_Trans.get("po_lbl"));
         ss_po.setmLabel(hmAux_Trans.get("po_lbl"));
         ss_po.setmShowLabel(true);
         ss_po.setmStyle(1);
@@ -450,16 +434,11 @@ public class Act050_Frag_Parameters extends BaseFragment {
 
                     if(favorite_contract_code != null
                     && favorite_contract_code > 0){
-
                         ss_contract.setmValue(getSelectedValue(options, favorite_contract_code));
-                        contract_val.setText(getSelectedValue(options, favorite_contract_code).get(SearchableSpinner.DESCRIPTION));
-
-//                        ss_contract.setmEnabled(false);
-
+                        ss_contract.setmEnabled(false);
                     }else {
                         if (options.size() == 1) {
                             ss_contract.setmValue(options.get(0));
-                            contract_val.setText(options.get(0).get(SearchableSpinner.DESCRIPTION));
                             ss_contract.setmEnabled(false);
                             //
                             Integer contract_code = options.get(0).hasConsistentValue(SearchableSpinner.CODE) ? ToolBox_Inf.mIntegerParse(options.get(0).get(SearchableSpinner.CODE)) : -1;
@@ -471,7 +450,6 @@ public class Act050_Frag_Parameters extends BaseFragment {
                             if (mFragListner.checkIsContractSelected()) {
                                 selected_contract_code = mFragListner.getSelectedContract();
                                 ss_contract.setmValue(getSelectedValue(options, selected_contract_code));
-                                contract_val.setText(getSelectedValue(options, favorite_contract_code).get(SearchableSpinner.DESCRIPTION));
                             }
                         }
                     }
@@ -480,14 +458,12 @@ public class Act050_Frag_Parameters extends BaseFragment {
                 if (ss_contract.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
                     if(favorite_po_code != null
                     && favorite_po_code > 0){
-                       
                         ArrayList<HMAux> options = generatePOOptionForSS(contracts, favorite_contract_code);
-//                        ss_po.setmOption(options);
+                        ss_po.setmOption(options);
 
                         for (HMAux poValue : options) {
                             if (favorite_po_code.equals(Integer.valueOf(poValue.get(SearchableSpinner.CODE)))){
                                 ss_po.setmValue(poValue);
-                                so_val.setText(poValue.get(SearchableSpinner.DESCRIPTION));
                                 ss_po.setmEnabled(false);
                                 setContractPoInfo(ss_po.getmValue());
                                 mFragListner.onPOSelected(favorite_po_code,ss_po.getmValue());
@@ -499,7 +475,6 @@ public class Act050_Frag_Parameters extends BaseFragment {
 
                         if (options.size() == 1) {
                             ss_po.setmValue(options.get(0));
-                            so_val.setText(options.get(0).get(SearchableSpinner.DESCRIPTION));
                             ss_po.setmEnabled(false);
                             //
                             setContractPoInfo(options.get(0));
@@ -514,7 +489,6 @@ public class Act050_Frag_Parameters extends BaseFragment {
                                     for (HMAux poValue : options) {
                                         if (selected_po_code.equals(Integer.valueOf(poValue.get(SearchableSpinner.CODE)))) {
                                             ss_po.setmValue(poValue);
-                                            so_val.setText(poValue.get(SearchableSpinner.DESCRIPTION));
                                             setContractPoInfo(ss_po.getmValue());
                                         }
                                     }
