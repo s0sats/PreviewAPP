@@ -34,16 +34,25 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:padding="0dp"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:src="@drawable/ic_baseline_arrow_right_24"
-                app:tint="#000000"/>
+                app:tint="#000000" />
 
             <TextView
                 android:id="@+id/card_serial_title"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 style="@style/TextAppearance.Material3.TitleLarge"
-                android:textColor="@color/m3_namoa_onSurface"/>
+                android:textColor="@color/m3_namoa_onSurface" />
+
+            <ImageView
+                android:id="@+id/iconOffline"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:padding="0dp"
+                android:src="@drawable/baseline_wifi_off_24"
+                app:tint="@color/m3_namoa_onSurfaceVariant" />
         </LinearLayout>
 
         <TextView

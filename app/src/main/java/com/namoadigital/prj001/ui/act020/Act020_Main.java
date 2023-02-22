@@ -661,6 +661,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                 context,
                 hmAux_Trans,
                 prod_serial_list,
+                fromOfflineSource,
                 (product_serial) -> {
                     selectedProductSerial = product_serial;
                     defineSerialFlow(product_serial);
