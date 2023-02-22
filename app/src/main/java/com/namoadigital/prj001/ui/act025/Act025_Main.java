@@ -171,6 +171,7 @@ public class Act025_Main extends Base_Activity_Frag_NFC_Geral implements Act025_
             if ( md_product.getAllow_new_serial_cl() == 1
                  && ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_PRODUCT_SERIAL, Constant.PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_EDIT)
                  && !fragSerial_ID.equals("")
+                 && !ToolBox_Inf.hasSerialOnList(serial_list , fragSerial_ID)
             ) {
                 btn_create_serial.setVisibility(View.VISIBLE);
             } else {
