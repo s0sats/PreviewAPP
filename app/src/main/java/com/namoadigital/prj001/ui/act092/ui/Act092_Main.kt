@@ -536,6 +536,7 @@ class Act092_Main : BaseActivityMvp
                 isEnabled = focusState.userFocus
                 background = mainUserCircle
                 setImageResource(mainUserPerson)
+                setPadding(ToolBox.convertPixelsToDpIndeed(context, 12f).toInt())
                 isClickable = focusState.userFocus
             }
 
