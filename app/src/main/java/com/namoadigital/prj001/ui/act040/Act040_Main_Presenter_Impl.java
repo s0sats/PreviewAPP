@@ -631,24 +631,24 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
 //            );
 //        } else {
 
-        ArrayList<MD_Product_Serial> results = processEqualCheck(mdProduct, serial_id, tracking, serial_list);
+//        ArrayList<MD_Product_Serial> results = processEqualCheck(mdProduct, serial_id, tracking, serial_list);
 
         Bundle bundle = new Bundle();
         bundle.putString(MD_ProductDao.PRODUCT_ID, mdProduct != null ? mdProduct.getProduct_id() : "");
         bundle.putLong(MD_ProductDao.PRODUCT_CODE, mdProduct != null ? mdProduct.getProduct_code() : -1L);
 
-        if (results.size() != 0) {
+//        if (results.size() != 0) {
+//            bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, true);
+//            bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, results);
+//        } else {
+        if (serial_list.size() == 1 && serial_list.get(0).getSerial_id().equalsIgnoreCase(serial_id)) {
             bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, true);
-            bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, results);
+            bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serial_list);
         } else {
-            if (serial_list.size() == 1 && serial_list.get(0).getSerial_id().equalsIgnoreCase(serial_id)) {
-                bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, true);
-                bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serial_list);
-            } else {
-                bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, false);
-                bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serial_list);
-            }
+            bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, false);
+            bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serial_list);
         }
+//        }
 
         bundle.putString(Constant.MAIN_MD_PRODUCT_SERIAL_ID, serial_id);
         bundle.putLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_COUNT, record_count);
