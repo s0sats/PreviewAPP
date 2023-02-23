@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +21,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.cardview.widget.CardView;
 
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.ConstantBase;
@@ -74,6 +78,9 @@ public class Act027_Services extends BaseFragment {
     private Context context;
     private TextView tv_filter_lbl;
     private SwitchCompat sw_filter;
+    private CardView cardStatus;
+    private ImageView iv_remove_card;
+    private TextView tv_status_card;
     private ListView lv_services;
     private Act027_Services_Adapter adp;
     private SM_SO_ServiceDao sm_so_serviceDao;
@@ -226,6 +233,26 @@ public class Act027_Services extends BaseFragment {
         tv_empty_list = view.findViewById(R.id.act027_tv_empty_list_lbl);
         sw_filter = view.findViewById(R.id.act027_services_content_sw_filter);
 
+        cardStatus = view.findViewById(R.id.card_alert_status);
+        tv_status_card = view.findViewById(R.id.tv_process_new_header);
+        iv_remove_card = view.findViewById(R.id.iv_nform_new_header);
+        iv_remove_card.setVisibility(View.GONE);
+
+
+        if (checkStatusSO()) {
+            cardStatus.setVisibility(View.VISIBLE);
+            String text = hmAux_Trans.get("warning_so_status_hinders_service_execution") + ": " + hmAux_Trans.get(mSm_so.getStatus());
+            SpannableString customText = new SpannableString(text);
+            customText.setSpan(
+                    new ForegroundColorSpan(getActivity().getResources().getColor(ToolBox_Inf.getStatusColor(mSm_so.getStatus()))),
+                    text.indexOf(": ") + 1,
+                    text.length(),
+                    Spanned.SPAN_INCLUSIVE_INCLUSIVE
+            );
+            tv_status_card.setText(customText);
+        } else {
+            cardStatus.setVisibility(View.GONE);
+        }
 
 
         iv_editable_serial.setVisibility(View.VISIBLE);
@@ -265,7 +292,7 @@ public class Act027_Services extends BaseFragment {
                         mMain.selectDrawerOption(Act027_Main.SELECTION_PRODUCT_LIST);
                     }
                 });
-            }else{
+            } else {
                 btn_product_event_shortcut.setVisibility(View.GONE);
             }
         }
@@ -273,7 +300,14 @@ public class Act027_Services extends BaseFragment {
         setLabels();
     }
 
-    private void setLabels(){
+    private boolean checkStatusSO() {
+        return mSm_so.getStatus().equals(Constant.SYS_STATUS_EDIT) ||
+                mSm_so.getStatus().equals(Constant.SYS_STATUS_WAITING_BUDGET) ||
+                mSm_so.getStatus().equals(Constant.SYS_STATUS_STOP) ||
+                mSm_so.getStatus().equals(Constant.SYS_STATUS_CANCELLED);
+    }
+
+    private void setLabels() {
         tv_empty_list.setText(hmAux_Trans.get("empty_service_list_lbl"));
     }
 
@@ -303,6 +337,7 @@ public class Act027_Services extends BaseFragment {
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
         );
+
         //
         List<HMAux> eventList = sm_so_product_eventDao.query_HM(
                 new Act027_Product_List_Sql_002(
