@@ -262,7 +262,8 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                 binding.act020BtnNoSerial.setVisibility(View.VISIBLE);
             }
             //
-            if (md_product.getAllow_new_serial_cl() == 1) {
+            if (md_product.getAllow_new_serial_cl() == 1
+            && !ToolBox_Inf.hasSerialOnList(serial_list , serial_id)) {
                 binding.act020BtnCreateSerial.setVisibility(View.VISIBLE);
             } else {
                 binding.act020BtnCreateSerial.setVisibility(View.GONE);

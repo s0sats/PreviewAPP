@@ -142,6 +142,7 @@ import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.extensions.AppCompatActivityKt;
+import com.namoadigital.prj001.extensions.StringHelperKt;
 import com.namoadigital.prj001.model.CH_Room;
 import com.namoadigital.prj001.model.Chat_Obj;
 import com.namoadigital.prj001.model.EV_Module_Res;
@@ -9532,6 +9533,26 @@ public class ToolBox_Inf {
 //        Bitmap bitmap = BitmapFactory.decodeFile(fromFile);
 //        File tempImageFile = new File(toFile);
 //        saveBitmapToFile(bitmap, tempImageFile);
+    }
+
+    public static boolean hasSerialOnList(ArrayList<MD_Product_Serial> serial_list, String serialId) {
+        String serialIdFormatted =serialId;
+        if(serialId == null ||
+                serialId.isEmpty()){
+            return false;
+        }else{
+            serialIdFormatted = StringHelperKt.stripAccents(serialId).toUpperCase();
+        }
+        for (MD_Product_Serial md_product_serial : serial_list) {
+            String serialListedFormatted ="";
+            if(md_product_serial.getSerial_id() != null) {
+                serialListedFormatted = StringHelperKt.stripAccents(md_product_serial.getSerial_id()).toUpperCase();
+            }
+            if(serialListedFormatted.equals(serialIdFormatted)){
+                return true;
+            }
+        }
+        return false;
     }
 
 }

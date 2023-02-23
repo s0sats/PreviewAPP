@@ -160,6 +160,7 @@ public class Act048_Main extends Base_Activity_Frag implements Act048_Main_Contr
             if ( md_product.getAllow_new_serial_cl() == 1
                  && ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_PRODUCT_SERIAL, Constant.PROFILE_PRJ001_PRODUCT_SERIAL_PARAM_EDIT)
                  && !serial_id.equals("")
+                 && !ToolBox_Inf.hasSerialOnList(serial_list , serial_id)
             ) {
                 btn_no_serial.setVisibility(View.GONE);
                 btn_create_serial.setVisibility(View.VISIBLE);
