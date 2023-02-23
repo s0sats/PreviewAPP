@@ -25,6 +25,7 @@ class Act020_Adapter constructor(
     private val context: Context,
     private val hmAux: HMAux,
     private val source: ArrayList<MD_Product_Serial>,
+    private val userOffline: Boolean,
     private val onCardClick: (product: MD_Product_Serial) -> Unit,
     private val emptyList: (listSize: Int) -> Unit,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
@@ -140,9 +141,11 @@ class Act020_Adapter constructor(
                             )
                             visibility = View.VISIBLE
                         }
-                    }else{
+                    } else {
                         iconClassColor.visibility = View.GONE
                     }
+
+                    iconOffline.visibility = if (userOffline) View.VISIBLE else View.GONE
 
                     val serial_desc = item.getSerialDescription()
                     if (serial_desc.isNotEmpty()) {
@@ -150,8 +153,8 @@ class Act020_Adapter constructor(
                             text = serial_desc
                             visibility = View.VISIBLE
                         }
-                    }else{
-                        serialDescription. visibility = View.GONE
+                    } else {
+                        serialDescription.visibility = View.GONE
                     }
 
                     val tracking = item.getTracking()
