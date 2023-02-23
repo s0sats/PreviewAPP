@@ -160,7 +160,7 @@ public class Act027_Services_Adapter extends BaseAdapter {
         exec_seq_oper.setText(item.get(SM_SO_ServiceDao.EXEC_SEQ_OPER));
 
         tv_pack_lbl.setText(hmAux_Trans.get("pack_id_lbl"));
-        tv_pack_val.setText(item.get(SM_SO_PackDao.PACK_ID) +" - "+ item.get(SM_SO_PackDao.PACK_DESC));
+        tv_pack_val.setText(item.get(SM_SO_PackDao.PACK_DESC));
 
         tv_zone_lbl.setText(hmAux_Trans.get("zone_lbl"));
         //06/08/18 - Se site do serviço diferente do site do logado, muda cor de fundo.
@@ -196,7 +196,7 @@ public class Act027_Services_Adapter extends BaseAdapter {
         }
 
         tv_service_lbl.setText(hmAux_Trans.get("service_lbl"));
-        tv_service_val.setText(item.get(SM_SO_ServiceDao.SERVICE_ID) +" - "+item.get(SM_SO_ServiceDao.SERVICE_DESC));
+        tv_service_val.setText(item.get(SM_SO_ServiceDao.SERVICE_DESC));
 
         tv_comment_lbl.setText(hmAux_Trans.get("comment_lbl"));
         if(item.get(SM_SO_ServiceDao.COMMENTS) != null && item.get(SM_SO_ServiceDao.COMMENTS).length() > 0){
@@ -210,7 +210,7 @@ public class Act027_Services_Adapter extends BaseAdapter {
         if(item.get(SM_SO_ServiceDao.PARTNER_CODE) != null && item.get(SM_SO_ServiceDao.PARTNER_CODE).length() > 0 ){
             ll_partner.setVisibility(View.VISIBLE);
             tv_partner_lbl.setText(hmAux_Trans.get("partner_lbl"));
-            tv_partner_val.setText(item.get(SM_SO_ServiceDao.PARTNER_ID) +" - " +item.get(SM_SO_ServiceDao.PARTNER_DESC));
+            tv_partner_val.setText(item.get(SM_SO_ServiceDao.PARTNER_DESC));
         }else{
             ll_partner.setVisibility(View.GONE);
             tv_partner_lbl.setText(hmAux_Trans.get("partner_lbl"));
