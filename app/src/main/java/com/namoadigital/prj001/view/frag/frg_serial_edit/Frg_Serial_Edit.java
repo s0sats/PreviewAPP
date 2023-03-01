@@ -2529,7 +2529,9 @@ public class Frg_Serial_Edit extends BaseFragment {
         mdProductSerial.setSite_desc(ss_site.getmValue().get(SearchableSpinner.DESCRIPTION));
         mdProductSerial.setSite_io_control(ToolBox_Inf.mIntegerParse(ss_site.getmValue().get(MD_SiteDao.IO_CONTROL)));
         mdProductSerial.setInbound_auto_create(ToolBox_Inf.mIntegerParse(ss_site.getmValue().get(MD_SiteDao.INBOUND_AUTO_CREATE)));
-        mdProductSerial.setSite_reason_code(ss_site.getmValue().get(MD_SiteDao.REASON_CODE));
+        if(ss_site.getmValue().hasConsistentValue(MD_SiteDao.REASON_CODE)) {
+            mdProductSerial.setSite_reason_code(ToolBox_Inf.mIntegerParse(ss_site.getmValue().get(MD_SiteDao.REASON_CODE)));
+        }
         //
         mdProductSerial.setZone_code(ToolBox_Inf.mIntegerParse(ss_site_zone.getmValue().get(SearchableSpinner.CODE)));
         mdProductSerial.setZone_id(ss_site_zone.getmValue().get(SearchableSpinner.ID));

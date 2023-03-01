@@ -32,7 +32,7 @@ public class MD_Product_Serial implements Serializable {
     @SerializedName("site_code") private Integer site_code;
     @SerializedName("site_id") private String site_id;
     @SerializedName("site_desc") private String site_desc;
-    @SerializedName("site_reason_code") private String site_reason_code;
+    @SerializedName("site_reason_code") private Integer site_reason_code;
     @Expose
     @SerializedName("zone_code") private Integer zone_code;
     @SerializedName("zone_id") private String zone_id;
@@ -356,11 +356,11 @@ public class MD_Product_Serial implements Serializable {
         this.site_desc = site_desc;
     }
 
-    public String getSite_reason_code() {
+    public Integer getSite_reason_code() {
         return site_reason_code;
     }
 
-    public void setSite_reason_code(String site_reason_code) {
+    public void setSite_reason_code(Integer site_reason_code) {
         this.site_reason_code = site_reason_code;
     }
 

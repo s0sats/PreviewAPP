@@ -1101,7 +1101,7 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             if (cursor.isNull(cursor.getColumnIndex(SITE_REASON_CODE))) {
                 md_product_serial.setSite_reason_code(null);
             } else {
-                md_product_serial.setSite_reason_code(cursor.getString(cursor.getColumnIndex(SITE_REASON_CODE)));
+                md_product_serial.setSite_reason_code(cursor.getInt(cursor.getColumnIndex(SITE_REASON_CODE)));
             }
             if (cursor.isNull(cursor.getColumnIndex(ZONE_CODE))) {
                 md_product_serial.setZone_code(null);
