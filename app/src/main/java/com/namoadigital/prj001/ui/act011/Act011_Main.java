@@ -1220,7 +1220,11 @@ public class Act011_Main extends Base_Activity
                 //LUCHE - 22/06/2021
                 //Modificado fluxo para voltar act006
                 // callAct005(context);
-                callAct006(context, false);
+                if (requestingAct.equals(ConstantBaseApp.ACT083)) {
+                    callAct083();
+                }else {
+                    callAct006(context, false);
+                }
             }
         }
     }
