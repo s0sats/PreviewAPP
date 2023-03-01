@@ -1210,8 +1210,12 @@ public class Act011_Main extends Base_Activity
             nservCall();
         } else {
             if (serial_id != null && !serial_id.isEmpty()) {
-                //callAct083();
-                onBackPressed();
+                //
+                if (requestingAct.equals(ConstantBaseApp.ACT092)) {
+                    callAct092();
+                }else{
+                    callAct083();
+                }
             } else {
                 //LUCHE - 22/06/2021
                 //Modificado fluxo para voltar act006
