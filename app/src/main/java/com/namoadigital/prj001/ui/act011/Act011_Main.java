@@ -1710,11 +1710,19 @@ public class Act011_Main extends Base_Activity
             if(device_item_tab_index > -1){
                 tabSelectedAction(device_item_tab_index + 1);
             }
+            //LUCHE - 31/03/2020
+            //Caso GPS desligado e form dependa de GPS exibe dialog
+            //
+            mPresenter.validateGPSResource(formLocal);
+        }else{
+            deleteFormLocal();
+            canSave = false;
+            showMsg(hmAux_Trans.get("alert_form_creation_failed_ttl"),
+                    hmAux_Trans.get("alert_form_creation_failed_msg"),
+                    SHOW_MSG_TYPE_SCHEDULE_EXEC_CANCEL_ERROR
+            );
         }
-        //LUCHE - 31/03/2020
-        //Caso GPS desligado e form dependa de GPS exibe dialog
-        //
-        mPresenter.validateGPSResource(formLocal);
+
     }
 
     private void addOsHeaderFrag(GeOs geOs, String custom_form_status, ArrayList<Act011FormTab> tabs, int tabQty, MD_Schedule_Exec mdScheduleExec) {
