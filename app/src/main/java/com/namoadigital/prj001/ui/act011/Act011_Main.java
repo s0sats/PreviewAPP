@@ -496,6 +496,8 @@ public class Act011_Main extends Base_Activity
         transList.add("alert_gps_rationale_exact_permission_msg");
         transList.add("alert_gps_denied_exact_permission_ttl");
         transList.add("alert_gps_denied_exact_permission_msg");
+        transList.add("alert_form_without_fields_ttl");
+        transList.add("alert_form_without_fields_msg");
         //
         transList.add("inspection_answer_fixed_lbl");
         transList.add("inspection_answer_change_lbl");
@@ -1717,8 +1719,8 @@ public class Act011_Main extends Base_Activity
         }else{
             deleteFormLocal();
             canSave = false;
-            showMsg(hmAux_Trans.get("alert_form_creation_failed_ttl"),
-                    hmAux_Trans.get("alert_form_creation_failed_msg"),
+            showMsg(hmAux_Trans.get("alert_form_without_fields_ttl"),
+                    hmAux_Trans.get("alert_form_without_fields_msg"),
                     SHOW_MSG_TYPE_SCHEDULE_EXEC_CANCEL_ERROR
             );
         }

@@ -109,6 +109,8 @@ public class Constant extends ConstantBaseApp {
     public static final String WS_GENERATE_FORM_PDF = "https://dev.namoadigital.com/ws/prj001/server_checklist_url.ws";
     public static final String WS_WORKGROUP_MEMBER_LIST = "https://dev.namoadigital.com/ws/prj001/wg/server_workgroup_member_list.ws";
     public static final String WS_WORKGROUP_MEMBER_EDIT = "https://dev.namoadigital.com//ws/prj001/wg/server_workgroup_member_set.ws";
+    //
+    public static final String WS_SCHEDULE_NOT_EXECUTED = "https://dev.namoadigital.com/ws/prj001/server_not_executed_schedule.ws";
     // Connection Test
     public static final String WS_HOST = "dev.namoadigital.com";
     public static final int WS_PORT = 443;

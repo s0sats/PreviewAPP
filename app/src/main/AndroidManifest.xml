@@ -983,6 +983,7 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
         <receiver android:name=".receiver.WBR_Product_Serial_Backup" />
         <receiver android:name=".receiver.WBR_Ticket_Creation" />
         <receiver android:name=".receiver.WBR_UnfocusAndHistoric" />
+        <receiver android:name=".receiver.WBR_Schedule_Not_Executed" />
 
         <service android:name=".service.WS_SO_Create_Room" />
         <service android:name=".service.WS_TK_Next_Ticket" />
