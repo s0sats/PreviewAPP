@@ -129,13 +129,13 @@
     <string name="act002_alt_license_list_not_found_msg">Standortliste lässt sich nicht laden.\nVersuchen Sie es bitte erneut.</string>
     
 	<!--Permissão da camera-->
-    <string name="lib_alert_allow_btn">Allow</string>
-    <string name="lib_alert_deny_btn">Deny</string>
-    <string name="lib_alert_settings_btn">Settings</string>
-    <string name="lib_alert_camera_never_ask_again_ttl">Camera Permission Denied</string>
-    <string name="lib_alert_camera_never_ask_again_msg">Permission to access the camera has been permanently denied!\nTo allow the use of the camera, click the button under Settings, Permissions -> Camera -> Allow</string>
-    <string name="lib_alert_rationale_camera_permission_ttl">Camera Permission</string>
-    <string name="lib_alert_rationale_barcode_camera_permission_msg">To read a barcode, access to the cell phone\'s camera is required.\nDo you want to allow access?</string>
+    <string name="lib_alert_allow_btn">Erlauben</string>
+    <string name="lib_alert_deny_btn">Verweigern</string>
+    <string name="lib_alert_settings_btn">Einstellungen</string>
+    <string name="lib_alert_camera_never_ask_again_ttl">Kameraerlaubnis verweigert</string>
+    <string name="lib_alert_camera_never_ask_again_msg">Die Berechtigung zum Zugriff auf die Kamera wurde dauerhaft verweigert!\nUm die Verwendung der Kamera zu erlauben, klicken Sie auf die Schaltfläche unter Einstellungen, Berechtigungen -> Kamera -> Zulassen</string>
+    <string name="lib_alert_rationale_camera_permission_ttl">Kameraerlaubnis</string>
+    <string name="lib_alert_rationale_barcode_camera_permission_msg">Um einen Barcode zu lesen, ist der Zugriff auf die Kamera des Mobiltelefons erforderlich.\nMöchten Sie den Zugriff erlauben?</string>
     
 	<!--Text Helpers -->
     <string name="unicode_bullet">"\u2022"</string>
