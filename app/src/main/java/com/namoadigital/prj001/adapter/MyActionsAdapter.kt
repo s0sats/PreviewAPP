@@ -32,31 +32,46 @@ class MyActionsAdapter constructor(
     private val myActionClickListener: (myAction: MyActions) -> Unit,
     private val myActionFormButtonClickListener: ((myActionFormButton: MyActionsFormButton) -> Unit)? = null,
     private val mySerialClickListener: ((myAction: MyActions, Int) -> Unit)? = null,
-    private val notifyFilterApplied: (qtyItensFiltered: Int) -> Unit
+    private val notifyFilterApplied: (qtyItensFiltered: Int) -> Unit,
+    private val cancelSerialSchedule: ((myActions: MyActions) -> Unit)? = null
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
     private val VIEW_TYPE_MY_ACTION = 0
     private val VIEW_TYPE_MY_ACTION_FORM_BUTTON = 1
-
     private var myFilteredAction: MutableList<MyActionsBase>
     private val mFilter = MyActionFilter()
     var userMainFilterOn: Boolean = false
-    init{
+
+    init {
         myFilteredAction = myActions as MutableList<MyActionsBase>
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return when(viewType){
-            VIEW_TYPE_MY_ACTION -> MyActionVh(MyActionsItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
-            else -> MyActionFormButtonVh(MyActionsFormButtonItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        return when (viewType) {
+            VIEW_TYPE_MY_ACTION -> MyActionVh(
+                MyActionsItemBinding.inflate(
+                    LayoutInflater.from(
+                        parent.context
+                    ), parent, false
+                )
+            )
+
+            else -> MyActionFormButtonVh(
+                MyActionsFormButtonItemBinding.inflate(
+                    LayoutInflater.from(
+                        parent.context
+                    ), parent, false
+                )
+            )
         }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when(getItemViewType(position)){
-            VIEW_TYPE_MY_ACTION -> with(holder as MyActionsAdapter.MyActionVh){
+        when (getItemViewType(position)) {
+            VIEW_TYPE_MY_ACTION -> with(holder as MyActionsAdapter.MyActionVh) {
                 onBinding(myFilteredAction[position] as MyActions, position)
             }
-            else -> with(holder as MyActionsAdapter.MyActionFormButtonVh){
+
+            else -> with(holder as MyActionsAdapter.MyActionFormButtonVh) {
                 onBinding(myFilteredAction[position] as MyActionsFormButton)
             }
         }
@@ -68,19 +83,21 @@ class MyActionsAdapter constructor(
 
     override fun getItemViewType(position: Int): Int {
         val baseAction = myFilteredAction[position]
-        if(baseAction is MyActions){
+        if (baseAction is MyActions) {
             return VIEW_TYPE_MY_ACTION
         }
         return VIEW_TYPE_MY_ACTION_FORM_BUTTON
     }
+
     fun getMyActionByPosition(position: Int): MyActions? {
-        if(position >= 0) {
+        if (position >= 0) {
             return myFilteredAction[position] as MyActions
         }
         return null
     }
 
-    inner class MyActionVh(private val binding: MyActionsItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class MyActionVh(private val binding: MyActionsItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("NewApi")
         fun onBinding(myAction: MyActions, position: Int) {
             binding.act083SerialInfo.text = hmAuxTrans["btn_select_serial_info_lbl"]
@@ -153,12 +170,12 @@ class MyActionsAdapter constructor(
             )
             //
             configTvSite(myAction)
-/*
-            binding.myActionsItemTvClient.applyVisibilityIfTextExists(myAction.clientInfo)
-*/
+            /*
+                        binding.myActionsItemTvClient.applyVisibilityIfTextExists(myAction.clientInfo)
+            */
             binding.myActionsItemTvActionProcess.applyVisibilityIfTextExists(myAction.processDesc)
-/*            binding.myActionsItemTvOsCode.applyVisibilityIfTextExists(myAction.serviceOrderCode)
-            binding.myActionsItemTvErrorMsg.applyVisibilityIfTextExists(myAction.erroMsg)*/
+            /*            binding.myActionsItemTvOsCode.applyVisibilityIfTextExists(myAction.serviceOrderCode)
+                        binding.myActionsItemTvErrorMsg.applyVisibilityIfTextExists(myAction.erroMsg)*/
             configDoneDate(myAction)
 
 //            if (myAction.isMainUserTicket
@@ -174,8 +191,11 @@ class MyActionsAdapter constructor(
             }
             //
             binding.myActionsItemTvJustify.apply {
-                applyVisibilityIfTextExists(myAction.justify_item_desc, hmAuxTrans["cell_justify_lbl"]!!)
-                if(myAction.justify_item_desc.isNullOrEmpty() &&
+                applyVisibilityIfTextExists(
+                    myAction.justify_item_desc,
+                    hmAuxTrans["cell_justify_lbl"]!!
+                )
+                if (myAction.justify_item_desc.isNullOrEmpty() &&
                     !myAction.not_exec_comments.isNullOrEmpty()
                 ) {
                     applyVisibilityIfTextExists(hmAuxTrans["cell_justify_lbl"]!! + ":")
@@ -198,7 +218,9 @@ class MyActionsAdapter constructor(
             binding.myActionsItemTvDoneDate.apply {
                 this.applyVisibilityIfTextExists(myAction.doneDate)
                 if (ConstantBaseApp.SYS_STATUS_DONE.equals(myAction.processStatus)) {
-                    this.setTextColor(context.getResources().getColor(R.color.m3_namoa_extended_verdeDone_seed))
+                    this.setTextColor(
+                        context.getResources().getColor(R.color.m3_namoa_extended_verdeDone_seed)
+                    )
                 } else {
                     this.setTextColor(context.getResources().getColor(R.color.namoa_color_gray_8))
                 }
@@ -230,25 +252,25 @@ class MyActionsAdapter constructor(
         private fun configTvSite(myAction: MyActions) {
             with(binding.myActionsItemTvSite) {
                 myAction.siteCode?.let {
-                    if(ToolBox_Inf.equalsToLoggedSite(context,it.toString())){
+                    if (ToolBox_Inf.equalsToLoggedSite(context, it.toString())) {
                         visibility = View.VISIBLE
                         text = myAction.getFormattedSiteZoneDesc()
-                    }else{
+                    } else {
                         visibility = View.VISIBLE
                         text = myAction.getFormattedSiteZoneDesc() //namoa_color_danger_red
                     }
-                 } ?: {
-                     visibility = View.GONE
-                     text = myAction.getFormattedSiteZoneDesc()
-                 }
+                } ?: {
+                    visibility = View.GONE
+                    text = myAction.getFormattedSiteZoneDesc()
+                }
             }
         }
 
         private fun configPlannedDate(myAction: MyActions) {
             binding.myActionsItemTvPlannedDate.apply {
-                if(myAction.plannedDate.isNullOrEmpty()){
+                if (myAction.plannedDate.isNullOrEmpty()) {
                     visibility = View.GONE
-                }else {
+                } else {
                     visibility = View.VISIBLE
                     text = myAction.plannedDate
                     if (myAction.doneDate.isNullOrEmpty()) {
@@ -256,6 +278,7 @@ class MyActionsAdapter constructor(
                             myAction.lateItem -> {
                                 setTextColor(ContextCompat.getColor(context, R.color.text_red))
                             }
+
                             myAction.periodStarted -> {
                                 setTextColor(
                                     ContextCompat.getColor(
@@ -264,15 +287,16 @@ class MyActionsAdapter constructor(
                                     )
                                 )
                             }
+
                             else -> {
-                                if (myAction.highlightItem){
+                                if (myAction.highlightItem) {
                                     setTextColor(
                                         ContextCompat.getColor(
                                             context,
                                             R.color.m3_namoa_extended_LaranjaObrigatorio_color
                                         )
                                     )
-                                }else {
+                                } else {
                                     setTextColor(
                                         ContextCompat.getColor(
                                             context,
@@ -283,14 +307,14 @@ class MyActionsAdapter constructor(
                             }
                         }
                     } else {
-                        if (myAction.highlightItem){
+                        if (myAction.highlightItem) {
                             setTextColor(
                                 ContextCompat.getColor(
                                     context,
                                     R.color.m3_namoa_extended_LaranjaObrigatorio_color
                                 )
                             )
-                        }else {
+                        } else {
                             setTextColor(
                                 ContextCompat.getColor(
                                     context,
@@ -324,11 +348,25 @@ class MyActionsAdapter constructor(
                         ColorStateList.valueOf(resources.getColor(R.color.m3_namoa_primary))
                     if (MyActions.MY_ACTION_TYPE_TICKET_CACHE == myAction.actionType) {
                         text = hmAuxTrans["btn_download_action_lbl"]
-                    }else {
+                    } else {
                         text = hmAuxTrans["btn_open_action_lbl"]
                     }
                     setTextColor(resources.getColor(R.color.m3_namoa_surface))
                     binding.myActionsItemTvFormNoFinish.visibility = View.GONE
+                }
+            }
+
+
+            binding.myActionCancelSerial.apply {
+                visibility = View.GONE
+                text = hmAuxTrans["btn_cancel_schedule"] ?: "btn_cancel_schedule"
+                cancelSerialSchedule?.let { justifyEvent ->
+                    myAction.hasNotExecuted?.let {
+                        visibility = View.VISIBLE
+                        setOnClickListener {
+                            justifyEvent(myAction)
+                        }
+                    }
                 }
             }
 
@@ -350,31 +388,32 @@ class MyActionsAdapter constructor(
 //                Log.d("TESTE_ORIGEM", """isTicketOriginManulOrBarcode: ${isTicketOriginManulOrBarcode(myAction)}""" )
 //                Log.d("TESTE_ORIGEM", """originDescriptor: ${myAction.originDescriptor}""" )
                 ellipsize = if (isTicketOriginManulOrBarcode(myAction)) {
-                                    TextUtils.TruncateAt.START
-                                } else {
-                                    null
-                                }
+                    TextUtils.TruncateAt.START
+                } else {
+                    null
+                }
             }
         }
 
         private fun isTicketOriginManulOrBarcode(myAction: MyActions) =
-                ((MyActions.MY_ACTION_TYPE_TICKET == myAction.actionType
-                        || MyActions.MY_ACTION_TYPE_TICKET_CACHE == myAction.actionType)
-                        && (ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_BARCODE == myAction.ticketOriginType
-                        || ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_MANUAL == myAction.ticketOriginType))
+            ((MyActions.MY_ACTION_TYPE_TICKET == myAction.actionType
+                    || MyActions.MY_ACTION_TYPE_TICKET_CACHE == myAction.actionType)
+                    && (ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_BARCODE == myAction.ticketOriginType
+                    || ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_MANUAL == myAction.ticketOriginType))
 
         /**
          * Formata info com bullet quando há informação.
          */
-        private fun getInfoBulletFormatted(context: Context, value: String?) : String?{
-            if(!value.isNullOrEmpty()){
+        private fun getInfoBulletFormatted(context: Context, value: String?): String? {
+            if (!value.isNullOrEmpty()) {
                 return " ${context.getString(R.string.unicode_bullet)} $value"
             }
             return null
         }
     }
 
-    inner class MyActionFormButtonVh(private val binding: MyActionsFormButtonItemBinding): RecyclerView.ViewHolder(binding.root){
+    inner class MyActionFormButtonVh(private val binding: MyActionsFormButtonItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun onBinding(myActionFormButton: MyActionsFormButton) {
             binding.root.setOnClickListener {
                 myActionFormButtonClickListener?.let {
@@ -389,17 +428,16 @@ class MyActionsAdapter constructor(
      * Busca o item do qual o usr acabou de voltar na lista.
      * Se dados null ou não encontrar retorna -1
      */
-    fun getActionPkPosition(processType: String?, processPk: String?): Int{
-        if(processType.isNullOrEmpty() || processPk.isNullOrEmpty() ){
+    fun getActionPkPosition(processType: String?, processPk: String?): Int {
+        if (processType.isNullOrEmpty() || processPk.isNullOrEmpty()) {
             return -1
         }
         //
-        myFilteredAction.forEachIndexed {
-            index, myActionsBase ->
-            if(myActionsBase is MyActions){
-                if( myActionsBase.actionType == processType
-                        && myActionsBase.processPk == processPk
-                ){
+        myFilteredAction.forEachIndexed { index, myActionsBase ->
+            if (myActionsBase is MyActions) {
+                if (myActionsBase.actionType == processType
+                    && myActionsBase.processPk == processPk
+                ) {
                     return index
                 }
             }
@@ -412,24 +450,24 @@ class MyActionsAdapter constructor(
         return mFilter
     }
 
-    inner class MyActionFilter() : Filter(){
+    inner class MyActionFilter() : Filter() {
 
         override fun performFiltering(constraint: CharSequence?): FilterResults {
             var temp = mutableListOf<MyActionsBase>()
             var charFilter = ToolBox.AccentMapper(constraint.toString().toLowerCase())
-            if(charFilter.isNullOrEmpty()){
-                if(userMainFilterOn){
+            if (charFilter.isNullOrEmpty()) {
+                if (userMainFilterOn) {
                     temp = myActions.filter {
-                        if(it is MyActions){
+                        if (it is MyActions) {
                             it.isMainUserTicket
-                        }else{
+                        } else {
                             true
                         }
                     } as MutableList<MyActionsBase>
-                }else{
+                } else {
                     temp = myActions as MutableList<MyActionsBase>
                 }
-            }else{
+            } else {
                 temp.addAll(
                     myActions.filter {
                         when (it) {
@@ -437,9 +475,9 @@ class MyActionsAdapter constructor(
                                 val allFields = ToolBox.AccentMapper(
                                     it.getAllFieldForFilter().toLowerCase()
                                 )
-                                if(userMainFilterOn){
+                                if (userMainFilterOn) {
                                     allFields.contains(charFilter) && it.isMainUserTicket
-                                }else {
+                                } else {
                                     allFields.contains(charFilter)
                                 }
                             }

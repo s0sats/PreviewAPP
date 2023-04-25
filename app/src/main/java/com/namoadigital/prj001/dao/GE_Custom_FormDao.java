@@ -42,6 +42,7 @@ public class GE_Custom_FormDao extends BaseDao implements Dao<GE_Custom_Form> {
     public static final String SO_ALLOW_BACKUP = "so_allow_backup";
     public static final String SO_OPTIONAL_JUSTIFY_PROBLEM = "so_optional_justify_problem";
     public static final String BLOCK_SPONTANEOUS = "block_spontaneous";
+    public static final String JUSTIFY_GROUP_CODE = "justify_group_code";
     //Não é campo da tabela, descrição vem da tradução
     public static final String CUSTOM_FORM_DESC = "custom_form_desc";
 
@@ -264,15 +265,20 @@ public class GE_Custom_FormDao extends BaseDao implements Dao<GE_Custom_Form> {
             custom_form.setTag_operational_code(cursor.getInt(cursor.getColumnIndex(TAG_OPERATIONAL_CODE)));
             custom_form.setIs_so(cursor.getInt(cursor.getColumnIndex(IS_SO)));
             custom_form.setSo_edit_start_end(cursor.getInt(cursor.getColumnIndex(SO_EDIT_START_END)));
-            if(cursor.isNull(cursor.getColumnIndex(SO_ORDER_TYPE_CODE_DEFAULT))) {
+            if (cursor.isNull(cursor.getColumnIndex(SO_ORDER_TYPE_CODE_DEFAULT))) {
                 custom_form.setSo_order_type_code_default(null);
-            }else{
+            } else {
                 custom_form.setSo_order_type_code_default(cursor.getInt(cursor.getColumnIndex(SO_ORDER_TYPE_CODE_DEFAULT)));
             }
             custom_form.setSo_allow_change_order_type(cursor.getInt(cursor.getColumnIndex(SO_ALLOW_CHANGE_ORDER_TYPE)));
             custom_form.setSo_allow_backup(cursor.getInt(cursor.getColumnIndex(SO_ALLOW_BACKUP)));
             custom_form.setSo_optional_justify_problem(cursor.getInt(cursor.getColumnIndex(SO_OPTIONAL_JUSTIFY_PROBLEM)));
             custom_form.setBlock_spontaneous(cursor.getInt(cursor.getColumnIndex(BLOCK_SPONTANEOUS)));
+            if (cursor.isNull(cursor.getColumnIndex(JUSTIFY_GROUP_CODE))) {
+                custom_form.setJustifyGroupCode(null);
+            } else {
+                custom_form.setJustifyGroupCode(cursor.getInt(cursor.getColumnIndex(JUSTIFY_GROUP_CODE)));
+            }
             return custom_form;
         }
     }
@@ -341,6 +347,7 @@ public class GE_Custom_FormDao extends BaseDao implements Dao<GE_Custom_Form> {
             if (custom_form.getBlock_spontaneous() > -1) {
                 contentValues.put(BLOCK_SPONTANEOUS, custom_form.getBlock_spontaneous());
             }
+            contentValues.put(JUSTIFY_GROUP_CODE, custom_form.getJustifyGroupCode());
             return contentValues;
         }
     }

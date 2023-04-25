@@ -11,6 +11,7 @@ import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.model.MyActionFilterParam.Companion.toActionFilter
 import com.namoadigital.prj001.receiver.WBR_Product_Serial_Structure
+import com.namoadigital.prj001.receiver.WBR_Schedule_Not_Executed
 import com.namoadigital.prj001.receiver.WBR_Serial_Search
 import com.namoadigital.prj001.receiver.WBR_Sync
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download
@@ -18,6 +19,7 @@ import com.namoadigital.prj001.service.WS_Product_Serial_Structure
 import com.namoadigital.prj001.service.WS_Serial_Search
 import com.namoadigital.prj001.service.WS_Sync
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download
+import com.namoadigital.prj001.service.WsScheduleNotExecuted
 import com.namoadigital.prj001.sql.*
 import com.namoadigital.prj001.ui.act070.Act070_Main
 import com.namoadigital.prj001.ui.act083.data.local.preferences.MyActionsFilterParamPreferences
@@ -45,6 +47,7 @@ class Act083_Main_Presenter constructor(
     private val serialDao: MD_Product_SerialDao,
     private val productDao: MD_ProductDao,
     private val syncChecklistDao: Sync_ChecklistDao,
+    private val mdJustifyItemDao: MdJustifyItemDao,
     private val sharedPreferences: MyActionsFilterParamPreferences,
     private val mModule_Code: String,
     private val mResource_Code: String
@@ -162,6 +165,20 @@ class Act083_Main_Presenter constructor(
         //
         transList.add("alert_form_os_requires_serial_ttl")
         transList.add("alert_form_os_requires_serial_msg")
+        //
+        transList.add("alert_not_execute_ttl")
+        transList.add("alert_not_execute_msg")
+        transList.add("alert_not_execute_justify_option_lbl")
+        transList.add("alert_not_execute_justify_comment_lbl")
+        transList.add("sys_alert_btn_cancel")
+        transList.add("alert_not_execute_save_btn")
+        transList.add("alert_not_execute_justify_required_ttl")
+        transList.add("alert_not_execute_justify_option_required_msg")
+        transList.add("alert_not_execute_justify_comment_required_msg")
+        transList.add("alert_not_execute_justify_success_ttl")
+        transList.add("alert_not_execute_justify_success_msg")
+        transList.add("btn_cancel_schedule")
+        transList.add("warning_not_execute_justify_required_date_hour")
         //
         transList.add("btn_open_action_lbl")
         transList.add("btn_download_action_lbl")
@@ -1946,6 +1963,52 @@ class Act083_Main_Presenter constructor(
                 initialTabToLoad = mView.getCurrentTab(),
             )
         )
+    }
+
+    override fun getJustifyItems(justifyGroupCode: Int): ArrayList<HMAux> {
+        return mdJustifyItemDao.getJustifyItems(
+            ToolBox_Con.getPreference_Customer_Code(context),
+            justifyGroupCode
+        )
+    }
+
+
+    override fun justifyNotExecuteSchedule(
+        processPk: String,
+        comments: String,
+        justify_group_code: Int,
+        justify_item_code: Int,
+        reschedule_date: String
+    ) {
+        if (ToolBox_Con.isOnline(context)) {
+            mView.setProcess(WsScheduleNotExecuted::class.java.name)
+
+            mView.showPD(
+                hmAux_Trans?.get("progress_n_form_sync_ttl"),
+                hmAux_Trans?.get("progress_n_form_sync_msg"),
+            )
+
+            Intent(context, WBR_Schedule_Not_Executed::class.java).also { intent ->
+
+                Bundle().apply {
+                    val schedule = processPk.split(".")
+                    putInt(WsScheduleNotExecuted.WS_BUNDLE_SCHEDULE_PREFIX, schedule[0].toInt())
+                    putInt(WsScheduleNotExecuted.WS_BUNDLE_SCHEDULE_CODE, schedule[1].toInt())
+                    putInt(WsScheduleNotExecuted.WS_BUNDLE_SCHEDULE_EXEC, schedule[2].toInt())
+                    putString(WsScheduleNotExecuted.WS_BUNDLE_COMMENTS, comments)
+                    putInt(WsScheduleNotExecuted.WS_BUNDLE_JUSTIFY_GROUP_CODE, justify_group_code)
+                    putInt(WsScheduleNotExecuted.WS_BUNDLE_JUSTIFY_ITEM_CODE, justify_item_code)
+                    putString(WsScheduleNotExecuted.WS_BUNDLE_RESCHEDULE_DATE, reschedule_date)
+                }.let { bundle ->
+                    intent.putExtras(bundle)
+                    context.sendBroadcast(intent)
+                }
+
+            }
+        } else {
+            ToolBox_Inf.showNoConnectionDialog(context)
+        }
+
     }
 
 

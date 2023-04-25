@@ -1,6 +1,6 @@
 package com.namoadigital.prj001.sql;
 
-import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
+import com.namoadigital.prj001.dao.GE_Custom_FormDao;
 import com.namoadigital.prj001.database.Specification;
 
 /**
@@ -30,12 +30,12 @@ public class MD_Schedule_Exec_Sql_007 implements Specification {
             .append(" SELECT\n" +
                     "   d.*\n" +
                     " FROM\n" +
-                    "   "+ GE_Custom_Form_DataDao.TABLE +" d\n" +
+                    "   " + GE_Custom_FormDao.TABLE + " d\n" +
                     " WHERE \n" +
-                    "   d.customer_code = '"+customer_code+"'\n" +
-                    "   and d.schedule_prefix = '"+schedule_prefix+"'\n" +
-                    "   and d.schedule_code = '"+schedule_code+"'\n" +
-                    "   and d.schedule_exec = '"+schedule_exec+"'\n")
+                    "   d.customer_code = '" + customer_code + "'\n" +
+                    "   and d.schedule_prefix = '" + schedule_prefix + "'\n" +
+                    "   and d.schedule_code = '" + schedule_code + "'\n" +
+                    "   and d.schedule_exec = '" + schedule_exec + "'\n")
             .toString();
     }
 }

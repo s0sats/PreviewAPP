@@ -6,101 +6,159 @@ import androidx.annotation.Nullable;
 
 import com.google.gson.annotations.SerializedName;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.GE_Custom_FormDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 public class MD_Schedule_Exec {
-    @SerializedName("customer_code") private long customer_code;
-    @SerializedName("schedule_prefix") private int schedule_prefix;
-    @SerializedName("schedule_code") private int schedule_code;
-    @SerializedName("schedule_exec") private int schedule_exec;
-    @SerializedName("schedule_desc") private String schedule_desc;
-    @SerializedName("schedule_type") private String schedule_type;
-    @SerializedName("status") private String status;
-    @SerializedName("site_code") private int site_code;
-    @SerializedName("site_id") private String site_id;
-    @SerializedName("site_desc") private String site_desc;
-    @SerializedName("zone_code") private Integer zone_code;
-    @SerializedName("zone_id") private String zone_id;
-    @SerializedName("zone_desc") private String zone_desc;
-    @SerializedName("operation_code") private int operation_code;
-    @SerializedName("operation_id") private String operation_id;
-    @SerializedName("operation_desc") private String operation_desc;
-    @SerializedName("product_code") private int product_code;
-    @SerializedName("product_id") private String product_id;
-    @SerializedName("product_desc") private String product_desc;
+    @SerializedName("customer_code")
+    private long customer_code;
+    @SerializedName("schedule_prefix")
+    private int schedule_prefix;
+    @SerializedName("schedule_code")
+    private int schedule_code;
+    @SerializedName("schedule_exec")
+    private int schedule_exec;
+    @SerializedName("schedule_desc")
+    private String schedule_desc;
+    @SerializedName("schedule_type")
+    private String schedule_type;
+    @SerializedName("status")
+    private String status;
+    @SerializedName("site_code")
+    private int site_code;
+    @SerializedName("site_id")
+    private String site_id;
+    @SerializedName("site_desc")
+    private String site_desc;
+    @SerializedName("zone_code")
+    private Integer zone_code;
+    @SerializedName("zone_id")
+    private String zone_id;
+    @SerializedName("zone_desc")
+    private String zone_desc;
+    @SerializedName("operation_code")
+    private int operation_code;
+    @SerializedName("operation_id")
+    private String operation_id;
+    @SerializedName("operation_desc")
+    private String operation_desc;
+    @SerializedName("product_code")
+    private int product_code;
+    @SerializedName("product_id")
+    private String product_id;
+    @SerializedName("product_desc")
+    private String product_desc;
     @Nullable
-    @SerializedName("serial_code") private Integer serial_code;
+    @SerializedName("serial_code")
+    private Integer serial_code;
     @Nullable
-    @SerializedName("serial_id") private String serial_id;
+    @SerializedName("serial_id")
+    private String serial_id;
     @Nullable
-    @SerializedName("custom_form_type") private Integer custom_form_type;
+    @SerializedName("custom_form_type")
+    private Integer custom_form_type;
     @Nullable
-    @SerializedName("custom_form_code") private Integer custom_form_code;
+    @SerializedName("custom_form_code")
+    private Integer custom_form_code;
     @Nullable
-    @SerializedName("custom_form_version") private Integer custom_form_version;
+    @SerializedName("custom_form_version")
+    private Integer custom_form_version;
     @Nullable
-    @SerializedName("custom_form_desc") private String custom_form_desc;
+    @SerializedName("custom_form_desc")
+    private String custom_form_desc;
     @Nullable
-    @SerializedName("ticket_type") private Integer ticket_type;
+    @SerializedName("ticket_type")
+    private Integer ticket_type;
     @Nullable
-    @SerializedName("ticket_type_id") private String ticket_type_id;
+    @SerializedName("ticket_type_id")
+    private String ticket_type_id;
     @Nullable
-    @SerializedName("ticket_type_desc") private String ticket_type_desc;
+    @SerializedName("ticket_type_desc")
+    private String ticket_type_desc;
 
-    @SerializedName("local_control") private int local_control;
-    @SerializedName("io_control") private int io_control;
+    @SerializedName("local_control")
+    private int local_control;
+    @SerializedName("io_control")
+    private int io_control;
     @Nullable
-    @SerializedName("serial_rule") private String serial_rule;
+    @SerializedName("serial_rule")
+    private String serial_rule;
     @Nullable
-    @SerializedName("serial_min_length") private Integer serial_min_length;
+    @SerializedName("serial_min_length")
+    private Integer serial_min_length;
     @Nullable
-    @SerializedName("serial_max_length") private Integer serial_max_length;
-    @SerializedName("site_restriction") private int site_restriction;
+    @SerializedName("serial_max_length")
+    private Integer serial_max_length;
+    @SerializedName("site_restriction")
+    private int site_restriction;
     @Nullable
-    @SerializedName("product_icon_name") private String product_icon_name;
+    @SerializedName("product_icon_name")
+    private String product_icon_name;
     @Nullable
-    @SerializedName("product_icon_url") private String product_icon_url;
-    @SerializedName("product_icon_url_local") private String product_icon_url_local;
-    @SerializedName("require_location") private int require_location;
+    @SerializedName("product_icon_url")
+    private String product_icon_url;
+    @SerializedName("product_icon_url_local")
+    private String product_icon_url_local;
+    @SerializedName("require_location")
+    private int require_location;
 
-    @SerializedName("date_start") private String date_start;
-    @SerializedName("date_end") private String date_end;
+    @SerializedName("date_start")
+    private String date_start;
+    @SerializedName("date_end")
+    private String date_end;
     @Nullable
-    @SerializedName("comments") private String comments;
-    @SerializedName("require_serial") private int require_serial;
-    @SerializedName("allow_new_serial_cl") private int allow_new_serial_cl;
-    @SerializedName("require_serial_done") private int require_serial_done;
-    @SerializedName("sync_process") private int sync_process;
+    @SerializedName("comments")
+    private String comments;
+    @SerializedName("require_serial")
+    private int require_serial;
+    @SerializedName("allow_new_serial_cl")
+    private int allow_new_serial_cl;
+    @SerializedName("require_serial_done")
+    private int require_serial_done;
+    @SerializedName("sync_process")
+    private int sync_process;
     @Nullable
-    @SerializedName("fcm_new_status") private String fcm_new_status;
+    @SerializedName("fcm_new_status")
+    private String fcm_new_status;
     @Nullable
-    @SerializedName("fcm_user_nick") private String fcm_user_nick;
+    @SerializedName("fcm_user_nick")
+    private String fcm_user_nick;
     @Nullable
-    @SerializedName("schedule_erro_msg") private String schedule_erro_msg;
+    @SerializedName("schedule_erro_msg")
+    private String schedule_erro_msg;
     @Nullable
-    @SerializedName("close_date") private String close_date;
-    @SerializedName("tag_operational_code") private int tag_operational_code;
-    @SerializedName("tag_operational_id") private String tag_operational_id;
-    @SerializedName("tag_operational_desc") private String tag_operational_desc;
+    @SerializedName("close_date")
+    private String close_date;
+    @SerializedName("tag_operational_code")
+    private int tag_operational_code;
+    @SerializedName("tag_operational_id")
+    private String tag_operational_id;
+    @SerializedName("tag_operational_desc")
+    private String tag_operational_desc;
     @Nullable
-    @SerializedName("has_Nc") private Integer has_Nc;
+    @SerializedName("has_Nc")
+    private Integer has_Nc;
     //LUCHE - 17/09/2021 - Flag que indica se originalmente o agendamento tinha um serial
-    @SerializedName("serial_defined_by_server") private int serial_defined_by_server;
-    @SerializedName("is_so") private int is_so;//indica se o form é tipo o.s
+    @SerializedName("serial_defined_by_server")
+    private int serial_defined_by_server;
+    @SerializedName("is_so")
+    private int is_so;//indica se o form é tipo o.s
 
     /**
      * LUCHE - 14/02/2020
-     *
+     * <p>
      * Valida se o agendamento passado é valido, ou seja, se obj com valores de pk preenchidos.
+     *
      * @param md_schedule_exec
      * @return
      */
-    public static boolean isValidScheduleExec(MD_Schedule_Exec md_schedule_exec){
-        return  md_schedule_exec != null
+    public static boolean isValidScheduleExec(MD_Schedule_Exec md_schedule_exec) {
+        return md_schedule_exec != null
                 && md_schedule_exec.getCustomer_code() > 0
                 && md_schedule_exec.getSchedule_prefix() > 0
                 && md_schedule_exec.getSchedule_code() > 0
@@ -571,7 +629,7 @@ public class MD_Schedule_Exec {
         String statusToUse = ConstantBaseApp.SYS_STATUS_IN_PROCESSING.equals(status) ? ConstantBaseApp.SYS_STATUS_PROCESS : status;
         Integer midIcon = R.drawable.ic_baseline_cloud_done_24_blue;
         Integer rightIcon = null;
-        if (status != null){
+        if (status != null) {
             switch (status) {
                 case ConstantBaseApp.SYS_STATUS_WAITING_SYNC:
                     midIcon = R.drawable.ic_cloud_upload_24_red;
@@ -602,14 +660,14 @@ public class MD_Schedule_Exec {
         }
 
         Integer leftIcon =
-            has_Nc != null && has_Nc.equals(1)
-                    ? R.drawable.ic_baseline_report_24_yellow
-                    : null;
+                has_Nc != null && has_Nc.equals(1)
+                        ? R.drawable.ic_baseline_report_24_yellow
+                        : null;
         String doneDate = null;
-        if(close_date != null){
+        if (close_date != null) {
             doneDate = ToolBox_Inf.millisecondsToString(
-                ToolBox_Inf.dateToMilliseconds(close_date),
-                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                    ToolBox_Inf.dateToMilliseconds(close_date),
+                    ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
             );
         }
         //
@@ -627,96 +685,58 @@ public class MD_Schedule_Exec {
         String processPk = ToolBox_Inf.formatSchedulePk(schedule_prefix, schedule_code, schedule_exec);
         boolean isLastSelectedItem = processPk.equals(lastScheduleSelected);
         //
+
+        GE_Custom_FormDao geCustomFormDao = new GE_Custom_FormDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
+
+        GE_Custom_Form geCustomForm =
+                geCustomFormDao.getByString(
+                        new GE_Custom_Form_Sql_001(
+                                String.valueOf(customer_code),
+                                String.valueOf(custom_form_type),
+                                String.valueOf(custom_form_code),
+                                String.valueOf(custom_form_version)
+                        ).toSqlQuery()
+                );
+
+        Integer hasJustifyGroup = null;
+
+        if (geCustomForm != null) {
+            boolean profileExist = ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_TICKET, ConstantBaseApp.PROFILE_MENU_TICKET_PARAM_NOT_EXECUTED);
+            if (profileExist && geCustomForm.getJustifyGroupCode() != null) {
+                hasJustifyGroup = geCustomForm.getJustifyGroupCode();
+            }
+        }
         try {
             MyActions myActions = new MyActions(
-                MyActions.MY_ACTION_TYPE_SCHEDULE,
-                processPk,
-                processPk,
-                statusToUse,
-                ConstantBaseApp.HMAUX_TRANS_LIB.get(statusToUse),
-                leftIcon,
-                midIcon,
-                rightIcon,
-                //LUCHE - getStepStartEndDateFormated ao inves do metodo scheduled, pois la espera da formtada igual exibição
-                ToolBox_Inf.getMyActionStartEndDateFormated(context, date_start + " " + customerGMT, date_end + " " + customerGMT),
-                tag_operational_desc,
-                product_desc,
-                serial_id == null ? "" : serial_id,
-                schedule_desc,
-                ConstantBaseApp.MD_SCHEDULE_TYPE_FORM.equals(schedule_type) ? custom_form_desc : ticket_type_desc,
+                    MyActions.MY_ACTION_TYPE_SCHEDULE,
+                    processPk,
+                    processPk,
+                    statusToUse,
+                    ConstantBaseApp.HMAUX_TRANS_LIB.get(statusToUse),
+                    leftIcon,
+                    midIcon,
+                    rightIcon,
+                    //LUCHE - getStepStartEndDateFormated ao inves do metodo scheduled, pois la espera da formtada igual exibição
+                    ToolBox_Inf.getMyActionStartEndDateFormated(context, date_start + " " + customerGMT, date_end + " " + customerGMT),
+                    tag_operational_desc,
+                    product_desc,
+                    serial_id == null ? "" : serial_id,
+                    schedule_desc,
+                    ConstantBaseApp.MD_SCHEDULE_TYPE_FORM.equals(schedule_type) ? custom_form_desc : ticket_type_desc,
                     comments,
-                null,
-                site_code,
-                site_desc,
+                    null,
+                    site_code,
+                    site_desc,
                     formattedZone,
-                null,
-                doneDate,
-                ToolBox_Inf.millisecondsToString(
-                    ToolBox_Inf.dateToMilliseconds(date_start + " " + customerGMT),
-                    "yyyyMMddHHmm"
-                ),
-                null,
-                -1,
-                ConstantBaseApp.SYS_STATUS_IN_PROCESSING.contentEquals(status),
-                ToolBox_Inf.isItemLate(date_start + " " + customerGMT),
-                ToolBox_Inf.isItemLate(date_end + " " + customerGMT),
-                    isLastSelectedItem,
-                    false,
-                    false,
                     null,
+                    doneDate,
+                    ToolBox_Inf.millisecondsToString(
+                            ToolBox_Inf.dateToMilliseconds(date_start + " " + customerGMT),
+                            "yyyyMMddHHmm"
+                    ),
                     null,
-                    null,
-                    null,
-                    true,
-                    null,
-                    null,
-                    null,
-                    null
-            );
-            myActions.setProductCode(product_code);
-            myActions.setProductId(product_id);
-            myActions.setCustomFormDesc(custom_form_desc);
-            myActions.setErroMsg(schedule_erro_msg);
-            return myActions;
-        }catch (Exception e){
-            /**
-             * Bug muito estranho acontece somente de vez em nunca geralmente quand volta do ticket
-             * e não espera carregar a lista de ações.
-             * Apesar do apontar processStatus null, o status existe e tem tradução maior hipotese é a
-             * var static dar algum pipoco e ser null...
-             */
-            ToolBox_Inf.registerException(getClass().getName(), new Exception(status +"\n"+ e.getMessage() ));
-            //
-            MyActions myActions = new MyActions(
-                MyActions.MY_ACTION_TYPE_SCHEDULE,
-                processPk,
-                processPk,
-                statusToUse,
-                ConstantBaseApp.HMAUX_TRANS_LIB.get(statusToUse),
-                leftIcon,
-                midIcon,
-                rightIcon,
-                //LUCHE - getStepStartEndDateFormated ao inves do metodo scheduled, pois la espera da formtada igual exibição
-                ToolBox_Inf.getMyActionStartEndDateFormated(context, date_start + " " + customerGMT, date_end + " " + customerGMT),
-                tag_operational_desc,
-                product_desc,
-                serial_id == null ? "" : serial_id,
-                schedule_desc,
-                ConstantBaseApp.MD_SCHEDULE_TYPE_FORM.equals(schedule_type) ? custom_form_desc : ticket_type_desc,
-                null,
-                comments,
-                site_code,
-                site_desc,
-                    formattedZone,
-                null,
-                close_date,
-                ToolBox_Inf.millisecondsToString(
-                    ToolBox_Inf.dateToMilliseconds(date_start + " " + customerGMT),
-                    "yyyyMMddHHmm"
-                ),
-                null,
-                -1,
-                ConstantBaseApp.SYS_STATUS_IN_PROCESSING.contentEquals(status),
+                    -1,
+                    ConstantBaseApp.SYS_STATUS_IN_PROCESSING.contentEquals(status),
                     ToolBox_Inf.isItemLate(date_start + " " + customerGMT),
                     ToolBox_Inf.isItemLate(date_end + " " + customerGMT),
                     isLastSelectedItem,
@@ -727,6 +747,67 @@ public class MD_Schedule_Exec {
                     null,
                     null,
                     true,
+                    null,
+                    null,
+                    null,
+                    null,
+                    hasJustifyGroup
+            );
+            myActions.setProductCode(product_code);
+            myActions.setProductId(product_id);
+            myActions.setCustomFormDesc(custom_form_desc);
+            myActions.setErroMsg(schedule_erro_msg);
+            return myActions;
+        } catch (Exception e) {
+            /**
+             * Bug muito estranho acontece somente de vez em nunca geralmente quand volta do ticket
+             * e não espera carregar a lista de ações.
+             * Apesar do apontar processStatus null, o status existe e tem tradução maior hipotese é a
+             * var static dar algum pipoco e ser null...
+             */
+            ToolBox_Inf.registerException(getClass().getName(), new Exception(status + "\n" + e.getMessage()));
+            //
+            MyActions myActions = new MyActions(
+                    MyActions.MY_ACTION_TYPE_SCHEDULE,
+                    processPk,
+                    processPk,
+                    statusToUse,
+                    ConstantBaseApp.HMAUX_TRANS_LIB.get(statusToUse),
+                    leftIcon,
+                    midIcon,
+                    rightIcon,
+                    //LUCHE - getStepStartEndDateFormated ao inves do metodo scheduled, pois la espera da formtada igual exibição
+                    ToolBox_Inf.getMyActionStartEndDateFormated(context, date_start + " " + customerGMT, date_end + " " + customerGMT),
+                    tag_operational_desc,
+                    product_desc,
+                    serial_id == null ? "" : serial_id,
+                    schedule_desc,
+                    ConstantBaseApp.MD_SCHEDULE_TYPE_FORM.equals(schedule_type) ? custom_form_desc : ticket_type_desc,
+                    null,
+                    comments,
+                    site_code,
+                    site_desc,
+                    formattedZone,
+                    null,
+                    close_date,
+                    ToolBox_Inf.millisecondsToString(
+                            ToolBox_Inf.dateToMilliseconds(date_start + " " + customerGMT),
+                            "yyyyMMddHHmm"
+                    ),
+                    null,
+                    -1,
+                    ConstantBaseApp.SYS_STATUS_IN_PROCESSING.contentEquals(status),
+                    ToolBox_Inf.isItemLate(date_start + " " + customerGMT),
+                    ToolBox_Inf.isItemLate(date_end + " " + customerGMT),
+                    isLastSelectedItem,
+                    false,
+                    false,
+                    null,
+                    null,
+                    null,
+                    null,
+                    true,
+                    null,
                     null,
                     null,
                     null,
@@ -743,10 +824,10 @@ public class MD_Schedule_Exec {
 
     private String formatErrorMsg() {
         String erroMsg = null;
-        if(schedule_erro_msg != null && !schedule_erro_msg.isEmpty()){
+        if (schedule_erro_msg != null && !schedule_erro_msg.isEmpty()) {
             erroMsg = schedule_erro_msg;
-            if(fcm_user_nick != null && !fcm_user_nick.isEmpty()){
-                erroMsg+= " ("+fcm_user_nick+")";
+            if (fcm_user_nick != null && !fcm_user_nick.isEmpty()) {
+                erroMsg += " (" + fcm_user_nick + ")";
             }
         }
         //

@@ -1,7 +1,6 @@
 package com.namoadigital.prj001.model
 
 import androidx.annotation.DrawableRes
-import com.namoadigital.prj001.R
 
 data class MyActions(
     val actionType: String,
@@ -43,6 +42,7 @@ data class MyActions(
     val justify_item_desc: String?,
     val not_exec_comments: String?,
     val waiting_approve: Boolean? = null,
+    val hasNotExecuted: Int? = null,
 ) : MyActionsBase() {
 
 

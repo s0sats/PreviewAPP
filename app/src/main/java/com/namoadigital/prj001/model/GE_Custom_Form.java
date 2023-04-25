@@ -18,15 +18,27 @@ public class GE_Custom_Form {
     @SerializedName("automatic_fill") private String automatic_fill;
     @SerializedName("all_site") private int all_site;
     @SerializedName("all_operation") private int all_operation;
-    @SerializedName("all_product") private int all_product;
-    @SerializedName("tag_operational_code") private int tag_operational_code;
-    @SerializedName("is_so") private int is_so;
-    @SerializedName("so_edit_start_end") private int so_edit_start_end;
-    @SerializedName("so_order_type_code_default") private Integer so_order_type_code_default;
-    @SerializedName("so_allow_change_order_type") private int so_allow_change_order_type;
-    @SerializedName("so_allow_backup") private int so_allow_backup;
-    @SerializedName("so_optional_justify_problem") private int so_optional_justify_problem;
-    @SerializedName("block_spontaneous") private int block_spontaneous;
+    @SerializedName("all_product")
+    private int all_product;
+    @SerializedName("tag_operational_code")
+    private int tag_operational_code;
+    @SerializedName("is_so")
+    private int is_so;
+    @SerializedName("so_edit_start_end")
+    private int so_edit_start_end;
+    @SerializedName("so_order_type_code_default")
+    private Integer so_order_type_code_default;
+    @SerializedName("so_allow_change_order_type")
+    private int so_allow_change_order_type;
+    @SerializedName("so_allow_backup")
+    private int so_allow_backup;
+    @SerializedName("so_optional_justify_problem")
+    private int so_optional_justify_problem;
+    @SerializedName("block_spontaneous")
+    private int block_spontaneous;
+
+    @SerializedName("justify_group_code")
+    private Integer justify_group_code;
 
     public long getCustomer_code() {
         return customer_code;
@@ -178,5 +190,13 @@ public class GE_Custom_Form {
 
     public void setBlock_spontaneous(int block_spontaneous) {
         this.block_spontaneous = block_spontaneous;
+    }
+
+    public Integer getJustifyGroupCode() {
+        return justify_group_code;
+    }
+
+    public void setJustifyGroupCode(Integer value) {
+        this.justify_group_code = value;
     }
 }

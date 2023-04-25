@@ -1,25 +1,33 @@
 package com.namoadigital.prj001.ui.act083
 
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.ContextThemeWrapper
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.GsonBuilder
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner.OnItemSelectedListener
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.Base_Activity
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.adapter.MyActionsAdapter
 import com.namoadigital.prj001.dao.*
+import com.namoadigital.prj001.dao.MdJustifyItemDao.Companion.RESCHEDULE
 import com.namoadigital.prj001.databinding.Act083MainBinding
+import com.namoadigital.prj001.databinding.TicketNotExecutedDialogBinding
 import com.namoadigital.prj001.model.MD_Product_Serial
 import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.model.MyActionsFormButton
@@ -27,6 +35,7 @@ import com.namoadigital.prj001.service.WS_Product_Serial_Structure
 import com.namoadigital.prj001.service.WS_Serial_Search
 import com.namoadigital.prj001.service.WS_Sync
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download
+import com.namoadigital.prj001.service.WsScheduleNotExecuted
 import com.namoadigital.prj001.ui.act005.Act005_Main
 import com.namoadigital.prj001.ui.act006.Act006_Main
 import com.namoadigital.prj001.ui.act009.Act009_Main
@@ -47,11 +56,12 @@ import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 
 class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
-    companion object{
+    companion object {
         const val MODULE_CHECKLIST_FORM_IN_PROCESSING = "checklist_form_in_processing"
         const val MODULE_CHECKLIST_START_FORM = "checklist_start_form"
         const val MODULE_SCHEDULE_DATE_REF = "module_schedule_date_ref"
-        const val MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR = "module_schedule_form_data_creation_error"
+        const val MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR =
+            "module_schedule_form_data_creation_error"
         const val EMPTY_SERIAL_SEARCH = "empty_serial_search"
         const val SERIAL_CREATION_DENIED = "serial_creation_denied"
         const val MODULE_TICKET_EXEC_CONFIRM = "module_ticket_exec_confirm"
@@ -60,13 +70,14 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         const val PROFILE_PRJ001_AP_NOT_FOUND = "profile_prj001_ap_not_found"
         const val PROFILE_MENU_TICKET_NOT_FOUND = "profile_menu_ticket_not_found"
         const val FREE_EXECUTION_BLOCKED = "free_execution_blocked"
+        const val WS_SCHEDULE_NOT_EXECUTED = "WS_SCHEDULE_NOT_EXECUTED"
     }
 
     private var serialActionSelected: Int = -1
     private lateinit var binding: Act083MainBinding
     private lateinit var mAdapter: MyActionsAdapter
     private lateinit var bundle: Bundle
-    private var wsProcess =""
+    private var wsProcess = ""
     private var hmAuxTicketDownload: HMAux = HMAux()
     private val CHANGE_ZONE_RESULT_CODE = 10
     private var firstScroll = true
@@ -74,64 +85,53 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
 
     private val mPresenter by lazy {
         Act083_Main_Presenter(
-                context,
-                this,
-                bundle,
-                TK_TicketDao(
-                        context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-                ),
-                TkTicketCacheDao(
-                        context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-                ),
-                MD_Schedule_ExecDao(
-                        context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-                ),
-                GE_Custom_Form_ApDao(
-                        context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-                ),
-                GE_Custom_Form_LocalDao(
-                        context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-                ),
-                MD_SiteDao(
-                        context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-                ),
-                TK_Ticket_CtrlDao(
-                        context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-                ),
-                MD_Product_SerialDao(
-                        context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-                ),
-            MD_ProductDao(
+            context, this, bundle, TK_TicketDao(
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
-            ),
-            Sync_ChecklistDao(
+            ), TkTicketCacheDao(
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
-            ),
-            MyActionsFilterParamPreferences(
+            ), MD_Schedule_ExecDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+            ), GE_Custom_Form_ApDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+            ), GE_Custom_Form_LocalDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+            ), MD_SiteDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+            ), TK_Ticket_CtrlDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+            ), MD_Product_SerialDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+            ), MD_ProductDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+            ), Sync_ChecklistDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+            ), MdJustifyItemDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+            ), MyActionsFilterParamPreferences(
                 getSharedPreferences("act083_filter", MODE_PRIVATE)
-            ),
-            mModule_Code,
-            mResource_Code
+            ), mModule_Code, mResource_Code
         )
     }
 
@@ -160,13 +160,12 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
 
     private fun iniSetup() {
         mResource_Code = ToolBox_Inf.getResourceCode(
-                context,
-                mModule_Code,
-                ConstantBaseApp.ACT083
+            context, mModule_Code, ConstantBaseApp.ACT083
         )
         //06/06/2021 - Add recolhimento do teclado
-        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN
-                or WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+        window.setSoftInputMode(
+            WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN or WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN
+        )
     }
 
     private fun initVars() {
@@ -176,9 +175,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         }
         //reseta preferencia do toggle da origem
         ToolBox_Con.setBooleanPreference(
-            context,
-            ConstantBaseApp.PREFERENCE_PIPELINE_HEADER_FORM_INFO_TOGGLE,
-            true
+            context, ConstantBaseApp.PREFERENCE_PIPELINE_HEADER_FORM_INFO_TOGGLE, true
         )
         //LUCHE - 21/06/2021
         //Desabilita os cliques nas abas, pois só serão habilitado após corroutine retornar.
@@ -198,15 +195,20 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
      * Fun que altera os labes das abas, adicionando o contador.
      */
     override fun setTabsCounters(selectedTabCounter: Int, otherTabCounter: Int) {
-        with(binding.act083MainContent){
-            when(act083Tabs.checkedRadioButtonId){
+        with(binding.act083MainContent) {
+            when (act083Tabs.checkedRadioButtonId) {
                 act083TabMyActions.id -> {
-                    act083TabMyActions.text = hmAux_Trans["tab_my_actions_lbl"].plus(" ($selectedTabCounter)")
-                    act083TabOtherActions.text = hmAux_Trans["tab_other_actions_lbl"].plus(" ($otherTabCounter)")
+                    act083TabMyActions.text =
+                        hmAux_Trans["tab_my_actions_lbl"].plus(" ($selectedTabCounter)")
+                    act083TabOtherActions.text =
+                        hmAux_Trans["tab_other_actions_lbl"].plus(" ($otherTabCounter)")
                 }
+
                 else -> {
-                    act083TabMyActions.text = hmAux_Trans["tab_my_actions_lbl"].plus(" ($otherTabCounter)")
-                    act083TabOtherActions.text = hmAux_Trans["tab_other_actions_lbl"].plus(" ($selectedTabCounter)")
+                    act083TabMyActions.text =
+                        hmAux_Trans["tab_my_actions_lbl"].plus(" ($otherTabCounter)")
+                    act083TabOtherActions.text =
+                        hmAux_Trans["tab_other_actions_lbl"].plus(" ($selectedTabCounter)")
                 }
             }
         }
@@ -215,7 +217,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     override fun iniRecycler() {
         val myActionsList = mPresenter.myActionsList
         changeProgressBarVisility(false)
-        if(myActionsList.size > 0) {
+        if (myActionsList.size > 0) {
             binding.act083MainContent.act083TvNoResult.visibility = View.GONE
             //
             mAdapter = MyActionsAdapter(
@@ -225,7 +227,9 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 this::onMyActionClick,
                 null,
                 this::onSerialButtonClick,
-                this::onAdapterFilterApplied
+                this::onAdapterFilterApplied,
+                this::createNotExecuteDialog
+
             )
             //
             with(binding.act083MainContent.act083RvActionsList) {
@@ -237,16 +241,16 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
 
             mAdapter.userMainFilterOn = applyMainUserFilter
 
-            if(!binding.act083MainContent.act083MketFilter.text.isNullOrEmpty()){
+            if (!binding.act083MainContent.act083MketFilter.text.isNullOrEmpty()) {
                 applyTextFilter(binding.act083MainContent.act083MketFilter.text.toString())
-            }else{
+            } else {
                 applyTextFilter("")
             }
-        }else{
-            with(binding.act083MainContent){
-                if(applyMainUserFilter){
+        } else {
+            with(binding.act083MainContent) {
+                if (applyMainUserFilter) {
                     act083TvNoResult.text = hmAux_Trans["no_record_for_filter_lbl"]
-                }else{
+                } else {
                     act083TvNoResult.text = hmAux_Trans["no_record_lbl"]
                 }
                 act083TvNoResult.visibility = View.VISIBLE
@@ -254,6 +258,175 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
             }
         }
     }
+
+    private fun createNotExecuteDialog(myAction: MyActions) {
+        val dm = context.resources.displayMetrics
+        val dmW = dm.widthPixels.toFloat() * 0.95f
+        //        float dmH = (float) dm.heightPixels * 0.95f;
+        with(TicketNotExecutedDialogBinding.inflate(layoutInflater)) {
+            Dialog(context).let { dialog ->
+
+                dialog.setContentView(root)
+                dialog.window!!.setLayout(dmW.toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
+                dialog.setCancelable(false)
+
+                act070IvJustifyPhotoBtn.visibility = View.GONE
+
+                setLabel(myAction)
+                setActions(myAction,
+                    closeDialog = {
+                        dialog.hide()
+                    }
+                )
+
+                dialog.show()
+            }
+        }
+    }
+
+    private fun validateNotExecuteFormEntry(binding: TicketNotExecutedDialogBinding): String {
+        var errorMsg: String? = ""
+        val hmAux = binding.act070NotExecuteDialogJustifyOptionSs.getmValue()
+        if (hmAux.hasConsistentValue(MdJustifyItemDao.REQUIRED_COMMENT) && "1" == hmAux[MdJustifyItemDao.REQUIRED_COMMENT]) {
+            if (binding.act070NotExecuteDialogJustifyCommentsActv.text == null || binding.act070NotExecuteDialogJustifyCommentsActv.text.toString()
+                    .isEmpty()
+            ) {
+                errorMsg = hmAux_Trans["alert_not_execute_justify_comment_required_msg"]
+            }
+        }
+        if (binding.act070NotExecuteDialogJustifyOptionSs.visibility == View.VISIBLE && !hmAux.hasConsistentValue(
+                SearchableSpinner.CODE
+            )
+        ) {
+            errorMsg += hmAux_Trans["alert_not_execute_justify_option_required_msg"]
+        }
+        return errorMsg ?: ""
+    }
+
+
+    private fun TicketNotExecutedDialogBinding.setActions(
+        item: MyActions,
+        closeDialog: () -> Unit,
+    ) {
+
+        var dateReschedule = ""
+
+        act070NotExecuteDialogJustifyBtnCancel.setOnClickListener {
+            closeDialog()
+        }
+
+        act070NotExecuteDialogJustifyBtnSave.setOnClickListener {
+
+            with(act070NotExecuteDialogJustifyDate) {
+
+                val dateInvalid = {
+                    Toast.makeText(
+                        this@Act083_Main,
+                        "warning_not_execute_justify_required_date_hour",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+                if (root.isVisible) {
+
+                    if (tvDateVal.isValid && !tvDateVal.getmValue().isNullOrEmpty()) {
+
+                        val isFuture = ToolBox_Inf.isFutureDate(tvDateVal.getmValue())
+
+                        if (!isFuture) {
+                            dateInvalid()
+                            return@setOnClickListener
+                        }
+
+                        dateReschedule = tvDateVal.getmValue()
+                    } else {
+                        dateInvalid()
+                        return@setOnClickListener
+                    }
+
+                }
+            }
+
+            val errorMsg = validateNotExecuteFormEntry(this)
+            val justifyOption = act070NotExecuteDialogJustifyOptionSs.getmValue()
+            errorMsg.ifEmpty {
+                closeDialog()
+                mPresenter.justifyNotExecuteSchedule(
+                    processPk = item.processPk,
+                    comments = act070NotExecuteDialogJustifyCommentsActv.text.toString(),
+                    justify_group_code = item.hasNotExecuted!!,
+                    justify_item_code = justifyOption[SearchableSpinner.CODE]?.toInt() ?: -1,
+                    reschedule_date = dateReschedule
+                )
+                return@setOnClickListener
+            }
+
+            showAlert(
+                hmAux_Trans["alert_not_execute_justify_required_ttl"], errorMsg
+            )
+        }
+
+
+    }
+
+
+    private fun TicketNotExecutedDialogBinding.setLabel(
+        item: MyActions
+    ) {
+        act070NotExecuteDialogTtl.text = hmAux_Trans["alert_not_execute_ttl"]
+        act070NotExecuteDialogMsg.text = hmAux_Trans["alert_not_execute_msg"]
+        //
+
+        val justifyItems = mPresenter.getJustifyItems(item.hasNotExecuted!!)
+
+
+        act070NotExecuteDialogJustifyOptionSs.apply {
+
+            if (justifyItems.isEmpty()) {
+                visibility = View.GONE
+                return@apply
+            }
+
+            setmRequired(false)
+            setmShowLabel(true)
+            setmCanClean(true)
+            setmOption(justifyItems)
+            setmLabel(hmAux_Trans["alert_not_execute_justify_option_lbl"])
+
+
+            setOnItemSelectedListener(object : OnItemSelectedListener {
+                override fun onItemPreSelected(p0: HMAux?) {
+
+                }
+
+                override fun onItemPostSelected(hmAux: HMAux?) {
+
+                    val requiredReschedule = hmAux?.get(RESCHEDULE)?.toInt() == 1
+
+                    if (!requiredReschedule) {
+                        act070NotExecuteDialogJustifyDate.root.visibility = View.GONE
+                        act070NotExecuteDialogJustifyDate.tvDateVal.setmValue("")
+                        return
+                    }
+                    act070NotExecuteDialogJustifyDate.root.visibility = View.VISIBLE
+                    act070NotExecuteDialogJustifyDate.tvDateVal.setmHighlightWhenInvalid(true)
+                }
+
+            })
+        }
+        //
+
+        act070NotExecuteDialogJustifyDate.chkShiftStep.visibility = View.GONE
+        act070NotExecuteDialogJustifyDate.chkShiftTicketDate.visibility = View.GONE
+        act070NotExecuteDialogJustifyDate.guideline6.visibility = View.GONE
+
+        act070NotExecuteDialogJustifyCommentsTil.hint =
+            hmAux_Trans["alert_not_execute_justify_comment_lbl"]
+        act070NotExecuteDialogJustifyBtnCancel.text = hmAux_Trans["sys_alert_btn_cancel"]
+        act070NotExecuteDialogJustifyBtnSave.text =
+            hmAux_Trans["alert_not_execute_save_btn"]
+    }
+
 
     private fun onSerialButtonClick(myAction: MyActions, position: Int) {
         serialActionSelected = position
@@ -264,15 +437,15 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         mPresenter.processActionFormButtonClick(myActionsFormButton)
     }
 
-    private fun onMyActionClick(myAction: MyActions){
+    private fun onMyActionClick(myAction: MyActions) {
         mPresenter.processActionClick(myAction)
     }
 
     /**
      * Fun acionada pelo adapter como callback após finalizar a filtragem
      */
-    private fun onAdapterFilterApplied(qtyItensFiltered: Int){
-        if(qtyItensFiltered > 0){
+    private fun onAdapterFilterApplied(qtyItensFiltered: Int) {
+        if (qtyItensFiltered > 0) {
             scrollToLastSelectedItem()
         }
         setPlaceholderTextAndVisibility(mPresenter.myActionsList.size)
@@ -287,18 +460,18 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         if (firstScroll) {
             firstScroll = false
             val actionPkPosition = mAdapter.getActionPkPosition(
-                    mPresenter.lastSelectedActionType,
-                    mPresenter.lastSelectedActionPk
+                mPresenter.lastSelectedActionType, mPresenter.lastSelectedActionPk
             )
             if (actionPkPosition >= 0) {
                 //Tenta fazer scroll com offset, se crashar, tenta scroll sem offset
                 try {
-                    val linearLayoutManager = binding.act083MainContent.act083RvActionsList.layoutManager as LinearLayoutManager
+                    val linearLayoutManager =
+                        binding.act083MainContent.act083RvActionsList.layoutManager as LinearLayoutManager
                     val offset = ToolBox.dbToPixel(context, 50)
                     linearLayoutManager.scrollToPositionWithOffset(actionPkPosition, offset)
-                }catch (e: Exception){
+                } catch (e: Exception) {
                     binding.act083MainContent.act083RvActionsList.scrollToPosition(
-                            actionPkPosition
+                        actionPkPosition
                     )
                 }
             }
@@ -307,10 +480,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
 
     override fun showPD(ttl: String?, msg: String?) {
         enableProgressDialog(
-                ttl,
-                msg,
-                hmAux_Trans["sys_alert_btn_cancel"],
-                hmAux_Trans["sys_alert_btn_ok"]
+            ttl, msg, hmAux_Trans["sys_alert_btn_cancel"], hmAux_Trans["sys_alert_btn_ok"]
         )
     }
 
@@ -322,13 +492,14 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         controls_sta.remove(mketSerial)
     }
 
-    private fun showAlert(ttl: String?, msg: String?, clickListner: DialogInterface.OnClickListener? = null, negativeBtn: Int = 0){
+    private fun showAlert(
+        ttl: String?,
+        msg: String?,
+        clickListner: DialogInterface.OnClickListener? = null,
+        negativeBtn: Int = 0
+    ) {
         ToolBox.alertMSG(
-                context,
-                ttl,
-                msg,
-                clickListner,
-                negativeBtn
+            context, ttl, msg, clickListner, negativeBtn
         )
     }
 
@@ -341,7 +512,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
      */
     override fun getCurrentTab(): Int {
         with(binding.act083MainContent) {
-            return when (act083Tabs.checkedRadioButtonId){
+            return when (act083Tabs.checkedRadioButtonId) {
                 act083TabMyActions.id -> 1
                 else -> 0
             }
@@ -355,9 +526,9 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     override fun getMketFilter(): String? {
         val textFilter = binding.act083MainContent.act083MketFilter.text.toString()
         //
-        return if(textFilter.isBlank() || textFilter.isEmpty()){
+        return if (textFilter.isBlank() || textFilter.isEmpty()) {
             null
-        }else{
+        } else {
             textFilter
         }
     }
@@ -370,12 +541,10 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
      * Fun que seta os params de filtro texto e aba recuperados do bundle
      */
     override fun setViewFiltersParam(
-        textFilter: String?,
-        initialTabToLoad: Int,
-        mainUserFilterState: Boolean
+        textFilter: String?, initialTabToLoad: Int, mainUserFilterState: Boolean
     ) {
         binding.act083MainContent.act083MketFilter.setText(textFilter)
-        if(initialTabToLoad == 0){
+        if (initialTabToLoad == 0) {
             binding.act083MainContent.act083TabOtherActions.performClick()
         }
         applyMainUserFilter = mainUserFilterState
@@ -387,9 +556,42 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         processCloseACT(mLink, mRequired, HMAux())
     }
 
+    private fun updateList() {
+
+        with(binding) {
+            val filterText = act083MainContent.act083MketFilter.text.toString()
+
+
+            showAlert(
+                ttl = hmAux_Trans["alert_not_execute_justify_success_ttl"],
+                msg = hmAux_Trans["alert_not_execute_justify_success_msg"],
+                clickListner = { dialog, _ ->
+                    dialog.dismiss()
+                    updateMyActionList(userFocusFilter)
+                    if (filterText.isNotEmpty()) {
+                        applyTextFilter(filterText)
+                    }
+                }
+            )
+
+
+        }
+
+    }
+
     override fun processCloseACT(mLink: String?, mRequired: String?, hmAux: HMAux) {
         super.processCloseACT(mLink, mRequired, hmAux)
-        when(wsProcess){
+        when (wsProcess) {
+
+            WsScheduleNotExecuted::class.java.name -> {
+                wsProcess = ""
+
+                progressDialog.dismiss()
+
+                updateList()
+
+            }
+
             WS_TK_Ticket_Download::class.java.name -> {
                 wsProcess = ""
                 if (mPresenter.verifyProductOutdateForForm(hmAux)) {
@@ -402,45 +604,52 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                     } else {
                         //
                         callAct070(
-                                mPresenter.getCacheTicketBundle(hmAux)
+                            mPresenter.getCacheTicketBundle(hmAux)
                         )
                     }
                 } else {
                     progressDialog.dismiss()
                     callAct070(
-                            mPresenter.getCacheTicketBundle(hmAux)
+                        mPresenter.getCacheTicketBundle(hmAux)
                     )
                 }
             }
+
             WS_Sync::class.java.name -> {
                 wsProcess = ""
                 progressDialog.dismiss()
                 //
                 mPresenter.processWsSyncReturn(hmAuxTicketDownload)
             }
+
             WS_Serial_Search::class.java.name -> {
                 wsProcess = ""
                 progressDialog.dismiss()
-                mPresenter.extractSearchResult(mLink, mAdapter.getMyActionByPosition(serialActionSelected))
+                mPresenter.extractSearchResult(
+                    mLink, mAdapter.getMyActionByPosition(serialActionSelected)
+                )
             }
+
             WS_Product_Serial_Structure::class.java.name -> {
                 wsProcess = ""
                 progressDialog.dismiss()
                 //
                 val gson = GsonBuilder().serializeNulls().create()
                 val serial = gson.fromJson(
-                    mLink,
-                    MD_Product_Serial::class.java
+                    mLink, MD_Product_Serial::class.java
                 )
                 //
-                mPresenter.extractStructureResult(serial, mAdapter.getMyActionByPosition(serialActionSelected))
+                mPresenter.extractStructureResult(
+                    serial, mAdapter.getMyActionByPosition(serialActionSelected)
+                )
                 resetActionPosition()
             }
+
             else -> progressDialog?.dismiss()
         }
     }
 
-    private fun createTvChip(chipLabel: String) : TextView {
+    private fun createTvChip(chipLabel: String): TextView {
         val tvChip = TextView(ContextThemeWrapper(context, R.style.TextViewChips))
         tvChip.apply {
             text = chipLabel
@@ -450,7 +659,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     }
 
     private fun setLabels() {
-        with(binding.act083MainContent){
+        with(binding.act083MainContent) {
 //            act083MketFilter.hint = hmAux_Trans["filter_hint"]
             act083TabMyActions.text = hmAux_Trans["tab_my_actions_lbl"]
             act083TabOtherActions.text = hmAux_Trans["tab_other_actions_lbl"]
@@ -476,13 +685,17 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         setFooter()
     }
 
+
     override fun footerCreateDialog() {
         //super.footerCreateDialog()
         ToolBox_Inf.buildFooterDialog(context)
     }
 
+    private var userFocusFilter = 1
+
     private fun initActions() {
-        binding.act083MainContent.act083MketFilter.setOnReportTextChangeListner(object : MKEditTextNM.IMKEditTextChangeText {
+        binding.act083MainContent.act083MketFilter.setOnReportTextChangeListner(object :
+            MKEditTextNM.IMKEditTextChangeText {
             override fun reportTextChange(text: String?) {
             }
 
@@ -495,9 +708,15 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
             binding.act083MainContent.act083RvActionsList.stopScroll()
             with(binding.act083MainContent) {
                 when (checkedId) {
-                    act083TabMyActions.id -> updateMyActionList(1)
-                    else -> updateMyActionList(0)
+                    act083TabMyActions.id -> {
+                        userFocusFilter = 1
+                    }
+
+                    else -> {
+                        userFocusFilter = 0
+                    }
                 }
+                updateMyActionList(userFocusFilter)
             }
         }
 
@@ -525,13 +744,11 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 context.getDrawable(R.drawable.my_action_toogle_default)
             var drawable = DrawableCompat.wrap(
                 ContextCompat.getDrawable(
-                    context,
-                    R.drawable.ic_person_black_24dp
+                    context, R.drawable.ic_person_black_24dp
                 )!!
             )!!
             DrawableCompat.setTint(
-                drawable.mutate(),
-                ContextCompat.getColor(context, R.color.my_action_toogle_circle)
+                drawable.mutate(), ContextCompat.getColor(context, R.color.my_action_toogle_circle)
             )
             binding.act083MainContent.act083IbMainUserSelection.setImageDrawable(drawable)
             binding.act083MainContent.act083IbMainUserSelection.postInvalidate()
@@ -539,14 +756,14 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     }
 
     private fun applyTextFilter(text: String?) {
-        if(::mAdapter.isInitialized){
+        if (::mAdapter.isInitialized) {
             mAdapter.filter.filter(text)
         }
     }
 
     private fun updateMyActionList(userFocusFilter: Int) {
         //Reseta visibilidade das views
-        with(binding.act083MainContent){
+        with(binding.act083MainContent) {
             act083TvNoResult.visibility = View.GONE
             act083RvActionsList.visibility = View.GONE
         }
@@ -570,9 +787,8 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 R.drawable.my_action_toogle_disable
             )
 
-        val mainUserPerson =
-            if (!show) R.color.my_action_toogle_circle
-            else R.color.namoa_color_disabled_gray
+        val mainUserPerson = if (!show) R.color.my_action_toogle_circle
+        else R.color.namoa_color_disabled_gray
 
 
 
@@ -720,6 +936,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 msg = hmAux_Trans["alert_msg_exists_in_processing"]
                 btnNegative = 0
             }
+
             MODULE_CHECKLIST_START_FORM -> {
                 title = hmAux_Trans["alert_ttl_start_new_processing"]
                 msg = hmAux_Trans["alert_msg_start_new_processing"]
@@ -728,47 +945,58 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                     mPresenter.checkFormFlow(item)
                 }
             }
+
             MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR -> {
                 title = hmAux_Trans["alert_error_on_create_form_ttl"]
                 msg = hmAux_Trans["alert_error_on_create_form_msg"]
                 btnNegative = 0
             }
+
             EMPTY_SERIAL_SEARCH -> {
                 title = hmAux_Trans["alert_no_serial_found_ttl"]
                 msg = hmAux_Trans["alert_no_serial_found_msg"]
                 btnNegative = 0
             }
+
             SERIAL_CREATION_DENIED -> {
                 title = hmAux_Trans["alert_no_serial_found_ttl"]
                 msg = hmAux_Trans["alert_product_no_allow_new_serial_msg"]
                 btnNegative = 0
             }
+
             MODULE_TICKET_EXEC_CONFIRM -> {
                 title = hmAux_Trans["alert_ticket_action_start_ttl"]
                 msg = hmAux_Trans["alert_ticket_action_start_confirm"]
                 btnNegative = 1
-                listener = DialogInterface.OnClickListener { dialog, which -> mPresenter.checkTicketFlow(item) }
+                listener = DialogInterface.OnClickListener { dialog, which ->
+                    mPresenter.checkTicketFlow(item)
+                }
             }
+
             MODULE_SCHEDULE_TICKET_CREATION_ERROR -> {
                 title = hmAux_Trans["alert_error_on_create_ticket_action_ttl"]
                 msg = hmAux_Trans["alert_error_on_create_ticket_action_msg"]
                 btnNegative = 0
             }
+
             MODULE_SCHEDULE_STATUS_PREVENTS_TO_OPEN -> {
                 title = hmAux_Trans["alert_schedule_status_prevents_to_open_ttl"]
                 msg = hmAux_Trans["alert_schedule_status_prevents_to_open_msg"]
                 btnNegative = 0
             }
+
             PROFILE_PRJ001_AP_NOT_FOUND -> {
                 title = hmAux_Trans["alert_menu_app_profile_not_found_ttl"]
                 msg = hmAux_Trans["alert_form_ap_menu_profile_not_found_msg"]
                 btnNegative = 0
             }
+
             PROFILE_MENU_TICKET_NOT_FOUND -> {
                 title = hmAux_Trans["alert_menu_app_profile_not_found_ttl"]
                 msg = hmAux_Trans["alert_ticket_menu_profile_not_found_msg"]
                 btnNegative = 0
             }
+
             FREE_EXECUTION_BLOCKED -> {
                 title = hmAux_Trans["alert_free_execution_blocked_ttl"]
                 msg = hmAux_Trans["alert_free_execution_blocked_msg"]
@@ -778,22 +1006,14 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
 
         if (btnNegative != null) {
             ToolBox.alertMSG(
-                    this,
-                    title,
-                    msg,
-                    listener,
-                    btnNegative
+                this, title, msg, listener, btnNegative
             )
         }
     }
 
     override fun showAlertMsg(ttl: String, msg: String) {
         ToolBox.alertMSG(
-                context,
-                ttl,
-                msg,
-                null,
-                0
+            context, ttl, msg, null, 0
         )
     }
 
@@ -814,8 +1034,8 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     }
 
     override fun setPlaceholderTextAndVisibility(currentTabCounter: Int) {
-        if(currentTabCounter > 0){
-            if(mAdapter.itemCount == 0){
+        if (currentTabCounter > 0) {
+            if (mAdapter.itemCount == 0) {
                 binding.act083MainContent.apply {
                     act083TvNoResult.text = hmAux_Trans["no_record_for_filter_lbl"]
                     act083TvNoResult.visibility = View.VISIBLE
@@ -881,7 +1101,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         super.processError_1(mLink, mRequired)
         mPresenter.formButtonData = null
         progressDialog.dismiss()
-        if(serialActionSelected > -1){
+        if (serialActionSelected > -1) {
             resetActionPosition()
         }
     }
@@ -890,7 +1110,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         super.processCustom_error(mLink, mRequired)
         mPresenter.formButtonData = null
         progressDialog.dismiss()
-        if(serialActionSelected > -1){
+        if (serialActionSelected > -1) {
             resetActionPosition()
         }
     }
@@ -899,20 +1119,16 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         //Super realiza o mesmo comportamento do error_1
 //        super.processError_http();
         ToolBox_Con.setBooleanPreference(
-            applicationContext,
-            ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW,
-            true
+            applicationContext, ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, true
         )
         progressDialog.dismiss()
-        if(serialActionSelected > -1){
-            mAdapter
-                .getMyActionByPosition(serialActionSelected)
-                ?.let {
-                    mPresenter.processLocalSearchForSerialAction(it, null)
-                }
+        if (serialActionSelected > -1) {
+            mAdapter.getMyActionByPosition(serialActionSelected)?.let {
+                mPresenter.processLocalSearchForSerialAction(it, null)
+            }
             //
             resetActionPosition()
-        }else {
+        } else {
             mPresenter.offlineSerialSearch()
         }
     }

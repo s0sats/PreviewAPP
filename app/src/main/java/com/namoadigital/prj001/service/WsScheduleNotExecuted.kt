@@ -8,8 +8,10 @@ import com.namoa_digital.namoa_library.util.ConstantBase
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.R
+import com.namoadigital.prj001.dao.MD_Schedule_ExecDao
 import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.receiver.WBR_Workgroup_Member_List
+import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -32,7 +34,6 @@ class WsScheduleNotExecuted :
         //
         try {
             val bundle = intent?.extras ?: Bundle()
-            val customer_code = bundle.getLong(WS_BUNDLE_CUSTOMER_CODE, -1)
             val schedule_prefix = bundle.getInt(WS_BUNDLE_SCHEDULE_PREFIX, -1)
             val schedule_code = bundle.getInt(WS_BUNDLE_SCHEDULE_CODE, -1)
             val schedule_exec = bundle.getInt(WS_BUNDLE_SCHEDULE_EXEC, -1)
@@ -43,7 +44,6 @@ class WsScheduleNotExecuted :
 
             //
             processScheduleNotExecuted(
-                customer_code,
                 schedule_prefix,
                 schedule_code,
                 schedule_exec,
@@ -71,7 +71,6 @@ class WsScheduleNotExecuted :
 
     @Throws(IOException::class)
     private fun processScheduleNotExecuted(
-        customer_code: Long,
         schedule_prefix: Int,
         schedule_code: Int,
         schedule_exec: Int,
@@ -97,7 +96,7 @@ class WsScheduleNotExecuted :
             session_app = ToolBox_Con.getPreference_Session_App(applicationContext),
             app_type = ConstantBaseApp.PKG_APP_TYPE_DEFAULT,
             token = token,
-            customer_code = customer_code,
+            customer_code = ToolBox_Con.getPreference_Customer_Code(applicationContext),
             schedule_prefix = schedule_prefix,
             schedule_code = schedule_code,
             schedule_exec = schedule_exec,
@@ -148,12 +147,34 @@ class WsScheduleNotExecuted :
             "0"
         )
         //
-        processScheduleNotExecutedReturn(rec.error_msg)
+        processScheduleNotExecutedReturn(
+            schedule_prefix,
+            schedule_code,
+            schedule_exec,
+            rec.error_msg
+        )
     }
 
     @Throws(IOException::class)
-    private fun processScheduleNotExecutedReturn(errorMsg: String?) {
-        ToolBox.sendBCStatus(applicationContext, "CLOSE_ACT", hmAuxTrans["generic_process_finalized_msg"], HMAux(), errorMsg, "0")
+    private fun processScheduleNotExecutedReturn(
+        schedule_prefix: Int,
+        schedule_code: Int,
+        schedule_exec: Int,
+        errorMsg: String?
+    ) {
+        updateScheduleExec(
+            schedule_prefix = schedule_prefix,
+            schedule_code = schedule_code,
+            schedule_exec = schedule_exec,
+        )
+        ToolBox.sendBCStatus(
+            applicationContext,
+            "CLOSE_ACT",
+            hmAuxTrans["generic_process_finalized_msg"],
+            HMAux(),
+            errorMsg,
+            "0"
+        )
     }
 
     private fun loadTranslation(): HMAux {
@@ -178,6 +199,35 @@ class WsScheduleNotExecuted :
             ToolBox_Con.getPreference_Translate_Code(applicationContext),
             translist
         )
+    }
+
+
+    private fun updateScheduleExec(
+        schedule_prefix: Int,
+        schedule_code: Int,
+        schedule_exec: Int,
+    ) {
+
+        //
+        val dao = MD_Schedule_ExecDao(
+            applicationContext,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(applicationContext)),
+            Constant.DB_VERSION_CUSTOM
+        )
+
+        dao.getByString(
+            MD_Schedule_Exec_Sql_001(
+                ToolBox_Con.getPreference_Customer_Code(applicationContext),
+                schedule_prefix,
+                schedule_code,
+                schedule_exec
+            ).toSqlQuery()
+        )?.let {
+            it.status = ConstantBaseApp.SYS_STATUS_NOT_EXECUTED
+            dao.addUpdate(it)
+        }
+
+
     }
 
     companion object {

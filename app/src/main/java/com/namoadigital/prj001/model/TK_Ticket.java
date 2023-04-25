@@ -1754,6 +1754,7 @@ public class TK_Ticket implements Cloneable, Serializable {
                 hmAux.get(TK_TicketDao.JUSTIFY_ITEM_ID),
                 hmAux.get(TK_TicketDao.JUSTIFY_ITEM_DESC),
                 hmAux.get(TK_TicketDao.NOT_EXECUTED_COMMENTS),
+                null,
                 null
         );
 

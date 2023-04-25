@@ -13,7 +13,8 @@ private val justifyGroupCode: Int
                        justify_item_code ${SearchableSpinner.CODE},
                        justify_item_id ${SearchableSpinner.ID}, 
                        justify_item_desc ${SearchableSpinner.DESCRIPTION},
-                       required_comment 
+                       required_comment ,
+                       reschedule 
                        FROM
                             ${MdJustifyItemDao.TABLE}                   
                        WHERE

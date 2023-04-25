@@ -66,11 +66,25 @@ interface Act083_Main_Contract {
         fun processActionFormButtonClick(myActionsFormButton: MyActionsFormButton)
         fun onBackPressedClicked()
         fun processWsSyncReturn(hmAuxTicketDownload: HMAux)
-        fun getMainUserFiltersParam():Boolean
+        fun getMainUserFiltersParam(): Boolean
         fun processSerialClick(myAction: MyActions)
-        fun processLocalSearchForSerialAction(selectedActionForSerialFLow: MyActions, mdProductSerial: MD_Product_Serial?)
+        fun processLocalSearchForSerialAction(
+            selectedActionForSerialFLow: MyActions,
+            mdProductSerial: MD_Product_Serial?
+        )
+
         fun extractStructureResult(serial: MD_Product_Serial, myAction: MyActions?)
         fun updateSharedPrefs()
+
+        fun getJustifyItems(justifyGroupCode: Int): ArrayList<HMAux>
+
+        fun justifyNotExecuteSchedule(
+            processPk: String,
+            comments: String,
+            justify_group_code: Int,
+            justify_item_code: Int,
+            reschedule_date: String
+        )
     }
 
 }

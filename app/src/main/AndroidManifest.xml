@@ -1000,6 +1000,7 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
         <service android:name=".service.WS_Product_Serial_Backup" />
         <service android:name=".service.WSTicketCreation" />
         <service android:name=".service.WS_UnfocusAndHistoric" />
+        <service android:name=".service.WsScheduleNotExecuted" />
     </application>
 
 </manifest>

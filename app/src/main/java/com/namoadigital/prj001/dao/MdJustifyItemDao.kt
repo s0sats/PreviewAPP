@@ -9,7 +9,7 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
 import com.namoadigital.prj001.model.DaoObjReturn
 import com.namoadigital.prj001.model.MdJustifyItem
-
+import com.namoadigital.prj001.sql.MdJustifyItemSqlSS
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -286,14 +286,25 @@ class MdJustifyItemDao(
                     }
                     put(JUSTIFY_ITEM_CODE,mdJustifyItem.justifyItemCode)
                     put(JUSTIFY_ITEM_ID,mdJustifyItem.justifyItemId)
-                    put(JUSTIFY_ITEM_DESC,mdJustifyItem.justifyItemDesc)
-                    put(REQUIRED_COMMENT,mdJustifyItem.requiredComment)
-                    put(RESCHEDULE,mdJustifyItem.reschedule)
+                    put(JUSTIFY_ITEM_DESC, mdJustifyItem.justifyItemDesc)
+                    put(REQUIRED_COMMENT, mdJustifyItem.requiredComment)
+                    put(RESCHEDULE, mdJustifyItem.reschedule)
                 }
             }
             //
             return contentValues
         }
+    }
+
+
+    fun getJustifyItems(customer_code: Long, justifyGroupCode: Int): ArrayList<HMAux> {
+        val justifyItems = query_HM(
+            MdJustifyItemSqlSS(
+                customer_code,
+                justifyGroupCode
+            ).toSqlQuery()
+        ) as ArrayList<HMAux>?
+        return justifyItems ?: ArrayList()
     }
 
 }
