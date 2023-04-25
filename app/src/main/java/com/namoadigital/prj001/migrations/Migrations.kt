@@ -2,6 +2,7 @@ package com.namoadigital.prj001.migrations
 
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
+import com.namoadigital.prj001.dao.MdJustifyItemDao
 import com.namoadigital.prj001.database.MigrationSQLite
 
 val MigrationV1 = object : MigrationSQLite(1, 2){
@@ -101,6 +102,16 @@ val MigrationV3 = object : MigrationSQLite(3, 4) {
             db.execSQL(""" ALTER TABLE [md_product_serials] ADD [last_cycle_date] text collate nocase;""".trimIndent())
         }
     }
+}
+
+val MigrationV4 = object : MigrationSQLite(4, 5) {
+
+    override fun migrate(db: SQLiteDatabase) {
+        if (!isFieldExist(db, MdJustifyItemDao.TABLE, MdJustifyItemDao.JUSTIFY_GROUP_CODE)) {
+            db.execSQL(""" ALTER TABLE [${MdJustifyItemDao.TABLE}] ADD [${MdJustifyItemDao.JUSTIFY_GROUP_CODE}] text collate nocase;""".trimIndent())
+        }
+    }
+
 }
 
 fun isFieldExist(db: SQLiteDatabase, tableName: String, fieldName: String): Boolean {

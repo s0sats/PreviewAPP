@@ -192,6 +192,8 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
                     MigrationsKt.getMigrationV2().migrate(db);
                 case 3:
                     MigrationsKt.getMigrationV3().migrate(db);
+                case 4:
+                    MigrationsKt.getMigrationV4().migrate(db);
                     break;
             }
         } catch (Exception e) {
