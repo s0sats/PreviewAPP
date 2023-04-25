@@ -179,6 +179,7 @@ class Act083_Main_Presenter constructor(
         transList.add("alert_not_execute_justify_success_msg")
         transList.add("btn_cancel_schedule")
         transList.add("warning_not_execute_justify_required_date_hour")
+        transList.add("warning_not_execute_justify_future_date_hour")
         //
         transList.add("btn_open_action_lbl")
         transList.add("btn_download_action_lbl")

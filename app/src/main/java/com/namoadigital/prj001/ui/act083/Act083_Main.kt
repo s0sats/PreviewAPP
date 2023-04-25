@@ -319,10 +319,10 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
 
             with(act070NotExecuteDialogJustifyDate) {
 
-                val dateInvalid = {
+                fun dateInvalid(msg: String) {
                     Toast.makeText(
                         this@Act083_Main,
-                        "warning_not_execute_justify_required_date_hour",
+                        hmAux_Trans[msg],
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -334,13 +334,13 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                         val isFuture = ToolBox_Inf.isFutureDate(tvDateVal.getmValue())
 
                         if (!isFuture) {
-                            dateInvalid()
+                            dateInvalid("warning_not_execute_justify_future_date_hour")
                             return@setOnClickListener
                         }
 
                         dateReschedule = tvDateVal.getmValue()
                     } else {
-                        dateInvalid()
+                        dateInvalid("warning_not_execute_justify_required_date_hour")
                         return@setOnClickListener
                     }
 
