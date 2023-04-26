@@ -2137,6 +2137,9 @@ public class Act011_Main extends Base_Activity
             photoFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         }else{
             photoFF.setmValue("p_" + prefix + cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ) + JPG_EXTENSION);
+            if(cf.hasConsistentValue(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_LOCAL_LINK)){
+                photoFF.setmOriginalValue(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_LOCAL_LINK));
+            }
         }
         photoFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
         //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico

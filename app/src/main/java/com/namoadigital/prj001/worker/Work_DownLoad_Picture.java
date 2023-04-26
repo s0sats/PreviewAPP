@@ -33,6 +33,7 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Sql_002;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Sql_003;
 import com.namoadigital.prj001.sql.MD_All_Product_Sql_004;
 import com.namoadigital.prj001.sql.MD_All_Product_Sql_005;
 import com.namoadigital.prj001.sql.MD_Product_Sql_004;
@@ -229,6 +230,10 @@ public class Work_DownLoad_Picture extends Worker {
         dados_geral = (ArrayList<HMAux>) form_fieldDao.query_HM(
             new GE_Custom_Form_Field_Sql_001().toSqlQuery().toLowerCase()
         );
+        //
+        dados_geral.addAll((ArrayList<HMAux>) form_fieldDao.query_HM(
+            new GE_Custom_Form_Field_Sql_003().toSqlQuery().toLowerCase()
+        ));
         //
         dados_geral.addAll(
             (ArrayList<HMAux>) form_fieldLocalDao.query_HM(
