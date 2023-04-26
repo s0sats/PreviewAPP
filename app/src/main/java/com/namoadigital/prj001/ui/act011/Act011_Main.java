@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act011;
 
+import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH;
 import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH_PHOTO;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DEVICE_BUNDLE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DEVICE_ITEM_LIST_CHECKBOX_STATUS;
@@ -156,6 +157,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -1075,14 +1077,30 @@ public class Act011_Main extends Base_Activity
         geFiles.clear();
 
         for (int i = 0; i < customFFs.size(); i++) {
-            String sFile_v = customFFs.get(i).getmValue();
-            String sFile_e_1 = customFFs.get(i).getmDots_photo1();
-            String sFile_e_2 = customFFs.get(i).getmDots_photo2();
-            String sFile_e_3 = customFFs.get(i).getmDots_photo3();
-            String sFile_e_4 = customFFs.get(i).getmDots_photo4();
+            CustomFF customFF = customFFs.get(i);
+
+            String sFile_v = customFF.getmValue();
+            String sFile_e_1 = customFF.getmDots_photo1();
+            String sFile_e_2 = customFF.getmDots_photo2();
+            String sFile_e_3 = customFF.getmDots_photo3();
+            String sFile_e_4 = customFF.getmDots_photo4();
 
             if (sFile_v.endsWith(PNG_EXTENSION) || sFile_v.endsWith(JPG_EXTENSION)) {
                 File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + sFile_v);
+                if(customFF instanceof PhotoFF){
+                    String originalPhotoName = ((PhotoFF) customFF).getmOriginalValue();
+                    //
+                    if(originalPhotoName != null
+                            && !originalPhotoName.isEmpty()){
+                        if(!sFile.exists() || sFile.isDirectory()){
+                            try {
+                                ToolBox_Inf.copyFiles(CACHE_PATH + "/" + originalPhotoName, CACHE_PATH_PHOTO + "/" + sFile_v);
+                            } catch (IOException e) {
+                                ToolBox_Inf.registerException(Act011_Main.class.getSimpleName(), e);
+                            }
+                        }
+                    }
+                }
                 if (sFile.exists()) {
                     GE_File geFile = new GE_File();
                     geFile.setFile_code(sFile_v.replace(PNG_EXTENSION, "").replace(JPG_EXTENSION, ""));
@@ -2137,6 +2155,9 @@ public class Act011_Main extends Base_Activity
             photoFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         }else{
             photoFF.setmValue("p_" + prefix + cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ) + JPG_EXTENSION);
+            if(cf.hasConsistentValue(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_LOCAL_LINK)){
+                photoFF.setmOriginalValue(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_LOCAL_LINK));
+            }
         }
         photoFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
         //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
@@ -3387,7 +3408,7 @@ public class Act011_Main extends Base_Activity
 
                     if (aux.get(GE_Custom_Form_Blob_LocalDao.BLOB_NAME).trim().length() != 0) {
 
-                        File file = new File(Constant.CACHE_PATH + "/" + aux.get(GE_Custom_Form_Blob_LocalDao.BLOB_URL_LOCAL));
+                        File file = new File(CACHE_PATH + "/" + aux.get(GE_Custom_Form_Blob_LocalDao.BLOB_URL_LOCAL));
 
                         try {
 
