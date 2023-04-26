@@ -2,7 +2,7 @@ package com.namoadigital.prj001.migrations
 
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
-import com.namoadigital.prj001.dao.MdJustifyItemDao
+import com.namoadigital.prj001.dao.GE_Custom_FormDao
 import com.namoadigital.prj001.database.MigrationSQLite
 
 val MigrationV1 = object : MigrationSQLite(1, 2){
@@ -107,8 +107,8 @@ val MigrationV3 = object : MigrationSQLite(3, 4) {
 val MigrationV4 = object : MigrationSQLite(4, 5) {
 
     override fun migrate(db: SQLiteDatabase) {
-        if (!isFieldExist(db, MdJustifyItemDao.TABLE, MdJustifyItemDao.JUSTIFY_GROUP_CODE)) {
-            db.execSQL(""" ALTER TABLE [${MdJustifyItemDao.TABLE}] ADD [${MdJustifyItemDao.JUSTIFY_GROUP_CODE}] text collate nocase;""".trimIndent())
+        if (!isFieldExist(db, GE_Custom_FormDao.TABLE, GE_Custom_FormDao.JUSTIFY_GROUP_CODE)) {
+            db.execSQL(""" ALTER TABLE [${GE_Custom_FormDao.TABLE}] ADD [${GE_Custom_FormDao.JUSTIFY_GROUP_CODE}] int;""".trimIndent())
         }
     }
 
