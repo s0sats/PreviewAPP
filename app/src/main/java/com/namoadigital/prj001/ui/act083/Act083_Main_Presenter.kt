@@ -192,6 +192,8 @@ class Act083_Main_Presenter constructor(
         transList.add("item_in_process_lbl")
         //
         transList.add("cell_justify_lbl")
+        transList.add("progress_n_form_sync_ttl")
+        transList.add("progress_n_form_sync_msg")
         //
         transList.add(Act092Translate.HINT_FILTER)
         transList.add(Act092Translate.PLACEHOLDER_FILTER)
