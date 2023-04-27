@@ -97,4 +97,6 @@ public interface Act011_Main_Presenter {
     ArrayList<HMAux> getSerialClassList();
 
     void saveSerialClass(long preference_customer_code, int productCode, String serialId, GE_Custom_Form_Local formLocal, SearchableSpinner ssSerialClass);
+
+    boolean isFormTicketKanban(Integer mTicket_prefix,Integer mTicket_code);
 }

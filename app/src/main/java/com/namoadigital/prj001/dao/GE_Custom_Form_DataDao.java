@@ -76,6 +76,7 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
     public static final String MEASURE_TP_CODE = "measure_tp_code";
     public static final String MEASURE_VALUE = "measure_value";
     public static final String MEASURE_CYCLE_VALUE = "measure_cycle_value";
+    public static final String FINALIZED_SERVICE = "finalized_service";
 
     //private String[] columns = {CUSTOMER_CODE, CUSTOM_FORM_TYPE, CUSTOM_FORM_CODE, CUSTOM_FORM_VERSION, CUSTOM_FORM_DATA, CUSTOM_FORM_STATUS, PRODUCT_CODE, SERIAL_ID, DATE_START, DATE_END, USER_CODE, SITE_CODE , OPERATION_CODE , SIGNAURE, TOKEN};
 
@@ -592,6 +593,11 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             }else{
                 custom_form_data.setMeasure_cycle_value(cursor.getFloat(cursor.getColumnIndex(MEASURE_CYCLE_VALUE)));
             }
+            if(cursor.isNull(cursor.getColumnIndex(FINALIZED_SERVICE))){
+                custom_form_data.setFinalized_service(null);
+            }else{
+                custom_form_data.setFinalized_service(cursor.getInt(cursor.getColumnIndex(FINALIZED_SERVICE)));
+            }
             return custom_form_data;
         }
     }
@@ -712,6 +718,7 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             contentValues.put(MEASURE_TP_CODE, custom_form_data.getMeasure_tp_code());
             contentValues.put(MEASURE_VALUE, custom_form_data.getMeasure_value() );
             contentValues.put(MEASURE_CYCLE_VALUE, custom_form_data.getMeasure_cycle_value());
+            contentValues.put(FINALIZED_SERVICE, custom_form_data.getFinalized_service());
 
             return contentValues;
         }

@@ -2536,5 +2536,13 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         md_product_serialDao.addUpdate(mdProductSerial);
     }
 
-
+    @Override
+    public boolean isFormTicketKanban(Integer mTicket_prefix, Integer mTicket_code) {
+        if(mTicket_prefix != null
+                && mTicket_code != null) {
+            TK_Ticket tkTicket = getTicketbyPk(mTicket_prefix, mTicket_code);
+            return tkTicket.getKanban() == 1;
+        }
+        return false;
+    }
 }

@@ -191,6 +191,9 @@ public class GE_Custom_Form_Data {
     @Expose
     @SerializedName("measure_cycle_value")
     private Float measure_cycle_value;
+    @Expose
+    @SerializedName("finalized_service")
+    private Integer finalized_service;
 
     public GE_Custom_Form_Data() {
         this.customer_code = -1L;
@@ -241,6 +244,7 @@ public class GE_Custom_Form_Data {
         this.measure_tp_code = null;
         this.measure_value = null;
         this.measure_cycle_value = null;
+        this.finalized_service = null;
     }
 
     public long getCustomer_code() {
@@ -625,5 +629,13 @@ public class GE_Custom_Form_Data {
 
     public void setMeasure_cycle_value(Float measure_cycle_value) {
         this.measure_cycle_value = measure_cycle_value;
+    }
+
+    public Integer getFinalized_service() {
+        return finalized_service;
+    }
+
+    public void setFinalized_service(Integer finalized_service) {
+        this.finalized_service = finalized_service;
     }
 }

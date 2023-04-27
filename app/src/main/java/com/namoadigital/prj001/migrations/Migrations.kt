@@ -3,6 +3,8 @@ package com.namoadigital.prj001.migrations
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import com.namoadigital.prj001.dao.GE_Custom_FormDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
+import com.namoadigital.prj001.dao.TK_TicketDao
 import com.namoadigital.prj001.database.MigrationSQLite
 
 val MigrationV1 = object : MigrationSQLite(1, 2){
@@ -110,6 +112,13 @@ val MigrationV4 = object : MigrationSQLite(4, 5) {
         if (!isFieldExist(db, GE_Custom_FormDao.TABLE, GE_Custom_FormDao.JUSTIFY_GROUP_CODE)) {
             db.execSQL(""" ALTER TABLE [${GE_Custom_FormDao.TABLE}] ADD [${GE_Custom_FormDao.JUSTIFY_GROUP_CODE}] int;""".trimIndent())
         }
+        if (!isFieldExist(db, GE_Custom_FormDao.TABLE, GE_Custom_Form_DataDao.FINALIZED_SERVICE)) {
+            db.execSQL(""" ALTER TABLE [${GE_Custom_Form_DataDao.TABLE}] ADD [${GE_Custom_Form_DataDao.FINALIZED_SERVICE}] int;""".trimIndent())
+        }
+        if (!isFieldExist(db, TK_TicketDao.TABLE, TK_TicketDao.KANBAN)) {
+            db.execSQL(""" ALTER TABLE [${TK_TicketDao.TABLE}] ADD [${TK_TicketDao.KANBAN}] int not null;""".trimIndent())
+        }
+
     }
 
 }

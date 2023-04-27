@@ -135,6 +135,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
     public static final String CLASS_ID = "class_id";
     public static final String CLASS_COLOR = "class_color";
     public static final String CLASS_AVAILABLE = "class_available";
+    public static final String KANBAN = "kanban";
 
 
     public TK_TicketDao(Context context, String mDB_NAME, int mDB_VERSION) {
@@ -1149,6 +1150,8 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
                 tk_ticket.setNot_executed_date(cursor.getString(cursor.getColumnIndex(NOT_EXECUTED_DATE)));
             }
 
+            tk_ticket.setKanban(cursor.getInt(cursor.getColumnIndex(KANBAN)));
+
             return tk_ticket;
         }
     }
@@ -1360,6 +1363,8 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             if (tk_ticket.getTag_operational_desc() != null) {
                 contentValues.put(TAG_OPERATIONAL_DESC, tk_ticket.getTag_operational_desc());
             }
+            //
+            contentValues.put(KANBAN, tk_ticket.getKanban());
             //
             return contentValues;
         }

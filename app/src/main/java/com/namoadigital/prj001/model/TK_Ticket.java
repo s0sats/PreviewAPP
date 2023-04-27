@@ -198,6 +198,7 @@ public class TK_Ticket implements Cloneable, Serializable {
     @SerializedName("class_id") private String class_id;
     @SerializedName("class_color") private String class_color;
     @SerializedName("class_available") private Integer class_available;
+    @SerializedName("kanban") private int kanban;
     @Expose
     @SerializedName("step")
     private ArrayList<TK_Ticket_Step> step = new ArrayList<>();
@@ -1122,6 +1123,14 @@ public class TK_Ticket implements Cloneable, Serializable {
 
     public void setClass_available(Integer class_available) {
         this.class_available = class_available;
+    }
+
+    public int getKanban() {
+        return kanban;
+    }
+
+    public void setKanban(int kanban) {
+        this.kanban = kanban;
     }
 
     public ArrayList<TK_Ticket_Step> getStep() {
