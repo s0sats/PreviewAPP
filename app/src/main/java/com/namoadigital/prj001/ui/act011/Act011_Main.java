@@ -448,6 +448,9 @@ public class Act011_Main extends Base_Activity
         transList.add("alert_error_on_create_form_msg");
         transList.add("alert_data_not_sent_ttl");
         transList.add("alert_resend_data_by_menu_msg");
+        transList.add("dialog_finalize_option_finalize_ttl");
+        transList.add("dialog_finalize_option_yes");
+        transList.add("dialog_finalize_option_no");
 
         transList.add("dialog_confirm_delete_ttl");
         transList.add("dialog_confirm_delete_msg");
@@ -1040,14 +1043,22 @@ public class Act011_Main extends Base_Activity
             && mSo_Prefix == null
             && mSo_Code == null
             && !ToolBox_Inf.isScheduleForm(formLocal)
-            && serial_id != null
-            && !serial_id.isEmpty()
-            //LUCHE - 28/08/2020
-            && !mPresenter.isFormCreateByTicket(formLocal)
-        ){
+                && serial_id != null
+                && !serial_id.isEmpty()
+                //LUCHE - 28/08/2020
+                && !mPresenter.isFormCreateByTicket(formLocal)
+        ) {
             return true;
         }
         return false;
+    }
+
+    private boolean showQuestionFinal() {
+        return mSo_Prefix == null
+                && mSo_Code == null
+                && !ToolBox_Inf.isScheduleForm(formLocal)
+                && mPresenter.isFormCreateByTicket(formLocal)
+                && mPresenter.isFormTicketKanban(mTicket_prefix, mTicket_code);
     }
 
     @Override
@@ -3622,7 +3633,7 @@ public class Act011_Main extends Base_Activity
                             missingAnswersCounter,
                             missingAnswer,
                             startDate,
-                            endDate
+                                endDate
                         );
                         //
                         mPresenter.saveSerialClass(ToolBox_Con.getPreference_Customer_Code(context),
@@ -3632,10 +3643,14 @@ public class Act011_Main extends Base_Activity
                                 binding.ssSerialClass
                         );
                         //
+                        formData.setFinalized_service(
+                                binding.rgCompletedServiceYes.isChecked() ? 1 : 0
+                        );
+                        //
                         formData.setClass_code(ToolBox_Inf.mIntegerParse(binding.ssSerialClass.getmValue().get(SearchableSpinner.CODE)));
                         //Somente chama atualização das listas dos recycles se houver itens precisando
                         //ser alterados.
-                        if(missingAnswersCounter > 0) {
+                        if (missingAnswersCounter > 0) {
                             refreshCurrentTabRecycle();
                         }
                         //Seta valor var que controla se fluxo é finaliza ou finaliza mais novo.
@@ -3779,19 +3794,23 @@ public class Act011_Main extends Base_Activity
     private void setDialogVisibilityAndLabels(Act011CheckDialogBinding binding) {
         binding.act011DialogCheckTtl.setText(hmAux_Trans.get("dialog_finalize_option_ttl"));
         binding.clSerialClass.setVisibility(View.GONE);
+        binding.tvCompletedService.setText(hmAux_Trans.get("dialog_finalize_option_finalize_ttl"));
+        binding.rgCompletedServiceYes.setText(hmAux_Trans.get("dialog_finalize_option_yes"));
+        binding.rgCompletedServiceNot.setText(hmAux_Trans.get("dialog_finalize_option_no"));
         //
-        if(isFormOs){
+        if (isFormOs) {
             setFormOsViewVisibility(binding, View.VISIBLE);
             int missingAnswersAmount = missingAnswersCounter();
-            if(missingAnswersAmount == 0){
+            if (missingAnswersAmount == 0) {
                 binding.act011DialogCheckClMissingAnswers.setVisibility(View.GONE);
                 binding.act011DialogCheckBtnOk.setEnabled(true);
-            }else{
+            } else {
                 binding.act011DialogCheckBtnOk.setEnabled(false);
-                if(formLocal.getSo_optional_justify_problem() == 1){
+                if (formLocal.getSo_optional_justify_problem() == 1) {
                     binding.act011DialogCheckBtnOk.setEnabled(true);
                 }
             }
+
             binding.act011DialogCheckTvMissingAnswerVal.setText(String.valueOf(missingAnswersAmount));
             binding.act011DialogCheckMkdateFormStart.setClickable(false);
             binding.act011DialogCheckMkdateFormStart.setmCanClean(false);
@@ -3826,7 +3845,7 @@ public class Act011_Main extends Base_Activity
             //
             setSerialClass(binding);
             //
-        }else{
+        } else {
             setFormOsViewVisibility(binding, View.GONE);
             binding.act011DialogFinalizeLbl.setText(hmAux_Trans.get("dialog_finalize_form_lbl"));
         }
@@ -3835,14 +3854,18 @@ public class Act011_Main extends Base_Activity
         //
         binding.act011DialogCheckOptionRg.setVisibility(View.GONE);
         //
-        if (allowFinalizeWithNewBtn()) {
-            binding.act011DialogFinalizeLbl.setVisibility(View.VISIBLE);
+        if (allowFinalizeWithNewBtn() && !isFormOs) {
+            binding.act011DialogFinalizeLbl.setVisibility(View.GONE);
             binding.act011DialogCheckOptionRg.setVisibility(View.VISIBLE);
             binding.act011DialogCheckOptionRdoFinalize.setText(hmAux_Trans.get("dialog_finalize_option_finalize_lbl"));
             binding.act011DialogCheckOptionRdoFinalizeNew.setText(hmAux_Trans.get("dialog_finalize_option_finalize_new_lbl"));
-        }else{
+        } else {
             binding.act011DialogFinalizeLbl.setVisibility(View.GONE);
             binding.act011DialogCheckOptionRg.setVisibility(View.GONE);
+        }
+
+        if (showQuestionFinal()) {
+            binding.layoutCompletedService.setVisibility(View.VISIBLE);
         }
     }
 
