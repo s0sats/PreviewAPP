@@ -117,6 +117,7 @@ val MigrationV4 = object : MigrationSQLite(4, 5) {
         }
         if (!isFieldExist(db, TK_TicketDao.TABLE, TK_TicketDao.KANBAN)) {
             db.execSQL(""" ALTER TABLE [${TK_TicketDao.TABLE}] ADD [${TK_TicketDao.KANBAN}] int not null;""".trimIndent())
+            db.execSQL(""" UPDATE [${TK_TicketDao.TABLE}] SET [${TK_TicketDao.SYNC_REQUIRED}] = 1;""".trimIndent())
         }
 
     }
