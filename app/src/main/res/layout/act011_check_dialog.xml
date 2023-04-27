@@ -115,39 +115,6 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/cl_serial_class"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:visibility="visible"
-                app:layout_constraintEnd_toStartOf="@+id/act011_gdl_end"
-                app:layout_constraintStart_toStartOf="@+id/act011_gdl_start"
-                app:layout_constraintTop_toBottomOf="@+id/act011_dialog_check_cl_missing_answers">
-
-                <TextView
-                    android:id="@+id/tv_serial_class_ttl"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:padding="5dp"
-                    tools:text="Class - Trad"
-                    android:textSize="@dimen/font_size_item_md"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <com.namoa_digital.namoa_library.ctls.SearchableSpinner
-                    android:id="@+id/ss_serial_class"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:text="Class -Trad"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_serial_class_ttl" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
                 android:id="@+id/act011_dialog_check_tv_elapsed_time_lbl"
@@ -159,7 +126,7 @@
                 android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@+id/act011_dialog_check_tv_elapsed_time_val"
                 app:layout_constraintStart_toStartOf="@+id/act011_gdl_start"
-                app:layout_constraintTop_toBottomOf="@+id/cl_serial_class"
+                app:layout_constraintTop_toBottomOf="@+id/act011_dialog_check_cl_missing_answers"
                 tools:text="Tempo total:" />
 
             <TextView
@@ -195,15 +162,108 @@
                 app:layout_constraintTop_toBottomOf="@id/act011_dialog_check_mkdate_form_start"
                 app:mConfigType="DATE_HOUR" />
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_serial_class"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:visibility="visible"
+                app:layout_constraintEnd_toStartOf="@+id/act011_gdl_end"
+                app:layout_constraintStart_toStartOf="@+id/act011_gdl_start"
+                app:layout_constraintTop_toBottomOf="@+id/act011_dialog_check_mkdate_form_end">
+
+                <TextView
+                    android:id="@+id/tv_serial_class_ttl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="5dp"
+                    tools:text="Class - Trad"
+                    android:textSize="@dimen/font_size_item_md"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+                    android:id="@+id/ss_serial_class"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:text="Class -Trad"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_serial_class_ttl" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_completed_service"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical"
+                android:visibility="gone"
+                app:layout_constraintEnd_toStartOf="@+id/act011_gdl_end"
+                app:layout_constraintStart_toStartOf="@+id/act011_gdl_start"
+                app:layout_constraintTop_toBottomOf="@+id/cl_serial_class">
+
+                <TextView
+                    android:id="@+id/tv_completed_service"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/text_black"
+                    android:textSize="16sp"
+                    tools:text="O Atendimento foi finalizado com a conclusão desta OS?" />
+
+
+                <RadioGroup
+                    android:id="@+id/rg_completed_service"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp">
+                    <!--<android.support.constraint.ConstraintLayout-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="match_parent">-->
+
+                    <RadioButton
+                        android:id="@+id/rg_completed_service_yes"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:checked="true"
+                        android:text="RadioButton"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <RadioButton
+                        android:id="@+id/rg_completed_service_not"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="RadioButton"
+                        tools:layout_marginBottom="8dp" />
+
+
+                    <!--</android.support.constraint.ConstraintLayout>-->
+
+                </RadioGroup>
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/act011_dialog_finalize_lbl"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textColor="@color/text_black"
                 android:textSize="16sp"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="@id/act011_gdl_end"
                 app:layout_constraintStart_toStartOf="@id/act011_gdl_start"
-                app:layout_constraintTop_toBottomOf="@id/act011_dialog_check_mkdate_form_end"
+                app:layout_constraintTop_toBottomOf="@+id/layout_completed_service"
                 tools:text="Para finalizar a OS, confirme abaixo." />
 
             <RadioGroup
@@ -212,6 +272,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
+                android:visibility="gone"
                 android:layout_marginEnd="8dp"
                 app:layout_constraintEnd_toEndOf="@id/act011_gdl_end"
                 app:layout_constraintStart_toStartOf="@id/act011_gdl_start"
