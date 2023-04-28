@@ -64,7 +64,7 @@
             android:gravity="center"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/act070_not_execute_dialog_justify_comments_til"
+            app:layout_constraintTop_toBottomOf="@+id/act070_not_execute_dialog_justify_date"
             android:orientation="vertical">
 
             <ImageView
@@ -91,9 +91,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone"
+            android:layout_marginTop="12dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/act070_not_execute_dialog_justify_option_ss" />
+            app:layout_constraintTop_toBottomOf="@+id/act070_not_execute_dialog_justify_comments_til" />
 
 
         <com.google.android.material.textfield.TextInputLayout
@@ -108,7 +109,7 @@
             app:endIconMode="none"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/act070_not_execute_dialog_justify_date">
+            app:layout_constraintTop_toBottomOf="@+id/act070_not_execute_dialog_justify_option_ss">
 
             <AutoCompleteTextView
                 android:id="@+id/act070_not_execute_dialog_justify_comments_actv"

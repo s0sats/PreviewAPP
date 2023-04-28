@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.ContextThemeWrapper
 import android.view.View
@@ -54,6 +55,7 @@ import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
+
 
 class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     companion object {
@@ -329,21 +331,28 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
 
                 if (root.isVisible) {
 
-                    if (tvDateVal.isValid && !tvDateVal.getmValue().isNullOrEmpty()) {
+                    val dateKey = tvDateVal.mketContents.hasConsistentValue("DATE_KEY")
+                    val hourKey = tvDateVal.mketContents.hasConsistentValue("HOUR_KEY")
 
-                        val isFuture = ToolBox_Inf.isFutureDate(tvDateVal.getmValue())
+                    if (dateKey || hourKey) {
 
-                        if (!isFuture) {
+                        if (tvDateVal.isValid) {
+                            val isFuture = ToolBox_Inf.isFutureDate(tvDateVal.getmValue())
+
+                            if (!isFuture) {
+                                dateInvalid("warning_not_execute_justify_future_date_hour")
+                                return@setOnClickListener
+                            }
+
+                            if (!tvDateVal.getmValue().isNullOrEmpty()) {
+                                dateReschedule = tvDateVal.getmValue()
+                            }
+                        } else {
                             dateInvalid("warning_not_execute_justify_future_date_hour")
                             return@setOnClickListener
                         }
 
-                        dateReschedule = tvDateVal.getmValue()
-                    } else {
-                        dateInvalid("warning_not_execute_justify_required_date_hour")
-                        return@setOnClickListener
                     }
-
                 }
             }
 
@@ -360,10 +369,11 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 )
                 return@setOnClickListener
             }
-
-            showAlert(
-                hmAux_Trans["alert_not_execute_justify_required_ttl"], errorMsg
-            )
+            Toast.makeText(
+                this@Act083_Main,
+                errorMsg,
+                Toast.LENGTH_SHORT
+            ).show()
         }
 
 
@@ -402,6 +412,43 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 override fun onItemPostSelected(hmAux: HMAux?) {
 
                     val requiredReschedule = hmAux?.get(RESCHEDULE)?.toInt() == 1
+                    val hmAux = act070NotExecuteDialogJustifyOptionSs.getmValue()
+                    val states = arrayOf(
+                        intArrayOf(android.R.attr.state_enabled), // enabled
+                        intArrayOf(-android.R.attr.state_enabled), // disabled
+                        intArrayOf(-android.R.attr.state_checked), // unchecked
+                        intArrayOf(android.R.attr.state_pressed)  // pressed
+                    )
+
+                    val colorsRequired = intArrayOf(
+                        resources.getColor(R.color.namoa_amount_pipeline_background_btn),
+                        resources.getColor(R.color.namoa_amount_pipeline_background_btn),
+                        resources.getColor(R.color.namoa_amount_pipeline_background_btn),
+                        resources.getColor(R.color.namoa_amount_pipeline_background_btn)
+                    )
+
+                    val colorsDefault = intArrayOf(
+                        resources.getColor(R.color.m3_namoa_primary),
+                        resources.getColor(R.color.m3_namoa_primary),
+                        resources.getColor(R.color.m3_namoa_primary),
+                        resources.getColor(R.color.m3_namoa_primary)
+                    )
+
+                    val colorRequiredState = ColorStateList(states, colorsRequired)
+                    val colorDefaultState = ColorStateList(states, colorsDefault)
+
+
+                    if (hmAux.hasConsistentValue(MdJustifyItemDao.REQUIRED_COMMENT) && "1" == hmAux[MdJustifyItemDao.REQUIRED_COMMENT]) {
+                        act070NotExecuteDialogJustifyCommentsTil.hintTextColor = colorRequiredState
+                        act070NotExecuteDialogJustifyCommentsTil.setBoxStrokeColorStateList(
+                            colorRequiredState
+                        )
+                    } else {
+                        act070NotExecuteDialogJustifyCommentsTil.hintTextColor = colorDefaultState
+                        act070NotExecuteDialogJustifyCommentsTil.setBoxStrokeColorStateList(
+                            colorDefaultState
+                        )
+                    }
 
                     if (!requiredReschedule) {
                         act070NotExecuteDialogJustifyDate.root.visibility = View.GONE
@@ -414,11 +461,14 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
 
             })
         }
-        //
 
+        //
+        act070NotExecuteDialogJustifyDate.tvDateVal.setmLabel(hmAux_Trans["alert_not_execute_justify_date_ttl"])
         act070NotExecuteDialogJustifyDate.chkShiftStep.visibility = View.GONE
         act070NotExecuteDialogJustifyDate.chkShiftTicketDate.visibility = View.GONE
         act070NotExecuteDialogJustifyDate.guideline6.visibility = View.GONE
+        act070NotExecuteDialogJustifyDate.tvDateLbl.visibility = View.GONE
+        act070NotExecuteDialogJustifyDate.tvTimeLbl.visibility = View.GONE
 
         act070NotExecuteDialogJustifyCommentsTil.hint =
             hmAux_Trans["alert_not_execute_justify_comment_lbl"]
