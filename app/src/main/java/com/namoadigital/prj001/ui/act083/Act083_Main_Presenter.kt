@@ -168,6 +168,7 @@ class Act083_Main_Presenter constructor(
         //
         transList.add("alert_not_execute_ttl")
         transList.add("alert_not_execute_msg")
+        transList.add("alert_not_execute_justify_date_ttl")
         transList.add("alert_not_execute_justify_option_lbl")
         transList.add("alert_not_execute_justify_comment_lbl")
         transList.add("sys_alert_btn_cancel")
@@ -180,6 +181,7 @@ class Act083_Main_Presenter constructor(
         transList.add("btn_cancel_schedule")
         transList.add("warning_not_execute_justify_required_date_hour")
         transList.add("warning_not_execute_justify_future_date_hour")
+        transList.add("progress_n_form_sync_ttl")
         //
         transList.add("btn_open_action_lbl")
         transList.add("btn_download_action_lbl")

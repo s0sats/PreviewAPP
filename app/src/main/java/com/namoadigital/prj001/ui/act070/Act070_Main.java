@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -524,9 +525,56 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                 ssJustifyItem.setmOption(justifyItems);
                 ssJustifyItem.setmLabel(hmAux_Trans.get("alert_not_execute_justify_option_lbl"));
             }
-        }else{
+        } else {
             ssJustifyItem.setVisibility(View.GONE);
         }
+        //
+        binding.act070NotExecuteDialogJustifyOptionSs.setOnItemSelectedListener(
+                new SearchableSpinner.OnItemSelectedListener() {
+                    @Override
+                    public void onItemPreSelected(HMAux hmAux) {
+
+                    }
+
+                    @Override
+                    public void onItemPostSelected(HMAux hmAux) {
+                        HMAux hmAuxSS = binding.act070NotExecuteDialogJustifyOptionSs.getmValue();
+                        int[][] states = new int[][]{
+                                new int[]{android.R.attr.state_enabled}, // enabled
+                                new int[]{-android.R.attr.state_enabled}, // disabled
+                                new int[]{-android.R.attr.state_checked}, // unchecked
+                                new int[]{android.R.attr.state_pressed}  // pressed
+                        };
+
+                        int[] colorsRequired = new int[]{
+                                getResources().getColor(R.color.namoa_amount_pipeline_background_btn),
+                                getResources().getColor(R.color.namoa_amount_pipeline_background_btn),
+                                getResources().getColor(R.color.namoa_amount_pipeline_background_btn),
+                                getResources().getColor(R.color.namoa_amount_pipeline_background_btn)
+                        };
+
+                        int[] colorsDefault = new int[]{
+                                getResources().getColor(R.color.m3_namoa_primary),
+                                getResources().getColor(R.color.m3_namoa_primary),
+                                getResources().getColor(R.color.m3_namoa_primary),
+                                getResources().getColor(R.color.m3_namoa_primary)
+                        };
+
+                        ColorStateList colorsRequiredState = new ColorStateList(states, colorsRequired);
+                        ColorStateList colorsDefaultState = new ColorStateList(states, colorsDefault);
+
+                        if (hmAuxSS.hasConsistentValue(MdJustifyItemDao.REQUIRED_COMMENT) && "1" == hmAuxSS.get(MdJustifyItemDao.REQUIRED_COMMENT)) {
+                            binding.act070NotExecuteDialogJustifyCommentsTil.setHintTextColor(colorsRequiredState);
+                            binding.act070NotExecuteDialogJustifyCommentsTil.setBoxStrokeColorStateList(
+                                    colorsRequiredState
+                            );
+                        } else {
+                            binding.act070NotExecuteDialogJustifyCommentsTil.setHintTextColor(colorsDefaultState);
+                            binding.act070NotExecuteDialogJustifyCommentsTil.setBoxStrokeColorStateList(colorsDefaultState);
+                        }
+                    }
+                }
+        );
         //
         binding.act070NotExecuteDialogJustifyCommentsTil.setHint(hmAux_Trans.get("alert_not_execute_justify_comment_lbl"));
         binding.act070NotExecuteDialogJustifyBtnCancel.setText(hmAux_Trans.get("sys_alert_btn_cancel"));

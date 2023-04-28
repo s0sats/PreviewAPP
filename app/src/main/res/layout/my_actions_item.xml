@@ -311,14 +311,14 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:strokeColor="@color/m3_namoa_outline" />
 
-                <TextView
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/my_action_cancel_serial"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/m3_namoa_primary"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     android:textStyle="bold"
-                    style="@style/TextAppearance.AppCompat.Button"
+                    style="@style/NamoaMaterialButtonText"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
