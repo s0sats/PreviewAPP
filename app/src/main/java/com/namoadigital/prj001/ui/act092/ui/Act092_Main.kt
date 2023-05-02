@@ -1,20 +1,27 @@
 package com.namoadigital.prj001.ui.act092.ui
 
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.core.view.setPadding
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.dao.GE_Custom_Form_BlobDao
 import com.namoadigital.prj001.dao.MD_Product_SerialDao
+import com.namoadigital.prj001.dao.MdJustifyItemDao
 import com.namoadigital.prj001.databinding.Act092MainBinding
+import com.namoadigital.prj001.databinding.TicketNotExecutedDialogBinding
 import com.namoadigital.prj001.model.MyActionFilterParam
 import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.model.MyActionsBase
@@ -146,6 +153,16 @@ class Act092_Main : BaseActivityMvp
 
     override fun processCloseACT(mLink: String?, mRequired: String?, hmAux: HMAux) {
         when (wsProcess.value) {
+
+            WsScheduleNotExecuted::class.java.name -> {
+                wsProcess.value = ""
+
+                progressDialog.dismiss()
+
+                updateList()
+
+            }
+
             WS_TK_Ticket_Download::class.java.name -> {
                 wsProcess.value = ""
                 progressDialog.dismiss()
@@ -256,6 +273,7 @@ class Act092_Main : BaseActivityMvp
     }
 
 
+
     override fun initSetup() {
         mResource_Code = ToolBox_Inf.getResourceCode(
             context,
@@ -266,6 +284,33 @@ class Act092_Main : BaseActivityMvp
 
     override fun initTrans() {
         hmAux_Trans = presenter.getTranslation()
+    }
+
+    private fun updateList() {
+
+        with(binding) {
+            val filterTexts = editSerialFilter.text.toString()
+
+
+            ToolBox.alertMSG(
+                context,
+                hmAux_Trans["alert_not_execute_justify_success_ttl"],
+                hmAux_Trans["alert_not_execute_justify_success_msg"],
+                { dialog, _ ->
+                    dialog.dismiss()
+                    presenter.getMyActionList()
+                    if (::mAdapter.isInitialized) {
+                        mAdapter.filter.filter(filterTexts)
+                        filterText.value = filterTexts
+                    }
+                    mAdapter.userMainFilter = _focusState.value.mainUser
+                },
+                0
+            )
+
+
+        }
+
     }
 
     private fun updateTitleActionSerial(serialModel: SerialModel) {
@@ -552,9 +597,18 @@ class Act092_Main : BaseActivityMvp
             mAdapter = Act092_Adapter(
                 list,
                 hmAux_Trans,
-                myActionClickListener = { myAction, position -> presenter.processActionClick(myAction, context, position) },
+                myActionClickListener = { myAction, position ->
+                    presenter.processActionClick(
+                        myAction,
+                        context,
+                        position
+                    )
+                },
                 {
                     onState(Act092UiEvent.EmptyOrError(sizeList = it))
+                },
+                cancelSerialSchedule = { item ->
+                    createNotExecuteDialog(item)
                 }
             )
 
@@ -568,7 +622,7 @@ class Act092_Main : BaseActivityMvp
             }
             scrollToLastSelectedItem()
             //
-            if (!editSerialFilter.text.isNullOrEmpty()){
+            if (!editSerialFilter.text.isNullOrEmpty()) {
                 mAdapter.filter.filter(editSerialFilter.text)
                 mAdapter.notifyDataSetChanged()
             }
@@ -576,6 +630,234 @@ class Act092_Main : BaseActivityMvp
 
 
         }
+    }
+
+    private fun createNotExecuteDialog(myAction: MyActions) {
+        val dm = context.resources.displayMetrics
+        val dmW = dm.widthPixels.toFloat() * 0.95f
+        //        float dmH = (float) dm.heightPixels * 0.95f;
+        with(TicketNotExecutedDialogBinding.inflate(layoutInflater)) {
+            Dialog(context).let { dialog ->
+
+                dialog.setContentView(root)
+                dialog.window!!.setLayout(dmW.toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
+                dialog.setCancelable(false)
+
+                act070IvJustifyPhotoBtn.visibility = View.GONE
+
+                setLabel(myAction)
+                setActions(myAction,
+                    closeDialog = {
+                        dialog.hide()
+                    }
+                )
+
+                dialog.show()
+            }
+        }
+    }
+
+    private fun validateNotExecuteFormEntry(binding: TicketNotExecutedDialogBinding): String {
+        var errorMsg: String? = ""
+        val hmAux = binding.act070NotExecuteDialogJustifyOptionSs.getmValue()
+        if (hmAux.hasConsistentValue(MdJustifyItemDao.REQUIRED_COMMENT) && "1" == hmAux[MdJustifyItemDao.REQUIRED_COMMENT]) {
+            if (binding.act070NotExecuteDialogJustifyCommentsActv.text == null || binding.act070NotExecuteDialogJustifyCommentsActv.text.toString()
+                    .isEmpty()
+            ) {
+                errorMsg = hmAux_Trans["alert_not_execute_justify_comment_required_msg"]
+            }
+        }
+        if (binding.act070NotExecuteDialogJustifyOptionSs.visibility == View.VISIBLE && !hmAux.hasConsistentValue(
+                SearchableSpinner.CODE
+            )
+        ) {
+            errorMsg += hmAux_Trans["alert_not_execute_justify_option_required_msg"]
+        }
+        return errorMsg ?: ""
+    }
+
+
+    private fun TicketNotExecutedDialogBinding.setActions(
+        item: MyActions,
+        closeDialog: () -> Unit,
+    ) {
+
+        var dateReschedule = ""
+
+        act070NotExecuteDialogJustifyBtnCancel.setOnClickListener {
+            closeDialog()
+        }
+
+        act070NotExecuteDialogJustifyBtnSave.setOnClickListener {
+
+            with(act070NotExecuteDialogJustifyDate) {
+
+                fun dateInvalid(msg: String) {
+                    Toast.makeText(
+                        this@Act092_Main,
+                        hmAux_Trans[msg],
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+                if (root.isVisible) {
+
+                    val dateKey =
+                        tvDateVal.mketContents.hasConsistentValue("DATE_KEY") && !tvDateVal.mketContents["DATE_KEY"].isNullOrEmpty()
+                    val hourKey =
+                        tvDateVal.mketContents.hasConsistentValue("HOUR_KEY") && !tvDateVal.mketContents["HOUR_KEY"].isNullOrEmpty()
+
+                    if (dateKey || hourKey) {
+
+                        if (tvDateVal.isValid) {
+                            val isFuture = ToolBox_Inf.isFutureDate(tvDateVal.getmValue())
+
+                            if (!isFuture) {
+                                dateInvalid("warning_not_execute_justify_future_date_hour")
+                                return@setOnClickListener
+                            }
+
+                            if (!tvDateVal.getmValue().isNullOrEmpty()) {
+                                dateReschedule = tvDateVal.getmValue()
+                            }
+                        } else {
+                            dateInvalid("warning_not_execute_justify_future_date_hour")
+                            return@setOnClickListener
+                        }
+
+                    }
+                }
+            }
+
+            val errorMsg = validateNotExecuteFormEntry(this)
+            val justifyOption = act070NotExecuteDialogJustifyOptionSs.getmValue()
+            errorMsg.ifEmpty {
+                closeDialog()
+                presenter.justifyNotExecuteSchedule(
+                    processPk = item.processPk,
+                    comments = act070NotExecuteDialogJustifyCommentsActv.text.toString(),
+                    justify_group_code = item.hasNotExecuted!!,
+                    justify_item_code = justifyOption[SearchableSpinner.CODE]?.toInt() ?: -1,
+                    reschedule_date = dateReschedule,
+                    context = context,
+                )
+                return@setOnClickListener
+            }
+            Toast.makeText(
+                this@Act092_Main,
+                errorMsg,
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
+
+    }
+
+
+    private fun TicketNotExecutedDialogBinding.setLabel(
+        item: MyActions
+    ) {
+        act070NotExecuteDialogTtl.text = hmAux_Trans["alert_not_execute_ttl"]
+        act070NotExecuteDialogMsg.text = hmAux_Trans["alert_not_execute_msg"]
+        //
+
+        val justifyItems = presenter.getJustifyItems(item.hasNotExecuted!!, context)
+
+
+        act070NotExecuteDialogJustifyOptionSs.apply {
+
+            if (justifyItems.isEmpty()) {
+                visibility = View.GONE
+                return@apply
+            }
+
+            setmRequired(false)
+            setmShowLabel(true)
+            setmCanClean(true)
+            setmOption(justifyItems)
+            setmLabel(hmAux_Trans["alert_not_execute_justify_option_lbl"])
+
+
+            setOnItemSelectedListener(object : SearchableSpinner.OnItemSelectedListener {
+                override fun onItemPreSelected(p0: HMAux?) {
+
+                }
+
+                override fun onItemPostSelected(hmAux: HMAux?) {
+
+                    val requiredReschedule = hmAux?.get(MdJustifyItemDao.RESCHEDULE)?.toInt() == 1
+                    val hmAux = act070NotExecuteDialogJustifyOptionSs.getmValue()
+                    val states = arrayOf(
+                        intArrayOf(android.R.attr.state_enabled), // enabled
+                        intArrayOf(-android.R.attr.state_enabled), // disabled
+                        intArrayOf(-android.R.attr.state_checked), // unchecked
+                        intArrayOf(android.R.attr.state_pressed), // pressed
+                        intArrayOf(android.R.attr.state_focused)  // focused
+                    )
+
+                    val colorsRequired = intArrayOf(
+                        resources.getColor(R.color.customff_required_on_color),
+                        resources.getColor(android.R.color.darker_gray),
+                        resources.getColor(R.color.customff_required_on_color),
+                        resources.getColor(R.color.customff_required_on_color),
+                        resources.getColor(R.color.customff_required_on_color),
+                    )
+
+                    val colorsDefault = intArrayOf(
+                        resources.getColor(R.color.m3_namoa_outline),
+                        resources.getColor(R.color.m3_namoa_outline),
+                        resources.getColor(R.color.m3_namoa_outline),
+                        resources.getColor(R.color.m3_namoa_primary),
+                        resources.getColor(R.color.m3_namoa_primary)
+                    )
+
+                    val colorRequiredState = ColorStateList(states, colorsRequired)
+                    val colorDefaultState = ColorStateList(states, colorsDefault)
+
+
+                    if (hmAux.hasConsistentValue(MdJustifyItemDao.REQUIRED_COMMENT) && "1" == hmAux[MdJustifyItemDao.REQUIRED_COMMENT]) {
+                        act070NotExecuteDialogJustifyCommentsTil.hintTextColor = colorRequiredState
+                        act070NotExecuteDialogJustifyCommentsTil.setBoxStrokeColorStateList(
+                            colorRequiredState
+                        )
+                    } else {
+                        act070NotExecuteDialogJustifyCommentsTil.hintTextColor = colorDefaultState
+                        act070NotExecuteDialogJustifyCommentsTil.setBoxStrokeColorStateList(
+                            colorDefaultState
+                        )
+                    }
+
+                    if (!requiredReschedule) {
+                        act070NotExecuteJustifyDateTtl.visibility = View.GONE
+                        act070NotExecuteDialogJustifyDate.root.visibility = View.GONE
+                        act070NotExecuteDialogJustifyDate.tvDateVal.setmValue("")
+                        return
+                    }
+
+                    act070NotExecuteDialogJustifyDate.root.visibility = View.VISIBLE
+                    act070NotExecuteDialogJustifyDate.tvDateVal.setmHighlightWhenInvalid(true)
+                    //
+                    act070NotExecuteJustifyDateTtl.visibility = View.VISIBLE
+                    act070NotExecuteJustifyDateTtl.text =
+                        hmAux_Trans["alert_not_execute_justify_date_ttl"]
+                }
+
+            })
+        }
+
+        //
+        act070NotExecuteDialogJustifyDate.tvDateVal.setmLabel("")
+        act070NotExecuteDialogJustifyDate.chkShiftStep.visibility = View.GONE
+        act070NotExecuteDialogJustifyDate.chkShiftTicketDate.visibility = View.GONE
+        act070NotExecuteDialogJustifyDate.guideline6.visibility = View.GONE
+        act070NotExecuteDialogJustifyDate.tvDateLbl.visibility = View.GONE
+        act070NotExecuteDialogJustifyDate.tvTimeLbl.visibility = View.GONE
+
+        act070NotExecuteDialogJustifyCommentsTil.hint =
+            hmAux_Trans["alert_not_execute_justify_comment_lbl"]
+        act070NotExecuteDialogJustifyBtnCancel.text = hmAux_Trans["sys_alert_btn_cancel"]
+        act070NotExecuteDialogJustifyBtnSave.text =
+            hmAux_Trans["alert_not_execute_save_btn"]
     }
 
     private fun toggleMainUserFilter(

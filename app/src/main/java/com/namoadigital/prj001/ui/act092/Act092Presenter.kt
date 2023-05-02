@@ -12,12 +12,32 @@ import com.namoadigital.prj001.core.IResult.Companion.isFailed
 import com.namoadigital.prj001.core.IResult.Companion.isLoading
 import com.namoadigital.prj001.core.IResult.Companion.isSuccess
 import com.namoadigital.prj001.core.IResult.Companion.loading
-import com.namoadigital.prj001.dao.*
-import com.namoadigital.prj001.model.*
+import com.namoadigital.prj001.dao.GE_Custom_FormDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao
+import com.namoadigital.prj001.dao.MD_ProductDao
+import com.namoadigital.prj001.dao.MD_Product_SerialDao
+import com.namoadigital.prj001.dao.MD_Schedule_ExecDao
+import com.namoadigital.prj001.dao.MdJustifyItemDao
+import com.namoadigital.prj001.dao.TK_TicketDao
+import com.namoadigital.prj001.dao.TK_Ticket_ActionDao
+import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao
+import com.namoadigital.prj001.model.MD_Product_Serial
+import com.namoadigital.prj001.model.MD_Schedule_Exec
+import com.namoadigital.prj001.model.MyActionFilterParam
+import com.namoadigital.prj001.model.MyActions
+import com.namoadigital.prj001.model.TSerial_Search_Rec
 import com.namoadigital.prj001.receiver.WBR_Generate_NForm_PDF
 import com.namoadigital.prj001.receiver.WBR_Save
+import com.namoadigital.prj001.receiver.WBR_Schedule_Not_Executed
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save
-import com.namoadigital.prj001.service.*
+import com.namoadigital.prj001.service.WS_Generate_NForm_PDF
+import com.namoadigital.prj001.service.WS_Save
+import com.namoadigital.prj001.service.WS_Sync
+import com.namoadigital.prj001.service.WS_TK_Ticket_Download
+import com.namoadigital.prj001.service.WS_TK_Ticket_Save
+import com.namoadigital.prj001.service.WS_UnfocusAndHistoric
+import com.namoadigital.prj001.service.WsScheduleNotExecuted
 import com.namoadigital.prj001.sql.Sql_Act005_002
 import com.namoadigital.prj001.ui.act005.Act005_Main
 import com.namoadigital.prj001.ui.act006.Act006_Main
@@ -55,12 +75,20 @@ import com.namoadigital.prj001.ui.act092.utils.Act092Translate
 import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent
 import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent.OpenDialog.DialogType
 import com.namoadigital.prj001.ui.act093.ui.Act093_Main
-import com.namoadigital.prj001.util.*
-import kotlinx.coroutines.*
+import com.namoadigital.prj001.util.Constant
+import com.namoadigital.prj001.util.ConstantBaseApp
+import com.namoadigital.prj001.util.ToolBox_Con
+import com.namoadigital.prj001.util.ToolBox_Inf
+import com.namoadigital.prj001.util.ValidateNewFormUseCaseException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 
 class Act092Presenter constructor(
@@ -1281,7 +1309,23 @@ class Act092Presenter constructor(
             Act092Translate.HINT_FILTER,
             Act092Translate.PLACEHOLDER_FILTER,
             Act092Translate.OTHER_ACTIONS,
-            Act092Translate.NEW_ACTION
+            Act092Translate.NEW_ACTION,
+            "alert_not_execute_ttl",
+            "alert_not_execute_msg",
+            "alert_not_execute_justify_date_ttl",
+            "alert_not_execute_justify_option_lbl",
+            "alert_not_execute_justify_comment_lbl",
+            "sys_alert_btn_cancel",
+            "alert_not_execute_save_btn",
+            "alert_not_execute_justify_required_ttl",
+            "alert_not_execute_justify_option_required_msg",
+            "alert_not_execute_justify_comment_required_msg",
+            "alert_not_execute_justify_success_ttl",
+            "alert_not_execute_justify_success_msg",
+            "btn_cancel_schedule",
+            "warning_not_execute_justify_required_date_hour",
+            "warning_not_execute_justify_future_date_hour",
+            "progress_n_form_sync_ttl",
         ).let {
             return ToolBox_Inf.setLanguage(
                 translateResource.context,
@@ -1405,6 +1449,62 @@ class Act092Presenter constructor(
                 0
             )
         }
+    }
+
+
+    override fun justifyNotExecuteSchedule(
+        processPk: String,
+        comments: String,
+        justify_group_code: Int,
+        justify_item_code: Int,
+        reschedule_date: String,
+        context: Context,
+    ) {
+        if (ToolBox_Con.isOnline(context)) {
+            view.wsProcess.value = WsScheduleNotExecuted::class.java.name
+
+            view.showPD(
+                hmAux_Trans["progress_n_form_sync_ttl"],
+                hmAux_Trans["progress_n_form_sync_msg"],
+            )
+
+            Intent(context, WBR_Schedule_Not_Executed::class.java).also { intent ->
+
+                Bundle().apply {
+                    val schedule = processPk.split(".")
+                    putInt(WsScheduleNotExecuted.WS_BUNDLE_SCHEDULE_PREFIX, schedule[0].toInt())
+                    putInt(WsScheduleNotExecuted.WS_BUNDLE_SCHEDULE_CODE, schedule[1].toInt())
+                    putInt(WsScheduleNotExecuted.WS_BUNDLE_SCHEDULE_EXEC, schedule[2].toInt())
+                    putString(WsScheduleNotExecuted.WS_BUNDLE_COMMENTS, comments)
+                    putInt(WsScheduleNotExecuted.WS_BUNDLE_JUSTIFY_GROUP_CODE, justify_group_code)
+                    putInt(WsScheduleNotExecuted.WS_BUNDLE_JUSTIFY_ITEM_CODE, justify_item_code)
+                    putString(WsScheduleNotExecuted.WS_BUNDLE_RESCHEDULE_DATE, reschedule_date)
+                }.let { bundle ->
+                    intent.putExtras(bundle)
+                    context.sendBroadcast(intent)
+                }
+
+            }
+        } else {
+            ToolBox_Inf.showNoConnectionDialog(context)
+        }
+
+    }
+
+    override fun getJustifyItems(justifyGroupCode: Int, context: Context): ArrayList<HMAux> {
+        MdJustifyItemDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        ).let { mdJustifyItemDao ->
+
+            return mdJustifyItemDao.getJustifyItems(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                justifyGroupCode
+            )
+
+        }
+
     }
 
 

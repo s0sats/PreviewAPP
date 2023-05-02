@@ -313,15 +313,16 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/my_action_cancel_serial"
+                    style="@style/NamoaMaterialButtonText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/m3_namoa_primary"
-                    android:visibility="visible"
                     android:textStyle="bold"
-                    style="@style/NamoaMaterialButtonText"
+                    android:visibility="visible"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="1.0"
                     app:strokeColor="@color/m3_namoa_error"
                     tools:text="Cancelar" />
 

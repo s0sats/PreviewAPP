@@ -20,7 +20,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:text="asdsdasdasdasdasdaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            tools:text="asdsdasdasdasdasdaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
             android:textColor="@color/text_black"
             android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -34,7 +34,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
-            android:text="asdasdasdasdasdasdasdasd"
+            tools:text="asdasdasdasdasdasdasdasd"
             android:textColor="@color/text_black"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -85,37 +85,54 @@
 
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/act070_not_execute_justify_date_ttl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="16dp"
+            android:textColor="@color/text_black"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toTopOf="@+id/act070_not_execute_dialog_justify_date"
+            app:layout_constraintTop_toBottomOf="@+id/act070_not_execute_dialog_justify_comments_til"
+            tools:text="AAAAAAAAAAAAAAAA"
+            android:visibility="gone" />
+
         <include
             android:id="@+id/act070_not_execute_dialog_justify_date"
             layout="@layout/act082_date_time_service_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            android:layout_marginTop="12dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/act070_not_execute_dialog_justify_comments_til" />
+            app:layout_constraintTop_toBottomOf="@+id/act070_not_execute_justify_date_ttl" />
 
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/act070_not_execute_dialog_justify_comments_til"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            style="@style/NamoaTheme3.TextInputLayout.Outlined"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
-            android:hint="Texto"
             app:endIconMode="none"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/act070_not_execute_dialog_justify_option_ss">
 
-            <AutoCompleteTextView
+            <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                 android:id="@+id/act070_not_execute_dialog_justify_comments_actv"
-                android:maxLength="500"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:maxLength="500"
+                android:textColor="@drawable/edittext_theme_text"
+                app:mBARCODE="false"
+                app:mNFC="false"
+                app:mOCR="false" />
         </com.google.android.material.textfield.TextInputLayout>
 
 

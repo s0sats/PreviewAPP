@@ -21,12 +21,14 @@ import com.namoadigital.prj001.model.MyActionsBase
 import com.namoadigital.prj001.ui.act092.utils.Act092Translate
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
+import java.util.Locale
 
 class Act092_Adapter constructor(
     private val source: List<MyActionsBase>,
     private val hmAux: HMAux,
     private val myActionClickListener: (myAction: MyActions, position: Int) -> Unit,
-    private val notifyFilterApplied: (qtyItensFiltered: Int) -> Unit
+    private val notifyFilterApplied: (qtyItensFiltered: Int) -> Unit,
+    private val cancelSerialSchedule: ((myActions: MyActions) -> Unit)? = null
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
 
 
@@ -174,7 +176,7 @@ class Act092_Adapter constructor(
                 }
 
                 myActionsItemClInfos.setOnClickListener {
-                    if(myActionSelectSerial.isEnabled) {
+                    if (myActionSelectSerial.isEnabled) {
                         myActionClickListener(item, adapterPosition)
                     }
                 }
@@ -242,8 +244,9 @@ class Act092_Adapter constructor(
                 //
                 binding.myActionsItemTvJustify.apply {
                     applyVisibilityIfTextExists(item.justify_item_desc, hmAux["cell_justify_lbl"]!!)
-                    if(item.justify_item_desc.isNullOrEmpty() &&
-                        !item.not_exec_comments.isNullOrEmpty()){
+                    if (item.justify_item_desc.isNullOrEmpty() &&
+                        !item.not_exec_comments.isNullOrEmpty()
+                    ) {
                         applyVisibilityIfTextExists(hmAux["cell_justify_lbl"]!! + ":")
                     }
                 }
@@ -251,6 +254,21 @@ class Act092_Adapter constructor(
                 binding.myActionsItemTvNotExecutedComments.apply {
                     applyVisibilityIfTextExists(getInfoQuotesFormatted(item.not_exec_comments))
                 }
+
+                binding.myActionCancelSerial.apply {
+                    visibility = View.GONE
+                    text = hmAux["btn_cancel_schedule"] ?: "btn_cancel_schedule"
+                    cancelSerialSchedule?.let { justifyEvent ->
+                        item.hasNotExecuted?.let {
+                            visibility = View.VISIBLE
+                            setOnClickListener {
+                                justifyEvent(item)
+                            }
+                        }
+
+                    }
+                }
+
                 applyBackgroundStrokeColor(item)
             }
         }
@@ -258,9 +276,9 @@ class Act092_Adapter constructor(
         private fun configDoneDate(myAction: MyActions) {
             with(binding) {
                 myActionsItemTvDoneDate.apply {
-                    if(ConstantBaseApp.SYS_STATUS_NOT_EXECUTED == myAction.processStatus){
+                    if (ConstantBaseApp.SYS_STATUS_NOT_EXECUTED == myAction.processStatus) {
                         applyVisibilityIfTextExists(null)
-                    }else {
+                    } else {
                         applyVisibilityIfTextExists(myAction.doneDate)
                     }
                     if (ConstantBaseApp.SYS_STATUS_DONE == myAction.processStatus) {
@@ -318,6 +336,7 @@ class Act092_Adapter constructor(
                             myAction.lateItem -> {
                                 setTextColor(ContextCompat.getColor(context, R.color.text_red))
                             }
+
                             myAction.periodStarted -> {
                                 setTextColor(
                                     ContextCompat.getColor(
@@ -326,15 +345,16 @@ class Act092_Adapter constructor(
                                     )
                                 )
                             }
+
                             else -> {
-                                if (myAction.highlightItem){
+                                if (myAction.highlightItem) {
                                     setTextColor(
                                         ContextCompat.getColor(
                                             context,
                                             R.color.m3_namoa_extended_LaranjaObrigatorio_color
                                         )
                                     )
-                                }else {
+                                } else {
                                     setTextColor(
                                         ContextCompat.getColor(
                                             context,
@@ -345,14 +365,14 @@ class Act092_Adapter constructor(
                             }
                         }
                     } else {
-                        if (myAction.highlightItem){
+                        if (myAction.highlightItem) {
                             setTextColor(
                                 ContextCompat.getColor(
                                     context,
                                     R.color.m3_namoa_extended_LaranjaObrigatorio_color
                                 )
                             )
-                        }else {
+                        } else {
                             setTextColor(
                                 ContextCompat.getColor(
                                     context,
@@ -431,10 +451,13 @@ class Act092_Adapter constructor(
 
     }
 
-    inner class ServiceFilter() : Filter() {
+    inner class ServiceFilter : Filter() {
         override fun performFiltering(constraint: CharSequence?): FilterResults {
             var temp = mutableListOf<MyActionsBase>()
-            var charFilter = ToolBox.AccentMapper(constraint.toString().toLowerCase())
+            var charFilter = ToolBox.AccentMapper(
+                constraint.toString()
+                    .lowercase(Locale.getDefault())
+            )
             if (charFilter.isNullOrEmpty()) {
                 temp = if (userMainFilter) {
                     source.filter {
@@ -453,7 +476,7 @@ class Act092_Adapter constructor(
                         when (it) {
                             is MyActions -> {
                                 val allFields = ToolBox.AccentMapper(
-                                    it.getAllFieldForFilter().toLowerCase()
+                                    it.getAllFieldForFilter().lowercase(Locale.getDefault())
                                 )
                                 if (userMainFilter) {
                                     allFields.contains(charFilter) && it.isMainUserTicket
@@ -488,7 +511,7 @@ class Act092_Adapter constructor(
         return mFilter
     }
 
-    fun getActionByPosition(position: Int):MyActions?{
+    fun getActionByPosition(position: Int): MyActions? {
         val item = filterList[position]
         if (item is SerialViewItem.ContentItem) {
             return item.item as MyActions
