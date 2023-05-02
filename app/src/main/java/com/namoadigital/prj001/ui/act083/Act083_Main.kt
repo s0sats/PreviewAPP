@@ -331,8 +331,10 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
 
                 if (root.isVisible) {
 
-                    val dateKey = tvDateVal.mketContents.hasConsistentValue("DATE_KEY")
-                    val hourKey = tvDateVal.mketContents.hasConsistentValue("HOUR_KEY")
+                    val dateKey =
+                        tvDateVal.mketContents.hasConsistentValue("DATE_KEY") && !tvDateVal.mketContents["DATE_KEY"].isNullOrEmpty()
+                    val hourKey =
+                        tvDateVal.mketContents.hasConsistentValue("HOUR_KEY") && !tvDateVal.mketContents["HOUR_KEY"].isNullOrEmpty()
 
                     if (dateKey || hourKey) {
 
@@ -417,19 +419,22 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                         intArrayOf(android.R.attr.state_enabled), // enabled
                         intArrayOf(-android.R.attr.state_enabled), // disabled
                         intArrayOf(-android.R.attr.state_checked), // unchecked
-                        intArrayOf(android.R.attr.state_pressed)  // pressed
+                        intArrayOf(android.R.attr.state_pressed), // pressed
+                        intArrayOf(android.R.attr.state_focused)  // focused
                     )
 
                     val colorsRequired = intArrayOf(
-                        resources.getColor(R.color.namoa_amount_pipeline_background_btn),
-                        resources.getColor(R.color.namoa_amount_pipeline_background_btn),
-                        resources.getColor(R.color.namoa_amount_pipeline_background_btn),
-                        resources.getColor(R.color.namoa_amount_pipeline_background_btn)
+                        resources.getColor(R.color.customff_required_on_color),
+                        resources.getColor(android.R.color.darker_gray),
+                        resources.getColor(R.color.customff_required_on_color),
+                        resources.getColor(R.color.customff_required_on_color),
+                        resources.getColor(R.color.customff_required_on_color),
                     )
 
                     val colorsDefault = intArrayOf(
-                        resources.getColor(R.color.m3_namoa_primary),
-                        resources.getColor(R.color.m3_namoa_primary),
+                        resources.getColor(R.color.m3_namoa_outline),
+                        resources.getColor(R.color.m3_namoa_outline),
+                        resources.getColor(R.color.m3_namoa_outline),
                         resources.getColor(R.color.m3_namoa_primary),
                         resources.getColor(R.color.m3_namoa_primary)
                     )
@@ -451,19 +456,26 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                     }
 
                     if (!requiredReschedule) {
+                        act070NotExecuteJustifyDateTtl.visibility = View.GONE
                         act070NotExecuteDialogJustifyDate.root.visibility = View.GONE
                         act070NotExecuteDialogJustifyDate.tvDateVal.setmValue("")
                         return
                     }
+
                     act070NotExecuteDialogJustifyDate.root.visibility = View.VISIBLE
                     act070NotExecuteDialogJustifyDate.tvDateVal.setmHighlightWhenInvalid(true)
+
+                    //
+                    act070NotExecuteJustifyDateTtl.visibility = View.VISIBLE
+                    act070NotExecuteJustifyDateTtl.text =
+                        hmAux_Trans["alert_not_execute_justify_date_ttl"]
                 }
 
             })
         }
 
         //
-        act070NotExecuteDialogJustifyDate.tvDateVal.setmLabel(hmAux_Trans["alert_not_execute_justify_date_ttl"])
+        act070NotExecuteDialogJustifyDate.tvDateVal.setmLabel("")
         act070NotExecuteDialogJustifyDate.chkShiftStep.visibility = View.GONE
         act070NotExecuteDialogJustifyDate.chkShiftTicketDate.visibility = View.GONE
         act070NotExecuteDialogJustifyDate.guideline6.visibility = View.GONE

@@ -49,5 +49,15 @@ interface Act092_Contract {
         fun executeNFormPDFGeneration(context: Context, action: MyActions, position: Int)
         fun goToInfoSerial()
         fun saveFilterWhenLeftActivity()
+        fun justifyNotExecuteSchedule(
+            processPk: String,
+            comments: String,
+            justify_group_code: Int,
+            justify_item_code: Int,
+            reschedule_date: String,
+            context: Context,
+        )
+
+        fun getJustifyItems(justifyGroupCode: Int, context: Context): ArrayList<HMAux>
     }
 }
