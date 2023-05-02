@@ -1088,30 +1088,14 @@ public class Act011_Main extends Base_Activity
         geFiles.clear();
 
         for (int i = 0; i < customFFs.size(); i++) {
-            CustomFF customFF = customFFs.get(i);
-
-            String sFile_v = customFF.getmValue();
-            String sFile_e_1 = customFF.getmDots_photo1();
-            String sFile_e_2 = customFF.getmDots_photo2();
-            String sFile_e_3 = customFF.getmDots_photo3();
-            String sFile_e_4 = customFF.getmDots_photo4();
+            String sFile_v = customFFs.get(i).getmValue();
+            String sFile_e_1 = customFFs.get(i).getmDots_photo1();
+            String sFile_e_2 = customFFs.get(i).getmDots_photo2();
+            String sFile_e_3 = customFFs.get(i).getmDots_photo3();
+            String sFile_e_4 = customFFs.get(i).getmDots_photo4();
 
             if (sFile_v.endsWith(PNG_EXTENSION) || sFile_v.endsWith(JPG_EXTENSION)) {
                 File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + sFile_v);
-                if(customFF instanceof PhotoFF){
-                    String originalPhotoName = ((PhotoFF) customFF).getmOriginalValue();
-                    //
-                    if(originalPhotoName != null
-                            && !originalPhotoName.isEmpty()){
-                        if(!sFile.exists() || sFile.isDirectory()){
-                            try {
-                                ToolBox_Inf.copyFiles(CACHE_PATH + "/" + originalPhotoName, CACHE_PATH_PHOTO + "/" + sFile_v);
-                            } catch (IOException e) {
-                                ToolBox_Inf.registerException(Act011_Main.class.getSimpleName(), e);
-                            }
-                        }
-                    }
-                }
                 if (sFile.exists()) {
                     GE_File geFile = new GE_File();
                     geFile.setFile_code(sFile_v.replace(PNG_EXTENSION, "").replace(JPG_EXTENSION, ""));
@@ -2166,10 +2150,12 @@ public class Act011_Main extends Base_Activity
             photoFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         }else{
             photoFF.setmValue("p_" + prefix + cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ) + JPG_EXTENSION);
-            if(cf.hasConsistentValue(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_LOCAL_LINK)){
-                photoFF.setmOriginalValue(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_LOCAL_LINK));
-            }
         }
+        //
+        if(cf.hasConsistentValue(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_LOCAL_LINK)){
+            photoFF.setmOriginalValue(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_LOCAL_LINK));
+        }
+        //
         photoFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
         //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
         //mas a vida eh uma caixinha de surpresas e teve que ser removido t0d0 acesso aos nform deletados
