@@ -1325,6 +1325,8 @@ class Act092Presenter constructor(
             "btn_cancel_schedule",
             "warning_not_execute_justify_required_date_hour",
             "warning_not_execute_justify_future_date_hour",
+            "alert_not_execute_justify_lost_data_ttl",
+            "alert_not_execute_justify_lost_data_msg",
             "progress_n_form_sync_ttl",
         ).let {
             return ToolBox_Inf.setLanguage(

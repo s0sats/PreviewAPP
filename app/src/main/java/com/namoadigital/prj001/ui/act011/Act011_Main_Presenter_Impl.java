@@ -763,6 +763,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                         && customFormLocal.getStep_code() != null && customFormLocal.getStep_code() > -1;
     }
 
+
     /**
      * LUCHE - 08/09/2020
      * Metodo que altera status do ticket e dependendo do status finaliza ou não ctrl.
@@ -1669,7 +1670,14 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         return isTicketProcess && isFromTicketActs();
     }
 
-    private void checkGpsFlow(GE_Custom_Form_Data formData, int require_location){
+    @Override
+    public boolean isIndependentForm(GE_Custom_Form_Local customFormLocal, Integer mSo_Prefix, Integer mSo_Code) {
+        return customFormLocal.getTicket_prefix() == null && customFormLocal.getTicket_code() == null //Nao pertence a ticket
+                && mSo_Prefix == null && mSo_Code == null //  não é N-Service
+                && !ToolBox_Inf.isScheduleForm(customFormLocal); //Não é agendado
+    }
+
+    private void checkGpsFlow(GE_Custom_Form_Data formData, int require_location) {
 
         final int GPS_VALID_INTERVAL = 300000;
 

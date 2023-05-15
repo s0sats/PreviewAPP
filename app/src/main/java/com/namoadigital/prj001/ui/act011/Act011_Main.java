@@ -157,7 +157,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -525,6 +524,7 @@ public class Act011_Main extends Base_Activity
         transList.add("dialog_finalize_os_form_invalid_end_date_end");
         transList.add("dialog_finalize_so_form_serial_empty_class_error");
         transList.add("dialog_finalize_serial_class_lbl");
+        transList.add("dialog_finalize_more_information_lbl");
         transList.add("ss_class_hint");
         //
         transList.add("alert_error_order_or_structure_not_found_ttl");
@@ -1053,12 +1053,19 @@ public class Act011_Main extends Base_Activity
         return false;
     }
 
-    private boolean showQuestionFinal() {
-        return mSo_Prefix == null
-                && mSo_Code == null
-                && !ToolBox_Inf.isScheduleForm(formLocal)
-                && mPresenter.isFormCreateByTicket(formLocal)
-                && mPresenter.isFormTicketKanban(mTicket_prefix, mTicket_code);
+    private boolean showQuestionFormOsConcludesTickets() {
+        return
+                //É FORM-OS
+                isFormOs
+                        && (
+                        //OU FORM-AVULSO
+                        mPresenter.isIndependentForm(formLocal, mSo_Prefix, mSo_Code)
+                                //OU FORM-AGENDADO
+                                || ToolBox_Inf.isScheduleForm(formLocal)
+                                //OU FORM-TICKET KANBAN
+                                || mPresenter.isFormTicketKanban(mTicket_prefix, mTicket_code)
+                );
+
     }
 
     @Override
@@ -3801,24 +3808,27 @@ public class Act011_Main extends Base_Activity
             binding.act011DialogCheckMkdateFormStart.setClickable(false);
             binding.act011DialogCheckMkdateFormStart.setmCanClean(false);
             binding.act011DialogCheckMkdateFormStart.setmEnabled(false);
-            binding.act011DialogCheckMkdateFormStart.setmLabel(hmAux_Trans.get("dialog_finalize_os_form_start_date_lbl"));
+            binding.act011DialogCheckMkdateFormStart.setmLabel("");
+            binding.act011DialogCheckTextFormStart.setText(hmAux_Trans.get("dialog_finalize_os_form_start_date_lbl"));
             binding.act011DialogCheckMkdateFormStart.setmValue(formData.getDate_start());
             binding.act011DialogCheckMkdateFormStart.setMk_hourEnable(geOs.getSo_edit_start_end() == 1);
             binding.act011DialogCheckMkdateFormEnd.setmCanClean(false);
-            binding.act011DialogCheckMkdateFormEnd.setmLabel(hmAux_Trans.get("dialog_finalize_os_form_end_date_lbl"));
-            if(geOs.getSo_edit_start_end() == 0) {
+            binding.act011DialogCheckMkdateFormEnd.setmLabel("");
+            binding.act011DialogCheckTextFormEnd.setText(hmAux_Trans.get("dialog_finalize_os_form_end_date_lbl"));
+            if (geOs.getSo_edit_start_end() == 0) {
                 binding.act011DialogCheckMkdateFormEnd.setEnabled(false);
                 binding.act011DialogCheckMkdateFormEnd.setClickable(false);
                 binding.act011DialogCheckMkdateFormEnd.setmEnabled(false);
             }
-            if(geOs.getDate_end() == null
-            || geOs.getDate_end().isEmpty()) {
+            if (geOs.getDate_end() == null
+                    || geOs.getDate_end().isEmpty()) {
                 binding.act011DialogCheckMkdateFormEnd.setmValue(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"), true);
-            }else{
+            } else {
                 binding.act011DialogCheckMkdateFormEnd.setmValue(geOs.getDate_end(), true);
             }
             //
             binding.act011DialogCheckTvElapsedTimeVal.setText(getFormElapsedTimeFormatted(binding.act011DialogCheckMkdateFormStart.getmValue(), binding.act011DialogCheckMkdateFormEnd.getmValue()));
+            //
             //
             binding.act011DialogFinalizeLbl.setText(hmAux_Trans.get("dialog_finalize_os_form_lbl"));
             binding.act011DialogCheckTvMissingAnswerLbl.setText(hmAux_Trans.get("dialog_finalize_os_form_missing_answer_count_lbl"));
@@ -3838,7 +3848,7 @@ public class Act011_Main extends Base_Activity
         binding.act011DialogCheckBtnOk.setText(hmAux_Trans.get("sys_alert_btn_ok"));
         binding.act011DialogCheckBtnCancel.setText(hmAux_Trans.get("sys_alert_btn_cancel"));
         //
-        binding.act011DialogCheckOptionRg.setVisibility(View.GONE);
+//        binding.act011DialogCheckOptionRg.setVisibility(View.GONE);
         //
         if (allowFinalizeWithNewBtn() && !isFormOs) {
             binding.act011DialogFinalizeLbl.setVisibility(View.GONE);
@@ -3850,7 +3860,7 @@ public class Act011_Main extends Base_Activity
             binding.act011DialogCheckOptionRg.setVisibility(View.GONE);
         }
 
-        if (showQuestionFinal()) {
+        if (showQuestionFormOsConcludesTickets()) {
             binding.layoutCompletedService.setVisibility(View.VISIBLE);
         }
     }
@@ -3876,8 +3886,7 @@ public class Act011_Main extends Base_Activity
             ssSerialClass.setmLabel(hmAux_Trans.get("ss_class_hint"));
             //
             ssSerialClass.setmOption(serialClassList);
-            binding.tvSerialClassTtl.setText(hmAux_Trans.get("dialog_finalize_serial_class_lbl"));
-            TextViewKt.setAsRequired(binding.tvSerialClassTtl, true);
+            binding.tvSerialClassTtl.setText(hmAux_Trans.get("dialog_finalize_more_information_lbl"));
             //
             ToolBox_Inf.setSSmValue(
                     ssSerialClass,

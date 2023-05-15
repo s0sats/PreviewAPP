@@ -519,7 +519,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             if(justifyItems.isEmpty()){
                 ssJustifyItem.setVisibility(View.GONE);
             }else {
-                ssJustifyItem.setmRequired(false);
+                ssJustifyItem.setmRequired(true);
                 ssJustifyItem.setmShowLabel(true);
                 ssJustifyItem.setmCanClean(true);
                 ssJustifyItem.setmOption(justifyItems);
@@ -534,6 +534,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                     @Override
                     public void onItemPreSelected(HMAux hmAux) {
 
+                        binding.act070NotExecuteDialogJustifyCommentsTil.clearFocus();
+
                     }
 
                     @Override
@@ -541,29 +543,26 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                         HMAux hmAuxSS = binding.act070NotExecuteDialogJustifyOptionSs.getmValue();
                         int[][] states = new int[][]{
                                 new int[]{android.R.attr.state_enabled}, // enabled
-                                new int[]{-android.R.attr.state_enabled}, // disabled
-                                new int[]{-android.R.attr.state_checked}, // unchecked
-                                new int[]{android.R.attr.state_pressed}  // pressed
+                                new int[]{android.R.attr.state_pressed}, // pressed
+                                new int[]{android.R.attr.state_focused}, // focused
                         };
 
                         int[] colorsRequired = new int[]{
                                 getResources().getColor(R.color.namoa_amount_pipeline_background_btn),
                                 getResources().getColor(R.color.namoa_amount_pipeline_background_btn),
                                 getResources().getColor(R.color.namoa_amount_pipeline_background_btn),
-                                getResources().getColor(R.color.namoa_amount_pipeline_background_btn)
                         };
 
                         int[] colorsDefault = new int[]{
+                                getResources().getColor(R.color.m3_namoa_outline),
                                 getResources().getColor(R.color.m3_namoa_primary),
-                                getResources().getColor(R.color.m3_namoa_primary),
-                                getResources().getColor(R.color.m3_namoa_primary),
-                                getResources().getColor(R.color.m3_namoa_primary)
+                                getResources().getColor(R.color.m3_namoa_outline)
                         };
 
                         ColorStateList colorsRequiredState = new ColorStateList(states, colorsRequired);
                         ColorStateList colorsDefaultState = new ColorStateList(states, colorsDefault);
 
-                        if (hmAuxSS.hasConsistentValue(MdJustifyItemDao.REQUIRED_COMMENT) && "1" == hmAuxSS.get(MdJustifyItemDao.REQUIRED_COMMENT)) {
+                        if (hmAuxSS.hasConsistentValue(MdJustifyItemDao.REQUIRED_COMMENT) && "1".equals(hmAuxSS.get(MdJustifyItemDao.REQUIRED_COMMENT))) {
                             binding.act070NotExecuteDialogJustifyCommentsTil.setHintTextColor(colorsRequiredState);
                             binding.act070NotExecuteDialogJustifyCommentsTil.setBoxStrokeColorStateList(
                                     colorsRequiredState
@@ -627,27 +626,24 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                         !bReadOnly);
             }
         });
-        binding.act070NotExecuteDialogJustifyBtnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                boolean hasPhoto = (binding.act070IvJustifyPhoto.getTag() instanceof Boolean && (Boolean) binding.act070IvJustifyPhoto.getTag());
-                boolean hasJustify = binding.act070NotExecuteDialogJustifyOptionSs.getVisibility() == View.VISIBLE
-                        && binding.act070NotExecuteDialogJustifyOptionSs.getmValue().hasConsistentValue(SearchableSpinner.CODE);
-                boolean hasComments = !binding.act070NotExecuteDialogJustifyCommentsActv.getText().toString().isEmpty();
-                if(hasPhoto || hasJustify || hasComments) {
-                    showAlert(
-                            hmAux_Trans.get("alert_not_execute_justify_lost_data_ttl"),
-                            hmAux_Trans.get("alert_not_execute_justify_lost_data_msg"),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    notExecutedDialog.dismiss();
-                                }
-                            }, true
-                    );
-                }else{
-                    notExecutedDialog.dismiss();
-                }
+        binding.act070NotExecuteDialogJustifyBtnCancel.setOnClickListener(v -> {
+            boolean hasPhoto = (binding.act070IvJustifyPhoto.getTag() instanceof Boolean && (Boolean) binding.act070IvJustifyPhoto.getTag());
+            boolean hasJustify = binding.act070NotExecuteDialogJustifyOptionSs.getVisibility() == View.VISIBLE
+                    && binding.act070NotExecuteDialogJustifyOptionSs.getmValue().hasConsistentValue(SearchableSpinner.CODE);
+            boolean hasComments = !binding.act070NotExecuteDialogJustifyCommentsActv.getText().toString().isEmpty();
+            if (hasPhoto || hasJustify || hasComments) {
+                showAlert(
+                        hmAux_Trans.get("alert_not_execute_justify_lost_data_ttl"),
+                        hmAux_Trans.get("alert_not_execute_justify_lost_data_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                notExecutedDialog.dismiss();
+                            }
+                        }, true
+                );
+            } else {
+                notExecutedDialog.dismiss();
             }
         });
         //
@@ -655,9 +651,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             @Override
             public void onClick(View v) {
                 String errorMsg = validateNotExecuteFormEntry(binding);
-                if(errorMsg.isEmpty()){
+                if (errorMsg.isEmpty()) {
                     mTicket.setUpdate_required_status(1);
-                    if(!binding.act070NotExecuteDialogJustifyCommentsActv.getText().toString().isEmpty()) {
+                    if (!binding.act070NotExecuteDialogJustifyCommentsActv.getText().toString().isEmpty()) {
                         mTicket.setNot_executed_comments(binding.act070NotExecuteDialogJustifyCommentsActv.getText().toString());
                     }
                     mTicket.setNot_executed_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
@@ -689,10 +685,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                         mPresenter.defineNotExecuteFlow(mTicket);
                     }
                 }else{
-                    showAlert(
-                            hmAux_Trans.get("alert_not_execute_justify_comment_required_ttl"),
-                            errorMsg
-                    );
+                    showToast(errorMsg);
                 }
             }
         });
@@ -706,12 +699,20 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                 //
                 try {
                     ToolBox_Inf.hideSoftKeyboard(Act070_Main.this);
-                } catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         });
         //
+    }
+
+    private void showToast(String msg) {
+        Toast.makeText(
+                context,
+                msg,
+                Toast.LENGTH_SHORT
+        ).show();
     }
 
     private void resetNotExecutedFile() {

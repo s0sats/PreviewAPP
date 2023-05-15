@@ -142,6 +142,18 @@
                 app:layout_constraintTop_toTopOf="@id/act011_dialog_check_tv_elapsed_time_lbl"
                 tools:text="00:33" />
 
+            <TextView
+                android:id="@+id/act011_dialog_check_text_form_start"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:textColor="@color/text_black"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toStartOf="@+id/act011_gdl_end"
+                app:layout_constraintStart_toStartOf="@+id/act011_gdl_start"
+                app:layout_constraintTop_toBottomOf="@id/act011_dialog_check_tv_elapsed_time_lbl" />
+
             <com.namoa_digital.namoa_library.ctls.MkDateTime
                 android:id="@+id/act011_dialog_check_mkdate_form_start"
                 android:layout_width="0dp"
@@ -149,8 +161,21 @@
                 android:layout_marginTop="8dp"
                 app:layout_constraintEnd_toStartOf="@+id/act011_gdl_end"
                 app:layout_constraintStart_toStartOf="@+id/act011_gdl_start"
-                app:layout_constraintTop_toBottomOf="@id/act011_dialog_check_tv_elapsed_time_lbl"
+                app:layout_constraintTop_toBottomOf="@id/act011_dialog_check_text_form_start"
                 app:mConfigType="DATE_HOUR" />
+
+
+            <TextView
+                android:id="@+id/act011_dialog_check_text_form_end"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:textColor="@color/text_black"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toStartOf="@+id/act011_gdl_end"
+                app:layout_constraintStart_toStartOf="@+id/act011_gdl_start"
+                app:layout_constraintTop_toBottomOf="@id/act011_dialog_check_mkdate_form_start" />
 
             <com.namoa_digital.namoa_library.ctls.MkDateTime
                 android:id="@+id/act011_dialog_check_mkdate_form_end"
@@ -159,7 +184,7 @@
                 android:layout_marginTop="8dp"
                 app:layout_constraintEnd_toStartOf="@+id/act011_gdl_end"
                 app:layout_constraintStart_toStartOf="@+id/act011_gdl_start"
-                app:layout_constraintTop_toBottomOf="@id/act011_dialog_check_mkdate_form_start"
+                app:layout_constraintTop_toBottomOf="@id/act011_dialog_check_text_form_end"
                 app:mConfigType="DATE_HOUR" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -178,7 +203,8 @@
                     android:layout_weight="1"
                     android:padding="5dp"
                     tools:text="Class - Trad"
-                    android:textSize="@dimen/font_size_item_md"
+                    android:textColor="@color/text_black"
+                    android:textSize="16sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"

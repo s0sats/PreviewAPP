@@ -35,6 +35,8 @@ public interface Act011_Main_Presenter {
 
     boolean isaTicketFlowForm();
 
+    boolean isIndependentForm(GE_Custom_Form_Local customFormLocal, Integer mSo_Prefix, Integer mSo_Code);
+
     MD_Schedule_Exec getMdScheduleExec(Integer schedule_prefix, Integer schedule_code, Integer schedule_exec);
 
     void checkSignature(GE_Custom_Form_Data formData, GeOs geOs, int signature, int opc, ArrayList<GE_File> geFiles, int require_serial_done, String require_serial_done_ok, int require_location);
