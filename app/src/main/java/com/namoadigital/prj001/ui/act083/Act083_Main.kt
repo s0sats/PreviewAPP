@@ -314,7 +314,27 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         var dateReschedule = ""
 
         act070NotExecuteDialogJustifyBtnCancel.setOnClickListener {
-            closeDialog()
+            val hasJustify = (act070NotExecuteDialogJustifyOptionSs.visibility == View.VISIBLE
+                    && act070NotExecuteDialogJustifyOptionSs.getmValue()
+                .hasConsistentValue(SearchableSpinner.CODE))
+            val hasComments: Boolean =
+                act070NotExecuteDialogJustifyCommentsActv.text.toString().isNotEmpty()
+            val dateKey = (act070NotExecuteDialogJustifyDate.tvDateVal.visibility == View.VISIBLE
+                    && act070NotExecuteDialogJustifyDate.tvDateVal.mketContents.hasConsistentValue("DATE_KEY")
+                    && !act070NotExecuteDialogJustifyDate.tvDateVal.mketContents["DATE_KEY"].isNullOrEmpty())
+            val hourKey = (act070NotExecuteDialogJustifyDate.tvDateVal.visibility == View.VISIBLE
+                    && act070NotExecuteDialogJustifyDate.tvDateVal.mketContents.hasConsistentValue("HOUR_KEY")
+                    && !act070NotExecuteDialogJustifyDate.tvDateVal.mketContents["HOUR_KEY"].isNullOrEmpty())
+            if (hasJustify || hasComments || dateKey || hourKey) {
+                showAlert(
+                    hmAux_Trans["alert_not_execute_justify_lost_data_ttl"],
+                    hmAux_Trans["alert_not_execute_justify_lost_data_msg"],
+                    { _, _ -> closeDialog() },
+                    1
+                )
+            } else {
+                closeDialog()
+            }
         }
 
         act070NotExecuteDialogJustifyBtnSave.setOnClickListener {
@@ -399,7 +419,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 return@apply
             }
 
-            setmRequired(false)
+            setmRequired(true)
             setmShowLabel(true)
             setmCanClean(true)
             setmOption(justifyItems)
@@ -409,6 +429,8 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
             setOnItemSelectedListener(object : OnItemSelectedListener {
                 override fun onItemPreSelected(p0: HMAux?) {
 
+                    act070NotExecuteDialogJustifyCommentsTil.clearFocus()
+
                 }
 
                 override fun onItemPostSelected(hmAux: HMAux?) {
@@ -417,15 +439,12 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                     val hmAux = act070NotExecuteDialogJustifyOptionSs.getmValue()
                     val states = arrayOf(
                         intArrayOf(android.R.attr.state_enabled), // enabled
-                        intArrayOf(-android.R.attr.state_enabled), // disabled
-                        intArrayOf(-android.R.attr.state_checked), // unchecked
                         intArrayOf(android.R.attr.state_pressed), // pressed
                         intArrayOf(android.R.attr.state_focused)  // focused
                     )
 
+
                     val colorsRequired = intArrayOf(
-                        resources.getColor(R.color.customff_required_on_color),
-                        resources.getColor(android.R.color.darker_gray),
                         resources.getColor(R.color.customff_required_on_color),
                         resources.getColor(R.color.customff_required_on_color),
                         resources.getColor(R.color.customff_required_on_color),
@@ -433,11 +452,10 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
 
                     val colorsDefault = intArrayOf(
                         resources.getColor(R.color.m3_namoa_outline),
-                        resources.getColor(R.color.m3_namoa_outline),
-                        resources.getColor(R.color.m3_namoa_outline),
                         resources.getColor(R.color.m3_namoa_primary),
-                        resources.getColor(R.color.m3_namoa_primary)
+                        resources.getColor(R.color.m3_namoa_primary),
                     )
+
 
                     val colorRequiredState = ColorStateList(states, colorsRequired)
                     val colorDefaultState = ColorStateList(states, colorsDefault)
