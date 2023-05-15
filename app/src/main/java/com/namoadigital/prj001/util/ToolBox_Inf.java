@@ -215,6 +215,7 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_011;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Local_Sql_004;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_006;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_003;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_007;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_010;
 import com.namoadigital.prj001.sql.GE_File_Sql_001;
 import com.namoadigital.prj001.sql.IO_Blind_Move_Sql_006;
@@ -2020,7 +2021,18 @@ public class ToolBox_Inf {
                     ).toSqlQuery()
             );
 
-            if (pendingPictures.size() > 0) {
+            List<HMAux> pendingPhoto = fieldLocalDao.query_HM(
+                    new GE_Custom_Form_Field_Local_Sql_007(
+                            customer_code,
+                            custom_form_type,
+                            custom_form_code,
+                            custom_form_version
+                    ).toSqlQuery()
+            );
+
+            int pendencies = pendingPictures.size() + pendingPhoto.size();
+
+            if (pendencies > 0) {
                 return false;
             } else {
                 return true;
