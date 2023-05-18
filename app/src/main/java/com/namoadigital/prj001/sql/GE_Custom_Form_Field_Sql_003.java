@@ -30,7 +30,7 @@ public class GE_Custom_Form_Field_Sql_003 implements Specification {
                         "custom_form_data_type = 'PHOTO'\n" +
                         "\n" +
                         "and \n" +
-                        "custom_form_data_content like '%https%'\n" +
+                        "custom_form_data_content like '%http%'\n" +
                         "order by \n" +
                         "\n" +
                         "customer_code, custom_form_type, custom_form_code, custom_form_version, custom_form_seq")
