@@ -765,6 +765,9 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         if(!scheduled_profile_check){
             bundle.putBoolean(SCHEDULED_PROFILE_CHECK, scheduled_profile_check);
         }
+        //
+        bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, fragProduct_ID);
+        //
         bundle.putAll(scheduleBundle);
         bundle.putAll(act013Bundle);
         bundle.putAll(act081Bundle);
