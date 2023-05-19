@@ -705,6 +705,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         transList.add("drawer_loading_lbl");
         transList.add("drawer_edit_user_workgroup_lbl");
         //
+        transList.add("alert_notification_denied_permission_ttl");
+        transList.add("alert_notification_denied_permission_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
