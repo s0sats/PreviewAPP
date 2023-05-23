@@ -366,8 +366,8 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
     private Bundle getSearchedFilter() {
         MyActionFilterParam myActionFilterParam = ToolBox_Inf.getMyActionFilterParam(bundle);
         Bundle mBundle = new Bundle();
-        mBundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, myActionFilterParam.getProductId() != null ? myActionFilterParam.getProductId(): "");
-        mBundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, myActionFilterParam.getSerialId() != null ? myActionFilterParam.getSerialId(): "");
+        mBundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, this.bundle.getString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, ""));
+        mBundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, "");
         mBundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, "");
         return mBundle;
     }

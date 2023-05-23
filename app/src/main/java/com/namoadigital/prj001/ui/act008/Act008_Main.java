@@ -1030,8 +1030,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, "");
             bundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, "");
         }else{
-            bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, bundle.getString(MD_ProductDao.PRODUCT_CODE));
-            bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER,bundle.getString(MD_Product_SerialDao.SERIAL_ID));
+            bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, this.bundle.getString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, ""));
+            bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, "");
             bundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, "");
         }
     }
