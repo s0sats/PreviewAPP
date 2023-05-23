@@ -31,7 +31,7 @@ class GE_Custom_Form_Field_Local_Sql_007(
    and fl.${GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_CODE} = $custom_form_code     
    and fl.${GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_VERSION} = $custom_form_version            
    and fl.${GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_TYPE} = 'PHOTO'     
-   and fl.${GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_CONTENT} like '%https%'
+   and fl.${GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_CONTENT} like '%http%'
    and fl.${GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_LOCAL_LINK} = ''    
      
  UNION ALL    
@@ -55,7 +55,7 @@ class GE_Custom_Form_Field_Local_Sql_007(
    and fl.${GE_Custom_Form_FieldDao.CUSTOM_FORM_CODE} = $custom_form_code      
    and fl.${GE_Custom_Form_FieldDao.CUSTOM_FORM_VERSION} = $custom_form_version     
    and fl.${GE_Custom_Form_FieldDao.CUSTOM_FORM_DATA_TYPE} = 'PHOTO'     
-   and fl.${GE_Custom_Form_FieldDao.CUSTOM_FORM_DATA_CONTENT} like '%https%' 
+   and fl.${GE_Custom_Form_FieldDao.CUSTOM_FORM_DATA_CONTENT} like '%http%' 
    and fl.${GE_Custom_Form_FieldDao.CUSTOM_FORM_LOCAL_LINK} = '' ;      
    """
 

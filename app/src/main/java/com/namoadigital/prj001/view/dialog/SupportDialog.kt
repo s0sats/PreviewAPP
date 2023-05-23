@@ -67,6 +67,7 @@ class SupportDialog(
 
     private fun setLabels() {
         binding.apply {
+            act005DialogSupportTvTtl.setText(labels.alert_support_ttl)
             act005DialogSupportTvContect.setText(labels.alert_support_contact)
             act005DialogSupportTvMsg.setText(labels.alert_support_msg)
             act005DialogSupportEtContact.setHint(labels.alert_support_contact_hint)

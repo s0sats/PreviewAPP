@@ -10,8 +10,8 @@
     <string name="alert_title_get_session">Sessão</string>
     <string name="msg_start_to_sync">Iniciando sincronismo...</string>
     <string name="alert_title_login_fill_field">Preenchimento do Login</string>
-    <string name="msg_login_required">Erro: Campo login é obrigatótio!</string>
-    <string name="msg_pwd_required">Erro: Campo senha é obrigatótio!</string>
+    <string name="msg_login_required">Erro: Campo login é obrigatório!</string>
+    <string name="msg_pwd_required">Erro: Campo senha é obrigatório!</string>
     <string name="generic_sending_data_msg">Enviando dados...</string>
     <string name="generic_receiving_data_msg">Recebendo dados...</string>
     <string name="generic_saving_data_msg">Salvando dados...</string>
