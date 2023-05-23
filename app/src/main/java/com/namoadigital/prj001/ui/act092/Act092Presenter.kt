@@ -238,9 +238,9 @@ class Act092Presenter constructor(
                 view.onState(Act092UiEvent.CallAct(Act006_Main::class.java, Bundle().apply {
                     putString(
                         Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER,
-                        _serialModel.value.productId
+                        bundle.getString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER)
                     )
-                    putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, _serialModel.value.serialId)
+                    putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, "")
                 }))
             }
             ConstantBaseApp.ACT016 -> {
