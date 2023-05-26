@@ -91,12 +91,13 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
-class Act092Presenter constructor(
+class Act092Presenter(
     private var myActionFilterParam: MyActionFilterParam,
     private val originFlow: String?,
     private val iconColor: String,
     private val actionUseCases: ActionUseCases,
     private val translateResource: TranslateResource,
+    private val showProductOnFilter: Boolean,
 ) : Act092_Contract.Presenter {
 
     var actionSelectedPosition: Int = -1
@@ -235,13 +236,18 @@ class Act092Presenter constructor(
     override fun onBackPressedClicked(bundle: Bundle) {
         when (_serialModel.value.originFlow) {
             ConstantBaseApp.ACT006 -> {
-                view.onState(Act092UiEvent.CallAct(Act006_Main::class.java, Bundle().apply {
-                    putString(
-                        Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER,
-                        bundle.getString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER)
+
+                val product =
+                    if (showProductOnFilter) serialModel.value.productId else bundle.getString(
+                        Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER
                     )
+
+                view.onState(Act092UiEvent.CallAct(Act006_Main::class.java, Bundle().apply {
+                    putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, product)
                     putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, "")
-                }))
+                }
+                )
+                )
             }
             ConstantBaseApp.ACT016 -> {
                 view.onState(Act092UiEvent.CallAct(Act016_Main::class.java, bundle.apply {
@@ -253,7 +259,6 @@ class Act092Presenter constructor(
                 Act092UiEvent.CallAct(
                     Act083_Main::class.java,
                     bundle.apply {
-
                         myActionFilterParam.productCode = null
                         myActionFilterParam.productId = null
                         myActionFilterParam.productDesc = null

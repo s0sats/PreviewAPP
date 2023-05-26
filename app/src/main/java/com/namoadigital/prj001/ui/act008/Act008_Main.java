@@ -1117,6 +1117,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         if (mdProductSerial.getClass_color() != null) {
             bundle.putString(MD_Product_SerialDao.CLASS_COLOR, mdProductSerial.getClass_color());
         }
+        bundle.putBoolean(Constant.SHOW_PRODUCT_IN_ACT006, false);
         //
         mIntent.putExtras(bundle);
         startActivity(mIntent);
