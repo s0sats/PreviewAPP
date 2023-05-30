@@ -1026,12 +1026,12 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
     private void setSearchedFieldsIntoBundle(Bundle bundle) {
         if(mdProductSerial != null) {
-            bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, mdProductSerial.getProduct_id());
-            bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, bundle_serial_id);
+            bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, this.bundle.getString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, ""));
+            bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, "");
             bundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, "");
         }else{
-            bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, bundle.getString(MD_ProductDao.PRODUCT_CODE));
-            bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER,bundle.getString(MD_Product_SerialDao.SERIAL_ID));
+            bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, this.bundle.getString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, ""));
+            bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, "");
             bundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, "");
         }
     }
@@ -1117,6 +1117,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         if (mdProductSerial.getClass_color() != null) {
             bundle.putString(MD_Product_SerialDao.CLASS_COLOR, mdProductSerial.getClass_color());
         }
+        bundle.putBoolean(Constant.SHOW_PRODUCT_IN_ACT006, false);
         //
         mIntent.putExtras(bundle);
         startActivity(mIntent);

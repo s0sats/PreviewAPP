@@ -1705,6 +1705,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         //
         Bundle bundle = new Bundle();
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, ToolBox_Inf.getMyActionFilterParam(requestingBundle));
+        bundle.putBoolean(Constant.SHOW_PRODUCT_IN_ACT006, true);
         intent.putExtras(bundle);
         //
         startActivity(intent);

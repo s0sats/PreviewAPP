@@ -366,8 +366,8 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
     private Bundle getSearchedFilter() {
         MyActionFilterParam myActionFilterParam = ToolBox_Inf.getMyActionFilterParam(bundle);
         Bundle mBundle = new Bundle();
-        mBundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, myActionFilterParam.getProductId() != null ? myActionFilterParam.getProductId(): "");
-        mBundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, myActionFilterParam.getSerialId() != null ? myActionFilterParam.getSerialId(): "");
+        mBundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, this.bundle.getString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, ""));
+        mBundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, "");
         mBundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, "");
         return mBundle;
     }
@@ -423,6 +423,7 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
         Intent mIntent = new Intent(context, Act092_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         act083Bundle.remove(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW);
+        bundle.putBoolean(Constant.SHOW_PRODUCT_IN_ACT006, true);
         bundle.putAll(act083Bundle);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
