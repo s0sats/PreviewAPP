@@ -154,6 +154,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private TicketNotExecutedDialogBinding binding;
     private boolean fromCamera = false;
     private boolean assertSingleTouch = true;
+    private boolean isCheckinFlow = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -887,6 +888,11 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     @Override
     public void setWsProcess(String wsProcess) {
         this.wsProcess = wsProcess;
+    }
+
+    @Override
+    public void setIsCheckinFlow(boolean isCheckinFlow) {
+        this.isCheckinFlow = isCheckinFlow;
     }
 
     private void recoverIntentsInfo() {
@@ -1856,8 +1862,15 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     public void showResult(boolean ticketResult) {
         if(wsResult != null && wsResult.isEmpty() && ticketResult){
             Toast.makeText(context,  hmAux_Trans.get("alert_ticket_results_ok"), Toast.LENGTH_SHORT).show();
-            refreshUi();
-            wsResult.clear();
+            if(isCheckinFlow
+            && lastPositionClicked > -1){
+                isCheckinFlow = false;
+                StepForm stepForm = (StepForm) sources.get(lastPositionClicked);
+                mPresenter.createFormOS(mTicket, stepForm);
+            } else {
+                refreshUi();
+                wsResult.clear();
+            }
         }else{
             final AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
@@ -1889,7 +1902,13 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                 @Override
                 public void onClick(View v) {
                     //
-                    refreshUi();
+                    if(isCheckinFlow){
+                        isCheckinFlow = false;
+                        StepForm stepForm = (StepForm) sources.get(lastPositionClicked);
+                        mPresenter.createFormOS(mTicket, stepForm);
+                    } else {
+                        refreshUi();
+                    }
                     //
                     wsResult.clear();
                     //
@@ -1917,7 +1936,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
 
     @Override
     public void resetLastPositionClicked() {
-        lastPositionClicked = -1;
+        if (!isCheckinFlow) {
+            lastPositionClicked = -1;
+        }
     }
 
     @Override
@@ -1927,6 +1948,11 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         //
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    public boolean getIsCheckinFlow() {
+        return isCheckinFlow;
     }
 
     class FCMReceiver extends BroadcastReceiver {
@@ -2044,7 +2070,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private void processSerialStructure() {
         StepForm stepForm = (StepForm) sources.get(lastPositionClicked);
         mPresenter.defineAfterFormSyncProcess(mTicket, stepForm, false);
-        lastPositionClicked =-1;
+//        if (!isCheckinFlow) {
+//            lastPositionClicked =-1;
+//        }
     }
 
 

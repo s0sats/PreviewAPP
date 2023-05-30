@@ -21,6 +21,7 @@ public interface Act070_Main_Contract {
     interface I_View{
 
         void setWsProcess(String wsProcess);
+        void setIsCheckinFlow(boolean isCheckinFlow);
 
         void showPD(String ttl,String msg);
 
@@ -85,6 +86,8 @@ public interface Act070_Main_Contract {
         void resetLastPositionClicked();
 
         void callAct005();
+
+        boolean getIsCheckinFlow();
     }
 
     interface I_Presenter{
@@ -179,5 +182,7 @@ public interface Act070_Main_Contract {
         boolean hasFormInProcess(TK_Ticket mTicket);
 
         String hasNonExecutionRestriction(TK_Ticket mTicket);
+
+        void createFormOS(TK_Ticket mTicket, StepForm stepForm);
     }
 }

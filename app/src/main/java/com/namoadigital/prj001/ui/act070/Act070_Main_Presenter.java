@@ -478,9 +478,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 );
             }
         }else{
-            mView.resetLastPositionClicked();
             //
-            startFormProcess(ticketCtrl);
+            startFormProcess(mTicket, ticketCtrl);
         }
     }
 
@@ -533,6 +532,13 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         }
 
         return errorMsg;
+    }
+
+    @Override
+    public void createFormOS(TK_Ticket mTicket, StepForm stepForm) {
+        final TK_Ticket_Ctrl ticketCtrl = getSelectedCtrlFormFromDb(mTicket.getTicket_prefix(),mTicket.getTicket_code(),stepForm.getProcessTkSeq(),stepForm.getProcessTkSeqTmp(),stepForm.getStepCode());
+        GE_Custom_Form customForm = getCustomFormFromCtrl(ticketCtrl.getForm());
+        startFormOS(ticketCtrl, customForm);
     }
 
     private boolean isOfflineFinished(int ticket_prefix, int ticket_code) {
@@ -1548,7 +1554,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                         }
                     } else if (ConstantBaseApp.SYS_STATUS_PROCESS.equals(ticketCtrl.getCtrl_status())) {
                         if (formDataAlreadyExists(ticketCtrl.getForm())) {
-                            startFormProcess(ticketCtrl);
+                            startFormProcess(mTicket, ticketCtrl);
                         } else if(formCtrlCreatedBySameUsr(ticketCtrl)) {
                             showConfirmStartFormDialog(mTicket, ticketStep, ticketCtrl);
                         } else {
@@ -1788,7 +1794,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                             ticketCtrl.getSerial_code() != null ? ticketCtrl.getSerial_code() : mTicket.getOpen_serial_code()
                         );
                     }else{
-                        startFormProcess(ticketCtrl);
+                        startFormProcess(mTicket, ticketCtrl);
                     }
                 }
             },
@@ -1808,7 +1814,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     private void navegateToFormOrPDF(TK_Ticket mTicket, TK_Ticket_Step ticketStep, TK_Ticket_Ctrl ticketCtrl) {
         if(ticketCtrl.getForm() != null){
             if (formDataAlreadyExists(ticketCtrl.getForm())) {
-                startFormProcess(ticketCtrl);
+                startFormProcess(mTicket, ticketCtrl);
             } else {
                 tryOpenFormPDF(ticketCtrl.getForm());
             }
@@ -1870,7 +1876,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         }
     }
 
-    private void startFormProcess(TK_Ticket_Ctrl ticketCtrl) {
+    private void startFormProcess(TK_Ticket mTicket, TK_Ticket_Ctrl ticketCtrl) {
         if(ticketCtrl.getForm() != null){
             if(ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(ticketCtrl.getForm().getForm_status())){
                 //LUCHE - 31/08/2020
@@ -1893,12 +1899,16 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                             GE_Custom_Form_Local ge_custom_form_local = getGe_custom_form_local(ticketCtrl);
                             mView.callAct011(getAct011Bundle(ticketCtrl, customForm, ge_custom_form_local));
                         } else {
-                            bundle = getAct011BundleForAct087(ticketCtrl, customForm);
                             //Se form os e não existe form, verifica se tem estrutura.
                             //Se tiver abre o form, caso contrario, exibe msg de serial sem estrutura.
                             if (serialHasStructure(ticketCtrl)) {
-                                bundle.putAll(getAct087Bundle(ticketCtrl, customForm));
-                                mView.callAct087(bundle);
+                                final TK_Ticket_Step ticketStep = getSelectedStep(ticketCtrl.getTicket_prefix(),ticketCtrl.getTicket_code(), ticketCtrl.getStep_code());
+                                if(isOneTouchActionExecutionCheckinPendent(ticketStep, ticketCtrl)){
+                                    mView.setIsCheckinFlow(true);
+                                    setCheckinToStep(mTicket,ticketCtrl.getStep_code(), ticketCtrl, customForm);
+                                }else {
+                                    startFormOS(ticketCtrl, customForm);
+                                }
                             } else {
                                 mView.showAlert(
                                         hmAux_Trans.get("alert_form_without_serial_structure_ttl"),
@@ -1916,6 +1926,12 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 }
             }
         }
+    }
+
+    private void startFormOS(TK_Ticket_Ctrl ticketCtrl, GE_Custom_Form customForm) {
+        Bundle bundle = getAct011BundleForAct087(ticketCtrl, customForm);
+        bundle.putAll(getAct087Bundle(ticketCtrl, customForm));
+        mView.callAct087(bundle);
     }
 
     private Bundle getAct011Bundle(TK_Ticket_Ctrl ticketCtrl, GE_Custom_Form customForm, GE_Custom_Form_Local ge_custom_form_local) {
@@ -2304,6 +2320,9 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     }
 
     private void setCheckinToStep(TK_Ticket mTicket, int stepCode) {
+        setCheckinToStep(mTicket, stepCode, null, null);
+    }
+    private void setCheckinToStep(TK_Ticket mTicket, int stepCode, TK_Ticket_Ctrl ticketCtrl, GE_Custom_Form customForm) {
         TK_Ticket_Step ticketStep = getSelectedStep(mTicket.getTicket_prefix(), mTicket.getTicket_code(), stepCode);
         //
         ticketStep.setStep_start_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
@@ -2329,18 +2348,26 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             //LUCHE - 30/11/2020
             //Se ao executar o check in tiver form pendente, ao invés de chamar Ws, chama o refresh da tela.
             if(!ToolBox_Inf.hasOffHandFormInProcess(context,mTicket.getTicket_prefix(),mTicket.getTicket_code())) {
-                executeSerialSave(true);
+                if(mView.getIsCheckinFlow()
+                        && ticketCtrl != null
+                        && customForm != null
+                        && !ToolBox_Con.isOnline(context)
+                ){
+                    startFormOS(ticketCtrl, customForm);
+                }else {
+                    executeSerialSave(true);
+                }
             }else{
                 mView.showAlert(
-                    hmAux_Trans.get("alert_offline_save_by_open_form_ttl"),
-                    hmAux_Trans.get("alert_offline_save_by_open_form_msg"),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            mView.callRefreshUi();
-                        }
-                    },
-                    false
+                        hmAux_Trans.get("alert_offline_save_by_open_form_ttl"),
+                        hmAux_Trans.get("alert_offline_save_by_open_form_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                mView.callRefreshUi();
+                            }
+                        },
+                        false
                 );
             }
         }else{
@@ -2478,6 +2505,12 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     private boolean isOneTouchActionExecution(TK_Ticket_Step ticketStep, TK_Ticket_Ctrl ticketCtrl) {
         return  (ConstantBaseApp.SYS_STATUS_PENDING.equals(ticketStep.getStep_status())
                 || ConstantBaseApp.SYS_STATUS_PROCESS.equals(ticketStep.getStep_status()))
+                && ConstantBaseApp.SYS_STATUS_PENDING.equals(ticketCtrl.getCtrl_status())
+                && ConstantBaseApp.TK_PIPELINE_STEP_TYPE_ONE_TOUCH.equals(ticketStep.getExec_type());
+    }
+
+    private boolean isOneTouchActionExecutionCheckinPendent(TK_Ticket_Step ticketStep, TK_Ticket_Ctrl ticketCtrl) {
+        return  ConstantBaseApp.SYS_STATUS_PENDING.equals(ticketStep.getStep_status())
                 && ConstantBaseApp.SYS_STATUS_PENDING.equals(ticketCtrl.getCtrl_status())
                 && ConstantBaseApp.TK_PIPELINE_STEP_TYPE_ONE_TOUCH.equals(ticketStep.getExec_type());
     }
