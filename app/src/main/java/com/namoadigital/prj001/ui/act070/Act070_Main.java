@@ -128,15 +128,16 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private ArrayList<HMAux> wsResult = new ArrayList<>();
     /**
      * Iniciando terraplanagem e reinicio da tela.
+     *
      * @param savedInstanceState
      */
     private RecyclerView rvTicketPipeline;
     private Act070_Steps_Adapter mAdapter;
     private ArrayList<BaseStep> sources = new ArrayList<>();
     private FabMenu fabMenu;
-    private boolean hasFABActive=false;
+    private boolean hasFABActive = false;
     private String save_return = "";
-    private int lastPositionClicked =-1;
+    private int lastPositionClicked = -1;
     private boolean preventSyncLoop = false;
     //LUCHE - 08/09/2020 - Var que define se deve forçar ou não envio ao chegar na act.
     private boolean forceSendByFormExecution = false;
@@ -177,17 +178,17 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         fm = getSupportFragmentManager();
         //
         mResource_Code = ToolBox_Inf.getResourceCode(
-            context,
-            mModule_Code,
-            Constant.ACT070
+                context,
+                mModule_Code,
+                Constant.ACT070
         );
         //
         loadTranslation();
         //22/04/2021 - Add flag SOFT_INPUT_ADJUST_PAN para evitar crash ao selecionar WG do item.
         //Por algum motivo, quando o
         getWindow().setSoftInputMode(
-            WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN
-            | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN
+                        | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN
         );
     }
 
@@ -370,11 +371,11 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("alert_sync_to_not_execute_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
-            context,
-            mModule_Code,
-            mResource_Code,
-            ToolBox_Con.getPreference_Translate_Code(context),
-            transList
+                context,
+                mModule_Code,
+                mResource_Code,
+                ToolBox_Con.getPreference_Translate_Code(context),
+                transList
         );
     }
 
@@ -410,9 +411,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         if (mPresenter.validateBundleParams(mTkPrefix, mTkCode)) {
             updateTicketData();
             //o metodo estah aqui pois o metodo updateTicketData() recupera o valor do ticket.
-            if(mTicket != null) {
+            if (mTicket != null) {
                 if (fabMenu != null
-                && (fabMenu.getmButtons()== null || fabMenu.getmButtons().size() <= 0)) {
+                        && (fabMenu.getmButtons() == null || fabMenu.getmButtons().size() <= 0)) {
                     setFabMenu();
                 }
             }
@@ -423,28 +424,28 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     }
 
     private void informReadonlyByUserLevel() {
-        if(bReadOnly
-            && mTicket != null
-            && !mTicket.isReadOnlyStatus()
-            && mTicket.isReadOnlyUserLevel(context)
-        ){
+        if (bReadOnly
+                && mTicket != null
+                && !mTicket.isReadOnlyStatus()
+                && mTicket.isReadOnlyUserLevel(context)
+        ) {
             showAlert(
-                hmAux_Trans.get("alert_readonly_by_low_user_level_ttl"),
-                hmAux_Trans.get("alert_readonly_by_low_user_level_msg")
+                    hmAux_Trans.get("alert_readonly_by_low_user_level_ttl"),
+                    hmAux_Trans.get("alert_readonly_by_low_user_level_msg")
             );
         }
     }
 
     /**
-     *  BARRIONUEVO - 07-01-2020
-     *  Foi necessário encapsular o set do FabMenu devido o status do ticket.
+     * BARRIONUEVO - 07-01-2020
+     * Foi necessário encapsular o set do FabMenu devido o status do ticket.
      */
     private void setFabMenu() {
         ToolBox_Inf.setPipelineFabMenu(context, fabMenu, hmAux_Trans, mTicket,
                 new FabMenu.IFabMenu() {
                     @Override
                     public void onFabClick(View view) {
-                        if(assertSingleTouch) {
+                        if (assertSingleTouch) {
                             assertSingleTouch = false;
                             String tag = (String) view.getTag();
                             //
@@ -514,12 +515,12 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         binding.act070NotExecuteDialogMsg.setText(hmAux_Trans.get("alert_not_execute_msg"));
         SearchableSpinner ssJustifyItem = binding.act070NotExecuteDialogJustifyOptionSs;
         //
-        if(mTicket.getJustify_group_code() != null
-        && mTicket.getJustify_group_code() > -1) {
+        if (mTicket.getJustify_group_code() != null
+                && mTicket.getJustify_group_code() > -1) {
             ArrayList<HMAux> justifyItems = mPresenter.getJustifyItems(mTicket);
-            if(justifyItems.isEmpty()){
+            if (justifyItems.isEmpty()) {
                 ssJustifyItem.setVisibility(View.GONE);
-            }else {
+            } else {
                 ssJustifyItem.setmRequired(true);
                 ssJustifyItem.setmShowLabel(true);
                 ssJustifyItem.setmCanClean(true);
@@ -585,20 +586,20 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     }
 
     private void setJustifyImage(TicketNotExecutedDialogBinding binding) {
-        try{
+        try {
             Bitmap bitmap = BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + ToolBox_Inf.buildTicketNotExecutedImgPath(mTicket));
-            if(bitmap != null) {
+            if (bitmap != null) {
                 binding.act070IvJustifyPhoto.setVisibility(View.VISIBLE);
                 binding.act070IvJustifyPhotoBtn.setVisibility(View.GONE);
                 binding.act070IvJustifyPhoto.setImageBitmap(bitmap);
                 binding.act070IvJustifyPhoto.setTag(Boolean.TRUE);
                 binding.act070IvJustifyPhoto.postInvalidate();
-            }else{
+            } else {
                 binding.act070IvJustifyPhoto.setVisibility(View.GONE);
                 binding.act070IvJustifyPhotoBtn.setVisibility(View.VISIBLE);
                 binding.act070IvJustifyPhoto.setTag(Boolean.FALSE);
             }
-        } catch (NullPointerException e ){
+        } catch (NullPointerException e) {
             e.printStackTrace();
         }
     }
@@ -658,10 +659,10 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                         mTicket.setNot_executed_comments(binding.act070NotExecuteDialogJustifyCommentsActv.getText().toString());
                     }
                     mTicket.setNot_executed_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
-                    String tempPath = ConstantBase.CACHE_PATH_PHOTO + "/" +TEMP_SUFIX_FILE + ToolBox_Inf.buildTicketNotExecutedImgPath(mTicket);
+                    String tempPath = ConstantBase.CACHE_PATH_PHOTO + "/" + TEMP_SUFIX_FILE + ToolBox_Inf.buildTicketNotExecutedImgPath(mTicket);
                     File temp = new File(tempPath);
-                    if(temp.length() > 0){
-                        File notExecutedPhoto = new File(ConstantBase.CACHE_PATH_PHOTO + "/" +ToolBox_Inf.buildTicketNotExecutedImgPath(mTicket));
+                    if (temp.length() > 0) {
+                        File notExecutedPhoto = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + ToolBox_Inf.buildTicketNotExecutedImgPath(mTicket));
                         try {
                             ToolBox_Inf.copyFiles(temp.getPath(), notExecutedPhoto.getPath());
                             temp.delete();
@@ -672,7 +673,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                     }
                     HMAux justifyHM = binding.act070NotExecuteDialogJustifyOptionSs.getmValue();
 
-                    if(justifyHM.hasConsistentValue(SearchableSpinner.CODE)) {
+                    if (justifyHM.hasConsistentValue(SearchableSpinner.CODE)) {
                         mTicket.setJustify_item_code(Integer.valueOf(Objects.requireNonNull(justifyHM.get(SearchableSpinner.CODE))));
                     }
                     //
@@ -682,10 +683,10 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                                 hmAux_Trans.get("alert_ticket_has_off_hand_form_in_process_ttl"),
                                 hmAux_Trans.get("alert_ticket_has_off_hand_form_in_process_msg")
                         );
-                    }else {
+                    } else {
                         mPresenter.defineNotExecuteFlow(mTicket);
                     }
-                }else{
+                } else {
                     showToast(errorMsg);
                 }
             }
@@ -693,7 +694,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         notExecutedDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-                if(binding.act070IvJustifyPhoto.getTag() instanceof Boolean
+                if (binding.act070IvJustifyPhoto.getTag() instanceof Boolean
                         && (Boolean) binding.act070IvJustifyPhoto.getTag()) {
                     resetNotExecutedFile();
                 }
@@ -727,16 +728,16 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private String validateNotExecuteFormEntry(TicketNotExecutedDialogBinding binding) {
         String errorMsg = "";
         HMAux hmAux = binding.act070NotExecuteDialogJustifyOptionSs.getmValue();
-        if(hmAux.hasConsistentValue(MdJustifyItemDao.REQUIRED_COMMENT)
-                && "1".equals(hmAux.get(MdJustifyItemDao.REQUIRED_COMMENT))){
-            if( binding.act070NotExecuteDialogJustifyCommentsActv == null
-            || binding.act070NotExecuteDialogJustifyCommentsActv.getText() == null
-            || binding.act070NotExecuteDialogJustifyCommentsActv.getText().toString().isEmpty()){
-                 errorMsg = hmAux_Trans.get("alert_not_execute_justify_comment_required_msg");
+        if (hmAux.hasConsistentValue(MdJustifyItemDao.REQUIRED_COMMENT)
+                && "1".equals(hmAux.get(MdJustifyItemDao.REQUIRED_COMMENT))) {
+            if (binding.act070NotExecuteDialogJustifyCommentsActv == null
+                    || binding.act070NotExecuteDialogJustifyCommentsActv.getText() == null
+                    || binding.act070NotExecuteDialogJustifyCommentsActv.getText().toString().isEmpty()) {
+                errorMsg = hmAux_Trans.get("alert_not_execute_justify_comment_required_msg");
             }
         }
-        if( binding.act070NotExecuteDialogJustifyOptionSs.getVisibility() == View.VISIBLE
-        && !hmAux.hasConsistentValue(SearchableSpinner.CODE)){
+        if (binding.act070NotExecuteDialogJustifyOptionSs.getVisibility() == View.VISIBLE
+                && !hmAux.hasConsistentValue(SearchableSpinner.CODE)) {
             errorMsg += hmAux_Trans.get("alert_not_execute_justify_option_required_msg");
         }
         return errorMsg;
@@ -744,13 +745,13 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
 
     private void checkEditFlow() {
         if (mPresenter.allowEditModeOn(mTicket)) {
-            if(mPresenter.getWorkgroupChangeList(mTicket) != null) {
+            if (mPresenter.getWorkgroupChangeList(mTicket) != null) {
                 toogleIntoEditMode();
             }
         } else {
             showAlert(
-                hmAux_Trans.get("alert_update_ticket_to_edit_ttl"),
-                hmAux_Trans.get("alert_update_ticket_to_edit_msg")
+                    hmAux_Trans.get("alert_update_ticket_to_edit_ttl"),
+                    hmAux_Trans.get("alert_update_ticket_to_edit_msg")
             );
         }
 
@@ -788,7 +789,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     }
 
     private void iniHeaderFrag() {
-        if(mFrgPipelineHeader == null) {
+        if (mFrgPipelineHeader == null) {
             mFrgPipelineHeader = Frg_Pipeline_Header.newInstanceForPipeline(
                     mTicket,
                     mTicket.getTicket_id() + " ",
@@ -803,7 +804,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                     mTicket.getOpen_product_desc(),
                     hmAux_Trans.get(mTicket.getTicket_status()),
                     ToolBox_Inf.getStatusColorV2(context, mTicket.getTicket_status()),
-                    ToolBox_Inf.getFormattedTicketOriginDesc(mTicket.getOrigin_type(), mTicket.getOrigin_desc(),mTicket.getType_desc()),
+                    ToolBox_Inf.getFormattedTicketOriginDesc(mTicket.getOrigin_type(), mTicket.getOrigin_desc(), mTicket.getType_desc()),
                     hmAux_Trans.get("please_sync_lbl"),
                     mPresenter.getSyncStatusParam(mTicket)
             );
@@ -813,9 +814,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             ft.replace(R.id.act070_frg_pipeline_header, mFrgPipelineHeader, mFrgPipelineHeader.getTag());
             ft.addToBackStack(null);
             ft.commit();
-        }else{
+        } else {
             mFrgPipelineHeader.updateSyncRequired(mPresenter.getSyncStatusParam(mTicket), mTicket);
-            if(mTicket != null) {
+            if (mTicket != null) {
                 mFrgPipelineHeader.updateTicketStatus(
                         hmAux_Trans.get(mTicket.getTicket_status()),
                         ToolBox_Inf.getStatusColorV2(context, mTicket.getTicket_status()),
@@ -828,9 +829,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
 
     @Override
     public void syncPipeline() {
-        if(!inWgEditMode || !mPresenter.hasWorkgroupChanges(sources)){
+        if (!inWgEditMode || !mPresenter.hasWorkgroupChanges(sources)) {
             syncPipelineFlow(false);
-        }else{
+        } else {
             showAlert(
                     hmAux_Trans.get("alert_discard_wg_changes_and_sync_ttl"),
                     hmAux_Trans.get("alert_discard_wg_changes_and_sync_msg"),
@@ -848,8 +849,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     /**
      * LUCHE - 17/12/2020
      * Metodo que verifica o fluxo após o clique
+     *
      * @param skipSyncConfirm - Var que indica se deve fazer a confirmação do sync
-     * Atualmente valor só verdaderio se veio do fluxo de sync durante edição de wg com dados alterados
+     *                        Atualmente valor só verdaderio se veio do fluxo de sync durante edição de wg com dados alterados
      */
     private void syncPipelineFlow(boolean skipSyncConfirm) {
         if (ToolBox_Inf.hasOffHandFormInProcess(context, mTkPrefix, mTkCode)) {
@@ -857,10 +859,10 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                     hmAux_Trans.get("alert_ticket_has_off_hand_form_in_process_ttl"),
                     hmAux_Trans.get("alert_ticket_has_off_hand_form_in_process_msg")
             );
-        }else {
-            if(skipSyncConfirm) {
+        } else {
+            if (skipSyncConfirm) {
                 mPresenter.prepareSyncProcess(mTicket, false);
-            }else{
+            } else {
                 showAlert(
                         hmAux_Trans.get("alert_ticket_sync_confirm_ttl"),
                         hmAux_Trans.get("alert_ticket_sync_confirm_msg"),
@@ -907,9 +909,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             mNavStepCode = requestingBundle.getInt(TK_Ticket_CtrlDao.STEP_CODE, -1);
             mNavTicketSeq = requestingBundle.getInt(TK_Ticket_CtrlDao.TICKET_SEQ, -1);
             mNavTicketSeqTmp = requestingBundle.getInt(TK_Ticket_CtrlDao.TICKET_SEQ_TMP, -1);
-            inWgEditMode =  requestingBundle.getBoolean(PARAM_WORKGROUP_EDIT_MODE, false);
-            forceWgEditMode =  requestingBundle.getBoolean(PARAM_FORCE_WORKGROUP_EDIT_MODE, false);
-            originFlow = requestingBundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,ConstantBaseApp.ACT005);
+            inWgEditMode = requestingBundle.getBoolean(PARAM_WORKGROUP_EDIT_MODE, false);
+            forceWgEditMode = requestingBundle.getBoolean(PARAM_FORCE_WORKGROUP_EDIT_MODE, false);
+            originFlow = requestingBundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT005);
             //
         } else {
             requestingAct = ConstantBaseApp.ACT069;
@@ -943,14 +945,14 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                 new Runnable() {
                     @Override
                     public void run() {
-                        if(hasNavegationBundleParam()) {
+                        if (hasNavegationBundleParam()) {
                             openLastProcessInteraction();
-                        }else {
+                        } else {
                             openCurrentSteps();
                             moveToCurrentStep(currentStepFirstPosition);
                         }
                     }
-                },100
+                }, 100
         );
         //
     }
@@ -962,8 +964,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private void openCurrentSteps() {
         try {
             for (int i = 0; i < sources.size(); i++) {
-                if(sources.get(i) instanceof StepMain){
-                    if(((StepMain) sources.get(i)).isCurrentStep()
+                if (sources.get(i) instanceof StepMain) {
+                    if (((StepMain) sources.get(i)).isCurrentStep()
                             && !ConstantBaseApp.SYS_STATUS_DONE.equals(((StepMain) sources.get(i)).getStepStatus())
                             && ((StepMain) sources.get(i)).isUser_focus()) {
                         Act070_Step_MainVH stepMainVH = (Act070_Step_MainVH) rvTicketPipeline.findViewHolderForAdapterPosition(i);
@@ -973,7 +975,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                     }
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             ToolBox.toastMSG(context, e.getMessage());
         }
     }
@@ -986,8 +988,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private void openLastProcessInteraction() {
         try {
             for (int i = 0; i < sources.size(); i++) {
-                if(sources.get(i) instanceof StepMain){
-                    if(((StepMain) sources.get(i)).getStepCode() == mNavStepCode){
+                if (sources.get(i) instanceof StepMain) {
+                    if (((StepMain) sources.get(i)).getStepCode() == mNavStepCode) {
                         Act070_Step_MainVH stepMainVH = (Act070_Step_MainVH) rvTicketPipeline.findViewHolderForAdapterPosition(i);
                         if (stepMainVH != null) {
                             stepMainVH.itemView.performClick();
@@ -997,13 +999,13 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                                         @Override
                                         public void run() {
                                             for (int i = 0; i < sources.size(); i++) {
-                                                if(sources.get(i) instanceof StepAbstractProcess){
+                                                if (sources.get(i) instanceof StepAbstractProcess) {
                                                     StepAbstractProcess process = (StepAbstractProcess) sources.get(i);
-                                                    if(process.getStepCode() == mNavStepCode
-                                                            && (   (mNavTicketSeq > 0 && process.getProcessTkSeq() == mNavTicketSeq)
+                                                    if (process.getStepCode() == mNavStepCode
+                                                            && ((mNavTicketSeq > 0 && process.getProcessTkSeq() == mNavTicketSeq)
                                                             || (mNavTicketSeq <= 0 && process.getProcessTkSeqTmp() == mNavTicketSeqTmp)
                                                     )
-                                                    ){
+                                                    ) {
                                                         smoothMoveToItemAndScrollItToTop(i);
                                                         process.setBackProcessHighlight(true);
                                                         mAdapter.notifyItemChanged(i);
@@ -1020,7 +1022,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                     }
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             ToolBox.toastMSG(context, e.getMessage());
         }
     }
@@ -1036,6 +1038,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
      * Metodo chamado quando a act ainda esta aberta e recebe uma nova intent.
      * Essa situação acontece quando a tela do ticket estava aberta, o usuario acessou o chat via
      * notificação e depois navegou novamente para a tela fo ticket via botão no chat.
+     *
      * @param intent
      */
     @Override
@@ -1048,7 +1051,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     @Override
     protected void onResume() {
         super.onResume();
-        if(fromCamera){
+        if (fromCamera) {
             fromCamera = false;
             setJustifyImage(binding);
         }
@@ -1140,17 +1143,17 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
 
             @Override
             public void notifySpinnerItemSelected(int stepMainPosition, HMAux hmAux, boolean dbValueChanges) {
-                mPresenter.updateWorkgroupChangeIntoItem(sources,stepMainPosition,hmAux,dbValueChanges);
+                mPresenter.updateWorkgroupChangeIntoItem(sources, stepMainPosition, hmAux, dbValueChanges);
             }
 
         },
-                new Act070_Steps_Adapter.OnNotExecutedInteraction(){
+                new Act070_Steps_Adapter.OnNotExecutedInteraction() {
                     @Override
                     public void onPhotoClickListener(int imageViewId) {
-                        String path =  ConstantBase.CACHE_PATH_PHOTO + "/" + ToolBox_Inf.buildTicketNotExecutedImgPath(mTicket);
-                        if(ToolBox_Inf.isImageUnder4kLimit(path)){
-                            callCameraAct(imageViewId,ToolBox_Inf.buildTicketNotExecutedImgPath(mTicket), false, false);
-                        }else{
+                        String path = ConstantBase.CACHE_PATH_PHOTO + "/" + ToolBox_Inf.buildTicketNotExecutedImgPath(mTicket);
+                        if (ToolBox_Inf.isImageUnder4kLimit(path)) {
+                            callCameraAct(imageViewId, ToolBox_Inf.buildTicketNotExecutedImgPath(mTicket), false, false);
+                        } else {
                             showAlert(
                                     hmAux_Trans.get("alert_image_too_large_to_open_ttl"),
                                     hmAux_Trans.get("alert_image_too_large_to_open_msg")
@@ -1162,7 +1165,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                     public String getTicketJustifyImagePath() {
                         return ToolBox_Inf.buildTicketNotExecutedImgPath(mTicket);
                     }
-                }     ,
+                },
                 inWgEditMode,
                 //LUCHE - 02/07/2021 - Voltado a regra do readOnly apenas de status. Para focus ou claim,
                 //cada processo fará a ato avalição, pois se o processo estiver em processo, seré permitido
@@ -1175,7 +1178,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
 
     private void callCameraAct(int imageViewId, String path, boolean inEditMode, boolean isEnable) {
         File sFile;
-        sFile = new File( ConstantBase.CACHE_PATH_PHOTO + "/" + path);
+        sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + path);
 
         if (!sFile.exists() && !inEditMode && !isEnable) {
             return;
@@ -1207,14 +1210,14 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
 
     @Override
     public void informAdapterInsertRange(int mainPosition, int rangeLength) {
-        if(mAdapter != null) {
+        if (mAdapter != null) {
             mAdapter.notifyItemRangeInserted(mainPosition, rangeLength);
         }
     }
 
     @Override
     public void informAdapterRemoveRange(int mainPosition, int rangeLength) {
-        if(mAdapter != null) {
+        if (mAdapter != null) {
             mAdapter.notifyItemRangeRemoved(mainPosition, rangeLength);
         }
     }
@@ -1222,7 +1225,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     @Override
     //TODO REVER SE PRECISA MANTER, CRIEI , MAS NÃO É NECESSARIO....
     public void informAdapterItemUpdate(int stepMainPosition) {
-        if(mAdapter != null){
+        if (mAdapter != null) {
             mAdapter.notifyItemChanged(stepMainPosition);
         }
     }
@@ -1269,18 +1272,18 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         mTicket = mPresenter.getTicketObj(mTkPrefix, mTkCode);
         //
         if (mTicket != null) {
-            if(mTicket.getValid_structure_step() == 1) {
+            if (mTicket.getValid_structure_step() == 1) {
                 handleFabMenuOnTicketStatusChanged();
                 iniHeaderFrag();
                 mPresenter.getStepsList(mTicket);
                 initFCMReceiver();
-                if(!isInWgEditMode()) {
+                if (!isInWgEditMode()) {
                     checkSyncNeeds();
                 }
                 applyEditUI();
                 //
                 forceEditModeIfNeeds();
-            }else{
+            } else {
                 ToolBox.alertMSG(
                         context,
                         hmAux_Trans.get("alert_ticket_struct_error_ttl"),
@@ -1306,23 +1309,23 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
      * o fab tem que ser reconstruido para a opção WG voltar a aparecer.
      */
     private void handleFabMenuOnTicketStatusChanged() {
-        if(mPresenter.getReadOnlyDefinition(mTicket)){
+        if (mPresenter.getReadOnlyDefinition(mTicket)) {
             ArrayList<FabMenuItem> fabMenuItems = fabMenu.getmButtons();
             ArrayList<FabMenuItem> fabMenuItemsRemoved = new ArrayList<>();
             if (!fabMenuItems.isEmpty()) {
                 for (FabMenuItem fabMenuItem : fabMenuItems) {
-                    if(ConstantBaseApp.FAB_TO_WORK_GROUP_EDIT_LBL.equals(fabMenuItem.getTag())
+                    if (ConstantBaseApp.FAB_TO_WORK_GROUP_EDIT_LBL.equals(fabMenuItem.getTag())
                             || ConstantBaseApp.FAB_NOT_EXECUTE_LBL.equals(fabMenuItem.getTag())
                     ) {
                         fabMenuItemsRemoved.add(fabMenuItem);
                     }
                 }
                 //
-                for(FabMenuItem fabMenuItem: fabMenuItemsRemoved){
+                for (FabMenuItem fabMenuItem : fabMenuItemsRemoved) {
                     fabMenu.removeFabMenuItens(fabMenuItem);
                 }
             }
-        }else{
+        } else {
             setFabMenu();
         }
     }
@@ -1353,7 +1356,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
      * Após a atualização do syncRequired, na segunda chamada, ai sim, forçará o modo edição.
      */
     private void forceEditModeIfNeeds() {
-        if(forceWgEditMode && !mPresenter.checkOnlySyncNeeds(mTicket)){
+        if (forceWgEditMode && !mPresenter.checkOnlySyncNeeds(mTicket)) {
             resetForceEditMode();
             checkEditFlow();
         }
@@ -1372,8 +1375,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         clEditMode.setVisibility(inWgEditMode ? View.VISIBLE : View.GONE);
         fabMenu.setVisibility(inWgEditMode ? View.GONE : View.VISIBLE);
         mPresenter.checkBtnSaveEditState(sources);
-        if(inWgEditMode && !mPresenter.allowEditModeOn(mTicket)){
-            if(mPresenter.hasWorkgroupChanges(sources)){
+        if (inWgEditMode && !mPresenter.allowEditModeOn(mTicket)) {
+            if (mPresenter.hasWorkgroupChanges(sources)) {
                 showAlert(
                         hmAux_Trans.get("alert_wg_changes_ll_be_lost_by_sync_needs_ttl"),
                         hmAux_Trans.get("alert_wg_changes_ll_be_lost_by_sync_needs_msg"),
@@ -1385,7 +1388,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                         },
                         true
                 );
-            }else{
+            } else {
                 showAlert(
                         hmAux_Trans.get("alert_wg_edit_mode_cancel_by_sync_needs_ttl"),
                         hmAux_Trans.get("alert_wg_edit_mode_cancel_by_sync_needs_msg"),
@@ -1427,18 +1430,18 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private void checkSyncNeeds() {
         //Se a atualização da tela foi chamada pelas callbacks de erro do Ws, não az chamada do WS
         //e reseta var que controla o loop
-        if(preventSyncLoop) {
+        if (preventSyncLoop) {
             preventSyncLoop = false;
-        }else {
-            if ( (mPresenter.checkOnlySyncNeeds(mTicket) || forceSendByFormExecution) && ToolBox_Con.isOnline(context)) {
-                if(forceSendByFormExecution){
+        } else {
+            if ((mPresenter.checkOnlySyncNeeds(mTicket) || forceSendByFormExecution) && ToolBox_Con.isOnline(context)) {
+                if (forceSendByFormExecution) {
                     forceSendByFormExecution = false;
                     mPresenter.prepareSyncProcess(mTicket, true);
-                }else{
+                } else {
                     mPresenter.prepareSyncProcess(mTicket, forceSendByFormExecution);
                 }
                 resetForceSendByform();
-            }else{
+            } else {
                 resetForceSendByform();
             }
         }
@@ -1453,7 +1456,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     public void updateSyncRequiredByFCM() {
         mTicket.setSync_required(1);
         //
-        if(mFrgPipelineHeader != null) {
+        if (mFrgPipelineHeader != null) {
             mFrgPipelineHeader.updateSyncRequired(true, mTicket);
         }
     }
@@ -1461,13 +1464,13 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private void updateSyncRequiredByGpsService() {
         mTicket.setUpdate_required(1);
         //
-        if(mFrgPipelineHeader != null) {
+        if (mFrgPipelineHeader != null) {
             mFrgPipelineHeader.updateSyncRequired(true, mTicket);
         }
     }
 
     private void initFCMReceiver() {
-        if(fcmReceiver == null) {
+        if (fcmReceiver == null) {
             fcmReceiver = new FCMReceiver();
             startStopFCMReceiver(true);
         }
@@ -1490,16 +1493,16 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
 
     private void paramErrorFlow() {
         ToolBox.alertMSG(
-            context,
-            hmAux_Trans.get("alert_ticket_parameter_error_ttl"),
-            hmAux_Trans.get("alert_ticket_parameter_error_msg"),
-            new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    callAct083();
-                }
-            },
-            0
+                context,
+                hmAux_Trans.get("alert_ticket_parameter_error_ttl"),
+                hmAux_Trans.get("alert_ticket_parameter_error_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        callAct083();
+                    }
+                },
+                0
         );
     }
 
@@ -1526,7 +1529,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
 
     @Override
     public void showAlert(String ttl, String msg, DialogInterface.OnClickListener listenerOk, boolean showNegative) {
-        if(showNegative){
+        if (showNegative) {
             ToolBox.alertMSG_YES_NO(
                     context,
                     ttl,
@@ -1534,7 +1537,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                     listenerOk,
                     showNegative ? 1 : 0
             );
-        }else{
+        } else {
             ToolBox.alertMSG(
                     context,
                     ttl,
@@ -1572,16 +1575,15 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                 || ConstantBaseApp.ACT014.equals(requestingAct)
                 || ConstantBaseApp.ACT035.equals(requestingAct)
                 || ConstantBaseApp.ACT017.equals(requestingAct)
-                || ConstantBaseApp.ACT083.equals(requestingAct))
-        {
+                || ConstantBaseApp.ACT083.equals(requestingAct)) {
             bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, requestingAct);
             if (ConstantBaseApp.ACT035.equals(requestingAct)) {
                 bundle.putString(CH_RoomDao.ROOM_CODE, room_code);
             }
             //LUCHE - 18/03/2020 - Tratativa especifica do agendamento
-            if( ConstantBaseApp.ACT017.equals(requestingAct)
-                    ||  ConstantBaseApp.ACT083.equals(requestingAct)
-            ){
+            if (ConstantBaseApp.ACT017.equals(requestingAct)
+                    || ConstantBaseApp.ACT083.equals(requestingAct)
+            ) {
                 bundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK, requestingBundle.getString(MD_Schedule_ExecDao.SCHEDULE_PK, null));
                 bundle.putString(ConstantBaseApp.ACT_SELECTED_DATE, requestingBundle.getString(ConstantBaseApp.ACT_SELECTED_DATE, null));
             }
@@ -1590,13 +1592,13 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         //Review 4.0
         bundle.putString(
                 ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
-                requestingBundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,ConstantBaseApp.ACT005)
+                requestingBundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT005)
         );
-        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM,ToolBox_Inf.getMyActionFilterParam(requestingBundle));
+        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, ToolBox_Inf.getMyActionFilterParam(requestingBundle));
         //
         intent.putExtras(bundle);
         //
-        if(mPresenter.checkWorkgroupEditJsonFileCreation(inWgEditMode,sources)) {
+        if (mPresenter.checkWorkgroupEditJsonFileCreation(inWgEditMode, sources)) {
             startActivity(intent);
             finish();
         }//SEM ELSE pois se for false, msg de erro será exibida
@@ -1644,9 +1646,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         }
         bundle.putString(
                 ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
-                requestingBundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,ConstantBaseApp.ACT005)
+                requestingBundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT005)
         );
-        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM,ToolBox_Inf.getMyActionFilterParam(requestingBundle));
+        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, ToolBox_Inf.getMyActionFilterParam(requestingBundle));
         intent.putExtras(bundle);
         //
         startActivity(intent);
@@ -1661,9 +1663,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         Bundle bundle = new Bundle();
         bundle.putString(
                 ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
-                requestingBundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,ConstantBaseApp.ACT005)
+                requestingBundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT005)
         );
-        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM,ToolBox_Inf.getMyActionFilterParam(requestingBundle));
+        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, ToolBox_Inf.getMyActionFilterParam(requestingBundle));
         intent.putExtras(bundle);
         //
         startActivity(intent);
@@ -1679,9 +1681,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         Bundle bundle = new Bundle();
         bundle.putString(
                 ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
-                requestingBundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,ConstantBaseApp.ACT005)
+                requestingBundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT005)
         );
-        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM,ToolBox_Inf.getMyActionFilterParam(requestingBundle));
+        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, ToolBox_Inf.getMyActionFilterParam(requestingBundle));
         intent.putExtras(bundle);
         //
         startActivity(intent);
@@ -1747,9 +1749,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         btnSaveEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mPresenter.allowEditModeOn(mTicket)){
+                if (mPresenter.allowEditModeOn(mTicket)) {
                     mPresenter.generateJsonWGSave(mTicket, sources);
-                }else{
+                } else {
                     showAlert(
                             hmAux_Trans.get("alert_update_ticket_to_edit_ttl"),
                             hmAux_Trans.get("alert_update_ticket_to_edit_msg")
@@ -1761,7 +1763,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     }
 
     private void confirmEditModeExit() {
-        if(mPresenter.hasWorkgroupChanges(sources)) {
+        if (mPresenter.hasWorkgroupChanges(sources)) {
             showAlert(
                     hmAux_Trans.get("alert_cancel_edit_mode_ttl"),
                     hmAux_Trans.get("alert_unsaved_group_changes_will_be_lost_msg"),
@@ -1773,7 +1775,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                     },
                     true
             );
-        }else{
+        } else {
             toogleIntoEditMode();
         }
     }
@@ -1813,16 +1815,16 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         act011Bundle.putString(
                 ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
-                requestingBundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,ConstantBaseApp.ACT005)
+                requestingBundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT005)
         );
-        act011Bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM,ToolBox_Inf.getMyActionFilterParam(requestingBundle));
+        act011Bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, ToolBox_Inf.getMyActionFilterParam(requestingBundle));
         intent.putExtras(act011Bundle);
         startActivity(intent);
         finish();
     }
 
     private void moveToCurrentStep(final int position) {
-        if(position > -1) {
+        if (position > -1) {
             //Faz scroll para o fim do scroll
             new Handler().postDelayed(
                     new Runnable() {
@@ -1840,12 +1842,14 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
      * Como as tentativas de smoothScroll do recycle e scrollToPositionWithOffset falharam, ja que
      * uma,smoothScroll, naõ rodava item pra primeiro na lista e a outra,scrollToPositionWithOffset,
      * setava no topo, mas abruptamente, foi necessario criar esse semi-demonio
+     *
      * @param position
      */
     private void smoothMoveToItemAndScrollItToTop(int position) {
         //Gera smooth scroller
         RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(context) {
-            @Override protected int getVerticalSnapPreference() {
+            @Override
+            protected int getVerticalSnapPreference() {
                 return LinearSmoothScroller.SNAP_TO_START;
             }
         };
@@ -1854,17 +1858,17 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         //Seta smooth scroller no layoutmaager do recycle o.O
         try {
             ((LinearLayoutManager) rvTicketPipeline.getLayoutManager()).startSmoothScroll(smoothScroller);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @Override
     public void showResult(boolean ticketResult) {
-        if(wsResult != null && wsResult.isEmpty() && ticketResult){
-            Toast.makeText(context,  hmAux_Trans.get("alert_ticket_results_ok"), Toast.LENGTH_SHORT).show();
-            if(isCheckinFlow
-            && lastPositionClicked > -1){
+        if (wsResult != null && wsResult.isEmpty() && ticketResult) {
+            Toast.makeText(context, hmAux_Trans.get("alert_ticket_results_ok"), Toast.LENGTH_SHORT).show();
+            if (isCheckinFlow
+                    && lastPositionClicked > -1) {
                 isCheckinFlow = false;
                 StepForm stepForm = (StepForm) sources.get(lastPositionClicked);
                 mPresenter.createFormOS(mTicket, stepForm);
@@ -1872,7 +1876,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                 refreshUi();
                 wsResult.clear();
             }
-        }else{
+        } else {
             final AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -1903,7 +1907,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                 @Override
                 public void onClick(View v) {
                     //
-                    if(isCheckinFlow){
+                    if (isCheckinFlow) {
                         isCheckinFlow = false;
                         StepForm stepForm = (StepForm) sources.get(lastPositionClicked);
                         mPresenter.createFormOS(mTicket, stepForm);
@@ -1921,8 +1925,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
 
     public void callOrigin() {
         Intent intent = ToolBox_Inf.getOriginIntent(context, mTicket.getOrigin_type());
-        if(intent != null) {
-            if(!inWgEditMode || mPresenter.checkWorkgroupEditJsonFileCreation(inWgEditMode,sources)){
+        if (intent != null) {
+            if (!inWgEditMode || mPresenter.checkWorkgroupEditJsonFileCreation(inWgEditMode, sources)) {
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 requestingBundle.putInt(TK_TicketDao.TICKET_PREFIX, mTkPrefix);
                 requestingBundle.putInt(TK_TicketDao.TICKET_CODE, mTkCode);
@@ -1970,7 +1974,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                     }
                 }
                 //
-                if(bundle.getString(ConstantBaseApp.SW_TYPE).equals(ConstantBaseApp.TK_TICKET_FORM_GPS_LOCATION_UPDATE)) {
+                if (bundle.getString(ConstantBaseApp.SW_TYPE).equals(ConstantBaseApp.TK_TICKET_FORM_GPS_LOCATION_UPDATE)) {
                     updateSyncRequiredByGpsService();
                 }
 
@@ -2005,20 +2009,20 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             wsProcess = "";
             save_return = "";
             progressDialog.dismiss();
-            if(!mPresenter.verifyProductForForm()){
+            if (!mPresenter.verifyProductForForm()) {
                 refreshUi();
             }
         } else if (wsProcess.equalsIgnoreCase(WS_Sync.class.getName())) {
             wsProcess = "";
             progressDialog.dismiss();
-            if(save_return == null || save_return.isEmpty()) {
-                if(lastPositionClicked >= 0) {
+            if (save_return == null || save_return.isEmpty()) {
+                if (lastPositionClicked >= 0) {
                     StepForm stepForm = (StepForm) sources.get(lastPositionClicked);
                     mPresenter.defineAfterFormSyncProcess(mTicket, stepForm, true);
-                }else{
+                } else {
                     refreshUi();
                 }
-            }else{
+            } else {
                 mPresenter.processSaveReturn(mTicket.getTicket_prefix(), mTicket.getTicket_code(), save_return);
                 save_return = "";
                 refreshUi();
@@ -2026,9 +2030,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         } else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getName())) {
             wsProcess = "";
             progressDialog.dismiss();
-            if(mPresenter.verifyProductForForm()){
+            if (mPresenter.verifyProductForForm()) {
                 save_return = mLink;
-            }else {
+            } else {
                 mPresenter.processSaveReturn(mTicket.getTicket_prefix(), mTicket.getTicket_code(), mLink);
             }
         } else if (wsProcess.equalsIgnoreCase(WS_Save.class.getName())) {
@@ -2037,7 +2041,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             mPresenter.processWS_SaveReturn(mLink);
             //mPresenter.prepareSyncProcess(mTicket, false);
             mPresenter.defineWsToCall(mTicket, true, true);
-        } else if(wsProcess.equals(WS_Serial_Save.class.getName())){
+        } else if (wsProcess.equals(WS_Serial_Save.class.getName())) {
             //LUCHE - 03/11/2020
             //Add envio de serial no bolo. Esse será o primeiro WS a ser chamado
             wsProcess = "";
@@ -2045,24 +2049,24 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             mPresenter.processWsSerialSavelReturn(hmAux);
             //Após rodar tratativa, se tiver itens pendentes de envio, chama o fluxo atual.
             //Caso contrario, significa que o WS_Serial_Save foi chamado do sincronismo.
-            if(mPresenter.checkUpdateRequiredNeeds(mTicket)) {
+            if (mPresenter.checkUpdateRequiredNeeds(mTicket)) {
                 mPresenter.defineWsToCall(mTicket, true, true);
-            }else{
-                mPresenter.prepareSyncProcess(mTicket,false);
+            } else {
+                mPresenter.prepareSyncProcess(mTicket, false);
             }
-        } else if(wsProcess.equals(WS_TK_Get_Workgroup_List.class.getName())){
+        } else if (wsProcess.equals(WS_TK_Get_Workgroup_List.class.getName())) {
             wsProcess = "";
             progressDialog.dismiss();
             mPresenter.processWsTkGetWorkgroup();
-        }else if(wsProcess.equals(WS_TK_Header_N_Group_Save.class.getName())) {
+        } else if (wsProcess.equals(WS_TK_Header_N_Group_Save.class.getName())) {
             wsProcess = "";
             progressDialog.dismiss();
             mPresenter.processWorkGroupSaveReturn(mTicket.getTicket_prefix(), mTicket.getTicket_code(), mLink);
-        }else if(wsProcess.equals(WS_Product_Serial_Structure.class.getName())){
+        } else if (wsProcess.equals(WS_Product_Serial_Structure.class.getName())) {
             wsProcess = "";
             progressDialog.dismiss();
             processSerialStructure();
-        }else{
+        } else {
             wsProcess = "";
             progressDialog.dismiss();
         }
@@ -2083,23 +2087,23 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         progressDialog.dismiss();
         //
         if (wsProcess.equalsIgnoreCase(WS_Sync.class.getName())) {
-            if(save_return != null
+            if (save_return != null
                     && !save_return.isEmpty()) {
                 mPresenter.processSaveReturn(mTicket.getTicket_prefix(), mTicket.getTicket_code(), save_return);
                 save_return = "";
                 resetLastPositionClicked();
             }
-        }else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getName())) {
+        } else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getName())) {
             //caso haja algo no extrato referente ao formulario forca a execucao do extrato.
-            if(!wsResult.isEmpty()) {
+            if (!wsResult.isEmpty()) {
                 showResult(false);
             }
-        }else if (wsProcess.equalsIgnoreCase(WS_TK_Get_Workgroup_List.class.getName())) {
+        } else if (wsProcess.equalsIgnoreCase(WS_TK_Get_Workgroup_List.class.getName())) {
             //reseta var de modo edição.
             inWgEditMode = false;
-        }else if(wsProcess.equals(WS_Product_Serial_Structure.class.getName())){
+        } else if (wsProcess.equals(WS_Product_Serial_Structure.class.getName())) {
             resetLastPositionClicked();
-        }else{
+        } else {
             wsResult.clear();
         }
         //LUCHE - 03/09/2020
@@ -2116,24 +2120,29 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         super.processError_1(mLink, mRequired);
         progressDialog.dismiss();
         if (wsProcess.equalsIgnoreCase(WS_Sync.class.getName())) {
-            if(save_return != null
+            if (save_return != null
                     && !save_return.isEmpty()) {
                 mPresenter.processSaveReturn(mTicket.getTicket_prefix(), mTicket.getTicket_code(), save_return);
                 save_return = "";
                 //
                 resetLastPositionClicked();
             }
-        }else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getName())) {
+        } else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getName())) {
             //caso haja algo no extrato referente ao formulario forca a execucao do extrato.
-            if(!wsResult.isEmpty()) {
+            if (!wsResult.isEmpty()) {
                 showResult(false);
+            } else if (isCheckinFlow
+                    && lastPositionClicked > -1) {
+                isCheckinFlow = false;
+                StepForm stepForm = (StepForm) sources.get(lastPositionClicked);
+                mPresenter.createFormOS(mTicket, stepForm);
             }
-        }else if (wsProcess.equalsIgnoreCase(WS_TK_Get_Workgroup_List.class.getName())) {
+        } else if (wsProcess.equalsIgnoreCase(WS_TK_Get_Workgroup_List.class.getName())) {
             //reseta var de modo edição.
             inWgEditMode = false;
-        }else if(wsProcess.equals(WS_Product_Serial_Structure.class.getName())){
+        } else if (wsProcess.equals(WS_Product_Serial_Structure.class.getName())) {
             resetLastPositionClicked();
-        }else{
+        } else {
             wsResult.clear();
         }
         //LUCHE - 03/09/2020
@@ -2171,7 +2180,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     @Override
     protected void processUpdateSoftware(String mLink, String mRequired) {
         super.processUpdateSoftware(mLink, mRequired);
-        if(progressDialog != null) {
+        if (progressDialog != null) {
             progressDialog.dismiss();
         }
         //
@@ -2182,12 +2191,12 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
-        if(hasFABActive){
+        if (hasFABActive) {
             fabMenu.animateFAB();
-        }else {
-            if(!inWgEditMode) {
+        } else {
+            if (!inWgEditMode) {
                 mPresenter.onBackPressedClicked(originFlow);
-            }else{
+            } else {
                 confirmEditModeExit();
             }
         }
