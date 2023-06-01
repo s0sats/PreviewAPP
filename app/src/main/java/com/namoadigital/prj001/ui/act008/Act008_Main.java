@@ -549,22 +549,22 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             }
             scheduled_profile_check = bundle.getBoolean(SCHEDULED_PROFILE_CHECK, true);
             //Chamada vinda Act013 quando agendamento
-            if ( bundle.containsKey(Constant.MAIN_REQUESTING_ACT)
-                 && bundle.getString(Constant.MAIN_REQUESTING_ACT).equals(Constant.ACT013)
+            if (bundle.containsKey(Constant.MAIN_REQUESTING_ACT)
+                    && bundle.getString(Constant.MAIN_REQUESTING_ACT).equals(Constant.ACT013)
             ) {
                 isSchedule = true;
             }
             //LUCHE - 04/06/2021 - Fluxo vinddo do myaction se for schedule, seta var isSchedule
-            if( bundle.containsKey(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW)
-                || bundle.containsKey(MyActionFilterParam.MY_ACTION_FILTER_PARAM)
-            ){
-                originFlow = bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,null);
+            if (bundle.containsKey(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW)
+                    || bundle.containsKey(MyActionFilterParam.MY_ACTION_FILTER_PARAM)
+            ) {
+                originFlow = bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, null);
                 act083Bundle.putString(
-                    ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
-                    bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,ConstantBaseApp.ACT005)
+                        ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
+                        bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT005)
                 );
                 MyActionFilterParam myActionFilterParam = getMyActionFilterParam(bundle);
-                if(MyActions.MY_ACTION_TYPE_SCHEDULE.equals(myActionFilterParam.getParamItemSelectedType())){
+                if (MyActions.MY_ACTION_TYPE_SCHEDULE.equals(myActionFilterParam.getParamItemSelectedType())) {
                     isSchedule = true;
                 }
                 act083Bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam);
@@ -573,7 +573,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             if (isSchedule) {
                 bundle_product_code = Long.parseLong(bundle.getString(MD_ProductDao.PRODUCT_CODE));
                 bundle_serial_id = bundle.getString(MD_Product_SerialDao.SERIAL_ID, "");
-                scheduled_site = bundle.getString(Constant.ACT017_SCHEDULED_SITE,"");
+                scheduled_site = bundle.getString(Constant.ACT017_SCHEDULED_SITE, "");
             } else {
                 bundle_product_code = Long.parseLong(bundle.getString(MD_ProductDao.PRODUCT_CODE));
                 bundle_serial_id = bundle.getString(MD_Product_SerialDao.SERIAL_ID, "");
@@ -583,7 +583,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             requesting_process = bundle.getString(Constant.MAIN_REQUESTING_ACT, Constant.ACT005);
             //LUCHE - 21/10/2021 - Para que indica que se o form é tipo O.S, Vira somente se agendamento
             //ou finaliza mais novo de um tipo O.S
-            isSoForm = bundle.getInt(GE_Custom_FormDao.IS_SO,0) == 1;
+            isSoForm = bundle.getInt(GE_Custom_FormDao.IS_SO, 0) == 1;
             //
             if (bundle.containsKey(Constant.MAIN_MD_PRODUCT_SERIAL)) {
                 mdProductSerial = (MD_Product_Serial) bundle.getSerializable(Constant.MAIN_MD_PRODUCT_SERIAL);
@@ -591,7 +591,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                 mdProductSerial = new MD_Product_Serial();
             }
             //todo testar esse ponto, pois substitui o param original
-            if(bundle.containsKey(Constant.ACT010_CUSTOM_FORM_CODE_DESC)){
+            if (bundle.containsKey(Constant.ACT010_CUSTOM_FORM_CODE_DESC)) {
                 productCode = bundle.getString(MD_ProductDao.PRODUCT_CODE, "");
                 productDesc = bundle.getString(MD_ProductDao.PRODUCT_DESC, "");
                 productId = bundle.getString(MD_ProductDao.PRODUCT_ID, "");
