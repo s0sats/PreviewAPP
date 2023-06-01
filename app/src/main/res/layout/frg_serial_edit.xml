@@ -586,14 +586,6 @@
                                 android:textColor="@color/m3_namoa_onSurfaceVariant"
                                 style="@style/TextAppearance.Material3.TitleSmall" />
 
-                            <com.google.android.material.button.MaterialButton
-                                android:id="@+id/frg_serial_edit_iv_serial_dialog_log"
-                                style="@style/NamoaTheme3.Button.Icon"
-                                android:layout_marginEnd="16dp"
-                                app:icon="@drawable/ic_clock_chat"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintTop_toTopOf="parent" />
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <com.namoa_digital.namoa_library.ctls.SearchableSpinner
@@ -876,15 +868,35 @@
                             android:layout_marginTop="40dp"
                             android:layout_marginBottom="12dp" />
 
-
-                        <TextView
-                            android:id="@+id/frg_serial_edit_tv_serial_add_info_ttl"
+                        <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:paddingVertical="5dp"
-                            android:textColor="@color/m3_namoa_onSurfaceVariant"
-                            style="@style/TextAppearance.Material3.TitleSmall"
-                            android:text="Additional Info" />
+                            android:paddingVertical="5dp">
+
+                            <TextView
+                                android:id="@+id/frg_serial_edit_tv_serial_add_info_ttl"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/m3_namoa_onSurfaceVariant"
+                                style="@style/TextAppearance.Material3.TitleSmall"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintEnd_toStartOf="@+id/frg_serial_edit_iv_serial_dialog_log"
+                                android:text="Additional Info" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/frg_serial_edit_iv_serial_dialog_log"
+                                style="@style/NamoaTheme3.Button.Icon"
+                                android:layout_marginEnd="16dp"
+                                app:icon="@drawable/ic_clock_chat"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
                         <com.google.android.material.textfield.TextInputLayout
                             android:id="@+id/frg_serial_edit_et_info1"
