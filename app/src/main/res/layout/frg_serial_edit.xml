@@ -567,7 +567,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
                             android:background="@color/m3_namoa_outlineVariant"
-                            android:layout_marginTop="40dp" />
+                            android:layout_marginTop="40dp"
+                            android:layout_marginBottom="12dp"/>
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
@@ -578,13 +579,13 @@
                                 android:id="@+id/frg_serial_edit_tv_serial_location_ttl"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:paddingVertical="5dp"
                                 android:text="Location"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
                                 android:textColor="@color/m3_namoa_onSurfaceVariant"
                                 style="@style/TextAppearance.Material3.TitleSmall" />
+
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -866,12 +867,12 @@
                             android:layout_height="1dp"
                             android:background="@color/m3_namoa_outlineVariant"
                             android:layout_marginTop="40dp"
-                            android:layout_marginBottom="12dp" />
+                            />
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:paddingVertical="5dp">
+                            >
 
                             <TextView
                                 android:id="@+id/frg_serial_edit_tv_serial_add_info_ttl"
