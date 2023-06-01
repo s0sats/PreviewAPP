@@ -2351,6 +2351,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 if(mView.getIsCheckinFlow()
                         && ticketCtrl != null
                         && customForm != null
+                        && !ToolBox_Con.getBooleanPreferencesByKey(context, ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false)
                         && !ToolBox_Con.isOnline(context)
                 ){
                     startFormOS(ticketCtrl, customForm);
