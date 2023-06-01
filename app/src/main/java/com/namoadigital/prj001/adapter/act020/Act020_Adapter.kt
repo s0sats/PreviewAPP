@@ -43,7 +43,7 @@ class Act020_Adapter constructor(
                     newList.add(
                         SearchSerialViewItem.ContentItem(
                             it,
-                            source.find { f -> it.serial == f.serial_id }!!
+                            source.find { f -> it.serial == f.serial_id && it.product_code == f.product_code }!!
                         )
                     )
                 } else {
@@ -53,7 +53,7 @@ class Act020_Adapter constructor(
                     newList.add(
                         SearchSerialViewItem.ContentItem(
                             it,
-                            source.find { f -> it.serial == f.serial_id }!!
+                            source.find { f -> it.serial == f.serial_id && it.product_code == f.product_code }!!
                         )
                     )
                 }
@@ -61,7 +61,7 @@ class Act020_Adapter constructor(
                 newList.add(
                     SearchSerialViewItem.ContentItem(
                         it,
-                        source.find { f -> it.serial == f.serial_id }!!
+                        source.find { f -> it.serial == f.serial_id && it.product_code == f.product_code }!!
                     )
                 )
             }

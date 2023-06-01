@@ -8,6 +8,7 @@ data class ProductSerialList(
     val classColor: String,
     val serial: String,
     val product_desc: String,
+    val product_code: Long,
     val local_control: Int,
     val siteAndZone: Pair<String, String>,
     val serialDescription: Triple<String, String, String>,
@@ -70,6 +71,7 @@ fun MD_Product_Serial.toAdapterList(site_preference: Int = -1) : ProductSerialLi
     classColor = class_color ?: "",
     serial = serial_id ?: "",
     product_desc = product_desc ?: "",
+    product_code = product_code,
     local_control = local_control ?: 0,
     siteAndZone = if (site_desc == zone_desc) Pair(site_desc ?: "", "") else Pair(
         site_desc ?: "",
