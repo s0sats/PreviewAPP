@@ -107,7 +107,7 @@ class Act092_Main : BaseActivityMvp
                 mModule_Code,
                 mResource_Code
             ),
-            showProductOnFilter = bundle.getBoolean(Constant.SHOW_PRODUCT_IN_ACT006, false)
+            showProductOnFilter = bundle.getBoolean(ConstantBaseApp.SHOW_PRODUCT_IN_ACT006, false)
         )
     }
 

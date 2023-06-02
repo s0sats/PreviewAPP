@@ -979,7 +979,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String MY_ACTIONS_ORIGIN_FLOW_SEARCH = "ORIGIN_SEARCH";
     public static final String MY_ACTIONS_ORIGIN_FLOW_CALENDAR = "ORIGIN_CALENDAR";
 
-
+    public static final String SHOW_PRODUCT_IN_ACT006 = "SHOW_PRODUCT_IN_ACT006";
     /*
      * Const FORM_OS
      */

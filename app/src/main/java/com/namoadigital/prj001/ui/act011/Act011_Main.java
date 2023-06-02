@@ -2968,7 +2968,7 @@ public class Act011_Main extends Base_Activity
         //
         Bundle mBundle = new Bundle();
         getMyActionsParam(mBundle);
-        mBundle.putBoolean(Constant.SHOW_PRODUCT_IN_ACT006, true);
+        mBundle.putBoolean(ConstantBaseApp.SHOW_PRODUCT_IN_ACT006, true);
         intent.putExtras(mBundle);
         //
         startActivity(intent);

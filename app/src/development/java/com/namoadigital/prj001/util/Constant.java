@@ -115,6 +115,4 @@ public class Constant extends ConstantBaseApp {
     public static final String WS_HOST = "dev.namoadigital.com";
     public static final int WS_PORT = 443;
     public static final int WS_TIMEOUT = 3000;
-
-    public static final String SHOW_PRODUCT_IN_ACT006 = "SHOW_PRODUCT_IN_ACT006";
 }
