@@ -1553,7 +1553,8 @@ public class TK_Ticket implements Cloneable, Serializable {
         return update_required >0
                 || update_required_product >0
                 || update_required_status >0
-                || isCurrentStepUpdateRequired();
+                || isCurrentStepUpdateRequired()
+                || ToolBox_Inf.hasTicketsToken(customer_code, ticket_prefix, ticket_code);
     }
 
     private boolean isCurrentStepUpdateRequired() {
@@ -1636,12 +1637,13 @@ public class TK_Ticket implements Cloneable, Serializable {
         if("0".equals(hmAux.get(SqlAct083_002.TOTAL_UPDATE_REQUIRED))
                 && "0".equals(hmAux.get(TK_TicketDao.SYNC_REQUIRED))
                 && "0".equals(hmAux.get(MyActions.MY_ACTION_TYPE_FORM))
+                && !ToolBox_Inf.hasTicketsToken(hmAux.get(TK_TicketDao.CUSTOMER_CODE), hmAux.get(TK_TicketDao.TICKET_PREFIX), hmAux.get(TK_TicketDao.TICKET_CODE))
         ) {
             midIcon = R.drawable.ic_baseline_cloud_done_24_blue;
         }else {
-            if("1".equals(hmAux.get(SqlAct083_002.TOTAL_UPDATE_REQUIRED)) && "1".equals(hmAux.get(TK_TicketDao.SYNC_REQUIRED))){
+            if(isTicketUpdateRequired(hmAux) && "1".equals(hmAux.get(TK_TicketDao.SYNC_REQUIRED))){
                 midIcon = R.drawable.ic_sync_main_menu_data;
-            }else if("1".equals(hmAux.get(SqlAct083_002.TOTAL_UPDATE_REQUIRED))){
+            }else if(isTicketUpdateRequired(hmAux)){
                 midIcon = R.drawable.ic_cloud_upload_24_red;
             }else if("1".equals(hmAux.get(MyActions.MY_ACTION_TYPE_FORM))){
                 midIcon = R.drawable.ic_baseline_cloud_upload_24_gray;
@@ -1769,5 +1771,10 @@ public class TK_Ticket implements Cloneable, Serializable {
 
         myActions.setProductCode(hmAux.hasConsistentValue(TK_TicketDao.OPEN_PRODUCT_CODE)? Integer.parseInt(hmAux.get(TK_TicketDao.OPEN_PRODUCT_CODE)) : 0);
         return myActions;
+    }
+
+    private static boolean isTicketUpdateRequired(HMAux hmAux) {
+        return "1".equals(hmAux.get(SqlAct083_002.TOTAL_UPDATE_REQUIRED))
+                || ToolBox_Inf.hasTicketsToken(hmAux.get(TK_TicketDao.CUSTOMER_CODE), hmAux.get(TK_TicketDao.TICKET_PREFIX), hmAux.get(TK_TicketDao.TICKET_CODE));
     }
 }

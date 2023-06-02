@@ -6914,6 +6914,67 @@ public class ToolBox_Inf {
         return token_ticket_list;
     }
 
+
+    /**
+     * LUCHE  - 06/01/2020
+     *
+     * Fachada para metodos que usam hmaux.
+     *
+     * @return - Se há pendencia de envio para o ticket.
+     *
+     */
+    public static boolean hasTicketsToken(String customerCode, String ticketPrefix, String ticketCode) {
+        if(customerCode != null
+        && ticketPrefix != null
+        && ticketCode != null
+        ){
+            return hasTicketsToken(Long.parseLong(customerCode), Integer.parseInt(ticketPrefix), Integer.parseInt(ticketCode));
+        }
+        return false;
+    }
+
+    /**
+     * LUCHE  - 06/01/2020
+     *
+     * Metodo retorna se o ticket tem pendencia de envio no arquivo token.
+     *
+     * @return - Se há pendencia de envio para o ticket.
+     * @param customerCode
+     */
+    public static boolean hasTicketsToken(long customerCode, int ticketPrefix, int ticketCode) {
+        ArrayList<TK_Ticket> token_ticket_list = new ArrayList<>();
+        try {
+            File[] ticketToken =
+                ToolBox_Inf.getListOfFiles_v5(
+                    ConstantBaseApp.TOKEN_PATH,
+                    buildTokenPrefixWithCustomer(customerCode,ConstantBaseApp.TOKEN_TICKET_PREFIX)
+                );
+            if (ticketToken.length > 0) {
+                Gson gsonEnv = new GsonBuilder().serializeNulls().create();
+                //
+                token_ticket_list =
+                    gsonEnv.fromJson(
+                        ToolBox_Inf.getContents(ticketToken[0]),
+                        T_TK_Ticket_Save_Env.class
+                    ).getTicket();
+                //
+                for (TK_Ticket tk_ticket : token_ticket_list) {
+                    if( tk_ticket.getCustomer_code() == customerCode
+                    &&  tk_ticket.getTicket_prefix() == ticketPrefix
+                    &&  tk_ticket.getTicket_code() == ticketCode
+                    ){
+                        return true;
+                    }
+                }
+                return false;
+            }
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(CLASS_NAME, e);
+        }
+        //
+        return false;
+    }
+
     /**
      * LUCHE - 06/01/2020
      *
