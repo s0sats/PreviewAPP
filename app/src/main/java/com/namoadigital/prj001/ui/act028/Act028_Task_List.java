@@ -2,7 +2,6 @@ package com.namoadigital.prj001.ui.act028;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +9,8 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -213,10 +214,10 @@ public class Act028_Task_List extends BaseFragment {
                 tv_exec_code_val.setText(String.valueOf(sm_so_service_exec.getExec_code()));
 
                 tv_partner_lbl.setText(hmAux_Trans.get("partner_lbl"));
-                tv_partner_val.setText(sm_so_service_exec.getPartner_id() + " - " + sm_so_service_exec.getPartner_desc());
+                tv_partner_val.setText(sm_so_service_exec.getPartner_desc());
 
                 tv_service_lbl.setText(hmAux_Trans.get("service_lbl"));
-                tv_service_val.setText(sm_so_service.getService_id() + " - " + sm_so_service.getService_desc());
+                tv_service_val.setText(sm_so_service.getService_desc());
 
                 //iv_new_task.setText(hmAux_Trans.get("btn_new_task"));
 

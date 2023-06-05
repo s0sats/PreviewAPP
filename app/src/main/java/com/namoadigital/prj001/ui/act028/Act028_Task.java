@@ -494,7 +494,7 @@ public class Act028_Task extends BaseFragment {
 
                     //tv_service_lbl.setText(hmAux_Trans.get("service_lbl"));
                     //tv_service_lbl.setText("Servide");
-                    tv_service_value.setText(mService.getService_id() + " - " + mService.getService_desc());
+                    tv_service_value.setText(mService.getService_desc());
 
                     //mk_comments.setText(mTask.getComments());
 
@@ -615,7 +615,7 @@ public class Act028_Task extends BaseFragment {
                                     (task_code.equalsIgnoreCase("0") ? "" : " / " + String.valueOf(mTask.getTask_code()))
                     );
 
-                    tv_service_value.setText(mService.getService_id() + " - " + mService.getService_desc());
+                    tv_service_value.setText(mService.getService_desc());
                     //
                     tv_additional_info_lbl.setText(hmAux_Trans.get("additional_info_lbl"));
 

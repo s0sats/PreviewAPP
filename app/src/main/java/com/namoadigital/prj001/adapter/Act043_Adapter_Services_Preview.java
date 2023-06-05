@@ -91,7 +91,7 @@ public class Act043_Adapter_Services_Preview extends BaseAdapter {
             iv_remove.setOnClickListener(null);
         }
         //
-        tv_service_desc.setText(hmAux.get(Sql_Act043_001.PACK_SERVICE_DESC_FULL));
+        tv_service_desc.setText(hmAux.get(Sql_Act043_001.PACK_SERVICE_DESC));
         tv_service_desc.setTextColor(context.getResources().getColor(ToolBox_Inf.getStatusColor(hmAux.get(SM_SO_ServiceDao.STATUS))));
         //
         tv_service_price.setText(hmAux.get(SM_SO_ServiceDao.PRICE));

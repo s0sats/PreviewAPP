@@ -1636,10 +1636,10 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
         tv_so_val.setText(mSoAux.get(SM_SODao.SO_ID).equals(so_prefix_code) ? so_prefix_code : mSoAux.get(SM_SODao.SO_ID));
         //
         tv_service_lbl.setText(hmAux_Trans.get("dialog_service_lbl"));
-        tv_service_val.setText(mService.getService_id() + " - " + mService.getService_desc());
+        tv_service_val.setText(mService.getService_desc());
         //
         tv_product_lbl.setText(hmAux_Trans.get("dialog_product_lbl"));
-        tv_product_val.setText(mSoAux.get(SM_SODao.PRODUCT_ID) + " - " + mSoAux.get(SM_SODao.PRODUCT_DESC));
+        tv_product_val.setText(mSoAux.get(SM_SODao.PRODUCT_DESC));
         //
         tv_serial_lbl.setText(hmAux_Trans.get("dialog_serial_lbl"));
         tv_serial_val.setText(mSoAux.get(SM_SODao.SERIAL_ID));
