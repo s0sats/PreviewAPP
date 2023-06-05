@@ -2,6 +2,7 @@ package com.namoadigital.prj001.view.frag.frg_serial_search;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -98,7 +99,9 @@ public class Frg_Serial_Search extends Fragment {
 
     public void setClickListener(View.OnClickListener clickListener) {
         this.clickListener = clickListener;
-        btn_nfc_reader.setOnClickListener(clickListener);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            btn_nfc_reader.setOnClickListener(clickListener);
+        }
     }
 
     public void setbTokenPendenciesCheck(boolean bTokenPendenciesCheck) {
@@ -125,10 +128,12 @@ public class Frg_Serial_Search extends Fragment {
 
     public void setSupportNFC(boolean supportNFC) {
         this.supportNFC = supportNFC;
-        if (supportNFC) {
-            btn_nfc_reader.setVisibility(View.VISIBLE);
-        } else {
-            btn_nfc_reader.setVisibility(View.GONE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            if (supportNFC) {
+                btn_nfc_reader.setVisibility(View.VISIBLE);
+            } else {
+                btn_nfc_reader.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -203,11 +208,13 @@ public class Frg_Serial_Search extends Fragment {
         //
         ll_options = (LinearLayout) view.findViewById(R.id.frg_serial_search_ll_options);
         //
-        btn_nfc_reader = (ButtonNFC) view.findViewById(R.id.frg_serial_search_btn_nfc_reader);
-        btn_nfc_reader.setmCustomer_code(String.valueOf(ToolBox_Con.getPreference_Customer_Code(getContext())));
-        btn_nfc_reader.setmProduct(true);
-        btn_nfc_reader.setmSerial(true);
-        btn_nfc_reader.setmProgressClose(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            btn_nfc_reader = (ButtonNFC) view.findViewById(R.id.frg_serial_search_btn_nfc_reader);
+            btn_nfc_reader.setmCustomer_code(String.valueOf(ToolBox_Con.getPreference_Customer_Code(getContext())));
+            btn_nfc_reader.setmProduct(true);
+            btn_nfc_reader.setmSerial(true);
+            btn_nfc_reader.setmProgressClose(true);
+        }
         //
         til_product = view.findViewById(R.id.frg_serial_search_til_prod);
         tv_product_id = (TextView) view.findViewById(R.id.frg_serial_search_tv_product_id);
@@ -260,12 +267,13 @@ public class Frg_Serial_Search extends Fragment {
         btn_option_05 = view.findViewById(R.id.frg_serial_search_btn_option_05);
         //
         ll_btn_option_04 = (LinearLayout) view.findViewById(R.id.frg_serial_search_ll_btn_option_04);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            if (supportNFC) {
+                btn_nfc_reader.setVisibility(View.VISIBLE);
 
-        if (supportNFC) {
-            btn_nfc_reader.setVisibility(View.VISIBLE);
-
-        } else {
-            btn_nfc_reader.setVisibility(View.GONE);
+            } else {
+                btn_nfc_reader.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -276,10 +284,15 @@ public class Frg_Serial_Search extends Fragment {
     }
 
     private void chekBottomButtonsVisibility() {
-        if (btn_nfc_reader.getVisibility() == View.VISIBLE || btn_option_01.getVisibility() == View.VISIBLE) {
-            cl_bottom_buttons.setVisibility(View.VISIBLE);
-        } else {
-            cl_bottom_buttons.setVisibility(View.GONE);
+        cl_bottom_buttons.setVisibility(View.GONE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            if (btn_nfc_reader.getVisibility() == View.VISIBLE || btn_option_01.getVisibility() == View.VISIBLE) {
+                cl_bottom_buttons.setVisibility(View.VISIBLE);
+            }
+        }else{
+            if (btn_option_01.getVisibility() == View.VISIBLE) {
+                cl_bottom_buttons.setVisibility(View.VISIBLE);
+            }
         }
 
     }
@@ -514,7 +527,9 @@ public class Frg_Serial_Search extends Fragment {
 
     // General Methods
     public void setNFCText(String text) {
-        btn_nfc_reader.setText(text.toString());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            btn_nfc_reader.setText(text.toString());
+        }
     }
 
     public void setProductIdText(String text, String productId) {
@@ -645,7 +660,9 @@ public class Frg_Serial_Search extends Fragment {
         setTranslation();
     }
     private void setTranslation() {
-        btn_nfc_reader.setText(hmAux_Trans.get("btn_enable_nfc"));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            btn_nfc_reader.setText(hmAux_Trans.get("btn_enable_nfc"));
+        }
         tv_product_id.setText(hmAux_Trans.get("product_lbl"));
         til_serial.setHint(hmAux_Trans.get("serial_lbl"));
         til_tracking.setHint(hmAux_Trans.get("tracking_lbl"));
@@ -714,7 +731,9 @@ public class Frg_Serial_Search extends Fragment {
     }
 
     public void cleanFields() {
-        btn_nfc_reader.setText(hmAux_Trans.get("btn_enable_nfc"));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            btn_nfc_reader.setText(hmAux_Trans.get("btn_enable_nfc"));
+        }
         //
         mket_product_id.setText("");
         //
