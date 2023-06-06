@@ -107,12 +107,17 @@ public class Act020_Prod_Serial_Adapter extends BaseAdapter {
         //TextView tv_serial_code = (TextView) convertView.findViewById(R.id.act020_cell_tv_serial_code);
         TextView tv_serial_id = (TextView) convertView.findViewById(R.id.act020_cell_tv_serial_id);
         //
+        TextView serial_description = convertView.findViewById(R.id.serialDescription);
+        TextView tracking_description = convertView.findViewById(R.id.list_trackings);
+        TextView site_zone_desc = convertView.findViewById(R.id.site_and_zone);
+        View space_site2 = convertView.findViewById(R.id.space_site2);
+        //
         if (auxObj.getSite_code() != null && auxObj.getSite_code() == site_id_preference) {
             ll_background.setBackground(context.getDrawable(R.drawable.namoa_cell_8_states));
         } else {
             ll_background.setBackground(context.getDrawable(R.drawable.act013_cell_in_processing_states));
         }
-        if(fromOfflineSource){
+        if (fromOfflineSource) {
             iv_offline.setVisibility(View.VISIBLE);
         }
         //
@@ -129,10 +134,7 @@ public class Act020_Prod_Serial_Adapter extends BaseAdapter {
                 hmAux_Trans.get("product_id_lbl")
                         + " " + auxObj.getProduct_id()
         );
-        tv_prod_desc.setText(
-                hmAux_Trans.get("product_desc_lbl")
-                        + " " + auxObj.getProduct_desc()
-        );
+        tv_prod_desc.setText(auxObj.getProduct_desc());
         //
         tv_serial_ttl.setText(
                 hmAux_Trans.get("serial_ttl")
@@ -141,14 +143,39 @@ public class Act020_Prod_Serial_Adapter extends BaseAdapter {
 //                hmAux_Trans.get("serial_code_lbl")
 //                        + " " + auxObj.getSERIAL_CODE()
 //        );
-        tv_serial_id.setText(
-                hmAux_Trans.get("serial_id_lbl")
-                        + " " + auxObj.getSerial_id()
-        );
+        tv_serial_id.setText(auxObj.getSerial_id());
+
+        String serial_desc = auxObj.getBrandModelAndColor();
+
+        String tracking_desc = auxObj.getTracking();
+
+
+        if (!serial_desc.isEmpty()) {
+            serial_description.setText(serial_desc);
+            serial_description.setVisibility(View.VISIBLE);
+        } else {
+            serial_description.setVisibility(View.GONE);
+        }
+
+        if (!tracking_desc.isEmpty()) {
+            tracking_description.setVisibility(View.VISIBLE);
+            tracking_description.setText(tracking_desc);
+        } else {
+            tracking_description.setVisibility(View.GONE);
+        }
+
+        if (!auxObj.getSiteAndZone().isEmpty()) {
+            site_zone_desc.setText(auxObj.getSiteAndZone());
+            site_zone_desc.setVisibility(View.VISIBLE);
+            space_site2.setVisibility(View.VISIBLE);
+        } else {
+            space_site2.setVisibility(View.GONE);
+            site_zone_desc.setVisibility(View.GONE);
+        }
+
         //
         return convertView;
     }
-
 
     private void loadTranslation() {
         List<String> translist = new ArrayList<>();
