@@ -144,6 +144,7 @@ public interface Act005_Main_Presenter {
 
     boolean hasTicketSyncRequiredCloudRule();
 
+    boolean hasSoSyncRequiredCloudRule();
 
     void rememberUpdateTomorrow();
 
