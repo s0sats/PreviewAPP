@@ -137,6 +137,15 @@
 
 
             <TextView
+                android:id="@+id/infos_add"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="normal"
+                android:visibility="gone"
+                style="@style/TextAppearance.Material3.BodySmall"
+                android:textColor="@color/m3_namoa_onSurfaceVariant" />
+
+            <TextView
                 android:id="@+id/list_trackings"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

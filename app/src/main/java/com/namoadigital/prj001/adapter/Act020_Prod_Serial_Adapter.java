@@ -110,6 +110,7 @@ public class Act020_Prod_Serial_Adapter extends BaseAdapter {
         TextView serial_description = convertView.findViewById(R.id.serialDescription);
         TextView tracking_description = convertView.findViewById(R.id.list_trackings);
         TextView site_zone_desc = convertView.findViewById(R.id.site_and_zone);
+        TextView infos_add = convertView.findViewById(R.id.infos_add);
         View space_site2 = convertView.findViewById(R.id.space_site2);
         //
         if (auxObj.getSite_code() != null && auxObj.getSite_code() == site_id_preference) {
@@ -149,12 +150,21 @@ public class Act020_Prod_Serial_Adapter extends BaseAdapter {
 
         String tracking_desc = auxObj.getTracking();
 
+        String info_add_desc = auxObj.getInfoAdd();
+
 
         if (!serial_desc.isEmpty()) {
             serial_description.setText(serial_desc);
             serial_description.setVisibility(View.VISIBLE);
         } else {
             serial_description.setVisibility(View.GONE);
+        }
+
+        if (!info_add_desc.isEmpty()) {
+            infos_add.setVisibility(View.VISIBLE);
+            infos_add.setText(info_add_desc);
+        } else {
+            infos_add.setVisibility(View.GONE);
         }
 
         if (!tracking_desc.isEmpty()) {

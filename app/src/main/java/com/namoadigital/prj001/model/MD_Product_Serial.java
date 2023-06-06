@@ -240,6 +240,7 @@ public class MD_Product_Serial implements Serializable {
     }
 
     public String getSiteAndZone() {
+
         List<String> mlist = new ArrayList<>();
 
         for (String item : Arrays.asList(getSite_desc(), getZone_desc())) {
@@ -326,6 +327,26 @@ public class MD_Product_Serial implements Serializable {
 
     public void setAdd_inf3(String add_inf3) {
         this.add_inf3 = add_inf3;
+    }
+
+
+    public String getInfoAdd() {
+        String resultado = add_inf1;
+        resultado = formatPipeFields(resultado, add_inf2);
+        return formatPipeFields(resultado, add_inf3);
+    }
+
+
+    private String formatPipeFields(String resultado, String addInfo) {
+
+        if (resultado != null && !resultado.isEmpty()) {
+            resultado += addInfo == null || addInfo.isEmpty() ? "" : " | " + addInfo;
+        } else {
+            if (addInfo != null && !addInfo.isEmpty()) {
+                resultado += addInfo;
+            }
+        }
+        return resultado == null || resultado.isEmpty() ? "" : resultado;
     }
 
     public int getUpdate_required() {
