@@ -14,6 +14,7 @@ import com.namoadigital.prj001.model.SM_SO_Product_Event;
 import com.namoadigital.prj001.sql.SM_SO_File_Sql_002;
 import com.namoadigital.prj001.sql.SM_SO_Pack_Sql_002;
 import com.namoadigital.prj001.sql.SM_SO_Product_Event_Sql_001;
+import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.sql.Sql_Act021_003;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -1369,7 +1370,7 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
                             ToolBox_Con.getPreference_Customer_Code(context)
                     ).toSqlQuery()
             ).get(Sql_Act021_003.UPDATE_APPROVAL_REQUIRED_QTY);
-        }catch (Exception e ){
+        } catch (Exception e) {
             qtySO = "0";
         }
 
@@ -1377,4 +1378,18 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
         return count > 0;
     }
 
+
+    public boolean hasSyncRequired(long customer_code, int so_prefix, int so_code) {
+        HMAux hmAux = this.getByStringHM(
+                new SM_SO_Sql_001(
+                        customer_code,
+                        so_prefix,
+                        so_code
+                ).toSqlQuery()
+        );
+        //
+        return hmAux != null
+                && hmAux.hasConsistentValue(SM_SODao.SO_PREFIX) && hmAux.hasConsistentValue(SM_SODao.SO_CODE)
+                && hmAux.hasConsistentValue(SM_SODao.SYNC_REQUIRED) && hmAux.get(SM_SODao.SYNC_REQUIRED).equals("1");
+    }
 }
