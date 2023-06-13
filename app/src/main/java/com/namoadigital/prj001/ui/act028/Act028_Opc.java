@@ -1,10 +1,10 @@
 package com.namoadigital.prj001.ui.act028;
 
+import static android.view.View.GONE;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +13,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -48,8 +51,6 @@ import com.namoadigital.prj001.view.dialog.ServiceRegisterDialog;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import static android.view.View.GONE;
 
 /**
  * Created by neomatrix on 14/07/17.
@@ -464,10 +465,10 @@ public class Act028_Opc extends BaseFragment {
                 }
 
                 tv_service_lbl.setText(hmAux_Trans.get("service_lbl"));
-                tv_service_val.setText(mService.getService_id() + " - " + mService.getService_desc());
+                tv_service_val.setText(mService.getService_desc());
 
                 tv_pack_lbl.setText(hmAux_Trans.get("pack_lbl"));
-                tv_pack_val.setText(data.get("pack_id") + " - " + data.get("pack_desc"));
+                tv_pack_val.setText(data.get("pack_desc"));
 
                 if (mService.getZone_id() != null) {
                     tv_zone_lbl.setText(hmAux_Trans.get("zone_lbl"));
@@ -493,7 +494,7 @@ public class Act028_Opc extends BaseFragment {
 
                 ll_partner.setVisibility(mService.getPartner_code() != null ? View.VISIBLE : GONE);
                 tv_partner_lbl.setText(hmAux_Trans.get("partner_lbl"));
-                tv_partner_val.setText(mService.getPartner_id() + " - " + mService.getPartner_desc());
+                tv_partner_val.setText(mService.getPartner_desc());
 
                 tv_exec_type_lbl.setText(hmAux_Trans.get("exec_type_lbl"));
                 tv_exec_type_val.setText(hmAux_Trans.get(mService.getExec_type()));
@@ -836,12 +837,12 @@ public class Act028_Opc extends BaseFragment {
         ArrayList<HMAux> siteOption = new ArrayList<>();
         ArrayList<HMAux> siteZoneOption = new ArrayList<>();
 
-        if(item.getSite_zone_list() != null && !item.getSite_zone_list().isEmpty() ) {
+        if (item.getSite_zone_list() != null && !item.getSite_zone_list().isEmpty()) {
             siteOption = generateSiteOption(item.getSite_zone_list());
             siteZoneOption = generateSiteZoneOption(item.getSite_zone_list());
         }
-        String package_service_desc = formatDescFull(data.get("pack_id"),  data.get("pack_desc"));
-        String service_desc = formatDescFull(mService.getService_id(), mService.getService_desc());
+        String package_service_desc = data.get("pack_desc");
+        String service_desc = mService.getService_desc();
         final ServiceRegisterDialog dialog =
                 new ServiceRegisterDialog(
                         context,

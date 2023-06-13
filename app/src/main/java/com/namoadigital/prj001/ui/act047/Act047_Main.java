@@ -346,6 +346,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         );
     }
 
+
     @Override
     public void showErrorMsg() {
         ToolBox.alertMSG(
