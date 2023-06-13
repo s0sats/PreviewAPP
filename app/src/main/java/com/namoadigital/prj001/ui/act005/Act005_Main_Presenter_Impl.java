@@ -62,6 +62,7 @@ import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.MainTagMenu;
 import com.namoadigital.prj001.model.MenuMainNamoa;
 import com.namoadigital.prj001.model.MyActionFilterParam;
+import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.SupportDialogFields;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TSave_Rec;
@@ -104,6 +105,7 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_002;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_001;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Sql_003;
+import com.namoadigital.prj001.sql.SMSOGetSyncRequiredList;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_010;
 import com.namoadigital.prj001.sql.SqlAct005TagList001;
 import com.namoadigital.prj001.sql.Sql_Act005_001;
@@ -533,6 +535,19 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         //
         return qty > 0;
     }
+
+    @Override
+    public boolean hasSoSyncRequiredCloudRule() {
+        //
+        List<SM_SO> sm_sos = soDao.query(
+                new SMSOGetSyncRequiredList(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        );
+        //
+        return sm_sos.size() > 0;
+    }
+
 
     private boolean checkUpdatePlayStore() {
         long actual = System.currentTimeMillis();
