@@ -552,6 +552,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         transList.add("alert_goto_service_menu_msg");
         transList.add("quality_approval_shortcut");
         transList.add("warning_so_status_hinders_service_execution");
+        transList.add("warning_so_status_service_sync");
         transList.add("final_approval_shortcut");
         transList.add("product_event_shortcut");
         transList.add("empty_service_list_lbl");
@@ -673,7 +674,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-
+                act027_services_.loadDataToScreen();
                 ActivityCompat.invalidateOptionsMenu(Act027_Main.this);
 
             }
@@ -3468,12 +3469,14 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         @Override
         public void onReceive(Context context, Intent intent) {
             Bundle bundle = intent.getExtras();
-            if( bundle != null
-                && bundle.containsKey(ConstantBaseApp.SW_TYPE)
-                && bundle.getString(ConstantBaseApp.SW_TYPE).equals(ConstantBaseApp.FCM_ACTION_SM_SO_UPDATE)
-                && act027_opc_ != null
+            if(bundle != null
+                    && bundle.containsKey(ConstantBaseApp.SW_TYPE)
+                    && bundle.getString(ConstantBaseApp.SW_TYPE).equals(ConstantBaseApp.FCM_ACTION_SM_SO_UPDATE)
+                    && act027_opc_ != null
+                    && act027_services_ != null
             ){
                 act027_opc_.loadDataToScreen();
+                act027_services_.loadDataToScreen();
             }
         }
     }
