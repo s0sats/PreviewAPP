@@ -402,6 +402,8 @@ public class Act011_Main extends Base_Activity
         transList.add("alert_question_finalize_title");
         transList.add("alert_question_finalize_msg");
 
+        transList.add("alert_signature_error_ttl");
+        transList.add("alert_signature_error_msg");
         transList.add("alert_require_signature_msg");
         transList.add("alert_optional_signature_msg");
         transList.add("dialog_signature_title_lbl");
@@ -1092,6 +1094,14 @@ public class Act011_Main extends Base_Activity
                 new GE_File_Sql_003().toSqlQuery()
         );
 
+        setGeFilesList();
+
+        formData.setSignature(mSignature);
+
+        mPresenter.checkSignature(formData, geOs, signature, 0, geFiles, require_serial_done, require_serial_done_ok, formLocal.getRequire_location());
+    }
+
+    private void setGeFilesList() {
         geFiles.clear();
 
         for (int i = 0; i < customFFs.size(); i++) {
@@ -1168,10 +1178,6 @@ public class Act011_Main extends Base_Activity
         }
 
         mPresenter.addGeOsDeviceItemPhotosIntoFiles(formLocal, geFiles,sDate);
-
-        formData.setSignature(mSignature);
-
-        mPresenter.checkSignature(formData, geOs, signature, 0, geFiles, require_serial_done, require_serial_done_ok, formLocal.getRequire_location());
     }
 
     private void deleteFormLocal() {
@@ -1408,16 +1414,7 @@ public class Act011_Main extends Base_Activity
         } else {
             serial_id = formData.getSerial_id();
         }
-        /**
-         * BARRIONUEVO - 23-10-2019 - Autosave no onPause
-         * Verifica existencia previa de assinatura do n-form e apaga o arquivo caso esteja
-         * IN_PROCESSING
-         */
-        String signaturePath = Constant.CACHE_PATH_PHOTO + "/" + mSignature;
-        if (ToolBox.validationCheckFile(signaturePath)
-            && mPresenter.isInProcessing(formLocal)) {
-            cleanSignatureFile(signaturePath);
-        }
+
 
         includeField = formData.getDataFields().size() == 0 ? true : false;
 
@@ -2634,8 +2631,13 @@ public class Act011_Main extends Base_Activity
                                 // hugo assinatura
                                 formData.setSignature("");
                                 formData.setSignature_name("");
-
-                                mPresenter.checkData(formData, geOs, geFiles, require_serial_done, require_serial_done_ok, formLocal.getRequire_location());
+                                String signaturePath = Constant.CACHE_PATH_PHOTO + "/" + mSignature;
+                                if (ToolBox.validationCheckFile(signaturePath)
+                                        && mPresenter.isInProcessing(formLocal)) {
+                                    cleanSignatureFile(signaturePath);
+                                }
+                                //
+                                mPresenter.checkData(formData, geOs, geFiles, require_serial_done, require_serial_done_ok, formLocal.getRequire_location(), formLocal.getRequire_signature());
                                 bNew = false;
                             }
                         }
@@ -3063,19 +3065,22 @@ public class Act011_Main extends Base_Activity
                 formData.setSignature(mSignature);
                 formData.setSignature_name(sName);
                 //
-                GE_File geFile = new GE_File();
-                geFile.setFile_code(mSignature.replace(PNG_EXTENSION, ""));
-                geFile.setFile_path(mSignature);
-                geFile.setFile_status(GE_File.OPENED);
-                geFile.setFile_date(sDate);
+                addSignatureToGeFiles();
                 //
-                geFiles.add(geFile);
-                //
-
-                mPresenter.checkData(formData, geOs, geFiles, require_serial_done, require_serial_done_ok, formLocal.getRequire_location());
+                mPresenter.checkData(formData, geOs, geFiles, require_serial_done, require_serial_done_ok, formLocal.getRequire_location(), formLocal.getRequire_signature());
                 bNew = false;
             } else {
                 formData.setSignature_name("");
+                /**
+                 * BARRIONUEVO - 23-10-2019 - Autosave no onPause
+                 * Verifica existencia previa de assinatura do n-form e apaga o arquivo caso esteja
+                 * IN_PROCESSING
+                 */
+                String signaturePath = Constant.CACHE_PATH_PHOTO + "/" + mSignature;
+                if (ToolBox.validationCheckFile(signaturePath)
+                        && mPresenter.isInProcessing(formLocal)) {
+                    cleanSignatureFile(signaturePath);
+                }
                 //Luche - 28/02/2019
                 //Reseta var de fluxo finaliza + novo
                 finalizeNewFlow = false;
@@ -3096,6 +3101,16 @@ public class Act011_Main extends Base_Activity
             formData.setLocation_lng("");
             formData.setLocation_type("");
         }
+    }
+
+    private void addSignatureToGeFiles() {
+        GE_File geFile = new GE_File();
+        geFile.setFile_code(mSignature.replace(PNG_EXTENSION, ""));
+        geFile.setFile_path(mSignature);
+        geFile.setFile_status(GE_File.OPENED);
+        geFile.setFile_date(sDate);
+        //
+        geFiles.add(geFile);
     }
 
     @Override
@@ -3130,7 +3145,20 @@ public class Act011_Main extends Base_Activity
         if (sResults.trim().length() != 0 && sResults.equalsIgnoreCase(ConstantBaseApp.MAIN_RESULT_OK)) {
             require_serial_done_ok = ConstantBaseApp.MAIN_RESULT_OK;
             formData.setDate_end(ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT));
-            mPresenter.checkData(formData, geOs, geFiles, require_serial_done, require_serial_done_ok, formLocal.getRequire_location());
+            /**
+             * BARRIONUEVO 13-06-2023
+             * Metodo que refaz a lista de geFiles devido problema de reinicializar a activity caso volte da verificacao do serial.
+             * Bug reportado por Supply Brasil, ao voltar para a tela de form a mesma era reiniciada, talvez por performance do device,
+             * no onResume era identificado os dados da tela de confirmacao de serial e entrava no fluxo de envio automatico causando o envio de form sem
+             * assinatura e sem as imagens em anexo.
+             */
+            if(geFiles == null || geFiles.isEmpty()) {
+                setGeFilesList();
+                if(signature == 1){
+                    addSignatureToGeFiles();
+                }
+            }
+            mPresenter.checkData(formData, geOs, geFiles, require_serial_done, require_serial_done_ok, formLocal.getRequire_location(), formLocal.getRequire_signature());
             //
             bNew = false;
         } else {
@@ -3146,6 +3174,7 @@ public class Act011_Main extends Base_Activity
             formData.setLocation_lng("");
             formData.setLocation_type("");
             formData.setDate_end("1900-01-01 00:00:00 +00:00");
+            mPresenter.saveData(formData, false);
             //Luche - 28/02/2019
             //Reseta var de finaliza + novo
             finalizeNewFlow = false;

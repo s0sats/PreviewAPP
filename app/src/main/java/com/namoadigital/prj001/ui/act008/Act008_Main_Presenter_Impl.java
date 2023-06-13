@@ -712,14 +712,15 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
             //
             //if(returnList.size() == 1){
             if (returnList.size() == 1) {
-                mView.showSingleResultMsg(ttl, msg);
+                mView.showSingleResultMsg(ttl, msg, !returnList.get(0).get(Generic_Results_Adapter.VALUE_ITEM_3).equals("OK"));
             } else {
                 mView.showSerialResults(returnList);
             }
         } else {
             mView.showSingleResultMsg(
                     hmAux_Trans.get("alert_save_serial_return_ttl"),
-                    hmAux_Trans.get("alert_no_serial_return_msg")
+                    hmAux_Trans.get("alert_no_serial_return_msg"),
+                    true
             );
         }
     }

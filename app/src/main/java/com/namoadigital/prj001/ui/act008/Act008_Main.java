@@ -812,7 +812,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     }
 
     @Override
-    public void showSingleResultMsg(String ttl, String msg) {
+    public void showSingleResultMsg(String ttl, String msg, boolean stopProc) {
         //
         ToolBox.alertMSG(
                 context,
@@ -823,7 +823,9 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                     public void onClick(DialogInterface dialog, int which) {
                         frgSerialEdit.scrollToTop();
                         //
-                        checkSerialStructureAndUnfocusTickets();
+                        if(!stopProc){
+                            checkSerialStructureAndUnfocusTickets();
+                        }
                     }
                 },
                 0
@@ -1236,7 +1238,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             } else {
                 showSingleResultMsg(
                         hmAux_Trans.get("alert_save_serial_return_ttl"),
-                        hmAux_Trans.get("alert_no_serial_return_msg")
+                        hmAux_Trans.get("alert_no_serial_return_msg"),
+                        true
                 );
             }
         } else if (ws_process.equals(WS_Serial_Tracking_Search.class.getName())) {
