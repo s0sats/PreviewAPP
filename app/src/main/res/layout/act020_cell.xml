@@ -21,6 +21,7 @@
             android:layout_weight="1"
             android:padding="2dp"
             android:gravity="center"
+            android:visibility="gone"
             android:text="1234"/>
 
         <LinearLayout
@@ -39,6 +40,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="10"
                     android:text="Produto"
+                    android:visibility="gone"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -58,6 +60,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
+                android:visibility="gone"
                 android:orientation="horizontal">
 
                 <TextView
@@ -85,15 +88,15 @@
 
             </LinearLayout>
 
-
             <TextView
-                android:id="@+id/act020_cell_tv_prod_desc"
+                android:id="@+id/act020_cell_tv_serial_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
+                style="@style/TextAppearance.Material3.TitleLarge"
+                android:layout_weight="1"
+                android:textColor="@color/m3_namoa_onSurface"
                 android:gravity="left"
-                android:text="Desc" />
-
+                android:text="Ext.code" />
 
             <TextView
                 android:id="@+id/act020_cell_tv_serial_ttl"
@@ -101,25 +104,69 @@
                 android:layout_height="wrap_content"
                 android:text="Serial"
                 android:textSize="16sp"
+                android:visibility="gone"
                 android:textStyle="bold" />
 
-            <!--<TextView-->
-                <!--android:id="@+id/act020_cell_tv_serial_code"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_marginLeft="15dp"-->
-                <!--android:gravity="left"-->
-                <!--android:text="Ext.code" />-->
-
             <TextView
-                android:id="@+id/act020_cell_tv_serial_id"
+                android:id="@+id/act020_cell_tv_prod_desc"
+                style="@style/TextAppearance.Material3.BodySmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
+                android:textColor="@color/m3_namoa_onSurfaceVariant"
+                android:textStyle="normal"
                 android:gravity="left"
-                android:text="Ext.code" />
+                android:text="Desc" />
+
+            <!--<TextView-->
+            <!--android:id="@+id/act020_cell_tv_serial_code"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginLeft="15dp"-->
+            <!--android:gravity="left"-->
+            <!--android:text="Ext.code" />-->
 
 
+            <TextView
+                android:id="@+id/serialDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="normal"
+                android:visibility="gone"
+                style="@style/TextAppearance.Material3.BodySmall"
+                android:textColor="@color/m3_namoa_onSurfaceVariant" />
+
+
+            <TextView
+                android:id="@+id/infos_add"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="normal"
+                android:visibility="gone"
+                style="@style/TextAppearance.Material3.BodySmall"
+                android:textColor="@color/m3_namoa_onSurfaceVariant" />
+
+            <TextView
+                android:id="@+id/list_trackings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="normal"
+                android:visibility="gone"
+                style="@style/TextAppearance.Material3.BodySmall"
+                android:textColor="@color/m3_namoa_onSurfaceVariant" />
+
+            <View
+                android:id="@+id/space_site2"
+                android:layout_width="match_parent"
+                android:layout_height="16dp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/site_and_zone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                style="@style/TextAppearance.Material3.TitleSmall"
+                android:textColor="@color/m3_namoa_onSurfaceVariant" />
 
         </LinearLayout>
 

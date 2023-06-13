@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import static com.namoadigital.prj001.adapter.act020.model.ProductSerialList.SEPARATOR;
+
 import androidx.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
@@ -7,6 +9,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -236,6 +239,19 @@ public class MD_Product_Serial implements Serializable {
         this.site_code_owner = site_code_owner;
     }
 
+    public String getSiteAndZone() {
+
+        List<String> mlist = new ArrayList<>();
+
+        for (String item : Arrays.asList(getSite_desc(), getZone_desc())) {
+            if (item != null && !item.isEmpty()) {
+                mlist.add(item);
+            }
+        }
+
+        return mlist.isEmpty() ? "" : String.join(SEPARATOR, mlist);
+    }
+
     public Integer getBrand_code() {
         return brand_code;
     }
@@ -258,6 +274,19 @@ public class MD_Product_Serial implements Serializable {
 
     public void setColor_code(Integer color_code) {
         this.color_code = color_code;
+    }
+
+
+    public String getBrandModelAndColor() {
+        List<String> mlist = new ArrayList<>();
+
+        for (String item : Arrays.asList(getBrand_desc(), getModel_desc(), getColor_desc())) {
+            if (item != null && !item.isEmpty()) {
+                mlist.add(item);
+            }
+        }
+
+        return mlist.isEmpty() ? "" : String.join(SEPARATOR, mlist);
     }
 
     public Integer getSegment_code() {
@@ -300,6 +329,26 @@ public class MD_Product_Serial implements Serializable {
         this.add_inf3 = add_inf3;
     }
 
+
+    public String getInfoAdd() {
+        String resultado = add_inf1;
+        resultado = formatPipeFields(resultado, add_inf2);
+        return formatPipeFields(resultado, add_inf3);
+    }
+
+
+    private String formatPipeFields(String resultado, String addInfo) {
+
+        if (resultado != null && !resultado.isEmpty()) {
+            resultado += addInfo == null || addInfo.isEmpty() ? "" : " | " + addInfo;
+        } else {
+            if (addInfo != null && !addInfo.isEmpty()) {
+                resultado += addInfo;
+            }
+        }
+        return resultado == null || resultado.isEmpty() ? "" : resultado;
+    }
+
     public int getUpdate_required() {
         return update_required;
     }
@@ -318,6 +367,18 @@ public class MD_Product_Serial implements Serializable {
 
     public ArrayList<MD_Product_Serial_Tracking> getTracking_list() {
         return tracking_list;
+    }
+
+    public String getTracking() {
+        List<String> mlist = new ArrayList<>();
+
+        for (MD_Product_Serial_Tracking item : getTracking_list()) {
+            if (item != null && !item.getTracking().isEmpty()) {
+                mlist.add(item.getTracking());
+            }
+        }
+
+        return mlist.isEmpty() ? "" : String.join(SEPARATOR, mlist);
     }
 
     public void setTracking_list(ArrayList<MD_Product_Serial_Tracking> tracking_list) {

@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act027;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,6 +24,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.cardview.widget.CardView;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -44,6 +47,7 @@ import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.SM_SO_Service;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
+import com.namoadigital.prj001.model.TSO_Save_Env;
 import com.namoadigital.prj001.sql.Act027_Product_List_Sql_002;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_SS;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_003;
@@ -59,6 +63,7 @@ import com.namoadigital.prj001.sql.Sql_Act027_005;
 import com.namoadigital.prj001.sql.Sql_Act027_006;
 import com.namoadigital.prj001.ui.act028.Act028_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -107,6 +112,7 @@ public class Act027_Services extends BaseFragment {
     private View cvlistHeaderProductSerial;
     private Button btn_approval_shortcut;
     private Button btn_product_event_shortcut;
+    private SM_SODao sm_soDao;
 
     public void setmSm_so(SM_SO mSm_so) {
         this.mSm_so = mSm_so;
@@ -145,10 +151,12 @@ public class Act027_Services extends BaseFragment {
 
         bStatus = true;
 //        Log.d("Permissao","onCreateView - Act027_Services");
-        if(savedInstanceState != null) {
+        if (savedInstanceState != null) {
 //            Log.d("Permissao", " onCreateView bundle - Act027_Services \n " + savedInstanceState.toString());
         }
         View view = inflater.inflate(R.layout.act027_services_content, container, false);
+        //
+        sm_soDao = new SM_SODao(getContext());
         //
         iniVar(view);
         iniAction();
@@ -184,6 +192,7 @@ public class Act027_Services extends BaseFragment {
         loadScreenToData();
     }
 
+    @SuppressLint("SetTextI18n")
     private void iniVar(View view) {
         context = getActivity();
         //
@@ -237,22 +246,7 @@ public class Act027_Services extends BaseFragment {
         tv_status_card = view.findViewById(R.id.tv_process_new_header);
         iv_remove_card = view.findViewById(R.id.iv_nform_new_header);
         iv_remove_card.setVisibility(View.GONE);
-
-
-        if (checkStatusSO()) {
-            cardStatus.setVisibility(View.VISIBLE);
-            String text = hmAux_Trans.get("warning_so_status_hinders_service_execution") + ": " + hmAux_Trans.get(mSm_so.getStatus());
-            SpannableString customText = new SpannableString(text);
-            customText.setSpan(
-                    new ForegroundColorSpan(getActivity().getResources().getColor(ToolBox_Inf.getStatusColor(mSm_so.getStatus()))),
-                    text.indexOf(": ") + 1,
-                    text.length(),
-                    Spanned.SPAN_INCLUSIVE_INCLUSIVE
-            );
-            tv_status_card.setText(customText);
-        } else {
-            cardStatus.setVisibility(View.GONE);
-        }
+        loadCardStatus();
 
 
         iv_editable_serial.setVisibility(View.VISIBLE);
@@ -300,12 +294,87 @@ public class Act027_Services extends BaseFragment {
         setLabels();
     }
 
+
+    public void loadCardStatus() {
+        String update = hmAux_Trans.get("warning_so_status_service_sync");
+        if (checkStatusSO()) {
+            cardStatus.setVisibility(View.VISIBLE);
+            String text;
+
+
+            if (checkIfNeedSync()) {
+                text = hmAux_Trans.get("warning_so_status_hinders_service_execution") + ": " + hmAux_Trans.get(mSm_so.getStatus()) + " \n" + update;
+            } else {
+                text = hmAux_Trans.get("warning_so_status_hinders_service_execution") + ": " + hmAux_Trans.get(mSm_so.getStatus());
+            }
+
+            SpannableString customText = new SpannableString(text);
+            customText.setSpan(
+                    new ForegroundColorSpan(getActivity().getResources().getColor(ToolBox_Inf.getStatusColor(mSm_so.getStatus()))),
+                    text.indexOf(": ") + 1,
+                    text.replace(" \n" + update, "").length(),
+                    Spanned.SPAN_INCLUSIVE_INCLUSIVE
+            );
+
+            tv_status_card.setText(customText);
+
+        } else {
+            if (checkIfNeedSync()) {
+                cardStatus.setVisibility(View.VISIBLE);
+                tv_status_card.setText(update);
+            } else {
+                cardStatus.setVisibility(View.GONE);
+            }
+        }
+    }
+
     private boolean checkStatusSO() {
         return mSm_so.getStatus().equals(Constant.SYS_STATUS_EDIT) ||
                 mSm_so.getStatus().equals(Constant.SYS_STATUS_WAITING_BUDGET) ||
                 mSm_so.getStatus().equals(Constant.SYS_STATUS_STOP) ||
                 mSm_so.getStatus().equals(Constant.SYS_STATUS_CANCELLED);
     }
+
+    private boolean checkIfNeedSync() {
+        return mSm_so.getUpdate_required() == 1 || isSoWithinTokenFile() || sm_soDao.hasSyncRequired(mSm_so.getCustomer_code(), mSm_so.getSo_prefix(), mSm_so.getSo_code());
+    }
+
+    public boolean isSoWithinTokenFile() {
+        try {
+            File[] soToken =
+                    ToolBox_Inf.getListOfFiles_v5(
+                            ConstantBaseApp.TOKEN_PATH,
+                            ToolBox_Inf.buildTokenPrefixWithCustomer(context, ConstantBaseApp.TOKEN_SO_PREFIX)
+                    );
+            if (soToken.length > 0) {
+                Gson gsonEnv = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
+                //
+                ArrayList<SM_SO> token_so_list =
+                        gsonEnv.fromJson(
+                                ToolBox_Inf.getContents(soToken[0]),
+                                TSO_Save_Env.class
+                        ).getSo();
+                //
+                if (token_so_list.size() == 0) {
+                    return false;
+                }
+                //
+                for (SM_SO so : token_so_list) {
+                    if (
+                            so.getCustomer_code() == ToolBox_Con.getPreference_Customer_Code(context)
+                                    && so.getSo_prefix() == mSm_so.getSo_prefix()
+                                    && so.getSo_code() == mSm_so.getSo_code()
+                    ) {
+                        return true;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        }
+        return false;
+    }
+
 
     private void setLabels() {
         tv_empty_list.setText(hmAux_Trans.get("empty_service_list_lbl"));
@@ -390,6 +459,7 @@ public class Act027_Services extends BaseFragment {
                 setServiceAdapter(getSwitchState());
                 setSerialInfo();
                 setAddInfo();
+                loadCardStatus();
             } else {
                 recoveryDelegate.callAct005();
             }
