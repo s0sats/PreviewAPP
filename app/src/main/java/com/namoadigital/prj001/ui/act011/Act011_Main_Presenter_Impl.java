@@ -1525,8 +1525,18 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     }
 
     @Override
-    public void checkData(GE_Custom_Form_Data formData, GeOs geOs, ArrayList<GE_File> geFiles, int require_serial_done, String require_serial_done_ok, int require_location) {
+    public void checkData(GE_Custom_Form_Data formData, GeOs geOs, ArrayList<GE_File> geFiles, int require_serial_done, String require_serial_done_ok, int require_location, int require_signature) {
+
         if (require_serial_done == 1 && !require_serial_done_ok.equalsIgnoreCase("OK")){
+            if ( require_signature == 1){
+                if ( formData.getSignature_name().trim().length() == 0
+                        || formData.getSignature_name().equals(Constant.CACHE_PATH_PHOTO + "/" + formData.getSignature())
+                ) {
+                    mView.showMsg(hmAux_Trans.get("alert_signature_error_ttl"), hmAux_Trans.get("alert_signature_error_msg"), 0);
+                }else{
+                    custom_form_dataDao.addUpdate(formData);
+                }
+            }
             mView.callNFCResults();
             //
             return;
@@ -1760,7 +1770,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         switch (signature) {
             case 1:
                 if (ToolBox.validationCheckFile(Constant.CACHE_PATH_PHOTO + "/" + formData.getSignature()) && formData.getSignature_name() != null && !formData.getSignature_name().isEmpty()) {
-                    checkData(formData, geOs, geFiles, require_serial_done, require_serial_done_ok, require_location);
+                    checkData(formData, geOs, geFiles, require_serial_done, require_serial_done_ok, require_location,signature);
                 } else {
 //                    mView.showMsg(
 //                            hmAux_Trans.get("alert_finalize_title"),//"Finalizar Registro",
@@ -1774,7 +1784,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 formData.setSignature("");
                 formData.setSignature_name("");
                 //
-                checkData(formData, geOs, geFiles, require_serial_done, require_serial_done_ok, require_location);
+                checkData(formData, geOs, geFiles, require_serial_done, require_serial_done_ok, require_location, signature);
 
 //                if (opc == 1) {
 //                    checkData(formData, geFiles);

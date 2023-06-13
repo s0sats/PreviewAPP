@@ -144,6 +144,7 @@ class Act011FfOption : Fragment() {
                         ibSave.setVisibility(View.VISIBLE)
                         ibFinalize.setVisibility(View.VISIBLE)
                         ibDelete.setVisibility(View.VISIBLE)
+                        binding.ibSignature.visibility = View.GONE
                         if (automatic) {
                             tvFormAutoAnswer.text = hmAux_Trans.get("drawer_automatic_lbl")
                             tvFormAutoAnswer.setVisibility(View.VISIBLE)
