@@ -220,12 +220,16 @@ public class TSO_Save_Rec {
 
     public class So_From_To{
         @Expose
+        @SerializedName("task")
         private ArrayList<SM_SO_Service_Exec_Task> task = new ArrayList<>();
         @Expose
+        @SerializedName("task_file")
         private ArrayList<SM_SO_Service_Exec_Task_File> task_file = new ArrayList<>();
         @Expose
+        @SerializedName("product_event")
         private ArrayList<SM_SO_Product_Event> product_event = new ArrayList<>();
         @Expose
+        @SerializedName("product_event_file")
         private ArrayList<SM_SO_Product_Event_File> product_event_file = new ArrayList<>();
 
 
