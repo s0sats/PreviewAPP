@@ -36,7 +36,7 @@ public interface Act008_Main_View {
 
     void callAct006(Context context);
 
-    void showSingleResultMsg(String ttl, String msg);
+    void showSingleResultMsg(String ttl, String msg, boolean stopProc);
 
     void showSerialResults(ArrayList<HMAux> returnList);
 
