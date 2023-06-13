@@ -2982,7 +2982,11 @@ public class Act011_Main extends Base_Activity
             MyActionFilterParam myActionFilterParam = ToolBox_Inf.getMyActionFilterParam(act083Bundle);
             //Se não tinha dados é pq é um novo form, seta então a nova pk
             if (myActionFilterParam.getParamItemSelectedPk() == null || myActionFilterParam.getParamItemSelectedPk().isEmpty()) {
-                myActionFilterParam.setParamItemSelectedPk(formLocal.getFormatedPk());
+                if (formLocal == null) {
+                    myActionFilterParam.setParamItemSelectedPk(type + "." + form + "." + form_version + "." + form_data);
+                } else {
+                    myActionFilterParam.setParamItemSelectedPk(formLocal.getFormatedPk());
+                }
                 myActionFilterParam.setParamItemSelectedType(MyActions.MY_ACTION_TYPE_FORM);
                 act083Bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam);
             }
