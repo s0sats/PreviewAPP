@@ -257,9 +257,17 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
             @Override
             public void onSaveNoChangesClick(MD_Product_Serial md_product_serial, boolean serial_id_changes) {
                 //Salva os dados do serial no banco local.
-                mPresenter.updateSerialData(mdProductSerial);
-                //
-                mPresenter.executeSoDownload(mdProduct.getProduct_code(),mdProductSerial.getSerial_id());
+                if(mdProductSerial.getUpdate_required() == 1
+                && ToolBox_Con.isOnline(context)){
+                    //seta var que define o fluxo apos o save do serial.
+                    soFlow = SO_FLOW_SEARCH_SO;
+                    //
+                    saveWithChangesProcess(mdProductSerial);
+                }else {
+                    mPresenter.updateSerialData(mdProductSerial);
+                    //
+                    mPresenter.executeSoDownload(mdProduct.getProduct_code(), mdProductSerial.getSerial_id());
+                }
             }
 
             @Override
