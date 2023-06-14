@@ -2816,9 +2816,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         int iconColor = 0;
         boolean hasUpdateRequired = mPresenter.hasUpdateRequired();
         boolean hasTicketSyncRequiredCloudRule = mPresenter.hasTicketSyncRequiredCloudRule();
-        boolean hasSoSyncRequiredCloudRule = mPresenter.hasSoSyncRequiredCloudRule();
         //
-        Drawable wrappedDrawable = setSyncIcon(iconColor, hasUpdateRequired, hasTicketSyncRequiredCloudRule, hasSoSyncRequiredCloudRule);
+        Drawable wrappedDrawable = setSyncIcon(iconColor, hasUpdateRequired, hasTicketSyncRequiredCloudRule);
         //
         menu.add(0, TOOLBAR_SYNC_DATA_STATUS, Menu.FIRST + 0, hmAux_Trans.get("lbl_sync_data"));
         menu.findItem(TOOLBAR_SYNC_DATA_STATUS).setIcon(wrappedDrawable);
@@ -2844,10 +2843,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     }
 
     @NotNull
-    private Drawable setSyncIcon(int iconColor, boolean hasUpdateRequired, boolean hasTicketSyncRequired, boolean hasSoSyncRequired) {
+    private Drawable setSyncIcon(int iconColor, boolean hasUpdateRequired, boolean hasTicketSyncRequired) {
         int icon;
-        if(hasUpdateRequired && hasTicketSyncRequired
-        || hasSoSyncRequired){
+        if(hasUpdateRequired && hasTicketSyncRequired){
             icon = R.drawable.ic_sync_main_menu_data;
         }else if(hasUpdateRequired){
             icon = R.drawable.ic_cloud_upload;
@@ -2881,7 +2879,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         DialogInterface.OnClickListener listener = null;
         boolean hasUpdateRequired = mPresenter.hasUpdateRequired();
         boolean hasTicketSyncRequired = mPresenter.hasTicketSyncRequired();
-        boolean hasSoSyncRequiredCloudRule = mPresenter.hasSoSyncRequiredCloudRule();
         switch (id) {
             //TODO REVISAR AQUI, POIS FOI MODIFICADO APENAS PARA SYNC GAMBIS
             case TOOLBAR_NAMOA_LOGO:
@@ -2899,9 +2896,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                                 masterDataSyncFlow = true;
                                 if(hasTicketSyncRequired){
                                     mPresenter.executeWSTicketDownload();
-                                }else if (hasSoSyncRequiredCloudRule){
-                                    sendToServer();
-                                } else {
+                                }else {
                                     mPresenter.syncFlow(mPresenter.hasUpdateRequired());
                                 }
                             }
@@ -2911,10 +2906,19 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 break;
             case TOOLBAR_SYNC_DATA_STATUS:
                 masterDataSyncFlow = false;
-                if(!hasUpdateRequired && !hasSoSyncRequiredCloudRule && hasTicketSyncRequired){
+                if(!hasUpdateRequired && hasTicketSyncRequired){
                     mPresenter.executeWSTicketDownload();
-                } else if (hasSoSyncRequiredCloudRule || hasUpdateRequired) {
-                    sendToServer();
+                } else if (hasUpdateRequired) {
+                    if (ToolBox_Con.isOnline(context)) {
+                        setWsProcess(Act005_Main.WS_PROCESS_SEND);
+                        setWsSoProcess(WS_Serial_Save.class.getSimpleName());
+                        showPD();
+                        cleanUpResults();
+                        //executeSaveProcess();
+                        mPresenter.executeSerialSave();
+                    } else {
+                        showNoConnectionDialog();
+                    }
                 }
                 break;
             default:
@@ -2932,19 +2936,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         }
 
         return true;
-    }
-
-    private void sendToServer() {
-        if (ToolBox_Con.isOnline(context)) {
-            setWsProcess(Act005_Main.WS_PROCESS_SEND);
-            setWsSoProcess(WS_Serial_Save.class.getSimpleName());
-            showPD();
-            cleanUpResults();
-            //executeSaveProcess();
-            mPresenter.executeSerialSave();
-        } else {
-            showNoConnectionDialog();
-        }
     }
 
     @Override

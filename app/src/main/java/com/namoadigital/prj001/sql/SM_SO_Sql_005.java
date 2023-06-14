@@ -30,8 +30,7 @@ public class SM_SO_Sql_005 implements Specification {
                         SM_SODao.TABLE + " S\n" +
                         " WHERE\n" +
                         "    S.customer_code =  '" + customer_code + "'\n" +
-                        "    AND (s.update_required = 1" +
-                        "        OR s.sync_required = 1)" )
+                        "    AND s.update_required = 1")
                 .toString();
     }
 }
