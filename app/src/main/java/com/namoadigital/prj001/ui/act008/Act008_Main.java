@@ -383,7 +383,13 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                     //Salva os dados do serial no banco local.
                     mPresenter.updateSerialData(mdProductSerial);
                     //
-                    checkSerialStructureAndUnfocusTickets();
+                    if (mdProductSerial.getUpdate_required() == 1
+                            && ToolBox_Con.isOnline(context)
+                            && !ToolBox_Con.getBooleanPreferencesByKey(getApplicationContext(), ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false)) {
+                        mPresenter.executeSerialSave();
+                    } else {
+                        checkSerialStructureAndUnfocusTickets();
+                    }
                 }
 
             @Override
