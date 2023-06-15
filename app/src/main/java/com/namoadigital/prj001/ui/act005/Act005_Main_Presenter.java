@@ -144,10 +144,13 @@ public interface Act005_Main_Presenter {
 
     boolean hasTicketSyncRequiredCloudRule();
 
+    boolean hasSoSyncRequiredCloudRule();
 
     void rememberUpdateTomorrow();
 
     void checkUpdateAvailable(AppUpdateManager updateManager);
 
     void checkUpdateInProgress(AppUpdateManager updateManager);
+
+    void executeWSSoSync();
 }

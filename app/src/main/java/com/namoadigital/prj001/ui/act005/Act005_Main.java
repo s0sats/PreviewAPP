@@ -2816,8 +2816,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         int iconColor = 0;
         boolean hasUpdateRequired = mPresenter.hasUpdateRequired();
         boolean hasTicketSyncRequiredCloudRule = mPresenter.hasTicketSyncRequiredCloudRule();
+        boolean hasSoSyncRequiredCloudRule = mPresenter.hasSoSyncRequiredCloudRule();
         //
-        Drawable wrappedDrawable = setSyncIcon(iconColor, hasUpdateRequired, hasTicketSyncRequiredCloudRule);
+        Drawable wrappedDrawable = setSyncIcon(iconColor, hasUpdateRequired, hasTicketSyncRequiredCloudRule, hasSoSyncRequiredCloudRule);
         //
         menu.add(0, TOOLBAR_SYNC_DATA_STATUS, Menu.FIRST + 0, hmAux_Trans.get("lbl_sync_data"));
         menu.findItem(TOOLBAR_SYNC_DATA_STATUS).setIcon(wrappedDrawable);
@@ -2843,14 +2844,14 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     }
 
     @NotNull
-    private Drawable setSyncIcon(int iconColor, boolean hasUpdateRequired, boolean hasTicketSyncRequired) {
+    private Drawable setSyncIcon(int iconColor, boolean hasUpdateRequired, boolean hasTicketSyncRequired, boolean hasSoSyncRequired) {
         int icon;
         if(hasUpdateRequired && hasTicketSyncRequired){
             icon = R.drawable.ic_sync_main_menu_data;
         }else if(hasUpdateRequired){
             icon = R.drawable.ic_cloud_upload;
             iconColor = R.color.namoa_cancel_red;
-        }else if(hasTicketSyncRequired){
+        }else if(hasTicketSyncRequired || hasSoSyncRequired){
             icon = R.drawable.ic_baseline_cloud_download_24;
             iconColor = R.color.custom_yellow_sync;
         }else{
@@ -2879,6 +2880,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         DialogInterface.OnClickListener listener = null;
         boolean hasUpdateRequired = mPresenter.hasUpdateRequired();
         boolean hasTicketSyncRequired = mPresenter.hasTicketSyncRequired();
+        boolean hasSoSyncRequiredCloudRule = mPresenter.hasSoSyncRequiredCloudRule();
         switch (id) {
             //TODO REVISAR AQUI, POIS FOI MODIFICADO APENAS PARA SYNC GAMBIS
             case TOOLBAR_NAMOA_LOGO:
@@ -2894,9 +2896,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 //mPresenter.accessMenuItem(MENU_ID_SYNC_DATA, 0);
                                 masterDataSyncFlow = true;
-                                if(hasTicketSyncRequired){
+                                if (hasSoSyncRequiredCloudRule){
+                                    mPresenter.executeWSSoSync();
+                                } else if(hasTicketSyncRequired){
                                     mPresenter.executeWSTicketDownload();
-                                }else {
+                                } else {
                                     mPresenter.syncFlow(mPresenter.hasUpdateRequired());
                                 }
                             }
@@ -2906,8 +2910,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 break;
             case TOOLBAR_SYNC_DATA_STATUS:
                 masterDataSyncFlow = false;
-                if(!hasUpdateRequired && hasTicketSyncRequired){
-                    mPresenter.executeWSTicketDownload();
+                if(!hasUpdateRequired && (hasSoSyncRequiredCloudRule || hasTicketSyncRequired)){
+                    if(hasSoSyncRequiredCloudRule){
+                        mPresenter.executeWSSoSync();
+                    }else{
+                        mPresenter.executeWSTicketDownload();
+                    }
                 } else if (hasUpdateRequired) {
                     if (ToolBox_Con.isOnline(context)) {
                         setWsProcess(Act005_Main.WS_PROCESS_SEND);
