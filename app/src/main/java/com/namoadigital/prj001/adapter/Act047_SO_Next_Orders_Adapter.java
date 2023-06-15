@@ -140,7 +140,7 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
                     ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
             );
 
-            if (ToolBox_Inf.isItemLate(deadlineTime + " " + customerGMT)) {
+            if (ToolBox_Inf.isItemLate(item.getDeadline())) {
                 tv_deadline_val.setTextColor(context.getResources().getColor(R.color.text_red));
             } else {
                 tv_deadline_val.setTextColor(context.getResources().getColor(R.color.m3_namoa_onSurfaceVariant));
