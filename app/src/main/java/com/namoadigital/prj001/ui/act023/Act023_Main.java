@@ -488,6 +488,8 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
                 && aux.hasConsistentValue(Generic_Results_Adapter.VALUE_ITEM_2)
                 && aux.get(MD_Product_SerialDao.PRODUCT_CODE).equals(String.valueOf(mdProductSerial.getProduct_code()))
                 && aux.get(Generic_Results_Adapter.VALUE_ITEM_2).equals(mdProductSerial.getSerial_id())
+                && aux.hasConsistentValue(Generic_Results_Adapter.VALUE_ITEM_3)
+                && aux.get(Generic_Results_Adapter.VALUE_ITEM_3).equalsIgnoreCase("OK")
             ){
                 hasSerialReturnedOk = true;
             }

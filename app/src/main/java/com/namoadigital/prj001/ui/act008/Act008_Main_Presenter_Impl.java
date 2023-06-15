@@ -712,7 +712,7 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
             //
             //if(returnList.size() == 1){
             if (returnList.size() == 1) {
-                mView.showSingleResultMsg(ttl, msg, !returnList.get(0).get(Generic_Results_Adapter.VALUE_ITEM_3).equals("OK"));
+                mView.showSingleResultMsg(ttl, msg, !returnList.get(0).get(Generic_Results_Adapter.VALUE_ITEM_3).equalsIgnoreCase("OK"));
             } else {
                 mView.showSerialResults(returnList);
             }
