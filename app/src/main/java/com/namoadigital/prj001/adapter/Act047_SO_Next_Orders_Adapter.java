@@ -181,7 +181,7 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
 
         create_date.setText(hmAux_Trans.get("create_date_lbl") + " " + ToolBox_Inf.millisecondsToString(
                 ToolBox_Inf.dateToMilliseconds(item.getCreateDate()),
-                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"));
+                ToolBox_Inf.nlsDateFormat(context)));
 
         return convertView;
     }

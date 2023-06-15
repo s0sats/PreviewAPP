@@ -57,8 +57,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:paddingVertical="16dp"
-            android:paddingHorizontal="12dp">
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="16dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -68,12 +68,12 @@
                     android:id="@+id/schedule_icon"
                     android:layout_width="18dp"
                     android:layout_height="18dp"
+                    android:contentDescription="null"
                     android:src="@drawable/baseline_schedule_24"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@color/m3_namoa_onSurfaceVariant"
-                    android:contentDescription="null" />
+                    app:tint="@color/m3_namoa_onSurfaceVariant" />
 
 
                 <LinearLayout
@@ -93,7 +93,7 @@
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
                         android:layout_weight="1"
-                        android:paddingStart="2dp"
+                        android:paddingStart="8dp"
                         android:textColor="@color/m3_namoa_onSurfaceVariant"
                         tools:text="01/11/2022 22:00" />
 
@@ -150,16 +150,16 @@
                 android:id="@+id/serial_detail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:gravity="center"
+                android:orientation="vertical"
                 android:paddingTop="12dp">
 
                 <TextView
                     android:id="@+id/act047_cell_tv_serial_id"
+                    style="@style/TextAppearance.Material3.TitleLarge"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="SERIAL NAME"
-                    style="@style/TextAppearance.Material3.TitleLarge"
                     android:textColor="@color/m3_namoa_onSurface" />
 
                 <!--                <TextView
@@ -192,31 +192,31 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:gravity="start"
-                    android:visibility="gone"
-                    tools:text="TAG NAME"
                     android:textAllCaps="true"
                     android:textColor="@color/m3_namoa_onSurface"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/my_actions_item_tv_class_status"
                     app:layout_constraintHorizontal_bias="1.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.0" />
+                    app:layout_constraintVertical_bias="0.0"
+                    tools:text="TAG NAME" />
 
                 <TextView
                     android:id="@+id/my_actions_item_tv_class_status"
                     style="@style/TextAppearance.Material3.LabelLarge"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    tools:text="CLASSE TICKET"
                     android:textAlignment="textEnd"
-                    android:visibility="gone"
                     android:textColor="@color/m3_namoa_error"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toEndOf="@+id/my_actions_item_tv_tag_desc"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="CLASSE TICKET" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -234,9 +234,9 @@
                         style="@style/TextAppearance.Material3.BodySmall"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        tools:text="Marca"
+                        android:textColor="@color/m3_namoa_onSurfaceVariant"
                         android:visibility="gone"
-                        android:textColor="@color/m3_namoa_onSurfaceVariant" />
+                        tools:text="Marca" />
 
                     <!--                <TextView
                                         android:id="@+id/my_actions_item_tv_action_process"
@@ -262,22 +262,22 @@
                     style="@style/TextAppearance.Material3.BodySmall"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    tools:text="LISTA | TRACKINGS "
+                    android:textColor="@color/m3_namoa_onSurfaceVariant"
                     android:visibility="gone"
-                    android:textColor="@color/m3_namoa_onSurfaceVariant" />
+                    tools:text="LISTA | TRACKINGS " />
 
                 <View
-                    android:layout_height="12dp"
-                    android:layout_width="match_parent" />
+                    android:layout_width="match_parent"
+                    android:layout_height="12dp" />
 
                 <TextView
                     android:id="@+id/act047_cell_tv_so_id_val"
                     style="@style/TextAppearance.Material3.BodySmall"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    tools:text="MY-OS.XXX"
+                    android:textColor="@color/m3_namoa_onSurfaceVariant"
                     android:visibility="gone"
-                    android:textColor="@color/m3_namoa_onSurfaceVariant" />
+                    tools:text="MY-OS.XXX" />
 
 
                 <TextView
@@ -285,9 +285,9 @@
                     style="@style/TextAppearance.Material3.BodySmall"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    tools:text="CLIENT S.O ID XX.XX"
+                    android:textColor="@color/m3_namoa_onSurfaceVariant"
                     android:visibility="gone"
-                    android:textColor="@color/m3_namoa_onSurfaceVariant" />
+                    tools:text="CLIENT S.O ID XX.XX" />
 
                 <TextView
                     android:id="@+id/act047_cell_tv_segment_category_val"
@@ -305,9 +305,9 @@
                     style="@style/TextAppearance.Material3.BodySmall"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    tools:text="JGA"
+                    android:textColor="@color/m3_namoa_onSurfaceVariant"
                     android:visibility="gone"
-                    android:textColor="@color/m3_namoa_onSurfaceVariant" />
+                    tools:text="JGA" />
 
                 <!--                <TextView
                                     android:id="@+id/act047_cell_tv_pipeline_val"
@@ -321,6 +321,10 @@
                                     android:textColor="@color/m3_namoa_onSurfaceVariant" />-->
 
             </LinearLayout>
+
+            <View
+                android:layout_height="12dp"
+                android:layout_width="match_parent" />
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
