@@ -1,6 +1,8 @@
 package com.namoadigital.prj001.ui.act005;
 
 import static com.namoadigital.prj001.ui.act005.Act005_Main_Presenter_Impl.SYNC_FOR_TICKETS_FORM;
+import static com.namoadigital.prj001.ui.act005.Act005_Main_Presenter_Impl.SYNC_SOS;
+import static com.namoadigital.prj001.util.ConstantBaseApp.FCM_ACTION_SM_SO_UPDATE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FCM_ACTION_TK_TICKET_UPDATE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FCM_MODULE_SYNC;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FCM_MODULE_TICKET;
@@ -611,6 +613,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         //Ws_Sync do ticket
         transList.add("progress_download_ticket_ttl");
         transList.add("progress_download_ticket_start");
+        //
+        //Ws_Sync do N-Services
+        transList.add("progress_sync_so_ttl");
+        transList.add("progress_sync_so_start");
         //
         transList.add("lbl_invalid_datetime_warning");
         transList.add("alert_invalid_local_datetime_ttl");
@@ -1462,6 +1468,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 alertTitle =  hmAux_Trans.get("progress_download_ticket_ttl");
                 alertMsg = hmAux_Trans.get("progress_download_ticket_start");
                 break;
+            case Act005_Main_Presenter_Impl.SYNC_SOS:
+                alertTitle =  hmAux_Trans.get("progress_sync_so_ttl");
+                alertMsg = hmAux_Trans.get("progress_sync_so_start");
+                break;
             default:
                 break;
 
@@ -1864,7 +1874,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 }
             } else {
                 if (!wsSoProcess.equalsIgnoreCase(WS_Save.class.getSimpleName())
-                && !wsSoProcess.equalsIgnoreCase(SYNC_FOR_TICKETS_FORM)) {
+                && !wsSoProcess.equalsIgnoreCase(SYNC_FOR_TICKETS_FORM)
+                && !wsSoProcess.equalsIgnoreCase(SYNC_SOS)
+                ) {
                     progressDialog.dismiss();
                     showSuccessDialog();
                     //Atualiza traduções
@@ -2245,7 +2257,23 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                     refreshUiData();
                 }
             }
-        } else if (wsSoProcess.equalsIgnoreCase(SYNC_FOR_TICKETS_FORM)) {
+        } else if (wsSoProcess.equalsIgnoreCase(SYNC_SOS)) {
+            progressDialog.dismiss();
+            setWsSoProcess("");
+            setWsProcess("");
+            //
+            if(mPresenter.hasTicketSyncRequired()){
+                mPresenter.executeWSTicketDownload();
+            }else{
+                if(masterDataSyncFlow){
+                    ToolBox_Inf.hasFormProductOutdate(context);
+                    syncAfterSave = true;
+                    executeSync();
+                }else{
+                    refreshUiData();
+                }
+            }
+        }  else if (wsSoProcess.equalsIgnoreCase(SYNC_FOR_TICKETS_FORM)) {
             progressDialog.dismiss();
             setWsSoProcess("");
             setWsProcess("");
@@ -2460,7 +2488,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                     //
                 }
                 //
-                if(mPresenter.hasTicketSyncRequired()) {
+                if(mPresenter.hasSoSyncRequiredCloudRule()) {
+                    mPresenter.executeWSSoSync();
+                } else if(mPresenter.hasTicketSyncRequired()) {
                     mPresenter.executeWSTicketDownload();
                 }else{
                     if(masterDataSyncFlow){
@@ -2754,7 +2784,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                         ToolBox_Inf.hasFormProductOutdate(context);
                         executeSync();
                     }else {
-                        if(mPresenter.hasTicketSyncRequired()) {
+                        if(mPresenter.hasSoSyncRequiredCloudRule()) {
+                            mPresenter.executeWSSoSync();
+                        } else if(mPresenter.hasTicketSyncRequired()) {
                             mPresenter.executeWSTicketDownload();
                         }
                     }
@@ -2846,7 +2878,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     @NotNull
     private Drawable setSyncIcon(int iconColor, boolean hasUpdateRequired, boolean hasTicketSyncRequired, boolean hasSoSyncRequired) {
         int icon;
-        if(hasUpdateRequired && hasTicketSyncRequired){
+        if(hasUpdateRequired && (hasTicketSyncRequired || hasSoSyncRequired) ){
             icon = R.drawable.ic_sync_main_menu_data;
         }else if(hasUpdateRequired){
             icon = R.drawable.ic_cloud_upload;
@@ -3192,7 +3224,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 //                    Log.d("FCM", "fcmTitle: " + fcmTitle);
                     if (fcmTitle.equals(FCM_MODULE_SYNC)) {
                         invalidateOptionsMenu();
-                    } else if (fcmTitle.equals(FCM_MODULE_TICKET) || fcmTitle.equals(ConstantBaseApp.FCM_MODULE_FORM_AP)|| fcmTitle.equals(FCM_ACTION_TK_TICKET_UPDATE)) {
+                    } else if (fcmTitle.equals(FCM_MODULE_TICKET) || fcmTitle.equals(FCM_ACTION_SM_SO_UPDATE) || fcmTitle.equals(ConstantBaseApp.FCM_MODULE_FORM_AP)|| fcmTitle.equals(FCM_ACTION_TK_TICKET_UPDATE)) {
                         invalidateOptionsMenu();
                         refreshUiData();
                     }

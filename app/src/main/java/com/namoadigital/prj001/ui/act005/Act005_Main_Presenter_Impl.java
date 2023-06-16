@@ -91,7 +91,6 @@ import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.service.WS_IO_Move_Save;
 import com.namoadigital.prj001.service.WS_IO_Outbound_Item_Save;
 import com.namoadigital.prj001.service.WS_SO_Pack_Express_Local;
-import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
@@ -160,6 +159,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     private static final int SECUNDARY_MENU_QTY = 6;
     public static final String SYNC_FOR_TICKETS_FORM = "SYNC_FOR_TICKETS_FORM";
     public static final String SYNC_TICKETS = "SYNC_TICKETS";
+    public static final String SYNC_SOS = "SYNC_SOS";
 
     private Context context;
     private Act005_Main_View mView;
@@ -616,7 +616,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     @Override
     public void executeWSSoSync() {
         if (ToolBox_Con.isOnline(context)) {
-            mView.setWsProcess(WS_SO_Search.class.getName());
+            mView.setWsProcess(SYNC_SOS);
+            mView.setWsSoProcess(SYNC_SOS);
             //
             mView.showPD();
             //
@@ -640,7 +641,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         List<SM_SO> soSyncList = getSoSyncList();
         String serviceSoList = "";
         for (SM_SO sm_so : soSyncList) {
-            serviceSoList = "|" + sm_so.getSo_prefix() + "." + sm_so.getSo_code();
+            serviceSoList += "|" + sm_so.getSo_prefix() + "." + sm_so.getSo_code();
         }
         serviceSoList = serviceSoList.substring(1);
         return serviceSoList;
