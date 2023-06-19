@@ -27,6 +27,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String DEVICE_BUNDLE = "DEVICE_BUNDLE";
     public static final String ITEM_CHECK_ANSWER = "ITEM_CHECK_ANSWER";
     public static final String ACTION_NOT_EXECUTED = "NOT_EXECUTED";
+    public static final String REGEX_SERIAL_FORBIDEN_CHARS = "[ ]{2,}|^[ ]+|[ ]+$|['\"\\t\\n&<>]";
     //As 3 variaveis abaixo são preenchidas pela classe AppBase
     public static String PRJ001_VERSION = "";
     public static int PRJ001_VERSION_CODE = -1;

@@ -1537,17 +1537,24 @@ public class Frg_Serial_Edit extends BaseFragment {
             public void onClick(View v) {
                 if (delegate != null) {
                     String serial_id = mket_serial_id.getText().toString().toUpperCase();
-                    mket_serial_id.setText(ToolBox_Inf.removeForbidenChars(serial_id));
-                    if (mket_serial_id.isValid()) {
-                        delegate.onCheckButtonClick(
-                                mdProduct.getProduct_code(),
-                                mdProduct.getProduct_id(),
-                                ToolBox_Inf.removeAllLineBreaks(mket_serial_id.getText().toString()),
-                                "");
-                    } else {
+                    if(!ToolBox_Inf.checkForbiddenChars(serial_id)){
+                        mket_serial_id.setText(ToolBox_Inf.removeForbidenChars(serial_id));
+                        if (mket_serial_id.isValid()) {
+                            delegate.onCheckButtonClick(
+                                    mdProduct.getProduct_code(),
+                                    mdProduct.getProduct_id(),
+                                    ToolBox_Inf.removeAllLineBreaks(mket_serial_id.getText().toString()),
+                                    "");
+                        } else {
+                            showAlertDialog(
+                                    hmAux_Trans.get("alert_serial_validation_ttl"),
+                                    mket_serial_id.getmErrorMSG()
+                            );
+                        }
+                    }else{
                         showAlertDialog(
-                                hmAux_Trans.get("alert_serial_validation_ttl"),
-                                mket_serial_id.getmErrorMSG()
+                                hmAux_Trans.get("alert_serial_forbidden_char_ttl"),
+                                hmAux_Trans.get("alert_serial_forbidden_char_msg")
                         );
                     }
                 }
@@ -1589,7 +1596,7 @@ public class Frg_Serial_Edit extends BaseFragment {
     }
     private void saveValidationFlow(int btnId) {
 
-        if (!new_serial || mket_serial_id.isValid()) {
+        if (!new_serial || (mket_serial_id.isValid() && !ToolBox_Inf.checkForbiddenChars(mket_serial_id.getText().toString()))) {
             //Valida se alteração de site é valida.
             if (!siteChanged || validateSiteChange()) {
                 if (validadeSerialLocation()) {
@@ -1655,10 +1662,18 @@ public class Frg_Serial_Edit extends BaseFragment {
             }
 
         } else {
-            showAlertDialog(
-                    hmAux_Trans.get("alert_serial_validation_ttl"),
-                    mket_serial_id.getmErrorMSG()
-            );
+            if(mket_serial_id.isValid()){
+                showAlertDialog(
+                        hmAux_Trans.get("alert_serial_validation_ttl"),
+                        mket_serial_id.getmErrorMSG()
+                );
+            }else{
+                showAlertDialog(
+                        hmAux_Trans.get("alert_serial_forbidden_char_ttl"),
+                        hmAux_Trans.get("alert_serial_forbidden_char_msg")
+                );
+            }
+
         }
     }
 
@@ -3581,6 +3596,9 @@ public class Frg_Serial_Edit extends BaseFragment {
         transListFrag.add("tracking_hint_lbl");
         transListFrag.add("spinner_empty_list_lbl");
         transListFrag.add("spinner_hint_lbl");
+        //
+        transListFrag.add("alert_serial_forbidden_char_ttl");
+        transListFrag.add("alert_serial_forbidden_char_msg");
         //
         return transListFrag;
     }

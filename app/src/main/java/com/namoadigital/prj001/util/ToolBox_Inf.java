@@ -6193,6 +6193,12 @@ public class ToolBox_Inf {
         return text.trim().replaceAll("\\t|\'|\"", "");
     }
 
+    public static boolean checkForbiddenChars(String text) {
+        Pattern pattern = Pattern.compile(ConstantBaseApp.REGEX_SERIAL_FORBIDEN_CHARS, Pattern.MULTILINE);
+        Matcher matcher = pattern.matcher(text);
+        return matcher.find();
+    }
+
 
 
     public static ArrayList<HMAux> getMenuProfiles(Context context, String menu_code) {
