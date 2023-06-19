@@ -38,7 +38,10 @@ public class SO_Next_Orders_Obj {
     @SerializedName("add_inf6") private String add_inf6;
     @SerializedName("client_so_id") private String client_so_id;
     @SerializedName("priority_code") private int priority_code;
-    @SerializedName("priority_desc") private String priority_desc;
+    @SerializedName("priority_desc")
+    private String priority_desc;
+    @SerializedName("create_date")
+    private String create_date;
 
     public String getSo_prefix() {
         return so_prefix;
@@ -312,15 +315,25 @@ public class SO_Next_Orders_Obj {
         this.priority_desc = priority_desc;
     }
 
+
+    public String getCreateDate() {
+        return create_date;
+    }
+
+    public void setCreateDate(String date) {
+        this.create_date = date;
+    }
+
     /**
      * LUCHE - 17/03/2021
      * Metodo que retorna todos os campos filtraveis e que será usado no filtro da
      * lista de proximas o.s
      * LUCHE - 13/07/2021
      * Add novos campos do card
+     *
      * @return
      */
-    public String getAllFieldForFilter(){
+    public String getAllFieldForFilter() {
         return  (
                 so_prefix+ "|" +
                 so_code+ "|" +

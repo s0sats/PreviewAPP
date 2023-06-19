@@ -296,6 +296,32 @@
                         android:gravity="start|center_vertical"
                         tools:text="Comment here - Trad" />
                 </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/act047_so_next_orders_dialog_ll_so_product"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:visibility="gone"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/act047_so_next_orders_dialog_tv_so_product_lbl"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="start|center_vertical"
+                        android:textSize="@dimen/font_size_title"
+                        android:textStyle="bold"
+                        tools:text="SO Comments - Trad" />
+
+                    <TextView
+                        android:id="@+id/act047_so_next_orders_dialog_tv_so_product_val"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:gravity="start|center_vertical"
+                        tools:text="Comment here - Trad" />
+                </LinearLayout>
             </LinearLayout>
 
 
