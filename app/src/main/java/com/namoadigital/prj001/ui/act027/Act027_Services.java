@@ -537,7 +537,7 @@ public class Act027_Services extends BaseFragment {
             iv_editable_serial.setVisibility(View.VISIBLE);
             adp = new Act027_Services_Adapter(
                     getActivity(),
-                    R.layout.act027_services_content_adapter_cell,
+                    R.layout.act027_services_content_adapter_cell_new,
                     sm_so_serviceDao.query_HM(
                                 /*new SM_SO_Service_Sql_003(
                                         mSm_so.getCustomer_code(),
