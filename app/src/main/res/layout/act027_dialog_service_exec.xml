@@ -25,7 +25,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="25dp"
         android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        app:layout_constraintBottom_toTopOf="@+id/my_action_select_serial"
+        app:layout_constraintBottom_toTopOf="@+id/btn_ok"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@id/tv_service_exec_ttl"
         app:layout_constraintTop_toBottomOf="@id/tv_service_exec_ttl"
@@ -50,7 +50,7 @@
     </RadioGroup>
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/act083_serial_info"
+        android:id="@+id/btn_cancel"
         style="@style/NamoaMaterialButtonText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -59,13 +59,13 @@
         android:textColor="@color/m3_namoa_primary"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/my_action_select_serial"
+        app:layout_constraintEnd_toStartOf="@+id/btn_ok"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:strokeColor="@color/m3_namoa_outline" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/my_action_select_serial"
+        android:id="@+id/btn_ok"
         style="@style/Widget.Material3.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
