@@ -257,9 +257,17 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
             @Override
             public void onSaveNoChangesClick(MD_Product_Serial md_product_serial, boolean serial_id_changes) {
                 //Salva os dados do serial no banco local.
-                mPresenter.updateSerialData(mdProductSerial);
-                //
-                mPresenter.executeSoDownload(mdProduct.getProduct_code(),mdProductSerial.getSerial_id());
+                if(mdProductSerial.getUpdate_required() == 1
+                && ToolBox_Con.isOnline(context)){
+                    //seta var que define o fluxo apos o save do serial.
+                    soFlow = SO_FLOW_SEARCH_SO;
+                    //
+                    saveWithChangesProcess(mdProductSerial);
+                }else {
+                    mPresenter.updateSerialData(mdProductSerial);
+                    //
+                    mPresenter.executeSoDownload(mdProduct.getProduct_code(), mdProductSerial.getSerial_id());
+                }
             }
 
             @Override
@@ -480,6 +488,8 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
                 && aux.hasConsistentValue(Generic_Results_Adapter.VALUE_ITEM_2)
                 && aux.get(MD_Product_SerialDao.PRODUCT_CODE).equals(String.valueOf(mdProductSerial.getProduct_code()))
                 && aux.get(Generic_Results_Adapter.VALUE_ITEM_2).equals(mdProductSerial.getSerial_id())
+                && aux.hasConsistentValue(Generic_Results_Adapter.VALUE_ITEM_3)
+                && aux.get(Generic_Results_Adapter.VALUE_ITEM_3).equalsIgnoreCase("OK")
             ){
                 hasSerialReturnedOk = true;
             }

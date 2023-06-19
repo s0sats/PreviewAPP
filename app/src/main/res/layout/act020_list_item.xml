@@ -44,12 +44,13 @@
             <TextView
                 android:id="@+id/card_serial_title"
                 style="@style/TextAppearance.Material3.TitleLarge"
-                android:layout_width="261dp"
-                android:layout_height="35dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textColor="@color/m3_namoa_onSurface"
                 app:layout_constraintEnd_toStartOf="@+id/iconOffline"
-                app:layout_constraintStart_toEndOf="@+id/iconClassColor" />
+                app:layout_constraintStart_toEndOf="@+id/iconClassColor"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
                 android:id="@+id/iconOffline"
