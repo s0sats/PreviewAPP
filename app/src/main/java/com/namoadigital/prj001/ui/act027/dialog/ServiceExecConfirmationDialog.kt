@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui.act027.dialog
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
+import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.databinding.Act027DialogServiceExecBinding
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -10,27 +11,18 @@ import com.namoadigital.prj001.util.ToolBox_Inf
 
 class ServiceExecConfirmationDialog(
     context: Context,
-    private val mListener: OnServiceTypeSelectListener
+    private val mListener: OnServiceTypeSelectListener,
+    private val sService: HMAux
 ): Dialog(context)  {
 
     private val mResourceName = "service_exec_confirmation_dialog"
     private val hmAux_trans  by lazy{
         var transListDialog = ArrayList<String>();
         //
-        transListDialog.add("filter_lbl")
-        transListDialog.add("rg_period_lbl")
-        transListDialog.add("until_next_action_opt")
-        transListDialog.add("until_next_week_opt")
-        transListDialog.add("until_today_opt")
-        transListDialog.add("all_periods_opt")
-        transListDialog.add("current_site_opt")
-        transListDialog.add("all_sites_opt")
-        transListDialog.add("only_my_action_opt")
-        transListDialog.add("all_action_opt")
-        transListDialog.add("period_filter_lbl")
-        transListDialog.add("site_filter_lbl")
-        transListDialog.add("focus_filter_lbl")
-        transListDialog.add("btn_save_lbl")
+        transListDialog.add("dialog_service_execution_type_ttl")
+        transListDialog.add("dialog_service_execution_direct_opt")
+        transListDialog.add("dialog_service_execution_with_attachments_opt")
+
         //
         val mResourceCodeDialog = ToolBox_Inf.getResourceCode(
             context,
@@ -64,7 +56,7 @@ class ServiceExecConfirmationDialog(
     private fun iniActions() {
         binding.apply {
             btnOk.setOnClickListener {
-                mListener.onSelected(rbStartExecution.isChecked)
+                mListener.onSelected(sService, rbStartExecution.isChecked)
             }
             //
             btnCancel.setOnClickListener {
@@ -76,11 +68,11 @@ class ServiceExecConfirmationDialog(
 
     private fun setLabels() {
         binding.apply {
-            btnOk.text = hmAux_trans[""]
-            btnCancel.text = hmAux_trans[""]
-            tvServiceExecTtl.text = hmAux_trans[""]
-            rbDirectExecution.text = hmAux_trans[""]
-            rbStartExecution.text = hmAux_trans[""]
+            btnOk.text = hmAux_trans["sys_alert_btn_ok"]
+            btnCancel.text = hmAux_trans["sys_alert_btn_cancel"]
+            tvServiceExecTtl.text = hmAux_trans["dialog_service_execution_type_ttl"]
+            rbDirectExecution.text = hmAux_trans["dialog_service_execution_direct_opt"]
+            rbStartExecution.text = hmAux_trans["dialog_service_execution_with_attachments_opt"]
         }
     }
 
@@ -90,6 +82,6 @@ class ServiceExecConfirmationDialog(
     }
 
     interface OnServiceTypeSelectListener {
-        fun onSelected(addAttachments: Boolean)
+        fun onSelected(sService: HMAux, addAttachments: Boolean)
     }
 }
