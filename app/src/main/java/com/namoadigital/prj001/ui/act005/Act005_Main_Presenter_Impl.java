@@ -62,6 +62,7 @@ import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.MainTagMenu;
 import com.namoadigital.prj001.model.MenuMainNamoa;
 import com.namoadigital.prj001.model.MyActionFilterParam;
+import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.SupportDialogFields;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TSave_Rec;
@@ -76,6 +77,7 @@ import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_SO_Approval;
 import com.namoadigital.prj001.receiver.WBR_SO_Pack_Express_Local;
 import com.namoadigital.prj001.receiver.WBR_SO_Save;
+import com.namoadigital.prj001.receiver.WBR_SO_Search;
 import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Sync;
@@ -104,6 +106,7 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_002;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_001;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Sql_003;
+import com.namoadigital.prj001.sql.SMSOGetSyncRequiredList;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_010;
 import com.namoadigital.prj001.sql.SqlAct005TagList001;
 import com.namoadigital.prj001.sql.Sql_Act005_001;
@@ -156,6 +159,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     private static final int SECUNDARY_MENU_QTY = 6;
     public static final String SYNC_FOR_TICKETS_FORM = "SYNC_FOR_TICKETS_FORM";
     public static final String SYNC_TICKETS = "SYNC_TICKETS";
+    public static final String SYNC_SOS = "SYNC_SOS";
 
     private Context context;
     private Act005_Main_View mView;
@@ -534,6 +538,15 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         return qty > 0;
     }
 
+    @Override
+    public boolean hasSoSyncRequiredCloudRule() {
+        //
+        List<SM_SO> sm_sos = getSoSyncList();
+        //
+        return sm_sos.size() > 0;
+    }
+
+
     private boolean checkUpdatePlayStore() {
         long actual = System.currentTimeMillis();
         long prefs = ToolBox_Con.getLongPreferencesByKey(context,
@@ -598,6 +611,48 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         callImmediateUpdateFlow(updateManager,appUpdateInfo);
                     }
                 });
+    }
+
+    @Override
+    public void executeWSSoSync() {
+        if (ToolBox_Con.isOnline(context)) {
+            mView.setWsProcess(SYNC_SOS);
+            mView.setWsSoProcess(SYNC_SOS);
+            //
+            mView.showPD();
+            //
+            Intent mIntent = new Intent(context, WBR_SO_Search.class);
+            Bundle bundle = new Bundle();
+            //
+            String serviceSoList = getSoIdSyncList();
+            //
+            bundle.putString(Constant.WS_SO_SEARCH_SO_MULT, serviceSoList);
+            bundle.putInt(Constant.WS_SO_SEARCH_PROFILE_CHECK,0);
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+            mView.showNoConnectionDialog();
+        }
+    }
+
+    private String getSoIdSyncList() {
+        List<SM_SO> soSyncList = getSoSyncList();
+        String serviceSoList = "";
+        for (SM_SO sm_so : soSyncList) {
+            serviceSoList += "|" + sm_so.getSo_prefix() + "." + sm_so.getSo_code();
+        }
+        serviceSoList = serviceSoList.substring(1);
+        return serviceSoList;
+    }
+
+    private List<SM_SO> getSoSyncList() {
+        return soDao.query(
+                new SMSOGetSyncRequiredList(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        );
     }
 
     @Deprecated

@@ -135,6 +135,8 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         transList.add("empty_serial_list_lbl");
         transList.add("zone_filter_lbl");
         //
+        transList.add("dialog_so_product_lbl");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -272,7 +274,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         mAdapter = new Act047_SO_Next_Orders_Adapter(
                 getApplicationContext(),
                 list,
-                R.layout.act047_cell,
+                R.layout.act047_cell_new,
                 this::changeVisibilityAdapter
         );
         lv_services.setAdapter(mAdapter);
@@ -430,23 +432,32 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         }
         //LUCHE - 13/07/2021 - Add infos add da o.s
         String formatedSoAddInfo = getFormatedSoAddInfo(item);
-        if(!formatedSoAddInfo.isEmpty()){
+        if (!formatedSoAddInfo.isEmpty()) {
             binding.act047SoNextOrdersDialogLlSoAddInfo.setVisibility(View.VISIBLE);
             binding.act047SoNextOrdersDialogTvSoAddInfoLbl.setText(hmAux_Trans.get("dialog_so_add_info_lbl"));
             binding.act047SoNextOrdersDialogTvSoAddInfoVal.setText(formatedSoAddInfo);
-        }else{
+        } else {
             binding.act047SoNextOrdersDialogLlSoAddInfo.setVisibility(View.GONE);
         }
 
+
+        if (!item.getProduct_id().isEmpty()) {
+            binding.act047SoNextOrdersDialogLlSoProduct.setVisibility(View.VISIBLE);
+            binding.act047SoNextOrdersDialogTvSoProductLbl.setText(hmAux_Trans.get("dialog_so_product_lbl"));
+            binding.act047SoNextOrdersDialogTvSoProductVal.setText(item.getProduct_id());
+        } else {
+            binding.act047SoNextOrdersDialogLlSoProduct.setVisibility(View.GONE);
+        }
+
         //Config TIl e Mket do seria
-        configSerialViews(binding.act047SoNextOrdersDialogTvError,binding.act047SoNextOrdersDialogMketSerialConfirm,item);
+        configSerialViews(binding.act047SoNextOrdersDialogTvError, binding.act047SoNextOrdersDialogMketSerialConfirm, item);
         hideSerialForByPassProfile(binding.act047SoNextOrdersDialogMketSerialConfirm);
         //
         builder
                 .setView(binding.getRoot())
                 .setPositiveButton(
-                    hmAux_Trans.get("sys_alert_btn_ok"),
-                    null
+                        hmAux_Trans.get("sys_alert_btn_ok"),
+                        null
                 )
                 .setNegativeButton(
                     hmAux_Trans.get("sys_alert_btn_cancel"),
