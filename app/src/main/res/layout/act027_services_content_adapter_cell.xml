@@ -85,7 +85,7 @@
             android:padding="2dp">
 
             <ImageView
-                android:id="@+id/act027_services_content_cell_btn_normal"
+                android:id="@+id/act027_services_content_cell_btn_options"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_gravity="center"
@@ -323,12 +323,13 @@
                     android:text="22"
                     android:textColor="@color/padrao_WHITE"
                     android:textSize="10sp"
-                    android:visibility="gone" />
+                    android:visibility="visible" />
 
                 <ImageView
                     android:id="@+id/act027_services_content_cell_iv_plus"
                     android:layout_width="18dp"
                     android:layout_height="18dp"
+                    android:visibility="gone"
                     android:layout_gravity="top|end"
                     android:background="@drawable/badge_sqn"
                     android:src="@drawable/ic_namoa_plus" />
