@@ -134,12 +134,16 @@ public class Act027_Services extends BaseFragment {
         this.lastServiceUpdated = lastServiceUpdated;
     }
 
+    public void setNeedSyncAdapter(boolean needSyncAdapter) {
+
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //
 //        Log.d("Permissao","onCreate - Act027_Services");
-        if(savedInstanceState != null) {
+        if (savedInstanceState != null) {
 //            Log.d("Permissao", " onCreate bundle - Act027_Services \n " + savedInstanceState.toString());
         }
         setRetainInstance(true);
@@ -559,7 +563,8 @@ public class Act027_Services extends BaseFragment {
                                     isChecked//sw_filter != null && sw_filter.isChecked()
                             ).toSqlQuery()
                     ),
-                    mMain.hasExecutionProfile()
+                    mMain.hasExecutionProfile(),
+                    checkIfNeedSync()
             );
             //
             adp.setOnServiceSelectedListener((sData, selection_type) -> {
