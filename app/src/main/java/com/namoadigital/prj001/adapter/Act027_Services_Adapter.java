@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.material.button.MaterialButton;
@@ -39,12 +40,14 @@ public class Act027_Services_Adapter extends BaseAdapter {
     private String mResource_Code;
     private HMAux hmAux_Trans;
     private boolean hasExecutionProfile;
+    private boolean needSync;
 
-    public Act027_Services_Adapter(Context context, int resource, List<HMAux> source, boolean hasExecutionProfile) {
+    public Act027_Services_Adapter(Context context, int resource, List<HMAux> source, boolean hasExecutionProfile, boolean needSync) {
         this.context = context;
         this.resource = resource;
         this.source = source;
         this.hasExecutionProfile = hasExecutionProfile;
+        this.needSync = needSync;
 
         this.mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
@@ -94,22 +97,22 @@ public class Act027_Services_Adapter extends BaseAdapter {
         return 0L;
     }
 
-    public int getPositionByPk(String pk){
-        for (int i = 0; i < source.size()  ; i++) {
-            HMAux auxItem  = source.get(i);
+    public int getPositionByPk(String pk) {
+        for (int i = 0; i < source.size(); i++) {
+            HMAux auxItem = source.get(i);
             String auxPk =
-                    auxItem.get(SM_SO_ServiceDao.CUSTOMER_CODE) +"|"+
-                    auxItem.get(SM_SO_ServiceDao.SO_PREFIX) +"|"+
-                    auxItem.get(SM_SO_ServiceDao.SO_CODE) +"|"+
-                    auxItem.get(SM_SO_ServiceDao.PRICE_LIST_CODE) +"|"+
-                    auxItem.get(SM_SO_ServiceDao.PACK_CODE) +"|"+
-                    auxItem.get(SM_SO_ServiceDao.PACK_SEQ) +"|"+
-                    auxItem.get(SM_SO_ServiceDao.CATEGORY_PRICE_CODE) +"|"+
-                    auxItem.get(SM_SO_ServiceDao.SERVICE_CODE) +"|"+
-                    auxItem.get(SM_SO_ServiceDao.SERVICE_SEQ) ;
+                    auxItem.get(SM_SO_ServiceDao.CUSTOMER_CODE) + "|" +
+                            auxItem.get(SM_SO_ServiceDao.SO_PREFIX) + "|" +
+                            auxItem.get(SM_SO_ServiceDao.SO_CODE) + "|" +
+                            auxItem.get(SM_SO_ServiceDao.PRICE_LIST_CODE) + "|" +
+                            auxItem.get(SM_SO_ServiceDao.PACK_CODE) + "|" +
+                            auxItem.get(SM_SO_ServiceDao.PACK_SEQ) + "|" +
+                            auxItem.get(SM_SO_ServiceDao.CATEGORY_PRICE_CODE) + "|" +
+                            auxItem.get(SM_SO_ServiceDao.SERVICE_CODE) + "|" +
+                            auxItem.get(SM_SO_ServiceDao.SERVICE_SEQ);
 
-            if(auxPk.equals(pk)){
-                return  i;
+            if (auxPk.equals(pk)) {
+                return i;
             }
         }
         //
@@ -182,7 +185,7 @@ public class Act027_Services_Adapter extends BaseAdapter {
             ll_bg.setBackground(context.getDrawable(R.drawable.namoa_cell_8));
         }
         //
-        if( (item.get(SM_SO_ServiceDao.SITE_CODE) != null && item.get(SM_SO_ServiceDao.SITE_CODE).length() > 0)) {
+        if ((item.get(SM_SO_ServiceDao.SITE_CODE) != null && item.get(SM_SO_ServiceDao.SITE_CODE).length() > 0)) {
             ll_zone.setVisibility(View.VISIBLE);
             //Linha abaixo, so com info de zone, é o esquema ate 06/08/18
             //tv_zone_val.setText(item.get(SM_SO_ServiceDao.ZONE_ID) + " - " + item.get(SM_SO_ServiceDao.ZONE_DESC));
@@ -193,8 +196,8 @@ public class Act027_Services_Adapter extends BaseAdapter {
             site_zone_desc += item.get(SM_SO_ServiceDao.ZONE_CODE) != null ? item.get(SM_SO_ServiceDao.ZONE_DESC) : site_zone_desc;
             tv_zone_val.setText(site_zone_desc);
             //Monta variaveis de comparação
-            String site_zone_row = item.get(SM_SO_ServiceDao.SITE_CODE) +"|"+item.get(SM_SO_ServiceDao.ZONE_CODE);
-            String site_zone_pref = ToolBox_Con.getPreference_Site_Code(context) +"|"+ToolBox_Con.getPreference_Zone_Code(context);
+            String site_zone_row = item.get(SM_SO_ServiceDao.SITE_CODE) + "|" + item.get(SM_SO_ServiceDao.ZONE_CODE);
+            String site_zone_pref = ToolBox_Con.getPreference_Site_Code(context) + "|" + ToolBox_Con.getPreference_Zone_Code(context);
             //
             if (site_zone_row.equals(site_zone_pref)) {
                 tv_zone_val.setTextColor(context.getResources().getColor(R.color.m3_namoa_onSurfaceVariant));
@@ -237,29 +240,48 @@ public class Act027_Services_Adapter extends BaseAdapter {
         int todoService = Integer.parseInt(item.get(SM_SO_ServiceDao.QTY));
         int doneServices = Integer.parseInt(item.get(Sql_Act027_001.QTY_DONE));
 
+        btn_confirm.setEnabled(checkIfIsSyncOrDifferentProccess(item));
 
         if (item.get(SM_SO_ServiceDao.STATUS).equals(Constant.SYS_STATUS_DONE)) {
-            ll_qty_item.setVisibility(View.VISIBLE);
-            tv_qty_val.setText(item.get(SM_SO_ServiceDao.STATUS));
+
+            if (item.get(Sql_Act027_002.SERVICE_WITH_COMMENT_OR_PHOTO) != null && !item.get(Sql_Act027_002.SERVICE_WITH_COMMENT_OR_PHOTO).isEmpty() && item.get(Sql_Act027_002.SERVICE_WITH_COMMENT_OR_PHOTO).equals("1")) {
+                btn_clip.setIconTint(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.m3_namoa_extended_verdeDone_seed)));
+                btn_clip.setVisibility(View.VISIBLE);
+            } else {
+                btn_clip.setVisibility(View.GONE);
+            }
+
+
+            if (doneServices == todoService && todoService > 1) {
+                ll_qty_item.setVisibility(View.VISIBLE);
+                tv_qty_val.setText(doneServices + " / " + todoService + "  -  " + ToolBox_Inf.millisecondsToString(
+                        ToolBox_Inf.dateToMilliseconds(item.get(Sql_Act027_002.SERVICE_DONE_DATE)),
+                        ToolBox_Inf.nlsDateFormat(context)
+                ));
+            } else {
+                tv_qty_val.setText(ToolBox_Inf.millisecondsToString(
+                        ToolBox_Inf.dateToMilliseconds(item.get(Sql_Act027_002.SERVICE_DONE_DATE)),
+                        ToolBox_Inf.nlsDateFormat(context)
+                ));
+            }
             tv_qty_val.setTextColor(ContextCompat.getColor(context, R.color.m3_namoa_extended_verdeDone_seed));
             iv_qty_icon.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.m3_namoa_extended_verdeDone_seed)));
+            ll_qty_item.setVisibility(View.VISIBLE);
         } else {
+            btn_clip.setIconTint(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.m3_namoa_onSurfaceVariant)));
             iv_qty_icon.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.m3_namoa_onSurfaceVariant)));
             if (todoService <= 1) {
                 ll_qty_item.setVisibility(View.GONE);
             } else {
                 if (doneServices == todoService) {
                     tv_qty_val.setTextColor(ContextCompat.getColor(context, R.color.m3_namoa_extended_verdeDone_seed));
-                    tv_qty_val.setText(item.get(SM_SO_ServiceDao.STATUS));
-                    ll_qty_item.setVisibility(View.VISIBLE);
                 } else {
-                    ll_qty_item.setVisibility(View.VISIBLE);
                     tv_qty_val.setTextColor(ContextCompat.getColor(context, R.color.m3_namoa_onSurfaceVariant));
                 }
+                ll_qty_item.setVisibility(View.VISIBLE);
             }
+            tv_qty_val.setText(doneServices + " / " + todoService);
         }
-
-        tv_qty_val.setText(doneServices + " / " + todoService);
 
 
         //Icones
@@ -270,11 +292,11 @@ public class Act027_Services_Adapter extends BaseAdapter {
             iv_flag.setVisibility(View.GONE);
         }
         /*
-        *
-        * APLICAÇÃO DO PROFILE DE  EXECUÇÃO
-        *
-        */
-        if(!hasExecutionProfile) {
+         *
+         * APLICAÇÃO DO PROFILE DE  EXECUÇÃO
+         *
+         */
+        if (!hasExecutionProfile) {
             //         ll_express.setVisibility(View.VISIBLE);
             //         btn_confirm.setImageDrawable(null);
             //        btn_confirm.setOnClickListener(null);
@@ -292,7 +314,7 @@ public class Act027_Services_Adapter extends BaseAdapter {
                     }
                 }
             });
-        }else {
+        } else {
             //
             if (item.get(SM_SO_ServiceDao.STATUS).equals(Constant.SYS_STATUS_PENDING)) {
                 btn_confirm.setVisibility(View.VISIBLE);
@@ -324,8 +346,9 @@ public class Act027_Services_Adapter extends BaseAdapter {
                     btn_confirm.setVisibility(View.VISIBLE);
                     btn_confirm.setText(hmAux_Trans.get("confirm_lbl"));
                     btn_confirm.setIcon(ContextCompat.getDrawable(context, R.drawable.baseline_done_24));
-                    btn_confirm.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.m3_namoa_primary)));
+                    btn_confirm.setBackgroundTintList(AppCompatResources.getColorStateList(context, R.drawable.button_theme_primary));
                     btn_confirm.setTextColor(ContextCompat.getColor(context, R.color.m3_namoa_surface));
+                    btn_confirm.setIconTint(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.m3_namoa_surface)));
                 } else {
 
                     if (item.get(Sql_Act027_002.START_STOP_ICON).equals(Sql_Act027_002.ACTION_PLAY)) {
@@ -334,15 +357,16 @@ public class Act027_Services_Adapter extends BaseAdapter {
                         //               btn_confirm.setImageDrawable(context.getDrawable(R.drawable.ic_play_stop_azul_ns_states));
                         btn_confirm.setVisibility(View.VISIBLE);
                         btn_confirm.setText(hmAux_Trans.get("start_lbl"));
-                        btn_confirm.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.m3_namoa_primary)));
+                        btn_confirm.setBackgroundTintList(AppCompatResources.getColorStateList(context, R.drawable.button_theme_primary));
                         btn_confirm.setIcon(ContextCompat.getDrawable(context, R.drawable.ic_baseline_play_arrow_24dp));
                         btn_confirm.setTextColor(ContextCompat.getColor(context, R.color.m3_namoa_surface));
+                        btn_confirm.setIconTint(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.m3_namoa_surface)));
                     } else if (item.get(Sql_Act027_002.START_STOP_ICON).equals(Sql_Act027_002.ACTION_STOP)) {
                         //               ll_express.setVisibility(View.VISIBLE);
                         //btn_confirm.setImageDrawable(context.getDrawable(R.drawable.ic_finaliza_play_ns_states));
                         //               btn_confirm.setImageDrawable(context.getDrawable(R.drawable.ic_play_stop_laranja_ns_states));
                         btn_confirm.setVisibility(View.VISIBLE);
-                        btn_confirm.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.namoa_amount_pipeline_background_btn)));
+                        btn_confirm.setBackgroundTintList(AppCompatResources.getColorStateList(context, R.drawable.button_theme_required));
                         btn_confirm.setText(hmAux_Trans.get("resume_lbl"));
                         btn_confirm.setIcon(ContextCompat.getDrawable(context, R.drawable.resume_48px));
                         btn_confirm.setTextColor(ContextCompat.getColor(context, R.color.m3_namoa_onSurface));
@@ -353,16 +377,15 @@ public class Act027_Services_Adapter extends BaseAdapter {
                         //              btn_confirm.setImageDrawable(context.getDrawable(R.drawable.ic_play_stop_azul_ns_states));
                         btn_confirm.setVisibility(View.VISIBLE);
                         btn_confirm.setText(hmAux_Trans.get("start_lbl"));
+                        btn_confirm.setIconTint(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.m3_namoa_surface)));
                         btn_confirm.setIcon(ContextCompat.getDrawable(context, R.drawable.ic_baseline_play_arrow_24dp));
                     }
                 }
             } else {
-                btn_confirm.setVisibility(View.GONE);
-                btn_clip.setVisibility(View.GONE);
-                btn_done.setVisibility(View.VISIBLE);
-                btn_done.setIcon(ContextCompat.getDrawable(context, R.drawable.baseline_done_24));
 
                 if (item.get(SM_SO_ServiceDao.STATUS).equals(Constant.SYS_STATUS_DONE)) {
+                    btn_done.setVisibility(View.VISIBLE);
+                    btn_done.setIcon(ContextCompat.getDrawable(context, R.drawable.baseline_done_24));
 
                     /*if (item.get(SM_SO_ServiceDao.EXEC_TYPE).equals(Constant.SO_SERVICE_TYPE_YES_NO)) {
           //              ll_express.setVisibility(View.VISIBLE);
@@ -377,10 +400,11 @@ public class Act027_Services_Adapter extends BaseAdapter {
                         ll_done_tv.setVisibility(View.VISIBLE);
                         icon_done.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.play_pause_48px));
                     }*/
-
-                    btn_done.setText(hmAux_Trans.get("done_lbl"));
-                }else {
                     btn_confirm.setVisibility(View.GONE);
+                    btn_done.setText(hmAux_Trans.get("done_lbl"));
+                } else {
+                    btn_confirm.setVisibility(View.VISIBLE);
+                    btn_confirm.setEnabled(false);
                     btn_done.setVisibility(View.GONE);
                     //btn_confirm.setVisibility(View.GONE);
                     //           ll_express.setVisibility(View.GONE);
@@ -424,6 +448,7 @@ public class Act027_Services_Adapter extends BaseAdapter {
                 }
             });
 
+
             btn_clip.setTag(item);
             btn_clip.setOnClickListener(acess_028_default);
             //
@@ -462,6 +487,23 @@ public class Act027_Services_Adapter extends BaseAdapter {
         return convertView;
     }
 
+    private boolean checkIfIsSyncOrDifferentProccess(HMAux item) {
+        return !needSync
+                &&
+                (
+                        (
+                                item.get(SM_SO_ServiceDao.STATUS).equals(Constant.SYS_STATUS_PENDING)
+                                        ||
+                                        item.get(SM_SO_ServiceDao.STATUS).equals(Constant.SYS_STATUS_PROCESS)
+                        )
+                                &&
+                                (
+                                        item.get(Sql_Act027_002.SO_STATUS).equals(Constant.SYS_STATUS_PENDING)
+                                                ||
+                                                item.get(Sql_Act027_002.SO_STATUS).equals(Constant.SYS_STATUS_PROCESS)
+                                )
+                );
+    }
 
     private View.OnClickListener acess_028_default = v -> {
         HMAux item1 = (HMAux) v.getTag();
