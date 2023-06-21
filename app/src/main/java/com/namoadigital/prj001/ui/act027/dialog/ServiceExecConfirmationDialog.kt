@@ -57,6 +57,7 @@ class ServiceExecConfirmationDialog(
         binding.apply {
             btnOk.setOnClickListener {
                 mListener.onSelected(sService, rbStartExecution.isChecked)
+                dismiss()
             }
             //
             btnCancel.setOnClickListener {

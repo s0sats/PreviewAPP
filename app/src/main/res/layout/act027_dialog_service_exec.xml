@@ -37,6 +37,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/namoa_color_dark_blue"
             android:textSize="12sp"
+            android:checked="true"
             tools:text="Direkt bestätigen" />
 
         <RadioButton

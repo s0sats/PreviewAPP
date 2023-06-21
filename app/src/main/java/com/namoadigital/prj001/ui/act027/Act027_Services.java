@@ -18,7 +18,9 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SwitchCompat;
@@ -51,6 +53,7 @@ import com.namoadigital.prj001.model.TSO_Save_Env;
 import com.namoadigital.prj001.sql.Act027_Product_List_Sql_002;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_SS;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_003;
+import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_004;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_004;
 import com.namoadigital.prj001.sql.SM_SO_Service_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Service_Sql_004;
@@ -61,6 +64,7 @@ import com.namoadigital.prj001.sql.Sql_Act027_003;
 import com.namoadigital.prj001.sql.Sql_Act027_004;
 import com.namoadigital.prj001.sql.Sql_Act027_005;
 import com.namoadigital.prj001.sql.Sql_Act027_006;
+import com.namoadigital.prj001.ui.act027.dialog.ServiceExecConfirmationDialog;
 import com.namoadigital.prj001.ui.act028.Act028_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -577,6 +581,7 @@ public class Act027_Services extends BaseFragment {
                                 Integer.parseInt(sData.get("service_seq"))
                         ).toSqlQuery()
                 );
+
                 //Tratativa para o nova ação do btn express é que igual ao btn normal...
                 //Confuso ?! kkkk Senta e chora
                 if (selection_type.equals(Act027_Main.SELECTION_EXPRESS) &&
@@ -623,6 +628,60 @@ public class Act027_Services extends BaseFragment {
             }
         }
 
+    }
+
+    private void execServiceAndCallService(SM_SO_Service_Exec serviceExec, SM_SO_Service_Exec_Task mTask) {
+        //
+        mTask.setStatus(Constant.SYS_STATUS_DONE);
+
+        String finalizeDate = ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm Z");
+        mTask.setEnd_date(finalizeDate);
+        //
+        mTask.setExec_time(Integer.parseInt(ToolBox.durationTimeValuesMinutes(mTask.getStart_date(), mTask.getEnd_date())));
+        //
+        mTask.setTask_perc(100);
+        //
+        mTask.setQty_people(1);
+        //
+        sm_so_service_exec_taskDao.addUpdateTmp(mTask);
+        //
+        /**
+         * Calling WebService
+         */
+        sm_soDao.getByString(
+                new SM_SO_Sql_009(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        mTask.getSo_prefix(),
+                        mTask.getSo_code()
+                ).toSqlQuery()
+        );
+
+        if (mTask.getTask_perc() == 100) {
+            sm_so_service_execDao.addUpdate(
+                    new SM_SO_Service_Exec_Sql_004(
+                            ToolBox_Con.getPreference_Customer_Code(context),
+                            mTask.getSo_prefix(),
+                            mTask.getSo_code(),
+                            mTask.getPrice_list_code(),
+                            mTask.getPack_code(),
+                            mTask.getPack_seq(),
+                            mTask.getCategory_price_code(),
+                            mTask.getService_code(),
+                            mTask.getService_seq(),
+                            mTask.getExec_tmp()
+                    ).toSqlQuery()
+            );
+        }
+        //
+        Act027_Main mMain = (Act027_Main) getActivity();
+        if (ToolBox_Con.isOnline(context)) {
+            //Seta flag de somente save sem sincronismo.
+            mMain.setOnly_save(true);
+            //
+            mMain.executeSerialSave(true);
+        } else {
+            Toast.makeText(context, hmAux_Trans.get("alert_offline_data_saved_msg"), Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void loadScreenToData() {
@@ -743,11 +802,28 @@ public class Act027_Services extends BaseFragment {
         );
         //
         if (sm_so_service.getExec_type().equals(Constant.SO_SERVICE_TYPE_YES_NO)) {
-            SM_SO_Service_Exec serviceExec = createExec(sm_so_service);
             //
-            SM_SO_Service_Exec_Task serviceExecTask = createTask(serviceExec);
-            //
-            sendToTask(item, String.valueOf(serviceExecTask.getExec_tmp()), String.valueOf(serviceExecTask.getTask_tmp()));
+            ServiceExecConfirmationDialog serviceExecConfirmationDialog = new ServiceExecConfirmationDialog(context,
+                    new ServiceExecConfirmationDialog.OnServiceTypeSelectListener() {
+                        @Override
+                        public void onSelected(@NonNull HMAux sService, boolean addAttachments) {
+                            SM_SO_Service_Exec serviceExec = createExec(sm_so_service);
+                            //
+                            SM_SO_Service_Exec_Task serviceExecTask = createTask(serviceExec);
+                            if (addAttachments) {
+                                sendToTask(item, String.valueOf(serviceExecTask.getExec_tmp()), String.valueOf(serviceExecTask.getTask_tmp()));
+                            }else{
+                                if (ToolBox_Inf.hasServiceSiteRestriction(context, String.valueOf(sm_so_service.getSite_code()), hmAux_Trans)) {
+                                    return;
+                                }
+                                //
+                                execServiceAndCallService(serviceExec, serviceExecTask);
+                            }
+                        }
+                    },
+                    item
+            );
+            serviceExecConfirmationDialog.show();
 
         } else {
             //Action_Start
