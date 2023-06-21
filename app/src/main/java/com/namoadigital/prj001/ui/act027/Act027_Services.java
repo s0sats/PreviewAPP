@@ -563,8 +563,7 @@ public class Act027_Services extends BaseFragment {
                                     isChecked//sw_filter != null && sw_filter.isChecked()
                             ).toSqlQuery()
                     ),
-                    mMain.hasExecutionProfile(),
-                    checkIfNeedSync()
+                    mMain.hasExecutionProfile()
             );
             //
             adp.setOnServiceSelectedListener((sData, selection_type) -> {
