@@ -438,6 +438,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         transList.add("alert_offline_data_not_saved_msg");
         transList.add("alert_offline_data_saved_ttl");
         transList.add("alert_offline_data_saved_msg");
+        transList.add("alert_offline_service_exec_msg");
         //
         transList.add("spinner_site_lbl");
         transList.add("spinner_zone_lbl");
@@ -1845,28 +1846,30 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                     progressDialog.dismiss();
                     only_save = false;
                     //
-                    ToolBox.alertMSG(
-                            context,
-                            hmAux_Trans.get("alert_so_ttl"),
-                            hmAux_Trans.get("msg_so_save_ok"),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    refreshUI();
-                                    if (isSoCreateRoomCall) {
-                                        executeSoCreateRoom();
-                                    } else {
-                                        boolean hasSerialPendency = getMd_product_serialsPendency(serialDao);
-
-                                        if (hasSerialPendency || isSerialOutdated) {
-                                            executeSerialSave(false);
-                                        }
-                                    }
-                                }
-                            },
-                            0
-                    );
-                    //refreshUI();
+//                    ToolBox.alertMSG(
+//                            context,
+//                            hmAux_Trans.get("alert_so_ttl"),
+//                            hmAux_Trans.get("msg_so_save_ok"),
+//                            new DialogInterface.OnClickListener() {
+//                                @Override
+//                                public void onClick(DialogInterface dialog, int which) {
+//                                    refreshUI();
+//                                    if (isSoCreateRoomCall) {
+//                                        executeSoCreateRoom();
+//                                    } else {
+//                                        boolean hasSerialPendency = getMd_product_serialsPendency(serialDao);
+//
+//                                        if (hasSerialPendency || isSerialOutdated) {
+//                                            executeSerialSave(false);
+//                                        }
+//                                    }
+//                                }
+//                            },
+//                            0
+//                    );
+                    Toast.makeText(context, hmAux_Trans.get("msg_so_save_ok"), Toast.LENGTH_SHORT).show();
+                    //
+                    refreshUI();
                     if (isSoCreateRoomCall) {
                         executeSoCreateRoom();
                     } else {

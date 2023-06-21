@@ -19,10 +19,11 @@ class ServiceExecConfirmationDialog(
     private val hmAux_trans  by lazy{
         var transListDialog = ArrayList<String>();
         //
+        transListDialog.add("dialog_service_execution_btn_continue")
+        transListDialog.add("dialog_service_execution_btn_cancel")
         transListDialog.add("dialog_service_execution_type_ttl")
         transListDialog.add("dialog_service_execution_direct_opt")
         transListDialog.add("dialog_service_execution_with_attachments_opt")
-
         //
         val mResourceCodeDialog = ToolBox_Inf.getResourceCode(
             context,
@@ -69,8 +70,8 @@ class ServiceExecConfirmationDialog(
 
     private fun setLabels() {
         binding.apply {
-            btnOk.text = hmAux_trans["sys_alert_btn_ok"]
-            btnCancel.text = hmAux_trans["sys_alert_btn_cancel"]
+            btnOk.text = hmAux_trans["dialog_service_execution_btn_continue"]
+            btnCancel.text = hmAux_trans["dialog_service_execution_btn_cancel"]
             tvServiceExecTtl.text = hmAux_trans["dialog_service_execution_type_ttl"]
             rbDirectExecution.text = hmAux_trans["dialog_service_execution_direct_opt"]
             rbStartExecution.text = hmAux_trans["dialog_service_execution_with_attachments_opt"]

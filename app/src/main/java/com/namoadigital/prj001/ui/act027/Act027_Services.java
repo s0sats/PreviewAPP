@@ -685,7 +685,8 @@ public class Act027_Services extends BaseFragment {
             //
             mMain.executeSerialSave(true);
         } else {
-            Toast.makeText(context, hmAux_Trans.get("alert_offline_data_saved_msg"), Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, hmAux_Trans.get("alert_offline_service_exec_msg"), Toast.LENGTH_SHORT).show();
+            mMain.refreshUI();
         }
     }
 

@@ -1,22 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:padding="@dimen/activity_vertical_margin">
 
     <TextView
         android:id="@+id/tv_service_exec_ttl"
+        style="@style/TextAppearance.Material3.HeadlineSmall"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
+        android:textColor="@color/m3_namoa_onSurface"
         app:layout_constraintStart_toStartOf="parent"
-        android:textColor="@color/m3_namoa_primary"
-        android:textStyle="bold"
-        tools:text="Leistung bestätigen?"
-        style="@style/MaterialAlertDialog.Material3.Title.Text"
-        />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Leistung bestätigen?" />
 
     <RadioGroup
         android:id="@+id/rg_service_execution_type"
@@ -33,19 +31,24 @@
 
         <RadioButton
             android:id="@+id/rb_direct_execution"
+            style="@style/TextAppearance.Material3.BodyLarge"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/namoa_color_dark_blue"
-            android:textSize="12sp"
+            android:layout_marginBottom="12dp"
+            android:buttonTint="@color/m3_namoa_primary"
             android:checked="true"
+            android:padding="12dp"
+            android:textColor="@color/m3_namoa_onSurface"
             tools:text="Direkt bestätigen" />
 
         <RadioButton
             android:id="@+id/rb_start_execution"
+            style="@style/TextAppearance.Material3.BodyLarge"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/namoa_color_dark_blue"
-            android:textSize="12sp"
+            android:buttonTint="@color/m3_namoa_primary"
+            android:padding="12dp"
+            android:textColor="@color/m3_namoa_onSurface"
             tools:text="Erweiterte optionen zur Bestätigen sehen" />
 
     </RadioGroup>
@@ -53,30 +56,34 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_cancel"
         style="@style/NamoaMaterialButtonText"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        app:layout_constraintWidth_max="wrap"
         android:layout_marginEnd="8dp"
-        tools:text="Abbrenchen"
         android:textColor="@color/m3_namoa_primary"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/btn_ok"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintStart_toStartOf="parent"
-        app:strokeColor="@color/m3_namoa_outline" />
+        app:strokeColor="@color/m3_namoa_outline"
+        tools:text="Abbrenchen" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_ok"
         style="@style/Widget.Material3.Button"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/activity_vertical_margin"
+        app:layout_constraintWidth_max="wrap"
         android:backgroundTint="@color/m3_namoa_primary"
-        tools:text="Weiter"
         android:textColor="@color/m3_namoa_onPrimary"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:strokeColor="@color/m3_namoa_outline" />
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/btn_cancel"
+        app:strokeColor="@color/m3_namoa_outline"
+        tools:text="Weiter" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
