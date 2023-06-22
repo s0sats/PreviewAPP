@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act027;
 
+import static com.namoadigital.prj001.adapter.Act027_Services_Adapter.NAVIGATE_ACT028;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -808,28 +810,36 @@ public class Act027_Services extends BaseFragment {
         //
         if (sm_so_service.getExec_type().equals(Constant.SO_SERVICE_TYPE_YES_NO)) {
             //
-            ServiceExecConfirmationDialog serviceExecConfirmationDialog = new ServiceExecConfirmationDialog(context,
-                    new ServiceExecConfirmationDialog.OnServiceTypeSelectListener() {
-                        @Override
-                        public void onSelected(@NonNull HMAux sService, boolean addAttachments) {
-                            SM_SO_Service_Exec serviceExec = createExec(sm_so_service);
-                            //
-                            SM_SO_Service_Exec_Task serviceExecTask = createTask(serviceExec);
-                            if (addAttachments) {
-                                sendToTask(item, String.valueOf(serviceExecTask.getExec_tmp()), String.valueOf(serviceExecTask.getTask_tmp()));
-                            }else{
-                                if (ToolBox_Inf.hasServiceSiteRestriction(context, String.valueOf(sm_so_service.getSite_code()), hmAux_Trans)) {
-                                    return;
-                                }
+            if(item.hasConsistentValue(NAVIGATE_ACT028)
+            && "0".equalsIgnoreCase(item.get(NAVIGATE_ACT028))) {
+                ServiceExecConfirmationDialog serviceExecConfirmationDialog = new ServiceExecConfirmationDialog(context,
+                        new ServiceExecConfirmationDialog.OnServiceTypeSelectListener() {
+                            @Override
+                            public void onSelected(@NonNull HMAux sService, boolean addAttachments) {
+                                SM_SO_Service_Exec serviceExec = createExec(sm_so_service);
                                 //
-                                execServiceAndCallService(serviceExec, serviceExecTask);
+                                SM_SO_Service_Exec_Task serviceExecTask = createTask(serviceExec);
+                                if (addAttachments) {
+                                    sendToTask(item, String.valueOf(serviceExecTask.getExec_tmp()), String.valueOf(serviceExecTask.getTask_tmp()));
+                                } else {
+                                    if (ToolBox_Inf.hasServiceSiteRestriction(context, String.valueOf(sm_so_service.getSite_code()), hmAux_Trans)) {
+                                        return;
+                                    }
+                                    //
+                                    execServiceAndCallService(serviceExec, serviceExecTask);
+                                }
                             }
-                        }
-                    },
-                    item
-            );
-            serviceExecConfirmationDialog.show();
-
+                        },
+                        item
+                );
+                serviceExecConfirmationDialog.show();
+            }else{
+                SM_SO_Service_Exec serviceExec = createExec(sm_so_service);
+                //
+                SM_SO_Service_Exec_Task serviceExecTask = createTask(serviceExec);
+                //
+                sendToTask(item, String.valueOf(serviceExecTask.getExec_tmp()), String.valueOf(serviceExecTask.getTask_tmp()));
+            }
         } else {
             //Action_Start
             SM_SO_Service_Exec execAux = sm_so_service_execDao.getByString(

@@ -41,6 +41,8 @@ public class Act027_Services_Adapter extends BaseAdapter {
     private HMAux hmAux_Trans;
     private boolean hasExecutionProfile;
 
+    public static final String NAVIGATE_ACT028 = "NAVIGATE_ACT028";
+
     public Act027_Services_Adapter(Context context, int resource, List<HMAux> source, boolean hasExecutionProfile) {
         this.context = context;
         this.resource = resource;
@@ -454,6 +456,7 @@ public class Act027_Services_Adapter extends BaseAdapter {
                     if (!item12.get(SM_SO_ServiceDao.STATUS).equals(Constant.SYS_STATUS_PENDING)
                             || !ToolBox_Inf.hasServiceSiteRestriction(context, item12.get(SM_SO_ServiceDao.SITE_CODE), hmAux_Trans)
                     ) {
+                        item12.put(NAVIGATE_ACT028, "0");
                         delegate.serviceSelected(item12, Act027_Main.SELECTION_EXPRESS);
                     }
                 }
@@ -521,6 +524,7 @@ public class Act027_Services_Adapter extends BaseAdapter {
             if (!item1.get(SM_SO_ServiceDao.STATUS).equals(Constant.SYS_STATUS_PENDING)
                     || !ToolBox_Inf.hasServiceSiteRestriction(context, item1.get(SM_SO_ServiceDao.SITE_CODE), hmAux_Trans)
             ) {
+                item1.put(NAVIGATE_ACT028, "1");
                 delegate.serviceSelected(item1, Act027_Main.SELECTION_EXPRESS);
             }
         }
