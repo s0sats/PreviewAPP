@@ -640,6 +640,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         transList.add("invalid_status_for_room_creation_ttl");
         transList.add("invalid_status_for_room_creation_msg");
         //
+        transList.add("lbl_sync_data");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,

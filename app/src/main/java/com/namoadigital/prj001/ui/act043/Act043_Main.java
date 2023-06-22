@@ -226,6 +226,8 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         transListdrawer.add("serial_ll_lbl");
         transListdrawer.add("header_ll_lbl");
         transListdrawer.add("service_edition_ll_lbl");
+        //
+        transListdrawer.add("lbl_sync_data");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
