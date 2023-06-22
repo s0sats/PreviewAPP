@@ -1,12 +1,14 @@
 package com.namoadigital.prj001.ui.act027;
 
 import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH_PHOTO;
+import static com.namoadigital.prj001.ui.act005.Act005_Main.TOOLBAR_SYNC_DATA_STATUS;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,6 +27,8 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -63,6 +67,7 @@ import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.Sync_Checklist;
+import com.namoadigital.prj001.model.TSO_Save_Env;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_SO_Approval;
 import com.namoadigital.prj001.receiver.WBR_SO_Create_Room;
@@ -105,6 +110,8 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.frag.frg_serial_edit.Frg_Serial_Edit;
 import com.namoadigital.prj001.worker.Work_DownLoad_PDF;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -153,6 +160,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     public static final int WS_PROCESS_APPROVAL_NOT = 0;
     public static final int WS_PROCESS_APPROVAL_ON_SIGNATURE = 1;
     public static final int WS_PROCESS_APPROVAL_ON_LINE = 2;
+
 
     private Context context;
     private Bundle bundle;
@@ -1774,6 +1782,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                 mSm_so.getSo_prefix(),
                 mSm_so.getSo_code()
         );
+        invalidateOptionsMenu();
 
         act027_opc_.setmSm_so(mSm_so);
         act027_opc_.loadDataToScreen();
@@ -3108,11 +3117,27 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        boolean hasSyncRequired = sm_soDao.hasSyncRequired(
+                mSm_so.getCustomer_code(),
+                mSm_so.getSo_prefix(),
+                mSm_so.getSo_code()
+        );
+
+        boolean hasUpdateRequired = mSm_so.getUpdate_required() == 1;
+
+        Drawable wrappedDrawable = setSyncIcon(hasUpdateRequired, isSoWithinTokenFile(), hasSyncRequired);
+
+
+        menu.add(0, TOOLBAR_SYNC_DATA_STATUS, 1, hmAux_Trans.get("lbl_sync_data"));
+        menu.findItem(TOOLBAR_SYNC_DATA_STATUS).setIcon(wrappedDrawable);
+        menu.findItem(TOOLBAR_SYNC_DATA_STATUS).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+
         ////LUCHE - 01/07/2021 - Removido verificação do profile de checklsit, deixando somente o SO_SHOW_ACTIONS
         if (
                 ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, Constant.PROFILE_MENU_SO_SHOW_ACTIONS) &&
-                hasExecutionProfile() &&
-                !mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_DONE)
+                        hasExecutionProfile() &&
+                        !mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_DONE)
         ) {
             menu.add(0, 3, Menu.FIRST + 4, hmAux_Trans.get("toolbar_n_form_lbl"));
             menu.findItem(3).setIcon(getResources().getDrawable(R.drawable.ic_n_form));
@@ -3120,17 +3145,83 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             menu.findItem(3).setTitle(hmAux_Trans.get("toolbar_n_form_lbl"));
         }
 
-        return super.onCreateOptionsMenu(menu);
+        return true;
+    }
+
+    @NotNull
+    private Drawable setSyncIcon(boolean hasUpdateRequired, boolean isSoWithinTokenFile, boolean hasSoSyncRequired) {
+        int icon;
+        int iconColor = 0;
+        if (hasSoSyncRequired && (isSoWithinTokenFile || hasUpdateRequired)) {
+            icon = R.drawable.ic_sync_main_menu_data;
+        } else if (hasUpdateRequired || isSoWithinTokenFile) {
+            icon = R.drawable.ic_cloud_upload;
+            iconColor = R.color.namoa_cancel_red;
+        } else if (hasSoSyncRequired) {
+            icon = R.drawable.ic_baseline_cloud_download_24;
+            iconColor = R.color.custom_yellow_sync;
+        } else {
+            iconColor = R.color.namoa_color_pipeline_origin_icon;
+            icon = R.drawable.ic_baseline_cloud_done_24;
+        }
+        //
+        Drawable wrappedDrawable = DrawableCompat.wrap(context.getDrawable(icon));
+        if (wrappedDrawable != null && iconColor > 0) {
+            DrawableCompat.setTint(wrappedDrawable.mutate(), ContextCompat.getColor(context, iconColor));
+        }
+        return wrappedDrawable;
+    }
+
+
+    public boolean isSoWithinTokenFile() {
+        try {
+            File[] soToken =
+                    ToolBox_Inf.getListOfFiles_v5(
+                            ConstantBaseApp.TOKEN_PATH,
+                            ToolBox_Inf.buildTokenPrefixWithCustomer(context, ConstantBaseApp.TOKEN_SO_PREFIX)
+                    );
+            if (soToken.length > 0) {
+                Gson gsonEnv = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
+                //
+                ArrayList<SM_SO> token_so_list =
+                        gsonEnv.fromJson(
+                                ToolBox_Inf.getContents(soToken[0]),
+                                TSO_Save_Env.class
+                        ).getSo();
+                //
+                if (token_so_list.size() == 0) {
+                    return false;
+                }
+                //
+                for (SM_SO so : token_so_list) {
+                    if (
+                            so.getCustomer_code() == ToolBox_Con.getPreference_Customer_Code(context)
+                                    && so.getSo_prefix() == mSm_so.getSo_prefix()
+                                    && so.getSo_code() == mSm_so.getSo_code()
+                    ) {
+                        return true;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        }
+        return false;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         //if (ToolBox_Inf.parameterExists(context, Constant.PARAM_CHECKLIST) && hasExecutionProfile()) {
-        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_CHECKLIST,null) && hasExecutionProfile()) {
+        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_CHECKLIST, null) && hasExecutionProfile()) {
             //
             int id = item.getItemId();
             //
             switch (id) {
+
+                case TOOLBAR_SYNC_DATA_STATUS:
+                    soSyncClick();
+                    break;
+
                 case 3:
 
                     if (currentFrag.equalsIgnoreCase(SELECTION_PRODUCT_EDIT) && act027_product_edit_.eventStatusOpen()) {
@@ -3477,6 +3568,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             ){
                 act027_opc_.loadDataToScreen();
                 act027_services_.loadDataToScreen();
+                invalidateOptionsMenu();
             }
         }
     }

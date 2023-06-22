@@ -193,7 +193,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     private static final int TOOLBAR_ENABLE_NFC = 2;
     private static final int TOOLBAR_CANCEL_NFC = 3;
     private static final int TOOLBAR_SUPPORT = 4;
-    private static final int TOOLBAR_SYNC_DATA_STATUS = 5;
+    public static final int TOOLBAR_SYNC_DATA_STATUS = 5;
     private static final int TOOLBAR_SEND_RECEIVE_DATA = 6;
     public static final int SETTINGS_FOR_DATETIME = 10001;
 
