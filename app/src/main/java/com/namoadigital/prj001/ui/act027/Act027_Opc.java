@@ -67,6 +67,7 @@ public class Act027_Opc extends BaseFragment {
     //LUCHE - 02/06/2020
     private LinearLayout ll_so_chat;
     private ImageView iv_so_chat;
+    private TextView tv_chat_title;
 
     private LinearLayout ll_so_id;
     private TextView tv_so_id_label;
@@ -194,6 +195,7 @@ public class Act027_Opc extends BaseFragment {
 
         ll_so_chat = view.findViewById(R.id.act027_opc_ll_so_chat);
         iv_so_chat = view.findViewById(R.id.act027_opc_iv_so_chat);
+        tv_chat_title = view.findViewById(R.id.act027_opc_tv_chat_title);
 
         ll_so_id = (LinearLayout) view.findViewById(R.id.act027_opc_ll_so_id);
         tv_so_id_label = (TextView) view.findViewById(R.id.act027_opc_tv_so_id_label);
@@ -565,6 +567,7 @@ public class Act027_Opc extends BaseFragment {
 
                 tv_product_title.setText(hmAux_Trans.get("product_ll_lbl"));
                 tv_approval_title.setText(hmAux_Trans.get("approval_ll_lbl"));
+                tv_chat_title.setText(hmAux_Trans.get("chat_ll_lbl"));
                 tv_services_title.setText(hmAux_Trans.get("services_ll_lbl"));
                 tv_serial_title.setText(hmAux_Trans.get("serial_ll_lbl"));
                 tv_header_title.setText(hmAux_Trans.get("header_ll_lbl"));
