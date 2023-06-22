@@ -30,6 +30,8 @@ public class Sql_Act027_002 implements Specification {
     public static final String ACTION_PLAY = "ACTION_PLAY";
     public static final String ACTION_STOP = "ACTION_STOP";
     public static final String ACTION_NONE = "ACTION_NONE";
+    public static final String SERVICE_DONE_DATE = "SERVICE_DONE_DATE";
+    public static final String SERVICE_WITH_COMMENT_OR_PHOTO = "SERVICE_WITH_COMMENT_OR_PHOTO";
 
     private long customer_code;
     private int so_prefix;
@@ -372,11 +374,52 @@ public class Sql_Act027_002 implements Specification {
                                 "      1\n" +
                                 "     ELSE\n" +
                                 "      0\n" +
-                                "     END) ANY_PARTNER " +
-                                "     \n" +
+                                "     END) ANY_PARTNER, " +
+                                "      (CASE WHEN S.STATUS = '" + Constant.SYS_STATUS_DONE + "' THEN (SELECT MAX(t.end_date)\n" +
+                                "                                FROM sm_so_service_exec_tasks t\n" +
+                                "                               WHERE t.customer_code = e.customer_code\n" +
+                                "                                AND t.so_prefix = e.so_prefix\n" +
+                                "                                AND t.so_code = e.so_code\n" +
+                                "                                AND t.price_list_code = e.price_list_code\n" +
+                                "                                AND t.pack_code = e.pack_code\n" +
+                                "                                AND t.pack_seq = e.pack_seq\n" +
+                                "                                AND t.category_price_code = e.category_price_code\n" +
+                                "                                AND t.service_code = e.service_code\n" +
+                                "                                AND t.service_seq = e.service_seq\n" +
+                                "                                AND t.exec_tmp = e.exec_tmp\n" +
+                                "                                and t.status = '" + Constant.SYS_STATUS_DONE + "')\n" +
+                                "                      ELSE NULL\n" +
+                                "                 END) " + SERVICE_DONE_DATE + "," +
+                                "\n" +
+                                "                (SELECT (CASE WHEN t.comments IS NULL AND MAX(f.file_tmp) IS NULL THEN NULL ELSE 1 END)\n" +
+                                "                 FROM sm_so_service_exec_tasks t\n" +
+                                "                 LEFT JOIN sm_so_service_exec_task_files f\n" +
+                                "                   on f.customer_code = t.customer_code\n" +
+                                "                  AND f.so_prefix = t.so_prefix\n" +
+                                "                  AND f.so_code = t.so_code\n" +
+                                "                  AND f.price_list_code = t.price_list_code\n" +
+                                "                  AND f.pack_code = t.pack_code\n" +
+                                "                  AND f.pack_seq = t.pack_seq\n" +
+                                "                  AND f.category_price_code = t.category_price_code\n" +
+                                "                  AND f.service_code = t.service_code\n" +
+                                "                  AND f.service_seq = t.service_seq\n" +
+                                "                  AND f.exec_tmp = t.exec_tmp\n" +
+                                "                  and f.task_tmp = t.task_tmp\n" +
+                                "                 WHERE t.customer_code = e.customer_code\n" +
+                                "                  AND t.so_prefix = e.so_prefix\n" +
+                                "                  AND t.so_code = e.so_code\n" +
+                                "                  AND t.price_list_code = e.price_list_code\n" +
+                                "                  AND t.pack_code = e.pack_code\n" +
+                                "                  AND t.pack_seq = e.pack_seq\n" +
+                                "                  AND t.category_price_code = e.category_price_code\n" +
+                                "                  AND t.service_code = e.service_code\n" +
+                                "                  AND t.service_seq = e.service_seq\n" +
+                                "                  AND t.exec_tmp = e.exec_tmp\n" +
+                                "                  and t.status = '" + Constant.SYS_STATUS_DONE + "') " + SERVICE_WITH_COMMENT_OR_PHOTO
+                                + "\n" +
                                 "    FROM\n" +
-                                "      "+ SM_SO_PackDao.TABLE+" p,\n" +
-                                "      "+ SM_SO_ServiceDao.TABLE+" s\n" +
+                                "      " + SM_SO_PackDao.TABLE + " p,\n" +
+                                "      " + SM_SO_ServiceDao.TABLE + " s\n" +
                                 "    LEFT JOIN  \n" +
                                 "     sm_so_service_execs e on e.customer_code =  S.customer_code\n" +
                                 "                              AND e.so_prefix = S.so_prefix\n" +

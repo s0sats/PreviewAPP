@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/activity_vertical_margin">
+
+    <TextView
+        android:id="@+id/tv_service_exec_ttl"
+        style="@style/TextAppearance.Material3.HeadlineSmall"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/m3_namoa_onSurface"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Leistung bestätigen?" />
+
+    <RadioGroup
+        android:id="@+id/rg_service_execution_type"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        app:layout_constraintBottom_toTopOf="@+id/btn_ok"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/tv_service_exec_ttl"
+        app:layout_constraintTop_toBottomOf="@id/tv_service_exec_ttl"
+        app:layout_constraintVertical_bias="0.0">
+
+        <RadioButton
+            android:id="@+id/rb_direct_execution"
+            style="@style/TextAppearance.Material3.BodyLarge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:buttonTint="@color/m3_namoa_primary"
+            android:checked="true"
+            android:padding="12dp"
+            android:textColor="@color/m3_namoa_onSurface"
+            tools:text="Direkt bestätigen" />
+
+        <RadioButton
+            android:id="@+id/rb_start_execution"
+            style="@style/TextAppearance.Material3.BodyLarge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/m3_namoa_primary"
+            android:padding="12dp"
+            android:textColor="@color/m3_namoa_onSurface"
+            tools:text="Erweiterte optionen zur Bestätigen sehen" />
+
+    </RadioGroup>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_cancel"
+        style="@style/NamoaMaterialButtonText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintWidth_max="wrap"
+        android:layout_marginEnd="8dp"
+        android:textColor="@color/m3_namoa_primary"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btn_ok"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="parent"
+        app:strokeColor="@color/m3_namoa_outline"
+        tools:text="Abbrenchen" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_ok"
+        style="@style/Widget.Material3.Button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintWidth_max="wrap"
+        android:backgroundTint="@color/m3_namoa_primary"
+        android:textColor="@color/m3_namoa_onPrimary"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/btn_cancel"
+        app:strokeColor="@color/m3_namoa_outline"
+        tools:text="Weiter" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -446,6 +446,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         transList.add("alert_offline_data_not_saved_msg");
         transList.add("alert_offline_data_saved_ttl");
         transList.add("alert_offline_data_saved_msg");
+        transList.add("alert_offline_service_exec_msg");
         //
         transList.add("spinner_site_lbl");
         transList.add("spinner_zone_lbl");
