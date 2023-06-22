@@ -62,7 +62,7 @@ public class Act027_Opc extends BaseFragment {
     private TextView tv_so_label;
 
     private TextView tv_so_prefix_code;
-    private LinearLayout ll_so_sync;
+//    private LinearLayout ll_so_sync;
 
     //LUCHE - 02/06/2020
     private LinearLayout ll_so_chat;
@@ -188,7 +188,7 @@ public class Act027_Opc extends BaseFragment {
 
         tv_so_label = (TextView) view.findViewById(R.id.act027_opc_tv_so_ttl);
 
-        ll_so_sync = (LinearLayout) view.findViewById(R.id.act027_opc_ll_so_sync);
+//        ll_so_sync = (LinearLayout) view.findViewById(R.id.act027_opc_ll_so_sync);
         tv_so_prefix_code = (TextView) view.findViewById(R.id.act027_opc_tv_so_prefix_code);
        
 
@@ -283,14 +283,14 @@ public class Act027_Opc extends BaseFragment {
         ll_approval.setOnClickListener(menuOnClickListener);
         ll_service_edition.setOnClickListener(menuOnClickListener);
 
-        ll_so_sync.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (delegate != null) {
-                    delegate.soSyncClick();
-                }
-            }
-        });
+//        ll_so_sync.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (delegate != null) {
+//                    delegate.soSyncClick();
+//                }
+//            }
+//        });
         //LUCHE - 04/06/2020
         //Clique no novo btn soChat
         ll_so_chat.setOnClickListener(new View.OnClickListener() {
@@ -371,7 +371,7 @@ public class Act027_Opc extends BaseFragment {
                 break;
             case Act027_Main.SELECTION_SYNC_SERVICE:
                 ll_services.performClick();
-                ll_so_sync.performClick();
+//                ll_so_sync.performClick();
                 break;
             case Act027_Main.SELECTION_CHAT_FLOW:
                 ll_services.performClick();
@@ -440,11 +440,11 @@ public class Act027_Opc extends BaseFragment {
             if (mSm_so != null
             && hmAux_Trans != null) {
 
-                if (mSm_so.getUpdate_required() == 1 || isSoWithinTokenFile() || hasSyncRequired()) {
-                    ll_so_sync.setBackground(getResources().getDrawable(R.drawable.stroke_yellow_states));
-                } else {
-                    ll_so_sync.setBackground(getResources().getDrawable(R.drawable.stroke_blue2_states));
-                }
+//                if (mSm_so.getUpdate_required() == 1 || isSoWithinTokenFile() || hasSyncRequired()) {
+//                    ll_so_sync.setBackground(getResources().getDrawable(R.drawable.stroke_yellow_states));
+//                } else {
+//                    ll_so_sync.setBackground(getResources().getDrawable(R.drawable.stroke_blue2_states));
+//                }
 
                 tv_so_label.setText(hmAux_Trans.get("so_lbl"));
                 tv_so_prefix_code.setText(String.valueOf(mSm_so.getSo_prefix()) + "." + mSm_so.getSo_code());
