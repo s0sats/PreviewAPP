@@ -75,6 +75,18 @@ public class Act027_Opc extends BaseFragment {
 
     private LinearLayout ll_so_desc;
     private TextView tv_so_desc;
+    private LinearLayout ll_so_create_date;
+    private TextView tv_so_create_date_lbl;
+    private TextView tv_so_create_date_val;
+    private LinearLayout ll_so_segment;
+    private TextView tv_so_segment_lbl;
+    private TextView tv_so_segment_val;
+    private LinearLayout ll_so_category;
+    private TextView tv_so_category_lbl;
+    private TextView tv_so_category_val;
+    private LinearLayout ll_so_pipeline;
+    private TextView tv_so_pipeline_lbl;
+    private TextView tv_so_pipeline_val;
 
     private TextView tv_prefix_code_label;
     private TextView tv_prefix_code_value;
@@ -190,7 +202,23 @@ public class Act027_Opc extends BaseFragment {
 
         ll_so_desc = (LinearLayout) view.findViewById(R.id.act027_opc_ll_so_desc);
         tv_so_desc = (TextView) view.findViewById(R.id.act027_opc_tv_so_desc_value);
+        //
+        ll_so_create_date = (LinearLayout) view.findViewById(R.id.act027_opc_ll_so_create_date);
+        tv_so_create_date_lbl = (TextView) view.findViewById(R.id.act027_opc_tv_so_create_date_label);
+        tv_so_create_date_val = (TextView) view.findViewById(R.id.act027_opc_tv_so_create_date_value);
 
+        ll_so_segment = (LinearLayout) view.findViewById(R.id.act027_opc_ll_so_segment);
+        tv_so_segment_lbl = (TextView) view.findViewById(R.id.act027_opc_tv_so_segment_label);
+        tv_so_segment_val = (TextView) view.findViewById(R.id.act027_opc_tv_so_segment_value);
+
+        ll_so_category = (LinearLayout) view.findViewById(R.id.act027_opc_ll_category);
+        tv_so_category_lbl = (TextView) view.findViewById(R.id.act027_opc_tv_so_category_label);
+        tv_so_category_val = (TextView) view.findViewById(R.id.act027_opc_tv_so_category_value);
+
+        ll_so_pipeline = (LinearLayout) view.findViewById(R.id.act027_opc_ll_so_pipeline);
+        tv_so_pipeline_lbl = (TextView) view.findViewById(R.id.act027_opc_tv_so_pipeline_label);
+        tv_so_pipeline_val = (TextView) view.findViewById(R.id.act027_opc_tv_so_pipeline_value);
+        //
         tv_priority_label = (TextView) view.findViewById(R.id.act027_opc_tv_priority_label);
         tv_priority_value = (TextView) view.findViewById(R.id.act027_opc_tv_priority_value);
 
@@ -438,7 +466,21 @@ public class Act027_Opc extends BaseFragment {
                 } else {
                     ll_so_desc.setVisibility(View.GONE);
                 }
-
+                //
+                setSoInfoVisibility(
+                        hmAux_Trans.get("so_create_date_lbl"),
+                        ToolBox_Inf.millisecondsToString(
+                                ToolBox_Inf.dateToMilliseconds(mSm_so.getCreate_date() != null ? mSm_so.getCreate_date() : "", ""),
+                                ToolBox_Inf.nlsDateFormat(getActivity()) + " HH:mm"
+                        ),
+                        ll_so_create_date,
+                        tv_so_create_date_lbl,
+                        tv_so_create_date_val
+                );
+                setSoInfoVisibility(hmAux_Trans.get("so_segment_lbl"), mSm_so.getSegment_desc(), ll_so_segment, tv_so_segment_lbl, tv_so_segment_val);
+                setSoInfoVisibility(hmAux_Trans.get("so_category_price_lbl"), mSm_so.getCategory_price_desc(), ll_so_category, tv_so_category_lbl, tv_so_category_val);
+                setSoInfoVisibility(hmAux_Trans.get("so_pipeline_lbl"), mSm_so.getPipeline_desc(), ll_so_pipeline, tv_so_pipeline_lbl, tv_so_pipeline_val);
+                //
                 tv_priority_label.setText(hmAux_Trans.get("priority_lbl"));
                 tv_priority_value.setText(mSm_so.getPriority_desc());
 
@@ -533,6 +575,16 @@ public class Act027_Opc extends BaseFragment {
 
                 changeTabColor();
             }
+        }
+    }
+
+    private void setSoInfoVisibility(String label, String value, LinearLayout linearLayout, TextView tvLabel, TextView tvValue ) {
+        if (value != null && value.length() > 0) {
+            linearLayout.setVisibility(View.VISIBLE);
+            tvLabel.setText(label);
+            tvValue.setText(value);
+        } else {
+            linearLayout.setVisibility(View.GONE);
         }
     }
 

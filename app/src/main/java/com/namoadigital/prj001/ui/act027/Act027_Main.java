@@ -327,6 +327,10 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         // ACT027_Opc Fragment
         transList.add("so_lbl");
         transList.add("so_id_lbl");
+        transList.add("so_create_date_lbl");
+        transList.add("so_segment_lbl");
+        transList.add("so_category_price_lbl");
+        transList.add("so_pipeline_lbl");
         transList.add("so_code_lbl");
         transList.add("product_lbl");
         transList.add("product_id_lbl");
