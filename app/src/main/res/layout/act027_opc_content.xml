@@ -54,50 +54,7 @@
                     layout_constraintWidth_default: wrap, o layout sera exibido como se fosse wrap.
                     O MELHOR DOS DOIS MUNDOS
                 -->
-                <LinearLayout
-                    android:id="@+id/act027_opc_ll_so_sync"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintWidth_default="wrap"
-                    android:background="@drawable/stroke_blue2_states"
-                    android:clickable="true"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    android:paddingLeft="15dp"
-                    android:paddingTop="4dp"
-                    android:paddingRight="15dp"
-                    android:paddingBottom="4dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/act027_opc_ll_so_chat"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="@id/act027_opc_tv_so_ttl"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:layout_marginEnd="8dp"
-                    >
 
-                    <TextView
-                        android:id="@+id/act027_opc_tv_so_prefix_code"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="5dp"
-                        android:layout_weight="1"
-                        android:clickable="false"
-                        android:focusable="false"
-                        android:gravity="center"
-                        android:text="2017.200"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <ImageView
-                        android:id="@+id/act027_opc_iv_sync_so"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:clickable="false"
-                        android:focusable="false"
-                        android:src="@drawable/ic_sync_black_24dp"
-                        android:tint="@color/namoa_dark_blue" />
-
-                </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/act027_opc_ll_so_chat"
@@ -753,6 +710,92 @@
         android:paddingLeft="5dp"
         android:paddingRight="5dp">
 
+
+        <LinearLayout
+            android:id="@+id/act027_opc_ll_service_edition"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/act027_opc_service_edition"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:maxHeight="24dp"
+                android:maxWidth="24dp"
+                android:src="@drawable/ic_power_settings_new_black_24dp"
+                android:tint="@color/padrao_MI40"
+                android:visibility="invisible" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <TextView
+                    android:id="@+id/act027_opc_tv_service_edition_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="Add Service -trad"
+                    android:textSize="@dimen/font_size_title" />
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/namoa_color_light_blue" />
+        <LinearLayout
+            android:id="@+id/act027_opc_ll_services"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/namoa_cell_9_states"
+            android:clickable="true"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/act027_opc_iv_services"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:maxHeight="24dp"
+                android:maxWidth="24dp"
+                android:src="@drawable/ic_power_settings_new_black_24dp"
+                android:tint="@color/padrao_MI40"
+                android:visibility="invisible" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/act027_opc_tv_services_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="Services"
+                    android:textSize="@dimen/font_size_title" />
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/namoa_color_light_blue" />
+
         <LinearLayout
             android:id="@+id/act027_opc_ll_approval"
             android:layout_width="match_parent"
@@ -841,91 +884,6 @@
             android:layout_height="1dp"
             android:background="@color/namoa_color_light_blue" />
 
-        <LinearLayout
-            android:id="@+id/act027_opc_ll_service_edition"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/act027_opc_service_edition"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:maxHeight="24dp"
-                android:maxWidth="24dp"
-                android:src="@drawable/ic_power_settings_new_black_24dp"
-                android:tint="@color/padrao_MI40"
-                android:visibility="invisible" />
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="visible">
-
-                <TextView
-                    android:id="@+id/act027_opc_tv_service_edition_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="10dp"
-                    android:text="Add Service -trad"
-                    android:textSize="@dimen/font_size_title" />
-
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/namoa_color_light_blue" />
-
-        <LinearLayout
-            android:id="@+id/act027_opc_ll_services"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/namoa_cell_9_states"
-            android:clickable="true"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/act027_opc_iv_services"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:maxHeight="24dp"
-                android:maxWidth="24dp"
-                android:src="@drawable/ic_power_settings_new_black_24dp"
-                android:tint="@color/padrao_MI40"
-                android:visibility="invisible" />
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/act027_opc_tv_services_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="10dp"
-                    android:text="Services"
-                    android:textSize="@dimen/font_size_title" />
-
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/namoa_color_light_blue" />
 
         <LinearLayout
             android:id="@+id/act027_opc_ll_serial"

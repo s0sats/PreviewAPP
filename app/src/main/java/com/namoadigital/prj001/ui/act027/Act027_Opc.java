@@ -61,7 +61,6 @@ public class Act027_Opc extends BaseFragment {
 
     private TextView tv_so_label;
 
-    private ImageView iv_so_sync;
     private TextView tv_so_prefix_code;
     private LinearLayout ll_so_sync;
 
@@ -191,7 +190,7 @@ public class Act027_Opc extends BaseFragment {
 
         ll_so_sync = (LinearLayout) view.findViewById(R.id.act027_opc_ll_so_sync);
         tv_so_prefix_code = (TextView) view.findViewById(R.id.act027_opc_tv_so_prefix_code);
-        iv_so_sync = (ImageView) view.findViewById(R.id.act027_opc_iv_sync_so);
+       
 
         ll_so_chat = view.findViewById(R.id.act027_opc_ll_so_chat);
         iv_so_chat = view.findViewById(R.id.act027_opc_iv_so_chat);
