@@ -853,7 +853,6 @@
         </LinearLayout>
 
         <View
-            android:id="@+id/act027_opc_v_service_edition"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/namoa_color_light_blue" />
