@@ -40,14 +40,12 @@ public class Act027_Services_Adapter extends BaseAdapter {
     private String mResource_Code;
     private HMAux hmAux_Trans;
     private boolean hasExecutionProfile;
-    private boolean needSync;
 
-    public Act027_Services_Adapter(Context context, int resource, List<HMAux> source, boolean hasExecutionProfile, boolean needSync) {
+    public Act027_Services_Adapter(Context context, int resource, List<HMAux> source, boolean hasExecutionProfile) {
         this.context = context;
         this.resource = resource;
         this.source = source;
         this.hasExecutionProfile = hasExecutionProfile;
-        this.needSync = needSync;
 
         this.mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
@@ -129,11 +127,8 @@ public class Act027_Services_Adapter extends BaseAdapter {
 
         HMAux item = source.get(position);
 
-        LinearLayout ll_bg = (LinearLayout) convertView.findViewById(R.id.act027_services_content_cell_ll_bg);
-        LinearLayout ll_done_tv = convertView.findViewById(R.id.act027_services_content_cell_layout_tv_done);
-        ImageView icon_done = convertView.findViewById(R.id.act027_services_content_cell_icon_done);
+        LinearLayout ll_bg = convertView.findViewById(R.id.act027_services_content_cell_ll_bg);
         MaterialButton btn_clip = convertView.findViewById(R.id.act027_services_content_cell_btn_clip);
-        TextView tv_done = convertView.findViewById(R.id.act027_services_content_cell_tv_done);
         //TextView exec_seq_oper =  (TextView) convertView.findViewById(R.id.act027_services_content_cell_tv_exec_seq_oper);
 //        LinearLayout ll_express = (LinearLayout) convertView.findViewById(R.id.act027_services_content_cell_ll_express);
         MaterialButton btn_confirm = convertView.findViewById(R.id.act027_services_content_cell_btn_normal);
@@ -256,12 +251,12 @@ public class Act027_Services_Adapter extends BaseAdapter {
                 ll_qty_item.setVisibility(View.VISIBLE);
                 tv_qty_val.setText(doneServices + " / " + todoService + "  -  " + ToolBox_Inf.millisecondsToString(
                         ToolBox_Inf.dateToMilliseconds(item.get(Sql_Act027_002.SERVICE_DONE_DATE)),
-                        ToolBox_Inf.nlsDateFormat(context)
+                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
                 ));
             } else {
                 tv_qty_val.setText(ToolBox_Inf.millisecondsToString(
                         ToolBox_Inf.dateToMilliseconds(item.get(Sql_Act027_002.SERVICE_DONE_DATE)),
-                        ToolBox_Inf.nlsDateFormat(context)
+                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
                 ));
             }
             tv_qty_val.setTextColor(ContextCompat.getColor(context, R.color.m3_namoa_extended_verdeDone_seed));
@@ -302,6 +297,8 @@ public class Act027_Services_Adapter extends BaseAdapter {
             //        btn_confirm.setOnClickListener(null);
             //        iv_plus.setVisibility(View.INVISIBLE);
             btn_confirm.setVisibility(View.GONE);
+            btn_clip.setVisibility(View.GONE);
+            ll_bg.setOnClickListener(null);
             //
             btn_options.setTag(item);
             btn_options.setOnClickListener(new View.OnClickListener() {
@@ -358,7 +355,7 @@ public class Act027_Services_Adapter extends BaseAdapter {
                         btn_confirm.setVisibility(View.VISIBLE);
                         btn_confirm.setText(hmAux_Trans.get("start_lbl"));
                         btn_confirm.setBackgroundTintList(AppCompatResources.getColorStateList(context, R.drawable.button_theme_primary));
-                        btn_confirm.setIcon(ContextCompat.getDrawable(context, R.drawable.ic_baseline_play_arrow_24dp));
+                        btn_confirm.setIcon(ContextCompat.getDrawable(context, R.drawable.outline_play_arrow_24));
                         btn_confirm.setTextColor(ContextCompat.getColor(context, R.color.m3_namoa_surface));
                         btn_confirm.setIconTint(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.m3_namoa_surface)));
                     } else if (item.get(Sql_Act027_002.START_STOP_ICON).equals(Sql_Act027_002.ACTION_STOP)) {
@@ -368,7 +365,7 @@ public class Act027_Services_Adapter extends BaseAdapter {
                         btn_confirm.setVisibility(View.VISIBLE);
                         btn_confirm.setBackgroundTintList(AppCompatResources.getColorStateList(context, R.drawable.button_theme_required));
                         btn_confirm.setText(hmAux_Trans.get("resume_lbl"));
-                        btn_confirm.setIcon(ContextCompat.getDrawable(context, R.drawable.resume_48px));
+                        btn_confirm.setIcon(ContextCompat.getDrawable(context, R.drawable.outline_play_arrow_24));
                         btn_confirm.setTextColor(ContextCompat.getColor(context, R.color.m3_namoa_onSurface));
                         btn_confirm.setIconTint(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.m3_namoa_onSurface)));
                     } else {
@@ -378,14 +375,16 @@ public class Act027_Services_Adapter extends BaseAdapter {
                         btn_confirm.setVisibility(View.VISIBLE);
                         btn_confirm.setText(hmAux_Trans.get("start_lbl"));
                         btn_confirm.setIconTint(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.m3_namoa_surface)));
-                        btn_confirm.setIcon(ContextCompat.getDrawable(context, R.drawable.ic_baseline_play_arrow_24dp));
+                        btn_confirm.setIcon(ContextCompat.getDrawable(context, R.drawable.outline_play_arrow_24));
                     }
                 }
             } else {
 
                 if (item.get(SM_SO_ServiceDao.STATUS).equals(Constant.SYS_STATUS_DONE)) {
                     btn_done.setVisibility(View.VISIBLE);
+                    btn_done.setIconTint(ContextCompat.getColorStateList(context, R.color.m3_namoa_extended_verdeDone_seed));
                     btn_done.setIcon(ContextCompat.getDrawable(context, R.drawable.baseline_done_24));
+                    btn_done.setTextColor(ContextCompat.getColor(context, R.color.m3_namoa_extended_verdeDone_seed));
 
                     /*if (item.get(SM_SO_ServiceDao.EXEC_TYPE).equals(Constant.SO_SERVICE_TYPE_YES_NO)) {
           //              ll_express.setVisibility(View.VISIBLE);
@@ -402,14 +401,26 @@ public class Act027_Services_Adapter extends BaseAdapter {
                     }*/
                     btn_confirm.setVisibility(View.GONE);
                     btn_done.setText(hmAux_Trans.get("done_lbl"));
-                } else {
-                    btn_confirm.setVisibility(View.VISIBLE);
-                    btn_confirm.setEnabled(false);
-                    btn_done.setVisibility(View.GONE);
+                } else if (item.get(SM_SO_ServiceDao.STATUS).equals(Constant.SYS_STATUS_CANCELLED)) {
+                    btn_confirm.setVisibility(View.GONE);
+                    btn_done.setVisibility(View.VISIBLE);
+                    btn_done.setText(hmAux_Trans.get("cancel_lbl"));
+                    btn_done.setIcon(null);
+                    btn_done.setTextColor(ContextCompat.getColor(context, android.R.color.darker_gray));
+                    btn_clip.setVisibility(View.GONE);
                     //btn_confirm.setVisibility(View.GONE);
                     //           ll_express.setVisibility(View.GONE);
                     //           btn_confirm.setImageDrawable(context.getDrawable(R.drawable.ic_ok_ns_states));
 
+                } else {
+                    btn_clip.setVisibility(View.GONE);
+                    btn_done.setVisibility(View.GONE);
+                    btn_confirm.setVisibility(View.VISIBLE);
+                    btn_confirm.setText(hmAux_Trans.get("confirm_lbl"));
+                    btn_confirm.setIcon(ContextCompat.getDrawable(context, R.drawable.baseline_done_24));
+                    btn_confirm.setBackgroundTintList(AppCompatResources.getColorStateList(context, R.drawable.button_theme_primary));
+                    btn_confirm.setTextColor(ContextCompat.getColor(context, R.color.m3_namoa_surface));
+                    btn_confirm.setIconTint(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.m3_namoa_surface)));
                 }
 
             }
@@ -488,21 +499,19 @@ public class Act027_Services_Adapter extends BaseAdapter {
     }
 
     private boolean checkIfIsSyncOrDifferentProccess(HMAux item) {
-        return !needSync
-                &&
+        return
                 (
+                        item.get(SM_SO_ServiceDao.STATUS).equals(Constant.SYS_STATUS_PENDING)
+                                ||
+                                item.get(SM_SO_ServiceDao.STATUS).equals(Constant.SYS_STATUS_PROCESS)
+                )
+                        &&
                         (
-                                item.get(SM_SO_ServiceDao.STATUS).equals(Constant.SYS_STATUS_PENDING)
+                                item.get(Sql_Act027_002.SO_STATUS).equals(Constant.SYS_STATUS_PENDING)
                                         ||
-                                        item.get(SM_SO_ServiceDao.STATUS).equals(Constant.SYS_STATUS_PROCESS)
-                        )
-                                &&
-                                (
-                                        item.get(Sql_Act027_002.SO_STATUS).equals(Constant.SYS_STATUS_PENDING)
-                                                ||
-                                                item.get(Sql_Act027_002.SO_STATUS).equals(Constant.SYS_STATUS_PROCESS)
-                                )
-                );
+                                        item.get(Sql_Act027_002.SO_STATUS).equals(Constant.SYS_STATUS_PROCESS)
+                        );
+
     }
 
     private View.OnClickListener acess_028_default = v -> {
@@ -532,6 +541,7 @@ public class Act027_Services_Adapter extends BaseAdapter {
         translateList.add("confirm_lbl");
         translateList.add("done_lbl");
         translateList.add("resume_lbl");
+        translateList.add("cancel_lbl");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
