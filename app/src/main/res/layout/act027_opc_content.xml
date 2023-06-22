@@ -861,7 +861,7 @@
             android:id="@+id/act027_opc_ll_so_chat"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/stroke_blue2_states"
+            android:background="@drawable/namoa_cell_9_states"
             android:clickable="true"
             android:orientation="horizontal">
 
