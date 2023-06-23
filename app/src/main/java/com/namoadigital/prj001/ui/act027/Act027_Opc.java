@@ -109,8 +109,8 @@ public class Act027_Opc extends BaseFragment {
     private TextView tv_tracking_label;
     private TextView tv_tracking_value;
 
-    private TextView tv_product_id_label;
-    private TextView tv_product_id_value;
+    private TextView tv_product_desc_label;
+    private TextView tv_product_desc_value;
 
     private TextView tv_desc_label;
     private TextView tv_desc_value;
@@ -247,8 +247,8 @@ public class Act027_Opc extends BaseFragment {
 //        tv_prefix_code_label = (TextView) view.findViewById(R.id.act027_opc_tv_prefix_code_label);
 //        tv_prefix_code_value = (TextView) view.findViewById(R.id.act027_opc_tv_prefix_code_value);
 
-        tv_product_id_label = (TextView) view.findViewById(R.id.act027_opc_tv_product_label);
-        tv_product_id_value = (TextView) view.findViewById(R.id.act027_opc_tv_product_value);
+        tv_product_desc_label = (TextView) view.findViewById(R.id.act027_opc_tv_product_label);
+        tv_product_desc_value = (TextView) view.findViewById(R.id.act027_opc_tv_product_value);
 
 //        tv_desc_label = (TextView) view.findViewById(R.id.act027_opc_tv_desc_label);
 //        tv_desc_value = (TextView) view.findViewById(R.id.act027_opc_tv_desc_value);
@@ -537,8 +537,8 @@ public class Act027_Opc extends BaseFragment {
                     ll_tracking.setVisibility(View.GONE);
                 }
 
-                tv_product_id_label.setText(hmAux_Trans.get("product_id_lbl"));
-                tv_product_id_value.setText(mSm_so.getProduct_id());
+                tv_product_desc_label.setText(hmAux_Trans.get("product_description_lbl"));
+                tv_product_desc_value.setText(mSm_so.getProduct_desc());
 
 //                tv_desc_label.setText(hmAux_Trans.get("product_description_lbl"));
 //                tv_desc_value.setText(mSm_so.getProduct_desc());

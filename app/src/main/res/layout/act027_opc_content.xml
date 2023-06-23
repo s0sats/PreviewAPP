@@ -230,8 +230,6 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-
                 android:orientation="horizontal">
 
                 <LinearLayout
@@ -277,8 +275,6 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-
                 android:orientation="horizontal">
 
                 <LinearLayout
@@ -519,7 +515,7 @@
                         android:layout_weight="1"
                         android:gravity="left"
                         android:textColor="@color/m3_namoa_onSurfaceVariant"
-                        tools:text="Client SO ID"
+                        tools:text="SO DESC"
                         android:textStyle="bold" />
 
                 </LinearLayout>
@@ -543,7 +539,6 @@
                 android:id="@+id/act027_opc_ll_so_create_date"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:orientation="horizontal">
 
                 <LinearLayout
@@ -633,7 +628,6 @@
                 android:id="@+id/act027_opc_ll_category"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:orientation="horizontal">
 
                 <LinearLayout
@@ -644,8 +638,8 @@
 
                     <TextView
                         android:id="@+id/act027_opc_tv_so_category_label"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="left"
                         android:textColor="@color/m3_namoa_onSurfaceVariant"
@@ -721,7 +715,6 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:orientation="horizontal">
 
                 <LinearLayout
