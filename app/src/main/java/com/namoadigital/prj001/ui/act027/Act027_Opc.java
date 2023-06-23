@@ -72,6 +72,9 @@ public class Act027_Opc extends BaseFragment {
     private LinearLayout ll_so_id;
     private TextView tv_so_id_label;
     private TextView tv_so_id_value;
+    private LinearLayout ll_client_so_id;
+    private TextView tv_client_so_id_label;
+    private TextView tv_client_so_id_value;
 
     private LinearLayout ll_so_desc;
     private TextView tv_so_desc;
@@ -200,6 +203,10 @@ public class Act027_Opc extends BaseFragment {
         ll_so_id = (LinearLayout) view.findViewById(R.id.act027_opc_ll_so_id);
         tv_so_id_label = (TextView) view.findViewById(R.id.act027_opc_tv_so_id_label);
         tv_so_id_value = (TextView) view.findViewById(R.id.act027_opc_tv_so_id_value);
+
+        ll_client_so_id = (LinearLayout) view.findViewById(R.id.act027_opc_ll_client_so_id);
+        tv_client_so_id_label = (TextView) view.findViewById(R.id.act027_opc_tv_client_so_id_label);
+        tv_client_so_id_value = (TextView) view.findViewById(R.id.act027_opc_tv_client_so_id_value);
 
         ll_so_desc = (LinearLayout) view.findViewById(R.id.act027_opc_ll_so_desc);
         tv_so_desc = (TextView) view.findViewById(R.id.act027_opc_tv_so_desc_value);
@@ -460,7 +467,9 @@ public class Act027_Opc extends BaseFragment {
                 } else {
                     ll_so_id.setVisibility(View.GONE);
                 }
-
+                //
+                setSoInfoVisibility(hmAux_Trans.get("so_client_so_id_lbl"), mSm_so.getClient_so_id(), ll_client_so_id, tv_client_so_id_label, tv_client_so_id_value);
+                //
                 if (mSm_so.getSo_desc() != null && mSm_so.getSo_desc().length() > 0) {
                     ll_so_desc.setVisibility(View.VISIBLE);
                     tv_so_desc.setText(mSm_so.getSo_desc());
