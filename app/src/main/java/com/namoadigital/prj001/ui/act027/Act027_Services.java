@@ -679,6 +679,8 @@ public class Act027_Services extends BaseFragment {
             );
         }
         //
+        sm_so_service_exec_taskDao.updateStatusOffLine(mTask);
+        //
         Act027_Main mMain = (Act027_Main) getActivity();
         if (ToolBox_Con.isOnline(context)) {
             //Seta flag de somente save sem sincronismo.

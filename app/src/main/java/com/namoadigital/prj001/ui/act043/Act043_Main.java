@@ -222,6 +222,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
 
         transListdrawer.add("product_ll_lbl");
         transListdrawer.add("approval_ll_lbl");
+        transListdrawer.add("chat_ll_lbl");
         transListdrawer.add("services_ll_lbl");
         transListdrawer.add("serial_ll_lbl");
         transListdrawer.add("header_ll_lbl");

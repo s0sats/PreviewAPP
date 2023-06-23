@@ -335,6 +335,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         // ACT027_Opc Fragment
         transList.add("so_lbl");
         transList.add("so_id_lbl");
+        transList.add("so_client_so_id_lbl");
         transList.add("so_create_date_lbl");
         transList.add("so_segment_lbl");
         transList.add("so_category_price_lbl");
@@ -353,6 +354,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
 
         transList.add("product_ll_lbl");
         transList.add("approval_ll_lbl");
+        transList.add("chat_ll_lbl");
         transList.add("services_ll_lbl");
         transList.add("serial_ll_lbl");
         transList.add("header_ll_lbl");

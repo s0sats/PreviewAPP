@@ -67,10 +67,14 @@ public class Act027_Opc extends BaseFragment {
     //LUCHE - 02/06/2020
     private LinearLayout ll_so_chat;
     private ImageView iv_so_chat;
+    private TextView tv_chat_title;
 
     private LinearLayout ll_so_id;
     private TextView tv_so_id_label;
     private TextView tv_so_id_value;
+    private LinearLayout ll_client_so_id;
+    private TextView tv_client_so_id_label;
+    private TextView tv_client_so_id_value;
 
     private LinearLayout ll_so_desc;
     private TextView tv_so_desc;
@@ -194,10 +198,15 @@ public class Act027_Opc extends BaseFragment {
 
         ll_so_chat = view.findViewById(R.id.act027_opc_ll_so_chat);
         iv_so_chat = view.findViewById(R.id.act027_opc_iv_so_chat);
+        tv_chat_title = view.findViewById(R.id.act027_opc_tv_chat_title);
 
         ll_so_id = (LinearLayout) view.findViewById(R.id.act027_opc_ll_so_id);
         tv_so_id_label = (TextView) view.findViewById(R.id.act027_opc_tv_so_id_label);
         tv_so_id_value = (TextView) view.findViewById(R.id.act027_opc_tv_so_id_value);
+
+        ll_client_so_id = (LinearLayout) view.findViewById(R.id.act027_opc_ll_client_so_id);
+        tv_client_so_id_label = (TextView) view.findViewById(R.id.act027_opc_tv_client_so_id_label);
+        tv_client_so_id_value = (TextView) view.findViewById(R.id.act027_opc_tv_client_so_id_value);
 
         ll_so_desc = (LinearLayout) view.findViewById(R.id.act027_opc_ll_so_desc);
         tv_so_desc = (TextView) view.findViewById(R.id.act027_opc_tv_so_desc_value);
@@ -458,7 +467,9 @@ public class Act027_Opc extends BaseFragment {
                 } else {
                     ll_so_id.setVisibility(View.GONE);
                 }
-
+                //
+                setSoInfoVisibility(hmAux_Trans.get("so_client_so_id_lbl"), mSm_so.getClient_so_id(), ll_client_so_id, tv_client_so_id_label, tv_client_so_id_value);
+                //
                 if (mSm_so.getSo_desc() != null && mSm_so.getSo_desc().length() > 0) {
                     ll_so_desc.setVisibility(View.VISIBLE);
                     tv_so_desc.setText(mSm_so.getSo_desc());
@@ -565,6 +576,7 @@ public class Act027_Opc extends BaseFragment {
 
                 tv_product_title.setText(hmAux_Trans.get("product_ll_lbl"));
                 tv_approval_title.setText(hmAux_Trans.get("approval_ll_lbl"));
+                tv_chat_title.setText(hmAux_Trans.get("chat_ll_lbl"));
                 tv_services_title.setText(hmAux_Trans.get("services_ll_lbl"));
                 tv_serial_title.setText(hmAux_Trans.get("serial_ll_lbl"));
                 tv_header_title.setText(hmAux_Trans.get("header_ll_lbl"));
