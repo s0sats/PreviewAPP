@@ -194,6 +194,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         transList.add("alert_invalid_package_total_value_msg");
         transList.add("service_or_pack_filter_hint");
         transList.add("toast_no_service_selected");
+        transList.add("msg_so_results_ok");
         //Frag_Package_Detail_List
         transList.add("btn_save_package_detail");
         transList.add("btn_cancel_package_detail");
@@ -953,8 +954,15 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
 
             mSO.add(hmAux);
         }
-
-        showResultsDialog(mSO);
+        if (mSO.size() == 1
+        && mSO.get(0).hasConsistentValue(Generic_Results_Adapter.VALUE_ITEM_2)
+        && "OK".equalsIgnoreCase(mSO.get(0).get(Generic_Results_Adapter.VALUE_ITEM_2))
+        ) {
+            Toast.makeText(context, hmAux_Trans.get("msg_so_results_ok"), Toast.LENGTH_SHORT).show();
+            onAddServiceSuccessfully(mSO);
+        }else{
+            showResultsDialog(mSO);
+        }
     }
 
     private void showResultsDialog(final List<HMAux> so_express) {
@@ -999,34 +1007,38 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
             public void onClick(View v) {
                 show.dismiss();
                 //
-                MD_Product_SerialDao serialDao = new MD_Product_SerialDao(
-                        context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-                );
-                //
-                boolean hasSerialPendency = getMd_product_serialsPendency(serialDao);
-                //
-                if (hasSerialPendency) {
-                    isSyncSerialNeeded = false;
-                    callSerialService();
-                } else if (isSyncSerialNeeded) {
-                    isSyncSerialNeeded = false;
-                    callDownloadSerialService(
-                            String.valueOf(mSm_so.getProduct_code()),
-                            mSm_so.getSerial_id()
-                    );
-                } else {
-                    if (so_express.size() > 0) {
-                        if (so_express.get(0).get(Generic_Results_Adapter.VALUE_ITEM_2).equalsIgnoreCase("OK")) {
-                            reloadSO();
-                        } else {
-                            reloadSO();
-                        }
-                    }
-                }
+                onAddServiceSuccessfully(so_express);
             }
         });
+    }
+
+    private void onAddServiceSuccessfully(List<HMAux> so_express) {
+        MD_Product_SerialDao serialDao = new MD_Product_SerialDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        //
+        boolean hasSerialPendency = getMd_product_serialsPendency(serialDao);
+        //
+        if (hasSerialPendency) {
+            isSyncSerialNeeded = false;
+            callSerialService();
+        } else if (isSyncSerialNeeded) {
+            isSyncSerialNeeded = false;
+            callDownloadSerialService(
+                    String.valueOf(mSm_so.getProduct_code()),
+                    mSm_so.getSerial_id()
+            );
+        } else {
+            if (so_express.size() > 0) {
+                if (so_express.get(0).get(Generic_Results_Adapter.VALUE_ITEM_2).equalsIgnoreCase("OK")) {
+                    reloadSO();
+                } else {
+                    reloadSO();
+                }
+            }
+        }
     }
 
     private boolean getMd_product_serialsPendency(MD_Product_SerialDao serialDao) {
