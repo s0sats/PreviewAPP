@@ -336,6 +336,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         transList.add("so_lbl");
         transList.add("so_id_lbl");
         transList.add("so_client_so_id_lbl");
+        transList.add("so_client_so_desc_lbl");
         transList.add("so_create_date_lbl");
         transList.add("so_segment_lbl");
         transList.add("so_category_price_lbl");
@@ -563,6 +564,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         transList.add("partner_selection_ttl");
         transList.add("partner_search_lbl");
         transList.add("tracking_num_lbl");
+        transList.add("brand_model_color_lbl");
         transList.add("alert_goto_service_menu_ttl");
         transList.add("alert_goto_service_menu_msg");
         transList.add("quality_approval_shortcut");

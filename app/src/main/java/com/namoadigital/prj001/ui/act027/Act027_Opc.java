@@ -77,7 +77,8 @@ public class Act027_Opc extends BaseFragment {
     private TextView tv_client_so_id_value;
 
     private LinearLayout ll_so_desc;
-    private TextView tv_so_desc;
+    private TextView tv_so_desc_val;
+    private TextView tv_so_desc_lbl;
     private LinearLayout ll_so_create_date;
     private TextView tv_so_create_date_lbl;
     private TextView tv_so_create_date_val;
@@ -117,6 +118,7 @@ public class Act027_Opc extends BaseFragment {
     private TextView tv_serial_label;
     private TextView tv_serial_value;
     private TextView tv_serial_brand_model_color;
+    private TextView tv_serial_brand_model_color_lbl;
 
     private TextView tv_product_title;
     private TextView tv_services_title;
@@ -209,7 +211,8 @@ public class Act027_Opc extends BaseFragment {
         tv_client_so_id_value = (TextView) view.findViewById(R.id.act027_opc_tv_client_so_id_value);
 
         ll_so_desc = (LinearLayout) view.findViewById(R.id.act027_opc_ll_so_desc);
-        tv_so_desc = (TextView) view.findViewById(R.id.act027_opc_tv_so_desc_value);
+        tv_so_desc_val = (TextView) view.findViewById(R.id.act027_opc_tv_so_desc_value);
+        tv_so_desc_lbl = (TextView) view.findViewById(R.id.act027_opc_tv_so_desc_label);
         //
         ll_so_create_date = (LinearLayout) view.findViewById(R.id.act027_opc_ll_so_create_date);
         tv_so_create_date_lbl = (TextView) view.findViewById(R.id.act027_opc_tv_so_create_date_label);
@@ -254,6 +257,7 @@ public class Act027_Opc extends BaseFragment {
         tv_serial_value = (TextView) view.findViewById(R.id.act027_opc_tv_product_serial_value);
         //LUCHE - 12/08/2019
         tv_serial_brand_model_color = view.findViewById(R.id.act027_opc_tv_serial_brand_model_color);
+        tv_serial_brand_model_color_lbl = view.findViewById(R.id.act027_opc_tv_serial_brand_model_color_lbl);
 
         ll_product = (LinearLayout) view.findViewById(R.id.act027_opc_ll_product);
         ll_services = (LinearLayout) view.findViewById(R.id.act027_opc_ll_services);
@@ -469,10 +473,11 @@ public class Act027_Opc extends BaseFragment {
                 }
                 //
                 setSoInfoVisibility(hmAux_Trans.get("so_client_so_id_lbl"), mSm_so.getClient_so_id(), ll_client_so_id, tv_client_so_id_label, tv_client_so_id_value);
+                setSoInfoVisibility(hmAux_Trans.get("so_client_so_desc_lbl"), mSm_so.getSo_desc(), ll_so_desc, tv_so_desc_lbl, tv_so_desc_val);
                 //
                 if (mSm_so.getSo_desc() != null && mSm_so.getSo_desc().length() > 0) {
                     ll_so_desc.setVisibility(View.VISIBLE);
-                    tv_so_desc.setText(mSm_so.getSo_desc());
+                    tv_so_desc_val.setText(mSm_so.getSo_desc());
                 } else {
                     ll_so_desc.setVisibility(View.GONE);
                 }
@@ -732,6 +737,7 @@ public class Act027_Opc extends BaseFragment {
         );
         //
         tv_serial_brand_model_color.setVisibility(View.GONE);
+        tv_serial_brand_model_color_lbl.setVisibility(View.GONE);
         if(serial != null && serial.getSerial_code() > 0){
             if(serial.getBrand_code() != null || serial.getModel_code() != null || serial.getColor_code() != null) {
                 tv_serial_brand_model_color.setVisibility(View.VISIBLE);
@@ -742,6 +748,9 @@ public class Act027_Opc extends BaseFragment {
                         serial.getColor_desc()
                     )
                 );
+                tv_serial_brand_model_color_lbl.setVisibility(View.VISIBLE);
+                tv_serial_brand_model_color_lbl.setText(hmAux_Trans.get("brand_model_color_lbl"));
+
             }
         }
     }
