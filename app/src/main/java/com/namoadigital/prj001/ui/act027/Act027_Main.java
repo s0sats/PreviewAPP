@@ -246,8 +246,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        Log.d("Permissao","onCreate - Act027");
-        if(savedInstanceState != null) {
+        Log.d("Permissao", "onCreate - Act027");
+        if (savedInstanceState != null) {
             Log.d("Permissao", "bundle - Act027 \n " + savedInstanceState.toString());
         }
         iniSetup();
@@ -287,7 +287,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         ToolBox_Con.setApproval_Type(context, "");
         //Para receiver que ouve o FCM
         startStopFCMReceiver(false);
-        Log.d("Permissao","onDestroy - Act027");
+        Log.d("Permissao", "onDestroy - Act027");
 
         super.onDestroy();
     }
@@ -837,7 +837,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             setFrag(act027_services_, SELECTION_SERVICES);
         } else {
             act027_opc_.perfomClickInOption(request_set_frag);
-            request_set_frag ="";
+            request_set_frag = "";
             bundle.remove(Act027_Main.REQUEST_SET_FRAG);
         }
         //
@@ -1047,7 +1047,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     }
 
     public void executeSerialDownload() {
-        if(isSerialOutdated) {
+        if (isSerialOutdated) {
             isSerialOutdated = false;
             //
             setWs_process(Act027_Main.WS_PROCESS_SERIAL_REFRESH);
@@ -1132,7 +1132,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                 //
                 if (product_code == Long.parseLong(pk[0])
                         && serial_id.equals(pk[1])
-                        ) {
+                ) {
 
                     if (status.equals("OK")) {
                         ttl = hmAux_Trans.get("alert_save_serial_return_ttl");
@@ -1409,12 +1409,13 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         BARRIONUEVO 17-04-2020
             - Verifica qual fragmento atual para aplicar form de atualizacao de site, zona e operação.
        */
-        if(currentFrag.equalsIgnoreCase(act027_services_.getTag())) {
+        if (currentFrag.equalsIgnoreCase(act027_services_.getTag())) {
             ToolBox_Inf.buildFooterDialog(context, true);
-        }else{
+        } else {
             ToolBox_Inf.buildFooterDialog(context, false);
         }
     }
+
     /*
             BARRIONUEVO 17-04-2020
             Atualiza info do footer e info da lista
@@ -1462,7 +1463,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             if (isSoSaveLinked) {
                 isSoSaveLinked = false;
                 executeSoSave();
-            }else{
+            } else {
                 /**
                  * BARRIONUEVO 29-05-2022
                  * Em caso de erro no serviço de download de serial, a SO se mantem desatualizada
@@ -1596,11 +1597,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             if (hmAux.size() > 0) {
                 processSerialSaveResult(frgSerialEdit.getMdProductSerial().getProduct_code(), frgSerialEdit.getMdProductSerial().getSerial_id(), hmAux);
             } else {
-                if(act027_opc_.hasSyncRequired()
-                || isSerialOutdated){
+                if (act027_opc_.hasSyncRequired()
+                        || isSerialOutdated) {
                     isSerialOutdated = true;
                     executeSerialDownload();
-                }else if (isSoSaveLinked) {
+                } else if (isSoSaveLinked) {
                     isSoSaveLinked = false;
                     //
                     executeSoSave();
@@ -1615,13 +1616,13 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
 //                        hmAux_Trans.get("alert_no_serial_return_msg")
 //                );
             }
-        } else if (ws_process.equalsIgnoreCase(WS_SO_PRODUCT_EVENT_CANCEL)){
+        } else if (ws_process.equalsIgnoreCase(WS_SO_PRODUCT_EVENT_CANCEL)) {
             setWs_process("");
             cleanUpResults();
             wsResults.add(hmAux);
             showNewOptDialogProductEvent(wsResults);
             progressDialog.dismiss();
-        } else if (ws_process.equalsIgnoreCase(WS_PROCESS_SO_CREATE_CHAT_ROOM)){
+        } else if (ws_process.equalsIgnoreCase(WS_PROCESS_SO_CREATE_CHAT_ROOM)) {
             //LUCHE - 04/06/2020
             //Trata o retorno do WS de criação de room
             progressDialog.dismiss();
@@ -1638,29 +1639,29 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
      * <P></P>
      * Metodo que trata o retorno do WS_SO_Create_Room que cria a room.
      * Caso não haja retorno ou erro ao gerar obj from json, exibe msg de erro.
-     * @param wsReturn Json retornado pelo Ws com informações da response.
      *
+     * @param wsReturn Json retornado pelo Ws com informações da response.
      */
     private void processSoCreateChatRoomReturn(String wsReturn) {
-        if(wsReturn == null || wsReturn.isEmpty()){
+        if (wsReturn == null || wsReturn.isEmpty()) {
             showAlertDialog(
-                hmAux_Trans.get("creation_room_return_error_ttl"),
-                hmAux_Trans.get("creation_room_return_not_found_msg")
+                    hmAux_Trans.get("creation_room_return_error_ttl"),
+                    hmAux_Trans.get("creation_room_return_not_found_msg")
             );
-        }else{
+        } else {
             Gson gson = new GsonBuilder().serializeNulls().create();
             WS_SO_Create_Room.SoCreateRoomReturn soCreateRoomReturn = null;
-            try{
+            try {
                 soCreateRoomReturn = gson.fromJson(
-                    wsReturn,
-                    WS_SO_Create_Room.SoCreateRoomReturn.class
+                        wsReturn,
+                        WS_SO_Create_Room.SoCreateRoomReturn.class
                 );
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
-                ToolBox_Inf.registerException(getClass().getName(),e);
+                ToolBox_Inf.registerException(getClass().getName(), e);
             }
             //Se obj gerado, segue tratativa
-            if(soCreateRoomReturn != null){
+            if (soCreateRoomReturn != null) {
                 //Se OK, valida se deve ou não chamar WS de sincronia para S.O full
                 //O sync_full é necessario que o usr estava com o SCN desatualizado.
                 if (soCreateRoomReturn.getRetStatus().equals(ConstantBaseApp.MAIN_RESULT_OK)) {
@@ -1675,15 +1676,15 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                     }
                 } else {
                     showAlertDialog(
-                        hmAux_Trans.get("creation_room_return_error_ttl"),
-                        soCreateRoomReturn.getRetMsg()
+                            hmAux_Trans.get("creation_room_return_error_ttl"),
+                            soCreateRoomReturn.getRetMsg()
                     );
                 }
-            }else{
+            } else {
                 //Se obj null, houve erro ao gerar obj json
                 showAlertDialog(
-                    hmAux_Trans.get("creation_room_return_error_ttl"),
-                    hmAux_Trans.get("creation_room_return_not_found_msg")
+                        hmAux_Trans.get("creation_room_return_error_ttl"),
+                        hmAux_Trans.get("creation_room_return_not_found_msg")
                 );
             }
         }
@@ -1700,12 +1701,12 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             updateSyncChecklist();
             //
             callAct009();
-        }else if (ws_process.equalsIgnoreCase(WS_PROCESS_SERIAL_REFRESH)) {
+        } else if (ws_process.equalsIgnoreCase(WS_PROCESS_SERIAL_REFRESH)) {
             ToolBox_Inf.saveSerialFromJson(context, mLink);
             if (isSoSaveLinked) {
                 isSoSaveLinked = false;
                 executeSoSave();
-            }else{
+            } else {
                 Toast.makeText(context, hmAux_Trans.get("toast_success_on_sync_serial_msg"), Toast.LENGTH_SHORT).show();
                 resetSOSyncRequired();
                 refreshUI();
@@ -1910,7 +1911,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                                     refreshUI();
                                     boolean hasSerialPendency = getMd_product_serialsPendency(serialDao);
 
-                                    if ( hasSerialPendency || isSerialOutdated){
+                                    if (hasSerialPendency || isSerialOutdated) {
                                         executeSerialSave(false);
                                     }
                                 }
@@ -2054,7 +2055,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             //
             sos.add(mHmAux);
             //Se nao em erro, verifica se esse item tem erro.
-            if(!hasError){
+            if (!hasError) {
                 hasError = !ConstantBaseApp.MAIN_RESULT_OK.equalsIgnoreCase(fields[1]);
             }
         }
@@ -2089,7 +2090,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                     //
                     boolean hasSerialPendency = getMd_product_serialsPendency(serialDao);
 
-                    if ( hasSerialPendency || isSerialOutdated){
+                    if (hasSerialPendency || isSerialOutdated) {
                         executeSerialSave(false);
                     }
                 } else {
@@ -2109,7 +2110,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                     );
                 }
             } else {
-                showNewOptDialogApproval(sos,hasError);
+                showNewOptDialogApproval(sos, hasError);
             }
 
         } else {
@@ -2120,15 +2121,15 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     public void showNewOptDialogApproval(List<HMAux> sos, boolean hasError) {
         //LUCHE - 10/12/2021 - Solicitado que as aprovações não tenham amsi confirmação,
         // apenas toast como feedback
-        if(!hasError){
+        if (!hasError) {
             //
             ToolBox.toastMSG(
-                context,
-                hmAux_Trans.get("msg_so_save_ok")
+                    context,
+                    hmAux_Trans.get("msg_so_save_ok")
             );
             //
             refreshUI();
-        }else{
+        } else {
             final AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -2154,11 +2155,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             }
             //
             lv_results.setAdapter(
-                new Act028_Results_Adapter(
-                    context,
-                    R.layout.act028_results_adapter_cell,
-                    sos
-                )
+                    new Act028_Results_Adapter(
+                            context,
+                            R.layout.act028_results_adapter_cell,
+                            sos
+                    )
             );
 
 
@@ -2184,16 +2185,16 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                         if (auxSo.get("status").equalsIgnoreCase("Ok")) {
                             //
                             ToolBox.alertMSG(
-                                context,
-                                hmAux_Trans.get("alert_so_sync_ok_ttl"),
-                                hmAux_Trans.get("alert_so_sync_ok_msg"),
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        refreshUI();
-                                    }
-                                },
-                                0
+                                    context,
+                                    hmAux_Trans.get("alert_so_sync_ok_ttl"),
+                                    hmAux_Trans.get("alert_so_sync_ok_msg"),
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            refreshUI();
+                                        }
+                                    },
+                                    0
                             );
                             //refreshUI();
                         }
@@ -2272,10 +2273,10 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                 //
                 boolean hasSerialPendency = getMd_product_serialsPendency(serialDao);
 
-                if (hasSerialPendency){
+                if (hasSerialPendency) {
                     executeSerialSave(false);
-                }else if(act027_opc_.hasSyncRequired()
-                        || isSerialOutdated){
+                } else if (act027_opc_.hasSyncRequired()
+                        || isSerialOutdated) {
                     isSerialOutdated = true;
                     executeSerialDownload();
                 }
@@ -2431,10 +2432,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
      * efetivamente o serviço é a flag isSoCreateRoomCall.
      * Caso seja true, chama o serviço para criação da room, caso contrario, pula para o proximo WS
      * que, atualmente, é o de sincronismo da O.S
-     *
      */
     private void executeSoCreateRoom() {
-        if(isSoCreateRoomCall){
+        if (isSoCreateRoomCall) {
             //Somente quando a camada for iniciado pelo btn soChat é que as infos devem ser setada.
             //Se o WS receber tudo 0 , entenderá que é uma chamada encadeada e que não deve ser executado.
             //reseta var
@@ -2447,10 +2447,10 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             }
             //
             enableProgressDialog(
-                hmAux_Trans.get("progress_so_create_chat_room_ttl"),
-                hmAux_Trans.get("progress_so_create_chat_room_msg"),
-                hmAux_Trans.get("sys_alert_btn_cancel"),
-                hmAux_Trans.get("sys_alert_btn_ok")
+                    hmAux_Trans.get("progress_so_create_chat_room_ttl"),
+                    hmAux_Trans.get("progress_so_create_chat_room_msg"),
+                    hmAux_Trans.get("sys_alert_btn_cancel"),
+                    hmAux_Trans.get("sys_alert_btn_ok")
             );
             //
             Intent mIntent = new Intent(context, WBR_SO_Create_Room.class);
@@ -2462,7 +2462,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             mIntent.putExtras(bundle);
             //
             context.sendBroadcast(mIntent);
-        }else{
+        } else {
             executeSoSync(mSm_so.getSo_prefix(), mSm_so.getSo_code());
         }
     }
@@ -2490,7 +2490,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     @Override
     protected void processUpdateSoftware(String mLink, String mRequired) {
         super.processUpdateSoftware(mLink, mRequired);
-        if(progressDialog != null) {
+        if (progressDialog != null) {
             progressDialog.dismiss();
         }
         //
@@ -2512,7 +2512,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
 
     private <T extends BaseFragment> void setFrag(T type, String sTag) {
         Fragment fragmentByTag = fm.findFragmentByTag(sTag);
-        Log.i("FRAGMENT_NAV", "[SetFrag] Class: " +type.getClass().getName()+ " Tag: "+ sTag);
+        Log.i("FRAGMENT_NAV", "[SetFrag] Class: " + type.getClass().getName() + " Tag: " + sTag);
         if (fragmentByTag == null) {
             FragmentTransaction ft = fm.beginTransaction();
             ft.replace(R.id.act027_main_ll, type, sTag);
@@ -2567,11 +2567,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                                  *  BARRIONUEVO     03-06-2020
                                  *  Fluxo para voltar para sala se navegacao fora feita via chat
                                  */
-                                if(mRequest_act !=null
-                                && mRequest_act.equalsIgnoreCase(ConstantBaseApp.ACT035)
-                                && mSm_so.getRoom_code() != null){
+                                if (mRequest_act != null
+                                        && mRequest_act.equalsIgnoreCase(ConstantBaseApp.ACT035)
+                                        && mSm_so.getRoom_code() != null) {
                                     callAct035();
-                                }else {
+                                } else {
                                     Intent mIntent = new Intent(context, Act005_Main.class);
                                     mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                     //
@@ -2597,9 +2597,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                  * de produto evento, porem a "flag" de edição não era resetada.
                  * Para evitar q outras situações caissem no mesmo problema, coloquei a tratativa nesse ponto.
                  */
-                if( !currentFrag.equalsIgnoreCase(SELECTION_PRODUCT_EDIT)
-                    && eventEditOpenStatus == true
-                ){
+                if (!currentFrag.equalsIgnoreCase(SELECTION_PRODUCT_EDIT)
+                        && eventEditOpenStatus == true
+                ) {
                     eventEditOpenStatusTypeDialog = false;
                     setEventEditOpenStatus(false);
                 }
@@ -2752,44 +2752,44 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
      */
     @Override
     public void soChatClick() {
-        if(mSm_so.getRoom_member() == 1){
-            if(mSm_so.getRoom_code() != null && !mSm_so.getRoom_code().isEmpty()){
-                if(mSm_so.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE)) {
+        if (mSm_so.getRoom_member() == 1) {
+            if (mSm_so.getRoom_code() != null && !mSm_so.getRoom_code().isEmpty()) {
+                if (mSm_so.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE)) {
                     showAlertDialog(
-                        hmAux_Trans.get("so_done_chat_room_ttl"),
-                        hmAux_Trans.get("so_done_chat_room_msg")
+                            hmAux_Trans.get("so_done_chat_room_ttl"),
+                            hmAux_Trans.get("so_done_chat_room_msg")
                     );
-                }else{
+                } else {
                     checkSoRoomExists(mSm_so.getRoom_code());
                 }
-            }else{
+            } else {
                 //Esse cenário de sem sala e status done não deveria acontecer, mas esta tratado
-                if(mSm_so.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE)) {
+                if (mSm_so.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE)) {
                     showAlertDialog(
-                        hmAux_Trans.get("invalid_status_for_room_creation_ttl"),
-                        hmAux_Trans.get("invalid_status_for_room_creation_msg")
+                            hmAux_Trans.get("invalid_status_for_room_creation_ttl"),
+                            hmAux_Trans.get("invalid_status_for_room_creation_msg")
                     );
-                }else {
+                } else {
                     ToolBox.alertMSG_YES_NO(
-                        context,
-                        hmAux_Trans.get("so_create_room_ttl"),
-                        hmAux_Trans.get("so_create_room_confirm"),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                isSoCreateRoomCall = true;
-                                //
-                                startWsChainedCall(true);
-                            }
-                        },
-                        1
+                            context,
+                            hmAux_Trans.get("so_create_room_ttl"),
+                            hmAux_Trans.get("so_create_room_confirm"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    isSoCreateRoomCall = true;
+                                    //
+                                    startWsChainedCall(true);
+                                }
+                            },
+                            1
                     );
                 }
             }
-        }else{
+        } else {
             showAlertDialog(
-                hmAux_Trans.get("so_usr_not_room_member_ttl"),
-                hmAux_Trans.get("so_usr_not_room_member_msg")
+                    hmAux_Trans.get("so_usr_not_room_member_ttl"),
+                    hmAux_Trans.get("so_usr_not_room_member_msg")
             );
         }
     }
@@ -2801,6 +2801,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
      * agora o mesmo trecho de codigo será chamada pelo metodo soChatClick
      * O metodo verifica a conexão e caso ela exista, dispara chamada do primeiro WS service,serial_save.
      * O retono desse WS gera a chama em cadeia dos demas.
+     *
      * @param isSoSaveLinked Indica se após o save do serial, deve ser disparado o WS de So Save e demais
      */
     private void startWsChainedCall(boolean isSoSaveLinked) {
@@ -2819,22 +2820,23 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
      * <P></P>
      * Metodo que verifica se a sala da o.s já existe localmente.
      * Se exste, navega para o chat, se não, exibe msg informando que a sala não foi encontrada.
+     *
      * @param room_code RoomCode da O.S
      */
     private void checkSoRoomExists(String room_code) {
         CH_RoomDao chRoomDao = new CH_RoomDao(context);
         CH_Room chRoom = chRoomDao.getByString(
-            new CH_Room_Sql_001(
-                room_code
-            ).toSqlQuery()
+                new CH_Room_Sql_001(
+                        room_code
+                ).toSqlQuery()
         );
         //
-        if( chRoom != null && chRoom.getCustomer_code() == mSm_so.getCustomer_code()){
+        if (chRoom != null && chRoom.getCustomer_code() == mSm_so.getCustomer_code()) {
             callAct035();
-        }else{
+        } else {
             showAlertDialog(
-                hmAux_Trans.get("so_room_not_found_ttl"),
-                hmAux_Trans.get("so_room_not_found_msg")
+                    hmAux_Trans.get("so_room_not_found_ttl"),
+                    hmAux_Trans.get("so_room_not_found_msg")
             );
         }
 
@@ -2846,8 +2848,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         Bundle bundle = new Bundle();
         bundle.putString(CH_MessageDao.ROOM_CODE, mSm_so.getRoom_code());
         bundle.putLong(CH_RoomDao.CUSTOMER_CODE, mSm_so.getCustomer_code());
-        if(mRequest_act == null
-            || !mRequest_act.equalsIgnoreCase(ConstantBaseApp.ACT035)) {
+        if (mRequest_act == null
+                || !mRequest_act.equalsIgnoreCase(ConstantBaseApp.ACT035)) {
             bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT027);
         }
         //
@@ -3145,16 +3147,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
 
 
         ////LUCHE - 01/07/2021 - Removido verificação do profile de checklsit, deixando somente o SO_SHOW_ACTIONS
-        if (
-                ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, Constant.PROFILE_MENU_SO_SHOW_ACTIONS) &&
-                        hasExecutionProfile() &&
-                        !mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_DONE)
-        ) {
-            menu.add(0, 3, Menu.FIRST + 4, hmAux_Trans.get("toolbar_n_form_lbl"));
-            menu.findItem(3).setIcon(getResources().getDrawable(R.drawable.ic_n_form));
-            menu.findItem(3).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
-            menu.findItem(3).setTitle(hmAux_Trans.get("toolbar_n_form_lbl"));
-        }
+
 
         return true;
     }
@@ -3222,91 +3215,14 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        //if (ToolBox_Inf.parameterExists(context, Constant.PARAM_CHECKLIST) && hasExecutionProfile()) {
-        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_CHECKLIST, null) && hasExecutionProfile()) {
-            //
-            int id = item.getItemId();
-            //
-            switch (id) {
+        //
+        int id = item.getItemId();
+        //
+        switch (id) {
 
-                case TOOLBAR_SYNC_DATA_STATUS:
-                    soSyncClick();
-                    break;
-
-                case 3:
-
-                    if (currentFrag.equalsIgnoreCase(SELECTION_PRODUCT_EDIT) && act027_product_edit_.eventStatusOpen()) {
-
-                        ToolBox.alertMSG(
-                                context,
-                                hmAux_Trans.get("alert_event_lose_data_ttl"),
-                                hmAux_Trans.get("alert_event_lose_data_msg"),
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        act027_product_edit_.removeEventPhotosOnLeave();
-                                        //
-                                        callNFormMsg();
-                                        //
-                                        setEventEditOpenStatus(false);
-                                    }
-                                },
-                                1
-                        );
-
-                    } else {
-                        if (nFormProductList != null && nFormProductList.size() > 0) {
-                            showNFormProductDialog();
-                        } else {
-                            callNFormMsg();
-                        }
-                    }
-
-                    return true;
-
-                case 4:
-                    if (currentFrag.equalsIgnoreCase(SELECTION_PRODUCT_EDIT) && act027_product_edit_.eventStatusOpen()) {
-
-                        ToolBox.alertMSG(
-                                context,
-                                hmAux_Trans.get("alert_event_lose_data_ttl"),
-                                hmAux_Trans.get("alert_event_lose_data_msg"),
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        act027_product_edit_.removeEventPhotosOnLeave();
-                                        //
-                                        callAct021();
-                                        //
-                                        setEventEditOpenStatus(false);
-                                    }
-                                },
-                                1
-                        );
-
-                    } else {
-
-                        super.onOptionsItemSelected(item);
-
-//                        ToolBox.alertMSG(
-//                                context,
-//                                hmAux_Trans.get("exit_shortcut_ttl"),
-//                                hmAux_Trans.get("exit_shortcut_msg"),
-//                                new DialogInterface.OnClickListener() {
-//                                    @Override
-//                                    public void onClick(DialogInterface dialog, int which) {
-//                                        act027_product_edit_.removeEventPhotosOnLeave();
-//                                        //
-//                                        callAct021();
-//                                    }
-//                                },
-//                                1
-//                        );
-                    }
-
-                    //
-                    return true;
-            }
+            case TOOLBAR_SYNC_DATA_STATUS:
+                soSyncClick();
+                break;
             //
         }
         return super.onOptionsItemSelected(item);
@@ -3381,9 +3297,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 // nFormProductSelected = Long.parseLong(ss_product.getmValue().get(SearchableSpinner.CODE));
-                                if(ss_product.getmValue().size() == 0) {
+                                if (ss_product.getmValue().size() == 0) {
                                     resetHmAuxProdutcSelected();
-                                }else {
+                                } else {
                                     //
                                     nFormProductSelected = ss_product.getmValue();
                                     processNFormFlow();
@@ -3566,17 +3482,18 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     protected void processNotification_close(String mValue, String mActivity) {
         //super.processNotification_close(mValue, mActivity);
     }
+
     //region TRATIVA_FCM
     private class FCMReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             Bundle bundle = intent.getExtras();
-            if(bundle != null
+            if (bundle != null
                     && bundle.containsKey(ConstantBaseApp.SW_TYPE)
                     && bundle.getString(ConstantBaseApp.SW_TYPE).equals(ConstantBaseApp.FCM_ACTION_SM_SO_UPDATE)
                     && act027_opc_ != null
                     && act027_services_ != null
-            ){
+            ) {
                 act027_opc_.loadDataToScreen();
                 act027_services_.loadDataToScreen();
                 invalidateOptionsMenu();
@@ -3585,12 +3502,12 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     }
 
     private void startStopFCMReceiver(boolean start) {
-        if(start){
+        if (start) {
             IntentFilter filter = new IntentFilter();
             filter.addAction(ConstantBaseApp.WS_FCM);
             filter.addCategory(Intent.CATEGORY_DEFAULT);
             LocalBroadcastManager.getInstance(this).registerReceiver(fcmReceiver, filter);
-        }else{
+        } else {
             LocalBroadcastManager.getInstance(this).unregisterReceiver(fcmReceiver);
         }
     }

@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -1697,47 +1696,9 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
-        menu.add(0, 2, Menu.FIRST + 3, hmAux_Trans.get("toolbar_info_lbl"));
-        menu.findItem(2).setIcon(getResources().getDrawable(R.drawable.ic_info));
-        menu.findItem(2).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
-        menu.findItem(2).setTitle(hmAux_Trans.get("toolbar_info_lbl"));
-        //LUCHE - 01/07/2021 - Removido verificação do profile de checklsit, deixando somente o SO_SHOW_ACTIONS
-        if (
-            ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, Constant.PROFILE_MENU_SO_SHOW_ACTIONS) &&
-            hasExecutionProfile() &&
-            !so_status.equalsIgnoreCase(Constant.SYS_STATUS_DONE)
-        ) {
-            menu.add(0, 3, Menu.FIRST + 4, hmAux_Trans.get("toolbar_n_form_lbl"));
-            menu.findItem(3).setIcon(getResources().getDrawable(R.drawable.ic_n_form));
-            menu.findItem(3).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
-            menu.findItem(3).setTitle(hmAux_Trans.get("toolbar_n_form_lbl"));
-        }
-
-
-        return super.onCreateOptionsMenu(menu);
+        return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        //
-        int id = item.getItemId();
-        //
-        switch (id) {
-            case 2:
-                showInfo();
-                return true;
-            case 3:
-                if (nFormProductList != null && nFormProductList.size() > 0) {
-                    showNFormProductDialog();
-                } else {
-                    callNFormMsg();
-                }
-                return true;
-        }
-        //
-        return super.onOptionsItemSelected(item);
-    }
 
     private void loadNFormProductList() {
         nFormProductList = (ArrayList<HMAux>) productDao.query_HM(

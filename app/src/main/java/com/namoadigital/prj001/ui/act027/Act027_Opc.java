@@ -384,6 +384,7 @@ public class Act027_Opc extends BaseFragment {
                 break;
             case Act027_Main.SELECTION_SYNC_SERVICE:
                 ll_services.performClick();
+                if (delegate != null) delegate.soSyncClick();
 //                ll_so_sync.performClick();
                 break;
             case Act027_Main.SELECTION_CHAT_FLOW:
