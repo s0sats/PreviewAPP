@@ -1,6 +1,6 @@
 package com.namoadigital.prj001.ui.act027.dialog
 
-import android.app.Dialog
+import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
 import com.namoa_digital.namoa_library.util.HMAux
@@ -13,7 +13,7 @@ class ServiceExecConfirmationDialog(
     context: Context,
     private val mListener: OnServiceTypeSelectListener,
     private val sService: HMAux
-): Dialog(context)  {
+): AlertDialog(context)  {
 
     private val mResourceName = "service_exec_confirmation_dialog"
     private val hmAux_trans  by lazy{
