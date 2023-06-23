@@ -54,85 +54,348 @@
                     layout_constraintWidth_default: wrap, o layout sera exibido como se fosse wrap.
                     O MELHOR DOS DOIS MUNDOS
                 -->
+
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
                 <LinearLayout
-                    android:id="@+id/act027_opc_ll_so_sync"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintWidth_default="wrap"
-                    android:background="@drawable/stroke_blue2_states"
-                    android:clickable="true"
-                    android:gravity="center"
+                    android:layout_weight="1"
                     android:orientation="horizontal"
-                    android:paddingLeft="15dp"
-                    android:paddingTop="4dp"
-                    android:paddingRight="15dp"
-                    android:paddingBottom="4dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/act027_opc_ll_so_chat"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="@id/act027_opc_tv_so_ttl"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:layout_marginEnd="8dp"
+                    android:visibility="gone"
                     >
 
                     <TextView
-                        android:id="@+id/act027_opc_tv_so_prefix_code"
+                        android:id="@+id/act027_opc_tv_status_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginRight="5dp"
                         android:layout_weight="1"
-                        android:clickable="false"
-                        android:focusable="false"
-                        android:gravity="center"
-                        android:text="2017.200"
-                        android:textSize="16sp"
+                        android:gravity="left"
+                        android:text="Status:"
                         android:textStyle="bold" />
 
-                    <ImageView
-                        android:id="@+id/act027_opc_iv_sync_so"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:clickable="false"
-                        android:focusable="false"
-                        android:src="@drawable/ic_sync_black_24dp"
-                        android:tint="@color/namoa_dark_blue" />
-
                 </LinearLayout>
+
+                <View
+                    android:layout_width="10dp"
+                    android:layout_height="0dp"
+                    android:visibility="gone"
+                    />
 
                 <LinearLayout
-                    android:id="@+id/act027_opc_ll_so_chat"
                     android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_gravity="right"
-                    android:background="@drawable/stroke_blue2_states"
-                    android:clickable="true"
-                    android:orientation="horizontal"
-                    android:paddingLeft="15dp"
-                    android:paddingTop="4dp"
-                    android:paddingRight="15dp"
-                    android:paddingBottom="4dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/act027_opc_ll_so_sync">
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
 
-                    <ImageView
-                        android:id="@+id/act027_opc_iv_so_chat"
-                        android:layout_width="0dp"
+                    <LinearLayout
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
                         android:layout_weight="1"
-                        android:clickable="false"
-                        android:focusable="false"
-                        android:src="@drawable/ic_forum_black_24dp"
-                        />
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/act027_opc_tv_so_prefix_code"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="left"
+                            tools:text="2017.200"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="10dp"
+                        android:layout_height="0dp" />
+
+                    <TextView
+                        android:id="@+id/act027_opc_tv_status_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="right"
+                        tools:text="DONE"
+                        android:textStyle="bold" />
+
                 </LinearLayout>
-            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/act027_opc_tv_priority_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="left"
+                        android:text="Priority:"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="10dp"
+                    android:layout_height="0dp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/act027_opc_tv_priority_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="right"
+                        android:text="STANDARD" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+
+            <LinearLayout
+                android:id="@+id/act027_opc_ll_deadline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/act027_opc_tv_deadline_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="left"
+                        android:text="DeadLine"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="10dp"
+                    android:layout_height="0dp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/act027_opc_tv_deadline_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="right"
+                        android:text="01/01/2017" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/act027_opc_tv_product_serial_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="left"
+                        android:text="Serial"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="10dp"
+                    android:layout_height="0dp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/act027_opc_tv_product_serial_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="right"
+                        android:text="ABC12345" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/act027_opc_tv_serial_brand_model_color_lbl"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="left"
+                        tools:text="Modelo"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="10dp"
+                    android:layout_height="0dp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/act027_opc_tv_serial_brand_model_color"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="right"
+                        tools:text="marca|modelo|cor" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/act027_opc_ll_tracking"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/act027_opc_tv_tracking_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:text="Tracking:"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/act027_opc_tv_tracking_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:text="Abc14 \nAcgb85" />
+
+            </LinearLayout>
+
+
+
+
+
+
+
+            <LinearLayout
+                android:id="@+id/act027_opc_ll_serial_add_info"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                >
+                <TextView
+                    android:id="@+id/act027_opc_tv_serial_add_info_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    tools:text="Serial  Add Info"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/act027_opc_tv_serial_add_info_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    tools:text="Abc14 \nAcgb85"
+                    android:paddingStart="4dp"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/act027_opc_ll_billing_add_info"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                >
+                <TextView
+                    android:id="@+id/act027_opc_tv_billing_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    tools:text="Billing Add Info"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/act027_opc_tv_billing_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:text="Billy \nIdol"
+                    android:paddingStart="4dp"
+                    />
+
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/act027_opc_ll_so_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="14dp"
+
                 android:orientation="horizontal">
 
                 <LinearLayout
@@ -178,7 +441,7 @@
                 android:id="@+id/act027_opc_ll_so_desc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="14dp"
+
                 android:orientation="horizontal">
 
                 <TextView
@@ -192,9 +455,10 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/act027_opc_ll_so_create_date"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="14dp"
+
                 android:orientation="horizontal">
 
                 <LinearLayout
@@ -204,12 +468,12 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/act027_opc_tv_priority_label"
+                        android:id="@+id/act027_opc_tv_so_create_date_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="left"
-                        android:text="Priority:"
+                        android:text="SO ID"
                         android:textStyle="bold" />
 
                 </LinearLayout>
@@ -225,48 +489,21 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/act027_opc_tv_priority_value"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="right"
-                        android:text="STANDARD" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="14dp"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="horizontal"
-                    android:visibility="gone"
-                    >
-
-                    <TextView
-                        android:id="@+id/act027_opc_tv_status_label"
+                        android:id="@+id/act027_opc_tv_so_create_date_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="left"
-                        android:text="Status:"
-                        android:textStyle="bold" />
-
+                        android:text="2017 / 1" />
                 </LinearLayout>
+            </LinearLayout>
 
-                <View
-                    android:layout_width="10dp"
-                    android:layout_height="0dp"
-                    android:visibility="gone"
-                    />
+            <LinearLayout
+                android:id="@+id/act027_opc_ll_so_segment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
 
+                android:orientation="horizontal">
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -274,38 +511,12 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/act027_opc_tv_status_value"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="right"
-                        android:text="DONE"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/act027_opc_ll_deadline"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="14dp"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/act027_opc_tv_deadline_label"
+                        android:id="@+id/act027_opc_tv_so_segment_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="left"
-                        android:text="DeadLine"
+                        android:text="SO ID"
                         android:textStyle="bold" />
 
                 </LinearLayout>
@@ -319,47 +530,105 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="horizontal">
-
                     <TextView
-                        android:id="@+id/act027_opc_tv_deadline_value"
+                        android:id="@+id/act027_opc_tv_so_segment_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:gravity="right"
-                        android:text="01/01/2017" />
+                        android:gravity="left"
+                        android:text="2017 / 1" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/act027_opc_ll_category"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/act027_opc_tv_so_category_label"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_weight="1"
+                        android:gravity="left"
+                        android:text="SO ID"
+                        android:textStyle="bold" />
 
                 </LinearLayout>
 
+                <View
+                    android:layout_width="10dp"
+                    android:layout_height="0dp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/act027_opc_tv_so_category_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="left"
+                        android:text="2017 / 1" />
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/act027_opc_ll_tracking"
+                android:id="@+id/act027_opc_ll_so_pipeline"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="14dp"
-                android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/act027_opc_tv_tracking_label"
-                    android:layout_width="match_parent"
+                android:orientation="horizontal">
+                <LinearLayout
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="left"
-                    android:text="Tracking:"
-                    android:textStyle="bold" />
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/act027_opc_tv_tracking_value"
-                    android:layout_width="match_parent"
+                    <TextView
+                        android:id="@+id/act027_opc_tv_so_pipeline_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="left"
+                        android:text="SO ID"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="10dp"
+                    android:layout_height="0dp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="left"
-                    android:text="Abc14 \nAcgb85" />
-
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/act027_opc_tv_so_pipeline_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="left"
+                        android:text="2017 / 1" />
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="14dp"
+
                 android:orientation="horizontal">
 
                 <LinearLayout
@@ -400,225 +669,24 @@
                 </LinearLayout>
 
             </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:layout_marginLeft="14dp"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/act027_opc_tv_product_serial_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="left"
-                        android:text="Serial"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
-                <View
-                    android:layout_width="10dp"
-                    android:layout_height="0dp" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/act027_opc_tv_product_serial_value"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="right"
-                        android:text="ABC12345" />
-
-                </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:layout_marginLeft="14dp"
-                    android:orientation="horizontal">
-
-
-                    <TextView
-                            android:id="@+id/act027_opc_tv_serial_brand_model_color"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:text="Trad | Trad | Trad"
-                            android:textStyle="bold"
-
-                    />
-
-            </LinearLayout>
-            <LinearLayout
-                android:id="@+id/act027_opc_ll_serial_add_info"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:layout_marginStart="14dp"
-                >
-                <TextView
-                    android:id="@+id/act027_opc_tv_serial_add_info_label"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="left"
-                    tools:text="Serial  Add Info"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/act027_opc_tv_serial_add_info_value"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="left"
-                    tools:text="Abc14 \nAcgb85"
-                    android:paddingStart="4dp"
-                    />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/act027_opc_ll_billing_add_info"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:layout_marginStart="14dp"
-                >
-                <TextView
-                    android:id="@+id/act027_opc_tv_billing_label"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="left"
-                    tools:text="Billing Add Info"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/act027_opc_tv_billing_value"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="left"
-                    android:text="Billy \nIdol"
-                    android:paddingStart="4dp"
-                    />
-
-            </LinearLayout>
-
         </LinearLayout>
     </ScrollView>
 
+
     <View
+        android:id="@+id/act027_opc_v_service_edition"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/namoa_color_light_blue" />
+        android:paddingHorizontal="12dp"
+        android:background="@color/m3_namoa_outlineVariant" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp">
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp">
 
-        <LinearLayout
-            android:id="@+id/act027_opc_ll_approval"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/act027_opc_approval"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:maxHeight="24dp"
-                android:maxWidth="24dp"
-                android:src="@drawable/ic_power_settings_new_black_24dp"
-                android:tint="@color/padrao_MI40"
-                android:visibility="invisible" />
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="visible">
-
-                <TextView
-                    android:id="@+id/act027_opc_tv_approval_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="10dp"
-                    android:text="Approval"
-                    android:textSize="@dimen/font_size_title" />
-
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/namoa_color_light_blue" />
-
-        <LinearLayout
-            android:id="@+id/act027_opc_ll_product"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/namoa_cell_9_states"
-            android:clickable="true"
-            android:orientation="horizontal"
-            android:visibility="gone">
-
-            <ImageView
-                android:id="@+id/act027_opc_iv_product"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:maxHeight="24dp"
-                android:maxWidth="24dp"
-                android:src="@drawable/ic_power_settings_new_black_24dp"
-                android:tint="@color/padrao_MI40"
-                android:visibility="invisible" />
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/act027_opc_tv_product_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="10dp"
-                    android:text="Product"
-                    android:textSize="@dimen/font_size_title" />
-
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <View
-            android:id="@+id/act027_opc_v_service_edition"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/namoa_color_light_blue" />
 
         <LinearLayout
             android:id="@+id/act027_opc_ll_service_edition"
@@ -632,11 +700,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:maxHeight="24dp"
                 android:maxWidth="24dp"
-                android:src="@drawable/ic_power_settings_new_black_24dp"
-                android:tint="@color/padrao_MI40"
-                android:visibility="invisible" />
+                android:maxHeight="24dp"
+                android:paddingStart="16dp"
+                android:src="@drawable/baseline_shopping_basket_24"
+                android:visibility="visible"
+                app:tint="@color/m3_namoa_onSurfaceVariant" />
 
 
             <LinearLayout
@@ -649,19 +718,17 @@
                     android:id="@+id/act027_opc_tv_service_edition_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="10dp"
                     android:text="Add Service -trad"
-                    android:textSize="@dimen/font_size_title" />
+                    android:paddingVertical="16dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="24dp"
+                    style="@style/TextAppearance.Material3.LabelLarge"
+                    android:textColor="@color/m3_namoa_onSurfaceVariant" />
 
 
             </LinearLayout>
 
         </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/namoa_color_light_blue" />
 
         <LinearLayout
             android:id="@+id/act027_opc_ll_services"
@@ -676,11 +743,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:paddingStart="16dp"
                 android:maxHeight="24dp"
                 android:maxWidth="24dp"
-                android:src="@drawable/ic_power_settings_new_black_24dp"
-                android:tint="@color/padrao_MI40"
-                android:visibility="invisible" />
+                android:src="@drawable/ic_check_box_black_24dp"
+                app:tint="@color/m3_namoa_onSurfaceVariant"
+                android:visibility="visible" />
 
 
             <LinearLayout
@@ -692,9 +760,55 @@
                     android:id="@+id/act027_opc_tv_services_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="10dp"
                     android:text="Services"
-                    android:textSize="@dimen/font_size_title" />
+                    android:paddingVertical="16dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="24dp"
+                    style="@style/TextAppearance.Material3.LabelLarge"
+                    android:textColor="@color/m3_namoa_onSurfaceVariant" />
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/act027_opc_ll_approval"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/act027_opc_approval"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="16dp"
+                android:src="@drawable/baseline_approval_24"
+                android:layout_gravity="center"
+                android:maxHeight="24dp"
+                android:maxWidth="24dp"
+                android:visibility="visible"
+                app:tint="@color/m3_namoa_onSurfaceVariant" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <TextView
+                    android:id="@+id/act027_opc_tv_approval_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Approval"
+                    android:paddingVertical="16dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="24dp"
+                    style="@style/TextAppearance.Material3.LabelLarge"
+                    android:textColor="@color/m3_namoa_onSurfaceVariant" />
 
 
             </LinearLayout>
@@ -704,7 +818,100 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/namoa_color_light_blue" />
+            android:paddingHorizontal="8dp"
+            android:background="@color/m3_namoa_outlineVariant" />
+
+        <LinearLayout
+            android:id="@+id/act027_opc_ll_product"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/namoa_cell_9_states"
+            android:clickable="true"
+            android:orientation="horizontal"
+            android:visibility="visible">
+
+            <ImageView
+                android:id="@+id/act027_opc_iv_product"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="16dp"
+                android:layout_gravity="center"
+                android:maxHeight="24dp"
+                android:maxWidth="24dp"
+                android:src="@drawable/baseline_find_in_page_24"
+                android:visibility="visible"
+                app:tint="@color/m3_namoa_onSurfaceVariant" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/act027_opc_tv_product_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Product"
+                    android:paddingVertical="16dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="24dp"
+                    style="@style/TextAppearance.Material3.LabelLarge"
+                    android:textColor="@color/m3_namoa_onSurfaceVariant" />
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/act027_opc_ll_so_chat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/namoa_cell_9_states"
+            android:clickable="true"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/act027_opc_iv_so_chat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingStart="16dp"
+                android:maxHeight="24dp"
+                android:maxWidth="24dp"
+                android:src="@drawable/ic_forum_black_24dp"
+                android:visibility="visible"
+                app:tint="@color/m3_namoa_onSurfaceVariant" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/act027_opc_tv_chat_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Chat"
+                    android:paddingVertical="16dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="24dp"
+                    style="@style/TextAppearance.Material3.LabelLarge"
+                    android:textColor="@color/m3_namoa_onSurfaceVariant" />
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:paddingHorizontal="12dp"
+            android:background="@color/m3_namoa_outlineVariant" />
+
 
         <LinearLayout
             android:id="@+id/act027_opc_ll_serial"
@@ -717,12 +924,13 @@
                 android:id="@+id/act027_opc_iv_serial"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:src="@drawable/baseline_directions_car_24"
+                android:paddingStart="16dp"
                 android:layout_gravity="center"
                 android:maxHeight="24dp"
                 android:maxWidth="24dp"
-                android:src="@drawable/ic_power_settings_new_black_24dp"
-                android:tint="@color/padrao_MI40"
-                android:visibility="invisible" />
+                android:visibility="visible"
+                app:tint="@color/m3_namoa_onSurfaceVariant" />
 
 
             <LinearLayout
@@ -734,19 +942,17 @@
                     android:id="@+id/act027_opc_tv_serial_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="10dp"
                     android:text="Serial"
-                    android:textSize="@dimen/font_size_title" />
+                    android:paddingVertical="16dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="24dp"
+                    style="@style/TextAppearance.Material3.LabelLarge"
+                    android:textColor="@color/m3_namoa_onSurfaceVariant" />
 
 
             </LinearLayout>
 
         </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/namoa_color_light_blue" />
 
         <LinearLayout
             android:id="@+id/act027_opc_ll_header"
@@ -759,12 +965,13 @@
                 android:id="@+id/act027_opc_iv_header"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:src="@drawable/baseline_assignment_24"
                 android:layout_gravity="center"
                 android:maxHeight="24dp"
                 android:maxWidth="24dp"
-                android:src="@drawable/ic_power_settings_new_black_24dp"
-                android:tint="@color/padrao_MI40"
-                android:visibility="invisible" />
+                android:paddingStart="16dp"
+                android:visibility="visible"
+                app:tint="@color/m3_namoa_onSurfaceVariant" />
 
 
             <LinearLayout
@@ -776,20 +983,18 @@
                     android:id="@+id/act027_opc_tv_header_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="10dp"
                     android:text="Header"
-                    android:textSize="@dimen/font_size_title" />
+                    android:paddingVertical="16dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="24dp"
+                    style="@style/TextAppearance.Material3.LabelLarge"
+                    android:textColor="@color/m3_namoa_onSurfaceVariant" />
 
 
             </LinearLayout>
 
         </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/namoa_color_light_blue" />
-
+        \
     </LinearLayout>
 
 
