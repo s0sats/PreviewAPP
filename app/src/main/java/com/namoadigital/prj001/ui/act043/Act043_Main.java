@@ -1013,6 +1013,18 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
     }
 
     private void onAddServiceSuccessfully(List<HMAux> so_express) {
+        Integer edit_user = mSm_so.getEdit_user();
+        if(edit_user != null
+        && edit_user.equals(ToolBox_Con.getPreference_User_Code(context))
+        ) {
+            //todo add dialog
+            checkSerialSyncAndReload(so_express);
+        }else{
+            checkSerialSyncAndReload(so_express);
+        }
+    }
+
+    private void checkSerialSyncAndReload(List<HMAux> so_express) {
         MD_Product_SerialDao serialDao = new MD_Product_SerialDao(
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
