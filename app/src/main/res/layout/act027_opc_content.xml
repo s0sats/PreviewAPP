@@ -343,12 +343,6 @@
 
             </LinearLayout>
 
-
-
-
-
-
-
             <LinearLayout
                 android:id="@+id/act027_opc_ll_serial_add_info"
                 android:layout_width="match_parent"

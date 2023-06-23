@@ -384,6 +384,9 @@ public class Act027_Opc extends BaseFragment {
                 break;
             case Act027_Main.SELECTION_SYNC_SERVICE:
                 ll_services.performClick();
+                if (delegate != null) {
+                    delegate.soSyncClick();
+                }
 //                ll_so_sync.performClick();
                 break;
             case Act027_Main.SELECTION_CHAT_FLOW:
@@ -781,7 +784,7 @@ public class Act027_Opc extends BaseFragment {
         for (int i = 0; i < tranckingAuxList.size(); i++) {
             trackingList += " º " +
                     tranckingAuxList.get(i).get(MD_Product_Serial_TrackingDao.TRACKING);
-            if (i < tranckingAuxList.size()) {
+            if (i < tranckingAuxList.size() -1) {
                 trackingList += "\n";
             }
         }
