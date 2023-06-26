@@ -204,6 +204,9 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         transList.add("alert_invalid_pack_msg");
         transList.add("alert_remove_pack_ttl");
         transList.add("alert_remove_pack_confirm");
+        //
+        transList.add("warning_so_status_hinders_service_execution");
+        transList.add("warning_so_status_service_sync");
         //Drawer
         List<String> transListdrawer = new ArrayList<String>();
         transListdrawer.add("so_lbl");
@@ -229,6 +232,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         transListdrawer.add("service_edition_ll_lbl");
         //
         transListdrawer.add("lbl_sync_data");
+        //
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -838,6 +842,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
                     && act027_opc_ != null
             ) {
                 act027_opc_.loadDataToScreen();
+                act043_frag_preview.loadDataToScreen();
                 invalidateOptionsMenu();
             }
         }
@@ -934,6 +939,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
             Toast.makeText(context, hmAux_Trans.get("toast_success_on_sync_serial_msg"), Toast.LENGTH_SHORT).show();
             reloadSO();
         }
+        act043_frag_preview.loadDataToScreen();
 
     }
 

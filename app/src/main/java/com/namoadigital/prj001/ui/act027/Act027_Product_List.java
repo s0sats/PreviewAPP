@@ -3,30 +3,42 @@ package com.namoadigital.prj001.ui.act027;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act027_Product_List_Adapter;
+import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SM_SO_Product_EventDao;
 import com.namoadigital.prj001.model.SM_SO;
+import com.namoadigital.prj001.model.TSO_Save_Env;
 import com.namoadigital.prj001.sql.Act027_Product_List_Sql_001;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -52,6 +64,10 @@ public class Act027_Product_List extends BaseFragment {
     private OnNewEventClickListner onNewEventClickListner;
     private OnItemEventClickListner onItemEventClickListner;
     private OnRecoveryFragmentState delegate;
+    private CardView cardStatus;
+    private ImageView iv_remove_card;
+    private TextView tv_status_card;
+    private SM_SODao mSm_soDao;
 
     public interface OnNewEventClickListner {
         void onNewEventClick();
@@ -122,6 +138,8 @@ public class Act027_Product_List extends BaseFragment {
         //
         mMain = (Act027_Main) getActivity();
         //
+        mSm_soDao = new SM_SODao(context);
+        //
         ll_event_list = view.findViewById(R.id.act027_product_list_content_ll_event_list);
         //
         ll_empty_list = view.findViewById(R.id.act027_product_list_content_ll_empty_list);
@@ -144,11 +162,17 @@ public class Act027_Product_List extends BaseFragment {
         //
         btn_add_event.setText(hmAux_Trans.get("btn_add_event"));
         btn_service_preview.setText(hmAux_Trans.get("btn_search_service"));
-        if (ToolBox_Inf.profileExists(context,Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_EDIT)) {
+        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_EDIT)) {
             btn_service_preview.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             btn_service_preview.setVisibility(View.GONE);
         }
+
+        cardStatus = view.findViewById(R.id.card_alert_status);
+        tv_status_card = view.findViewById(R.id.tv_process_new_header);
+        iv_remove_card = view.findViewById(R.id.iv_nform_new_header);
+        iv_remove_card.setVisibility(View.GONE);
+        loadCardStatus();
     }
 
     private void iniAction() {
@@ -264,6 +288,7 @@ public class Act027_Product_List extends BaseFragment {
                 tv_empty_lbl.setText(hmAux_Trans.get("empty_list_lbl"));
                 //
                 loadEventList();
+                loadCardStatus();
             }else{
                 delegate.callAct005();
             }
@@ -313,5 +338,87 @@ public class Act027_Product_List extends BaseFragment {
             ll_event_list.setVisibility(View.GONE);
             ll_empty_list.setVisibility(View.VISIBLE);
         }
+    }
+
+
+    public void loadCardStatus() {
+        String update = hmAux_Trans.get("warning_so_status_service_sync");
+        if (checkStatusSO()) {
+            cardStatus.setVisibility(View.VISIBLE);
+            String text;
+
+
+            if (checkIfNeedSync()) {
+                text = hmAux_Trans.get("warning_so_status_hinders_service_execution") + ": " + hmAux_Trans.get(mSm_so.getStatus()) + " \n" + update;
+            } else {
+                text = hmAux_Trans.get("warning_so_status_hinders_service_execution") + ": " + hmAux_Trans.get(mSm_so.getStatus());
+            }
+
+            SpannableString customText = new SpannableString(text);
+            customText.setSpan(
+                    new ForegroundColorSpan(getActivity().getResources().getColor(ToolBox_Inf.getStatusColor(mSm_so.getStatus()))),
+                    text.indexOf(": ") + 1,
+                    text.replace(" \n" + update, "").length(),
+                    Spanned.SPAN_INCLUSIVE_INCLUSIVE
+            );
+
+            tv_status_card.setText(customText);
+
+        } else {
+            if (checkIfNeedSync()) {
+                cardStatus.setVisibility(View.VISIBLE);
+                tv_status_card.setText(update);
+            } else {
+                cardStatus.setVisibility(View.GONE);
+            }
+        }
+    }
+
+
+    private boolean checkStatusSO() {
+        return mSm_so.getStatus().equals(Constant.SYS_STATUS_EDIT) ||
+                mSm_so.getStatus().equals(Constant.SYS_STATUS_WAITING_BUDGET) ||
+                mSm_so.getStatus().equals(Constant.SYS_STATUS_STOP) ||
+                mSm_so.getStatus().equals(Constant.SYS_STATUS_CANCELLED);
+    }
+
+    private boolean checkIfNeedSync() {
+        return mSm_so.getUpdate_required() == 1 || isSoWithinTokenFile() || mSm_soDao.hasSyncRequired(mSm_so.getCustomer_code(), mSm_so.getSo_prefix(), mSm_so.getSo_code());
+    }
+
+    public boolean isSoWithinTokenFile() {
+        try {
+            File[] soToken =
+                    ToolBox_Inf.getListOfFiles_v5(
+                            ConstantBaseApp.TOKEN_PATH,
+                            ToolBox_Inf.buildTokenPrefixWithCustomer(context, ConstantBaseApp.TOKEN_SO_PREFIX)
+                    );
+            if (soToken.length > 0) {
+                Gson gsonEnv = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
+                //
+                ArrayList<SM_SO> token_so_list =
+                        gsonEnv.fromJson(
+                                ToolBox_Inf.getContents(soToken[0]),
+                                TSO_Save_Env.class
+                        ).getSo();
+                //
+                if (token_so_list.size() == 0) {
+                    return false;
+                }
+                //
+                for (SM_SO so : token_so_list) {
+                    if (
+                            so.getCustomer_code() == ToolBox_Con.getPreference_Customer_Code(context)
+                                    && so.getSo_prefix() == mSm_so.getSo_prefix()
+                                    && so.getSo_code() == mSm_so.getSo_code()
+                    ) {
+                        return true;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        }
+        return false;
     }
 }

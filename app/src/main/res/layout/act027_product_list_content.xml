@@ -7,6 +7,12 @@
     android:orientation="vertical"
     android:padding="5dp">
 
+
+    <include
+        android:id="@+id/card_alert_status"
+        layout="@layout/process_in_progress"
+        android:visibility="visible" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
