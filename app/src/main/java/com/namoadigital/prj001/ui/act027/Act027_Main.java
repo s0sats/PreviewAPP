@@ -99,6 +99,7 @@ import com.namoadigital.prj001.sql.Sync_Checklist_Sql_002;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act009.Act009_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
+import com.namoadigital.prj001.ui.act027.dialog.ServiceExitConfirmationDialog;
 import com.namoadigital.prj001.ui.act027.fragment.Act027_Approval;
 import com.namoadigital.prj001.ui.act028.Act028_Main;
 import com.namoadigital.prj001.ui.act032.Act032_Main;
@@ -2556,34 +2557,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                 setFrag(act027_product_list_, SELECTION_PRODUCT_LIST);
                 break;
             case SELECTION_SERVICES:
-                ToolBox.alertMSG(
-                        context,
-                        hmAux_Trans.get("alert_so_exit_title"),
-                        hmAux_Trans.get("alert_so_exit_msg"),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                /**
-                                 *  BARRIONUEVO     03-06-2020
-                                 *  Fluxo para voltar para sala se navegacao fora feita via chat
-                                 */
-                                if (mRequest_act != null
-                                        && mRequest_act.equalsIgnoreCase(ConstantBaseApp.ACT035)
-                                        && mSm_so.getRoom_code() != null) {
-                                    callAct035();
-                                } else {
-                                    Intent mIntent = new Intent(context, Act005_Main.class);
-                                    mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    //
-                                    startActivity(mIntent);
-                                    finish();
-                                }
-                            }
-                        },
-                        1,
-                        false
-
-                );
+                checkUserToActiveOS();
                 break;
             default:
                 /**
@@ -2604,6 +2578,67 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                     setEventEditOpenStatus(false);
                 }
                 act027_opc_.perfomClickInOption(Act027_Main.SELECTION_SERVICES);
+        }
+    }
+
+
+    /**
+     * Verifica se o usuário de edição é nulo ou diferente do usuário atual.
+     * Caso seja verdadeiro, exibe um diálogo de confirmação para sair.
+     * Caso contrário, mostra um dialog perguntando se ele quer ativar a OS ou somente retornar.
+     */
+    private void checkUserToActiveOS() {
+        Integer editUser = mSm_so.getEdit_user();
+        Integer userCode = Integer.valueOf(ToolBox_Con.getPreference_User_Code(context));
+
+        if (editUser == null || !editUser.equals(userCode)) {
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_so_exit_title"),
+                    hmAux_Trans.get("alert_so_exit_msg"),
+                    (dialog, which) -> {
+                        /**
+                         * BARRIONUEVO     03-06-2020
+                         * Fluxo para voltar para sala se a navegação foi feita via chat
+                         */
+                        backActivity();
+                    },
+                    1,
+                    false
+            );
+            return;
+        }
+
+        new ServiceExitConfirmationDialog(
+                context,
+                activeTask -> {
+                    if (!activeTask) {
+                        backActivity();
+                        return;
+                    }
+                    executeService(context);
+                }
+        ).show();
+    }
+
+    /**
+     * Executa o serviço para ativar a OS.
+     */
+    private void executeService(Context context) {
+        Toast.makeText(context, "Calling a service...", Toast.LENGTH_LONG).show();
+    }
+
+    private void backActivity() {
+        if (mRequest_act != null
+                && mRequest_act.equalsIgnoreCase(ConstantBaseApp.ACT035)
+                && mSm_so.getRoom_code() != null) {
+            callAct035();
+        } else {
+            Intent mIntent = new Intent(context, Act005_Main.class);
+            mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            //
+            startActivity(mIntent);
+            finish();
         }
     }
 
