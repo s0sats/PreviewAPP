@@ -964,7 +964,7 @@
                 android:maxWidth="24dp"
                 android:src="@drawable/ic_forum_black_24dp"
                 android:visibility="visible"
-                app:tint="@color/m3_namoa_onSurfaceVariant" />
+                app:tint="@color/namoa_status_process" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -979,8 +979,9 @@
                     android:paddingVertical="16dp"
                     android:paddingStart="12dp"
                     android:paddingEnd="24dp"
+                    android:textStyle="@color/namoa_status_done"
                     style="@style/TextAppearance.Material3.LabelLarge"
-                    android:textColor="@color/m3_namoa_onSurfaceVariant" />
+                    android:textColor="@color/namoa_status_process" />
 
 
             </LinearLayout>

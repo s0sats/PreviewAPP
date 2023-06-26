@@ -713,7 +713,7 @@ public class Act027_Opc extends BaseFragment {
      */
     private void defineSoChatIcon() {
         Drawable drawable = getResources().getDrawable(R.drawable.ic_outline_forum_black_24dp);
-        int iconColor = R.color.namoa_status_pending;
+        int iconColor = R.color.m3_namoa_onSurfaceVariant;
         //Define cor e icone
         if(mSm_so.getRoom_code() != null && !mSm_so.getRoom_code().isEmpty()){
             drawable = getResources().getDrawable(R.drawable.ic_forum_black_24dp);
@@ -724,6 +724,7 @@ public class Act027_Opc extends BaseFragment {
         //Seta filtro de cor no icone
         drawable.setColorFilter(context.getResources().getColor(iconColor), PorterDuff.Mode.SRC_ATOP);
         iv_so_chat.setImageDrawable(drawable);
+        tv_chat_title.setTextColor(getResources().getColor(iconColor));
     }
 
     private void setSerialBrandModelColor() {
