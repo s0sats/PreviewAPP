@@ -164,7 +164,7 @@ class WSSoStatusChange:
             )
             //
         }?: run {
-            if("OK".equals(result.so_status.get(0).ret_status, true)) {
+            if("OK".equals(result.so_status[0].ret_status, true)) {
                 result.so_status.forEach { item ->
                     val smSo = soDao.getByString(
                         SM_SO_Sql_001(
@@ -178,8 +178,8 @@ class WSSoStatusChange:
                 }
             }
             val hmAux = HMAux()
-            hmAux.put(WS_RETURN_SO_STATUS, result.so_status[0].ret_status)
-            hmAux.put(WS_RETURN_SO_MSG, result.so_status[0].ret_msg)
+            hmAux[WS_RETURN_SO_STATUS] = result.so_status[0].ret_status
+            hmAux[WS_RETURN_SO_MSG] = result.so_status[0].ret_msg
             //
             ToolBox.sendBCStatus(
                 applicationContext,
