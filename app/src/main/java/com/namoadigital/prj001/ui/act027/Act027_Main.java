@@ -1632,6 +1632,10 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             progressDialog.dismiss();
             setWs_process("");
             processSoCreateChatRoomReturn(mLink);
+        } else if (ws_process.equalsIgnoreCase(WS_PROCESS_SO_STATUS_CHANGE)) {
+            progressDialog.dismiss();
+            setWs_process("");
+            backActivity();
         } else {
             setWs_process("");
             progressDialog.dismiss();
@@ -2619,7 +2623,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                         backActivity();
                         return;
                     }
-                    executeService(context);
+                    executeSoStatusChangeService(context);
                 }
         ).show();
     }
@@ -2627,8 +2631,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     /**
      * Executa o serviço para ativar a OS.
      */
-    private void executeService(Context context) {
-        Toast.makeText(context, "Calling a service...", Toast.LENGTH_LONG).show();
+    private void executeSoStatusChangeService(Context context) {
         if (ToolBox_Con.isOnline(context)) {
             setWs_process(WS_PROCESS_SO_STATUS_CHANGE);
             //
@@ -2645,9 +2648,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             bundle.putInt(SM_SODao.SO_PREFIX, mSm_so.getSo_prefix());
             bundle.putInt(SM_SODao.SO_CODE, mSm_so.getSo_code());
             bundle.putInt(SM_SODao.SO_SCN, mSm_so.getSo_scn());
-            bundle.putString(WSSoStatusChange.WS_BUNDLE_ACTION, "");
+            bundle.putString(WSSoStatusChange.WS_BUNDLE_ACTION, WSSoStatusChange.WS_ACTION_SO_PROCESS);
             bundle.putString(WSSoStatusChange.WS_BUNDLE_RETURN_SO, "1");
-            bundle.putBoolean(Constant.PROCESS_MENU_SEND, true);
             //
             mIntent.putExtras(bundle);
             //

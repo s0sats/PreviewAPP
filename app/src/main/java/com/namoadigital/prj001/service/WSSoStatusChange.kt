@@ -97,6 +97,7 @@ class WSSoStatusChange:
             app_version = Constant.PRJ001_VERSION,
             session_app = ToolBox_Con.getPreference_Session_App(applicationContext),
             app_type = Constant.PKG_APP_TYPE_DEFAULT,
+            token = ToolBox_Inf.getToken(applicationContext),
             so_prefix = so_prefix,
             so_code = so_code,
             so_scn = so_scn,
@@ -134,7 +135,7 @@ class WSSoStatusChange:
             ToolBox.sendBCStatus(
                 applicationContext,
                 "CLOSE_ACT",
-                hmAuxTrans.get("msg_no_so_to_send"),
+                hmAuxTrans["msg_no_so_to_send"],
                 HMAux(),
                 rec.so_status[0].so_status,
                 "0"
@@ -150,7 +151,7 @@ class WSSoStatusChange:
         result.so?.let{
             ToolBox.sendBCStatus(applicationContext, "STATUS", hmAuxTrans["generic_processing_data"], "", "0")
             //
-            it.so.forEach { soFull ->
+            it.forEach { soFull ->
                 soDao.addUpdate(soFull)
             }
             //

@@ -10,6 +10,6 @@ class SO_Status_Change_Return (
 @Expose @SerializedName("so_scn") val so_scn: Int ,
 @Expose @SerializedName("so_update") val so_update: Int,
 @Expose @SerializedName("so_status") val so_status: String,
-@Expose @SerializedName("ret_status") val ret_status: String,
+@Expose @SerializedName("ret_status") val ret_status: String?,
 @Expose @SerializedName("ret_msg") val ret_msg: String?
 )

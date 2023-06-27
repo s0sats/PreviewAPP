@@ -25,4 +25,6 @@ public interface Act043_Main_View {
     void callDownloadSerialService(String productCode, String serialId);
 
     void callSerialService();
+
+    void setWs_process(String ws_process);
 }

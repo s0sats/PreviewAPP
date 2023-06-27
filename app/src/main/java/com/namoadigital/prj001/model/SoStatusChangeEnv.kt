@@ -7,6 +7,7 @@ class SoStatusChangeEnv(
     app_version: String,
     app_type: String,
     session_app: String,
+    @SerializedName("token") val token: String,
     @SerializedName("so_prefix") val so_prefix: Int,
     @SerializedName("so_code") val so_code: Int,
     @SerializedName("so_scn") val so_scn: Int,

@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act043;
 
+import static com.namoadigital.prj001.ui.act027.Act027_Main.WS_PROCESS_SO_STATUS_CHANGE;
+
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -59,6 +61,7 @@ import com.namoadigital.prj001.sql.SM_SO_Sql_018;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Opc;
+import com.namoadigital.prj001.ui.act027.dialog.ServiceExitConfirmationDialog;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -933,9 +936,11 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         } else if (ws_process.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())) {
             disableProgressDialog();
             Toast.makeText(context, hmAux_Trans.get("toast_success_on_sync_serial_msg"), Toast.LENGTH_SHORT).show();
+            checkSOonProcess();
+        } else if (ws_process.equalsIgnoreCase(WS_PROCESS_SO_STATUS_CHANGE)) {
+            disableProgressDialog();
             reloadSO();
         }
-
     }
 
     private void showResults(HMAux so) {
@@ -959,7 +964,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         && "OK".equalsIgnoreCase(mSO.get(0).get(Generic_Results_Adapter.VALUE_ITEM_2))
         ) {
             Toast.makeText(context, hmAux_Trans.get("msg_so_results_ok"), Toast.LENGTH_SHORT).show();
-            onAddServiceSuccessfully(mSO);
+            checkSerialSyncAndReload(mSO);
         }else{
             showResultsDialog(mSO);
         }
@@ -1007,21 +1012,9 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
             public void onClick(View v) {
                 show.dismiss();
                 //
-                onAddServiceSuccessfully(so_express);
+                checkSerialSyncAndReload(so_express);
             }
         });
-    }
-
-    private void onAddServiceSuccessfully(List<HMAux> so_express) {
-        Integer edit_user = mSm_so.getEdit_user();
-        if(edit_user != null
-        && edit_user.equals(ToolBox_Con.getPreference_User_Code(context))
-        ) {
-            //todo add dialog
-            checkSerialSyncAndReload(so_express);
-        }else{
-            checkSerialSyncAndReload(so_express);
-        }
     }
 
     private void checkSerialSyncAndReload(List<HMAux> so_express) {
@@ -1043,13 +1036,28 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
                     mSm_so.getSerial_id()
             );
         } else {
-            if (so_express.size() > 0) {
-                if (so_express.get(0).get(Generic_Results_Adapter.VALUE_ITEM_2).equalsIgnoreCase("OK")) {
-                    reloadSO();
-                } else {
-                    reloadSO();
-                }
-            }
+            checkSOonProcess();
+        }
+    }
+
+    private void checkSOonProcess() {
+        Integer edit_user = mSm_so.getEdit_user();
+        if(edit_user != null
+                && edit_user.equals(ToolBox_Con.getPreference_User_Code(context))
+        ) {
+            new ServiceExitConfirmationDialog(
+                    context,
+                    keepInEdition -> {
+                        if (keepInEdition) {
+                            reloadSO();
+                            return;
+                        }
+                        //
+                        mPresenter.executeSoStatusChangeService(mSm_so);
+                    }
+            ).show();
+        }else{
+            reloadSO();
         }
     }
 

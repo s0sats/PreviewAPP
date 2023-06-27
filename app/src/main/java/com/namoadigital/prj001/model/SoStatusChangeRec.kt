@@ -13,11 +13,15 @@ class SoStatusChangeRec(
 
     @Expose
     @SerializedName("link_url")
-    val link_url: String,
+    val link_url: String?,
 
     @Expose
     @SerializedName("error_msg")
-    val error_msg: String,
+    val error_msg: String?,
+
+    @Expose
+    @SerializedName("save")
+    val save: String?,
 
     @Expose
     @SerializedName("so_status")
@@ -25,5 +29,5 @@ class SoStatusChangeRec(
 
     @Expose
     @SerializedName("so")
-    val so: TSO_SO_Service_List?,
+    val so: ArrayList<SM_SO>?,
 )
