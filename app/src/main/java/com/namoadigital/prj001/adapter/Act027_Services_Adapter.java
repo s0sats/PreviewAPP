@@ -252,12 +252,12 @@ public class Act027_Services_Adapter extends BaseAdapter {
             if (doneServices == todoService && todoService > 1) {
                 ll_qty_item.setVisibility(View.VISIBLE);
                 tv_qty_val.setText(doneServices + " / " + todoService + "  -  " + ToolBox_Inf.millisecondsToString(
-                        ToolBox_Inf.dateToMilliseconds(item.get(Sql_Act027_002.SERVICE_DONE_DATE)),
+                        ToolBox_Inf.dateToMilliseconds(item.get(Sql_Act027_002.SERVICE_DONE_DATE), Constant.DATE_TO_MILLISECOND_TYPE_IGNORE_SECOND),
                         ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
                 ));
             } else {
                 tv_qty_val.setText(ToolBox_Inf.millisecondsToString(
-                        ToolBox_Inf.dateToMilliseconds(item.get(Sql_Act027_002.SERVICE_DONE_DATE)),
+                        ToolBox_Inf.dateToMilliseconds(item.get(Sql_Act027_002.SERVICE_DONE_DATE), Constant.DATE_TO_MILLISECOND_TYPE_IGNORE_SECOND),
                         ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
                 ));
             }
