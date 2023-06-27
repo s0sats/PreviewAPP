@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -15,6 +16,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.design.list.OnRememberListState;
 import com.namoadigital.prj001.model.SO_Next_Orders_Obj;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -85,6 +87,7 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
         TextView tv_prefix_code = convertView.findViewById(R.id.act047_cell_tv_prefix_code);
         TextView tv_so_id_val = convertView.findViewById(R.id.act047_cell_tv_so_id_val);
         TextView tv_status_val = convertView.findViewById(R.id.act047_cell_tv_status_val);
+        ImageView iv_block = convertView.findViewById(R.id.act047_cell_iv_block);
         TextView tv_priority_val = convertView.findViewById(R.id.act047_cell_tv_priority_val);
         TextView tv_deadline_val = convertView.findViewById(R.id.act047_cell_tv_deadline_val);
         TextView tv_serial_id = convertView.findViewById(R.id.act047_cell_tv_serial_id);
@@ -121,6 +124,10 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
         //
         tv_status_val.setText((hmAux_Trans.get(item.getStatus())));
         tv_status_val.setTextColor(context.getResources().getColor(ToolBox_Inf.getStatusColor(item.getStatus())));
+        iv_block.setVisibility(View.GONE);
+        if(item.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_STOP)){
+            iv_block.setVisibility(View.VISIBLE);
+        }
         //
         if (item.getPriority_desc() != null || !item.getPriority_desc().isEmpty()) {
             tv_priority_val.setText(item.getPriority_desc());
