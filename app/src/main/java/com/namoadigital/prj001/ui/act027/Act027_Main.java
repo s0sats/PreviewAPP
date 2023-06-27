@@ -76,8 +76,10 @@ import com.namoadigital.prj001.receiver.WBR_SO_Search;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
+import com.namoadigital.prj001.receiver.WBR_So_Status_Change;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_UserAuthor;
+import com.namoadigital.prj001.service.WSSoStatusChange;
 import com.namoadigital.prj001.service.WS_SO_Create_Room;
 import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.service.WS_SO_Search;
@@ -157,6 +159,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     public static final String WS_PROCESS_N_FORM_SYNC = "WS_PROCESS_N_FORM_SYNC";
     public static final String WS_SO_PRODUCT_EVENT_CANCEL = "WS_SO_PRODUCT_EVENT_CANCEL";
     public static final String WS_PROCESS_SO_CREATE_CHAT_ROOM = "WS_PROCESS_SO_CREATE_CHAT_ROOM";
+    public static final String WS_PROCESS_SO_STATUS_CHANGE = "WS_PROCESS_SO_STATUS_CHANGE";
 
     public static final int WS_PROCESS_APPROVAL_NOT = 0;
     public static final int WS_PROCESS_APPROVAL_ON_SIGNATURE = 1;
@@ -2611,8 +2614,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
 
         new ServiceExitConfirmationDialog(
                 context,
-                activeTask -> {
-                    if (!activeTask) {
+                keepInEdition -> {
+                    if (keepInEdition) {
                         backActivity();
                         return;
                     }
@@ -2626,6 +2629,32 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
      */
     private void executeService(Context context) {
         Toast.makeText(context, "Calling a service...", Toast.LENGTH_LONG).show();
+        if (ToolBox_Con.isOnline(context)) {
+            setWs_process(WS_PROCESS_SO_STATUS_CHANGE);
+            //
+            //
+            enableProgressDialog(
+                    hmAux_Trans.get("progress_status_change_ttl"),
+                    hmAux_Trans.get("progress_status_change_msg"),
+                    hmAux_Trans.get("sys_alert_btn_cancel"),
+                    hmAux_Trans.get("sys_alert_btn_ok")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_So_Status_Change.class);
+            Bundle bundle = new Bundle();
+            bundle.putInt(SM_SODao.SO_PREFIX, mSm_so.getSo_prefix());
+            bundle.putInt(SM_SODao.SO_CODE, mSm_so.getSo_code());
+            bundle.putInt(SM_SODao.SO_SCN, mSm_so.getSo_scn());
+            bundle.putString(WSSoStatusChange.WS_BUNDLE_ACTION, "");
+            bundle.putString(WSSoStatusChange.WS_BUNDLE_RETURN_SO, "1");
+            bundle.putBoolean(Constant.PROCESS_MENU_SEND, true);
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
     }
 
     private void backActivity() {

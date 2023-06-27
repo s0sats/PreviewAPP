@@ -222,6 +222,12 @@ class WSSoStatusChange:
         const val WS_BUNDLE_ACTION = "ACTION"
         const val WS_BUNDLE_RETURN_SO = "RETURN_SO"
         const val WS_RETURN_SO_STATUS = "RETURN_SO_STATUS"
-        const val WS_RETURN_SO_MSG = "RETURN_SO_MSG"
+        const val WS_RETURN_SO_MSG = "RETUN_SO_MSG"
+
+        const val WS_ACTION_SO_EDIT = "EDIT"
+        const val WS_ACTION_SO_PROCESS = "PROCESS"
+        const val WS_ACTION_SO_STOP = "STOP"
+
+
     }
 }
