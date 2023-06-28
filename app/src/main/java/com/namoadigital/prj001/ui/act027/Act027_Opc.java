@@ -72,29 +72,10 @@ public class Act027_Opc extends BaseFragment {
     private LinearLayout ll_so_id;
     private TextView tv_so_id_label;
     private TextView tv_so_id_value;
-    private LinearLayout ll_client_so_id;
-    private TextView tv_client_so_id_label;
-    private TextView tv_client_so_id_value;
 
     private LinearLayout ll_so_desc;
     private TextView tv_so_desc_val;
     private TextView tv_so_desc_lbl;
-    private LinearLayout ll_so_create_date;
-    private TextView tv_so_create_date_lbl;
-    private TextView tv_so_create_date_val;
-    private LinearLayout ll_so_segment;
-    private TextView tv_so_segment_lbl;
-    private TextView tv_so_segment_val;
-    private LinearLayout ll_so_category;
-    private TextView tv_so_category_lbl;
-    private TextView tv_so_category_val;
-    private LinearLayout ll_so_pipeline;
-    private TextView tv_so_pipeline_lbl;
-    private TextView tv_so_pipeline_val;
-
-    private TextView tv_prefix_code_label;
-    private TextView tv_prefix_code_value;
-
     private TextView tv_priority_label;
     private TextView tv_priority_value;
 
@@ -206,29 +187,9 @@ public class Act027_Opc extends BaseFragment {
         tv_so_id_label = (TextView) view.findViewById(R.id.act027_opc_tv_so_id_label);
         tv_so_id_value = (TextView) view.findViewById(R.id.act027_opc_tv_so_id_value);
 
-        ll_client_so_id = (LinearLayout) view.findViewById(R.id.act027_opc_ll_client_so_id);
-        tv_client_so_id_label = (TextView) view.findViewById(R.id.act027_opc_tv_client_so_id_label);
-        tv_client_so_id_value = (TextView) view.findViewById(R.id.act027_opc_tv_client_so_id_value);
-
         ll_so_desc = (LinearLayout) view.findViewById(R.id.act027_opc_ll_so_desc);
         tv_so_desc_val = (TextView) view.findViewById(R.id.act027_opc_tv_so_desc_value);
         tv_so_desc_lbl = (TextView) view.findViewById(R.id.act027_opc_tv_so_desc_label);
-        //
-        ll_so_create_date = (LinearLayout) view.findViewById(R.id.act027_opc_ll_so_create_date);
-        tv_so_create_date_lbl = (TextView) view.findViewById(R.id.act027_opc_tv_so_create_date_label);
-        tv_so_create_date_val = (TextView) view.findViewById(R.id.act027_opc_tv_so_create_date_value);
-
-        ll_so_segment = (LinearLayout) view.findViewById(R.id.act027_opc_ll_so_segment);
-        tv_so_segment_lbl = (TextView) view.findViewById(R.id.act027_opc_tv_so_segment_label);
-        tv_so_segment_val = (TextView) view.findViewById(R.id.act027_opc_tv_so_segment_value);
-
-        ll_so_category = (LinearLayout) view.findViewById(R.id.act027_opc_ll_category);
-        tv_so_category_lbl = (TextView) view.findViewById(R.id.act027_opc_tv_so_category_label);
-        tv_so_category_val = (TextView) view.findViewById(R.id.act027_opc_tv_so_category_value);
-
-        ll_so_pipeline = (LinearLayout) view.findViewById(R.id.act027_opc_ll_so_pipeline);
-        tv_so_pipeline_lbl = (TextView) view.findViewById(R.id.act027_opc_tv_so_pipeline_label);
-        tv_so_pipeline_val = (TextView) view.findViewById(R.id.act027_opc_tv_so_pipeline_value);
         //
         tv_priority_label = (TextView) view.findViewById(R.id.act027_opc_tv_priority_label);
         tv_priority_value = (TextView) view.findViewById(R.id.act027_opc_tv_priority_value);
@@ -473,7 +434,6 @@ public class Act027_Opc extends BaseFragment {
                     ll_so_id.setVisibility(View.GONE);
                 }
                 //
-                setSoInfoVisibility(hmAux_Trans.get("so_client_so_id_lbl"), mSm_so.getClient_so_id(), ll_client_so_id, tv_client_so_id_label, tv_client_so_id_value);
                 setSoInfoVisibility(hmAux_Trans.get("so_client_so_desc_lbl"), mSm_so.getSo_desc(), ll_so_desc, tv_so_desc_lbl, tv_so_desc_val);
                 //
                 if (mSm_so.getSo_desc() != null && mSm_so.getSo_desc().length() > 0) {
@@ -482,20 +442,6 @@ public class Act027_Opc extends BaseFragment {
                 } else {
                     ll_so_desc.setVisibility(View.GONE);
                 }
-                //
-                setSoInfoVisibility(
-                        hmAux_Trans.get("so_create_date_lbl"),
-                        ToolBox_Inf.millisecondsToString(
-                                ToolBox_Inf.dateToMilliseconds(mSm_so.getCreate_date() != null ? mSm_so.getCreate_date() : "", ""),
-                                ToolBox_Inf.nlsDateFormat(getActivity()) + " HH:mm"
-                        ),
-                        ll_so_create_date,
-                        tv_so_create_date_lbl,
-                        tv_so_create_date_val
-                );
-                setSoInfoVisibility(hmAux_Trans.get("so_segment_lbl"), mSm_so.getSegment_desc(), ll_so_segment, tv_so_segment_lbl, tv_so_segment_val);
-                setSoInfoVisibility(hmAux_Trans.get("so_category_price_lbl"), mSm_so.getCategory_price_desc(), ll_so_category, tv_so_category_lbl, tv_so_category_val);
-                setSoInfoVisibility(hmAux_Trans.get("so_pipeline_lbl"), mSm_so.getPipeline_desc(), ll_so_pipeline, tv_so_pipeline_lbl, tv_so_pipeline_val);
                 //
                 tv_priority_label.setText(hmAux_Trans.get("priority_lbl"));
                 tv_priority_value.setText(mSm_so.getPriority_desc());
