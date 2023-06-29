@@ -90,6 +90,8 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
             script.append("create table if not exists [sm_so_product_event_files] ([customer_code] int not null, [so_prefix] int not null, [so_code] int not null, [seq] int not null, [seq_tmp] int not null, [file_code] int not null , [file_tmp] int not null , [file_name] text not null collate nocase, [file_url] text collate nocase, [file_url_local] text collate nocase, constraint pk_sm_so_product_event_files primary key(customer_code, so_prefix, so_code, seq_tmp, file_tmp));");
             script.append("create table if not exists [sm_so_product_event_sketchs] ([customer_code] int not null, [so_prefix] int not null, [so_code] int not null, [seq] int not null, [seq_tmp] int not null, [line] int not null , [col] int not null , constraint pk_sm_so_product_event_sketchs primary key(customer_code, so_prefix, so_code, seq_tmp, line, col));");
 
+            script.append("create table if not exists [sm_priority] ([customer_code] int not null, [priority_code] int not null, [priority_desc] int not null, [priority_weight] int not null, [priority_default] int not null, [priority_color] int not null, constraint pk_sm_priority primary key(customer_code, priority_code));");
+
             script.append("create table if not exists [md_segments]([customer_code] int not null,[segment_code] int not null,[segment_id] text not null collate nocase,[segment_desc] text not null collate nocase,constraint [pk_md_segments] primary key([customer_code],[segment_code]));");
             script.append("create table if not exists [md_category_prices]([customer_code] int not null,[category_price_code] int not null,[category_price_id] text not null collate nocase,[category_price_desc] text not null collate nocase,constraint [pk_md_category_prices] primary key([customer_code],[category_price_code]));");
             script.append("create table if not exists [md_brands]([customer_code] int not null,[brand_code] int not null,[brand_id] text not null collate nocase,[brand_desc] text not null collate nocase,constraint [pk_md_brands] primary key([customer_code],[brand_code]));");
@@ -194,6 +196,8 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
                     MigrationsKt.getMigrationV3().migrate(db);
                 case 4:
                     MigrationsKt.getMigrationV4().migrate(db);
+                case 5:
+                    MigrationsKt.getMigrationV5().migrate(db);
                     break;
             }
         } catch (Exception e) {
