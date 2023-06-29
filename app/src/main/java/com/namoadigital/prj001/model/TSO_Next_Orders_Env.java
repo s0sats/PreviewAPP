@@ -2,12 +2,15 @@ package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 public class TSO_Next_Orders_Env extends Main_Header_Env  {
 
     @SerializedName("customer_code") private long customer_code;
     @SerializedName("site_code") private String site_code;
     @SerializedName("zone_code") private Integer zone_code;
     @SerializedName("operation_code") private long operation_code;
+    @SerializedName("status") private List<String> status;
 
 
     public long getCustomer_code() {
@@ -40,6 +43,14 @@ public class TSO_Next_Orders_Env extends Main_Header_Env  {
 
     public void setOperation_code(long operation_code) {
         this.operation_code = operation_code;
+    }
+
+    public List<String> getStatus() {
+        return status;
+    }
+
+    public void setStatus(List<String> status) {
+        this.status = status;
     }
 }
 

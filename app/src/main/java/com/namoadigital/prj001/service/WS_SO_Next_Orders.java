@@ -3,6 +3,7 @@ package com.namoadigital.prj001.service;
 import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
@@ -23,6 +24,7 @@ import java.util.List;
 public class WS_SO_Next_Orders extends IntentService {
 
     public static final String SO_NEXT_SERVICES =  "SO_NEXT_SERVICES";
+    public static final String SO_NEXT_STATUS_LIST_FILTER =  "SO_NEXT_STATUS_LIST_FILTER";
 
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
@@ -45,8 +47,9 @@ public class WS_SO_Next_Orders extends IntentService {
             String site_code = bundle.getString(Constant.LOGIN_SITE_CODE);
             int zone_code = bundle.getInt(Constant.LOGIN_ZONE_CODE);
             long operation_code = bundle.getInt(Constant.LOGIN_OPERATION_CODE);
+            List<String> statusList = (List<String>) bundle.getSerializable(SO_NEXT_STATUS_LIST_FILTER);
 
-            processWSSoNextServices(customer_code, site_code, zone_code, operation_code);
+            processWSSoNextServices(customer_code, site_code, zone_code, operation_code, statusList);
 
         } catch (Exception e) {
 
@@ -62,7 +65,7 @@ public class WS_SO_Next_Orders extends IntentService {
         }
     }
 
-    private void processWSSoNextServices(long customer_code, String site_code, int zone_code, long operation_code) throws Exception {
+    private void processWSSoNextServices(long customer_code, String site_code, int zone_code, long operation_code, List<String> statusList) throws Exception {
         //Seleciona traduções
         loadTranslation();
         //
@@ -80,6 +83,7 @@ public class WS_SO_Next_Orders extends IntentService {
         env.setZone_code(filterZone);
         env.setOperation_code(operation_code);
         env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
+        env.setStatus(statusList);
         //
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_receving_data"), "", "0");
         //
