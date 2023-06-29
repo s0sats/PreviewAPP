@@ -20,6 +20,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
@@ -939,11 +940,34 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
             checkSOonProcess();
         } else if (ws_process.equalsIgnoreCase(WS_PROCESS_SO_STATUS_CHANGE)) {
             disableProgressDialog();
-            reloadSO();
+            ArrayList<HMAux> mSO = extractReturnMsg(hmAux);
+            if (mSO.isEmpty() || checkReturnOK(mSO)) {
+                Toast.makeText(context, hmAux_Trans.get("msg_so_results_ok"), Toast.LENGTH_SHORT).show();
+                reloadSO();
+            }else{
+                showResultsDialog(mSO, true);
+            }
         }
     }
 
     private void showResults(HMAux so) {
+        ArrayList<HMAux> mSO = extractReturnMsg(so);
+        if (checkReturnOK(mSO)) {
+            Toast.makeText(context, hmAux_Trans.get("msg_so_results_ok"), Toast.LENGTH_SHORT).show();
+            checkSerialSyncAndReload(mSO);
+        }else{
+            showResultsDialog(mSO, false);
+        }
+    }
+
+    private boolean checkReturnOK(ArrayList<HMAux> mSO) {
+        return mSO.size() == 1
+                && mSO.get(0).hasConsistentValue(Generic_Results_Adapter.VALUE_ITEM_2)
+                && "OK".equalsIgnoreCase(mSO.get(0).get(Generic_Results_Adapter.VALUE_ITEM_2));
+    }
+
+    @NonNull
+    private ArrayList<HMAux> extractReturnMsg(HMAux so) {
         ArrayList<HMAux> mSO = new ArrayList<>();
 
         for (String sKey : so.keySet()) {
@@ -959,18 +983,10 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
 
             mSO.add(hmAux);
         }
-        if (mSO.size() == 1
-        && mSO.get(0).hasConsistentValue(Generic_Results_Adapter.VALUE_ITEM_2)
-        && "OK".equalsIgnoreCase(mSO.get(0).get(Generic_Results_Adapter.VALUE_ITEM_2))
-        ) {
-            Toast.makeText(context, hmAux_Trans.get("msg_so_results_ok"), Toast.LENGTH_SHORT).show();
-            checkSerialSyncAndReload(mSO);
-        }else{
-            showResultsDialog(mSO);
-        }
+        return mSO;
     }
 
-    private void showResultsDialog(final List<HMAux> so_express) {
+    private void showResultsDialog(final List<HMAux> so_express, boolean backFlow) {
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
@@ -1012,7 +1028,11 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
             public void onClick(View v) {
                 show.dismiss();
                 //
-                checkSerialSyncAndReload(so_express);
+                if(backFlow){
+                    reloadSO();
+                }else{
+                    checkSerialSyncAndReload(so_express);
+                }
             }
         });
     }
@@ -1043,7 +1063,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
     private void checkSOonProcess() {
         Integer edit_user = mSm_so.getEdit_user();
         if(edit_user != null
-                && edit_user.equals(ToolBox_Con.getPreference_User_Code(context))
+                && ToolBox_Con.getPreference_User_Code(context).equals(edit_user.toString())
         ) {
             new ServiceExitConfirmationDialog(
                     context,
@@ -1052,6 +1072,11 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
                             reloadSO();
                             return;
                         }
+                        mSm_so = loadSM_So(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                Integer.parseInt(bundle.getString(SM_SODao.SO_PREFIX, "0")),
+                                Integer.parseInt(bundle.getString(SM_SODao.SO_CODE, "0"))
+                        );
                         //
                         mPresenter.executeSoStatusChangeService(mSm_so);
                     }
