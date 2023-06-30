@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -16,11 +17,21 @@
 
         <TextView
             android:id="@+id/act047_so_next_orders_dialog_tv_title"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textSize="@dimen/font_size_title_dialog"
-            android:textStyle="bold"
+            android:gravity="start"
+            style="@style/TextAppearance.Material3.TitleMedium"
+            tools:text="O.S - Trad" />
+
+
+        <TextView
+            android:id="@+id/act047_so_next_orders_dialog_tv_status"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            style="@style/TextAppearance.Material3.TitleSmall"
             tools:text="O.S - Trad" />
     </LinearLayout>
 
@@ -352,4 +363,53 @@
             android:visibility="gone"
             tools:text="Serial errado" />
     </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/so_next_orders_dialog_cancel"
+            style="@style/NamoaTheme3.Button.Text"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/so_next_orders_dialog_middle_action"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:textColor="@color/m3_namoa_primary"
+            android:text="Voltar" />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/so_next_orders_dialog_middle_action"
+            style="@style/Widget.Material3.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            app:backgroundTint="@color/m3_namoa_primary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/so_next_orders_dialog_ok"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/so_next_orders_dialog_cancel"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_default="percent"
+            android:visibility="gone"
+            android:text="Bloqueado" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/so_next_orders_dialog_ok"
+            style="@style/Widget.Material3.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/so_next_orders_dialog_middle_action"
+            app:layout_constraintTop_toTopOf="parent"
+            app:backgroundTint="@color/m3_namoa_primary"
+            android:text="Abrir" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>
