@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act043;
 
+import static com.namoadigital.prj001.ui.act027.Act027_Main.WS_PROCESS_SO_STATUS_CHANGE;
+
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -18,6 +20,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
@@ -59,6 +62,7 @@ import com.namoadigital.prj001.sql.SM_SO_Sql_018;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Opc;
+import com.namoadigital.prj001.ui.act027.dialog.ServiceExitConfirmationDialog;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -194,6 +198,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         transList.add("alert_invalid_package_total_value_msg");
         transList.add("service_or_pack_filter_hint");
         transList.add("toast_no_service_selected");
+        transList.add("msg_so_results_ok");
         //Frag_Package_Detail_List
         transList.add("btn_save_package_detail");
         transList.add("btn_cancel_package_detail");
@@ -932,12 +937,37 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         } else if (ws_process.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())) {
             disableProgressDialog();
             Toast.makeText(context, hmAux_Trans.get("toast_success_on_sync_serial_msg"), Toast.LENGTH_SHORT).show();
-            reloadSO();
+            checkSOonProcess();
+        } else if (ws_process.equalsIgnoreCase(WS_PROCESS_SO_STATUS_CHANGE)) {
+            disableProgressDialog();
+            ArrayList<HMAux> mSO = extractReturnMsg(hmAux);
+            if (mSO.isEmpty() || checkReturnOK(mSO)) {
+                Toast.makeText(context, hmAux_Trans.get("msg_so_results_ok"), Toast.LENGTH_SHORT).show();
+                reloadSO();
+            }else{
+                showResultsDialog(mSO, true);
+            }
         }
-
     }
 
     private void showResults(HMAux so) {
+        ArrayList<HMAux> mSO = extractReturnMsg(so);
+        if (checkReturnOK(mSO)) {
+            Toast.makeText(context, hmAux_Trans.get("msg_so_results_ok"), Toast.LENGTH_SHORT).show();
+            checkSerialSyncAndReload(mSO);
+        }else{
+            showResultsDialog(mSO, false);
+        }
+    }
+
+    private boolean checkReturnOK(ArrayList<HMAux> mSO) {
+        return mSO.size() == 1
+                && mSO.get(0).hasConsistentValue(Generic_Results_Adapter.VALUE_ITEM_2)
+                && "OK".equalsIgnoreCase(mSO.get(0).get(Generic_Results_Adapter.VALUE_ITEM_2));
+    }
+
+    @NonNull
+    private ArrayList<HMAux> extractReturnMsg(HMAux so) {
         ArrayList<HMAux> mSO = new ArrayList<>();
 
         for (String sKey : so.keySet()) {
@@ -953,11 +983,10 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
 
             mSO.add(hmAux);
         }
-
-        showResultsDialog(mSO);
+        return mSO;
     }
 
-    private void showResultsDialog(final List<HMAux> so_express) {
+    private void showResultsDialog(final List<HMAux> so_express, boolean backFlow) {
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
@@ -999,34 +1028,62 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
             public void onClick(View v) {
                 show.dismiss();
                 //
-                MD_Product_SerialDao serialDao = new MD_Product_SerialDao(
-                        context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-                );
-                //
-                boolean hasSerialPendency = getMd_product_serialsPendency(serialDao);
-                //
-                if (hasSerialPendency) {
-                    isSyncSerialNeeded = false;
-                    callSerialService();
-                } else if (isSyncSerialNeeded) {
-                    isSyncSerialNeeded = false;
-                    callDownloadSerialService(
-                            String.valueOf(mSm_so.getProduct_code()),
-                            mSm_so.getSerial_id()
-                    );
-                } else {
-                    if (so_express.size() > 0) {
-                        if (so_express.get(0).get(Generic_Results_Adapter.VALUE_ITEM_2).equalsIgnoreCase("OK")) {
-                            reloadSO();
-                        } else {
-                            reloadSO();
-                        }
-                    }
+                if(backFlow){
+                    reloadSO();
+                }else{
+                    checkSerialSyncAndReload(so_express);
                 }
             }
         });
+    }
+
+    private void checkSerialSyncAndReload(List<HMAux> so_express) {
+        MD_Product_SerialDao serialDao = new MD_Product_SerialDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        //
+        boolean hasSerialPendency = getMd_product_serialsPendency(serialDao);
+        //
+        if (hasSerialPendency) {
+            isSyncSerialNeeded = false;
+            callSerialService();
+        } else if (isSyncSerialNeeded) {
+            isSyncSerialNeeded = false;
+            callDownloadSerialService(
+                    String.valueOf(mSm_so.getProduct_code()),
+                    mSm_so.getSerial_id()
+            );
+        } else {
+            checkSOonProcess();
+        }
+    }
+
+    private void checkSOonProcess() {
+        Integer edit_user = mSm_so.getEdit_user();
+        if(edit_user != null
+                && ToolBox_Con.getPreference_User_Code(context).equals(edit_user.toString())
+        ) {
+            new ServiceExitConfirmationDialog(
+                    context,
+                    keepInEdition -> {
+                        if (keepInEdition) {
+                            reloadSO();
+                            return;
+                        }
+                        mSm_so = loadSM_So(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                Integer.parseInt(bundle.getString(SM_SODao.SO_PREFIX, "0")),
+                                Integer.parseInt(bundle.getString(SM_SODao.SO_CODE, "0"))
+                        );
+                        //
+                        mPresenter.executeSoStatusChangeService(mSm_so);
+                    }
+            ).show();
+        }else{
+            reloadSO();
+        }
     }
 
     private boolean getMd_product_serialsPendency(MD_Product_SerialDao serialDao) {

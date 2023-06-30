@@ -76,8 +76,10 @@ import com.namoadigital.prj001.receiver.WBR_SO_Search;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
+import com.namoadigital.prj001.receiver.WBR_So_Status_Change;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_UserAuthor;
+import com.namoadigital.prj001.service.WSSoStatusChange;
 import com.namoadigital.prj001.service.WS_SO_Create_Room;
 import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.service.WS_SO_Search;
@@ -99,6 +101,7 @@ import com.namoadigital.prj001.sql.Sync_Checklist_Sql_002;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act009.Act009_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
+import com.namoadigital.prj001.ui.act027.dialog.ServiceExitConfirmationDialog;
 import com.namoadigital.prj001.ui.act027.fragment.Act027_Approval;
 import com.namoadigital.prj001.ui.act028.Act028_Main;
 import com.namoadigital.prj001.ui.act032.Act032_Main;
@@ -156,6 +159,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     public static final String WS_PROCESS_N_FORM_SYNC = "WS_PROCESS_N_FORM_SYNC";
     public static final String WS_SO_PRODUCT_EVENT_CANCEL = "WS_SO_PRODUCT_EVENT_CANCEL";
     public static final String WS_PROCESS_SO_CREATE_CHAT_ROOM = "WS_PROCESS_SO_CREATE_CHAT_ROOM";
+    public static final String WS_PROCESS_SO_STATUS_CHANGE = "WS_PROCESS_SO_STATUS_CHANGE";
 
     public static final int WS_PROCESS_APPROVAL_NOT = 0;
     public static final int WS_PROCESS_APPROVAL_ON_SIGNATURE = 1;
@@ -1628,6 +1632,10 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             progressDialog.dismiss();
             setWs_process("");
             processSoCreateChatRoomReturn(mLink);
+        } else if (ws_process.equalsIgnoreCase(WS_PROCESS_SO_STATUS_CHANGE)) {
+            progressDialog.dismiss();
+            setWs_process("");
+            backActivity();
         } else {
             setWs_process("");
             progressDialog.dismiss();
@@ -2556,34 +2564,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                 setFrag(act027_product_list_, SELECTION_PRODUCT_LIST);
                 break;
             case SELECTION_SERVICES:
-                ToolBox.alertMSG(
-                        context,
-                        hmAux_Trans.get("alert_so_exit_title"),
-                        hmAux_Trans.get("alert_so_exit_msg"),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                /**
-                                 *  BARRIONUEVO     03-06-2020
-                                 *  Fluxo para voltar para sala se navegacao fora feita via chat
-                                 */
-                                if (mRequest_act != null
-                                        && mRequest_act.equalsIgnoreCase(ConstantBaseApp.ACT035)
-                                        && mSm_so.getRoom_code() != null) {
-                                    callAct035();
-                                } else {
-                                    Intent mIntent = new Intent(context, Act005_Main.class);
-                                    mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    //
-                                    startActivity(mIntent);
-                                    finish();
-                                }
-                            }
-                        },
-                        1,
-                        false
-
-                );
+                checkUserToActiveOS();
                 break;
             default:
                 /**
@@ -2604,6 +2585,91 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                     setEventEditOpenStatus(false);
                 }
                 act027_opc_.perfomClickInOption(Act027_Main.SELECTION_SERVICES);
+        }
+    }
+
+
+    /**
+     * Verifica se o usuário de edição é nulo ou diferente do usuário atual.
+     * Caso seja verdadeiro, exibe um diálogo de confirmação para sair.
+     * Caso contrário, mostra um dialog perguntando se ele quer ativar a OS ou somente retornar.
+     */
+    private void checkUserToActiveOS() {
+        Integer editUser = mSm_so.getEdit_user();
+        Integer userCode = Integer.valueOf(ToolBox_Con.getPreference_User_Code(context));
+
+        if (editUser == null || !editUser.equals(userCode)) {
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_so_exit_title"),
+                    hmAux_Trans.get("alert_so_exit_msg"),
+                    (dialog, which) -> {
+                        /**
+                         * BARRIONUEVO     03-06-2020
+                         * Fluxo para voltar para sala se a navegação foi feita via chat
+                         */
+                        backActivity();
+                    },
+                    1,
+                    false
+            );
+            return;
+        }
+
+        new ServiceExitConfirmationDialog(
+                context,
+                keepInEdition -> {
+                    if (keepInEdition) {
+                        backActivity();
+                        return;
+                    }
+                    executeSoStatusChangeService(context);
+                }
+        ).show();
+    }
+
+    /**
+     * Executa o serviço para ativar a OS.
+     */
+    private void executeSoStatusChangeService(Context context) {
+        if (ToolBox_Con.isOnline(context)) {
+            setWs_process(WS_PROCESS_SO_STATUS_CHANGE);
+            //
+            //
+            enableProgressDialog(
+                    hmAux_Trans.get("progress_status_change_ttl"),
+                    hmAux_Trans.get("progress_status_change_msg"),
+                    hmAux_Trans.get("sys_alert_btn_cancel"),
+                    hmAux_Trans.get("sys_alert_btn_ok")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_So_Status_Change.class);
+            Bundle bundle = new Bundle();
+            bundle.putInt(SM_SODao.SO_PREFIX, mSm_so.getSo_prefix());
+            bundle.putInt(SM_SODao.SO_CODE, mSm_so.getSo_code());
+            bundle.putInt(SM_SODao.SO_SCN, mSm_so.getSo_scn());
+            bundle.putString(WSSoStatusChange.WS_BUNDLE_ACTION, WSSoStatusChange.WS_ACTION_SO_PROCESS);
+            bundle.putString(WSSoStatusChange.WS_BUNDLE_RETURN_SO, "1");
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
+    }
+
+    private void backActivity() {
+        if (mRequest_act != null
+                && mRequest_act.equalsIgnoreCase(ConstantBaseApp.ACT035)
+                && mSm_so.getRoom_code() != null) {
+            callAct035();
+        } else {
+            Intent mIntent = new Intent(context, Act005_Main.class);
+            mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            //
+            startActivity(mIntent);
+            finish();
         }
     }
 

@@ -240,6 +240,10 @@ public class Act043_Frag_Preview extends BaseFragment {
         if( mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PROCESS)
             || mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PENDING)
             || mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_BUDGET)
+            || (
+                    mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_EDIT)
+                    && ToolBox_Con.getPreference_User_Code(context).equalsIgnoreCase(mSm_so.getEdit_user() == null ? "0":mSm_so.getEdit_user().toString())
+                )
         ){
             btn_search_service.setEnabled(true);
         }else{

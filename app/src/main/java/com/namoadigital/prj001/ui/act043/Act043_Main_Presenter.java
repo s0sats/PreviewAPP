@@ -1,7 +1,10 @@
 package com.namoadigital.prj001.ui.act043;
 
+import android.content.Context;
+
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.MD_Partner;
+import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.TSO_Service_Search_Detail_Params_Obj;
 import com.namoadigital.prj001.model.TSO_Service_Search_Obj;
 
@@ -28,4 +31,6 @@ public interface Act043_Main_Presenter {
     void calculateTotalPrice(TSO_Service_Search_Obj packService);
 
     void resetPackService(TSO_Service_Search_Obj packService);
+
+    void executeSoStatusChangeService(SM_SO mSm_so);
 }
