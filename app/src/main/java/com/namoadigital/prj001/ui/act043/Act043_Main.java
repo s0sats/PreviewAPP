@@ -62,7 +62,7 @@ import com.namoadigital.prj001.sql.SM_SO_Sql_018;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Opc;
-import com.namoadigital.prj001.ui.act027.dialog.ServiceExitConfirmationDialog;
+import com.namoadigital.prj001.ui.act027.dialog.ServiceAddedChangeStatusDialog;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -209,6 +209,9 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         transList.add("alert_invalid_pack_msg");
         transList.add("alert_remove_pack_ttl");
         transList.add("alert_remove_pack_confirm");
+
+        transList.add("progress_status_change_ttl");
+        transList.add("progress_status_change_msg");
         //Drawer
         List<String> transListdrawer = new ArrayList<String>();
         transListdrawer.add("so_lbl");
@@ -932,7 +935,13 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
             disableProgressDialog();
             //}else if(ws_process.equalsIgnoreCase(WBR_SO_Search.class.getName())){
         } else if (ws_process.equalsIgnoreCase(WS_SO_Service_Cancel.class.getName())) {
-            showResults(hmAux);
+            ArrayList<HMAux> mSO = extractReturnMsg(hmAux);
+            if (mSO.isEmpty() || checkReturnOK(mSO)) {
+                Toast.makeText(context, hmAux_Trans.get("msg_so_results_ok"), Toast.LENGTH_SHORT).show();
+                reloadSO();
+            }else{
+                showResultsDialog(mSO, false);
+            }
             disableProgressDialog();
         } else if (ws_process.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())) {
             disableProgressDialog();
@@ -1065,7 +1074,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         if(edit_user != null
                 && ToolBox_Con.getPreference_User_Code(context).equals(edit_user.toString())
         ) {
-            new ServiceExitConfirmationDialog(
+            new ServiceAddedChangeStatusDialog(
                     context,
                     keepInEdition -> {
                         if (keepInEdition) {

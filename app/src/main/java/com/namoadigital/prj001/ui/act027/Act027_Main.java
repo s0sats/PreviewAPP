@@ -651,6 +651,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         transList.add("so_done_chat_room_msg");
         transList.add("invalid_status_for_room_creation_ttl");
         transList.add("invalid_status_for_room_creation_msg");
+
+        transList.add("progress_status_change_ttl");
+        transList.add("progress_status_change_msg");
         //
         transList.add("lbl_sync_data");
         //
@@ -2650,6 +2653,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             bundle.putInt(SM_SODao.SO_SCN, mSm_so.getSo_scn());
             bundle.putString(WSSoStatusChange.WS_BUNDLE_ACTION, WSSoStatusChange.WS_ACTION_SO_PROCESS);
             bundle.putString(WSSoStatusChange.WS_BUNDLE_RETURN_SO, "1");
+            bundle.putString(WSSoStatusChange.WS_BUNDLE_SO_TOKEN, ToolBox_Inf.getToken(context));
             //
             mIntent.putExtras(bundle);
             //

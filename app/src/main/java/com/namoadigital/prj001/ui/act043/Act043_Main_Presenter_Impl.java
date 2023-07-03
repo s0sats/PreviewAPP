@@ -361,6 +361,7 @@ public class Act043_Main_Presenter_Impl implements Act043_Main_Presenter {
             bundle.putInt(SM_SODao.SO_SCN, mSm_so.getSo_scn());
             bundle.putString(WSSoStatusChange.WS_BUNDLE_ACTION, WSSoStatusChange.WS_ACTION_SO_PROCESS);
             bundle.putString(WSSoStatusChange.WS_BUNDLE_RETURN_SO, "1");
+            bundle.putString(WSSoStatusChange.WS_BUNDLE_SO_TOKEN, ToolBox_Inf.getToken(context));
             //
             mIntent.putExtras(bundle);
             //
