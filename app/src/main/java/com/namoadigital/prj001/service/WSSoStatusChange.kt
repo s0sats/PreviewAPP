@@ -18,25 +18,26 @@ import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.io.IOException
 
-class WSSoStatusChange:
-    IntentService("WS_So_Status_Change")
-{
+class WSSoStatusChange :
+    IntentService("WS_So_Status_Change") {
     //
-    private val soDao by lazy{
+    private val soDao by lazy {
         SM_SODao(
             getApplicationContext(),
             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
             Constant.DB_VERSION_CUSTOM
         )
     }
+
     //
-    private val serialDao by lazy{
+    private val serialDao by lazy {
         MD_Product_SerialDao(
             getApplicationContext(),
             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
             Constant.DB_VERSION_CUSTOM
         )
     }
+
     //
     private val mModuleCode = Constant.APP_MODULE
     private val mResourceName = "ws_generic_resource"
@@ -55,13 +56,15 @@ class WSSoStatusChange:
             val so_scn = bundle.getInt(SM_SODao.SO_SCN, 0)
             val action = bundle.getString(WS_BUNDLE_ACTION, "")
             val return_so = bundle.getString(WS_BUNDLE_RETURN_SO, "1")
+            val token = bundle.getString(WS_BUNDLE_SO_TOKEN, "")
             //
             processSOStatusChange(
                 so_prefix,
                 so_code,
                 so_scn,
                 action,
-                return_so
+                return_so,
+                token
             )
 
         } catch (e: Exception) {
@@ -87,17 +90,24 @@ class WSSoStatusChange:
         so_code: Int,
         so_scn: Int,
         action: String,
-        return_so: String
+        return_so: String,
+        token: String
     ) {
         //
-        ToolBox.sendBCStatus(applicationContext, "STATUS", hmAuxTrans["generic_sending_data_msg"], "", "0")
+        ToolBox.sendBCStatus(
+            applicationContext,
+            "STATUS",
+            hmAuxTrans["generic_sending_data_msg"],
+            "",
+            "0"
+        )
         //
         val env = SoStatusChangeEnv(
             app_code = Constant.PRJ001_CODE,
             app_version = Constant.PRJ001_VERSION,
             session_app = ToolBox_Con.getPreference_Session_App(applicationContext),
             app_type = Constant.PKG_APP_TYPE_DEFAULT,
-            token = ToolBox_Inf.getToken(applicationContext),
+            token = token,
             so_prefix = so_prefix,
             so_code = so_code,
             so_scn = so_scn,
@@ -110,7 +120,13 @@ class WSSoStatusChange:
             gson.toJson(env)
         )
         //
-        ToolBox.sendBCStatus(applicationContext, "STATUS", hmAuxTrans["generic_receiving_data_msg"], "", "0")
+        ToolBox.sendBCStatus(
+            applicationContext,
+            "STATUS",
+            hmAuxTrans["generic_receiving_data_msg"],
+            "",
+            "0"
+        )
         //
         val rec = gson.fromJson(resultado, SoStatusChangeRec::class.java)
         //
@@ -120,27 +136,51 @@ class WSSoStatusChange:
                 rec.error_msg,
                 rec.link_url,
                 1,
-                1)
+                1
+            )
             ||
             !ToolBox_Inf.processoOthersError(
                 applicationContext,
                 resources.getString(R.string.generic_error_lbl),
-                rec.error_msg)) {
+                rec.error_msg
+            )
+        ) {
             return
         }
         //
-        ToolBox.sendBCStatus(applicationContext, "STATUS", hmAuxTrans["generic_processing_data"], "", "0")
+        ToolBox.sendBCStatus(
+            applicationContext,
+            "STATUS",
+            hmAuxTrans["generic_processing_data"],
+            "",
+            "0"
+        )
         //
-        if("0" == return_so){
-            ToolBox.sendBCStatus(
-                applicationContext,
-                "CLOSE_ACT",
-                hmAuxTrans["msg_no_so_to_send"],
-                HMAux(),
-                rec.so_status[0].so_status,
-                "0"
-            )
-        }else {
+        if ("0" == return_so) {
+            val soStatus = rec.so_status[0]
+            val recHmAux = HMAux()
+            recHmAux["so_status"] = soStatus.so_status
+            recHmAux["scn_code"] = soStatus.so_scn.toString()
+
+            if (soStatus.ret_status != "OK") {
+                ToolBox.sendBCStatus(
+                    applicationContext,
+                    ConstantBase.PD_TYPE_CUSTOM_ERROR,
+                    soStatus.ret_msg,
+                    "",
+                    "0"
+                )
+            } else {
+                ToolBox.sendBCStatus(
+                    applicationContext,
+                    "CLOSE_ACT",
+                    hmAuxTrans["msg_no_so_to_send"],
+                    recHmAux,
+                    "",
+                    "0"
+                )
+            }
+        } else {
             processSOStatusChange(rec)
         }
     }
@@ -148,8 +188,14 @@ class WSSoStatusChange:
     @Throws(Exception::class)
     private fun processSOStatusChange(result: SoStatusChangeRec) {
 
-        result.so?.let{
-            ToolBox.sendBCStatus(applicationContext, "STATUS", hmAuxTrans["generic_processing_data"], "", "0")
+        result.so?.let {
+            ToolBox.sendBCStatus(
+                applicationContext,
+                "STATUS",
+                hmAuxTrans["generic_processing_data"],
+                "",
+                "0"
+            )
             //
             it.forEach { soFull ->
                 soDao.addUpdate(soFull)
@@ -164,8 +210,12 @@ class WSSoStatusChange:
                 "0"
             )
             //
-        }?: run {
-            if("OK".equals(result.so_status[0].ret_status, true)) {
+        } ?: run {
+            val hmAux = HMAux()
+            val soStatus = result.so_status[0]
+            hmAux[WS_RETURN_SO_STATUS] = soStatus.ret_status
+            hmAux[WS_RETURN_SO_MSG] = soStatus.ret_msg
+            if ("OK".equals(soStatus.ret_status, true)) {
                 result.so_status.forEach { item ->
                     val smSo = soDao.getByString(
                         SM_SO_Sql_001(
@@ -177,25 +227,29 @@ class WSSoStatusChange:
                     smSo.status = item.so_status
                     soDao.addUpdate(smSo)
                 }
+
+                ToolBox.sendBCStatus(
+                    applicationContext,
+                    "CLOSE_ACT",
+                    hmAuxTrans["msg_no_so_to_send"],
+                    hmAux,
+                    "",
+                    "0"
+                )
+            } else {
+                ToolBox.sendBCStatus(
+                    applicationContext,
+                    ConstantBase.PD_TYPE_CUSTOM_ERROR,
+                    soStatus.ret_msg,
+                    "",
+                    "0"
+                )
             }
-            val hmAux = HMAux()
-            hmAux[WS_RETURN_SO_STATUS] = result.so_status[0].ret_status
-            hmAux[WS_RETURN_SO_MSG] = result.so_status[0].ret_msg
-            //
-            ToolBox.sendBCStatus(
-                applicationContext,
-                "CLOSE_ACT",
-                hmAuxTrans.get("msg_no_so_to_send"),
-                hmAux,
-                "",
-                "0"
-            )
-            //
         }
         //
     }
 
-    private fun loadTranslation() : HMAux {
+    private fun loadTranslation(): HMAux {
         val translist = listOf<String>(
             "generic_sending_data_msg",
             "generic_receiving_data_msg",
@@ -219,11 +273,12 @@ class WSSoStatusChange:
         )
     }
 
-    companion object{
+    companion object {
         const val WS_BUNDLE_ACTION = "ACTION"
         const val WS_BUNDLE_RETURN_SO = "RETURN_SO"
         const val WS_RETURN_SO_STATUS = "RETURN_SO_STATUS"
         const val WS_RETURN_SO_MSG = "RETUN_SO_MSG"
+        const val WS_BUNDLE_SO_TOKEN = "RETURN_SO_TOKEN"
 
         const val WS_ACTION_SO_EDIT = "EDIT"
         const val WS_ACTION_SO_PROCESS = "PROCESS"
