@@ -3,12 +3,14 @@ package com.namoadigital.prj001.dao
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
+import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
 import com.namoadigital.prj001.model.DaoObjReturn
 import com.namoadigital.prj001.model.SmPriority
+import com.namoadigital.prj001.sql.MdTagSql001
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -22,7 +24,7 @@ class SmPriorityDao (
 ), DaoWithReturn<SmPriority> {
 
     companion object {
-        const val TABLE = "so_pack_express_packs_local"
+        const val TABLE = "sm_priority"
         const val CUSTOMER_CODE = "customer_code"
         const val PRIORITY_CODE = "priority_code"
         const val PRIORITY_DESC = "priority_desc"
@@ -41,7 +43,7 @@ class SmPriorityDao (
     }
 
 
-    override fun addUpdate(item: SmPriority?): DaoObjReturn {
+    override fun addUpdate(smPriority: SmPriority?): DaoObjReturn {
         var daoObjReturn = DaoObjReturn()
         var addUpdateRet: Long = 0
         var curAction = DaoObjReturn.INSERT_OR_UPDATE
@@ -49,25 +51,16 @@ class SmPriorityDao (
         openDB()
 
         try {
-            daoObjReturn.table = TABLE
+            daoObjReturn.table = SmPriorityDao.TABLE
             curAction = DaoObjReturn.UPDATE
             //Where para update
-            val sbWhere: StringBuilder = getWherePkClause(item)
+            val sbWhere: StringBuilder = getWherePkClause(smPriority)
             //Tenta update e armazena retorno
-            addUpdateRet = db.update(
-                TABLE,
-                toContentValuesMapper.map(item),
-                sbWhere.toString(),
-                null
-            ).toLong()
+            addUpdateRet = db.update(SmPriorityDao.TABLE, toContentValuesMapper.map(smPriority), sbWhere.toString(), null).toLong()
             //Se nenhuma linha afetada, tenta insert
             if (addUpdateRet == 0L) {
                 curAction = DaoObjReturn.INSERT
-                db.insertOrThrow(
-                    TABLE,
-                    null,
-                    toContentValuesMapper.map(item)
-                )
+                db.insertOrThrow(SmPriorityDao.TABLE, null, toContentValuesMapper.map(smPriority))
             }
         } catch (e: SQLiteException) {
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
@@ -101,59 +94,45 @@ class SmPriorityDao (
     private fun getWherePkClause(smPriority: SmPriority?): StringBuilder {
         smPriority?.let {
             return java.lang.StringBuilder()
-                .append(
-                    """
+                .append("""
                         $CUSTOMER_CODE = '${smPriority.customer_code}'  
                         AND $PRIORITY_CODE = '${smPriority.priority_code}'
-                      
                         """.trimIndent()
                 )
         }
         throw Exception("NULL_OBJ_RECEIVED")
     }
 
-    override fun addUpdate(
-        items: MutableList<SmPriority>?,
-        status: Boolean
-    ): DaoObjReturn {
+    override fun addUpdate(smPrioritys: MutableList<SmPriority>?, status: Boolean): DaoObjReturn {
         var daoObjReturn = DaoObjReturn()
         var addUpdateRet: Long = 0
         var curAction = DaoObjReturn.INSERT_OR_UPDATE
         //
         openDB()
-        //
+
         try {
-            daoObjReturn.table = TABLE
-            curAction = DaoObjReturn.UPDATE
+            daoObjReturn.table = SmPriorityDao.TABLE
+            //
             db.beginTransaction()
 
             if (status) {
-                db.delete(TABLE, null, null)
+                db.delete(SmPriorityDao.TABLE, null, null)
             }
-
-            items?.forEach { item ->
+            //
+            smPrioritys?.forEach { smPriority ->
+                curAction = DaoObjReturn.UPDATE
                 //Where para update
-                val sbWhere: StringBuilder = getWherePkClause(item)
+                val sbWhere: StringBuilder = getWherePkClause(smPriority)
                 //Tenta update e armazena retorno
-                addUpdateRet = db.update(
-                    TABLE,
-                    toContentValuesMapper.map(item),
-                    sbWhere.toString(),
-                    null
-                ).toLong()
+                addUpdateRet = db.update(SmPriorityDao.TABLE, toContentValuesMapper.map(smPriority), sbWhere.toString(), null).toLong()
                 //Se nenhuma linha afetada, tenta insert
                 if (addUpdateRet == 0L) {
                     curAction = DaoObjReturn.INSERT
-                    db?.insertOrThrow(
-                        TABLE,
-                        null,
-                        toContentValuesMapper.map(item)
-                    )
+                    db.insertOrThrow(SmPriorityDao.TABLE, null, toContentValuesMapper.map(smPriority))
                 }
             }
             //
             db.setTransactionSuccessful()
-
         } catch (e: SQLiteException) {
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
             //e contendo msg de erro tratada.
@@ -173,6 +152,7 @@ class SmPriorityDao (
             daoObjReturn.setError(true)
             ToolBox_Inf.registerException(javaClass.name, e)
         } finally {
+            db.endTransaction()
             daoObjReturn.action = curAction
             daoObjReturn.actionReturn = addUpdateRet
         }
@@ -204,74 +184,39 @@ class SmPriorityDao (
         closeDB()
     }
 
-    fun removeFull(item: SmPriority):DaoObjReturn {
-        var daoObjReturn = DaoObjReturn()
-        val addUpdateRet: Long = 0
-        val curAction = DaoObjReturn.DELETE
-        daoObjReturn.table = SO_Pack_Express_LocalDao.TABLE
-        //
-        openDB()
-        try {
-            val sbWhere = getWherePkClause(item)
-            //
-            db.beginTransaction()
-            //
-            db.delete(TABLE, sbWhere.toString(), null)
-            db.delete(SoPackExpressServicesLocalDao.TABLE, sbWhere.toString(), null)
-            //
-            db.setTransactionSuccessful()
-        } catch (e: SQLiteException) {
-            //Chama metodo que baseado na exception gera obj de retorno setado como erro
-            //e contendo msg de erro tratada.
-            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.message)
-            //
-            ToolBox_Inf.registerException(
-                javaClass.name,
-                java.lang.Exception(
-                    """
-            ${e.message}
-            ${daoObjReturn.errorMsg}
-            """.trimIndent()
-                )
-            )
-        } catch (e: java.lang.Exception) {
-            //Seta obj de retorno com flag de erro e gera arquivo de exception
-            daoObjReturn.setError(true)
-            ToolBox_Inf.registerException(javaClass.name, e)
-        } finally {
-            db.endTransaction()
-            //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
-            //ou rowId do ultimo insert.
-            daoObjReturn.action = curAction
-            daoObjReturn.actionReturn = addUpdateRet
-        }
-        closeDB()
-        return daoObjReturn
-    }
-
-
-
-    override fun getByString(sQuery: String?): SmPriority? {
+    fun getByString(sQuery: String?, dbInstance: SQLiteDatabase?) : SmPriority?{
         var smPriority: SmPriority? = null
-        openDB()
+        if(dbInstance == null) {
+            openDB()
+        } else{
+            this.db = dbInstance
+        }
+        lateinit var cursor: Cursor
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            cursor = db.rawQuery(sQuery, null)
             while (cursor.moveToNext()) {
                 smPriority = toSmPriorityMapper.map(cursor)
             }
-            //
-            cursor.close()
         } catch (e: java.lang.Exception) {
             ToolBox_Inf.registerException(javaClass.name, e)
         } finally {
+            cursor.close()
         }
-        closeDB()
+        //
+        if(dbInstance == null) {
+            closeDB()
+        }
+        //
         return smPriority
     }
+
+    override fun getByString(sQuery: String?) = getByString(sQuery,null)
+
 
     override fun getByStringHM(sQuery: String?): HMAux? {
         var hmAux: HMAux? = null
         openDB()
+
         try {
             val cursor = db.rawQuery(sQuery, null)
             while (cursor.moveToNext()) {
@@ -282,37 +227,41 @@ class SmPriorityDao (
             ToolBox_Inf.registerException(javaClass.name, e)
         } finally {
         }
+
         closeDB()
+
         return hmAux
     }
 
     override fun query(sQuery: String?): MutableList<SmPriority> {
-        val smPriority = mutableListOf<SmPriority>()
+        var smPrioritys = mutableListOf<SmPriority>()
         openDB()
         try {
             val cursor = db.rawQuery(sQuery, null)
             while (cursor.moveToNext()) {
-                val uAux = toSmPriorityMapper.map(cursor)
-                smPriority.add(uAux)
+                val uAux: SmPriority = toSmPriorityMapper.map(cursor)
+                smPrioritys.add(uAux)
             }
+            //
             cursor.close()
         } catch (e: java.lang.Exception) {
             ToolBox_Inf.registerException(javaClass.name, e)
         } finally {
         }
+        //
         closeDB()
-        return smPriority
+        return smPrioritys
     }
 
-
+    fun getMdTagByPk(customer_code:Int, tag_code: Int): SmPriority? = this.getByString(MdTagSql001(customer_code,tag_code).toSqlQuery())
 
     override fun query_HM(sQuery: String?): MutableList<HMAux> {
-        val smPriority: MutableList<HMAux> = ArrayList()
+        val smPrioritys: MutableList<HMAux> = ArrayList()
         openDB()
         try {
             val cursor = db.rawQuery(sQuery, null)
             while (cursor.moveToNext()) {
-                smPriority.add(CursorToHMAuxMapper.mapN(cursor))
+                smPrioritys.add(CursorToHMAuxMapper.mapN(cursor))
             }
             cursor.close()
         } catch (e: java.lang.Exception) {
@@ -320,7 +269,7 @@ class SmPriorityDao (
         } finally {
         }
         closeDB()
-        return smPriority
+        return smPrioritys
     }
 
     //
@@ -364,12 +313,10 @@ class SmPriorityDao (
                         )
                     }
                     //
-                    if (smPriority.priority_desc != null) {
-                        put(
-                            PRIORITY_DESC,
-                            smPriority.priority_desc
-                        )
-                    }
+                    put(
+                        PRIORITY_DESC,
+                        smPriority.priority_desc
+                    )
                     //
                     if (smPriority.priority_weight > -1) {
                         put(
@@ -378,19 +325,15 @@ class SmPriorityDao (
                         )
                     }
                     //
-                    if (smPriority.priority_default != null) {
-                        put(
-                            PRIORITY_DEFAULT,
-                            smPriority.priority_default
-                        )
-                    }
+                    put(
+                        PRIORITY_DEFAULT,
+                        smPriority.priority_default
+                    )
                     //
-                    if (smPriority.priority_color != null) {
-                        put(
-                            PRIORITY_COLOR,
-                            smPriority.priority_color
-                        )
-                    }
+                    put(
+                        PRIORITY_COLOR,
+                        smPriority.priority_color
+                    )
                     //
                 }
             }

@@ -37,6 +37,9 @@ public class GE_Custom_Form {
     @SerializedName("block_spontaneous")
     private int block_spontaneous;
 
+    @SerializedName("block_spontaneous_in_ticket")
+    private int block_spontaneous_in_ticket;
+
     @SerializedName("justify_group_code")
     private Integer justify_group_code;
 
@@ -190,6 +193,14 @@ public class GE_Custom_Form {
 
     public void setBlock_spontaneous(int block_spontaneous) {
         this.block_spontaneous = block_spontaneous;
+    }
+
+    public int getBlock_spontaneous_in_ticket() {
+        return block_spontaneous_in_ticket;
+    }
+
+    public void setBlock_spontaneous_in_ticket(int block_spontaneous_in_ticket) {
+        this.block_spontaneous_in_ticket = block_spontaneous_in_ticket;
     }
 
     public Integer getJustifyGroupCode() {

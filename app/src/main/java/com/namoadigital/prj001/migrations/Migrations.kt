@@ -141,7 +141,11 @@ val MigrationV5 = object : MigrationSQLite(5, 6) {
                ); 
             """.trimIndent()
         )
-
+        //
+        if (!isFieldExist(db, GE_Custom_FormDao.TABLE, GE_Custom_FormDao.BLOCK_SPONTANEOUS_IN_TICKET)) {
+            db.execSQL(""" ALTER TABLE [${GE_Custom_FormDao.TABLE}] ADD [${GE_Custom_FormDao.BLOCK_SPONTANEOUS_IN_TICKET}] int;""".trimIndent())
+        }
+        //
     }
 
 }
