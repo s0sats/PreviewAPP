@@ -108,6 +108,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
     private FCMReceiver fcmReceiver;
     private ArrayList<MD_Partner> partner_list = new ArrayList<>();
     protected boolean isSyncSerialNeeded;
+    private String changeStatusToken = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -436,6 +437,10 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
                 soPrefix,
                 soCode
         );
+    }
+
+    public void setChangeStatusToken(String changeStatusToken) {
+        this.changeStatusToken = changeStatusToken;
     }
 
     //region Metodo interface onSmSoRequestObject
@@ -1087,7 +1092,11 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
                                 Integer.parseInt(bundle.getString(SM_SODao.SO_CODE, "0"))
                         );
                         //
-                        mPresenter.executeSoStatusChangeService(mSm_so);
+                        if(changeStatusToken.isEmpty()){
+                            changeStatusToken = ToolBox_Inf.getToken(context);
+                        }
+                        //
+                        mPresenter.executeSoStatusChangeService(mSm_so, changeStatusToken);
                     }
             ).show();
         }else{
@@ -1183,6 +1192,8 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
             );
             reloadSO();
 //            Toast.makeText(context, hmAux_Trans.get("toast_error_on_sync_serial_msg"), Toast.LENGTH_SHORT).show();
+        } else if (ws_process.equalsIgnoreCase(WS_PROCESS_SO_STATUS_CHANGE)) {
+            reloadSO();
         }
     }
 
@@ -1198,6 +1209,8 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
             //Verifica se após chamar o WS de Serial deve ser chama o WS de S.O
             reloadSO();
 //            Toast.makeText(context, hmAux_Trans.get("toast_error_on_sync_serial_msg"), Toast.LENGTH_SHORT).show();
+        } else if (ws_process.equalsIgnoreCase(WS_PROCESS_SO_STATUS_CHANGE)) {
+            reloadSO();
         }
     }
 
@@ -1226,6 +1239,8 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
             //Verifica se após chamar o WS de Serial deve ser chama o WS de S.O
             reloadSO();
 //            Toast.makeText(context, hmAux_Trans.get("toast_error_on_sync_serial_msg"), Toast.LENGTH_SHORT).show();
+        } else if (ws_process.equalsIgnoreCase(WS_PROCESS_SO_STATUS_CHANGE)) {
+            reloadSO();
         }
     }
 
