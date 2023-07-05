@@ -69,30 +69,38 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_cancel"
         style="@style/NamoaMaterialButtonText"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintWidth_max="wrap"
-        android:layout_marginEnd="8dp"
         android:textColor="@color/m3_namoa_primary"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintEnd_toStartOf="@+id/gl_align_button"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_max="wrap"
         app:strokeColor="@color/m3_namoa_outline"
         tools:text="Abbrenchen" />
+
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_ok"
         style="@style/Widget.Material3.Button"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/m3_namoa_primary"
         android:textColor="@color/m3_namoa_onPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/btn_cancel"
+        app:layout_constraintStart_toStartOf="@+id/gl_align_button"
         app:layout_constraintWidth_max="wrap"
         app:strokeColor="@color/m3_namoa_outline"
         tools:text="Weiter" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gl_align_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".5" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

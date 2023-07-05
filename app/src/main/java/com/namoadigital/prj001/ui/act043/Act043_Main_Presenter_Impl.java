@@ -344,7 +344,7 @@ public class Act043_Main_Presenter_Impl implements Act043_Main_Presenter {
         }
     }
     @Override
-    public void executeSoStatusChangeService(SM_SO mSm_so) {
+    public void executeSoStatusChangeService(SM_SO mSm_so, String token) {
         if (ToolBox_Con.isOnline(context)) {
             mView.setWs_process(Act027_Main.WS_PROCESS_SO_STATUS_CHANGE);
             //
@@ -361,6 +361,7 @@ public class Act043_Main_Presenter_Impl implements Act043_Main_Presenter {
             bundle.putInt(SM_SODao.SO_SCN, mSm_so.getSo_scn());
             bundle.putString(WSSoStatusChange.WS_BUNDLE_ACTION, WSSoStatusChange.WS_ACTION_SO_PROCESS);
             bundle.putString(WSSoStatusChange.WS_BUNDLE_RETURN_SO, "1");
+            bundle.putString(WSSoStatusChange.WS_BUNDLE_SO_TOKEN, token);
             //
             mIntent.putExtras(bundle);
             //

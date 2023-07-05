@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui.act047;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -41,6 +42,8 @@ public interface Act047_Main_Contract {
     interface I_Presenter {
 
         void executeNextOrdersSearch(Boolean filter);
+
+        void executeSoStatusChangeService(SO_Next_Orders_Obj so_next, String type, String token);
 
         void processNextOrderList(String nextOrderList);
 

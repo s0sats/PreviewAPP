@@ -32,5 +32,5 @@ public interface Act043_Main_Presenter {
 
     void resetPackService(TSO_Service_Search_Obj packService);
 
-    void executeSoStatusChangeService(SM_SO mSm_so);
+    void executeSoStatusChangeService(SM_SO mSm_so, String token);
 }

@@ -4,26 +4,48 @@ import com.google.gson.annotations.SerializedName;
 
 public class SO_Next_Orders_Obj {
 
-    @SerializedName("so_prefix") private String so_prefix;
-    @SerializedName("so_code") private String so_code;
-    @SerializedName("so_id") private String so_id;
-    @SerializedName("so_desc") private String so_desc;
+    @SerializedName("so_prefix")
+    private String so_prefix;
+    @SerializedName("so_code")
+    private String so_code;
+    @SerializedName("so_id")
+    private String so_id;
+    @SerializedName("so_desc")
+    private String so_desc;
     //private String product_code;
-    @SerializedName("product_id") private String product_id;
-   // private String product_desc;
-    @SerializedName("serial_code") private String serial_code;
-    @SerializedName("serial_id") private String serial_id;
-    @SerializedName("status") private String status;
-    @SerializedName("deadline") private String deadline;
-    @SerializedName("tracking") private String tracking;
-    @SerializedName("brand_model_color") private String brand_model_color;
-    @SerializedName("comments") private String comments;
-    @SerializedName("service") private String service;
-    @SerializedName("serial_site_code") private String serial_site_code;
-    @SerializedName("serial_site_desc") private String serial_site_desc;
-    @SerializedName("serial_zone_desc") private String serial_zone_desc;
-    @SerializedName("serial_local_desc") private String serial_local_desc;
-    @SerializedName("create_user") private String create_user;
+    @SerializedName("product_id")
+    private String product_id;
+    // private String product_desc;
+    @SerializedName("serial_code")
+    private String serial_code;
+    @SerializedName("serial_id")
+    private String serial_id;
+    @SerializedName("status")
+    private String status;
+    @SerializedName("edit_user")
+    private String editUser;
+    @SerializedName("so_scn")
+    private int soScn;
+    @SerializedName("deadline")
+    private String deadline;
+    @SerializedName("tracking")
+    private String tracking;
+    @SerializedName("brand_model_color")
+    private String brand_model_color;
+    @SerializedName("comments")
+    private String comments;
+    @SerializedName("service")
+    private String service;
+    @SerializedName("serial_site_code")
+    private String serial_site_code;
+    @SerializedName("serial_site_desc")
+    private String serial_site_desc;
+    @SerializedName("serial_zone_desc")
+    private String serial_zone_desc;
+    @SerializedName("serial_local_desc")
+    private String serial_local_desc;
+    @SerializedName("create_user")
+    private String create_user;
     @SerializedName("last_approval_budget_user") private String last_approval_budget_user;
     @SerializedName("deadline_filter") private String deadline_filter;
     @SerializedName("status_filter") private String status_filter;
@@ -360,8 +382,24 @@ public class SO_Next_Orders_Obj {
                 create_user+ "|" +
                 last_approval_budget_user*/
         )
-            .replace("null|","")
-            .replace("null","")
-            ;
+                .replace("null|", "")
+                .replace("null", "")
+                ;
+    }
+
+    public String getEditUser() {
+        return editUser;
+    }
+
+    public void setEditUser(String editUser) {
+        this.editUser = editUser;
+    }
+
+    public int getSoScn() {
+        return soScn;
+    }
+
+    public void setSoScn(int soScn) {
+        this.soScn = soScn;
     }
 }

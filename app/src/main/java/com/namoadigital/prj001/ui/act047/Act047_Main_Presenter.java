@@ -18,6 +18,8 @@ import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_SO_Next_Orders;
 import com.namoadigital.prj001.receiver.WBR_SO_Search;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
+import com.namoadigital.prj001.receiver.WBR_So_Status_Change;
+import com.namoadigital.prj001.service.WSSoStatusChange;
 import com.namoadigital.prj001.service.WS_SO_Next_Orders;
 import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.service.WS_Serial_Search;
@@ -72,6 +74,35 @@ public class Act047_Main_Presenter implements Act047_Main_Contract.I_Presenter {
         }
     }
 
+
+    @Override
+    public void executeSoStatusChangeService(SO_Next_Orders_Obj so_next, String type, String token) {
+        if (ToolBox_Con.isOnline(context)) {
+            mView.setWsProcess(Act047_Main.WS_PROCESS_SO_STATUS_CHANGE);
+            //
+            //
+            mView.showPD(
+                    hmAux_Trans.get("progress_status_change_ttl"),
+                    hmAux_Trans.get("progress_status_change_msg")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_So_Status_Change.class);
+            Bundle bundle = new Bundle();
+            bundle.putInt(SM_SODao.SO_PREFIX, Integer.parseInt(so_next.getSo_prefix()));
+            bundle.putInt(SM_SODao.SO_CODE, Integer.parseInt(so_next.getSo_code()));
+            bundle.putInt(SM_SODao.SO_SCN, so_next.getSoScn());
+            bundle.putString(WSSoStatusChange.WS_BUNDLE_ACTION, type);
+            bundle.putString(WSSoStatusChange.WS_BUNDLE_RETURN_SO, "0");
+            bundle.putString(WSSoStatusChange.WS_BUNDLE_SO_TOKEN, token);
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
+    }
+
     @Override
     public void executeSoDownload(String soPrefix, String soCode) {
         if (ToolBox_Con.isOnline(context)) {
@@ -79,7 +110,7 @@ public class Act047_Main_Presenter implements Act047_Main_Contract.I_Presenter {
             //
             mView.showPD(
                     hmAux_Trans.get("dialog_so_download_ttl"),
-                hmAux_Trans.get("dialog_so_download_start")
+                    hmAux_Trans.get("dialog_so_download_start")
             );
             //
             Intent mIntent = new Intent(context, WBR_SO_Search.class);

@@ -119,6 +119,14 @@ public class Act043_Frag_Service_List extends BaseFragment {
         setRetainInstance(true);
         //
         mToken = ToolBox_Inf.getToken(getActivity());
+        //
+        try {
+            Act043_Main act = (Act043_Main) getActivity();
+            act.setChangeStatusToken("");
+        }catch (NullPointerException e){
+            e.printStackTrace();
+        }
+        //
     }
 
     @Nullable
