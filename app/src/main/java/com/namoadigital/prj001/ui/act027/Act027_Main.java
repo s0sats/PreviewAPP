@@ -239,6 +239,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     //se o clique vier do botão de soChat
     private boolean isSoCreateRoomCall = false;
 
+    private boolean backflow = false;
+
     public void setWs_process(String ws_process) {
         this.ws_process = ws_process;
     }
@@ -1504,6 +1506,16 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             }
         }
         //
+        if (ws_process.equalsIgnoreCase(WS_PROCESS_SO_STATUS_CHANGE)) {
+            setWs_process("");
+            if(backflow){
+                backflow = false;
+                backActivity();
+            }else{
+                refreshUI();
+            }
+        }
+        //
         if (ws_process.equalsIgnoreCase(WS_PROCESS_SO_PRIORITY_CHANGE)) {
             setWs_process("");
             refreshUI();
@@ -1542,6 +1554,17 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                     ).toSqlQuery()
             );
         }
+        //
+        if (ws_process.equalsIgnoreCase(WS_PROCESS_SO_STATUS_CHANGE)) {
+            setWs_process("");
+            if(backflow){
+                backflow = false;
+                backActivity();
+            }else{
+                refreshUI();
+            }
+        }
+        //
         //LUCHE - 08/06/2020
         resetSoCreateRoomFlag();
 
@@ -1576,7 +1599,17 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             );
             //
             refreshUI();
+        } else if (ws_process.equalsIgnoreCase(WS_PROCESS_SO_STATUS_CHANGE)) {
+            setWs_process("");
+            //
+            if(backflow){
+                backflow = false;
+                backActivity();
+            }else{
+                refreshUI();
+            }
         }
+
         //
     }
 
@@ -1674,7 +1707,13 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         } else if (ws_process.equalsIgnoreCase(WS_PROCESS_SO_STATUS_CHANGE)) {
             progressDialog.dismiss();
             setWs_process("");
-            backActivity();
+            if(backflow) {
+                backflow = false;
+                backActivity();
+            }else{
+                Toast.makeText(context, hmAux_Trans.get("msg_so_results_ok"), Toast.LENGTH_SHORT).show();
+                refreshUI();
+            }
         }  else if (ws_process.equalsIgnoreCase(WS_PROCESS_SO_PRIORITY_CHANGE)) {
             progressDialog.dismiss();
             setWs_process("");
@@ -2672,6 +2711,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                         backActivity();
                         return;
                     }
+                    backflow = true;
                     executeSoStatusChangeService(context, WSSoStatusChange.WS_ACTION_SO_PROCESS);
                 }
         ).show();

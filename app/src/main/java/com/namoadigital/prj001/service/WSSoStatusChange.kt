@@ -187,28 +187,35 @@ class WSSoStatusChange :
 
     @Throws(Exception::class)
     private fun processSOStatusChange(result: SoStatusChangeRec) {
+        val hmAux = HMAux()
+        val soStatus = result.so_status[0]
+        hmAux[WS_RETURN_SO_STATUS] = soStatus.ret_status
+        hmAux[WS_RETURN_SO_MSG] = soStatus.ret_msg
 
         result.so?.let {
-            ToolBox.sendBCStatus(
-                applicationContext,
-                "STATUS",
-                hmAuxTrans["generic_processing_data"],
-                "",
-                "0"
-            )
             //
             it.forEach { soFull ->
                 soDao.addUpdate(soFull)
             }
             //
-            ToolBox.sendBCStatus(
-                applicationContext,
-                "CLOSE_ACT",
-                hmAuxTrans.get("msg_no_so_to_send"),
-                HMAux(),
-                "",
-                "0"
-            )
+            if ("OK".equals(soStatus.ret_status, true)) {
+                ToolBox.sendBCStatus(
+                    applicationContext,
+                    "CLOSE_ACT",
+                    hmAuxTrans["generic_process_finalized_msg"],
+                    hmAux,
+                    "",
+                    "0"
+                )
+            }else{
+                ToolBox.sendBCStatus(
+                    applicationContext,
+                    ConstantBase.PD_TYPE_CUSTOM_ERROR,
+                    soStatus.ret_msg,
+                    "",
+                    "0"
+                )
+            }
             //
         } ?: run {
             val hmAux = HMAux()
@@ -231,7 +238,7 @@ class WSSoStatusChange :
                 ToolBox.sendBCStatus(
                     applicationContext,
                     "CLOSE_ACT",
-                    hmAuxTrans["msg_no_so_to_send"],
+                    hmAuxTrans["generic_process_finalized_msg"],
                     hmAux,
                     "",
                     "0"
