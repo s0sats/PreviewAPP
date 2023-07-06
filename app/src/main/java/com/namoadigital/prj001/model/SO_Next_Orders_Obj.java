@@ -30,16 +30,28 @@ public class SO_Next_Orders_Obj {
     //LUCHE - 13/07/2021
     @SerializedName("segment_category_price") private String segment_category_price;
     @SerializedName("pipeline_desc") private String pipeline_desc;
-    @SerializedName("add_inf1") private String add_inf1;
-    @SerializedName("add_inf2") private String add_inf2;
-    @SerializedName("add_inf3") private String add_inf3;
-    @SerializedName("add_inf4") private String add_inf4;
-    @SerializedName("add_inf5") private String add_inf5;
-    @SerializedName("add_inf6") private String add_inf6;
-    @SerializedName("client_so_id") private String client_so_id;
-    @SerializedName("priority_code") private int priority_code;
+    @SerializedName("add_inf1")
+    private String add_inf1;
+    @SerializedName("add_inf2")
+    private String add_inf2;
+    @SerializedName("add_inf3")
+    private String add_inf3;
+    @SerializedName("add_inf4")
+    private String add_inf4;
+    @SerializedName("add_inf5")
+    private String add_inf5;
+    @SerializedName("add_inf6")
+    private String add_inf6;
+    @SerializedName("client_so_id")
+    private String client_so_id;
+    @SerializedName("priority_code")
+    private int priority_code;
     @SerializedName("priority_desc")
     private String priority_desc;
+    @SerializedName("priority_weight")
+    private Integer priority_weight;
+    @SerializedName("priority_color")
+    private String priority_color;
     @SerializedName("create_date")
     private String create_date;
 
@@ -360,8 +372,24 @@ public class SO_Next_Orders_Obj {
                 create_user+ "|" +
                 last_approval_budget_user*/
         )
-            .replace("null|","")
-            .replace("null","")
-            ;
+                .replace("null|", "")
+                .replace("null", "")
+                ;
+    }
+
+    public Integer getPriority_weight() {
+        return priority_weight;
+    }
+
+    public void setPriority_weight(Integer priority_weight) {
+        this.priority_weight = priority_weight;
+    }
+
+    public String getPriority_color() {
+        return priority_color;
+    }
+
+    public void setPriority_color(String priority_color) {
+        this.priority_color = priority_color;
     }
 }

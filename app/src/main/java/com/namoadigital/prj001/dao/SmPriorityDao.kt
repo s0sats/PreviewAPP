@@ -22,6 +22,11 @@ class SmPriorityDao (
 ) : BaseDao(
     context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI
 ), DaoWithReturn<SmPriority> {
+    constructor(context: Context) : this(
+        context,
+        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+        Constant.DB_VERSION_CUSTOM
+    )
 
     companion object {
         const val TABLE = "sm_priority"

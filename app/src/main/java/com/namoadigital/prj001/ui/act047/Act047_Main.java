@@ -6,17 +6,28 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
@@ -27,16 +38,29 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act047_SO_Next_Orders_Adapter;
+import com.namoadigital.prj001.dao.MD_PartnerDao;
+import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
+import com.namoadigital.prj001.databinding.Act047FilterDialogBinding;
 import com.namoadigital.prj001.databinding.Act047SoNextOrdersDialogBinding;
+import com.namoadigital.prj001.model.MD_Site;
+import com.namoadigital.prj001.model.MD_Site_Zone;
 import com.namoadigital.prj001.model.SO_Next_Orders_Obj;
+import com.namoadigital.prj001.model.SmPriority;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_SO_Next_Orders;
 import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.service.WS_Serial_Search;
+import com.namoadigital.prj001.sql.MD_Partner_Sql_SS;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
+import com.namoadigital.prj001.ui.act047.model.NextOsFilter;
+import com.namoadigital.prj001.ui.act047.model.TypeDeadlineFilter;
+import com.namoadigital.prj001.ui.act047.model.TypePriorityFilter;
+import com.namoadigital.prj001.ui.act047.model.TypeStatusFilter;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -55,7 +79,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
     private Act047_SO_Next_Orders_Adapter mAdapter;
     private String requestingAct = "";
     private Act047_Main_Contract.I_Presenter mPresenter;
-    private String wsProcess ="";
+    private String wsProcess = "";
     //Var tmp que armazena o item da lista clicado.
     private SO_Next_Orders_Obj wsTmpItem = null;
     private MKEditTextNM mketFilter;
@@ -137,6 +161,23 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         //
         transList.add("dialog_so_product_lbl");
         //
+        transList.add("filter_dialog_ttl_lbl");
+        transList.add("filter_dialog_status_lbl");
+        transList.add("filter_dialog_deadline_lbl");
+        transList.add("filter_dialog_deadline_without_lbl");
+        transList.add("filter_dialog_deadline_expired_lbl");
+        transList.add("filter_dialog_orders_lbl");
+        transList.add("filter_dialog_priority_deadline_lbl");
+        transList.add("filter_dialog_priority_date_created_lbl");
+        transList.add("filter_dialog_priority_lbl");
+        transList.add("filter_dialog_priority_all_lbl");
+        transList.add("filter_dialog_desc_lbl");
+        transList.add("filter_dialog_zone_lbl");
+        transList.add("filter_dialog_partner_lbl");
+        transList.add("filter_dialog_ok_lbl");
+        transList.add("filter_dialog_cancel_lbl");
+
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -186,12 +227,12 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         mketFilter.setHint(hmAux_Trans.get("filter_hint"));
         tv_empty_list.setText(hmAux_Trans.get("empty_serial_list_lbl"));
         tv_filter.setText(hmAux_Trans.get("zone_filter_lbl"));
-        if(!filterSerial.isEmpty()) mketFilter.setText(filterSerial);
+        if (!filterSerial.isEmpty()) mketFilter.setText(filterSerial);
     }
 
-    private void checkIfContainsFilter(){
+    private void checkIfContainsFilter() {
         String text = mketFilter.getText().toString();
-        if(mAdapter != null && !text.isEmpty()){
+        if (mAdapter != null && !text.isEmpty()) {
             mAdapter.getFilter().filter(text);
         }
     }
@@ -203,8 +244,6 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
             mPresenter.executeNextOrdersSearch(isChecked);
         }
     };
-
-
 
 
     private void recoverIntentsInfo() {
@@ -225,14 +264,14 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
 
     /**
      * LUCHE - 16/01/2020
-     *
+     * <p>
      * Metodo que reseta as variaveis relativas a chamada de WS e fecha o dialog.
      */
     @Override
     public void cleanWsTmpItem() {
-       wsProcess ="";
-       wsTmpItem = null;
-       disableProgressDialog();
+        wsProcess = "";
+        wsTmpItem = null;
+        disableProgressDialog();
     }
 
     private void setLocationInfo() {
@@ -241,9 +280,9 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         tv_site.setText(mFooter.get(Constant.FOOTER_SITE));
         //
         tv_zone.setVisibility(View.GONE);
-        if( ToolBox_Inf.profileExists(context,Constant.PROFILE_PRJ001_SO,null)
-            && mFooter.containsKey(Constant.FOOTER_ZONE)
-            && !mFooter.get(Constant.FOOTER_ZONE).isEmpty()
+        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null)
+                && mFooter.containsKey(Constant.FOOTER_ZONE)
+                && !mFooter.get(Constant.FOOTER_ZONE).isEmpty()
         ) {
             tv_zone.setVisibility(View.VISIBLE);
             tv_zone.setText(mFooter.get(Constant.FOOTER_ZONE));
@@ -263,10 +302,10 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         checkIfContainsFilter();
     }
 
-    private void setAdapter(ArrayList<SO_Next_Orders_Obj> list){
+    private void setAdapter(ArrayList<SO_Next_Orders_Obj> list) {
         changeVisibilityAdapter(list);
 
-        if(mAdapter != null){
+        if (mAdapter != null) {
             mAdapter.changeListByFilter(list);
             return;
         }
@@ -294,44 +333,44 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
     @Override
     public void showAlert(String ttl, String msg, DialogInterface.OnClickListener listener) {
         ToolBox.alertMSG(
-            context,
-            ttl,
-            msg,
-            listener,
-            0
+                context,
+                ttl,
+                msg,
+                listener,
+                0
         );
     }
 
     /**
      * LUCHE - 16/01/2020
-     *
+     * <p>
      * Alterado metodo para verificar se o progressDialog ja esta instanciado e, caso esteja, atualiza
      * title, msg e exibe o dialog ao inves de criar uma nova instancia.
-     *
+     * <p>
      * Teste feito para tentar resolver problemas que acontecem em algumas telas que tem chamadas de
      * ws encadeadas. Como cada chamada do enableProgressDialog, gera uma nova instancia do progressDialog,
      * era possivel empilhar dialogs e não conseguir fechar los ja que o se houvessem 2 aberto,
      * não existe mais referencia do primeiro tornando impossivel fechar o dialog.     *
-     *
+     * <p>
      * O teste mostrou ser efetivo e talvez fosse interessando aplicar esse conceito direto na BaseACt
      *
      * @param title - Titulo
-     * @param msg - Msg
+     * @param msg   - Msg
      */
     @Override
     public void showPD(String title, String msg) {
-        if(progressDialog == null) {
+        if (progressDialog == null) {
             enableProgressDialog(
-                title,
-                msg,
-                hmAux_Trans.get("sys_alert_btn_cancel"),
-                hmAux_Trans.get("sys_alert_btn_ok")
+                    title,
+                    msg,
+                    hmAux_Trans.get("sys_alert_btn_cancel"),
+                    hmAux_Trans.get("sys_alert_btn_ok")
             );
-        }else{
+        } else {
             progressDialog.setTitle(title);
             progressDialog.setMessage(msg);
             //
-            if(!progressDialog.isShowing()) {
+            if (!progressDialog.isShowing()) {
                 progressDialog.show();
             }
         }
@@ -361,21 +400,21 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
     }
 
     private void showDetailsDialog(final SO_Next_Orders_Obj item) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context,R.style.AlertDialogTheme);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
         Act047SoNextOrdersDialogBinding binding = Act047SoNextOrdersDialogBinding.inflate(LayoutInflater.from(context));
         //
-        binding.act047SoNextOrdersDialogTvTitle.setText((hmAux_Trans.get("dialog_so_details_ttl")+" "+ item.getSo_prefix()+"."+item.getSo_code()));
+        binding.act047SoNextOrdersDialogTvTitle.setText((hmAux_Trans.get("dialog_so_details_ttl") + " " + item.getSo_prefix() + "." + item.getSo_code()));
 
-        if (item.getSo_desc()==null || item.getSo_desc().isEmpty()) {
+        if (item.getSo_desc() == null || item.getSo_desc().isEmpty()) {
             binding.act047SoNextOrdersDialogLlSoDesc.setVisibility(View.GONE);
-        }else{
+        } else {
             binding.act047SoNextOrdersDialogLlSoDesc.setVisibility(View.VISIBLE);
             binding.act047SoNextOrdersDialogTvSoDescLbl.setText(hmAux_Trans.get("dialog_so_desc_lbl"));
             binding.act047SoNextOrdersDialogTvSoDescVal.setText(item.getSo_desc());
         }
-         if (item.getComments()==null || item.getComments().isEmpty()) {
-             binding.act047SoNextOrdersDialogLlSoComment.setVisibility(View.GONE);
-        }else{
+        if (item.getComments() == null || item.getComments().isEmpty()) {
+            binding.act047SoNextOrdersDialogLlSoComment.setVisibility(View.GONE);
+        } else {
             binding.act047SoNextOrdersDialogLlSoComment.setVisibility(View.VISIBLE);
             binding.act047SoNextOrdersDialogTvSoCommentLbl.setText(hmAux_Trans.get("dialog_so_comment_lbl"));
             binding.act047SoNextOrdersDialogTvSoCommentVal.setText(item.getComments());
@@ -388,7 +427,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         binding.act047SoNextOrdersDialogTvError.setText(hmAux_Trans.get("serial_no_match_hint"));
 
         binding.act047SoNextOrdersDialogTvPositionLbl.setText(hmAux_Trans.get("dialog_so_serial_position_lbl"));
-        if(item.getSerial_site_code() != null) {
+        if (item.getSerial_site_code() != null) {
             binding.act047SoNextOrdersDialogLlSoPosition.setVisibility(View.VISIBLE);
             if (item.getSerial_site_code().equals(ToolBox_Con.getPreference_Site_Code(context))) {
                 binding.act047SoNextOrdersDialogLlSoPositionSite.setVisibility(View.GONE);
@@ -401,7 +440,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
                 binding.act047SoNextOrdersDialogTvSoPositionZoneVal.setTextColor(getResources().getColor(R.color.namoa_status_error));
                 binding.act047SoNextOrdersDialogTvSoPositionLocalVal.setTextColor(getResources().getColor(R.color.namoa_status_error));
             }
-        }else{
+        } else {
             binding.act047SoNextOrdersDialogLlSoPosition.setVisibility(View.GONE);
             binding.act047SoNextOrdersDialogLlSoPositionSite.setVisibility(View.GONE);
         }
@@ -413,19 +452,19 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         binding.act047SoNextOrdersDialogTvSoPositionLocalLbl.setText(hmAux_Trans.get("dialog_so_local_lbl"));
         binding.act047SoNextOrdersDialogTvSoPositionLocalVal.setText(item.getSerial_local_desc());
 
-        if (item.getLast_approval_budget_user()==null
+        if (item.getLast_approval_budget_user() == null
                 || item.getLast_approval_budget_user().isEmpty()) {
             binding.act047SoNextOrdersDialogLlSoApprovedBy.setVisibility(View.GONE);
-        }else{
+        } else {
             binding.act047SoNextOrdersDialogLlSoApprovedBy.setVisibility(View.VISIBLE);
             binding.act047SoNextOrdersDialogTvSoApprovedByLbl.setText(hmAux_Trans.get("dialog_so_approved_by_lbl"));
             binding.act047SoNextOrdersDialogTvSoApprovedByVal.setText(item.getLast_approval_budget_user());
         }
 
-        if (item.getCreate_user()==null
-        || item.getCreate_user().isEmpty()) {
+        if (item.getCreate_user() == null
+                || item.getCreate_user().isEmpty()) {
             binding.act047SoNextOrdersDialogLlSoCreatedBy.setVisibility(View.GONE);
-        }else{
+        } else {
             binding.act047SoNextOrdersDialogLlSoCreatedBy.setVisibility(View.VISIBLE);
             binding.act047SoNextOrdersDialogTvSoCreatedByLbl.setText(hmAux_Trans.get("dialog_so_created_by_lbl"));
             binding.act047SoNextOrdersDialogTvSoCreatedByVal.setText(item.getCreate_user());
@@ -460,18 +499,18 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
                         null
                 )
                 .setNegativeButton(
-                    hmAux_Trans.get("sys_alert_btn_cancel"),
-                    null
+                        hmAux_Trans.get("sys_alert_btn_cancel"),
+                        null
                 );
         //
-        final AlertDialog dialog =  builder.create();
+        final AlertDialog dialog = builder.create();
         dialog.show();
         //Setado listner do botão positivo nesse momento, pois era necessaria a passagem do dialog
         //como parametro do metodo checkDialogFlow
         dialog.getButton(Dialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                checkDialogFlow(dialog,binding.act047SoNextOrdersDialogTvError,binding.act047SoNextOrdersDialogMketSerialConfirm,item);
+                checkDialogFlow(dialog, binding.act047SoNextOrdersDialogTvError, binding.act047SoNextOrdersDialogMketSerialConfirm, item);
             }
         });
         //Listener para remover o mket_serial da lista de componentes
@@ -488,68 +527,70 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
      * <p></p>
      * Metodo que formata a exibição das 6 infos add da o.s
      * A exibição deve seguir, caso exista:
-     *  idx : Valor \n
+     * idx : Valor \n
+     *
      * @param ordersObj
      * @return
      */
     private String getFormatedSoAddInfo(SO_Next_Orders_Obj ordersObj) {
         String finalAddInfo = "";
         //
-        finalAddInfo += getIdxAddInfoWithExists("1",ordersObj.getAdd_inf1());
-        finalAddInfo += getIdxAddInfoWithExists("2",ordersObj.getAdd_inf2());
-        finalAddInfo += getIdxAddInfoWithExists("3",ordersObj.getAdd_inf3());
-        finalAddInfo += getIdxAddInfoWithExists("4",ordersObj.getAdd_inf4());
-        finalAddInfo += getIdxAddInfoWithExists("5",ordersObj.getAdd_inf5());
-        finalAddInfo += getIdxAddInfoWithExists("6",ordersObj.getAdd_inf6());
+        finalAddInfo += getIdxAddInfoWithExists("1", ordersObj.getAdd_inf1());
+        finalAddInfo += getIdxAddInfoWithExists("2", ordersObj.getAdd_inf2());
+        finalAddInfo += getIdxAddInfoWithExists("3", ordersObj.getAdd_inf3());
+        finalAddInfo += getIdxAddInfoWithExists("4", ordersObj.getAdd_inf4());
+        finalAddInfo += getIdxAddInfoWithExists("5", ordersObj.getAdd_inf5());
+        finalAddInfo += getIdxAddInfoWithExists("6", ordersObj.getAdd_inf6());
         //
-        return !finalAddInfo.isEmpty() ? finalAddInfo.substring(0,finalAddInfo.length() -1) : finalAddInfo ;
+        return !finalAddInfo.isEmpty() ? finalAddInfo.substring(0, finalAddInfo.length() - 1) : finalAddInfo;
     }
 
     /**
      * LUCHE - 13/07/2021
      * <p></p>
      * Metodo que avalia concatena o idx a info caso exista.
+     *
      * @param idx
      * @param addInfo
      * @return
      */
     private String getIdxAddInfoWithExists(String idx, String addInfo) {
-        if(addInfo != null && !addInfo.isEmpty()){
-            return idx + ": " + addInfo.trim()+"\n";
+        if (addInfo != null && !addInfo.isEmpty()) {
+            return idx + ": " + addInfo.trim() + "\n";
         }
         return "";
     }
 
     private void hideSerialForByPassProfile(MKEditTextNM mket_serial) {
-        if(ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_SO,Constant.PROFILE_MENU_SO_PARAM_BYPASS_SERIAL_VERIFICATION)){
+        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_BYPASS_SERIAL_VERIFICATION)) {
             mket_serial.setVisibility(View.GONE);
         }
     }
 
     /**
      * LUCHE - 16/01/2020
-     *
+     * <p>
      * Metodo que define qual fluxo seguir apos a digitação do serial.
-     *
+     * <p>
      * Se nenhum texto digitado, fecha o dialog
      * Se texto digitado diferente do serial, exibe tv com msg de erro
      * Se texto igual serial, verifica se o.s existe, e se existir, navega para act027.
      * Caso não exista, inicia a sequencia de download do serial e ana sequencia da o.s.
-     *
+     * <p>
      * Dialog pode ser nulo e quando nulo, identifica que a chamada do metodo foi disparada pelos
      * leitores de Barcode ou OCR
      *
-     * @param dialog - Instancia do dialog para fecha-lo caso o campos serial seja vazio.
-     * @param tv_error - TextView que exibe o msg de erro caso o serial digitado seja diferente
+     * @param dialog      - Instancia do dialog para fecha-lo caso o campos serial seja vazio.
+     * @param tv_error    - TextView que exibe o msg de erro caso o serial digitado seja diferente
      * @param mket_serial - Mket do serial
-     * @param item - Item da lista
+     * @param item        - Item da lista
      */
     private void checkDialogFlow(@Nullable AlertDialog dialog, TextView tv_error, MKEditTextNM mket_serial, SO_Next_Orders_Obj item) {
         String mketVal = mket_serial.getText().toString().trim();
         //LUCHE - 17/03/2021 - Aplicado profile que pula necessidade de digitação do serial.
-        if(ToolBox_Inf.profileExists(context,Constant.PROFILE_MENU_SO,Constant.PROFILE_MENU_SO_PARAM_BYPASS_SERIAL_VERIFICATION)){
+        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_BYPASS_SERIAL_VERIFICATION)) {
             callSoAction(item);
-        }else {
+        } else {
             if (mketVal.length() > 0) {
                 if (mketVal.equalsIgnoreCase(item.getSerial_id())) {
                     callSoAction(item);
@@ -572,17 +613,18 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
     /**
      * LUCHE - 17/03/2021
      * Metodo que define a ação para abertura da O.S, se avança ou faz download antes de avançar.
+     *
      * @param item
      */
     private void callSoAction(SO_Next_Orders_Obj item) {
-        if(mPresenter.checkSoExits(item.getSo_prefix(),item.getSo_code())){
+        if (mPresenter.checkSoExits(item.getSo_prefix(), item.getSo_code())) {
             callAct027(
-                mPresenter.getAct027Bundle(
-                    item.getSo_prefix(),
-                    item.getSo_code()
-                )
+                    mPresenter.getAct027Bundle(
+                            item.getSo_prefix(),
+                            item.getSo_code()
+                    )
             );
-        }else {
+        } else {
             wsTmpItem = item;
             mPresenter.executeSerialDownload(item.getProduct_id(), item.getSerial_id());
         }
@@ -590,35 +632,35 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
 
     /**
      * LUCHE - 16/01/2020
-     *
+     * <p>
      * Metodo que configura as views relativas ao serial e seus listeners.
-     *
+     * <p>
      * Configura os tipos de leitura do mket
      *
-     * @param tv_error - TextView que exibe o msg de erro caso o serial digitado seja diferente
+     * @param tv_error    - TextView que exibe o msg de erro caso o serial digitado seja diferente
      * @param mket_serial - Mket do serial
-     * @param item - Item da lista
+     * @param item        - Item da lista
      */
     private void configSerialViews(final TextView tv_error, final MKEditTextNM mket_serial, final SO_Next_Orders_Obj item) {
         mket_serial.setmBARCODE(
-            ToolBox_Inf.profileExists(
-                context,
-                Constant.PROFILE_MENU_PROFILE,
-                Constant.PROFILE_MENU_PROFILE_SERIAL_BARCODE
-            )
+                ToolBox_Inf.profileExists(
+                        context,
+                        Constant.PROFILE_MENU_PROFILE,
+                        Constant.PROFILE_MENU_PROFILE_SERIAL_BARCODE
+                )
         );
         //
         mket_serial.setmOCR(ToolBox_Inf.profileExists(
-            context,
-            Constant.PROFILE_MENU_PROFILE,
-            Constant.PROFILE_MENU_PROFILE_SERIAL_OCR_MOSOLF
+                context,
+                Constant.PROFILE_MENU_PROFILE,
+                Constant.PROFILE_MENU_PROFILE_SERIAL_OCR_MOSOLF
         ));
         mket_serial.setmNFC(false);
         //
         mket_serial.setDelegateTextBySpecialist(new MKEditTextNM.IMKEditTextTextBySpecialist() {
             @Override
             public void reportTextBySpecialist(String s) {
-                checkDialogFlow(null, tv_error, mket_serial,item);
+                checkDialogFlow(null, tv_error, mket_serial, item);
             }
         });
         //
@@ -695,7 +737,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
 
             @Override
             public void reportTextChange(String s, boolean b) {
-                if(mAdapter != null) {
+                if (mAdapter != null) {
                     mAdapter.getFilter().filter(s.trim());
                 }
             }
@@ -704,7 +746,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
 
     @Override
     protected void processCloseACT(String mLink, String mRequired) {
-       processCloseACT(mLink, mRequired,new HMAux());
+        processCloseACT(mLink, mRequired, new HMAux());
     }
 
     @Override
@@ -714,13 +756,13 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         if (wsProcess.equals(WS_SO_Next_Orders.class.getName())) {
             mPresenter.processNextOrderList(hmAux.get(WS_SO_Next_Orders.SO_NEXT_SERVICES));
             disableProgressDialog();
-        }else if(wsProcess.equals(WS_Serial_Search.class.getName())){
+        } else if (wsProcess.equals(WS_Serial_Search.class.getName())) {
             //Não fecha o dialog, pois o mesmo será usado na sequencia para o download a S.O
             //em caso de erro, dialog pé fechado pelo metodo  cleanWsTmpItem();
             //disableProgressDialog();
             mPresenter.extractSearchResult(mLink, wsTmpItem);
-        }else if(wsProcess.equals(WS_SO_Search.class.getName())){
-            mPresenter.processSoDownloadResult(hmAux,wsTmpItem.getSo_prefix(),wsTmpItem.getSo_code());
+        } else if (wsProcess.equals(WS_SO_Search.class.getName())) {
+            mPresenter.processSoDownloadResult(hmAux, wsTmpItem.getSo_prefix(), wsTmpItem.getSo_code());
             cleanWsTmpItem();
         }
     }
@@ -754,11 +796,10 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
     protected void processError_1(String mLink, String mRequired) {
         super.processError_1(mLink, mRequired);
         //
-        if( wsProcess.equals(WS_Serial_Search.class.getName())
-            || wsProcess.equals(WS_SO_Search.class.getName()))
-        {
+        if (wsProcess.equals(WS_Serial_Search.class.getName())
+                || wsProcess.equals(WS_SO_Search.class.getName())) {
             cleanWsTmpItem();
-        }else{
+        } else {
             disableProgressDialog();
             onBackPressed();
         }
@@ -768,11 +809,11 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
     protected void processCustom_error(String mLink, String mRequired) {
         super.processCustom_error(mLink, mRequired);
         //
-        if( wsProcess.equals(WS_Serial_Search.class.getName())
-            || wsProcess.equals(WS_SO_Search.class.getName())
-        ){
+        if (wsProcess.equals(WS_Serial_Search.class.getName())
+                || wsProcess.equals(WS_SO_Search.class.getName())
+        ) {
             cleanWsTmpItem();
-        }else{
+        } else {
             disableProgressDialog();
             onBackPressed();
         }
@@ -795,7 +836,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
     @Override
     protected void processUpdateSoftware(String mLink, String mRequired) {
         super.processUpdateSoftware(mLink, mRequired);
-        if(progressDialog != null) {
+        if (progressDialog != null) {
             progressDialog.dismiss();
         }
         //
@@ -829,24 +870,353 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
 
 
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
+        menu.add(0, 1, Menu.NONE, "");
 
-        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
+        menu.getItem(0).setIcon(getResources().getDrawable(R.drawable.ic_baseline_filter_alt_24));
         menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         return true;
     }
 
 
-    private boolean getSwitchState(){
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        if (item.getItemId() == 1) {
+            showFilterDialog();
+        }
+
+        return true;
+    }
+
+    private boolean getSwitchState() {
         return ToolBox_Con.getBooleanPreferencesByKey(context, Constant.ACT047_SWITCH_STATE, true);
     }
 
-    private void setSwitchState(boolean isChecked){
+    private void setSwitchState(boolean isChecked) {
         ToolBox_Con.setBooleanPreference(context, Constant.ACT047_SWITCH_STATE, isChecked);
     }
 
+
+    private void showFilterDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
+        Act047FilterDialogBinding binding = Act047FilterDialogBinding.inflate(LayoutInflater.from(context));
+        NextOsFilter filter = mPresenter.getCheckboxFromPreference();
+        List<TypeStatusFilter> status = filter.getStatusFilter();
+        List<TypeDeadlineFilter> deadlineFilter = filter.getDeadlineFilter();
+        TypePriorityFilter priorityFilter = filter.getPriorityFilter();
+        MD_Site_Zone zone = new MD_Site_ZoneDao(context).getZone();
+        MD_Site site = new MD_SiteDao(context).getSite();
+        MD_PartnerDao partnerDao = new MD_PartnerDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        ArrayList<HMAux> partnerList = (ArrayList<HMAux>) partnerDao.query_HM(
+                new MD_Partner_Sql_SS(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        );
+
+        binding.filterDialogTvTitle.setText(hmAux_Trans.get("filter_dialog_ttl_lbl"));
+        binding.filterDialogTvStatusLbl.setText(hmAux_Trans.get("filter_dialog_status_lbl"));
+        binding.filterDialogTvDeadlineLbl.setText(hmAux_Trans.get("filter_dialog_deadline_lbl"));
+        binding.checkBoxWithoutDeadline.setText(hmAux_Trans.get("filter_dialog_deadline_without_lbl"));
+        binding.checkboxExpiredDeadline.setText(hmAux_Trans.get("filter_dialog_deadline_expired_lbl"));
+        binding.filterDialogTvOrdersLbl.setText(hmAux_Trans.get("filter_dialog_orders_lbl"));
+        binding.radioPriorityDeadline.setText(hmAux_Trans.get("filter_dialog_priority_deadline_lbl"));
+        binding.radioPriorityDateCreated.setText(hmAux_Trans.get("filter_dialog_priority_date_created_lbl"));
+
+        binding.filterDialogTvPriorityLbl.setText(hmAux_Trans.get("filter_dialog_priority_lbl"));
+        binding.radiobuttonAllPriority.setText(hmAux_Trans.get("filter_dialog_priority_all_lbl"));
+        if (site != null && !site.getSite_desc().isEmpty()) {
+            binding.filterDialogTvDescLbl.setText(hmAux_Trans.get("filter_dialog_desc_lbl") + ": " + site.getSite_desc());
+            binding.filterDialogTvDescLbl.setVisibility(View.VISIBLE);
+        } else {
+            binding.filterDialogTvDescLbl.setVisibility(View.GONE);
+        }
+        if (getSwitchState() && zone != null && !zone.getZone_desc().isEmpty()) {
+            binding.filterDialogTvZoneLbl.setText(hmAux_Trans.get("filter_dialog_zone_lbl") + ": " + zone.getZone_desc());
+            binding.filterDialogTvZoneLbl.setVisibility(View.VISIBLE);
+        } else {
+            binding.filterDialogTvZoneLbl.setVisibility(View.GONE);
+        }
+
+        if (partnerList.isEmpty()) {
+            binding.filterDialogTvPartnerLbl.setVisibility(View.GONE);
+        } else {
+            binding.filterDialogTvPartnerLbl.setVisibility(View.VISIBLE);
+            binding.filterDialogTvPartnerLbl.setText(hmAux_Trans.get("filter_dialog_partner_lbl") + ": " + TextUtils.join(", ", filter.getPartnerList(partnerList)));
+        }
+        binding.filterDialogOk.setText(hmAux_Trans.get("filter_dialog_ok_lbl"));
+        binding.filterDialogCancel.setText(hmAux_Trans.get("filter_dialog_cancel_lbl"));
+
+        onChangeStyleStatusFilter(binding);
+        for (TypeStatusFilter item : status) {
+            switch (item) {
+                case EDIT:
+                    binding.checkboxEdit.setChecked(true);
+                    break;
+                case APPROVAL_QUALITY:
+                    binding.checkboxApprovalQuality.setChecked(true);
+                    break;
+                case PENDING_AND_PROCESS:
+                    binding.checkboxPendingAndProcess.setChecked(true);
+                    break;
+                case STOP:
+                    binding.checkboxStop.setChecked(true);
+                    break;
+                case APPROVAL_FINAL:
+                    binding.checkboxApprovalFinal.setChecked(true);
+                    break;
+                case BUDGET:
+                    binding.checkboxBudget.setChecked(true);
+                    break;
+            }
+        }
+
+        for (TypeDeadlineFilter item : deadlineFilter) {
+            switch (item) {
+                case WITHOUT:
+                    binding.checkBoxWithoutDeadline.setChecked(true);
+                    break;
+                case EXPIRED:
+                    binding.checkboxExpiredDeadline.setChecked(true);
+                    break;
+            }
+        }
+
+        switch (priorityFilter) {
+            case DEADLINE:
+                binding.radioPriorityDeadline.setChecked(true);
+                break;
+            case DATE_CREATED:
+                binding.radioPriorityDateCreated.setChecked(true);
+                break;
+        }
+
+        for (int i = 0; i < mPresenter.getListSmPriority().size(); i++) {
+            RadioButton radioButton = new RadioButton(this);
+            SmPriority item = mPresenter.getListSmPriority().get(i);
+            radioButton.setId(View.generateViewId());
+            radioButton.setText(item.getPriority_desc());
+            radioButton.setTextColor(Color.parseColor(item.getPriority_color()));
+            if (item.getPriority_desc().equals(priorityTypeFiltered)) {
+                radioButton.setChecked(true);
+            }
+            RadioGroup.LayoutParams rdioLayout = new RadioGroup.LayoutParams(RadioGroup.LayoutParams.WRAP_CONTENT, RadioGroup.LayoutParams.WRAP_CONTENT);
+            binding.radioPriority.addView(radioButton, rdioLayout);
+        }
+
+        builder.setView(binding.getRoot());
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        binding.filterDialogOk.setOnClickListener(v -> {
+            List<TypeStatusFilter> typeStatusFilters = processSaveStatusFilterDialog(binding);
+            List<TypeDeadlineFilter> deadlineFilterList = processSaveDeadlineFilterDialog(binding);
+            TypePriorityFilter typePriorityFilter = processSavePriorityFilterDialog(binding);
+            filter.setStatusFilter(typeStatusFilters);
+            filter.setDeadlineFilter(deadlineFilterList);
+            filter.setPriorityFilter(typePriorityFilter);
+            filter.setPriorityTypeFilter(priorityTypeFiltered);
+            if (mPresenter.saveFilterDialog(filter, getSwitchState())) {
+                dialog.dismiss();
+            }
+        });
+
+        binding.filterDialogCancel.setOnClickListener(v -> dialog.dismiss());
+
+        binding.checkboxEdit.setOnClickListener(v -> checkStateFromButtonFilter(binding));
+        binding.checkboxBudget.setOnClickListener(v -> checkStateFromButtonFilter(binding));
+        binding.checkboxStop.setOnClickListener(vv -> checkStateFromButtonFilter(binding));
+        binding.checkboxPendingAndProcess.setOnClickListener(v -> checkStateFromButtonFilter(binding));
+        binding.checkboxApprovalQuality.setOnClickListener(v -> checkStateFromButtonFilter(binding));
+        binding.checkboxApprovalFinal.setOnClickListener(v -> checkStateFromButtonFilter(binding));
+
+        binding.radioPriority.setOnCheckedChangeListener((radioGroup, i) -> {
+            RadioButton radioButton = radioGroup.findViewById(i);
+            if (radioButton != null) {
+                if (radioButton.getId() == binding.radiobuttonAllPriority.getId()) {
+                    priorityTypeFiltered = "";
+                    return;
+                }
+                priorityTypeFiltered = radioButton.getText().toString();
+
+            } else {
+                Toast.makeText(context, "Option invalid", Toast.LENGTH_LONG).show();
+            }
+        });
+
+
+    }
+
+    String priorityTypeFiltered = "";
+
+    //Caso o filtro "Todos os filtros" esteja ativado, desativa os outros filtros
+    //Caso esteja desativado ativa os outros filtros
+    private void onChangeStateStatusFilter(Act047FilterDialogBinding binding, boolean checked) {
+        CheckBox[] checkboxes = {
+                binding.checkboxEdit,
+                binding.checkboxBudget,
+                binding.checkboxStop,
+                binding.checkboxPendingAndProcess,
+                binding.checkboxApprovalQuality,
+                binding.checkboxApprovalFinal,
+        };
+
+        for (CheckBox item : checkboxes) {
+            item.setEnabled(!checked);
+            item.setChecked(checked);
+        }
+
+    }
+
+
+    private void onChangeStyleStatusFilter(Act047FilterDialogBinding binding) {
+
+        TypeStatusFilter[] filters = {
+                TypeStatusFilter.EDIT,
+                TypeStatusFilter.BUDGET,
+                TypeStatusFilter.APPROVAL_QUALITY,
+                TypeStatusFilter.PENDING_AND_PROCESS,
+                TypeStatusFilter.STOP,
+                TypeStatusFilter.APPROVAL_FINAL,
+        };
+
+        for (TypeStatusFilter filter : filters) {
+            switch (filter) {
+                case EDIT:
+                    binding.checkboxEdit.setText(hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_EDIT));
+                    binding.checkboxEdit.setTextColor(ColorStateList.valueOf(ToolBox_Inf.getStatusColorV2(context, ConstantBaseApp.SYS_STATUS_EDIT)));
+                    break;
+                case BUDGET:
+                    binding.checkboxBudget.setText(hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_WAITING_BUDGET));
+                    binding.checkboxBudget.setTextColor(ColorStateList.valueOf(ToolBox_Inf.getStatusColorV2(context, ConstantBaseApp.SYS_STATUS_WAITING_BUDGET)));
+                    break;
+                case APPROVAL_QUALITY:
+                    binding.checkboxApprovalQuality.setText(hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_WAITING_QUALITY));
+                    binding.checkboxApprovalQuality.setTextColor(ColorStateList.valueOf(ToolBox_Inf.getStatusColorV2(context, ConstantBaseApp.SYS_STATUS_WAITING_QUALITY)));
+                    break;
+                case PENDING_AND_PROCESS:
+                    String pendingText = hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_PENDING);
+                    String processText = hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_PROCESS);
+
+                    SpannableString spannableString = new SpannableString(pendingText + " / " + processText);
+
+                    ForegroundColorSpan pendingColorSpan = new ForegroundColorSpan(ToolBox_Inf.getStatusColorV2(context, ConstantBaseApp.SYS_STATUS_PENDING));
+                    spannableString.setSpan(pendingColorSpan, 0, pendingText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                    ForegroundColorSpan processColorSpan = new ForegroundColorSpan(ToolBox_Inf.getStatusColorV2(context, ConstantBaseApp.SYS_STATUS_PROCESS));
+                    spannableString.setSpan(processColorSpan, pendingText.length() + 3, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                    binding.checkboxPendingAndProcess.setText(spannableString);
+                    break;
+                case STOP:
+                    binding.checkboxStop.setText(hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_STOP));
+                    binding.checkboxStop.setTextColor(ColorStateList.valueOf(ToolBox_Inf.getStatusColorV2(context, ConstantBaseApp.SYS_STATUS_STOP)));
+                    break;
+                case APPROVAL_FINAL:
+                    binding.checkboxApprovalFinal.setText(hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_WAITING_APPROVAL));
+                    binding.checkboxApprovalFinal.setTextColor(ColorStateList.valueOf(ToolBox_Inf.getStatusColorV2(context, ConstantBaseApp.SYS_STATUS_WAITING_APPROVAL)));
+                    break;
+            }
+        }
+    }
+
+
+    private TypePriorityFilter processSavePriorityFilterDialog(
+            Act047FilterDialogBinding binding
+    ) {
+
+        if (binding.radioPriorityDeadline.isChecked()) {
+            return TypePriorityFilter.DEADLINE;
+        }
+        if (binding.radioPriorityDateCreated.isChecked()) {
+            return TypePriorityFilter.DATE_CREATED;
+        }
+        return TypePriorityFilter.DEADLINE;
+    }
+
+    private List<TypeDeadlineFilter> processSaveDeadlineFilterDialog(
+            Act047FilterDialogBinding binding
+    ) {
+        List<TypeDeadlineFilter> deadlineList = new ArrayList<>();
+
+        CheckBox[] checkBoxes = {
+                binding.checkBoxWithoutDeadline,
+                binding.checkboxExpiredDeadline
+        };
+
+        TypeDeadlineFilter[] filters = {
+                TypeDeadlineFilter.WITHOUT,
+                TypeDeadlineFilter.EXPIRED
+        };
+
+        for (int i = 0; i < checkBoxes.length; i++) {
+            if (checkBoxes[i].isChecked()) {
+                deadlineList.add(filters[i]);
+            }
+        }
+
+        return deadlineList;
+    }
+
+    private void checkStateFromButtonFilter(Act047FilterDialogBinding binding) {
+        CheckBox[] checkboxes = {
+                binding.checkboxEdit,
+                binding.checkboxBudget,
+                binding.checkboxStop,
+                binding.checkboxPendingAndProcess,
+                binding.checkboxApprovalQuality,
+                binding.checkboxApprovalFinal,
+        };
+
+        boolean allCheckboxesUnchecked = true;
+        for (CheckBox checkbox : checkboxes) {
+            if (checkbox.isChecked()) {
+                allCheckboxesUnchecked = false;
+                break;
+            }
+        }
+
+        binding.filterDialogOk.setEnabled(!allCheckboxesUnchecked);
+
+    }
+
+    private List<TypeStatusFilter> processSaveStatusFilterDialog(Act047FilterDialogBinding binding) {
+        List<TypeStatusFilter> statusList = new ArrayList<>();
+
+        //Tem que está ordenado como no layout
+        CheckBox[] checkboxes = {
+                binding.checkboxEdit,
+                binding.checkboxBudget,
+                binding.checkboxStop,
+                binding.checkboxPendingAndProcess,
+                binding.checkboxApprovalQuality,
+                binding.checkboxApprovalFinal,
+        };
+
+        //Tem que está ordenado como no layout
+        TypeStatusFilter[] filters = {
+                TypeStatusFilter.EDIT,
+                TypeStatusFilter.BUDGET,
+                TypeStatusFilter.STOP,
+                TypeStatusFilter.PENDING_AND_PROCESS,
+                TypeStatusFilter.APPROVAL_QUALITY,
+                TypeStatusFilter.APPROVAL_FINAL,
+        };
+
+
+        for (int i = 0; i < checkboxes.length; i++) {
+            if (checkboxes[i].isChecked()) {
+                statusList.add(filters[i]);
+            }
+        }
+
+        return statusList;
+    }
 
 }
 
