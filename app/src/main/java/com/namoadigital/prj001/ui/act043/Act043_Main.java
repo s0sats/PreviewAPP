@@ -43,15 +43,18 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.dao.SmPriorityDao;
 import com.namoadigital.prj001.model.MD_Partner;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.SM_SO;
+import com.namoadigital.prj001.model.SmPriority;
 import com.namoadigital.prj001.model.TSO_Save_Env;
 import com.namoadigital.prj001.model.TSO_Service_Search_Detail_Params_Obj;
 import com.namoadigital.prj001.model.TSO_Service_Search_Obj;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
+import com.namoadigital.prj001.service.WSSoStatusChange;
 import com.namoadigital.prj001.service.WS_SO_Service_Cancel;
 import com.namoadigital.prj001.service.WS_SO_Service_Search;
 import com.namoadigital.prj001.service.WS_Serial_Save;
@@ -59,6 +62,8 @@ import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_004;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Sql_018;
+import com.namoadigital.prj001.sql.SmPrioritySql001;
+import com.namoadigital.prj001.sql.SmPrioritySql002;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Opc;
@@ -94,6 +99,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
     private String ws_process;
     private SM_SO mSm_so;
     private SM_SODao sm_soDao;
+    private SmPriorityDao smPriorityDao;
     private DrawerLayout mDrawerLayout;
     //FRAGMENTS
     private Act043_Frag_Preview act043_frag_preview;
@@ -139,6 +145,13 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         );
         //
         sm_soDao = new SM_SODao(context);
+        //
+        smPriorityDao = new SmPriorityDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        //
         //
         loadTranslation();
     }
@@ -213,6 +226,8 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
 
         transList.add("progress_status_change_ttl");
         transList.add("progress_status_change_msg");
+        transList.add("progress_priority_change_ttl");
+        transList.add("progress_priority_change_msg");
         //Drawer
         List<String> transListdrawer = new ArrayList<String>();
         transListdrawer.add("so_lbl");
@@ -617,6 +632,35 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
     @Override
     public void soChatClick() {
         callAct027(context, Act027_Main.SELECTION_CHAT_FLOW);
+    }
+
+    @Override
+    public SmPriority getPriorityInfo(int priorityCode) {
+        return smPriorityDao.getByString(
+                new SmPrioritySql001(
+                    Math.toIntExact(ToolBox_Con.getPreference_Customer_Code(context)),
+                    priorityCode
+                ).toSqlQuery()
+        );
+    }
+
+    @Override
+    public List<SmPriority> getPriorities() {
+        return smPriorityDao.query(
+                new SmPrioritySql002(
+                        Math.toIntExact(ToolBox_Con.getPreference_Customer_Code(context))
+                ).toSqlQuery()
+        );
+    }
+
+    @Override
+    public void callWsStatusChange(String ws_action_so) {
+        mPresenter.executeSoStatusChangeService(mSm_so, ToolBox_Inf.getToken(context), ws_action_so);
+    }
+
+    @Override
+    public void callWsPriorityChange(SmPriority priority) {
+        mPresenter.executeSoPriorityChangeService(mSm_so, ToolBox_Inf.getToken(context), priority);
     }
 
     public void setCurrentFrag(String currentFrag) {
@@ -1096,7 +1140,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
                             changeStatusToken = ToolBox_Inf.getToken(context);
                         }
                         //
-                        mPresenter.executeSoStatusChangeService(mSm_so, changeStatusToken);
+                        mPresenter.executeSoStatusChangeService(mSm_so, changeStatusToken, WSSoStatusChange.WS_ACTION_SO_PROCESS);
                     }
             ).show();
         }else{

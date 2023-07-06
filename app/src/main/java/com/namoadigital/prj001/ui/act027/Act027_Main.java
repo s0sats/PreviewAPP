@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act027;
 
 import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH_PHOTO;
+import static com.namoadigital.prj001.service.WSSoPriorityChange.WS_RETURN_SO_PRIORITY;
 import static com.namoadigital.prj001.ui.act005.Act005_Main.TOOLBAR_SYNC_DATA_STATUS;
 
 import android.content.BroadcastReceiver;
@@ -59,6 +60,7 @@ import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SM_SO_FileDao;
 import com.namoadigital.prj001.dao.SM_SO_Product_EventDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_Exec_TaskDao;
+import com.namoadigital.prj001.dao.SmPriorityDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.CH_Room;
 import com.namoadigital.prj001.model.DataPackage;
@@ -66,6 +68,7 @@ import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.SM_SO;
+import com.namoadigital.prj001.model.SmPriority;
 import com.namoadigital.prj001.model.Sync_Checklist;
 import com.namoadigital.prj001.model.TSO_Save_Env;
 import com.namoadigital.prj001.receiver.WBR_Logout;
@@ -76,9 +79,11 @@ import com.namoadigital.prj001.receiver.WBR_SO_Search;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
+import com.namoadigital.prj001.receiver.WBR_So_Priority_Change;
 import com.namoadigital.prj001.receiver.WBR_So_Status_Change;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_UserAuthor;
+import com.namoadigital.prj001.service.WSSoPriorityChange;
 import com.namoadigital.prj001.service.WSSoStatusChange;
 import com.namoadigital.prj001.service.WS_SO_Create_Room;
 import com.namoadigital.prj001.service.WS_SO_Save;
@@ -97,6 +102,8 @@ import com.namoadigital.prj001.sql.SM_SO_Sql_012;
 import com.namoadigital.prj001.sql.SM_SO_Sql_014;
 import com.namoadigital.prj001.sql.SM_SO_Sql_018;
 import com.namoadigital.prj001.sql.SM_SO_Sql_025;
+import com.namoadigital.prj001.sql.SmPrioritySql001;
+import com.namoadigital.prj001.sql.SmPrioritySql002;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_002;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act009.Act009_Main;
@@ -160,6 +167,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     public static final String WS_SO_PRODUCT_EVENT_CANCEL = "WS_SO_PRODUCT_EVENT_CANCEL";
     public static final String WS_PROCESS_SO_CREATE_CHAT_ROOM = "WS_PROCESS_SO_CREATE_CHAT_ROOM";
     public static final String WS_PROCESS_SO_STATUS_CHANGE = "WS_PROCESS_SO_STATUS_CHANGE";
+    public static final String WS_PROCESS_SO_PRIORITY_CHANGE = "WS_PROCESS_SO_PRIORITY_CHANGE";
 
     public static final int WS_PROCESS_APPROVAL_NOT = 0;
     public static final int WS_PROCESS_APPROVAL_ON_SIGNATURE = 1;
@@ -184,6 +192,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     private Act027_Header act027_header_;
 
     private SM_SODao sm_soDao;
+    private SmPriorityDao smPriorityDao;
     private SM_SO mSm_so;
 
     private String ws_process = "";
@@ -262,6 +271,12 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
 
     private void iniDaos() {
         sm_soDao = new SM_SODao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        //
+        smPriorityDao = new SmPriorityDao(
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
@@ -656,6 +671,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         transList.add("progress_status_change_msg");
         //
         transList.add("lbl_sync_data");
+        transList.add("msg_so_results_ok");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -1487,6 +1503,12 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
 
             }
         }
+        //
+        if (ws_process.equalsIgnoreCase(WS_PROCESS_SO_PRIORITY_CHANGE)) {
+            setWs_process("");
+            refreshUI();
+        }
+        //
         //LUCHE - 08/06/2020
         resetSoCreateRoomFlag();
         //
@@ -1541,7 +1563,21 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                     ).toSqlQuery()
             );
             Toast.makeText(context, hmAux_Trans.get("toast_error_on_sync_serial_msg"), Toast.LENGTH_SHORT).show();
+        }else  if (ws_process.equalsIgnoreCase(WS_PROCESS_SO_PRIORITY_CHANGE)) {
+            setWs_process("");
+            //
+            sm_soDao.addUpdate(
+                    new SM_SO_Sql_018(
+                            mSm_so.getCustomer_code(),
+                            mSm_so.getSo_prefix(),
+                            mSm_so.getSo_code(),
+                            0
+                    ).toSqlQuery()
+            );
+            //
+            refreshUI();
         }
+        //
     }
 
     //LUCHE - 08/06/2020
@@ -1639,6 +1675,16 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             progressDialog.dismiss();
             setWs_process("");
             backActivity();
+        }  else if (ws_process.equalsIgnoreCase(WS_PROCESS_SO_PRIORITY_CHANGE)) {
+            progressDialog.dismiss();
+            setWs_process("");
+            //
+            if(hmAux.hasConsistentValue(WS_RETURN_SO_PRIORITY)){
+                if("OK".equalsIgnoreCase(hmAux.get(WS_RETURN_SO_PRIORITY))){
+                    Toast.makeText(context, hmAux_Trans.get("msg_so_results_ok"), Toast.LENGTH_SHORT).show();
+                }
+            }
+            refreshUI();
         } else {
             setWs_process("");
             progressDialog.dismiss();
@@ -2626,7 +2672,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                         backActivity();
                         return;
                     }
-                    executeSoStatusChangeService(context);
+                    executeSoStatusChangeService(context, WSSoStatusChange.WS_ACTION_SO_PROCESS);
                 }
         ).show();
     }
@@ -2634,7 +2680,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     /**
      * Executa o serviço para ativar a OS.
      */
-    private void executeSoStatusChangeService(Context context) {
+    private void executeSoStatusChangeService(Context context, String ws_action_so) {
         if (ToolBox_Con.isOnline(context)) {
             setWs_process(WS_PROCESS_SO_STATUS_CHANGE);
             //
@@ -2651,7 +2697,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             bundle.putInt(SM_SODao.SO_PREFIX, mSm_so.getSo_prefix());
             bundle.putInt(SM_SODao.SO_CODE, mSm_so.getSo_code());
             bundle.putInt(SM_SODao.SO_SCN, mSm_so.getSo_scn());
-            bundle.putString(WSSoStatusChange.WS_BUNDLE_ACTION, WSSoStatusChange.WS_ACTION_SO_PROCESS);
+            bundle.putString(WSSoStatusChange.WS_BUNDLE_ACTION, ws_action_so);
             bundle.putString(WSSoStatusChange.WS_BUNDLE_RETURN_SO, "1");
             bundle.putString(WSSoStatusChange.WS_BUNDLE_SO_TOKEN, ToolBox_Inf.getToken(context));
             //
@@ -2861,6 +2907,61 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                     hmAux_Trans.get("so_usr_not_room_member_ttl"),
                     hmAux_Trans.get("so_usr_not_room_member_msg")
             );
+        }
+    }
+
+    @Override
+    public SmPriority getPriorityInfo(int priorityCode) {
+        return smPriorityDao.getByString(
+                new SmPrioritySql001(
+                        Math.toIntExact(ToolBox_Con.getPreference_Customer_Code(context)),
+                        priorityCode
+                ).toSqlQuery()
+        );
+    }
+
+    @Override
+    public List<SmPriority> getPriorities() {
+        return smPriorityDao.query(
+                new SmPrioritySql002(
+                        Math.toIntExact(ToolBox_Con.getPreference_Customer_Code(context))
+                ).toSqlQuery()
+        );
+    }
+
+    @Override
+    public void callWsStatusChange(String ws_action_so) {
+        executeSoStatusChangeService(context, ws_action_so);
+    }
+
+    @Override
+    public void callWsPriorityChange(SmPriority priority) {
+        executeSoPriorityChangeService(context, priority);
+    }
+
+    private void executeSoPriorityChangeService(Context context, SmPriority priority) {
+        if (ToolBox_Con.isOnline(context)) {
+            ws_process = Act027_Main.WS_PROCESS_SO_PRIORITY_CHANGE;
+            //
+            showPD(
+                    hmAux_Trans.get("progress_priority_change_ttl"),
+                    hmAux_Trans.get("progress_priority_change_msg")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_So_Priority_Change.class);
+            Bundle bundle = new Bundle();
+            bundle.putInt(SM_SODao.SO_PREFIX, mSm_so.getSo_prefix());
+            bundle.putInt(SM_SODao.SO_CODE, mSm_so.getSo_code());
+            bundle.putInt(SM_SODao.SO_SCN, mSm_so.getSo_scn());
+            bundle.putInt(SmPriorityDao.PRIORITY_CODE, priority.getPriority_code());
+            bundle.putString(SmPriorityDao.PRIORITY_DESC, priority.getPriority_desc());
+            bundle.putString(WSSoPriorityChange.WS_SO_TOKEN, ToolBox_Inf.getToken(context));
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+            ToolBox_Inf.showNoConnectionDialog(context);
         }
     }
 

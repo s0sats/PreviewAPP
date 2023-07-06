@@ -19,6 +19,7 @@
     <color name="m3_namoa_background">#FBFCFE</color>
     <color name="m3_namoa_onBackground">#191C1E</color>
     <color name="m3_namoa_surface">#FBFCFE</color>
+    <color name="m3_namoa_surfaceContainerHighest">#E6E0E9</color>
     <color name="m3_namoa_onSurface">#191C1E</color>
     <color name="m3_namoa_surfaceVariant">#DCE4E9</color>
     <color name="m3_namoa_onSurfaceVariant">#40484C</color>

@@ -65,13 +65,23 @@ class WSSoPriorityChange:
             //
             ToolBox_Inf.registerException(javaClass.name, e)
             //
-            ToolBox.sendBCStatus(
-                applicationContext,
-                ConstantBase.PD_TYPE_ERROR_1,
-                sb.toString(),
-                "",
-                "0"
-            )
+            if (ToolBox_Con.isHttpError(e)) {
+                ToolBox_Inf.sendBCStatus(
+                    applicationContext,
+                    ConstantBase.PD_TYPE_ERROR_HTTP,
+                    sb.toString(),
+                    "",
+                    "0"
+                )
+            } else {
+                ToolBox_Inf.sendBCStatus(
+                    applicationContext,
+                    ConstantBase.PD_TYPE_ERROR_1,
+                    sb.toString(),
+                    "",
+                    "0"
+                )
+            }
         } finally {
             WBR_So_Status_Change.completeWakefulIntent(intent)
         }
@@ -131,51 +141,61 @@ class WSSoPriorityChange:
 
     @Throws(Exception::class)
     private fun processSOStatusChange(result: SoPriorityChangeRec) {
-
-        result.so?.let{
-            ToolBox.sendBCStatus(applicationContext, "STATUS", hmAuxTrans["generic_processing_data"], "", "0")
-            //
-            it.forEach { soFull ->
-                soDao.addUpdate(soFull)
+        val hmAuxReturn = HMAux()
+        hmAuxReturn[WS_RETURN_SO_PRIORITY] = result.so_status[0].ret_status
+        hmAuxReturn[WS_RETURN_SO_MSG] = result.so_status[0].ret_msg
+        if("OK".equals(result.so_status[0].ret_status, true)) {
+            result.so_status.forEach { item ->
+                val smSo = soDao.getByString(
+                    SM_SO_Sql_001(
+                        ToolBox_Con.getPreference_Customer_Code(applicationContext),
+                        item.so_prefix,
+                        item.so_code,
+                    ).toSqlQuery()
+                )
+                smSo.priority_code = priority_code
+                smSo.priority_desc = priority_desc
+                smSo.so_scn = item.so_scn
+                soDao.addUpdate(smSo)
             }
             //
             ToolBox.sendBCStatus(
                 applicationContext,
                 "CLOSE_ACT",
-                hmAuxTrans.get("msg_no_so_to_send"),
-                HMAux(),
+                result.so_status[0].ret_msg,
+                hmAuxReturn,
                 "",
                 "0"
             )
-            //
-        }?: run {
-            if("OK".equals(result.so_status[0].ret_status, true)) {
-                result.so_status.forEach { item ->
+        }else{
+            result.so?.let{
+                //
+                it.forEach { soFull ->
+                    soDao.addUpdate(soFull)
+                }
+                //
+            }?:run{
+                result.so_status.forEach {
                     val smSo = soDao.getByString(
                         SM_SO_Sql_001(
                             ToolBox_Con.getPreference_Customer_Code(applicationContext),
-                            item.so_prefix,
-                            item.so_code,
+                            it.so_prefix,
+                            it.so_code,
                         ).toSqlQuery()
                     )
-                    smSo.priority_code = priority_code
-                    smSo.priority_desc = priority_desc
+                    smSo.sync_required = 1
                     soDao.addUpdate(smSo)
                 }
             }
-            val hmAux = HMAux()
-            hmAux[WS_RETURN_SO_STATUS] = result.so_status[0].ret_status
-            hmAux[WS_RETURN_SO_MSG] = result.so_status[0].ret_msg
             //
             ToolBox.sendBCStatus(
                 applicationContext,
-                "CLOSE_ACT",
-                hmAuxTrans.get("msg_no_so_to_send"),
-                hmAux,
+                ConstantBase.PD_TYPE_CUSTOM_ERROR,
+                result.so_status[0].ret_msg,
+                hmAuxReturn,
                 "",
                 "0"
             )
-            //
         }
         //
     }
@@ -205,8 +225,11 @@ class WSSoPriorityChange:
     }
 
     companion object{
-        const val WS_RETURN_SO_STATUS = "RETURN_SO_STATUS"
+        const val WS_RETURN_SO_PRIORITY = "RETURN_SO_PRIORITY"
         const val WS_RETURN_SO_MSG = "RETUN_SO_MSG"
         const val WS_SO_TOKEN = "SO_TOKEN"
+
+        const val WS_BUNDLE_PRIORITY_CODE = "PRIORITY_CODE"
+        const val WS_BUNDLE_PRIORITY_DESC = "PRIORITY_DESC"
     }
 }
