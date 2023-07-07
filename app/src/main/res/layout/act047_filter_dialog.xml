@@ -203,6 +203,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="start"
+                    android:textColor="@color/m3_namoa_onSurfaceVariant"
                     style="@style/TextAppearance.Material3.LabelSmall"
                     tools:text="Titulo Muito DAORA" />
 
@@ -211,6 +212,7 @@
                     android:id="@+id/filter_dialog_tv_zone_lbl"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/m3_namoa_onSurfaceVariant"
                     style="@style/TextAppearance.Material3.LabelSmall"
                     tools:text="Sub-Titulo que faz efeito" />
 
@@ -218,6 +220,7 @@
                     android:id="@+id/filter_dialog_tv_partner_lbl"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/m3_namoa_onSurfaceVariant"
                     style="@style/TextAppearance.Material3.LabelSmall"
                     tools:text="Sub-Titulo que faz efeito" />
 

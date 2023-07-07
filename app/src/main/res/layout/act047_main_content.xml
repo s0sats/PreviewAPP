@@ -34,33 +34,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="5dp">
-
-                    <TextView
-                        android:id="@+id/act047_tv_site_val"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_gravity="center_vertical"
-                        android:text="Site_Desc - Trad"
-                        android:textSize="@dimen/font_size_item_md" />
-
-                    <TextView
-                        android:id="@+id/act047_tv_qty_orders"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="@dimen/font_size_item_md"
-                        android:text="Qty: 50-trad"
-                        android:layout_gravity="center_vertical"
-                        />
-
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:layout_gravity="center"
                     android:padding="5dp">
 

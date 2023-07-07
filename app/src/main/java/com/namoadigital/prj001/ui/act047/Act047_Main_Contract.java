@@ -43,7 +43,6 @@ public interface Act047_Main_Contract {
     }
 
     interface I_Presenter {
-
         ArrayList<SO_Next_Orders_Obj> getOriginalListFromSoNextOrders();
 
         void executeNextOrdersSearch(Boolean filter);
