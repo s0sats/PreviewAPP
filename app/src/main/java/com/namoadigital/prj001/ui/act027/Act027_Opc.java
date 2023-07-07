@@ -91,9 +91,6 @@ public class Act027_Opc extends BaseFragment {
     private LinearLayout ll_deadline;
     private TextView tv_deadline_label;
     private TextView tv_deadline_value;
-
-    private LinearLayout ll_tracking;
-    private TextView tv_tracking_label;
     private TextView tv_tracking_value;
 
     private TextView tv_product_desc_label;
@@ -105,7 +102,6 @@ public class Act027_Opc extends BaseFragment {
     private TextView tv_serial_label;
     private TextView tv_serial_value;
     private TextView tv_serial_brand_model_color;
-    private TextView tv_serial_brand_model_color_lbl;
 
     private TextView tv_product_title;
     private TextView tv_services_title;
@@ -115,7 +111,6 @@ public class Act027_Opc extends BaseFragment {
     private TextView tv_service_edition_title;
 
     private LinearLayout ll_serial_add_infos;
-    private TextView tv_serial_add_infos_label;
     private TextView tv_serial_add_infos_value;
 
     private LinearLayout ll_billing_add_infos;
@@ -210,8 +205,6 @@ public class Act027_Opc extends BaseFragment {
         tv_deadline_label = (TextView) view.findViewById(R.id.act027_opc_tv_deadline_label);
         tv_deadline_value = (TextView) view.findViewById(R.id.act027_opc_tv_deadline_value);
 
-        ll_tracking = (LinearLayout) view.findViewById(R.id.act027_opc_ll_tracking);
-        tv_tracking_label = (TextView) view.findViewById(R.id.act027_opc_tv_tracking_label);
         tv_tracking_value = (TextView) view.findViewById(R.id.act027_opc_tv_tracking_value);
 
 //        tv_prefix_code_label = (TextView) view.findViewById(R.id.act027_opc_tv_prefix_code_label);
@@ -227,7 +220,6 @@ public class Act027_Opc extends BaseFragment {
         tv_serial_value = (TextView) view.findViewById(R.id.act027_opc_tv_product_serial_value);
         //LUCHE - 12/08/2019
         tv_serial_brand_model_color = view.findViewById(R.id.act027_opc_tv_serial_brand_model_color);
-        tv_serial_brand_model_color_lbl = view.findViewById(R.id.act027_opc_tv_serial_brand_model_color_lbl);
 
         ll_product = (LinearLayout) view.findViewById(R.id.act027_opc_ll_product);
         ll_services = (LinearLayout) view.findViewById(R.id.act027_opc_ll_services);
@@ -250,7 +242,6 @@ public class Act027_Opc extends BaseFragment {
         tv_service_edition_title = (TextView) view.findViewById(R.id.act027_opc_tv_service_edition_title);
         //LUCHE - 08/07/2021 - Add infos adicionais de serial e billing
         ll_serial_add_infos = view.findViewById(R.id.act027_opc_ll_serial_add_info);
-        tv_serial_add_infos_label = view.findViewById(R.id.act027_opc_tv_serial_add_info_label);
         tv_serial_add_infos_value = view.findViewById(R.id.act027_opc_tv_serial_add_info_value);
 
         ll_billing_add_infos = view.findViewById(R.id.act027_opc_ll_billing_add_info);
@@ -499,11 +490,10 @@ public class Act027_Opc extends BaseFragment {
                         );
 
                 if (tranckingAuxList != null && tranckingAuxList.size() > 0) {
-                    ll_tracking.setVisibility(View.VISIBLE);
-                    tv_tracking_label.setText(hmAux_Trans.get("tracking_num_lbl"));
+                    tv_tracking_value.setVisibility(View.VISIBLE);
                     tv_tracking_value.setText(formatTrackingList(tranckingAuxList));
                 } else {
-                    ll_tracking.setVisibility(View.GONE);
+                    tv_tracking_value.setVisibility(View.GONE);
                 }
 
                 tv_product_desc_label.setText(hmAux_Trans.get("product_description_lbl"));
@@ -556,7 +546,6 @@ public class Act027_Opc extends BaseFragment {
                 tv_serial_title.setText(hmAux_Trans.get("serial_ll_lbl"));
                 tv_header_title.setText(hmAux_Trans.get("header_ll_lbl"));
                 tv_service_edition_title.setText(hmAux_Trans.get("service_edition_ll_lbl"));
-                tv_serial_add_infos_label.setText(hmAux_Trans.get("serial_add_infos_lbl"));
                 tv_billing_add_infos_label.setText(hmAux_Trans.get("billing_add_infos_lbl"));
 
                 changeTabColor();
@@ -836,7 +825,6 @@ public class Act027_Opc extends BaseFragment {
         );
         //
         tv_serial_brand_model_color.setVisibility(View.GONE);
-        tv_serial_brand_model_color_lbl.setVisibility(View.GONE);
         if (serial != null && serial.getSerial_code() > 0) {
             if (serial.getBrand_code() != null || serial.getModel_code() != null || serial.getColor_code() != null) {
                 tv_serial_brand_model_color.setVisibility(View.VISIBLE);
@@ -847,8 +835,6 @@ public class Act027_Opc extends BaseFragment {
                                 serial.getColor_desc()
                         )
                 );
-                tv_serial_brand_model_color_lbl.setVisibility(View.VISIBLE);
-                tv_serial_brand_model_color_lbl.setText(hmAux_Trans.get("brand_model_color_lbl"));
 
             }
         }

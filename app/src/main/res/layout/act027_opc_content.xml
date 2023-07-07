@@ -171,96 +171,7 @@
 
                 </LinearLayout>
 
-                <View
-                    android:layout_width="10dp"
-                    android:layout_height="0dp" />
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/act027_opc_tv_product_serial_value"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="right"
-                        android:textColor="@color/m3_namoa_onSurfaceVariant"
-                        android:text="ABC12345" />
-
-                </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/act027_opc_tv_serial_brand_model_color_lbl"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="left"
-                        tools:text="Modelo"
-                        android:textColor="@color/m3_namoa_onSurfaceVariant"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
-                <View
-                    android:layout_width="10dp"
-                    android:layout_height="0dp" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/act027_opc_tv_serial_brand_model_color"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="right"
-                        android:textColor="@color/m3_namoa_onSurfaceVariant"
-                        tools:text="marca|modelo|cor" />
-
-                </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/act027_opc_ll_tracking"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/act027_opc_tv_tracking_label"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="left"
-                    android:text="Tracking:"
-                    android:textColor="@color/m3_namoa_onSurfaceVariant"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/act027_opc_tv_tracking_value"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="left"
-                    android:textColor="@color/m3_namoa_onSurfaceVariant"
-                    android:text="Abc14 \nAcgb85" />
 
             </LinearLayout>
 
@@ -269,15 +180,28 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
+                android:paddingTop="10dp"
                 >
+
                 <TextView
-                    android:id="@+id/act027_opc_tv_serial_add_info_label"
+                    android:id="@+id/act027_opc_tv_product_serial_value"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="left"
-                    tools:text="Serial  Add Info"
+                    style="@style/TextAppearance.Material3.TitleLarge"
+                    android:textStyle="bold"
                     android:textColor="@color/m3_namoa_onSurfaceVariant"
-                    android:textStyle="bold" />
+                    tools:text="Abc14Acgb85"
+                    android:paddingStart="4dp" />
+
+                <TextView
+                    android:id="@+id/act027_opc_tv_serial_brand_model_color"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="right"
+                    android:textColor="@color/m3_namoa_onSurfaceVariant"
+                    tools:text="marca|modelo|cor" />
 
                 <TextView
                     android:id="@+id/act027_opc_tv_serial_add_info_value"
@@ -285,9 +209,35 @@
                     android:layout_height="wrap_content"
                     android:gravity="left"
                     android:textColor="@color/m3_namoa_onSurfaceVariant"
-                    tools:text="Abc14 \nAcgb85"
-                    android:paddingStart="4dp"
+                    tools:text="Abc14Acgb85"
+
                     />
+
+                <TextView
+                    android:id="@+id/act027_opc_tv_billing_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:text="BillyIdol"
+                    android:singleLine="true"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:textColor="@color/m3_namoa_onSurfaceVariant" />
+
+                <TextView
+                    android:id="@+id/act027_opc_tv_tracking_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:singleLine="true"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:textColor="@color/m3_namoa_onSurfaceVariant"
+                    android:text="Abc14 \nAcgb85" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="20dp" />
             </LinearLayout>
 
             <LinearLayout
@@ -305,15 +255,6 @@
                     android:textColor="@color/m3_namoa_onSurfaceVariant"
                     android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/act027_opc_tv_billing_value"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="left"
-                    android:text="Billy \nIdol"
-                    android:textColor="@color/m3_namoa_onSurfaceVariant"
-                    android:paddingStart="4dp"
-                    />
 
             </LinearLayout>
 
