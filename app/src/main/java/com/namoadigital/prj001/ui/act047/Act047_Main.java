@@ -70,8 +70,6 @@ import java.util.List;
 
 public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I_View {
 
-    private TextView tv_site;
-    private TextView tv_qty;
     private TextView tv_zone;
     private TextView tv_empty_list;
     private TextView tv_filter;
@@ -85,6 +83,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
     private SO_Next_Orders_Obj wsTmpItem = null;
     private MKEditTextNM mketFilter;
     private String filterSerial;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -172,9 +171,6 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         transList.add("filter_dialog_priority_date_created_lbl");
         transList.add("filter_dialog_priority_lbl");
         transList.add("filter_dialog_priority_all_lbl");
-        transList.add("filter_dialog_desc_lbl");
-        transList.add("filter_dialog_zone_lbl");
-        transList.add("filter_dialog_partner_lbl");
         transList.add("filter_dialog_ok_lbl");
         transList.add("filter_dialog_cancel_lbl");
 
@@ -191,10 +187,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
     private void initVars() {
         //
         recoverIntentsInfo();
-        //
-        tv_site = (TextView) findViewById(R.id.act047_tv_site_val);
-        //
-        tv_qty = (TextView) findViewById(R.id.act047_tv_qty_orders);
+
         //
         tv_zone = (TextView) findViewById(R.id.act047_tv_zone_val);
         //
@@ -278,8 +271,6 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
     private void setLocationInfo() {
         HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
         //
-        tv_site.setText(mFooter.get(Constant.FOOTER_SITE));
-        //
         tv_zone.setVisibility(View.GONE);
         if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null)
                 && mFooter.containsKey(Constant.FOOTER_ZONE)
@@ -289,14 +280,13 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
             tv_zone.setText(mFooter.get(Constant.FOOTER_ZONE));
         }
         //
-        tv_qty.setText(hmAux_Trans.get("qty_lbl") + " 0");
     }
 
     @SuppressLint("SetTextI18n")
     @Override
     public void loadNextOrders(ArrayList<SO_Next_Orders_Obj> nextOrdersObjs) {
         //
-        tv_qty.setText(hmAux_Trans.get("qty_lbl") + " " + nextOrdersObjs.size());
+        setTitleLanguage(nextOrdersObjs.size() + " / " + mPresenter.getOriginalListFromSoNextOrders().size());
         //
         setAdapter(nextOrdersObjs);
         //Checar se o usuario está usando o filtro
@@ -932,13 +922,13 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         binding.filterDialogTvPriorityLbl.setText(hmAux_Trans.get("filter_dialog_priority_lbl"));
         binding.radiobuttonAllPriority.setText(hmAux_Trans.get("filter_dialog_priority_all_lbl"));
         if (site != null && !site.getSite_desc().isEmpty()) {
-            binding.filterDialogTvDescLbl.setText(hmAux_Trans.get("filter_dialog_desc_lbl") + ": " + site.getSite_desc());
+            binding.filterDialogTvDescLbl.setText(site.getSite_desc());
             binding.filterDialogTvDescLbl.setVisibility(View.VISIBLE);
         } else {
             binding.filterDialogTvDescLbl.setVisibility(View.GONE);
         }
         if (getSwitchState() && zone != null && !zone.getZone_desc().isEmpty()) {
-            binding.filterDialogTvZoneLbl.setText(hmAux_Trans.get("filter_dialog_zone_lbl") + ": " + zone.getZone_desc());
+            binding.filterDialogTvZoneLbl.setText(zone.getZone_desc());
             binding.filterDialogTvZoneLbl.setVisibility(View.VISIBLE);
         } else {
             binding.filterDialogTvZoneLbl.setVisibility(View.GONE);
@@ -948,7 +938,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
             binding.filterDialogTvPartnerLbl.setVisibility(View.GONE);
         } else {
             binding.filterDialogTvPartnerLbl.setVisibility(View.VISIBLE);
-            binding.filterDialogTvPartnerLbl.setText(hmAux_Trans.get("filter_dialog_partner_lbl") + ": " + TextUtils.join(", ", filter.getPartnerList(partnerList)));
+            binding.filterDialogTvPartnerLbl.setText(TextUtils.join(", ", filter.getPartnerList(partnerList)));
         }
         binding.filterDialogOk.setText(hmAux_Trans.get("filter_dialog_ok_lbl"));
         binding.filterDialogOk.setBackgroundTintList(AppCompatResources.getColorStateList(context, R.drawable.button_theme_primary));
