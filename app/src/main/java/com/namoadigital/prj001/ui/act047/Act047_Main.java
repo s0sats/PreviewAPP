@@ -5,18 +5,28 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.SwitchCompat;
@@ -29,16 +39,28 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act047_SO_Next_Orders_Adapter;
+import com.namoadigital.prj001.dao.MD_PartnerDao;
+import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
+import com.namoadigital.prj001.databinding.Act047FilterDialogBinding;
 import com.namoadigital.prj001.databinding.Act047SoNextOrdersDialogBinding;
+import com.namoadigital.prj001.model.MD_Site;
+import com.namoadigital.prj001.model.MD_Site_Zone;
 import com.namoadigital.prj001.model.SO_Next_Orders_Obj;
+import com.namoadigital.prj001.model.SmPriority;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WSSoStatusChange;
 import com.namoadigital.prj001.service.WS_SO_Next_Orders;
 import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.service.WS_Serial_Search;
+import com.namoadigital.prj001.sql.MD_Partner_Sql_SS;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
+import com.namoadigital.prj001.ui.act047.model.NextOsFilter;
+import com.namoadigital.prj001.ui.act047.model.TypeDeadlineFilter;
+import com.namoadigital.prj001.ui.act047.model.TypePriorityFilter;
+import com.namoadigital.prj001.ui.act047.model.TypeStatusFilter;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -141,6 +163,23 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         transList.add("zone_filter_lbl");
         //
         transList.add("dialog_so_product_lbl");
+        //
+        transList.add("filter_dialog_ttl_lbl");
+        transList.add("filter_dialog_status_lbl");
+        transList.add("filter_dialog_deadline_lbl");
+        transList.add("filter_dialog_deadline_without_lbl");
+        transList.add("filter_dialog_deadline_expired_lbl");
+        transList.add("filter_dialog_orders_lbl");
+        transList.add("filter_dialog_priority_deadline_lbl");
+        transList.add("filter_dialog_priority_date_created_lbl");
+        transList.add("filter_dialog_priority_lbl");
+        transList.add("filter_dialog_priority_all_lbl");
+        transList.add("filter_dialog_desc_lbl");
+        transList.add("filter_dialog_zone_lbl");
+        transList.add("filter_dialog_partner_lbl");
+        transList.add("filter_dialog_ok_lbl");
+        transList.add("filter_dialog_cancel_lbl");
+
         //
         transList.add("progress_status_change_ttl");
         transList.add("progress_status_change_msg");
@@ -934,15 +973,24 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
 
 
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
+        menu.add(0, 1, Menu.NONE, "");
 
-        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
+        menu.getItem(0).setIcon(getResources().getDrawable(R.drawable.ic_baseline_filter_alt_24));
         menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         return true;
     }
 
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        if (item.getItemId() == 1) {
+            showFilterDialog();
+        }
+
+        return true;
+    }
 
     private boolean getSwitchState() {
         return ToolBox_Con.getBooleanPreferencesByKey(context, Constant.ACT047_SWITCH_STATE, true);
@@ -952,6 +1000,326 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         ToolBox_Con.setBooleanPreference(context, Constant.ACT047_SWITCH_STATE, isChecked);
     }
 
+
+    private void showFilterDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
+        Act047FilterDialogBinding binding = Act047FilterDialogBinding.inflate(LayoutInflater.from(context));
+        NextOsFilter filter = mPresenter.getCheckboxFromPreference();
+        List<TypeStatusFilter> status = filter.getStatusFilter();
+        List<TypeDeadlineFilter> deadlineFilter = filter.getDeadlineFilter();
+        TypePriorityFilter priorityFilter = filter.getPriorityFilter();
+        MD_Site_Zone zone = new MD_Site_ZoneDao(context).getZone();
+        MD_Site site = new MD_SiteDao(context).getSite();
+        MD_PartnerDao partnerDao = new MD_PartnerDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        ArrayList<HMAux> partnerList = (ArrayList<HMAux>) partnerDao.query_HM(
+                new MD_Partner_Sql_SS(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        );
+
+        binding.filterDialogTvTitle.setText(hmAux_Trans.get("filter_dialog_ttl_lbl"));
+        binding.filterDialogTvStatusLbl.setText(hmAux_Trans.get("filter_dialog_status_lbl"));
+        binding.filterDialogTvDeadlineLbl.setText(hmAux_Trans.get("filter_dialog_deadline_lbl"));
+        binding.checkBoxWithoutDeadline.setText(hmAux_Trans.get("filter_dialog_deadline_without_lbl"));
+        binding.checkboxExpiredDeadline.setText(hmAux_Trans.get("filter_dialog_deadline_expired_lbl"));
+        binding.filterDialogTvOrdersLbl.setText(hmAux_Trans.get("filter_dialog_orders_lbl"));
+        binding.radioPriorityDeadline.setText(hmAux_Trans.get("filter_dialog_priority_deadline_lbl"));
+        binding.radioPriorityDateCreated.setText(hmAux_Trans.get("filter_dialog_priority_date_created_lbl"));
+
+        binding.filterDialogTvPriorityLbl.setText(hmAux_Trans.get("filter_dialog_priority_lbl"));
+        binding.radiobuttonAllPriority.setText(hmAux_Trans.get("filter_dialog_priority_all_lbl"));
+        if (site != null && !site.getSite_desc().isEmpty()) {
+            binding.filterDialogTvDescLbl.setText(hmAux_Trans.get("filter_dialog_desc_lbl") + ": " + site.getSite_desc());
+            binding.filterDialogTvDescLbl.setVisibility(View.VISIBLE);
+        } else {
+            binding.filterDialogTvDescLbl.setVisibility(View.GONE);
+        }
+        if (getSwitchState() && zone != null && !zone.getZone_desc().isEmpty()) {
+            binding.filterDialogTvZoneLbl.setText(hmAux_Trans.get("filter_dialog_zone_lbl") + ": " + zone.getZone_desc());
+            binding.filterDialogTvZoneLbl.setVisibility(View.VISIBLE);
+        } else {
+            binding.filterDialogTvZoneLbl.setVisibility(View.GONE);
+        }
+
+        if (partnerList.isEmpty()) {
+            binding.filterDialogTvPartnerLbl.setVisibility(View.GONE);
+        } else {
+            binding.filterDialogTvPartnerLbl.setVisibility(View.VISIBLE);
+            binding.filterDialogTvPartnerLbl.setText(hmAux_Trans.get("filter_dialog_partner_lbl") + ": " + TextUtils.join(", ", filter.getPartnerList(partnerList)));
+        }
+        binding.filterDialogOk.setText(hmAux_Trans.get("filter_dialog_ok_lbl"));
+        binding.filterDialogOk.setBackgroundTintList(AppCompatResources.getColorStateList(context, R.drawable.button_theme_primary));
+        binding.filterDialogCancel.setText(hmAux_Trans.get("filter_dialog_cancel_lbl"));
+        onChangeStyleStatusFilter(binding);
+        for (TypeStatusFilter item : status) {
+            switch (item) {
+                case EDIT:
+                    binding.checkboxEdit.setChecked(true);
+                    break;
+                case APPROVAL_QUALITY:
+                    binding.checkboxApprovalQuality.setChecked(true);
+                    break;
+                case PENDING_AND_PROCESS:
+                    binding.checkboxPendingAndProcess.setChecked(true);
+                    break;
+                case STOP:
+                    binding.checkboxStop.setChecked(true);
+                    break;
+                case APPROVAL_FINAL:
+                    binding.checkboxApprovalFinal.setChecked(true);
+                    break;
+                case BUDGET:
+                    binding.checkboxBudget.setChecked(true);
+                    break;
+            }
+        }
+
+        for (TypeDeadlineFilter item : deadlineFilter) {
+            switch (item) {
+                case WITHOUT:
+                    binding.checkBoxWithoutDeadline.setChecked(true);
+                    break;
+                case EXPIRED:
+                    binding.checkboxExpiredDeadline.setChecked(true);
+                    break;
+            }
+        }
+
+        switch (priorityFilter) {
+            case DEADLINE:
+                binding.radioPriorityDeadline.setChecked(true);
+                break;
+            case DATE_CREATED:
+                binding.radioPriorityDateCreated.setChecked(true);
+                break;
+        }
+
+        for (int i = 0; i < mPresenter.getListSmPriority().size(); i++) {
+            RadioButton radioButton = new RadioButton(this);
+            SmPriority item = mPresenter.getListSmPriority().get(i);
+            radioButton.setId(View.generateViewId());
+            radioButton.setText(item.getPriority_desc());
+            radioButton.setTextColor(Color.parseColor(item.getPriority_color()));
+            if (item.getPriority_desc().equals(priorityTypeFiltered)) {
+                radioButton.setChecked(true);
+            }
+            RadioGroup.LayoutParams rdioLayout = new RadioGroup.LayoutParams(RadioGroup.LayoutParams.WRAP_CONTENT, RadioGroup.LayoutParams.WRAP_CONTENT);
+            binding.radioPriority.addView(radioButton, rdioLayout);
+        }
+
+        builder.setView(binding.getRoot());
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        binding.filterDialogOk.setOnClickListener(v -> {
+            List<TypeStatusFilter> typeStatusFilters = processSaveStatusFilterDialog(binding);
+            List<TypeDeadlineFilter> deadlineFilterList = processSaveDeadlineFilterDialog(binding);
+            TypePriorityFilter typePriorityFilter = processSavePriorityFilterDialog(binding);
+            filter.setStatusFilter(typeStatusFilters);
+            filter.setDeadlineFilter(deadlineFilterList);
+            filter.setPriorityFilter(typePriorityFilter);
+            filter.setPriorityTypeFilter(priorityTypeFiltered);
+            if (mPresenter.saveFilterDialog(filter, getSwitchState())) {
+                dialog.dismiss();
+            }
+        });
+
+        binding.filterDialogCancel.setOnClickListener(v -> dialog.dismiss());
+
+        binding.checkboxEdit.setOnClickListener(v -> checkStateFromButtonFilter(binding));
+        binding.checkboxBudget.setOnClickListener(v -> checkStateFromButtonFilter(binding));
+        binding.checkboxStop.setOnClickListener(vv -> checkStateFromButtonFilter(binding));
+        binding.checkboxPendingAndProcess.setOnClickListener(v -> checkStateFromButtonFilter(binding));
+        binding.checkboxApprovalQuality.setOnClickListener(v -> checkStateFromButtonFilter(binding));
+        binding.checkboxApprovalFinal.setOnClickListener(v -> checkStateFromButtonFilter(binding));
+
+        binding.radioPriority.setOnCheckedChangeListener((radioGroup, i) -> {
+            RadioButton radioButton = radioGroup.findViewById(i);
+            if (radioButton != null) {
+                if (radioButton.getId() == binding.radiobuttonAllPriority.getId()) {
+                    priorityTypeFiltered = "";
+                    return;
+                }
+                priorityTypeFiltered = radioButton.getText().toString();
+
+            } else {
+                Toast.makeText(context, "Option invalid", Toast.LENGTH_LONG).show();
+            }
+        });
+
+
+    }
+
+    String priorityTypeFiltered = "";
+
+    //Caso o filtro "Todos os filtros" esteja ativado, desativa os outros filtros
+    //Caso esteja desativado ativa os outros filtros
+    private void onChangeStateStatusFilter(Act047FilterDialogBinding binding, boolean checked) {
+        CheckBox[] checkboxes = {
+                binding.checkboxEdit,
+                binding.checkboxBudget,
+                binding.checkboxStop,
+                binding.checkboxPendingAndProcess,
+                binding.checkboxApprovalQuality,
+                binding.checkboxApprovalFinal,
+        };
+
+        for (CheckBox item : checkboxes) {
+            item.setEnabled(!checked);
+            item.setChecked(checked);
+        }
+
+    }
+
+
+    private void onChangeStyleStatusFilter(Act047FilterDialogBinding binding) {
+
+        TypeStatusFilter[] filters = {
+                TypeStatusFilter.EDIT,
+                TypeStatusFilter.BUDGET,
+                TypeStatusFilter.APPROVAL_QUALITY,
+                TypeStatusFilter.PENDING_AND_PROCESS,
+                TypeStatusFilter.STOP,
+                TypeStatusFilter.APPROVAL_FINAL,
+        };
+
+        for (TypeStatusFilter filter : filters) {
+            switch (filter) {
+                case EDIT:
+                    binding.checkboxEdit.setText(hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_EDIT));
+                    binding.checkboxEdit.setTextColor(ColorStateList.valueOf(ToolBox_Inf.getStatusColorV2(context, ConstantBaseApp.SYS_STATUS_EDIT)));
+                    break;
+                case BUDGET:
+                    binding.checkboxBudget.setText(hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_WAITING_BUDGET));
+                    binding.checkboxBudget.setTextColor(ColorStateList.valueOf(ToolBox_Inf.getStatusColorV2(context, ConstantBaseApp.SYS_STATUS_WAITING_BUDGET)));
+                    break;
+                case APPROVAL_QUALITY:
+                    binding.checkboxApprovalQuality.setText(hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_WAITING_QUALITY));
+                    binding.checkboxApprovalQuality.setTextColor(ColorStateList.valueOf(ToolBox_Inf.getStatusColorV2(context, ConstantBaseApp.SYS_STATUS_WAITING_QUALITY)));
+                    break;
+                case PENDING_AND_PROCESS:
+                    String pendingText = hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_PENDING);
+                    String processText = hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_PROCESS);
+
+                    SpannableString spannableString = new SpannableString(pendingText + " / " + processText);
+
+                    ForegroundColorSpan pendingColorSpan = new ForegroundColorSpan(ToolBox_Inf.getStatusColorV2(context, ConstantBaseApp.SYS_STATUS_PENDING));
+                    spannableString.setSpan(pendingColorSpan, 0, pendingText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                    ForegroundColorSpan processColorSpan = new ForegroundColorSpan(ToolBox_Inf.getStatusColorV2(context, ConstantBaseApp.SYS_STATUS_PROCESS));
+                    spannableString.setSpan(processColorSpan, pendingText.length() + 3, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                    binding.checkboxPendingAndProcess.setText(spannableString);
+                    break;
+                case STOP:
+                    binding.checkboxStop.setText(hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_STOP));
+                    binding.checkboxStop.setTextColor(ColorStateList.valueOf(ToolBox_Inf.getStatusColorV2(context, ConstantBaseApp.SYS_STATUS_STOP)));
+                    break;
+                case APPROVAL_FINAL:
+                    binding.checkboxApprovalFinal.setText(hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_WAITING_APPROVAL));
+                    binding.checkboxApprovalFinal.setTextColor(ColorStateList.valueOf(ToolBox_Inf.getStatusColorV2(context, ConstantBaseApp.SYS_STATUS_WAITING_APPROVAL)));
+                    break;
+            }
+        }
+    }
+
+
+    private TypePriorityFilter processSavePriorityFilterDialog(
+            Act047FilterDialogBinding binding
+    ) {
+
+        if (binding.radioPriorityDeadline.isChecked()) {
+            return TypePriorityFilter.DEADLINE;
+        }
+        if (binding.radioPriorityDateCreated.isChecked()) {
+            return TypePriorityFilter.DATE_CREATED;
+        }
+        return TypePriorityFilter.DEADLINE;
+    }
+
+    private List<TypeDeadlineFilter> processSaveDeadlineFilterDialog(
+            Act047FilterDialogBinding binding
+    ) {
+        List<TypeDeadlineFilter> deadlineList = new ArrayList<>();
+
+        CheckBox[] checkBoxes = {
+                binding.checkBoxWithoutDeadline,
+                binding.checkboxExpiredDeadline
+        };
+
+        TypeDeadlineFilter[] filters = {
+                TypeDeadlineFilter.WITHOUT,
+                TypeDeadlineFilter.EXPIRED
+        };
+
+        for (int i = 0; i < checkBoxes.length; i++) {
+            if (checkBoxes[i].isChecked()) {
+                deadlineList.add(filters[i]);
+            }
+        }
+
+        return deadlineList;
+    }
+
+    private void checkStateFromButtonFilter(Act047FilterDialogBinding binding) {
+        CheckBox[] checkboxes = {
+                binding.checkboxEdit,
+                binding.checkboxBudget,
+                binding.checkboxStop,
+                binding.checkboxPendingAndProcess,
+                binding.checkboxApprovalQuality,
+                binding.checkboxApprovalFinal,
+        };
+
+        boolean allCheckboxesUnchecked = true;
+        for (CheckBox checkbox : checkboxes) {
+            if (checkbox.isChecked()) {
+                allCheckboxesUnchecked = false;
+                break;
+            }
+        }
+
+        binding.filterDialogOk.setEnabled(!allCheckboxesUnchecked);
+
+    }
+
+    private List<TypeStatusFilter> processSaveStatusFilterDialog(Act047FilterDialogBinding binding) {
+        List<TypeStatusFilter> statusList = new ArrayList<>();
+
+        //Tem que está ordenado como no layout
+        CheckBox[] checkboxes = {
+                binding.checkboxEdit,
+                binding.checkboxBudget,
+                binding.checkboxStop,
+                binding.checkboxPendingAndProcess,
+                binding.checkboxApprovalQuality,
+                binding.checkboxApprovalFinal,
+        };
+
+        //Tem que está ordenado como no layout
+        TypeStatusFilter[] filters = {
+                TypeStatusFilter.EDIT,
+                TypeStatusFilter.BUDGET,
+                TypeStatusFilter.STOP,
+                TypeStatusFilter.PENDING_AND_PROCESS,
+                TypeStatusFilter.APPROVAL_QUALITY,
+                TypeStatusFilter.APPROVAL_FINAL,
+        };
+
+
+        for (int i = 0; i < checkboxes.length; i++) {
+            if (checkboxes[i].isChecked()) {
+                statusList.add(filters[i]);
+            }
+        }
+
+        return statusList;
+    }
 
 }
 
