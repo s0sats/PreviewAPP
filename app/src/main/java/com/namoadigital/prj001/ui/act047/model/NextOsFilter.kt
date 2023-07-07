@@ -93,12 +93,11 @@ enum class TypeDeadlineFilter(val type: String) {
 
 enum class TypeStatusFilter(val type: String) {
 
-    ALL("ALL"),
     EDIT(Constant.SYS_STATUS_EDIT),
     BUDGET(Constant.SYS_STATUS_WAITING_BUDGET),
     APPROVAL_QUALITY(Constant.SYS_STATUS_WAITING_QUALITY),
     PENDING_AND_PROCESS(Constant.SYS_STATUS_PENDING + "_" + Constant.SYS_STATUS_PROCESS),
     STOP(Constant.SYS_STATUS_STOP),
-    APPROVAL_FINAL(Constant.SYS_STATUS_FINALIZED),
+    APPROVAL_FINAL(Constant.SYS_STATUS_WAITING_CLIENT),
 }
 

@@ -563,13 +563,6 @@ public class Act027_Opc extends BaseFragment {
                 //
                 chip_os_status.setText(hmAux_Trans.get(mSm_so.getStatus()));
                 chip_os_status.setTextColor(getActivity().getResources().getColor(ToolBox_Inf.getStatusColor(mSm_so.getStatus())));
-                chip_os_status.setEnabled(true);
-                if(mSm_so.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_EDIT)
-                && mSm_so.getEdit_user() != null
-                && !ToolBox_Con.getPreference_User_Code(context).equalsIgnoreCase(mSm_so.getEdit_user().toString())
-                ){
-                    chip_os_status.setEnabled(false);
-                }
                 //
                 SmPriority priority = delegate.getPriorityInfo(mSm_so.getPriority_code());
                 if(priority != null) {
@@ -581,7 +574,16 @@ public class Act027_Opc extends BaseFragment {
                 //
                 setMenuPriority();
                 //
-                if (mSm_so.getUpdate_required() == 1 || isSoWithinTokenFile() || hasSyncRequired()) {
+                if ( mSm_so.getUpdate_required() == 1
+                    || isSoWithinTokenFile()
+                    || hasSyncRequired()
+                    || mSm_so.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_DONE)
+                    || mSm_so.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_CANCELLED)
+                    || (mSm_so.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_EDIT)
+                                && mSm_so.getEdit_user() != null
+                                && !ToolBox_Con.getPreference_User_Code(context).equalsIgnoreCase(mSm_so.getEdit_user().toString())
+                        )
+                ) {
                     setSpinnersEnable(false);
                 } else {
                     setSpinnersEnable(true);

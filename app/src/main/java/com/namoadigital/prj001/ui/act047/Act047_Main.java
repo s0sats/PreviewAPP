@@ -1213,8 +1213,8 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
                     binding.checkboxStop.setTextColor(ColorStateList.valueOf(ToolBox_Inf.getStatusColorV2(context, ConstantBaseApp.SYS_STATUS_STOP)));
                     break;
                 case APPROVAL_FINAL:
-                    binding.checkboxApprovalFinal.setText(hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_WAITING_APPROVAL));
-                    binding.checkboxApprovalFinal.setTextColor(ColorStateList.valueOf(ToolBox_Inf.getStatusColorV2(context, ConstantBaseApp.SYS_STATUS_WAITING_APPROVAL)));
+                    binding.checkboxApprovalFinal.setText(hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_WAITING_CLIENT));
+                    binding.checkboxApprovalFinal.setTextColor(ColorStateList.valueOf(ToolBox_Inf.getStatusColorV2(context, ConstantBaseApp.SYS_STATUS_WAITING_CLIENT)));
                     break;
             }
         }
