@@ -580,6 +580,12 @@ public class Act027_Opc extends BaseFragment {
                 setMenuStatus();
                 //
                 setMenuPriority();
+                //
+                if (mSm_so.getUpdate_required() == 1 || isSoWithinTokenFile() || hasSyncRequired()) {
+                    setSpinnersEnable(false);
+                } else {
+                    setSpinnersEnable(true);
+                }
             }
         }
     }
@@ -608,7 +614,9 @@ public class Act027_Opc extends BaseFragment {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 SmPriority priority = delegate.getPriorityInfo(item.getItemId());
-                delegate.callWsPriorityChange(priority);
+                if(priority.getPriority_code() != mSm_so.getPriority_code()) {
+                    delegate.callWsPriorityChange(priority);
+                }
                 return false;
             }
         });
@@ -912,6 +920,22 @@ public class Act027_Opc extends BaseFragment {
             ToolBox_Inf.registerException(getClass().getName(), e);
         }
         return false;
+    }
+    public void setSpinnersEnable(boolean isEnable) {
+        setChipStroke(isEnable);
+        chip_os_priority.setEnabled(isEnable);
+        chip_os_status.setEnabled(isEnable);
+    }
+
+    private void setChipStroke(boolean isEnable) {
+        chip_os_priority.setChipIconVisible(isEnable);
+        chip_os_priority.setChipStrokeWidth(1.0f);
+        chip_os_status.setChipIconVisible(isEnable);
+        chip_os_status.setChipStrokeWidth(1.0f);
+        if(!isEnable){
+            chip_os_priority.setChipStrokeWidth(0.0f);
+            chip_os_status.setChipStrokeWidth(0.0f);
+        }
     }
 
     public void loadScreenToData() {

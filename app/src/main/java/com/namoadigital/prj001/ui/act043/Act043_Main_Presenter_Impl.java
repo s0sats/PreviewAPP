@@ -23,6 +23,7 @@ import com.namoadigital.prj001.model.TSO_Service_Search_Obj;
 import com.namoadigital.prj001.model.TSO_Service_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_So_Priority_Change;
 import com.namoadigital.prj001.receiver.WBR_So_Status_Change;
+import com.namoadigital.prj001.service.WSSoPriorityChange;
 import com.namoadigital.prj001.service.WSSoStatusChange;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -362,7 +363,7 @@ public class Act043_Main_Presenter_Impl implements Act043_Main_Presenter {
             bundle.putInt(SM_SODao.SO_PREFIX, mSm_so.getSo_prefix());
             bundle.putInt(SM_SODao.SO_CODE, mSm_so.getSo_code());
             bundle.putInt(SM_SODao.SO_SCN, mSm_so.getSo_scn());
-            bundle.putString(WSSoStatusChange.WS_BUNDLE_ACTION, WSSoStatusChange.WS_ACTION_SO_PROCESS);
+            bundle.putString(WSSoStatusChange.WS_BUNDLE_ACTION, ws_action_so);
             bundle.putString(WSSoStatusChange.WS_BUNDLE_RETURN_SO, "1");
             bundle.putString(WSSoStatusChange.WS_BUNDLE_SO_TOKEN, token);
             //
@@ -392,8 +393,7 @@ public class Act043_Main_Presenter_Impl implements Act043_Main_Presenter {
             bundle.putInt(SM_SODao.SO_SCN, mSm_so.getSo_scn());
             bundle.putInt(SmPriorityDao.PRIORITY_CODE, priority.getPriority_code());
             bundle.putString(SmPriorityDao.PRIORITY_DESC, priority.getPriority_desc());
-            bundle.putString(WSSoStatusChange.WS_BUNDLE_RETURN_SO, "1");
-            bundle.putString(WSSoStatusChange.WS_BUNDLE_SO_TOKEN, token);
+            bundle.putString(WSSoPriorityChange.WS_SO_TOKEN, token);
             //
             mIntent.putExtras(bundle);
             //

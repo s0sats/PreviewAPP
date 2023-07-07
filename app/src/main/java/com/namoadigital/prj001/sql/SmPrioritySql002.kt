@@ -14,7 +14,9 @@ class SmPrioritySql002(
                     ${SmPriorityDao.TABLE} t
                 WHERE
                     t.${SmPriorityDao.CUSTOMER_CODE} = '$customerCode'
-                    ORDER BY t.${SmPriorityDao.PRIORITY_WEIGHT} DESC
+                    ORDER BY 
+                        t.${SmPriorityDao.PRIORITY_WEIGHT} DESC,
+                        t.${SmPriorityDao.PRIORITY_DESC} ASC
                  """.trimIndent()
     }
 }

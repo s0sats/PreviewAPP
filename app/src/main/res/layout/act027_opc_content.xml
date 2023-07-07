@@ -46,18 +46,18 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
                         android:paddingHorizontal="8dp"
-                        tools:text="Em Edição"
                         android:textStyle="bold"
-                        app:chipStrokeColor="@color/m3_namoa_outline"
-                        app:chipStrokeWidth="1dp"
                         app:checkedIconEnabled="false"
                         app:chipBackgroundColor="@color/bg_chip_os_state_color_list"
+                        app:chipStrokeColor="@color/m3_namoa_outline"
+                        app:chipStrokeWidth="1dp"
                         app:closeIcon="@drawable/ic_arrow_drop_down_black_24dp"
                         app:closeIconEnabled="true"
                         app:closeIconSize="16dp"
                         app:closeIconTint="@color/text_black"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="Em Edição" />
 
                 </LinearLayout>
 

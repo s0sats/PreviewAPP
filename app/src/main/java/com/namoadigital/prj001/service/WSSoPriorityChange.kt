@@ -171,8 +171,12 @@ class WSSoPriorityChange:
             result.so?.let{
                 //
                 it.forEach { soFull ->
-                    soDao.addUpdate(soFull)
+                    //Apaga SO completa
+                    soDao.removeFull(soFull)
+                    //
+                    soFull.setPK()
                 }
+                soDao.addUpdate(it,false)
                 //
             }?:run{
                 result.so_status.forEach {

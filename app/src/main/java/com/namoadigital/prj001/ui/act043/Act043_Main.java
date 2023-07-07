@@ -1,5 +1,8 @@
 package com.namoadigital.prj001.ui.act043;
 
+import static com.namoadigital.prj001.service.WSSoPriorityChange.WS_RETURN_SO_PRIORITY;
+import static com.namoadigital.prj001.service.WSSoStatusChange.WS_RETURN_SO_STATUS;
+import static com.namoadigital.prj001.ui.act027.Act027_Main.WS_PROCESS_SO_PRIORITY_CHANGE;
 import static com.namoadigital.prj001.ui.act027.Act027_Main.WS_PROCESS_SO_STATUS_CHANGE;
 
 import android.app.AlertDialog;
@@ -675,12 +678,15 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
     public void setFragByTag(String tag) {
         switch (tag) {
             case SELECTION_FRAG_PREVIEW:
+                act027_opc_.setSpinnersEnable(true);
                 setFrag(act043_frag_preview, SELECTION_FRAG_PREVIEW);
                 break;
             case SELECTION_FRAG_SERVICE_LIST:
+                act027_opc_.setSpinnersEnable(false);
                 setFrag(act043_frag_service_list, SELECTION_FRAG_SERVICE_LIST);
                 break;
             case SELECTION_FRAG_PACKAGE_DETAIL_LIST:
+                act027_opc_.setSpinnersEnable(false);
                 setFrag(act043_frag_package_detail_list, SELECTION_FRAG_PACKAGE_DETAIL_LIST);
                 break;
         }
@@ -998,14 +1004,42 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
             checkSOonProcess();
         } else if (ws_process.equalsIgnoreCase(WS_PROCESS_SO_STATUS_CHANGE)) {
             disableProgressDialog();
-            ArrayList<HMAux> mSO = extractReturnMsg(hmAux);
-            if (mSO.isEmpty() || checkReturnOK(mSO)) {
+            //
+            HMAux hmAuxReturnFormatted = getReturnFormatted(hmAux);
+            //
+            ArrayList<HMAux> mSO = extractReturnMsg(hmAuxReturnFormatted);
+            if (hmAux.hasConsistentValue(WS_RETURN_SO_STATUS) && "OK".equalsIgnoreCase(hmAux.get(WS_RETURN_SO_STATUS))) {
                 Toast.makeText(context, hmAux_Trans.get("msg_so_results_ok"), Toast.LENGTH_SHORT).show();
                 reloadSO();
+                act027_opc_.setmSm_so(mSm_so);
+                act027_opc_.loadDataToScreen();
             }else{
                 showResultsDialog(mSO, true);
             }
+        } else if (ws_process.equalsIgnoreCase(WS_PROCESS_SO_PRIORITY_CHANGE)) {
+            disableProgressDialog();
+            progressDialog.dismiss();
+            setWs_process("");
+            //
+            if(hmAux.hasConsistentValue(WS_RETURN_SO_PRIORITY)){
+                if("OK".equalsIgnoreCase(hmAux.get(WS_RETURN_SO_PRIORITY))){
+                    Toast.makeText(context, hmAux_Trans.get("msg_so_results_ok"), Toast.LENGTH_SHORT).show();
+                }
+            }
+            reloadSO();
+            act027_opc_.setmSm_so(mSm_so);
+            act027_opc_.loadDataToScreen();
         }
+    }
+
+    @NonNull
+    private HMAux getReturnFormatted(HMAux hmAux) {
+        HMAux hmAuxReturnFormatted = new HMAux();
+        hmAuxReturnFormatted.put(Generic_Results_Adapter.LABEL_ITEM_1, "SO");
+        hmAuxReturnFormatted.put(Generic_Results_Adapter.VALUE_ITEM_1, mSm_so.getSo_prefix() + "." +  mSm_so.getSo_code());
+        hmAuxReturnFormatted.put(Generic_Results_Adapter.LABEL_ITEM_2, "alert_so_status");
+        hmAuxReturnFormatted.put(Generic_Results_Adapter.VALUE_ITEM_2, hmAux.get(WS_RETURN_SO_STATUS));
+        return hmAuxReturnFormatted;
     }
 
     private void showResults(HMAux so) {

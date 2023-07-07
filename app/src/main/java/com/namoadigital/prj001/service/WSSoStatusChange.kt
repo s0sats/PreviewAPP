@@ -195,8 +195,12 @@ class WSSoStatusChange :
         result.so?.let {
             //
             it.forEach { soFull ->
-                soDao.addUpdate(soFull)
+                //Apaga SO completa
+                soDao.removeFull(soFull)
+                //
+                soFull.setPK()
             }
+            soDao.addUpdate(it,false)
             //
             if ("OK".equals(soStatus.ret_status, true)) {
                 ToolBox.sendBCStatus(
@@ -218,10 +222,7 @@ class WSSoStatusChange :
             }
             //
         } ?: run {
-            val hmAux = HMAux()
-            val soStatus = result.so_status[0]
-            hmAux[WS_RETURN_SO_STATUS] = soStatus.ret_status
-            hmAux[WS_RETURN_SO_MSG] = soStatus.ret_msg
+
             if ("OK".equals(soStatus.ret_status, true)) {
                 result.so_status.forEach { item ->
                     val smSo = soDao.getByString(
