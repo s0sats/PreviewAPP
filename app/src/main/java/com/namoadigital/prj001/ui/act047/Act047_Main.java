@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 
@@ -950,8 +951,8 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
             binding.filterDialogTvPartnerLbl.setText(hmAux_Trans.get("filter_dialog_partner_lbl") + ": " + TextUtils.join(", ", filter.getPartnerList(partnerList)));
         }
         binding.filterDialogOk.setText(hmAux_Trans.get("filter_dialog_ok_lbl"));
+        binding.filterDialogOk.setBackgroundTintList(AppCompatResources.getColorStateList(context, R.drawable.button_theme_primary));
         binding.filterDialogCancel.setText(hmAux_Trans.get("filter_dialog_cancel_lbl"));
-
         onChangeStyleStatusFilter(binding);
         for (TypeStatusFilter item : status) {
             switch (item) {
