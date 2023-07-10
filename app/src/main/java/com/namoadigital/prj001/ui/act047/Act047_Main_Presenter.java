@@ -328,7 +328,7 @@ public class Act047_Main_Presenter implements Act047_Main_Contract.I_Presenter {
         if(smSo != null) {
             dao.addUpdate(
                     new SM_SO_Sql_018(
-                            Integer.parseInt(ToolBox_Con.getPreference_User_Code(context)),
+                            ToolBox_Con.getPreference_Customer_Code(context),
                             soPrefix,
                             soCode,
                             0
