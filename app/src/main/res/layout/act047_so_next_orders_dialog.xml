@@ -313,7 +313,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     android:orientation="vertical">
 
                     <TextView
@@ -323,7 +323,7 @@
                         android:gravity="start|center_vertical"
                         android:textSize="@dimen/font_size_title"
                         android:textStyle="bold"
-                        tools:text="SO Comments - Trad" />
+                        tools:text="PRODUTO ALGO" />
 
                     <TextView
                         android:id="@+id/act047_so_next_orders_dialog_tv_so_product_val"
@@ -331,7 +331,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
                         android:gravity="start|center_vertical"
-                        tools:text="Comment here - Trad" />
+                        tools:text="SERIAL NAME" />
                 </LinearLayout>
             </LinearLayout>
 

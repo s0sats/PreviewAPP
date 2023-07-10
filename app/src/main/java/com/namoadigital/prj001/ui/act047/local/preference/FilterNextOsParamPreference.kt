@@ -18,11 +18,11 @@ class FilterNextOsParamPreference constructor(
             edit()
                 .putString(
                     FILTER_NEXT_OS_STATUS,
-                    model.statusListFilterToString().joinToString("|")
+                    model.statusListFilterToString().joinToString(SEPARATOR)
                 )
                 .putString(
                     FILTER_NEXT_OS_DEADLINE,
-                    model.deadlineFilterToString().joinToString("|")
+                    model.deadlineFilterToString().joinToString(SEPARATOR)
                 )
                 .putString(FILTER_NEXT_OS_PRIORITY, model.priorityFilter.type)
                 .apply()
@@ -54,7 +54,13 @@ class FilterNextOsParamPreference constructor(
     }
 
     private fun SharedPreferences.getDeadline(): List<TypeDeadlineFilter> {
-        val values = getString(FILTER_NEXT_OS_DEADLINE, "")
+        val values = getString(
+            FILTER_NEXT_OS_DEADLINE, listOf(
+                TypeDeadlineFilter.UNDEFEATED.type,
+                TypeDeadlineFilter.EXPIRED.type,
+                TypeDeadlineFilter.WITHOUT.type
+            ).joinToString(SEPARATOR)
+        )
         values?.let { filter ->
             return filter.split(SEPARATOR).mapNotNull { getTypeDeadlineFilter(it) }
         }

@@ -242,18 +242,61 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                     <TextView
-                        android:id="@+id/act047_cell_tv_brand_model_color_val"
+                        android:id="@+id/act047_cell_tv_brand_val"
                         style="@style/TextAppearance.Material3.BodySmall"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/m3_namoa_onSurfaceVariant"
-                        android:visibility="gone"
+                        android:visibility="visible"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/act047_cell_tv_model_val"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintHorizontal_chainStyle="packed"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:maxEms="5"
                         tools:text="Marca" />
+
+                    <TextView
+                        android:id="@+id/act047_cell_tv_model_val"
+                        style="@style/TextAppearance.Material3.BodySmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:textColor="@color/m3_namoa_onSurfaceVariant"
+                        android:visibility="visible"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/act047_cell_tv_color_val"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/act047_cell_tv_brand_val"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:maxEms="5"
+                        tools:text="Modelo" />
+
+                    <TextView
+                        android:id="@+id/act047_cell_tv_color_val"
+                        style="@style/TextAppearance.Material3.BodySmall"
+                        android:layout_width="213dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:maxLines="1"
+                        android:textColor="@color/m3_namoa_onSurfaceVariant"
+                        android:visibility="visible"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/act047_cell_tv_model_val"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="Cor" />
 
                     <!--                <TextView
                                         android:id="@+id/my_actions_item_tv_action_process"
@@ -271,7 +314,7 @@
                                         android:text="Cor"
                                         android:textColor="@color/m3_namoa_onSurface" />-->
 
-                </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
 
                 <TextView

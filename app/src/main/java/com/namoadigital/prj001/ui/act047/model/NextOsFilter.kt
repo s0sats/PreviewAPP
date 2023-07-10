@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.ui.act047.model
 
-import android.content.Context
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.model.SO_Next_Orders_Obj
@@ -33,7 +32,7 @@ data class NextOsFilter(
 
     fun filterList(
         list: ArrayList<SO_Next_Orders_Obj>,
-        context: Context
+        priorityTypeFilter: String = ""
     ): ArrayList<SO_Next_Orders_Obj> {
         val listFilter = list.filter { item ->
             statusFilter.any { status ->
@@ -44,8 +43,9 @@ data class NextOsFilter(
                 }
             } && (deadlineFilter.isEmpty() || deadlineFilter.any { deadline ->
                 when (deadline) {
-                    TypeDeadlineFilter.WITHOUT -> item.deadline.isNullOrEmpty()
+                    TypeDeadlineFilter.UNDEFEATED -> !ToolBox_Inf.isItemLate(item.deadline) && !item.deadline.isNullOrEmpty()
                     TypeDeadlineFilter.EXPIRED -> ToolBox_Inf.isItemLate(item.deadline)
+                    TypeDeadlineFilter.WITHOUT -> item.deadline.isNullOrEmpty()
                 }
             }) && (priorityTypeFilter.isEmpty() || item.priority_desc == priorityTypeFilter)
         }
@@ -87,8 +87,9 @@ enum class TypePriorityFilter(val type: String) {
 }
 
 enum class TypeDeadlineFilter(val type: String) {
-    WITHOUT("WITHOUT_DEADLINE"),
-    EXPIRED("EXPIRED")
+    UNDEFEATED("UNDEFEATED"),
+    EXPIRED("EXPIRED"),
+    WITHOUT("WITHOUT_DEADLINE")
 }
 
 enum class TypeStatusFilter(val type: String) {

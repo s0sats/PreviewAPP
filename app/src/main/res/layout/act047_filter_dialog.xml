@@ -113,16 +113,22 @@
                     tools:text="Termine algumacoia" />
 
                 <CheckBox
-                    android:id="@+id/checkBoxWithoutDeadline"
+                    android:id="@+id/checkBoxUndefeatedDeadline"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    tools:text="OS Sem prazo" />
+                    tools:text="Nao vencido" />
 
                 <CheckBox
                     android:id="@+id/checkboxExpiredDeadline"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     tools:text="OS ultrapassada" />
+
+                <CheckBox
+                    android:id="@+id/checkBoxWithoutDeadline"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:text="OS Sem prazo" />
 
             </LinearLayout>
 

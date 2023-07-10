@@ -176,7 +176,7 @@ public class Act047_Main_Presenter implements Act047_Main_Contract.I_Presenter {
             );
             //
             nextOrdersObjsList = nextOrderList;
-            ArrayList<SO_Next_Orders_Obj> next_orders_objArrayList = pref.read().filterList(nextOrderList, context);
+            ArrayList<SO_Next_Orders_Obj> next_orders_objArrayList = pref.read().filterList(nextOrderList, filterPriorityType);
             setFilterData(next_orders_objArrayList);
             mView.loadNextOrders(next_orders_objArrayList);
         } catch (Exception e) {
@@ -282,11 +282,13 @@ public class Act047_Main_Presenter implements Act047_Main_Contract.I_Presenter {
         return pref.read();
     }
 
+    private String filterPriorityType = "";
     @Override
     public boolean saveFilterDialog(NextOsFilter filter, boolean switchFilter) {
         List<TypeStatusFilter> actualFilter = pref.read().getStatusFilter();
         if (!filter.getStatusFilter().equals(actualFilter)) {
             if (ToolBox_Con.isOnline(context)) {
+                filterPriorityType = filter.getPriorityTypeFilter();
                 pref.write(filter);
                 executeNextOrdersSearch(switchFilter);
                 return true;
@@ -297,7 +299,7 @@ public class Act047_Main_Presenter implements Act047_Main_Contract.I_Presenter {
 
         filter.setStatusFilter(actualFilter);
         pref.write(filter);
-        mView.loadNextOrders(filter.filterList(nextOrdersObjsList, context));
+        mView.loadNextOrders(filter.filterList(nextOrdersObjsList, filter.getPriorityTypeFilter()));
         return true;
 
     }

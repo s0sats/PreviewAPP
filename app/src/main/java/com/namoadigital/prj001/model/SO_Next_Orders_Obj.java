@@ -15,7 +15,8 @@ public class SO_Next_Orders_Obj {
     //private String product_code;
     @SerializedName("product_id")
     private String product_id;
-    // private String product_desc;
+    @SerializedName("product_desc")
+    private String product_desc;
     @SerializedName("serial_code")
     private String serial_code;
     @SerializedName("serial_id")
@@ -32,6 +33,13 @@ public class SO_Next_Orders_Obj {
     private String tracking;
     @SerializedName("brand_model_color")
     private String brand_model_color;
+    @SerializedName("brand_desc")
+    private String brand_desc;
+    @SerializedName("model_desc")
+    private String model_desc;
+    @SerializedName("color_desc")
+    private String color_desc;
+
     @SerializedName("comments")
     private String comments;
     @SerializedName("service")
@@ -76,6 +84,9 @@ public class SO_Next_Orders_Obj {
     private String priority_color;
     @SerializedName("create_date")
     private String create_date;
+
+    @SerializedName("deadline_manual")
+    private Integer deadline_manual;
 
     public String getSo_prefix() {
         return so_prefix;
@@ -125,13 +136,13 @@ public class SO_Next_Orders_Obj {
         this.product_id = product_id;
     }
 
-//    public String getProduct_desc() {
-//        return product_desc;
-//    }
-//
-//    public void setProduct_desc(String product_desc) {
-//        this.product_desc = product_desc;
-//    }
+    public String getProduct_desc() {
+        return product_desc;
+    }
+
+    public void setProduct_desc(String product_desc) {
+        this.product_desc = product_desc;
+    }
 
     public String getSerial_code() {
         return serial_code;
@@ -429,5 +440,37 @@ public class SO_Next_Orders_Obj {
 
     public void setPriority_color(String priority_color) {
         this.priority_color = priority_color;
+    }
+
+    public String getColor_desc() {
+        return color_desc;
+    }
+
+    public void setColor_desc(String color_desc) {
+        this.color_desc = color_desc;
+    }
+
+    public String getModel_desc() {
+        return model_desc;
+    }
+
+    public void setModel_desc(String model_desc) {
+        this.model_desc = model_desc;
+    }
+
+    public String getBrand_desc() {
+        return brand_desc;
+    }
+
+    public void setBrand_desc(String brand_desc) {
+        this.brand_desc = brand_desc;
+    }
+
+    public Integer getDeadline_manual() {
+        return deadline_manual;
+    }
+
+    public void setDeadline_manual(Integer deadline_manual) {
+        this.deadline_manual = deadline_manual;
     }
 }
