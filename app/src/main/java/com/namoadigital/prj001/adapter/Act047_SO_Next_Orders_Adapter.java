@@ -10,6 +10,8 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.content.res.AppCompatResources;
+
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
@@ -92,11 +94,14 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
         TextView tv_deadline_val = convertView.findViewById(R.id.act047_cell_tv_deadline_val);
         TextView tv_serial_id = convertView.findViewById(R.id.act047_cell_tv_serial_id);
         TextView tv_tracking_val = convertView.findViewById(R.id.act047_cell_tv_tracking_val);
-        TextView tv_brand_model_color = convertView.findViewById(R.id.act047_cell_tv_brand_model_color_val);
+        TextView tv_brand = convertView.findViewById(R.id.act047_cell_tv_brand_val);
+        TextView tv_model = convertView.findViewById(R.id.act047_cell_tv_model_val);
+        TextView tv_color = convertView.findViewById(R.id.act047_cell_tv_color_val);
         TextView tv_segment_category_val = convertView.findViewById(R.id.act047_cell_tv_segment_category_val);
         TextView tv_pipeline_val = convertView.findViewById(R.id.act047_cell_tv_pipeline_val);
         TextView tv_client_so_id_val = convertView.findViewById(R.id.act047_cell_tv_client_so_id_val);
         TextView create_date = convertView.findViewById(R.id.act047_cell_tv_create_date_val);
+        ImageView icon_schedule = convertView.findViewById(R.id.schedule_icon);
         //
         //Seta Valores
         tv_prefix_code.setText(item.getSo_prefix() + "." + item.getSo_code());
@@ -125,7 +130,15 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
         tv_status_val.setText((hmAux_Trans.get(item.getStatus())));
         tv_status_val.setTextColor(context.getResources().getColor(ToolBox_Inf.getStatusColor(item.getStatus())));
         iv_block.setVisibility(View.GONE);
-        if(item.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_STOP)){
+
+
+        if (item.getDeadline_manual() == 1) {
+            icon_schedule.setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.perm_contact_calendar_48px));
+        } else {
+            icon_schedule.setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.baseline_schedule_24));
+        }
+
+        if (item.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_STOP)) {
             iv_block.setVisibility(View.VISIBLE);
         }
         //
@@ -139,6 +152,7 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
         if (item.getDeadline() == null || item.getDeadline().isEmpty()) {
             tv_deadline_val.setText(hmAux_Trans.get("no_deadline_lbl"));
             tv_deadline_val.setTextColor(context.getResources().getColor(R.color.m3_namoa_onSurfaceVariant));
+            icon_schedule.setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.baseline_schedule_24));
         } else {
 
             String customerGMT = ToolBox_Con.getPreference_Customer_TMZ(context);
@@ -158,21 +172,27 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
         //
         tv_serial_id.setText(item.getSerial_id());
         //
-        if(item.getTracking() == null || item.getTracking().isEmpty()) {
+        if (item.getTracking() == null || item.getTracking().isEmpty()) {
             tv_tracking_val.setVisibility(View.GONE);
-        }else{
+        } else {
             tv_tracking_val.setVisibility(View.VISIBLE);
             tv_tracking_val.setText(item.getTracking());
         }
         //
-        if(item.getBrand_model_color() == null || item.getBrand_model_color().isEmpty()){
-            tv_brand_model_color.setVisibility(View.GONE);
-        }else{
-            tv_brand_model_color.setVisibility(View.VISIBLE);
-            tv_brand_model_color.setText(item.getBrand_model_color());
-        }
+
+        //
+
+
+        tv_brand.setVisibility(item.getBrand_desc() == null || item.getBrand_desc().isEmpty() ? View.GONE : View.VISIBLE);
+        tv_model.setVisibility(item.getModel_desc() == null || item.getModel_desc().isEmpty() ? View.GONE : View.VISIBLE);
+        tv_color.setVisibility(item.getColor_desc() == null || item.getColor_desc().isEmpty() ? View.GONE : View.VISIBLE);
+
+        tv_brand.setText(item.getBrand_desc() == null || item.getBrand_desc().isEmpty() ? "" : item.getBrand_desc());
+        tv_model.setText(item.getModel_desc() == null || item.getModel_desc().isEmpty() ? "" : "| " + item.getModel_desc());
+        tv_color.setText(item.getColor_desc() == null || item.getColor_desc().isEmpty() ? "" : "| " + item.getColor_desc());
+
         //Segment
-        if(item.getSegment_category_price() != null && !item.getSegment_category_price().isEmpty()){
+        if (item.getSegment_category_price() != null && !item.getSegment_category_price().isEmpty()) {
             tv_segment_category_val.setText(item.getSegment_category_price());
             tv_segment_category_val.setVisibility(View.VISIBLE);
         } else {

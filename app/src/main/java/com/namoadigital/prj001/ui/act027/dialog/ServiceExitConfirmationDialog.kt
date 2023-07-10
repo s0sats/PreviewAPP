@@ -4,6 +4,8 @@ import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import androidx.core.content.res.ResourcesCompat
+import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.Act027DialogServiceExecBinding
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -75,8 +77,15 @@ class ServiceExitConfirmationDialog(
             tvServiceExecTtl.text = hmAux_trans[DIALOG_TITLE]
             tvServiceExecLbl.text = hmAux_trans[DIALOG_SUBTITLE]
             tvServiceExecLbl.visibility = View.VISIBLE
-            rbDirectExecution.text = hmAux_trans[DIALOG_RADIO_OPT]
-            rbStartExecution.text = hmAux_trans[DIALOG_RADIO_OPT_TWO]
+            tvServiceExecLbl.setTextColor(
+                ResourcesCompat.getColor(
+                    context.resources,
+                    R.color.m3_namoa_onSurfaceVariant,
+                    null
+                )
+            )
+            rbDirectExecution.text = hmAux_trans[DIALOG_RADIO_OPT_TWO]
+            rbStartExecution.text = hmAux_trans[DIALOG_RADIO_OPT]
         }
     }
 
