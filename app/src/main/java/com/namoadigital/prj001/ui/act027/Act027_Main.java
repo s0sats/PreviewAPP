@@ -3709,9 +3709,19 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                     && act027_opc_ != null
                     && act027_services_ != null
             ) {
-                act027_opc_.loadDataToScreen();
-                act027_services_.loadDataToScreen();
+                mSm_so = loadSM_SO(
+                        mSm_so.getCustomer_code(),
+                        mSm_so.getSo_prefix(),
+                        mSm_so.getSo_code()
+                );
+
                 invalidateOptionsMenu();
+
+                act027_opc_.setmSm_so(mSm_so);
+                act027_opc_.loadDataToScreen();
+
+                act027_services_.setmSm_so(mSm_so);
+                act027_services_.loadDataToScreen();
             }
         }
     }
