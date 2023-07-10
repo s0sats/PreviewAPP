@@ -2685,12 +2685,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     private void checkUserToActiveOS() {
         Integer editUser = mSm_so.getEdit_user();
         Integer userCode = Integer.valueOf(ToolBox_Con.getPreference_User_Code(context));
-
         if (editUser == null
         || !editUser.equals(userCode)
         || mSm_so.getUpdate_required() == 1
         || isSoWithinTokenFile()
-        || mSm_so.getSync_required() == 1
+        || act027_opc_.hasSyncRequired()
         ) {
             ToolBox.alertMSG(
                     context,
