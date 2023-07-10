@@ -565,6 +565,8 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         } else {
             Toast.makeText(context, hmAux_Trans.get("status_change_error_toast"), Toast.LENGTH_LONG).show();
         }
+        //
+        mPresenter.updateLocalSo(Integer.parseInt(item.getSo_prefix()), Integer.parseInt(item.getSo_code()));
     }
 
     private void changeStatusDialog(SO_Next_Orders_Obj item) {
