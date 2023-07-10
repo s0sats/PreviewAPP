@@ -2686,7 +2686,12 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         Integer editUser = mSm_so.getEdit_user();
         Integer userCode = Integer.valueOf(ToolBox_Con.getPreference_User_Code(context));
 
-        if (editUser == null || !editUser.equals(userCode)) {
+        if (editUser == null
+        || !editUser.equals(userCode)
+        || mSm_so.getUpdate_required() == 1
+        || isSoWithinTokenFile()
+        || mSm_so.getSync_required() == 1
+        ) {
             ToolBox.alertMSG(
                     context,
                     hmAux_Trans.get("alert_so_exit_title"),
