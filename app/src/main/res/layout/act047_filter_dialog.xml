@@ -113,7 +113,7 @@
                     tools:text="Termine algumacoia" />
 
                 <CheckBox
-                    android:id="@+id/checkBoxUndefeatedDeadline"
+                    android:id="@+id/checkBoxNotExpiredDeadline"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     tools:text="Nao vencido" />

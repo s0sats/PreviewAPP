@@ -54,12 +54,17 @@ public class SO_Next_Orders_Obj {
     private String serial_local_desc;
     @SerializedName("create_user")
     private String create_user;
-    @SerializedName("last_approval_budget_user") private String last_approval_budget_user;
-    @SerializedName("deadline_filter") private String deadline_filter;
-    @SerializedName("status_filter") private String status_filter;
+    @SerializedName("last_approval_budget_user")
+    private String last_approval_budget_user;
+    @SerializedName("deadline_filter")
+    private String deadline_filter;
+    @SerializedName("status_filter")
+    private String status_filter;
     //LUCHE - 13/07/2021
-    @SerializedName("segment_category_price") private String segment_category_price;
-    @SerializedName("pipeline_desc") private String pipeline_desc;
+    @SerializedName("segment_category_price")
+    private String segment_category_price;
+    @SerializedName("pipeline_desc")
+    private String pipeline_desc;
     @SerializedName("add_inf1")
     private String add_inf1;
     @SerializedName("add_inf2")
@@ -379,22 +384,27 @@ public class SO_Next_Orders_Obj {
      * @return
      */
     public String getAllFieldForFilter() {
-        return  (
-                so_prefix+ "|" +
-                so_code+ "|" +
-                so_id+ "|" +
-                so_desc+ "|" +
-                product_id+ "|" +
-                //serial_code+ "|" +
-                serial_id+ "|" +
-                status_filter+ "|" +
-                deadline_filter+ "|" +
-                tracking+ "|" +
-                brand_model_color+ "|" +
-                segment_category_price + "|"+
-                pipeline_desc + "|"+
-                client_so_id + "|" +
-                priority_desc + "|"
+        return (
+                so_prefix + "." +
+                        so_code + "|" +
+                        so_id + "|" +
+                        so_desc + "|" +
+                        product_desc + "|" +
+                        //serial_code+ "|" +
+                        serial_id + "|" +
+                        status_filter + "|" +
+                        deadline_filter + "|" +
+                        tracking + "|" +
+                        brand_desc + "|" +
+                        model_desc + "|" +
+                        color_desc + "|" +
+                        segment_category_price + "|" +
+                        pipeline_desc + "|" +
+                        client_so_id + "|" +
+                        priority_desc + "|" +
+                        create_date + "|" +
+                        create_user + "|" +
+                        last_approval_budget_user
                     /*+
                 comments+ "|" +
                 service+ "|" +
@@ -402,8 +412,7 @@ public class SO_Next_Orders_Obj {
                 serial_site_desc+ "|" +
                 serial_zone_desc+ "|" +
                 serial_local_desc+ "|" +
-                create_user+ "|" +
-                last_approval_budget_user*/
+                */
         )
                 .replace("null|", "")
                 .replace("null", "")

@@ -43,7 +43,7 @@ data class NextOsFilter(
                 }
             } && (deadlineFilter.isEmpty() || deadlineFilter.any { deadline ->
                 when (deadline) {
-                    TypeDeadlineFilter.UNDEFEATED -> !ToolBox_Inf.isItemLate(item.deadline) && !item.deadline.isNullOrEmpty()
+                    TypeDeadlineFilter.NOT_EXPIRED -> !ToolBox_Inf.isItemLate(item.deadline) && !item.deadline.isNullOrEmpty()
                     TypeDeadlineFilter.EXPIRED -> ToolBox_Inf.isItemLate(item.deadline)
                     TypeDeadlineFilter.WITHOUT -> item.deadline.isNullOrEmpty()
                 }
@@ -87,7 +87,7 @@ enum class TypePriorityFilter(val type: String) {
 }
 
 enum class TypeDeadlineFilter(val type: String) {
-    UNDEFEATED("UNDEFEATED"),
+    NOT_EXPIRED("NOT_EXPIRED"),
     EXPIRED("EXPIRED"),
     WITHOUT("WITHOUT_DEADLINE")
 }

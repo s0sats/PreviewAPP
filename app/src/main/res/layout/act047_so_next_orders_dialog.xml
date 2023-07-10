@@ -368,48 +368,63 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelines_01"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.30" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelines_02"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.70" />
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/so_next_orders_dialog_cancel"
             style="@style/NamoaTheme3.Button.Text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Voltar"
+            android:textColor="@color/m3_namoa_primary"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/so_next_orders_dialog_middle_action"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintEnd_toEndOf="@+id/guidelines_01"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:textColor="@color/m3_namoa_primary"
-            android:text="Voltar" />
+            app:layout_constraintWidth_default="wrap" />
 
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/so_next_orders_dialog_middle_action"
             style="@style/Widget.Material3.Button"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
+            android:text="Bloqueado"
+            android:visibility="visible"
             app:backgroundTint="@color/m3_namoa_primary"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/so_next_orders_dialog_ok"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/so_next_orders_dialog_cancel"
+            app:layout_constraintEnd_toEndOf="@+id/guidelines_02"
+            app:layout_constraintStart_toStartOf="@+id/guidelines_01"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_default="percent"
-            android:visibility="gone"
-            android:text="Bloqueado" />
+            app:layout_constraintWidth_default="wrap" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/so_next_orders_dialog_ok"
             style="@style/Widget.Material3.Button"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:text="Abrir"
+            app:backgroundTint="@color/m3_namoa_primary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/so_next_orders_dialog_middle_action"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/guidelines_02"
             app:layout_constraintTop_toTopOf="parent"
-            app:backgroundTint="@color/m3_namoa_primary"
-            android:text="Abrir" />
+            app:layout_constraintWidth_default="wrap" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

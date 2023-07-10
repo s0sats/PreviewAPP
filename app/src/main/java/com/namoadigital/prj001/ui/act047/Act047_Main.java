@@ -170,7 +170,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         transList.add("filter_dialog_deadline_lbl");
         transList.add("filter_dialog_deadline_without_lbl");
         transList.add("filter_dialog_deadline_expired_lbl");
-        transList.add("filter_dialog_deadline_undefeated_lbl");
+        transList.add("filter_dialog_deadline_not_expired_lbl");
         transList.add("filter_dialog_orders_lbl");
         transList.add("filter_dialog_priority_deadline_lbl");
         transList.add("filter_dialog_priority_date_created_lbl");
@@ -1023,7 +1023,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         binding.filterDialogTvDeadlineLbl.setText(hmAux_Trans.get("filter_dialog_deadline_lbl"));
         binding.checkBoxWithoutDeadline.setText(hmAux_Trans.get("filter_dialog_deadline_without_lbl"));
         binding.checkboxExpiredDeadline.setText(hmAux_Trans.get("filter_dialog_deadline_expired_lbl"));
-        binding.checkBoxUndefeatedDeadline.setText(hmAux_Trans.get("filter_dialog_deadline_undefeated_lbl"));
+        binding.checkBoxNotExpiredDeadline.setText(hmAux_Trans.get("filter_dialog_deadline_not_expired_lbl"));
         binding.filterDialogTvOrdersLbl.setText(hmAux_Trans.get("filter_dialog_orders_lbl"));
         binding.radioPriorityDeadline.setText(hmAux_Trans.get("filter_dialog_priority_deadline_lbl"));
         binding.radioPriorityDateCreated.setText(hmAux_Trans.get("filter_dialog_priority_date_created_lbl"));
@@ -1078,8 +1078,8 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
 
         for (TypeDeadlineFilter item : deadlineFilter) {
             switch (item) {
-                case UNDEFEATED:
-                    binding.checkBoxUndefeatedDeadline.setChecked(true);
+                case NOT_EXPIRED:
+                    binding.checkBoxNotExpiredDeadline.setChecked(true);
                     break;
                 case EXPIRED:
                     binding.checkboxExpiredDeadline.setChecked(true);
@@ -1137,7 +1137,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         binding.checkboxPendingAndProcess.setOnClickListener(v -> checkStateFromButtonFilter(binding));
         binding.checkboxApprovalQuality.setOnClickListener(v -> checkStateFromButtonFilter(binding));
         binding.checkboxApprovalFinal.setOnClickListener(v -> checkStateFromButtonFilter(binding));
-        binding.checkBoxUndefeatedDeadline.setOnClickListener(v -> checkStateFromButtonFilter(binding));
+        binding.checkBoxNotExpiredDeadline.setOnClickListener(v -> checkStateFromButtonFilter(binding));
         binding.checkboxExpiredDeadline.setOnClickListener(v -> checkStateFromButtonFilter(binding));
         binding.checkBoxWithoutDeadline.setOnClickListener(v -> checkStateFromButtonFilter(binding));
 
@@ -1251,13 +1251,13 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         List<TypeDeadlineFilter> deadlineList = new ArrayList<>();
 
         CheckBox[] checkBoxes = {
-                binding.checkBoxUndefeatedDeadline,
+                binding.checkBoxNotExpiredDeadline,
                 binding.checkboxExpiredDeadline,
                 binding.checkBoxWithoutDeadline,
         };
 
         TypeDeadlineFilter[] filters = {
-                TypeDeadlineFilter.UNDEFEATED,
+                TypeDeadlineFilter.NOT_EXPIRED,
                 TypeDeadlineFilter.EXPIRED,
                 TypeDeadlineFilter.WITHOUT
         };
@@ -1282,7 +1282,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         };
 
         CheckBox[] checkboxesDeadline = {
-                binding.checkBoxUndefeatedDeadline,
+                binding.checkBoxNotExpiredDeadline,
                 binding.checkboxExpiredDeadline,
                 binding.checkBoxWithoutDeadline,
         };

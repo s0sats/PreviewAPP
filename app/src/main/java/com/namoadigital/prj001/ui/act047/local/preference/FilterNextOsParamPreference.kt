@@ -56,7 +56,7 @@ class FilterNextOsParamPreference constructor(
     private fun SharedPreferences.getDeadline(): List<TypeDeadlineFilter> {
         val values = getString(
             FILTER_NEXT_OS_DEADLINE, listOf(
-                TypeDeadlineFilter.UNDEFEATED.type,
+                TypeDeadlineFilter.NOT_EXPIRED.type,
                 TypeDeadlineFilter.EXPIRED.type,
                 TypeDeadlineFilter.WITHOUT.type
             ).joinToString(SEPARATOR)
