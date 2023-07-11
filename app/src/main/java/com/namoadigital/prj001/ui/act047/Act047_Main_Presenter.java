@@ -190,6 +190,7 @@ public class Act047_Main_Presenter implements Act047_Main_Contract.I_Presenter {
     private void setFilterData(ArrayList<SO_Next_Orders_Obj> nextOrderList) {
         for (SO_Next_Orders_Obj so_next_orders_obj : nextOrderList) {
             so_next_orders_obj.setDeadline_filter(getFormatedDeadlineDate(so_next_orders_obj.getDeadline()));
+            so_next_orders_obj.setCreate_date_filter(getFormatedDeadlineDate(so_next_orders_obj.getCreateDate()));
             so_next_orders_obj.setStatus_filter(getTranslatedStatus(so_next_orders_obj.getStatus()));
         }
     }

@@ -89,6 +89,7 @@ public class SO_Next_Orders_Obj {
     private String priority_color;
     @SerializedName("create_date")
     private String create_date;
+    private String create_date_filter;
 
     @SerializedName("deadline_manual")
     private Integer deadline_manual;
@@ -402,7 +403,7 @@ public class SO_Next_Orders_Obj {
                         pipeline_desc + "|" +
                         client_so_id + "|" +
                         priority_desc + "|" +
-                        create_date + "|" +
+                        create_date_filter + "|" +
                         create_user + "|" +
                         last_approval_budget_user
                     /*+
@@ -481,5 +482,13 @@ public class SO_Next_Orders_Obj {
 
     public void setDeadline_manual(Integer deadline_manual) {
         this.deadline_manual = deadline_manual;
+    }
+
+    public String getCreate_date_filter() {
+        return create_date_filter;
+    }
+
+    public void setCreate_date_filter(String create_date_filter) {
+        this.create_date_filter = create_date_filter;
     }
 }
