@@ -46,6 +46,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -79,30 +80,26 @@ public class Act027_Opc extends BaseFragment {
     private ImageView iv_so_chat;
     private TextView tv_chat_title;
 
-    private LinearLayout ll_so_id;
-    private TextView tv_so_id_label;
-    private TextView tv_so_id_value;
 
-    private LinearLayout ll_so_desc;
-    private TextView tv_so_desc_val;
-    private TextView tv_so_desc_lbl;
     private Chip chip_os_status;
     private Chip chip_os_priority;
 
     private LinearLayout ll_deadline;
     private TextView tv_deadline_label;
     private TextView tv_deadline_value;
+
+
+    private LinearLayout ll_created_date;
+    private TextView tv_create_label;
+    private TextView tv_created_value;
     private TextView tv_tracking_value;
 
-    private TextView tv_product_desc_label;
-    private TextView tv_product_desc_value;
+    private TextView tv_pipeline_os;
 
     private TextView tv_desc_label;
     private TextView tv_desc_value;
 
-    private TextView tv_serial_label;
     private TextView tv_serial_value;
-    private TextView tv_serial_brand_model_color;
 
     private TextView tv_product_title;
     private TextView tv_services_title;
@@ -110,16 +107,22 @@ public class Act027_Opc extends BaseFragment {
     private TextView tv_header_title;
     private TextView tv_approval_title;
     private TextView tv_service_edition_title;
-
-    private LinearLayout ll_serial_add_infos;
     private TextView tv_serial_add_infos_value;
+    private TextView tv_serial_add_infos_value_two;
+    private TextView tv_serial_add_infos_value_three;
 
-    private LinearLayout ll_billing_add_infos;
-    private TextView tv_billing_add_infos_label;
-    private TextView tv_billing_add_infos_value;
+    private TextView tv_brand;
+    private TextView tv_model;
+    private TextView tv_color;
+
+    private TextView id_serial;
+    private TextView tv_seg_category;
 
     private PopupMenu menuStatus;
     private PopupMenu menuPriority;
+
+    private MD_Product_SerialDao serialDao;
+
 
     public interface IAct027_Opc {
         void menuOptionsSelected(String type);
@@ -184,7 +187,7 @@ public class Act027_Opc extends BaseFragment {
 
     private void iniVar(View view) {
         context = getActivity();
-
+        serialDao = new MD_Product_SerialDao(context);
 //        ll_so_sync = (LinearLayout) view.findViewById(R.id.act027_opc_ll_so_sync);
         chip_os_status = view.findViewById(R.id.chip_os_status);
         chip_os_priority = view.findViewById(R.id.chip_os_priority);
@@ -193,34 +196,35 @@ public class Act027_Opc extends BaseFragment {
         iv_so_chat = view.findViewById(R.id.act027_opc_iv_so_chat);
         tv_chat_title = view.findViewById(R.id.act027_opc_tv_chat_title);
 
-        ll_so_id = (LinearLayout) view.findViewById(R.id.act027_opc_ll_so_id);
-        tv_so_id_label = (TextView) view.findViewById(R.id.act027_opc_tv_so_id_label);
-        tv_so_id_value = (TextView) view.findViewById(R.id.act027_opc_tv_so_id_value);
 
-        ll_so_desc = (LinearLayout) view.findViewById(R.id.act027_opc_ll_so_desc);
-        tv_so_desc_val = (TextView) view.findViewById(R.id.act027_opc_tv_so_desc_value);
-        tv_so_desc_lbl = (TextView) view.findViewById(R.id.act027_opc_tv_so_desc_label);
         //
 
         ll_deadline = (LinearLayout) view.findViewById(R.id.act027_opc_ll_deadline);
         tv_deadline_label = (TextView) view.findViewById(R.id.act027_opc_tv_deadline_label);
         tv_deadline_value = (TextView) view.findViewById(R.id.act027_opc_tv_deadline_value);
 
+        ll_created_date = (LinearLayout) view.findViewById(R.id.act027_opc_ll_create);
+        tv_create_label = (TextView) view.findViewById(R.id.act027_opc_tv_created_label);
+        tv_created_value = (TextView) view.findViewById(R.id.act027_opc_tv_created_value);
+
         tv_tracking_value = (TextView) view.findViewById(R.id.act027_opc_tv_tracking_value);
 
 //        tv_prefix_code_label = (TextView) view.findViewById(R.id.act027_opc_tv_prefix_code_label);
 //        tv_prefix_code_value = (TextView) view.findViewById(R.id.act027_opc_tv_prefix_code_value);
 
-        tv_product_desc_label = (TextView) view.findViewById(R.id.act027_opc_tv_product_label);
-        tv_product_desc_value = (TextView) view.findViewById(R.id.act027_opc_tv_product_value);
+        tv_pipeline_os = view.findViewById(R.id.act027_opc_tv_pipelineos_label);
 
 //        tv_desc_label = (TextView) view.findViewById(R.id.act027_opc_tv_desc_label);
 //        tv_desc_value = (TextView) view.findViewById(R.id.act027_opc_tv_desc_value);
 
-        tv_serial_label = (TextView) view.findViewById(R.id.act027_opc_tv_product_serial_label);
         tv_serial_value = (TextView) view.findViewById(R.id.act027_opc_tv_product_serial_value);
+        tv_brand = view.findViewById(R.id.act027_opc_tv_brand_val);
+        tv_model = view.findViewById(R.id.act027_opc_tv_model_val);
+        tv_color = view.findViewById(R.id.act027_opc_tv_color_val);
+        id_serial = view.findViewById(R.id.act027_opc_tv_id_serial_value);
+        tv_seg_category = view.findViewById(R.id.act027_opc_tv_segment_category_label);
+
         //LUCHE - 12/08/2019
-        tv_serial_brand_model_color = view.findViewById(R.id.act027_opc_tv_serial_brand_model_color);
 
         ll_product = (LinearLayout) view.findViewById(R.id.act027_opc_ll_product);
         ll_services = (LinearLayout) view.findViewById(R.id.act027_opc_ll_services);
@@ -242,12 +246,11 @@ public class Act027_Opc extends BaseFragment {
         tv_approval_title = (TextView) view.findViewById(R.id.act027_opc_tv_approval_title);
         tv_service_edition_title = (TextView) view.findViewById(R.id.act027_opc_tv_service_edition_title);
         //LUCHE - 08/07/2021 - Add infos adicionais de serial e billing
-        ll_serial_add_infos = view.findViewById(R.id.act027_opc_ll_serial_add_info);
         tv_serial_add_infos_value = view.findViewById(R.id.act027_opc_tv_serial_add_info_value);
+        tv_serial_add_infos_value_two = view.findViewById(R.id.act027_opc_tv_serial_add_info_value2);
+        tv_serial_add_infos_value_three = view.findViewById(R.id.act027_opc_tv_serial_add_info_value3);
 
-        ll_billing_add_infos = view.findViewById(R.id.act027_opc_ll_billing_add_info);
-        tv_billing_add_infos_label = view.findViewById(R.id.act027_opc_tv_billing_label);
-        tv_billing_add_infos_value = view.findViewById(R.id.act027_opc_tv_billing_value);
+
     }
 
     private void iniAction() {
@@ -443,23 +446,8 @@ public class Act027_Opc extends BaseFragment {
 
 
                 defineSoChatLayout();
+                //
 
-                if (!mSm_so.getSo_id().equals(String.valueOf(mSm_so.getSo_prefix()) + "." + mSm_so.getSo_code())) {
-                    ll_so_id.setVisibility(View.VISIBLE);
-                    tv_so_id_label.setText(hmAux_Trans.get("so_id_lbl"));
-                    tv_so_id_value.setText(mSm_so.getSo_id());
-                } else {
-                    ll_so_id.setVisibility(View.GONE);
-                }
-                //
-                setSoInfoVisibility(hmAux_Trans.get("so_client_so_desc_lbl"), mSm_so.getSo_desc(), ll_so_desc, tv_so_desc_lbl, tv_so_desc_val);
-                //
-                if (mSm_so.getSo_desc() != null && mSm_so.getSo_desc().length() > 0) {
-                    ll_so_desc.setVisibility(View.VISIBLE);
-                    tv_so_desc_val.setText(mSm_so.getSo_desc());
-                } else {
-                    ll_so_desc.setVisibility(View.GONE);
-                }
                 //
 //                tv_status_value.setText(hmAux_Trans.get(mSm_so.getStatus()));
 
@@ -478,6 +466,21 @@ public class Act027_Opc extends BaseFragment {
                 } else {
                     ll_deadline.setVisibility(View.GONE);
                 }
+
+
+                if (mSm_so.getCreate_date() != null && !mSm_so.getCreate_date().isEmpty()) {
+                    ll_created_date.setVisibility(View.VISIBLE);
+                    tv_create_label.setText(hmAux_Trans.get("create_date_lbl"));
+                    tv_created_value.setText(
+                            ToolBox_Inf.millisecondsToString(
+                                    ToolBox_Inf.dateToMilliseconds(mSm_so.getCreate_date() != null ? mSm_so.getCreate_date() : "", ""),
+                                    ToolBox_Inf.nlsDateFormat(getActivity()) + " HH:mm"
+                            )
+                    );
+                } else {
+                    ll_created_date.setVisibility(View.GONE);
+                }
+
                 //Seleciona Trackings do Serial
                 MD_Product_Serial_TrackingDao trackingDao = new MD_Product_Serial_TrackingDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
                 //
@@ -497,19 +500,27 @@ public class Act027_Opc extends BaseFragment {
                     tv_tracking_value.setVisibility(View.GONE);
                 }
 
-                tv_product_desc_label.setText(hmAux_Trans.get("product_description_lbl"));
-                tv_product_desc_value.setText(mSm_so.getProduct_desc());
 
 //                tv_desc_label.setText(hmAux_Trans.get("product_description_lbl"));
 //                tv_desc_value.setText(mSm_so.getProduct_desc());
-
-                tv_serial_label.setText(hmAux_Trans.get("serial_lbl"));
                 tv_serial_value.setText(mSm_so.getSerial_id());
+
+
+                if (mSm_so.getSegment_desc() == null || !mSm_so.getSegment_desc().isEmpty()) {
+                    List<String> descList = Arrays.asList(mSm_so.getSegment_desc(), mSm_so.getCategory_price_desc());
+                    tv_seg_category.setVisibility(View.VISIBLE);
+                    tv_seg_category.setText(String.join(" | ", descList));
+                } else {
+                    tv_seg_category.setVisibility(View.GONE);
+                }
+
                 //LUCHE - 12/08/2019
                 setSerialBrandModelColor();
                 //LUCHE - 08/07/2021
                 setSerialAddlInfoIfAny();
-                setBillingAddlInfoIfAny();
+                setSerialInfo();
+                tv_pipeline_os.setVisibility(mSm_so.getPipeline_desc() == null || mSm_so.getPipeline_desc().isEmpty() ? View.GONE : View.VISIBLE);
+                tv_pipeline_os.setText(mSm_so.getPipeline_desc());
                 //
                 if (mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_DONE) ||
                         mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_CLIENT) ||
@@ -547,7 +558,6 @@ public class Act027_Opc extends BaseFragment {
                 tv_serial_title.setText(hmAux_Trans.get("serial_ll_lbl"));
                 tv_header_title.setText(hmAux_Trans.get("header_ll_lbl"));
                 tv_service_edition_title.setText(hmAux_Trans.get("service_edition_ll_lbl"));
-                tv_billing_add_infos_label.setText(hmAux_Trans.get("billing_add_infos_lbl"));
 
                 changeTabColor();
                 //
@@ -581,8 +591,8 @@ public class Act027_Opc extends BaseFragment {
                                 && mSm_so.getEdit_user() != null
                                 && !ToolBox_Con.getPreference_User_Code(context).equalsIgnoreCase(mSm_so.getEdit_user().toString())
                         )
-                    || currentFrag.equalsIgnoreCase(Act043_Main.SELECTION_FRAG_PACKAGE_DETAIL_LIST)
-                    || currentFrag.equalsIgnoreCase(Act043_Main.SELECTION_FRAG_SERVICE_LIST)
+                        || currentFrag.equalsIgnoreCase(Act043_Main.SELECTION_FRAG_PACKAGE_DETAIL_LIST)
+                        || currentFrag.equalsIgnoreCase(Act043_Main.SELECTION_FRAG_SERVICE_LIST)
                 ) {
                     setSpinnersEnable(false);
                 } else {
@@ -591,6 +601,46 @@ public class Act027_Opc extends BaseFragment {
             }
         }
     }
+
+    private void setSerialInfo() {
+        MD_Product_Serial serial = serialDao.getByString(
+                new MD_Product_Serial_Sql_009(
+                        mSm_so.getCustomer_code(),
+                        mSm_so.getProduct_code(),
+                        mSm_so.getSerial_code()
+                ).toSqlQuery()
+        );
+
+
+        if (serial != null && serial.getSerial_code() > 0) {
+            id_serial.setVisibility(serial.getLocal_id() == null || serial.getLocal_id().isEmpty() ? View.GONE : View.VISIBLE);
+            id_serial.setText(serial.getLocal_id());
+        }
+
+    }
+
+    private void setSerialBrandModelColor() {
+        //
+        MD_Product_Serial serial = serialDao.getByString(
+                new MD_Product_Serial_Sql_009(
+                        mSm_so.getCustomer_code(),
+                        mSm_so.getProduct_code(),
+                        mSm_so.getSerial_code()
+                ).toSqlQuery()
+        );
+        //
+        if (serial != null && serial.getSerial_code() > 0) {
+
+            tv_brand.setVisibility(serial.getBrand_desc() == null || serial.getBrand_desc().isEmpty() ? View.GONE : View.VISIBLE);
+            tv_model.setVisibility(serial.getModel_desc() == null || serial.getModel_desc().isEmpty() ? View.GONE : View.VISIBLE);
+            tv_color.setVisibility(serial.getColor_desc() == null || serial.getColor_desc().isEmpty() ? View.GONE : View.VISIBLE);
+
+            tv_brand.setText(serial.getBrand_desc() == null || serial.getBrand_desc().isEmpty() ? "" : serial.getBrand_desc());
+            tv_model.setText(serial.getModel_desc() == null || serial.getModel_desc().isEmpty() ? "" : "| " + serial.getModel_desc());
+            tv_color.setText(serial.getColor_desc() == null || serial.getColor_desc().isEmpty() ? "" : "| " + serial.getColor_desc());
+        }
+    }
+
 
     private void setMenuPriority() {
         menuPriority = new PopupMenu(requireContext(), chip_os_priority);
@@ -707,18 +757,18 @@ public class Act027_Opc extends BaseFragment {
      * Metodo que valida a visibilidade das infos de serial e inseri a info ja formatada na view.
      */
     private void setSerialAddlInfoIfAny() {
-        if (hasAnyAddInfo(mSm_so.getSerial_add_inf1(), mSm_so.getSerial_add_inf2(), mSm_so.getSerial_add_inf3())) {
-            ll_serial_add_infos.setVisibility(View.VISIBLE);
-            tv_serial_add_infos_value.setText(
-                    getFormattedAddInfo(
-                            mSm_so.getSerial_add_inf1(),
-                            mSm_so.getSerial_add_inf2(),
-                            mSm_so.getSerial_add_inf3()
-                    )
-            );
-        } else {
-            ll_serial_add_infos.setVisibility(View.GONE);
-        }
+
+        String serial_add_inf1 = mSm_so.getSerial_add_inf1();
+        String serial_add_inf2 = mSm_so.getSerial_add_inf2();
+        String serial_add_inf3 = mSm_so.getSerial_add_inf3();
+
+        tv_serial_add_infos_value.setVisibility(serial_add_inf1 == null || serial_add_inf1.isEmpty() ? View.GONE : View.VISIBLE);
+        tv_serial_add_infos_value_two.setVisibility(serial_add_inf2 == null || serial_add_inf2.isEmpty() ? View.GONE : View.VISIBLE);
+        tv_serial_add_infos_value_three.setVisibility(serial_add_inf3 == null || serial_add_inf3.isEmpty() ? View.GONE : View.VISIBLE);
+
+        tv_serial_add_infos_value.setText(serial_add_inf1);
+        tv_serial_add_infos_value_two.setText(serial_add_inf2);
+        tv_serial_add_infos_value_three.setText(serial_add_inf3);
     }
 
     /**
@@ -726,20 +776,7 @@ public class Act027_Opc extends BaseFragment {
      * <P></P>
      * Metodo que valida a visibilidade das infos de serial e inseri a info ja formatada na view.
      */
-    private void setBillingAddlInfoIfAny() {
-        if (hasAnyAddInfo(mSm_so.getBilling_add_inf1(), mSm_so.getBilling_add_inf2(), mSm_so.getBilling_add_inf3())) {
-            ll_billing_add_infos.setVisibility(View.VISIBLE);
-            tv_billing_add_infos_value.setText(
-                    getFormattedAddInfo(
-                            mSm_so.getBilling_add_inf1(),
-                            mSm_so.getBilling_add_inf2(),
-                            mSm_so.getBilling_add_inf3()
-                    )
-            );
-        } else {
-            ll_billing_add_infos.setVisibility(View.GONE);
-        }
-    }
+
 
     /**
      * LUCHE - 08/07/2021
@@ -748,7 +785,11 @@ public class Act027_Opc extends BaseFragment {
      *
      * @return
      */
-    private boolean hasAnyAddInfo(String inf1, String inf2, String inf3) {
+    private boolean hasAnyAddInfo(
+            String inf1,
+            String inf2,
+            String inf3
+    ) {
         return mSm_so != null
                 && ((inf1 != null && !inf1.isEmpty())
                 || (inf2 != null && !inf2.isEmpty())
@@ -826,33 +867,6 @@ public class Act027_Opc extends BaseFragment {
         tv_chat_title.setTextColor(getResources().getColor(iconColor));
     }
 
-    private void setSerialBrandModelColor() {
-        MD_Product_SerialDao serialDao = new MD_Product_SerialDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
-        //
-        MD_Product_Serial serial = serialDao.getByString(
-                new MD_Product_Serial_Sql_009(
-                        mSm_so.getCustomer_code(),
-                        mSm_so.getProduct_code(),
-                        mSm_so.getSerial_code()
-                ).toSqlQuery()
-        );
-        //
-        tv_serial_brand_model_color.setVisibility(View.GONE);
-        if (serial != null && serial.getSerial_code() > 0) {
-            if (serial.getBrand_code() != null || serial.getModel_code() != null || serial.getColor_code() != null) {
-                tv_serial_brand_model_color.setVisibility(View.VISIBLE);
-                tv_serial_brand_model_color.setText(
-                        ToolBox_Inf.formatSerialBrandModelColor(
-                                serial.getBrand_desc(),
-                                serial.getModel_desc(),
-                                serial.getColor_desc()
-                        )
-                );
-
-            }
-        }
-    }
-
     boolean hasSyncRequired() {
         SM_SODao soDao = new SM_SODao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
         //
@@ -873,16 +887,15 @@ public class Act027_Opc extends BaseFragment {
     }
 
     private String formatTrackingList(ArrayList<HMAux> tranckingAuxList) {
-        String trackingList = "";
+        StringBuilder trackingList = new StringBuilder();
         //
         for (int i = 0; i < tranckingAuxList.size(); i++) {
-            trackingList += " º " +
-                    tranckingAuxList.get(i).get(MD_Product_Serial_TrackingDao.TRACKING);
+            trackingList.append(tranckingAuxList.get(i).get(MD_Product_Serial_TrackingDao.TRACKING));
             if (i < tranckingAuxList.size() - 1) {
-                trackingList += "\n";
+                trackingList.append("\n");
             }
         }
-        return trackingList;
+        return trackingList.toString();
     }
 
     public boolean isSoWithinTokenFile() {

@@ -371,6 +371,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         transList.add("product_description_lbl");
         transList.add("serial_lbl");
         transList.add("deadline_lbl");
+        transList.add("create_date_lbl");
         transList.add("status_lbl");
         transList.add("priority_lbl");
 
@@ -1423,7 +1424,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         //
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
-        setTitleLanguage();
+        getSupportActionBar().setTitle(mSm_so.getSo_prefix() + "." + mSm_so.getSo_code());
+        //setTitleLanguage();
         setFooter();
     }
 
