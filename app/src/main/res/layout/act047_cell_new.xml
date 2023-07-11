@@ -285,7 +285,7 @@
                     <TextView
                         android:id="@+id/act047_cell_tv_color_val"
                         style="@style/TextAppearance.Material3.BodySmall"
-                        android:layout_width="213dp"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
                         android:maxLines="1"
@@ -293,9 +293,9 @@
                         android:visibility="visible"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.5"
                         app:layout_constraintStart_toEndOf="@+id/act047_cell_tv_model_val"
                         app:layout_constraintTop_toTopOf="parent"
+                        android:ellipsize="end"
                         tools:text="Cor" />
 
                     <!--                <TextView

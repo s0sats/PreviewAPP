@@ -244,6 +244,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         transListdrawer.add("product_description_lbl");
         transListdrawer.add("serial_lbl");
         transListdrawer.add("deadline_lbl");
+        transListdrawer.add("create_date_lbl");
         transListdrawer.add("status_lbl");
         transListdrawer.add("priority_lbl");
 
@@ -762,7 +763,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         //
         mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
         mAct_Info = Constant.ACT043;
-        mAct_Title = Constant.ACT043 + "_" + "title";
+        //      mAct_Title = Constant.ACT043 + "_" + "title";
         //
         HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
         mSite_Value = mFooter.get(Constant.FOOTER_SITE);
@@ -770,7 +771,8 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         //
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
-        setTitleLanguage();
+        getSupportActionBar().setTitle(mSm_so.getSo_prefix() + "." + mSm_so.getSo_code());
+//        setTitleLanguage();
         setFooter();
     }
 
