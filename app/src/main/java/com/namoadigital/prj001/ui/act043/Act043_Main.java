@@ -682,14 +682,18 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
                 setFrag(act043_frag_preview, SELECTION_FRAG_PREVIEW);
                 break;
             case SELECTION_FRAG_SERVICE_LIST:
-                act027_opc_.setSpinnersEnable(false);
-                setFrag(act043_frag_service_list, SELECTION_FRAG_SERVICE_LIST);
+                setServiceListFrag();
                 break;
             case SELECTION_FRAG_PACKAGE_DETAIL_LIST:
                 act027_opc_.setSpinnersEnable(false);
                 setFrag(act043_frag_package_detail_list, SELECTION_FRAG_PACKAGE_DETAIL_LIST);
                 break;
         }
+    }
+
+    private void setServiceListFrag() {
+        act027_opc_.setSpinnersEnable(false);
+        setFrag(act043_frag_service_list, SELECTION_FRAG_SERVICE_LIST);
     }
 
     @Override
@@ -830,7 +834,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         resetPackService(packageDetailObj);
-                        setFragByTag(Act043_Main.SELECTION_FRAG_SERVICE_LIST);
+                        setServiceListFrag();
                     }
                 },
                 1
@@ -966,7 +970,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
                         act043_frag_service_list.setAdapterData(
                                 mPresenter.prepareListToAdapter(new ArrayList<>(servicesList))
                         );
-                        setFrag(act043_frag_service_list, SELECTION_FRAG_SERVICE_LIST);
+                        setServiceListFrag();
                     } else {
                         ToolBox.alertMSG(
                                 context,
@@ -1157,7 +1161,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         if(edit_user != null
                 && ToolBox_Con.getPreference_User_Code(context).equals(edit_user.toString())
         ) {
-            new ServiceAddedChangeStatusDialog(
+            ServiceAddedChangeStatusDialog serviceAddedChangeStatusDialog = new ServiceAddedChangeStatusDialog(
                     context,
                     keepInEdition -> {
                         if (keepInEdition) {
@@ -1170,13 +1174,15 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
                                 Integer.parseInt(bundle.getString(SM_SODao.SO_CODE, "0"))
                         );
                         //
-                        if(changeStatusToken.isEmpty()){
+                        if (changeStatusToken.isEmpty()) {
                             changeStatusToken = ToolBox_Inf.getToken(context);
                         }
                         //
                         mPresenter.executeSoStatusChangeService(mSm_so, changeStatusToken, WSSoStatusChange.WS_ACTION_SO_PROCESS);
                     }
-            ).show();
+            );
+            serviceAddedChangeStatusDialog.setCancelable(false);
+            serviceAddedChangeStatusDialog.show();
         }else{
             reloadSO();
         }

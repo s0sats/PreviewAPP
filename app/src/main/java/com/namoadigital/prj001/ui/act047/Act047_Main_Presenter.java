@@ -28,6 +28,7 @@ import com.namoadigital.prj001.service.WS_SO_Next_Orders;
 import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
+import com.namoadigital.prj001.sql.SM_SO_Sql_018;
 import com.namoadigital.prj001.sql.SmPrioritySql002;
 import com.namoadigital.prj001.ui.act047.local.preference.FilterNextOsParamPreference;
 import com.namoadigital.prj001.ui.act047.model.NextOsFilter;
@@ -176,7 +177,7 @@ public class Act047_Main_Presenter implements Act047_Main_Contract.I_Presenter {
             );
             //
             nextOrdersObjsList = nextOrderList;
-            ArrayList<SO_Next_Orders_Obj> next_orders_objArrayList = pref.read().filterList(nextOrderList, context);
+            ArrayList<SO_Next_Orders_Obj> next_orders_objArrayList = pref.read().filterList(nextOrderList, filterPriorityType);
             setFilterData(next_orders_objArrayList);
             mView.loadNextOrders(next_orders_objArrayList);
         } catch (Exception e) {
@@ -282,11 +283,13 @@ public class Act047_Main_Presenter implements Act047_Main_Contract.I_Presenter {
         return pref.read();
     }
 
+    private String filterPriorityType = "";
     @Override
     public boolean saveFilterDialog(NextOsFilter filter, boolean switchFilter) {
         List<TypeStatusFilter> actualFilter = pref.read().getStatusFilter();
         if (!filter.getStatusFilter().equals(actualFilter)) {
             if (ToolBox_Con.isOnline(context)) {
+                filterPriorityType = filter.getPriorityTypeFilter();
                 pref.write(filter);
                 executeNextOrdersSearch(switchFilter);
                 return true;
@@ -297,7 +300,7 @@ public class Act047_Main_Presenter implements Act047_Main_Contract.I_Presenter {
 
         filter.setStatusFilter(actualFilter);
         pref.write(filter);
-        mView.loadNextOrders(filter.filterList(nextOrdersObjsList, context));
+        mView.loadNextOrders(filter.filterList(nextOrdersObjsList, filter.getPriorityTypeFilter()));
         return true;
 
     }
@@ -311,6 +314,29 @@ public class Act047_Main_Presenter implements Act047_Main_Contract.I_Presenter {
     public List<SmPriority> getListSmPriority() {
         SmPriorityDao dao = new SmPriorityDao(context);
         return dao.query(new SmPrioritySql002(Integer.parseInt(String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)))).toSqlQuery());
+    }
+
+    @Override
+    public void updateLocalSo(int soPrefix, int soCode) {
+        SM_SODao dao = new SM_SODao(context);
+        //
+        SM_SO smSo = dao.getByString(
+                new SM_SO_Sql_001(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        soPrefix,
+                        soCode
+                ).toSqlQuery());
+        //
+        if(smSo != null) {
+            dao.addUpdate(
+                    new SM_SO_Sql_018(
+                            ToolBox_Con.getPreference_Customer_Code(context),
+                            soPrefix,
+                            soCode,
+                            0
+                    ).toSqlQuery()
+            );
+        }
     }
 
     /**

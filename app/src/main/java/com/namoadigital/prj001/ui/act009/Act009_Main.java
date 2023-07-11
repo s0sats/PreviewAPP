@@ -144,7 +144,7 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
         mPresenter.setAdapterData(
             product_code,
             serial_id,
-            ToolBox_Inf.getBlockSpontaneousValueByOrigin(context, originFlow),
+            ToolBox_Inf.getBlockSpontaneousValueByOrigin(context, originFlow, has_tk_ticket_is_form_off_hand),
                 has_tk_ticket_is_form_off_hand
         );
         //

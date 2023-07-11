@@ -170,11 +170,14 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         transList.add("filter_dialog_deadline_lbl");
         transList.add("filter_dialog_deadline_without_lbl");
         transList.add("filter_dialog_deadline_expired_lbl");
+        transList.add("filter_dialog_deadline_not_expired_lbl");
         transList.add("filter_dialog_orders_lbl");
         transList.add("filter_dialog_priority_deadline_lbl");
         transList.add("filter_dialog_priority_date_created_lbl");
         transList.add("filter_dialog_priority_lbl");
         transList.add("filter_dialog_priority_all_lbl");
+        transList.add("filter_dialog_zone_lbl");
+        transList.add("filter_dialog_partner_lbl");
         transList.add("filter_dialog_ok_lbl");
         transList.add("filter_dialog_cancel_lbl");
 
@@ -305,7 +308,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
     @Override
     public void loadNextOrders(ArrayList<SO_Next_Orders_Obj> nextOrdersObjs) {
         //
-        setTitleLanguage(nextOrdersObjs.size() + " / " + mPresenter.getOriginalListFromSoNextOrders().size());
+        setTitleLanguage(" (" + nextOrdersObjs.size() + " / " + mPresenter.getOriginalListFromSoNextOrders().size() + ")");
         //
         setAdapter(nextOrdersObjs);
         //Checar se o usuario está usando o filtro
@@ -506,8 +509,8 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
 
         if (!item.getProduct_id().isEmpty()) {
             bindingDetailDialog.act047SoNextOrdersDialogLlSoProduct.setVisibility(View.VISIBLE);
-            bindingDetailDialog.act047SoNextOrdersDialogTvSoProductLbl.setText(hmAux_Trans.get("dialog_so_product_lbl"));
-            bindingDetailDialog.act047SoNextOrdersDialogTvSoProductVal.setText(item.getProduct_id());
+            bindingDetailDialog.act047SoNextOrdersDialogTvSoProductLbl.setText(item.getProduct_desc());
+            bindingDetailDialog.act047SoNextOrdersDialogTvSoProductVal.setText(item.getSerial_id());
         } else {
             bindingDetailDialog.act047SoNextOrdersDialogLlSoProduct.setVisibility(View.GONE);
         }
@@ -565,6 +568,8 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         } else {
             Toast.makeText(context, hmAux_Trans.get("status_change_error_toast"), Toast.LENGTH_LONG).show();
         }
+        //
+        mPresenter.updateLocalSo(Integer.parseInt(item.getSo_prefix()), Integer.parseInt(item.getSo_code()));
     }
 
     private void changeStatusDialog(SO_Next_Orders_Obj item) {
@@ -993,6 +998,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
     }
 
 
+    @SuppressLint("ResourceType")
     private void showFilterDialog() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
@@ -1019,6 +1025,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         binding.filterDialogTvDeadlineLbl.setText(hmAux_Trans.get("filter_dialog_deadline_lbl"));
         binding.checkBoxWithoutDeadline.setText(hmAux_Trans.get("filter_dialog_deadline_without_lbl"));
         binding.checkboxExpiredDeadline.setText(hmAux_Trans.get("filter_dialog_deadline_expired_lbl"));
+        binding.checkBoxNotExpiredDeadline.setText(hmAux_Trans.get("filter_dialog_deadline_not_expired_lbl"));
         binding.filterDialogTvOrdersLbl.setText(hmAux_Trans.get("filter_dialog_orders_lbl"));
         binding.radioPriorityDeadline.setText(hmAux_Trans.get("filter_dialog_priority_deadline_lbl"));
         binding.radioPriorityDateCreated.setText(hmAux_Trans.get("filter_dialog_priority_date_created_lbl"));
@@ -1032,7 +1039,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
             binding.filterDialogTvDescLbl.setVisibility(View.GONE);
         }
         if (getSwitchState() && zone != null && !zone.getZone_desc().isEmpty()) {
-            binding.filterDialogTvZoneLbl.setText(zone.getZone_desc());
+            binding.filterDialogTvZoneLbl.setText(hmAux_Trans.get("filter_dialog_zone_lbl") + ": " + zone.getZone_desc());
             binding.filterDialogTvZoneLbl.setVisibility(View.VISIBLE);
         } else {
             binding.filterDialogTvZoneLbl.setVisibility(View.GONE);
@@ -1042,7 +1049,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
             binding.filterDialogTvPartnerLbl.setVisibility(View.GONE);
         } else {
             binding.filterDialogTvPartnerLbl.setVisibility(View.VISIBLE);
-            binding.filterDialogTvPartnerLbl.setText(TextUtils.join(", ", filter.getPartnerList(partnerList)));
+            binding.filterDialogTvPartnerLbl.setText(hmAux_Trans.get("filter_dialog_partner_lbl") + ": " + TextUtils.join(", ", filter.getPartnerList(partnerList)));
         }
         binding.filterDialogOk.setText(hmAux_Trans.get("filter_dialog_ok_lbl"));
         binding.filterDialogOk.setBackgroundTintList(AppCompatResources.getColorStateList(context, R.drawable.button_theme_primary));
@@ -1073,11 +1080,14 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
 
         for (TypeDeadlineFilter item : deadlineFilter) {
             switch (item) {
-                case WITHOUT:
-                    binding.checkBoxWithoutDeadline.setChecked(true);
+                case NOT_EXPIRED:
+                    binding.checkBoxNotExpiredDeadline.setChecked(true);
                     break;
                 case EXPIRED:
                     binding.checkboxExpiredDeadline.setChecked(true);
+                    break;
+                case WITHOUT:
+                    binding.checkBoxWithoutDeadline.setChecked(true);
                     break;
             }
         }
@@ -1129,6 +1139,9 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         binding.checkboxPendingAndProcess.setOnClickListener(v -> checkStateFromButtonFilter(binding));
         binding.checkboxApprovalQuality.setOnClickListener(v -> checkStateFromButtonFilter(binding));
         binding.checkboxApprovalFinal.setOnClickListener(v -> checkStateFromButtonFilter(binding));
+        binding.checkBoxNotExpiredDeadline.setOnClickListener(v -> checkStateFromButtonFilter(binding));
+        binding.checkboxExpiredDeadline.setOnClickListener(v -> checkStateFromButtonFilter(binding));
+        binding.checkBoxWithoutDeadline.setOnClickListener(v -> checkStateFromButtonFilter(binding));
 
         binding.radioPriority.setOnCheckedChangeListener((radioGroup, i) -> {
             RadioButton radioButton = radioGroup.findViewById(i);
@@ -1213,8 +1226,8 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
                     binding.checkboxStop.setTextColor(ColorStateList.valueOf(ToolBox_Inf.getStatusColorV2(context, ConstantBaseApp.SYS_STATUS_STOP)));
                     break;
                 case APPROVAL_FINAL:
-                    binding.checkboxApprovalFinal.setText(hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_WAITING_APPROVAL));
-                    binding.checkboxApprovalFinal.setTextColor(ColorStateList.valueOf(ToolBox_Inf.getStatusColorV2(context, ConstantBaseApp.SYS_STATUS_WAITING_APPROVAL)));
+                    binding.checkboxApprovalFinal.setText(hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_WAITING_CLIENT));
+                    binding.checkboxApprovalFinal.setTextColor(ColorStateList.valueOf(ToolBox_Inf.getStatusColorV2(context, ConstantBaseApp.SYS_STATUS_WAITING_CLIENT)));
                     break;
             }
         }
@@ -1240,13 +1253,15 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         List<TypeDeadlineFilter> deadlineList = new ArrayList<>();
 
         CheckBox[] checkBoxes = {
+                binding.checkBoxNotExpiredDeadline,
+                binding.checkboxExpiredDeadline,
                 binding.checkBoxWithoutDeadline,
-                binding.checkboxExpiredDeadline
         };
 
         TypeDeadlineFilter[] filters = {
-                TypeDeadlineFilter.WITHOUT,
-                TypeDeadlineFilter.EXPIRED
+                TypeDeadlineFilter.NOT_EXPIRED,
+                TypeDeadlineFilter.EXPIRED,
+                TypeDeadlineFilter.WITHOUT
         };
 
         for (int i = 0; i < checkBoxes.length; i++) {
@@ -1259,7 +1274,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
     }
 
     private void checkStateFromButtonFilter(Act047FilterDialogBinding binding) {
-        CheckBox[] checkboxes = {
+        CheckBox[] checkboxesStatus = {
                 binding.checkboxEdit,
                 binding.checkboxBudget,
                 binding.checkboxStop,
@@ -1268,15 +1283,30 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
                 binding.checkboxApprovalFinal,
         };
 
-        boolean allCheckboxesUnchecked = true;
-        for (CheckBox checkbox : checkboxes) {
+        CheckBox[] checkboxesDeadline = {
+                binding.checkBoxNotExpiredDeadline,
+                binding.checkboxExpiredDeadline,
+                binding.checkBoxWithoutDeadline,
+        };
+
+
+        boolean allCheckboxesUncheckedStatus = true;
+        for (CheckBox checkbox : checkboxesStatus) {
             if (checkbox.isChecked()) {
-                allCheckboxesUnchecked = false;
+                allCheckboxesUncheckedStatus = false;
                 break;
             }
         }
 
-        binding.filterDialogOk.setEnabled(!allCheckboxesUnchecked);
+        boolean allCheckboxesUncheckedDeadline = true;
+        for (CheckBox checkbox : checkboxesDeadline) {
+            if (checkbox.isChecked()) {
+                allCheckboxesUncheckedDeadline = false;
+                break;
+            }
+        }
+
+        binding.filterDialogOk.setEnabled(!allCheckboxesUncheckedStatus && !allCheckboxesUncheckedDeadline);
 
     }
 

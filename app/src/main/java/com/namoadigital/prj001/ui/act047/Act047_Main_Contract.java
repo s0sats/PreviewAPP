@@ -71,6 +71,7 @@ public interface Act047_Main_Contract {
 
         List<SmPriority> getListSmPriority();
 
+        void updateLocalSo(int soPrefix, int soCode);
     }
 
 }

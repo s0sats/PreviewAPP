@@ -9172,9 +9172,13 @@ public class ToolBox_Inf {
      * @return 0 ou null
      */
     @Nullable
-    public static Integer getBlockSpontaneousValueByOrigin(Context context, String originFlow) {
+    public static Integer getBlockSpontaneousValueByOrigin(Context context, String originFlow, boolean has_tk_ticket_is_form_off_hand) {
         if(originFlow == null || originFlow.isEmpty()){
             return hasSoOrIOProfile(context) ? null : 0;
+        }
+        //
+        if(has_tk_ticket_is_form_off_hand){
+            return null;
         }
         //
         switch (originFlow) {

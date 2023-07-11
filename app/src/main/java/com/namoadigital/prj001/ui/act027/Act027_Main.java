@@ -2685,8 +2685,12 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     private void checkUserToActiveOS() {
         Integer editUser = mSm_so.getEdit_user();
         Integer userCode = Integer.valueOf(ToolBox_Con.getPreference_User_Code(context));
-
-        if (editUser == null || !editUser.equals(userCode)) {
+        if (editUser == null
+        || !editUser.equals(userCode)
+        || mSm_so.getUpdate_required() == 1
+        || isSoWithinTokenFile()
+        || act027_opc_.hasSyncRequired()
+        ) {
             ToolBox.alertMSG(
                     context,
                     hmAux_Trans.get("alert_so_exit_title"),
@@ -3705,9 +3709,19 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                     && act027_opc_ != null
                     && act027_services_ != null
             ) {
-                act027_opc_.loadDataToScreen();
-                act027_services_.loadDataToScreen();
+                mSm_so = loadSM_SO(
+                        mSm_so.getCustomer_code(),
+                        mSm_so.getSo_prefix(),
+                        mSm_so.getSo_code()
+                );
+
                 invalidateOptionsMenu();
+
+                act027_opc_.setmSm_so(mSm_so);
+                act027_opc_.loadDataToScreen();
+
+                act027_services_.setmSm_so(mSm_so);
+                act027_services_.loadDataToScreen();
             }
         }
     }

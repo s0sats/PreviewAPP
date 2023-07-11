@@ -38,6 +38,7 @@ import com.namoadigital.prj001.service.WSSoStatusChange;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
+import com.namoadigital.prj001.ui.act043.Act043_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -552,13 +553,6 @@ public class Act027_Opc extends BaseFragment {
                 //
                 chip_os_status.setText(hmAux_Trans.get(mSm_so.getStatus()));
                 chip_os_status.setTextColor(getActivity().getResources().getColor(ToolBox_Inf.getStatusColor(mSm_so.getStatus())));
-                chip_os_status.setEnabled(true);
-                if(mSm_so.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_EDIT)
-                && mSm_so.getEdit_user() != null
-                && !ToolBox_Con.getPreference_User_Code(context).equalsIgnoreCase(mSm_so.getEdit_user().toString())
-                ){
-                    chip_os_status.setEnabled(false);
-                }
                 //
                 SmPriority priority = delegate.getPriorityInfo(mSm_so.getPriority_code());
                 if(priority != null) {
@@ -569,8 +563,27 @@ public class Act027_Opc extends BaseFragment {
                 setMenuStatus();
                 //
                 setMenuPriority();
+                String currentFrag = "";
+                try {
+                    if(getActivity() instanceof Act043_Main){
+                        currentFrag = ((Act043_Main) getActivity()).getCurrentFrag();
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
                 //
-                if (mSm_so.getUpdate_required() == 1 || isSoWithinTokenFile() || hasSyncRequired()) {
+                if ( mSm_so.getUpdate_required() == 1
+                    || isSoWithinTokenFile()
+                    || hasSyncRequired()
+                    || mSm_so.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_DONE)
+                    || mSm_so.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_CANCELLED)
+                    || (mSm_so.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_EDIT)
+                                && mSm_so.getEdit_user() != null
+                                && !ToolBox_Con.getPreference_User_Code(context).equalsIgnoreCase(mSm_so.getEdit_user().toString())
+                        )
+                    || currentFrag.equalsIgnoreCase(Act043_Main.SELECTION_FRAG_PACKAGE_DETAIL_LIST)
+                    || currentFrag.equalsIgnoreCase(Act043_Main.SELECTION_FRAG_SERVICE_LIST)
+                ) {
                     setSpinnersEnable(false);
                 } else {
                     setSpinnersEnable(true);
