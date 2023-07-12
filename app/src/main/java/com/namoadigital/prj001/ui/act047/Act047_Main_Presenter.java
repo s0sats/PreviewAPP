@@ -288,9 +288,9 @@ public class Act047_Main_Presenter implements Act047_Main_Contract.I_Presenter {
     @Override
     public boolean saveFilterDialog(NextOsFilter filter, boolean switchFilter) {
         List<TypeStatusFilter> actualFilter = pref.read().getStatusFilter();
+        filterPriorityType = filter.getPriorityTypeFilter();
         if (!filter.getStatusFilter().equals(actualFilter)) {
             if (ToolBox_Con.isOnline(context)) {
-                filterPriorityType = filter.getPriorityTypeFilter();
                 pref.write(filter);
                 executeNextOrdersSearch(switchFilter);
                 return true;

@@ -269,9 +269,16 @@ public class Act027_Services extends BaseFragment {
             }
         });
 
-        if(hasApprovalStatus()) {
+        loadApprovalState();
+
+        setLabels();
+    }
+
+
+    private void loadApprovalState() {
+        if (hasApprovalStatus()) {
             btn_approval_shortcut.setText(hmAux_Trans.get("quality_approval_shortcut"));
-            if(ConstantBase.SYS_STATUS_WAITING_CLIENT.equals(mSm_so.getStatus())) {
+            if (ConstantBase.SYS_STATUS_WAITING_CLIENT.equals(mSm_so.getStatus())) {
                 btn_approval_shortcut.setText(hmAux_Trans.get("final_approval_shortcut"));
             }
             btn_approval_shortcut.setVisibility(View.VISIBLE);
@@ -282,13 +289,13 @@ public class Act027_Services extends BaseFragment {
                     mMain.selectDrawerOption(Act027_Main.SELECTION_APPROVAL);
                 }
             });
-        }else{
+        } else {
             btn_approval_shortcut.setVisibility(View.GONE);
             int productEventPendancy = getProductEventPendancy();
-            if(productEventPendancy > 0){
+            if (productEventPendancy > 0) {
                 btn_product_event_shortcut.setVisibility(View.VISIBLE);
                 btn_product_event_shortcut.setText(
-                        hmAux_Trans.get("product_event_shortcut")+ " (" + productEventPendancy+")"
+                        hmAux_Trans.get("product_event_shortcut") + " (" + productEventPendancy + ")"
                 );
                 btn_product_event_shortcut.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -300,10 +307,7 @@ public class Act027_Services extends BaseFragment {
                 btn_product_event_shortcut.setVisibility(View.GONE);
             }
         }
-
-        setLabels();
     }
-
 
     public void loadCardStatus() {
         String update = hmAux_Trans.get("warning_so_status_service_sync");
@@ -470,6 +474,7 @@ public class Act027_Services extends BaseFragment {
                 setSerialInfo();
                 setAddInfo();
                 loadCardStatus();
+                loadApprovalState();
             } else {
                 recoveryDelegate.callAct005();
             }
