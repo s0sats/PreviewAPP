@@ -808,11 +808,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         lv_services.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView absListView, int scrollState) {
-                if (scrollState == SCROLL_STATE_IDLE) {
-                    mketFilter.setEnabled(true);
-                } else {
-                    mketFilter.setEnabled(false);
-                }
+                mketFilter.setEnabled(scrollState == SCROLL_STATE_IDLE);
             }
 
             @Override
@@ -831,6 +827,8 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
             public void reportTextChange(String s, boolean b) {
                 if (mAdapter != null) {
                     mAdapter.getFilter().filter(s.trim());
+                    if (lv_services.getVisibility() == View.VISIBLE)
+                        lv_services.setSelectionFromTop(0, 0);
                 }
             }
         });
@@ -1127,6 +1125,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
             filter.setPriorityFilter(typePriorityFilter);
             filter.setPriorityTypeFilter(priorityTypeFiltered);
             if (mPresenter.saveFilterDialog(filter, getSwitchState())) {
+                if (lv_services.getVisibility() == View.VISIBLE) lv_services.setSelection(0);
                 dialog.dismiss();
             }
         });
