@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="15dp">
+
+
+    <LinearLayout
+        android:id="@+id/filter_dialog_ll_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/filter_dialog_tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            style="@style/TextAppearance.Material3.TitleMedium"
+            tools:text="Titulo Muito DAORA" />
+
+
+        <TextView
+            android:id="@+id/filter_dialog_tv_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/TextAppearance.Material3.LabelSmall"
+            tools:text="Sub-Titulo que faz efeito" />
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
+        android:fillViewport="false">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/filter_dialog_ll_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/filter_dialog_tv_status_lbl"
+                    style="@style/TextAppearance.Material3.TitleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    tools:text="Status algumacoisa" />
+
+                <CheckBox
+                    android:id="@+id/checkboxEdit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:text="Edit" />
+
+                <CheckBox
+                    android:id="@+id/checkboxBudget"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:text="Budget" />
+
+                <CheckBox
+                    android:id="@+id/checkboxStop"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:text="Stop" />
+
+                <CheckBox
+                    android:id="@+id/checkboxPendingAndProcess"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:text="Pending / Process" />
+
+                <CheckBox
+                    android:id="@+id/checkboxApprovalQuality"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:text="Approval Quality" />
+
+                <CheckBox
+                    android:id="@+id/checkboxApprovalFinal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:text="Aprroval final" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/filter_dialog_ll_deadline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/filter_dialog_tv_deadline_lbl"
+                    style="@style/TextAppearance.Material3.TitleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    tools:text="Termine algumacoia" />
+
+                <CheckBox
+                    android:id="@+id/checkBoxNotExpiredDeadline"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:text="Nao vencido" />
+
+                <CheckBox
+                    android:id="@+id/checkboxExpiredDeadline"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:text="OS ultrapassada" />
+
+                <CheckBox
+                    android:id="@+id/checkBoxWithoutDeadline"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:text="OS Sem prazo" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/filter_dialog_ll_orders"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/filter_dialog_tv_orders_lbl"
+                    style="@style/TextAppearance.Material3.TitleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    tools:text="Sortieksdksdshu" />
+
+                <RadioGroup
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <RadioButton
+                        android:id="@+id/radioPriorityDeadline"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:text="Prioridade e Prazo" />
+
+                    <RadioButton
+                        android:id="@+id/radioPriorityDateCreated"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:text="Prioridade e Data de criação" />
+                </RadioGroup>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/filter_dialog_ll_priority"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/filter_dialog_tv_priority_lbl"
+                    style="@style/TextAppearance.Material3.TitleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    tools:text="Termine algumacoia" />
+
+                <RadioGroup
+                    android:id="@+id/radioPriority"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <RadioButton
+                        android:id="@+id/radiobuttonAllPriority"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        tools:text="All Priority" />
+                </RadioGroup>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/filter_dialog_ll_site_zone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="20dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/filter_dialog_tv_desc_lbl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:textColor="@color/m3_namoa_onSurfaceVariant"
+                    style="@style/TextAppearance.Material3.LabelSmall"
+                    tools:text="Titulo Muito DAORA" />
+
+
+                <TextView
+                    android:id="@+id/filter_dialog_tv_zone_lbl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/m3_namoa_onSurfaceVariant"
+                    style="@style/TextAppearance.Material3.LabelSmall"
+                    tools:text="Sub-Titulo que faz efeito" />
+
+                <TextView
+                    android:id="@+id/filter_dialog_tv_partner_lbl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/m3_namoa_onSurfaceVariant"
+                    style="@style/TextAppearance.Material3.LabelSmall"
+                    tools:text="Sub-Titulo que faz efeito" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+
+    </ScrollView>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/filter_dialog_cancel"
+            style="@style/NamoaTheme3.Button.Text"
+            tools:text="Cancelar"
+            android:textColor="@color/m3_namoa_primary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/filter_dialog_ok"
+            style="@style/Widget.Material3.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Filtrar"
+            app:backgroundTint="@color/m3_namoa_primary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

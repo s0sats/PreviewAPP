@@ -32,8 +32,9 @@ public class Sql_Act010_001 implements Specification {
     private String s_site_code;
     private String s_serial_id;
     private Integer blockSpontaneous;
+    private Integer blockSpontaneousInTicket;
 
-    public Sql_Act010_001(long s_customer_code, int s_tag_code, String s_translate_code, String s_product_code, long s_operation_code, String s_site_code, String s_serial_id, Integer blockSpontaneous) {
+    public Sql_Act010_001(long s_customer_code, int s_tag_code, String s_translate_code, String s_product_code, long s_operation_code, String s_site_code, String s_serial_id, Integer blockSpontaneous, Integer blockSpontaneousInTicket) {
         this.s_customer_code = s_customer_code;
         this.s_tag_code = s_tag_code;
         this.s_translate_code = s_translate_code;
@@ -42,6 +43,7 @@ public class Sql_Act010_001 implements Specification {
         this.s_site_code = s_site_code;
         this.s_serial_id = s_serial_id.trim().length() != 0 ? s_serial_id.trim()  : "null";
         this.blockSpontaneous = blockSpontaneous;
+        this.blockSpontaneousInTicket = blockSpontaneousInTicket;
     }
 
     @Override
@@ -100,6 +102,7 @@ public class Sql_Act010_001 implements Specification {
                 "      cf."+GE_Custom_FormDao.CUSTOMER_CODE+" = '" + s_customer_code + "'\n" +
                 "      AND cf."+GE_Custom_FormDao.TAG_OPERATIONAL_CODE+" = '" + s_tag_code +"'\n" +
                 "      AND (" + blockSpontaneous +" is null OR cf."+GE_Custom_FormDao.BLOCK_SPONTANEOUS+" = '" + blockSpontaneous +"')\n" +
+                "      AND (" + blockSpontaneousInTicket +" is null OR cf."+GE_Custom_FormDao.BLOCK_SPONTANEOUS_IN_TICKET+" = '" + blockSpontaneousInTicket +"')\n" +
                 "      AND (cf.all_product = 1 OR p.product_code = '"+s_product_code+"')\n" +
                 "      AND (cf.all_operation = 1 OR o.operation_code = '"+s_operation_code+"') \n" +
                 "      AND (cf.all_site = 1 OR s.site_code = '"+s_site_code+"')\n"+

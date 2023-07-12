@@ -595,6 +595,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_MENU_SO_PARAM_BYPASS_SERIAL_VERIFICATION = "BYPASS_SERIAL_VERIFICATION";
     public static final String PROFILE_MENU_SO_SHOW_ACTIONS = "SHOW_ACTIONS";
     public static final String PROFILE_PRJ001_MASTER_DATA_PARAM_EDIT_USER_WORKGROUP_HOME = "EDIT_USER_WORKGROUP_HOME";
+    public static final String PROFILE_MENU_SO_PARAM_CHANGE_STATUS = "CHANGE_SO_STATUS";
 
     public static final String SO_ORIGIN_CHANGE_APP = "APP";
     public static final String PROFILE_MENU_AP = "PRJ001_AP";
@@ -1001,5 +1002,7 @@ public class ConstantBaseApp extends ConstantBase {
      */
     public static final String DESC_FOR_SORT = "descForSort";
 
-    //Constante para replace da tradução
+    /*
+     * Profile to be able to activate/deactivate OS through the "Next OS" card
+     */
 }

@@ -532,43 +532,38 @@ public class Act027_Services extends BaseFragment {
                 tv_product_serial_infos.setTextAlignment(TextView.TEXT_ALIGNMENT_CENTER);
                 tv_product_serial_id.setTextAlignment(TextView.TEXT_ALIGNMENT_CENTER);
             }
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             tv_product_serial_infos.setText("");
             tv_product_serial_infos.setVisibility(View.GONE);
         }
 
     }
 
+
+    List<HMAux> getListFromService(boolean filter) {
+        return sm_so_serviceDao.query_HM(
+                new Sql_Act027_002(
+                        mSm_so.getCustomer_code(),
+                        mSm_so.getSo_prefix(),
+                        mSm_so.getSo_code(),
+                        ToolBox_Con.getPreference_User_Code(context),
+                        ToolBox_Con.getPreference_Site_Code(context),
+                        ToolBox_Con.getPreference_Zone_Code(context),
+                        filter
+                ).toSqlQuery()
+        );
+    }
+
     public void setServiceAdapter(boolean isChecked) {
 
-        if(mSm_so == null){
+        if (mSm_so == null) {
             recoveryDelegate.callAct005();
-        }else {
+        } else {
             iv_editable_serial.setVisibility(View.VISIBLE);
             adp = new Act027_Services_Adapter(
                     getActivity(),
                     R.layout.act027_services_content_adapter_cell_new,
-                    sm_so_serviceDao.query_HM(
-                                /*new SM_SO_Service_Sql_003(
-                                        mSm_so.getCustomer_code(),
-                                        mSm_so.getSo_prefix(),
-                                        mSm_so.getSo_code()
-                                ).toSqlQuery()*/
-                                /*new Sql_Act027_001(
-                                        mSm_so.getCustomer_code(),
-                                        mSm_so.getSo_prefix(),
-                                        mSm_so.getSo_code()
-                                ).toSqlQuery()*/
-                            new Sql_Act027_002(
-                                    mSm_so.getCustomer_code(),
-                                    mSm_so.getSo_prefix(),
-                                    mSm_so.getSo_code(),
-                                    ToolBox_Con.getPreference_User_Code(context),
-                                    ToolBox_Con.getPreference_Site_Code(context),
-                                    ToolBox_Con.getPreference_Zone_Code(context),
-                                    isChecked//sw_filter != null && sw_filter.isChecked()
-                            ).toSqlQuery()
-                    ),
+                    getListFromService(isChecked),
                     mMain.hasExecutionProfile()
             );
             //
@@ -616,7 +611,9 @@ public class Act027_Services extends BaseFragment {
             if (adp.getCount() == 0) {
                 tv_empty_list.setVisibility(View.VISIBLE);
                 lv_services.setVisibility(View.GONE);
-                mMain.openDrawerInternally();
+                if (getListFromService(false).isEmpty()) {
+                    mMain.openDrawerInternally();
+                }
             }else{
                 lv_services.setVisibility(View.VISIBLE);
                 tv_empty_list.setVisibility(View.GONE);

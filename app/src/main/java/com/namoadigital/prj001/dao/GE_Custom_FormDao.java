@@ -42,6 +42,7 @@ public class GE_Custom_FormDao extends BaseDao implements Dao<GE_Custom_Form> {
     public static final String SO_ALLOW_BACKUP = "so_allow_backup";
     public static final String SO_OPTIONAL_JUSTIFY_PROBLEM = "so_optional_justify_problem";
     public static final String BLOCK_SPONTANEOUS = "block_spontaneous";
+    public static final String BLOCK_SPONTANEOUS_IN_TICKET = "block_spontaneous_in_ticket";
     public static final String JUSTIFY_GROUP_CODE = "justify_group_code";
     //Não é campo da tabela, descrição vem da tradução
     public static final String CUSTOM_FORM_DESC = "custom_form_desc";
@@ -274,6 +275,7 @@ public class GE_Custom_FormDao extends BaseDao implements Dao<GE_Custom_Form> {
             custom_form.setSo_allow_backup(cursor.getInt(cursor.getColumnIndex(SO_ALLOW_BACKUP)));
             custom_form.setSo_optional_justify_problem(cursor.getInt(cursor.getColumnIndex(SO_OPTIONAL_JUSTIFY_PROBLEM)));
             custom_form.setBlock_spontaneous(cursor.getInt(cursor.getColumnIndex(BLOCK_SPONTANEOUS)));
+            custom_form.setBlock_spontaneous_in_ticket(cursor.getInt(cursor.getColumnIndex(BLOCK_SPONTANEOUS_IN_TICKET)));
             if (cursor.isNull(cursor.getColumnIndex(JUSTIFY_GROUP_CODE))) {
                 custom_form.setJustifyGroupCode(null);
             } else {
@@ -346,6 +348,9 @@ public class GE_Custom_FormDao extends BaseDao implements Dao<GE_Custom_Form> {
             }
             if (custom_form.getBlock_spontaneous() > -1) {
                 contentValues.put(BLOCK_SPONTANEOUS, custom_form.getBlock_spontaneous());
+            }
+            if (custom_form.getBlock_spontaneous_in_ticket() > -1) {
+                contentValues.put(BLOCK_SPONTANEOUS_IN_TICKET, custom_form.getBlock_spontaneous_in_ticket());
             }
             contentValues.put(JUSTIFY_GROUP_CODE, custom_form.getJustifyGroupCode());
             return contentValues;

@@ -1,5 +1,10 @@
 package com.namoadigital.prj001.ui.act043;
 
+import static com.namoadigital.prj001.service.WSSoPriorityChange.WS_RETURN_SO_PRIORITY;
+import static com.namoadigital.prj001.service.WSSoStatusChange.WS_RETURN_SO_STATUS;
+import static com.namoadigital.prj001.ui.act027.Act027_Main.WS_PROCESS_SO_PRIORITY_CHANGE;
+import static com.namoadigital.prj001.ui.act027.Act027_Main.WS_PROCESS_SO_STATUS_CHANGE;
+
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -18,6 +23,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
@@ -40,15 +46,18 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.dao.SmPriorityDao;
 import com.namoadigital.prj001.model.MD_Partner;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.SM_SO;
+import com.namoadigital.prj001.model.SmPriority;
 import com.namoadigital.prj001.model.TSO_Save_Env;
 import com.namoadigital.prj001.model.TSO_Service_Search_Detail_Params_Obj;
 import com.namoadigital.prj001.model.TSO_Service_Search_Obj;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
+import com.namoadigital.prj001.service.WSSoStatusChange;
 import com.namoadigital.prj001.service.WS_SO_Service_Cancel;
 import com.namoadigital.prj001.service.WS_SO_Service_Search;
 import com.namoadigital.prj001.service.WS_Serial_Save;
@@ -56,9 +65,12 @@ import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_004;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Sql_018;
+import com.namoadigital.prj001.sql.SmPrioritySql001;
+import com.namoadigital.prj001.sql.SmPrioritySql002;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Opc;
+import com.namoadigital.prj001.ui.act027.dialog.ServiceAddedChangeStatusDialog;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -90,6 +102,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
     private String ws_process;
     private SM_SO mSm_so;
     private SM_SODao sm_soDao;
+    private SmPriorityDao smPriorityDao;
     private DrawerLayout mDrawerLayout;
     //FRAGMENTS
     private Act043_Frag_Preview act043_frag_preview;
@@ -104,6 +117,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
     private FCMReceiver fcmReceiver;
     private ArrayList<MD_Partner> partner_list = new ArrayList<>();
     protected boolean isSyncSerialNeeded;
+    private String changeStatusToken = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,6 +148,13 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         );
         //
         sm_soDao = new SM_SODao(context);
+        //
+        smPriorityDao = new SmPriorityDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        //
         //
         loadTranslation();
     }
@@ -194,6 +215,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         transList.add("alert_invalid_package_total_value_msg");
         transList.add("service_or_pack_filter_hint");
         transList.add("toast_no_service_selected");
+        transList.add("msg_so_results_ok");
         //Frag_Package_Detail_List
         transList.add("btn_save_package_detail");
         transList.add("btn_cancel_package_detail");
@@ -207,6 +229,11 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         //
         transList.add("warning_so_status_hinders_service_execution");
         transList.add("warning_so_status_service_sync");
+
+        transList.add("progress_status_change_ttl");
+        transList.add("progress_status_change_msg");
+        transList.add("progress_priority_change_ttl");
+        transList.add("progress_priority_change_msg");
         //Drawer
         List<String> transListdrawer = new ArrayList<String>();
         transListdrawer.add("so_lbl");
@@ -220,6 +247,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         transListdrawer.add("product_description_lbl");
         transListdrawer.add("serial_lbl");
         transListdrawer.add("deadline_lbl");
+        transListdrawer.add("create_date_lbl");
         transListdrawer.add("status_lbl");
         transListdrawer.add("priority_lbl");
 
@@ -434,6 +462,10 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         );
     }
 
+    public void setChangeStatusToken(String changeStatusToken) {
+        this.changeStatusToken = changeStatusToken;
+    }
+
     //region Metodo interface onSmSoRequestObject
     @Override
     public SM_SO getSmSo() {
@@ -610,6 +642,35 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         callAct027(context, Act027_Main.SELECTION_CHAT_FLOW);
     }
 
+    @Override
+    public SmPriority getPriorityInfo(int priorityCode) {
+        return smPriorityDao.getByString(
+                new SmPrioritySql001(
+                    Math.toIntExact(ToolBox_Con.getPreference_Customer_Code(context)),
+                    priorityCode
+                ).toSqlQuery()
+        );
+    }
+
+    @Override
+    public List<SmPriority> getPriorities() {
+        return smPriorityDao.query(
+                new SmPrioritySql002(
+                        Math.toIntExact(ToolBox_Con.getPreference_Customer_Code(context))
+                ).toSqlQuery()
+        );
+    }
+
+    @Override
+    public void callWsStatusChange(String ws_action_so) {
+        mPresenter.executeSoStatusChangeService(mSm_so, ToolBox_Inf.getToken(context), ws_action_so);
+    }
+
+    @Override
+    public void callWsPriorityChange(SmPriority priority) {
+        mPresenter.executeSoPriorityChangeService(mSm_so, ToolBox_Inf.getToken(context), priority);
+    }
+
     public void setCurrentFrag(String currentFrag) {
         this.currentFrag = currentFrag;
     }
@@ -622,15 +683,22 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
     public void setFragByTag(String tag) {
         switch (tag) {
             case SELECTION_FRAG_PREVIEW:
+                act027_opc_.setSpinnersEnable(true);
                 setFrag(act043_frag_preview, SELECTION_FRAG_PREVIEW);
                 break;
             case SELECTION_FRAG_SERVICE_LIST:
-                setFrag(act043_frag_service_list, SELECTION_FRAG_SERVICE_LIST);
+                setServiceListFrag();
                 break;
             case SELECTION_FRAG_PACKAGE_DETAIL_LIST:
+                act027_opc_.setSpinnersEnable(false);
                 setFrag(act043_frag_package_detail_list, SELECTION_FRAG_PACKAGE_DETAIL_LIST);
                 break;
         }
+    }
+
+    private void setServiceListFrag() {
+        act027_opc_.setSpinnersEnable(false);
+        setFrag(act043_frag_service_list, SELECTION_FRAG_SERVICE_LIST);
     }
 
     @Override
@@ -699,7 +767,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         //
         mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
         mAct_Info = Constant.ACT043;
-        mAct_Title = Constant.ACT043 + "_" + "title";
+        //      mAct_Title = Constant.ACT043 + "_" + "title";
         //
         HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
         mSite_Value = mFooter.get(Constant.FOOTER_SITE);
@@ -707,7 +775,8 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         //
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
-        setTitleLanguage();
+        getSupportActionBar().setTitle(mSm_so.getSo_prefix() + "." + mSm_so.getSo_code());
+//        setTitleLanguage();
         setFooter();
     }
 
@@ -771,7 +840,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         resetPackService(packageDetailObj);
-                        setFragByTag(Act043_Main.SELECTION_FRAG_SERVICE_LIST);
+                        setServiceListFrag();
                     }
                 },
                 1
@@ -908,7 +977,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
                         act043_frag_service_list.setAdapterData(
                                 mPresenter.prepareListToAdapter(new ArrayList<>(servicesList))
                         );
-                        setFrag(act043_frag_service_list, SELECTION_FRAG_SERVICE_LIST);
+                        setServiceListFrag();
                     } else {
                         ToolBox.alertMSG(
                                 context,
@@ -932,18 +1001,77 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
             disableProgressDialog();
             //}else if(ws_process.equalsIgnoreCase(WBR_SO_Search.class.getName())){
         } else if (ws_process.equalsIgnoreCase(WS_SO_Service_Cancel.class.getName())) {
-            showResults(hmAux);
+            ArrayList<HMAux> mSO = extractReturnMsg(hmAux);
+            if (mSO.isEmpty() || checkReturnOK(mSO)) {
+                Toast.makeText(context, hmAux_Trans.get("msg_so_results_ok"), Toast.LENGTH_SHORT).show();
+                reloadSO();
+            }else{
+                showResultsDialog(mSO, false);
+            }
             disableProgressDialog();
         } else if (ws_process.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())) {
             disableProgressDialog();
             Toast.makeText(context, hmAux_Trans.get("toast_success_on_sync_serial_msg"), Toast.LENGTH_SHORT).show();
+            checkSOonProcess();
+        } else if (ws_process.equalsIgnoreCase(WS_PROCESS_SO_STATUS_CHANGE)) {
+            disableProgressDialog();
+            //
+            HMAux hmAuxReturnFormatted = getReturnFormatted(hmAux);
+            //
+            ArrayList<HMAux> mSO = extractReturnMsg(hmAuxReturnFormatted);
+            if (hmAux.hasConsistentValue(WS_RETURN_SO_STATUS) && "OK".equalsIgnoreCase(hmAux.get(WS_RETURN_SO_STATUS))) {
+                Toast.makeText(context, hmAux_Trans.get("msg_so_results_ok"), Toast.LENGTH_SHORT).show();
+                reloadSO();
+                act027_opc_.setmSm_so(mSm_so);
+                act027_opc_.loadDataToScreen();
+            }else{
+                showResultsDialog(mSO, true);
+            }
+        } else if (ws_process.equalsIgnoreCase(WS_PROCESS_SO_PRIORITY_CHANGE)) {
+            disableProgressDialog();
+            progressDialog.dismiss();
+            setWs_process("");
+            //
+            if(hmAux.hasConsistentValue(WS_RETURN_SO_PRIORITY)){
+                if("OK".equalsIgnoreCase(hmAux.get(WS_RETURN_SO_PRIORITY))){
+                    Toast.makeText(context, hmAux_Trans.get("msg_so_results_ok"), Toast.LENGTH_SHORT).show();
+                }
+            }
             reloadSO();
+            act027_opc_.setmSm_so(mSm_so);
+            act027_opc_.loadDataToScreen();
         }
         act043_frag_preview.loadDataToScreen();
+    }
 
+    @NonNull
+    private HMAux getReturnFormatted(HMAux hmAux) {
+        HMAux hmAuxReturnFormatted = new HMAux();
+        hmAuxReturnFormatted.put(Generic_Results_Adapter.LABEL_ITEM_1, "SO");
+        hmAuxReturnFormatted.put(Generic_Results_Adapter.VALUE_ITEM_1, mSm_so.getSo_prefix() + "." +  mSm_so.getSo_code());
+        hmAuxReturnFormatted.put(Generic_Results_Adapter.LABEL_ITEM_2, "alert_so_status");
+        hmAuxReturnFormatted.put(Generic_Results_Adapter.VALUE_ITEM_2, hmAux.get(WS_RETURN_SO_STATUS));
+        return hmAuxReturnFormatted;
     }
 
     private void showResults(HMAux so) {
+        ArrayList<HMAux> mSO = extractReturnMsg(so);
+        if (checkReturnOK(mSO)) {
+            Toast.makeText(context, hmAux_Trans.get("msg_so_results_ok"), Toast.LENGTH_SHORT).show();
+            checkSerialSyncAndReload(mSO);
+        }else{
+            showResultsDialog(mSO, false);
+        }
+    }
+
+    private boolean checkReturnOK(ArrayList<HMAux> mSO) {
+        return mSO.size() == 1
+                && mSO.get(0).hasConsistentValue(Generic_Results_Adapter.VALUE_ITEM_2)
+                && "OK".equalsIgnoreCase(mSO.get(0).get(Generic_Results_Adapter.VALUE_ITEM_2));
+    }
+
+    @NonNull
+    private ArrayList<HMAux> extractReturnMsg(HMAux so) {
         ArrayList<HMAux> mSO = new ArrayList<>();
 
         for (String sKey : so.keySet()) {
@@ -959,11 +1087,10 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
 
             mSO.add(hmAux);
         }
-
-        showResultsDialog(mSO);
+        return mSO;
     }
 
-    private void showResultsDialog(final List<HMAux> so_express) {
+    private void showResultsDialog(final List<HMAux> so_express, boolean backFlow) {
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
@@ -1005,34 +1132,68 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
             public void onClick(View v) {
                 show.dismiss();
                 //
-                MD_Product_SerialDao serialDao = new MD_Product_SerialDao(
-                        context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-                );
-                //
-                boolean hasSerialPendency = getMd_product_serialsPendency(serialDao);
-                //
-                if (hasSerialPendency) {
-                    isSyncSerialNeeded = false;
-                    callSerialService();
-                } else if (isSyncSerialNeeded) {
-                    isSyncSerialNeeded = false;
-                    callDownloadSerialService(
-                            String.valueOf(mSm_so.getProduct_code()),
-                            mSm_so.getSerial_id()
-                    );
-                } else {
-                    if (so_express.size() > 0) {
-                        if (so_express.get(0).get(Generic_Results_Adapter.VALUE_ITEM_2).equalsIgnoreCase("OK")) {
-                            reloadSO();
-                        } else {
-                            reloadSO();
-                        }
-                    }
+                if(backFlow){
+                    reloadSO();
+                }else{
+                    checkSerialSyncAndReload(so_express);
                 }
             }
         });
+    }
+
+    private void checkSerialSyncAndReload(List<HMAux> so_express) {
+        MD_Product_SerialDao serialDao = new MD_Product_SerialDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        //
+        boolean hasSerialPendency = getMd_product_serialsPendency(serialDao);
+        //
+        if (hasSerialPendency) {
+            isSyncSerialNeeded = false;
+            callSerialService();
+        } else if (isSyncSerialNeeded) {
+            isSyncSerialNeeded = false;
+            callDownloadSerialService(
+                    String.valueOf(mSm_so.getProduct_code()),
+                    mSm_so.getSerial_id()
+            );
+        } else {
+            checkSOonProcess();
+        }
+    }
+
+    private void checkSOonProcess() {
+        Integer edit_user = mSm_so.getEdit_user();
+        if(edit_user != null
+                && ToolBox_Con.getPreference_User_Code(context).equals(edit_user.toString())
+        ) {
+            ServiceAddedChangeStatusDialog serviceAddedChangeStatusDialog = new ServiceAddedChangeStatusDialog(
+                    context,
+                    keepInEdition -> {
+                        if (keepInEdition) {
+                            reloadSO();
+                            return;
+                        }
+                        mSm_so = loadSM_So(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                Integer.parseInt(bundle.getString(SM_SODao.SO_PREFIX, "0")),
+                                Integer.parseInt(bundle.getString(SM_SODao.SO_CODE, "0"))
+                        );
+                        //
+                        if (changeStatusToken.isEmpty()) {
+                            changeStatusToken = ToolBox_Inf.getToken(context);
+                        }
+                        //
+                        mPresenter.executeSoStatusChangeService(mSm_so, changeStatusToken, WSSoStatusChange.WS_ACTION_SO_PROCESS);
+                    }
+            );
+            serviceAddedChangeStatusDialog.setCancelable(false);
+            serviceAddedChangeStatusDialog.show();
+        }else{
+            reloadSO();
+        }
     }
 
     private boolean getMd_product_serialsPendency(MD_Product_SerialDao serialDao) {
@@ -1123,6 +1284,8 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
             );
             reloadSO();
 //            Toast.makeText(context, hmAux_Trans.get("toast_error_on_sync_serial_msg"), Toast.LENGTH_SHORT).show();
+        } else if (ws_process.equalsIgnoreCase(WS_PROCESS_SO_STATUS_CHANGE)) {
+            reloadSO();
         }
     }
 
@@ -1138,6 +1301,8 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
             //Verifica se após chamar o WS de Serial deve ser chama o WS de S.O
             reloadSO();
 //            Toast.makeText(context, hmAux_Trans.get("toast_error_on_sync_serial_msg"), Toast.LENGTH_SHORT).show();
+        } else if (ws_process.equalsIgnoreCase(WS_PROCESS_SO_STATUS_CHANGE)) {
+            reloadSO();
         }
     }
 
@@ -1166,6 +1331,8 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
             //Verifica se após chamar o WS de Serial deve ser chama o WS de S.O
             reloadSO();
 //            Toast.makeText(context, hmAux_Trans.get("toast_error_on_sync_serial_msg"), Toast.LENGTH_SHORT).show();
+        } else if (ws_process.equalsIgnoreCase(WS_PROCESS_SO_STATUS_CHANGE)) {
+            reloadSO();
         }
     }
 

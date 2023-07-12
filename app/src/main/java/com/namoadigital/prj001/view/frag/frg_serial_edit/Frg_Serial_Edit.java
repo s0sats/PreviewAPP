@@ -1662,7 +1662,7 @@ public class Frg_Serial_Edit extends BaseFragment {
             }
 
         } else {
-            if(mket_serial_id.isValid()){
+            if(!mket_serial_id.isValid()){
                 showAlertDialog(
                         hmAux_Trans.get("alert_serial_validation_ttl"),
                         mket_serial_id.getmErrorMSG()

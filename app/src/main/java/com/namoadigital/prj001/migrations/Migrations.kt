@@ -124,6 +124,32 @@ val MigrationV4 = object : MigrationSQLite(4, 5) {
 
 }
 
+val MigrationV5 = object : MigrationSQLite(5, 6) {
+
+    override fun migrate(db: SQLiteDatabase) {
+        db.execSQL(
+            """
+               create table if not exists [sm_priority] (
+                   [customer_code] int not null, 
+                   [priority_code] int not null, 
+                   [priority_desc] text not null collate nocase, 
+                   [priority_weight] int not null, 
+                   [priority_default] int not null, 
+                   [priority_color] text not null collate nocase, 
+                   constraint [pk_sm_priority] 
+                   primary key(customer_code, priority_code)
+               ); 
+            """.trimIndent()
+        )
+        //
+        if (!isFieldExist(db, GE_Custom_FormDao.TABLE, GE_Custom_FormDao.BLOCK_SPONTANEOUS_IN_TICKET)) {
+            db.execSQL(""" ALTER TABLE [${GE_Custom_FormDao.TABLE}] ADD [${GE_Custom_FormDao.BLOCK_SPONTANEOUS_IN_TICKET}] int not null DEFAULT 0;""".trimIndent())
+        }
+        //
+    }
+
+}
+
 fun isFieldExist(db: SQLiteDatabase, tableName: String, fieldName: String): Boolean {
 
     val res: Cursor = db.rawQuery("PRAGMA table_info($tableName)", null)

@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act047;
 
+import static com.namoadigital.prj001.service.WS_SO_Next_Orders.SO_NEXT_STATUS_LIST_FILTER;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,22 +13,32 @@ import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.dao.SmPriorityDao;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.SO_Next_Orders_Obj;
+import com.namoadigital.prj001.model.SmPriority;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_SO_Next_Orders;
 import com.namoadigital.prj001.receiver.WBR_SO_Search;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
+import com.namoadigital.prj001.receiver.WBR_So_Status_Change;
+import com.namoadigital.prj001.service.WSSoStatusChange;
 import com.namoadigital.prj001.service.WS_SO_Next_Orders;
 import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.sql.SM_SO_Sql_001;
+import com.namoadigital.prj001.sql.SM_SO_Sql_018;
+import com.namoadigital.prj001.sql.SmPrioritySql002;
+import com.namoadigital.prj001.ui.act047.local.preference.FilterNextOsParamPreference;
+import com.namoadigital.prj001.ui.act047.model.NextOsFilter;
+import com.namoadigital.prj001.ui.act047.model.TypeStatusFilter;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Act047_Main_Presenter implements Act047_Main_Contract.I_Presenter {
 
@@ -34,34 +46,41 @@ public class Act047_Main_Presenter implements Act047_Main_Contract.I_Presenter {
     private Act047_Main_Contract.I_View mView;
     private HMAux hmAux_Trans;
     private String requestingAct;
+    private FilterNextOsParamPreference pref;
+    private ArrayList<SO_Next_Orders_Obj> nextOrdersObjsList;
 
     public Act047_Main_Presenter(Context context, Act047_Main_Contract.I_View mView, String requestingAct, HMAux hmAux_Trans) {
         this.context = context;
         this.mView = mView;
         this.requestingAct = requestingAct;
         this.hmAux_Trans = hmAux_Trans;
+        pref = FilterNextOsParamPreference.Companion.instancePref(context);
     }
 
     @Override
     public void executeNextOrdersSearch(Boolean filter) {
         if (ToolBox_Con.isOnline(context)) {
-
+            Intent mIntent = new Intent(context, WBR_SO_Next_Orders.class);
+            Bundle bundle = new Bundle();
             int contain_filter = (filter ? ToolBox_Con.getPreference_Zone_Code(context) : -1);
+            NextOsFilter modelFilter = pref.read();
 
             mView.setWsProcess(WS_SO_Next_Orders.class.getName());
             //
             mView.showPD(
-                hmAux_Trans.get("dialog_next_orders_search_ttl"),
-                hmAux_Trans.get("dialog_next_orders_search_msg")
+                    hmAux_Trans.get("dialog_next_orders_search_ttl"),
+                    hmAux_Trans.get("dialog_next_orders_search_msg")
             );
             //
-            Intent mIntent = new Intent(context, WBR_SO_Next_Orders.class);
-            Bundle bundle = new Bundle();
+
             //
             bundle.putLong(Constant.LOGIN_CUSTOMER_CODE, ToolBox_Con.getPreference_Customer_Code(context));
             bundle.putString(Constant.LOGIN_SITE_CODE, ToolBox_Con.getPreference_Site_Code(context));
             bundle.putInt(Constant.LOGIN_ZONE_CODE, contain_filter);
             bundle.putLong(Constant.LOGIN_OPERATION_CODE, ToolBox_Con.getPreference_Operation_Code(context));
+            if (!modelFilter.getStatusFilter().isEmpty()) {
+                bundle.putStringArrayList(SO_NEXT_STATUS_LIST_FILTER, (ArrayList<String>) modelFilter.statusFilterToService());
+            }
             //
             mIntent.putExtras(bundle);
             //
@@ -72,6 +91,35 @@ public class Act047_Main_Presenter implements Act047_Main_Contract.I_Presenter {
         }
     }
 
+
+    @Override
+    public void executeSoStatusChangeService(SO_Next_Orders_Obj so_next, String type, String token) {
+        if (ToolBox_Con.isOnline(context)) {
+            mView.setWsProcess(Act047_Main.WS_PROCESS_SO_STATUS_CHANGE);
+            //
+            //
+            mView.showPD(
+                    hmAux_Trans.get("progress_status_change_ttl"),
+                    hmAux_Trans.get("progress_status_change_msg")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_So_Status_Change.class);
+            Bundle bundle = new Bundle();
+            bundle.putInt(SM_SODao.SO_PREFIX, Integer.parseInt(so_next.getSo_prefix()));
+            bundle.putInt(SM_SODao.SO_CODE, Integer.parseInt(so_next.getSo_code()));
+            bundle.putInt(SM_SODao.SO_SCN, so_next.getSoScn());
+            bundle.putString(WSSoStatusChange.WS_BUNDLE_ACTION, type);
+            bundle.putString(WSSoStatusChange.WS_BUNDLE_RETURN_SO, "0");
+            bundle.putString(WSSoStatusChange.WS_BUNDLE_SO_TOKEN, token);
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
+    }
+
     @Override
     public void executeSoDownload(String soPrefix, String soCode) {
         if (ToolBox_Con.isOnline(context)) {
@@ -79,7 +127,7 @@ public class Act047_Main_Presenter implements Act047_Main_Contract.I_Presenter {
             //
             mView.showPD(
                     hmAux_Trans.get("dialog_so_download_ttl"),
-                hmAux_Trans.get("dialog_so_download_start")
+                    hmAux_Trans.get("dialog_so_download_start")
             );
             //
             Intent mIntent = new Intent(context, WBR_SO_Search.class);
@@ -128,8 +176,10 @@ public class Act047_Main_Presenter implements Act047_Main_Contract.I_Presenter {
                     }.getType()
             );
             //
-            setFilterData(nextOrderList);
-            mView.loadNextOrders(nextOrderList);
+            nextOrdersObjsList = nextOrderList;
+            ArrayList<SO_Next_Orders_Obj> next_orders_objArrayList = pref.read().filterList(nextOrderList, filterPriorityType);
+            setFilterData(next_orders_objArrayList);
+            mView.loadNextOrders(next_orders_objArrayList);
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
             //
@@ -140,6 +190,7 @@ public class Act047_Main_Presenter implements Act047_Main_Contract.I_Presenter {
     private void setFilterData(ArrayList<SO_Next_Orders_Obj> nextOrderList) {
         for (SO_Next_Orders_Obj so_next_orders_obj : nextOrderList) {
             so_next_orders_obj.setDeadline_filter(getFormatedDeadlineDate(so_next_orders_obj.getDeadline()));
+            so_next_orders_obj.setCreate_date_filter(getFormatedDeadlineDate(so_next_orders_obj.getCreateDate()));
             so_next_orders_obj.setStatus_filter(getTranslatedStatus(so_next_orders_obj.getStatus()));
         }
     }
@@ -226,11 +277,75 @@ public class Act047_Main_Presenter implements Act047_Main_Contract.I_Presenter {
         return bundle;
     }
 
+    @Override
+    public NextOsFilter getCheckboxFromPreference() {
+        FilterNextOsParamPreference pref = FilterNextOsParamPreference.Companion.instancePref(context);
+
+        return pref.read();
+    }
+
+    private String filterPriorityType = "";
+    @Override
+    public boolean saveFilterDialog(NextOsFilter filter, boolean switchFilter) {
+        List<TypeStatusFilter> actualFilter = pref.read().getStatusFilter();
+        if (!filter.getStatusFilter().equals(actualFilter)) {
+            if (ToolBox_Con.isOnline(context)) {
+                filterPriorityType = filter.getPriorityTypeFilter();
+                pref.write(filter);
+                executeNextOrdersSearch(switchFilter);
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        filter.setStatusFilter(actualFilter);
+        pref.write(filter);
+        mView.loadNextOrders(filter.filterList(nextOrdersObjsList, filter.getPriorityTypeFilter()));
+        return true;
+
+    }
+
+    @Override
+    public ArrayList<SO_Next_Orders_Obj> getOriginalListFromSoNextOrders() {
+        return nextOrdersObjsList;
+    }
+
+    @Override
+    public List<SmPriority> getListSmPriority() {
+        SmPriorityDao dao = new SmPriorityDao(context);
+        return dao.query(new SmPrioritySql002(Integer.parseInt(String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)))).toSqlQuery());
+    }
+
+    @Override
+    public void updateLocalSo(int soPrefix, int soCode) {
+        SM_SODao dao = new SM_SODao(context);
+        //
+        SM_SO smSo = dao.getByString(
+                new SM_SO_Sql_001(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        soPrefix,
+                        soCode
+                ).toSqlQuery());
+        //
+        if(smSo != null) {
+            dao.addUpdate(
+                    new SM_SO_Sql_018(
+                            ToolBox_Con.getPreference_Customer_Code(context),
+                            soPrefix,
+                            soCode,
+                            0
+                    ).toSqlQuery()
+            );
+        }
+    }
+
     /**
      * LUCHE - 16/01/2020
-     *
+     * <p>
      * Trata retorno do ws do serial.
-     * @param result - Json enviado pelo WS
+     *
+     * @param result    - Json enviado pelo WS
      * @param wsTmpItem - Item da lista.
      */
     @Override

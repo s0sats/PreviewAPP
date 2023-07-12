@@ -8,7 +8,9 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.MD_Site;
+import com.namoadigital.prj001.sql.MD_Site_Sql_Footer;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
@@ -51,6 +53,27 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
 
         this.toContentValuesMapper = new MD_SiteToContentValuesMapper();
         this.toMD_SiteMapper = new CursorMD_SiteMapper();
+    }
+
+    public MD_SiteDao(Context context) {
+        super(context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM,
+                Constant.DB_MODE_MULTI
+        );
+
+        this.toContentValuesMapper = new MD_SiteToContentValuesMapper();
+        this.toMD_SiteMapper = new CursorMD_SiteMapper();
+    }
+
+
+    public MD_Site getSite() {
+        return getByString(
+                new MD_Site_Sql_Footer(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        ToolBox_Con.getPreference_Site_Code(context)
+                ).toSqlQuery()
+        );
     }
 
     @Override

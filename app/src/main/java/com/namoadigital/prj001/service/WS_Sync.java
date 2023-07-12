@@ -68,6 +68,7 @@ import com.namoadigital.prj001.dao.MdTagDao;
 import com.namoadigital.prj001.dao.MeMeasureTpDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_ExpressDao;
+import com.namoadigital.prj001.dao.SmPriorityDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TkTicketCacheDao;
@@ -129,6 +130,7 @@ import com.namoadigital.prj001.model.MdOrderType;
 import com.namoadigital.prj001.model.MdTag;
 import com.namoadigital.prj001.model.MeMeasureTp;
 import com.namoadigital.prj001.model.SO_Pack_Express;
+import com.namoadigital.prj001.model.SmPriority;
 import com.namoadigital.prj001.model.Sync_Checklist;
 import com.namoadigital.prj001.model.TSearch_Ap_Env;
 import com.namoadigital.prj001.model.TSync_Env;
@@ -184,6 +186,7 @@ import com.namoadigital.prj001.sql.MdOrderTypeSqlTruncate;
 import com.namoadigital.prj001.sql.MdTagSqlTruncate;
 import com.namoadigital.prj001.sql.MeMeasureTpSqlTruncate;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Sql_Truncate;
+import com.namoadigital.prj001.sql.SmPrioritySqlTruncate;
 import com.namoadigital.prj001.sql.Sql_WS_Sync_Datapackage_Serial_001;
 import com.namoadigital.prj001.sql.Sql_WS_Sync_Datapackage_So_001;
 import com.namoadigital.prj001.sql.Sql_WS_Sync_Datapackage_Ticket_001;
@@ -2059,8 +2062,10 @@ public class WS_Sync extends IntentService {
         //
         if (dataPackageType.contains(DataPackage.DATA_PACKAGE_SO)) {
             SO_Pack_ExpressDao so_pack_expressDao = new SO_Pack_ExpressDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            SmPriorityDao smPriorityDao = new SmPriorityDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             //apaga tabelas
             so_pack_expressDao.remove(new SO_Pack_Express_Sql_Truncate().toSqlQuery());
+            smPriorityDao.remove(new SmPrioritySqlTruncate().toSqlQuery());
             //
             // Processamento SO_Pack_Express
             //
@@ -2081,6 +2086,29 @@ public class WS_Sync extends IntentService {
             //
             //Libera pro GB
             files_so_pack_express = null;
+            //
+            //
+            // Processamento Sm_Priority
+            //
+            File[] files_sm_priority = ToolBox_Inf.getListOfFiles_v2("sm_priority-");
+
+            for (File _file : files_sm_priority) {
+
+                ArrayList<SmPriority> smPriorities = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<SmPriority>>() {
+                        }.getType()
+                );
+
+                smPriorityDao.addUpdate(smPriorities, false);
+            }
+            //
+            //Libera pro GB
+            files_sm_priority = null;
+            //
+
         }
         //endregion
         //region Limpeza de diretorio de SO Express

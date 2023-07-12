@@ -101,7 +101,8 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
                                 ToolBox_Con.getPreference_Operation_Code(context),
                                 site_code_form_param,
                                 serial_id,
-                                blockSpontaneous
+                                blockSpontaneous,
+                                has_tk_ticket_is_form_off_hand ? 0 : null
                         ).toSqlQuery()
                 );
 

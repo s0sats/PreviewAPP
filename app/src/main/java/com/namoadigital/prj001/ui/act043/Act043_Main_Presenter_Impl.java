@@ -2,6 +2,8 @@ package com.namoadigital.prj001.ui.act043;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -11,12 +13,21 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.MD_PartnerDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.dao.SmPriorityDao;
 import com.namoadigital.prj001.model.MD_Partner;
+import com.namoadigital.prj001.model.SM_SO;
+import com.namoadigital.prj001.model.SmPriority;
 import com.namoadigital.prj001.model.TSO_Service_Search_Detail_Obj;
 import com.namoadigital.prj001.model.TSO_Service_Search_Detail_Params_Obj;
 import com.namoadigital.prj001.model.TSO_Service_Search_Obj;
 import com.namoadigital.prj001.model.TSO_Service_Search_Rec;
+import com.namoadigital.prj001.receiver.WBR_So_Priority_Change;
+import com.namoadigital.prj001.receiver.WBR_So_Status_Change;
+import com.namoadigital.prj001.service.WSSoPriorityChange;
+import com.namoadigital.prj001.service.WSSoStatusChange;
+import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
@@ -334,6 +345,61 @@ public class Act043_Main_Presenter_Impl implements Act043_Main_Presenter {
             if(file.exists() && file.isFile()){
                 file.delete();
             }
+        }
+    }
+    @Override
+    public void executeSoStatusChangeService(SM_SO mSm_so, String token, String ws_action_so) {
+        if (ToolBox_Con.isOnline(context)) {
+            mView.setWs_process(Act027_Main.WS_PROCESS_SO_STATUS_CHANGE);
+            //
+            //
+            mView.showPD(
+                    hmAux_Trans.get("progress_status_change_ttl"),
+                    hmAux_Trans.get("progress_status_change_msg")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_So_Status_Change.class);
+            Bundle bundle = new Bundle();
+            bundle.putInt(SM_SODao.SO_PREFIX, mSm_so.getSo_prefix());
+            bundle.putInt(SM_SODao.SO_CODE, mSm_so.getSo_code());
+            bundle.putInt(SM_SODao.SO_SCN, mSm_so.getSo_scn());
+            bundle.putString(WSSoStatusChange.WS_BUNDLE_ACTION, ws_action_so);
+            bundle.putString(WSSoStatusChange.WS_BUNDLE_RETURN_SO, "1");
+            bundle.putString(WSSoStatusChange.WS_BUNDLE_SO_TOKEN, token);
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
+    }
+
+    @Override
+    public void executeSoPriorityChangeService(SM_SO mSm_so, String token, SmPriority priority) {
+        if (ToolBox_Con.isOnline(context)) {
+            mView.setWs_process(Act027_Main.WS_PROCESS_SO_PRIORITY_CHANGE);
+            //
+            //
+            mView.showPD(
+                    hmAux_Trans.get("progress_priority_change_ttl"),
+                    hmAux_Trans.get("progress_priority_change_msg")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_So_Priority_Change.class);
+            Bundle bundle = new Bundle();
+            bundle.putInt(SM_SODao.SO_PREFIX, mSm_so.getSo_prefix());
+            bundle.putInt(SM_SODao.SO_CODE, mSm_so.getSo_code());
+            bundle.putInt(SM_SODao.SO_SCN, mSm_so.getSo_scn());
+            bundle.putInt(SmPriorityDao.PRIORITY_CODE, priority.getPriority_code());
+            bundle.putString(SmPriorityDao.PRIORITY_DESC, priority.getPriority_desc());
+            bundle.putString(WSSoPriorityChange.WS_SO_TOKEN, token);
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+            ToolBox_Inf.showNoConnectionDialog(context);
         }
     }
 }
