@@ -180,6 +180,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         transList.add("filter_dialog_partner_lbl");
         transList.add("filter_dialog_ok_lbl");
         transList.add("filter_dialog_cancel_lbl");
+        transList.add("filter_option_invalid");
 
         //
         transList.add("progress_status_change_ttl");
@@ -1152,7 +1153,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
                 priorityTypeFiltered = radioButton.getText().toString();
 
             } else {
-                Toast.makeText(context, "Option invalid", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, hmAux_Trans.get("filter_option_invalid"), Toast.LENGTH_LONG).show();
             }
         });
 
