@@ -156,10 +156,6 @@ public class Act043_Frag_Service_List extends BaseFragment {
         mSO_Service = delegateSmSo.getSmSo();
         hmAux_Trans = delegateSmSo.getHMAux_Trans();
         //
-        tv_title = (TextView) view.findViewById(R.id.act043_frag_service_list_tv_lbl);
-        //tv_title.setText(hmAux_Trans.get("tv_service_list_title"));
-        tv_title.setText(String.valueOf(mSO_Service.getSo_prefix()) + "." + String.valueOf(mSO_Service.getSo_code()));
-        //
         mk_desc = (MKEditTextNM) view.findViewById(R.id.act043_frag_service_mket_search_services_packs);
         mk_desc.setHint(hmAux_Trans.get("service_or_pack_filter_hint"));
         mk_desc.requestFocus();

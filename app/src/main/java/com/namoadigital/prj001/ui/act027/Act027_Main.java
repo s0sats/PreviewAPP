@@ -591,6 +591,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         transList.add("alert_goto_service_menu_msg");
         transList.add("quality_approval_shortcut");
         transList.add("warning_so_status_hinders_service_execution");
+        transList.add("warning_so_status_hinders_add_product_events");
         transList.add("warning_so_status_service_sync");
         transList.add("final_approval_shortcut");
         transList.add("product_event_shortcut");

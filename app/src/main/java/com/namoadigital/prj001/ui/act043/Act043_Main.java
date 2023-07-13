@@ -234,6 +234,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         transList.add("progress_status_change_msg");
         transList.add("progress_priority_change_ttl");
         transList.add("progress_priority_change_msg");
+        transList.add("warning_so_status_hinders_add_services");
         //Drawer
         List<String> transListdrawer = new ArrayList<String>();
         transListdrawer.add("so_lbl");
