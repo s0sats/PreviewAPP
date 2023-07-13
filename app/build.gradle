@@ -9,8 +9,8 @@ android {
         applicationId "com.namoadigital.prj001"
         minSdkVersion 21
         targetSdkVersion 31
-        versionCode 180
-        versionName "5.5.0"
+        versionCode 183
+        versionName "5.5.1"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
         multiDexEnabled true
