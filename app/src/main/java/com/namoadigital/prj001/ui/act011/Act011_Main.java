@@ -166,13 +166,12 @@ import java.util.Map;
  */
 
 public class Act011_Main extends Base_Activity
-    implements
-    Act011_Main_View,
-    Act011BaseFrgInteractionNavegation,
-    Act011FrgFFInteraction,
-    InspectionListFragmentInteraction,
-    Act011BaseFrgInteraction
-{
+        implements
+        Act011_Main_View,
+        Act011BaseFrgInteractionNavegation,
+        Act011FrgFFInteraction,
+        InspectionListFragmentInteraction,
+        Act011BaseFrgInteraction {
     public static final int SHOW_MSG_TYPE_FORM_LOCAL_INSERT_ERROR = 4;
     public static final int SHOW_MSG_TYPE_SCHEDULE_EXEC_UPDATE_ERROR = 5;
     public static final int SHOW_MSG_TYPE_SCHEDULE_EXEC_CANCEL_ERROR = 6;
@@ -314,14 +313,14 @@ public class Act011_Main extends Base_Activity
          * Implementado metodo para recuperar CUSTOM_FORM_DATA quando o app se recupera do fechamento
          * por falta de memoria evitando a msg de form aberto a cada evento de "fechamento por falta de memoria"
          */
-         if(savedInstanceState != null) {
+        if (savedInstanceState != null) {
             //Se tiver os savedInstanceState e a chave CUSTOM_FORM_DATA,
             //seta o CUSTOM_FORM_DATA no bundle da intent que por sua vez será resgatado no metodo
             //recoverGetIntents
-            if(savedInstanceState.containsKey(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA)) {
+            if (savedInstanceState.containsKey(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA)) {
                 getIntent().putExtra(
-                    GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA,
-                    savedInstanceState.getString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA)
+                        GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA,
+                        savedInstanceState.getString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA)
                 );
             }
         }
@@ -438,6 +437,7 @@ public class Act011_Main extends Base_Activity
         transList.add("lbl_no_serial_placeholder");
 
         transList.add("dialog_finalize_option_ttl");
+        transList.add("dialog_finalize_form_so_ttl");
         transList.add("dialog_finalize_option_finalize_lbl");
         transList.add("dialog_finalize_option_finalize_new_lbl");
         transList.add("btn_check_new");
@@ -539,6 +539,7 @@ public class Act011_Main extends Base_Activity
         //
         transList.add("form_non_compliance_photo_required_toast");
         //
+        //
         transList.addAll(Act011FrgInspection.Companion.getFragTranslationsVars());
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
@@ -550,15 +551,15 @@ public class Act011_Main extends Base_Activity
         );
         //LUCHE - 05/10/2021
         HMAux formOsFragTransient = ToolBox_Inf.setLanguage(
-            context,
-            mModule_Code,
-            ToolBox_Inf.getResourceCode(
                 context,
                 mModule_Code,
-                FormOsHeaderFrg.Companion.getMResource_Name()
-            ),
-            ToolBox_Con.getPreference_Translate_Code(context),
-            FormOsHeaderFrg.Companion.getFragTranslationsVars()
+                ToolBox_Inf.getResourceCode(
+                        context,
+                        mModule_Code,
+                        FormOsHeaderFrg.Companion.getMResource_Name()
+                ),
+                ToolBox_Con.getPreference_Translate_Code(context),
+                FormOsHeaderFrg.Companion.getFragTranslationsVars()
         );
         //
         hmAux_Trans.putAll(formOsFragTransient);
@@ -602,37 +603,37 @@ public class Act011_Main extends Base_Activity
     @Deprecated
     public Act011_FF.ICustom_Form_FF_ll getFFInterface(){
         return  new Act011_FF.ICustom_Form_FF_ll() {
-                    @Override
-                    public void openDrawer() {
-                        mDrawerLayout.openDrawer(GravityCompat.START);
-                    }
+            @Override
+            public void openDrawer() {
+                mDrawerLayout.openDrawer(GravityCompat.START);
+            }
 
-                    @Override
-                    public void check() {
-                        checkAction(false);
-                    }
+            @Override
+            public void check() {
+                checkAction(false);
+            }
 
-                    @Override
-                    public void previosTab() {
-                        if ((index - 1) >= 1) {
-                            tabSelectedAction(index - 1);
-                        }
-                    }
+            @Override
+            public void previosTab() {
+                if ((index - 1) >= 1) {
+                    tabSelectedAction(index - 1);
+                }
+            }
 
-                    @Override
-                    public void nextTab() {
-                        if ((index + 1) <= pager.getAdapter().getCount()) {
-                            tabSelectedAction(index + 1);
-                        }
-                    }
+            @Override
+            public void nextTab() {
+                if ((index + 1) <= pager.getAdapter().getCount()) {
+                    tabSelectedAction(index + 1);
+                }
+            }
 
-                    @Override
-                    public void checkWithNew() {
-                        finalizeNewFlow = true;
-                        //
-                        checkAction(false);
-                    }
-                };
+            @Override
+            public void checkWithNew() {
+                finalizeNewFlow = true;
+                //
+                checkAction(false);
+            }
+        };
     }
 
     /**
@@ -714,7 +715,7 @@ public class Act011_Main extends Base_Activity
                 hideSoftKeyboard(Act011_Main.this);
                 //Valida tabs e informa resultado ao drawer
                 updateTabStatusIntoDrawer(
-                    returnValidateTabObj(index_old)
+                        returnValidateTabObj(index_old)
                 );
             }
         };
@@ -800,19 +801,19 @@ public class Act011_Main extends Base_Activity
      * @param customFF
      */
     private void scrollToLastCustomFFClicked(CustomFF customFF) {
-         //Remove o foco da view atual
-                View currentFocus = getCurrentFocus();
-                if (currentFocus != null) {
-                    currentFocus.clearFocus();
-                }
-                customFF.requestFocus();
-                //Inicia processo de scroll, buscando o fragment atual e depois chamando o metodo que
-                //faz o scroll
-                int currentItem = pager.getCurrentItem();
-                Act011BaseFrg fragment = screens.get(currentItem);
-                if (fragment instanceof Act011FrgFF) {
-                    ((Act011FrgFF) fragment).scrollToSelectedView(customFF);
-                }
+        //Remove o foco da view atual
+        View currentFocus = getCurrentFocus();
+        if (currentFocus != null) {
+            currentFocus.clearFocus();
+        }
+        customFF.requestFocus();
+        //Inicia processo de scroll, buscando o fragment atual e depois chamando o metodo que
+        //faz o scroll
+        int currentItem = pager.getCurrentItem();
+        Act011BaseFrg fragment = screens.get(currentItem);
+        if (fragment instanceof Act011FrgFF) {
+            ((Act011FrgFF) fragment).scrollToSelectedView(customFF);
+        }
     }
 
     /**
@@ -835,8 +836,8 @@ public class Act011_Main extends Base_Activity
         //
         if(type == 1 && id > -1 ){
             for (CustomFF customFF : controls_dyn) {
-                if( customFF.getmSequence() == id
-                    && (customFF instanceof PictureFF || customFF instanceof PhotoFF)
+                if(customFF.getmSequence() == id
+                        && (customFF instanceof PictureFF || customFF instanceof PhotoFF)
                 ) {
                     scrollToLastCustomFFClicked(customFF);
                 }
@@ -950,7 +951,7 @@ public class Act011_Main extends Base_Activity
             returnValidCheck(String.valueOf(-1));
         }
 
-        loadCustomFFValueIntoFormData();    
+        loadCustomFFValueIntoFormData();
 
         mPresenter.saveData(formData, fieldsValidation);
 
@@ -963,7 +964,7 @@ public class Act011_Main extends Base_Activity
      */
     private void loadCustomFFValueIntoFormData() {
         for (GE_Custom_Form_Data_Field df : formData.getDataFields()) {
-              setCustomFFValueIntoFormDataField(df);
+            setCustomFFValueIntoFormDataField(df);
         }
     }
 
@@ -978,7 +979,7 @@ public class Act011_Main extends Base_Activity
         ArrayList<Act011FormTab> tabs = returnValidateTabObj(-1);
         //
         updateTabStatusIntoDrawer(
-            tabs
+                tabs
         );
         //
         formData.setLocation_type("");
@@ -995,30 +996,30 @@ public class Act011_Main extends Base_Activity
             finalizeNewFlow = false;
             //
             ToolBox.alertMSG(
-                Act011_Main.this,
-                hmAux_Trans.get("alert_error_on_finalize_title"),
-                hmAux_Trans.get("alert_error_on_finalize_msg"),
-                null,
-                0
+                    Act011_Main.this,
+                    hmAux_Trans.get("alert_error_on_finalize_title"),
+                    hmAux_Trans.get("alert_error_on_finalize_msg"),
+                    null,
+                    0
             );
         } else {
-            if(showFinalizeOpt && allowFinalizeWithNewBtn()
-            || isFormOs){
+            if (showFinalizeOpt && allowFinalizeWithNewBtn()
+                    || isFormOs) {
                 showFinalizeDialogOpt();
-            }else {
+            } else {
                 // Mudar Aqui
                 ToolBox.alertMSG(
-                    Act011_Main.this,
-                    hmAux_Trans.get("alert_question_finalize_title"), //"Finalizar Formalário"
-                    hmAux_Trans.get("alert_question_finalize_msg"), //"Deseja Finalizar o Formulário?"
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            startCheckIN();
+                        Act011_Main.this,
+                        hmAux_Trans.get("alert_question_finalize_title"), //"Finalizar Formalário"
+                        hmAux_Trans.get("alert_question_finalize_msg"), //"Deseja Finalizar o Formulário?"
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                startCheckIN();
 //                                checkGpsFlow();
-                        }
-                    },
-                    1
+                            }
+                        },
+                        1
                 );
             }
         }
@@ -1041,10 +1042,10 @@ public class Act011_Main extends Base_Activity
      */
     @Override
     public boolean allowFinalizeWithNewBtn() {
-        if( ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_CHECKLIST,ConstantBaseApp.PROFILE_PRJ001_CHECKLIST_PARAM_DONE_NEW)
-            && mSo_Prefix == null
-            && mSo_Code == null
-            && !ToolBox_Inf.isScheduleForm(formLocal)
+        if(ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_CHECKLIST, ConstantBaseApp.PROFILE_PRJ001_CHECKLIST_PARAM_DONE_NEW)
+                && mSo_Prefix == null
+                && mSo_Code == null
+                && !ToolBox_Inf.isScheduleForm(formLocal)
                 && serial_id != null
                 && !serial_id.isEmpty()
                 //LUCHE - 28/08/2020
@@ -1199,15 +1200,15 @@ public class Act011_Main extends Base_Activity
         //Query modificada para alterar status de form em vez de excluir fisicamente.
         //
         formLocalDao.addUpdate(
-            new GE_Custom_Form_Local_Sql_016(
-                String.valueOf(formData.getCustomer_code()),
-                String.valueOf(formData.getCustom_form_type()),
-                String.valueOf(formData.getCustom_form_code()),
-                String.valueOf(formData.getCustom_form_version()),
-                String.valueOf(formData.getCustom_form_data()),
-                    ConstantBase.SYS_STATUS_DELETED,
-                    ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT)
-            ).toSqlQuery()
+                new GE_Custom_Form_Local_Sql_016(
+                        String.valueOf(formData.getCustomer_code()),
+                        String.valueOf(formData.getCustom_form_type()),
+                        String.valueOf(formData.getCustom_form_code()),
+                        String.valueOf(formData.getCustom_form_version()),
+                        String.valueOf(formData.getCustom_form_data()),
+                        ConstantBase.SYS_STATUS_DELETED,
+                        ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT)
+                ).toSqlQuery()
         );
         //
         formDataDao.addUpdate(
@@ -1305,8 +1306,8 @@ public class Act011_Main extends Base_Activity
 
             }
             //
-            if( bundle.containsKey(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW)
-                || bundle.containsKey(MyActionFilterParam.MY_ACTION_FILTER_PARAM)
+            if(bundle.containsKey(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW)
+                    || bundle.containsKey(MyActionFilterParam.MY_ACTION_FILTER_PARAM)
             ){
                 act083Bundle = new Bundle();
                 act083Bundle.putString(
@@ -1426,8 +1427,8 @@ public class Act011_Main extends Base_Activity
         //Tenta resgatar dados do agendamento caso exista.
         MD_Schedule_Exec mdScheduleExec = null;
         if (formLocal.getSchedule_prefix() != null
-            && formLocal.getSchedule_code() != null
-            && formLocal.getSchedule_exec() != null) {
+                && formLocal.getSchedule_code() != null
+                && formLocal.getSchedule_exec() != null) {
             mdScheduleExec = mPresenter.getMdScheduleExec(formLocal.getSchedule_prefix(), formLocal.getSchedule_code(), formLocal.getSchedule_exec());
         }
         //LUCHE-25/10/2021
@@ -1440,8 +1441,8 @@ public class Act011_Main extends Base_Activity
             for (HMAux cf : cf_fields) {
 
                 if (includeField
-                    && !cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_TYPE).equalsIgnoreCase(CustomFF.LABEL)
-                    && !cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_TYPE).equalsIgnoreCase(CustomFF.TAB)
+                        && !cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_TYPE).equalsIgnoreCase(CustomFF.LABEL)
+                        && !cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_TYPE).equalsIgnoreCase(CustomFF.TAB)
                 ) {
                     GE_Custom_Form_Data_Field form_data_field = new GE_Custom_Form_Data_Field();
                     form_data_field.setCustomer_code(formData.getCustomer_code());
@@ -1455,7 +1456,7 @@ public class Act011_Main extends Base_Activity
                 }
 
                 if (!automatic
-                    && cf.hasConsistentValue(GE_Custom_Form_Field_LocalDao.AUTOMATIC)
+                        && cf.hasConsistentValue(GE_Custom_Form_Field_LocalDao.AUTOMATIC)
                 ) {
                     automatic = !cf.get(GE_Custom_Form_Field_LocalDao.AUTOMATIC).isEmpty();
                 }
@@ -1531,13 +1532,13 @@ public class Act011_Main extends Base_Activity
         if (customFFs != null && customFFs.size() > 0){
             for (int i = 1; i <= pages; i++) {
                 Act011FrgFF custom_form_ff = Act011FrgFF.Companion.newInstance(
-                    hmAux_Trans,
-                    i,
-                    fullTabQty,
-                    formData.getCustom_form_status(),
-                    mdScheduleExec != null ? mdScheduleExec.getSchedule_desc() : null,
-                    mdScheduleExec != null ? mdScheduleExec.getComments() : null,
-                    formLocal.getIs_so() == 1
+                        hmAux_Trans,
+                        i,
+                        fullTabQty,
+                        formData.getCustom_form_status(),
+                        mdScheduleExec != null ? mdScheduleExec.getSchedule_desc() : null,
+                        mdScheduleExec != null ? mdScheduleExec.getComments() : null,
+                        formLocal.getIs_so() == 1
 
                 );
                 custom_form_ff.setCustomFF(customFFs);
@@ -1565,7 +1566,7 @@ public class Act011_Main extends Base_Activity
                     acessoryFormView.setNonForecastFilter(true);
                 }
                 acessoryFormView.setTabIndex(acessoryIndex);
-                        Act011FrgInspection act011FrgInspection = Act011FrgInspection.Companion
+                Act011FrgInspection act011FrgInspection = Act011FrgInspection.Companion
                         .newInstance(
                                 hmAux_Trans,
                                 acessoryIndex,
@@ -1577,23 +1578,22 @@ public class Act011_Main extends Base_Activity
                                 formLocal.getIs_so() == 1,
                                 acessoryFormView,
                                 acessoryFormViews.indexOf(acessoryFormView)
-                                );
+                        );
                 tabs.add(act011FrgInspection.getTabObj(includeField));
                 screens.add(act011FrgInspection);
-                acessoryIndex ++;
+                acessoryIndex++;
             }
         }
-        if( (customFFs!= null && customFFs.size() > 0)
-            || geOs != null
-            || (acessoryFormViews != null && acessoryFormViews.size() > 0))
-        {
+        if ((customFFs != null && customFFs.size() > 0)
+                || geOs != null
+                || (acessoryFormViews != null && acessoryFormViews.size() > 0)) {
             //
             pager.setOffscreenPageLimit(screens.size());
             pager.setAdapter(
-                new ScreenAdapter(
-                    getSupportFragmentManager(),
-                    screens
-                )
+                    new ScreenAdapter(
+                            getSupportFragmentManager(),
+                            screens
+                    )
             );
 
             pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -1613,7 +1613,7 @@ public class Act011_Main extends Base_Activity
                     setTitleLanguage("          (" + String.valueOf(index) + "/" + String.valueOf(pager.getAdapter().getCount()) + ")");
                     //
                     updateTabStatusIntoDrawer(
-                        returnValidateTabObj(index_old)
+                            returnValidateTabObj(index_old)
                     );
                 }
 
@@ -1623,104 +1623,104 @@ public class Act011_Main extends Base_Activity
             });
             //Seta dados no drawer
             act011FfOption.setFragmentsArgs(
-                new Act011FfOptionsViewObject(
-                    form_desc,
-                    tabs,
-                    isFormOs ? 0 : 1,
-                    formData.getCustom_form_status(),
-                    mSignature,
-                    automatic,
-                    (formData.getTicket_prefix() != null && formData.getTicket_prefix() > 0)
-                        && (formData.getTicket_code() != null && formData.getTicket_code() > 0 ),
-                    mSo_Prefix != null && mSo_Code != null,
-                    isFormOs
-                ),
-                hmAux_Trans,
-                new Act011FfOption.ICustom_Form_FF_Options_ll() {
-                    @Override
-                    public void info() {
-                        mDrawerLayout.closeDrawer(GravityCompat.START);
+                    new Act011FfOptionsViewObject(
+                            form_desc,
+                            tabs,
+                            isFormOs ? 0 : 1,
+                            formData.getCustom_form_status(),
+                            mSignature,
+                            automatic,
+                            (formData.getTicket_prefix() != null && formData.getTicket_prefix() > 0)
+                                    && (formData.getTicket_code() != null && formData.getTicket_code() > 0),
+                            mSo_Prefix != null && mSo_Code != null,
+                            isFormOs
+                    ),
+                    hmAux_Trans,
+                    new Act011FfOption.ICustom_Form_FF_Options_ll() {
+                        @Override
+                        public void info() {
+                            mDrawerLayout.closeDrawer(GravityCompat.START);
 
-                        showCustomDialog();
-                    }
+                            showCustomDialog();
+                        }
 
-                    @Override
-                    public void delete() {
-                        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                showConfirmDeleteDialog();
-                            }
-                        };
-                        //
-                        ToolBox.alertMSG(
-                            Act011_Main.this,
-                            hmAux_Trans.get("dialog_delete_title"),
-                            hmAux_Trans.get("dialog_delete_msg"),
-                            listener,
-                            1
-                        );
-                    }
+                        @Override
+                        public void delete() {
+                            DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    showConfirmDeleteDialog();
+                                }
+                            };
+                            //
+                            ToolBox.alertMSG(
+                                    Act011_Main.this,
+                                    hmAux_Trans.get("dialog_delete_title"),
+                                    hmAux_Trans.get("dialog_delete_msg"),
+                                    listener,
+                                    1
+                            );
+                        }
 
-                    @Override
-                    public void save() {
-                        saveV2(true);
-                    }
+                        @Override
+                        public void save() {
+                            saveV2(true);
+                        }
 
-                    @Override
-                    public void check() {
-                        checkAction(true);
-                    }
+                        @Override
+                        public void check() {
+                            checkAction(true);
+                        }
 
-                    @Override
-                    public void autograph() {
-                        mDrawerLayout.closeDrawer(GravityCompat.START);
+                        @Override
+                        public void autograph() {
+                            mDrawerLayout.closeDrawer(GravityCompat.START);
 
-                        showCustomDialogSignature();
-                    }
+                            showCustomDialogSignature();
+                        }
 
-                    @Override
-                    public void auto() {
-                        mDrawerLayout.closeDrawer(GravityCompat.START);
-                        int quantidade = 0;
-                        //
-                        for (Act011BaseFrg baseFrg : screens) {
-                            if(baseFrg instanceof Act011FrgFF) {
-                                int itensAuto = baseFrg.applyAutoAnswer();
-                                if (itensAuto > 0) {
-                                    updateTabStatusIntoDrawer(baseFrg.getTabObj(false));
-                                    quantidade += itensAuto;
+                        @Override
+                        public void auto() {
+                            mDrawerLayout.closeDrawer(GravityCompat.START);
+                            int quantidade = 0;
+                            //
+                            for (Act011BaseFrg baseFrg : screens) {
+                                if (baseFrg instanceof Act011FrgFF) {
+                                    int itensAuto = baseFrg.applyAutoAnswer();
+                                    if (itensAuto > 0) {
+                                        updateTabStatusIntoDrawer(baseFrg.getTabObj(false));
+                                        quantidade += itensAuto;
+                                    }
                                 }
                             }
+                            //
+                            Toast.makeText(
+                                    context,
+                                    hmAux_Trans.get("qty_automatic_answer_msg") + ": " + String.valueOf(quantidade),
+                                    Toast.LENGTH_SHORT
+                            ).show();
                         }
-                        //
-                        Toast.makeText(
-                            context,
-                            hmAux_Trans.get("qty_automatic_answer_msg") + ": " + String.valueOf(quantidade),
-                            Toast.LENGTH_SHORT
-                        ).show();
-                    }
 
-                    @Override
-                    public void nserv() {
-                        mDrawerLayout.closeDrawer(GravityCompat.START);
+                        @Override
+                        public void nserv() {
+                            mDrawerLayout.closeDrawer(GravityCompat.START);
 
-                        if (formData != null && formData.getCustom_form_status().equals(Constant.SYS_STATUS_IN_PROCESSING)) {
-                            exitAlertNServ();
-                        } else {
-                            nservCall();
+                            if (formData != null && formData.getCustom_form_status().equals(Constant.SYS_STATUS_IN_PROCESSING)) {
+                                exitAlertNServ();
+                            } else {
+                                nservCall();
+                            }
                         }
-                    }
 
-                    @Override
-                    public void onTabSelected(int page) {
-                        //LUCHE - 05/10/2021 - ajuste para quando for form o.s funcione
-                        //corretamente.
-                        tabSelectedAction(isFormOs ? page + 1 : page);
-                        //
-                        mDrawerLayout.closeDrawer(GravityCompat.START);
-                    }
-                });
+                        @Override
+                        public void onTabSelected(int page) {
+                            //LUCHE - 05/10/2021 - ajuste para quando for form o.s funcione
+                            //corretamente.
+                            tabSelectedAction(isFormOs ? page + 1 : page);
+                            //
+                            mDrawerLayout.closeDrawer(GravityCompat.START);
+                        }
+                    });
 
             returnValidCheck(String.valueOf(index_old));
             if(bNew){
@@ -1746,14 +1746,14 @@ public class Act011_Main extends Base_Activity
 
     private void addOsHeaderFrag(GeOs geOs, String custom_form_status, ArrayList<Act011FormTab> tabs, int tabQty, MD_Schedule_Exec mdScheduleExec) {
         FormOsHeaderFrg formOsHeaderFrg = FormOsHeaderFrg.newInstance(
-            hmAux_Trans,
-            0,
-            tabQty,
-            custom_form_status,
-            mdScheduleExec != null ? mdScheduleExec.getSchedule_desc() : null,
-            mdScheduleExec != null ? mdScheduleExec.getComments() : null,
-            geOs,
-            false
+                hmAux_Trans,
+                0,
+                tabQty,
+                custom_form_status,
+                mdScheduleExec != null ? mdScheduleExec.getSchedule_desc() : null,
+                mdScheduleExec != null ? mdScheduleExec.getComments() : null,
+                geOs,
+                false
         );
         //
         tabs.add(formOsHeaderFrg.getTabObj(includeField));
@@ -1763,23 +1763,23 @@ public class Act011_Main extends Base_Activity
     @Override
     public void alertActiveGPSResource() {
         ToolBox.alertMSG(
-            this,
-            hmAux_Trans.get("alert_form_turn_gps_on_title"),
-            hmAux_Trans.get("alert_form_turn_gps_on_msg"),
-            new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    mPresenter.validateGPSResource(formLocal);
+                this,
+                hmAux_Trans.get("alert_form_turn_gps_on_title"),
+                hmAux_Trans.get("alert_form_turn_gps_on_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mPresenter.validateGPSResource(formLocal);
+                    }
+                },
+                2,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //LUCHE - 31/03/2020 - Gambi para evitar msg de deseja sair ao forçar volta
+                        checkBackFlow();
+                    }
                 }
-            },
-            2,
-            new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    //LUCHE - 31/03/2020 - Gambi para evitar msg de deseja sair ao forçar volta
-                    checkBackFlow();
-                }
-            }
         );
 
     }
@@ -1879,7 +1879,7 @@ public class Act011_Main extends Base_Activity
 //                mkEditTextNMFF.setmDecimal(0);
 //            }
             mkEditTextNMFF.setmDecimal(
-                getDecimalFromContent(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_CONTENT))
+                    getDecimalFromContent(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_CONTENT))
             );
         }
 
@@ -1895,7 +1895,7 @@ public class Act011_Main extends Base_Activity
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) ||
                 formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE)
 //              ||  formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
-                ) {
+        ) {
             mkEditTextNMFF.setmEnabled(false);
         } else {
             mkEditTextNMFF.setmEnabled(true);
@@ -1922,7 +1922,7 @@ public class Act011_Main extends Base_Activity
                 opcs[i] = jo.getString(DECIMAL);
             }
             //
-           return Integer.parseInt(opcs[0]);
+            return Integer.parseInt(opcs[0]);
         } catch (JSONException e) {
             return 0;
         }
@@ -1956,7 +1956,7 @@ public class Act011_Main extends Base_Activity
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) ||
                 formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE)
 //               || formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
-                ) {
+        ) {
             comboBoxFF.setmEnabled(false);
         } else {
             comboBoxFF.setmEnabled(true);
@@ -2046,7 +2046,7 @@ public class Act011_Main extends Base_Activity
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) ||
                 formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE)
 //               || formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
-                ) {
+        ) {
             ratingImageFF.setmEnabled(false);
         } else {
             ratingImageFF.setmEnabled(true);
@@ -2083,7 +2083,7 @@ public class Act011_Main extends Base_Activity
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) ||
                 formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE)
 //              ||  formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
-                ) {
+        ) {
             ratingBarFF.setmEnabled(false);
         } else {
             ratingBarFF.setmEnabled(true);
@@ -2120,7 +2120,7 @@ public class Act011_Main extends Base_Activity
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) ||
                 formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE)
 //               || formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
-                ) {
+        ) {
             pictureFF.setmEnabled(false);
         } else {
             pictureFF.setmEnabled(true);
@@ -2150,9 +2150,9 @@ public class Act011_Main extends Base_Activity
         HMAux itemDB = retornDBValue(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
 
         if (itemDB.hasConsistentValue(HMAux.TEXTO_01)
-        && itemDB.get(HMAux.TEXTO_01).length() > 0) {
+                && itemDB.get(HMAux.TEXTO_01).length() > 0) {
             photoFF.setmValue(itemDB.get(HMAux.TEXTO_01));
-        }else{
+        } else {
             photoFF.setmValue("p_" + prefix + cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ) + JPG_EXTENSION);
         }
         //
@@ -2166,7 +2166,7 @@ public class Act011_Main extends Base_Activity
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) ||
                 formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE)
 //              ||  formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
-                ) {
+        ) {
             photoFF.setmEnabled(false);
         } else {
             photoFF.setmEnabled(true);
@@ -2186,9 +2186,9 @@ public class Act011_Main extends Base_Activity
         measureFF.setLastMeasureValue(historicalInfo);
         measureFF.setLastMeasureLbl(hmAux_Trans.get("form_measure_last_value_lbl"));
         measureFF.setMDecimal(
-            measureTp.getRestrictionDecimal() != null
-            ? measureTp.getRestrictionDecimal()
-            : getDecimalFromContent(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_CONTENT))
+                measureTp.getRestrictionDecimal() != null
+                        ? measureTp.getRestrictionDecimal()
+                        : getDecimalFromContent(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_CONTENT))
         );
         //
         if(measureValidateListener == null) {
@@ -2198,21 +2198,21 @@ public class Act011_Main extends Base_Activity
                 public MeasureFF.MeasureValidationReturn isMeasureValid(float measure) {
                     //Trata lastMeasure null.
                     Float lastMeasureValue =
-                        serialInfo.getLast_measure_value() != null
-                        ? serialInfo.getLast_measure_value().floatValue()
-                        : null;
+                            serialInfo.getLast_measure_value() != null
+                                    ? serialInfo.getLast_measure_value().floatValue()
+                                    : null;
                     //
                     MeasureFF.MeasureValidationReturn validationReturn = measureTp.validateMeasureRestriction(
-                        false,
-                        measure,
-                        lastMeasureValue,
-                        serialInfo.getLast_measure_date(),
-                        ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT)
+                            false,
+                            measure,
+                            lastMeasureValue,
+                            serialInfo.getLast_measure_date(),
+                            ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT)
                     );
                     //Se msg de erro, seta tradução
                     if(validationReturn.getErrorMsg() != null && !validationReturn.getErrorMsg().isEmpty()){
                         validationReturn.setErrorMsg(
-                            hmAux_Trans.get(validationReturn.getErrorMsg())
+                                hmAux_Trans.get(validationReturn.getErrorMsg())
                         );
                     }
                     //
@@ -2246,7 +2246,7 @@ public class Act011_Main extends Base_Activity
         //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
         //mas a vida eh uma caixinha de surpresas e teve que ser removido t0d0 acesso aos nform deletados
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) ||
-            formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE)
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE)
 //               || formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
         ) {
             measureFF.setmEnabled(false);
@@ -2318,17 +2318,17 @@ public class Act011_Main extends Base_Activity
                     if (!customFFs.get(i).isValid() || !customFFs.get(i).isValidDots()) {
                         numberOfErrors += 1;
                     }
-    //                if(formData.getCustom_form_status() != null && !formData.getCustom_form_status().equals(ConstantBase.SYS_STATUS_DELETED)) {
-                        customFFs.get(i).setValidationBackGroundDots();
-    //                }
+                    //                if(formData.getCustom_form_status() != null && !formData.getCustom_form_status().equals(ConstantBase.SYS_STATUS_DELETED)) {
+                    customFFs.get(i).setValidationBackGroundDots();
+                    //                }
                 } else {
                     if (customFFs.get(i).getmPage() == ipage) {
                         if (!customFFs.get(i).isValid() || !customFFs.get(i).isValidDots()) {
                             numberOfErrors += 1;
                         }
-    //                    if(formData.getCustom_form_status() != null && !formData.getCustom_form_status().equals(ConstantBase.SYS_STATUS_DELETED)) {
-                            customFFs.get(i).setValidationBackGroundDots();
-    //                    }
+                        //                    if(formData.getCustom_form_status() != null && !formData.getCustom_form_status().equals(ConstantBase.SYS_STATUS_DELETED)) {
+                        customFFs.get(i).setValidationBackGroundDots();
+                        //                    }
                     } else {
                     }
                 }
@@ -2646,7 +2646,7 @@ public class Act011_Main extends Base_Activity
                 break;
             //Msg quando ocorre erro ao criar registro na ge_custom_form_local
             case SHOW_MSG_TYPE_FORM_LOCAL_INSERT_ERROR:
-            //Msg quando ocorrer erro ao atualizar dados do novo agendamento.
+                //Msg quando ocorrer erro ao atualizar dados do novo agendamento.
             case SHOW_MSG_TYPE_SCHEDULE_EXEC_UPDATE_ERROR:
                 ToolBox.alertMSG(
                         Act011_Main.this,
@@ -2666,41 +2666,41 @@ public class Act011_Main extends Base_Activity
             case SHOW_MSG_TYPE_GE_OS_NOT_FOUND:
                 //TODO O QUE FAZER NO CASO DO TICKET
                 ToolBox.alertMSG(
-                    context,
-                    title,
-                    msg,
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            onBackPressed();
-                        }
-                    },
-                    0
+                        context,
+                        title,
+                        msg,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                onBackPressed();
+                            }
+                        },
+                        0
                 );
                 break;
             case SHOW_MSG_TYPE_TICKET_FORM_FINALIZED:
                 ToolBox.alertMSG(
-                    Act011_Main.this,
-                    title,
-                    msg,
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            flowControl();
-                        }
-                    },
-                    0,
-                    false
+                        Act011_Main.this,
+                        title,
+                        msg,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                flowControl();
+                            }
+                        },
+                        0,
+                        false
                 );
                 break;
             case SHOW_MSG_TYPE_INVALID_SYS_END_DATE:
                 ToolBox.alertMSG(
-                    context,
-                    title,
-                    msg,
-                    null,
-                    0,
-                    false
+                        context,
+                        title,
+                        msg,
+                        null,
+                        0,
+                        false
                 );
                 break;
         }
@@ -2731,31 +2731,31 @@ public class Act011_Main extends Base_Activity
         dialogScheduleWarning.setTitle(hmAux_Trans.get("alert_schedule_cancelled_by_server_ttl"));
         dialogScheduleWarning.setMessage(
                 ToolBox_Inf.getFormattedScheduleWarningInfo(
-                    hmAux_Trans.get("alert_schedule_warning_new_status_lbl"),
-                    hmAux_Trans.get(scheduleExec.getFcm_new_status()),
-                    hmAux_Trans.get("alert_warning_user_nick_lbl"),
-                    scheduleExec.getFcm_user_nick(),
-                    null,
-                    null,
-                    hmAux_Trans.get("alert_schedule_cancelled_by_server_msg")+"\n"
+                        hmAux_Trans.get("alert_schedule_warning_new_status_lbl"),
+                        hmAux_Trans.get(scheduleExec.getFcm_new_status()),
+                        hmAux_Trans.get("alert_warning_user_nick_lbl"),
+                        scheduleExec.getFcm_user_nick(),
+                        null,
+                        null,
+                        hmAux_Trans.get("alert_schedule_cancelled_by_server_msg") + "\n"
                 )
         );
         dialogScheduleWarning.setCancelable(true);
         dialogScheduleWarning.setPositiveButton(
-            hmAux_Trans.get("sys_alert_btn_ok"),
-            new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    mPresenter.cancelScheduleAndForm(customFormLocal,scheduleExec);
+                hmAux_Trans.get("sys_alert_btn_ok"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mPresenter.cancelScheduleAndForm(customFormLocal, scheduleExec);
+                    }
                 }
-            }
         );
         //
         AlertDialog dialog = dialogScheduleWarning.create();
         dialog.show();
         //
         dialog.getButton(
-            DialogInterface.BUTTON_POSITIVE
+                DialogInterface.BUTTON_POSITIVE
         ).setTextColor(getResources().getColor(R.color.namoa_lime_green));
     }
 
@@ -2791,16 +2791,16 @@ public class Act011_Main extends Base_Activity
                 finalizeNewFlow = false;
                 //
                 ToolBox.alertMSG(
-                    Act011_Main.this,
-                    hmAux_Trans.get("alert_nform_expired_ttl"),
-                    hmAux_Trans.get("alert_nform_expired_msg"),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            callAct006(context,finalizeNewFlow);
-                        }
-                    },
-                    0
+                        Act011_Main.this,
+                        hmAux_Trans.get("alert_nform_expired_ttl"),
+                        hmAux_Trans.get("alert_nform_expired_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                callAct006(context, finalizeNewFlow);
+                            }
+                        },
+                        0
                 );
             }
         } else {
@@ -2931,7 +2931,7 @@ public class Act011_Main extends Base_Activity
         bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ_TMP, formData.getTicket_seq_tmp());
         //
         if(isOffHandForm){
-             bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, requestingAct);
+            bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, requestingAct);
         }
         bundle.putString(CH_RoomDao.ROOM_CODE, room_code);
         //LUCHE - 08/09/2020
@@ -3004,8 +3004,8 @@ public class Act011_Main extends Base_Activity
         Bundle mBundle = new Bundle();
         mBundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, Constant.ACT005);
         mBundle.putSerializable(
-            MyActionFilterParam.MY_ACTION_FILTER_PARAM,
-            bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM)
+                MyActionFilterParam.MY_ACTION_FILTER_PARAM,
+                bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM)
         );
         intent.putExtras(mBundle);
         //
@@ -3029,7 +3029,7 @@ public class Act011_Main extends Base_Activity
                 checkBackFlow();
             }
         } else {
-           callAct005(Act011_Main.this);
+            callAct005(Act011_Main.this);
         }
     }
 
@@ -3324,10 +3324,10 @@ public class Act011_Main extends Base_Activity
         if(serial_id == null || serial_id.isEmpty()) {
             //Pegar info do serial
             ll_serial_info.setVisibility(View.GONE);
-        }else{
-             serial = getSerialInfo();
-             //
-            if(serial != null) {
+        }else {
+            serial = getSerialInfo();
+            //
+            if (serial != null) {
                 setDescriptions(tv_descriptions, serial);
                 setSerialInfo(ll_serial, tv_serial_code_val, serial.getSerial_id());
                 setSerialInfo(ll_class, tv_classe_id_val, serial.getClass_id());
@@ -3364,8 +3364,8 @@ public class Act011_Main extends Base_Activity
         }
 
         if (formData != null
-            && formData.getTicket_prefix() != null
-            && formData.getTicket_code() != null
+                && formData.getTicket_prefix() != null
+                && formData.getTicket_code() != null
         ) {
             String ticketDesc = formData.getTicket_prefix() + "." + formData.getTicket_code();
             //
@@ -3381,26 +3381,25 @@ public class Act011_Main extends Base_Activity
         }
 
 
-
-         if(ToolBox_Inf.isScheduleForm(formLocal)){
+        if (ToolBox_Inf.isScheduleForm(formLocal)) {
             tv_data_serv_lbl.setText(hmAux_Trans.get("dialog_info_data_serv_lbl"));
             tv_dt_schedule_start_lbl.setText(hmAux_Trans.get("dialog_info_dt_schedule_start_lbl"));
             tv_dt_schedule_end_lbl.setText(hmAux_Trans.get("dialog_info_dt_schedule_end_lbl"));
             //
             ll_schedule_info.setVisibility(View.VISIBLE);
             tv_data_serv_val.setText(
-                ToolBox_Inf.formatSchedulePk(
-                    formLocal.getSchedule_prefix(),
-                    formLocal.getSchedule_code(),
-                    formLocal.getSchedule_exec()
-                )
+                    ToolBox_Inf.formatSchedulePk(
+                            formLocal.getSchedule_prefix(),
+                            formLocal.getSchedule_code(),
+                            formLocal.getSchedule_exec()
+                    )
             );
             //
             tv_dt_schedule_start_val.setText(
-                ToolBox_Inf.formatScheduleDate(context, formLocal.getSchedule_date_start_format())
+                    ToolBox_Inf.formatScheduleDate(context, formLocal.getSchedule_date_start_format())
             );
             tv_dt_schedule_end_val.setText(
-                ToolBox_Inf.formatScheduleDate(context, formLocal.getSchedule_date_end_format())
+                    ToolBox_Inf.formatScheduleDate(context, formLocal.getSchedule_date_end_format())
             );
         }else{
             ll_schedule_info.setVisibility(View.GONE);
@@ -3629,11 +3628,11 @@ public class Act011_Main extends Base_Activity
                     }
                     @Override
                     public void reportTextChange(String s, boolean b) {
-                        if(formLocal.getSo_optional_justify_problem() == 0) {
+                        if (formLocal.getSo_optional_justify_problem() == 0) {
                             binding.act011DialogCheckBtnOk.setEnabled(s != null && !s.isEmpty());
                         }
-                        if(s!= null
-                        && b){
+                        if (s != null
+                                && b) {
                             if (s.isEmpty() && formLocal.getSo_optional_justify_problem() == 0) {
                                 DrawableCompat.setTintList(binding.act011DialogCheckMkedtJustifyMissingAnswerVal.getBackground(), ColorStateList.valueOf(ContextCompat.getColor(context, R.color.font_required)));
                             }
@@ -3656,10 +3655,10 @@ public class Act011_Main extends Base_Activity
                         int missingAnswersCounter = missingAnswersCounter();
                         //
                         mPresenter.updateGeOsItems(
-                            geOs,
-                            missingAnswersCounter,
-                            missingAnswer,
-                            startDate,
+                                geOs,
+                                missingAnswersCounter,
+                                missingAnswer,
+                                startDate,
                                 endDate
                         );
                         //
@@ -3688,11 +3687,11 @@ public class Act011_Main extends Base_Activity
                         alertDialog.dismiss();
                     }else{
                         ToolBox.alertMSG(
-                            context,
-                            hmAux_Trans.get("dialog_finalize_so_form_invalid_ttl"),
+                                context,
+                                hmAux_Trans.get("dialog_finalize_so_form_invalid_ttl"),
                                 errorMsg,
-                            null,
-                            0
+                                null,
+                                0
                         );
                     }
                 }else{
@@ -3806,7 +3805,7 @@ public class Act011_Main extends Base_Activity
                 frgInspection.notifyAdapterDataSetMayChanged();
                 //Após atualizar lista da tab, precisa atualizar lista do drawer
                 updateTabStatusIntoDrawer(
-                    frgInspection.getTabObj(false)
+                        frgInspection.getTabObj(false)
                 );
             }
         }
@@ -3815,11 +3814,15 @@ public class Act011_Main extends Base_Activity
     private boolean validEndDate(String startDate, String endDate) {
         //todo colocar valida com data atual apos tratar fluxo de assinatura.
         return ToolBox_Inf.getDateDiferenceInMilliseconds(startDate, endDate) <= 0
-                     && ToolBox_Inf.getDateDiferenceInMilliseconds(endDate, ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT)) <= 0;
+                && ToolBox_Inf.getDateDiferenceInMilliseconds(endDate, ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT)) <= 0;
     }
 
     private void setDialogVisibilityAndLabels(Act011CheckDialogBinding binding) {
-        binding.act011DialogCheckTtl.setText(hmAux_Trans.get("dialog_finalize_option_ttl"));
+        if (!isFormOs) {
+            binding.act011DialogCheckTtl.setText(hmAux_Trans.get("dialog_finalize_option_ttl"));
+        } else {
+            binding.act011DialogCheckTtl.setText(hmAux_Trans.get("dialog_finalize_form_so_ttl"));
+        }
         binding.clSerialClass.setVisibility(View.GONE);
         binding.tvCompletedService.setText(hmAux_Trans.get("dialog_finalize_option_finalize_ttl"));
         binding.rgCompletedServiceYes.setText(hmAux_Trans.get("dialog_finalize_option_yes"));
@@ -3849,6 +3852,7 @@ public class Act011_Main extends Base_Activity
             binding.act011DialogCheckMkdateFormEnd.setmCanClean(false);
             binding.act011DialogCheckMkdateFormEnd.setmLabel("");
             binding.act011DialogCheckTextFormEnd.setText(hmAux_Trans.get("dialog_finalize_os_form_end_date_lbl"));
+            binding.act011DialogCheckTextFormEnd.setVisibility(View.VISIBLE);
             if (geOs.getSo_edit_start_end() == 0) {
                 binding.act011DialogCheckMkdateFormEnd.setEnabled(false);
                 binding.act011DialogCheckMkdateFormEnd.setClickable(false);
@@ -4031,20 +4035,20 @@ public class Act011_Main extends Base_Activity
     protected void processCustom_error(String mLink, String mRequired) {
         progressDialog.dismiss();
         //
-        if( wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())
-           || wsSoProcess.equalsIgnoreCase(WS_Save.class.getSimpleName())
+        if(wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())
+                || wsSoProcess.equalsIgnoreCase(WS_Save.class.getSimpleName())
         ){
             ToolBox.alertMSG(
-                context,
-                hmAux_Trans.get("alert_data_not_sent_ttl"),
-                hmAux_Trans.get("alert_resend_data_by_menu_msg"),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        flowControl();
-                    }
-                },
-                0
+                    context,
+                    hmAux_Trans.get("alert_data_not_sent_ttl"),
+                    hmAux_Trans.get("alert_resend_data_by_menu_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            flowControl();
+                        }
+                    },
+                    0
             );
         }else {
             formData.setLocation_type("");
@@ -4063,16 +4067,16 @@ public class Act011_Main extends Base_Activity
         super.processError_1(mLink, mRequired);
         //
         ToolBox.alertMSG(
-            context,
-            hmAux_Trans.get("alert_data_not_sent_ttl"),
-            hmAux_Trans.get("alert_resend_data_by_menu_msg"),
-            new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    flowControl();
-                }
-            },
-            0
+                context,
+                hmAux_Trans.get("alert_data_not_sent_ttl"),
+                hmAux_Trans.get("alert_resend_data_by_menu_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        flowControl();
+                    }
+                },
+                0
         );
     }
 
@@ -4193,10 +4197,10 @@ public class Act011_Main extends Base_Activity
     @Override
     public void addWsResults(ArrayList<HMAux> formDataErroAux) {
         wsResults.addAll(
-            formDataErroAux
+                formDataErroAux
         );
         if (wsResults.size() > 0) {
-                showResults(wsResults);
+            showResults(wsResults);
         } else {
             progressDialog.dismiss();
             if(mPresenter.hasGpsPendecy(
