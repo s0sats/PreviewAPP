@@ -150,6 +150,7 @@
                 android:layout_marginEnd="8dp"
                 android:textColor="@color/text_black"
                 android:textSize="16sp"
+                android:visibility="gone"
                 app:layout_constraintEnd_toStartOf="@+id/act011_gdl_end"
                 app:layout_constraintStart_toStartOf="@+id/act011_gdl_start"
                 app:layout_constraintTop_toBottomOf="@id/act011_dialog_check_tv_elapsed_time_lbl" />
