@@ -9,7 +9,7 @@ android {
         applicationId "com.namoadigital.prj001"
         minSdkVersion 21
         targetSdkVersion 31
-        versionCode 183
+        versionCode 184
         versionName "5.5.1.1"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
