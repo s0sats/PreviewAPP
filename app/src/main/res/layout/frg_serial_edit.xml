@@ -66,10 +66,10 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/text_input_serial_id"
+                    style="@style/NamoaTheme3.TextInputLayout.Outlined"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    style="@style/NamoaTheme3.TextInputLayout.Outlined"
                     android:visibility="visible">
 
                     <com.namoa_digital.namoa_library.ctls.MKEditTextNM
