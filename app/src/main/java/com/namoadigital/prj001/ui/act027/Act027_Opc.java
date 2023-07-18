@@ -936,7 +936,22 @@ public class Act027_Opc extends BaseFragment {
     public void setSpinnersEnable(boolean isEnable) {
         setChipStroke(isEnable);
         chip_os_priority.setEnabled(isEnable);
+
+        boolean isStatusEdit = !mSm_so.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_EDIT) && !ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_CHANGE_STATUS);
+        if (isStatusEdit) {
+            setSpinnerStatusEnable(false);
+        } else {
+            setSpinnerStatusEnable(isEnable);
+        }
+    }
+
+    public void setSpinnerStatusEnable(boolean isEnable) {
         chip_os_status.setEnabled(isEnable);
+        if (!isEnable) {
+            chip_os_status.setChipStrokeWidth(0.0f);
+        } else {
+            chip_os_status.setChipStrokeWidth(1.0f);
+        }
     }
 
     private void setChipStroke(boolean isEnable) {
@@ -944,7 +959,7 @@ public class Act027_Opc extends BaseFragment {
         chip_os_priority.setChipStrokeWidth(1.0f);
         chip_os_status.setChipIconVisible(isEnable);
         chip_os_status.setChipStrokeWidth(1.0f);
-        if(!isEnable){
+        if (!isEnable) {
             chip_os_priority.setChipStrokeWidth(0.0f);
             chip_os_status.setChipStrokeWidth(0.0f);
         }
