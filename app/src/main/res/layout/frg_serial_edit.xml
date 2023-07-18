@@ -77,6 +77,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textMultiLine"
+                        android:clickable="true"
+                        android:focusableInTouchMode="true"
                         android:textColor="@drawable/edittext_theme_text"
                         app:mBARCODE="true"
                         app:mNFC="false"
