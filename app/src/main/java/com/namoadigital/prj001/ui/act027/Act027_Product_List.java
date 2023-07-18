@@ -167,6 +167,7 @@ public class Act027_Product_List extends BaseFragment {
         iv_remove_card = view.findViewById(R.id.iv_nform_new_header);
         iv_remove_card.setVisibility(View.GONE);
         loadCardStatus();
+        checkStatus();
     }
 
     private void iniAction() {
@@ -188,11 +189,6 @@ public class Act027_Product_List extends BaseFragment {
 
                 }
             });
-
-            if (mSm_so.getStatus().equals(Constant.SYS_STATUS_EDIT)
-                || mSm_so.getStatus().equals(Constant.SYS_STATUS_STOP)) {
-                btn_add_event.setEnabled(false);
-            }
 
             btn_add_event.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -291,12 +287,14 @@ public class Act027_Product_List extends BaseFragment {
 
     private void checkStatus() {
 
-        if (!mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_DONE) &&
-                !mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_CLIENT) &&
-                !mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_QUALITY) &&
-                !mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_CANCELLED) &&
-                !mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC)
-                ) {
+        if (mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PROCESS)
+                || mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PENDING)
+                || mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_BUDGET)
+                || (
+                mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_EDIT)
+                        && ToolBox_Con.getPreference_User_Code(context).equalsIgnoreCase(mSm_so.getEdit_user() == null ? "0" : mSm_so.getEdit_user().toString())
+        )
+        ) {
             btn_add_event.setEnabled(true);
         } else {
             btn_add_event.setEnabled(false);
@@ -351,6 +349,8 @@ public class Act027_Product_List extends BaseFragment {
 
             tv_status_card.setText(customText);
 
+        } else {
+            cardStatus.setVisibility(View.GONE);
         }
     }
 
