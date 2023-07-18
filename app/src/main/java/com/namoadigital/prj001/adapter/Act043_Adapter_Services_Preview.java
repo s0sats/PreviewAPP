@@ -11,8 +11,11 @@ import android.widget.TextView;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
+import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.sql.Sql_Act043_001;
 import com.namoadigital.prj001.ui.act043.Act043_Main;
+import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
@@ -29,7 +32,9 @@ public class Act043_Adapter_Services_Preview extends BaseAdapter {
     private HMAux hmAux_Trans;
     private OnRemoveClickListener onRemoveClickListener;
 
-    public interface OnRemoveClickListener{
+    private SM_SO mSm_so;
+
+    public interface OnRemoveClickListener {
         void OnRemoveClick(HMAux service);
     }
 
@@ -37,12 +42,13 @@ public class Act043_Adapter_Services_Preview extends BaseAdapter {
         this.onRemoveClickListener = onRemoveClickListener;
     }
 
-    public Act043_Adapter_Services_Preview(Context context, int resource_01, ArrayList<HMAux> data, HMAux hmAux_Trans) {
+    public Act043_Adapter_Services_Preview(Context context, int resource_01, ArrayList<HMAux> data, HMAux hmAux_Trans, SM_SO mSm_so) {
         this.context = context;
         this.resource_01 = resource_01;
 
         this.data = data;
         this.hmAux_Trans = hmAux_Trans;
+        this.mSm_so = mSm_so;
     }
 
     @Override
@@ -78,16 +84,31 @@ public class Act043_Adapter_Services_Preview extends BaseAdapter {
         TextView tv_comments = convertView.findViewById(R.id.act043_adapter_services_preview_cell_tv_comments);
         ImageView iv_info = convertView.findViewById(R.id.act043_adapter_services_preview_cell_iv_info);
         //
-        iv_remove.setEnabled(hmAux.get(Sql_Act043_001.IN_PROCESS).equals("0"));
+
+        iv_remove.setEnabled(
+                (
+                        mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_EDIT)
+                                &&
+                                ToolBox_Con.getPreference_User_Code(context).equalsIgnoreCase(mSm_so.getEdit_user() == null ? "0" : mSm_so.getEdit_user().toString())
+                                &&
+                                hmAux.get(Sql_Act043_001.IN_PROCESS).equals("0")
+                )
+                        ||
+                        (
+                                !mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_EDIT)
+                                        &&
+                                        hmAux.get(Sql_Act043_001.IN_PROCESS).equals("0")
+                        )
+        );
         //
-        if(onRemoveClickListener != null){
+        if (onRemoveClickListener != null) {
             iv_remove.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     onRemoveClickListener.OnRemoveClick(hmAux);
                 }
             });
-        }else{
+        } else {
             iv_remove.setOnClickListener(null);
         }
         //

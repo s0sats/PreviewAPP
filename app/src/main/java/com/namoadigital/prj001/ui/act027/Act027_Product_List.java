@@ -290,10 +290,9 @@ public class Act027_Product_List extends BaseFragment {
         if (mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PROCESS)
                 || mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PENDING)
                 || mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_BUDGET)
-                || (
+                /*|| ( //Obs: Comentado para publicação, falta um tratamento do lucas.
                 mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_EDIT)
-                        && ToolBox_Con.getPreference_User_Code(context).equalsIgnoreCase(mSm_so.getEdit_user() == null ? "0" : mSm_so.getEdit_user().toString())
-        )
+                        && ToolBox_Con.getPreference_User_Code(context).equalsIgnoreCase(mSm_so.getEdit_user() == null ? "0" : mSm_so.getEdit_user().toString()))*/
         ) {
             btn_add_event.setEnabled(true);
         } else {

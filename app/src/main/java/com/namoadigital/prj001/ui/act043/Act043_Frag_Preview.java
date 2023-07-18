@@ -276,7 +276,8 @@ public class Act043_Frag_Preview extends BaseFragment {
                 R.layout.act043_adapter_services_preview_cell,
                 //getServicesAsHmAux(),
                 getPackServiceList(),
-                hmAux_Trans
+                hmAux_Trans,
+                mSm_so
         );
         //Interface de click no btn de cancelar item
         mAdapter.setOnRemoveClickListener(new Act043_Adapter_Services_Preview.OnRemoveClickListener() {
