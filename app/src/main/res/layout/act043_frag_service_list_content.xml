@@ -7,19 +7,6 @@
               android:layout_height="match_parent"
               android:orientation="vertical"
               app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-
-    <TextView
-            android:id="@+id/act043_frag_service_list_tv_lbl"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:padding="5dp"
-            android:text="Service to Add - Trad"
-            android:textColor="@color/namoa_color_blue_dark_chat"
-            android:textSize="@dimen/font_size_title_dialog"
-            android:textStyle="bold"/>
-
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

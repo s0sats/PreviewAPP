@@ -226,11 +226,15 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         transList.add("alert_invalid_pack_msg");
         transList.add("alert_remove_pack_ttl");
         transList.add("alert_remove_pack_confirm");
+        //
+        transList.add("warning_so_status_hinders_service_execution");
+        transList.add("warning_so_status_service_sync");
 
         transList.add("progress_status_change_ttl");
         transList.add("progress_status_change_msg");
         transList.add("progress_priority_change_ttl");
         transList.add("progress_priority_change_msg");
+        transList.add("warning_so_status_hinders_add_services");
         //Drawer
         List<String> transListdrawer = new ArrayList<String>();
         transListdrawer.add("so_lbl");
@@ -257,6 +261,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         transListdrawer.add("service_edition_ll_lbl");
         //
         transListdrawer.add("lbl_sync_data");
+        //
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -907,6 +912,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
                     && act027_opc_ != null
             ) {
                 act027_opc_.loadDataToScreen();
+                act043_frag_preview.loadDataToScreen();
                 invalidateOptionsMenu();
             }
         }
@@ -1036,6 +1042,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
             act027_opc_.setmSm_so(mSm_so);
             act027_opc_.loadDataToScreen();
         }
+        act043_frag_preview.loadDataToScreen();
     }
 
     @NonNull

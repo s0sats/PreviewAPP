@@ -3,33 +3,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="8dp"
-    >
+    android:padding="8dp">
+
+
+    <include
+        android:id="@+id/card_alert_status"
+        layout="@layout/process_in_progress"
+        android:visibility="gone" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:padding="5dp">
-
-            <TextView
-                android:id="@+id/act043_frag_preview_tv_so_prefix_code"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_horizontal"
-                android:text=" YYYY.XXX"
-                android:textSize="@dimen/font_size_title_dialog"
-                android:textStyle="bold"
-                />
-
-        </LinearLayout>
-
 
 
         <LinearLayout

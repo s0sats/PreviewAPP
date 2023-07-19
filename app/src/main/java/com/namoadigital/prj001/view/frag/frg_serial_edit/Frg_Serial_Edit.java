@@ -23,6 +23,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.google.android.material.button.MaterialButton;
@@ -1151,6 +1152,7 @@ public class Frg_Serial_Edit extends BaseFragment {
             iv_serial_log.setVisibility(View.VISIBLE);
         }
         //
+        checkIfSerialIsValid(mdProductSerial.getSerial_id());
 
         String last_measure = mdProductSerial.getLast_measure_value() != null && mdProductSerial.getLast_measure_value() != 0.0 ? ToolBox_Inf.convertDoubleToBigDecimalString( getMeasureValueRounded(mdProductSerial.getLast_measure_value()), true) : null;
         String last_measure_date = mdProductSerial.getLast_measure_date() != null && !mdProductSerial.getLast_measure_date().isEmpty() ? mdProductSerial.getLast_measure_date() : null;
@@ -1424,21 +1426,39 @@ public class Frg_Serial_Edit extends BaseFragment {
             ss_site_zone.setmEnabled(false);
             ss_site_zone_local.setmEnabled(false);
             //
-            if(!isIOProcess){
+            if (!isIOProcess) {
                 iv_add_tracking.setEnabled(false);
             }
         }
     }
 
-    private boolean isSerialLinkedWithInbound() {
-        return mdProductSerial.getSite_code() == null
-        && mdProductSerial.getInbound_code() != null
-        && mdProductSerial.getTracking_list() != null
-        && mdProductSerial.getTracking_list().size() > 0;
+    private void checkIfSerialIsValid(String value) {
+        boolean isInvalidChar = StringHelperKt.checkIfHasCharInvalid(value);
+        if (isInvalidChar) {
+            textInputLayoutSerial.setBoxStrokeColor(getResources().getColor(R.color.m3_namoa_error));
+            textInputLayoutSerial.setHelperText(hmAux_Trans.get("serial_invalid_char_lbl"));
+            textInputLayoutSerial.setHelperTextColor(AppCompatResources.getColorStateList(context, R.color.m3_namoa_error));
+            textInputLayoutSerial.setHintTextColor(AppCompatResources.getColorStateList(context, R.color.m3_namoa_error));
+            textInputLayoutSerial.requestFocus();
+            textInputLayoutSerial.setHelperTextEnabled(true);
+        } else {
+            textInputLayoutSerial.setBoxStrokeColorStateList(AppCompatResources.getColorStateList(context, R.color.m3_namoa_primary));
+            textInputLayoutSerial.setHintTextColor(AppCompatResources.getColorStateList(context, R.color.m3_namoa_primary));
+            textInputLayoutSerial.setHelperTextEnabled(false);
+        }
+
+
     }
 
-    public void updateAddressSuggestion(Integer zone_code, String zone_id, String zone_desc, Integer local_code, String local_id){
-        if(zone_code != null || local_code != null){
+    private boolean isSerialLinkedWithInbound() {
+        return mdProductSerial.getSite_code() == null
+                && mdProductSerial.getInbound_code() != null
+                && mdProductSerial.getTracking_list() != null
+                && mdProductSerial.getTracking_list().size() > 0;
+    }
+
+    public void updateAddressSuggestion(Integer zone_code, String zone_id, String zone_desc, Integer local_code, String local_id) {
+        if (zone_code != null || local_code != null) {
             ll_suggestion.setVisibility(View.VISIBLE);
             tv_suggested_location.setText(formatSuggestion(zone_id,zone_desc,local_id));
         }else{
@@ -1537,13 +1557,13 @@ public class Frg_Serial_Edit extends BaseFragment {
             public void onClick(View v) {
                 if (delegate != null) {
                     String serial_id = mket_serial_id.getText().toString().toUpperCase();
-                    if(!ToolBox_Inf.checkForbiddenChars(serial_id)){
-                        mket_serial_id.setText(ToolBox_Inf.removeForbidenChars(serial_id));
+                    if (!StringHelperKt.checkIfHasCharInvalid(serial_id)) {
+                        // mket_serial_id.setText(ToolBox_Inf.removeForbidenChars(serial_id));
                         if (mket_serial_id.isValid()) {
                             delegate.onCheckButtonClick(
                                     mdProduct.getProduct_code(),
                                     mdProduct.getProduct_id(),
-                                    ToolBox_Inf.removeAllLineBreaks(mket_serial_id.getText().toString()),
+                                    serial_id,//ToolBox_Inf.removeAllLineBreaks(mket_serial_id.getText().toString()),
                                     "");
                         } else {
                             showAlertDialog(
@@ -1596,13 +1616,13 @@ public class Frg_Serial_Edit extends BaseFragment {
     }
     private void saveValidationFlow(int btnId) {
 
-        if (!new_serial || (mket_serial_id.isValid() && !ToolBox_Inf.checkForbiddenChars(mket_serial_id.getText().toString()))) {
+        if (!new_serial || (mket_serial_id.isValid() && !StringHelperKt.checkIfHasCharInvalid(mket_serial_id.getText().toString()))) {
             //Valida se alteração de site é valida.
             if (!siteChanged || validateSiteChange()) {
                 if (validadeSerialLocation()) {
-                    if(validateMoveReasonSS()) {
+                    if (validateMoveReasonSS()) {
                         if (validateSiteRestriction()) {
-                            if(validateAddInfoDuplication()){
+                            if (validateAddInfoDuplication()) {
                                 if (new_serial || checkSerialChanges() || forceSaveAgain) {
                                     //
                                     setUIDataToSerialObj();
@@ -1742,6 +1762,7 @@ public class Frg_Serial_Edit extends BaseFragment {
 
             @Override
             public void reportTextChange(String s, boolean b) {
+                checkIfSerialIsValid(s);
                 if (!serialIdChanged && !s.equalsIgnoreCase((String) mket_serial_id.getTag())) {
                     serialIdChanged = true;
                     btn_action.setText(hmAux_Trans.get("btn_check_exists"));
@@ -3496,6 +3517,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         transListFrag.add("product_label");
         transListFrag.add("product_desc_label");
         transListFrag.add("mket_hint_label");
+        transListFrag.add("serial_invalid_char_lbl");
         transListFrag.add("btn_create");
         transListFrag.add("chk_required");
         transListFrag.add("chk_allow_new");

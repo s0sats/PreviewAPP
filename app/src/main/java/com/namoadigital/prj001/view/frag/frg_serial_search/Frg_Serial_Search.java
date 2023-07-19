@@ -644,10 +644,10 @@ public class Frg_Serial_Search extends Fragment {
         //Como o setOnReportTextChangeListner reseta a var de busca exata, foi removido o listener nesse momento.
         String serial_id = ToolBox_Inf.removeForbidenChars(mket_serial.getText().toString().trim()).toUpperCase();
         mket_serial.setOnReportTextChangeListner(null);
-        mket_serial.setText(serial_id);
+        mket_serial.setText(mket_serial.getText().toString()/*serial_id*/);
         mket_serial.setOnReportTextChangeListner(mketSerialTextChangeListener);
         //
-        values.put(SERIAL, ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString().trim().isEmpty() ? "" : mket_serial.getText().toString().trim()));
+        values.put(SERIAL, mket_serial.getText().toString()/*ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString().trim().isEmpty() ? "" : mket_serial.getText().toString().trim())*/);
         values.put(TRACKING, mket_tracking.getText().toString().trim().isEmpty() ? "" : mket_tracking.getText().toString().trim());
 
         return values;

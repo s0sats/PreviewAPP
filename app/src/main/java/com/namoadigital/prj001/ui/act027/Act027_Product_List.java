@@ -3,16 +3,21 @@ package com.namoadigital.prj001.ui.act027;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -20,6 +25,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act027_Product_List_Adapter;
+import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SM_SO_Product_EventDao;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.sql.Act027_Product_List_Sql_001;
@@ -52,6 +58,10 @@ public class Act027_Product_List extends BaseFragment {
     private OnNewEventClickListner onNewEventClickListner;
     private OnItemEventClickListner onItemEventClickListner;
     private OnRecoveryFragmentState delegate;
+    private CardView cardStatus;
+    private ImageView iv_remove_card;
+    private TextView tv_status_card;
+    private SM_SODao mSm_soDao;
 
     public interface OnNewEventClickListner {
         void onNewEventClick();
@@ -122,6 +132,8 @@ public class Act027_Product_List extends BaseFragment {
         //
         mMain = (Act027_Main) getActivity();
         //
+        mSm_soDao = new SM_SODao(context);
+        //
         ll_event_list = view.findViewById(R.id.act027_product_list_content_ll_event_list);
         //
         ll_empty_list = view.findViewById(R.id.act027_product_list_content_ll_empty_list);
@@ -144,11 +156,18 @@ public class Act027_Product_List extends BaseFragment {
         //
         btn_add_event.setText(hmAux_Trans.get("btn_add_event"));
         btn_service_preview.setText(hmAux_Trans.get("btn_search_service"));
-        if (ToolBox_Inf.profileExists(context,Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_EDIT)) {
+        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_EDIT)) {
             btn_service_preview.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             btn_service_preview.setVisibility(View.GONE);
         }
+
+        cardStatus = view.findViewById(R.id.card_alert_status);
+        tv_status_card = view.findViewById(R.id.tv_process_new_header);
+        iv_remove_card = view.findViewById(R.id.iv_nform_new_header);
+        iv_remove_card.setVisibility(View.GONE);
+        loadCardStatus();
+        checkStatus();
     }
 
     private void iniAction() {
@@ -170,11 +189,6 @@ public class Act027_Product_List extends BaseFragment {
 
                 }
             });
-
-            if (mSm_so.getStatus().equals(Constant.SYS_STATUS_EDIT)
-                || mSm_so.getStatus().equals(Constant.SYS_STATUS_STOP)) {
-                btn_add_event.setEnabled(false);
-            }
 
             btn_add_event.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -264,6 +278,7 @@ public class Act027_Product_List extends BaseFragment {
                 tv_empty_lbl.setText(hmAux_Trans.get("empty_list_lbl"));
                 //
                 loadEventList();
+                loadCardStatus();
             }else{
                 delegate.callAct005();
             }
@@ -272,15 +287,16 @@ public class Act027_Product_List extends BaseFragment {
 
     private void checkStatus() {
 
-        if (!mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_DONE) &&
-                !mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_CLIENT) &&
-                !mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_QUALITY) &&
-                !mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_CANCELLED) &&
-                !mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC)
-                ) {
-            btn_add_event.setVisibility(View.VISIBLE);
+        if (mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PROCESS)
+                || mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PENDING)
+                || mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_BUDGET)
+                /*|| ( //Obs: Comentado para publicação, falta um tratamento do lucas.
+                mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_EDIT)
+                        && ToolBox_Con.getPreference_User_Code(context).equalsIgnoreCase(mSm_so.getEdit_user() == null ? "0" : mSm_so.getEdit_user().toString()))*/
+        ) {
+            btn_add_event.setEnabled(true);
         } else {
-            btn_add_event.setVisibility(View.GONE);
+            btn_add_event.setEnabled(false);
         }
     }
 
@@ -313,5 +329,35 @@ public class Act027_Product_List extends BaseFragment {
             ll_event_list.setVisibility(View.GONE);
             ll_empty_list.setVisibility(View.VISIBLE);
         }
+    }
+
+
+    public void loadCardStatus() {
+        if (checkStatusSOBlockService()) {
+            cardStatus.setVisibility(View.VISIBLE);
+            String text;
+            text = hmAux_Trans.get("warning_so_status_hinders_add_product_events") + ": " + hmAux_Trans.get(mSm_so.getStatus());
+
+            SpannableString customText = new SpannableString(text);
+            customText.setSpan(
+                    new ForegroundColorSpan(getActivity().getResources().getColor(ToolBox_Inf.getStatusColor(mSm_so.getStatus()))),
+                    text.indexOf(": ") + 1,
+                    text.length(),
+                    Spanned.SPAN_INCLUSIVE_INCLUSIVE
+            );
+
+            tv_status_card.setText(customText);
+
+        } else {
+            cardStatus.setVisibility(View.GONE);
+        }
+    }
+
+
+    private boolean checkStatusSOBlockService() {
+        return mSm_so.getStatus().equals(Constant.SYS_STATUS_STOP) ||
+                mSm_so.getStatus().equals(Constant.SYS_STATUS_CANCELLED) ||
+                mSm_so.getStatus().equals(Constant.SYS_STATUS_WAITING_QUALITY) ||
+                mSm_so.getStatus().equals(Constant.SYS_STATUS_WAITING_CLIENT);
     }
 }

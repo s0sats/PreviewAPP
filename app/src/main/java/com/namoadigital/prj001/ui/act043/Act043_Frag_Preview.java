@@ -4,14 +4,19 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -46,7 +51,6 @@ public class Act043_Frag_Preview extends BaseFragment {
     private SM_SO mSm_so;
     private SM_SO_ServiceDao mSm_So_ServiceDao;
     private Button btn_search_service;
-    private TextView tv_so_prefix_code;
     private TextView tv_service_pack_ttl;
     private TextView tv_total_lbl;
     private TextView tv_total_val;
@@ -57,6 +61,11 @@ public class Act043_Frag_Preview extends BaseFragment {
     private DialogInterface.OnDismissListener dismissListener;
     onSmSoRequestObject delegateSmSo;
     private Button btn_product_event;
+    private CardView cardStatus;
+    private ImageView iv_remove_card;
+    private TextView tv_status_card;
+
+    private SM_SODao mSm_soDao;
 
     public void setmSm_so(SM_SO mSm_so) {
         this.mSm_so = mSm_so;
@@ -90,13 +99,13 @@ public class Act043_Frag_Preview extends BaseFragment {
         //
         mMain = (Act043_Main) getActivity();
         //
+        mSm_soDao = new SM_SODao(context);
+        //
         mSm_So_ServiceDao = new SM_SO_ServiceDao(
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
         );
-        //
-        tv_so_prefix_code = view.findViewById(R.id.act043_frag_preview_tv_so_prefix_code);
         //
         btn_search_service = view.findViewById(R.id.act043_frag_preview_btn_search_service);
         btn_search_service.setEnabled(false);
@@ -111,6 +120,12 @@ public class Act043_Frag_Preview extends BaseFragment {
         tv_total_val = view.findViewById(R.id.act043_frag_preview_tv_total_val);
         //
         lv_service_pack = view.findViewById(R.id.act043_frag_preview_lv_services_packs);
+        //
+        cardStatus = view.findViewById(R.id.card_alert_status);
+        tv_status_card = view.findViewById(R.id.tv_process_new_header);
+        iv_remove_card = view.findViewById(R.id.iv_nform_new_header);
+        iv_remove_card.setVisibility(View.GONE);
+        loadCardStatus();
         //
         dismissListener = new DialogInterface.OnDismissListener() {
             @Override
@@ -221,14 +236,13 @@ public class Act043_Frag_Preview extends BaseFragment {
                 hmAux_Trans = delegateSmSo.getHMAux_Trans();
                 setContentIntoView();
             }
+            loadCardStatus();
         }
     }
 
     private void setContentIntoView() {
         //Reseta var de posição do fragmento de lista
         mMain.resetFragListPosition();
-        //
-        tv_so_prefix_code.setText(String.valueOf(mSm_so.getSo_prefix()) + "." + mSm_so.getSo_code());
         //
         btn_search_service.setText(hmAux_Trans.get("btn_search_service"));
 
@@ -262,7 +276,8 @@ public class Act043_Frag_Preview extends BaseFragment {
                 R.layout.act043_adapter_services_preview_cell,
                 //getServicesAsHmAux(),
                 getPackServiceList(),
-                hmAux_Trans
+                hmAux_Trans,
+                mSm_so
         );
         //Interface de click no btn de cancelar item
         mAdapter.setOnRemoveClickListener(new Act043_Adapter_Services_Preview.OnRemoveClickListener() {
@@ -443,6 +458,31 @@ public class Act043_Frag_Preview extends BaseFragment {
         loadScreenToData();
     }
 
+    public void loadCardStatus() {
+        if (checkStatusSOBlockService()) {
+            cardStatus.setVisibility(View.VISIBLE);
+            String text;
+            text = hmAux_Trans.get("warning_so_status_hinders_add_services") + ": " + hmAux_Trans.get(mSm_so.getStatus());
+
+            SpannableString customText = new SpannableString(text);
+            customText.setSpan(
+                    new ForegroundColorSpan(getActivity().getResources().getColor(ToolBox_Inf.getStatusColor(mSm_so.getStatus()))),
+                    text.indexOf(": ") + 1,
+                    text.length(),
+                    Spanned.SPAN_INCLUSIVE_INCLUSIVE
+            );
+
+            tv_status_card.setText(customText);
+
+        }
+    }
+
+    private boolean checkStatusSOBlockService() {
+        return mSm_so.getStatus().equals(Constant.SYS_STATUS_STOP) ||
+                mSm_so.getStatus().equals(Constant.SYS_STATUS_CANCELLED) ||
+                mSm_so.getStatus().equals(Constant.SYS_STATUS_WAITING_QUALITY) ||
+                mSm_so.getStatus().equals(Constant.SYS_STATUS_WAITING_CLIENT);
+    }
 
 
 }
