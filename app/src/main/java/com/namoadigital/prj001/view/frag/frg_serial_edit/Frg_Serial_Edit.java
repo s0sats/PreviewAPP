@@ -1434,7 +1434,7 @@ public class Frg_Serial_Edit extends BaseFragment {
 
     private void checkIfSerialIsValid(String value) {
         boolean isInvalidChar = StringHelperKt.checkIfHasCharInvalid(value);
-        if (isInvalidChar || value.startsWith(" ")) {
+        if (isInvalidChar) {
             textInputLayoutSerial.setBoxStrokeColor(getResources().getColor(R.color.m3_namoa_error));
             textInputLayoutSerial.setError(hmAux_Trans.get("serial_invalid_char_lbl"));
             textInputLayoutSerial.setErrorIconDrawable(AppCompatResources.getDrawable(context, R.drawable.ic_baseline_error_outline_24dp_black));
@@ -1614,13 +1614,13 @@ public class Frg_Serial_Edit extends BaseFragment {
     }
     private void saveValidationFlow(int btnId) {
 
-        if (!new_serial || (mket_serial_id.isValid() && !ToolBox_Inf.checkForbiddenChars(mket_serial_id.getText().toString()))) {
+        if (!new_serial || (mket_serial_id.isValid() && !StringHelperKt.checkIfHasCharInvalid(mket_serial_id.getText().toString()))) {
             //Valida se alteração de site é valida.
             if (!siteChanged || validateSiteChange()) {
                 if (validadeSerialLocation()) {
-                    if(validateMoveReasonSS()) {
+                    if (validateMoveReasonSS()) {
                         if (validateSiteRestriction()) {
-                            if(validateAddInfoDuplication()){
+                            if (validateAddInfoDuplication()) {
                                 if (new_serial || checkSerialChanges() || forceSaveAgain) {
                                     //
                                     setUIDataToSerialObj();

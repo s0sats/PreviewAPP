@@ -1,7 +1,6 @@
 package com.namoadigital.prj001.extensions
 
 import java.text.Normalizer
-import java.util.regex.Pattern
 
 fun String?.formatForDisplay() = if (this.isNullOrBlank()) "" else this
 
@@ -12,6 +11,10 @@ fun String.stripAccents(): String {
     return string
 }
 
-fun checkIfHasCharInvalid(value: String) =
-    Pattern.compile("/^\\s|\\s$|\\s{2}|[\\t\\n\\r]|[^\\s0-9a-zà-ü\\-\\_\\(\\)\\[\\]\\{\\}\\.\\|\\/\\+\\\\]/gmi")
-        .matcher(value).find()
+fun checkIfHasCharInvalid(value: String): Boolean {
+    val regexPattern = Regex(
+        """^\s|\s$|\s{2}|[\t\n\r]|[^\s0-9a-zà-ü\-\_\(\)\[\]\{\}\.\|\/\+\\\ª\º]""",
+        setOf(RegexOption.MULTILINE, RegexOption.IGNORE_CASE, RegexOption.DOT_MATCHES_ALL)
+    )
+    return regexPattern.containsMatchIn(value)
+}
