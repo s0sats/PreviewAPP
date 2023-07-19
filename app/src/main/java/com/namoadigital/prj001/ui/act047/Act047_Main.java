@@ -337,6 +337,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
 
 
     private void changeVisibilityAdapter(ArrayList<SO_Next_Orders_Obj> list) {
+        setTitleLanguage(" (" + list.size() + " / " + mPresenter.getOriginalListFromSoNextOrders().size() + ")");
         lv_services.setVisibility(list.isEmpty() ? View.GONE : View.VISIBLE);
         tv_empty_list.setVisibility(list.isEmpty() ? View.VISIBLE : View.GONE);
     }
