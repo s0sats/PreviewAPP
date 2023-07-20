@@ -13,7 +13,6 @@ import com.namoadigital.prj001.databinding.Act011FrgFfBinding
 import com.namoadigital.prj001.model.Act011FormTab
 import com.namoadigital.prj001.model.Act011FormTabStatus
 import com.namoadigital.prj001.util.ToolBox_Inf
-import java.util.*
 
 class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(),Act011FrgFFScroll {
 
@@ -102,7 +101,7 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(),Act011FrgFFScroll {
             }.forEach { ff ->
                 if(ff.getmInclude() == 1){
                     count++
-                    ff.setmLabel("$count. ${ff.getmLabel()}")
+                    ff.setmLabel("$tabIndex.$count. ${ff.getmLabel()}")
                 }
                 //
                 binding.llControls.addView(ff)
