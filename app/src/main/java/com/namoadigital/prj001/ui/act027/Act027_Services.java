@@ -565,11 +565,14 @@ public class Act027_Services extends BaseFragment {
             recoveryDelegate.callAct005();
         } else {
             iv_editable_serial.setVisibility(View.VISIBLE);
+
+
             adp = new Act027_Services_Adapter(
                     getActivity(),
                     R.layout.act027_services_content_adapter_cell_new,
                     getListFromService(isChecked),
-                    mMain.hasExecutionProfile()
+                    mMain.hasExecutionProfile(),
+                    getListPartners()
             );
             //
             adp.setOnServiceSelectedListener((sData, selection_type) -> {
@@ -1049,20 +1052,18 @@ public class Act027_Services extends BaseFragment {
         return createTask(serviceExec, null);
     }
 
-    private void showPartnerDialog(final HMAux item) {
-
-        MD_PartnerDao md_partnerDao = new MD_PartnerDao(
-                context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                Constant.DB_VERSION_CUSTOM
-        );
-
-        final ArrayList<HMAux> partners = (ArrayList<HMAux>) md_partnerDao.query_HM(
-
+    public ArrayList<HMAux> getListPartners() {
+        MD_PartnerDao md_partnerDao = new MD_PartnerDao(context);
+        return (ArrayList<HMAux>) md_partnerDao.query_HM(
                 new MD_Partner_Sql_SS(
                         ToolBox_Con.getPreference_Customer_Code(context)
                 ).toSqlQuery()
         );
+    }
+
+    private void showPartnerDialog(final HMAux item) {
+
+        ArrayList<HMAux> partners = getListPartners();
         //
         if (partners == null || partners.size() == 0) {
             ToolBox.alertMSG(
@@ -1101,20 +1102,17 @@ public class Act027_Services extends BaseFragment {
 
             builder.setView(view);
             builder.setCancelable(true);
-            builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialog) {
-                    if (partnerAux.size() == 0) {
-                        ToolBox.alertMSG(
-                                context,
-                                hmAux_Trans.get("alert_partner_selection_ttl"),
-                                hmAux_Trans.get("alert_no_partner_selected_msg"),
-                                null,
-                                0
-                        );
-                    } else {
-                        createExecTask(item);
-                    }
+            builder.setOnDismissListener(dialog -> {
+                if (partnerAux.size() == 0) {
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_partner_selection_ttl"),
+                            hmAux_Trans.get("alert_no_partner_selected_msg"),
+                            null,
+                            0
+                    );
+                } else {
+                    createExecTask(item);
                 }
             });
 
