@@ -405,14 +405,14 @@ public class SO_Next_Orders_Obj {
                         priority_desc + "|" +
                         create_date_filter + "|" +
                         create_user + "|" +
-                        last_approval_budget_user
+                        last_approval_budget_user + "|" +
+                        comments + "|" +
+                        service + "|" +
+                        serial_local_desc
                     /*+
-                comments+ "|" +
-                service+ "|" +
                 //serial_site_code+ "|" +
                 serial_site_desc+ "|" +
                 serial_zone_desc+ "|" +
-                serial_local_desc+ "|" +
                 */
         )
                 .replace("null|", "")
