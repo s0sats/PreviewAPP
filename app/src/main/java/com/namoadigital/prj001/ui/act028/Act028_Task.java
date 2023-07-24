@@ -81,6 +81,7 @@ public class Act028_Task extends BaseFragment {
 
     //private TextView tv_service_lbl;
     private TextView tv_service_value;
+    private TextView tv_comment_value;
 
     private TextView tv_additional_info_lbl;
 
@@ -414,6 +415,7 @@ public class Act028_Task extends BaseFragment {
 
         //tv_service_lbl = (TextView) view.findViewById(R.id.act028_task_content_tv_service_lbl);
         tv_service_value = (TextView) view.findViewById(R.id.act028_task_content_tv_service_value);
+        tv_comment_value = (TextView) view.findViewById(R.id.act028_task_content_tv_comment_value);
 
         tv_additional_info_lbl = (TextView) view.findViewById(R.id.act028_task_content_tv_addicional_info_lbl);
 
@@ -495,6 +497,7 @@ public class Act028_Task extends BaseFragment {
                     //tv_service_lbl.setText(hmAux_Trans.get("service_lbl"));
                     //tv_service_lbl.setText("Servide");
                     tv_service_value.setText(mService.getService_desc());
+                    tv_comment_value.setText(mService.getComments());
 
                     //mk_comments.setText(mTask.getComments());
 
@@ -616,6 +619,7 @@ public class Act028_Task extends BaseFragment {
                     );
 
                     tv_service_value.setText(mService.getService_desc());
+                    tv_comment_value.setText(mService.getComments());
                     //
                     tv_additional_info_lbl.setText(hmAux_Trans.get("additional_info_lbl"));
 
