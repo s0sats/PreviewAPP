@@ -1436,13 +1436,15 @@ public class Frg_Serial_Edit extends BaseFragment {
         boolean isInvalidChar = StringHelperKt.checkIfHasCharInvalid(value);
         if (isInvalidChar) {
             textInputLayoutSerial.setBoxStrokeColor(getResources().getColor(R.color.m3_namoa_error));
-            textInputLayoutSerial.setError(hmAux_Trans.get("serial_invalid_char_lbl"));
-            textInputLayoutSerial.setErrorIconDrawable(AppCompatResources.getDrawable(context, R.drawable.ic_baseline_error_outline_24dp_black));
-            textInputLayoutSerial.setErrorIconTintList(AppCompatResources.getColorStateList(context, R.color.m3_namoa_error));
-            textInputLayoutSerial.setErrorEnabled(true);
+            textInputLayoutSerial.setHelperText(hmAux_Trans.get("serial_invalid_char_lbl"));
+            textInputLayoutSerial.setHelperTextColor(AppCompatResources.getColorStateList(context, R.color.m3_namoa_error));
+            textInputLayoutSerial.setHintTextColor(AppCompatResources.getColorStateList(context, R.color.m3_namoa_error));
+            textInputLayoutSerial.requestFocus();
+            textInputLayoutSerial.setHelperTextEnabled(true);
         } else {
             textInputLayoutSerial.setBoxStrokeColorStateList(AppCompatResources.getColorStateList(context, R.color.m3_namoa_primary));
-            textInputLayoutSerial.setErrorEnabled(false);
+            textInputLayoutSerial.setHintTextColor(AppCompatResources.getColorStateList(context, R.color.m3_namoa_primary));
+            textInputLayoutSerial.setHelperTextEnabled(false);
         }
 
 
