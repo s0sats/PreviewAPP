@@ -41,14 +41,15 @@ public class Act027_Services_Adapter extends BaseAdapter {
     private HMAux hmAux_Trans;
     private boolean hasExecutionProfile;
 
+    private ArrayList<HMAux> listPartners;
     public static final String NAVIGATE_ACT028 = "NAVIGATE_ACT028";
 
-    public Act027_Services_Adapter(Context context, int resource, List<HMAux> source, boolean hasExecutionProfile) {
+    public Act027_Services_Adapter(Context context, int resource, List<HMAux> source, boolean hasExecutionProfile, ArrayList<HMAux> listPartners) {
         this.context = context;
         this.resource = resource;
         this.source = source;
         this.hasExecutionProfile = hasExecutionProfile;
-
+        this.listPartners = listPartners;
         this.mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
                 Constant.APP_MODULE,
@@ -237,7 +238,7 @@ public class Act027_Services_Adapter extends BaseAdapter {
         int todoService = Integer.parseInt(item.get(SM_SO_ServiceDao.QTY));
         int doneServices = Integer.parseInt(item.get(Sql_Act027_001.QTY_DONE));
 
-        btn_confirm.setEnabled(checkIfIsSyncOrDifferentProccess(item));
+        btn_confirm.setEnabled(checkIfIsSyncOrDifferentProccessAndPartner(item));
 
         if (item.get(SM_SO_ServiceDao.STATUS).equals(Constant.SYS_STATUS_DONE)) {
 
@@ -501,7 +502,14 @@ public class Act027_Services_Adapter extends BaseAdapter {
         return convertView;
     }
 
-    private boolean checkIfIsSyncOrDifferentProccess(HMAux item) {
+    public boolean checkIfIsSyncOrDifferentProccessAndPartner(HMAux item) {
+        boolean p = false;
+
+        for (int i = 0; i < listPartners.size(); i++) {
+            if (item.get(SM_SO_ServiceDao.PARTNER_DESC).isEmpty() || listPartners.get(i).containsValue(item.get(SM_SO_ServiceDao.PARTNER_DESC))) {
+                p = true;
+            }
+        }
         return
                 (
                         item.get(SM_SO_ServiceDao.STATUS).equals(Constant.SYS_STATUS_PENDING)
@@ -513,7 +521,8 @@ public class Act027_Services_Adapter extends BaseAdapter {
                                 item.get(Sql_Act027_002.SO_STATUS).equals(Constant.SYS_STATUS_PENDING)
                                         ||
                                         item.get(Sql_Act027_002.SO_STATUS).equals(Constant.SYS_STATUS_PROCESS)
-                        );
+                        )
+                        && p;
 
     }
 
