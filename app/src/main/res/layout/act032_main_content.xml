@@ -19,15 +19,39 @@
         android:gravity="center_horizontal"
         android:padding="5dp">
 
-        <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-            android:id="@+id/act032_mket_filter"
+        <LinearLayout
+            android:id="@+id/linearLayout2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:mOCR="false"
-            app:mBARCODE="false"
-            app:mNFC="false"
-            android:paddingLeft="10dp"
-            />
+            android:background="@color/m3_namoa_surface2"
+            android:gravity="start"
+            android:orientation="vertical"
+            android:paddingHorizontal="10dp"
+            android:paddingBottom="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/act092TextLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:startIconDrawable="@drawable/ic_search_black_24dp"
+                app:startIconTint="@color/m3_namoa_onSurfaceVariant"
+                style="@style/NamoaTheme3.TextInputLayout.Outlined"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toStartOf="@+id/main_user_selection"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                    android:id="@+id/act032_mket_filter"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:textColor="@color/m3_namoa_onSurface" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
 
         <ListView
             android:id="@+id/act032_lv_so"
