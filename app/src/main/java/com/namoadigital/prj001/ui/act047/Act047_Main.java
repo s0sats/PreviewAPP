@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -19,7 +20,7 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -28,11 +29,16 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.OptIn;
 import androidx.appcompat.content.res.AppCompatResources;
-import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 
+import com.google.android.material.badge.BadgeDrawable;
+import com.google.android.material.badge.BadgeUtils;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputLayout;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -73,12 +79,9 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
 
     public static final String WS_PROCESS_SO_STATUS_CHANGE = "WS_PROCESS_SO_STATUS_CHANGE";
     private TextView tv_site;
-    private TextView tv_qty;
-    private TextView tv_zone;
     private TextView tv_empty_list;
-    private TextView tv_filter;
     private ListView lv_services;
-    private SwitchCompat sw_filter;
+    private ImageView sw_filter;
     private Act047_SO_Next_Orders_Adapter mAdapter;
     private String requestingAct = "";
     private Act047_Main_Contract.I_Presenter mPresenter;
@@ -86,6 +89,8 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
     //Var tmp que armazena o item da lista clicado.
     private SO_Next_Orders_Obj wsTmpItem = null;
     private MKEditTextNM mketFilter;
+    private TextInputLayout filter_layout;
+    private Toolbar toolbar;
     private String filterSerial;
 
 
@@ -95,8 +100,9 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         //
         setContentView(R.layout.act047_main);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //
         iniSetup();
         //
@@ -210,22 +216,21 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
     private void initVars() {
         //
         recoverIntentsInfo();
-
-        //
-        tv_zone = (TextView) findViewById(R.id.act047_tv_zone_val);
-        //
-        tv_filter = findViewById(R.id.act047_tv_zone_filter);
         //
         tv_empty_list = (TextView) findViewById(R.id.act047_list_empty);
         //
-        mketFilter = findViewById(R.id.act047_mket_filter);
+        mketFilter = findViewById(R.id.so_mket_filter);
+
         //
         lv_services = (ListView) findViewById(R.id.act047_lv_services);
         //
-        sw_filter = findViewById(R.id.act047_sw_filter);
-        sw_filter.setOnCheckedChangeListener(null);
-        sw_filter.setChecked(getSwitchState());
-        sw_filter.setOnCheckedChangeListener(sw_filter_listener);
+        filter_layout = findViewById(R.id.actTextLayout);
+        filter_layout.setHint(hmAux_Trans.get("filter_hint"));
+        //
+        sw_filter = findViewById(R.id.main_zone_selection);
+        sw_filter.setVisibility(View.VISIBLE);
+        applyZoneFilter = getSwitchState();
+        setIvMainUserSelection();
         //
         mPresenter = new Act047_Main_Presenter(
                 context,
@@ -233,7 +238,6 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
                 requestingAct,
                 hmAux_Trans
         );
-        setLocationInfo();
         //
         setLabels();
         //
@@ -241,9 +245,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
     }
 
     private void setLabels() {
-        mketFilter.setHint(hmAux_Trans.get("filter_hint"));
         tv_empty_list.setText(hmAux_Trans.get("empty_serial_list_lbl"));
-        tv_filter.setText(hmAux_Trans.get("zone_filter_lbl"));
         if (!filterSerial.isEmpty()) mketFilter.setText(filterSerial);
     }
 
@@ -253,14 +255,6 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
             mAdapter.getFilter().filter(text);
         }
     }
-
-    private CompoundButton.OnCheckedChangeListener sw_filter_listener = new CompoundButton.OnCheckedChangeListener() {
-        @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            setSwitchState(isChecked);
-            mPresenter.executeNextOrdersSearch(isChecked);
-        }
-    };
 
 
     private void recoverIntentsInfo() {
@@ -289,20 +283,6 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         wsProcess = "";
         wsTmpItem = null;
         disableProgressDialog();
-    }
-
-    private void setLocationInfo() {
-        HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
-        //
-        tv_zone.setVisibility(View.GONE);
-        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null)
-                && mFooter.containsKey(Constant.FOOTER_ZONE)
-                && !mFooter.get(Constant.FOOTER_ZONE).isEmpty()
-        ) {
-            tv_zone.setVisibility(View.VISIBLE);
-            tv_zone.setText(mFooter.get(Constant.FOOTER_ZONE));
-        }
-        //
     }
 
     @SuppressLint("SetTextI18n")
@@ -795,7 +775,15 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
     }
 
     private int soPositionCardItemClicked;
+
     private void initActions() {
+        sw_filter.setOnClickListener(view -> {
+            applyZoneFilter = !applyZoneFilter;
+            setIvMainUserSelection();
+            setSwitchState(applyZoneFilter);
+            checkIfContainsFilter();
+            mPresenter.executeNextOrdersSearch(applyZoneFilter);
+        });
         lv_services.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -835,6 +823,35 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
             }
         });
     }
+
+    private boolean applyZoneFilter;
+
+    private void setIvMainUserSelection() {
+        if (applyZoneFilter) {
+            sw_filter.setImageDrawable(null);
+            sw_filter.setBackground(context.getDrawable(R.drawable.my_action_toogle_pressed));
+            Drawable drawable = DrawableCompat.wrap(
+                    ContextCompat.getDrawable(context, R.drawable.ic_location_on_24));
+            DrawableCompat.setTint(
+                    drawable.mutate(), ContextCompat.getColor(context, R.color.padrao_WHITE)
+            );
+
+            sw_filter.setImageDrawable(drawable);
+            sw_filter.postInvalidate();
+        } else {
+            sw_filter.setImageDrawable(null);
+            sw_filter.setBackground(context.getDrawable(R.drawable.my_action_toogle_default));
+            Drawable drawable = DrawableCompat.wrap(
+                    ContextCompat.getDrawable(context, R.drawable.outline_wrong_location_24));
+            DrawableCompat.setTint(
+                    drawable.mutate(), ContextCompat.getColor(context, R.color.m3_namoa_secondary)
+            );
+
+            sw_filter.setImageDrawable(drawable);
+            sw_filter.postInvalidate();
+        }
+    }
+
 
     @Override
     protected void processCloseACT(String mLink, String mRequired) {
@@ -968,13 +985,11 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         mPresenter.onBackPressedClicked();
     }
 
-
+    Menu optionMenu;
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, 1, Menu.NONE, "");
-
-        menu.getItem(0).setIcon(getResources().getDrawable(R.drawable.ic_baseline_filter_alt_24));
-        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
-
+        getMenuInflater().inflate(R.menu.act047_main_menu, menu);
+        optionMenu = menu;
+        changeBadgeVisibility();
         return true;
     }
 
@@ -982,11 +997,11 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
-        if (item.getItemId() == 1) {
+        if (item.getItemId() == R.id.filter_next_os) {
             showFilterDialog();
+            return true;
         }
-
-        return true;
+        return false;
     }
 
     private boolean getSwitchState() {
@@ -1127,6 +1142,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
             filter.setPriorityFilter(typePriorityFilter);
             filter.setPriorityTypeFilter(priorityTypeFiltered);
             if (mPresenter.saveFilterDialog(filter, getSwitchState())) {
+                changeBadgeVisibility();
                 if (lv_services.getVisibility() == View.VISIBLE) lv_services.setSelection(0);
                 dialog.dismiss();
             }
@@ -1159,6 +1175,24 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         });
 
 
+    }
+
+    BadgeDrawable badgeDrawable;
+
+    @OptIn(markerClass = com.google.android.material.badge.ExperimentalBadgeUtils.class)
+    private void changeBadgeVisibility() {
+        NextOsFilter filter = mPresenter.getCheckboxFromPreference();
+        if (badgeDrawable == null) {
+            badgeDrawable = BadgeDrawable.create(this);
+        }
+        badgeDrawable.setTint(getResources().getColor(R.color.m3_namoa_extended_LaranjaObrigatorio_color));
+        if (!filter.isDefaultFilter()) {
+            badgeDrawable.setVisible(true);
+            BadgeUtils.attachBadgeDrawable(badgeDrawable, toolbar, R.id.filter_next_os);
+        } else {
+            badgeDrawable.setVisible(false);
+            BadgeUtils.detachBadgeDrawable(badgeDrawable, toolbar, R.id.filter_next_os);
+        }
     }
 
     String priorityTypeFiltered = "";
@@ -1344,5 +1378,11 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         return statusList;
     }
 
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return super.onSupportNavigateUp();
+    }
 }
 

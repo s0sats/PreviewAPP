@@ -14,13 +14,15 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.Act042SoExpressCellBinding
+import com.namoadigital.prj001.design.list.OnRememberListState
 import com.namoadigital.prj001.extensions.applyVisibilityIfSourceExists
 import com.namoadigital.prj001.model.SO_Pack_Express_Local
 import com.namoadigital.prj001.util.ToolBox_Inf
 
-class Act042SOExpressAdapter (
-    val soExpressList : ArrayList<SO_Pack_Express_Local>,
-    val hmAux_Trans: HMAux
+class Act042SOExpressAdapter(
+    val soExpressList: ArrayList<SO_Pack_Express_Local>,
+    val hmAux_Trans: HMAux,
+    val onRememberListState: OnRememberListState<SO_Pack_Express_Local>,
 ) : RecyclerView.Adapter<Act042SOExpressAdapter.MySOExpressVh>(), Filterable{
     //
     val soExpressListFiltered: MutableList<SO_Pack_Express_Local> = mutableListOf()
@@ -169,6 +171,7 @@ class Act042SOExpressAdapter (
                 soExpressListFiltered.clear()
                 soExpressListFiltered.addAll(results.values as Collection<SO_Pack_Express_Local>)
                 notifyDataSetChanged()
+                onRememberListState.dataChanged(results.values as ArrayList<SO_Pack_Express_Local>)
             }
         }
     }

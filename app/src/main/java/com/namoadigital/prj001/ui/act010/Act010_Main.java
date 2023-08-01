@@ -42,7 +42,7 @@ import com.namoadigital.prj001.dao.TkTicketTypeDao;
 import com.namoadigital.prj001.databinding.Act010MainBinding;
 import com.namoadigital.prj001.databinding.Act010MainContentBinding;
 import com.namoadigital.prj001.databinding.TicketCreationDialogBinding;
-import com.namoadigital.prj001.design.list.IOnRememberListState;
+import com.namoadigital.prj001.design.list.IOnRememberRecyclerView;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WSTicketCreation;
 import com.namoadigital.prj001.service.WS_Serial_Save;
@@ -369,7 +369,7 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
                         }
                         return null;
                     },
-                    new IOnRememberListState<>(binding.act010LvForm, binding.emptyListTextview)
+                    new IOnRememberRecyclerView<>(binding.act010LvForm, binding.emptyListTextview)
             );
 
             binding.act010LvForm.setLayoutManager(new LinearLayoutManager(this));

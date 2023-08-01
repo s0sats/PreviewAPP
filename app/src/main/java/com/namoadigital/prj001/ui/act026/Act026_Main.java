@@ -3,18 +3,24 @@ package com.namoadigital.prj001.ui.act026;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputLayout;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -24,6 +30,7 @@ import com.namoadigital.prj001.adapter.SO_Header_Adapter;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.design.list.IOnRememberListView;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act012.Act012_Main;
@@ -53,14 +60,24 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
     private String product_code;
     private String serial_id;
     //
-    private TextView tv_filter_lbl;
     private TextView tv_empty_state;
-    private SwitchCompat sw_filter;
     private MKEditTextNM mket_filter;
-    private Button btnNewOs;
+    private TextInputLayout filter_layout;
+    private MaterialButton btnNewOs;
+    private ConstraintLayout bottom_bar;
     private View lv_so_footer;
+    private ImageView zoneFilter;
     private MD_Product_Serial mdProductSerial;
     private int listSize;
+    private boolean applyZoneFilter = false;
+    private TextView tv_color;
+    private TextView tv_brand;
+    private TextView tv_model;
+    private TextView tv_serial;
+    private TextView tv_product;
+    private ImageView iconClass;
+
+    private ConstraintLayout layout_serial_header;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,6 +86,7 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //
         iniSetup();
         //
@@ -143,23 +161,51 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
         //
         lv_so = (ListView) findViewById(R.id.act026_lv_so);
 
-        if (hasNewOsFlow()) {
-            lv_so_footer = View.inflate(this, R.layout.act026_list_os_footer, null);
-            lv_so.addFooterView(lv_so_footer, null, false);
-            setBtnNewOs();
-        }
-
 
         //
-        tv_filter_lbl = (TextView) findViewById(R.id.act026_tv_filter_lbl);
-        tv_filter_lbl.setText(hmAux_Trans.get("only_avaliable_filter_lbl"));
         setTvEmptyState();
         //views.add(tv_filter_lbl);
         //
-        mket_filter = (MKEditTextNM) findViewById(R.id.act026_mket_filter);
-        mket_filter.setHint(hmAux_Trans.get("filter_hint"));
+        bottom_bar = findViewById(R.id.bottom_bar_layout);
         //
-        sw_filter = findViewById(R.id.act026_sw_filter);
+        mket_filter = (MKEditTextNM) findViewById(R.id.so_mket_filter);
+        filter_layout = findViewById(R.id.actTextLayout);
+        filter_layout.setHint(hmAux_Trans.get("filter_hint"));
+        //
+        zoneFilter = findViewById(R.id.main_zone_selection);
+        zoneFilter.setVisibility(View.VISIBLE);
+        //
+        tv_brand = findViewById(R.id.act026_tv_brand_val);
+        tv_model = findViewById(R.id.act026_tv_model_val);
+        tv_color = findViewById(R.id.act026_tv_color_val);
+        tv_serial = findViewById(R.id.serial_title);
+        tv_product = findViewById(R.id.product_description);
+        iconClass = findViewById(R.id.iconClassColor);
+        layout_serial_header = findViewById(R.id.layout_top_header_bar);
+
+        if (mdProductSerial != null) {
+            iconClass.setVisibility(mdProductSerial.getClass_color() == null || mdProductSerial.getClass_color().isEmpty() ? View.GONE : View.VISIBLE);
+            tv_serial.setVisibility(mdProductSerial.getSerial_id() == null || mdProductSerial.getSerial_id().isEmpty() ? View.GONE : View.VISIBLE);
+            tv_product.setVisibility(mdProductSerial.getProduct_desc() == null || mdProductSerial.getProduct_desc().isEmpty() ? View.GONE : View.VISIBLE);
+            tv_brand.setVisibility(mdProductSerial.getBrand_desc() == null || mdProductSerial.getBrand_desc().isEmpty() ? View.GONE : View.VISIBLE);
+            tv_model.setVisibility(mdProductSerial.getModel_desc() == null || mdProductSerial.getModel_desc().isEmpty() ? View.GONE : View.VISIBLE);
+            tv_color.setVisibility(mdProductSerial.getClass_color() == null || mdProductSerial.getClass_color().isEmpty() ? View.GONE : View.VISIBLE);
+
+            if (mdProductSerial.getClass_color() != null && !mdProductSerial.getClass_color().isEmpty()) {
+                iconClass.setColorFilter(Color.parseColor(mdProductSerial.getClass_color()));
+            }
+            tv_serial.setText(mdProductSerial.getSerial_id() == null || mdProductSerial.getSerial_id().isEmpty() ? "" : mdProductSerial.getSerial_id());
+            tv_product.setText(mdProductSerial.getProduct_desc() == null || mdProductSerial.getProduct_desc().isEmpty() ? "" : mdProductSerial.getProduct_desc());
+            tv_brand.setText(mdProductSerial.getBrand_desc() == null || mdProductSerial.getBrand_desc().isEmpty() ? "" : mdProductSerial.getBrand_desc());
+            tv_model.setText(mdProductSerial.getModel_desc() == null || mdProductSerial.getModel_desc().isEmpty() ? "" : "| " + mdProductSerial.getModel_desc());
+            tv_color.setText(mdProductSerial.getColor_desc() == null || mdProductSerial.getColor_desc().isEmpty() ? "" : "| " + mdProductSerial.getColor_desc());
+        }
+        layout_serial_header.setVisibility(tv_serial.getVisibility());
+
+        if (hasNewOsFlow()) {
+            bottom_bar.setVisibility(View.VISIBLE);
+            setBtnNewOs();
+        }
         //
         mPresenter.getSOListTotalCount(product_code, serial_id);
         //mPresenter.getSOList(product_code, serial_id, sw_filter.isChecked());
@@ -177,7 +223,7 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
     }
 
     private void setBtnNewOs() {
-        btnNewOs = (Button) findViewById(R.id.act026_os_list_btn_new_os);
+        btnNewOs = findViewById(R.id.btn_create_action);
         btnNewOs.setText(hmAux_Trans.get("btn_new_os"));
     }
 
@@ -304,14 +350,43 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
                 }
             });
         }
-        sw_filter.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                //mPresenter.getSOList(product_code, serial_id, isChecked);
-                setAvailableFilter(isChecked);
-            }
+
+
+        zoneFilter.setOnClickListener(view -> {
+            applyZoneFilter = !applyZoneFilter;
+            setIvMainUserSelection();
+            setAvailableFilter(applyZoneFilter);
+            applySearchFilter();
         });
     }
+
+
+    private void setIvMainUserSelection() {
+        if (applyZoneFilter) {
+            zoneFilter.setImageDrawable(null);
+            zoneFilter.setBackground(context.getDrawable(R.drawable.my_action_toogle_pressed));
+            Drawable drawable = DrawableCompat.wrap(
+                    ContextCompat.getDrawable(context, R.drawable.ic_location_on_24));
+            DrawableCompat.setTint(
+                    drawable.mutate(), ContextCompat.getColor(context, R.color.padrao_WHITE)
+            );
+
+            zoneFilter.setImageDrawable(drawable);
+            zoneFilter.postInvalidate();
+        } else {
+            zoneFilter.setImageDrawable(null);
+            zoneFilter.setBackground(context.getDrawable(R.drawable.my_action_toogle_default));
+            Drawable drawable = DrawableCompat.wrap(
+                    ContextCompat.getDrawable(context, R.drawable.outline_wrong_location_24));
+            DrawableCompat.setTint(
+                    drawable.mutate(), ContextCompat.getColor(context, R.color.m3_namoa_secondary)
+            );
+
+            zoneFilter.setImageDrawable(drawable);
+            zoneFilter.postInvalidate();
+        }
+    }
+
 
     private void setAvailableFilter(boolean isChecked) {
         if (mAdapter != null) {
@@ -330,6 +405,8 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
     public void loadSOList(List<HMAux> soList) {
         String configType = product_code == null || serial_id == null ? SO_Header_Adapter.CONFIG_TYPE_EXIBITION_FULL : SO_Header_Adapter.CONFIG_TYPE_EXIBITION_SO;
         //
+        setTitleLanguage(" (" + soList.size() + " / " + soList.size() + ")");
+        //
         mAdapter = new SO_Header_Adapter(
                 context,
                 soList,
@@ -338,7 +415,10 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
                 R.layout.so_header_cell,
                 mket_filter != null ? mket_filter.getText().toString().trim() : null,
                 list -> {
-                    tv_empty_state.setVisibility(list.isEmpty() ? View.VISIBLE : View.GONE);
+                    setTitleLanguage(" (" + list.size() + " / " + soList.size() + ")");
+                    new IOnRememberListView<HMAux>(
+                            lv_so, tv_empty_state
+                    ).dataChanged(list);
                 }
         );
         //
@@ -354,7 +434,7 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
         }
         lv_so.setAdapter(mAdapter);
         //LUCHE - 01/11/2019
-        setAvailableFilter(sw_filter.isChecked());
+        setAvailableFilter(applyZoneFilter);
     }
 
     @Override
@@ -432,7 +512,7 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
         mPresenter.getSOListTotalCount(product_code, serial_id);
         //mPresenter.getSOList(product_code, serial_id, sw_filter.isChecked());
         mPresenter.getSOList(product_code, serial_id, false);
-        setAvailableFilter(sw_filter.isChecked());
+        setAvailableFilter(applyZoneFilter);
         iniUIFooter();
     }
 
@@ -442,6 +522,17 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
         //super.onBackPressed();
         mPresenter.onBackPressedClicked();
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return true;
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return super.onSupportNavigateUp();
     }
 
     @Override

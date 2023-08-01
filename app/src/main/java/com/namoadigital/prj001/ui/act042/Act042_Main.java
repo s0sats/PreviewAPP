@@ -4,6 +4,7 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.ACT042;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -15,12 +16,14 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.textfield.TextInputLayout;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act042SOExpressAdapter;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
+import com.namoadigital.prj001.design.list.IOnRememberRecyclerView;
 import com.namoadigital.prj001.model.SO_Pack_Express_Local;
 import com.namoadigital.prj001.ui.act014.Act014_Main;
 import com.namoadigital.prj001.ui.act040.Act040_Main;
@@ -39,9 +42,10 @@ public class Act042_Main extends Base_Activity {
     private Act042SOExpressAdapter mAdapter;
     private MKEditTextNM mket_filter;
     private Bundle bundle;
-    private TextView tv_placeholder;
+    private TextView tv_emptylist;
     private ProgressBar pb_list;
     private ViewFlipper vf_main;
+    private TextInputLayout filter_layout;
 
 
     @Override
@@ -51,6 +55,7 @@ public class Act042_Main extends Base_Activity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //
         iniSetup();
         //
@@ -76,7 +81,7 @@ public class Act042_Main extends Base_Activity {
         List<String> transList = new ArrayList<String>();
         transList.add("act042_title");
         transList.add("filter_hint");
-        transList.add("alert_get_express_so_error");
+        transList.add("lbl_os_express_empty");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -103,23 +108,24 @@ public class Act042_Main extends Base_Activity {
         //
         rv_sos = findViewById(R.id.act042_rv_sos);
         pb_list = findViewById(R.id.act042_pb_list);
-        tv_placeholder = findViewById(R.id.act042_tv_placeholder);
+        tv_emptylist = findViewById(R.id.act042_tv_emptylist);
         vf_main = findViewById(R.id.act042_vf_main);
         //
         vf_main.setDisplayedChild(0);
         //
-        mket_filter = findViewById(R.id.act042_mket_filter_desc);
-        mket_filter.setHint(hmAux_Trans.get("filter_hint"));
-        tv_placeholder.setText(hmAux_Trans.get("alert_get_express_so_error"));
+        mket_filter = findViewById(R.id.so_mket_filter);
+        filter_layout = findViewById(R.id.actTextLayout);
+        filter_layout.setHint(hmAux_Trans.get("filter_hint"));
+        tv_emptylist.setText(hmAux_Trans.get("lbl_os_express_empty"));
         //
         viewModel.getSo_express_list().observe(this, new Observer<ArrayList<SO_Pack_Express_Local>>() {
             @Override
             public void onChanged(ArrayList<SO_Pack_Express_Local> so_pack_express_locals) {
 
-                if(so_pack_express_locals != null) {
+                if (so_pack_express_locals != null) {
                     vf_main.setDisplayedChild(1);
                     loadSoExpress(so_pack_express_locals);
-                }else{
+                } else {
                     vf_main.setDisplayedChild(2);
                 }
             }
@@ -150,7 +156,6 @@ public class Act042_Main extends Base_Activity {
         //
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
-        setTitleLanguage();
         setFooter();
 
     }
@@ -183,14 +188,23 @@ public class Act042_Main extends Base_Activity {
         }
     }
 
+    private ArrayList<SO_Pack_Express_Local> so_pack_express_localArrayList;
     public void loadSoExpress(ArrayList<SO_Pack_Express_Local> so_express_list) {
         //
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
         rv_sos.setLayoutManager(linearLayoutManager);
         //
+        setTitleLanguage(" (" + so_express_list.size() + " / " + so_express_list.size() + ")");
         mAdapter = new Act042SOExpressAdapter(
                 so_express_list,
-                hmAux_Trans
+                hmAux_Trans,
+                list -> {
+                    new IOnRememberRecyclerView<SO_Pack_Express_Local>(
+                            rv_sos, tv_emptylist
+                    ).dataChanged(list);
+                    setTitleLanguage(" (" + list.size() + " / " + so_express_list.size() + ")");
+                }
+
         );
         //
         rv_sos.setAdapter(mAdapter);
@@ -224,5 +238,16 @@ public class Act042_Main extends Base_Activity {
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return true;
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return super.onSupportNavigateUp();
     }
 }

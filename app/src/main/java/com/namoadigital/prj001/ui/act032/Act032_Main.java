@@ -1,15 +1,21 @@
 package com.namoadigital.prj001.ui.act032;
 
+import static com.namoadigital.prj001.R.layout.act032_main;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
+import android.view.Menu;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+
+import com.google.android.material.textfield.TextInputLayout;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
@@ -18,6 +24,7 @@ import com.namoadigital.prj001.adapter.SO_Header_Adapter;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.design.list.IOnRememberListView;
 import com.namoadigital.prj001.ui.act014.Act014_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
@@ -27,8 +34,6 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.namoadigital.prj001.R.layout.act032_main;
 
 /**
  * Created by neomatrix on 03/07/17.
@@ -42,11 +47,13 @@ public class Act032_Main extends Base_Activity_Frag implements Act032_Main_View 
 
     private Act032_Main_Presenter mPresenter;
     private ListView lv_so;
+    private TextView tv_empty_list;
     private SO_Header_Adapter mAdapter;
     private String requesting_act;
     private String product_code;
     private String serial_id;
     private MKEditTextNM mket_filter;
+    private TextInputLayout filter_layout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,6 +62,7 @@ public class Act032_Main extends Base_Activity_Frag implements Act032_Main_View 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //
         iniSetup();
         //
@@ -90,6 +98,7 @@ public class Act032_Main extends Base_Activity_Frag implements Act032_Main_View 
         transList.add("alert_no_so_founded_ttl");
         transList.add("alert_no_so_founded_msg");
         transList.add("filter_hint");
+        transList.add("lbl_empty_list");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -122,8 +131,16 @@ public class Act032_Main extends Base_Activity_Frag implements Act032_Main_View 
         //
         lv_so = (ListView) findViewById(R.id.act032_lv_so);
         //
-        mket_filter = (MKEditTextNM) findViewById(R.id.act032_mket_filter);
-        mket_filter.setHint(hmAux_Trans.get("filter_hint"));
+        tv_empty_list = findViewById(R.id.act032_tv_emptylist);
+        tv_empty_list.setText(hmAux_Trans.get("lbl_empty_list"));
+        //
+        mket_filter = (MKEditTextNM) findViewById(R.id.so_mket_filter);
+
+        filter_layout = findViewById(R.id.actTextLayout);
+        filter_layout.setHint(hmAux_Trans.get("filter_hint"));
+        //
+        mAct_Title = Constant.ACT032 + "_" + "title";
+        //
         //
         mPresenter.getSOList(product_code, serial_id);
     }
@@ -154,7 +171,6 @@ public class Act032_Main extends Base_Activity_Frag implements Act032_Main_View 
         //
         mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
         mAct_Info = Constant.ACT032;
-        mAct_Title = Constant.ACT032 + "_" + "title";
         //
         HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
         mSite_Value = mFooter.get(Constant.FOOTER_SITE);
@@ -162,7 +178,7 @@ public class Act032_Main extends Base_Activity_Frag implements Act032_Main_View 
         //
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
-        setTitleLanguage();
+        ///setTitleLanguage();
         setFooter();
         //
     }
@@ -211,12 +227,23 @@ public class Act032_Main extends Base_Activity_Frag implements Act032_Main_View 
     public void loadSOList(List<HMAux> soList) {
         String configType = product_code == null || serial_id == null ? SO_Header_Adapter.CONFIG_TYPE_EXIBITION_FULL : SO_Header_Adapter.CONFIG_TYPE_EXIBITION_SO;
         //
+        setTitleLanguage(" (" + soList.size() + " / " + soList.size() + ")");
+        //
         mAdapter = new SO_Header_Adapter(
                 context,
                 soList,
                 configType,
                 R.layout.so_header_cell,
-                R.layout.so_header_cell
+                R.layout.so_header_cell,
+                mket_filter.getText().toString().trim(),
+                list -> {
+                    setTitleLanguage(" (" + list.size() + " / " + soList.size() + ")");
+                    new IOnRememberListView<HMAux>(
+                            lv_so, tv_empty_list
+                    ).dataChanged(list);
+                }
+
+
         );
         //
         lv_so.setAdapter(mAdapter);
@@ -253,11 +280,23 @@ public class Act032_Main extends Base_Activity_Frag implements Act032_Main_View 
     public void onBackPressed() {
         //super.onBackPressed();
         mPresenter.onBackPressedClicked();
+    }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return true;
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return super.onSupportNavigateUp();
     }
 
     @Override
     protected void processNotification_close(String mValue, String mActivity) {
         //super.processNotification_close(mValue, mActivity);
     }
+
+
 }

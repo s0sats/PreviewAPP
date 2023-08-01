@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/linearLayout2"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/m3_namoa_surface2"
+    android:gravity="start"
+    android:orientation="vertical"
+    android:paddingHorizontal="10dp"
+    android:paddingBottom="4dp"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/actTextLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:startIconDrawable="@drawable/ic_search_black_24dp"
+            app:startIconTint="@color/m3_namoa_onSurfaceVariant"
+            style="@style/NamoaTheme3.TextInputLayout.Outlined"
+            app:placeholderTextColor="@color/m3_namoa_onSurface"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/main_zone_selection"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                android:id="@+id/so_mket_filter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@drawable/edittext_theme_text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <ImageView
+            android:id="@+id/main_zone_selection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/my_action_toogle_default_inset"
+            android:layout_margin="4dp"
+            android:padding="12dp"
+            android:visibility="gone"
+            android:src="@drawable/outline_wrong_location_24"
+            app:layout_constraintBottom_toBottomOf="@+id/actTextLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/actTextLayout" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

@@ -11,6 +11,131 @@
     tools:context=".ui.act026.Act026_Main"
     tools:showIn="@layout/act026_main">
 
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/m3_namoa_surface2"
+        android:gravity="start"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_top_header_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="4dp"
+            android:paddingHorizontal="10dp"
+            android:visibility="gone"
+            tools:ignore="UseCompoundDrawables">
+
+            <ImageView
+                android:id="@+id/iconClassColor"
+                android:layout_width="24dp"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_baseline_arrow_right_24"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@+id/product_description"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/serial_title"
+                style="@style/TextAppearance.Material3.TitleLarge"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:textColor="@color/m3_namoa_onSurface"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/iconClassColor"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/product_description"
+                style="@style/TextAppearance.Material3.BodySmall"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/m3_namoa_onSurfaceVariant"
+                android:textStyle="normal"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="@+id/serial_title"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/serial_title" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/product_description">
+
+                <TextView
+                    android:id="@+id/act026_tv_brand_val"
+                    style="@style/TextAppearance.Material3.BodySmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxEms="5"
+                    android:maxLines="1"
+                    android:textColor="@color/m3_namoa_onSurfaceVariant"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/act026_tv_model_val"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Marca" />
+
+                <TextView
+                    android:id="@+id/act026_tv_model_val"
+                    style="@style/TextAppearance.Material3.BodySmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:ellipsize="end"
+                    android:maxEms="5"
+                    android:maxLines="1"
+                    android:textColor="@color/m3_namoa_onSurfaceVariant"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/act026_tv_color_val"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/act026_tv_brand_val"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Modelo" />
+
+                <TextView
+                    android:id="@+id/act026_tv_color_val"
+                    style="@style/TextAppearance.Material3.BodySmall"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="@color/m3_namoa_onSurfaceVariant"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/act026_tv_model_val"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Cor" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <include
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            layout="@layout/top_search_os_layout" />
+
+    </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -20,48 +145,6 @@
         android:orientation="vertical"
         android:scrollbars="vertical">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="2dp">
-
-            <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-                android:id="@+id/act026_mket_filter"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:paddingLeft="10dp"
-                app:mBARCODE="false"
-                app:mNFC="false"
-                app:mOCR="false" />
-
-            <TextView
-                android:id="@+id/act026_tv_filter_lbl"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Filtrar "
-                android:textSize="@dimen/font_size_title_md"
-                android:textStyle="bold"
-                android:visibility="gone" />
-
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/act026_sw_filter"
-                android:layout_width="wrap_content"
-                android:layout_height="20dp"
-                android:checked="true"
-                android:textSize="@dimen/font_size_font_16"
-                android:thumb="@drawable/namoa_switch_states"
-                app:layout_constraintBottom_toBottomOf="@id/tv_os_machine_lbl"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@id/br_switch"
-                app:layout_constraintTop_toTopOf="@id/tv_os_machine_lbl"
-                app:thumbTint="@color/namoa_switch_color_states"
-                app:trackTint="@color/namoa_switch_track_color_states" />
-
-        </LinearLayout>
-
         <TextView
             android:id="@+id/act026_tv_empty_state"
             android:layout_width="match_parent"
@@ -69,19 +152,54 @@
             android:gravity="center"
             android:visibility="gone"
             android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-            android:padding="25dp"
-            />
+            android:padding="25dp" />
 
         <ListView
             android:id="@+id/act026_lv_so"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
             android:divider="@color/padrao_TRANSPARENT"
-            android:dividerHeight="4dp"
-            android:padding="5dp"/>
+            android:paddingTop="5dp"
+            android:dividerHeight="4dp" />
 
     </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bottom_bar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/m3_namoa_surface2"
+        android:gravity="start"
+        android:orientation="horizontal"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="10dp"
+        app:layout_constraintBottom_toTopOf="@id/ui_footer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:visibility="gone">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_create_action"
+            style="@style/Widget.Material3.Button.Icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:gravity="center"
+            tools:text="Nova Ação"
+            android:textAlignment="center"
+            android:textColor="@color/m3_namoa_surface2"
+            android:visibility="visible"
+            app:backgroundTint="@color/m3_namoa_primary"
+            app:icon="@drawable/ic_add_black_24px"
+            app:iconGravity="textStart"
+            app:iconTint="@color/m3_namoa_surface2"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:strokeColor="@color/m3_namoa_primary"
+            app:strokeWidth="0dp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <include layout="@layout/footer_base" />
 

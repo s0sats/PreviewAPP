@@ -31,7 +31,7 @@ import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.databinding.Act009MainBinding;
 import com.namoadigital.prj001.databinding.Act009MainContentBinding;
-import com.namoadigital.prj001.design.list.IOnRememberListState;
+import com.namoadigital.prj001.design.list.IOnRememberRecyclerView;
 import com.namoadigital.prj001.model.MyActionFilterParam;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
 import com.namoadigital.prj001.ui.act010.Act010_Main;
@@ -268,7 +268,7 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
                         callAct010(context);
                         return null;
                     },
-                    new IOnRememberListState<>(binding.act009LvTags, binding.emptyListTextview)
+                    new IOnRememberRecyclerView<>(binding.act009LvTags, binding.emptyListTextview)
             );
 
             binding.act009LvTags.setLayoutManager(new LinearLayoutManager(this));
