@@ -22,7 +22,7 @@ class MeMeasureTp(
     @SerializedName("restriction_decimal") val restrictionDecimal: Int? = 4,
     @SerializedName("value_cycle_size") val valueCycleSize: Float?,
     @SerializedName("cycle_tolerance") val cycleTolerance: Int?,
-    @SerializedName("without_measure") val without_measure: Int
+    @SerializedName("without_measure") val without_measure: Int = 0
 ) {
 
     fun isMeasureRestrictionInvalid(
