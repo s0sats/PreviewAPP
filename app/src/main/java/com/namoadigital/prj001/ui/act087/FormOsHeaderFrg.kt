@@ -451,6 +451,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
 
                 }
                 mainMeasureTp?.let { measure->
+                    clMainMeasure.visibility = if(measure.without_measure == 0 ) View.VISIBLE else View.GONE
                     mketOsMainMeasureVal.setmDecimal(measure.restrictionDecimal?:ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT)
                 }
             }
@@ -464,7 +465,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 formOsHeader.last_measure_value,
                 formOsHeader.last_measure_date
             )
-            clLastMeasure.visibility = if(!tvOsLastMeasureVal.text.toString().isNullOrEmpty()) View.VISIBLE else View.GONE
+            clLastMeasure.visibility = if(!tvOsLastMeasureVal.text.toString().isNullOrEmpty() && mainMeasureTp != null && mainMeasureTp?.without_measure == 0) View.VISIBLE else View.GONE
         }
     }
 
