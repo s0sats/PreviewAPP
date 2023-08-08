@@ -132,6 +132,7 @@ public class Act001_Main_Presenter_Impl implements Act001_Main_Presenter {
             Constant.WS_PREFIX = toEnvironmentType(environmentSelected).getString();
             ConstantBase.DEVELOPMENT_TYPE = toEnvironmentType(environmentSelected).getString();
         }
+        Constant.refreshUrl();
     }
 
 
