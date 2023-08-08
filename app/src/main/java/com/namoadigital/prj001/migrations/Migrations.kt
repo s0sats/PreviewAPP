@@ -4,6 +4,7 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import com.namoadigital.prj001.dao.GE_Custom_FormDao
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
+import com.namoadigital.prj001.dao.MeMeasureTpDao
 import com.namoadigital.prj001.dao.TK_TicketDao
 import com.namoadigital.prj001.database.MigrationSQLite
 
@@ -144,6 +145,18 @@ val MigrationV5 = object : MigrationSQLite(5, 6) {
         //
         if (!isFieldExist(db, GE_Custom_FormDao.TABLE, GE_Custom_FormDao.BLOCK_SPONTANEOUS_IN_TICKET)) {
             db.execSQL(""" ALTER TABLE [${GE_Custom_FormDao.TABLE}] ADD [${GE_Custom_FormDao.BLOCK_SPONTANEOUS_IN_TICKET}] int not null DEFAULT 0;""".trimIndent())
+        }
+        //
+    }
+
+}
+
+val MigrationV6 = object : MigrationSQLite(6, 7) {
+
+    override fun migrate(db: SQLiteDatabase) {
+        //
+        if (!isFieldExist(db, MeMeasureTpDao.TABLE, MeMeasureTpDao.WITHOUT_MEASURE)) {
+            db.execSQL(""" ALTER TABLE [${MeMeasureTpDao.TABLE}] ADD [${MeMeasureTpDao.WITHOUT_MEASURE}] int not null DEFAULT 0;""".trimIndent())
         }
         //
     }

@@ -39,6 +39,7 @@ class MeMeasureTpDao(
         const val RESTRICTION_DECIMAL = "restriction_decimal"
         const val VALUE_CYCLE_SIZE = "value_cycle_size"
         const val CYCLE_TOLERANCE = "cycle_tolerance"
+        const val WITHOUT_MEASURE = "without_measure"
 
     }
 
@@ -282,6 +283,9 @@ class MeMeasureTpDao(
                     put(RESTRICTION_DECIMAL, meMeasureTp.restrictionDecimal)
                     put(VALUE_CYCLE_SIZE, meMeasureTp.valueCycleSize)
                     put(CYCLE_TOLERANCE, meMeasureTp.cycleTolerance)
+                    if (meMeasureTp.without_measure > -1) {
+                        put(WITHOUT_MEASURE, meMeasureTp.without_measure)
+                    }
                 }
             }
             return contentValues
@@ -304,7 +308,8 @@ class MeMeasureTpDao(
                         getDoubleOrNull(getColumnIndex(RESTRICTION_MAX)),
                         getIntOrNull(getColumnIndex(RESTRICTION_DECIMAL)),
                         getFloatOrNull(getColumnIndex(VALUE_CYCLE_SIZE)),
-                        getIntOrNull(getColumnIndex(CYCLE_TOLERANCE))
+                        getIntOrNull(getColumnIndex(CYCLE_TOLERANCE)),
+                        getInt(getColumnIndex(WITHOUT_MEASURE))
                     )
                 }
             }

@@ -28,6 +28,7 @@ import com.namoadigital.prj001.databinding.FormOsHeaderFrgErrorDialogBinding
 import com.namoadigital.prj001.extensions.setAsRequired
 import com.namoadigital.prj001.extensions.setPrefix
 import com.namoadigital.prj001.model.*
+import com.namoadigital.prj001.ui.act011.FormOsHeaderFrgMeasureInteraction
 import com.namoadigital.prj001.ui.act011.frags.Act011BaseFrg
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ConstantBaseApp.ONE_DAY_IN_MILLISECOND
@@ -44,6 +45,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
 
     private var isOsCreation: Boolean = false
     private lateinit var formOsHeader: GeOs
+    private var measureTpListener: FormOsHeaderFrgMeasureInteraction? = null
     private var mCreationListener: FormOsHeaderFrgCreationInteraction? = null
     private var orderTypeList: ArrayList<MdOrderType> = arrayListOf()
     private val spinnerAdapter: ArrayAdapter<String> by lazy{
@@ -433,7 +435,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             with(binding){
                 clMainMeasure.visibility = if(formOsHeader.measure_tp_code != null) View.VISIBLE else View.GONE
                 formOsHeader.measure_tp_code?.let{
-                    mainMeasureTp = mCreationListener?.getMeasure(it)
+                    mainMeasureTp = mCreationListener?.getMeasure(it) ?: measureTpListener?.getMeasure(customerCode = formOsHeader.customer_code, it)
                 }
                 formOsHeader.measure_tp_desc?.let{
                     tvOsMainMeasureLbl.text = it
@@ -449,11 +451,38 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                     mketOsMainMeasureVal.isEnabled = isOsCreation
                     mketOsMainMeasureVal.setmBARCODE(isOsCreation)
 
+                }?: run {
+                    if(mainMeasureTp?.without_measure == 1 ) {
+                        mketOsMainMeasureVal.setText(
+                            formOsHeader.last_cycle_value?.let {
+                                ToolBox_Inf.convertFloatToBigDecimalString(
+                                    it,
+                                    true
+                                )
+                            }?:ToolBox_Inf.convertFloatToBigDecimalString(
+                                0f,
+                                true
+                            )
+                        )
+                    }
                 }
                 mainMeasureTp?.let { measure->
+                    checkWithoutMeasure(measure)
                     mketOsMainMeasureVal.setmDecimal(measure.restrictionDecimal?:ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT)
                 }
             }
+    }
+
+    private fun FormOsHeaderFrgBinding.checkWithoutMeasure(measure: MeMeasureTp) {
+        if (measure.without_measure == 0) {
+            clMainMeasure.visibility = View.VISIBLE
+            tvOsMainMeasureLbl.visibility = View.VISIBLE
+            mketOsMainMeasureVal.visibility = View.VISIBLE
+        } else {
+            clMainMeasure.visibility = View.GONE
+            tvOsMainMeasureLbl.visibility = View.GONE
+            mketOsMainMeasureVal.visibility = View.GONE
+        }
     }
 
     private fun iniLastMeasureInfo() {
@@ -464,7 +493,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 formOsHeader.last_measure_value,
                 formOsHeader.last_measure_date
             )
-            clLastMeasure.visibility = if(!tvOsLastMeasureVal.text.toString().isNullOrEmpty()) View.VISIBLE else View.GONE
+            clLastMeasure.visibility = if(!tvOsLastMeasureVal.text.toString().isNullOrEmpty() && mainMeasureTp != null && mainMeasureTp?.without_measure == 0) View.VISIBLE else View.GONE
         }
     }
 
@@ -897,7 +926,9 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if(context is FormOsHeaderFrgCreationInteraction){
+        if(context is FormOsHeaderFrgMeasureInteraction){
+            measureTpListener = context
+        }else if(context is FormOsHeaderFrgCreationInteraction){
             mCreationListener = context
         } else if (isOsCreation){
             //Se criação e interface não definida, solta exception

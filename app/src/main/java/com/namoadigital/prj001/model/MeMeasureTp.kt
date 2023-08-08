@@ -21,7 +21,8 @@ class MeMeasureTp(
     @SerializedName("restriction_max") val restrictionMax: Double?,
     @SerializedName("restriction_decimal") val restrictionDecimal: Int? = 4,
     @SerializedName("value_cycle_size") val valueCycleSize: Float?,
-    @SerializedName("cycle_tolerance") val cycleTolerance: Int?
+    @SerializedName("cycle_tolerance") val cycleTolerance: Int?,
+    @SerializedName("without_measure") val without_measure: Int = 0
 ) {
 
     fun isMeasureRestrictionInvalid(
@@ -49,7 +50,8 @@ class MeMeasureTp(
         measureDate: String?
     ): MeasureFF.MeasureValidationReturn {
         val consideredLastMeasureValue = lastMeasureValue?.roundByRestrictionMeasure(restrictionDecimal?:ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT)
-        if(bypassMinValidation){
+        if(bypassMinValidation
+            || without_measure == 1){
             return MeasureFF.MeasureValidationReturn(true)
         }
          return when (this.restrictionType) {

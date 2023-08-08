@@ -168,6 +168,7 @@ import java.util.Map;
 public class Act011_Main extends Base_Activity
         implements
         Act011_Main_View,
+        FormOsHeaderFrgMeasureInteraction,
         Act011BaseFrgInteractionNavegation,
         Act011FrgFFInteraction,
         InspectionListFragmentInteraction,
@@ -2399,6 +2400,12 @@ public class Act011_Main extends Base_Activity
     @Override
     public AcessoryFormView getObjectView(int position) {
         return acessoryFormViews.get(position);
+    }
+
+    @Nullable
+    @Override
+    public MeMeasureTp getMeasure(long customerCode, int measureCode) {
+        return mPresenter.getMeasureTp(customerCode, measureCode);
     }
 
     //TODO APAGAR APPOS TESTES FINAL
