@@ -142,6 +142,7 @@ import com.namoadigital.prj001.ui.act011.frags.InspectionListFragmentInteraction
 import com.namoadigital.prj001.ui.act022.Act022_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.ui.act070.Act070_Main;
+import com.namoadigital.prj001.ui.act081.Act081_Main;
 import com.namoadigital.prj001.ui.act083.Act083_Main;
 import com.namoadigital.prj001.ui.act084.Act084Main;
 import com.namoadigital.prj001.ui.act086.Act086Main;
@@ -1039,6 +1040,8 @@ public class Act011_Main extends Base_Activity
      * - 0 Serial deve ser informdo
      * LUCHE - 28/08/2020
      *  Modificado metodo, adicionando condição de form NÃO TER SIDO ORIDINADO por um ticket
+     * BARRIONUEVO - 28/08/2020
+     *  Modificado metodo, Permitindo para forms espontaneos do ticket.
      * @return
      */
     @Override
@@ -1050,7 +1053,7 @@ public class Act011_Main extends Base_Activity
                 && serial_id != null
                 && !serial_id.isEmpty()
                 //LUCHE - 28/08/2020
-                && !mPresenter.isFormCreateByTicket(formLocal)
+                && (!mPresenter.isFormCreateByTicket(formLocal) || isOffHandForm)
         ) {
             return true;
         }
@@ -2782,7 +2785,7 @@ public class Act011_Main extends Base_Activity
          */
         canSave = false;
         //LUCHE - 31/08/2020
-        if(mPresenter.isaTicketFlowForm()){
+        if(mPresenter.isaTicketFlowForm() && !finalizeNewFlow){
             callAct070();
             return;
         }
@@ -2793,7 +2796,11 @@ public class Act011_Main extends Base_Activity
         }
         if (finalizeNewFlow) {
             if (mPresenter.checkNFormExists(formLocal)) {
-                callAct006(context,finalizeNewFlow);
+                if(isOffHandForm && !mPresenter.isFormTicketKanban(mTicket_prefix, mTicket_code)){
+                    callAct081();
+                }else {
+                    callAct006(context, finalizeNewFlow);
+                }
             } else {
                 finalizeNewFlow = false;
                 //
@@ -2953,6 +2960,34 @@ public class Act011_Main extends Base_Activity
         //
         mIntent.putExtras(bundle);
         startActivity(mIntent);
+        finish();
+    }
+
+    public void callAct081() {
+        Intent intent = new Intent(context, Act081_Main.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, requestingAct);
+        if (ConstantBaseApp.ACT035.equals(requestingAct)) {
+            bundle.putString(CH_RoomDao.ROOM_CODE, room_code);
+        }
+        //LUCHE - 20/05/2021
+        if (ConstantBaseApp.ACT083.equals(requestingAct)) {
+            bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT070);
+        }
+        //
+        if(mPresenter.setForceSentByForm(formData.getCustomer_code(),formData.getCustom_form_type(),formData.getCustom_form_code(),formData.getCustom_form_version(), (int) formData.getCustom_form_data())){
+            bundle.putBoolean(Act070_Main.PARAM_FORCE_SEND_BY_FORM_EXEC,true);
+        }
+        //
+        bundle.putString(
+                ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
+                bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT005)
+        );
+        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, ToolBox_Inf.getMyActionFilterParam(bundle));
+        intent.putExtras(bundle);
+        //
+        startActivity(intent);
         finish();
     }
 
