@@ -14,7 +14,7 @@ import android.text.style.ForegroundColorSpan;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,9 +22,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -229,7 +226,32 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         //aponta pra produção ou desenvolvimento
 
         tv_version.setText("v" + Constant.PRJ001_VERSION);
+        selectEnvironmentDev.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
 
+                TextView textView = view.findViewById(R.id.text1);
+                SpannableString item = (SpannableString) adapterView.getSelectedItem();
+
+                SpannableString spannableString = new SpannableString(item);
+                int textColor = Color.BLACK;
+
+
+                if (pos == 0) {
+                    textColor = Color.RED;
+                } else if (pos == 1) {
+                    textColor = Color.parseColor("#ccaf14");
+                }
+
+                spannableString.setSpan(new ForegroundColorSpan(textColor), 0, item.length(), 0);
+                textView.setText(spannableString);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
     }
 
     private void checkDevelopmentMode() {
@@ -251,32 +273,9 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         SpannableString spannableStringHomo = new SpannableString(homoEnv);
         spannableStringHomo.setSpan(new ForegroundColorSpan(Color.parseColor("#ccaf14")), 0, homoEnv.length(), 0);
         SpannableString[] spinnerOptions = {spannableStringDev, spannableStringHomo};
-        ArrayAdapter<SpannableString> adapter = new ArrayAdapter<SpannableString>(this, R.layout.form_os_header_frg_spinner_item, spinnerOptions) {
 
-            @NonNull
-            @Override
-            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                TextView textView = view.findViewById(R.id.text1);
-                SpannableString item = getItem(position);
-
-                SpannableString spannableString = new SpannableString(item);
-                int textColor = Color.BLACK;
-
-
-                if (position == 0) {
-                    textColor = Color.RED;
-                } else if (position == 1) {
-                    textColor = Color.parseColor("#ccaf14");
-                }
-
-                spannableString.setSpan(new ForegroundColorSpan(textColor), 0, item.length(), 0);
-                textView.setText(spannableString);
-
-
-                return view;
-            }
-        };
+        ArrayAdapter<SpannableString> adapter = new ArrayAdapter<SpannableString>(this, R.layout.form_os_header_frg_spinner_item, spinnerOptions);
+        adapter.setDropDownViewResource(R.layout.form_os_header_frg_spinner_item);
         selectEnvironmentDev.setAdapter(adapter);
         if (type != EnvironmentType.NULL) {
             selectEnvironmentDev.setSelection(type == EnvironmentType.DEVELOPMENT ? 0 : 1);
