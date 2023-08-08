@@ -4,23 +4,34 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.SEND_TO_STORE;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_NFC;
 import com.namoadigital.prj001.BuildConfig;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.core.data.domain.model.EnvironmentType;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -43,6 +54,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
     private Button btn_login;
     private TextView tv_dev_db;
     private TextView tv_version;
+    private Spinner selectEnvironmentDev;
 
     private Act001_Main_Presenter mPresenter;
 
@@ -51,6 +63,8 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
     private String mNFC = "";
     private LinearLayout ll_main;
     private ImageView iv_main;
+
+    private String wsProcess;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +96,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         if (!isTaskRoot()) {
             finish();
             return;
-        }else {
+        } else {
             SERVICE_TYPE = "LOGIN";
             //
             initVars();
@@ -90,28 +104,28 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
             removeDeprecatedPreferences();
             //
             recoverIntentsInfo();
+            mPresenter.checkEnvironmentDevelopment();
             mPresenter.checkLogin();
         }
     }
 
     /**
      * LUCHE - 10/01/2020
-     *
+     * <p>
      * Criado metodo para remover as preferencias obsoletas.
-     *
+     * <p>
      * LUCHE - 06/02/2020
      * Add remove da preferencia PHONE_UUID_CODE
-     *
      */
     private void removeDeprecatedPreferences() {
         ToolBox_Con.removePreference(
-            context,
-            ConstantBaseApp.PROFILE_PRJ001_PRODUCT_SERIAL_FORCE_NOT_SHOW_SERIAL_INFO
+                context,
+                ConstantBaseApp.PROFILE_PRJ001_PRODUCT_SERIAL_FORCE_NOT_SHOW_SERIAL_INFO
         );
         //
         ToolBox_Con.removePreference(
-            context,
-            ConstantBaseApp.PHONE_UUID_CODE
+                context,
+                ConstantBaseApp.PHONE_UUID_CODE
         );
     }
 
@@ -126,13 +140,14 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         //Chama metodo que cancela os alarms que eram usados antes do WorkManager.
         ToolBox_Inf.cancelAlarmsTarget21(context);
 
-        ll_main =  findViewById(R.id.ll_main);
-        iv_main =  findViewById(R.id.iv_main);
+        ll_main = findViewById(R.id.ll_main);
+        iv_main = findViewById(R.id.iv_main);
         mk_login = (MKEditTextNM) findViewById(R.id.act001_mk_login);
         et_password = (EditText) findViewById(R.id.act001_et_password);
         btn_login = (Button) findViewById(R.id.act001_btn_login);
         tv_dev_db = (TextView) findViewById(R.id.act001_tv_dev_db);
         tv_version = (TextView) findViewById(R.id.act001_tv_version);
+        selectEnvironmentDev = findViewById(R.id.select_environment_dev);
         //
         setSplashScreen(true);
         //
@@ -148,12 +163,13 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
 //        mPresenter.checkLogin();
         //
     }
+
     @Override
     public void setSplashScreen(boolean showIcon) {
-        if(showIcon){
+        if (showIcon) {
             iv_main.setVisibility(View.VISIBLE);
             ll_main.setVisibility(View.GONE);
-        }else{
+        } else {
             iv_main.setVisibility(View.GONE);
             ll_main.setVisibility(View.VISIBLE);
         }
@@ -163,7 +179,7 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             boolean sendToStore = bundle.getBoolean(SEND_TO_STORE);
-            if(sendToStore){
+            if (sendToStore) {
                 callAppStore();
             }
         }
@@ -191,12 +207,17 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
                 mNFC = "";
 
 
-                if(mPresenter.isPackageInstalled()){
+                if (mPresenter.isPackageInstalled()) {
                     ToolBox.alertMSG(context, getString(R.string.act001_locked_standalone_namoa_app_found_ttl),
                             getString(R.string.act001_locked_standalone_namoa_app_found_msg),
-                            (dialog, i) -> {}, 0);
+                            (dialog, i) -> {
+                            }, 0);
                     return;
                 }
+
+
+                checkDevelopmentMode();
+
                 mPresenter.validateLogin(mk_login.getText().toString().trim(),
                         et_password.getText().toString().replace("\"", "'").trim(),
                         ""
@@ -207,12 +228,59 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         //"TRATATIVA" que identifica se app
         //aponta pra produção ou desenvolvimento
 
-        if (Constant.DEVELOPMENT_BASE) {
-            tv_dev_db.setText(R.string.login_dev_db_msg);
-            tv_dev_db.setVisibility(View.VISIBLE);
-        }
-
         tv_version.setText("v" + Constant.PRJ001_VERSION);
+
+    }
+
+    private void checkDevelopmentMode() {
+        if (Constant.DEVELOPMENT_BASE) {
+            String ENVIRONMENT_SELECTED = selectEnvironmentDev.getSelectedItemId() == 0 ? EnvironmentType.DEVELOPMENT.getString() : EnvironmentType.HOMOLOG.getString();
+            mPresenter.processEnvironmentSelected(ENVIRONMENT_SELECTED);
+        }
+    }
+
+    @Override
+    public void developmentMode(EnvironmentType type) {
+        selectEnvironmentDev.setVisibility(View.VISIBLE);
+
+        String devEnv = "Desenvolvimento";
+        String homoEnv = "Homologação";
+        SpannableString spannableStringDev = new SpannableString(devEnv);
+        spannableStringDev.setSpan(new ForegroundColorSpan(Color.RED), 0, devEnv.length(), 0);
+
+        SpannableString spannableStringHomo = new SpannableString(homoEnv);
+        spannableStringHomo.setSpan(new ForegroundColorSpan(Color.parseColor("#ccaf14")), 0, homoEnv.length(), 0);
+        SpannableString[] spinnerOptions = {spannableStringDev, spannableStringHomo};
+        ArrayAdapter<SpannableString> adapter = new ArrayAdapter<SpannableString>(this, R.layout.form_os_header_frg_spinner_item, spinnerOptions) {
+
+            @NonNull
+            @Override
+            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                TextView textView = view.findViewById(R.id.text1);
+                SpannableString item = getItem(position);
+
+                SpannableString spannableString = new SpannableString(item);
+                int textColor = Color.BLACK;
+
+
+                if (position == 0) {
+                    textColor = Color.RED;
+                } else if (position == 1) {
+                    textColor = Color.parseColor("#ccaf14");
+                }
+
+                spannableString.setSpan(new ForegroundColorSpan(textColor), 0, item.length(), 0);
+                textView.setText(spannableString);
+
+
+                return view;
+            }
+        };
+        selectEnvironmentDev.setAdapter(adapter);
+        if (type != EnvironmentType.NULL) {
+            selectEnvironmentDev.setSelection(type == EnvironmentType.DEVELOPMENT ? 0 : 1);
+        }
 
     }
 
@@ -259,6 +327,24 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
     public void updatePD(String type, String sMessage) {
         updateProgressDialog(type, sMessage, "", "");
     }
+
+    @Override
+    public void showAlertYesOrNo(String title, String message, DialogInterface.OnClickListener positiveButton, DialogInterface.OnClickListener negativeButton) {
+        AlertDialog.Builder alertD = new AlertDialog.Builder(this);
+        alertD
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(
+                        context.getString(R.string.generic_msg_ok),
+                        positiveButton)
+                .setNegativeButton(
+                        context.getString(R.string.generic_msg_cancel),
+                        negativeButton
+                );
+
+        alertD.show();
+    }
+
 
     @Override
     public void showAlertMsg(String title, String message) {
@@ -352,39 +438,39 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         if (ToolBox_Con.getPreference_CleanTokenFiles(getApplicationContext()) == 1) {
             File[] files_token = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, "");
             ToolBox_Inf.deleteFileListExceptionSafe(files_token);
-            ToolBox_Con.setPreference_CleanTokenFiles(getApplicationContext(),-1);
+            ToolBox_Con.setPreference_CleanTokenFiles(getApplicationContext(), -1);
         }
 
         /**
-        * LUCHE - 13/05/2019
-        * Se usr decidiu atualizar e há troca de versão do banco,
-        * busca imagens pendentes de transmissao e tenta a copia das imagens.
-        * EM CASO DE ERRO AO COPIAR IMGS, IMPEDE ATUALIZAÇÃO DE SOFTWARE
-        *
-        */
-        if(ToolBox_Con.getPreference_BkpUnsentImg(context)){
-            if(!ToolBox_Inf.moveUnsentImgs(context)){
+         * LUCHE - 13/05/2019
+         * Se usr decidiu atualizar e há troca de versão do banco,
+         * busca imagens pendentes de transmissao e tenta a copia das imagens.
+         * EM CASO DE ERRO AO COPIAR IMGS, IMPEDE ATUALIZAÇÃO DE SOFTWARE
+         *
+         */
+        if (ToolBox_Con.getPreference_BkpUnsentImg(context)) {
+            if (!ToolBox_Inf.moveUnsentImgs(context)) {
                 progressDialog.dismiss();
                 //
                 ToolBox.alertMSG(
-                    context,
-                    context.getString(R.string.alert_move_unsent_data_error_ttl),
-                    context.getString(R.string.alert_move_unsent_data_error_msg),
-                    null,
-                    0
+                        context,
+                        context.getString(R.string.alert_move_unsent_data_error_ttl),
+                        context.getString(R.string.alert_move_unsent_data_error_msg),
+                        null,
+                        0
                 );
-            }else{
+            } else {
                 //Reseta preferencia
-                ToolBox_Con.setPreference_BkpUnsentImg(context,false);
+                ToolBox_Con.setPreference_BkpUnsentImg(context, false);
                 //
-                if(progressDialog != null) {
+                if (progressDialog != null) {
                     progressDialog.dismiss();
                 }
                 //
                 ToolBox_Inf.executeLogoffAndUpdateSoftware(context);
             }
-        }else{
-            if(progressDialog != null) {
+        } else {
+            if (progressDialog != null) {
                 progressDialog.dismiss();
             }
             ToolBox_Inf.executeLogoffAndUpdateSoftware(context);
@@ -413,12 +499,12 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         super.processGo();
         //Se processo de troca de banco de dados com dados pendentes
         //mas usr não decidiu atualizar o app, reseta var.
-        if(ToolBox_Con.getPreference_CleanTokenFiles(context) == 1){
+        if (ToolBox_Con.getPreference_CleanTokenFiles(context) == 1) {
             ToolBox_Con.setPreference_CleanTokenFiles(context, -1);
         }
         //
-        if(ToolBox_Con.getPreference_BkpUnsentImg(context)){
-            ToolBox_Con.setPreference_BkpUnsentImg(context,false);
+        if (ToolBox_Con.getPreference_BkpUnsentImg(context)) {
+            ToolBox_Con.setPreference_BkpUnsentImg(context, false);
         }
         //
         mPresenter.executeLoginProcess(
@@ -448,7 +534,6 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.act001_main_menu, menu);
-
         return true;
     }
 

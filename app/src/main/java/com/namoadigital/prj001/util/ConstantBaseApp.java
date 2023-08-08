@@ -1005,4 +1005,8 @@ public class ConstantBaseApp extends ConstantBase {
     /*
      * Profile to be able to activate/deactivate OS through the "Next OS" card
      */
+
+
+    //--
+    public static String WS_PREFIX;
 }

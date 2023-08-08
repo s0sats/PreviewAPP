@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui;
 
+import static com.namoa_digital.namoa_library.util.ConstantBase.DEVELOPMENT_TYPE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CACHE_CHAT_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CACHE_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CACHE_PATH_PHOTO;
@@ -37,6 +38,7 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SERIAL_PREFIX;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SO_NAME_FULL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SO_PREFIX;
 import static com.namoadigital.prj001.util.ConstantBaseApp.UNSENT_IMG_PATH;
+import static com.namoadigital.prj001.util.ConstantBaseApp.WS_PREFIX;
 import static com.namoadigital.prj001.util.ConstantBaseApp.ZIP_NAME;
 import static com.namoadigital.prj001.util.ConstantBaseApp.ZIP_NAME_FULL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.ZIP_PATH;
@@ -49,6 +51,8 @@ import android.net.ConnectivityManager;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoadigital.prj001.BuildConfig;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.core.data.domain.model.EnvironmentType;
+import com.namoadigital.prj001.core.data.local.preferences.EnvironmentDevelopementPref;
 import com.namoadigital.prj001.receiver.WBR_Connections_Change;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -108,6 +112,7 @@ public class AppBase extends Application {
         OTHER_ACTIONS_JSON_PATH = DB_PATH + OTHER_ACTIONS_DIR;
         CUSTOMER_SITE_LICENSE_JSON_PATH = DB_PATH + CUSTOMER_SITE_LICENSE_JSON_DIR;
 
+
         ZIP_NAME = "namoa_sms.zip";
         ZIP_NAME_FULL = ZIP_PATH + "/" + ZIP_NAME;
 
@@ -154,6 +159,17 @@ public class AppBase extends Application {
         ToolBox_Inf.libTranslation(getApplicationContext());
 
         ConstantBaseApp.DEVELOPMENT_BASE = ToolBox_Inf.isDevelopmentBase();
+
+        EnvironmentDevelopementPref pref = EnvironmentDevelopementPref.Companion.instance(this);
+        EnvironmentType type = pref.read().getEnvironment();
+
+        if (type == EnvironmentType.NULL) {
+            WS_PREFIX = "dev";
+            ConstantBase.DEVELOPMENT_TYPE = "dev";
+        } else {
+            WS_PREFIX = pref.read().getEnvironment().getString();
+            DEVELOPMENT_TYPE = pref.read().getEnvironment().getString();
+        }
 
         ConstantBaseApp.HM_ICON_NAMOA = R.mipmap.ic_namoa;
         ConstantBaseApp.HM_ICON_NAMOA_GO_ACT021 = "com.namoadigital.prj001.ui.act021.Act021_Main";
