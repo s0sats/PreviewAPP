@@ -29,6 +29,11 @@
             app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
 
             <include
+                android:id="@+id/act008_current_step"
+                layout="@layout/process_in_progress"
+                android:visibility="gone" />
+
+            <include
                 android:id="@+id/act008_nform_in_progress"
                 layout="@layout/process_in_progress"
                 android:visibility="gone" />

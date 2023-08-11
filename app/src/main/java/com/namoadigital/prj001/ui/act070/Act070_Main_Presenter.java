@@ -1362,11 +1362,12 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     private Bundle getAct081Bundle(TK_Ticket mTicket, TK_Ticket_Step selectedStep, int productCode, String productId, String productDesc, String serialId) {
         Bundle bundle = new Bundle();
         bundle.putInt(TK_TicketDao.TICKET_PREFIX, mTicket.getTicket_prefix());
+        //Alterado o tipo de int para String para compatibilizar ao processo de finaliza + novo
         bundle.putInt(TK_TicketDao.TICKET_CODE, mTicket.getTicket_code());
         bundle.putString(TK_TicketDao.TICKET_ID, mTicket.getTicket_id());
         bundle.putInt(TK_Ticket_StepDao.STEP_CODE, selectedStep.getStep_code());
         bundle.putString(TK_Ticket_StepDao.STEP_DESC, selectedStep.getStep_desc());
-        bundle.putInt(TK_Ticket_CtrlDao.PRODUCT_CODE, productCode);
+        bundle.putString(TK_Ticket_CtrlDao.PRODUCT_CODE, String.valueOf(productCode));
         bundle.putString(TK_Ticket_CtrlDao.PRODUCT_ID, productId);
         bundle.putString(TK_Ticket_CtrlDao.PRODUCT_DESC, productDesc);
         bundle.putString(TK_Ticket_CtrlDao.SERIAL_ID, serialId);

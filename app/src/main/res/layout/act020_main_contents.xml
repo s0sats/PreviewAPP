@@ -23,6 +23,12 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <include
+            android:id="@+id/act020_current_step"
+            layout="@layout/process_in_progress"
+            android:visibility="gone"
+            />
+
+        <include
             android:id="@+id/act020_nform_in_progress"
             layout="@layout/process_in_progress"
             android:visibility="gone"

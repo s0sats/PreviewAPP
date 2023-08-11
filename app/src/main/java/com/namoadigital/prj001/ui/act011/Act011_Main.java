@@ -2984,7 +2984,19 @@ public class Act011_Main extends Base_Activity
                 ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
                 bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT005)
         );
+        //
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, ToolBox_Inf.getMyActionFilterParam(bundle));
+        //Finaliza + novo
+        bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(formLocal.getCustom_product_code()));
+        bundle.putString(MD_ProductDao.PRODUCT_DESC, formLocal.getCustom_product_desc());
+        bundle.putString(MD_ProductDao.PRODUCT_ID, formLocal.getCustom_product_id());
+        bundle.putString(MD_Product_SerialDao.SERIAL_ID, formLocal.getSerial_id());
+        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, String.valueOf(formLocal.getCustom_form_type()));
+        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, String.valueOf(formLocal.getCustom_form_code()));
+        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, String.valueOf(formLocal.getCustom_form_version()));
+        bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, formLocal.getCustom_form_desc());
+        bundle.putInt(GE_Custom_FormDao.IS_SO, formLocal.getIs_so());
+        //
         intent.putExtras(bundle);
         //
         startActivity(intent);

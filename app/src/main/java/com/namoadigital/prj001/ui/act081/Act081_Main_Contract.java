@@ -35,5 +35,10 @@ public interface Act081_Main_Contract {
         void offlineSerialSearch();
 
 
+        void executeSerialSave();
+
+        void callWsSave();
+
+        void executeTicketSaveProcess();
     }
 }

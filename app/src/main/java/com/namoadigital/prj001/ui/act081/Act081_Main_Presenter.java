@@ -14,11 +14,18 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
+import com.namoadigital.prj001.receiver.WBR_Save;
+import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
+import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
+import com.namoadigital.prj001.service.WS_Save;
+import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
+import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.sql.MD_Product_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act020_002;
+import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -252,6 +259,74 @@ public class Act081_Main_Presenter implements Act081_Main_Contract.I_Presenter{
                 );
 
         return local_serial_list;
+    }
+
+    @Override
+    public void executeSerialSave() {
+        if (ToolBox_Con.isOnline(context)) {
+            mView.setWsProcess(WS_Serial_Save.class.getName());
+            //
+            mView.showPD(
+                    hmAux_Trans.get("progress_serial_save_ttl"),
+                    hmAux_Trans.get("progress_serial_save_msg")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_Serial_Save.class);
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(Constant.PROCESS_MENU_SEND, true);
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+            mView.showMsg(
+                    hmAux_Trans.get("alert_offline_save_ttl"),
+                    hmAux_Trans.get("alert_offline_save_msg")
+            );
+
+        }
+    }
+    @Override
+    public void callWsSave() {
+        if(ToolBox_Con.isOnline(context)) {
+            mView.setWsProcess(WS_Save.class.getName());
+            //
+            mView.showPD(
+                    hmAux_Trans.get("dialog_ticket_form_save_ttl"),
+                    hmAux_Trans.get("dialog_ticket_form_save_start")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_Save.class);
+            Bundle bundle = new Bundle();
+            bundle.putInt(Constant.GC_STATUS_JUMP, 1);//Pula validação Update require
+            bundle.putInt(Constant.GC_STATUS, 1);//Pula validação de other device
+            bundle.putString(Act005_Main.WS_PROCESS_SO_STATUS, "SEND");
+
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        }else{
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
+    }
+    @Override
+    public void executeTicketSaveProcess() {
+        if (ToolBox_Con.isOnline(context)) {
+            mView.setWsProcess(WS_TK_Ticket_Save.class.getName());
+            //
+            mView.showPD(
+                    hmAux_Trans.get("dialog_ticket_save_ttl"),
+                    hmAux_Trans.get("dialog_ticket_save_start")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_TK_Ticket_Save.class);
+            Bundle bundle = new Bundle();
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
     }
 
 }

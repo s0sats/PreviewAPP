@@ -100,6 +100,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     //private boolean forceCheckSerial = false;
     private String scheduled_site;
     private View vNFormSelected;
+    private View vCurrentStep;
     private LinearLayout contentMain;
     private Toolbar toolbar;
     private String productCode;
@@ -132,6 +133,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         setContentView(R.layout.act008_main);
 
         vNFormSelected = findViewById(R.id.act008_nform_in_progress);
+        vCurrentStep = findViewById(R.id.act008_current_step);
         contentMain = findViewById(R.id.content_main);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -634,10 +636,6 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     }
 
     private void initalizeBundleForFinishPlusNew() {
-        productCode = "";
-        productDesc = "";
-        productId = "";
-        serialId = "";
         customFormType = "";
         customFormCode = "";
         customFormVersion = "";
@@ -690,20 +688,25 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                 }
             });
             tvNFormSelected.setText(customFormCodeDesc);
-        }else{
-            if(has_tk_ticket_is_form_off_hand) {
-                ImageView ivClose = vNFormSelected.findViewById(R.id.iv_nform_new_header);
-                TextView tvNFormSelected = vNFormSelected.findViewById(R.id.tv_process_new_header);
-                ivClose.setVisibility(View.GONE);
-                tvNFormSelected.setText(mPresenter.getFormattedTicketInfo(act081Bundle));
-                vNFormSelected.setVisibility(View.VISIBLE);
-            }
+            vNFormSelected.setVisibility(View.VISIBLE);
+        }
+        //
+        if(has_tk_ticket_is_form_off_hand) {
+            ImageView ivClose = vCurrentStep.findViewById(R.id.iv_nform_new_header);
+            ivClose.setVisibility(View.GONE);
+            TextView tvNFormSelected = vCurrentStep.findViewById(R.id.tv_process_new_header);
+            tvNFormSelected.setText(mPresenter.getFormattedTicketInfo(act081Bundle));
+            vCurrentStep.setVisibility(View.VISIBLE);
         }
     }
 
     private void recoverInitialNFormState() {
         initalizeBundleForFinishPlusNew();
-        callAct006(this);
+        if(has_tk_ticket_is_form_off_hand) {
+            callAct081(context);
+        }else {
+            callAct006(this);
+        }
     }
 
     @Override
@@ -1077,10 +1080,25 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     public void callAct081(Context context) {
         Intent mIntent = new Intent(context, Act081_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+        buildBundleForNformFinishPlusNew(bundle);
         mIntent.putExtras(act081Bundle);
         mIntent.putExtras(act083Bundle);
         startActivity(mIntent);
         finish();
+    }
+
+    private void buildBundleForNformFinishPlusNew(Bundle bundle) {
+        if(hasNFormSelected()) {
+            bundle.putString(MD_ProductDao.PRODUCT_CODE, productCode);
+            bundle.putString(MD_ProductDao.PRODUCT_DESC, productDesc);
+            bundle.putString(MD_ProductDao.PRODUCT_ID, productId);
+            bundle.putString(MD_Product_SerialDao.SERIAL_ID, serialId);
+            bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, customFormType);
+            bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, customFormCode);
+            bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, customFormVersion);
+            bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, customFormCodeDesc);
+        }
     }
 
     @Override

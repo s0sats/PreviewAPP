@@ -293,18 +293,17 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
 
         if(hasNFormSelected()){
             binding.act020NformInProgress.getRoot().setVisibility(View.VISIBLE);
-        }else{
-            //Quando a tela vier do fluxo de criação de processo espontaneo do ticket,
-            //exibe card view com dados dos ticket
-            if(mtk_ticket_is_form_off_hand) {
-                binding.act020NformInProgress.ivNformNewHeader.setVisibility(View.GONE);
-                binding.act020NformInProgress.tvProcessNewHeader.setText(mPresenter.getFormattedTicketInfo(act081Bundle));
-                binding.act020NformInProgress.getRoot().setVisibility(View.VISIBLE);
-                //LUCHE - 10/11/2020
-                //Quando a tela vier do fluxo de criação de processo espontaneo do ticket, a obj de
-                //sem serial nunca deve ser exibida.
-                binding.act020BtnNoSerial.setVisibility(View.GONE);
-            }
+        }
+        //Quando a tela vier do fluxo de criação de processo espontaneo do ticket,
+        //exibe card view com dados dos ticket
+        if(mtk_ticket_is_form_off_hand) {
+            binding.act020CurrentStep.ivNformNewHeader.setVisibility(View.GONE);
+            binding.act020CurrentStep.tvProcessNewHeader.setText(mPresenter.getFormattedTicketInfo(act081Bundle));
+            binding.act020CurrentStep.getRoot().setVisibility(View.VISIBLE);
+            //LUCHE - 10/11/2020
+            //Quando a tela vier do fluxo de criação de processo espontaneo do ticket, a obj de
+            //sem serial nunca deve ser exibida.
+            binding.act020BtnNoSerial.setVisibility(View.GONE);
         }
     }
 
@@ -596,7 +595,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         customFormCode = "";
         customFormVersion = "";
         customFormCodeDesc = "";
-        callAct006(this);
+        mPresenter.onBackPressedClicked();
     }
 
     @Override
@@ -772,6 +771,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         bundle.putAll(act013Bundle);
         bundle.putAll(act081Bundle);
         bundle.putAll(act083Bundle);
+        buildBundleForNformFinishPlusNew(bundle);
         bundle.putString(Constant.MAIN_REQUESTING_ACT, requestingAct);
         mIntent.putExtras(bundle);
         //
@@ -834,6 +834,12 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     public void callAct081(Context context) {
         Intent mIntent = new Intent(context, Act081_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, fragProduct_ID);
+        bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, fragSerial_ID);
+        bundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, fragTracking);
+        buildBundleForNformFinishPlusNew(bundle);
+        mIntent.putExtras(bundle);
         mIntent.putExtras(act081Bundle);
         mIntent.getExtras().putAll(act083Bundle);
         startActivity(mIntent);
@@ -1009,13 +1015,15 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     }
 
     private void buildBundleForNformFinishPlusNew(Bundle bundle) {
-        bundle.putString(MD_ProductDao.PRODUCT_CODE, productCode);
-        bundle.putString(MD_ProductDao.PRODUCT_DESC,productDesc);
-        bundle.putString(MD_ProductDao.PRODUCT_ID,productId);
-        bundle.putString(MD_Product_SerialDao.SERIAL_ID, serialId);
-        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, customFormType);
-        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, customFormCode);
-        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION,customFormVersion);
-        bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, customFormCodeDesc);
+        if(hasNFormSelected()) {
+            bundle.putString(MD_ProductDao.PRODUCT_CODE, productCode);
+            bundle.putString(MD_ProductDao.PRODUCT_DESC, productDesc);
+            bundle.putString(MD_ProductDao.PRODUCT_ID, productId);
+            bundle.putString(MD_Product_SerialDao.SERIAL_ID, serialId);
+            bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, customFormType);
+            bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, customFormCode);
+            bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, customFormVersion);
+            bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, customFormCodeDesc);
+        }
     }
 }

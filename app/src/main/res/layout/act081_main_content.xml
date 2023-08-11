@@ -15,7 +15,12 @@
     <include
         android:id="@+id/act081_current_step"
         layout="@layout/process_in_progress"
-        android:visibility="gone"/>
+        android:visibility="visible"/>
+
+    <include
+        android:id="@+id/act081_nform_in_progress"
+        layout="@layout/process_in_progress"
+        android:visibility="visible"/>
 
     <LinearLayout
         android:layout_width="match_parent"
