@@ -18,3 +18,16 @@ fun checkIfHasCharInvalid(value: String): Boolean {
     )
     return regexPattern.containsMatchIn(value)
 }
+
+fun checkIfLastCharContainTabOrEnter(value: String): Boolean {
+    Regex(
+        """[ \t\n\r]*([\t\n\r])${'$'}""",
+        setOf(RegexOption.COMMENTS, RegexOption.DOT_MATCHES_ALL)
+    ).let { regex ->
+        return regex.containsMatchIn(value)
+    }
+}
+
+fun removeLastCharEnterOrTab(value: String): String {
+    return value.replace("""[ \t\n\r]*([\t\n\r])${'$'}""", "")
+}
