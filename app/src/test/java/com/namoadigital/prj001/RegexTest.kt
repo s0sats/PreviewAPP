@@ -64,7 +64,7 @@ class RegexTest {
 
     fun `check if contain ENTER or TAB on end string`(value: String): Boolean {
         Regex(
-            """[ \t\n\r]*([\t\n\r]+)${'$'}""",
+            """[ \t\n\r]*([\t\n\r])${'$'}""",
             setOf(RegexOption.COMMENTS, RegexOption.DOT_MATCHES_ALL)
         ).let { regex ->
             return regex.containsMatchIn(value)
