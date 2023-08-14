@@ -197,6 +197,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     private static final int TOOLBAR_SEND_RECEIVE_DATA = 6;
     public static final int SETTINGS_FOR_DATETIME = 10001;
 
+
+    public static String AUTO_SYNC_FORM = "AUTO_SYNC_FORM";
+    private boolean auto_sync_form = false;
+
     private ArrayList<HMAux> wsResults = new ArrayList<>();
 
     private Context context;
@@ -658,6 +662,14 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         Constant.HM_ICON_NAMOA_SERVICES_TEXT = hmAux_Trans.get("lbl_so");
     }
 
+    private void recoverIntents() {
+
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            auto_sync_form = bundle.getBoolean(AUTO_SYNC_FORM, false);
+        }
+    }
+
     private void initVars() {
         Act035_Main.mRoom_code = "";
 
@@ -668,6 +680,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
         mDrawerLayout = (DrawerLayout)
                 findViewById(R.id.act005_drawer);
+
+        recoverIntents();
 
         mPresenter = new Act005_Main_Presenter_Impl(
                 context,
@@ -1028,7 +1042,16 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 //                }
 //            }
 //        });
-          initilizeDrawer();
+        initilizeDrawer();
+
+        if (auto_sync_form) {
+            boolean hasUpdateRequired = mPresenter.hasUpdateRequired();
+            boolean hasTicketSyncRequired = mPresenter.hasTicketSyncRequired();
+            boolean hasSoSyncRequiredCloudRule = mPresenter.hasSoSyncRequiredCloudRule();
+
+            sendsendUpdateRequiredData(hasUpdateRequired, hasTicketSyncRequired, hasSoSyncRequiredCloudRule);
+
+        }
 
 
         //
@@ -2941,25 +2964,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 );
                 break;
             case TOOLBAR_SYNC_DATA_STATUS:
-                masterDataSyncFlow = false;
-                if(!hasUpdateRequired && (hasSoSyncRequiredCloudRule || hasTicketSyncRequired)){
-                    if(hasSoSyncRequiredCloudRule){
-                        mPresenter.executeWSSoSync();
-                    }else{
-                        mPresenter.executeWSTicketDownload();
-                    }
-                } else if (hasUpdateRequired) {
-                    if (ToolBox_Con.isOnline(context)) {
-                        setWsProcess(Act005_Main.WS_PROCESS_SEND);
-                        setWsSoProcess(WS_Serial_Save.class.getSimpleName());
-                        showPD();
-                        cleanUpResults();
-                        //executeSaveProcess();
-                        mPresenter.executeSerialSave();
-                    } else {
-                        showNoConnectionDialog();
-                    }
-                }
+                sendsendUpdateRequiredData(hasUpdateRequired, hasTicketSyncRequired, hasSoSyncRequiredCloudRule);
                 break;
             default:
                 return true;
@@ -2976,6 +2981,28 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         }
 
         return true;
+    }
+
+    private void sendsendUpdateRequiredData(boolean hasUpdateRequired, boolean hasTicketSyncRequired, boolean hasSoSyncRequiredCloudRule) {
+        masterDataSyncFlow = false;
+        if (!hasUpdateRequired && (hasSoSyncRequiredCloudRule || hasTicketSyncRequired)) {
+            if (hasSoSyncRequiredCloudRule) {
+                mPresenter.executeWSSoSync();
+            } else {
+                mPresenter.executeWSTicketDownload();
+            }
+        } else if (hasUpdateRequired) {
+            if (ToolBox_Con.isOnline(context)) {
+                setWsProcess(Act005_Main.WS_PROCESS_SEND);
+                setWsSoProcess(WS_Serial_Save.class.getSimpleName());
+                showPD();
+                cleanUpResults();
+                //executeSaveProcess();
+                mPresenter.executeSerialSave();
+            } else {
+                showNoConnectionDialog();
+            }
+        }
     }
 
     @Override

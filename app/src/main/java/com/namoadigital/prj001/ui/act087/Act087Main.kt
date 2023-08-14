@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act087
 
+import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
@@ -12,11 +13,26 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag
 import com.namoadigital.prj001.R
-import com.namoadigital.prj001.dao.*
+import com.namoadigital.prj001.dao.GE_Custom_FormDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
+import com.namoadigital.prj001.dao.GeOsDao
+import com.namoadigital.prj001.dao.MD_ProductDao
+import com.namoadigital.prj001.dao.MD_Product_SerialDao
+import com.namoadigital.prj001.dao.MD_Schedule_ExecDao
+import com.namoadigital.prj001.dao.MdOrderTypeDao
+import com.namoadigital.prj001.dao.MeMeasureTpDao
+import com.namoadigital.prj001.dao.TK_TicketDao
 import com.namoadigital.prj001.databinding.Act087MainBinding
 import com.namoadigital.prj001.databinding.Act087MainContentBinding
 import com.namoadigital.prj001.extensions.setFrag
-import com.namoadigital.prj001.model.*
+import com.namoadigital.prj001.model.FormOsHeaderFrgSerialBkpItemAbs
+import com.namoadigital.prj001.model.GeOs
+import com.namoadigital.prj001.model.MD_Product
+import com.namoadigital.prj001.model.MD_Product_Serial
+import com.namoadigital.prj001.model.MD_Schedule_Exec
+import com.namoadigital.prj001.model.MdOrderType
+import com.namoadigital.prj001.model.MeMeasureTp
+import com.namoadigital.prj001.model.MyActionFilterParam
 import com.namoadigital.prj001.service.WS_Product_Serial_Backup
 import com.namoadigital.prj001.ui.act005.Act005_Main
 import com.namoadigital.prj001.ui.act011.Act011_Main
@@ -29,6 +45,8 @@ import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
+import com.namoadigital.prj001.view.dialog.WarningFormPending
+import com.namoadigital.prj001.view.dialog.WarningFormPending.Interact
 
 class Act087Main : Base_Activity_Frag(),
     Act011BaseFrgInteractionNavegation,
@@ -90,7 +108,12 @@ class Act087Main : Base_Activity_Frag(),
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
             ),
-            originFlow
+            originFlow,
+            GE_Custom_Form_DataDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+            ),
         )
     }
 
@@ -142,6 +165,7 @@ class Act087Main : Base_Activity_Frag(),
     }
 
     private fun initVars() {
+        checkIfHasPassedDays()
         if(mPresenter.validateBundleParams()) {
             if(mPresenter.checkFormExists()) {
                 if (mPresenter.isSchedule()) {
@@ -171,8 +195,31 @@ class Act087Main : Base_Activity_Frag(),
                     0
                 )
             }
-        }else{
+        } else {
             paramErrorFlow()
+        }
+    }
+
+
+    private fun checkIfHasPassedDays() {
+        val hasPassedDays: Int = mPresenter.hasPassedDay()
+        if (hasPassedDays >= 15) {
+            val dialog = WarningFormPending(
+                context,
+                R.drawable.ic_cloud_upload_24_red,
+                true,
+                object : Interact {
+                    override fun onClickOk(dialog: AlertDialog) {
+                        callAct005()
+                    }
+
+                    override fun onClickCancel(dialog: AlertDialog) {
+                        mPresenter.onBackPressedClicked(false)
+                    }
+                }
+            )
+            dialog.show()
+            return
         }
     }
 
@@ -504,15 +551,15 @@ class Act087Main : Base_Activity_Frag(),
     }
 
     private fun callAct005() {
-        startActivity(
-            Intent().apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                setClass(this@Act087Main, Act005_Main::class.java)
-            }
-        )
-        //
+        val mIntent = Intent(context, Act005_Main::class.java)
+        mIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        val auto_sync = Bundle()
+        auto_sync.putBoolean(Act005_Main.AUTO_SYNC_FORM, true)
+        mIntent.putExtras(auto_sync)
+        startActivity(mIntent)
         finish()
     }
+
 
     companion object{
         @JvmStatic fun getBundleInstance(

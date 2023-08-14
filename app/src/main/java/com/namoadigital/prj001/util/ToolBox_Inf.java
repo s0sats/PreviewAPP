@@ -311,6 +311,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.DateTimeException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -320,6 +321,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Random;
 import java.util.TimeZone;
@@ -9227,14 +9229,36 @@ public class ToolBox_Inf {
         return l;
     }
 
+    public static int calculateDaysPassed(String dateString) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+
+        try {
+            Date currentDate = Calendar.getInstance().getTime();
+            Date date = dateFormat.parse(dateString.split(" ")[0]);
+
+            if (date == null) {
+                throw new DateTimeException("Date is null");
+            }
+
+            long diffInMillis = currentDate.getTime() - date.getTime();
+            int daysPassed = (int) (diffInMillis / (1000 * 60 * 60 * 24));
+
+            return daysPassed;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
     /**
      * Metodo que recebe um valor com decimal e aplica o separados baseado no locale do usr.
+     *
      * @param numberAsString
      * @return
      */
-    public static String applyDecimalSeparatorByUserLocale(String numberAsString){
+    public static String applyDecimalSeparatorByUserLocale(String numberAsString) {
         char decimalSeparator = DecimalFormatSymbols.getInstance().getDecimalSeparator();
-        return numberAsString.replace('.',decimalSeparator);
+        return numberAsString.replace('.', decimalSeparator);
     }
 
     /**

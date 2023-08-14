@@ -8,15 +8,51 @@ import android.graphics.BitmapFactory
 import android.os.Bundle
 import com.google.gson.GsonBuilder
 import com.namoa_digital.namoa_library.util.HMAux
-import com.namoadigital.prj001.dao.*
+import com.namoadigital.prj001.dao.GE_Custom_FormDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_Blob_LocalDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao
+import com.namoadigital.prj001.dao.GeOsDao
+import com.namoadigital.prj001.dao.MD_ProductDao
+import com.namoadigital.prj001.dao.MD_Product_SerialDao
+import com.namoadigital.prj001.dao.MD_Schedule_ExecDao
+import com.namoadigital.prj001.dao.MdOrderTypeDao
+import com.namoadigital.prj001.dao.MeMeasureTpDao
 import com.namoadigital.prj001.extensions.roundByRestrictionMeasure
-import com.namoadigital.prj001.model.*
+import com.namoadigital.prj001.model.FormOsHeaderFrgSerialBkpExceededItem
+import com.namoadigital.prj001.model.FormOsHeaderFrgSerialBkpItem
+import com.namoadigital.prj001.model.FormOsHeaderFrgSerialBkpItemAbs
+import com.namoadigital.prj001.model.GE_Custom_Form
+import com.namoadigital.prj001.model.GE_Custom_Form_Local
+import com.namoadigital.prj001.model.GeOs
+import com.namoadigital.prj001.model.MD_Product
+import com.namoadigital.prj001.model.MD_Product_Serial
+import com.namoadigital.prj001.model.MD_Schedule_Exec
+import com.namoadigital.prj001.model.MdOrderType
+import com.namoadigital.prj001.model.MeMeasureTp
+import com.namoadigital.prj001.model.T_MD_Product_Serial_Backup_Rec
+import com.namoadigital.prj001.model.T_MD_Product_Serial_Backup_Record
 import com.namoadigital.prj001.receiver.WBR_Product_Serial_Backup
 import com.namoadigital.prj001.service.SO_PRODUCT_CODE
 import com.namoadigital.prj001.service.SO_SERIAL_CODE
 import com.namoadigital.prj001.service.WS_Product_Serial_Backup
-import com.namoadigital.prj001.sql.*
-import com.namoadigital.prj001.util.*
+import com.namoadigital.prj001.sql.Act087Sql_001
+import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_002
+import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_001_TT
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002
+import com.namoadigital.prj001.sql.MD_Product_Sql_001
+import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001
+import com.namoadigital.prj001.sql.MdOrderTypeSql_001
+import com.namoadigital.prj001.sql.MdOrderTypeSql_002
+import com.namoadigital.prj001.sql.MeMeasureTpSql_001
+import com.namoadigital.prj001.util.Constant
+import com.namoadigital.prj001.util.ConstantBaseApp
+import com.namoadigital.prj001.util.ScheduleFormFatory
+import com.namoadigital.prj001.util.ToolBox_Con
+import com.namoadigital.prj001.util.ToolBox_Inf
 import java.io.File
 
 class Act087MainPresenter(
@@ -39,7 +75,9 @@ class Act087MainPresenter(
     private val scheduleCode: Int?,
     private val scheduleExec: Int?,
     private val scheduleDao: MD_Schedule_ExecDao,
-    private val originFlow: String = ConstantBaseApp.ACT005
+    private val originFlow: String = ConstantBaseApp.ACT005,
+    private var custom_form_dataDao: GE_Custom_Form_DataDao
+
 ): Act087MainContract.I_Presenter {
 
     private val hmAuxTrans: HMAux by lazy {
@@ -650,6 +688,7 @@ class Act087MainPresenter(
                 ConstantBaseApp.ACT083 -> {
                     mView.callAct083()
                 }
+
                 ConstantBaseApp.ACT092 -> {
                     mView.callAct092()
                 }
@@ -659,5 +698,14 @@ class Act087MainPresenter(
                 }
             }
         }
+    }
+
+
+    override fun hasPassedDay(): Int {
+        return custom_form_dataDao.getDaysPassedDateEnd(
+            ToolBox_Con.getPreference_Customer_Code(
+                context
+            )
+        )
     }
 }

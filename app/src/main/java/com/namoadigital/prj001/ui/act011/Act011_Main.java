@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act011;
 
 import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH;
 import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH_PHOTO;
+import static com.namoadigital.prj001.ui.act005.Act005_Main.AUTO_SYNC_FORM;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DEVICE_BUNDLE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DEVICE_ITEM_LIST_CHECKBOX_STATUS;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DEVICE_ITEM_LIST_FILTER;
@@ -152,6 +153,7 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+import com.namoadigital.prj001.view.dialog.WarningFormPending;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -270,14 +272,14 @@ public class Act011_Main extends Base_Activity
     private Integer mTicket_seq_tmp;
     private Integer mStep_code;
     private String requestingAct;
-    private boolean isOffHandForm=false;
+    private boolean isOffHandForm = false;
     private Bundle act081Bundle;
     private String room_code;
     private CustomFF.ICustomFFDotsDialogDismiss onBackFocusEvent;
     private Bundle act083Bundle;
     private boolean isFormOs = false;
 
-    private int device_item_tab_index =-1;
+    private int device_item_tab_index = -1;
     private int device_item_list_index = -1;
     private String device_item_list_filter;
     private boolean device_item_list_checkbox_status;
@@ -541,6 +543,9 @@ public class Act011_Main extends Base_Activity
         //
         transList.add("form_non_compliance_photo_required_toast");
         //
+        transList.add("passed_days_title");
+        transList.add("passed_days_ten_lbl");
+        transList.add("passed_days_fifteen_lbl");
         //
         transList.addAll(Act011FrgInspection.Companion.getFragTranslationsVars());
         //
@@ -589,22 +594,25 @@ public class Act011_Main extends Base_Activity
 
      */
     //region RotateBugFixed
+
     /**
      * Retorna a tradução contida na act.
+     *
      * @return
      */
     @Deprecated
-    public HMAux getHmAuxTrans(){
+    public HMAux getHmAuxTrans() {
         return hmAux_Trans;
     }
 
     /**
      * Retorna a implementação das interfaces,delegate, do fragmento Act011_FF
+     *
      * @return
      */
     @Deprecated
-    public Act011_FF.ICustom_Form_FF_ll getFFInterface(){
-        return  new Act011_FF.ICustom_Form_FF_ll() {
+    public Act011_FF.ICustom_Form_FF_ll getFFInterface() {
+        return new Act011_FF.ICustom_Form_FF_ll() {
             @Override
             public void openDrawer() {
                 mDrawerLayout.openDrawer(GravityCompat.START);
@@ -640,10 +648,11 @@ public class Act011_Main extends Base_Activity
 
     /**
      * Retorna a lista de componente do formulário.
+     *
      * @return
      */
     @Deprecated
-    public ArrayList<CustomFF> getFf(){
+    public ArrayList<CustomFF> getFf() {
         return customFFs;
     }
 
@@ -676,7 +685,7 @@ public class Act011_Main extends Base_Activity
     }
 
     @Override
-    public Bitmap getProductIconBmp(){
+    public Bitmap getProductIconBmp() {
         return mPresenter.getProductIconBitmap(formLocal.getCustom_product_icon_name());
     }
 
@@ -773,6 +782,84 @@ public class Act011_Main extends Base_Activity
         };
 
         //
+        checkAndShowDialogWarningForm();
+
+
+    }
+
+
+    private void checkAndShowDialogWarningForm() {
+        if (mPresenter.checkIfFormIsNew(
+                String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                type,
+                form,
+                form_version,
+                product_code,
+                form_data,
+                product_desc,
+                product_id,
+                form_desc,
+                serial_id,
+                mSo_Prefix,
+                mSo_Code,
+                mSite_Code,
+                mOperation_Code,
+                mTicket_prefix,
+                mTicket_code,
+                mTicket_seq,
+                mTicket_seq_tmp,
+                mStep_code
+        )) {
+            int hasPassedDays = mPresenter.hasPassedDay();
+            if (hasPassedDays >= 10 && hasPassedDays <= 14) {
+                createForm();
+                WarningFormPending dialog = new WarningFormPending(
+                        context,
+                        R.drawable.ic_cloud_upload_24_red,
+                        false,
+                        new WarningFormPending.Interact() {
+                            @Override
+                            public void onClickOk(@NonNull AlertDialog dialog) {
+                                dialog.dismiss();
+                            }
+
+                            @Override
+                            public void onClickCancel(@NonNull AlertDialog dialog) {
+
+                            }
+                        }
+
+                );
+                dialog.show();
+            } else if (hasPassedDays >= 15) {
+                WarningFormPending dialog = new WarningFormPending(
+                        context,
+                        R.drawable.ic_cloud_upload_24_red,
+                        true,
+                        new WarningFormPending.Interact() {
+                            @Override
+                            public void onClickOk(@NonNull AlertDialog dialog) {
+                                callAct005SyncForm();
+                                canSave = false;
+                            }
+
+                            @Override
+                            public void onClickCancel(@NonNull AlertDialog dialog) {
+                                mPresenter.onBackPressedClicked();
+                            }
+                        }
+
+                );
+                dialog.show();
+            } else {
+                createForm();
+            }
+        } else {
+            createForm();
+        }
+    }
+
+    private void createForm() {
         mPresenter.setData(
                 String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
                 type,
@@ -796,10 +883,17 @@ public class Act011_Main extends Base_Activity
         );
     }
 
+    private boolean checkIfBlockFormUser(int hasPassedDays) {
+        if (hasPassedDays >= 10 && hasPassedDays <= 14) return false;
+        if (hasPassedDays >= 15) return true;
+        return false;
+    }
+
     /**
      * Metodo que faz o scroll para o customFF passado.
      * Busca a view que é o foco atual, remove o foco dele e seta o foco no customFF. Na sequencia,
      * resgata o Act011FrgFF e roda o metodo scrollToSelectedView
+     *
      * @param customFF
      */
     private void scrollToLastCustomFFClicked(CustomFF customFF) {
@@ -836,9 +930,9 @@ public class Act011_Main extends Base_Activity
         //
         super.updateUI();
         //
-        if(type == 1 && id > -1 ){
+        if (type == 1 && id > -1) {
             for (CustomFF customFF : controls_dyn) {
-                if(customFF.getmSequence() == id
+                if (customFF.getmSequence() == id
                         && (customFF instanceof PictureFF || customFF instanceof PhotoFF)
                 ) {
                     scrollToLastCustomFFClicked(customFF);
@@ -852,11 +946,12 @@ public class Act011_Main extends Base_Activity
      * Atualizado metodo com verificação de lsita vazia , pois na criação de form, como o oldIndex
      * é 0, não roda nenhum validação e retornava lista vazia, zerando lista de tabs
      * no drawer
+     *
      * @param tabs
      */
     private void updateTabStatusIntoDrawer(ArrayList<Act011FormTab> tabs) {
-        if(tabs != null && tabs.size() > 0) {
-            int selectecTab = isFormOs && index >= 1 ? index -1 : index;
+        if (tabs != null && tabs.size() > 0) {
+            int selectecTab = isFormOs && index >= 1 ? index - 1 : index;
             if (tabs.size() == 1) {
                 act011FfOption.updateTabList(tabs.get(0), selectecTab);
             } else {
@@ -867,10 +962,11 @@ public class Act011_Main extends Base_Activity
 
     /**
      * Metodo que chama atualização de item da lista
+     *
      * @param tab
      */
     private void updateTabStatusIntoDrawer(Act011FormTab tab) {
-        act011FfOption.updateTabList(tab,index);
+        act011FfOption.updateTabList(tab, index);
     }
 
     //TODO averiguar pq mudou de onResume para onStart
@@ -903,7 +999,7 @@ public class Act011_Main extends Base_Activity
 
         Drawable drawable_ic = null;
         TextView tv_title = view.findViewById(R.id.act011_dialog_tv_title);
-        TextView tv_msg = view.findViewById(R.id.act011_dialog_tv_msg );
+        TextView tv_msg = view.findViewById(R.id.act011_dialog_tv_msg);
         TextView btn_ok = view.findViewById(R.id.act011_dialog_btn_ok);
         TextView btn_cancel = view.findViewById(R.id.act011_dialog_btn_cancel);
         ImageView iv_error = view.findViewById(R.id.act011_dialog_iv_error);
@@ -949,7 +1045,7 @@ public class Act011_Main extends Base_Activity
 //        formData.setLocation_lat("");
 //        formData.setLocation_lng("");
         //
-        if(fieldsValidation) {
+        if (fieldsValidation) {
             returnValidCheck(String.valueOf(-1));
         }
 
@@ -988,7 +1084,7 @@ public class Act011_Main extends Base_Activity
         formData.setLocation_lat("");
         formData.setLocation_lng("");
         //
-        if(canSave) {
+        if (canSave) {
             saveV2(false);
         }
         //
@@ -1046,7 +1142,7 @@ public class Act011_Main extends Base_Activity
      */
     @Override
     public boolean allowFinalizeWithNewBtn() {
-        if(ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_CHECKLIST, ConstantBaseApp.PROFILE_PRJ001_CHECKLIST_PARAM_DONE_NEW)
+        if (ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_CHECKLIST, ConstantBaseApp.PROFILE_PRJ001_CHECKLIST_PARAM_DONE_NEW)
                 && mSo_Prefix == null
                 && mSo_Code == null
                 && !ToolBox_Inf.isScheduleForm(formLocal)
@@ -1182,7 +1278,7 @@ public class Act011_Main extends Base_Activity
             }
         }
 
-        mPresenter.addGeOsDeviceItemPhotosIntoFiles(formLocal, geFiles,sDate);
+        mPresenter.addGeOsDeviceItemPhotosIntoFiles(formLocal, geFiles, sDate);
     }
 
     private void deleteFormLocal() {
@@ -1233,20 +1329,20 @@ public class Act011_Main extends Base_Activity
         //
         mPresenter.deleteGeOsFormIfNeeds(formLocal);
         //
-        mPresenter.checkAppExecutionDecrementUpdateNeeds(mSo_Prefix,mSo_Code, formData);
+        mPresenter.checkAppExecutionDecrementUpdateNeeds(mSo_Prefix, mSo_Code, formData);
         //
-        if(mPresenter.isaTicketFlowForm()){
+        if (mPresenter.isaTicketFlowForm()) {
             callAct070();
-        }else if(ConstantBaseApp.ACT084.equals(requestingAct)){
+        } else if (ConstantBaseApp.ACT084.equals(requestingAct)) {
             callAct084();
-        }else if (ConstantBaseApp.ACT027.equals(requestingAct) || ConstantBaseApp.ACT028.equals(requestingAct)) {
+        } else if (ConstantBaseApp.ACT027.equals(requestingAct) || ConstantBaseApp.ACT028.equals(requestingAct)) {
             nservCall();
         } else {
             if (serial_id != null && !serial_id.isEmpty()) {
                 //
                 if (requestingAct.equals(ConstantBaseApp.ACT092)) {
                     callAct092();
-                }else{
+                } else {
                     callAct083();
                 }
             } else {
@@ -1255,7 +1351,7 @@ public class Act011_Main extends Base_Activity
                 // callAct005(context);
                 if (requestingAct.equals(ConstantBaseApp.ACT083)) {
                     callAct083();
-                }else {
+                } else {
                     callAct006(context, false);
                 }
             }
@@ -1281,14 +1377,14 @@ public class Act011_Main extends Base_Activity
             mOperation_Code = bundle.getString(SM_SODao.OPERATION_CODE, null) == null ? null : Integer.parseInt(bundle.getString(SM_SODao.OPERATION_CODE, null));
             //LUCHE - 24/08/2020 - PK Ticket
             mTicket_prefix = bundle.containsKey(TK_Ticket_CtrlDao.TICKET_PREFIX) ? bundle.getInt(TK_Ticket_CtrlDao.TICKET_PREFIX) : null;
-            mTicket_code = bundle.containsKey(TK_Ticket_CtrlDao.TICKET_CODE)? bundle.getInt(TK_Ticket_CtrlDao.TICKET_CODE) : null;
+            mTicket_code = bundle.containsKey(TK_Ticket_CtrlDao.TICKET_CODE) ? bundle.getInt(TK_Ticket_CtrlDao.TICKET_CODE) : null;
             mTicket_seq = bundle.containsKey(TK_Ticket_CtrlDao.TICKET_SEQ) ? bundle.getInt(TK_Ticket_CtrlDao.TICKET_SEQ) : null;
             mTicket_seq_tmp = bundle.containsKey(TK_Ticket_CtrlDao.TICKET_SEQ_TMP) ? bundle.getInt(TK_Ticket_CtrlDao.TICKET_SEQ_TMP) : null;
             mStep_code = bundle.containsKey(TK_Ticket_CtrlDao.STEP_CODE) ? bundle.getInt(TK_Ticket_CtrlDao.STEP_CODE) : null;
-            requestingAct = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT005);
+            requestingAct = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT005);
             isOffHandForm = bundle.containsKey(ConstantBaseApp.TK_TICKET_IS_FORM_OFF_HAND);
 
-            if(isOffHandForm){
+            if (isOffHandForm) {
                 mTicket_seq = 0;
                 mTicket_seq_tmp = mPresenter.getSeqTmpForFormOffHand(context, mTicket_prefix, mTicket_code, mStep_code);
                 act081Bundle = new Bundle();
@@ -1310,18 +1406,18 @@ public class Act011_Main extends Base_Activity
 
             }
             //
-            if(bundle.containsKey(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW)
+            if (bundle.containsKey(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW)
                     || bundle.containsKey(MyActionFilterParam.MY_ACTION_FILTER_PARAM)
-            ){
+            ) {
                 act083Bundle = new Bundle();
                 act083Bundle.putString(
                         ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
-                        bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,ConstantBaseApp.ACT005)
+                        bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT005)
                 );
-                act083Bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM,ToolBox_Inf.getMyActionFilterParam(bundle));
+                act083Bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, ToolBox_Inf.getMyActionFilterParam(bundle));
             }
             //
-            if(bundle.containsKey(DEVICE_BUNDLE)) {
+            if (bundle.containsKey(DEVICE_BUNDLE)) {
                 //Se existe essa chave, é uma navegação de fluxo de Form Os
                 isNavegationFromGeOsFlow = true;
                 Bundle deviceBundle = bundle.getBundle(DEVICE_BUNDLE);
@@ -1353,12 +1449,13 @@ public class Act011_Main extends Base_Activity
      * LUCHE - 30/01/2020
      * <p>
      * Implmentado metodo para salvar o form_data no bundle
+     *
      * @param outState
      */
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA,form_data);
+        outState.putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, form_data);
     }
 
     private void iniUIFooter() {
@@ -1377,9 +1474,9 @@ public class Act011_Main extends Base_Activity
         //LUCHE - 14/03/2018
         //Tratativa necessaria quando o carregamento dos itens é abortado pelo erro de insert na ge_custom_form_local
         //pois nesse fluxo, o adapter do pager não é setado.
-        if(pager != null && pager.getAdapter() != null) {
+        if (pager != null && pager.getAdapter() != null) {
             setTitleLanguage("          (" + String.valueOf(index) + "/" + String.valueOf(pager.getAdapter().getCount()) + ")");
-        }else{
+        } else {
             setTitleLanguage();
         }
         setFooter();
@@ -1485,7 +1582,7 @@ public class Act011_Main extends Base_Activity
                         customField = cfg_ComboBox(cf);
                         break;
                     case CustomFF.NUMBER:
-                        customField = mPresenter.checkNumberOrMeasureCtrl(cf,getSerialInfo());
+                        customField = mPresenter.checkNumberOrMeasureCtrl(cf, getSerialInfo());
                         break;
                     case CustomFF.DATE:
                         customField = cfg_Date(cf);
@@ -1533,7 +1630,7 @@ public class Act011_Main extends Base_Activity
             addOsHeaderFrag(geOs, formData.getCustom_form_status(), tabs, fullTabQty, mdScheduleExec);
         }
         //Loop de criação das tabs do form utilizando o novo fragment.
-        if (customFFs != null && customFFs.size() > 0){
+        if (customFFs != null && customFFs.size() > 0) {
             for (int i = 1; i <= pages; i++) {
                 Act011FrgFF custom_form_ff = Act011FrgFF.Companion.newInstance(
                         hmAux_Trans,
@@ -1554,17 +1651,17 @@ public class Act011_Main extends Base_Activity
             }
         }
         //
-        if(formLocal.getIs_so() == 1) {
+        if (formLocal.getIs_so() == 1) {
             int acessoryIndex = pages + 1;
             this.acessoryFormViews = acessoryFormViews;
-            for(AcessoryFormView acessoryFormView: acessoryFormViews){
+            for (AcessoryFormView acessoryFormView : acessoryFormViews) {
                 int item_index = -1;
-                if((acessoryIndex) == device_item_tab_index){
+                if ((acessoryIndex) == device_item_tab_index) {
                     item_index = device_item_list_index;
                     acessoryFormView.setLastPositionSelected(device_item_list_index);
                     acessoryFormView.setFilterVal(device_item_list_filter);
                     acessoryFormView.setNonForecastFilter(device_item_list_checkbox_status);
-                }else{
+                } else {
                     acessoryFormView.setLastPositionSelected(-1);
                     acessoryFormView.setFilterVal("");
                     acessoryFormView.setNonForecastFilter(true);
@@ -1727,17 +1824,17 @@ public class Act011_Main extends Base_Activity
                     });
 
             returnValidCheck(String.valueOf(index_old));
-            if(bNew){
+            if (bNew) {
                 saveV2(false);
             }
-            if(device_item_tab_index > -1){
+            if (device_item_tab_index > -1) {
                 tabSelectedAction(device_item_tab_index + 1);
             }
             //LUCHE - 31/03/2020
             //Caso GPS desligado e form dependa de GPS exibe dialog
             //
             mPresenter.validateGPSResource(formLocal);
-        }else{
+        } else {
             deleteFormLocal();
             canSave = false;
             showMsg(hmAux_Trans.get("alert_form_without_fields_ttl"),
@@ -1794,7 +1891,7 @@ public class Act011_Main extends Base_Activity
             if (file.exists()) {
                 file.delete();
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             ToolBox.registerException(getClass().getName(), e);
         }
     }
@@ -1811,6 +1908,7 @@ public class Act011_Main extends Base_Activity
 
         return labelFF;
     }
+
     /**
      * BARRIONUEVO - 23-10-2019 - Autosave no onPause
      * Função que visa diminuir a perda de dados no N-Form como metodo paliativo para o crash de
@@ -1819,7 +1917,7 @@ public class Act011_Main extends Base_Activity
     @Override
     protected void onPause() {
         super.onPause();
-        if(canSave) {
+        if (canSave) {
             saveV2(false);
         }
     }
@@ -1910,10 +2008,11 @@ public class Act011_Main extends Base_Activity
 
     /**
      * Metodo que retorna o qtd de casa decimais de dentro do customFormContent
+     *
      * @param customFormContent
      * @return Valor do decimal ou 0 caos não exista ou de exception
      */
-    private int getDecimalFromContent(String customFormContent){
+    private int getDecimalFromContent(String customFormContent) {
         String[] opcs = null;
         try {
             JSONObject jsonObject = new JSONObject(customFormContent);
@@ -1970,7 +2069,9 @@ public class Act011_Main extends Base_Activity
     }
 
     @Override
-    public CustomFF cfg_Number(HMAux cf) { return cfg_Char(cf); }
+    public CustomFF cfg_Number(HMAux cf) {
+        return cfg_Char(cf);
+    }
 
     private CustomFF cfg_Date(HMAux cf) {
         return cfg_Char(cf);
@@ -2160,7 +2261,7 @@ public class Act011_Main extends Base_Activity
             photoFF.setmValue("p_" + prefix + cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ) + JPG_EXTENSION);
         }
         //
-        if(cf.hasConsistentValue(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_LOCAL_LINK)){
+        if (cf.hasConsistentValue(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_LOCAL_LINK)) {
             photoFF.setmOriginalValue(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_LOCAL_LINK));
         }
         //
@@ -2184,7 +2285,7 @@ public class Act011_Main extends Base_Activity
 
     @Override
     public CustomFF cfg_Measure(HMAux cf, MD_Product_Serial serialInfo, MeMeasureTp measureTp) {
-        String historicalInfo = mPresenter.getLastMeasureInfo(measureTp,serialInfo, getDecimalFromContent(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_CONTENT)) );
+        String historicalInfo = mPresenter.getLastMeasureInfo(measureTp, serialInfo, getDecimalFromContent(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_CONTENT)));
         //
         MeasureFF measureFF = new MeasureFF(Act011_Main.this);
         measureFF.setLastMeasureValue(historicalInfo);
@@ -2195,7 +2296,7 @@ public class Act011_Main extends Base_Activity
                         : getDecimalFromContent(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_CONTENT))
         );
         //
-        if(measureValidateListener == null) {
+        if (measureValidateListener == null) {
             measureValidateListener = new MeasureFF.OnValidationListener() {
                 @NonNull
                 @Override
@@ -2214,7 +2315,7 @@ public class Act011_Main extends Base_Activity
                             ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT)
                     );
                     //Se msg de erro, seta tradução
-                    if(validationReturn.getErrorMsg() != null && !validationReturn.getErrorMsg().isEmpty()){
+                    if (validationReturn.getErrorMsg() != null && !validationReturn.getErrorMsg().isEmpty()) {
                         validationReturn.setErrorMsg(
                                 hmAux_Trans.get(validationReturn.getErrorMsg())
                         );
@@ -2260,6 +2361,7 @@ public class Act011_Main extends Base_Activity
         //
         return measureFF;
     }
+
     //
     private HMAux retornDBValue(int seq) {
         HMAux hmAux = new HMAux();
@@ -2280,6 +2382,7 @@ public class Act011_Main extends Base_Activity
      * Metodo que pega os valores do customFF e seta do form_data_fields
      * Faz o loop nos customFF buscano a view da sequencia do form_data_fields e quando encontra,
      * copia os valores de getmValue e getmValue_Extra para form_data_fields.value e valuewsExtra
+     *
      * @param df
      */
     private void setCustomFFValueIntoFormDataField(GE_Custom_Form_Data_Field df) {
@@ -2298,6 +2401,7 @@ public class Act011_Main extends Base_Activity
      * Quando sPage = -1 , faz loop na lista de screen chamando a validação em cada uma.
      * Se sPage > 0 , "ajusta" indice da lista e chama o metodo de validação daquela aba especifica
      * Se sPage 0, não faz nada
+     *
      * @param sPage
      * @return
      */
@@ -2305,15 +2409,15 @@ public class Act011_Main extends Base_Activity
         int numberOfErrors = 0;
         int ipage = Integer.parseInt(sPage);
         try {
-            if(ipage == -1) {
+            if (ipage == -1) {
                 for (Act011BaseFrg act011BaseFrg : screens) {
                     numberOfErrors += ((Act011FrgFF) act011BaseFrg).getTabErrorCount();
                 }
-            }else if(ipage > 0) {
+            } else if (ipage > 0) {
                 ipage = ipage - 1;
                 numberOfErrors = screens.get(ipage).getTabErrorCount();
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             //
             for (int i = 0; i < customFFs.size(); i++) {
                 //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
@@ -2349,13 +2453,13 @@ public class Act011_Main extends Base_Activity
      * @param page -1  se deve validar todos ou >0 se especifico
      * @return
      */
-    private ArrayList<Act011FormTab> returnValidateTabObj(int page){
+    private ArrayList<Act011FormTab> returnValidateTabObj(int page) {
         ArrayList<Act011FormTab> tabs = new ArrayList<>();
-        if(page == -1){
+        if (page == -1) {
             for (Act011BaseFrg baseFrg : screens) {
                 tabs.add(baseFrg.getTabObj(false));
             }
-        }else if(page > 0){
+        } else if (page > 0) {
             //Ajuste para pega o indice correto da tab no array de frags.
             page--;
             tabs.add(screens.get(page).getTabObj(false));
@@ -2366,21 +2470,21 @@ public class Act011_Main extends Base_Activity
     @Override
     public void onInspectionSelected(@NonNull AcessoryFormView acessoryFormView, boolean isNewItem, int position, @NonNull String searchFilterValue, boolean chkStatus, @NonNull String itemCodeAndSeqPk) {
         String device_item_pk = acessoryFormView.getDevicePkPrefix();
-        if(!isNewItem){
-            device_item_pk = acessoryFormView.getDevicePkPrefix() +"."+itemCodeAndSeqPk;
+        if (!isNewItem) {
+            device_item_pk = acessoryFormView.getDevicePkPrefix() + "." + itemCodeAndSeqPk;
         }
         Intent mIntent = new Intent(context, Act086Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Bundle deviceBundle = new Bundle();
         deviceBundle.putString(GeOsDeviceDao.DEVICE_TP_DESC, acessoryFormView.getAcessoryName());
         deviceBundle.putString(GeOsDeviceDao.TRACKING_NUMBER, acessoryFormView.getAcessoryTracking());
-        deviceBundle.putString(DEVICE_ITEM_PK,device_item_pk);
-        deviceBundle.putInt(DEVICE_ITEM_TAB_INDEX,acessoryFormView.getTabIndex());
-        deviceBundle.putInt(DEVICE_ITEM_LIST_INDEX,position);
-        deviceBundle.putString(DEVICE_ITEM_LIST_FILTER,searchFilterValue);
-        deviceBundle.putBoolean(DEVICE_ITEM_LIST_CHECKBOX_STATUS,acessoryFormView.getNonForecastFilter());
-        deviceBundle.putBoolean(DEVICE_ITEM_NEW_ACTION,isNewItem);
-        deviceBundle.putString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS,formData.getCustom_form_status());
+        deviceBundle.putString(DEVICE_ITEM_PK, device_item_pk);
+        deviceBundle.putInt(DEVICE_ITEM_TAB_INDEX, acessoryFormView.getTabIndex());
+        deviceBundle.putInt(DEVICE_ITEM_LIST_INDEX, position);
+        deviceBundle.putString(DEVICE_ITEM_LIST_FILTER, searchFilterValue);
+        deviceBundle.putBoolean(DEVICE_ITEM_LIST_CHECKBOX_STATUS, acessoryFormView.getNonForecastFilter());
+        deviceBundle.putBoolean(DEVICE_ITEM_NEW_ACTION, isNewItem);
+        deviceBundle.putString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS, formData.getCustom_form_status());
         deviceBundle.putString(GeOsDao.DATE_START, geOs.getDate_start());
         bundle.putBundle(DEVICE_BUNDLE, deviceBundle);
         mIntent.putExtras(bundle);
@@ -2397,7 +2501,7 @@ public class Act011_Main extends Base_Activity
 
     @Override
     public void onRefreshTabCounter(int tabIndex) {
-        act011FfOption.updateTabList(screens.get(tabIndex).getTabObj(false),tabIndex);
+        act011FfOption.updateTabList(screens.get(tabIndex).getTabObj(false), tabIndex);
     }
 
     @Override
@@ -2728,7 +2832,7 @@ public class Act011_Main extends Base_Activity
 
             executeSerialSave();
         } else {
-            if(!mPresenter.isaTicketFlowForm()){
+            if (!mPresenter.isaTicketFlowForm()) {
                 ToolBox.toastMSG(context, hmAux_Trans.get("toast_finalized_offline_msg"));
             }
             flowControl();
@@ -2790,7 +2894,7 @@ public class Act011_Main extends Base_Activity
             return;
         }
         //
-        if(mSo_Prefix != null && mSo_Code != null){
+        if (mSo_Prefix != null && mSo_Code != null) {
             nservCall();
             return;
         }
@@ -2850,7 +2954,7 @@ public class Act011_Main extends Base_Activity
 
     private boolean hasAnyValueChanged() {
         for (CustomFF customFF : customFFs) {
-            if(customFF != null && !customFF.getmValue().isEmpty()){
+            if (customFF != null && !customFF.getmValue().isEmpty()) {
                 return true;
             }
         }
@@ -2893,13 +2997,24 @@ public class Act011_Main extends Base_Activity
         finish();
     }
 
+
+    public void callAct005SyncForm() {
+        Intent mIntent = new Intent(context, Act005_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle auto_sync = new Bundle();
+        auto_sync.putBoolean(AUTO_SYNC_FORM, true);
+        mIntent.putExtras(auto_sync);
+        startActivity(mIntent);
+        finish();
+    }
+
     @Override
     public void callAct006(Context context, boolean finalizeNewFlow) {
         Intent mIntent = new Intent(context, Act006_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //
         Bundle bundle = new Bundle();
-        if(finalizeNewFlow) {
+        if (finalizeNewFlow) {
             bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(formLocal.getCustom_product_code()));
             bundle.putString(MD_ProductDao.PRODUCT_DESC, formLocal.getCustom_product_desc());
             bundle.putString(MD_ProductDao.PRODUCT_ID, formLocal.getCustom_product_id());
@@ -2937,23 +3052,23 @@ public class Act011_Main extends Base_Activity
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //
         Bundle bundle = new Bundle();
-        bundle.putInt(TK_TicketDao.TICKET_PREFIX, mTicket_prefix != null ? mTicket_prefix : -1 );
-        bundle.putInt(TK_TicketDao.TICKET_CODE, mTicket_code != null ? mTicket_code : -1 );
+        bundle.putInt(TK_TicketDao.TICKET_PREFIX, mTicket_prefix != null ? mTicket_prefix : -1);
+        bundle.putInt(TK_TicketDao.TICKET_CODE, mTicket_code != null ? mTicket_code : -1);
         //
         bundle.putInt(TK_Ticket_CtrlDao.STEP_CODE, formData.getStep_code());
         bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ, formData.getTicket_seq());
         bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ_TMP, formData.getTicket_seq_tmp());
         //
-        if(isOffHandForm){
+        if (isOffHandForm) {
             bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, requestingAct);
         }
         bundle.putString(CH_RoomDao.ROOM_CODE, room_code);
         //LUCHE - 08/09/2020
         //Se é finalização do form e esta voltando pra act070, seta flag para forçar o envio ao chegar na act
-        if(mPresenter.setForceSentByForm(formData.getCustomer_code(),formData.getCustom_form_type(),formData.getCustom_form_code(),formData.getCustom_form_version(), (int) formData.getCustom_form_data())){
-            bundle.putBoolean(Act070_Main.PARAM_FORCE_SEND_BY_FORM_EXEC,true);
+        if (mPresenter.setForceSentByForm(formData.getCustomer_code(), formData.getCustom_form_type(), formData.getCustom_form_code(), formData.getCustom_form_version(), (int) formData.getCustom_form_data())) {
+            bundle.putBoolean(Act070_Main.PARAM_FORCE_SEND_BY_FORM_EXEC, true);
         }
-        if(act083Bundle != null) {
+        if (act083Bundle != null) {
             bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT083);
             bundle.putAll(act083Bundle);
         }
@@ -3076,10 +3191,10 @@ public class Act011_Main extends Base_Activity
     public void onBackPressed() {
         //super.onBackPressed();
         //mPresenter.onBackPressedClicked();
-        if (formData != null){
-            if(formData.getCustom_form_status().equals(Constant.SYS_STATUS_IN_PROCESSING)) {
+        if (formData != null) {
+            if (formData.getCustom_form_status().equals(Constant.SYS_STATUS_IN_PROCESSING)) {
                 exitAlert();
-            }else {
+            } else {
                 checkBackFlow();
             }
         } else {
@@ -3092,7 +3207,6 @@ public class Act011_Main extends Base_Activity
      * Extraido metodo que verifica o fluxo de voltar
      * Feito isso para poder executar o fluxo de voltar sem exibir a msg de confirmação no fluxo
      * do bvoltar por GPS desligado.
-     *
      */
     private void checkBackFlow() {
         if (mPresenter.isaTicketFlowForm()) {
@@ -3102,7 +3216,7 @@ public class Act011_Main extends Base_Activity
         } else if (ConstantBaseApp.ACT084.equals(requestingAct)
                 || ConstantBaseApp.SYS_STATUS_DONE.equals(formData.getCustom_form_status())) {
             callAct084();
-        }  else {
+        } else {
             callAct083();
         }
     }
@@ -3116,7 +3230,7 @@ public class Act011_Main extends Base_Activity
     protected void getSignatueF(String mValue) {
         String sName = mValue;
         canSave = mPresenter.isInProcessing(formLocal);
-        if (sName.trim().length() != 0 && !sName.equals(Constant.CACHE_PATH_PHOTO + "/" + mSignature) ) {
+        if (sName.trim().length() != 0 && !sName.equals(Constant.CACHE_PATH_PHOTO + "/" + mSignature)) {
 
             File sFile = new File(Constant.CACHE_PATH_PHOTO + "/" + mSignature);
             if (sFile.exists()) {
@@ -3193,6 +3307,7 @@ public class Act011_Main extends Base_Activity
 
     /**
      * Resultado da leitura de NFC do serial
+     *
      * @param mValue
      */
     @Override
@@ -3210,9 +3325,9 @@ public class Act011_Main extends Base_Activity
              * no onResume era identificado os dados da tela de confirmacao de serial e entrava no fluxo de envio automatico causando o envio de form sem
              * assinatura e sem as imagens em anexo.
              */
-            if(geFiles == null || geFiles.isEmpty()) {
+            if (geFiles == null || geFiles.isEmpty()) {
                 setGeFilesList();
-                if(signature == 1){
+                if (signature == 1) {
                     addSignatureToGeFiles();
                 }
             }
@@ -3375,10 +3490,10 @@ public class Act011_Main extends Base_Activity
         //Campos do Serial podem ou não existir
         MD_Product_Serial serial = null;
 
-        if(serial_id == null || serial_id.isEmpty()) {
+        if (serial_id == null || serial_id.isEmpty()) {
             //Pegar info do serial
             ll_serial_info.setVisibility(View.GONE);
-        }else {
+        } else {
             serial = getSerialInfo();
             //
             if (serial != null) {
@@ -3423,7 +3538,7 @@ public class Act011_Main extends Base_Activity
         ) {
             String ticketDesc = formData.getTicket_prefix() + "." + formData.getTicket_code();
             //
-            if(formData.getStep_code() != null) {
+            if (formData.getStep_code() != null) {
                 ticketDesc = mPresenter.getDialogTicketInfo(formData.getTicket_prefix(), formData.getTicket_code(), formData.getStep_code());
             }
             tv_ticket_info_desc.setText(ticketDesc);
@@ -3455,7 +3570,7 @@ public class Act011_Main extends Base_Activity
             tv_dt_schedule_end_val.setText(
                     ToolBox_Inf.formatScheduleDate(context, formLocal.getSchedule_date_end_format())
             );
-        }else{
+        } else {
             ll_schedule_info.setVisibility(View.GONE);
         }
 
@@ -3476,7 +3591,7 @@ public class Act011_Main extends Base_Activity
 //        }
 
 
-        if(pdfs_local.size()>0) {
+        if (pdfs_local.size() > 0) {
             String[] from = {BLOB_ICON, GE_Custom_Form_Blob_LocalDao.BLOB_NAME};
             int[] to = {R.id.act011_dialog_form_info_cell_iv_logo, R.id.act011_dialog_form_info_cell_tv_name};
             lv_pdfs.setAdapter(
@@ -3514,14 +3629,14 @@ public class Act011_Main extends Base_Activity
                         }
                         //LUCHE - 03/10/2020
                         //Modificado metodo de abertura do PDF para que seja compativel com Android 10
-                        Intent intent = ToolBox_Inf.getOpenPdfIntent(context,Constant.CACHE_PDF + "/" + aux.get(GE_Custom_Form_Blob_LocalDao.BLOB_URL_LOCAL));
+                        Intent intent = ToolBox_Inf.getOpenPdfIntent(context, Constant.CACHE_PDF + "/" + aux.get(GE_Custom_Form_Blob_LocalDao.BLOB_URL_LOCAL));
                         /*
                             23/08/2019 - BARRIONUEVO
                             Trata devices sem suporte a pdf
                         */
                         try {
                             startActivity(intent);
-                        }catch (ActivityNotFoundException e){
+                        } catch (ActivityNotFoundException e) {
                             ToolBox_Inf.registerException(getClass().getName(), e);
                             ToolBox.alertMSG(
                                     context,
@@ -3534,7 +3649,7 @@ public class Act011_Main extends Base_Activity
                     }
                 }
             });
-        }else{
+        } else {
             lv_pdfs.setVisibility(View.GONE);
         }
 
@@ -3552,9 +3667,9 @@ public class Act011_Main extends Base_Activity
     }
 
     private void setTrackingListForm(LinearLayout ll_tracking, LinearLayout ll_tracking_val, MD_Product_Serial serial) {
-        if(serial.getTracking_list() == null || serial.getTracking_list().isEmpty()) {
+        if (serial.getTracking_list() == null || serial.getTracking_list().isEmpty()) {
             ll_tracking.setVisibility(View.GONE);
-        }else{
+        } else {
             for (MD_Product_Serial_Tracking tracking : serial.getTracking_list()) {
                 TextView tvTracking = new TextView(Act011_Main.this);
                 tvTracking.setText(tracking.getTracking());
@@ -3570,28 +3685,28 @@ public class Act011_Main extends Base_Activity
     }
 
     private void setDescriptions(TextView tv_descriptions, MD_Product_Serial serial) {
-        String description = ( serial.getBrand_desc() == null ? "" :  serial.getBrand_desc() );
-        description = description + ( serial.getModel_desc() == null ? "" :  " - " + serial.getModel_desc() );
-        description = description + ( serial.getColor_desc() == null ? "" :  " - " + serial.getColor_desc() );
-        if(description.isEmpty()){
+        String description = (serial.getBrand_desc() == null ? "" : serial.getBrand_desc());
+        description = description + (serial.getModel_desc() == null ? "" : " - " + serial.getModel_desc());
+        description = description + (serial.getColor_desc() == null ? "" : " - " + serial.getColor_desc());
+        if (description.isEmpty()) {
             tv_descriptions.setVisibility(View.GONE);
-        }else{
+        } else {
             tv_descriptions.setText(description);
         }
     }
 
     private void setSerialInfo(LinearLayout layout, TextView tvValor, String conteudo_id, String conteudo_desc) {
-        if (conteudo_id==null || conteudo_id.isEmpty()){
+        if (conteudo_id == null || conteudo_id.isEmpty()) {
             hideView(layout);
-        } else{
+        } else {
             tvValor.setText(conteudo_id + " - " + conteudo_desc);
         }
     }
 
     private void setSerialInfo(LinearLayout layout, TextView tvValor, String conteudo) {
-        if (conteudo==null || conteudo.isEmpty()){
+        if (conteudo == null || conteudo.isEmpty()) {
             hideView(layout);
-        } else{
+        } else {
             tvValor.setText(conteudo);
         }
     }
@@ -3635,7 +3750,7 @@ public class Act011_Main extends Base_Activity
 
     }
 
-    private void showFinalizeDialogOpt(){
+    private void showFinalizeDialogOpt() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         //
         Act011CheckDialogBinding binding = Act011CheckDialogBinding.inflate(getLayoutInflater());
@@ -3660,10 +3775,10 @@ public class Act011_Main extends Base_Activity
                         binding.act011DialogCheckMkedtJustifyMissingAnswerVal.post(new Runnable() {
                             @Override
                             public void run() {
-                                if(mText != null && !mText.isEmpty()) {
+                                if (mText != null && !mText.isEmpty()) {
                                     DrawableCompat.setTintList(binding.act011DialogCheckMkedtJustifyMissingAnswerVal.getBackground(), ColorStateList.valueOf(ContextCompat.getColor(context, R.color.namoa_color_gray_9)));
-                                }else{
-                                    if(formLocal.getSo_optional_justify_problem() == 0) {
+                                } else {
+                                    if (formLocal.getSo_optional_justify_problem() == 0) {
                                         DrawableCompat.setTintList(binding.act011DialogCheckMkedtJustifyMissingAnswerVal.getBackground(), ColorStateList.valueOf(ContextCompat.getColor(context, R.color.font_required)));
                                     }
                                 }
@@ -3680,6 +3795,7 @@ public class Act011_Main extends Base_Activity
                     public void reportTextChange(String s) {
 
                     }
+
                     @Override
                     public void reportTextChange(String s, boolean b) {
                         if (formLocal.getSo_optional_justify_problem() == 0) {
@@ -3697,11 +3813,11 @@ public class Act011_Main extends Base_Activity
         binding.act011DialogCheckBtnOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isFormOs) {
+                if (isFormOs) {
                     String startDate = binding.act011DialogCheckMkdateFormStart.getmValue();
                     String endDate = binding.act011DialogCheckMkdateFormEnd.getmValue();
                     String errorMsg = isFinalizeDialogInputValid(binding, startDate, endDate);
-                    if(errorMsg.isEmpty()) {
+                    if (errorMsg.isEmpty()) {
                         String missingAnswer = binding.act011DialogCheckTilJustifyMissingAnswerVal.getEditText().getText().toString();
                         //LUCHE - 08/11/2021 - resgata contador antes para ser usado na validação
                         //de refreshCurrentTabRecycle. Se não há mais não respondidos(segunda chama),
@@ -3739,7 +3855,7 @@ public class Act011_Main extends Base_Activity
                         startCheckIN();
                         //
                         alertDialog.dismiss();
-                    }else{
+                    } else {
                         ToolBox.alertMSG(
                                 context,
                                 hmAux_Trans.get("dialog_finalize_so_form_invalid_ttl"),
@@ -3748,7 +3864,7 @@ public class Act011_Main extends Base_Activity
                                 0
                         );
                     }
-                }else{
+                } else {
                     //Seta valor var que controla se fluxo é finaliza ou finaliza mais novo.
                     finalizeNewFlow = binding.act011DialogCheckOptionRg.getCheckedRadioButtonId() == R.id.act011_dialog_check_option_rdo_finalize_new;
                     //
@@ -3772,9 +3888,9 @@ public class Act011_Main extends Base_Activity
             public void onChangeValue(String s) {
                 clearMkEdtJustifyMissingAnswerValFocus(binding.act011DialogCheckMkedtJustifyMissingAnswerVal);
                 String startDate = binding.act011DialogCheckMkdateFormStart.getmValue();
-                if(validEndDate(startDate, s)){
+                if (validEndDate(startDate, s)) {
                     binding.act011DialogCheckTvElapsedTimeVal.setText(getFormElapsedTimeFormatted(binding.act011DialogCheckMkdateFormStart.getmValue(), s));
-                }else{
+                } else {
                     ToolBox.alertMSG(
                             context,
                             hmAux_Trans.get("dialog_finalize_os_form_invalid_end_date_ttl"),
@@ -3791,9 +3907,9 @@ public class Act011_Main extends Base_Activity
             public void onChangeValue(String s) {
                 clearMkEdtJustifyMissingAnswerValFocus(binding.act011DialogCheckMkedtJustifyMissingAnswerVal);
                 String endDate = binding.act011DialogCheckMkdateFormEnd.getmValue();
-                if(validEndDate(s, endDate)){
+                if (validEndDate(s, endDate)) {
                     binding.act011DialogCheckTvElapsedTimeVal.setText(getFormElapsedTimeFormatted(s, endDate));
-                }else{
+                } else {
                     ToolBox.alertMSG(
                             context,
                             hmAux_Trans.get("dialog_finalize_os_form_invalid_end_date_ttl"),
@@ -3821,7 +3937,7 @@ public class Act011_Main extends Base_Activity
     }
 
     private void clearMkEdtJustifyMissingAnswerValFocus(MKEditTextNM mkEditTextNM) {
-        if(mkEditTextNM != null) {
+        if (mkEditTextNM != null) {
             mkEditTextNM.clearFocus();
         }
     }
@@ -3829,11 +3945,11 @@ public class Act011_Main extends Base_Activity
     private String isFinalizeDialogInputValid(Act011CheckDialogBinding binding, String startDate, String endDate) {
         String errorMsg = "";
         //
-        if(!validEndDate(startDate, endDate)){
+        if (!validEndDate(startDate, endDate)) {
             errorMsg = getString(R.string.unicode_bullet) + " " + hmAux_Trans.get("dialog_finalize_os_form_invalid_end_date_end") + "\n";
         }
         //
-        if(!validSerialClass(binding)){
+        if (!validSerialClass(binding)) {
             errorMsg += getString(R.string.unicode_bullet) + " " + hmAux_Trans.get("dialog_finalize_so_form_serial_empty_class_error");
         }
         //
@@ -3841,7 +3957,7 @@ public class Act011_Main extends Base_Activity
     }
 
     private boolean validSerialClass(Act011CheckDialogBinding binding) {
-        if(binding.ssSerialClass.ismRequired()){
+        if (binding.ssSerialClass.ismRequired()) {
             return binding.ssSerialClass.getmValue().hasConsistentValue(SearchableSpinner.CODE);
         }
         return true;
@@ -3927,7 +4043,7 @@ public class Act011_Main extends Base_Activity
             binding.act011DialogCheckTvMissingAnswerLbl.setText(hmAux_Trans.get("dialog_finalize_os_form_missing_answer_count_lbl"));
             binding.act011DialogCheckTvElapsedTimeLbl.setText(hmAux_Trans.get("dialog_finalize_os_form_elapsed_time_lbl"));
             binding.act011DialogCheckTvJustifyMissingAnswerLbl.setText(hmAux_Trans.get("dialog_finalize_os_form_justify_missing_answer_lbl"));
-            if(formLocal.getSo_optional_justify_problem() == 0) {
+            if (formLocal.getSo_optional_justify_problem() == 0) {
                 TextViewKt.setAsRequired(binding.act011DialogCheckTvJustifyMissingAnswerLbl, true);
                 DrawableCompat.setTintList(binding.act011DialogCheckMkedtJustifyMissingAnswerVal.getBackground(), ColorStateList.valueOf(ContextCompat.getColor(context, R.color.font_required)));
             }
@@ -3963,7 +4079,7 @@ public class Act011_Main extends Base_Activity
         ArrayList<HMAux> serialClassList = mPresenter.getSerialClassList();
         SearchableSpinner ssSerialClass = binding.ssSerialClass;
         ssSerialClass.setmRequired(false);
-        if(serialClassList != null && serialClassList.size() > 0) {
+        if (serialClassList != null && serialClassList.size() > 0) {
             binding.clSerialClass.setVisibility(View.VISIBLE);
             //
             MD_Product_Serial mdProductSerial = mPresenter.getSerialInfo(
@@ -4047,7 +4163,7 @@ public class Act011_Main extends Base_Activity
      * do GPS caso o usuario NÃO TENHA cancelado a ação.
      * Em caso de cancelamento, por segurança, os valores estão sendo resetados.
      *
-     * @param mLink - String concatenada com as informações:
+     * @param mLink     - String concatenada com as informações:
      *                  * Tipo de Provider
      *                  * Latitude
      *                  * Longitude
@@ -4090,9 +4206,9 @@ public class Act011_Main extends Base_Activity
     protected void processCustom_error(String mLink, String mRequired) {
         progressDialog.dismiss();
         //
-        if(wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())
+        if (wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())
                 || wsSoProcess.equalsIgnoreCase(WS_Save.class.getSimpleName())
-        ){
+        ) {
             ToolBox.alertMSG(
                     context,
                     hmAux_Trans.get("alert_data_not_sent_ttl"),
@@ -4105,7 +4221,7 @@ public class Act011_Main extends Base_Activity
                     },
                     0
             );
-        }else {
+        } else {
             formData.setLocation_type("");
             formData.setLocation_lat("");
             formData.setLocation_lng("");
@@ -4114,6 +4230,7 @@ public class Act011_Main extends Base_Activity
 
     /**
      * LUCHE
+     *
      * @param mLink
      * @param mRequired
      */
@@ -4224,13 +4341,13 @@ public class Act011_Main extends Base_Activity
             showResults(wsResults);
         } else {
             progressDialog.dismiss();
-            if(mPresenter.hasGpsPendecy(
+            if (mPresenter.hasGpsPendecy(
                     formLocal.getCustomer_code(),
                     formLocal.getCustom_form_type(),
                     formLocal.getCustom_form_code(),
                     formLocal.getCustom_form_version(),
                     formLocal.getCustom_form_data()
-            )){
+            )) {
                 ToolBox.alertMSG(
                         Act011_Main.this,
                         hmAux_Trans.get("dialog_has_gps_pendency_ttl"),
@@ -4243,7 +4360,7 @@ public class Act011_Main extends Base_Activity
                         },
                         0
                 );
-            }else {
+            } else {
                 flowControl();
             }
         }
@@ -4258,13 +4375,13 @@ public class Act011_Main extends Base_Activity
             showResults(wsResults);
         } else {
             progressDialog.dismiss();
-            if(mPresenter.hasGpsPendecy(
+            if (mPresenter.hasGpsPendecy(
                     formLocal.getCustomer_code(),
                     formLocal.getCustom_form_type(),
                     formLocal.getCustom_form_code(),
                     formLocal.getCustom_form_version(),
                     formLocal.getCustom_form_data()
-            )){
+            )) {
                 ToolBox.alertMSG(
                         Act011_Main.this,
                         hmAux_Trans.get("dialog_has_gps_pendency_ttl"),
@@ -4277,7 +4394,7 @@ public class Act011_Main extends Base_Activity
                         },
                         0
                 );
-            }else {
+            } else {
                 flowControl();
             }
         }
@@ -4309,11 +4426,11 @@ public class Act011_Main extends Base_Activity
                     break;
                 case ConstantBaseApp.SYS_STATUS_SCHEDULE:
                     hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_schedule"));
-                    hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, item.get("final_status")+"\n"+item.get("status"));
+                    hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, item.get("final_status") + "\n" + item.get("status"));
                     break;
                 case TSave_Rec.Error_Process.ERROR_TYPE_TICKET:
                     hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_ticket"));
-                    hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, item.get("final_status")+"\n"+item.get("status"));
+                    hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, item.get("final_status") + "\n" + item.get("status"));
                     break;
             }
             //
@@ -4374,7 +4491,7 @@ public class Act011_Main extends Base_Activity
     @Override
     protected void processUpdateSoftware(String mLink, String mRequired) {
         super.processUpdateSoftware(mLink, mRequired);
-        if(progressDialog != null) {
+        if (progressDialog != null) {
             progressDialog.dismiss();
         }
         //
@@ -4398,7 +4515,7 @@ public class Act011_Main extends Base_Activity
         //super.processNotification_close(mValue, mActivity);
     }
 
-    public MD_Product_Serial getSerialInfo(){
+    public MD_Product_Serial getSerialInfo() {
         return mPresenter.getSerialInfo(
                 ToolBox_Con.getPreference_Customer_Code(context),
                 Integer.parseInt(product_code),
@@ -4407,9 +4524,9 @@ public class Act011_Main extends Base_Activity
         );
     }
 
-    public String getProduct_icon(){
+    public String getProduct_icon() {
         //return mPresenter.getProductIcon(Long.parseLong(product_code));
-        return formLocal != null ? formLocal.getCustom_product_icon_name(): "";
+        return formLocal != null ? formLocal.getCustom_product_icon_name() : "";
     }
 
     private void getLocation() {
@@ -4429,7 +4546,7 @@ public class Act011_Main extends Base_Activity
                     public void accessDenied(final String[] permissions) {
                         String alertTtl = hmAux_Trans.get("alert_gps_denied_permission_ttl");
                         String alertMsg = hmAux_Trans.get("alert_gps_denied_permission_msg");
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                             alertTtl = hmAux_Trans.get("alert_gps_denied_exact_permission_ttl");
                             alertMsg = hmAux_Trans.get("alert_gps_denied_exact_permission_msg");
                         }
@@ -4441,7 +4558,7 @@ public class Act011_Main extends Base_Activity
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
-                                        callRequestPermission(MULTIIPLE_PERMISSION_REQUEST_WITHOUT_RATIONALE,permissions);
+                                        callRequestPermission(MULTIIPLE_PERMISSION_REQUEST_WITHOUT_RATIONALE, permissions);
                                     }
                                 },
                                 new DialogInterface.OnClickListener() {
@@ -4457,7 +4574,7 @@ public class Act011_Main extends Base_Activity
                     public void requestPermissionRationale(final String[] permissions) {
                         String alertTtl = hmAux_Trans.get("alert_gps_rationale_permission_ttl");
                         String alertMsg = hmAux_Trans.get("alert_gps_rationale_permission_msg");
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                             alertTtl = hmAux_Trans.get("alert_gps_rationale_exact_permission_ttl");
                             alertMsg = hmAux_Trans.get("alert_gps_rationale_exact_permission_msg");
                         }
@@ -4469,7 +4586,7 @@ public class Act011_Main extends Base_Activity
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
-                                        callRequestPermission(MULTIIPLE_PERMISSION_REQUEST_WITHOUT_RATIONALE,permissions);
+                                        callRequestPermission(MULTIIPLE_PERMISSION_REQUEST_WITHOUT_RATIONALE, permissions);
                                     }
                                 },
                                 new DialogInterface.OnClickListener() {
@@ -4485,7 +4602,7 @@ public class Act011_Main extends Base_Activity
                     public void accessDeniedNeverAskAgain(String[] permissions) {
                         String alertTtl = hmAux_Trans.get("alert_gps_never_ask_again_permission_ttl");
                         String alertMsg = hmAux_Trans.get("alert_gps_never_ask_again_permission_msg");
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                             alertTtl = hmAux_Trans.get("alert_gps_never_ask_again_exact_permission_ttl");
                             alertMsg = hmAux_Trans.get("alert_gps_never_ask_again_exact_permission_msg");
                         }
@@ -4504,10 +4621,11 @@ public class Act011_Main extends Base_Activity
 
                     @Override
                     public void informAppDetailSettingsReturn() {
-                        callRequestPermission(MULTIIPLE_PERMISSION_REQUEST_WITHOUT_RATIONALE,new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION});
+                        callRequestPermission(MULTIIPLE_PERMISSION_REQUEST_WITHOUT_RATIONALE, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION});
                     }
                 }
         );
     }
+
 
 }
