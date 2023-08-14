@@ -23,7 +23,7 @@ public class Sql_WS_TK_Ticket_Save_008 implements Specification {
         StringBuilder sb = new StringBuilder();
         return sb
                 .append(" UPDATE "+ TK_TicketDao.TABLE+" set\n" +
-                        "   update_required = '"+update_required+"',\n" +
+                        "   update_required = '"+update_required+"'\n" +
                         " WHERE\n" +
                         "  customer_code = '"+customer_code+"'\n" +
                         "  and ticket_prefix = '"+ticket_prefix+"'\n" +
