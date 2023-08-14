@@ -1,7 +1,7 @@
 package com.namoadigital.prj001.ui.act083.data.local.preferences
 
 import android.content.SharedPreferences
-import com.namoadigital.prj001.core.data.local.preferences.ModelPreferences
+import com.namoadigital.prj001.core.data.domain.preference.ModelPreferences
 import com.namoadigital.prj001.ui.act083.model.SaveActionFilterModel
 import com.namoadigital.prj001.util.ConstantBaseApp
 

@@ -3,7 +3,7 @@ package com.namoadigital.prj001.ui.act047.local.preference
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
-import com.namoadigital.prj001.core.data.local.preferences.ModelPreferences
+import com.namoadigital.prj001.core.data.domain.preference.ModelPreferences
 import com.namoadigital.prj001.ui.act047.model.NextOsFilter
 import com.namoadigital.prj001.ui.act047.model.TypeDeadlineFilter
 import com.namoadigital.prj001.ui.act047.model.TypePriorityFilter

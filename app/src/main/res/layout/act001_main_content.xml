@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     android:background="@color/namoa_color_light_blue"
     android:gravity="center"
-
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ui.act001.Act001_Main"
     tools:showIn="@layout/act001_main">
@@ -88,15 +87,22 @@
             android:gravity="center"
             android:orientation="vertical">
 
+            <Spinner
+                android:id="@+id/select_environment_dev"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:layout_marginBottom="30dp" />
+
             <Button
                 android:id="@+id/act001_btn_login"
                 android:layout_width="@dimen/btn_width_default"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
                 android:background="@drawable/btn_namoa_main_states"
                 android:text="@string/act001_btn_login"
-                android:textColor="@color/padrao_WHITE"
-                android:layout_margin="5dp"
-                />
+                android:textColor="@color/padrao_WHITE" />
         </LinearLayout>
 
         <TextView

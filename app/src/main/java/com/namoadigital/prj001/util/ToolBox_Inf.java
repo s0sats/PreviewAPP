@@ -3271,7 +3271,7 @@ public class ToolBox_Inf {
     }
 
     public static boolean isDevelopmentBase() {
-        return Constant.WS_GETCUSTOMERS.contains("https://dev.");
+        return BuildConfig.FLAVOR.equals("development");
     }
 
     public static boolean isDownloadRunning() {

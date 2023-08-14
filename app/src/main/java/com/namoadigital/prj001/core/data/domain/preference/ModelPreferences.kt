@@ -1,4 +1,4 @@
-package com.namoadigital.prj001.core.data.local.preferences
+package com.namoadigital.prj001.core.data.domain.preference
 
 interface ModelPreferences<T> {
 
