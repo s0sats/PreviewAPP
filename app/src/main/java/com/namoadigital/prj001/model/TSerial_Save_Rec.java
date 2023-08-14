@@ -61,6 +61,7 @@ public class TSerial_Save_Rec {
         @SerializedName("product_code") private long product_code;
         @SerializedName("serial_code") private int serial_code;
         @SerializedName("serial_tmp") private int serial_tmp;
+        @SerializedName("has_item_check") private int has_item_check;
         //private String serial_id;
         @SerializedName("ret_status") private String ret_status;
         @SerializedName("ret_msg") private String ret_msg;
@@ -97,7 +98,15 @@ public class TSerial_Save_Rec {
             this.serial_tmp = serial_tmp;
         }
 
-//        public String getSerial_id() {
+        public int getHas_item_check() {
+            return has_item_check;
+        }
+
+        public void setHas_item_check(int has_item_check) {
+            this.has_item_check = has_item_check;
+        }
+
+        //        public String getSerial_id() {
 //            return serial_id;
 //        }
 //
