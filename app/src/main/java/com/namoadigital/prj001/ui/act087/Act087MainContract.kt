@@ -4,7 +4,13 @@ import android.content.DialogInterface
 import android.graphics.Bitmap
 import android.os.Bundle
 import com.namoa_digital.namoa_library.util.HMAux
-import com.namoadigital.prj001.model.*
+import com.namoadigital.prj001.model.FormOsHeaderFrgSerialBkpItemAbs
+import com.namoadigital.prj001.model.GeOs
+import com.namoadigital.prj001.model.MD_Product
+import com.namoadigital.prj001.model.MD_Product_Serial
+import com.namoadigital.prj001.model.MD_Schedule_Exec
+import com.namoadigital.prj001.model.MdOrderType
+import com.namoadigital.prj001.model.MeMeasureTp
 
 interface Act087MainContract {
 
@@ -46,5 +52,6 @@ interface Act087MainContract {
         fun getScheduleExecObj(): MD_Schedule_Exec?
         fun getFormRequiresGPSInfo(): Boolean
         fun checkFormExists(): Boolean
+        fun hasPassedDay(): Int
     }
 }

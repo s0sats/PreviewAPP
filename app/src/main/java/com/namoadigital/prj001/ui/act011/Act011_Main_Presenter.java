@@ -27,7 +27,27 @@ import java.util.ArrayList;
 
 public interface Act011_Main_Presenter {
 
-    void setData(String customer_code, String formtype_code, String form_code, String formversion_code, String product_code, String form_data, String product_desc, String product_id, String formcode_desc, String serial_id, Integer so_prefix, Integer so_code, String so_site_code, Integer so_operation_code, Integer mTicket_prefix, Integer mTicket_code, Integer mTicket_seq, Integer mTicket_seq_tmp, Integer mStep_code);
+    void setData(
+            String customer_code,
+            String formtype_code,
+            String form_code,
+            String formversion_code,
+            String product_code,
+            String form_data,
+            String product_desc,
+            String product_id,
+            String formcode_desc,
+            String serial_id,
+            Integer so_prefix,
+            Integer so_code,
+            String so_site_code,
+            Integer so_operation_code,
+            Integer mTicket_prefix,
+            Integer mTicket_code,
+            Integer mTicket_seq,
+            Integer mTicket_seq_tmp,
+            Integer mStep_code
+    );
 
     void saveData(GE_Custom_Form_Data formData, boolean bMsg);
 
@@ -58,6 +78,7 @@ public interface Act011_Main_Presenter {
     void cancelScheduleAndForm(GE_Custom_Form_Local customFormLocal, MD_Schedule_Exec scheduleExec);
 
     void validateGPSResource(GE_Custom_Form_Local formLocal);
+
     //
     boolean isFormCreateByTicket(GE_Custom_Form_Local customFormLocal);
 
@@ -100,5 +121,30 @@ public interface Act011_Main_Presenter {
 
     void saveSerialClass(long preference_customer_code, int productCode, String serialId, GE_Custom_Form_Local formLocal, SearchableSpinner ssSerialClass);
 
-    boolean isFormTicketKanban(Integer mTicket_prefix,Integer mTicket_code);
+    boolean isFormTicketKanban(Integer mTicket_prefix, Integer mTicket_code);
+
+    boolean checkIfFormIsNew(
+            String customer_code,
+            String formtype_code,
+            String form_code,
+            String formversion_code,
+            String product_code,
+            String form_data,
+            String product_desc,
+            String product_id,
+            String formcode_desc,
+            String serial_id,
+            Integer so_prefix,
+            Integer so_code,
+            String so_site_code,
+            Integer so_operation_code,
+            Integer mTicket_prefix,
+            Integer mTicket_code,
+            Integer mTicket_seq,
+            Integer mTicket_seq_tmp,
+            Integer mStep_code
+    );
+
+
+    int hasPassedDay();
 }

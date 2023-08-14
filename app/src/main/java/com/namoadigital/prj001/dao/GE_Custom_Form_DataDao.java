@@ -12,6 +12,7 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_Get_Last_Date;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -116,17 +117,17 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
     }
 
     public DaoObjReturn addUpdateWithReturn(GE_Custom_Form_Data custom_form_data) {
-       return addUpdateWithReturnAndSharedDbInstance(custom_form_data,null);
+        return addUpdateWithReturnAndSharedDbInstance(custom_form_data, null);
     }
 
-    public DaoObjReturn addUpdateWithReturnAndSharedDbInstance(GE_Custom_Form_Data custom_form_data, @Nullable SQLiteDatabase dbInstance){
+    public DaoObjReturn addUpdateWithReturnAndSharedDbInstance(GE_Custom_Form_Data custom_form_data, @Nullable SQLiteDatabase dbInstance) {
         DaoObjReturn daoObjReturn = new DaoObjReturn();
         long addUpdateRet = 0;
         String curAction = DaoObjReturn.INSERT_OR_UPDATE;
         //
-        if(dbInstance == null) {
+        if (dbInstance == null) {
             openDB();
-        }else{
+        } else {
             this.db = dbInstance;
         }
         try {
@@ -150,10 +151,10 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
             //Gera arquivo de exception usando dados da exception e do obj de retorno
             ToolBox_Inf.registerException(
-                getClass().getName(),
-                new Exception(
-                    e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
-                )
+                    getClass().getName(),
+                    new Exception(
+                            e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
+                    )
             );
         } finally {
             daoObjReturn.setAction(curAction);
@@ -238,7 +239,7 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
 
     @Override
     public GE_Custom_Form_Data getByString(String s_query) {
-         return getByString(s_query,null);
+        return getByString(s_query, null);
 //        GE_Custom_Form_Data custom_form_data = null;
 //        openDB();
 //
@@ -261,7 +262,7 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
 //        return custom_form_data;
     }
 
-    public GE_Custom_Form_Data getByString(String s_query,@Nullable DaoObjReturn daoObjReturn) {
+    public GE_Custom_Form_Data getByString(String s_query, @Nullable DaoObjReturn daoObjReturn) {
         GE_Custom_Form_Data custom_form_data = null;
         openDB();
 
@@ -275,7 +276,7 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
 
             cursor.close();
         } catch (Exception e) {
-            if(daoObjReturn != null){
+            if (daoObjReturn != null) {
                 daoObjReturn.copyError(ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage()));
             }
             //
@@ -289,7 +290,7 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
         return custom_form_data;
     }
 
-    public GE_Custom_Form_Data getByStringSharedDbInstance(String s_query,@Nullable SQLiteDatabase dbInstance){
+    public GE_Custom_Form_Data getByStringSharedDbInstance(String s_query, @Nullable SQLiteDatabase dbInstance) {
         GE_Custom_Form_Data custom_form_data = null;
         if (dbInstance == null) {
             openDB();
@@ -313,12 +314,13 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
         } finally {
         }
 
-        if(dbInstance == null) {
+        if (dbInstance == null) {
             closeDB();
         }
 
         return custom_form_data;
     }
+
     //
     @Override
     public HMAux getByStringHM(String sQuery) {
@@ -489,68 +491,68 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
                 custom_form_data.setDate_gps(cursor.getString(cursor.getColumnIndex(DATE_GPS)));
             }
             //
-            if(cursor.isNull(cursor.getColumnIndex(SCHEDULE_PREFIX))){
+            if (cursor.isNull(cursor.getColumnIndex(SCHEDULE_PREFIX))) {
                 custom_form_data.setSchedule_prefix(null);
-            }else{
+            } else {
                 custom_form_data.setSchedule_prefix(cursor.getInt(cursor.getColumnIndex(SCHEDULE_PREFIX)));
             }
 
-            if(cursor.isNull(cursor.getColumnIndex(SCHEDULE_CODE))){
+            if (cursor.isNull(cursor.getColumnIndex(SCHEDULE_CODE))) {
                 custom_form_data.setSchedule_code(null);
-            }else{
+            } else {
                 custom_form_data.setSchedule_code(cursor.getInt(cursor.getColumnIndex(SCHEDULE_CODE)));
             }
 
-            if(cursor.isNull(cursor.getColumnIndex(SCHEDULE_EXEC))){
+            if (cursor.isNull(cursor.getColumnIndex(SCHEDULE_EXEC))) {
                 custom_form_data.setSchedule_exec(null);
-            }else{
+            } else {
                 custom_form_data.setSchedule_exec(cursor.getInt(cursor.getColumnIndex(SCHEDULE_EXEC)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(ERROR_MSG))){
+            if (cursor.isNull(cursor.getColumnIndex(ERROR_MSG))) {
                 custom_form_data.setError_msg(null);
-            }else{
+            } else {
                 custom_form_data.setError_msg(cursor.getString(cursor.getColumnIndex(ERROR_MSG)));
             }
 
-            if(cursor.isNull(cursor.getColumnIndex(TICKET_PREFIX))){
+            if (cursor.isNull(cursor.getColumnIndex(TICKET_PREFIX))) {
                 custom_form_data.setTicket_prefix(null);
-            }else{
+            } else {
                 custom_form_data.setTicket_prefix(cursor.getInt(cursor.getColumnIndex(TICKET_PREFIX)));
             }
 
-            if(cursor.isNull(cursor.getColumnIndex(TICKET_CODE))){
+            if (cursor.isNull(cursor.getColumnIndex(TICKET_CODE))) {
                 custom_form_data.setTicket_code(null);
-            }else{
+            } else {
                 custom_form_data.setTicket_code(cursor.getInt(cursor.getColumnIndex(TICKET_CODE)));
             }
 
-            if(cursor.isNull(cursor.getColumnIndex(TICKET_SEQ))){
+            if (cursor.isNull(cursor.getColumnIndex(TICKET_SEQ))) {
                 custom_form_data.setTicket_seq(null);
-            }else{
+            } else {
                 custom_form_data.setTicket_seq(cursor.getInt(cursor.getColumnIndex(TICKET_SEQ)));
             }
 
-            if(cursor.isNull(cursor.getColumnIndex(TICKET_SEQ_TMP))){
+            if (cursor.isNull(cursor.getColumnIndex(TICKET_SEQ_TMP))) {
                 custom_form_data.setTicket_seq_tmp(null);
-            }else{
+            } else {
                 custom_form_data.setTicket_seq_tmp(cursor.getInt(cursor.getColumnIndex(TICKET_SEQ_TMP)));
             }
 
-            if(cursor.isNull(cursor.getColumnIndex(PIPELINE_CODE))){
+            if (cursor.isNull(cursor.getColumnIndex(PIPELINE_CODE))) {
                 custom_form_data.setPipeline_code(null);
-            }else{
+            } else {
                 custom_form_data.setPipeline_code(cursor.getInt(cursor.getColumnIndex(PIPELINE_CODE)));
             }
 
-            if(cursor.isNull(cursor.getColumnIndex(STEP_CODE))){
+            if (cursor.isNull(cursor.getColumnIndex(STEP_CODE))) {
                 custom_form_data.setStep_code(null);
-            }else{
+            } else {
                 custom_form_data.setStep_code(cursor.getInt(cursor.getColumnIndex(STEP_CODE)));
             }
 
-            if(cursor.isNull(cursor.getColumnIndex(TICKET_CHECKIN_DATE))){
+            if (cursor.isNull(cursor.getColumnIndex(TICKET_CHECKIN_DATE))) {
                 custom_form_data.setTicket_checkin_date(null);
-            }else{
+            } else {
                 custom_form_data.setTicket_checkin_date(cursor.getString(cursor.getColumnIndex(TICKET_CHECKIN_DATE)));
             }
 
@@ -558,44 +560,44 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             custom_form_data.setSys_date_start(cursor.getString(cursor.getColumnIndex(SYS_DATE_START)));
             custom_form_data.setSys_date_end(cursor.getString(cursor.getColumnIndex(SYS_DATE_END)));
 
-            if(cursor.isNull(cursor.getColumnIndex(ORDER_TYPE_CODE))){
+            if (cursor.isNull(cursor.getColumnIndex(ORDER_TYPE_CODE))) {
                 custom_form_data.setOrder_type_code(null);
-            }else{
+            } else {
                 custom_form_data.setOrder_type_code(cursor.getInt(cursor.getColumnIndex(ORDER_TYPE_CODE)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(BACKUP_PRODUCT_CODE))){
+            if (cursor.isNull(cursor.getColumnIndex(BACKUP_PRODUCT_CODE))) {
                 custom_form_data.setBackup_product_code(null);
-            }else{
+            } else {
                 custom_form_data.setBackup_product_code(cursor.getInt(cursor.getColumnIndex(BACKUP_PRODUCT_CODE)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(BACKUP_SERIAL_CODE))){
+            if (cursor.isNull(cursor.getColumnIndex(BACKUP_SERIAL_CODE))) {
                 custom_form_data.setBackup_serial_code(null);
-            }else{
+            } else {
                 custom_form_data.setBackup_serial_code(cursor.getInt(cursor.getColumnIndex(BACKUP_SERIAL_CODE)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(DEVICE_TP_CODE))){
+            if (cursor.isNull(cursor.getColumnIndex(DEVICE_TP_CODE))) {
                 custom_form_data.setDevice_tp_code(null);
-            }else{
+            } else {
                 custom_form_data.setDevice_tp_code(cursor.getInt(cursor.getColumnIndex(DEVICE_TP_CODE)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(MEASURE_TP_CODE))){
+            if (cursor.isNull(cursor.getColumnIndex(MEASURE_TP_CODE))) {
                 custom_form_data.setMeasure_tp_code(null);
-            }else{
+            } else {
                 custom_form_data.setMeasure_tp_code(cursor.getInt(cursor.getColumnIndex(MEASURE_TP_CODE)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(MEASURE_VALUE))){
+            if (cursor.isNull(cursor.getColumnIndex(MEASURE_VALUE))) {
                 custom_form_data.setMeasure_value(null);
-            }else{
+            } else {
                 custom_form_data.setMeasure_value(cursor.getFloat(cursor.getColumnIndex(MEASURE_VALUE)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(MEASURE_CYCLE_VALUE))){
+            if (cursor.isNull(cursor.getColumnIndex(MEASURE_CYCLE_VALUE))) {
                 custom_form_data.setMeasure_cycle_value(null);
-            }else{
+            } else {
                 custom_form_data.setMeasure_cycle_value(cursor.getFloat(cursor.getColumnIndex(MEASURE_CYCLE_VALUE)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(FINALIZED_SERVICE))){
+            if (cursor.isNull(cursor.getColumnIndex(FINALIZED_SERVICE))) {
                 custom_form_data.setFinalized_service(null);
-            }else{
+            } else {
                 custom_form_data.setFinalized_service(cursor.getInt(cursor.getColumnIndex(FINALIZED_SERVICE)));
             }
             return custom_form_data;
@@ -689,9 +691,9 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
                 Tratamento de campo para ser sempre 0 ou 1.
             */
             if (custom_form_data.getLocation_pendency() == 0
-                || custom_form_data.getLocation_pendency() == 1) {
+                    || custom_form_data.getLocation_pendency() == 1) {
                 contentValues.put(LOCATION_PENDENCY, custom_form_data.getLocation_pendency());
-            }else{
+            } else {
                 contentValues.put(LOCATION_PENDENCY, 0);
             }
             //
@@ -711,16 +713,30 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             if (custom_form_data.getSys_date_end() != null) {
                 contentValues.put(SYS_DATE_END, custom_form_data.getSys_date_end());
             }
-            contentValues.put(ORDER_TYPE_CODE, custom_form_data.getOrder_type_code() );
-            contentValues.put(BACKUP_PRODUCT_CODE, custom_form_data.getBackup_product_code() );
-            contentValues.put(BACKUP_SERIAL_CODE, custom_form_data.getBackup_serial_code() );
-            contentValues.put(DEVICE_TP_CODE, custom_form_data.getDevice_tp_code() );
+            contentValues.put(ORDER_TYPE_CODE, custom_form_data.getOrder_type_code());
+            contentValues.put(BACKUP_PRODUCT_CODE, custom_form_data.getBackup_product_code());
+            contentValues.put(BACKUP_SERIAL_CODE, custom_form_data.getBackup_serial_code());
+            contentValues.put(DEVICE_TP_CODE, custom_form_data.getDevice_tp_code());
             contentValues.put(MEASURE_TP_CODE, custom_form_data.getMeasure_tp_code());
-            contentValues.put(MEASURE_VALUE, custom_form_data.getMeasure_value() );
+            contentValues.put(MEASURE_VALUE, custom_form_data.getMeasure_value());
             contentValues.put(MEASURE_CYCLE_VALUE, custom_form_data.getMeasure_cycle_value());
             contentValues.put(FINALIZED_SERVICE, custom_form_data.getFinalized_service());
 
             return contentValues;
         }
     }
+
+    //-----------------------------------
+
+
+    public int getDaysPassedDateEnd(Long customer_code) {
+        HMAux dateEnd = getByStringHM(
+                new GE_Custom_Form_Data_Sql_Get_Last_Date(
+                        customer_code
+                ).toSqlQuery()
+        );
+        return ToolBox_Inf.calculateDaysPassed(dateEnd.get(SYS_DATE_END));
+    }
+
+
 }
