@@ -498,18 +498,27 @@ public class Act027_Product_Edit extends BaseFragment {
     }
 
     private void setProductEventDeleteFuction() {
-        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_PRODUCT_EVENT_CANCEL)
-        && (Constant.SYS_STATUS_PENDING.equals(mSm_so_product_event.getStatus())
-                ||Constant.SYS_STATUS_DONE.equals(mSm_so_product_event.getStatus()) )
-        ){
-            ll_delete_prod_event.setVisibility(View.VISIBLE);
-            btn_delete_prod_event.setVisibility(View.VISIBLE);
-            btn_delete_prod_event.setText(hmAux_Trans.get("btn_product_event_cancel"));
+        ll_delete_prod_event.setVisibility(View.VISIBLE);
+        btn_delete_prod_event.setVisibility(View.VISIBLE);
+        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_PRODUCT_EVENT_CANCEL)) {
+            if ((Constant.SYS_STATUS_PENDING.equals(mSm_so_product_event.getStatus())
+                    || Constant.SYS_STATUS_DONE.equals(mSm_so_product_event.getStatus()))
+                    && (Constant.SYS_STATUS_PENDING.equals(mSm_so.getStatus())
+                        || Constant.SYS_STATUS_PROCESS.equals(mSm_so.getStatus())
+                        || Constant.SYS_STATUS_WAITING_BUDGET.equals(mSm_so.getStatus())
+                        || (mSm_so.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_EDIT)
+                        && mSm_so.getEdit_user() != null
+                        && !ToolBox_Con.getPreference_User_Code(context).equalsIgnoreCase(mSm_so.getEdit_user().toString()))
+                    )
+            ) {
+
+                btn_delete_prod_event.setText(hmAux_Trans.get("btn_product_event_cancel"));
+            }
+
         }else{
             ll_delete_prod_event.setVisibility(View.GONE);
             btn_delete_prod_event.setVisibility(View.GONE);
         }
-
     }
 
     /**
@@ -942,7 +951,9 @@ public class Act027_Product_Edit extends BaseFragment {
 
     private boolean hasSOStatusStopOrEdit() {
         return mSm_so.getStatus().equals(Constant.SYS_STATUS_STOP)
-                || mSm_so.getStatus().equals(Constant.SYS_STATUS_EDIT);
+                || (mSm_so.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_EDIT)
+                && mSm_so.getEdit_user() != null
+                && !ToolBox_Con.getPreference_User_Code(context).equalsIgnoreCase(mSm_so.getEdit_user().toString()));
     }
 
     private View.OnClickListener save_listener = new View.OnClickListener() {

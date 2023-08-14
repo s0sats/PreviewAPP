@@ -949,15 +949,18 @@ public class Act027_Opc extends BaseFragment {
         chip_os_status.setEnabled(isEnable);
         if (!isEnable) {
             chip_os_status.setChipStrokeWidth(0.0f);
+            chip_os_status.setCloseIconVisible(false);
         } else {
+            chip_os_status.setCloseIconVisible(true);
             chip_os_status.setChipStrokeWidth(1.0f);
         }
+        chip_os_status.invalidate();
     }
 
     private void setChipStroke(boolean isEnable) {
-        chip_os_priority.setChipIconVisible(isEnable);
+        chip_os_priority.setCloseIconVisible(isEnable);
         chip_os_priority.setChipStrokeWidth(1.0f);
-        chip_os_status.setChipIconVisible(isEnable);
+        chip_os_status.setCloseIconVisible(isEnable);
         chip_os_status.setChipStrokeWidth(1.0f);
         if (!isEnable) {
             chip_os_priority.setChipStrokeWidth(0.0f);
