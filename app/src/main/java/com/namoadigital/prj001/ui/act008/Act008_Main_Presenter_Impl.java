@@ -1072,7 +1072,11 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
             bundle.putLong(MD_Product_SerialDao.CUSTOMER_CODE, productSerial.getCustomer_code());
             bundle.putLong(MD_Product_SerialDao.PRODUCT_CODE, productSerial.getProduct_code());
             bundle.putLong(MD_Product_SerialDao.SERIAL_CODE, productSerial.getSerial_code());
-            bundle.putInt(MD_Product_SerialDao.SCN_ITEM_CHECK, productSerial.getScn_item_check());
+            Integer scn_item_check = productSerial.getScn_item_check();
+            if(mView.isNewSerial()){
+                scn_item_check = 0;
+            }
+            bundle.putInt(MD_Product_SerialDao.SCN_ITEM_CHECK, scn_item_check);
             //
             mIntent.putExtras(bundle);
             //

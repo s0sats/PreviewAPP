@@ -244,12 +244,12 @@ public class WS_Serial_Save extends IntentService {
                 //
                 if(serial.getUpdate_required() == 1){
                     serial.setSerial_code(serialSaveReturn.getSerial_code());
-                    serial.setHas_item_check(serialSaveReturn.getSerial_code());
+                    serial.setHas_item_check(serialSaveReturn.getHas_item_check());
                     serialDao.addUpdateTmp(serial);
                 }else{
                     serialAux.setUpdate_required(serial.getUpdate_required());
                     serialAux.setSerial_code(serialSaveReturn.getSerial_code());
-                    serial.setHas_item_check(serialSaveReturn.getSerial_code());
+                    serialAux.setHas_item_check(serialSaveReturn.getHas_item_check());
                     //Luche - 06/03/2019
                     //Limpa campo de reason.
                     serialAux.setReason_code(null);
