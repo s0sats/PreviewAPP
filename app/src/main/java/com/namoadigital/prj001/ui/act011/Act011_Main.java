@@ -788,7 +788,7 @@ public class Act011_Main extends Base_Activity
 
 
     private void checkAndShowDialogWarningForm() {
-        if (!mPresenter.checkIfFormIsNew(
+        if (mPresenter.checkIfFormIsNew(
                 String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
                 type,
                 form,
@@ -811,6 +811,7 @@ public class Act011_Main extends Base_Activity
         )) {
             int hasPassedDays = mPresenter.hasPassedDay();
             if (hasPassedDays >= 10 && hasPassedDays <= 14) {
+                createForm();
                 WarningFormPending dialog = new WarningFormPending(
                         context,
                         R.drawable.ic_cloud_upload_24_red,
@@ -819,7 +820,6 @@ public class Act011_Main extends Base_Activity
                             @Override
                             public void onClickOk(@NonNull AlertDialog dialog) {
                                 dialog.dismiss();
-                                createForm();
                             }
 
                             @Override
@@ -850,6 +850,8 @@ public class Act011_Main extends Base_Activity
 
                 );
                 dialog.show();
+            } else {
+                createForm();
             }
         } else {
             createForm();

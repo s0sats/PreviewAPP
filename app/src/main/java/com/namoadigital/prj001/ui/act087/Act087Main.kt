@@ -165,6 +165,7 @@ class Act087Main : Base_Activity_Frag(),
     }
 
     private fun initVars() {
+        checkIfHasPassedDays()
         if(mPresenter.validateBundleParams()) {
             if(mPresenter.checkFormExists()) {
                 if (mPresenter.isSchedule()) {
@@ -213,11 +214,12 @@ class Act087Main : Base_Activity_Frag(),
                     }
 
                     override fun onClickCancel(dialog: AlertDialog) {
-                        onBackPressed()
+                        mPresenter.onBackPressedClicked(false)
                     }
                 }
             )
             dialog.show()
+            return
         }
     }
 
