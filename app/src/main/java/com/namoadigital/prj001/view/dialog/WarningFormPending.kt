@@ -83,8 +83,8 @@ class WarningFormPending(
             dialogIcon.setImageDrawable(AppCompatResources.getDrawable(context, icon))
             dialogTitle.text = hmAux[DIALOG_TITLE]
             dialogDescription.text = hmAux[DIALOG_DESC]
-            dialogAction1.text = "Enviar / Continuar"//hmAux[DIALOG_OK]
-            dialogAction2.text = "Voltar"//hmAux[DIALOG_CANCEL]
+            dialogAction1.text = hmAux[DIALOG_OK]
+            dialogAction2.text = hmAux[DIALOG_CANCEL]
 
             dialogAction2.visibility = if (isBlocked) {
                 View.VISIBLE
