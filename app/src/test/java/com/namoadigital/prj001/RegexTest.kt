@@ -33,6 +33,25 @@ class RegexTest {
         assertTrue(text_char_invalid, checkIfHasCharInvalid(text_char_invalid))
     }
 
+    @Test
+    fun `Verificar se no final do texto contém TAB`() {
+        assertTrue("TAB\t", `check if contain ENTER or TAB on end string`("TAB\t"))
+    }
+
+    @Test
+    fun `Verificar se no final do texto contém ENTER`() {
+        assertTrue("ENTER\n", `check if contain ENTER or TAB on end string`("ENTER\n"))
+    }
+
+    @Test
+    fun `Verificar se no final do texto não contém TAB`() {
+        assertFalse("T\tAB ", `check if contain ENTER or TAB on end string`("T\tAB "))
+    }
+
+    @Test
+    fun `Verificar se no final do texto não contém ENTER`() {
+        assertFalse("EN\nTER ", `check if contain ENTER or TAB on end string`("EN\nTER "))
+    }
 
     fun checkIfHasCharInvalid(value: String): Boolean {
         val regexPattern = Regex(
@@ -40,6 +59,16 @@ class RegexTest {
             setOf(RegexOption.MULTILINE, RegexOption.IGNORE_CASE, RegexOption.DOT_MATCHES_ALL)
         )
         return regexPattern.containsMatchIn(value)
+    }
+
+
+    fun `check if contain ENTER or TAB on end string`(value: String): Boolean {
+        Regex(
+            """[ \t\n\r]*([\t\n\r])${'$'}""",
+            setOf(RegexOption.COMMENTS, RegexOption.DOT_MATCHES_ALL)
+        ).let { regex ->
+            return regex.containsMatchIn(value)
+        }
     }
 
 
