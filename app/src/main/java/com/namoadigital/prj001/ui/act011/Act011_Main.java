@@ -812,50 +812,42 @@ public class Act011_Main extends Base_Activity
             int hasPassedDays = mPresenter.hasPassedDay();
             if (hasPassedDays >= 10 && hasPassedDays <= 14) {
                 createForm();
-                WarningFormPending dialog = new WarningFormPending(
-                        context,
-                        R.drawable.ic_cloud_upload_24_red,
-                        false,
-                        new WarningFormPending.Interact() {
-                            @Override
-                            public void onClickOk(@NonNull AlertDialog dialog) {
-                                dialog.dismiss();
-                            }
-
-                            @Override
-                            public void onClickCancel(@NonNull AlertDialog dialog) {
-
-                            }
-                        }
-
-                );
-                dialog.show();
+                createWarningFormPending(context, false, R.drawable.ic_cloud_upload_24_red, null);
             } else if (hasPassedDays >= 15) {
-                WarningFormPending dialog = new WarningFormPending(
-                        context,
-                        R.drawable.ic_cloud_upload_24_red,
-                        true,
-                        new WarningFormPending.Interact() {
-                            @Override
-                            public void onClickOk(@NonNull AlertDialog dialog) {
-                                callAct005SyncForm();
-                                canSave = false;
-                            }
+                createWarningFormPending(context, true, R.drawable.ic_cloud_upload_24_red, new WarningFormPending.Interact() {
+                    @Override
+                    public void onClickOk(@NonNull AlertDialog dialog) {
+                        callAct005SyncForm();
+                        canSave = false;
+                    }
 
-                            @Override
-                            public void onClickCancel(@NonNull AlertDialog dialog) {
-                                mPresenter.onBackPressedClicked();
-                            }
-                        }
-
-                );
-                dialog.show();
+                    @Override
+                    public void onClickCancel(@NonNull AlertDialog dialog) {
+                        mPresenter.onBackPressedClicked();
+                    }
+                });
             } else {
                 createForm();
             }
         } else {
             createForm();
         }
+    }
+
+    private void createWarningFormPending(Context context, boolean isSync, int iconRes, WarningFormPending.Interact listener) {
+        WarningFormPending dialog = new WarningFormPending(context, iconRes, isSync, listener != null ? listener : new WarningFormPending.Interact() {
+            @Override
+            public void onClickCancel(@NonNull AlertDialog dialog) {
+
+            }
+
+            @Override
+            public void onClickOk(@NonNull AlertDialog dialog) {
+                dialog.dismiss();
+            }
+        }
+        );
+        dialog.show();
     }
 
     private void createForm() {
