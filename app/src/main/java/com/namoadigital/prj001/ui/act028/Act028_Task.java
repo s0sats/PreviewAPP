@@ -882,7 +882,7 @@ public class Act028_Task extends BaseFragment {
             public void onClick(View v) {
                 mTask.setStatus(Constant.SYS_STATUS_NOT_EXECUTED);
                 mTask.setComments(mk_comments.getText().toString().trim().length() > 0 ? mk_comments.getText().toString() : null);
-//                mTask.setTask_file(recoverTaskFiles(mTask.getTask_file(), (String) iv_gallery.getTag()));
+                mTask.setTask_file(recoverTaskFiles(mTask.getTask_file(), (String) iv_gallery.getTag()));
 
                 mTask.setStart_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm Z"));
                 mTask.setEnd_date(mTask.getStart_date());
