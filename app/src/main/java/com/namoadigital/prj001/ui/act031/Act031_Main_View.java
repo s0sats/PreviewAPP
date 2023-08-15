@@ -24,6 +24,8 @@ public interface Act031_Main_View {
 
     void callAct030(Context context);
 
+    void showToastMsg(String msg);
+
     void showSingleResultMsg(String ttl, String msg);
 
     void showSerialResults(ArrayList<HMAux> returnList);

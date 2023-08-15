@@ -420,6 +420,22 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
     }
 
     @Override
+    public void showToastMsg(String msg, boolean returnOk) {
+        //
+        ToolBox.toastMSG(context,msg);
+        if(returnOk) {
+            if (soFlow.equals(SO_FLOW_SEARCH_SO)) {
+                mPresenter.executeSoDownload(mdProductSerial.getProduct_code(), mdProductSerial.getSerial_id());
+            } else {
+                callAct050(context);
+            }
+        }
+        //
+        soFlow = "";
+    }
+
+
+    @Override
     public void showSingleResultMsg(String ttl, String msg, final boolean returnOk) {
         //
         ToolBox.alertMSG(

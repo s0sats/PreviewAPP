@@ -217,7 +217,7 @@ public class Act053_Main_Presenter implements Act053_Main_Contract.I_Presenter {
                     returnOk = true;
                 }
                 //
-                mView.showSingleResultMsg(ttl, msg, returnOk);
+                mView.showToastMsg(msg, returnOk);
             } else {
                 mView.showSerialResults(returnList);
             }

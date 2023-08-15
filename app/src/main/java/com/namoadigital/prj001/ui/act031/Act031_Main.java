@@ -409,6 +409,13 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
     }
 
     @Override
+    public void showToastMsg(String msg) {
+        //
+        ToolBox.toastMSG(context,msg);
+        frgSerialEdit.scrollToTop();
+    }
+
+    @Override
     public void showSingleResultMsg(String ttl, String msg) {
         //
         ToolBox.alertMSG(

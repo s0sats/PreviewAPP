@@ -20,6 +20,8 @@ public interface Act073_Main_Contract {
 
         void showAlert(String ttl, String msg);
 
+        void showToastMsg(String msg, boolean saveOk);
+
         void callAct068();
 
         void callAct069();

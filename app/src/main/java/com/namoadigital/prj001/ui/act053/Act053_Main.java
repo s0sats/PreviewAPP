@@ -423,6 +423,20 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
         this.itemSavedOk = itemSavedOk;
     }
 
+
+    @Override
+    public void showToastMsg(String msg, boolean saveOk) {
+        //
+        ToolBox.toastMSG(context,msg);
+        if(saveOk) {
+            if(frgSerialEdit != null){
+                frgSerialEdit.setForceSaveAgain(false);
+            }
+            checkFlow();
+            //
+        }
+    }
+
     @Override
     public void showSingleResultMsg(String ttl, String msg, final boolean saveOk) {
         ToolBox.alertMSG(

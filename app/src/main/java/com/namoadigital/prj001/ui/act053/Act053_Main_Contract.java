@@ -38,6 +38,8 @@ public interface Act053_Main_Contract {
 
         void showPD(String title, String msg);
 
+        void showToastMsg(String msg, boolean saveOk);
+
         String getIoProcess();
 
         void callAct061(Bundle bundle);

@@ -255,7 +255,7 @@ public class Act031_Main_Presenter_Impl implements Act031_Main_Presenter {
             //
             //if(returnList.size() == 1){
             if (returnList.size() == 1) {
-                mView.showSingleResultMsg(ttl, msg);
+                mView.showToastMsg(msg);
             } else {
                 mView.showSerialResults(returnList);
             }
