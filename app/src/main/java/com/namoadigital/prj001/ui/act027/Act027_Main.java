@@ -1991,7 +1991,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
 //                            },
 //                            0
 //                    );
-                    refreshUI();
+                    ToolBox.toastMSG(
+                            context,
+                            hmAux_Trans.get("msg_so_save_ok")
+                    );
+
                     if (isSoCreateRoomCall) {
                         executeSoCreateRoom();
                     } else {
@@ -2001,7 +2005,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                             executeSerialSave(false);
                         }
                     }
-                    //refreshUI();
+                    refreshUI();
                 } else {
                     progressDialog.dismiss();
                     //

@@ -498,8 +498,8 @@ public class Act027_Product_Edit extends BaseFragment {
     }
 
     private void setProductEventDeleteFuction() {
-        ll_delete_prod_event.setVisibility(View.VISIBLE);
-        btn_delete_prod_event.setVisibility(View.VISIBLE);
+        ll_delete_prod_event.setVisibility(View.GONE);
+        btn_delete_prod_event.setVisibility(View.GONE);
         if (ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_PRODUCT_EVENT_CANCEL)) {
             if ((Constant.SYS_STATUS_PENDING.equals(mSm_so_product_event.getStatus())
                     || Constant.SYS_STATUS_DONE.equals(mSm_so_product_event.getStatus()))
@@ -511,13 +511,10 @@ public class Act027_Product_Edit extends BaseFragment {
                         && !ToolBox_Con.getPreference_User_Code(context).equalsIgnoreCase(mSm_so.getEdit_user().toString()))
                     )
             ) {
-
+                ll_delete_prod_event.setVisibility(View.VISIBLE);
+                btn_delete_prod_event.setVisibility(View.VISIBLE);
                 btn_delete_prod_event.setText(hmAux_Trans.get("btn_product_event_cancel"));
             }
-
-        }else{
-            ll_delete_prod_event.setVisibility(View.GONE);
-            btn_delete_prod_event.setVisibility(View.GONE);
         }
     }
 
