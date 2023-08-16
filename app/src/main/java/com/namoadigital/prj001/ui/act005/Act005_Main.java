@@ -324,77 +324,79 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     }
 
     private void requestNotificationPermission() {
-        requestPermissions(
-                Act005_Main.this,
-                NamoaPermissionRequest.SINGLE_PERMISSION_REQUEST,
-                new String[]{Manifest.permission.POST_NOTIFICATIONS},
-                new NamoaPermissionRequest() {
-                    @Override
-                    public void accessGranted() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissions(
+                    Act005_Main.this,
+                    NamoaPermissionRequest.SINGLE_PERMISSION_REQUEST,
+                    new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                    new NamoaPermissionRequest() {
+                        @Override
+                        public void accessGranted() {
 
+                        }
+
+                        @Override
+                        public void accessDenied(String[] strings) {
+                            String alertTtl = hmAux_Trans.get("alert_notification_denied_permission_ttl");
+                            String alertMsg = hmAux_Trans.get("alert_notification_denied_permission_msg");
+
+
+                            showPermissionRationaleDialog(
+                                    Act005_Main.this,
+                                    com.namoa_digital.namoa_library.R.drawable.ic_alert_n,
+                                    alertTtl,
+                                    alertMsg,
+                                    (dialog, i) -> callRequestPermission(SINGLE_PERMISSION_REQUEST, strings),
+                                    (dialog, which) -> {
+
+                                    }
+                            );
+
+                        }
+
+                        @Override
+                        public void requestPermissionRationale(String[] strings) {
+                            String alertTtl = hmAux_Trans.get("alert_notification_denied_permission_ttl");
+                            String alertMsg = hmAux_Trans.get("alert_notification_denied_permission_msg");
+
+
+                            showPermissionRationaleDialog(
+                                    Act005_Main.this,
+                                    com.namoa_digital.namoa_library.R.drawable.ic_alert_n,
+                                    alertTtl,
+                                    alertMsg,
+                                    (dialog, i) -> callRequestPermission(SINGLE_PERMISSION_REQUEST, strings),
+                                    (dialog, which) -> {
+
+                                    }
+                            );
+                        }
+
+                        @Override
+                        public void accessDeniedNeverAskAgain(String[] strings) {
+                            String alertTtl = hmAux_Trans.get("alert_notification_denied_permission_ttl");
+                            String alertMsg = hmAux_Trans.get("alert_notification_denied_permission_msg");
+
+                            showPermissionNeverAskAgainDialog(
+                                    R.drawable.ic_notifications_active_black_24dp,
+                                    alertTtl,
+                                    alertMsg,
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                                        }
+                                    }
+                            );
+                        }
+
+                        @Override
+                        public void informAppDetailSettingsReturn() {
+                            callRequestPermission(SINGLE_PERMISSION_REQUEST, new String[]{Manifest.permission.POST_NOTIFICATIONS});
+                        }
                     }
-
-                    @Override
-                    public void accessDenied(String[] strings) {
-                        String alertTtl = hmAux_Trans.get("alert_notification_denied_permission_ttl");
-                        String alertMsg = hmAux_Trans.get("alert_notification_denied_permission_msg");
-
-
-                        showPermissionRationaleDialog(
-                                Act005_Main.this,
-                                com.namoa_digital.namoa_library.R.drawable.ic_alert_n,
-                                alertTtl,
-                                alertMsg,
-                                (dialog, i) -> callRequestPermission(SINGLE_PERMISSION_REQUEST, strings),
-                                (dialog, which) -> {
-
-                                }
-                        );
-
-                    }
-
-                    @Override
-                    public void requestPermissionRationale(String[] strings) {
-                        String alertTtl = hmAux_Trans.get("alert_notification_denied_permission_ttl");
-                        String alertMsg = hmAux_Trans.get("alert_notification_denied_permission_msg");
-
-
-                        showPermissionRationaleDialog(
-                                Act005_Main.this,
-                                com.namoa_digital.namoa_library.R.drawable.ic_alert_n,
-                                alertTtl,
-                                alertMsg,
-                                (dialog, i) -> callRequestPermission(SINGLE_PERMISSION_REQUEST, strings),
-                                (dialog, which) -> {
-
-                                }
-                        );
-                    }
-
-                    @Override
-                    public void accessDeniedNeverAskAgain(String[] strings) {
-                        String alertTtl = hmAux_Trans.get("alert_notification_denied_permission_ttl");
-                        String alertMsg = hmAux_Trans.get("alert_notification_denied_permission_msg");
-
-
-                        showPermissionRationaleDialog(
-                                Act005_Main.this,
-                                com.namoa_digital.namoa_library.R.drawable.ic_alert_n,
-                                alertTtl,
-                                alertMsg,
-                                (dialog, i) -> callRequestPermission(SINGLE_PERMISSION_REQUEST, strings),
-                                (dialog, which) -> {
-
-                                }
-                        );
-                    }
-
-                    @Override
-                    public void informAppDetailSettingsReturn() {
-                        callRequestPermission(SINGLE_PERMISSION_REQUEST, new String[]{Manifest.permission.POST_NOTIFICATIONS});
-                    }
-                }
-        );
+            );
+        }
     }
 
     private void retryGetLocation() {
