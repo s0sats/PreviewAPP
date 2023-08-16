@@ -30,6 +30,21 @@ data class NextOsFilter(
         }
     }
 
+
+    fun isDefaultFilter(): Boolean {
+        return statusFilter == listOf(TypeStatusFilter.PENDING_AND_PROCESS)
+                &&
+                deadlineFilter == listOf(
+            TypeDeadlineFilter.NOT_EXPIRED,
+            TypeDeadlineFilter.EXPIRED,
+            TypeDeadlineFilter.WITHOUT
+        )
+                &&
+                priorityFilter == TypePriorityFilter.DEADLINE
+                &&
+                priorityTypeFilter == ""
+    }
+
     fun filterList(
         list: ArrayList<SO_Next_Orders_Obj>,
         priorityTypeFilter: String = ""

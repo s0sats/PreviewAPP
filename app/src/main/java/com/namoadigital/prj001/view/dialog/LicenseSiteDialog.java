@@ -16,7 +16,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.LicenseSiteAdapter;
-import com.namoadigital.prj001.design.list.IOnRememberListState;
+import com.namoadigital.prj001.design.list.IOnRememberRecyclerView;
 import com.namoadigital.prj001.model.SiteLicense;
 
 import java.util.ArrayList;
@@ -82,7 +82,7 @@ public class LicenseSiteDialog extends AlertDialog {
                     getContext(),
                     siteList,
                     onSiteClickListener,
-                    new IOnRememberListState<>(rvSites, emptyList));
+                    new IOnRememberRecyclerView<>(rvSites, emptyList));
             //
             rvSites.setLayoutManager(new LinearLayoutManager(getContext()));
             rvSites.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
