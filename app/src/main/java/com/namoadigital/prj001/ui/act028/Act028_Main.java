@@ -12,6 +12,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -939,6 +940,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
             if(hasError) {
                 showNewOptDialog(wsResults, so_current_reload);
             }else {
+                Toast.makeText(context, hmAux_Trans.get("alert_so_list_msg"), Toast.LENGTH_SHORT).show();
                 refreshUI();
             }
 
@@ -999,7 +1001,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
 
         //if (sos.size() == 1 && sos.get(0).get("status").equalsIgnoreCase("Ok")) {
         if (wsResults.size() == 1 && wsResults.get(0).get("status").equalsIgnoreCase("Ok")) {
-
+            Toast.makeText(context, hmAux_Trans.get("alert_so_list_msg"), Toast.LENGTH_SHORT).show();
             if (mShortCut) {
                 callAct027();
             } else {
