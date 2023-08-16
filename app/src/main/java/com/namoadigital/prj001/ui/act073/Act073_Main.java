@@ -400,6 +400,25 @@ public class Act073_Main extends Base_Activity_Frag implements Act073_Main_Contr
     }
 
     @Override
+    public void showToastMsg(String msg, boolean saveOk) {
+        //
+        if(saveOk) {
+            ToolBox.toastMSG(context,msg);
+            if(frgSerialEdit != null){
+                frgSerialEdit.setForceSaveAgain(false);
+            }
+            //
+            mPresenter.executeTicketDownload(
+                    mdProductSerial.getProduct_code(),
+                    mdProductSerial.getSerial_code(),
+                    mdProductSerial.getSerial_id()
+            );
+            //
+
+        }
+    }
+
+    @Override
     public void showSingleResultMsg(String ttl, String msg, final boolean saveOk) {
         ToolBox.alertMSG(
             context,

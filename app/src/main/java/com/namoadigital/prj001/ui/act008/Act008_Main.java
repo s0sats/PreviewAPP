@@ -821,6 +821,19 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     }
 
     @Override
+    public void showToastMsg(String msg, boolean stopProc) {
+        //
+        ToolBox.toastMSG(context,msg);
+        //
+        frgSerialEdit.scrollToTop();
+        //
+        if(!stopProc){
+            checkSerialStructureAndUnfocusTickets();
+        }
+    }
+
+
+    @Override
     public void showSingleResultMsg(String ttl, String msg, boolean stopProc) {
         //
         ToolBox.alertMSG(

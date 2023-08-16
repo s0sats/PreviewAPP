@@ -241,7 +241,7 @@ public class Act023_Main_Presenter_Impl implements Act023_Main_Presenter {
                     returnOk = true;
                 }
                 //
-                mView.showSingleResultMsg(ttl, msg, returnOk);
+                mView.showToastMsg(msg, returnOk);
             } else {
                 mView.showSerialResults(returnList);
             }

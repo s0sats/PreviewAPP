@@ -1851,19 +1851,24 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
 
             } else if (Integer.parseInt(so_download_result.get(WS_SO_Search.SO_LIST_QTY)) == 1) {
                 //
-                ToolBox.alertMSG(
+//                ToolBox.alertMSG(
+//                        context,
+//                        hmAux_Trans.get("alert_so_sync_ok_ttl"),
+//                        hmAux_Trans.get("alert_so_sync_ok_msg"),
+//                        new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                refreshUI();
+//                            }
+//                        },
+//                        0
+//                );
+                //
+                ToolBox.toastMSG(
                         context,
-                        hmAux_Trans.get("alert_so_sync_ok_ttl"),
-                        hmAux_Trans.get("alert_so_sync_ok_msg"),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                refreshUI();
-                            }
-                        },
-                        0
+                        hmAux_Trans.get("alert_so_sync_ok_msg")
                 );
-
+                //
             } else {
                 //
                 ToolBox.alertMSG(
@@ -1965,28 +1970,28 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                     progressDialog.dismiss();
                     only_save = false;
                     //
-                    ToolBox.alertMSG(
-                            context,
-                            hmAux_Trans.get("alert_so_ttl"),
-                            hmAux_Trans.get("msg_so_save_ok"),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    refreshUI();
-                                    if (isSoCreateRoomCall) {
-                                        executeSoCreateRoom();
-                                    } else {
-                                        boolean hasSerialPendency = getMd_product_serialsPendency(serialDao);
-
-                                        if (hasSerialPendency || isSerialOutdated) {
-                                            executeSerialSave(false);
-                                        }
-                                    }
-                                }
-                            },
-                            0
-                    );
-                    //refreshUI();
+//                    ToolBox.alertMSG(
+//                            context,
+//                            hmAux_Trans.get("alert_so_ttl"),
+//                            hmAux_Trans.get("msg_so_save_ok"),
+//                            new DialogInterface.OnClickListener() {
+//                                @Override
+//                                public void onClick(DialogInterface dialog, int which) {
+//                                    refreshUI();
+//                                    if (isSoCreateRoomCall) {
+//                                        executeSoCreateRoom();
+//                                    } else {
+//                                        boolean hasSerialPendency = getMd_product_serialsPendency(serialDao);
+//
+//                                        if (hasSerialPendency || isSerialOutdated) {
+//                                            executeSerialSave(false);
+//                                        }
+//                                    }
+//                                }
+//                            },
+//                            0
+//                    );
+                    refreshUI();
                     if (isSoCreateRoomCall) {
                         executeSoCreateRoom();
                     } else {
