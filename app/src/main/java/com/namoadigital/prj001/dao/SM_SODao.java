@@ -149,6 +149,10 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
     public static final String PIPELINE_CODE =  "pipeline_code";
     public static final String PIPELINE_DESC =  "pipeline_desc";
 
+    public static final String DEADLINE_MANUAL =  "deadline_manual";
+
+    public static final String HAS_CLIENT_DEADLINE =  "has_client_deadline";
+
 
     public static String[] columns = {CUSTOMER_CODE, SO_PREFIX, SO_CODE, SO_ID, SO_SCN, SO_DESC, PRODUCT_CODE, PRODUCT_ID,
             PRODUCT_DESC, SERIAL_CODE, SERIAL_ID, CATEGORY_PRICE_CODE, CATEGORY_PRICE_ID, CATEGORY_PRICE_DESC,
@@ -974,6 +978,9 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
                 so.setLast_approval_budget_user_nick(cursor.getString(cursor.getColumnIndex(LAST_APPROVAL_BUDGET_USER_NICK)));
             }
             //
+            so.setDeadline_manual(cursor.getInt(cursor.getColumnIndex(DEADLINE_MANUAL)));
+            so.setHas_client_deadline(cursor.getInt(cursor.getColumnIndex(HAS_CLIENT_DEADLINE)));
+            //
             return so;
         }
     }
@@ -1358,6 +1365,13 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
             contentValues.put(LAST_APPROVAL_BUDGET_DATE, sm_so.getLast_approval_budget_date());
             contentValues.put(LAST_APPROVAL_BUDGET_USER, sm_so.getLast_approval_budget_user());
             contentValues.put(LAST_APPROVAL_BUDGET_USER_NICK, sm_so.getLast_approval_budget_user_nick());
+            //
+            if(sm_so.getDeadline_manual() > -1) {
+                contentValues.put(DEADLINE_MANUAL, sm_so.getDeadline_manual());
+            }
+            if(sm_so.getHas_client_deadline() > -1) {
+                contentValues.put(HAS_CLIENT_DEADLINE, sm_so.getHas_client_deadline());
+            }
             //
             return contentValues;
         }
