@@ -245,6 +245,9 @@ public class SM_SO {
     @SerializedName("pipeline_desc")
     private String pipeline_desc;
 
+    @SerializedName("deadline_manual") private int deadline_manual;
+    @SerializedName("has_client_deadline") private int has_client_deadline;
+
     public void setPK() {
         for (int i = 0; i < so_file.size(); i++) {
             so_file.get(i).setPK(this);
@@ -1190,5 +1193,21 @@ public class SM_SO {
 
     public void setPipeline_desc(@Nullable String pipeline_desc) {
         this.pipeline_desc = pipeline_desc;
+    }
+
+    public int getDeadline_manual() {
+        return deadline_manual;
+    }
+
+    public void setDeadline_manual(int deadline_manual) {
+        this.deadline_manual = deadline_manual;
+    }
+
+    public int getHas_client_deadline() {
+        return has_client_deadline;
+    }
+
+    public void setHas_client_deadline(int has_client_deadline) {
+        this.has_client_deadline = has_client_deadline;
     }
 }
