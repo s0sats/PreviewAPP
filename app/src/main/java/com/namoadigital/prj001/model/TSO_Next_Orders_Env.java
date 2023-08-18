@@ -9,7 +9,7 @@ public class TSO_Next_Orders_Env extends Main_Header_Env  {
     @SerializedName("customer_code") private long customer_code;
     @SerializedName("site_code") private String site_code;
     @SerializedName("zone_code") private Integer zone_code;
-    @SerializedName("operation_code") private long operation_code;
+//    @SerializedName("operation_code") private long operation_code;
     @SerializedName("status") private List<String> status;
 
 
@@ -35,14 +35,6 @@ public class TSO_Next_Orders_Env extends Main_Header_Env  {
 
     public void setZone_code(Integer zone_code) {
         this.zone_code = zone_code;
-    }
-
-    public long getOperation_code() {
-        return operation_code;
-    }
-
-    public void setOperation_code(long operation_code) {
-        this.operation_code = operation_code;
     }
 
     public List<String> getStatus() {

@@ -9,6 +9,8 @@ import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
  * Created by neomatrix on 3/22/18.
  */
@@ -53,6 +55,7 @@ public class SO_Pack_Express_Local implements Serializable {
     @Expose @SerializedName("segment_code") private Integer segment_code;
     @Expose @SerializedName("segment_id") private String segment_id;
     @Expose @SerializedName("segment_desc") private String segment_desc;
+    @Expose @SerializedName("pipeline_desc") private String pipeline_desc;
     @Expose @SerializedName("billing_add_inf1_value") private String billing_add_inf1_value;
     @Expose @SerializedName("billing_add_inf2_value") private String billing_add_inf2_value;
     @Expose @SerializedName("billing_add_inf3_value") private String billing_add_inf3_value;
@@ -102,6 +105,7 @@ public class SO_Pack_Express_Local implements Serializable {
         this.segment_code = null;
         this.segment_id = null;
         this.segment_desc = null;
+        this.pipeline_desc = null;
         this.billing_add_inf1_value = null;
         this.billing_add_inf2_value = null;
         this.billing_add_inf3_value = null;
@@ -362,6 +366,15 @@ public class SO_Pack_Express_Local implements Serializable {
 
     public void setSegment_desc(String segment_desc) {
         this.segment_desc = segment_desc;
+    }
+
+    @Nullable
+    public String getPipeline_desc() {
+        return pipeline_desc;
+    }
+
+    public void setPipeline_desc(@Nullable String pipeline_desc) {
+        this.pipeline_desc = pipeline_desc;
     }
 
     public String getBilling_add_inf1_value() {
