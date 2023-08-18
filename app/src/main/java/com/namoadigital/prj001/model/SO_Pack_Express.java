@@ -22,6 +22,8 @@ public class SO_Pack_Express implements Serializable {
     @SerializedName("contract_code") private int contract_code;
     @SerializedName("segment_code") private int segment_code;
     @SerializedName("price_list_code") private int price_list_code;
+    @Nullable
+    @SerializedName("pipeline_desc") private String pipeline_desc;
     @SerializedName("pack_code") private int pack_code;
     @SerializedName("add_pack_service") private int add_pack_service;
     @SerializedName("price") private float price;
@@ -37,6 +39,8 @@ public class SO_Pack_Express implements Serializable {
     @Nullable
     @SerializedName("billing_add_inf3_text") private String billing_add_inf3_text;
     @SerializedName("billing_add_inf3_tracking") private int billing_add_inf3_tracking;
+
+
 
     public long getCustomer_code() {
         return customer_code;
@@ -116,6 +120,15 @@ public class SO_Pack_Express implements Serializable {
 
     public void setPrice_list_code(int price_list_code) {
         this.price_list_code = price_list_code;
+    }
+
+    @Nullable
+    public String getPipeline_desc() {
+        return pipeline_desc;
+    }
+
+    public void setPipeline_desc(@Nullable String pipeline_desc) {
+        this.pipeline_desc = pipeline_desc;
     }
 
     public int getPack_code() {

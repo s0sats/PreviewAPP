@@ -2,11 +2,7 @@ package com.namoadigital.prj001.migrations
 
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
-import com.namoadigital.prj001.dao.GE_Custom_FormDao
-import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
-import com.namoadigital.prj001.dao.MeMeasureTpDao
-import com.namoadigital.prj001.dao.SM_SODao
-import com.namoadigital.prj001.dao.TK_TicketDao
+import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.database.MigrationSQLite
 
 val MigrationV1 = object : MigrationSQLite(1, 2){
@@ -176,6 +172,13 @@ val MigrationV7 = object : MigrationSQLite(6, 7) {
             db.execSQL(""" UPDATE [${SM_SODao.TABLE}] SET [${SM_SODao.SYNC_REQUIRED}] = 1;""".trimIndent())
         }
         //
+        if (!isFieldExist(db, SO_Pack_ExpressDao.TABLE, SO_Pack_ExpressDao.PIPELINE_DESC)) {
+            db.execSQL(""" ALTER TABLE [${SO_Pack_ExpressDao.TABLE}] ADD [${SO_Pack_ExpressDao.PIPELINE_DESC}]  text collate nocase;""".trimIndent())
+        }
+        //
+        if (!isFieldExist(db, SO_Pack_Express_LocalDao.TABLE, SO_Pack_Express_LocalDao.PIPELINE_DESC)) {
+            db.execSQL(""" ALTER TABLE [${SO_Pack_Express_LocalDao.TABLE}] ADD [${SO_Pack_Express_LocalDao.PIPELINE_DESC}] text collate nocase;""".trimIndent())
+        }
     }
 
 }

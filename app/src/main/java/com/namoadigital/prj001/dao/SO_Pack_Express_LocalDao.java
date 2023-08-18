@@ -62,6 +62,7 @@ public class SO_Pack_Express_LocalDao extends BaseDao implements Dao<SO_Pack_Exp
     public static final String SEGMENT_CODE = "segment_code";
     public static final String SEGMENT_ID = "segment_id";
     public static final String SEGMENT_DESC = "segment_desc";
+    public static final String PIPELINE_DESC = "pipeline_desc";
     public static final String BILLING_ADD_INF1_VALUE = "billing_add_inf1_value";
     public static final String BILLING_ADD_INF2_VALUE = "billing_add_inf2_value";
     public static final String BILLING_ADD_INF3_VALUE = "billing_add_inf3_value";
@@ -576,6 +577,11 @@ public class SO_Pack_Express_LocalDao extends BaseDao implements Dao<SO_Pack_Exp
             } else {
                 so_pack_express_local.setSegment_desc(cursor.getString(cursor.getColumnIndex(SEGMENT_CODE)));
             }
+            if (cursor.isNull(cursor.getColumnIndex(PIPELINE_DESC))) {
+                so_pack_express_local.setPipeline_desc(null);
+            } else {
+                so_pack_express_local.setPipeline_desc(cursor.getString(cursor.getColumnIndex(PIPELINE_DESC)));
+            }
             if (cursor.isNull(cursor.getColumnIndex(BILLING_ADD_INF1_VALUE))) {
                 so_pack_express_local.setBilling_add_inf1_value(null);
             } else {
@@ -710,6 +716,9 @@ public class SO_Pack_Express_LocalDao extends BaseDao implements Dao<SO_Pack_Exp
             }
             if (so_pack_express_local.getSegment_desc() != null) {
                 contentValues.put(SEGMENT_DESC, so_pack_express_local.getSegment_desc());
+            }
+            if (so_pack_express_local.getPipeline_desc() != null) {
+                contentValues.put(PIPELINE_DESC, so_pack_express_local.getPipeline_desc());
             }
             contentValues.put(BILLING_ADD_INF1_VALUE, so_pack_express_local.getBilling_add_inf1_value());
             if (so_pack_express_local.getBilling_add_inf1_tracking() > -1) {

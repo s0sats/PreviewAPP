@@ -335,6 +335,7 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
         so_pack_express_local.setStatus(Constant.SO_EXPRESS_STATUS_NEW);
         //
         so_pack_express_local.setSo_desc(mSo_pack_express.getPack_desc());
+        so_pack_express_local.setPipeline_desc(mSo_pack_express.getPipeline_desc());
         so_pack_express_local.setSo_status(so_status);
         so_pack_express_local.setLog_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
         //
