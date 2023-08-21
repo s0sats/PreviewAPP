@@ -38,6 +38,8 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
     public static final String CONFIG_TYPE_DOWNLOAD = "download";
     public static final String CONFIG_TYPE_EXIBITION_FULL = "CONFIG_TYPE_EXIBITION_FULL";
     public static final String CONFIG_TYPE_EXIBITION_SO = "CONFIG_TYPE_EXIBITION_SO";
+    public static final String TRACKING_LIST = "TRACKING_LIST";
+
     //
     private Context context;
     private int resource_01;
