@@ -18,7 +18,7 @@
         android:background="@drawable/namoa_cell_8_states">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/serial_detail"
+            android:id="@+id/mid_card_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"

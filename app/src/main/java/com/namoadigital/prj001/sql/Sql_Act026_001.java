@@ -36,27 +36,18 @@ public class Sql_Act026_001 implements Specification {
     private long customer_code;
     private String site_code;
     private int zone_code;
-    private String product_code;
-    private String serial_id;
     private String HmAuxFields = ToolBox_Inf.getColumnsToHmAux(SM_SODao.columns);
     private String serialFilter = "";
     private String only_avaliable_where = "";
 
-    public Sql_Act026_001(long customer_code, String site_code, int zone_code, String product_code, String serial_id, boolean filter_only_avaliable) {
+    public Sql_Act026_001(long customer_code, String site_code, int zone_code, boolean filter_only_avaliable) {
         this.customer_code = customer_code;
         this.site_code = site_code;
         this.zone_code = zone_code;
-        this.product_code = product_code;
-        this.serial_id = serial_id;
-
-        if(product_code != null && serial_id != null){
-            serialFilter += " AND s3.product_code = '"+product_code+"' \n"+
-                            " AND s3.serial_id = '"+serial_id+"' \n";
-        }
         //
-        if(filter_only_avaliable){
+        if (filter_only_avaliable) {
             this.only_avaliable_where =
-                    " and "+QTD_SERVICES+" > 0 \n ";
+                    " and " + QTD_SERVICES + " > 0 \n ";
         }
     }
 
@@ -256,7 +247,6 @@ public class Sql_Act026_001 implements Specification {
                         " WHERE\n" +
                         "   s3.customer_code = '"+customer_code+"'\n" +
                         "   and s3.status NOT IN ('" + Constant.SYS_STATUS_CANCELLED + "','" + Constant.SYS_STATUS_DONE + "') \n")
-                .append(serialFilter)
                 .append(only_avaliable_where)
                 .append(";")
 //                .append(HmAuxFields+"#" +

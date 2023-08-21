@@ -10,6 +10,7 @@ import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act026_001;
+import com.namoadigital.prj001.sql.Sql_Act026_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -53,22 +54,40 @@ public class Act026_Main_Presenter_Impl implements Act026_Main_Presenter {
 //        );
 //        //
 //        int tam = soList.size();
-        List<HMAux> soList = soDao.query_HM(
+        List<HMAux> soList;
+        if (product_code == null && serial_id == null) {
+            soList = soDao.query_HM(
                 /*new SM_SO_Sql_011(
                         ToolBox_Con.getPreference_Customer_Code(context),
                         product_code,
                         serial_id
                 ).toSqlQuery()
                 */
-                new Sql_Act026_001(
+                    new Sql_Act026_001(
+                            ToolBox_Con.getPreference_Customer_Code(context),
+                            ToolBox_Con.getPreference_Site_Code(context),
+                            ToolBox_Con.getPreference_Zone_Code(context),
+                            onlyAvaliables
+                    ).toSqlQuery()
+            );
+        } else {
+            soList = soDao.query_HM(
+                /*new SM_SO_Sql_011(
                         ToolBox_Con.getPreference_Customer_Code(context),
-                        ToolBox_Con.getPreference_Site_Code(context),
-                        ToolBox_Con.getPreference_Zone_Code(context),
                         product_code,
-                        serial_id,
-                        onlyAvaliables
+                        serial_id
                 ).toSqlQuery()
-        );
+                */
+                    new Sql_Act026_002(
+                            ToolBox_Con.getPreference_Customer_Code(context),
+                            ToolBox_Con.getPreference_Site_Code(context),
+                            ToolBox_Con.getPreference_Zone_Code(context),
+                            product_code,
+                            serial_id,
+                            onlyAvaliables
+                    ).toSqlQuery()
+            );
+        }
         MD_Product_Serial_TrackingDao mdpstDao = new MD_Product_Serial_TrackingDao(
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
@@ -92,7 +111,7 @@ public class Act026_Main_Presenter_Impl implements Act026_Main_Presenter {
                 for (int i = 0; i < tranckingAuxList.size(); i++) {
                     trackingList.append(tranckingAuxList.get(i).getTracking());
                     if (i < tranckingAuxList.size() - 1) {
-                        trackingList.append("\n");
+                        trackingList.append(" | ");
                     }
                 }
                 so.put(SO_Header_Adapter.TRACKING_LIST, trackingList.toString());
@@ -116,22 +135,40 @@ public class Act026_Main_Presenter_Impl implements Act026_Main_Presenter {
 //        );
 //        //
 //        int tam = soList.size();
-        List<HMAux> soList = soDao.query_HM(
+        List<HMAux> soList;
+        if (product_code == null && serial_id == null) {
+            soList = soDao.query_HM(
                 /*new SM_SO_Sql_011(
                         ToolBox_Con.getPreference_Customer_Code(context),
                         product_code,
                         serial_id
                 ).toSqlQuery()
                 */
-                new Sql_Act026_001(
+                    new Sql_Act026_001(
+                            ToolBox_Con.getPreference_Customer_Code(context),
+                            ToolBox_Con.getPreference_Site_Code(context),
+                            ToolBox_Con.getPreference_Zone_Code(context),
+                            false
+                    ).toSqlQuery()
+            );
+        } else {
+            soList = soDao.query_HM(
+                /*new SM_SO_Sql_011(
                         ToolBox_Con.getPreference_Customer_Code(context),
-                        ToolBox_Con.getPreference_Site_Code(context),
-                        ToolBox_Con.getPreference_Zone_Code(context),
                         product_code,
-                        serial_id,
-                        false
+                        serial_id
                 ).toSqlQuery()
-        );
+                */
+                    new Sql_Act026_002(
+                            ToolBox_Con.getPreference_Customer_Code(context),
+                            ToolBox_Con.getPreference_Site_Code(context),
+                            ToolBox_Con.getPreference_Zone_Code(context),
+                            product_code,
+                            serial_id,
+                            false
+                    ).toSqlQuery()
+            );
+        }
         //
         mView.setListSOSize(soList.size());
     }

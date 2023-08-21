@@ -1,11 +1,14 @@
 package com.namoadigital.prj001.adapter;
 
+import static android.text.TextUtils.join;
+
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Filter;
 import android.widget.Filterable;
@@ -13,19 +16,20 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.appcompat.content.res.AppCompatResources;
+
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.dao.MD_BrandDao;
-import com.namoadigital.prj001.dao.MD_Brand_ColorDao;
-import com.namoadigital.prj001.dao.MD_Brand_ModelDao;
 import com.namoadigital.prj001.dao.SM_SODao;
-import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.design.list.OnRememberListState;
 import com.namoadigital.prj001.sql.Sql_Act026_001;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +43,6 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
     public static final String CONFIG_TYPE_EXIBITION_FULL = "CONFIG_TYPE_EXIBITION_FULL";
     public static final String CONFIG_TYPE_EXIBITION_SO = "CONFIG_TYPE_EXIBITION_SO";
     public static final String TRACKING_LIST = "TRACKING_LIST";
-
     //
     private Context context;
     private int resource_01;
@@ -58,6 +61,7 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
     private OnRememberListState<HMAux> rememberListState;
     //
     private boolean showOnlyAvailable = false;
+    private boolean showSerialAndTrackings = false;
 
 //    public SO_Header_Adapter(Context context, int resource_01, List<HMAux> source, String config_type) {
 //        this.context = context;
@@ -96,14 +100,14 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
 //        this.source_filtered = (ArrayList<HMAux>) source;
 //
 //        getFilter();
-        applyConstructor(context,source,config_type,resource_01,resource_02,null, null);
+        applyConstructor(context, source, config_type, resource_01, resource_02, null, null, false);
     }
 
-    public SO_Header_Adapter(Context context, List<HMAux> source, String config_type, int resource_01, int resource_02, String sFilter, OnRememberListState<HMAux> rememberListState) {
-        applyConstructor(context, source, config_type, resource_01, resource_02, sFilter, rememberListState);
+    public SO_Header_Adapter(Context context, List<HMAux> source, String config_type, int resource_01, int resource_02, String sFilter, OnRememberListState<HMAux> rememberListState, boolean showSerialAndTrackings) {
+        applyConstructor(context, source, config_type, resource_01, resource_02, sFilter, rememberListState, showSerialAndTrackings);
     }
 
-    private void applyConstructor(Context context, List<HMAux> source, String config_type, int resource_01, int resource_02, String sFilter, OnRememberListState<HMAux> OnRememberListState) {
+    private void applyConstructor(Context context, List<HMAux> source, String config_type, int resource_01, int resource_02, String sFilter, OnRememberListState<HMAux> OnRememberListState, boolean showSerialAndTrackings) {
         this.context = context;
         this.resource_01 = resource_01;
         this.resource_02 = resource_02;
@@ -122,6 +126,7 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
         loadTranslation();
         //
         this.source_filtered = (ArrayList<HMAux>) source;
+        this.showSerialAndTrackings = showSerialAndTrackings;
         //LUCHE - 01/11/2019
         if(sFilter != null && !sFilter.trim().isEmpty()) {
             getFilter().filter(sFilter);
@@ -211,183 +216,186 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
         return convertView;
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     private void processSO(View convertView, int position) {
-        //Resgata item do list view.
         HMAux so = source.get(position);
-        //
-        TextView tv_so_ttl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_so_ttl);
-        //SO Prefix.SO_code
-        LinearLayout ll_prefix_code = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_prefix_code);
-        TextView tv_so_prefix_code = (TextView) convertView.findViewById(R.id.so_header_cell_tv_prefix_code);
 
-        LinearLayout ll_so_id = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_so_id);
-        TextView tv_so_id_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_so_id);
-        TextView tv_so_id_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_so_id_val);
-        //
-        LinearLayout ll_so_desc = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_so_desc);
-        TextView tv_so_desc_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_so_desc);
-        //
-        LinearLayout ll_date = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_date);
+        TextView tv_prefix_code = convertView.findViewById(R.id.act047_cell_tv_prefix_code);
+        TextView tv_so_id_val = convertView.findViewById(R.id.so_so_id_val);
+        TextView tv_status_val = convertView.findViewById(R.id.act047_cell_tv_status_val);
+        ImageView iv_block = convertView.findViewById(R.id.so_block);
+        TextView tv_priority_val = convertView.findViewById(R.id.so_priority_val);
+        TextView tv_deadline_val = convertView.findViewById(R.id.so_deadline_val);
+        TextView tv_serial_id = convertView.findViewById(R.id.so_serial_id_val);
+        LinearLayout ll_serial_detail = convertView.findViewById(R.id.mid_card_layout);
+        TextView tv_tracking_val = convertView.findViewById(R.id.so_tracking_val);
+        TextView tv_brand = convertView.findViewById(R.id.so_brand_val);
+        TextView tv_model = convertView.findViewById(R.id.so_model_val);
+        TextView tv_color = convertView.findViewById(R.id.so_color_val);
+        TextView tv_segment_category_val = convertView.findViewById(R.id.so_segment_category_val);
+        TextView tv_pipeline_val = convertView.findViewById(R.id.so_pipeline_val);
+        TextView create_date = convertView.findViewById(R.id.so_create_date_val);
+        ImageView icon_schedule = convertView.findViewById(R.id.so_left_icon);
+        ImageView icon_clouds = convertView.findViewById(R.id.so_right_icon);
+        TextView tv_site = convertView.findViewById(R.id.so_site_val);
+        LinearLayout ll_so_express = convertView.findViewById(R.id.so_express_layout);
 
-        //
-        LinearLayout ll_priority = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_priority);
-        TextView tv_priority_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_priority_lbl);
-        TextView tv_priority_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_priority_val);
-        //
-        LinearLayout ll_status = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_status);
-        TextView tv_status_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_status_lbl);
-        TextView tv_status_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_status_val);
-        //
-        LinearLayout ll_express_so = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_express_ret);
-        TextView tv_express_ret_msg = (TextView) convertView.findViewById(R.id.so_header_cell_tv_express_ret_msg);
-        //
-        LinearLayout ll_deadline = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_deadline);
-        TextView tv_deadline_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_deadline_lbl);
-        TextView tv_deadline_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_deadline_val);
-        //
-        LinearLayout ll_site = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_site);
-        TextView tv_site_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_site_lbl);
-        TextView tv_site_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_site_val);
-        //
-        LinearLayout ll_operation = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_operation);
-        TextView tv_operation_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_operation_lbl);
-        TextView tv_operation_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_operation_val);
-        //
-        LinearLayout ll_contract = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_contract);
-        TextView tv_contract_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_contract_lbl);
-        TextView tv_contract_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_contract_val);
-        //
-        LinearLayout ll_client = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_client);
-        TextView tv_client_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_client_lbl);
-        TextView tv_client_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_client_val);
-        //
-        LinearLayout ll_serial_info = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_serial_info);
-        TextView tv_serial_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_serial_lbl);
-        TextView tv_serial_id = (TextView) convertView.findViewById(R.id.so_header_cell_tv_serial_id);
-        //
-        LinearLayout ll_product = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_product);
-        TextView tv_product_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_product_lbl);
-        TextView tv_product_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_product_val);
-        //
-        LinearLayout ll_segment = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_segment);
-        TextView tv_segment_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_segment_lbl);
-        TextView tv_segment_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_segment_val);
-        //
-        LinearLayout ll_category_price = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_category_price);
-        TextView tv_category_price_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_category_price_lbl);
-        TextView tv_category_price_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_category_price_val);
-        //
-        LinearLayout ll_brand_model_color = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_brand_model_color);
-        TextView tv_brand_model_color_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_brand_model_color_val);
-        //
-        LinearLayout ll_download_optc = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_download_opt);
-        //
-        ImageView btn_download = (ImageView) convertView.findViewById(R.id.so_header_cell_btn_single_download);
-        //
-        CheckBox chk_download = (CheckBox) convertView.findViewById(R.id.so_header_cell_chk_download);
-        //SO EXPRESS
-        LinearLayout ll_so_express = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_express_icon);
-        //
-        ImageView iv_express_so = (ImageView) convertView.findViewById(R.id.so_header_cell_iv_express_so);
         //
         //Montagem dos dados na tela.
         //
-        tv_so_ttl.setText(hmAux_Trans.get("so_main_title"));
-        //
-        tv_so_prefix_code.setText(so.get(SM_SODao.SO_PREFIX) + "." + so.get(SM_SODao.SO_CODE));
-        //
-        tv_so_id_lbl.setText(hmAux_Trans.get("so_id_lbl"));
-        tv_so_id_val.setText(so.get(SM_SODao.SO_ID));
+        tv_prefix_code.setText(so.get(SM_SODao.SO_PREFIX) + "." + so.get(SM_SODao.SO_CODE));
         if (so.get(SM_SODao.SO_ID).equals(so.get(SM_SODao.SO_PREFIX) + "." + so.get(SM_SODao.SO_CODE))) {
-            ll_so_id.setVisibility(View.GONE);
+            tv_so_id_val.setVisibility(View.GONE);
         } else {
-            ll_so_id.setVisibility(View.VISIBLE);
+            tv_so_id_val.setVisibility(View.VISIBLE);
+            tv_so_id_val.setText(so.get(SM_SODao.SO_ID));
         }
-        //
-        tv_so_desc_val.setText(hmAux_Trans.get("so_desc_lbl") + ": " + so.get(SM_SODao.SO_DESC));
-        if (so.get(SM_SODao.SO_DESC) != null && so.get(SM_SODao.SO_DESC).length() > 0) {
-            ll_so_desc.setVisibility(View.VISIBLE);
-        } else {
-            ll_so_desc.setVisibility(View.GONE);
-        }
-        //
-        //data eh apenas para Ordem Expressa
-        ll_date.setVisibility(View.GONE);
-        //
-        tv_priority_lbl.setText(hmAux_Trans.get("priority_lbl"));
-        tv_priority_val.setText(so.get(SM_SODao.PRIORITY_DESC));
-        //
-        tv_status_lbl.setText(hmAux_Trans.get("status_lbl"));
-        tv_status_val.setText(hmAux_Trans.get(so.get(SM_SODao.STATUS)));
-        ToolBox_Inf.setSOStatusColor(context, tv_status_val, so.get(SM_SODao.STATUS));
-        //Só exibir se for Express
-        ll_express_so.setVisibility(View.GONE);
-        //
-        tv_deadline_lbl.setText(hmAux_Trans.get("deadline_lbl"));
-        if (so.get(SM_SODao.DEADLINE) != null && so.get(SM_SODao.DEADLINE).length() > 0) {
-            ll_deadline.setVisibility(View.VISIBLE);
-            tv_deadline_val.setText(
-                    ToolBox_Inf.millisecondsToString(
-                            ToolBox_Inf.dateToMilliseconds(so.get(SM_SODao.DEADLINE)),
-                            ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-                    )
 
+
+        StringBuilder value = new StringBuilder();
+        if (!so.get(SM_SODao.SO_ID).equals(so.get(SM_SODao.SO_PREFIX) + "." + so.get(SM_SODao.SO_CODE))) {
+            value.append(so.get(SM_SODao.SO_ID));
+
+            if (so.get(SM_SODao.CLIENT_SO_ID) != null && !so.get(SM_SODao.CLIENT_SO_ID).isEmpty()) {
+                value.append(" | ").append(so.get(SM_SODao.CLIENT_SO_ID));
+            }
+            tv_so_id_val.setVisibility(View.VISIBLE);
+            tv_so_id_val.setText(value);
+        } else {
+            if (so.get(SM_SODao.CLIENT_SO_ID) != null && !so.get(SM_SODao.CLIENT_SO_ID).isEmpty()) {
+                value.append(so.get(SM_SODao.CLIENT_SO_ID));
+                tv_so_id_val.setVisibility(View.VISIBLE);
+                tv_so_id_val.setText(value);
+            } else {
+                tv_so_id_val.setVisibility(View.GONE);
+            }
+        }
+
+        tv_status_val.setText(hmAux_Trans.get(so.get(SM_SODao.STATUS)));
+        tv_status_val.setTextColor(ToolBox_Inf.getStatusColorV2(context, so.get(SM_SODao.STATUS)));
+        iv_block.setVisibility(View.GONE);
+        //
+        if (so.hasConsistentValue(SM_SODao.DEADLINE_MANUAL)) {
+            if (so.get(SM_SODao.DEADLINE_MANUAL).equalsIgnoreCase("1")) {
+                icon_schedule.setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.perm_contact_calendar_48px));
+            } else {
+                icon_schedule.setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.baseline_schedule_24));
+            }
+            icon_schedule.setVisibility(View.VISIBLE);
+        } else {
+            icon_schedule.setVisibility(View.GONE);
+        }
+
+        if (so.get(SM_SODao.STATUS) != null && !so.get(SM_SODao.STATUS).isEmpty() &&
+                so.get(SM_SODao.STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_STOP)) {
+            iv_block.setVisibility(View.VISIBLE);
+        }
+
+        if (so.get(SM_SODao.PRIORITY_DESC) != null && !so.get(SM_SODao.PRIORITY_DESC).isEmpty()) {
+            tv_priority_val.setText(so.get(SM_SODao.PRIORITY_DESC));
+            tv_priority_val.setVisibility(View.VISIBLE);
+        } else {
+            tv_priority_val.setVisibility(View.GONE);
+        }
+
+        if (so.get(SM_SODao.DEADLINE) == null || so.get(SM_SODao.DEADLINE).isEmpty()) {
+            tv_deadline_val.setText(hmAux_Trans.get("deadline_lbl"));
+            tv_deadline_val.setTextColor(context.getResources().getColor(R.color.m3_namoa_onSurfaceVariant));
+            icon_schedule.setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.baseline_schedule_24));
+            icon_schedule.setVisibility(View.VISIBLE);
+        } else {
+            String deadlineTime = ToolBox_Inf.millisecondsToString(
+                    ToolBox_Inf.dateToMilliseconds(so.get(SM_SODao.DEADLINE)),
+                    ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
             );
+
+            if (ToolBox_Inf.isItemLate(so.get(SM_SODao.DEADLINE))) {
+                tv_deadline_val.setTextColor(context.getResources().getColor(R.color.text_red));
+            } else {
+                tv_deadline_val.setTextColor(context.getResources().getColor(R.color.m3_namoa_onSurfaceVariant));
+            }
+            tv_deadline_val.setText(deadlineTime);
+        }
+        //
+        if (so.get(SM_SODao.SITE_DESC) != null && !so.get(SM_SODao.SITE_DESC).isEmpty()) {
+            tv_site.setText(so.get(SM_SODao.SITE_DESC));
+            tv_site.setVisibility(View.VISIBLE);
         } else {
-            ll_deadline.setVisibility(View.GONE);
-            tv_deadline_val.setText("");
+            tv_site.setVisibility(View.GONE);
         }
-        //
-        tv_site_lbl.setText(hmAux_Trans.get("site_lbl"));
-        tv_site_val.setText(so.get(SM_SODao.SITE_ID) + " - " + so.get(SM_SODao.SITE_DESC));
-        //
-        tv_operation_lbl.setText(hmAux_Trans.get("operation_lbl"));
-        tv_operation_val.setText(so.get(SM_SODao.OPERATION_ID) + " - " + so.get(SM_SODao.OPERATION_DESC));
-        //
-        tv_contract_lbl.setText(hmAux_Trans.get("contract_lbl"));
-        tv_contract_val.setText(so.get(SM_SODao.CONTRACT_CODE) + " - " + so.get(SM_SODao.CONTRACT_DESC));
-        //
-        tv_client_lbl.setText(hmAux_Trans.get("client_lbl"));
-        tv_client_val.setText(so.get(SM_SODao.CLIENT_NAME));
-        //
-        if (so.get(SM_SODao.CLIENT_TYPE).equals(Constant.CLIENT_TYPE_CLIENT)) {
-            ll_client.setVisibility(View.VISIBLE);
+
+        if (so.hasConsistentValue(SM_SODao.SERIAL_ID) && showSerialAndTrackings) {
+            tv_serial_id.setText(so.get(SM_SODao.SERIAL_ID));
+            tv_serial_id.setVisibility(View.VISIBLE);
+            ll_serial_detail.setVisibility(View.VISIBLE);
         } else {
-            ll_client.setVisibility(View.GONE);
+            ll_serial_detail.setVisibility(View.GONE);
+            tv_serial_id.setVisibility(View.GONE);
         }
-        //
-        tv_serial_lbl.setText(hmAux_Trans.get("serial_main_title"));
-        tv_serial_id.setText(so.get(SM_SODao.SERIAL_ID));
-        //
-        tv_product_lbl.setText(hmAux_Trans.get("product_lbl"));
-        tv_product_val.setText(so.get(SM_SODao.PRODUCT_ID) + " - " + so.get(SM_SODao.PRODUCT_DESC));
-        //
-        tv_segment_lbl.setText(hmAux_Trans.get("segment_lbl"));
-        tv_segment_val.setText(so.get(SM_SODao.SEGMENT_ID) + " - " + so.get(SM_SODao.SEGMENT_DESC));
-        //
-        tv_category_price_lbl.setText(hmAux_Trans.get("category_price_lbl"));
-        tv_category_price_val.setText(so.get(SM_SODao.CATEGORY_PRICE_ID) + " - " + so.get(SM_SODao.CATEGORY_PRICE_DESC));
-        //
-        String brand_model_color = "";
-        if ((so.containsKey(MD_BrandDao.BRAND_DESC)
-                || so.containsKey(MD_Brand_ModelDao.MODEL_DESC)
-                || so.containsKey(MD_Brand_ColorDao.COLOR_DESC)
-        )
-                ) {
-            brand_model_color += so.get(MD_BrandDao.BRAND_DESC).length() == 0 ? "" : "| " + so.get(MD_BrandDao.BRAND_DESC) + " ";
-            brand_model_color += so.get(MD_Brand_ModelDao.MODEL_DESC).length() == 0 ? "" : "| " + so.get(MD_Brand_ModelDao.MODEL_DESC) + " ";
-            brand_model_color += so.get(MD_Brand_ColorDao.COLOR_DESC).length() == 0 ? "" : "| " + so.get(MD_Brand_ColorDao.COLOR_DESC) + " ";
-        }
-        //
-        if (brand_model_color.length() > 0) {
-            brand_model_color = brand_model_color.substring(1, brand_model_color.length());
-            tv_brand_model_color_val.setText(brand_model_color);
-            ll_brand_model_color.setVisibility(View.VISIBLE);
+
+        if (isNotNullOrEmpty(so, TRACKING_LIST) && showSerialAndTrackings) {
+            tv_tracking_val.setText(so.get(TRACKING_LIST));
+            tv_tracking_val.setVisibility(View.VISIBLE);
         } else {
-            tv_brand_model_color_val.setText("");
-            ll_brand_model_color.setVisibility(View.GONE);
+            tv_tracking_val.setVisibility(View.GONE);
         }
+
         //
+
+        tv_brand.setVisibility(isNotNullOrEmpty(so, "brand_desc") && showSerialAndTrackings ? View.VISIBLE : View.GONE);
+        tv_model.setVisibility(isNotNullOrEmpty(so, "model_desc") && showSerialAndTrackings ? View.VISIBLE : View.GONE);
+        tv_color.setVisibility(isNotNullOrEmpty(so, "color_desc") && showSerialAndTrackings ? View.VISIBLE : View.GONE);
+
+        tv_brand.setText(isNotNullOrEmpty(so, "brand_desc") && showSerialAndTrackings ? so.get("brand_desc") : "");
+        tv_model.setText(isNotNullOrEmpty(so, "model_desc") && showSerialAndTrackings ? "| " + so.get("model_desc") : "");
+        tv_color.setText(isNotNullOrEmpty(so, "color_desc") && showSerialAndTrackings ? "| " + so.get("color_desc") : "");
+
+        if (tv_brand.getVisibility() == View.VISIBLE) {
+            ll_serial_detail.setVisibility(View.VISIBLE);
+        }
+        //Segment
+        List<String> seg_category = new ArrayList<>();
+        if (so.get(SM_SODao.SEGMENT_DESC) != null && !so.get(SM_SODao.SEGMENT_DESC).isEmpty()) {
+            seg_category.add(so.get(SM_SODao.SEGMENT_DESC));
+        }
+        if (so.get(SM_SODao.CATEGORY_PRICE_DESC) != null && !so.get(SM_SODao.CATEGORY_PRICE_DESC).isEmpty()) {
+            seg_category.add(so.get(SM_SODao.CATEGORY_PRICE_DESC));
+        }
+
+        if (!seg_category.toString().isEmpty()) {
+            tv_segment_category_val.setText(join(" | ", seg_category));
+            tv_segment_category_val.setVisibility(View.VISIBLE);
+        } else {
+            tv_segment_category_val.setVisibility(View.GONE);
+        }
+        //Pipeline
+        if (isNotNullOrEmpty(so, SM_SODao.PIPELINE_DESC)) {
+            tv_pipeline_val.setText(so.get(SM_SODao.PIPELINE_DESC));
+            tv_pipeline_val.setVisibility(View.VISIBLE);
+        } else {
+            tv_pipeline_val.setVisibility(View.GONE);
+        }
+
+        create_date.setText(hmAux_Trans.get("create_date_lbl") + " " + ToolBox_Inf.millisecondsToString(
+                ToolBox_Inf.dateToMilliseconds(so.get(SM_SODao.CREATE_DATE)),
+                ToolBox_Inf.nlsDateFormat(context)));
+
+        if ((so.get(SM_SODao.UPDATE_REQUIRED) != null || so.get(SM_SODao.SYNC_REQUIRED) != null) && !so.get(SM_SODao.STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_DONE)) {
+
+            Drawable wrapperDrawable = setSyncIcon(
+                    icon_clouds,
+                    so.get(SM_SODao.UPDATE_REQUIRED).equalsIgnoreCase("1"),
+                    ToolBox_Inf.isSoWithinTokenFile(context, Integer.parseInt(so.get(SM_SODao.SO_PREFIX)), Integer.parseInt(so.get(SM_SODao.SO_CODE))),
+                    so.get(SM_SODao.SYNC_REQUIRED).equalsIgnoreCase("1")
+            );
+
+            icon_clouds.setImageDrawable(wrapperDrawable);
+        } else {
+            icon_clouds.setVisibility(View.VISIBLE);
+            icon_clouds.setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.ic_baseline_check_circle_24));
+            icon_clouds.setImageTintList(AppCompatResources.getColorStateList(context, R.color.m3_namoa_extended_verdeDone_seed));
+        }
+        /*//
         //Checkbox
         chk_download.setTag(position);
         //
@@ -408,10 +416,12 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
         //so exibir se So Express
         ll_so_express.setVisibility(View.GONE);
         //
+        */
         /*
          * Tratativas
          *
          */
+        /*
 
 //        if (config_type.equals(CONFIG_TYPE_DOWNLOAD)) {
 //            //Se status da OS for edit ou stop, não exibe opções de download.
@@ -427,205 +437,216 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
             ll_serial_info.setVisibility(View.GONE);
         } else {
             ll_serial_info.setVisibility(View.VISIBLE);
+        }*/
+    }
+
+    private boolean isNotNullOrEmpty(HMAux so, String value) {
+        return so.hasConsistentValue(value) && !so.get(value).isEmpty();
+    }
+
+    @NotNull
+    private Drawable setSyncIcon(ImageView icon_clouds, boolean hasUpdateRequired, boolean isSoWithinTokenFile, boolean hasSoSyncRequired) {
+        int icon;
+        if (hasSoSyncRequired && (isSoWithinTokenFile || hasUpdateRequired)) {
+            icon = R.drawable.ic_sync_main_menu_data;
+            icon_clouds.setVisibility(View.VISIBLE);
+        } else if (hasUpdateRequired || isSoWithinTokenFile) {
+            icon = R.drawable.ic_cloud_upload_24_red;
+            icon_clouds.setVisibility(View.VISIBLE);
+        } else if (hasSoSyncRequired) {
+            icon = R.drawable.ic_baseline_cloud_download_24_yellow;
+            icon_clouds.setVisibility(View.VISIBLE);
+        } else {
+            icon = R.drawable.ic_baseline_cloud_done_24_blue;
+            icon_clouds.setVisibility(View.VISIBLE);
         }
+        //
+        return context.getResources().getDrawable(icon);
     }
 
     private void processSOExpress(View convertView, int position) {
         //Resgata item do list view.
-        HMAux so_express = source.get(position);
-        //
-        TextView tv_so_ttl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_so_ttl);
-        //SO Prefix.SO_code
-        LinearLayout ll_prefix_code = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_prefix_code);
-        TextView tv_so_prefix_code = (TextView) convertView.findViewById(R.id.so_header_cell_tv_prefix_code);
+        HMAux so = source.get(position);
 
-        LinearLayout ll_so_id = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_so_id);
-        TextView tv_so_id_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_so_id);
-        TextView tv_so_id_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_so_id_val);
-        //
-        LinearLayout ll_so_desc = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_so_desc);
-        TextView tv_so_desc_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_so_desc);
-        //
-        LinearLayout ll_date = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_date);
-        TextView tv_date_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_date_lbl);
-        TextView tv_date_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_date_val);
-        //
-        LinearLayout ll_priority = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_priority);
-        TextView tv_priority_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_priority_lbl);
-        TextView tv_priority_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_priority_val);
-        //
-        LinearLayout ll_status = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_status);
-        TextView tv_status_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_status_lbl);
-        TextView tv_status_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_status_val);
-        //
-        LinearLayout ll_express_ret = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_express_ret);
-        TextView tv_express_ret_msg = (TextView) convertView.findViewById(R.id.so_header_cell_tv_express_ret_msg);
-        //
-        LinearLayout ll_deadline = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_deadline);
-        TextView tv_deadline_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_deadline_lbl);
-        TextView tv_deadline_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_deadline_val);
-        //
-        LinearLayout ll_site = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_site);
-        TextView tv_site_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_site_lbl);
-        TextView tv_site_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_site_val);
-        //
-        LinearLayout ll_operation = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_operation);
-        TextView tv_operation_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_operation_lbl);
-        TextView tv_operation_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_operation_val);
-        //
-        LinearLayout ll_contract = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_contract);
-        TextView tv_contract_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_contract_lbl);
-        TextView tv_contract_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_contract_val);
-        //
-        LinearLayout ll_client = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_client);
-        TextView tv_client_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_client_lbl);
-        TextView tv_client_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_client_val);
-        //
-        LinearLayout ll_serial_info = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_serial_info);
-        TextView tv_serial_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_serial_lbl);
-        TextView tv_serial_id = (TextView) convertView.findViewById(R.id.so_header_cell_tv_serial_id);
-        //
-        LinearLayout ll_product = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_product);
-        TextView tv_product_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_product_lbl);
-        TextView tv_product_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_product_val);
-        //
-        LinearLayout ll_segment = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_segment);
-        TextView tv_segment_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_segment_lbl);
-        TextView tv_segment_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_segment_val);
-        //
-        LinearLayout ll_category_price = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_category_price);
-        TextView tv_category_price_lbl = (TextView) convertView.findViewById(R.id.so_header_cell_tv_category_price_lbl);
-        TextView tv_category_price_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_category_price_val);
-        //} so_header_cell_ll_brand_model_color
-        LinearLayout ll_brand_model_color = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_brand_model_color);
-        TextView tv_brand_model_color_val = (TextView) convertView.findViewById(R.id.so_header_cell_tv_brand_model_color_val);
-        //
-        LinearLayout ll_download_optc = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_download_opt);
-        //SO EXPRESS
-        LinearLayout ll_so_express = (LinearLayout) convertView.findViewById(R.id.so_header_cell_ll_express_icon);
-        //
-        ImageView iv_express_so = (ImageView) convertView.findViewById(R.id.so_header_cell_iv_express_so);
+        TextView tv_prefix_code = convertView.findViewById(R.id.act047_cell_tv_prefix_code);
+        TextView tv_so_id_val = convertView.findViewById(R.id.so_so_id_val);
+        TextView tv_status_val = convertView.findViewById(R.id.act047_cell_tv_status_val);
+        ImageView iv_block = convertView.findViewById(R.id.so_block);
+        TextView tv_priority_val = convertView.findViewById(R.id.so_priority_val);
+        TextView tv_deadline_val = convertView.findViewById(R.id.so_deadline_val);
+        TextView tv_serial_id = convertView.findViewById(R.id.so_serial_id_val);
+        LinearLayout ll_serial_id = convertView.findViewById(R.id.mid_card_layout);
+        TextView tv_tracking_val = convertView.findViewById(R.id.so_tracking_val);
+        TextView tv_brand = convertView.findViewById(R.id.so_brand_val);
+        TextView tv_model = convertView.findViewById(R.id.so_model_val);
+        TextView tv_color = convertView.findViewById(R.id.so_color_val);
+        TextView tv_segment_category_val = convertView.findViewById(R.id.so_segment_category_val);
+        TextView tv_pipeline_val = convertView.findViewById(R.id.so_pipeline_val);
+        TextView tv_client_so_id_val = convertView.findViewById(R.id.so_cliente_so_id_val);
+        TextView create_date = convertView.findViewById(R.id.so_create_date_val);
+        ImageView icon_schedule = convertView.findViewById(R.id.so_left_icon);
+        ImageView icon_clouds = convertView.findViewById(R.id.so_right_icon);
+        TextView tv_site = convertView.findViewById(R.id.so_site_val);
+        LinearLayout ll_so_express = convertView.findViewById(R.id.so_express_layout);
+        TextView packet_list = convertView.findViewById(R.id.so_express_pack_service_list);
+
+        ll_so_express.setVisibility(View.VISIBLE);
         //
         //Montagem dos dados na tela.
         //
-        tv_so_ttl.setText(hmAux_Trans.get("so_main_title"));
-        //
-        if (!so_express.get(SM_SODao.SO_PREFIX).isEmpty()) {
-            ll_prefix_code.setVisibility(View.VISIBLE);
-            tv_so_prefix_code.setText(so_express.get(SM_SODao.SO_PREFIX) + "." + so_express.get(SM_SODao.SO_CODE));
+        tv_prefix_code.setText(so.get(SM_SODao.SO_PREFIX) + "." + so.get(SM_SODao.SO_CODE));
+        if (so.get(SM_SODao.SO_ID).equals(so.get(SM_SODao.SO_PREFIX) + "." + so.get(SM_SODao.SO_CODE))) {
+            tv_so_id_val.setVisibility(View.GONE);
         } else {
-            tv_so_prefix_code.setText("");
-            ll_prefix_code.setVisibility(View.INVISIBLE);
+            tv_so_id_val.setVisibility(View.VISIBLE);
+            tv_so_id_val.setText(so.get(SM_SODao.SO_ID));
         }
-        //
-        tv_so_id_lbl.setText(hmAux_Trans.get("so_id_lbl"));
-        tv_so_id_val.setText(so_express.get(SM_SODao.SO_ID));
-        if (so_express.get(SM_SODao.SO_ID).equals(so_express.get(SM_SODao.SO_PREFIX) + "." + so_express.get(SM_SODao.SO_CODE))) {
-            ll_so_id.setVisibility(View.GONE);
-        } else {
-            ll_so_id.setVisibility(View.VISIBLE);
-        }
-        //
-        tv_so_desc_val.setText(hmAux_Trans.get("so_desc_lbl") + ": " + so_express.get(SM_SODao.SO_DESC));
-        if (so_express.get(SM_SODao.SO_DESC) != null && so_express.get(SM_SODao.SO_DESC).length() > 0) {
-            ll_so_desc.setVisibility(View.VISIBLE);
-        } else {
-            ll_so_desc.setVisibility(View.GONE);
-        }
-        //
-        ll_date.setVisibility(View.VISIBLE);
-        tv_date_lbl.setText(hmAux_Trans.get("date_lbl"));
 
-        tv_date_val.setText(ToolBox_Inf.millisecondsToString(
-                ToolBox_Inf.dateToMilliseconds(so_express.get(SM_SODao.LOG_DATE)),
-                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-        ));
-        //
-        tv_priority_lbl.setText(hmAux_Trans.get("priority_lbl"));
-        tv_priority_val.setText(so_express.get(SM_SODao.PRIORITY_DESC));
-        //
-        tv_status_lbl.setText(hmAux_Trans.get("status_lbl"));
-        tv_status_val.setText(hmAux_Trans.get(so_express.get(SO_Pack_Express_LocalDao.SO_STATUS)));
-        ToolBox_Inf.setSOStatusColor(context, tv_status_val, so_express.get(SO_Pack_Express_LocalDao.SO_STATUS));
-        //
-        if(so_express.get(SO_Pack_Express_LocalDao.SO_STATUS).equalsIgnoreCase(Constant.SYS_STATUS_DENIED)
-           || so_express.get(SO_Pack_Express_LocalDao.SO_STATUS).equalsIgnoreCase(Constant.SYS_STATUS_ERROR)
-        ){
-            ll_express_ret.setVisibility(View.VISIBLE);
-            tv_express_ret_msg.setText(so_express.get(SO_Pack_Express_LocalDao.RET_MSG));
-            ToolBox_Inf.setSOStatusColor(context, tv_express_ret_msg, so_express.get(SO_Pack_Express_LocalDao.SO_STATUS));
-        }else{
-            ll_express_ret.setVisibility(View.GONE);
-            tv_express_ret_msg.setText(so_express.get(SO_Pack_Express_LocalDao.RET_MSG));
 
-        }
-        //
-        tv_deadline_lbl.setText(hmAux_Trans.get("deadline_lbl"));
-            ll_deadline.setVisibility(View.GONE);
-            tv_deadline_val.setText("");
-        //
-        tv_site_lbl.setText(hmAux_Trans.get("site_lbl"));
-        tv_site_val.setText(so_express.get(SM_SODao.SITE_ID) + " - " + so_express.get(SM_SODao.SITE_DESC));
-        //
-        tv_operation_lbl.setText(hmAux_Trans.get("operation_lbl"));
-        tv_operation_val.setText(so_express.get(SM_SODao.OPERATION_ID) + " - " + so_express.get(SM_SODao.OPERATION_DESC));
-        //
-        tv_contract_lbl.setText(hmAux_Trans.get("contract_lbl"));
-        tv_contract_val.setText(so_express.get(SM_SODao.CONTRACT_CODE) + " - " + so_express.get(SM_SODao.CONTRACT_DESC));
-        //
-        tv_client_lbl.setText(hmAux_Trans.get("client_lbl"));
-        tv_client_val.setText(so_express.get(SM_SODao.CLIENT_NAME));
-        //
-        ll_client.setVisibility(View.GONE);
-        //
-        tv_serial_lbl.setText(hmAux_Trans.get("serial_main_title"));
-        tv_serial_id.setText(so_express.get(SM_SODao.SERIAL_ID));
-        //
-        tv_product_lbl.setText(hmAux_Trans.get("product_lbl"));
-        tv_product_val.setText(so_express.get(SM_SODao.PRODUCT_ID) + " - " + so_express.get(SM_SODao.PRODUCT_DESC));
-        //
-        tv_segment_lbl.setText(hmAux_Trans.get("segment_lbl"));
-        tv_segment_val.setText(so_express.get(SM_SODao.SEGMENT_ID) + " - " + so_express.get(SM_SODao.SEGMENT_DESC));
-        //
-        tv_category_price_lbl.setText(hmAux_Trans.get("category_price_lbl"));
-        tv_category_price_val.setText(so_express.get(SM_SODao.CATEGORY_PRICE_ID) + " - " + so_express.get(SM_SODao.CATEGORY_PRICE_DESC));
-        //
-        String brand_model_color = "";
-        if ((so_express.containsKey(MD_BrandDao.BRAND_DESC)
-                || so_express.containsKey(MD_Brand_ModelDao.MODEL_DESC)
-                || so_express.containsKey(MD_Brand_ColorDao.COLOR_DESC)
-        )
-                ) {
-            brand_model_color += so_express.get(MD_BrandDao.BRAND_DESC).length() == 0 ? "" : "| " + so_express.get(MD_BrandDao.BRAND_DESC) + " ";
-            brand_model_color += so_express.get(MD_Brand_ModelDao.MODEL_DESC).length() == 0 ? "" : "| " + so_express.get(MD_Brand_ModelDao.MODEL_DESC) + " ";
-            brand_model_color += so_express.get(MD_Brand_ColorDao.COLOR_DESC).length() == 0 ? "" : "| " + so_express.get(MD_Brand_ColorDao.COLOR_DESC) + " ";
-        }
-        //
-        if (brand_model_color.length() > 0) {
-            brand_model_color = brand_model_color.substring(1, brand_model_color.length());
-            tv_brand_model_color_val.setText(brand_model_color);
-            ll_brand_model_color.setVisibility(View.VISIBLE);
+        StringBuilder value = new StringBuilder();
+        if (!so.get(SM_SODao.SO_ID).equals(so.get(SM_SODao.SO_PREFIX) + "." + so.get(SM_SODao.SO_CODE))) {
+            value.append(so.get(SM_SODao.SO_ID));
+
+            if (so.get(SM_SODao.CLIENT_SO_ID) != null && !so.get(SM_SODao.CLIENT_SO_ID).isEmpty()) {
+                value.append(" | ").append(so.get(SM_SODao.CLIENT_SO_ID));
+            }
+            tv_so_id_val.setVisibility(View.VISIBLE);
         } else {
-            tv_brand_model_color_val.setText("");
-            ll_brand_model_color.setVisibility(View.GONE);
+            if (so.get(SM_SODao.CLIENT_SO_ID) != null && !so.get(SM_SODao.CLIENT_SO_ID).isEmpty()) {
+                value.append(so.get(SM_SODao.CLIENT_SO_ID));
+                tv_so_id_val.setVisibility(View.VISIBLE);
+            } else {
+                tv_so_id_val.setVisibility(View.GONE);
+            }
+        }
+
+        tv_status_val.setText(hmAux_Trans.get(so.get(SM_SODao.STATUS)));
+        tv_status_val.setTextColor(ToolBox_Inf.getStatusColorV2(context, so.get(SM_SODao.STATUS)));
+        iv_block.setVisibility(View.GONE);
+        //
+/*        if(so.get(SM_SODao.DEADLINE_MANUAL) != null && !so.get(SM_SODao.DEADLINE_MANUAL).isEmpty()){
+            icon_schedule.setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.perm_contact_calendar_48px));
+        } else {
+            icon_schedule.setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.baseline_schedule_24));
+        }*/
+
+        if (so.get(SM_SODao.STATUS) != null && !so.get(SM_SODao.STATUS).isEmpty() &&
+                so.get(SM_SODao.STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_STOP)) {
+            iv_block.setVisibility(View.VISIBLE);
+        }
+
+        if (so.get(SM_SODao.PRIORITY_DESC) != null && !so.get(SM_SODao.PRIORITY_DESC).isEmpty()) {
+            tv_priority_val.setText(so.get(SM_SODao.PRIORITY_DESC));
+            tv_priority_val.setVisibility(View.VISIBLE);
+        } else {
+            tv_priority_val.setVisibility(View.GONE);
+        }
+
+        if (so.get(SM_SODao.DEADLINE) == null || so.get(SM_SODao.DEADLINE).isEmpty()) {
+            tv_deadline_val.setText(hmAux_Trans.get("deadline_lbl"));
+            tv_deadline_val.setTextColor(context.getResources().getColor(R.color.m3_namoa_onSurfaceVariant));
+            icon_schedule.setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.baseline_schedule_24));
+            icon_schedule.setVisibility(View.VISIBLE);
+        } else {
+            String deadlineTime = ToolBox_Inf.millisecondsToString(
+                    ToolBox_Inf.dateToMilliseconds(so.get(SM_SODao.DEADLINE)),
+                    ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+            );
+
+            if (ToolBox_Inf.isItemLate(so.get(SM_SODao.DEADLINE))) {
+                tv_deadline_val.setTextColor(context.getResources().getColor(R.color.text_red));
+            } else {
+                tv_deadline_val.setTextColor(context.getResources().getColor(R.color.m3_namoa_onSurfaceVariant));
+            }
+            tv_deadline_val.setText(deadlineTime);
         }
         //
-        ll_so_express.setVisibility(View.VISIBLE);
+        if (so.get(SM_SODao.SITE_DESC) != null && !so.get(SM_SODao.SITE_DESC).isEmpty()) {
+            tv_site.setText(so.get(SM_SODao.SITE_DESC));
+            tv_site.setVisibility(View.VISIBLE);
+        } else {
+            tv_site.setVisibility(View.GONE);
+        }
+
+        if (so.get(SM_SODao.SERIAL_ID) != null && !so.get(SM_SODao.SERIAL_ID).isEmpty()) {
+            tv_serial_id.setText(so.get(SM_SODao.SERIAL_ID));
+            tv_serial_id.setVisibility(View.VISIBLE);
+        } else {
+            tv_serial_id.setVisibility(View.GONE);
+        }
+
+        if (isNotNullOrEmpty(so, TRACKING_LIST)) {
+            tv_tracking_val.setText(so.get(TRACKING_LIST));
+            tv_tracking_val.setVisibility(View.VISIBLE);
+        } else {
+            tv_tracking_val.setVisibility(View.GONE);
+        }
 
         //
-        /*
-         * Tratativas
-         *
-         */
 
-        ll_serial_info.setVisibility(View.VISIBLE);
-        ll_so_id.setVisibility(View.GONE);
-        ll_priority.setVisibility(View.GONE);
-        ll_deadline.setVisibility(View.GONE);
-        ll_contract.setVisibility(View.GONE);
-        ll_client.setVisibility(View.GONE);
-        ll_category_price.setVisibility(View.GONE);
-        ll_segment.setVisibility(View.GONE);
+
+        tv_brand.setVisibility(so.get("brand_desc") == null || so.get("brand_desc").isEmpty() ? View.GONE : View.VISIBLE);
+        tv_model.setVisibility(so.get("model_desc") == null || so.get("model_desc").isEmpty() ? View.GONE : View.VISIBLE);
+        tv_color.setVisibility(so.get("color_desc") == null || so.get("color_desc").isEmpty() ? View.GONE : View.VISIBLE);
+
+        tv_brand.setText(so.get("brand_desc") == null || so.get("brand_desc").isEmpty() ? "" : so.get("brand_desc"));
+        tv_model.setText(so.get("model_desc") == null || so.get("model_desc").isEmpty() ? "" : "| " + so.get("model_desc"));
+        tv_color.setText(so.get("color_desc") == null || so.get("color_desc").isEmpty() ? "" : "| " + so.get("color_desc"));
+
+        //Segment
+        List<String> seg_category = new ArrayList<>();
+        if (so.get(SM_SODao.SEGMENT_DESC) != null && !so.get(SM_SODao.SEGMENT_DESC).isEmpty()) {
+            seg_category.add(so.get(SM_SODao.SEGMENT_DESC));
+        }
+        if (so.get(SM_SODao.CATEGORY_PRICE_DESC) != null && !so.get(SM_SODao.CATEGORY_PRICE_DESC).isEmpty()) {
+            seg_category.add(so.get(SM_SODao.CATEGORY_PRICE_DESC));
+        }
+
+        if (!seg_category.toString().isEmpty()) {
+            tv_segment_category_val.setText(join(" | ", seg_category));
+            tv_segment_category_val.setVisibility(View.VISIBLE);
+        } else {
+            tv_segment_category_val.setVisibility(View.GONE);
+        }
+        //Pipeline
+        if (so.get(SM_SODao.PIPELINE_DESC) != null && !so.get(SM_SODao.PIPELINE_DESC).isEmpty()) {
+            tv_pipeline_val.setText(so.get(SM_SODao.PIPELINE_DESC));
+            tv_pipeline_val.setVisibility(View.VISIBLE);
+        } else {
+            tv_pipeline_val.setVisibility(View.GONE);
+        }
+
+        create_date.setText(hmAux_Trans.get("create_date_lbl") + " " + ToolBox_Inf.millisecondsToString(
+                ToolBox_Inf.dateToMilliseconds(so.get(SM_SODao.CREATE_DATE)),
+                ToolBox_Inf.nlsDateFormat(context)));
+
+        if ((so.get(SM_SODao.UPDATE_REQUIRED) != null || so.get(SM_SODao.SYNC_REQUIRED) != null) && !so.get(SM_SODao.STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_DONE)) {
+
+            Drawable wrapperDrawable = setSyncIcon(
+                    icon_clouds,
+                    so.get(SM_SODao.UPDATE_REQUIRED).equalsIgnoreCase("1"),
+                    ToolBox_Inf.isSoWithinTokenFile(context, Integer.parseInt(so.get(SM_SODao.SO_PREFIX)), Integer.parseInt(so.get(SM_SODao.SO_CODE))),
+                    so.get(SM_SODao.SYNC_REQUIRED).equalsIgnoreCase("1")
+            );
+
+            icon_clouds.setImageDrawable(wrapperDrawable);
+        } else {
+            icon_clouds.setVisibility(View.VISIBLE);
+            icon_clouds.setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.ic_baseline_check_circle_24));
+            icon_clouds.setImageTintList(AppCompatResources.getColorStateList(context, R.color.m3_namoa_extended_verdeDone_seed));
+        }
+
+
+        ll_serial_id.setVisibility(
+                tv_serial_id.getVisibility() == View.VISIBLE ||
+                        tv_brand.getVisibility() == View.VISIBLE ||
+                        tv_model.getVisibility() == View.VISIBLE ||
+                        tv_color.getVisibility() == View.VISIBLE ||
+                        tv_tracking_val.getVisibility() == View.VISIBLE ||
+                        tv_pipeline_val.getVisibility() == View.VISIBLE ||
+                        tv_segment_category_val.getVisibility() == View.VISIBLE
+                        ? View.VISIBLE : View.GONE
+        );
     }
 
     public ArrayList<HMAux> getSoToDownload() {
@@ -678,6 +699,7 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
         translateList.add("serial_lbl");
         translateList.add("segment_lbl");
         translateList.add("category_price_lbl");
+        translateList.add("create_date_lbl");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -715,14 +737,14 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
                     boolean isAvailable = hmAux.hasConsistentValue(Sql_Act026_001.QTD_SERVICES) && !"0".equals(hmAux.get(Sql_Act026_001.QTD_SERVICES));
                     //
                     if (
-                        (!showOnlyAvailable || (showOnlyAvailable && isAvailable )) &&
-                        (so_prefix_code.contains(constraint.toString().toLowerCase()) ||
-                         so_id.contains(constraint.toString().toLowerCase()) ||
-                         so_desc.contains(constraint.toString().toLowerCase()) ||
-                         serial_id.contains(constraint.toString().toLowerCase())
-                        )
+                            (!showOnlyAvailable || (showOnlyAvailable && isAvailable)) &&
+                                    (so_prefix_code.contains(constraint.toString().toLowerCase()) ||
+                                            so_id.contains(constraint.toString().toLowerCase()) ||
+                                            so_desc.contains(constraint.toString().toLowerCase()) ||
+                                            serial_id.contains(constraint.toString().toLowerCase())
+                                    )
 
-                     ) {
+                    ) {
                         filterList.add(hmAux);
                     }
                 }

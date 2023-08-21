@@ -75,6 +75,7 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
     private TextView tv_model;
     private TextView tv_serial;
     private TextView tv_product;
+    private TextView tracking_desc;
     private ImageView iconClass;
 
     private ConstraintLayout layout_serial_header;
@@ -182,6 +183,7 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
         tv_product = findViewById(R.id.product_description);
         iconClass = findViewById(R.id.iconClassColor);
         layout_serial_header = findViewById(R.id.layout_top_header_bar);
+        tracking_desc = findViewById(R.id.tracking_desc);
 
         if (mdProductSerial != null) {
             iconClass.setVisibility(mdProductSerial.getClass_color() == null || mdProductSerial.getClass_color().isEmpty() ? View.GONE : View.VISIBLE);
@@ -190,6 +192,7 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
             tv_brand.setVisibility(mdProductSerial.getBrand_desc() == null || mdProductSerial.getBrand_desc().isEmpty() ? View.GONE : View.VISIBLE);
             tv_model.setVisibility(mdProductSerial.getModel_desc() == null || mdProductSerial.getModel_desc().isEmpty() ? View.GONE : View.VISIBLE);
             tv_color.setVisibility(mdProductSerial.getClass_color() == null || mdProductSerial.getClass_color().isEmpty() ? View.GONE : View.VISIBLE);
+            tracking_desc.setVisibility(mdProductSerial.getTracking_list() == null || mdProductSerial.getTracking_list().isEmpty() ? View.GONE : View.VISIBLE);
 
             if (mdProductSerial.getClass_color() != null && !mdProductSerial.getClass_color().isEmpty()) {
                 iconClass.setColorFilter(Color.parseColor(mdProductSerial.getClass_color()));
@@ -199,6 +202,15 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
             tv_brand.setText(mdProductSerial.getBrand_desc() == null || mdProductSerial.getBrand_desc().isEmpty() ? "" : mdProductSerial.getBrand_desc());
             tv_model.setText(mdProductSerial.getModel_desc() == null || mdProductSerial.getModel_desc().isEmpty() ? "" : "| " + mdProductSerial.getModel_desc());
             tv_color.setText(mdProductSerial.getColor_desc() == null || mdProductSerial.getColor_desc().isEmpty() ? "" : "| " + mdProductSerial.getColor_desc());
+            if (mdProductSerial.getTracking_list().size() == 1) {
+                tracking_desc.setText(mdProductSerial.getTracking_list().get(0).getTracking());
+            } else {
+                List<String> trackings = new ArrayList<>();
+                for (int i = 0; i < mdProductSerial.getTracking_list().size(); i++) {
+                    trackings.add(mdProductSerial.getTracking_list().get(i).getTracking());
+                }
+                tracking_desc.setText(String.join(" | ", trackings));
+            }
         }
         layout_serial_header.setVisibility(tv_serial.getVisibility());
 
@@ -411,15 +423,16 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
                 context,
                 soList,
                 configType,
-                R.layout.so_header_cell,
-                R.layout.so_header_cell,
+                R.layout.so_item_list,
+                R.layout.so_item_list,
                 mket_filter != null ? mket_filter.getText().toString().trim() : null,
                 list -> {
                     setTitleLanguage(" (" + list.size() + " / " + soList.size() + ")");
                     new IOnRememberListView<HMAux>(
                             lv_so, tv_empty_state
                     ).dataChanged(list);
-                }
+                },
+                mdProductSerial == null
         );
         //
         if(soList.isEmpty()) {

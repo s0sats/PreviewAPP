@@ -2720,10 +2720,10 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         Integer editUser = mSm_so.getEdit_user();
         Integer userCode = Integer.valueOf(ToolBox_Con.getPreference_User_Code(context));
         if (editUser == null
-        || !editUser.equals(userCode)
-        || mSm_so.getUpdate_required() == 1
-        || isSoWithinTokenFile()
-        || act027_opc_.hasSyncRequired()
+                || !editUser.equals(userCode)
+                || mSm_so.getUpdate_required() == 1
+                || ToolBox_Inf.isSoWithinTokenFile(context, mSm_so.getSo_prefix(), mSm_so.getSo_code())
+                || act027_opc_.hasSyncRequired()
         ) {
             ToolBox.alertMSG(
                     context,
@@ -3387,7 +3387,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
 
         boolean hasUpdateRequired = mSm_so.getUpdate_required() == 1;
 
-        Drawable wrappedDrawable = setSyncIcon(hasUpdateRequired, isSoWithinTokenFile(), hasSyncRequired);
+        Drawable wrappedDrawable = setSyncIcon(hasUpdateRequired, ToolBox_Inf.isSoWithinTokenFile(context, mSm_so.getSo_prefix(), mSm_so.getSo_code()), hasSyncRequired);
 
 
         menu.add(0, TOOLBAR_SYNC_DATA_STATUS, 1, hmAux_Trans.get("lbl_sync_data"));
@@ -3426,7 +3426,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     }
 
 
-    public boolean isSoWithinTokenFile() {
+    public boolean isSoWithinTokenFile(Integer soPrefix, Integer soCode) {
         try {
             File[] soToken =
                     ToolBox_Inf.getListOfFiles_v5(
@@ -3449,8 +3449,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                 for (SM_SO so : token_so_list) {
                     if (
                             so.getCustomer_code() == ToolBox_Con.getPreference_Customer_Code(context)
-                                    && so.getSo_prefix() == mSm_so.getSo_prefix()
-                                    && so.getSo_code() == mSm_so.getSo_code()
+                                    && so.getSo_prefix() == soPrefix
+                                    && so.getSo_code() == soCode
                     ) {
                         return true;
                     }

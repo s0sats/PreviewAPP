@@ -13,7 +13,7 @@ import com.namoa_digital.namoa_library.util.ConstantBase.SYS_STATUS_SENT
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.R
-import com.namoadigital.prj001.databinding.Act042SoExpressCellBinding
+import com.namoadigital.prj001.databinding.SoItemListBinding
 import com.namoadigital.prj001.design.list.OnRememberListState
 import com.namoadigital.prj001.extensions.applyVisibilityIfSourceExists
 import com.namoadigital.prj001.model.SO_Pack_Express_Local
@@ -34,7 +34,7 @@ class Act042SOExpressAdapter(
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MySOExpressVh {
         return MySOExpressVh(
-            Act042SoExpressCellBinding.inflate(
+            SoItemListBinding.inflate(
                 LayoutInflater.from(
                     parent.context
                 ), parent, false
@@ -48,33 +48,77 @@ class Act042SOExpressAdapter(
     }
     //
     override fun getItemCount() = soExpressListFiltered.size
+
     //
-    inner class MySOExpressVh(val binding: Act042SoExpressCellBinding)  : RecyclerView.ViewHolder(binding.root){
-        fun onBind(soPackExpressLocal: SO_Pack_Express_Local){
+    inner class MySOExpressVh(val binding: SoItemListBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun onBind(soPackExpressLocal: SO_Pack_Express_Local) {
             binding.apply {
-                setHeaderContentAndVisibility(soExpressTvHeader ,soPackExpressLocal.so_id, hmAux_Trans.get(soPackExpressLocal.so_status))
-                setViewContentAndVisibility(soExpressPackageDesc ,soPackExpressLocal.so_desc)
-                setViewContentAndVisibility(soExpressProductDesc ,soPackExpressLocal.product_desc)
-                setViewContentAndVisibility(soExpressSerialId ,soPackExpressLocal.serial_id)
-                setViewContentAndVisibility(soExpressBillingAddInf1 ,soPackExpressLocal.billing_add_inf1_value)
-                setViewContentAndVisibility(soExpressBillingAddInf2 ,soPackExpressLocal.billing_add_inf2_value)
-                setViewContentAndVisibility(soExpressBillingAddInf3 ,soPackExpressLocal.billing_add_inf3_value)
-                setViewContentAndVisibility(soExpressSiteDesc ,soPackExpressLocal.exec_site_desc)
-                setViewContentAndVisibility(soExpressOperationDesc ,soPackExpressLocal.operation_desc)
-                setViewContentAndVisibility(soExpressErrorMsg ,soPackExpressLocal.ret_msg)
-                setViewContentAndVisibility(soExpressEndDatetime ,ToolBox_Inf.millisecondsToString(
-                    ToolBox_Inf.dateToMilliseconds(soPackExpressLocal.log_date),
-                    ToolBox_Inf.nlsDateFormat(root.context) + " HH:mm"
-                ))
-                setViewContentAndVisibility(soExpressPackServiceList ,getPackServiceFormatted(root.context, soPackExpressLocal))
-                soExpressEndDatetime.setTextColor(root.context.getResources().getColor(R.color.namoa_lime_green_2))
-                if(SYS_STATUS_DENIED.equals(soPackExpressLocal.ret_code)){
-                    soExpressIvStatus.applyVisibilityIfSourceExists(R.drawable.ic_baseline_close_24)
-                    soExpressEndDatetime.setTextColor(root.context.getResources().getColor(R.color.namoa_color_gray_8))
-                }else if(SYS_STATUS_SENT.equals(soPackExpressLocal.status)) {
-                    soExpressIvStatus.applyVisibilityIfSourceExists(R.drawable.ic_baseline_cloud_done_24_blue)
-                }else{
-                    soExpressIvStatus.applyVisibilityIfSourceExists(R.drawable.ic_cloud_upload_24_red)
+
+                //
+                //
+                act047CellTvPrefixCode.apply {
+                    text = "${soPackExpressLocal.so_prefix}.${soPackExpressLocal.so_code}"
+                    visibility =
+                        if (soPackExpressLocal.so_prefix == null) View.GONE else View.VISIBLE
+                }
+                act047CellTvStatusVal.apply {
+                    text = hmAux_Trans[soPackExpressLocal.so_status]
+                    setTextColor(
+                        ToolBox_Inf.getStatusColorV2(
+                            act047CellTvStatusVal.context,
+                            soPackExpressLocal.so_status
+                        )
+                    )
+
+                    visibility =
+                        if (soPackExpressLocal.so_status == null) View.GONE else View.VISIBLE
+                }
+
+
+                soLeftIcon.applyVisibilityIfSourceExists(R.drawable.ic_baseline_qr_code_2_24)
+                setViewContentAndVisibility(soPipelineVal, soPackExpressLocal.pipeline_desc)
+                setViewContentAndVisibility(soSerialIdVal, soPackExpressLocal.serial_id)
+                midCardLayout.visibility = soSerialIdVal.visibility
+                setViewContentAndVisibility(
+                    soPriorityVal,
+                    hmAux_Trans[soPackExpressLocal.priority_desc]
+                )
+                setViewContentAndVisibility(soSiteVal, soPackExpressLocal.exec_site_desc)
+                setViewContentAndVisibility(soDeadlineVal, soPackExpressLocal.so_desc)
+                val billings = listOfNotNull(
+                    soPackExpressLocal.billing_add_inf1_value,
+                    soPackExpressLocal.billing_add_inf2_value,
+                    soPackExpressLocal.billing_add_inf3_value
+                ).joinToString(" | ")
+
+                listOf(
+                    soBrandVal,
+                    soModelVal,
+                    soColorVal,
+                ).forEach { item -> item.visibility = View.GONE }
+
+                setViewContentAndVisibility(soTrackingVal, billings)
+
+                setViewContentAndVisibility(
+                    soCreateDateVal,
+                    hmAux_Trans["create_date_lbl"] + " " + ToolBox_Inf.millisecondsToString(
+                        ToolBox_Inf.dateToMilliseconds(soPackExpressLocal.log_date),
+                        ToolBox_Inf.nlsDateFormat(root.context) + " HH:mm"
+                    )
+                )
+                setViewContentAndVisibility(
+                    soExpressPackServiceList,
+                    getPackServiceFormatted(root.context, soPackExpressLocal)
+                )
+                soExpressLayout.visibility = soExpressPackServiceList.visibility
+
+                if (SYS_STATUS_DENIED == soPackExpressLocal.ret_code) {
+                    soRightIcon.applyVisibilityIfSourceExists(R.drawable.ic_baseline_close_24)
+                } else if (SYS_STATUS_SENT == soPackExpressLocal.status) {
+                    soRightIcon.applyVisibilityIfSourceExists(R.drawable.ic_baseline_cloud_done_24_blue)
+                } else {
+                    soRightIcon.applyVisibilityIfSourceExists(R.drawable.ic_cloud_upload_24_red)
                 }
             }
         }
@@ -96,23 +140,6 @@ class Act042SOExpressAdapter(
             return serviceList
         }
 
-        private fun setHeaderContentAndVisibility(soExpressTvHeader: TextView, soId: String?, soStatus: String?) {
-            if(soStatus.isNullOrEmpty()
-                && soId.isNullOrEmpty()){
-                soExpressTvHeader.visibility = View.GONE
-            }else{
-                soExpressTvHeader.visibility = View.VISIBLE
-                if(!soId.isNullOrEmpty()){
-                    soExpressTvHeader.text = soId
-                    if(!soStatus.isNullOrEmpty()){
-                        soExpressTvHeader.text = """${soExpressTvHeader.text}  ${soStatus}"""
-                    }
-                }else{
-                    soExpressTvHeader.text = """${soStatus}"""
-                }
-            }
-        }
-
     }
     //
 
@@ -130,18 +157,19 @@ class Act042SOExpressAdapter(
     override fun getFilter(): Filter {
         return mFilter
     }
+
     //
-    inner class Act042SOExpressFilter() : Filter(){
+    inner class Act042SOExpressFilter : Filter() {
 
         override fun performFiltering(constraint: CharSequence?): FilterResults {
             var temp = mutableListOf<SO_Pack_Express_Local>()
             var charFilter = ToolBox.AccentMapper(constraint.toString().toLowerCase())
-            if(charFilter.isNullOrEmpty()){
+            if (charFilter.isNullOrEmpty()) {
                 temp = soExpressList as MutableList<SO_Pack_Express_Local>
-            }else{
+            } else {
                 temp.addAll(
                     soExpressList.filter {
-                        when(it){
+                        when (it) {
                             is SO_Pack_Express_Local ->{
                                 /**
                                  * BARRIONUEVO 06-12-2021

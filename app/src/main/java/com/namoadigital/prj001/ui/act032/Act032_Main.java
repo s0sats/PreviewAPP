@@ -233,15 +233,15 @@ public class Act032_Main extends Base_Activity_Frag implements Act032_Main_View 
                 context,
                 soList,
                 configType,
-                R.layout.so_header_cell,
-                R.layout.so_header_cell,
+                R.layout.so_item_list,
+                R.layout.so_item_list,
                 mket_filter.getText().toString().trim(),
                 list -> {
                     setTitleLanguage(" (" + list.size() + " / " + soList.size() + ")");
                     new IOnRememberListView<HMAux>(
                             lv_so, tv_empty_list
                     ).dataChanged(list);
-                }
+                }, true
 
 
         );
