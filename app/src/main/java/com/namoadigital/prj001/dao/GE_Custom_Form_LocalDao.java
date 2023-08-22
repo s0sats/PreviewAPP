@@ -97,6 +97,7 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
     public static final String SO_ALLOW_CHANGE_ORDER_TYPE = "so_allow_change_order_type";
     public static final String SO_ALLOW_BACKUP = "so_allow_backup";
     public static final String SO_OPTIONAL_JUSTIFY_PROBLEM = "so_optional_justify_problem";
+    public static final String NC_RECOGNIZE_EMAIL_IN_COMMENT = "nc_recognize_email_in_comment";
 
 
     public GE_Custom_Form_LocalDao(Context context, String DB_NAME, int DB_VERSION) {
@@ -716,6 +717,7 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             custom_form_local.setProduct_io_control(cursor.getInt(cursor.getColumnIndex(PRODUCT_IO_CONTROL)));
             custom_form_local.setSite_restriction(cursor.getInt(cursor.getColumnIndex(SITE_RESTRICTION)));
             custom_form_local.setSerial_rule(cursor.getString(cursor.getColumnIndex(SERIAL_RULE)));
+            custom_form_local.setNc_recognize_email_in_comment(cursor.getString(cursor.getColumnIndex(NC_RECOGNIZE_EMAIL_IN_COMMENT)));
 
             if (cursor.isNull(cursor.getColumnIndex(SERIAL_MIN_LENGTH))) {
                 custom_form_local.setSerial_min_length(null);
@@ -929,6 +931,9 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             }
             if (custom_form_local.getSerial_rule() != null) {
                 contentValues.put(SERIAL_RULE, custom_form_local.getSerial_rule());
+            }
+            if (custom_form_local.getNc_recognize_email_in_comment() != null) {
+                contentValues.put(NC_RECOGNIZE_EMAIL_IN_COMMENT, custom_form_local.getNc_recognize_email_in_comment());
             }
             //
             contentValues.put(SERIAL_MIN_LENGTH, custom_form_local.getSerial_min_length());

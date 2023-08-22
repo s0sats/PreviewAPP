@@ -159,7 +159,7 @@ val MigrationV6 = object : MigrationSQLite(6, 7) {
     }
 
 }
-val MigrationV7 = object : MigrationSQLite(6, 7) {
+val MigrationV7 = object : MigrationSQLite(7, 8) {
 
     override fun migrate(db: SQLiteDatabase) {
         //
@@ -179,6 +179,26 @@ val MigrationV7 = object : MigrationSQLite(6, 7) {
         if (!isFieldExist(db, SO_Pack_Express_LocalDao.TABLE, SO_Pack_Express_LocalDao.PIPELINE_DESC)) {
             db.execSQL(""" ALTER TABLE [${SO_Pack_Express_LocalDao.TABLE}] ADD [${SO_Pack_Express_LocalDao.PIPELINE_DESC}] text collate nocase;""".trimIndent())
         }
+    }
+
+}
+
+val MigrationV8 = object : MigrationSQLite(8, 9) {
+
+    override fun migrate(db: SQLiteDatabase) {
+        //
+        if (!isFieldExist(db, GE_Custom_FormDao.TABLE, GE_Custom_FormDao.NC_RECOGNIZE_EMAIL_IN_COMMENT)) {
+            db.execSQL(""" ALTER TABLE [${GE_Custom_FormDao.TABLE}] ADD [${GE_Custom_FormDao.NC_RECOGNIZE_EMAIL_IN_COMMENT}] int not null DEFAULT 0;""".trimIndent())
+        }
+        //
+        if (!isFieldExist(db, GE_Custom_Form_LocalDao.TABLE, GE_Custom_Form_LocalDao.NC_RECOGNIZE_EMAIL_IN_COMMENT)) {
+            db.execSQL(""" ALTER TABLE [${GE_Custom_Form_LocalDao.TABLE}] ADD [${GE_Custom_Form_LocalDao.NC_RECOGNIZE_EMAIL_IN_COMMENT}] int not null DEFAULT 0;""".trimIndent())
+        }
+        //
+        if (!isFieldExist(db, MD_SiteDao.TABLE, MD_SiteDao.EMAIL_NC)) {
+            db.execSQL(""" ALTER TABLE [${MD_SiteDao.TABLE}] ADD [${MD_SiteDao.EMAIL_NC}] text collate nocase;""".trimIndent())
+        }
+        //
     }
 
 }
