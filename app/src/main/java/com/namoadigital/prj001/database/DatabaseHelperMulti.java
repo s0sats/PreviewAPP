@@ -163,6 +163,26 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
             script.append("create table if not exists [tk_ticket_type_sites] ([customer_code] int not null, [ticket_type_code] int not null, [site_code] int not null, constraint pk_tk_ticket_type_sites primary key([customer_code], [ticket_type_code], [site_code]));");
             script.append("create table if not exists [tk_ticket_type] ([customer_code] int not null, [ticket_type_code] int not null, [ticket_type_id] text not null collate nocase, [ticket_type_desc] text not null collate nocase,[all_site] int not null,[all_operation] int not null,[all_product] int not null,[tag_operational_code] int not null, constraint pk_tk_ticket_type_sites primary key([customer_code], [ticket_type_code]));");
             //
+            script.append("create table if not exists [md_product_serial_tp_device_item_hist_mat]\n" +
+                    "(\n" +
+                    "    [customer_code]   int  not null,\n" +
+                    "    [product_code]    int  not null,\n" +
+                    "    [serial_code]     int  not null,\n" +
+                    "    [item_check_seq]  int  not null,\n" +
+                    "    [seq]             int  not null,\n" +
+                    "    [material_code]   int  not null,\n" +
+                    "    [un]              text not null collate nocase,\n" +
+                    "    [qty]             real not null,\n" +
+                    "    [qty_planned]     real  not null,\n" +
+                    "    [material_action] int  not null,\n" +
+                    "    constraint [pk_md_product_serial_tp_device_item_hist_mat] primary key (\n" +
+                    "    [customer_code],\n" +
+                    "    [product_code],\n" +
+                    "    [serial_code],\n" +
+                    "    [item_check_seq],\n" +
+                    "    [seq],\n" +
+                    "    [material_code]));");
+            //
             String[] scripts = script.toString().split(";");
             String[] scripts_dados = script_dados.toString().split(";");
             //
@@ -202,6 +222,8 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
                     MigrationsKt.getMigrationV6().migrate(db);
                 case 7:
                     MigrationsKt.getMigrationV7().migrate(db);
+                case 8:
+                    MigrationsKt.getMigrationV8().migrate(db);
                     break;
             }
         } catch (Exception e) {

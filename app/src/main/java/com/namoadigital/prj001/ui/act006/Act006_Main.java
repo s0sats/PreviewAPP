@@ -5,11 +5,13 @@ import static com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Sea
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
@@ -24,7 +26,11 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.MdProductSerialTpDeviceItemHistMatDao;
 import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.model.MdProductSerialTpDeviceItemHistMat;
+import com.namoadigital.prj001.sql.ChoiceTest3SQL;
+import com.namoadigital.prj001.sql.ChoiceTestAllSQL;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act013.Act013_Main;
 import com.namoadigital.prj001.ui.act020.Act020_Main;
@@ -395,6 +401,18 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         //Metodo que seta o titulo da tela baseado na origem
         setActBarTitle();
         setFooter();
+
+
+        MdProductSerialTpDeviceItemHistMatDao dao = new MdProductSerialTpDeviceItemHistMatDao.DatabaseFactory(context).build();
+
+        List<HMAux> choice = dao.query_HM(new ChoiceTest3SQL().toSqlQuery());
+        List<MdProductSerialTpDeviceItemHistMat> choiceAll = dao.query(new ChoiceTestAllSQL().toSqlQuery());
+
+        Log.d("TpDeviceItemHistMat", "3 Column -> " + choice.toArray().toString());
+        Toast.makeText(context, "BUSCAR 3 COLUNAS -> " + choice, Toast.LENGTH_LONG).show();
+        Log.d("TpDeviceItemHistMat", "All Column ->" + choiceAll);
+        Toast.makeText(context, "BUSCAR TODAS COLUNAS -> " + choiceAll, Toast.LENGTH_LONG).show();
+
     }
 
     @Override

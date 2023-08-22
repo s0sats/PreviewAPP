@@ -127,6 +127,7 @@ import com.namoadigital.prj001.model.MdDeviceTp;
 import com.namoadigital.prj001.model.MdItemCheck;
 import com.namoadigital.prj001.model.MdJustifyItem;
 import com.namoadigital.prj001.model.MdOrderType;
+import com.namoadigital.prj001.model.MdProductSerialTpDeviceItemHistMat;
 import com.namoadigital.prj001.model.MdTag;
 import com.namoadigital.prj001.model.MeMeasureTp;
 import com.namoadigital.prj001.model.SO_Pack_Express;
@@ -964,10 +965,12 @@ public class WS_Sync extends IntentService {
             File[] files_serial_tp_device_item = ToolBox_Inf.getListOfFiles_v2("md_product_serial_tp_device_item-");
             File[] files_serial_tp_device_item_hist = ToolBox_Inf.getListOfFiles_v2("md_product_serial_tp_device_item_hist-");
             File[] files_serial_tp_device_item_material = ToolBox_Inf.getListOfFiles_v2("md_product_serial_tp_device_item_material-");
+            File[] files_serial_tp_device_item_hist_mat = ToolBox_Inf.getListOfFiles_v2("md_product_serial_tp_device_item_hist_mat-");
             ArrayList<MD_Product_Serial_Tp_Device> serialTpDevices = new ArrayList<>();
             ArrayList<MD_Product_Serial_Tp_Device_Item> serialTpDeviceItems = new ArrayList<>();
             ArrayList<MD_Product_Serial_Tp_Device_Item_Hist> serialTpDeviceItemHists = new ArrayList<>();
             ArrayList<MD_Product_Serial_Tp_Device_Item_Material> serialTpDeviceItemMaterials = new ArrayList<>();
+            ArrayList<MdProductSerialTpDeviceItemHistMat> serialTpDeviceItemHistMaterials = new ArrayList<>();
             /**
              * Carrega lista de MD_PRODUCT_SERIAL_TP_DEVICE
              */
@@ -1017,14 +1020,27 @@ public class WS_Sync extends IntentService {
              */
             for (File _file : files_serial_tp_device_item_material) {
                 serialTpDeviceItemMaterials.addAll(
-                    gson.fromJson(
-                        ToolBox.jsonFromOracle(
-                            ToolBox_Inf.getContents(_file)
-                        ),
-                        new TypeToken<ArrayList<MD_Product_Serial_Tp_Device_Item_Material>>() {
-                        }.getType()
-                    )
+                        gson.fromJson(
+                                ToolBox.jsonFromOracle(
+                                        ToolBox_Inf.getContents(_file)
+                                ),
+                                new TypeToken<ArrayList<MD_Product_Serial_Tp_Device_Item_Material>>() {
+                                }.getType()
+                        )
                 );
+            }
+
+            for (File _file : files_serial_tp_device_item_hist_mat) {
+                serialTpDeviceItemHistMaterials.addAll(
+                        gson.fromJson(
+                                ToolBox.jsonFromOracle(
+                                        ToolBox_Inf.getContents(_file)
+                                ),
+                                new TypeToken<ArrayList<MdProductSerialTpDeviceItemHistMat>>() {
+                                }.getType()
+                        )
+                );
+                Log.d("TpDeviceItemHistMat", gson.toString());
             }
 
             for (File _file : files_serial) {
@@ -1045,11 +1061,12 @@ public class WS_Sync extends IntentService {
                  *     Seta sync_process para 1 e chama metodo de insert criando TMP
                  */
                 serialDao.processSerialSync(
-                    serialList,
-                    serialTpDevices,
-                    serialTpDeviceItems,
-                    serialTpDeviceItemHists,
-                    serialTpDeviceItemMaterials
+                        serialList,
+                        serialTpDevices,
+                        serialTpDeviceItems,
+                        serialTpDeviceItemHists,
+                        serialTpDeviceItemMaterials,
+                        serialTpDeviceItemHistMaterials
                 );
             }
             //Libera pro GB
@@ -1058,6 +1075,7 @@ public class WS_Sync extends IntentService {
             files_serial_tp_device_item = null;
             files_serial_tp_device_item_hist = null;
             files_serial_tp_device_item_material = null;
+            files_serial_tp_device_item_hist_mat = null;
             /**
              * Após inserir todos os seriais de todos os arquivos,
              * Seleciona todos os seriais que NÃO FORAM ATUALIZADOS PELO PROCESSO ACIMA,
