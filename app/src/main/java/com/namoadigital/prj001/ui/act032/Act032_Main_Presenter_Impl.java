@@ -4,16 +4,11 @@ import android.content.Context;
 import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoadigital.prj001.adapter.SO_Header_Adapter;
-import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
 import com.namoadigital.prj001.dao.SM_SODao;
-import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
-import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Sql_016;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -60,37 +55,6 @@ public class Act032_Main_Presenter_Impl  implements Act032_Main_Presenter {
 //            soList.addAll(soExpressList);
 //        }
         //
-        MD_Product_Serial_TrackingDao mdpstDao = new MD_Product_Serial_TrackingDao(
-                context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                Constant.DB_VERSION_CUSTOM
-        );
-
-        for (HMAux so :
-                soList) {
-            try {
-                ArrayList<MD_Product_Serial_Tracking> tranckingAuxList =
-                        (ArrayList<MD_Product_Serial_Tracking>) mdpstDao.query(
-                                new MD_Product_Serial_Tracking_Sql_003(
-                                        ToolBox_Con.getPreference_Customer_Code(context),
-                                        Long.parseLong(so.get(SM_SODao.PRODUCT_CODE)),
-                                        Long.parseLong(so.get(SM_SODao.SERIAL_CODE))
-                                ).toSqlQuery()
-                        );
-                //
-                StringBuilder trackingList = new StringBuilder();
-                //
-                for (int i = 0; i < tranckingAuxList.size(); i++) {
-                    trackingList.append(tranckingAuxList.get(i).getTracking());
-                    if (i < tranckingAuxList.size() - 1) {
-                        trackingList.append(" | ");
-                    }
-                }
-                so.put(SO_Header_Adapter.TRACKING_LIST, trackingList.toString());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
         mView.loadSOList(soList);
     }
 
