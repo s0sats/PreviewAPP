@@ -159,7 +159,7 @@ val MigrationV6 = object : MigrationSQLite(6, 7) {
     }
 
 }
-val MigrationV7 = object : MigrationSQLite(6, 7) {
+val MigrationV7 = object : MigrationSQLite(7, 8) {
 
     override fun migrate(db: SQLiteDatabase) {
         //
