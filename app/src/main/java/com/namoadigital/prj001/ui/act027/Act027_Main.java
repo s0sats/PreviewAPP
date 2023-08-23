@@ -1184,7 +1184,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                 resetSOSyncRequired();
                 //if(returnList.size() == 1){
                 if (returnList.size() == 1) {
-                    showSingleResultMsg(ttl, msg);
+                    ToolBox.toastMSG(
+                            context,
+                            msg
+                    );
+//                    showSingleResultMsg(ttl, msg);
                 } else {
                     showSerialResults(returnList);
                 }

@@ -403,8 +403,12 @@ public class Act027_Serial extends BaseFragment implements Act027_Serial_View {
                             mPresenter.updateSerialInfo(serialObj);
                         } else {
                             //ToolBox_Inf.showNoConnectionDialog(context);
-                            showAlertDialog(
-                                    hmAux_Trans.get("alert_offline_data_not_saved_ttl"),
+//                            showAlertDialog(
+//                                    hmAux_Trans.get("alert_offline_data_not_saved_ttl"),
+//                                    hmAux_Trans.get("alert_offline_data_not_saved_msg")
+//                            );
+                            ToolBox.toastMSG(
+                                    context,
                                     hmAux_Trans.get("alert_offline_data_not_saved_msg")
                             );
                         }
