@@ -9,6 +9,7 @@ import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SM_SO_PackDao;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_ExecDao;
+import com.namoadigital.prj001.dao.SmPriorityDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -217,20 +218,21 @@ public class Sql_Act026_001 implements Specification {
                         "     ),\n" +
                         "      CASE WHEN S3.status = '"+Constant.SYS_STATUS_WAITING_SYNC+"'    \n" +
                         "                THEN 1\n" +
-                        "           WHEN S3.status = '"+Constant.SYS_STATUS_WAITING_CLIENT+"' AND S3.client_type = '"+Constant.CLIENT_TYPE_USER+"' AND s3.approve_client = 1\n" +
+                        "           WHEN S3.status = '" + Constant.SYS_STATUS_WAITING_CLIENT + "' AND S3.client_type = '" + Constant.CLIENT_TYPE_USER + "' AND s3.approve_client = 1\n" +
                         "                THEN 1\n" +
                         "                ELSE 0\n" +
                         "      END           \n" +
-                        "      ) "+QTD_SERVICES+" ,\n" +
+                        "      ) " + QTD_SERVICES + " ,\n" +
                         "       s3.*,\n" +
-                        "      '"+Constant.PARAM_KEY_TYPE_SO+"' " + Constant.PARAM_KEY_TYPE+" \n," +
-                        "      ps."+ MD_BrandDao.BRAND_DESC+" ,\n" +
-                        "      ps."+MD_Brand_ModelDao.MODEL_DESC+" ,\n" +
-                        "      ps."+MD_Brand_ColorDao.COLOR_DESC+" \n" +
+                        "      '" + Constant.PARAM_KEY_TYPE_SO + "' " + Constant.PARAM_KEY_TYPE + " \n," +
+                        "      ps." + MD_BrandDao.BRAND_DESC + " ,\n" +
+                        "      ps." + MD_Brand_ModelDao.MODEL_DESC + " ,\n" +
+                        "      ps." + MD_Brand_ColorDao.COLOR_DESC + ", \n" +
+                        "      sp." + SmPriorityDao.PRIORITY_COLOR + " \n" +
                         " FROM\n" +
-                        "  "+SM_SODao.TABLE+" s3\n" +
+                        "  " + SM_SODao.TABLE + " s3\n" +
                         "  LEFT JOIN\n" +
-                        MD_Product_SerialDao.TABLE +" ps on ps.customer_code = s3.customer_code\n" +
+                        MD_Product_SerialDao.TABLE + " ps on ps.customer_code = s3.customer_code\n" +
                         "                             and ps.product_code = s3.product_code \n" +
                         "                             and ps.serial_code = s3.serial_code\n" +
                         /*" LEFT JOIN\n" +
@@ -239,13 +241,12 @@ public class Sql_Act026_001 implements Specification {
                         " LEFT JOIN\n" +
                         MD_Brand_ModelDao.TABLE +" m on ps.customer_code = m.customer_code\n" +
                         "                       and ps.brand_code = m.brand_code\n" +
-                        "                       and ps.model_code = m.model_code\n" +
+                        "                       and ps.model_code = m.model_code\n" +*/
                         " LEFT JOIN\n" +
-                        MD_Brand_ColorDao.TABLE +" c on ps.customer_code = c.customer_code\n" +
-                        "                       and ps.brand_code = c.brand_code\n" +
-                        "                       and ps.color_code = c.color_code\n" +*/
+                        SmPriorityDao.TABLE + " sp on s3.customer_code = sp.customer_code\n" +
+                        "                       and s3.priority_code = sp.priority_code\n" +
                         " WHERE\n" +
-                        "   s3.customer_code = '"+customer_code+"'\n" +
+                        "   s3.customer_code = '" + customer_code + "'\n" +
                         "   and s3.status NOT IN ('" + Constant.SYS_STATUS_CANCELLED + "','" + Constant.SYS_STATUS_DONE + "') \n")
                 .append(only_avaliable_where)
                 .append(";")

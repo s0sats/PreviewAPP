@@ -1,9 +1,11 @@
 package com.namoadigital.prj001.adapter;
 
 import static android.text.TextUtils.join;
+import static com.namoa_digital.namoa_library.util.ConstantBase.SYS_STATUS_DONE;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +24,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.dao.SmPriorityDao;
 import com.namoadigital.prj001.design.list.OnRememberListState;
 import com.namoadigital.prj001.sql.Sql_Act026_001;
 import com.namoadigital.prj001.util.Constant;
@@ -275,8 +278,8 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
         tv_status_val.setTextColor(ToolBox_Inf.getStatusColorV2(context, so.get(SM_SODao.STATUS)));
         iv_block.setVisibility(View.GONE);
         //
-        if (so.hasConsistentValue(SM_SODao.DEADLINE_MANUAL)) {
-            if (so.get(SM_SODao.DEADLINE_MANUAL).equalsIgnoreCase("1")) {
+        if (so.hasConsistentValue(SM_SODao.HAS_CLIENT_DEADLINE)) {
+            if (so.get(SM_SODao.HAS_CLIENT_DEADLINE).equalsIgnoreCase("1")) {
                 icon_schedule.setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.perm_contact_calendar_48px));
             } else {
                 icon_schedule.setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.baseline_schedule_24));
@@ -294,14 +297,16 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
         if (so.get(SM_SODao.PRIORITY_DESC) != null && !so.get(SM_SODao.PRIORITY_DESC).isEmpty()) {
             tv_priority_val.setText(so.get(SM_SODao.PRIORITY_DESC));
             tv_priority_val.setVisibility(View.VISIBLE);
+            if (isNotNullOrEmpty(so, SmPriorityDao.PRIORITY_COLOR)) {
+                tv_priority_val.setTextColor(Color.parseColor(so.get(SmPriorityDao.PRIORITY_COLOR)));
+            }
         } else {
             tv_priority_val.setVisibility(View.GONE);
         }
 
-        if (so.get(SM_SODao.DEADLINE) == null || so.get(SM_SODao.DEADLINE).isEmpty()) {
-            tv_deadline_val.setText(hmAux_Trans.get("deadline_lbl"));
+        if (!isNotNullOrEmpty(so, SM_SODao.DEADLINE)) {
+            tv_deadline_val.setText(hmAux_Trans.get("no_deadline_lbl"));
             tv_deadline_val.setTextColor(context.getResources().getColor(R.color.m3_namoa_onSurfaceVariant));
-            icon_schedule.setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.baseline_schedule_24));
             icon_schedule.setVisibility(View.VISIBLE);
         } else {
             String deadlineTime = ToolBox_Inf.millisecondsToString(
@@ -309,7 +314,7 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
                     ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
             );
 
-            if (ToolBox_Inf.isItemLate(so.get(SM_SODao.DEADLINE))) {
+            if (ToolBox_Inf.isItemLate(so.get(SM_SODao.DEADLINE)) && (isNotNullOrEmpty(so, SM_SODao.STATUS) && !so.get(SM_SODao.STATUS).equals(SYS_STATUS_DONE))) {
                 tv_deadline_val.setTextColor(context.getResources().getColor(R.color.text_red));
             } else {
                 tv_deadline_val.setTextColor(context.getResources().getColor(R.color.m3_namoa_onSurfaceVariant));
@@ -331,13 +336,6 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
         } else {
             ll_serial_detail.setVisibility(View.GONE);
             tv_serial_id.setVisibility(View.GONE);
-        }
-
-        if (isNotNullOrEmpty(so, TRACKING_LIST) && showSerialAndTrackings) {
-            tv_tracking_val.setText(so.get(TRACKING_LIST));
-            tv_tracking_val.setVisibility(View.VISIBLE);
-        } else {
-            tv_tracking_val.setVisibility(View.GONE);
         }
 
         //
@@ -380,7 +378,7 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
                 ToolBox_Inf.dateToMilliseconds(so.get(SM_SODao.CREATE_DATE)),
                 ToolBox_Inf.nlsDateFormat(context)));
 
-        if ((so.get(SM_SODao.UPDATE_REQUIRED) != null || so.get(SM_SODao.SYNC_REQUIRED) != null) && !so.get(SM_SODao.STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_DONE)) {
+        if ((so.get(SM_SODao.UPDATE_REQUIRED) != null || so.get(SM_SODao.SYNC_REQUIRED) != null) && !so.get(SM_SODao.STATUS).equalsIgnoreCase(SYS_STATUS_DONE)) {
 
             Drawable wrapperDrawable = setSyncIcon(
                     icon_clouds,
@@ -464,7 +462,7 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
         return context.getResources().getDrawable(icon);
     }
 
-    private void processSOExpress(View convertView, int position) {
+    private void processSOExpress(View convertView, int position) {/*
         //Resgata item do list view.
         HMAux so = source.get(position);
 
@@ -524,25 +522,19 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
         tv_status_val.setTextColor(ToolBox_Inf.getStatusColorV2(context, so.get(SM_SODao.STATUS)));
         iv_block.setVisibility(View.GONE);
         //
-/*        if(so.get(SM_SODao.DEADLINE_MANUAL) != null && !so.get(SM_SODao.DEADLINE_MANUAL).isEmpty()){
+*//*        if(so.get(SM_SODao.DEADLINE_MANUAL) != null && !so.get(SM_SODao.DEADLINE_MANUAL).isEmpty()){
             icon_schedule.setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.perm_contact_calendar_48px));
         } else {
             icon_schedule.setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.baseline_schedule_24));
-        }*/
+        }*//*
 
         if (so.get(SM_SODao.STATUS) != null && !so.get(SM_SODao.STATUS).isEmpty() &&
                 so.get(SM_SODao.STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_STOP)) {
             iv_block.setVisibility(View.VISIBLE);
         }
 
-        if (so.get(SM_SODao.PRIORITY_DESC) != null && !so.get(SM_SODao.PRIORITY_DESC).isEmpty()) {
-            tv_priority_val.setText(so.get(SM_SODao.PRIORITY_DESC));
-            tv_priority_val.setVisibility(View.VISIBLE);
-        } else {
-            tv_priority_val.setVisibility(View.GONE);
-        }
 
-        if (so.get(SM_SODao.DEADLINE) == null || so.get(SM_SODao.DEADLINE).isEmpty()) {
+        if (isNotNullOrEmpty(so, SM_SODao.DEADLINE)) {
             tv_deadline_val.setText(hmAux_Trans.get("deadline_lbl"));
             tv_deadline_val.setTextColor(context.getResources().getColor(R.color.m3_namoa_onSurfaceVariant));
             icon_schedule.setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.baseline_schedule_24));
@@ -553,7 +545,8 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
                     ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
             );
 
-            if (ToolBox_Inf.isItemLate(so.get(SM_SODao.DEADLINE))) {
+
+            if (ToolBox_Inf.isItemLate(so.get(SM_SODao.DEADLINE)) && (isNotNullOrEmpty(so, SM_SODao.STATUS) && !so.get(SM_SODao.STATUS).equals(SYS_STATUS_DONE))) {
                 tv_deadline_val.setTextColor(context.getResources().getColor(R.color.text_red));
             } else {
                 tv_deadline_val.setTextColor(context.getResources().getColor(R.color.m3_namoa_onSurfaceVariant));
@@ -573,13 +566,6 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
             tv_serial_id.setVisibility(View.VISIBLE);
         } else {
             tv_serial_id.setVisibility(View.GONE);
-        }
-
-        if (isNotNullOrEmpty(so, TRACKING_LIST)) {
-            tv_tracking_val.setText(so.get(TRACKING_LIST));
-            tv_tracking_val.setVisibility(View.VISIBLE);
-        } else {
-            tv_tracking_val.setVisibility(View.GONE);
         }
 
         //
@@ -620,7 +606,7 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
                 ToolBox_Inf.dateToMilliseconds(so.get(SM_SODao.CREATE_DATE)),
                 ToolBox_Inf.nlsDateFormat(context)));
 
-        if ((so.get(SM_SODao.UPDATE_REQUIRED) != null || so.get(SM_SODao.SYNC_REQUIRED) != null) && !so.get(SM_SODao.STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_DONE)) {
+        if ((so.get(SM_SODao.UPDATE_REQUIRED) != null || so.get(SM_SODao.SYNC_REQUIRED) != null) && !so.get(SM_SODao.STATUS).equalsIgnoreCase(SYS_STATUS_DONE)) {
 
             Drawable wrapperDrawable = setSyncIcon(
                     icon_clouds,
@@ -646,7 +632,7 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
                         tv_pipeline_val.getVisibility() == View.VISIBLE ||
                         tv_segment_category_val.getVisibility() == View.VISIBLE
                         ? View.VISIBLE : View.GONE
-        );
+        );*/
     }
 
     public ArrayList<HMAux> getSoToDownload() {
@@ -693,7 +679,7 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
         translateList.add("priority_lbl");
         translateList.add("status_lbl");
         translateList.add("client_lbl");
-        translateList.add("deadline_lbl");
+        translateList.add("no_deadline_lbl");
         translateList.add("serial_main_title");
         translateList.add("product_lbl");
         translateList.add("serial_lbl");
@@ -730,10 +716,28 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
             if (constraint != null && constraint.length() > 0) {
                 ArrayList<HMAux> filterList = new ArrayList<HMAux>();
                 for (HMAux hmAux : source_filtered) {
-                    String so_prefix_code = ToolBox.AccentMapper(hmAux.get(SM_SODao.SO_PREFIX).toLowerCase() + "." +hmAux.get(SM_SODao.SO_CODE).toLowerCase());
+                    String so_prefix_code = ToolBox.AccentMapper(hmAux.get(SM_SODao.SO_PREFIX).toLowerCase() + "." + hmAux.get(SM_SODao.SO_CODE).toLowerCase());
                     String so_id = ToolBox.AccentMapper(hmAux.get(SM_SODao.SO_ID).toLowerCase());
                     String so_desc = ToolBox.AccentMapper(hmAux.get(SM_SODao.SO_DESC).toLowerCase());
                     String serial_id = ToolBox.AccentMapper(hmAux.get(SM_SODao.SERIAL_ID).toLowerCase());
+                    String SO_CODE = ToolBox.AccentMapper(hmAux.get(SM_SODao.SO_CODE).toLowerCase());
+                    String product_desc = ToolBox.AccentMapper(hmAux.get(SM_SODao.PRODUCT_DESC).toLowerCase());
+                    String deadline = ToolBox.AccentMapper(ToolBox_Inf.millisecondsToString(
+                            ToolBox_Inf.dateToMilliseconds(hmAux.get(SM_SODao.DEADLINE)),
+                            ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                    ));
+                    String brand_desc = ToolBox.AccentMapper(hmAux.get("brand_desc").toLowerCase());
+                    String model_desc = ToolBox.AccentMapper(hmAux.get("model_desc").toLowerCase());
+                    String color_desc = ToolBox.AccentMapper(hmAux.get("color_desc").toLowerCase());
+                    String segment_desc = ToolBox.AccentMapper(hmAux.get(SM_SODao.SEGMENT_DESC).toLowerCase());
+                    String category_price_desc = ToolBox.AccentMapper(hmAux.get(SM_SODao.CATEGORY_PRICE_DESC).toLowerCase());
+                    String pipeline_desc = ToolBox.AccentMapper(hmAux.get(SM_SODao.PIPELINE_DESC).toLowerCase());
+                    String client_so_id = ToolBox.AccentMapper(hmAux.get(SM_SODao.CLIENT_SO_ID).toLowerCase());
+                    String priority_desc = ToolBox.AccentMapper(hmAux.get(SM_SODao.PRIORITY_DESC).toLowerCase());
+                    String create_user = ToolBox.AccentMapper(hmAux.get(SM_SODao.CREATE_USER).toLowerCase());
+                    String create_date = ToolBox.AccentMapper(hmAux.get(SM_SODao.CREATE_DATE).toLowerCase());
+                    String last_approval_budget_user = ToolBox.AccentMapper(hmAux.get(SM_SODao.LAST_APPROVAL_BUDGET_USER).toLowerCase());
+                    String comments = ToolBox.AccentMapper(hmAux.get(SM_SODao.COMMENTS).toLowerCase());
                     boolean isAvailable = hmAux.hasConsistentValue(Sql_Act026_001.QTD_SERVICES) && !"0".equals(hmAux.get(Sql_Act026_001.QTD_SERVICES));
                     //
                     if (
@@ -741,7 +745,22 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
                                     (so_prefix_code.contains(constraint.toString().toLowerCase()) ||
                                             so_id.contains(constraint.toString().toLowerCase()) ||
                                             so_desc.contains(constraint.toString().toLowerCase()) ||
-                                            serial_id.contains(constraint.toString().toLowerCase())
+                                            SO_CODE.contains(constraint.toString().toLowerCase()) ||
+                                            product_desc.contains(constraint.toString().toLowerCase()) ||
+                                            serial_id.contains(constraint.toString().toLowerCase()) ||
+                                            deadline.contains(constraint.toString().toLowerCase()) ||
+                                            brand_desc.contains(constraint.toString().toLowerCase()) ||
+                                            model_desc.contains(constraint.toString().toLowerCase()) ||
+                                            color_desc.contains(constraint.toString().toLowerCase()) ||
+                                            segment_desc.contains(constraint.toString().toLowerCase()) ||
+                                            category_price_desc.contains(constraint.toString().toLowerCase()) ||
+                                            pipeline_desc.contains(constraint.toString().toLowerCase()) ||
+                                            client_so_id.contains(constraint.toString().toLowerCase()) ||
+                                            priority_desc.contains(constraint.toString().toLowerCase()) ||
+                                            create_date.contains(constraint.toString().toLowerCase()) ||
+                                            create_user.contains(constraint.toString().toLowerCase()) ||
+                                            last_approval_budget_user.contains(constraint.toString().toLowerCase()) ||
+                                            comments.contains(constraint.toString().toLowerCase())
                                     )
 
                     ) {

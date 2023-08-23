@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
@@ -191,7 +192,7 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
             tv_product.setVisibility(mdProductSerial.getProduct_desc() == null || mdProductSerial.getProduct_desc().isEmpty() ? View.GONE : View.VISIBLE);
             tv_brand.setVisibility(mdProductSerial.getBrand_desc() == null || mdProductSerial.getBrand_desc().isEmpty() ? View.GONE : View.VISIBLE);
             tv_model.setVisibility(mdProductSerial.getModel_desc() == null || mdProductSerial.getModel_desc().isEmpty() ? View.GONE : View.VISIBLE);
-            tv_color.setVisibility(mdProductSerial.getClass_color() == null || mdProductSerial.getClass_color().isEmpty() ? View.GONE : View.VISIBLE);
+            tv_color.setVisibility(mdProductSerial.getColor_desc() == null || mdProductSerial.getColor_desc().isEmpty() ? View.GONE : View.VISIBLE);
             tracking_desc.setVisibility(mdProductSerial.getTracking_list() == null || mdProductSerial.getTracking_list().isEmpty() ? View.GONE : View.VISIBLE);
 
             if (mdProductSerial.getClass_color() != null && !mdProductSerial.getClass_color().isEmpty()) {
@@ -369,7 +370,18 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
             setIvMainUserSelection();
             setAvailableFilter(applyZoneFilter);
             applySearchFilter();
+            swToastMessage();
         });
+    }
+
+
+    private void swToastMessage() {
+        String message = applyZoneFilter ? hmAux_Trans.get("apply_zone_on_lbl") : hmAux_Trans.get("apply_zone_off_lbl");
+        Toast.makeText(
+                        context,
+                        message,
+                        Toast.LENGTH_SHORT)
+                .show();
     }
 
 

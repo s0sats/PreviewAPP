@@ -86,19 +86,13 @@ class Act042SOExpressAdapter(
                 )
                 setViewContentAndVisibility(soSiteVal, soPackExpressLocal.exec_site_desc)
                 setViewContentAndVisibility(soDeadlineVal, soPackExpressLocal.so_desc)
-                val billings = listOfNotNull(
-                    soPackExpressLocal.billing_add_inf1_value,
-                    soPackExpressLocal.billing_add_inf2_value,
-                    soPackExpressLocal.billing_add_inf3_value
-                ).joinToString(" | ")
+
 
                 listOf(
                     soBrandVal,
                     soModelVal,
                     soColorVal,
                 ).forEach { item -> item.visibility = View.GONE }
-
-                setViewContentAndVisibility(soTrackingVal, billings)
 
                 setViewContentAndVisibility(
                     soCreateDateVal,
