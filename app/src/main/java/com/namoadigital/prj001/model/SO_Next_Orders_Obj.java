@@ -94,6 +94,12 @@ public class SO_Next_Orders_Obj {
     @SerializedName("deadline_manual")
     private Integer deadline_manual;
 
+    @SerializedName("has_client_deadline")
+    private Integer has_client_deadline;
+
+    @SerializedName("site_desc")
+    private String siteDesc;
+
     public String getSo_prefix() {
         return so_prefix;
     }
@@ -490,5 +496,21 @@ public class SO_Next_Orders_Obj {
 
     public void setCreate_date_filter(String create_date_filter) {
         this.create_date_filter = create_date_filter;
+    }
+
+    public String getSiteDesc() {
+        return siteDesc;
+    }
+
+    public void setSiteDesc(String siteDesc) {
+        this.siteDesc = siteDesc;
+    }
+
+    public Integer getHas_client_deadline() {
+        return has_client_deadline;
+    }
+
+    public void setHas_client_deadline(Integer has_client_deadline) {
+        this.has_client_deadline = has_client_deadline;
     }
 }

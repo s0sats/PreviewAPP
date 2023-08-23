@@ -5,6 +5,7 @@ import com.namoadigital.prj001.dao.MD_Brand_ColorDao;
 import com.namoadigital.prj001.dao.MD_Brand_ModelDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.dao.SmPriorityDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -44,13 +45,15 @@ public class SM_SO_Sql_016 implements Specification {
         return sb
                 .append(" SELECT\n" +
                         "      S.*\n," +
-                        "      '"+Constant.PARAM_KEY_TYPE_SO+"' "+Constant.PARAM_KEY_TYPE+",\n"+
-                        MD_BrandDao.BRAND_DESC+" ,\n" +
-                        MD_Brand_ModelDao.MODEL_DESC+" ,\n" +
-                        MD_Brand_ColorDao.COLOR_DESC+" \n" +                        " FROM\n" +
+                        "      '" + Constant.PARAM_KEY_TYPE_SO + "' " + Constant.PARAM_KEY_TYPE + ",\n" +
+                        MD_BrandDao.BRAND_DESC + " ,\n" +
+                        MD_Brand_ModelDao.MODEL_DESC + " ,\n" +
+                        MD_Brand_ColorDao.COLOR_DESC + ", \n" +
+                        SmPriorityDao.PRIORITY_COLOR + " \n" +
+                        " FROM\n" +
                         SM_SODao.TABLE + " S\n" +
                         "  LEFT JOIN\n" +
-                        MD_Product_SerialDao.TABLE +" ps on ps.customer_code = s.customer_code\n" +
+                        MD_Product_SerialDao.TABLE + " ps on ps.customer_code = s.customer_code\n" +
                         "                             and ps.product_code = s.product_code \n" +
                         "                             and ps.serial_code = s.serial_code\n" +
 //                        " LEFT JOIN\n" +
@@ -60,15 +63,14 @@ public class SM_SO_Sql_016 implements Specification {
 //                        MD_Brand_ModelDao.TABLE +" m on ps.customer_code = m.customer_code\n" +
 //                        "                       and ps.brand_code = m.brand_code\n" +
 //                        "                       and ps.model_code = m.model_code\n" +
-//                        " LEFT JOIN\n" +
-//                        MD_Brand_ColorDao.TABLE +" c on ps.customer_code = c.customer_code\n" +
-//                        "                       and ps.brand_code = c.brand_code\n" +
-//                        "                       and ps.color_code = c.color_code\n" +
+                        " LEFT JOIN\n" +
+                        SmPriorityDao.TABLE + " sp on S.customer_code = sp.customer_code\n" +
+                        "                       and S.priority_code = sp.priority_code\n" +
                         " WHERE\n" +
                         "    S.customer_code =  '" + customer_code + "'\n" +
-                            filter +
+                        filter +
                         //"    AND s.status in ('"+ Constant.SYS_STATUS_CANCELLED+"','" + Constant.SYS_STATUS_WAITING_QUALITY +"','"+ Constant.SYS_STATUS_DONE+"');")
-                        "    AND s.status in ('"+ Constant.SYS_STATUS_CANCELLED+"','"+ Constant.SYS_STATUS_DONE+"');")
+                        "    AND s.status in ('" + Constant.SYS_STATUS_CANCELLED + "','" + Constant.SYS_STATUS_DONE + "');")
 //                .append(fields+"#"+
 //                        Constant.PARAM_KEY_TYPE+"#"+
 //                        MD_BrandDao.BRAND_DESC+"#"+

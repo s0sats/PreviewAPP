@@ -794,7 +794,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
             setSwitchState(applyZoneFilter);
             checkIfContainsFilter();
             mPresenter.executeNextOrdersSearch(applyZoneFilter);
-
+            swToastMessage();
         });
         lv_services.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -876,7 +876,6 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         //
         if (wsProcess.equals(WS_SO_Next_Orders.class.getName())) {
             mPresenter.processNextOrderList(hmAux.get(WS_SO_Next_Orders.SO_NEXT_SERVICES));
-            swToastMessage();
             disableProgressDialog();
         } else if (wsProcess.equals(WS_Serial_Search.class.getName())) {
             //Não fecha o dialog, pois o mesmo será usado na sequencia para o download a S.O
