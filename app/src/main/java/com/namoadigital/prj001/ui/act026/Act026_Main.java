@@ -132,6 +132,8 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
         transList.add("alert_leave_so_creation_ttl");
         transList.add("alert_leave_so_creation_confirm");
         transList.add("empty_list_state_so_not_listed_msg");
+        transList.add("apply_zone_on_lbl");
+        transList.add("apply_zone_off_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -377,11 +379,7 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
 
     private void swToastMessage() {
         String message = applyZoneFilter ? hmAux_Trans.get("apply_zone_on_lbl") : hmAux_Trans.get("apply_zone_off_lbl");
-        Toast.makeText(
-                        context,
-                        message,
-                        Toast.LENGTH_SHORT)
-                .show();
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
 
