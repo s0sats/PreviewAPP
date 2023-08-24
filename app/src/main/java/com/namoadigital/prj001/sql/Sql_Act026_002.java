@@ -228,7 +228,7 @@ public class Sql_Act026_002 implements Specification {
                                 "      END           \n" +
                                 "      ) " + QTD_SERVICES + " ,\n" +
                                 "       s3.*,\n" +
-                                "      '" + Constant.PARAM_KEY_TYPE_SO + "' " + Constant.PARAM_KEY_TYPE + ", \n," +
+                                "      '" + Constant.PARAM_KEY_TYPE_SO + "' " + Constant.PARAM_KEY_TYPE + "," +
                                 "      sp." + SmPriorityDao.PRIORITY_COLOR + " \n" +
                                 " FROM\n" +
                                 "  " + SM_SODao.TABLE + " s3\n" +
@@ -241,7 +241,7 @@ public class Sql_Act026_002 implements Specification {
                         "                       and ps.model_code = m.model_code\n" +*/
                                 " LEFT JOIN\n" +
                                 SmPriorityDao.TABLE + " sp on s3.customer_code = sp.customer_code\n" +
-                                "                       and s3.brand_code = sp.brand_code\n" +
+                                "                       and s3.priority_code = sp.priority_code\n" +
                                 " WHERE\n" +
                                 "   s3.customer_code = '" + customer_code + "'\n" +
                                 "   and s3.status NOT IN ('" + Constant.SYS_STATUS_CANCELLED + "','" + Constant.SYS_STATUS_DONE + "') \n")
