@@ -215,7 +215,9 @@ val MigrationV8 = object : MigrationSQLite(7, 8) {
                     [customer_code],
                     [product_code],
                     [serial_code],
+                    [device_tp_code],
                     [item_check_seq],
+                    [item_check_code],
                     [seq],
                     [material_code]
                 )
