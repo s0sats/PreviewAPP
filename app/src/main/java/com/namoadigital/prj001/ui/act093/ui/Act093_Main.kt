@@ -5,15 +5,13 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.databinding.Act093MainBinding
-import com.namoadigital.prj001.extensions.formatForDisplay
+import com.namoadigital.prj001.databinding.Act093SerialInfoBinding
 import com.namoadigital.prj001.ui.act092.ui.Act092_Main
 import com.namoadigital.prj001.ui.act093.Act093Presenter
 import com.namoadigital.prj001.ui.act093.Act093Presenter.Companion.Act093PresenterFactory
 import com.namoadigital.prj001.ui.act093.Contract
-import com.namoadigital.prj001.ui.act093.adapter.Act093Adapter
 import com.namoadigital.prj001.ui.act093.model.DeviceTpModel
 import com.namoadigital.prj001.ui.act093.util.Act093Event
 import com.namoadigital.prj001.ui.base.BaseActivityMvp
@@ -59,6 +57,10 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
     }
     override val binding: Act093MainBinding by lazy {
         Act093MainBinding.inflate(layoutInflater)
+    }
+
+    private val bindingHeader: Act093SerialInfoBinding by lazy {
+        binding.llSerialInfo
     }
 
     override fun onBack() {
@@ -147,11 +149,9 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
     ) {
         with(binding) {
             if (isLoading) {
-                progressLoading.visibility = View.VISIBLE
-                recyclerViewList.visibility = View.GONE
+                //todo esconder lista e visualizar progress
             } else {
-                progressLoading.visibility = View.GONE
-                recyclerViewList.visibility = View.VISIBLE
+                //todo visualizar lista e esconder progress
             }
         }
 
@@ -161,29 +161,11 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
     private fun initRecyclerView(
         list: List<DeviceTpModel> = presenter.state.value.list
     ) {
-        if (list.isNotEmpty()) {
-
-            val mAdapter = Act093Adapter(
-                list,
-                hmAux_Trans
-            )
-
-            binding.recyclerViewList.apply {
-                adapter = mAdapter
-                visibility = View.VISIBLE
-                layoutManager = LinearLayoutManager(context)
-            }
-
-        } else {
-            binding.recyclerViewList.apply {
-                visibility = View.GONE
-            }
-        }
-
+        //todo atualizaar fragmento com lista.
     }
 
     private fun onUpdateHeader() {
-        with(binding) {
+        with(bindingHeader) {
 
             val state = presenter.state.value.serialInfo
 
@@ -245,58 +227,8 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
             }
 
 
-            val measureFormatted = if (state.last_measure_value != null) {
-                if (!state.last_measure_date.isNullOrEmpty()) {
-                    "${ToolBox_Inf.convertDoubleToBigDecimalString(state.last_measure_value, true)} ${state.value_suffix.formatForDisplay()} (${state.last_measure_date})"
-                } else {
-                    "${ToolBox_Inf.convertDoubleToBigDecimalString(state.last_measure_value, true)} ${state.value_suffix.formatForDisplay()}"
-                }
-            } else {
-                null
-            }
-
-            if (measureFormatted.isNullOrEmpty()) {
-                measureValue.visibility = View.GONE
-            } else {
-                measureValue.apply {
-                    text = measureFormatted
-                    visibility = View.VISIBLE
-                }
-            }
-
-            linearLayout6.visibility = if (measureFormatted.isNullOrEmpty()) {
-                View.GONE
-            } else {
-                View.VISIBLE
-            }
-
-            linearLayout5.visibility =
-                if (state.last_cycle_value == null
-                    || state.last_cycle_value == 0.0f) {
-                    View.GONE
-                } else {
-                    View.VISIBLE
-                }
 
 
-            val cycleFormatted = if (state.last_cycle_value != null) {
-                if (!state.last_cycle_date.isNullOrEmpty()) {
-                    "${ToolBox_Inf.convertDoubleToBigDecimalString(state.last_cycle_value.toDouble(), true)} ${state.value_suffix.formatForDisplay()}  (${state.last_cycle_date})"
-                } else {
-                    "${ToolBox_Inf.convertDoubleToBigDecimalString(state.last_cycle_value.toDouble(), true)} ${state.value_suffix.formatForDisplay()}"
-                }
-            } else {
-                null
-            }
-
-            if (cycleFormatted.isNullOrEmpty()) {
-                cycleValue.visibility = View.GONE
-            } else {
-                cycleValue.apply {
-                    text = cycleFormatted
-                    visibility = View.VISIBLE
-                }
-            }
 
         }
 
@@ -319,29 +251,7 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
 
     override fun initVars() {
         with(binding) {
-            val state = presenter.state.value.serialInfo
-            if (state.lastUpdateSerial.isNullOrEmpty()) {
-                lastUpdateSerial.visibility = View.GONE
-            } else {
-                lastUpdateSerial.apply {
-                    text = "${hmAux_Trans["last_update_serial_lbl"]}: ${state.lastUpdateSerial}"
-                    visibility = View.VISIBLE
-                }
-            }
 
-            if (state.last_cycle_value != null) {
-                titleCycle.text = hmAux_Trans["last_cycle_lbl"]
-                titleCycle.visibility = View.VISIBLE
-            } else {
-                titleCycle.visibility = View.GONE
-            }
-
-            if (state.last_measure_value != null) {
-                titleMeasure.text = hmAux_Trans["last_measure_lbl"]
-                titleMeasure.visibility = View.VISIBLE
-            } else {
-                titleMeasure.visibility = View.GONE
-            }
         }
         iniUIFooter(Constant.ACT093, hmAux_Trans)
     }

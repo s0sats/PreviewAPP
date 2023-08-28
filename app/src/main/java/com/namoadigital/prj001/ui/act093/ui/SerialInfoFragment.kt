@@ -5,8 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.databinding.FragmentSerialInfoBinding
 import com.namoadigital.prj001.extensions.formatForDisplay
+import com.namoadigital.prj001.ui.act093.adapter.Act093Adapter
+import com.namoadigital.prj001.ui.act093.model.DeviceTpModel
 import com.namoadigital.prj001.ui.act093.util.Act093State
 import com.namoadigital.prj001.util.ToolBox_Inf
 
@@ -21,7 +25,12 @@ class SerialInfoFragment : Fragment() {
         FragmentSerialInfoBinding.inflate(layoutInflater)
     }
 
-    private lateinit var serialInfo: Act093State.SerialInfo
+    private val state: Act093State.SerialInfo by lazy{
+        Act093State.SerialInfo()
+    }
+
+    private lateinit var list: List<DeviceTpModel>
+    private lateinit var hmAux_Trans: HMAux
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,120 +51,127 @@ class SerialInfoFragment : Fragment() {
 
     }
 
-    private fun onUpdateHeader() {
+    fun initSerialInfoHeader(){
         with(binding) {
 
-            if (serialInfo.iconColor.isNullOrEmpty()) {
-                iconSerialColor.visibility = android.view.View.GONE
+            if (state.lastUpdateSerial.isNullOrEmpty()) {
+                lastUpdateSerial.visibility = View.GONE
             } else {
-                iconSerialColor.apply {
-                    setColorFilter(android.graphics.Color.parseColor(serialInfo.iconColor))
-                    visibility = android.view.View.VISIBLE
+                lastUpdateSerial.apply {
+                    text = "${hmAux_Trans["last_update_serial_lbl"]}: ${state.lastUpdateSerial}"
+                    visibility = View.VISIBLE
                 }
             }
 
-            if (serialInfo.serialId.isNullOrEmpty()) {
-                serialId.visibility = android.view.View.GONE
+            if (state.last_cycle_value != null) {
+                titleCycle.text = hmAux_Trans["last_cycle_lbl"]
+                titleCycle.visibility = View.VISIBLE
             } else {
-                serialId.apply {
-                    text = serialInfo.serialId
-                    visibility = android.view.View.VISIBLE
-                }
+                titleCycle.visibility = View.GONE
             }
 
-            if (serialInfo.product.isNullOrEmpty()) {
-                productId.visibility = android.view.View.GONE
+            if (state.last_measure_value != null) {
+                titleMeasure.text = hmAux_Trans["last_measure_lbl"]
+                titleMeasure.visibility = View.VISIBLE
             } else {
-                productId.apply {
-                    text = serialInfo.product
-                    visibility = android.view.View.VISIBLE
-                }
+                titleMeasure.visibility = View.GONE
             }
-
-            if (serialInfo.model.isNullOrEmpty()) {
-                brandModel.visibility = android.view.View.GONE
-            } else {
-                brandModel.apply {
-                    text = serialInfo.model
-                    visibility = android.view.View.VISIBLE
-                }
-            }
-
-            infoAndTrackingLayout.visibility =
-                if (serialInfo.trackings.isNullOrEmpty() && serialInfo.infoAdd.isNullOrEmpty()) android.view.View.GONE else android.view.View.VISIBLE
-
-            if (serialInfo.infoAdd.isNullOrEmpty()) {
-                infosAddText.visibility = android.view.View.GONE
-            } else {
-                infosAddText.apply {
-                    visibility = android.view.View.VISIBLE
-                    text = serialInfo.infoAdd
-                }
-            }
-
-            if (serialInfo.trackings.isNullOrEmpty()) {
-                trackingsText.visibility = android.view.View.GONE
-            } else {
-                trackingsText.apply {
-                    text = serialInfo.trackings
-                    visibility = android.view.View.VISIBLE
-                }
-            }
-
-
-            val measureFormatted = if (serialInfo.last_measure_value != null) {
-                if (!serialInfo.last_measure_date.isNullOrEmpty()) {
-                    "${ToolBox_Inf.convertDoubleToBigDecimalString(serialInfo.last_measure_value!!, true)} ${serialInfo.value_suffix.formatForDisplay()} (${serialInfo.last_measure_date})"
+            val measureFormatted = if (state.last_measure_value != null) {
+                if (!state.last_measure_date.isNullOrEmpty()) {
+                    "${
+                        ToolBox_Inf.convertDoubleToBigDecimalString(
+                            state.last_measure_value!!,
+                            true
+                        )
+                    } ${state.value_suffix.formatForDisplay()} (${state.last_measure_date})"
                 } else {
-                    "${ToolBox_Inf.convertDoubleToBigDecimalString(serialInfo.last_measure_value!!, true)} ${serialInfo.value_suffix.formatForDisplay()}"
+                    "${
+                        ToolBox_Inf.convertDoubleToBigDecimalString(
+                            state.last_measure_value!!,
+                            true
+                        )
+                    } ${state.value_suffix.formatForDisplay()}"
                 }
             } else {
                 null
             }
 
             if (measureFormatted.isNullOrEmpty()) {
-                measureValue.visibility = android.view.View.GONE
+                measureValue.visibility = View.GONE
             } else {
                 measureValue.apply {
                     text = measureFormatted
-                    visibility = android.view.View.VISIBLE
+                    visibility = View.VISIBLE
                 }
             }
 
             linearLayout6.visibility = if (measureFormatted.isNullOrEmpty()) {
-                android.view.View.GONE
+                View.GONE
             } else {
-                android.view.View.VISIBLE
+                View.VISIBLE
             }
 
             linearLayout5.visibility =
-                if (serialInfo.last_cycle_value == null
-                    || serialInfo.last_cycle_value == 0.0f) {
-                    android.view.View.GONE
+                if (state.last_cycle_value == null
+                    || state.last_cycle_value == 0.0f
+                ) {
+                    View.GONE
                 } else {
-                    android.view.View.VISIBLE
+                    View.VISIBLE
                 }
 
 
-            val cycleFormatted = if (serialInfo.last_cycle_value != null) {
-                if (!serialInfo.last_cycle_date.isNullOrEmpty()) {
-                    "${ToolBox_Inf.convertDoubleToBigDecimalString(serialInfo.last_cycle_value!!.toDouble(), true)} ${serialInfo.value_suffix.formatForDisplay()}  (${serialInfo.last_cycle_date})"
+            val cycleFormatted = if (state.last_cycle_value != null) {
+                if (!state.last_cycle_date.isNullOrEmpty()) {
+                    "${
+                        ToolBox_Inf.convertDoubleToBigDecimalString(
+                            state.last_cycle_value!!.toDouble(),
+                            true
+                        )
+                    } ${state.value_suffix.formatForDisplay()}  (${state.last_cycle_date})"
                 } else {
-                    "${ToolBox_Inf.convertDoubleToBigDecimalString(serialInfo.last_cycle_value!!.toDouble(), true)} ${serialInfo.value_suffix.formatForDisplay()}"
+                    "${
+                        ToolBox_Inf.convertDoubleToBigDecimalString(
+                            state.last_cycle_value!!.toDouble(),
+                            true
+                        )
+                    } ${state.value_suffix.formatForDisplay()}"
                 }
             } else {
                 null
             }
 
             if (cycleFormatted.isNullOrEmpty()) {
-                cycleValue.visibility = android.view.View.GONE
+                cycleValue.visibility = View.GONE
             } else {
                 cycleValue.apply {
                     text = cycleFormatted
-                    visibility = android.view.View.VISIBLE
+                    visibility = View.VISIBLE
                 }
             }
+        }
+    }
 
+    private fun initRecyclerView(
+
+    ) {
+        if (list.isNotEmpty()) {
+
+            val mAdapter = Act093Adapter(
+                list,
+                hmAux_Trans
+            )
+
+            binding.recyclerViewList.apply {
+                adapter = mAdapter
+                visibility = View.VISIBLE
+                layoutManager = LinearLayoutManager(context)
+            }
+
+        } else {
+            binding.recyclerViewList.apply {
+                visibility = View.GONE
+            }
         }
 
     }
