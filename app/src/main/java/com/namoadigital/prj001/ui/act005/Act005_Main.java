@@ -2342,8 +2342,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             boolean productOutdate = false;
 
             if(masterDataSyncFlow){
-                syncAfterSave = true;
-                executeSync();
+                mPresenter.syncFlow(mPresenter.hasUpdateRequired());
             }else {
                 if(ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET ,null)){
                     productOutdate = ToolBox_Inf.hasFormProductOutdate(context);
@@ -2364,9 +2363,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 mPresenter.executeWSTicketDownload();
             }else{
                 if(masterDataSyncFlow){
-                    ToolBox_Inf.hasFormProductOutdate(context);
-                    syncAfterSave = true;
-                    executeSync();
+                    mPresenter.syncFlow(mPresenter.hasUpdateRequired());
                 }else{
                     refreshUiData();
                 }
