@@ -437,7 +437,12 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
                 R.layout.so_item_list,
                 mket_filter != null ? mket_filter.getText().toString().trim() : null,
                 list -> {
-                    setTitleLanguage(" (" + list.size() + " / " + soList.size() + ")");
+                    try {
+                        setTitleLanguage(" (" + list.size() + " / " + soList.size() + ")");
+                    }catch(NullPointerException e){
+                        e.printStackTrace();
+                        ToolBox.registerException(getClass().getName(), e);
+                    }
                     new IOnRememberListView<HMAux>(
                             lv_so, tv_empty_state
                     ).dataChanged(list);

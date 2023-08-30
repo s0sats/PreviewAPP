@@ -553,9 +553,23 @@ public class SO_Header_Adapter extends BaseAdapter implements Filterable {
                             ToolBox_Inf.dateToMilliseconds(hmAux.get(SM_SODao.DEADLINE)),
                             ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
                     ));
-                    String brand_desc = ToolBox.AccentMapper(hmAux.get("brand_desc").toLowerCase());
-                    String model_desc = ToolBox.AccentMapper(hmAux.get("model_desc").toLowerCase());
-                    String color_desc = ToolBox.AccentMapper(hmAux.get("color_desc").toLowerCase());
+
+                    String brand_desc = "";
+                    String model_desc = "";
+                    String color_desc = "";
+
+                    if(hmAux.hasConsistentValue("brand_desc")) {
+                        brand_desc = ToolBox.AccentMapper(hmAux.get("brand_desc").toLowerCase());
+                    }
+
+                    if(hmAux.hasConsistentValue("model_desc")) {
+                        model_desc = ToolBox.AccentMapper(hmAux.get("model_desc").toLowerCase());
+                    }
+
+                    if(hmAux.hasConsistentValue("color_desc")) {
+                        color_desc = ToolBox.AccentMapper(hmAux.get("color_desc").toLowerCase());
+                    }
+
                     String segment_desc = ToolBox.AccentMapper(hmAux.get(SM_SODao.SEGMENT_DESC).toLowerCase());
                     String category_price_desc = ToolBox.AccentMapper(hmAux.get(SM_SODao.CATEGORY_PRICE_DESC).toLowerCase());
                     String pipeline_desc = ToolBox.AccentMapper(hmAux.get(SM_SODao.PIPELINE_DESC).toLowerCase());
