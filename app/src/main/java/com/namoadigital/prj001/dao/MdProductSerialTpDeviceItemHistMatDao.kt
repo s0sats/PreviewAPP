@@ -18,11 +18,13 @@ import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 
 class MdProductSerialTpDeviceItemHistMatDao(
-    context: Context, mDB_NAME: String = ToolBox_Con.customDBPath(
+    context: Context,
+    mDB_NAME: String = ToolBox_Con.customDBPath(
         ToolBox_Con.getPreference_Customer_Code(
             context
         )
-    ), mDB_VERSION: Int = Constant.DB_VERSION_CUSTOM
+    ),
+    mDB_VERSION: Int = Constant.DB_VERSION_CUSTOM
 ) : BaseDao(
     context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI
 ), DaoWithReturn<MdProductSerialTpDeviceItemHistMat>,
@@ -31,6 +33,22 @@ class MdProductSerialTpDeviceItemHistMatDao(
 
     private val toMdProductSerialTpDeviceItemHistMatMapper: Mapper<Cursor, MdProductSerialTpDeviceItemHistMat>
     private val toContentValuesMapper: Mapper<MdProductSerialTpDeviceItemHistMat, ContentValues>
+
+
+    init {
+        toMdProductSerialTpDeviceItemHistMatMapper =
+            CursorToMdProductSerialTpDeviceItemHistMatMapper()
+        toContentValuesMapper = MdProductSerialTpDeviceItemHistMatContentValuesMapper()
+    }
+
+
+    override fun remove(
+        item: MdProductSerialTpDeviceItemHistMat?,
+        dbInstance: SQLiteDatabase?
+    ): DaoObjReturn {
+        return DaoObjReturn()
+    }
+
 
     override fun addUpdate(
         item: MdProductSerialTpDeviceItemHistMat?,
@@ -348,17 +366,5 @@ class MdProductSerialTpDeviceItemHistMatDao(
         }
     }
 
-    init {
-        toMdProductSerialTpDeviceItemHistMatMapper =
-            CursorToMdProductSerialTpDeviceItemHistMatMapper()
-        toContentValuesMapper = MdProductSerialTpDeviceItemHistMatContentValuesMapper()
-    }
 
-
-    override fun remove(
-        item: MdProductSerialTpDeviceItemHistMat?,
-        dbInstance: SQLiteDatabase?
-    ): DaoObjReturn {
-        TODO("Not yet implemented")
-    }
 }
