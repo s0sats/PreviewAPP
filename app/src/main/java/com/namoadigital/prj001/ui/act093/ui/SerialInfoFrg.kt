@@ -12,30 +12,30 @@ import com.namoadigital.prj001.extensions.formatForDisplay
 import com.namoadigital.prj001.ui.act093.adapter.Act093Adapter
 import com.namoadigital.prj001.ui.act093.model.DeviceTpModel
 import com.namoadigital.prj001.ui.act093.util.Act093State
+import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
+import java.util.*
 
 
 /**
  * A simple [Fragment] subclass.
- * Use the [SerialInfoFragment.newInstance] factory method to
+ * Use the [SerialInfoFrg.newInstance] factory method to
  * create an instance of this fragment.
  */
-class SerialInfoFragment : Fragment() {
-    private val binding: FragmentSerialInfoBinding by lazy{
+class SerialInfoFrg : Fragment() {
+    private val binding: FragmentSerialInfoBinding by lazy {
         FragmentSerialInfoBinding.inflate(layoutInflater)
     }
 
-    private val state: Act093State.SerialInfo by lazy{
-        Act093State.SerialInfo()
-    }
-
-    private lateinit var list: List<DeviceTpModel>
+    private lateinit var serialInfo: Act093State.SerialInfo
+    private var list: List<DeviceTpModel> = mutableListOf()
     private lateinit var hmAux_Trans: HMAux
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-
+            hmAux_Trans =  HMAux.getHmAuxFromHashMap(it.getSerializable(ConstantBaseApp.MAIN_HMAUX_TRANS_KEY) as HashMap<String?, String?>)
+            serialInfo = it.getSerializable(Act093State.SerialInfo::javaClass.name) as Act093State.SerialInfo
         }
     }
 
@@ -51,46 +51,46 @@ class SerialInfoFragment : Fragment() {
 
     }
 
-    fun initSerialInfoHeader(){
+    fun initSerialInfoHeader() {
         with(binding) {
 
-            if (state.lastUpdateSerial.isNullOrEmpty()) {
+            if (serialInfo.lastUpdateSerial.isNullOrEmpty()) {
                 lastUpdateSerial.visibility = View.GONE
             } else {
                 lastUpdateSerial.apply {
-                    text = "${hmAux_Trans["last_update_serial_lbl"]}: ${state.lastUpdateSerial}"
+                    text = "${hmAux_Trans["last_update_serial_lbl"]}: ${serialInfo.lastUpdateSerial}"
                     visibility = View.VISIBLE
                 }
             }
 
-            if (state.last_cycle_value != null) {
+            if (serialInfo.last_cycle_value != null) {
                 titleCycle.text = hmAux_Trans["last_cycle_lbl"]
                 titleCycle.visibility = View.VISIBLE
             } else {
                 titleCycle.visibility = View.GONE
             }
 
-            if (state.last_measure_value != null) {
+            if (serialInfo.last_measure_value != null) {
                 titleMeasure.text = hmAux_Trans["last_measure_lbl"]
                 titleMeasure.visibility = View.VISIBLE
             } else {
                 titleMeasure.visibility = View.GONE
             }
-            val measureFormatted = if (state.last_measure_value != null) {
-                if (!state.last_measure_date.isNullOrEmpty()) {
+            val measureFormatted = if (serialInfo.last_measure_value != null) {
+                if (!serialInfo.last_measure_date.isNullOrEmpty()) {
                     "${
                         ToolBox_Inf.convertDoubleToBigDecimalString(
-                            state.last_measure_value!!,
+                            serialInfo.last_measure_value!!,
                             true
                         )
-                    } ${state.value_suffix.formatForDisplay()} (${state.last_measure_date})"
+                    } ${serialInfo.value_suffix.formatForDisplay()} (${serialInfo.last_measure_date})"
                 } else {
                     "${
                         ToolBox_Inf.convertDoubleToBigDecimalString(
-                            state.last_measure_value!!,
+                            serialInfo.last_measure_value!!,
                             true
                         )
-                    } ${state.value_suffix.formatForDisplay()}"
+                    } ${serialInfo.value_suffix.formatForDisplay()}"
                 }
             } else {
                 null
@@ -112,8 +112,8 @@ class SerialInfoFragment : Fragment() {
             }
 
             linearLayout5.visibility =
-                if (state.last_cycle_value == null
-                    || state.last_cycle_value == 0.0f
+                if (serialInfo.last_cycle_value == null
+                    || serialInfo.last_cycle_value == 0.0f
                 ) {
                     View.GONE
                 } else {
@@ -121,21 +121,21 @@ class SerialInfoFragment : Fragment() {
                 }
 
 
-            val cycleFormatted = if (state.last_cycle_value != null) {
-                if (!state.last_cycle_date.isNullOrEmpty()) {
+            val cycleFormatted = if (serialInfo.last_cycle_value != null) {
+                if (!serialInfo.last_cycle_date.isNullOrEmpty()) {
                     "${
                         ToolBox_Inf.convertDoubleToBigDecimalString(
-                            state.last_cycle_value!!.toDouble(),
+                            serialInfo.last_cycle_value!!.toDouble(),
                             true
                         )
-                    } ${state.value_suffix.formatForDisplay()}  (${state.last_cycle_date})"
+                    } ${serialInfo.value_suffix.formatForDisplay()}  (${serialInfo.last_cycle_date})"
                 } else {
                     "${
                         ToolBox_Inf.convertDoubleToBigDecimalString(
-                            state.last_cycle_value!!.toDouble(),
+                            serialInfo.last_cycle_value!!.toDouble(),
                             true
                         )
-                    } ${state.value_suffix.formatForDisplay()}"
+                    } ${serialInfo.value_suffix.formatForDisplay()}"
                 }
             } else {
                 null
@@ -152,9 +152,18 @@ class SerialInfoFragment : Fragment() {
         }
     }
 
-    private fun initRecyclerView(
+    fun refreshProgressLoading(isLoading: Boolean) {
+        with(binding) {
+            if (isLoading) {
+                progressLoading.visibility = View.VISIBLE
+            } else {
+                progressLoading.visibility = View.GONE
+                initSerialInfoHeader()
+            }
+        }
+    }
 
-    ) {
+    private fun initRecyclerView() {
         if (list.isNotEmpty()) {
 
             val mAdapter = Act093Adapter(
@@ -175,6 +184,12 @@ class SerialInfoFragment : Fragment() {
         }
 
     }
+
+    fun setItemsList(list: List<DeviceTpModel>) {
+        this.list = list
+        initRecyclerView()
+    }
+
     companion object {
         /**
          * Use this factory method to create a new instance of
@@ -184,13 +199,16 @@ class SerialInfoFragment : Fragment() {
          * @param param2 Parameter 2.
          * @return A new instance of fragment SerialInfoFragment.
          */
-        // TODO: Rename and change types and number of parameters
+        //
         @JvmStatic
-        fun newInstance() =
-            SerialInfoFragment().apply {
+        fun newInstance(
+            hmAux_Trans: HMAux,
+            serialInfo: Act093State.SerialInfo
+        ) =
+            SerialInfoFrg().apply {
                 arguments = Bundle().apply {
-
-
+                    putSerializable(ConstantBaseApp.MAIN_HMAUX_TRANS_KEY, hmAux_Trans)
+                    putSerializable(Act093State.SerialInfo::javaClass.name, serialInfo)
                 }
             }
     }

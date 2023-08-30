@@ -142,7 +142,7 @@ class Act093Adapter constructor(
                 ballColor.apply {
                     setColorFilter(resources.getColor(color))
                 }
-
+                ivItemDetail.visibility = View.VISIBLE
                 itemOverlined.text = item.device_tp_desc
                 itemTitle.text = item.item_check_desc
                 itemSupport.apply {

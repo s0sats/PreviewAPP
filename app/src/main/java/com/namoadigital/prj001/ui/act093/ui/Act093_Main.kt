@@ -5,6 +5,8 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.annotation.IdRes
+import androidx.fragment.app.Fragment
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.databinding.Act093MainBinding
 import com.namoadigital.prj001.databinding.Act093SerialInfoBinding
@@ -12,9 +14,8 @@ import com.namoadigital.prj001.ui.act092.ui.Act092_Main
 import com.namoadigital.prj001.ui.act093.Act093Presenter
 import com.namoadigital.prj001.ui.act093.Act093Presenter.Companion.Act093PresenterFactory
 import com.namoadigital.prj001.ui.act093.Contract
-import com.namoadigital.prj001.ui.act093.model.DeviceTpModel
 import com.namoadigital.prj001.ui.act093.util.Act093Event
-import com.namoadigital.prj001.ui.base.BaseActivityMvp
+import com.namoadigital.prj001.ui.base.BaseActivityFragMvp
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -22,9 +23,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contract.View {
+class Act093_Main : BaseActivityFragMvp<Act093Presenter, Act093MainBinding>(), Contract.View {
 
-
+    private val serialInfoFrg: SerialInfoFrg by lazy{
+        SerialInfoFrg.newInstance(
+            hmAux_Trans,
+            presenter.state.value.serialInfo
+        )
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -76,10 +82,11 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
                 }
 
                 is Act093Event.OnUpdateList -> {
-                    initRecyclerView()
+                    serialInfoFrg.setItemsList(presenter.state.value.list)
                 }
 
                 is Act093Event.OnLoading -> {
+                    initSerialFrg()
                     recyclerViewLoading()
                 }
 
@@ -93,6 +100,10 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
 
             }
         }
+    }
+
+    private fun initSerialFrg() {
+
     }
 
     private fun openDialog(
@@ -147,21 +158,7 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
     private fun recyclerViewLoading(
         isLoading: Boolean = presenter.state.value.isLoading
     ) {
-        with(binding) {
-            if (isLoading) {
-                //todo esconder lista e visualizar progress
-            } else {
-                //todo visualizar lista e esconder progress
-            }
-        }
-
-    }
-
-
-    private fun initRecyclerView(
-        list: List<DeviceTpModel> = presenter.state.value.list
-    ) {
-        //todo atualizaar fragmento com lista.
+        serialInfoFrg.refreshProgressLoading(isLoading)
     }
 
     private fun onUpdateHeader() {
@@ -225,15 +222,8 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
                     visibility = View.VISIBLE
                 }
             }
-
-
-
-
-
         }
-
         initVars()
-
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -251,12 +241,33 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
 
     override fun initVars() {
         with(binding) {
-
+            setFrag(
+                type = serialInfoFrg,
+                sTag = SERIAL_INFO_FRG_TAG,
+                placeHolderId = binding.flSerialStrucutre.id,
+                replaceEvenCreated = true,
+                addToBackStack = false
+            )
         }
         iniUIFooter(Constant.ACT093, hmAux_Trans)
     }
 
     override fun initAction() {
+    }
+
+    fun setFrag(type: SerialInfoFrg, sTag: String, @IdRes placeHolderId: Int, replaceEvenCreated: Boolean = false, addToBackStack: Boolean = true){
+        if (replaceEvenCreated || this.supportFragmentManager.findFragmentByTag(sTag) == null) {
+            val ft = this.supportFragmentManager.beginTransaction()
+            ft.replace(placeHolderId, type as Fragment, sTag)
+            if(addToBackStack) {
+                ft.addToBackStack(sTag)
+            }
+            ft.commit()
+        }
+    }
+
+    companion object{
+        const val SERIAL_INFO_FRG_TAG = "SERIAL_INFO_FRG_TAG"
     }
 
 }
