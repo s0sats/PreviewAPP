@@ -3,6 +3,7 @@ package com.namoadigital.prj001.model.VH_models
 import android.annotation.SuppressLint
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.namoadigital.prj001.databinding.Act086HistoricFrgAlertItemBinding
 import com.namoadigital.prj001.model.Act086HistoricModel
 import java.util.*
@@ -27,6 +28,30 @@ class Act086HistoricAlertVH(
                     act086HistoricFrgAlertItemTvComment.apply {
                         text = item.comment?.capitalize(Locale.getDefault())
                         visibility = if (text != null) View.VISIBLE else View.GONE
+                    }
+                    //
+                    item.photo1?.let {
+                        Glide.with(root.context)
+                            .load(it)
+                            .into(frgAlertItemIvPhoto1)
+                    }
+                    //
+                    item.photo2?.let {
+                        Glide.with(root.context)
+                            .load(it)
+                            .into(frgAlertItemIvPhoto2)
+                    }
+                    //
+                    item.photo3?.let {
+                        Glide.with(root.context)
+                            .load(it)
+                            .into(frgAlertItemIvPhoto3)
+                    }
+                    //
+                    item.photo4?.let {
+                        Glide.with(root.context)
+                            .load(it)
+                            .into(frgAlertItemIvPhoto4)
                     }
                 }
 

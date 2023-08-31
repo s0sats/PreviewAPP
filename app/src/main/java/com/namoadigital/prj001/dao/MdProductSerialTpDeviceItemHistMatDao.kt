@@ -11,10 +11,10 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
 import com.namoadigital.prj001.model.DaoObjReturn
-import com.namoadigital.prj001.model.HistoricMaterialInputs
+import com.namoadigital.prj001.model.MaterialHistItemModel
 import com.namoadigital.prj001.model.MdProductSerialTpDeviceItemHistMat
-import com.namoadigital.prj001.sql.MdProductSerialTpDeviceItemHistMat_Sql_GetInputs
-import com.namoadigital.prj001.sql.MdProductSerialTpDeviceItemHistMat_Sql_GetInputs.Companion.mappingToHistoricMaterialInputs
+import com.namoadigital.prj001.sql.MdProductSerialTpDeviceItemHistMat_Sql_002
+import com.namoadigital.prj001.sql.MdProductSerialTpDeviceItemHistMat_Sql_002.Companion.mappingToHistoricMaterialInputs
 import com.namoadigital.prj001.ui.base.NamoaFactory
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -378,16 +378,16 @@ class MdProductSerialTpDeviceItemHistMatDao(
 //-------------------------------------------------\\
 
     fun getInputs(
-        customerCode: Int,
+        customerCode: Long,
         serialCode: Int,
         producCode: Int,
         deviceTpCode: Int,
         itemCheckSeq: Int,
         itemCheckCode: Int,
         seq: Int,
-    ): List<HistoricMaterialInputs> {
+    ): List<MaterialHistItemModel> {
         return query_HM(
-            MdProductSerialTpDeviceItemHistMat_Sql_GetInputs(
+            MdProductSerialTpDeviceItemHistMat_Sql_002(
                 customerCode,
                 serialCode,
                 producCode,

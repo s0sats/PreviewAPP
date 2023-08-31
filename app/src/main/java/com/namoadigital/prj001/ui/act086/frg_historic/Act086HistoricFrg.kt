@@ -59,7 +59,7 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
         super.onCreate(savedInstanceState)
         arguments?.let {
             hmAux_Trans = HMAux.getHmAuxFromHashMap(it.getSerializable(Constant.MAIN_HMAUX_TRANS_KEY) as HashMap<String?, String?>)
-            itemHist = it.getSerializable(GeOsDeviceItemHist::javaClass.name) as ArrayList<GeOsDeviceItemHist>
+            alertList = it.getSerializable(Act086HistoricModel::javaClass.name) as ArrayList<Act086HistoricModel>
             itemCheckStatus = it.getString(GeOsDeviceItemDao.ITEM_CHECK_STATUS)
             nextCycleMeasure = it.getFloat(GeOsDeviceItemDao.NEXT_CYCLE_MEASURE)
             nextCycleMeasureDate = it.getString(GeOsDeviceItemDao.NEXT_CYCLE_MEASURE_DATE)
@@ -93,6 +93,13 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
         setInstructionInfo()
         /*setLastFixedInfo()*/
         setHistoricInfo()
+        setImageInfo()
+    }
+
+    private fun setImageInfo() {
+        with(binding){
+
+        }
     }
 
     private fun setLabels() {
@@ -260,12 +267,9 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
     }
 
     private fun setHistoricInfo() {
-        alertList.clear()
         //Filtra itens que são alerta
-        val toAlertList = mPresenter.getAlertList(itemHist,measureValueSufix,restrictionDecimal)
-        //
-        if(toAlertList.isNotEmpty()) {
-            alertList.addAll(toAlertList)
+        if(alertList.isNotEmpty()) {
+            binding.act086HistoricFrgClAlertHistoric.visibility = View.VISIBLE
         }else{
             binding.act086HistoricFrgClAlertHistoric.visibility = View.GONE
         }
@@ -309,7 +313,7 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
             verification_instruction: String? = null,
             restriction_decimal: Int? = null,
             dateStartUntilLastMinute: String,
-            itemHist: ArrayList<GeOsDeviceItemHist>
+            alertList: ArrayList<Act086HistoricModel>
         ) =
             Act086HistoricFrg().apply {
                 arguments = Bundle().apply {
@@ -326,7 +330,7 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
                         putInt(GeOsDeviceItemDao.RESTRICTION_DECIMAL, it)
                     }
                     putString(GeOsDao.DATE_START, dateStartUntilLastMinute)
-                    putSerializable(GeOsDeviceItemHist::javaClass.name, itemHist)
+                    putSerializable(Act086HistoricModel::javaClass.name, alertList)
                 }
             }
 

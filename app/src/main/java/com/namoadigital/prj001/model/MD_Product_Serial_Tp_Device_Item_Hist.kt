@@ -8,6 +8,10 @@ class MD_Product_Serial_Tp_Device_Item_Hist(
     @SerializedName("exec_value") val exec_value: Double,
     @SerializedName("exec_date") val exec_date: String,
     @SerializedName("exec_comment") val exec_comment: String?,
+    @SerializedName("exec_photo1") val exec_photo1: String?,
+    @SerializedName("exec_photo2") val exec_photo2: String?,
+    @SerializedName("exec_photo3") val exec_photo3: String?,
+    @SerializedName("exec_photo4") val exec_photo4: String?,
     @SerializedName("exec_material") val exec_material: Int,
     @SerializedName("change_adjust") val change_adjust: Int,
 ) {
@@ -42,6 +46,10 @@ class MD_Product_Serial_Tp_Device_Item_Hist(
         exec_value: Double,
         exec_date: String,
         exec_comment: String?,
+        exec_photo1: String?,
+        exec_photo2: String?,
+        exec_photo3: String?,
+        exec_photo4: String?,
         exec_material: Int,
         change_adjust: Int
     ) : this(
@@ -50,6 +58,10 @@ class MD_Product_Serial_Tp_Device_Item_Hist(
         exec_value,
         exec_date,
         exec_comment,
+        exec_photo1,
+        exec_photo2,
+        exec_photo3,
+        exec_photo4,
         exec_material,
         change_adjust
     ){

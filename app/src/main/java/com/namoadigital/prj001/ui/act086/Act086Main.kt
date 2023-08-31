@@ -12,15 +12,12 @@ import androidx.fragment.app.Fragment
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag
 import com.namoadigital.prj001.R
-import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
-import com.namoadigital.prj001.dao.GeOsDeviceDao
-import com.namoadigital.prj001.dao.GeOsDeviceItemDao
-import com.namoadigital.prj001.dao.GeOsDeviceItemHistDao
+import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.databinding.Act086MainBinding
 import com.namoadigital.prj001.databinding.Act086MainContentBinding
 import com.namoadigital.prj001.extensions.setFrag
+import com.namoadigital.prj001.model.Act086HistoricModel
 import com.namoadigital.prj001.model.GeOsDeviceItem
-import com.namoadigital.prj001.model.GeOsDeviceItemHist
 import com.namoadigital.prj001.ui.act011.Act011_Main
 import com.namoadigital.prj001.ui.act086.frg_historic.Act086HistoricFrg
 import com.namoadigital.prj001.ui.act086.frg_verification.Act086VerificationFrg
@@ -47,7 +44,9 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
             mModule_Code,
             mResource_Code,
             GeOsDeviceItemDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
-            GeOsDeviceItemHistDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), DB_VERSION_CUSTOM)
+            GeOsDeviceItemHistDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), DB_VERSION_CUSTOM),
+            MD_Product_Serial_Tp_Device_Item_HistDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), DB_VERSION_CUSTOM),
+            MdProductSerialTpDeviceItemHistMatDao.DatabaseFactory(context).build()
         )
     }
     private val prefixPhoto: String by lazy{
@@ -86,7 +85,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
     private var deviceDesc: String = ""
     private var trackingNumber: String? = null
     private var readOnly: Boolean = false
-    private var itemHist: ArrayList<GeOsDeviceItemHist>? = null
+    private var itemHist: ArrayList<Act086HistoricModel>? = null
     private val dateStartUntilLastMinute :String by lazy{
         mPresenter.getDateStartUntilLastMinute()
     }

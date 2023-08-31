@@ -9,5 +9,11 @@ data class Act086HistoricModel(
     val measure: String,
     val materialLbl: String,
     val material: String,
-    val comment: String?
+    val comment: String?,
+    val manualInstruction: String?,
+    val materialList: List<MaterialHistItemModel>?,
+    val photo1: String?,
+    val photo2: String?,
+    val photo3: String?,
+    val photo4: String?,
 )

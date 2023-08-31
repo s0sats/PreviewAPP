@@ -37,6 +37,10 @@ class MD_Product_Serial_Tp_Device_Item_HistDao(
         const val EXEC_VALUE = "exec_value"
         const val EXEC_DATE = "exec_date"
         const val EXEC_COMMENT = "exec_comment"
+        const val EXEC_PHOTO1 = "exec_photo1"
+        const val EXEC_PHOTO2 = "exec_photo2"
+        const val EXEC_PHOTO3 = "exec_photo3"
+        const val EXEC_PHOTO4 = "exec_photo4"
         const val EXEC_MATERIAL = "exec_material"
         const val CHANGE_ADJUST = "change_adjust"
     }
@@ -363,6 +367,10 @@ class MD_Product_Serial_Tp_Device_Item_HistDao(
                         exec_value = getDouble(getColumnIndex(EXEC_VALUE)) ,
                         exec_date = getString(getColumnIndex(EXEC_DATE)) ,
                         exec_comment = getStringOrNull(getColumnIndex(EXEC_COMMENT)) ,
+                        exec_photo1 = getStringOrNull(getColumnIndex(EXEC_PHOTO1)) ,
+                        exec_photo2 = getStringOrNull(getColumnIndex(EXEC_PHOTO2)) ,
+                        exec_photo3 = getStringOrNull(getColumnIndex(EXEC_PHOTO3)) ,
+                        exec_photo4 = getStringOrNull(getColumnIndex(EXEC_PHOTO4)) ,
                         exec_material = getInt(getColumnIndex(EXEC_MATERIAL)),
                         change_adjust = getInt(getColumnIndex(CHANGE_ADJUST))
                     )
@@ -409,6 +417,10 @@ class MD_Product_Serial_Tp_Device_Item_HistDao(
                         put(EXEC_DATE,mdProductSerialTpDeviceItemHist.exec_date)
                     }
                     put(EXEC_COMMENT,mdProductSerialTpDeviceItemHist.exec_comment)
+                    put(EXEC_PHOTO1,mdProductSerialTpDeviceItemHist.exec_photo1)
+                    put(EXEC_PHOTO2,mdProductSerialTpDeviceItemHist.exec_photo2)
+                    put(EXEC_PHOTO3,mdProductSerialTpDeviceItemHist.exec_photo3)
+                    put(EXEC_PHOTO4,mdProductSerialTpDeviceItemHist.exec_photo4)
 
                     if(mdProductSerialTpDeviceItemHist.exec_material > -1){
                         put(EXEC_MATERIAL,mdProductSerialTpDeviceItemHist.exec_material)

@@ -2,13 +2,7 @@ package com.namoadigital.prj001.migrations
 
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
-import com.namoadigital.prj001.dao.GE_Custom_FormDao
-import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
-import com.namoadigital.prj001.dao.MeMeasureTpDao
-import com.namoadigital.prj001.dao.SM_SODao
-import com.namoadigital.prj001.dao.SO_Pack_ExpressDao
-import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao
-import com.namoadigital.prj001.dao.TK_TicketDao
+import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.database.MigrationSQLite
 
 val MigrationV1 = object : MigrationSQLite(1, 2){
@@ -224,6 +218,23 @@ val MigrationV8 = object : MigrationSQLite(7, 8) {
             );
         """.trimIndent()
         )
+        //
+        if (!isFieldExist(db, MD_Product_Serial_Tp_Device_Item_HistDao.TABLE, MD_Product_Serial_Tp_Device_Item_HistDao.EXEC_PHOTO1)) {
+            db.execSQL(""" ALTER TABLE [${MD_Product_Serial_Tp_Device_Item_HistDao.TABLE}] ADD [${MD_Product_Serial_Tp_Device_Item_HistDao.EXEC_PHOTO1}]  text collate nocase;""".trimIndent())
+        }
+        //
+        if (!isFieldExist(db, MD_Product_Serial_Tp_Device_Item_HistDao.TABLE, MD_Product_Serial_Tp_Device_Item_HistDao.EXEC_PHOTO2)) {
+            db.execSQL(""" ALTER TABLE [${MD_Product_Serial_Tp_Device_Item_HistDao.TABLE}] ADD [${MD_Product_Serial_Tp_Device_Item_HistDao.EXEC_PHOTO2}]  text collate nocase;""".trimIndent())
+        }
+        //
+        if (!isFieldExist(db, MD_Product_Serial_Tp_Device_Item_HistDao.TABLE, MD_Product_Serial_Tp_Device_Item_HistDao.EXEC_PHOTO3)) {
+            db.execSQL(""" ALTER TABLE [${MD_Product_Serial_Tp_Device_Item_HistDao.TABLE}] ADD [${MD_Product_Serial_Tp_Device_Item_HistDao.EXEC_PHOTO3}]  text collate nocase;""".trimIndent())
+        }
+        //
+        if (!isFieldExist(db, MD_Product_Serial_Tp_Device_Item_HistDao.TABLE, MD_Product_Serial_Tp_Device_Item_HistDao.EXEC_PHOTO4)) {
+            db.execSQL(""" ALTER TABLE [${MD_Product_Serial_Tp_Device_Item_HistDao.TABLE}] ADD [${MD_Product_Serial_Tp_Device_Item_HistDao.EXEC_PHOTO4}]  text collate nocase;""".trimIndent())
+        }
+        //
     }
 
 }
