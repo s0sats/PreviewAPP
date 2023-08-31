@@ -168,7 +168,9 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
                     "    [customer_code]   int  not null,\n" +
                     "    [product_code]    int  not null,\n" +
                     "    [serial_code]     int  not null,\n" +
+                    "    [device_tp_code]  int  not null,\n" +
                     "    [item_check_seq]  int  not null,\n" +
+                    "    [item_check_code] int  not null,\n" +
                     "    [seq]             int  not null,\n" +
                     "    [material_code]   int  not null,\n" +
                     "    [un]              text not null collate nocase,\n" +
@@ -179,7 +181,9 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
                     "    [customer_code],\n" +
                     "    [product_code],\n" +
                     "    [serial_code],\n" +
+                    "    [device_tp_code],\n" +
                     "    [item_check_seq],\n" +
+                    "    [item_check_code],\n" +
                     "    [seq],\n" +
                     "    [material_code]));");
             //

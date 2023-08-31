@@ -21,8 +21,6 @@ import com.namoadigital.prj001.model.GeOsDeviceItemHist
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
-import java.util.*
-import kotlin.collections.ArrayList
 
 /**
  * A simple [Fragment] subclass.
@@ -100,7 +98,7 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
     private fun setLabels() {
         with(binding){
             act086HistoricFrgTvAlertTypeTtl.text = hmAux_Trans["alert_type_ttl"]
-            act086HistoricFrgTvNextVerifyTtl.text = hmAux_Trans["next_cycle_ttl"]
+            //act086HistoricFrgTvNextVerifyTtl.text = hmAux_Trans["next_cycle_ttl"]
             act086HistoricFrgTvMeasureLbl.text = hmAux_Trans["measure_lbl"]
             act086HistoricFrgTvDeadlineLbl.text = hmAux_Trans["limit_date_lbl"]
             act086HistoricFrgTvInstructionTtl.text = hmAux_Trans["verification_instruction_ttl"]
