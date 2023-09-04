@@ -34,9 +34,9 @@ class MdProductSerialTpDeviceItemHistMat_Sql_002(
     and hist_mat.device_tp_code = '$device_tp_code'
     and hist_mat.item_check_seq = '$item_check_seq'
     and hist_mat.item_check_code = '$item_check_code'
-    and hist_mat.seq = '$seq';
-    and ap.${MD_All_ProductDao.SPARE_PART} = 1
-    ORDER BY ap.${MD_All_ProductDao.PRODUCT_DESC}
+    and hist_mat.seq = '$seq'
+    and item.${MD_All_ProductDao.SPARE_PART} = 1
+    ORDER BY item.${MD_All_ProductDao.PRODUCT_DESC} ;
     """.trimIndent()
 
 

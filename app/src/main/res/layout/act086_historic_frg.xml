@@ -162,7 +162,8 @@
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/act086_historic_frg_tv_alert_historic_ttl"
-                tools:itemCount="1"
+                android:scrollbars="vertical"
+                tools:itemCount="4"
                 tools:listitem="@layout/act086_historic_frg_alert_item" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 

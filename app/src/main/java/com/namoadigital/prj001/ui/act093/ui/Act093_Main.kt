@@ -8,12 +8,18 @@ import android.widget.Toast
 import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import com.namoa_digital.namoa_library.util.ToolBox
+import com.namoa_digital.namoa_library.view.BaseFragment
+import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.Act093MainBinding
 import com.namoadigital.prj001.databinding.Act093SerialInfoBinding
+import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_MANUAL_ALERT
+import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_NORMAL
+import com.namoadigital.prj001.ui.act086.frg_historic.Act086HistoricFrg
 import com.namoadigital.prj001.ui.act092.ui.Act092_Main
 import com.namoadigital.prj001.ui.act093.Act093Presenter
 import com.namoadigital.prj001.ui.act093.Act093Presenter.Companion.Act093PresenterFactory
 import com.namoadigital.prj001.ui.act093.Contract
+import com.namoadigital.prj001.ui.act093.model.DeviceTpModel
 import com.namoadigital.prj001.ui.act093.util.Act093Event
 import com.namoadigital.prj001.ui.base.BaseActivityFragMvp
 import com.namoadigital.prj001.util.Constant
@@ -23,7 +29,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class Act093_Main : BaseActivityFragMvp<Act093Presenter, Act093MainBinding>(), Contract.View {
+class Act093_Main : BaseActivityFragMvp<Act093Presenter, Act093MainBinding>(), Contract.View, ItemCheckListFragmentInteraction {
 
     private val serialInfoFrg: SerialInfoFrg by lazy{
         SerialInfoFrg.newInstance(
@@ -42,9 +48,14 @@ class Act093_Main : BaseActivityFragMvp<Act093Presenter, Act093MainBinding>(), C
 
     override fun onBackPressed() {
         super.onBackPressed()
-        Intent(applicationContext, Act092_Main::class.java).also {
-            startActivity(it)
-            finish()
+
+        if(binding.llSerialItemCheckInfo.root.visibility ==  View.VISIBLE ){
+            setSerialInfoFrag()
+        }else {
+            Intent(applicationContext, Act092_Main::class.java).also {
+                startActivity(it)
+                finish()
+            }
         }
     }
 
@@ -240,22 +251,28 @@ class Act093_Main : BaseActivityFragMvp<Act093Presenter, Act093MainBinding>(), C
     }
 
     override fun initVars() {
-        with(binding) {
-            setFrag(
-                type = serialInfoFrg,
-                sTag = SERIAL_INFO_FRG_TAG,
-                placeHolderId = binding.flSerialStrucutre.id,
-                replaceEvenCreated = true,
-                addToBackStack = false
-            )
-        }
+        setSerialInfoFrag()
         iniUIFooter(Constant.ACT093, hmAux_Trans)
+    }
+
+    private fun setSerialInfoFrag() {
+        with(binding) {
+            llSerialInfo.root.visibility = View.VISIBLE
+            llSerialItemCheckInfo.root.visibility = View.GONE
+        }
+        setFrag(
+            type = serialInfoFrg,
+            sTag = SERIAL_INFO_FRG_TAG,
+            placeHolderId = binding.flSerialStrucutre.id,
+            replaceEvenCreated = true,
+            addToBackStack = true
+        )
     }
 
     override fun initAction() {
     }
 
-    fun setFrag(type: SerialInfoFrg, sTag: String, @IdRes placeHolderId: Int, replaceEvenCreated: Boolean = false, addToBackStack: Boolean = true){
+    fun setFrag(type: BaseFragment, sTag: String, @IdRes placeHolderId: Int, replaceEvenCreated: Boolean = false, addToBackStack: Boolean = true){
         if (replaceEvenCreated || this.supportFragmentManager.findFragmentByTag(sTag) == null) {
             val ft = this.supportFragmentManager.beginTransaction()
             ft.replace(placeHolderId, type as Fragment, sTag)
@@ -268,6 +285,52 @@ class Act093_Main : BaseActivityFragMvp<Act093Presenter, Act093MainBinding>(), C
 
     companion object{
         const val SERIAL_INFO_FRG_TAG = "SERIAL_INFO_FRG_TAG"
+        const val ITEM_CHECK_INFO_FRG_TAG = "ITEM_CHECK_INFO_FRG_TAG"
+    }
+
+    override fun itemCheckSelected(position: Int, item: DeviceTpModel) {
+        val itemHist = presenter.getDeviceItemHist(context, item, hmAux_Trans)
+        val deviceItem = presenter.getDeviceItem(context, item)
+        val historicFrg =
+            Act086HistoricFrg.newInstance(
+                hmAux_Trans,
+                deviceItem!!.item_check_status,
+                deviceItem.next_cycle_measure?.toFloat(),
+                deviceItem.next_cycle_measure_date,
+                deviceItem.next_cycle_limit_date,
+                presenter.state.value.serialInfo.value_suffix,
+                deviceItem.verification_instruction,
+                null,
+                "",
+                itemHist!!
+            )
+
+
+        setItemCheckHistFrag(historicFrg, item)
+
+    }
+
+    private fun setItemCheckHistFrag(historicFrg: Act086HistoricFrg, item: DeviceTpModel) {
+        with(binding) {
+            llSerialInfo.root.visibility = View.GONE
+            llSerialItemCheckInfo.root.visibility = View.VISIBLE
+            llSerialItemCheckInfo.ivStatus.apply {
+                if(item.item_check_status == ITEM_CHECK_STATUS_MANUAL_ALERT){
+                    setColorFilter(resources.getColor(R.color.namoa_os_form_problem_red))
+                }else if(item.critical_item == 1 && item.item_check_status != ITEM_CHECK_STATUS_NORMAL){
+                    setColorFilter(resources.getColor(R.color.namoa_os_form_critical_forecast_yellow))
+                }
+            }
+            llSerialItemCheckInfo.itemOverlined.text = item.device_tp_desc
+            llSerialItemCheckInfo.itemTitle.text = item.item_check_desc
+        }
+        setFrag(
+            type = historicFrg,
+            sTag = ITEM_CHECK_INFO_FRG_TAG,
+            placeHolderId = binding.flSerialStrucutre.id,
+            replaceEvenCreated = true,
+            addToBackStack = false
+        )
     }
 
 }

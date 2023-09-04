@@ -362,7 +362,7 @@ class MD_Product_Serial_Tp_Device_Item_HistDao(
                         device_tp_code = getInt(getColumnIndex(DEVICE_TP_CODE)),
                         item_check_code = getInt(getColumnIndex(ITEM_CHECK_CODE)) ,
                         item_check_seq = getInt(getColumnIndex(ITEM_CHECK_SEQ)) ,
-                        seq =  getInt(getColumnIndex(ITEM_CHECK_SEQ)) ,
+                        seq =  getInt(getColumnIndex(SEQ)),
                         exec_type = getString(getColumnIndex(EXEC_TYPE)) ,
                         exec_value = getDouble(getColumnIndex(EXEC_VALUE)) ,
                         exec_date = getString(getColumnIndex(EXEC_DATE)) ,

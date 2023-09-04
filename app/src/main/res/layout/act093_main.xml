@@ -53,14 +53,22 @@
 
     </LinearLayout>
 
-    <FrameLayout
-        android:id="@+id/fl_serial_strucutre"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/act086_nv_main"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/ui_footer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout4"/>
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout4">
+
+        <FrameLayout
+            android:id="@+id/fl_serial_strucutre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </androidx.core.widget.NestedScrollView>
+
 
     <include
         android:id="@+id/ui_footer"

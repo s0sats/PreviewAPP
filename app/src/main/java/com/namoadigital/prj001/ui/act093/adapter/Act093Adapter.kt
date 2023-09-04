@@ -15,6 +15,7 @@ import com.namoadigital.prj001.ui.act093.model.DeviceTpModel
 class Act093Adapter constructor(
     private val source: List<DeviceTpModel>,
     private val hmAux: HMAux,
+    private val onItemSelected: (position: Int, item: DeviceTpModel) -> Unit,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
 
@@ -118,6 +119,9 @@ class Act093Adapter constructor(
         }
         if (holder is ViewHolder && item is DeviceViewItem.ContentItem) {
             holder.onBinding(item.item, item.color)
+            holder.itemView.setOnClickListener {
+                onItemSelected(position, item.item)
+            }
         }
     }
 

@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act093.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.namoa_digital.namoa_library.util.HMAux
+import com.namoa_digital.namoa_library.view.BaseFragment
 import com.namoadigital.prj001.databinding.FragmentSerialInfoBinding
 import com.namoadigital.prj001.extensions.formatForDisplay
 import com.namoadigital.prj001.ui.act093.adapter.Act093Adapter
@@ -22,14 +24,15 @@ import java.util.*
  * Use the [SerialInfoFrg.newInstance] factory method to
  * create an instance of this fragment.
  */
-class SerialInfoFrg : Fragment() {
+class SerialInfoFrg : BaseFragment() {
     private val binding: FragmentSerialInfoBinding by lazy {
         FragmentSerialInfoBinding.inflate(layoutInflater)
     }
 
     private lateinit var serialInfo: Act093State.SerialInfo
     private var list: List<DeviceTpModel> = mutableListOf()
-    private lateinit var hmAux_Trans: HMAux
+    private var _mFrgListener: ItemCheckListFragmentInteraction? = null
+    private val mFrgListener get() = _mFrgListener!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -168,7 +171,8 @@ class SerialInfoFrg : Fragment() {
 
             val mAdapter = Act093Adapter(
                 list,
-                hmAux_Trans
+                hmAux_Trans,
+                ::onItemSelected,
             )
 
             binding.recyclerViewList.apply {
@@ -181,6 +185,21 @@ class SerialInfoFrg : Fragment() {
             binding.recyclerViewList.apply {
                 visibility = View.GONE
             }
+        }
+
+    }
+
+    fun onItemSelected(position: Int,
+                       item: DeviceTpModel){
+        mFrgListener.itemCheckSelected(position, item)
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if(context is ItemCheckListFragmentInteraction){
+            _mFrgListener = context
+        }else{
+            throw RuntimeException("${context.toString()} must implement FrgFFInteraction")
         }
 
     }

@@ -312,20 +312,18 @@ class Act086MainPresenter(
                     ) as ArrayList
 
                     return geOsDeviceItemHists.map { hist ->
-                        val deviceItem = getDeviceItem(false)
-                        val itemHistMat = deviceItem?.let{ deviceItem ->
-                            mdProductSerialTpDeviceItemHistMatDao.getInputs(
-                                deviceItem.customer_code,
-                                deviceItem.serial_code,
-                                deviceItem.product_code,
-                                deviceItem.device_tp_code,
-                                deviceItem.item_check_seq,
-                                deviceItem.item_check_code,
-                                deviceItem.item_check_seq,
+                        //
+                        val itemHistMat = mdProductSerialTpDeviceItemHistMatDao.getInputs(
+                                hist.customer_code,
+                                hist.serial_code,
+                                hist.product_code,
+                                hist.device_tp_code,
+                                hist.item_check_seq,
+                                hist.item_check_code,
+                                hist.seq,
                             )
-                        }
-                        val itemHist = deviceItem?.let{ deviceItem ->
-                            mdProductSerialTpDeviceItemHistDao.getByString(
+                        //
+                        val itemHist = mdProductSerialTpDeviceItemHistDao.getByString(
                                 MD_Product_Serial_Tp_Device_Item_Hist_Sql_001(
                                     hist.customer_code,
                                     hist.product_code.toLong(),
@@ -336,9 +334,8 @@ class Act086MainPresenter(
                                     hist.seq,
                                 ).toSqlQuery()
                             )
-                        }
                         //
-                        val histPhotos = mutableListOf<String>()
+                        val deviceItem = getDeviceItem(false)
                         //
                         //Convert para lista do adapter
                         Act086HistoricModel(

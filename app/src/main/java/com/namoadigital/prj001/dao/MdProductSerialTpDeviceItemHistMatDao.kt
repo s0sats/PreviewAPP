@@ -396,6 +396,6 @@ class MdProductSerialTpDeviceItemHistMatDao(
                 itemCheckCode,
                 seq
             ).toSqlQuery()
-        ).mappingToHistoricMaterialInputs()
+        ).mappingToHistoricMaterialInputs().sortedBy { it.materialDesc }
     }
 }

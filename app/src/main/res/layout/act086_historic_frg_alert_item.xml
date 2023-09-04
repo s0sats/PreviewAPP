@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_marginTop="8dp"
     app:cardBackgroundColor="@color/padrao_TRANSPARENT"
     app:cardElevation="0dp">
@@ -16,130 +16,184 @@
 
         <ImageView
             android:id="@+id/act086_historic_frg_alert_item_iv_last_adjust"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/ic_outline_report_problem_24_black"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/namoa_os_form_problem_red" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/act086_historic_frg_alert_item_cl_last_adjust_data"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/act086_historic_frg_alert_item_iv_last_adjust"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/act086_historic_frg_alert_item_tv_adjust_lbl"
+                style="@style/TextAppearance.Material3.LabelMedium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginStart="16dp"
-                android:src="@drawable/ic_outline_report_problem_24_black"
+                android:textColor="@color/m3_namoa_onSurfaceVariant"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/namoa_os_form_problem_red" />
+                tools:text="Continua com problema" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/act086_historic_frg_alert_item_cl_last_adjust_data"
+            <TextView
+                android:id="@+id/act086_historic_frg_alert_item_tv_adjust_date"
+                style="@style/TextAppearance.Material3.BodyLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="10/08/2021"
+                android:textColor="@color/m3_namoa_onSurfaceVariant"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/act086_historic_frg_alert_item_tv_adjust_lbl"
+                app:layout_constraintWidth_default="wrap" />
+
+            <TextView
+                android:id="@+id/act086_historic_frg_alert_item_tv_last_measure_val"
+                style="@style/TextAppearance.Material3.BodyLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="1094h"
+                android:textColor="@color/m3_namoa_onSurfaceVariant"
+                app:layout_constraintBottom_toBottomOf="@+id/act086_historic_frg_alert_item_tv_adjust_date"
+                app:layout_constraintStart_toEndOf="@+id/act086_historic_frg_alert_item_tv_adjust_date"
+                app:layout_constraintTop_toTopOf="@+id/act086_historic_frg_alert_item_tv_adjust_date"
+                app:layout_constraintWidth_default="wrap" />
+
+            <TextView
+                android:id="@+id/act086_historic_frg_alert_item_tv_comment"
+                style="@style/TextAppearance.Material3.BodyMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/m3_namoa_onSurfaceVariant"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/act086_historic_frg_alert_item_tv_adjust_date"
+                tools:text="Ajuste feito nos campos" />
+
+
+            <TextView
+                android:id="@+id/act086_historic_frg_alert_item_tv_material_bl"
+                style="@style/TextViewGray9Padding"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginStart="16dp"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/act086_historic_frg_alert_item_iv_last_adjust"
-                >
+                android:layout_marginBottom="8dp"
+                android:text="Foi aplicado insumo?"
+                app:layout_constraintBottom_toTopOf="@id/frg_alert_item_cl_photo"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/act086_historic_frg_alert_item_tv_comment"
+                app:layout_constraintVertical_bias="0.0" />
 
-                <TextView
-                    android:id="@+id/act086_historic_frg_alert_item_tv_adjust_lbl"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/TextAppearance.Material3.LabelMedium"
-                    android:textColor="@color/m3_namoa_onSurfaceVariant"
-                    tools:text="Continua com problema"
+            <TextView
+                android:id="@+id/frg_alert_item_tv_material_list_item"
+                style="@style/TextViewGray9Padding"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="Foi aplicado insumo?"
+                app:layout_constraintBottom_toTopOf="@id/frg_alert_item_cl_photo"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/act086_historic_frg_alert_item_tv_material_bl" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/frg_alert_item_cl_photo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/frg_alert_item_cv_photo1"
+                    android:layout_width="145dp"
+                    android:layout_height="145dp"
+                    app:cardCornerRadius="32dp"
+                    app:cardElevation="0dp"
+                    app:layout_constraintEnd_toStartOf="@+id/frg_alert_item_cv_photo2"
+                    app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent">
 
-                <TextView
-                    android:id="@+id/act086_historic_frg_alert_item_tv_adjust_date"
-                    style="@style/TextAppearance.Material3.BodyLarge"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/m3_namoa_onSurfaceVariant"
-                    android:text="10/08/2021"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/act086_historic_frg_alert_item_tv_adjust_lbl"
-                    app:layout_constraintWidth_default="wrap" />
-
-                <TextView
-                    android:id="@+id/act086_historic_frg_alert_item_tv_last_measure_val"
-                    style="@style/TextAppearance.Material3.BodyLarge"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/m3_namoa_onSurfaceVariant"
-                    android:layout_marginStart="8dp"
-                    android:text="1094h"
-                    app:layout_constraintBottom_toBottomOf="@+id/act086_historic_frg_alert_item_tv_adjust_date"
-                    app:layout_constraintStart_toEndOf="@+id/act086_historic_frg_alert_item_tv_adjust_date"
-                    app:layout_constraintTop_toTopOf="@+id/act086_historic_frg_alert_item_tv_adjust_date"
-                    app:layout_constraintWidth_default="wrap" />
-
-                <TextView
-                    android:id="@+id/act086_historic_frg_alert_item_tv_comment"
-                    style="@style/TextAppearance.Material3.BodyMedium"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/m3_namoa_onSurfaceVariant"
-                    tools:text="Ajuste feito nos campos"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/act086_historic_frg_alert_item_tv_adjust_date" />
-
-
-                <TextView
-                    android:id="@+id/act086_historic_frg_alert_item_tv_material_bl"
-                    style="@style/TextViewGray9Padding"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="Foi aplicado insumo?"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/act086_historic_frg_alert_item_tv_comment"
-                    app:layout_constraintBottom_toTopOf="@id/frg_alert_item_cl_photo"
-                    />
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/frg_alert_item_cl_photo"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    >
                     <ImageView
                         android:id="@+id/frg_alert_item_iv_photo1"
-                        android:layout_width="156dp"
-                        android:layout_height="156dp"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        />
+                        android:layout_width="145dp"
+                        android:layout_height="145dp"
+                        android:scaleType="centerCrop" />
+                </androidx.cardview.widget.CardView>
 
-                     <ImageView
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/frg_alert_item_cv_photo2"
+                    android:layout_width="145dp"
+                    android:layout_height="145dp"
+                    android:layout_marginLeft="8dp"
+                    app:cardCornerRadius="32dp"
+                    app:cardElevation="0dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/frg_alert_item_cv_photo1"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <ImageView
                         android:id="@+id/frg_alert_item_iv_photo2"
-                        android:layout_width="156dp"
-                        android:layout_height="156dp"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/frg_alert_item_iv_photo1"
-                         app:layout_constraintEnd_toEndOf="parent"
-                        />
+                        android:layout_width="145dp"
+                        android:layout_height="145dp"
+                        android:scaleType="centerCrop" />
+
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/frg_alert_item_cv_photo3"
+                    android:layout_width="145dp"
+                    android:layout_height="145dp"
+                    android:layout_marginTop="8dp"
+                    app:cardCornerRadius="32dp"
+                    app:cardElevation="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/frg_alert_item_cv_photo4"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/frg_alert_item_cv_photo1">
+
                     <ImageView
                         android:id="@+id/frg_alert_item_iv_photo3"
-                        android:layout_width="156dp"
-                        android:layout_height="156dp"
-                        app:layout_constraintTop_toBottomOf="@id/frg_alert_item_iv_photo1"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        />
+                        android:layout_width="145dp"
+                        android:layout_height="145dp"
+                        android:scaleType="centerCrop" />
+                </androidx.cardview.widget.CardView>
 
-                     <ImageView
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/frg_alert_item_cv_photo4"
+                    android:layout_width="145dp"
+                    android:layout_height="145dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    app:cardCornerRadius="32dp"
+                    app:cardElevation="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/frg_alert_item_cv_photo3"
+                    app:layout_constraintTop_toBottomOf="@id/frg_alert_item_cv_photo2">
+
+                    <ImageView
                         android:id="@+id/frg_alert_item_iv_photo4"
-                        android:layout_width="156dp"
-                        android:layout_height="156dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/frg_alert_item_iv_photo1"
-                         app:layout_constraintTop_toBottomOf="@id/frg_alert_item_iv_photo2"
-                         app:layout_constraintEnd_toEndOf="parent"
-                        />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
+                        android:layout_width="145dp"
+                        android:layout_height="145dp"
+                        android:scaleType="centerCrop" />
+                </androidx.cardview.widget.CardView>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>

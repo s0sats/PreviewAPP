@@ -1,6 +1,10 @@
 package com.namoadigital.prj001.model
 
+import android.content.Context
 import com.google.gson.annotations.SerializedName
+import com.namoa_digital.namoa_library.util.HMAux
+import com.namoadigital.prj001.R
+import com.namoadigital.prj001.util.ToolBox_Inf
 
 class MD_Product_Serial_Tp_Device_Item_Hist(
     @SerializedName("seq") val seq: Int,
@@ -80,6 +84,46 @@ class MD_Product_Serial_Tp_Device_Item_Hist(
         this.device_tp_code = item.device_tp_code
         this.item_check_code = item.item_check_code
         this.item_check_seq = item.item_check_seq
+    }
+
+    fun getIcon() = when(exec_type){
+        GeOsDeviceItem.EXEC_TYPE_FIXED -> Pair(R.drawable.ic_build_black_24dp, R.color.namoa_os_form_done_action_blue)
+
+        GeOsDeviceItem.EXEC_TYPE_ADJUST -> Pair(R.drawable.ic_build_black_24dp, R.color.namoa_color_gray_8)
+
+        else -> Pair(R.drawable.ic_outline_report_problem_24_black, R.color.namoa_os_form_problem_red)
+    }
+
+    fun getTitleFormated(hmAux: HMAux) = when(exec_type) {
+        GeOsDeviceItem.EXEC_TYPE_FIXED -> if (change_adjust == 1) {
+            hmAux["change_lbl"]
+        } else {
+            hmAux["fixed_lbl"]
+        }
+
+        GeOsDeviceItem.EXEC_TYPE_ALERT -> hmAux["still_with_problem_lbl"]
+
+        GeOsDeviceItem.EXEC_TYPE_ADJUST -> hmAux["adjust_lbl"]
+
+        else -> ""
+    }
+
+    fun getDate(context: Context) = ToolBox_Inf.millisecondsToString(
+        ToolBox_Inf.dateToMilliseconds(
+            exec_date
+        ),
+        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+    )
+
+    fun getMaterialLbl(hmAux: HMAux) =
+        when(exec_type){
+            GeOsDeviceItem.EXEC_TYPE_ALERT -> hmAux["material_requested_lbl"]
+            else -> hmAux["material_applied_lbl"]
+        }
+
+    fun hasMaterialApplied(hmAux: HMAux) = when(exec_material){
+        1 -> hmAux["YES"]
+        else -> hmAux["NO"]
     }
 
     companion object{
