@@ -29,7 +29,8 @@ class SerialInfoFrg : BaseFragment() {
         FragmentSerialInfoBinding.inflate(layoutInflater)
     }
 
-    private lateinit var serialInfo: Act093State.SerialInfo
+    var serialInfo: Act093State.SerialInfo? = null
+
     private var list: List<DeviceTpModel> = mutableListOf()
     private var _mFrgListener: ItemCheckListFragmentInteraction? = null
     private val mFrgListener get() = _mFrgListener!!
@@ -37,8 +38,8 @@ class SerialInfoFrg : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            hmAux_Trans =  HMAux.getHmAuxFromHashMap(it.getSerializable(ConstantBaseApp.MAIN_HMAUX_TRANS_KEY) as HashMap<String?, String?>)
-            serialInfo = it.getSerializable(Act093State.SerialInfo::javaClass.name) as Act093State.SerialInfo
+            hmAux_Trans =
+                HMAux.getHmAuxFromHashMap(it.getSerializable(ConstantBaseApp.MAIN_HMAUX_TRANS_KEY) as HashMap<String?, String?>)
         }
     }
 
@@ -56,100 +57,102 @@ class SerialInfoFrg : BaseFragment() {
 
     fun initSerialInfoHeader() {
         with(binding) {
-
-            if (serialInfo.lastUpdateSerial.isNullOrEmpty()) {
-                lastUpdateSerial.visibility = View.GONE
-            } else {
-                lastUpdateSerial.apply {
-                    text = "${hmAux_Trans["last_update_serial_lbl"]}: ${serialInfo.lastUpdateSerial}"
-                    visibility = View.VISIBLE
-                }
-            }
-
-            if (serialInfo.last_cycle_value != null) {
-                titleCycle.text = hmAux_Trans["last_cycle_lbl"]
-                titleCycle.visibility = View.VISIBLE
-            } else {
-                titleCycle.visibility = View.GONE
-            }
-
-            if (serialInfo.last_measure_value != null) {
-                titleMeasure.text = hmAux_Trans["last_measure_lbl"]
-                titleMeasure.visibility = View.VISIBLE
-            } else {
-                titleMeasure.visibility = View.GONE
-            }
-            val measureFormatted = if (serialInfo.last_measure_value != null) {
-                if (!serialInfo.last_measure_date.isNullOrEmpty()) {
-                    "${
-                        ToolBox_Inf.convertDoubleToBigDecimalString(
-                            serialInfo.last_measure_value!!,
-                            true
-                        )
-                    } ${serialInfo.value_suffix.formatForDisplay()} (${serialInfo.last_measure_date})"
+            serialInfo?.let {
+                if (it.lastUpdateSerial.isNullOrEmpty()) {
+                    lastUpdateSerial.visibility = View.GONE
                 } else {
-                    "${
-                        ToolBox_Inf.convertDoubleToBigDecimalString(
-                            serialInfo.last_measure_value!!,
-                            true
-                        )
-                    } ${serialInfo.value_suffix.formatForDisplay()}"
+                    lastUpdateSerial.apply {
+                        text =
+                            "${hmAux_Trans["last_update_serial_lbl"]}: ${it.lastUpdateSerial}"
+                        visibility = View.VISIBLE
+                    }
                 }
-            } else {
-                null
-            }
 
-            if (measureFormatted.isNullOrEmpty()) {
-                measureValue.visibility = View.GONE
-            } else {
-                measureValue.apply {
-                    text = measureFormatted
-                    visibility = View.VISIBLE
+                if (it.last_cycle_value != null) {
+                    titleCycle.text = hmAux_Trans["last_cycle_lbl"]
+                    titleCycle.visibility = View.VISIBLE
+                } else {
+                    titleCycle.visibility = View.GONE
                 }
-            }
 
-            linearLayout6.visibility = if (measureFormatted.isNullOrEmpty()) {
-                View.GONE
-            } else {
-                View.VISIBLE
-            }
+                if (it.last_measure_value != null) {
+                    titleMeasure.text = hmAux_Trans["last_measure_lbl"]
+                    titleMeasure.visibility = View.VISIBLE
+                } else {
+                    titleMeasure.visibility = View.GONE
+                }
+                val measureFormatted = if (it.last_measure_value != null) {
+                    if (!it.last_measure_date.isNullOrEmpty()) {
+                        "${
+                            ToolBox_Inf.convertDoubleToBigDecimalString(
+                                it.last_measure_value!!,
+                                true
+                            )
+                        } ${it.value_suffix.formatForDisplay()} (${it.last_measure_date})"
+                    } else {
+                        "${
+                            ToolBox_Inf.convertDoubleToBigDecimalString(
+                                it.last_measure_value!!,
+                                true
+                            )
+                        } ${it.value_suffix.formatForDisplay()}"
+                    }
+                } else {
+                    null
+                }
 
-            linearLayout5.visibility =
-                if (serialInfo.last_cycle_value == null
-                    || serialInfo.last_cycle_value == 0.0f
-                ) {
+                if (measureFormatted.isNullOrEmpty()) {
+                    measureValue.visibility = View.GONE
+                } else {
+                    measureValue.apply {
+                        text = measureFormatted
+                        visibility = View.VISIBLE
+                    }
+                }
+
+                linearLayout6.visibility = if (measureFormatted.isNullOrEmpty()) {
                     View.GONE
                 } else {
                     View.VISIBLE
                 }
 
+                linearLayout5.visibility =
+                    if (it.last_cycle_value == null
+                        || it.last_cycle_value == 0.0f
+                    ) {
+                        View.GONE
+                    } else {
+                        View.VISIBLE
+                    }
 
-            val cycleFormatted = if (serialInfo.last_cycle_value != null) {
-                if (!serialInfo.last_cycle_date.isNullOrEmpty()) {
-                    "${
-                        ToolBox_Inf.convertDoubleToBigDecimalString(
-                            serialInfo.last_cycle_value!!.toDouble(),
-                            true
-                        )
-                    } ${serialInfo.value_suffix.formatForDisplay()}  (${serialInfo.last_cycle_date})"
+
+                val cycleFormatted = if (it.last_cycle_value != null) {
+                    if (!it.last_cycle_date.isNullOrEmpty()) {
+                        "${
+                            ToolBox_Inf.convertDoubleToBigDecimalString(
+                                it.last_cycle_value!!.toDouble(),
+                                true
+                            )
+                        } ${it.value_suffix.formatForDisplay()}  (${it.last_cycle_date})"
+                    } else {
+                        "${
+                            ToolBox_Inf.convertDoubleToBigDecimalString(
+                                it.last_cycle_value!!.toDouble(),
+                                true
+                            )
+                        } ${it.value_suffix.formatForDisplay()}"
+                    }
                 } else {
-                    "${
-                        ToolBox_Inf.convertDoubleToBigDecimalString(
-                            serialInfo.last_cycle_value!!.toDouble(),
-                            true
-                        )
-                    } ${serialInfo.value_suffix.formatForDisplay()}"
+                    null
                 }
-            } else {
-                null
-            }
 
-            if (cycleFormatted.isNullOrEmpty()) {
-                cycleValue.visibility = View.GONE
-            } else {
-                cycleValue.apply {
-                    text = cycleFormatted
-                    visibility = View.VISIBLE
+                if (cycleFormatted.isNullOrEmpty()) {
+                    cycleValue.visibility = View.GONE
+                } else {
+                    cycleValue.apply {
+                        text = cycleFormatted
+                        visibility = View.VISIBLE
+                    }
                 }
             }
         }
@@ -189,19 +192,26 @@ class SerialInfoFrg : BaseFragment() {
 
     }
 
-    fun onItemSelected(position: Int,
-                       item: DeviceTpModel){
+    fun onItemSelected(
+        position: Int,
+        item: DeviceTpModel
+    ) {
         mFrgListener.itemCheckSelected(position, item)
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if(context is ItemCheckListFragmentInteraction){
+        if (context is ItemCheckListFragmentInteraction) {
             _mFrgListener = context
-        }else{
+        } else {
             throw RuntimeException("${context.toString()} must implement FrgFFInteraction")
         }
 
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        _mFrgListener = null
     }
 
     fun setItemsList(list: List<DeviceTpModel>) {
@@ -221,13 +231,11 @@ class SerialInfoFrg : BaseFragment() {
         //
         @JvmStatic
         fun newInstance(
-            hmAux_Trans: HMAux,
-            serialInfo: Act093State.SerialInfo
+            hmAux_Trans: HMAux
         ) =
             SerialInfoFrg().apply {
                 arguments = Bundle().apply {
                     putSerializable(ConstantBaseApp.MAIN_HMAUX_TRANS_KEY, hmAux_Trans)
-                    putSerializable(Act093State.SerialInfo::javaClass.name, serialInfo)
                 }
             }
     }

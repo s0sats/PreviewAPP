@@ -37,7 +37,13 @@ class MD_Product_Serial_Tp_Device_Item_Hist(
     @SerializedName("item_check_seq")
     var item_check_seq: Int = -1
         private set
+    @SerializedName("material_hist")
+    var material_hist = mutableListOf<MdProductSerialTpDeviceItemHistMat>()
+        private set
 
+    init {
+        material_hist = mutableListOf<MdProductSerialTpDeviceItemHistMat>()
+    }
     constructor(
         customer_code: Long,
         product_code: Long,
@@ -55,7 +61,8 @@ class MD_Product_Serial_Tp_Device_Item_Hist(
         exec_photo3: String?,
         exec_photo4: String?,
         exec_material: Int,
-        change_adjust: Int
+        change_adjust: Int,
+
     ) : this(
         seq,
         exec_type,
@@ -84,6 +91,9 @@ class MD_Product_Serial_Tp_Device_Item_Hist(
         this.device_tp_code = item.device_tp_code
         this.item_check_code = item.item_check_code
         this.item_check_seq = item.item_check_seq
+        material_hist.forEach {
+            it.setPk(this)
+        }
     }
 
     fun getIcon() = when(exec_type){

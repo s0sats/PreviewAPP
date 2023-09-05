@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act086
 
 import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -20,6 +21,7 @@ import com.namoadigital.prj001.model.Act086HistoricModel
 import com.namoadigital.prj001.model.GeOsDeviceItem
 import com.namoadigital.prj001.ui.act011.Act011_Main
 import com.namoadigital.prj001.ui.act086.frg_historic.Act086HistoricFrg
+import com.namoadigital.prj001.ui.act086.frg_historic.PhotoSelection
 import com.namoadigital.prj001.ui.act086.frg_verification.Act086VerificationFrg
 import com.namoadigital.prj001.ui.act090.Act090Main
 import com.namoadigital.prj001.util.Constant
@@ -32,7 +34,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 
-class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
+class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelection {
     private lateinit var binding: Act086MainContentBinding
     private var bundle: Bundle = Bundle()
     private var bundleDevice: Bundle = Bundle()
@@ -470,7 +472,11 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
     }
 
     override fun onBackPressed() {
-        mPresenter.onBackPressedClicked(supportFragmentManager,deviceItem)
+        if(binding.clImageZoom.visibility == View.VISIBLE){
+            binding.showHistPhoto(false)
+        } else {
+            mPresenter.onBackPressedClicked(supportFragmentManager,deviceItem)
+        }
     }
 
     override fun callAct011() {
@@ -506,5 +512,20 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
         const val HISTORIC_FRG_TAG = "HISTORIC_FRG_TAG"
         const val PARAM_PREFIX_PHOTO = "PARAM_PREFIX_PHOTO"
         const val PARAM_NEW_VERIFICATION = "PARAM_NEW_VERIFICATION"
+    }
+
+    override fun onPhotoSelection(drawable: Drawable) {
+        with(binding){
+            showHistPhoto(true)
+            ivImageZoom.setImageDrawable(drawable)
+            ivImageClose.setOnClickListener {
+                showHistPhoto(false)
+            }
+        }
+    }
+
+    private fun Act086MainContentBinding.showHistPhoto(show: Boolean) {
+        clImageZoom.visibility = if(show) View.VISIBLE else  View.GONE
+        act086NvMain.visibility = if(show) View.INVISIBLE else  View.VISIBLE
     }
 }

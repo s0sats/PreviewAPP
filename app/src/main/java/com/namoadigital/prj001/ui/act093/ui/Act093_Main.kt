@@ -2,7 +2,10 @@ package com.namoadigital.prj001.ui.act093.ui
 
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.annotation.IdRes
@@ -15,6 +18,7 @@ import com.namoadigital.prj001.databinding.Act093SerialInfoBinding
 import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_MANUAL_ALERT
 import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_NORMAL
 import com.namoadigital.prj001.ui.act086.frg_historic.Act086HistoricFrg
+import com.namoadigital.prj001.ui.act086.frg_historic.PhotoSelection
 import com.namoadigital.prj001.ui.act092.ui.Act092_Main
 import com.namoadigital.prj001.ui.act093.Act093Presenter
 import com.namoadigital.prj001.ui.act093.Act093Presenter.Companion.Act093PresenterFactory
@@ -29,12 +33,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class Act093_Main : BaseActivityFragMvp<Act093Presenter, Act093MainBinding>(), Contract.View, ItemCheckListFragmentInteraction {
+class Act093_Main : BaseActivityFragMvp<Act093Presenter, Act093MainBinding>(), Contract.View, ItemCheckListFragmentInteraction,
+    PhotoSelection {
 
     private val serialInfoFrg: SerialInfoFrg by lazy{
         SerialInfoFrg.newInstance(
-            hmAux_Trans,
-            presenter.state.value.serialInfo
+            hmAux_Trans
         )
     }
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,11 +50,21 @@ class Act093_Main : BaseActivityFragMvp<Act093Presenter, Act093MainBinding>(), C
         }
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menu.add(0, 1, Menu.NONE, resources.getString(R.string.app_name))
+        menu.getItem(0).icon = resources.getDrawable(R.mipmap.ic_namoa)
+        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+        return true
+    }
 
+    override fun onBackPressed() {
         if(binding.llSerialItemCheckInfo.root.visibility ==  View.VISIBLE ){
-            setSerialInfoFrag()
+            if(binding.clImageZoom.visibility == View.VISIBLE){
+                binding.showHistPhoto(false)
+            } else {
+                setSerialInfoFrag()
+            }
         }else {
             Intent(applicationContext, Act092_Main::class.java).also {
                 startActivity(it)
@@ -93,11 +107,15 @@ class Act093_Main : BaseActivityFragMvp<Act093Presenter, Act093MainBinding>(), C
                 }
 
                 is Act093Event.OnUpdateList -> {
+                    //
+                    serialInfoFrg.serialInfo = presenter.state.value.serialInfo
+                    serialInfoFrg.initSerialInfoHeader()
+                    //
                     serialInfoFrg.setItemsList(presenter.state.value.list)
+                    //
                 }
 
                 is Act093Event.OnLoading -> {
-                    initSerialFrg()
                     recyclerViewLoading()
                 }
 
@@ -111,10 +129,6 @@ class Act093_Main : BaseActivityFragMvp<Act093Presenter, Act093MainBinding>(), C
 
             }
         }
-    }
-
-    private fun initSerialFrg() {
-
     }
 
     private fun openDialog(
@@ -234,6 +248,7 @@ class Act093_Main : BaseActivityFragMvp<Act093Presenter, Act093MainBinding>(), C
                 }
             }
         }
+        //
         initVars()
     }
 
@@ -260,12 +275,13 @@ class Act093_Main : BaseActivityFragMvp<Act093Presenter, Act093MainBinding>(), C
             llSerialInfo.root.visibility = View.VISIBLE
             llSerialItemCheckInfo.root.visibility = View.GONE
         }
+        //
         setFrag(
             type = serialInfoFrg,
             sTag = SERIAL_INFO_FRG_TAG,
             placeHolderId = binding.flSerialStrucutre.id,
             replaceEvenCreated = true,
-            addToBackStack = true
+            addToBackStack = false
         )
     }
 
@@ -331,6 +347,22 @@ class Act093_Main : BaseActivityFragMvp<Act093Presenter, Act093MainBinding>(), C
             replaceEvenCreated = true,
             addToBackStack = false
         )
+    }
+
+    override fun onPhotoSelection(drawable: Drawable) {
+        with(binding){
+            showHistPhoto(true)
+            ivImageZoom.setImageDrawable(drawable)
+            ivImageClose.setOnClickListener {
+                showHistPhoto(false)
+            }
+        }
+    }
+
+    private fun Act093MainBinding.showHistPhoto(show: Boolean) {
+        clImageZoom.visibility = if(show) View.VISIBLE else  View.GONE
+        act093NvMain.visibility = if(show) View.INVISIBLE else  View.VISIBLE
+        linearLayout4.visibility = if(show) View.INVISIBLE else  View.VISIBLE
     }
 
 }

@@ -11,6 +11,7 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
 import com.namoadigital.prj001.model.DaoObjReturn
 import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device_Item_Hist
+import com.namoadigital.prj001.model.MdProductSerialTpDeviceItemHistMat
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -171,6 +172,13 @@ class MD_Product_Serial_Tp_Device_Item_HistDao(
                     curAction = DaoObjReturn.INSERT
                     db.insertOrThrow(TABLE, null, toContentValuesMapper.map(mdProductSerialTpDeviceItemHist))
                 }
+                if(mdProductSerialTpDeviceItemHist.material_hist != null && mdProductSerialTpDeviceItemHist.material_hist.isNotEmpty()){
+                    daoObjReturn = tryAddUpdateHistMat(mdProductSerialTpDeviceItemHist.material_hist, db)
+                    //Se erro durante insert, dispara exception abortando o processamento.
+                    if (daoObjReturn.hasError()) {
+                        throw java.lang.Exception(daoObjReturn.rawMessage)
+                    }
+                }
             }
             //
             if(dbInstance == null) {
@@ -209,6 +217,24 @@ class MD_Product_Serial_Tp_Device_Item_HistDao(
         }
         //
         return daoObjReturn
+    }
+
+    private fun tryAddUpdateHistMat(
+        materialHist: MutableList<MdProductSerialTpDeviceItemHistMat>,
+        db: SQLiteDatabase?
+    ): DaoObjReturn {
+        return getItemHistMatDao().addUpdate(materialHist, false, db)
+    }
+
+    /**
+     * Fun que retorna o dao do historico.
+     */
+    private fun getItemHistMatDao(): MdProductSerialTpDeviceItemHistMatDao {
+        return MdProductSerialTpDeviceItemHistMatDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        )
     }
 
     override fun addUpdate(sQuery: String?) {

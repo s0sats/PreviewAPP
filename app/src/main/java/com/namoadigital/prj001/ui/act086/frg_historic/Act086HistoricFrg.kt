@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act086.frg_historic
 
+import android.content.Context
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -18,6 +20,7 @@ import com.namoadigital.prj001.databinding.Act086HistoricFrgBinding
 import com.namoadigital.prj001.model.Act086HistoricModel
 import com.namoadigital.prj001.model.GeOsDeviceItem
 import com.namoadigital.prj001.model.GeOsDeviceItemHist
+import com.namoadigital.prj001.ui.act093.ui.ItemCheckListFragmentInteraction
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -33,9 +36,14 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
     }
     private val alertAdapter: Act086HistoricAdapter by lazy{
         Act086HistoricAdapter(
-            alertList
+            alertList,
+            ::onPhotoSelected
         )
     }
+    //
+    private var _mFrgListener: PhotoSelection? = null
+    private val mFrgListener get() = _mFrgListener!!
+    //
     private var alertList = mutableListOf<Act086HistoricModel>()
     private lateinit var itemHist: ArrayList<GeOsDeviceItemHist>
     private var itemCheckStatus: String? = null
@@ -275,6 +283,24 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
         }
     }
 
+    fun onPhotoSelected(drawable: Drawable) {
+        mFrgListener.onPhotoSelection(drawable)
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is PhotoSelection) {
+            _mFrgListener = context
+        } else {
+            throw RuntimeException("${context.toString()} must implement PhotoSelection")
+        }
+
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        _mFrgListener = null
+    }
 
 /*    private fun getMaintenanceLbl() : String? {
         var label = hmAux_Trans["fixed_lbl"]
@@ -349,3 +375,4 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
         )
     }
 }
+

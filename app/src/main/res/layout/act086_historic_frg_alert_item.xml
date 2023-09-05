@@ -81,7 +81,7 @@
 
 
             <TextView
-                android:id="@+id/act086_historic_frg_alert_item_tv_material_bl"
+                android:id="@+id/act086_historic_frg_alert_item_tv_material_request_lbl"
                 style="@style/TextViewGray9Padding"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -93,7 +93,7 @@
                 app:layout_constraintVertical_bias="0.0" />
 
             <TextView
-                android:id="@+id/frg_alert_item_tv_material_list_item"
+                android:id="@+id/frg_alert_item_tv_material_request_list_item"
                 style="@style/TextViewGray9Padding"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -101,7 +101,29 @@
                 android:text="Foi aplicado insumo?"
                 app:layout_constraintBottom_toTopOf="@id/frg_alert_item_cl_photo"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/act086_historic_frg_alert_item_tv_material_bl" />
+                app:layout_constraintTop_toBottomOf="@+id/act086_historic_frg_alert_item_tv_material_request_lbl" />
+            <TextView
+                android:id="@+id/act086_historic_frg_alert_item_tv_material_applied_lbl"
+                style="@style/TextViewGray9Padding"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="Foi aplicado insumo?"
+                app:layout_constraintBottom_toTopOf="@id/frg_alert_item_cl_photo"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/act086_historic_frg_alert_item_tv_comment"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/frg_alert_item_tv_material_applied_list_item"
+                style="@style/TextViewGray9Padding"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="Foi aplicado insumo?"
+                app:layout_constraintBottom_toTopOf="@id/frg_alert_item_cl_photo"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/act086_historic_frg_alert_item_tv_material_applied_lbl" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/frg_alert_item_cl_photo"
