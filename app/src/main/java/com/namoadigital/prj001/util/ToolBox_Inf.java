@@ -9376,6 +9376,20 @@ public class ToolBox_Inf {
         return convertedValue;
     }
 
+    public static String getFormattedLastMeasureInfo(
+            Float lastFixed,
+            String measureValueSufix,
+            Integer restrictionDecimal
+    ){
+        String lastFixedFormatted = ToolBox_Inf.convertFloatToBigDecimalString(lastFixed, true);
+
+        if(measureValueSufix != null){
+            lastFixedFormatted += " " + measureValueSufix;
+        }
+
+        return lastFixedFormatted;
+    }
+
     public static String convertDoubleToBigDecimalString(double valor, boolean applyDecimalSeparatorByLocale){
         String convertedValue =  new DecimalFormat("#.####").format(new BigDecimal(String.valueOf(valor)));
         if(applyDecimalSeparatorByLocale){

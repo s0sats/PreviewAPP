@@ -263,6 +263,11 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements
         customFormCodeDesc = "";
         isSoForm = 0;
         mPresenter.getMD_Products();
+        if (!isFinalizePlusNewProcess()) {
+            mFrgSerialSearch.setBtn_Option_02_Visibility(View.VISIBLE);
+            mFrgSerialSearch.setBtn_Option_02_BackGround(R.drawable.namoa_cell_3_states);
+            mFrgSerialSearch.setBtn_Option_02_Label(hmAux_Trans.get("btn_start_action"));
+        }
     }
 
     private boolean isFinalizePlusNewProcess() {

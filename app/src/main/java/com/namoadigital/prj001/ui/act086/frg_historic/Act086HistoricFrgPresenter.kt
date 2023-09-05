@@ -21,20 +21,7 @@ class Act086HistoricFrgPresenter(
         restrictionDecimal: Int?
     ): MutableList<Act086HistoricModel> {
 
-        val toAlertList = itemHist.map { hist ->
-            //Convert para lista do adapter
-            Act086HistoricModel(
-                icon = hist.getIcon(),
-                titleLbl = hist.getTitleFormated(hmAuxTrans) ?: "",
-                date = hist.getDate(context),
-                measureLbl = hmAuxTrans["last_measure_lbl"]!!,
-                measure = getFormattedLastMeasureInfo(hist.exec_value, measureValueSufix, restrictionDecimal),
-                materialLbl = hist.getMaterialLbl(hmAuxTrans) ?: "",
-                material = hist.hasMaterialApplied(hmAuxTrans) ?: "",
-                comment = hist.exec_comment,
-                exec_type = hist.exec_type
-            )
-        }
+        val toAlertList = mutableListOf<Act086HistoricModel>()
         //
         if(toAlertList.isNotEmpty()){
             toAlertList.filter {
@@ -45,7 +32,7 @@ class Act086HistoricFrgPresenter(
             }
         }
         //
-        return toAlertList.toMutableList()
+        return toAlertList
     }
 
 

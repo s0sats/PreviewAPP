@@ -17,6 +17,7 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -1123,6 +1124,7 @@ public class Act027_Product_Edit extends BaseFragment {
             mMain.executeSoSave();
         } else {
             //ToolBox_Inf.showNoConnectionDialog(context);
+            Toast.makeText(context, hmAux_Trans.get("alert_offline_data_saved_msg"), Toast.LENGTH_SHORT).show();
             mMain.refreshUI();
             //
             mMain.setProductListFragOffLine();

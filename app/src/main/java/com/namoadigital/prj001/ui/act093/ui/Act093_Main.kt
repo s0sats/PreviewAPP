@@ -2,21 +2,30 @@ package com.namoadigital.prj001.ui.act093.ui
 
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.annotation.IdRes
+import androidx.fragment.app.Fragment
 import com.namoa_digital.namoa_library.util.ToolBox
+import com.namoa_digital.namoa_library.view.BaseFragment
+import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.Act093MainBinding
-import com.namoadigital.prj001.extensions.formatForDisplay
+import com.namoadigital.prj001.databinding.Act093SerialInfoBinding
+import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_MANUAL_ALERT
+import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_NORMAL
+import com.namoadigital.prj001.ui.act086.frg_historic.Act086HistoricFrg
+import com.namoadigital.prj001.ui.act086.frg_historic.PhotoSelection
 import com.namoadigital.prj001.ui.act092.ui.Act092_Main
 import com.namoadigital.prj001.ui.act093.Act093Presenter
 import com.namoadigital.prj001.ui.act093.Act093Presenter.Companion.Act093PresenterFactory
 import com.namoadigital.prj001.ui.act093.Contract
-import com.namoadigital.prj001.ui.act093.adapter.Act093Adapter
 import com.namoadigital.prj001.ui.act093.model.DeviceTpModel
 import com.namoadigital.prj001.ui.act093.util.Act093Event
-import com.namoadigital.prj001.ui.base.BaseActivityMvp
+import com.namoadigital.prj001.ui.base.BaseActivityFragMvp
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -24,9 +33,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contract.View {
+class Act093_Main : BaseActivityFragMvp<Act093Presenter, Act093MainBinding>(), Contract.View, ItemCheckListFragmentInteraction,
+    PhotoSelection {
 
-
+    private val serialInfoFrg: SerialInfoFrg by lazy{
+        SerialInfoFrg.newInstance(
+            hmAux_Trans
+        )
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -36,11 +50,26 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menu.add(0, 1, Menu.NONE, resources.getString(R.string.app_name))
+        menu.getItem(0).icon = resources.getDrawable(R.mipmap.ic_namoa)
+        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+        return true
+    }
+
     override fun onBackPressed() {
-        super.onBackPressed()
-        Intent(applicationContext, Act092_Main::class.java).also {
-            startActivity(it)
-            finish()
+        if(binding.llSerialItemCheckInfo.root.visibility ==  View.VISIBLE ){
+            if(binding.clImageZoom.visibility == View.VISIBLE){
+                binding.showHistPhoto(false)
+            } else {
+                setSerialInfoFrag()
+            }
+        }else {
+            Intent(applicationContext, Act092_Main::class.java).also {
+                startActivity(it)
+                finish()
+            }
         }
     }
 
@@ -61,6 +90,10 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
         Act093MainBinding.inflate(layoutInflater)
     }
 
+    private val bindingHeader: Act093SerialInfoBinding by lazy {
+        binding.llSerialInfo
+    }
+
     override fun onBack() {
         onBackPressed()
     }
@@ -74,7 +107,12 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
                 }
 
                 is Act093Event.OnUpdateList -> {
-                    initRecyclerView()
+                    //
+                    serialInfoFrg.serialInfo = presenter.state.value.serialInfo
+                    serialInfoFrg.initSerialInfoHeader()
+                    //
+                    serialInfoFrg.setItemsList(presenter.state.value.list)
+                    //
                 }
 
                 is Act093Event.OnLoading -> {
@@ -145,45 +183,11 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
     private fun recyclerViewLoading(
         isLoading: Boolean = presenter.state.value.isLoading
     ) {
-        with(binding) {
-            if (isLoading) {
-                progressLoading.visibility = View.VISIBLE
-                recyclerViewList.visibility = View.GONE
-            } else {
-                progressLoading.visibility = View.GONE
-                recyclerViewList.visibility = View.VISIBLE
-            }
-        }
-
-    }
-
-
-    private fun initRecyclerView(
-        list: List<DeviceTpModel> = presenter.state.value.list
-    ) {
-        if (list.isNotEmpty()) {
-
-            val mAdapter = Act093Adapter(
-                list,
-                hmAux_Trans
-            )
-
-            binding.recyclerViewList.apply {
-                adapter = mAdapter
-                visibility = View.VISIBLE
-                layoutManager = LinearLayoutManager(context)
-            }
-
-        } else {
-            binding.recyclerViewList.apply {
-                visibility = View.GONE
-            }
-        }
-
+        serialInfoFrg.refreshProgressLoading(isLoading)
     }
 
     private fun onUpdateHeader() {
-        with(binding) {
+        with(bindingHeader) {
 
             val state = presenter.state.value.serialInfo
 
@@ -243,65 +247,9 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
                     visibility = View.VISIBLE
                 }
             }
-
-
-            val measureFormatted = if (state.last_measure_value != null) {
-                if (!state.last_measure_date.isNullOrEmpty()) {
-                    "${ToolBox_Inf.convertDoubleToBigDecimalString(state.last_measure_value, true)} ${state.value_suffix.formatForDisplay()} (${state.last_measure_date})"
-                } else {
-                    "${ToolBox_Inf.convertDoubleToBigDecimalString(state.last_measure_value, true)} ${state.value_suffix.formatForDisplay()}"
-                }
-            } else {
-                null
-            }
-
-            if (measureFormatted.isNullOrEmpty()) {
-                measureValue.visibility = View.GONE
-            } else {
-                measureValue.apply {
-                    text = measureFormatted
-                    visibility = View.VISIBLE
-                }
-            }
-
-            linearLayout6.visibility = if (measureFormatted.isNullOrEmpty()) {
-                View.GONE
-            } else {
-                View.VISIBLE
-            }
-
-            linearLayout5.visibility =
-                if (state.last_cycle_value == null
-                    || state.last_cycle_value == 0.0f) {
-                    View.GONE
-                } else {
-                    View.VISIBLE
-                }
-
-
-            val cycleFormatted = if (state.last_cycle_value != null) {
-                if (!state.last_cycle_date.isNullOrEmpty()) {
-                    "${ToolBox_Inf.convertDoubleToBigDecimalString(state.last_cycle_value.toDouble(), true)} ${state.value_suffix.formatForDisplay()}  (${state.last_cycle_date})"
-                } else {
-                    "${ToolBox_Inf.convertDoubleToBigDecimalString(state.last_cycle_value.toDouble(), true)} ${state.value_suffix.formatForDisplay()}"
-                }
-            } else {
-                null
-            }
-
-            if (cycleFormatted.isNullOrEmpty()) {
-                cycleValue.visibility = View.GONE
-            } else {
-                cycleValue.apply {
-                    text = cycleFormatted
-                    visibility = View.VISIBLE
-                }
-            }
-
         }
-
+        //
         initVars()
-
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -318,35 +266,103 @@ class Act093_Main : BaseActivityMvp<Act093Presenter, Act093MainBinding>(), Contr
     }
 
     override fun initVars() {
-        with(binding) {
-            val state = presenter.state.value.serialInfo
-            if (state.lastUpdateSerial.isNullOrEmpty()) {
-                lastUpdateSerial.visibility = View.GONE
-            } else {
-                lastUpdateSerial.apply {
-                    text = "${hmAux_Trans["last_update_serial_lbl"]}: ${state.lastUpdateSerial}"
-                    visibility = View.VISIBLE
-                }
-            }
-
-            if (state.last_cycle_value != null) {
-                titleCycle.text = hmAux_Trans["last_cycle_lbl"]
-                titleCycle.visibility = View.VISIBLE
-            } else {
-                titleCycle.visibility = View.GONE
-            }
-
-            if (state.last_measure_value != null) {
-                titleMeasure.text = hmAux_Trans["last_measure_lbl"]
-                titleMeasure.visibility = View.VISIBLE
-            } else {
-                titleMeasure.visibility = View.GONE
-            }
-        }
+        setSerialInfoFrag()
         iniUIFooter(Constant.ACT093, hmAux_Trans)
     }
 
+    private fun setSerialInfoFrag() {
+        with(binding) {
+            llSerialInfo.root.visibility = View.VISIBLE
+            llSerialItemCheckInfo.root.visibility = View.GONE
+        }
+        //
+        setFrag(
+            type = serialInfoFrg,
+            sTag = SERIAL_INFO_FRG_TAG,
+            placeHolderId = binding.flSerialStrucutre.id,
+            replaceEvenCreated = true,
+            addToBackStack = false
+        )
+    }
+
     override fun initAction() {
+    }
+
+    fun setFrag(type: BaseFragment, sTag: String, @IdRes placeHolderId: Int, replaceEvenCreated: Boolean = false, addToBackStack: Boolean = true){
+        if (replaceEvenCreated || this.supportFragmentManager.findFragmentByTag(sTag) == null) {
+            val ft = this.supportFragmentManager.beginTransaction()
+            ft.replace(placeHolderId, type as Fragment, sTag)
+            if(addToBackStack) {
+                ft.addToBackStack(sTag)
+            }
+            ft.commit()
+        }
+    }
+
+    companion object{
+        const val SERIAL_INFO_FRG_TAG = "SERIAL_INFO_FRG_TAG"
+        const val ITEM_CHECK_INFO_FRG_TAG = "ITEM_CHECK_INFO_FRG_TAG"
+    }
+
+    override fun itemCheckSelected(position: Int, item: DeviceTpModel) {
+        val itemHist = presenter.getDeviceItemHist(context, item, hmAux_Trans)
+        val deviceItem = presenter.getDeviceItem(context, item)
+        val historicFrg =
+            Act086HistoricFrg.newInstance(
+                hmAux_Trans,
+                deviceItem!!.item_check_status,
+                deviceItem.next_cycle_measure?.toFloat(),
+                deviceItem.next_cycle_measure_date,
+                deviceItem.next_cycle_limit_date,
+                presenter.state.value.serialInfo.value_suffix,
+                deviceItem.verification_instruction,
+                null,
+                "",
+                itemHist!!
+            )
+
+
+        setItemCheckHistFrag(historicFrg, item)
+
+    }
+
+    private fun setItemCheckHistFrag(historicFrg: Act086HistoricFrg, item: DeviceTpModel) {
+        with(binding) {
+            llSerialInfo.root.visibility = View.GONE
+            llSerialItemCheckInfo.root.visibility = View.VISIBLE
+            llSerialItemCheckInfo.ivStatus.apply {
+                if(item.item_check_status == ITEM_CHECK_STATUS_MANUAL_ALERT){
+                    setColorFilter(resources.getColor(R.color.namoa_os_form_problem_red))
+                }else if(item.critical_item == 1 && item.item_check_status != ITEM_CHECK_STATUS_NORMAL){
+                    setColorFilter(resources.getColor(R.color.namoa_os_form_critical_forecast_yellow))
+                }
+            }
+            llSerialItemCheckInfo.itemOverlined.text = item.device_tp_desc
+            llSerialItemCheckInfo.itemTitle.text = item.item_check_desc
+        }
+        setFrag(
+            type = historicFrg,
+            sTag = ITEM_CHECK_INFO_FRG_TAG,
+            placeHolderId = binding.flSerialStrucutre.id,
+            replaceEvenCreated = true,
+            addToBackStack = false
+        )
+    }
+
+    override fun onPhotoSelection(drawable: Drawable) {
+        with(binding){
+            showHistPhoto(true)
+            ivImageZoom.setImageDrawable(drawable)
+            ivImageClose.setOnClickListener {
+                showHistPhoto(false)
+            }
+        }
+    }
+
+    private fun Act093MainBinding.showHistPhoto(show: Boolean) {
+        clImageZoom.visibility = if(show) View.VISIBLE else  View.GONE
+        act093NvMain.visibility = if(show) View.INVISIBLE else  View.VISIBLE
+        linearLayout4.visibility = if(show) View.INVISIBLE else  View.VISIBLE
     }
 
 }

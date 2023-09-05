@@ -183,9 +183,52 @@ val MigrationV7 = object : MigrationSQLite(7, 8) {
 
 }
 
-val MigrationV8 = object : MigrationSQLite(8, 9) {
 
+val MigrationV8 = object : MigrationSQLite(7, 8) {
     override fun migrate(db: SQLiteDatabase) {
+        db.execSQL(
+            """
+            create table [md_product_serial_tp_device_item_hist_mat]
+            (
+                    [customer_code]   int  not null,
+                    [product_code]    int  not null,
+                    [serial_code]     int  not null,
+                    [item_check_seq]  int  not null,
+                    [seq]             int  not null,
+                    [material_code]   int  not null,
+                    [un]              text not null collate nocase,
+                    [qty]             real  not null,
+                    [qty_planned]     real  not null,
+                    [material_action] int  not null,
+                    constraint [pk_md_product_serial_tp_device_item_hist_mat] primary key (
+                    [customer_code],
+                    [product_code],
+                    [serial_code],
+                    [device_tp_code],
+                    [item_check_seq],
+                    [item_check_code],
+                    [seq],
+                    [material_code]
+                )
+            );
+        """.trimIndent()
+        )
+        //
+        if (!isFieldExist(db, MD_Product_Serial_Tp_Device_Item_HistDao.TABLE, MD_Product_Serial_Tp_Device_Item_HistDao.EXEC_PHOTO1)) {
+            db.execSQL(""" ALTER TABLE [${MD_Product_Serial_Tp_Device_Item_HistDao.TABLE}] ADD [${MD_Product_Serial_Tp_Device_Item_HistDao.EXEC_PHOTO1}]  text collate nocase;""".trimIndent())
+        }
+        //
+        if (!isFieldExist(db, MD_Product_Serial_Tp_Device_Item_HistDao.TABLE, MD_Product_Serial_Tp_Device_Item_HistDao.EXEC_PHOTO2)) {
+            db.execSQL(""" ALTER TABLE [${MD_Product_Serial_Tp_Device_Item_HistDao.TABLE}] ADD [${MD_Product_Serial_Tp_Device_Item_HistDao.EXEC_PHOTO2}]  text collate nocase;""".trimIndent())
+        }
+        //
+        if (!isFieldExist(db, MD_Product_Serial_Tp_Device_Item_HistDao.TABLE, MD_Product_Serial_Tp_Device_Item_HistDao.EXEC_PHOTO3)) {
+            db.execSQL(""" ALTER TABLE [${MD_Product_Serial_Tp_Device_Item_HistDao.TABLE}] ADD [${MD_Product_Serial_Tp_Device_Item_HistDao.EXEC_PHOTO3}]  text collate nocase;""".trimIndent())
+        }
+        //
+        if (!isFieldExist(db, MD_Product_Serial_Tp_Device_Item_HistDao.TABLE, MD_Product_Serial_Tp_Device_Item_HistDao.EXEC_PHOTO4)) {
+            db.execSQL(""" ALTER TABLE [${MD_Product_Serial_Tp_Device_Item_HistDao.TABLE}] ADD [${MD_Product_Serial_Tp_Device_Item_HistDao.EXEC_PHOTO4}]  text collate nocase;""".trimIndent())
+        }
         //
         if (!isFieldExist(db, GE_Custom_FormDao.TABLE, GE_Custom_FormDao.NC_RECOGNIZE_EMAIL_IN_COMMENT)) {
             db.execSQL(""" ALTER TABLE [${GE_Custom_FormDao.TABLE}] ADD [${GE_Custom_FormDao.NC_RECOGNIZE_EMAIL_IN_COMMENT}] int not null DEFAULT 0;""".trimIndent())
