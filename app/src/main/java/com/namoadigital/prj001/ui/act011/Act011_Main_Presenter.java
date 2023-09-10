@@ -20,6 +20,7 @@ import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.MeMeasureTp;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -147,4 +148,6 @@ public interface Act011_Main_Presenter {
 
 
     int hasPassedDay();
+
+    List<String> getSiteEmailList();
 }

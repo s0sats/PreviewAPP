@@ -44,7 +44,7 @@ public class GE_Custom_Form {
     private Integer justify_group_code;
 
     @SerializedName("nc_recognize_email_in_comment")
-    private String nc_recognize_email_in_comment;
+    private int nc_recognize_email_in_comment;
 
     public long getCustomer_code() {
         return customer_code;
@@ -222,11 +222,11 @@ public class GE_Custom_Form {
         this.justify_group_code = justify_group_code;
     }
 
-    public String getNc_recognize_email_in_comment() {
+    public int getNc_recognize_email_in_comment() {
         return nc_recognize_email_in_comment;
     }
 
-    public void setNc_recognize_email_in_comment(String nc_recognize_email_in_comment) {
+    public void setNc_recognize_email_in_comment(int nc_recognize_email_in_comment) {
         this.nc_recognize_email_in_comment = nc_recognize_email_in_comment;
     }
 }

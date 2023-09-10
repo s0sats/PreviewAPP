@@ -283,7 +283,7 @@ public class GE_Custom_FormDao extends BaseDao implements Dao<GE_Custom_Form> {
             } else {
                 custom_form.setJustifyGroupCode(cursor.getInt(cursor.getColumnIndex(JUSTIFY_GROUP_CODE)));
             }
-            custom_form.setNc_recognize_email_in_comment(cursor.getString(cursor.getColumnIndex(NC_RECOGNIZE_EMAIL_IN_COMMENT)));
+            custom_form.setNc_recognize_email_in_comment(cursor.getInt(cursor.getColumnIndex(NC_RECOGNIZE_EMAIL_IN_COMMENT)));
             return custom_form;
         }
     }
@@ -356,7 +356,7 @@ public class GE_Custom_FormDao extends BaseDao implements Dao<GE_Custom_Form> {
                 contentValues.put(BLOCK_SPONTANEOUS_IN_TICKET, custom_form.getBlock_spontaneous_in_ticket());
             }
             contentValues.put(JUSTIFY_GROUP_CODE, custom_form.getJustifyGroupCode());
-            if (custom_form.getNc_recognize_email_in_comment() != null) {
+            if (custom_form.getNc_recognize_email_in_comment() > -1) {
                 contentValues.put(NC_RECOGNIZE_EMAIL_IN_COMMENT, custom_form.getNc_recognize_email_in_comment());
             }
             return contentValues;

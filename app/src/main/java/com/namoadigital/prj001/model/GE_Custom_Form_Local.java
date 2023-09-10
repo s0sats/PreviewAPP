@@ -87,7 +87,7 @@ public class GE_Custom_Form_Local {
     private int so_allow_change_order_type;
     private int so_allow_backup;
     private int so_optional_justify_problem;
-    private String nc_recognize_email_in_comment;
+    private int nc_recognize_email_in_comment;
 
     public long getCustomer_code() {
         return customer_code;
@@ -593,11 +593,11 @@ public class GE_Custom_Form_Local {
         this.so_allow_backup = so_allow_backup;
     }
 
-    public String getNc_recognize_email_in_comment() {
+    public int getNc_recognize_email_in_comment() {
         return nc_recognize_email_in_comment;
     }
 
-    public void setNc_recognize_email_in_comment(String nc_recognize_email_in_comment) {
+    public void setNc_recognize_email_in_comment(int nc_recognize_email_in_comment) {
         this.nc_recognize_email_in_comment = nc_recognize_email_in_comment;
     }
 

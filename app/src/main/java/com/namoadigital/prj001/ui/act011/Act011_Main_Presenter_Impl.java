@@ -197,6 +197,21 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     }
 
     @Override
+    public List<String> getSiteEmailList() {
+        MD_SiteDao md_siteDao = new MD_SiteDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
+        MD_Site site = md_siteDao.getSite();
+        if(site != null){
+            String[] split = site.getEmail_nc().split("\n");
+            List<String> siteList = new ArrayList<>();
+            for (String siteDesc : split) {
+                siteList.add(siteDesc.trim());
+            }
+            return siteList;
+        }
+        return null;
+    }
+
+    @Override
     public boolean checkIfFormIsNew(
             String customer_code,
             String formtype_code,
@@ -432,6 +447,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 customFormLocal.setSo_allow_change_order_type(customForm.getSo_allow_change_order_type());
                 customFormLocal.setSo_allow_backup(customForm.getSo_allow_backup());
                 customFormLocal.setSo_optional_justify_problem(customForm.getSo_optional_justify_problem());
+                customFormLocal.setNc_recognize_email_in_comment(customForm.getNc_recognize_email_in_comment());
                 //LUCHE -  14/03/2019
                 //Alteração Dao de insert com exception NOVO METODO DAO
                 //custom_form_LocalDao.addUpdate(customFormLocal);
