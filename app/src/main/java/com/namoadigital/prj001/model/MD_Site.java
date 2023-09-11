@@ -32,6 +32,7 @@ public class MD_Site {
     @SerializedName("free_executions_count") private Integer free_executions_count;
     @SerializedName("app_executions_count") private int app_executions_count;
     @SerializedName("license_blocked") private int license_blocked;
+    @SerializedName("email_nc") private String email_nc;
 
     public long getCustomer_code() {
         return customer_code;
@@ -207,6 +208,14 @@ public class MD_Site {
 
     public void setLicense_blocked(int license_blocked) {
         this.license_blocked = license_blocked;
+    }
+
+    public String getEmail_nc() {
+        return email_nc;
+    }
+
+    public void setEmail_nc(String email_nc) {
+        this.email_nc = email_nc;
     }
 
     /**

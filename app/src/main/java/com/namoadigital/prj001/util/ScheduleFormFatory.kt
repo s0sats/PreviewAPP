@@ -114,6 +114,7 @@ class ScheduleFormFatory {
             customFormLocal.so_allow_change_order_type = customForm.so_allow_change_order_type
             customFormLocal.so_allow_backup = customForm.so_allow_backup
             customFormLocal.so_optional_justify_problem = customForm.so_optional_justify_problem
+            customFormLocal.nc_recognize_email_in_comment = customForm.nc_recognize_email_in_comment
             //
             //LUCHE -  14/03/2019
             //Alteração Dao de insert com exception NOVO METODO DAO
