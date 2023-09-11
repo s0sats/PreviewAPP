@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui.act093
 
 import android.content.Context
 import com.namoa_digital.namoa_library.util.HMAux
+import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.core.IResult.Companion.isFailed
 import com.namoadigital.prj001.core.IResult.Companion.isLoading
 import com.namoadigital.prj001.core.IResult.Companion.isSuccess
@@ -31,6 +32,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 
 class Act093Presenter constructor(
     private val infoUseCase: InfoSerialUseCase,
@@ -186,6 +188,18 @@ class Act093Presenter constructor(
         )
     }
 
+    override fun getDeviceItemDaysInAlert(context: Context, item: DeviceTpModel): Long {
+        val deviceItem = getDeviceItem(context, item)
+        deviceItem?.let {
+            val dateDiferenceInMilliseconds = ToolBox_Inf.getDateDiferenceInMilliseconds(
+                deviceItem.target_date,
+                ToolBox_Inf.getDateLastMinute(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"))
+            )
+            return TimeUnit.MILLISECONDS.toDays(dateDiferenceInMilliseconds)
+        }
+       return 0
+    }
+
 
     override fun setView(view: Contract.View) {
         this.view = view
@@ -228,6 +242,8 @@ class Act093Presenter constructor(
             "adjust_lbl",
             "material_requested_lbl",
             "material_applied_lbl",
+            "inspection_alert_days_lbl",
+            "inspection_missing_lbl",
         ).let {
             return ToolBox_Inf.setLanguage(
                 translateResource.context,

@@ -9,6 +9,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.annotation.IdRes
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.BaseFragment
@@ -32,6 +33,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 
 class Act093_Main : BaseActivityFragMvp<Act093Presenter, Act093MainBinding>(), Contract.View, ItemCheckListFragmentInteraction,
     PhotoSelection {
@@ -339,6 +341,15 @@ class Act093_Main : BaseActivityFragMvp<Act093Presenter, Act093MainBinding>(), C
             }
             llSerialItemCheckInfo.itemOverlined.text = item.device_tp_desc
             llSerialItemCheckInfo.itemTitle.text = item.item_check_desc
+            val deviceItemDaysInAlert = presenter.getDeviceItemDaysInAlert(context, item)
+            llSerialItemCheckInfo.itemSupport.apply {
+                text = getAlertDateLblByItemCheckStatus(
+                    deviceItemDaysInAlert
+                )
+                //
+                setTextColor(getAlertDateTextColor(deviceItemDaysInAlert))
+            }
+
         }
         setFrag(
             type = historicFrg,
@@ -348,6 +359,21 @@ class Act093_Main : BaseActivityFragMvp<Act093Presenter, Act093MainBinding>(), C
             addToBackStack = false
         )
     }
+
+    private fun getAlertDateLblByItemCheckStatus(dateDiff: Long) =
+        if (dateDiff <= 0) {
+            """${hmAux_Trans["inspection_alert_days_lbl"]}: ${abs(dateDiff)}"""
+
+        } else {
+            """${hmAux_Trans["inspection_missing_lbl"]}: $dateDiff"""
+        }
+
+    private fun getAlertDateTextColor(daysDiff: Long) =
+        if (daysDiff <= 0) {
+            ContextCompat.getColor(context, R.color.namoa_os_form_problem_red)
+        } else {
+            ContextCompat.getColor(context, R.color.namoa_pipeline_header_icon)
+        }
 
     override fun onPhotoSelection(drawable: Drawable) {
         with(binding){
