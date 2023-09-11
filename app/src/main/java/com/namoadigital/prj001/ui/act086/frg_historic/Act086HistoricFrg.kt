@@ -23,6 +23,7 @@ import com.namoadigital.prj001.model.GeOsDeviceItemHist
 import com.namoadigital.prj001.ui.act093.ui.ItemCheckListFragmentInteraction
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
+import com.namoadigital.prj001.util.ConstantBaseApp.FRG_HISTORIC_ITEM_CHECK
 import com.namoadigital.prj001.util.ToolBox_Inf
 
 /**
@@ -287,8 +288,14 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
         mFrgListener.onPhotoSelection(drawable)
     }
 
+    override fun onResume() {
+        super.onResume()
+        binding.act086HistoricFrgRvAlertHistoric.scrollToPosition(0)
+    }
+    
     override fun onAttach(context: Context) {
         super.onAttach(context)
+
         if (context is PhotoSelection) {
             _mFrgListener = context
         } else {
@@ -361,6 +368,7 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
             }
 
         fun getFragTranslationsVars() = listOf<String>(
+                "frg_historic_item_check_title",
                 "alert_type_ttl",
                 "next_cycle_ttl",
                 "measure_lbl",
@@ -371,7 +379,10 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
                 "material_applied_lbl",
                 "alert_historic_ttl",
                 "material_requested_lbl",
-                "still_with_problem_lbl"
+                "still_with_problem_lbl",
+                "change_lbl",
+                "fixed_lbl",
+
         )
     }
 }

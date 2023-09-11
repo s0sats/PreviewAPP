@@ -90,12 +90,10 @@ class SerialInfoFrg : BaseFragment() {
                             )
                         } ${it.value_suffix.formatForDisplay()} (${it.last_measure_date})"
                     } else {
-                        "${
-                            ToolBox_Inf.convertDoubleToBigDecimalString(
+                        "${ToolBox_Inf.convertDoubleToBigDecimalString(
                                 it.last_measure_value!!,
                                 true
-                            )
-                        } ${it.value_suffix.formatForDisplay()}"
+                            )} ${it.value_suffix.formatForDisplay()}"
                     }
                 } else {
                     null

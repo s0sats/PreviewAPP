@@ -22,6 +22,7 @@ interface Contract {
         fun getDeviceItemHist(context: Context, deviceItemRawPk: DeviceTpModel, hmAuxTrans: HMAux):  ArrayList<Act086HistoricModel>?
         fun getDeviceItem(context: Context, item: DeviceTpModel): MD_Product_Serial_Tp_Device_Item?
         fun getDeviceItemDaysInAlert(context: Context, item: DeviceTpModel): Long
+        fun loadHistoricFrgTranslation(): HMAux
     }
 
 }

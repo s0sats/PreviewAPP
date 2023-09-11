@@ -29,6 +29,7 @@ import com.namoadigital.prj001.ui.act093.util.Act093Event
 import com.namoadigital.prj001.ui.base.BaseActivityFragMvp
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
+import com.namoadigital.prj001.util.ConstantBaseApp.FRG_HISTORIC_ITEM_CHECK
 import com.namoadigital.prj001.util.ToolBox_Inf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -276,6 +277,7 @@ class Act093_Main : BaseActivityFragMvp<Act093Presenter, Act093MainBinding>(), C
         with(binding) {
             llSerialInfo.root.visibility = View.VISIBLE
             llSerialItemCheckInfo.root.visibility = View.GONE
+            topAppBar.title = hmAux_Trans["act093_title"]
         }
         //
         setFrag(
@@ -307,11 +309,13 @@ class Act093_Main : BaseActivityFragMvp<Act093Presenter, Act093MainBinding>(), C
     }
 
     override fun itemCheckSelected(position: Int, item: DeviceTpModel) {
-        val itemHist = presenter.getDeviceItemHist(context, item, hmAux_Trans)
+        val hmAuxTransHistoricFrg =  presenter.loadHistoricFrgTranslation()
+        val itemHist = presenter.getDeviceItemHist(context, item, hmAuxTransHistoricFrg)
         val deviceItem = presenter.getDeviceItem(context, item)
+        binding.topAppBar.title = hmAuxTransHistoricFrg["frg_historic_item_check_title"]
         val historicFrg =
             Act086HistoricFrg.newInstance(
-                hmAux_Trans,
+                hmAuxTransHistoricFrg,
                 deviceItem!!.item_check_status,
                 deviceItem.next_cycle_measure?.toFloat(),
                 deviceItem.next_cycle_measure_date,
@@ -349,7 +353,6 @@ class Act093_Main : BaseActivityFragMvp<Act093Presenter, Act093MainBinding>(), C
                 //
                 setTextColor(getAlertDateTextColor(deviceItemDaysInAlert))
             }
-
         }
         setFrag(
             type = historicFrg,

@@ -14,6 +14,7 @@ import com.namoadigital.prj001.model.Act086HistoricModel
 import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device_Item
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_Device_Item_Hist_Sql_003
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_Device_Item_Sql_001
+import com.namoadigital.prj001.ui.act086.frg_historic.Act086HistoricFrg
 import com.namoadigital.prj001.ui.act091.mvp.model.TranslateResource
 import com.namoadigital.prj001.ui.act093.model.DeviceTpModel
 import com.namoadigital.prj001.ui.act093.usecases.InfoSerialUseCase
@@ -198,6 +199,21 @@ class Act093Presenter constructor(
             return TimeUnit.MILLISECONDS.toDays(dateDiferenceInMilliseconds)
         }
        return 0
+    }
+
+    override fun loadHistoricFrgTranslation(): HMAux {
+
+        return ToolBox_Inf.setLanguage(
+            translateResource.context,
+            translateResource.mModule_code,
+            ToolBox_Inf.getResourceCode(
+                translateResource.context,
+                translateResource.mModule_code,
+                ConstantBaseApp.FRG_HISTORIC_ITEM_CHECK
+            ),
+            ToolBox_Con.getPreference_Translate_Code(translateResource.context),
+            Act086HistoricFrg.getFragTranslationsVars()
+        )
     }
 
 

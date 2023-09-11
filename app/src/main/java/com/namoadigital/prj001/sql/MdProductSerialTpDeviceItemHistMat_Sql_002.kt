@@ -17,7 +17,7 @@ class MdProductSerialTpDeviceItemHistMat_Sql_002(
 ) : Specification {
     override fun toSqlQuery() = """
     SELECT 
-    item.product_desc ${MD_All_ProductDao.PRODUCT_DESC},
+    case when item.${MD_All_ProductDao.PRODUCT_CODE} == item.${MD_All_ProductDao.PRODUCT_ID} then item.${MD_All_ProductDao.PRODUCT_DESC} else item.${MD_All_ProductDao.PRODUCT_DESC} || ' (' || item.${MD_All_ProductDao.PRODUCT_ID} || ')'  end ${MD_All_ProductDao.PRODUCT_DESC},
     hist_mat.qty ${MdProductSerialTpDeviceItemHistMatDao.QTY},
     hist_mat.un ${MdProductSerialTpDeviceItemHistMatDao.UN},
     hist_mat.material_action ${MdProductSerialTpDeviceItemHistMatDao.MATERIAL_ACTION}

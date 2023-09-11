@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.model.VH_models
 
+import android.content.Context
 import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
@@ -26,11 +27,11 @@ class Act086HistoricAlertVH(
                     act086HistoricFrgAlertItemTvAdjustLbl.text =
                         item.titleLbl.capitalize(Locale.getDefault())
                     act086HistoricFrgAlertItemTvAdjustDate.text = item.date.split(" ")[0]
-                    act086HistoricFrgAlertItemTvLastMeasureVal.text = "( ${item.measure} )"
+                    act086HistoricFrgAlertItemTvLastMeasureVal.text = "(${item.measure})"
 
                     act086HistoricFrgAlertItemTvMaterialAppliedLbl.text =
-                        item.materialAppliedLbl.capitalize(Locale.getDefault())
-                    val materialListAppliedFormatted = formatMaterialList(item.materialList, 1)
+                        """${item.materialAppliedLbl.capitalize(Locale.getDefault())}: """
+                    val materialListAppliedFormatted = formatMaterialList(item.materialList, 1, binding.root.context)
 
                     frgAlertItemTvMaterialAppliedListItem.visibility = View.GONE
                     act086HistoricFrgAlertItemTvMaterialAppliedLbl.visibility = View.GONE
@@ -41,8 +42,8 @@ class Act086HistoricAlertVH(
                     }
 
                     act086HistoricFrgAlertItemTvMaterialRequestLbl.text =
-                        item.materialAppliedLbl.capitalize(Locale.getDefault())
-                    val materialRequestListFormatted = formatMaterialList(item.materialList, 2)
+                        """${item.materialAppliedLbl.capitalize(Locale.getDefault())}: """
+                    val materialRequestListFormatted = formatMaterialList(item.materialList, 2, binding.root.context)
 
                     frgAlertItemTvMaterialRequestListItem.visibility = View.GONE
                     act086HistoricFrgAlertItemTvMaterialRequestLbl.visibility = View.GONE
@@ -55,13 +56,13 @@ class Act086HistoricAlertVH(
 
                     act086HistoricFrgAlertItemTvComment.apply {
                         text = item.comment?.capitalize(Locale.getDefault())
-                        visibility = if (text != null) View.VISIBLE else View.GONE
+                        visibility = if (!text.isNullOrBlank()) View.VISIBLE else View.GONE
                     }
                     //
-                    frgAlertItemIvPhoto1.visibility = View.GONE
+                    frgAlertItemCvPhoto1.visibility = View.GONE
                     if(!item.photo1.isNullOrBlank()) {
 
-                        frgAlertItemIvPhoto1.visibility = View.VISIBLE
+                        frgAlertItemCvPhoto1.visibility = View.VISIBLE
                         frgAlertItemIvPhoto1.setOnClickListener {
                             onPhotoSelected(frgAlertItemIvPhoto1.drawable )
                         }
@@ -76,9 +77,9 @@ class Act086HistoricAlertVH(
                     }
 
                     //
-                    frgAlertItemIvPhoto2.visibility = View.GONE
+                    frgAlertItemCvPhoto2.visibility = View.GONE
                     if(!item.photo2.isNullOrBlank()) {
-                        frgAlertItemIvPhoto2.visibility = View.VISIBLE
+                        frgAlertItemCvPhoto2.visibility = View.VISIBLE
                         frgAlertItemIvPhoto2.setOnClickListener {
                             onPhotoSelected(frgAlertItemIvPhoto2.drawable )
                         }
@@ -92,9 +93,9 @@ class Act086HistoricAlertVH(
                             .into(frgAlertItemIvPhoto2)
                     }
                     //
-                    frgAlertItemIvPhoto3.visibility = View.GONE
+                    frgAlertItemCvPhoto3.visibility = View.GONE
                     if(!item.photo3.isNullOrBlank()) {
-                        frgAlertItemIvPhoto3.visibility = View.VISIBLE
+                        frgAlertItemCvPhoto3.visibility = View.VISIBLE
                         frgAlertItemIvPhoto3.setOnClickListener {
                             onPhotoSelected(frgAlertItemIvPhoto3.drawable )
                         }
@@ -108,9 +109,9 @@ class Act086HistoricAlertVH(
                             .into(frgAlertItemIvPhoto3)
                     }
                     //
-                    frgAlertItemIvPhoto4.visibility = View.GONE
+                    frgAlertItemCvPhoto4.visibility = View.GONE
                     if(!item.photo4.isNullOrBlank()) {
-                        frgAlertItemIvPhoto4.visibility = View.VISIBLE
+                        frgAlertItemCvPhoto4.visibility = View.VISIBLE
                         frgAlertItemIvPhoto4.setOnClickListener {
                             onPhotoSelected(frgAlertItemIvPhoto4.drawable )
                         }
@@ -127,12 +128,16 @@ class Act086HistoricAlertVH(
 
         }
 
-    private fun formatMaterialList(list: List<MaterialHistItemModel>?, materialAction: Int): String {
+    private fun formatMaterialList(
+        list: List<MaterialHistItemModel>?,
+        materialAction: Int,
+        context: Context
+    ): String {
         val sb = StringBuilder("")
         list?.filter {
             it.materialAction == materialAction
         }?.forEach {
-            sb.append(it.formatMaterialHistItem())
+            sb.append(context.getString(R.string.unicode_bullet) + " " + it.formatMaterialHistItem())
             sb.append("\n")
         }
         sb.removeSuffix("\n")
