@@ -96,6 +96,7 @@ import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_016;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
+import com.namoadigital.prj001.sql.MD_Site_Sql_003;
 import com.namoadigital.prj001.sql.MeMeasureTpSql_001;
 import com.namoadigital.prj001.sql.Sql_Act011_002;
 import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_008;
@@ -197,10 +198,15 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     }
 
     @Override
-    public List<String> getSiteEmailList() {
+    public List<String> getSiteEmailList(int site_code) {
         MD_SiteDao md_siteDao = new MD_SiteDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
-        MD_Site site = md_siteDao.getSite();
-        if(site != null){
+        MD_Site site = md_siteDao.getByString(new MD_Site_Sql_003(
+                    ToolBox_Con.getPreference_Customer_Code(context),
+                    String.valueOf(site_code)
+            ).toSqlQuery()
+        );
+        if(site != null
+            && site.getEmail_nc() != null){
             String[] split = site.getEmail_nc().split("\n");
             List<String> siteList = new ArrayList<>();
             for (String siteDesc : split) {

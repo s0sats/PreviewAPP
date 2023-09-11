@@ -149,5 +149,5 @@ public interface Act011_Main_Presenter {
 
     int hasPassedDay();
 
-    List<String> getSiteEmailList();
+    List<String> getSiteEmailList(int site_code);
 }

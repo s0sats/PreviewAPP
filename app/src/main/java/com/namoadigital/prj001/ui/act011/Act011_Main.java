@@ -1605,8 +1605,8 @@ public class Act011_Main extends Base_Activity
                 if (customField != null) {
                     customField.setNcRecognizeEmailInComment(formLocal.getNc_recognize_email_in_comment());
                     if(formLocal.getNc_recognize_email_in_comment() == 1) {
-                        customField.setNcEmail(mPresenter.getSiteEmailList());
-                    }
+                        customField.setOnSiteEmailList(() -> mPresenter.getSiteEmailList(formLocal.getSite_code()));
+                    };
                     //Implments da interface que faz o scroll ao rodar o dismiss do dialog dos dots
                     customField.setOnDotsDialogDismiss(onBackFocusEvent);
                     //Add na lista de customFF
