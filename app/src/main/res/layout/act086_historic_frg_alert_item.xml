@@ -83,46 +83,41 @@
 
             <TextView
                 android:id="@+id/act086_historic_frg_alert_item_tv_material_request_lbl"
-                style="@style/TextViewGray9Padding"
+                style="@style/BodyMediumGray"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
                 android:text="Foi aplicado insumo?"
-                app:layout_constraintBottom_toTopOf="@id/frg_alert_item_cl_photo"
+                app:layout_constraintBottom_toTopOf="@id/frg_alert_item_tv_material_request_list_item"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/act086_historic_frg_alert_item_tv_comment"
                 app:layout_constraintVertical_bias="0.0" />
 
             <TextView
                 android:id="@+id/frg_alert_item_tv_material_request_list_item"
-                style="@style/TextViewGray9Padding"
+                style="@style/BodyMediumGray"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:text="Foi aplicado insumo?"
-                app:layout_constraintBottom_toTopOf="@id/frg_alert_item_cl_photo"
+                android:text="123123123"
+                app:layout_constraintBottom_toTopOf="@id/act086_historic_frg_alert_item_tv_material_applied_lbl"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/act086_historic_frg_alert_item_tv_material_request_lbl" />
             <TextView
                 android:id="@+id/act086_historic_frg_alert_item_tv_material_applied_lbl"
-                style="@style/TextViewGray9Padding"
+                style="@style/BodyMediumGray"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
                 android:text="Foi aplicado insumo?"
-                app:layout_constraintBottom_toTopOf="@id/frg_alert_item_cl_photo"
+                app:layout_constraintBottom_toTopOf="@id/frg_alert_item_tv_material_applied_list_item"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/act086_historic_frg_alert_item_tv_comment"
+                app:layout_constraintTop_toBottomOf="@+id/frg_alert_item_tv_material_request_list_item"
                 app:layout_constraintVertical_bias="0.0" />
 
             <TextView
                 android:id="@+id/frg_alert_item_tv_material_applied_list_item"
-                style="@style/TextViewGray9Padding"
+                style="@style/BodyMediumGray"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:text="Foi aplicado insumo?"
-                app:layout_constraintBottom_toTopOf="@id/frg_alert_item_cl_photo"
+                android:text="1231231231231"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/act086_historic_frg_alert_item_tv_material_applied_lbl" />
 
@@ -130,14 +125,16 @@
                 android:id="@+id/frg_alert_item_cl_photo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
+                android:layout_marginTop="4dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent">
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/frg_alert_item_tv_material_applied_list_item">
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/frg_alert_item_cv_photo1"
-                    android:layout_width="145dp"
-                    android:layout_height="145dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     app:cardCornerRadius="32dp"
                     app:cardElevation="0dp"
                     app:layout_constraintEnd_toStartOf="@+id/frg_alert_item_cv_photo2"
@@ -149,13 +146,13 @@
                         android:id="@+id/frg_alert_item_iv_photo1"
                         android:layout_width="145dp"
                         android:layout_height="145dp"
-                        android:scaleType="centerCrop" />
+                        android:scaleType="centerInside" />
                 </androidx.cardview.widget.CardView>
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/frg_alert_item_cv_photo2"
-                    android:layout_width="145dp"
-                    android:layout_height="145dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
                     app:cardCornerRadius="32dp"
                     app:cardElevation="0dp"
@@ -168,34 +165,34 @@
                         android:id="@+id/frg_alert_item_iv_photo2"
                         android:layout_width="145dp"
                         android:layout_height="145dp"
-                        android:scaleType="centerCrop" />
+                        android:scaleType="centerInside" />
 
                 </androidx.cardview.widget.CardView>
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/frg_alert_item_cv_photo3"
-                    android:layout_width="145dp"
-                    android:layout_height="145dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     app:cardCornerRadius="32dp"
                     app:cardElevation="0dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/frg_alert_item_cv_photo4"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@+id/frg_alert_item_cv_photo1"
                     app:layout_constraintTop_toBottomOf="@id/frg_alert_item_cv_photo1">
 
                     <ImageView
                         android:id="@+id/frg_alert_item_iv_photo3"
                         android:layout_width="145dp"
                         android:layout_height="145dp"
-                        android:scaleType="centerCrop" />
+                        android:scaleType="centerInside" />
                 </androidx.cardview.widget.CardView>
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/frg_alert_item_cv_photo4"
-                    android:layout_width="145dp"
-                    android:layout_height="145dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
                     android:layout_marginTop="8dp"
                     app:cardCornerRadius="32dp"
@@ -210,7 +207,7 @@
                         android:id="@+id/frg_alert_item_iv_photo4"
                         android:layout_width="145dp"
                         android:layout_height="145dp"
-                        android:scaleType="centerCrop" />
+                        android:scaleType="centerInside" />
                 </androidx.cardview.widget.CardView>
             </androidx.constraintlayout.widget.ConstraintLayout>
 

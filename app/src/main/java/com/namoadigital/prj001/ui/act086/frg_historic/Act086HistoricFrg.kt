@@ -287,11 +287,6 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
     fun onPhotoSelected(drawable: Drawable) {
         mFrgListener.onPhotoSelection(drawable)
     }
-
-    override fun onResume() {
-        super.onResume()
-        binding.act086HistoricFrgRvAlertHistoric.scrollToPosition(0)
-    }
     
     override fun onAttach(context: Context) {
         super.onAttach(context)

@@ -29,7 +29,6 @@ import com.namoadigital.prj001.ui.act093.util.Act093Event
 import com.namoadigital.prj001.ui.base.BaseActivityFragMvp
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
-import com.namoadigital.prj001.util.ConstantBaseApp.FRG_HISTORIC_ITEM_CHECK
 import com.namoadigital.prj001.util.ToolBox_Inf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -63,6 +62,7 @@ class Act093_Main : BaseActivityFragMvp<Act093Presenter, Act093MainBinding>(), C
 
     override fun onBackPressed() {
         if(binding.llSerialItemCheckInfo.root.visibility ==  View.VISIBLE ){
+            binding.act093NvMain.smoothScrollTo(0,0)
             if(binding.clImageZoom.visibility == View.VISIBLE){
                 binding.showHistPhoto(false)
             } else {

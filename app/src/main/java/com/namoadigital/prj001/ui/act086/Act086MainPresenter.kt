@@ -63,9 +63,6 @@ class Act086MainPresenter(
         transList.addAll(
             Act086VerificationFrg.getFragTranslationsVars()
         )
-        transList.addAll(
-            Act086HistoricFrg.getFragTranslationsVars()
-        )
         //
         return ToolBox_Inf.setLanguage(
             context,
@@ -442,6 +439,22 @@ class Act086MainPresenter(
                 )
             }
         }
+    }
+
+    override fun loadHistoricFrgTranslation(): HMAux {
+        //
+        return ToolBox_Inf.setLanguage(
+            context,
+            mModule_Code,
+            ToolBox_Inf.getResourceCode(
+                context,
+                mModule_Code,
+                ConstantBaseApp.FRG_HISTORIC_ITEM_CHECK
+            ),
+            ToolBox_Con.getPreference_Translate_Code(context),
+            Act086HistoricFrg.getFragTranslationsVars()
+        )
+        //
     }
 
     override fun onBackPressedClicked(fragmentManager: FragmentManager, deviceItem: GeOsDeviceItem) {

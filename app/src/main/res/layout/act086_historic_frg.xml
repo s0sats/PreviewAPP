@@ -28,7 +28,7 @@
                 android:layout_height="wrap_content"
                 tools:text="Tipo de Alerta"
                 style="@style/TextAppearance.Material3.BodySmall"
-                android:textColor="@color/m3_namoa_onSurfaceVariant"
+                android:textColor="@color/m3_namoa_onSurface"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -61,7 +61,7 @@
                 tools:text="Estimado para"
                 android:visibility="gone"
                 style="@style/TextAppearance.Material3.BodySmall"
-                android:textColor="@color/m3_namoa_onSurfaceVariant"
+                android:textColor="@color/m3_namoa_onSurface"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -88,7 +88,7 @@
                 style="@style/TextAppearance.Material3.BodySmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/m3_namoa_onSurfaceVariant"
+                android:textColor="@color/m3_namoa_onSurface"
                 app:layout_constraintStart_toStartOf="@+id/act086_historic_frg_tv_deadline_val"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="Data Limite" />
@@ -122,7 +122,7 @@
                 style="@style/TextAppearance.Material3.BodySmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/m3_namoa_onSurfaceVariant"
+                android:textColor="@color/m3_namoa_onSurface"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="Instrução para verificação" />

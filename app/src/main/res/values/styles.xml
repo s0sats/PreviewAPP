@@ -113,6 +113,10 @@
         <item name="android:paddingBottom">4dp</item>
     </style>
 
+    <style name="BodyMediumGray" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textColor">@color/m3_namoa_onSurfaceVariant</item>
+    </style>
+
     <style name="ImageViewButtonStd">
         <item name="android:padding">15dp</item>
         <item name="android:layout_width">48dp</item>

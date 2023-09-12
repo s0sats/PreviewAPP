@@ -42,7 +42,7 @@ class Act086HistoricAlertVH(
                     }
 
                     act086HistoricFrgAlertItemTvMaterialRequestLbl.text =
-                        """${item.materialAppliedLbl.capitalize(Locale.getDefault())}: """
+                        """${item.materialRequestLbl.capitalize(Locale.getDefault())}: """
                     val materialRequestListFormatted = formatMaterialList(item.materialList, 2, binding.root.context)
 
                     frgAlertItemTvMaterialRequestListItem.visibility = View.GONE
@@ -64,7 +64,7 @@ class Act086HistoricAlertVH(
 
                         frgAlertItemCvPhoto1.visibility = View.VISIBLE
                         frgAlertItemIvPhoto1.setOnClickListener {
-                            onPhotoSelected(frgAlertItemIvPhoto1.drawable )
+                            onPhotoSelected(frgAlertItemIvPhoto1.drawable)
                         }
 
                         Glide.with(root.context)

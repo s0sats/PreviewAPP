@@ -68,8 +68,9 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
     }
 
     private val historicFrg: Act086HistoricFrg by lazy{
+        val hmAuxTransHistoricFrg =  mPresenter.loadHistoricFrgTranslation()
         Act086HistoricFrg.newInstance(
-            hmAux_Trans,
+            hmAuxTransHistoricFrg,
             deviceItem.item_check_status,
             deviceItem.next_cycle_measure,
             deviceItem.next_cycle_measure_date,
