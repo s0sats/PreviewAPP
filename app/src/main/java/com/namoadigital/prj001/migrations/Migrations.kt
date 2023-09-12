@@ -193,6 +193,8 @@ val MigrationV8 = object : MigrationSQLite(7, 8) {
                     [customer_code]   int  not null,
                     [product_code]    int  not null,
                     [serial_code]     int  not null,
+                    [device_tp_code]  int  not null,
+                    [item_check_code] int  not null,
                     [item_check_seq]  int  not null,
                     [seq]             int  not null,
                     [material_code]   int  not null,

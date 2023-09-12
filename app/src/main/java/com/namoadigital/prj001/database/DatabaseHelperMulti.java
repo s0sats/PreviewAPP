@@ -169,8 +169,8 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
                     "    [product_code]    int  not null,\n" +
                     "    [serial_code]     int  not null,\n" +
                     "    [device_tp_code]  int  not null,\n" +
-                    "    [item_check_seq]  int  not null,\n" +
                     "    [item_check_code] int  not null,\n" +
+                    "    [item_check_seq]  int  not null,\n" +
                     "    [seq]             int  not null,\n" +
                     "    [material_code]   int  not null,\n" +
                     "    [un]              text not null collate nocase,\n" +
