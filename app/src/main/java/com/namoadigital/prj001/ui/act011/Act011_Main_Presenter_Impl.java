@@ -207,12 +207,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         );
         if(site != null
             && site.getEmail_nc() != null){
-            String[] split = site.getEmail_nc().split("\n");
-            List<String> siteList = new ArrayList<>();
-            for (String siteDesc : split) {
-                siteList.add(siteDesc.trim());
-            }
-            return siteList;
+            return ToolBox.getEmailFromText(site.getEmail_nc());
         }
         return null;
     }
