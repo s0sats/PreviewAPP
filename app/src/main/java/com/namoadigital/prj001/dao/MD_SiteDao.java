@@ -48,6 +48,7 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
     public static final String FREE_EXECUTIONS_COUNT = "free_executions_count";
     public static final String APP_EXECUTIONS_COUNT = "app_executions_count";
     public static final String LICENSE_BLOCKED = "license_blocked";
+    public static final String EMAIL_NC = "email_nc";
 
     public MD_SiteDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -331,6 +332,11 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
             }
             md_site.setApp_executions_count(cursor.getInt(cursor.getColumnIndex(APP_EXECUTIONS_COUNT)));
             md_site.setLicense_blocked(cursor.getInt(cursor.getColumnIndex(LICENSE_BLOCKED)));
+            if(cursor.isNull(cursor.getColumnIndex(EMAIL_NC))){
+                md_site.setEmail_nc(null);
+            }else{
+                md_site.setEmail_nc(cursor.getString(cursor.getColumnIndex(EMAIL_NC)));
+            }
             return md_site;
         }
 
@@ -393,7 +399,7 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
             if (md_site.getLicense_blocked() > -1) {
                 contentValues.put(LICENSE_BLOCKED, md_site.getLicense_blocked());
             }
-
+            contentValues.put(EMAIL_NC,md_site.getEmail_nc());
             return contentValues;
 
         }

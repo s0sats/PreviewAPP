@@ -3,11 +3,11 @@ package com.namoadigital.prj001.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by neomatrix on 3/22/18.
@@ -53,6 +53,7 @@ public class SO_Pack_Express_Local implements Serializable {
     @Expose @SerializedName("segment_code") private Integer segment_code;
     @Expose @SerializedName("segment_id") private String segment_id;
     @Expose @SerializedName("segment_desc") private String segment_desc;
+    @Expose @SerializedName("pipeline_desc") private String pipeline_desc;
     @Expose @SerializedName("billing_add_inf1_value") private String billing_add_inf1_value;
     @Expose @SerializedName("billing_add_inf2_value") private String billing_add_inf2_value;
     @Expose @SerializedName("billing_add_inf3_value") private String billing_add_inf3_value;
@@ -102,6 +103,7 @@ public class SO_Pack_Express_Local implements Serializable {
         this.segment_code = null;
         this.segment_id = null;
         this.segment_desc = null;
+        this.pipeline_desc = null;
         this.billing_add_inf1_value = null;
         this.billing_add_inf2_value = null;
         this.billing_add_inf3_value = null;
@@ -364,6 +366,15 @@ public class SO_Pack_Express_Local implements Serializable {
         this.segment_desc = segment_desc;
     }
 
+    @Nullable
+    public String getPipeline_desc() {
+        return pipeline_desc;
+    }
+
+    public void setPipeline_desc(@Nullable String pipeline_desc) {
+        this.pipeline_desc = pipeline_desc;
+    }
+
     public String getBilling_add_inf1_value() {
         return billing_add_inf1_value;
     }
@@ -460,18 +471,24 @@ public class SO_Pack_Express_Local implements Serializable {
         this.packsLocals = packsLocals;
     }
 
-    public String getAllFieldForFilter(){
-        return express_code
-                + so_id
-                + serial_id
-                + billing_add_inf1_value
-                + billing_add_inf2_value
-                + billing_add_inf3_value
-                + exec_site_desc
-                + operation_desc
-                + ret_msg
+    public String getAllFieldForFilter() {
+        return express_code +
+                so_prefix + "." +
+                so_code + "|" +
+                so_id + "|" +
+                so_desc + "|" +
+                product_desc + "|" +
+                serial_id + "|" +
+                pipeline_desc + "|" +
+                priority_desc + "|"
+                + billing_add_inf1_value + "|"
+                + billing_add_inf2_value + "|"
+                + billing_add_inf3_value + "|"
+                + exec_site_desc + "|"
+                + operation_desc + "|"
+                + ret_msg + "|"
                 + log_date
-                        .replace("null|","");
+                .replace("null|", "");
     }
 
 

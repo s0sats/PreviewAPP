@@ -1184,7 +1184,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                 resetSOSyncRequired();
                 //if(returnList.size() == 1){
                 if (returnList.size() == 1) {
-                    showSingleResultMsg(ttl, msg);
+                    ToolBox.toastMSG(
+                            context,
+                            msg
+                    );
+//                    showSingleResultMsg(ttl, msg);
                 } else {
                     showSerialResults(returnList);
                 }
@@ -1864,6 +1868,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
 //                        0
 //                );
                 //
+                refreshUI();
+                //
                 ToolBox.toastMSG(
                         context,
                         hmAux_Trans.get("alert_so_sync_ok_msg")
@@ -2331,13 +2337,6 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
          * Ini Vars
          */
 
-        TextView tv_title = (TextView) view.findViewById(R.id.act028_dialog_tv_title);
-        ListView lv_results = (ListView) view.findViewById(R.id.act028_dialog_lv_results);
-        Button btn_ok = (Button) view.findViewById(R.id.act028_dialog_btn_ok);
-
-        tv_title.setText(hmAux_Trans.get("alert_results_ttl"));
-        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
-        //
         final HMAux auxSo = new HMAux();
         for (int i = 0; i < sos.size(); i++) {
             if (sos.get(i).get("label").equals(mSm_so.getSo_prefix() + "." + mSm_so.getSo_code())) {
@@ -2345,53 +2344,80 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                 break;
             }
         }
-        //
-        lv_results.setAdapter(
-                new Act028_Results_Adapter(
-                        context,
-                        R.layout.act028_results_adapter_cell,
-                        sos
-                )
-        );
+
+        if (sos.size() > 1) {
+            TextView tv_title = (TextView) view.findViewById(R.id.act028_dialog_tv_title);
+            ListView lv_results = (ListView) view.findViewById(R.id.act028_dialog_lv_results);
+            Button btn_ok = (Button) view.findViewById(R.id.act028_dialog_btn_ok);
+
+            tv_title.setText(hmAux_Trans.get("alert_results_ttl"));
+            btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
+            //
+
+            //
+            lv_results.setAdapter(
+                    new Act028_Results_Adapter(
+                            context,
+                            R.layout.act028_results_adapter_cell,
+                            sos
+                    )
+            );
 
 
-        //builder.setTitle(hmAux_Trans.get("alert_results_ttl"));
-        builder.setView(view);
-        builder.setCancelable(false);
+            //builder.setTitle(hmAux_Trans.get("alert_results_ttl"));
+            builder.setView(view);
+            builder.setCancelable(false);
 
-        final AlertDialog show = builder.show();
+            final AlertDialog show = builder.show();
 
-        /**
-         * Ini Action
-         */
-        btn_ok.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                show.dismiss();
+            /**
+             * Ini Action
+             */
+            btn_ok.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    show.dismiss();
 
-                if (progressDialog != null && progressDialog.isShowing()) {
-                    progressDialog.dismiss();
+                    processEventProductCancelReturn(auxSo);
                 }
-                if (auxSo.containsKey("status")) {
-                    if (auxSo.get("status").equalsIgnoreCase("Ok")) {
-                        //
-                        act027_product_edit_.setStatusCancelled();
+            });
+        }else {
+            if (sos.size() == 1) {
+                //Verifica se S.O atualizada, foi esta S.O
+                if (sos.get(0).get("label").equals(mSm_so.getSo_prefix() + "." + mSm_so.getSo_code())) {
+                    if (sos.get(0).get("status").equalsIgnoreCase("Ok")) {
+                        Toast.makeText(context, hmAux_Trans.get("msg_so_results_ok"), Toast.LENGTH_SHORT).show();
                     }
                 }
-                //
-                boolean hasSerialPendency = getMd_product_serialsPendency(serialDao);
-
-                if (hasSerialPendency) {
-                    executeSerialSave(false);
-                } else if (act027_opc_.hasSyncRequired()
-                        || isSerialOutdated) {
-                    isSerialOutdated = true;
-                    executeSerialDownload();
-                }
-                //
-                refreshUI();
             }
-        });
+            processEventProductCancelReturn(auxSo);
+        }
+
+
+    }
+
+    private void processEventProductCancelReturn(HMAux auxSo) {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
+        if (auxSo.containsKey("status")) {
+            if (auxSo.get("status").equalsIgnoreCase("Ok")) {
+                //
+                act027_product_edit_.setStatusCancelled();
+            }
+        }
+        //
+        boolean hasSerialPendency = getMd_product_serialsPendency(serialDao);
+
+        if (hasSerialPendency) {
+            executeSerialSave(false);
+        } else if (act027_opc_.hasSyncRequired()
+                || isSerialOutdated) {
+            isSerialOutdated = true;
+            executeSerialDownload();
+        }
+        //
+        refreshUI();
     }
 
     //endregion
@@ -2698,10 +2724,10 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         Integer editUser = mSm_so.getEdit_user();
         Integer userCode = Integer.valueOf(ToolBox_Con.getPreference_User_Code(context));
         if (editUser == null
-        || !editUser.equals(userCode)
-        || mSm_so.getUpdate_required() == 1
-        || isSoWithinTokenFile()
-        || act027_opc_.hasSyncRequired()
+                || !editUser.equals(userCode)
+                || mSm_so.getUpdate_required() == 1
+                || ToolBox_Inf.isSoWithinTokenFile(context, mSm_so.getSo_prefix(), mSm_so.getSo_code())
+                || act027_opc_.hasSyncRequired()
         ) {
             ToolBox.alertMSG(
                     context,
@@ -3365,7 +3391,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
 
         boolean hasUpdateRequired = mSm_so.getUpdate_required() == 1;
 
-        Drawable wrappedDrawable = setSyncIcon(hasUpdateRequired, isSoWithinTokenFile(), hasSyncRequired);
+        Drawable wrappedDrawable = setSyncIcon(hasUpdateRequired, ToolBox_Inf.isSoWithinTokenFile(context, mSm_so.getSo_prefix(), mSm_so.getSo_code()), hasSyncRequired);
 
 
         menu.add(0, TOOLBAR_SYNC_DATA_STATUS, 1, hmAux_Trans.get("lbl_sync_data"));
@@ -3404,7 +3430,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     }
 
 
-    public boolean isSoWithinTokenFile() {
+    public boolean isSoWithinTokenFile(Integer soPrefix, Integer soCode) {
         try {
             File[] soToken =
                     ToolBox_Inf.getListOfFiles_v5(
@@ -3427,8 +3453,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                 for (SM_SO so : token_so_list) {
                     if (
                             so.getCustomer_code() == ToolBox_Con.getPreference_Customer_Code(context)
-                                    && so.getSo_prefix() == mSm_so.getSo_prefix()
-                                    && so.getSo_code() == mSm_so.getSo_code()
+                                    && so.getSo_prefix() == soPrefix
+                                    && so.getSo_code() == soCode
                     ) {
                         return true;
                     }

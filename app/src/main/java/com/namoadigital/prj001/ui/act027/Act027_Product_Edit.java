@@ -17,6 +17,7 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -508,7 +509,7 @@ public class Act027_Product_Edit extends BaseFragment {
                         || Constant.SYS_STATUS_WAITING_BUDGET.equals(mSm_so.getStatus())
                         || (mSm_so.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_EDIT)
                         && mSm_so.getEdit_user() != null
-                        && !ToolBox_Con.getPreference_User_Code(context).equalsIgnoreCase(mSm_so.getEdit_user().toString()))
+                        && ToolBox_Con.getPreference_User_Code(context).equalsIgnoreCase(mSm_so.getEdit_user().toString()))
                     )
             ) {
                 ll_delete_prod_event.setVisibility(View.VISIBLE);
@@ -876,81 +877,64 @@ public class Act027_Product_Edit extends BaseFragment {
     private void processTaskStatus() {
 
         Act027_Main mMain = (Act027_Main) getActivity();
-
+//
         if (!mMain.hasExecutionProfile()
                 || hasSOStatusStopOrEdit()) {
-            arff_applyrepair.setmEnabled(false);
-            cb_inspection.setEnabled(false);
-            cb_inspection.setTextColor(0xFF000000);
-            mk_qty.setEnabled(false);
-            tv_unit.setEnabled(false);
-            pff_sketch.setmEnabled(false);
-            mk_comments.setEnabled(false);
-
-            String sFF = (String) iv_gallery.getTag();
-
-            if (sFF.length() != 0) {
-                iv_gallery.setEnabled(true);
-                iv_gallery.setImageDrawable(context.getDrawable(R.drawable.ic_camera_on));
-            } else {
-                iv_gallery.setEnabled(false);
-                iv_gallery.setImageDrawable(context.getDrawable(R.drawable.ic_camera_off));
-            }
-            ll_save.setVisibility(View.GONE);
-            //iv_save.setVisibility(View.GONE);
-
-            mMain.setEventEditOpenStatus(false);
+            disableProductEvent(mMain);
 
             return;
         }
 
         if (mSm_so_product_event.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PENDING) ||
                 mSm_so_product_event.getStatus().equalsIgnoreCase("")) {
-
-            arff_applyrepair.setmEnabled(true);
-            cb_inspection.setEnabled(true);
-            mk_qty.setEnabled(true);
-            tv_unit.setEnabled(true);
-            pff_sketch.setmEnabled(true);
-            mk_comments.setEnabled(true);
-            ll_save.setVisibility(View.VISIBLE);
-            //iv_save.setVisibility(View.VISIBLE);
-            iv_save.setOnClickListener(save_listener);
-
-            mMain.setEventEditOpenStatus(true);
+            enableProductEvent(mMain);
         } else {
-            arff_applyrepair.setmEnabled(false);
-            cb_inspection.setEnabled(false);
-            cb_inspection.setTextColor(0xFF000000);
-            mk_qty.setEnabled(false);
-            tv_unit.setEnabled(false);
-            pff_sketch.setmEnabled(false);
-            mk_comments.setEnabled(false);
-
-            String sFF = (String) iv_gallery.getTag();
-
-            if (sFF.length() != 0) {
-                iv_gallery.setEnabled(true);
-                iv_gallery.setImageDrawable(context.getDrawable(R.drawable.ic_camera_on));
-            } else {
-                iv_gallery.setEnabled(false);
-                iv_gallery.setImageDrawable(context.getDrawable(R.drawable.ic_camera_off));
-            }
-
-            ll_save.setVisibility(View.GONE);
-            //iv_save.setVisibility(View.GONE);
-
-            mMain.setEventEditOpenStatus(false);
-
+            disableProductEvent(mMain);
         }
 
     }
 
+    private void enableProductEvent(Act027_Main mMain) {
+        arff_applyrepair.setmEnabled(true);
+        cb_inspection.setEnabled(true);
+        mk_qty.setEnabled(true);
+        tv_unit.setEnabled(true);
+        pff_sketch.setmEnabled(true);
+        mk_comments.setEnabled(true);
+        ll_save.setVisibility(View.VISIBLE);
+        //iv_save.setVisibility(View.VISIBLE);
+        iv_save.setOnClickListener(save_listener);
+
+        mMain.setEventEditOpenStatus(true);
+    }
+
+    private void disableProductEvent(Act027_Main mMain) {
+        arff_applyrepair.setmEnabled(false);
+        cb_inspection.setEnabled(false);
+        cb_inspection.setTextColor(0xFF000000);
+        mk_qty.setEnabled(false);
+        tv_unit.setEnabled(false);
+        pff_sketch.setmEnabled(false);
+        mk_comments.setEnabled(false);
+
+        String sFF = (String) iv_gallery.getTag();
+
+        if (sFF.length() != 0) {
+            iv_gallery.setEnabled(true);
+            iv_gallery.setImageDrawable(context.getDrawable(R.drawable.ic_camera_on));
+        } else {
+            iv_gallery.setEnabled(false);
+            iv_gallery.setImageDrawable(context.getDrawable(R.drawable.ic_camera_off));
+        }
+        ll_save.setVisibility(View.GONE);
+        //iv_save.setVisibility(View.GONE);
+
+        mMain.setEventEditOpenStatus(false);
+    }
+
     private boolean hasSOStatusStopOrEdit() {
         return mSm_so.getStatus().equals(Constant.SYS_STATUS_STOP)
-                || (mSm_so.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_EDIT)
-                && mSm_so.getEdit_user() != null
-                && !ToolBox_Con.getPreference_User_Code(context).equalsIgnoreCase(mSm_so.getEdit_user().toString()));
+                || mSm_so.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_EDIT);
     }
 
     private View.OnClickListener save_listener = new View.OnClickListener() {
@@ -1140,6 +1124,7 @@ public class Act027_Product_Edit extends BaseFragment {
             mMain.executeSoSave();
         } else {
             //ToolBox_Inf.showNoConnectionDialog(context);
+            Toast.makeText(context, hmAux_Trans.get("alert_offline_data_saved_msg"), Toast.LENGTH_SHORT).show();
             mMain.refreshUI();
             //
             mMain.setProductListFragOffLine();

@@ -19,6 +19,7 @@ import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device_Item;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device_Item_Hist;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device_Item_Material;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
+import com.namoadigital.prj001.model.MdProductSerialTpDeviceItemHistMat;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_005;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_006;
@@ -151,19 +152,20 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
 
     @Override
     public void addUpdate(MD_Product_Serial md_product_serial) {
-        addUpdate(md_product_serial,null);
+        addUpdate(md_product_serial, null);
     }
 
     /**
      * METODO MODIFICADO PARA TRABALHAR COM INSTANCIA DO DB COMPARTILHADA
      * E NO METODO DE TRANSACTION DE INSERT DO SERIAL NO SYNCRONISMO
+     *
      * @param dbInstance
      */
-    public void addUpdate(MD_Product_Serial md_product_serial,SQLiteDatabase dbInstance) {
+    public void addUpdate(MD_Product_Serial md_product_serial, SQLiteDatabase dbInstance) {
         //
-        if(dbInstance == null){
+        if (dbInstance == null) {
             openDB();
-        }else{
+        } else {
             this.db = dbInstance;
         }
         //
@@ -198,14 +200,14 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             );
 
             //Seta a pk nos tracking
-            if(md_product_serial.getTracking_list() != null) {
+            if (md_product_serial.getTracking_list() != null) {
 
                 for (int i = 0; i < md_product_serial.getTracking_list().size(); i++) {
                     md_product_serial.getTracking_list().get(i).setPk(md_product_serial);
                 }
             }
             //Verifica se existe tracking, caso não exista, nem tenta fazer o add update
-            if(md_product_serial.getTracking_list() != null && md_product_serial.getTracking_list().size() > 0) {
+            if (md_product_serial.getTracking_list() != null && md_product_serial.getTracking_list().size() > 0) {
                 md_product_serial_trackingDao.addUpdate(md_product_serial.getTracking_list(), false, db);
             }
 
@@ -214,7 +216,7 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
         } finally {
         }
         //
-        if(dbInstance == null){
+        if (dbInstance == null) {
             closeDB();
         }
     }
@@ -256,19 +258,20 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
 
     @Override
     public void addUpdateTmp(MD_Product_Serial md_product_serial) {
-        addUpdateTmp(md_product_serial,null);
+        addUpdateTmp(md_product_serial, null);
     }
 
     /**
      * METODO MODIFICADO PARA TRABALHAR COM INSTANCIA DO DB COMPARTILHADA
      * E NO METODO DE TRANSACTION DE INSERT DO SERIAL NO SYNCRONISMO
+     *
      * @param dbInstance
      */
     public void addUpdateTmp(MD_Product_Serial md_product_serial, SQLiteDatabase dbInstance) {
         //
-        if(dbInstance == null){
+        if (dbInstance == null) {
             openDB();
-        }else{
+        } else {
             this.db = dbInstance;
         }
         //
@@ -315,7 +318,7 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
         //
         if (serial_tmp != 0) {
             md_product_serial.setSerial_tmp(serial_tmp);
-            if(md_product_serial.getTracking_list() != null) {
+            if (md_product_serial.getTracking_list() != null) {
                 for (int i = 0; i < md_product_serial.getTracking_list().size(); i++) {
                     md_product_serial.getTracking_list().get(i).setPk(md_product_serial);
                 }
@@ -353,15 +356,15 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             );
             //
             //Verifica se existe tracking, caso não exista, nem tenta fazer o add update
-            if(md_product_serial.getTracking_list() != null && md_product_serial.getTracking_list().size() > 0) {
-                md_product_serial_trackingDao.addUpdate(md_product_serial.getTracking_list(), false,db);
+            if (md_product_serial.getTracking_list() != null && md_product_serial.getTracking_list().size() > 0) {
+                md_product_serial_trackingDao.addUpdate(md_product_serial.getTracking_list(), false, db);
             }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
         }
         //
-        if(dbInstance == null){
+        if (dbInstance == null) {
             closeDB();
         }
     }
@@ -459,7 +462,7 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
                 }
                 //
                 //Verifica se existe tracking, caso não exista, nem tenta fazer o add update
-                if(md_product_serial.getTracking_list() != null && md_product_serial.getTracking_list().size() > 0) {
+                if (md_product_serial.getTracking_list() != null && md_product_serial.getTracking_list().size() > 0) {
                     md_product_serial_trackingDao.addUpdate(md_product_serial.getTracking_list(), false);
                 }
             }
@@ -480,9 +483,9 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
      * @param md_product_serials
      * @param dbInstance
      */
-    public void addUpdateTmpByIOProcess(Iterable<MD_Product_Serial> md_product_serials, SQLiteDatabase dbInstance){
-        for(MD_Product_Serial serial : md_product_serials ){
-            addUpdateTmp(serial,dbInstance);
+    public void addUpdateTmpByIOProcess(Iterable<MD_Product_Serial> md_product_serials, SQLiteDatabase dbInstance) {
+        for (MD_Product_Serial serial : md_product_serials) {
+            addUpdateTmp(serial, dbInstance);
         }
     }
 
@@ -507,18 +510,19 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
 
     @Override
     public void remove(String sQuery) {
-        remove(sQuery,null);
+        remove(sQuery, null);
     }
 
     /**
      * METODO MODIFICADO PARA TRABALHAR COM INSTANCIA DO DB COMPARTILHADA
      * E NO METODO DE TRANSACTION DE INSERT DO SERIAL NO SYNCRONISMO
+     *
      * @param dbInstance
      */
     public void remove(String sQuery, SQLiteDatabase dbInstance) {
-        if(dbInstance == null) {
+        if (dbInstance == null) {
             openDB();
-        }else{
+        } else {
             this.db = dbInstance;
         }
 
@@ -529,13 +533,14 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
         } finally {
         }
 
-        if(dbInstance == null) {
+        if (dbInstance == null) {
             closeDB();
         }
 
     }
 
     //region Metodo para processamento via transaction
+
     /**
      * Metodo especifico para sincronizar os dados do serial
      *
@@ -544,12 +549,13 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
      * @param serialTpDeviceItems
      * @param serialTpDeviceItemHists
      * @param serialTpDeviceItemMaterials
+     * @param serialTpDeviceItemHistMaterials
      * @return
      */
-    public boolean processSerialSync(Iterable<MD_Product_Serial> md_product_serials, ArrayList<MD_Product_Serial_Tp_Device> serialTpDevices, ArrayList<MD_Product_Serial_Tp_Device_Item> serialTpDeviceItems, ArrayList<MD_Product_Serial_Tp_Device_Item_Hist> serialTpDeviceItemHists, ArrayList<MD_Product_Serial_Tp_Device_Item_Material> serialTpDeviceItemMaterials){
+    public boolean processSerialSync(Iterable<MD_Product_Serial> md_product_serials, ArrayList<MD_Product_Serial_Tp_Device> serialTpDevices, ArrayList<MD_Product_Serial_Tp_Device_Item> serialTpDeviceItems, ArrayList<MD_Product_Serial_Tp_Device_Item_Hist> serialTpDeviceItemHists, ArrayList<MD_Product_Serial_Tp_Device_Item_Material> serialTpDeviceItemMaterials, ArrayList<MdProductSerialTpDeviceItemHistMat> serialTpDeviceItemHistMaterials) {
         boolean processReturn = false;
 
-        Log.d("SerialTransaction","processSerialSync - Inicio:  " + ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+        Log.d("SerialTransaction", "processSerialSync - Inicio:  " + ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
         openDB();
 
         try {
@@ -563,23 +569,23 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
                                 md_product_serial.getCustomer_code(),
                                 md_product_serial.getProduct_code(),
                                 md_product_serial.getSerial_id()
-                        ).toSqlQuery(),db);
+                        ).toSqlQuery(), db);
                 //
                 md_product_serial.setLog_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
-                if(dbSerial != null && dbSerial.getSerial_code() > 0){
+                if (dbSerial != null && dbSerial.getSerial_code() > 0) {
                     md_product_serial.setSerial_tmp(dbSerial.getSerial_tmp());
                     md_product_serial.setSync_process(1);
                     //
-                    this.addUpdate(md_product_serial,db);
+                    this.addUpdate(md_product_serial, db);
                     //LUCHE - 10/11/2021 - Tratativa para seriais com estrutura
-                    handleLocalSerialStructureChanges(serialTpDevices, serialTpDeviceItems, serialTpDeviceItemHists,serialTpDeviceItemMaterials, md_product_serial, dbSerial);
-                }else{
+                    handleLocalSerialStructureChanges(serialTpDevices, serialTpDeviceItems, serialTpDeviceItemHists, serialTpDeviceItemMaterials, md_product_serial, dbSerial, serialTpDeviceItemHistMaterials);
+                } else {
                     md_product_serial.setSync_process(1);
                     //
-                    this.addUpdateTmp(md_product_serial,db);
+                    this.addUpdateTmp(md_product_serial, db);
                     //Se é um novo serial e tem estrutura, insere.
-                    if(md_product_serial.getHas_item_check() == 1) {
-                        tryAddUpdateStructure(md_product_serial, serialTpDevices, serialTpDeviceItems, serialTpDeviceItemHists, serialTpDeviceItemMaterials);
+                    if (md_product_serial.getHas_item_check() == 1) {
+                        tryAddUpdateStructure(md_product_serial, serialTpDevices, serialTpDeviceItems, serialTpDeviceItemHists, serialTpDeviceItemMaterials, serialTpDeviceItemHistMaterials);
                     }
                 }
 
@@ -589,47 +595,49 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             processReturn = true;
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
-            Log.d("SerialTransaction","processSerialSync - Erro:  "+ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + "\n"+e.toString());
+            Log.d("SerialTransaction", "processSerialSync - Erro:  " + ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + "\n" + e.toString());
             processReturn = false;
         } finally {
             db.endTransaction();
         }
 
         closeDB();
-        Log.d("SerialTransaction","processSerialSync - Fim:  " + ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
-        return processReturn ;
+        Log.d("SerialTransaction", "processSerialSync - Fim:  " + ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+        return processReturn;
     }
 
     /**
      * LUCHE - 10/11/2021
      * Metodo que verifica a necessidade de inserir, atualizar ou deletar estrutura do serial JA EXISTENTE
      * Esse metodo avalia o serial recebido do server como serial ja existente no device:
-     *      - Se o serial recebido tiver estrutura(has_item_check == 1):
-     *         - Caso Serial local NÃO POSSUA estrutura(has_item_check == 0), insere a nova estrutura.
-     *         - Caso Serial local POSSUA estrutura(has_item_check == 1) e scn_item_check FOR DIFERENTE do recebido, remove estrutura atual e recria.
-     *         - Caso Serial local POSSUA estrutura(has_item_check == 1) e scn_item_check FOR IGUAL do recebido, NÃO FAZ NADA.
-     *     -  Se o serial recebido NÃO tiver estrutura(has_item_check == 0):
-     *         - Caso Serial local POSSUA estrutura(has_item_check == 1), REMOVE a estrutura atual.
+     * - Se o serial recebido tiver estrutura(has_item_check == 1):
+     * - Caso Serial local NÃO POSSUA estrutura(has_item_check == 0), insere a nova estrutura.
+     * - Caso Serial local POSSUA estrutura(has_item_check == 1) e scn_item_check FOR DIFERENTE do recebido, remove estrutura atual e recria.
+     * - Caso Serial local POSSUA estrutura(has_item_check == 1) e scn_item_check FOR IGUAL do recebido, NÃO FAZ NADA.
+     * -  Se o serial recebido NÃO tiver estrutura(has_item_check == 0):
+     * - Caso Serial local POSSUA estrutura(has_item_check == 1), REMOVE a estrutura atual.
+     *
      * @param serialTpDevices
      * @param serialTpDeviceItems
      * @param serialTpDeviceItemHists
      * @param serialTpDeviceItemMaterials
      * @param md_product_serial
      * @param dbSerial
+     * @param serialTpDeviceItemHistMaterials
      */
-    private void handleLocalSerialStructureChanges(ArrayList<MD_Product_Serial_Tp_Device> serialTpDevices, ArrayList<MD_Product_Serial_Tp_Device_Item> serialTpDeviceItems, ArrayList<MD_Product_Serial_Tp_Device_Item_Hist> serialTpDeviceItemHists, ArrayList<MD_Product_Serial_Tp_Device_Item_Material> serialTpDeviceItemMaterials, MD_Product_Serial md_product_serial, MD_Product_Serial dbSerial) {
+    private void handleLocalSerialStructureChanges(ArrayList<MD_Product_Serial_Tp_Device> serialTpDevices, ArrayList<MD_Product_Serial_Tp_Device_Item> serialTpDeviceItems, ArrayList<MD_Product_Serial_Tp_Device_Item_Hist> serialTpDeviceItemHists, ArrayList<MD_Product_Serial_Tp_Device_Item_Material> serialTpDeviceItemMaterials, MD_Product_Serial md_product_serial, MD_Product_Serial dbSerial, ArrayList<MdProductSerialTpDeviceItemHistMat> serialTpDeviceItemHistMaterials) {
         //Verifica se serial vindo do servidor possui estrutura
-        if( md_product_serial.getHas_item_check() == 1) {
+        if (md_product_serial.getHas_item_check() == 1) {
             //Se serial do servidor tem estrutura, verifica se a estrutura local não existe ou tem scn_item_check diferente. Nesses casos, insere aestrutura recebida,
-            if( md_product_serial.getScn_item_check() != null
-                && (dbSerial.getHas_item_check() == 0 || dbSerial.getScn_item_check() == null || !dbSerial.getScn_item_check().equals(md_product_serial.getScn_item_check()))) {
+            if (md_product_serial.getScn_item_check() != null
+                    && (dbSerial.getHas_item_check() == 0 || dbSerial.getScn_item_check() == null || !dbSerial.getScn_item_check().equals(md_product_serial.getScn_item_check()))) {
                 removeFullStructure(md_product_serial);
-                tryAddUpdateStructure(md_product_serial, serialTpDevices, serialTpDeviceItems, serialTpDeviceItemHists, serialTpDeviceItemMaterials);
+                tryAddUpdateStructure(md_product_serial, serialTpDevices, serialTpDeviceItems, serialTpDeviceItemHists, serialTpDeviceItemMaterials, serialTpDeviceItemHistMaterials);
             }
-        }else{
+        } else {
             //Se serial vindo do servidor não possi estrutura, verifica se o local tem.
             //Caso tenha, significa que a estrutura foi removida e por isso deleta a estrutura local.
-            if(dbSerial.getHas_item_check() == 1){
+            if (dbSerial.getHas_item_check() == 1) {
                 removeFullStructure(md_product_serial);
             }
         }
@@ -638,82 +646,98 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
     /**
      * LUCHE - 10/11/2021
      * Metodo que recebe o serial como parametro e busca a sua estrutura nas listas de device, item e historico e inserir os registros nas tabelas.
+     *
      * @param md_product_serial
      * @param serialTpDevices
      * @param serialTpDeviceItems
      * @param serialTpDeviceItemHists
      * @param serialTpDeviceItemMaterials
+     * @param serialTpDeviceItemHistMaterials
      */
-    private void tryAddUpdateStructure(MD_Product_Serial md_product_serial, ArrayList<MD_Product_Serial_Tp_Device> serialTpDevices, ArrayList<MD_Product_Serial_Tp_Device_Item> serialTpDeviceItems, ArrayList<MD_Product_Serial_Tp_Device_Item_Hist> serialTpDeviceItemHists, ArrayList<MD_Product_Serial_Tp_Device_Item_Material> serialTpDeviceItemMaterials) {
+    private void tryAddUpdateStructure(MD_Product_Serial md_product_serial, ArrayList<MD_Product_Serial_Tp_Device> serialTpDevices, ArrayList<MD_Product_Serial_Tp_Device_Item> serialTpDeviceItems, ArrayList<MD_Product_Serial_Tp_Device_Item_Hist> serialTpDeviceItemHists, ArrayList<MD_Product_Serial_Tp_Device_Item_Material> serialTpDeviceItemMaterials, ArrayList<MdProductSerialTpDeviceItemHistMat> serialTpDeviceItemHistMaterials) {
         getSerialTpDeviceDao().addUpdate(
-            MD_Product_Serial_Tp_Device.getSerialDeviceTpFromList(
-                md_product_serial,
-                serialTpDevices
-           ),
-           false,
-            db
+                MD_Product_Serial_Tp_Device.getSerialDeviceTpFromList(
+                        md_product_serial,
+                        serialTpDevices
+                ),
+                false,
+                db
         );
         //
         getSerialTpDeviceItemDao().addUpdate(
-            MD_Product_Serial_Tp_Device_Item.getSerialDeviceTpItemFromList(
-                md_product_serial,
-                serialTpDeviceItems
-            ),
-            false,
-            db
+                MD_Product_Serial_Tp_Device_Item.getSerialDeviceTpItemFromList(
+                        md_product_serial,
+                        serialTpDeviceItems
+                ),
+                false,
+                db
         );
         //
         getSerialTpDeviceItemHistDao().addUpdate(
-            MD_Product_Serial_Tp_Device_Item_Hist.getSerialDeviceTpItemHistFromList(
-                md_product_serial,
-                serialTpDeviceItemHists
-            ),
-            false,
-            db
+                MD_Product_Serial_Tp_Device_Item_Hist.getSerialDeviceTpItemHistFromList(
+                        md_product_serial,
+                        serialTpDeviceItemHists
+                ),
+                false,
+                db
         );
         //
         getSerialTpDeviceItemMaterialDao().addUpdate(
-            MD_Product_Serial_Tp_Device_Item_Material.getSerialDeviceTpItemMaterialFromList(
-                md_product_serial,
-                serialTpDeviceItemMaterials
-            ),
-            false,
-            db
+                MD_Product_Serial_Tp_Device_Item_Material.getSerialDeviceTpItemMaterialFromList(
+                        md_product_serial,
+                        serialTpDeviceItemMaterials
+                ),
+                false,
+                db
         );
+
+        getSerialTpDeviceItemHistMaterialDao().addUpdate(
+                MdProductSerialTpDeviceItemHistMat.getSerialDeviceTpItemHistMaterialFromList(
+                        md_product_serial,
+                        serialTpDeviceItemHistMaterials
+                ),
+                false,
+                db
+        );
+
     }
 
-    private MD_Product_Serial_Tp_DeviceDao getSerialTpDeviceDao(){
+    private MD_Product_Serial_Tp_DeviceDao getSerialTpDeviceDao() {
         return new MD_Product_Serial_Tp_DeviceDao(context,
-                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                    Constant.DB_VERSION_CUSTOM
-                );
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
     }
 
-    private MD_Product_Serial_Tp_Device_ItemDao getSerialTpDeviceItemDao(){
+    private MD_Product_Serial_Tp_Device_ItemDao getSerialTpDeviceItemDao() {
         return new MD_Product_Serial_Tp_Device_ItemDao(context,
-            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-            Constant.DB_VERSION_CUSTOM
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
         );
     }
 
-    private MD_Product_Serial_Tp_Device_Item_HistDao getSerialTpDeviceItemHistDao(){
+    private MD_Product_Serial_Tp_Device_Item_HistDao getSerialTpDeviceItemHistDao() {
         return new MD_Product_Serial_Tp_Device_Item_HistDao(context,
-            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-            Constant.DB_VERSION_CUSTOM
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
         );
     }
 
-    private MD_Product_Serial_Tp_Device_Item_MaterialDao getSerialTpDeviceItemMaterialDao(){
+    private MD_Product_Serial_Tp_Device_Item_MaterialDao getSerialTpDeviceItemMaterialDao() {
         return new MD_Product_Serial_Tp_Device_Item_MaterialDao(context,
-            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-            Constant.DB_VERSION_CUSTOM
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
         );
     }
 
-    public boolean processSerialConsiliation(){
+    private MdProductSerialTpDeviceItemHistMatDao getSerialTpDeviceItemHistMaterialDao() {
+        return new MdProductSerialTpDeviceItemHistMatDao.DatabaseFactory(context).build();
+    }
+
+    public boolean processSerialConsiliation() {
         boolean processReturn = false;
         openDB();
-        Log.d("SerialTransaction","processSerialConsiliation - Inicio:  " + ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+        Log.d("SerialTransaction", "processSerialConsiliation - Inicio:  " + ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
         try {
 
             db.beginTransaction();
@@ -771,33 +795,34 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             processReturn = true;
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
-            Log.d("SerialTransaction","processSerialConsiliation - Erro:  "+ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + "\n"+e.toString());
+            Log.d("SerialTransaction", "processSerialConsiliation - Erro:  " + ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + "\n" + e.toString());
             processReturn = false;
         } finally {
             db.endTransaction();
         }
 
         closeDB();
-        Log.d("SerialTransaction","processSerialConsiliation - Fim: " + ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
-        return processReturn ;
+        Log.d("SerialTransaction", "processSerialConsiliation - Fim: " + ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+        return processReturn;
     }
 
     @Override
     public MD_Product_Serial getByString(String sQuery) {
-        return getByString(sQuery,null);
+        return getByString(sQuery, null);
     }
 
     /**
      * Metodo modificado para trabahar com a instancia de banco passada por parametro
+     *
      * @param sQuery
      * @param dbInstance
      * @return
      */
     public MD_Product_Serial getByString(String sQuery, SQLiteDatabase dbInstance) {
         //
-        if(dbInstance == null){
+        if (dbInstance == null) {
             openDB();
-        }else{
+        } else {
             this.db = dbInstance;
         }
         //
@@ -845,19 +870,20 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
 
     @Override
     public HMAux getByStringHM(String sQuery) {
-        return getByStringHM(sQuery,null);
+        return getByStringHM(sQuery, null);
     }
 
     /**
      * METODO MODIFICADO PARA TRABALHAR COM INSTANCIA DO DB COMPARTILHADA
      * E NO METODO DE TRANSACTION DE INSERT DO SERIAL NO SYNCRONISMO
+     *
      * @param dbInstance
      */
-    public HMAux getByStringHM(String sQuery, SQLiteDatabase dbInstance ) {
+    public HMAux getByStringHM(String sQuery, SQLiteDatabase dbInstance) {
 
-        if(dbInstance == null){
+        if (dbInstance == null) {
             openDB();
-        }else{
+        } else {
             this.db = dbInstance;
         }
 
@@ -877,7 +903,7 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
         } finally {
         }
 
-        if(dbInstance == null){
+        if (dbInstance == null) {
             closeDB();
         }
         //
@@ -886,19 +912,20 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
 
     @Override
     public List<MD_Product_Serial> query(String sQuery) {
-        return query(sQuery,null);
+        return query(sQuery, null);
     }
 
     /**
      * METODO MODIFICADO PARA TRABALHAR COM INSTANCIA DO DB COMPARTILHADA
      * E NO METODO DE TRANSACTION DE INSERT DO SERIAL NO SYNCRONISMO
+     *
      * @param dbInstance
      */
-    public List<MD_Product_Serial> query(String sQuery,SQLiteDatabase dbInstance) {
+    public List<MD_Product_Serial> query(String sQuery, SQLiteDatabase dbInstance) {
 
-        if(dbInstance == null){
+        if (dbInstance == null) {
             openDB();
-        }else{
+        } else {
             this.db = dbInstance;
         }
         //
@@ -939,7 +966,7 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
         } finally {
         }
 
-        if(dbInstance == null){
+        if (dbInstance == null) {
             closeDB();
         }
         return md_product_serials;
@@ -990,29 +1017,29 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
         wherePkClause.append(" and ");
         wherePkClause.append(SERIAL_CODE).append(" = '").append(mdProductSerial.getSerial_code()).append("'");
         //
-        if(dbInstance == null){
+        if (dbInstance == null) {
             openDB();
-        }else{
+        } else {
             this.db = dbInstance;
         }
         //
         try {
-            if(dbInstance == null) {
+            if (dbInstance == null) {
                 this.db.beginTransaction();
             }
             //
-            addUpdateRet += this.db.delete(MD_Product_Serial_Tp_DeviceDao.TABLE,wherePkClause.toString(),null);
-            addUpdateRet += this.db.delete(MD_Product_Serial_Tp_Device_ItemDao.TABLE,wherePkClause.toString(),null);
-            addUpdateRet += this.db.delete(MD_Product_Serial_Tp_Device_Item_HistDao.TABLE,wherePkClause.toString(),null);
-            addUpdateRet += this.db.delete(MD_Product_Serial_Tp_Device_Item_MaterialDao.TABLE,wherePkClause.toString(),null);
+            addUpdateRet += this.db.delete(MD_Product_Serial_Tp_DeviceDao.TABLE, wherePkClause.toString(), null);
+            addUpdateRet += this.db.delete(MD_Product_Serial_Tp_Device_ItemDao.TABLE, wherePkClause.toString(), null);
+            addUpdateRet += this.db.delete(MD_Product_Serial_Tp_Device_Item_HistDao.TABLE, wherePkClause.toString(), null);
+            addUpdateRet += this.db.delete(MD_Product_Serial_Tp_Device_Item_MaterialDao.TABLE, wherePkClause.toString(), null);
             //
-            if(dbInstance == null) {
+            if (dbInstance == null) {
                 this.db.setTransactionSuccessful();
             }
         } catch (SQLException e) {
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
             //e contendo msg de erro tratada.
-            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage() );
+            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
             //Gera arquivo de exception usando dados da exception e do obj de retorno
             ToolBox_Inf.registerException(
                     getClass().getName(),
@@ -1024,14 +1051,14 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             daoObjReturn.setError(true);
             ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
-            if(dbInstance == null) {
+            if (dbInstance == null) {
                 this.db.endTransaction();
             }
             daoObjReturn.setAction(curAction);
             daoObjReturn.setActionReturn(addUpdateRet);
         }
         //
-        if(dbInstance == null){
+        if (dbInstance == null) {
             closeDB();
         }
         return daoObjReturn;
@@ -1322,30 +1349,30 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             md_product_serial.setEdit_mode(cursor.getString(cursor.getColumnIndex(EDIT_MODE)));
             md_product_serial.setProfile(cursor.getString(cursor.getColumnIndex(PROFILE)));
             md_product_serial.setLog_date(cursor.getString(cursor.getColumnIndex(LOG_DATE)));
-            if(cursor.isNull(cursor.getColumnIndex(REASON_CODE))){
-               md_product_serial.setReason_code(null);
-            }else{
+            if (cursor.isNull(cursor.getColumnIndex(REASON_CODE))) {
+                md_product_serial.setReason_code(null);
+            } else {
                 md_product_serial.setReason_code(cursor.getInt(cursor.getColumnIndex(REASON_CODE)));
             }
             md_product_serial.setHas_item_check(cursor.getInt(cursor.getColumnIndex(HAS_ITEM_CHECK)));
-            if(cursor.isNull(cursor.getColumnIndex(SCN_ITEM_CHECK))){
+            if (cursor.isNull(cursor.getColumnIndex(SCN_ITEM_CHECK))) {
                 md_product_serial.setScn_item_check(null);
-            }else{
+            } else {
                 md_product_serial.setScn_item_check(cursor.getInt(cursor.getColumnIndex(SCN_ITEM_CHECK)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(MEASURE_TP_CODE))){
+            if (cursor.isNull(cursor.getColumnIndex(MEASURE_TP_CODE))) {
                 md_product_serial.setMeasure_tp_code(null);
-            }else{
+            } else {
                 md_product_serial.setMeasure_tp_code(cursor.getInt(cursor.getColumnIndex(MEASURE_TP_CODE)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(DEVICE_TP_CODE_MAIN))){
+            if (cursor.isNull(cursor.getColumnIndex(DEVICE_TP_CODE_MAIN))) {
                 md_product_serial.setDevice_tp_code_main(null);
-            }else{
+            } else {
                 md_product_serial.setDevice_tp_code_main(cursor.getInt(cursor.getColumnIndex(DEVICE_TP_CODE_MAIN)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(LAST_MEASURE_VALUE))){
+            if (cursor.isNull(cursor.getColumnIndex(LAST_MEASURE_VALUE))) {
                 md_product_serial.setLast_measure_value(null);
-            }else{
+            } else {
                 md_product_serial.setLast_measure_value(cursor.getDouble(cursor.getColumnIndex(LAST_MEASURE_VALUE)));
             }
             if (cursor.isNull(cursor.getColumnIndex(LAST_MEASURE_DATE))) {
@@ -1470,7 +1497,7 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
                 contentValues.put(LOG_DATE, md_product_serial.getLog_date());
             }
             contentValues.put(REASON_CODE, md_product_serial.getReason_code());
-            if(md_product_serial.getHas_item_check() > -1){
+            if (md_product_serial.getHas_item_check() > -1) {
                 contentValues.put(HAS_ITEM_CHECK, md_product_serial.getHas_item_check());
             }
             contentValues.put(SCN_ITEM_CHECK, md_product_serial.getScn_item_check());

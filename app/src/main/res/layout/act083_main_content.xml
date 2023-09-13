@@ -141,6 +141,22 @@
                         tools:text="OUTROS"
                         android:textStyle="bold"
                         />
+                    <View
+                        android:layout_width="2dp"
+                        android:layout_height="match_parent" />
+
+                    <RadioButton
+                        android:id="@+id/act083_tab_serial"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/act074_radio_states"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:textColor="@color/my_action_radio"
+                        tools:text="Serial"
+                        android:textStyle="bold"
+                        />
 
                 </RadioGroup>
 

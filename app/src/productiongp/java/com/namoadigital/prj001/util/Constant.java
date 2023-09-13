@@ -104,5 +104,7 @@ public class Constant extends ConstantBaseApp {
     public static final String WS_HOST = "portal.namoadigital.com";
     public static final int WS_PORT = 443;
     public static final int WS_TIMEOUT = 3000;
-
+    public static void refreshUrl(){
+        //Metodo vazio pois produção não possui mudanca de ambientes.
+    }
 }

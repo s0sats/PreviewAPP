@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act086.frg_historic
 
+import android.content.Context
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -18,11 +20,11 @@ import com.namoadigital.prj001.databinding.Act086HistoricFrgBinding
 import com.namoadigital.prj001.model.Act086HistoricModel
 import com.namoadigital.prj001.model.GeOsDeviceItem
 import com.namoadigital.prj001.model.GeOsDeviceItemHist
+import com.namoadigital.prj001.ui.act093.ui.ItemCheckListFragmentInteraction
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
+import com.namoadigital.prj001.util.ConstantBaseApp.FRG_HISTORIC_ITEM_CHECK
 import com.namoadigital.prj001.util.ToolBox_Inf
-import java.util.*
-import kotlin.collections.ArrayList
 
 /**
  * A simple [Fragment] subclass.
@@ -35,9 +37,14 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
     }
     private val alertAdapter: Act086HistoricAdapter by lazy{
         Act086HistoricAdapter(
-            alertList
+            alertList,
+            ::onPhotoSelected
         )
     }
+    //
+    private var _mFrgListener: PhotoSelection? = null
+    private val mFrgListener get() = _mFrgListener!!
+    //
     private var alertList = mutableListOf<Act086HistoricModel>()
     private lateinit var itemHist: ArrayList<GeOsDeviceItemHist>
     private var itemCheckStatus: String? = null
@@ -61,7 +68,7 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
         super.onCreate(savedInstanceState)
         arguments?.let {
             hmAux_Trans = HMAux.getHmAuxFromHashMap(it.getSerializable(Constant.MAIN_HMAUX_TRANS_KEY) as HashMap<String?, String?>)
-            itemHist = it.getSerializable(GeOsDeviceItemHist::javaClass.name) as ArrayList<GeOsDeviceItemHist>
+            alertList = it.getSerializable(Act086HistoricModel::javaClass.name) as ArrayList<Act086HistoricModel>
             itemCheckStatus = it.getString(GeOsDeviceItemDao.ITEM_CHECK_STATUS)
             nextCycleMeasure = it.getFloat(GeOsDeviceItemDao.NEXT_CYCLE_MEASURE)
             nextCycleMeasureDate = it.getString(GeOsDeviceItemDao.NEXT_CYCLE_MEASURE_DATE)
@@ -95,12 +102,19 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
         setInstructionInfo()
         /*setLastFixedInfo()*/
         setHistoricInfo()
+        setImageInfo()
+    }
+
+    private fun setImageInfo() {
+        with(binding){
+
+        }
     }
 
     private fun setLabels() {
         with(binding){
             act086HistoricFrgTvAlertTypeTtl.text = hmAux_Trans["alert_type_ttl"]
-            act086HistoricFrgTvNextVerifyTtl.text = hmAux_Trans["next_cycle_ttl"]
+            //act086HistoricFrgTvNextVerifyTtl.text = hmAux_Trans["next_cycle_ttl"]
             act086HistoricFrgTvMeasureLbl.text = hmAux_Trans["measure_lbl"]
             act086HistoricFrgTvDeadlineLbl.text = hmAux_Trans["limit_date_lbl"]
             act086HistoricFrgTvInstructionTtl.text = hmAux_Trans["verification_instruction_ttl"]
@@ -262,17 +276,33 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
     }
 
     private fun setHistoricInfo() {
-        alertList.clear()
         //Filtra itens que são alerta
-        val toAlertList = mPresenter.getAlertList(itemHist,measureValueSufix,restrictionDecimal)
-        //
-        if(toAlertList.isNotEmpty()) {
-            alertList.addAll(toAlertList)
+        if(alertList.isNotEmpty()) {
+            binding.act086HistoricFrgClAlertHistoric.visibility = View.VISIBLE
         }else{
             binding.act086HistoricFrgClAlertHistoric.visibility = View.GONE
         }
     }
 
+    fun onPhotoSelected(drawable: Drawable) {
+        mFrgListener.onPhotoSelection(drawable)
+    }
+    
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        if (context is PhotoSelection) {
+            _mFrgListener = context
+        } else {
+            throw RuntimeException("${context.toString()} must implement PhotoSelection")
+        }
+
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        _mFrgListener = null
+    }
 
 /*    private fun getMaintenanceLbl() : String? {
         var label = hmAux_Trans["fixed_lbl"]
@@ -311,7 +341,7 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
             verification_instruction: String? = null,
             restriction_decimal: Int? = null,
             dateStartUntilLastMinute: String,
-            itemHist: ArrayList<GeOsDeviceItemHist>
+            alertList: ArrayList<Act086HistoricModel>
         ) =
             Act086HistoricFrg().apply {
                 arguments = Bundle().apply {
@@ -328,11 +358,12 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
                         putInt(GeOsDeviceItemDao.RESTRICTION_DECIMAL, it)
                     }
                     putString(GeOsDao.DATE_START, dateStartUntilLastMinute)
-                    putSerializable(GeOsDeviceItemHist::javaClass.name, itemHist)
+                    putSerializable(Act086HistoricModel::javaClass.name, alertList)
                 }
             }
 
         fun getFragTranslationsVars() = listOf<String>(
+                "frg_historic_item_check_title",
                 "alert_type_ttl",
                 "next_cycle_ttl",
                 "measure_lbl",
@@ -343,7 +374,11 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
                 "material_applied_lbl",
                 "alert_historic_ttl",
                 "material_requested_lbl",
-                "still_with_problem_lbl"
+                "still_with_problem_lbl",
+                "change_lbl",
+                "fixed_lbl",
+
         )
     }
 }
+

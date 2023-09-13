@@ -3,15 +3,27 @@ package com.namoadigital.prj001.ui.act093
 
 import android.content.Context
 import com.namoa_digital.namoa_library.util.HMAux
+import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.core.IResult.Companion.isFailed
 import com.namoadigital.prj001.core.IResult.Companion.isLoading
 import com.namoadigital.prj001.core.IResult.Companion.isSuccess
+import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_ItemDao
+import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_Item_HistDao
+import com.namoadigital.prj001.dao.MdProductSerialTpDeviceItemHistMatDao
+import com.namoadigital.prj001.model.Act086HistoricModel
+import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device_Item
+import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_Device_Item_Hist_Sql_003
+import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_Device_Item_Sql_001
+import com.namoadigital.prj001.ui.act086.frg_historic.Act086HistoricFrg
 import com.namoadigital.prj001.ui.act091.mvp.model.TranslateResource
+import com.namoadigital.prj001.ui.act093.model.DeviceTpModel
 import com.namoadigital.prj001.ui.act093.usecases.InfoSerialUseCase
 import com.namoadigital.prj001.ui.act093.usecases.InfoSerialUseCase.Companion.InfoSerialUseCasesFactory
 import com.namoadigital.prj001.ui.act093.util.Act093Event
 import com.namoadigital.prj001.ui.act093.util.Act093State
 import com.namoadigital.prj001.ui.base.NamoaFactory
+import com.namoadigital.prj001.util.Constant
+import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 import kotlinx.coroutines.CoroutineScope
@@ -21,6 +33,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 
 class Act093Presenter constructor(
     private val infoUseCase: InfoSerialUseCase,
@@ -92,6 +105,116 @@ class Act093Presenter constructor(
 
     private var _state = MutableStateFlow(Act093State())
     override var state: StateFlow<Act093State> = _state
+    override fun getDeviceItemHist(context:Context, deviceItemModel: DeviceTpModel, hmAuxTrans: HMAux): ArrayList<Act086HistoricModel>? {
+        val mdProductSerialTpDeviceItemHistDao = MD_Product_Serial_Tp_Device_Item_HistDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            ConstantBaseApp.DB_VERSION_CUSTOM
+        )
+        val mdProductSerialTpDeviceItemHistMatDao = MdProductSerialTpDeviceItemHistMatDao.DatabaseFactory(context).build()
+
+        deviceItemModel.let {
+            try {
+
+                val mdProductSerialTpDeviceItemHist = mdProductSerialTpDeviceItemHistDao.query(
+                    MD_Product_Serial_Tp_Device_Item_Hist_Sql_003(
+                        deviceItemModel.customer_code.toString(),
+                        deviceItemModel.product_code.toString(),
+                        deviceItemModel.serial_code.toString(),
+                        deviceItemModel.device_tp_code.toString(),
+                        deviceItemModel.item_check_code.toString(),
+                        deviceItemModel.item_check_seq.toString(),
+                    ).toSqlQuery()
+                ) as ArrayList
+
+                 val modelList = mdProductSerialTpDeviceItemHist.map { hist ->
+                    val itemHistMat = mdProductSerialTpDeviceItemHistMatDao.getInputs(
+                        hist.customer_code,
+                        hist.serial_code.toInt(),
+                        hist.product_code.toInt(),
+                        hist.device_tp_code,
+                        hist.item_check_seq,
+                        hist.item_check_code,
+                        hist.seq,
+                    )
+
+                    val deviceItem = getDeviceItem(context,deviceItemModel)
+                    val serialInfo = state.value.serialInfo
+                    //Convert para lista do adapter
+                    Act086HistoricModel(
+                        icon = hist.getIcon(),
+                        titleLbl = hist.getTitleFormated(hmAuxTrans) ?: "",
+                        date = hist.getDate(context),
+                        measureLbl = hmAuxTrans["last_measure_lbl"]!!,
+                        measure = ToolBox_Inf.getFormattedLastMeasureInfo(serialInfo.last_measure_value?.toFloat(), serialInfo.value_suffix, null),
+                        materialRequestLbl =  hmAuxTrans["material_requested_lbl"] ?: "",
+                        materialAppliedLbl =  hmAuxTrans["material_applied_lbl"] ?: "",
+                        comment = hist.exec_comment,
+                        exec_type = hist.exec_type,
+                        manualInstruction = deviceItem?.manual_desc,
+                        materialList = itemHistMat,
+                        photo1 = hist.exec_photo1,
+                        photo2 = hist.exec_photo2,
+                        photo3 = hist.exec_photo3,
+                        photo4 = hist.exec_photo4,
+                    )
+                } as ArrayList
+                return modelList
+            } catch (e: Exception) {
+                ToolBox_Inf.registerException(javaClass.name, e)
+            }
+        }
+        return null
+    }
+
+    override fun getDeviceItem(
+        context: Context,
+        item: DeviceTpModel
+    ): MD_Product_Serial_Tp_Device_Item? {
+        val mdProductSerialTpDeviceItemDao = MD_Product_Serial_Tp_Device_ItemDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        )
+
+        return mdProductSerialTpDeviceItemDao.getByString(
+            MD_Product_Serial_Tp_Device_Item_Sql_001(
+                item.customer_code.toLong(),
+                item.product_code.toLong(),
+                item.serial_code.toLong(),
+                item.device_tp_code,
+                item.item_check_code,
+                item.item_check_seq
+            ).toSqlQuery()
+        )
+    }
+
+    override fun getDeviceItemDaysInAlert(context: Context, item: DeviceTpModel): Long {
+        val deviceItem = getDeviceItem(context, item)
+        deviceItem?.let {
+            val dateDiferenceInMilliseconds = ToolBox_Inf.getDateDiferenceInMilliseconds(
+                deviceItem.target_date,
+                ToolBox_Inf.getDateLastMinute(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"))
+            )
+            return TimeUnit.MILLISECONDS.toDays(dateDiferenceInMilliseconds)
+        }
+       return 0
+    }
+
+    override fun loadHistoricFrgTranslation(): HMAux {
+
+        return ToolBox_Inf.setLanguage(
+            translateResource.context,
+            translateResource.mModule_code,
+            ToolBox_Inf.getResourceCode(
+                translateResource.context,
+                translateResource.mModule_code,
+                ConstantBaseApp.FRG_HISTORIC_ITEM_CHECK
+            ),
+            ToolBox_Con.getPreference_Translate_Code(translateResource.context),
+            Act086HistoricFrg.getFragTranslationsVars()
+        )
+    }
 
 
     override fun setView(view: Contract.View) {
@@ -128,7 +251,15 @@ class Act093Presenter constructor(
             "item_with_problem_lbl",
             "item_with_change_expired_lbl",
             "alert_no_data_warning_title",
-            "alert_no_data_warning_msg"
+            "alert_no_data_warning_msg",
+            "change_lbl",
+            "fixed_lbl",
+            "still_with_problem_lbl",
+            "adjust_lbl",
+            "material_requested_lbl",
+            "material_applied_lbl",
+            "inspection_alert_days_lbl",
+            "inspection_missing_lbl",
         ).let {
             return ToolBox_Inf.setLanguage(
                 translateResource.context,

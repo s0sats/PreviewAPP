@@ -259,6 +259,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         initVars();
         iniUIFooter();
         initActions();
+        requestNotificationPermission();
         //LUCHE - 12/02/2021 - substituido IntentService pelo worker
         ToolBox_Inf.scheduleFirebaseRegistrationWork(context);
         //LUCHE - 22/02/2021 - Comentado chamada pois agora não será recorrente será apenas quando FCM de ROom
@@ -316,11 +317,87 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         //
 
 
-        if(ToolBox_Inf.hasAnyDatabaseOnUpgradeError(context)) {
+        if (ToolBox_Inf.hasAnyDatabaseOnUpgradeError(context)) {
             call_Act089_Main();
         }
 
         mPresenter.deleteSerialSiteInventoryFile();
+    }
+
+    private void requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissions(
+                    Act005_Main.this,
+                    NamoaPermissionRequest.SINGLE_PERMISSION_REQUEST,
+                    new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                    new NamoaPermissionRequest() {
+                        @Override
+                        public void accessGranted() {
+
+                        }
+
+                        @Override
+                        public void accessDenied(String[] strings) {
+                            String alertTtl = hmAux_Trans.get("alert_notification_denied_permission_ttl");
+                            String alertMsg = hmAux_Trans.get("alert_notification_denied_permission_msg");
+
+
+                            showPermissionRationaleDialog(
+                                    Act005_Main.this,
+                                    com.namoa_digital.namoa_library.R.drawable.ic_alert_n,
+                                    alertTtl,
+                                    alertMsg,
+                                    (dialog, i) -> callRequestPermission(SINGLE_PERMISSION_REQUEST, strings),
+                                    (dialog, which) -> {
+
+                                    }
+                            );
+
+                        }
+
+                        @Override
+                        public void requestPermissionRationale(String[] strings) {
+                            String alertTtl = hmAux_Trans.get("alert_notification_denied_permission_ttl");
+                            String alertMsg = hmAux_Trans.get("alert_notification_denied_permission_msg");
+
+
+                            showPermissionRationaleDialog(
+                                    Act005_Main.this,
+                                    com.namoa_digital.namoa_library.R.drawable.ic_alert_n,
+                                    alertTtl,
+                                    alertMsg,
+                                    (dialog, i) -> callRequestPermission(SINGLE_PERMISSION_REQUEST, strings),
+                                    (dialog, which) -> {
+
+                                    }
+                            );
+                        }
+
+                        @Override
+                        public void accessDeniedNeverAskAgain(String[] strings) {
+                            String alertTtl = hmAux_Trans.get("alert_notification_denied_permission_ttl");
+                            String alertMsg = hmAux_Trans.get("alert_notification_denied_permission_msg");
+
+                            showPermissionNeverAskAgainDialog(
+                                    R.drawable.ic_notifications_active_black_24dp,
+                                    alertTtl,
+                                    alertMsg,
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                                        }
+                                    }
+                            );
+                        }
+
+                        @Override
+                        public void informAppDetailSettingsReturn() {
+                            callRequestPermission(SINGLE_PERMISSION_REQUEST, new String[]{Manifest.permission.POST_NOTIFICATIONS});
+                        }
+                    }
+            );
+        }
     }
 
     private void retryGetLocation() {
@@ -347,12 +424,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                                 com.namoa_digital.namoa_library.R.drawable.ic_alert_n,
                                 alertTtl,
                                 alertMsg,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        callRequestPermission(MULTIIPLE_PERMISSION_REQUEST_WITHOUT_RATIONALE,permissions);
-                                    }
-                                },
+                                (dialogInterface, i) -> callRequestPermission(MULTIIPLE_PERMISSION_REQUEST_WITHOUT_RATIONALE, permissions),
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
@@ -645,6 +717,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         transList.add("drawer_historic_lbl");
         transList.add("drawer_loading_lbl");
         transList.add("drawer_edit_user_workgroup_lbl");
+        //
+        transList.add("alert_notification_denied_permission_ttl");
+        transList.add("alert_notification_denied_permission_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -2268,8 +2343,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             boolean productOutdate = false;
 
             if(masterDataSyncFlow){
-                syncAfterSave = true;
-                executeSync();
+                mPresenter.syncFlow(mPresenter.hasUpdateRequired());
             }else {
                 if(ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET ,null)){
                     productOutdate = ToolBox_Inf.hasFormProductOutdate(context);
@@ -2290,9 +2364,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 mPresenter.executeWSTicketDownload();
             }else{
                 if(masterDataSyncFlow){
-                    ToolBox_Inf.hasFormProductOutdate(context);
-                    syncAfterSave = true;
-                    executeSync();
+                    mPresenter.syncFlow(mPresenter.hasUpdateRequired());
                 }else{
                     refreshUiData();
                 }

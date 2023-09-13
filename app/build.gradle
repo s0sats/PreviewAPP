@@ -2,15 +2,15 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 33
     buildToolsVersion '30.0.3'
 
     defaultConfig {
         applicationId "com.namoadigital.prj001"
         minSdkVersion 21
-        targetSdkVersion 31
-        versionCode 198
-        versionName "5.5.4.4"
+        targetSdkVersion 33
+        versionCode 207
+        versionName "5.5.7.1"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
         multiDexEnabled true
@@ -89,7 +89,7 @@ repositories {
     maven { url 'https://jitpack.io' }
 }
 //Var com o nome do import da lib
-def namoaLibVersion = "com.namoa_digital:library:2.5.5.3"
+def namoaLibVersion = "com.namoa_digital:library:2.5.6.1"
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')

@@ -72,12 +72,9 @@ public class Act047_Main_Presenter implements Act047_Main_Contract.I_Presenter {
                     hmAux_Trans.get("dialog_next_orders_search_msg")
             );
             //
-
-            //
             bundle.putLong(Constant.LOGIN_CUSTOMER_CODE, ToolBox_Con.getPreference_Customer_Code(context));
             bundle.putString(Constant.LOGIN_SITE_CODE, ToolBox_Con.getPreference_Site_Code(context));
             bundle.putInt(Constant.LOGIN_ZONE_CODE, contain_filter);
-            bundle.putLong(Constant.LOGIN_OPERATION_CODE, ToolBox_Con.getPreference_Operation_Code(context));
             if (!modelFilter.getStatusFilter().isEmpty()) {
                 bundle.putStringArrayList(SO_NEXT_STATUS_LIST_FILTER, (ArrayList<String>) modelFilter.statusFilterToService());
             }

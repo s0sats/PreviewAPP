@@ -187,7 +187,9 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         transList.add("filter_dialog_ok_lbl");
         transList.add("filter_dialog_cancel_lbl");
         transList.add("filter_option_invalid");
-
+        //
+        transList.add("apply_zone_on_lbl");
+        transList.add("apply_zone_off_lbl");
         //
         transList.add("progress_status_change_ttl");
         transList.add("progress_status_change_msg");
@@ -309,7 +311,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         mAdapter = new Act047_SO_Next_Orders_Adapter(
                 getApplicationContext(),
                 list,
-                R.layout.act047_cell_new,
+                R.layout.so_item_list,
                 this::changeVisibilityAdapter
         );
         lv_services.setAdapter(mAdapter);
@@ -774,6 +776,15 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         ToolBox_Inf.buildFooterDialog(context);
     }
 
+    private void swToastMessage() {
+        String message = applyZoneFilter ? hmAux_Trans.get("apply_zone_on_lbl") : hmAux_Trans.get("apply_zone_off_lbl");
+        Toast.makeText(
+                        context,
+                        message,
+                        Toast.LENGTH_LONG)
+                .show();
+    }
+
     private int soPositionCardItemClicked;
 
     private void initActions() {
@@ -783,6 +794,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
             setSwitchState(applyZoneFilter);
             checkIfContainsFilter();
             mPresenter.executeNextOrdersSearch(applyZoneFilter);
+            swToastMessage();
         });
         lv_services.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

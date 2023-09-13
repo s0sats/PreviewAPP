@@ -81,6 +81,7 @@ public class Act042_Main extends Base_Activity {
         List<String> transList = new ArrayList<String>();
         transList.add("act042_title");
         transList.add("filter_hint");
+        transList.add("create_date_lbl");
         transList.add("lbl_os_express_empty");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(

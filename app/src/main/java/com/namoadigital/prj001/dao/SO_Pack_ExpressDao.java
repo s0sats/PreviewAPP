@@ -35,6 +35,7 @@ public class SO_Pack_ExpressDao extends BaseDao implements Dao<SO_Pack_Express> 
     public static final String CONTRACT_CODE = "contract_code";
     public static final String SEGMENT_CODE = "segment_code";
     public static final String PRICE_LIST_CODE = "price_list_code";
+    public static final String PIPELINE_DESC = "pipeline_desc";
     public static final String PACK_CODE = "pack_code";
     public static final String ADD_PACK_SERVICE = "add_pack_service";
     public static final String PRICE = "price";
@@ -267,6 +268,11 @@ public class SO_Pack_ExpressDao extends BaseDao implements Dao<SO_Pack_Express> 
             so_pack_express.setContract_code(cursor.getInt(cursor.getColumnIndex(CONTRACT_CODE)));
             so_pack_express.setSegment_code(cursor.getInt(cursor.getColumnIndex(SEGMENT_CODE)));
             so_pack_express.setPrice_list_code(cursor.getInt(cursor.getColumnIndex(PRICE_LIST_CODE)));
+            if(cursor.isNull(cursor.getColumnIndex(PIPELINE_DESC))){
+                so_pack_express.setPipeline_desc(null);
+            }else{
+                so_pack_express.setPipeline_desc(cursor.getString(cursor.getColumnIndex(PIPELINE_DESC)));
+            }
             so_pack_express.setPack_code(cursor.getInt(cursor.getColumnIndex(PACK_CODE)));
             so_pack_express.setAdd_pack_service(cursor.getInt(cursor.getColumnIndex(ADD_PACK_SERVICE)));
             so_pack_express.setPrice(cursor.getFloat(cursor.getColumnIndex(PRICE)));
@@ -333,6 +339,7 @@ public class SO_Pack_ExpressDao extends BaseDao implements Dao<SO_Pack_Express> 
             if (so_pack_express.getPrice_list_code() > -1) {
                 contentValues.put(PRICE_LIST_CODE, so_pack_express.getPrice_list_code());
             }
+            contentValues.put(PIPELINE_DESC, so_pack_express.getPipeline_desc());
             if (so_pack_express.getPack_code() > -1) {
                 contentValues.put(PACK_CODE, so_pack_express.getPack_code());
             }

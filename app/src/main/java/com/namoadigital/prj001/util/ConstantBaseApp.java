@@ -149,6 +149,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String FRG_MAIN_HOME_ALT = "frg_main_home_alt";
     public static final String FRG_USER_WORK_GROUP_SEARCH = "frg_user_work_group_search";
 
+    public static final String FRG_HISTORIC_ITEM_CHECK = "frg_historic_item_check";
+
     public static final String ACT_SELECTED_DATE = "selected_date";
     public static final String ACT_FILTER_FORM = "filter_form";
     public static final String ACT_FILTER_FORM_AP = "filter_form_ap";

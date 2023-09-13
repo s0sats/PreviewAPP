@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -87,23 +88,25 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
         final SO_Next_Orders_Obj item = mFilteredValues.get(position);
         //IniVars
         TextView tv_prefix_code = convertView.findViewById(R.id.act047_cell_tv_prefix_code);
-        TextView tv_so_id_val = convertView.findViewById(R.id.act047_cell_tv_so_id_val);
+        TextView tv_so_id_val = convertView.findViewById(R.id.so_so_id_val);
         TextView tv_status_val = convertView.findViewById(R.id.act047_cell_tv_status_val);
-        ImageView iv_block = convertView.findViewById(R.id.act047_cell_iv_block);
-        TextView tv_priority_val = convertView.findViewById(R.id.act047_cell_tv_priority_val);
-        TextView tv_deadline_val = convertView.findViewById(R.id.act047_cell_tv_deadline_val);
-        TextView tv_serial_id = convertView.findViewById(R.id.act047_cell_tv_serial_id);
-        TextView tv_tracking_val = convertView.findViewById(R.id.act047_cell_tv_tracking_val);
-        TextView tv_brand = convertView.findViewById(R.id.act047_cell_tv_brand_val);
-        TextView tv_model = convertView.findViewById(R.id.act047_cell_tv_model_val);
-        TextView tv_color = convertView.findViewById(R.id.act047_cell_tv_color_val);
-        TextView tv_segment_category_val = convertView.findViewById(R.id.act047_cell_tv_segment_category_val);
-        TextView tv_pipeline_val = convertView.findViewById(R.id.act047_cell_tv_pipeline_val);
-        TextView tv_client_so_id_val = convertView.findViewById(R.id.act047_cell_tv_client_so_id_val);
-        TextView create_date = convertView.findViewById(R.id.act047_cell_tv_create_date_val);
-        ImageView icon_schedule = convertView.findViewById(R.id.schedule_icon);
+        ImageView iv_block = convertView.findViewById(R.id.so_block);
+        TextView tv_priority_val = convertView.findViewById(R.id.so_priority_val);
+        TextView tv_deadline_val = convertView.findViewById(R.id.so_deadline_val);
+        TextView tv_serial_id = convertView.findViewById(R.id.so_serial_id_val);
+        TextView tv_tracking_val = convertView.findViewById(R.id.so_tracking_val);
+        TextView tv_brand = convertView.findViewById(R.id.so_brand_val);
+        TextView tv_model = convertView.findViewById(R.id.so_model_val);
+        TextView tv_color = convertView.findViewById(R.id.so_color_val);
+        TextView tv_segment_category_val = convertView.findViewById(R.id.so_segment_category_val);
+        TextView tv_pipeline_val = convertView.findViewById(R.id.so_pipeline_val);
+        TextView create_date = convertView.findViewById(R.id.so_create_date_val);
+        ImageView icon_schedule = convertView.findViewById(R.id.so_left_icon);
+        ImageView icon_clouds = convertView.findViewById(R.id.so_right_icon);
+        TextView tv_site = convertView.findViewById(R.id.so_site_val);
         //
         //Seta Valores
+        icon_clouds.setVisibility(View.GONE);
         tv_prefix_code.setText(item.getSo_prefix() + "." + item.getSo_code());
         //
         StringBuilder value = new StringBuilder();
@@ -132,7 +135,7 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
         iv_block.setVisibility(View.GONE);
 
 
-        if (item.getDeadline_manual() == 1) {
+        if (item.getHas_client_deadline() == 1) {
             icon_schedule.setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.perm_contact_calendar_48px));
         } else {
             icon_schedule.setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.baseline_schedule_24));
@@ -145,6 +148,9 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
         if (item.getPriority_desc() != null || !item.getPriority_desc().isEmpty()) {
             tv_priority_val.setText(item.getPriority_desc());
             tv_priority_val.setVisibility(View.VISIBLE);
+            if (!item.getPriority_color().isEmpty()) {
+                tv_priority_val.setTextColor(Color.parseColor(item.getPriority_color()));
+            }
         } else {
             tv_priority_val.setVisibility(View.GONE);
         }
@@ -152,10 +158,8 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
         if (item.getDeadline() == null || item.getDeadline().isEmpty()) {
             tv_deadline_val.setText(hmAux_Trans.get("no_deadline_lbl"));
             tv_deadline_val.setTextColor(context.getResources().getColor(R.color.m3_namoa_onSurfaceVariant));
-            icon_schedule.setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.baseline_schedule_24));
         } else {
 
-            String customerGMT = ToolBox_Con.getPreference_Customer_TMZ(context);
             String deadlineTime = ToolBox_Inf.millisecondsToString(
                     ToolBox_Inf.dateToMilliseconds(item.getDeadline()),
                     ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
@@ -170,6 +174,13 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
 
         }
         //
+        if (item.getSiteDesc() != null && !item.getSiteDesc().isEmpty()) {
+            tv_site.setText(item.getSiteDesc());
+            tv_site.setVisibility(View.VISIBLE);
+        } else {
+            tv_site.setVisibility(View.GONE);
+        }
+
         tv_serial_id.setText(item.getSerial_id());
         //
         if (item.getTracking() == null || item.getTracking().isEmpty()) {
@@ -265,7 +276,8 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
                 ArrayList<SO_Next_Orders_Obj> filteredList = new ArrayList<>();
                 for (SO_Next_Orders_Obj row : mValues) {
                     //Resgata todos os campos concatenado e com remoção de acentuacao
-                    String rowFields = ToolBox.AccentMapper(row.getAllFieldForFilter().toLowerCase());if (rowFields.contains(charString)) {
+                    String rowFields = ToolBox.AccentMapper(row.getAllFieldForFilter().toLowerCase());
+                    if (rowFields.contains(charString)) {
                         filteredList.add(row);
                     }
                 }

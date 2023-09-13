@@ -311,7 +311,6 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.DateTimeException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -6846,6 +6845,42 @@ public class ToolBox_Inf {
         }
     }
 
+    public static boolean isSoWithinTokenFile(Context context, Integer soPrefix, Integer soCode) {
+        try {
+            File[] soToken =
+                    ToolBox_Inf.getListOfFiles_v5(
+                            ConstantBaseApp.TOKEN_PATH,
+                            ToolBox_Inf.buildTokenPrefixWithCustomer(context, ConstantBaseApp.TOKEN_SO_PREFIX)
+                    );
+            if (soToken.length > 0) {
+                Gson gsonEnv = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
+                //
+                ArrayList<SM_SO> token_so_list =
+                        gsonEnv.fromJson(
+                                ToolBox_Inf.getContents(soToken[0]),
+                                TSO_Save_Env.class
+                        ).getSo();
+                //
+                if (token_so_list.size() == 0) {
+                    return false;
+                }
+                //
+                for (SM_SO so : token_so_list) {
+                    if (
+                            so.getCustomer_code() == ToolBox_Con.getPreference_Customer_Code(context)
+                                    && so.getSo_prefix() == soPrefix
+                                    && so.getSo_code() == soCode
+                    ) {
+                        return true;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(CLASS_NAME, e);
+        }
+        return false;
+    }
+
     /**
      * Metodo que retorna a qtd de Seriais dentro do arquivos token de Serial
      *
@@ -9242,7 +9277,7 @@ public class ToolBox_Inf {
             Date date = dateFormat.parse(dateString.split(" ")[0]);
 
             if (date == null) {
-                throw new DateTimeException("Date is null");
+                return -1;
             }
 
             long diffInMillis = currentDate.getTime() - date.getTime();
@@ -9344,6 +9379,20 @@ public class ToolBox_Inf {
         }
         //
         return convertedValue;
+    }
+
+    public static String getFormattedLastMeasureInfo(
+            Float lastFixed,
+            String measureValueSufix,
+            Integer restrictionDecimal
+    ){
+        String lastFixedFormatted = ToolBox_Inf.convertFloatToBigDecimalString(lastFixed, true);
+
+        if(measureValueSufix != null){
+            lastFixedFormatted += " " + measureValueSufix;
+        }
+
+        return lastFixedFormatted;
     }
 
     public static String convertDoubleToBigDecimalString(double valor, boolean applyDecimalSeparatorByLocale){

@@ -4,6 +4,7 @@ import android.content.DialogInterface
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.namoa_digital.namoa_library.util.HMAux
+import com.namoadigital.prj001.model.Act086HistoricModel
 import com.namoadigital.prj001.model.GeOsDeviceItem
 import com.namoadigital.prj001.model.GeOsDeviceItemHist
 
@@ -42,14 +43,15 @@ interface Act086MainContract {
             fragmentManager: FragmentManager,
             deviceItem: GeOsDeviceItem
         )
-        fun getDeviceItemHist(isNewVerification: Boolean):  ArrayList<GeOsDeviceItemHist>?
+        fun getDeviceItemHist(isNewVerification: Boolean):  ArrayList<Act086HistoricModel>?
         fun hasAnyVisibleInfoIntoConsultFrag(
             deviceItem: GeOsDeviceItem,
-            itemHist: java.util.ArrayList<GeOsDeviceItemHist>?
+            itemHist: java.util.ArrayList<Act086HistoricModel>?
         ): Boolean
 
         fun getActionBarTitle(fragmentManager: Fragment, newOrCreatedByApp: Boolean): String?
         fun putListItemIndexOnLastPositionFromBundle()
         fun getDateStartUntilLastMinute() : String
+        fun loadHistoricFrgTranslation() : HMAux
     }
 }

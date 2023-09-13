@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act093.util
 
 import com.namoadigital.prj001.ui.act093.model.DeviceTpModel
+import java.io.Serializable
 
 data class Act093State(
     val isLoading: Boolean = false,
@@ -20,5 +21,5 @@ data class Act093State(
         val last_cycle_value: Float? = null,
         val last_cycle_date: String? = null,
         val lastUpdateSerial: String? = null,
-    )
+    ) : Serializable
 }

@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Widget.Material3.CardView.Filled"
+    android:elevation="0dp"
+    android:id="@+id/serial_site_item_card"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:minHeight="80dp"
+    app:cardBackgroundColor="@color/m3_namoa_neutral95"
+    app:cardCornerRadius="12dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="16dp"
+        android:paddingStart="20dp"
+        >
+
+        <TextView
+            android:id="@+id/serial_site_item_tv_serial_id"
+            style="@style/TextAppearance.Material3.TitleLarge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:textColor="@color/m3_namoa_onSurface"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="SERIAL NAME" />
+
+        <TextView
+            android:id="@+id/serial_site_item_tv_brand_model_color"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/serial_site_item_tv_serial_id"
+            tools:text="TextView" />
+
+        <TextView
+            android:id="@+id/serial_site_item_tv_trackings"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:paddingVertical="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/serial_site_item_tv_brand_model_color"
+            tools:text="TextView" />
+
+        <TextView
+            android:id="@+id/serial_site_item_tv_last_measure_lbl"
+            style="@style/TextAppearance.Material3.BodySmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="TextView"
+            android:textColor="@color/m3_namoa_onSurface"
+            app:layout_constraintEnd_toEndOf="@+id/serial_site_item_tv_last_measure_val"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/serial_site_item_tv_trackings" />
+
+        <TextView
+            android:id="@+id/serial_site_item_tv_last_measure_val"
+            style="@style/TextAppearance.Material3.BodyLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="TextView"
+            android:textColor="@color/m3_namoa_onSurface"
+            app:layout_constraintEnd_toStartOf="@+id/guideline8"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/serial_site_item_tv_last_measure_lbl" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline8"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintGuide_percent="0.5" />
+
+
+        <LinearLayout
+            android:id="@+id/serial_site_item_ll_items_status"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
+            app:layout_constraintEnd_toStartOf="@+id/guideline8"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/serial_site_item_tv_last_measure_val"
+            app:layout_constraintVertical_bias="0.0">
+
+            <ImageView
+                android:id="@+id/iv_tag"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_tag_black_24dp"
+                app:layout_constraintBottom_toBottomOf="@+id/ll_infos"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/ll_infos"
+                app:tint="@color/text_black" />
+
+            <TextView
+                android:id="@+id/tv_tag_val"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="16dp"
+                tools:text="1" />
+
+            <ImageView
+                android:id="@+id/iv_item_alert"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/circle_item"
+                app:layout_constraintBottom_toBottomOf="@+id/ll_infos"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/ll_infos"
+                app:tint="@color/namoa_os_form_problem_red" />
+
+            <TextView
+                android:id="@+id/tv_item_alert_val"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="16dp"
+                tools:text="1" />
+
+
+            <ImageView
+                android:id="@+id/iv_item_critical"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/circle_item"
+                app:tint="@color/namoa_os_form_critical_forecast_yellow" />
+
+            <TextView
+                android:id="@+id/tv_item_critical_val"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="16dp"
+                tools:text="1" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/serial_site_item_tv_last_cycle_lbl"
+            style="@style/TextAppearance.Material3.BodySmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="TextView"
+            android:textColor="@color/m3_namoa_onSurface"
+            app:layout_constraintEnd_toEndOf="@+id/serial_site_item_tv_last_cycle_val"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/guideline8"
+            app:layout_constraintTop_toBottomOf="@+id/serial_site_item_tv_trackings" />
+
+        <TextView
+            android:id="@+id/serial_site_item_tv_last_cycle_val"
+            style="@style/TextAppearance.Material3.BodyLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="TextView"
+            android:textColor="@color/m3_namoa_onSurface"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/guideline8"
+            app:layout_constraintTop_toBottomOf="@+id/serial_site_item_tv_last_cycle_lbl" />
+
+        <TextView
+            android:id="@+id/serial_site_item_tv_next_cycle_lbl"
+            style="@style/TextAppearance.Material3.BodySmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="TextView"
+            android:textColor="@color/m3_namoa_onSurface"
+            android:layout_marginTop="12dp"
+            app:layout_constraintEnd_toEndOf="@+id/serial_site_item_tv_next_cycle_val"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/guideline8"
+            app:layout_constraintTop_toBottomOf="@+id/serial_site_item_tv_last_cycle_val" />
+
+        <TextView
+            android:id="@+id/serial_site_item_tv_next_cycle_val"
+            style="@style/TextAppearance.Material3.BodyLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/m3_namoa_onSurface"
+            app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/guideline8"
+            app:layout_constraintTop_toBottomOf="@+id/serial_site_item_tv_next_cycle_lbl"
+            app:layout_constraintVertical_bias="0.0"
+            tools:text="TextView" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:gravity="end"
+            android:paddingTop="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/act083_serial_info"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:paddingHorizontal="12dp"
+                android:textColor="@color/m3_namoa_primary"
+                app:icon="@drawable/ic_outline_info_24"
+                tools:text="Status"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintEnd_toStartOf="@+id/my_action_select_serial"
+                app:layout_constraintTop_toTopOf="parent"
+                app:strokeColor="@color/m3_namoa_outline" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/my_action_select_serial"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/m3_namoa_primary"
+                tools:text="Ver Ações"
+                app:icon="@drawable/ic_tag_black_24dp"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:strokeColor="@color/m3_namoa_outline" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

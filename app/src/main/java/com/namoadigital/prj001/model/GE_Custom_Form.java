@@ -43,6 +43,9 @@ public class GE_Custom_Form {
     @SerializedName("justify_group_code")
     private Integer justify_group_code;
 
+    @SerializedName("nc_recognize_email_in_comment")
+    private int nc_recognize_email_in_comment;
+
     public long getCustomer_code() {
         return customer_code;
     }
@@ -209,5 +212,21 @@ public class GE_Custom_Form {
 
     public void setJustifyGroupCode(Integer value) {
         this.justify_group_code = value;
+    }
+
+    public Integer getJustify_group_code() {
+        return justify_group_code;
+    }
+
+    public void setJustify_group_code(Integer justify_group_code) {
+        this.justify_group_code = justify_group_code;
+    }
+
+    public int getNc_recognize_email_in_comment() {
+        return nc_recognize_email_in_comment;
+    }
+
+    public void setNc_recognize_email_in_comment(int nc_recognize_email_in_comment) {
+        this.nc_recognize_email_in_comment = nc_recognize_email_in_comment;
     }
 }

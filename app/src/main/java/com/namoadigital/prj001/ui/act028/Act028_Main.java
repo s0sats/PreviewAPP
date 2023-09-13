@@ -12,6 +12,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -264,6 +265,8 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
         //
         transList.add("alert_so_get_edit_service_fail_ttl");
         transList.add("alert_so_get_edit_service_fail_msg");
+        transList.add("alert_offline_data_saved_msg");
+        transList.add("alert_data_saved_msg");
 
 
         sm_soDao = new SM_SODao(
@@ -833,6 +836,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
             context.sendBroadcast(mIntent);
         } else {
             if (mTaskCall) {
+                Toast.makeText(context, hmAux_Trans.get("alert_offline_data_saved_msg"), Toast.LENGTH_SHORT).show();
                 mTaskCall = false;
                 offLineProcess();
             }
@@ -939,6 +943,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
             if(hasError) {
                 showNewOptDialog(wsResults, so_current_reload);
             }else {
+                Toast.makeText(context, hmAux_Trans.get("alert_data_saved_msg"), Toast.LENGTH_SHORT).show();
                 refreshUI();
             }
 
@@ -999,7 +1004,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
 
         //if (sos.size() == 1 && sos.get(0).get("status").equalsIgnoreCase("Ok")) {
         if (wsResults.size() == 1 && wsResults.get(0).get("status").equalsIgnoreCase("Ok")) {
-
+            Toast.makeText(context, hmAux_Trans.get("alert_data_saved_msg"), Toast.LENGTH_SHORT).show();
             if (mShortCut) {
                 callAct027();
             } else {

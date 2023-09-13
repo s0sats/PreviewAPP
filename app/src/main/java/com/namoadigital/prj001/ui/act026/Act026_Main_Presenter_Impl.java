@@ -6,6 +6,7 @@ import android.os.Bundle;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.sql.Sql_Act026_001;
+import com.namoadigital.prj001.sql.Sql_Act026_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -48,22 +49,40 @@ public class Act026_Main_Presenter_Impl implements Act026_Main_Presenter {
 //        );
 //        //
 //        int tam = soList.size();
-        List<HMAux> soList = soDao.query_HM(
+        List<HMAux> soList;
+        if (product_code == null && serial_id == null) {
+            soList = soDao.query_HM(
                 /*new SM_SO_Sql_011(
                         ToolBox_Con.getPreference_Customer_Code(context),
                         product_code,
                         serial_id
                 ).toSqlQuery()
                 */
-                new Sql_Act026_001(
+                    new Sql_Act026_001(
+                            ToolBox_Con.getPreference_Customer_Code(context),
+                            ToolBox_Con.getPreference_Site_Code(context),
+                            ToolBox_Con.getPreference_Zone_Code(context),
+                            onlyAvaliables
+                    ).toSqlQuery()
+            );
+        } else {
+            soList = soDao.query_HM(
+                /*new SM_SO_Sql_011(
                         ToolBox_Con.getPreference_Customer_Code(context),
-                        ToolBox_Con.getPreference_Site_Code(context),
-                        ToolBox_Con.getPreference_Zone_Code(context),
                         product_code,
-                        serial_id,
-                        onlyAvaliables
+                        serial_id
                 ).toSqlQuery()
-        );
+                */
+                    new Sql_Act026_002(
+                            ToolBox_Con.getPreference_Customer_Code(context),
+                            ToolBox_Con.getPreference_Site_Code(context),
+                            ToolBox_Con.getPreference_Zone_Code(context),
+                            product_code,
+                            serial_id,
+                            onlyAvaliables
+                    ).toSqlQuery()
+            );
+        }
         //
         mView.loadSOList(soList);
     }
@@ -80,22 +99,40 @@ public class Act026_Main_Presenter_Impl implements Act026_Main_Presenter {
 //        );
 //        //
 //        int tam = soList.size();
-        List<HMAux> soList = soDao.query_HM(
+        List<HMAux> soList;
+        if (product_code == null && serial_id == null) {
+            soList = soDao.query_HM(
                 /*new SM_SO_Sql_011(
                         ToolBox_Con.getPreference_Customer_Code(context),
                         product_code,
                         serial_id
                 ).toSqlQuery()
                 */
-                new Sql_Act026_001(
+                    new Sql_Act026_001(
+                            ToolBox_Con.getPreference_Customer_Code(context),
+                            ToolBox_Con.getPreference_Site_Code(context),
+                            ToolBox_Con.getPreference_Zone_Code(context),
+                            false
+                    ).toSqlQuery()
+            );
+        } else {
+            soList = soDao.query_HM(
+                /*new SM_SO_Sql_011(
                         ToolBox_Con.getPreference_Customer_Code(context),
-                        ToolBox_Con.getPreference_Site_Code(context),
-                        ToolBox_Con.getPreference_Zone_Code(context),
                         product_code,
-                        serial_id,
-                        false
+                        serial_id
                 ).toSqlQuery()
-        );
+                */
+                    new Sql_Act026_002(
+                            ToolBox_Con.getPreference_Customer_Code(context),
+                            ToolBox_Con.getPreference_Site_Code(context),
+                            ToolBox_Con.getPreference_Zone_Code(context),
+                            product_code,
+                            serial_id,
+                            false
+                    ).toSqlQuery()
+            );
+        }
         //
         mView.setListSOSize(soList.size());
     }
