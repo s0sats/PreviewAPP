@@ -37,6 +37,8 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Logout_Adapter;
+import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.SerialSiteInventoryUseCase;
+import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.SerialSiteInventoryUseCase.Companion.SiteInventoryUseCaseFactory;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
@@ -151,10 +153,9 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     private static final float COLUMN_VAR_PIXEL_MULT_FACTOR = 5.6f;
     /**
      * LUCHE - 19/12/2019
-     *
+     * <p>
      * ATENÇÃO, ESSA CONSTANTE SECUNDARY_MENU_QTY É A QTD DE ITENS DE MENUS QUE NÃO SÃO MODULOS DO APP
      * CASO ALGUMA MENU SEJA CRIA OU RETIRADO ELA DEVE SER ALTERADA MANUALMENTE
-     *
      **/
     private static final int SECUNDARY_MENU_QTY = 6;
     public static final String SYNC_FOR_TICKETS_FORM = "SYNC_FOR_TICKETS_FORM";
@@ -175,6 +176,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     private TK_TicketDao tk_ticketDao;
     private MD_ProductDao mdProductDao;
     private CH_MessageDao chMessageDao;
+    private SerialSiteInventoryUseCase serialSiteUseCase;
     private MD_SiteDao siteDao;
     private MD_Schedule_ExecDao scheduleExecDao;
     private TkTicketCacheDao tkTicketCacheDao;
@@ -189,10 +191,21 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     //
     private ArrayList<MenuMainNamoa> menuList = new ArrayList<>();
     //
-    private int customFormPendentAmount=0;
+    private int customFormPendentAmount = 0;
 
 
-    public Act005_Main_Presenter_Impl(Context context, Act005_Main_View mView, GE_Custom_Form_LocalDao customFormLocalDao, HMAux hmAux_Trans, EV_User_CustomerDao userCustomerDao, FCMMessageDao fcmMessageDao, SM_SODao soDao, GE_Custom_Form_ApDao customFormApDao, SO_Pack_Express_LocalDao soPackExpressLocalDao, MD_ProductDao mdProductDao, CH_MessageDao chMessageDao) {
+    public Act005_Main_Presenter_Impl(
+            Context context,
+            Act005_Main_View mView,
+            GE_Custom_Form_LocalDao customFormLocalDao,
+            HMAux hmAux_Trans,
+            EV_User_CustomerDao userCustomerDao,
+            FCMMessageDao fcmMessageDao,
+            SM_SODao soDao,
+            GE_Custom_Form_ApDao customFormApDao,
+            SO_Pack_Express_LocalDao soPackExpressLocalDao,
+            MD_ProductDao mdProductDao,
+            CH_MessageDao chMessageDao) {
         this.context = context;
         this.mView = mView;
         this.customFormLocalDao = customFormLocalDao;
@@ -230,16 +243,16 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 Constant.DB_VERSION_CUSTOM
         );
         this.scheduleExecDao = new MD_Schedule_ExecDao(
-            context,
-            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-            Constant.DB_VERSION_CUSTOM
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
         );
         this.tkTicketCacheDao = new TkTicketCacheDao(
-            context,
-            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-            Constant.DB_VERSION_CUSTOM
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
         );
-
+        this.serialSiteUseCase = new SiteInventoryUseCaseFactory(context).deleteSerialSiteInvFile();
 
 
         buildMenuList();
@@ -269,14 +282,14 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         );
         //
         menuList.add(
-            new MenuMainNamoa(
-                Act005_Main.MENU_ID_TICKET,
-                Constant.PROFILE_MENU_TICKET,
-                "lbl_ticket",
-                "lbl_ticket",
-                R.drawable.ic_n_ticket
+                new MenuMainNamoa(
+                        Act005_Main.MENU_ID_TICKET,
+                        Constant.PROFILE_MENU_TICKET,
+                        "lbl_ticket",
+                        "lbl_ticket",
+                        R.drawable.ic_n_ticket
 
-            )
+                )
         );
         //
         menuList.add(
@@ -383,11 +396,11 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
     @Override
     public List<HMAux> getMenuItensV3(@NotNull String periodFilter, @NotNull String sitesFilter, @NotNull String focusFilter) {
-        ToolBox_Con.setStringPreference(context, PREFERENCE_HOME_PERIOD_FILTER,  periodFilter);
-        ToolBox_Con.setStringPreference(context, PREFERENCE_HOME_SITES_FILTER,  sitesFilter);
-        ToolBox_Con.setStringPreference(context, PREFERENCE_HOME_FOCUS_FILTER,  focusFilter);
+        ToolBox_Con.setStringPreference(context, PREFERENCE_HOME_PERIOD_FILTER, periodFilter);
+        ToolBox_Con.setStringPreference(context, PREFERENCE_HOME_SITES_FILTER, sitesFilter);
+        ToolBox_Con.setStringPreference(context, PREFERENCE_HOME_FOCUS_FILTER, focusFilter);
         int site_code = -1;
-        if(PREFERENCE_HOME_CURRENT_SITE_OPTION.equals(sitesFilter)){
+        if (PREFERENCE_HOME_CURRENT_SITE_OPTION.equals(sitesFilter)) {
             site_code = Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context));
         }
         List<HMAux> queryResult = tk_ticketDao.query_HM(
@@ -471,7 +484,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         } catch (Exception e) {
             qtySerial = "0";
         }
-        qtySerial =  String.valueOf(Integer.valueOf(qtySerial)  + ToolBox_Inf.isSerialWithinTokenFile(ToolBox_Con.getPreference_Customer_Code(context)));
+        qtySerial = String.valueOf(Integer.valueOf(qtySerial) + ToolBox_Inf.isSerialWithinTokenFile(ToolBox_Con.getPreference_Customer_Code(context)));
 
         String qtyAssets = ToolBox_Inf.handleAssetsWaitingSync(context, ToolBox_Con.getPreference_Customer_Code(context));
         String qtyTicket = ToolBox_Inf.handleTicketUpdateRequired(context, ToolBox_Con.getPreference_Customer_Code(context));
@@ -491,6 +504,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
      * <p></p>
      * Alterado metodo para utilizar a mesma regra da query que seleciona os tickets para envio.
      * <p></p>
+     *
      * @return
      */
     @Override
@@ -519,15 +533,16 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
      * <P></P>
      * Metodo que valida o ticket sync requirede baseado nas regras exclusivas
      * da nuvem no menu principal. Basicamente é a implementação antiga de hasTicketSyncRequired
+     *
      * @return
      */
     @Override
     public boolean hasTicketSyncRequiredCloudRule() {
         //
         List<TK_Ticket> tickets = tk_ticketDao.query(
-            new Sql_Act005_011(
-                ToolBox_Con.getPreference_Customer_Code(context)
-            ).toSqlQuery()
+                new Sql_Act005_011(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
         );
         //
         int qty = 0;
@@ -554,7 +569,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         String current = new SimpleDateFormat("dd/MM").format(actual);
         String old = new SimpleDateFormat("dd/MM").format(prefs);
 
-        if(prefs == -1){
+        if (prefs == -1) {
             return true;
         }
 
@@ -570,14 +585,14 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
     @Override
     public void checkUpdateAvailable(AppUpdateManager updateManager) {
-        if(checkUpdatePlayStore()){
+        if (checkUpdatePlayStore()) {
             rememberUpdateTomorrow();
             updateManager.getAppUpdateInfo().addOnSuccessListener(appUpdateInfo -> {
-                if(appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE){
-                    if(appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)){
+                if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE) {
+                    if (appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)) {
                         callImmediateUpdateFlow(updateManager, appUpdateInfo);
-                   }
-               }
+                    }
+                }
             });
         }
     }
@@ -592,7 +607,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                     ConstantBaseApp.PLAYSTORE_UPDATE_REQUEST_CODE // Include a request code to later monitor this update request.
             );
         } catch (IntentSender.SendIntentException e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
             ToolBox.toastMSG(
                     context,
                     context.getString(R.string.error_on_inapp_start_update_flow)
@@ -606,9 +621,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         updateManager
                 .getAppUpdateInfo()
                 .addOnSuccessListener(appUpdateInfo -> {
-                    if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS)
-                    {
-                        callImmediateUpdateFlow(updateManager,appUpdateInfo);
+                    if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
+                        callImmediateUpdateFlow(updateManager, appUpdateInfo);
                     }
                 });
     }
@@ -627,7 +641,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             String serviceSoList = getSoIdSyncList();
             //
             bundle.putString(Constant.WS_SO_SEARCH_SO_MULT, serviceSoList);
-            bundle.putInt(Constant.WS_SO_SEARCH_PROFILE_CHECK,0);
+            bundle.putInt(Constant.WS_SO_SEARCH_PROFILE_CHECK, 0);
             //
             mIntent.putExtras(bundle);
             //
@@ -635,6 +649,11 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         } else {
             mView.showNoConnectionDialog();
         }
+    }
+
+    @Override
+    public void deleteSerialSiteInventoryFile() {
+        serialSiteUseCase.getDeleteFile().invoke();
     }
 
     private String getSoIdSyncList() {
@@ -746,14 +765,14 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         if (ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_AP, null)) {
                             try {
                                 qtyAP = customFormApDao.getByStringHM(
-                                    new GE_Custom_Form_Ap_Sql_001(
-                                        ToolBox_Con.getPreference_Customer_Code(context)
-                                    ).toSqlQuery()
+                                        new GE_Custom_Form_Ap_Sql_001(
+                                                ToolBox_Con.getPreference_Customer_Code(context)
+                                        ).toSqlQuery()
                                 ).get(GE_Custom_Form_Ap_Sql_001.BADGE_IN_PROCESSING_QTY);
                             } catch (Exception e) {
                                 qtyAP = "0";
                             }
-                        } else{
+                        } else {
                             qtyAP = "0";
                         }
                         //24/08/2018 - Add validação se usr tem acesso a S.O Express
@@ -773,7 +792,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
                         qtyAssets = handleAssetsPendency();
                         //
-                        if(ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET ,null)){
+                        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET, null)) {
                             qtyTicket = handleTicketPendency();
                         }
                         //
@@ -858,8 +877,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         } catch (Exception e) {
                             qtySerial = "0";
                         }
-                        qtyAssets = ToolBox_Inf.handleAssetsWaitingSync(context,  ToolBox_Con.getPreference_Customer_Code(context));
-                        qtyTicket = ToolBox_Inf.handleTicketUpdateRequired(context,  ToolBox_Con.getPreference_Customer_Code(context));
+                        qtyAssets = ToolBox_Inf.handleAssetsWaitingSync(context, ToolBox_Con.getPreference_Customer_Code(context));
+                        qtyTicket = ToolBox_Inf.handleTicketUpdateRequired(context, ToolBox_Con.getPreference_Customer_Code(context));
                         //Soma Qtd de n-form, n_service, form_ap e assets que era IO e não se sabe se o que é
                         menu.addInBadge1(qty);
                         menu.addInBadge1(qtySO);
@@ -890,14 +909,14 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         //
                         try {
                             //LUCHE - 08/04/2020 - So contabilza se tem acesso ao modulo.
-                            if(ToolBox_Inf.profileExists(context,ConstantBaseApp.PROFILE_PRJ001_AP,null)) {
+                            if (ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_AP, null)) {
                                 qtyAP = customFormApDao.getByStringHM(
-                                    new Sql_Act005_006(
-                                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
-                                        forward_hour
-                                    ).toSqlQuery()
+                                        new Sql_Act005_006(
+                                                String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                                                forward_hour
+                                        ).toSqlQuery()
                                 ).get(Sql_Act005_006.BADGE_SCHEDULED_QTY);
-                            }else{
+                            } else {
                                 qtyAP = "0";
                             }
                         } catch (Exception e) {
@@ -1013,7 +1032,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         }
         //
         //mView.loadMenuV2(menuList);
-        mView.loadMenuV2(grantedMenus,calculateNumColumns());
+        mView.loadMenuV2(grantedMenus, calculateNumColumns());
     }
 
     @Override
@@ -1063,9 +1082,9 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         true).toSqlQuery()
         );
         //
-        if(ticketPendencies.hasConsistentValue(PENDING_QTY)){
+        if (ticketPendencies.hasConsistentValue(PENDING_QTY)) {
             return ticketPendencies.get(Sql_Act005_009.PENDING_QTY);
-        }else{
+        } else {
             return "0";
         }
     }
@@ -1074,29 +1093,29 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
      * LUCHE - 19/12/2019
      * Metodo responsavel por calcular a qtd de colunas possiveis de serem exibidas na tela.
      * Para tal, são usadas constantes pre definidas.
-     *  - COLUMN_VAR_PIXEL_BASE: Qtd de pixels padrão para a largura da view do menu
-     *  - COLUMN_VAR_DENSITY_BASE: Densidade base do calculo 1,5
-     *  - COLUMN_VAR_PIXEL_MULT_FACTOR: Fator de multplicação para redefinir a qtd de pixel q será
-     *  convertida em DP para exibição.
-     *  Essas constantes foram obtidas depois de diversos testes para criar uma formula que conseguisse
-     *  calcular a qtd de colunas antes do grid ser "atachado" na tela.
-     *  Obtendo os tamanhos de largura dos itens que o gridview criava foi observado:
-     *   - Com densidade 4.0, a largura em pixel era 115
-     *   - Com densidade 1.5, a largura em pixel era 101
-     *  A partir desses dados, o seguinte calculo foi criado para definir o fator de multiplicação
-     *  dos pixel:
-     *    Diferença de pixels entra as densidades 4.0 e 1.5
-     *    115 - 101 = 14
-     *    Diferença entre as densidades 4.0 e 1.5
-     *    4 - 1.5 = 2.5
-     *    Divisão entre diferença de pixel e diferença de densidades
-     *    14 / 2.5 = 5,6
-     *  Com todos os dados, temos a formula final
-     *   larguraEmPixel = COLUMN_VAR_PIXEL_BASE + ((Densidade do device - COLUMN_VAR_DENSITY_BASE) * COLUMN_VAR_PIXEL_MULT_FACTOR)
-     *   larguraEmPixel = 101 + ((4 - 1.5)*5.6
-     *  Por fim, para calcular a qtd de colunas, convertemos a larguraEmPixel para largura em DP
-     *  e dividimos a largura do device por ela
-     *    qtdColumns = larguraDevice / larguraFinalEmDP
+     * - COLUMN_VAR_PIXEL_BASE: Qtd de pixels padrão para a largura da view do menu
+     * - COLUMN_VAR_DENSITY_BASE: Densidade base do calculo 1,5
+     * - COLUMN_VAR_PIXEL_MULT_FACTOR: Fator de multplicação para redefinir a qtd de pixel q será
+     * convertida em DP para exibição.
+     * Essas constantes foram obtidas depois de diversos testes para criar uma formula que conseguisse
+     * calcular a qtd de colunas antes do grid ser "atachado" na tela.
+     * Obtendo os tamanhos de largura dos itens que o gridview criava foi observado:
+     * - Com densidade 4.0, a largura em pixel era 115
+     * - Com densidade 1.5, a largura em pixel era 101
+     * A partir desses dados, o seguinte calculo foi criado para definir o fator de multiplicação
+     * dos pixel:
+     * Diferença de pixels entra as densidades 4.0 e 1.5
+     * 115 - 101 = 14
+     * Diferença entre as densidades 4.0 e 1.5
+     * 4 - 1.5 = 2.5
+     * Divisão entre diferença de pixel e diferença de densidades
+     * 14 / 2.5 = 5,6
+     * Com todos os dados, temos a formula final
+     * larguraEmPixel = COLUMN_VAR_PIXEL_BASE + ((Densidade do device - COLUMN_VAR_DENSITY_BASE) * COLUMN_VAR_PIXEL_MULT_FACTOR)
+     * larguraEmPixel = 101 + ((4 - 1.5)*5.6
+     * Por fim, para calcular a qtd de colunas, convertemos a larguraEmPixel para largura em DP
+     * e dividimos a largura do device por ela
+     * qtdColumns = larguraDevice / larguraFinalEmDP
      *
      * @return qtdColumns
      */
@@ -1107,8 +1126,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             int pixelTot = COLUMN_VAR_PIXEL_BASE + addtionalPixel;
             int totalDp = (int) ToolBox.convertPixelsToDpIndeed(context, pixelTot);
             return metrics[0] / totalDp;
-        }catch (Exception e){
-            ToolBox_Inf.registerException(getClass().getName(),e);
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
             //Se não foi possivel calcular, seta 3, pois a maiora dos devices testados suportam no minimo 3 itens
             return 3;
         }
@@ -1116,7 +1135,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
     /**
      * LUCHE - 19/12/2019
-     *
+     * <p>
      * Metodo que recebe lista de menus e qtd de colunas e processa a qtd de menu fakes que devem
      * ser criados e retorna idx dp primeiro fake menu.
      *
@@ -1135,21 +1154,21 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         //Calcula quantos itens fake precisam ser gerados para completar linha do ultimo menu
         //Pega o mod da qtd de menus por qtd de colunas, se for diferente de 0, subtrai o mod do total
         //de colunas para descobrir qtd de itens de menu fake.
-        int fakeMenus = (qtdModulos % columnsQty) != 0 ? columnsQty - (qtdModulos % columnsQty)   :  0;
+        int fakeMenus = (qtdModulos % columnsQty) != 0 ? columnsQty - (qtdModulos % columnsQty) : 0;
         //Soma a qtd de menus fakes com a qtd de colunas , definindo qtos itens fake precisam ser gerados.
         int fakeTotal = fakeMenus + columnsQty;
         //Faz loop adicionando a qtd total de fake. O itens começam a ser adicionados após o indice do
         //ultimo menu de verdade.
-        for(int i = 0; i < fakeTotal;i++){
+        for (int i = 0; i < fakeTotal; i++) {
             menus.add(
-                qtdModulos + i,
-                new MenuMainNamoa(
-                    Act005_Main.MENU_ID_FAKE,
-                    "",
-                    Act005_Main.MENU_ID_FAKE,
-                    Act005_Main.MENU_ID_FAKE,
-                    null
-                )
+                    qtdModulos + i,
+                    new MenuMainNamoa(
+                            Act005_Main.MENU_ID_FAKE,
+                            "",
+                            Act005_Main.MENU_ID_FAKE,
+                            Act005_Main.MENU_ID_FAKE,
+                            null
+                    )
             );
         }
         //
@@ -1175,7 +1194,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         )
                 ).toSqlQuery()
         );
-        int movePendencies=0;
+        int movePendencies = 0;
         if (movePendency != null && movePendency.hasConsistentValue(Sql_Act012_006.PENDING_QTY)) {
             try {
                 movePendencies = Integer.valueOf(movePendency.get(Sql_Act012_006.PENDING_QTY));
@@ -1184,7 +1203,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 e.printStackTrace();
             }
         }
-        int inboundPendencies=0;
+        int inboundPendencies = 0;
         HMAux inboundPendency = assetInboundDao.getByStringHM(
                 new Sql_Act012_005(
                         ToolBox_Con.getPreference_Customer_Code(context),
@@ -1199,7 +1218,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 e.printStackTrace();
             }
         }
-        int outboundPendencies=0;
+        int outboundPendencies = 0;
         HMAux outboundPendency = assetOutboundDao.getByStringHM(
                 new Sql_Act012_007(
                         ToolBox_Con.getPreference_Customer_Code(context),
@@ -1227,7 +1246,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             qty = chMessageDao.getByStringHM(
                     new CH_Message_Sql_025(
                             ToolBox_Con.getPreference_User_Code(context),
-                        sessionCustomerList).toSqlQuery()
+                            sessionCustomerList).toSqlQuery()
             ).get(CH_Message_Sql_025.BADGE_MESSAGES_QTY);
         } catch (Exception e) {
             qty = "0";
@@ -1239,22 +1258,23 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     /**
      * LUCHE - 21/06/2021
      * Metodo que retorna a lista de customer com sessão no formato para in do SQL
+     *
      * @return
      */
     private String getFormatedSessionCustomerList() {
         ArrayList<HMAux> sessionCustomerList = ToolBox_Inf.getSessionCustomerChatList(context);
         String formattedList = "";
         //
-        if(sessionCustomerList != null && sessionCustomerList.size() > 0){
-            for (HMAux auxCustomer :sessionCustomerList) {
-                formattedList += "'"+auxCustomer.get(EV_User_CustomerDao.CUSTOMER_CODE)+"',";
+        if (sessionCustomerList != null && sessionCustomerList.size() > 0) {
+            for (HMAux auxCustomer : sessionCustomerList) {
+                formattedList += "'" + auxCustomer.get(EV_User_CustomerDao.CUSTOMER_CODE) + "',";
             }
         }
         //Se não encontoru customer logado, algo qe nunca deveria acontecer, retorna o customer logado.
         return
-            formattedList.isEmpty()
-                ? "'"+ToolBox_Con.getPreference_Customer_Code(context)+"'"
-                : formattedList.substring(0,formattedList.length() -1);
+                formattedList.isEmpty()
+                        ? "'" + ToolBox_Con.getPreference_Customer_Code(context) + "'"
+                        : formattedList.substring(0, formattedList.length() - 1);
     }
 
     @Override
@@ -1264,7 +1284,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         ArrayList<HMAux> resultList = new ArrayList<>();
         List<String> itemTypeList = new ArrayList<>();
         //inicializa indice para rastrear o tipo do item.
-        int indexOfItems =0;
+        int indexOfItems = 0;
         IO_MoveDao moveDao = new IO_MoveDao(context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM);
@@ -1306,9 +1326,9 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         && !actReturn.getRetStatus().equals("OK")
                 )
                 ) {
-                    String msg = actReturn.getRetStatus() ;
-                    if(actReturn.getMsg() != null && !actReturn.getMsg().isEmpty()){
-                        msg+= "\n" + actReturn.getMsg();
+                    String msg = actReturn.getRetStatus();
+                    if (actReturn.getMsg() != null && !actReturn.getMsg().isEmpty()) {
+                        msg += "\n" + actReturn.getMsg();
                     }
                     auxResult.put(moveCode, msg);
                     itemTypeList.add(itemType);
@@ -1319,7 +1339,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             //For no resumido por in/outbound montando msg a ser exibida
             for (Map.Entry<String, String> item : auxResult.entrySet()) {
 
-                if(!item.getValue().equals("OK")) {
+                if (!item.getValue().equals("OK")) {
                     HMAux hmAux = new HMAux();
                     //
                     //Monta HmAux
@@ -1345,7 +1365,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         ArrayList<HMAux> resultList = new ArrayList<>();
         List<String> itemTypeList = new ArrayList<>();
         //inicializa indice para rastrear o tipo do item.
-        int indexOfItems =0;
+        int indexOfItems = 0;
         IO_MoveDao moveDao = new IO_MoveDao(context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM);
@@ -1387,9 +1407,9 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         && !actReturn.getRetStatus().equals("OK")
                 )
                 ) {
-                    String msg = actReturn.getRetStatus() ;
-                    if(actReturn.getMsg() != null && !actReturn.getMsg().isEmpty()){
-                        msg+= "\n" + actReturn.getMsg();
+                    String msg = actReturn.getRetStatus();
+                    if (actReturn.getMsg() != null && !actReturn.getMsg().isEmpty()) {
+                        msg += "\n" + actReturn.getMsg();
                     }
                     auxResult.put(moveCode, msg);
                     itemTypeList.add(itemType);
@@ -1398,7 +1418,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             //For no resumido por in/outbound montando msg a ser exibida
             for (Map.Entry<String, String> item : auxResult.entrySet()) {
 
-                if(!item.getValue().equals("OK")) {
+                if (!item.getValue().equals("OK")) {
                     HMAux hmAux = new HMAux();
                     //
                     //Monta HmAux
@@ -1434,18 +1454,18 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                     String ticketCode = actReturn.getPrefix() + "." + actReturn.getCode();
                     //
                     if (!auxResult.containsKey(ticketCode)
-                        || (auxResult.containsKey(ticketCode)
-                        &&  !ConstantBaseApp.MAIN_RESULT_OK.equalsIgnoreCase(actReturn.getRetStatus())
+                            || (auxResult.containsKey(ticketCode)
+                            && !ConstantBaseApp.MAIN_RESULT_OK.equalsIgnoreCase(actReturn.getRetStatus())
                     )
                     ) {
                         //Se erro, verifica se erro de processamento qual erro foi e pega msg
-                        auxResult.put(ticketCode, getFormmatedRetMsg(actReturn.getRetStatus(),actReturn.getRetMsg()));
+                        auxResult.put(ticketCode, getFormmatedRetMsg(actReturn.getRetStatus(), actReturn.getRetMsg()));
                     }
                 }
                 //For no resumido por ticket montando msg a ser exibida
                 for (Map.Entry<String, String> item : auxResult.entrySet()) {
 
-                    if(!item.getValue().equals("OK")) {
+                    if (!item.getValue().equals("OK")) {
                         HMAux hmAux = new HMAux();
                         //
                         //Monta HmAux
@@ -1470,19 +1490,20 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         Gson gson = new GsonBuilder().serializeNulls().create();
         try {
             checkinReturns = gson.fromJson(
-                jsonRet,
-                new TypeToken<ArrayList<WS_TK_Ticket_Save.TicketSaveActReturn>>() {
-                }.getType());
+                    jsonRet,
+                    new TypeToken<ArrayList<WS_TK_Ticket_Save.TicketSaveActReturn>>() {
+                    }.getType());
 
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
         }
         return checkinReturns;
     }
+
     //TODO REVISAR APÓS PUBLIA PRA TESTE. TALVEZ REVER COMO GERAR LISTA DE RETORNO DO SAVE.
-    private String getFormmatedRetMsg(String retStatus, String retMsg ) {
-        String msg = retStatus ;
-        if(!ConstantBaseApp.MAIN_RESULT_OK.equals(retStatus)) {
+    private String getFormmatedRetMsg(String retStatus, String retMsg) {
+        String msg = retStatus;
+        if (!ConstantBaseApp.MAIN_RESULT_OK.equals(retStatus)) {
             msg += retMsg != null && !retMsg.isEmpty() ? "\n" + retMsg : "";
         }
         return msg;
@@ -1490,29 +1511,30 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
     /**
      * Metodo que processa o retorno do WS_Save(Checklist)
+     *
      * @param wsRet - Json com retorno
      */
     @Override
     public void processWS_SaveReturn(String wsRet) {
         Gson gson = new GsonBuilder().serializeNulls().create();
         //
-        int pendencyCount=0;
+        int pendencyCount = 0;
         boolean isDone = true;
-        if(wsRet != null && !wsRet.isEmpty()){
+        if (wsRet != null && !wsRet.isEmpty()) {
             ArrayList<TSave_Rec.Error_Process> errorProcesses = null;
             try {
                 errorProcesses = gson.fromJson(
-                    wsRet,
-                    new TypeToken<ArrayList<TSave_Rec.Error_Process>>() {
-                    }.getType()
+                        wsRet,
+                        new TypeToken<ArrayList<TSave_Rec.Error_Process>>() {
+                        }.getType()
                 );
-            }catch (Exception e){
+            } catch (Exception e) {
                 //TODO quando não há dados para enviar o ws ta retornando uam string e cai no catch rever
                 e.printStackTrace();
 //                ToolBox_Inf.registerException(getClass().getName(),e);
             }
             //
-            if(errorProcesses != null && errorProcesses.size() > 0){
+            if (errorProcesses != null && errorProcesses.size() > 0) {
                 ArrayList<HMAux> auxResults = new ArrayList<>();
                 for (TSave_Rec.Error_Process error_process : errorProcesses) {
                     ////
@@ -1520,7 +1542,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                     //
                     auxResults.add(mHmAux);
                 }
-                if(auxResults != null && auxResults.size() > 0) {
+                if (auxResults != null && auxResults.size() > 0) {
                     pendencyCount = auxResults.size();
                     isDone = false;
                 }
@@ -1529,14 +1551,14 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             }
         }
         int locationPendencies = ToolBox_Inf.getLocationPendencies(context);
-        if(locationPendencies > 0){
+        if (locationPendencies > 0) {
             pendencyCount = locationPendencies;
             isDone = false;
         }
-        if(pendencyCount > 0){
+        if (pendencyCount > 0) {
             isDone = false;
         }
-        mView.refreshResume(R.id.act005_send_resume_nform, isDone, customFormPendentAmount - pendencyCount ,customFormPendentAmount );
+        mView.refreshResume(R.id.act005_send_resume_nform, isDone, customFormPendentAmount - pendencyCount, customFormPendentAmount);
     }
 
     @Override
@@ -1584,12 +1606,12 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
          * Quando usuario estiver com a data muito discrepanta a ultima data valida, as funcoes do
          * menu principal serão travadas.
          */
-        if(!ToolBox_Inf.isLocalDatetimeOk(context)
-        && (!menu_id.equals(Act005_Main.MENU_ID_SEND_DATA)
-        && !menu_id.equals(Act005_Main.MENU_ID_SYNC_DATA))
-        ){
+        if (!ToolBox_Inf.isLocalDatetimeOk(context)
+                && (!menu_id.equals(Act005_Main.MENU_ID_SEND_DATA)
+                && !menu_id.equals(Act005_Main.MENU_ID_SYNC_DATA))
+        ) {
             mView.handleInvalidLocalDatetime();
-        }else {
+        } else {
             try {
                 switch (menu_id) {
                     case Act005_Main.MENU_ID_CHECKLIST:
@@ -1848,7 +1870,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                     ToolBox_Inf.cancelNotification(context, 10);
                     logoutList = logoutList.substring(0, logoutList.length() - 1);
                     //
-                    if (ToolBox_Con.isOnline(context,true)) {
+                    if (ToolBox_Con.isOnline(context, true)) {
                         executeLogout(logoutList);
                     } else {
                         if (ToolBox_Con.getPreference_Customer_Code(context) == -1L) {
@@ -2084,7 +2106,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     @Override
     public void executeSupport(String support_msg, String support_contact) {
 
-        if (ToolBox_Con.isOnline(context,true)) {
+        if (ToolBox_Con.isOnline(context, true)) {
             mView.setWsProcess(Act005_Main.WS_PROCESS_SUPPORT);
 
             mView.showPD();
@@ -2102,7 +2124,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         }
     }
 
-//    private int isSoWithinTokenFile() {
+    //    private int isSoWithinTokenFile() {
 //        try {
 //            File[] soToken = ToolBox_Inf.getListOfFiles_v5(Constant.TOKEN_PATH, Constant.TOKEN_SO_PREFIX);
 //            if (soToken.length > 0) {
@@ -2256,11 +2278,12 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         }
         return false;
     }
+
     @Override
     public int countInboundItemSaveReturnTotal(String jsonRet, String io_item_lbl) {
         ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn> actReturnList = null;
         Gson gson = new GsonBuilder().serializeNulls().create();
-        int okInboundItem= 0;
+        int okInboundItem = 0;
         try {
             actReturnList = gson.fromJson(
                     jsonRet,
@@ -2270,8 +2293,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             ToolBox_Inf.registerException(getClass().getName(), e);
         }
 
-        if(actReturnList != null){
-           return actReturnList.size();
+        if (actReturnList != null) {
+            return actReturnList.size();
         }
         return okInboundItem;
     }
@@ -2280,7 +2303,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     public int countOutboundItemSaveReturnTotal(String jsonRet, String io_item_lbl) {
         ArrayList<WS_IO_Outbound_Item_Save.OutboundItemSaveActReturn> actReturnList = null;
         Gson gson = new GsonBuilder().serializeNulls().create();
-        int okInboundItem= 0;
+        int okInboundItem = 0;
         try {
             actReturnList = gson.fromJson(
                     jsonRet,
@@ -2290,7 +2313,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             ToolBox_Inf.registerException(getClass().getName(), e);
         }
 
-        if(actReturnList != null){
+        if (actReturnList != null) {
             return actReturnList.size();
         }
         return okInboundItem;
@@ -2326,27 +2349,27 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     public EV_User getEv_user() {
         EV_UserDao userDao = new EV_UserDao(context, Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
         return userDao.getByString(
-            new EV_User_Sql_001(
-                ToolBox_Con.getPreference_User_Code(context)
-            ).toSqlQuery()
+                new EV_User_Sql_001(
+                        ToolBox_Con.getPreference_User_Code(context)
+                ).toSqlQuery()
         );
     }
 
     private ArrayList<EV_User_Customer> getCustomerAccessList() {
         return (ArrayList<EV_User_Customer>) userCustomerDao.query(
-            new EV_User_Customer_Sql_001(
-                ToolBox_Con.getPreference_User_Code(context)
-            ).toSqlQuery()
+                new EV_User_Customer_Sql_001(
+                        ToolBox_Con.getPreference_User_Code(context)
+                ).toSqlQuery()
         );
     }
 
     @Override
     public boolean showEditUserWg() {
         return ToolBox_Inf.profileExists(
-                    context,
-                    ConstantBaseApp.PROFILE_PRJ001_MASTER_DATA,
-                    ConstantBaseApp.PROFILE_PRJ001_MASTER_DATA_PARAM_EDIT_USER_WORKGROUP_HOME
-                );
+                context,
+                ConstantBaseApp.PROFILE_PRJ001_MASTER_DATA,
+                ConstantBaseApp.PROFILE_PRJ001_MASTER_DATA_PARAM_EDIT_USER_WORKGROUP_HOME
+        );
     }
 
     @Override
@@ -2371,24 +2394,25 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     @Override
     public Bitmap getLogoBitmap() {
         EV_User_Customer customer = getEvUserCustomer();
-        if(customer != null && customer.getLogo_url() != null){
+        if (customer != null && customer.getLogo_url() != null) {
             Bitmap bm = ToolBox_Inf.getCustomerImage(ToolBox_Inf.getCustomerLogoPath(context));
             return bm;
         }
-        return BitmapFactory.decodeResource(context.getResources(),R.drawable.logo_namoa);
+        return BitmapFactory.decodeResource(context.getResources(), R.drawable.logo_namoa);
     }
 
     /**
      * LUCHE - 04/05/2021
      * Metodo que retorna o EV_User_Customer do customer atual
+     *
      * @return
      */
     private EV_User_Customer getEvUserCustomer() {
         return userCustomerDao.getByString(
-            new EV_User_Customer_Sql_002(
-                    ToolBox_Con.getPreference_User_Code(context),
-                    String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
-            ).toSqlQuery()
+                new EV_User_Customer_Sql_002(
+                        ToolBox_Con.getPreference_User_Code(context),
+                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                ).toSqlQuery()
         );
     }
 
@@ -2396,15 +2420,15 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     public Bundle getAct083BundleParams(MainTagMenu mainTagMenu) {
 
         MyActionFilterParam actionFilterParam = new MyActionFilterParam(
-        mainTagMenu.getTagCode() > 0  ? mainTagMenu.getTagCode() : null,
-            mainTagMenu.getTagName(),
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null
+                mainTagMenu.getTagCode() > 0 ? mainTagMenu.getTagCode() : null,
+                mainTagMenu.getTagName(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
         );
 
         Bundle bundle = new Bundle();
@@ -2417,7 +2441,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
     @Override
     public void executeWSTicketDownload() {
-        if(ToolBox_Con.isOnline(context)){
+        if (ToolBox_Con.isOnline(context)) {
             mView.setWsSoProcess(SYNC_TICKETS);
             mView.setWsProcess(SYNC_TICKETS);
             //
@@ -2430,7 +2454,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             //
             context.sendBroadcast(mIntent);
 
-        }else{
+        } else {
             ToolBox_Inf.showNoConnectionDialog(context);
         }
     }
@@ -2445,7 +2469,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         ArrayList<HMAux> auxTickets = getTicketToSync();
         String ticketPKList = "";
         for (HMAux aux : auxTickets) {
-            if(aux.hasConsistentValue(Sql_Act069_002.TICKET_PK)){
+            if (aux.hasConsistentValue(Sql_Act069_002.TICKET_PK)) {
                 ticketPKList += ConstantBaseApp.MAIN_CONCAT_STRING + aux.get(Sql_Act069_002.TICKET_PK);
             }
         }

@@ -87,6 +87,7 @@ public class Constant extends ConstantBaseApp {
     public static final String WS_WORKGROUP_MEMBER_LIST = "https://portal.namoadigital.com/ws/prj001/wg/server_workgroup_member_list.ws";
     public static final String WS_WORKGROUP_MEMBER_EDIT = "https://portal.namoadigital.com//ws/prj001/wg/server_workgroup_member_set.ws";
     public static final String WS_SCHEDULE_NOT_EXECUTED = "https://portal.namoadigital.com/ws/prj001/server_not_executed_schedule.ws";
+    public static final String WS_SERIAL_SITE_INV = "https://portal.namoadigital.com/ws/prj001/server_site_serial_inv.ws";
     public static final String WEB_SOCKET_CHAT = "https://nchat.namoadigital.com";
     public static final String WS_UPLOAD_NODE_CHAT = "https://nchat.namoadigital.com/messageFile";
     public static final String WS_CHAT_ROOM_INFO = "https://nchat.namoadigital.com/roomMemberList";

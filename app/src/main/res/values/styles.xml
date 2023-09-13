@@ -288,6 +288,21 @@
         <item name="android:paddingVertical">8dp</item>
     </style>
 
+    <style name="NamoaTheme3.TextInputLayoutNoMargin.Outlined" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="enforceMaterialTheme">false</item>
+        <item name="enforceTextAppearance">false</item>
+        <item name="android:textColorHint">@drawable/edittext_theme</item>
+        <item name="hintTextColor">@drawable/edittext_theme</item>
+        <item name="boxStrokeColor">@drawable/edittext_theme_outlined</item>
+        <item name="android:textColor">@drawable/edittext_theme_text</item>
+        <item name="startIconTint">@drawable/edittext_icon_theme</item>
+        <item name="shapeAppearance">?attr/shapeAppearanceSmallComponent</item>
+        <item name="boxCollapsedPaddingTop">0dp</item>
+        <item name="boxStrokeErrorColor">@color/mtrl_error</item>
+        <item name="boxStrokeWidth">@dimen/mtrl_textinput_box_stroke_width_default</item>
+        <item name="boxStrokeWidthFocused">@dimen/mtrl_textinput_box_stroke_width_focused</item>
+    </style>
+
     <style name="NamoaTheme3.Button.Outlined" parent="Widget.Material3.Button.Icon">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>

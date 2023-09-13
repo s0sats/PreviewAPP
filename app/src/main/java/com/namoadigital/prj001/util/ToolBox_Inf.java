@@ -477,6 +477,11 @@ public class ToolBox_Inf {
         if (!dirOtherActionJsonFile.exists()) {
             dirOtherActionJsonFile.mkdir();
         }
+        //Serial Site Inventory
+        File dirSerialSiteInv = new File(Constant.SERIAL_SITE_INV_JSON_PATH);
+        if (!dirSerialSiteInv.exists()) {
+            dirSerialSiteInv.mkdir();
+        }
     }
 
     public static String md5(String s) {

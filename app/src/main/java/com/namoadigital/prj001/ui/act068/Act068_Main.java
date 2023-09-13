@@ -33,6 +33,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.service.WsSerialSerialInventory;
 import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Search_Not_Focus;
@@ -72,10 +73,10 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     private String fragSerial_ID;
     private String fragTracking;
     private boolean fragIsOnlyOne;
-    private String wsProcess ="";
+    private String wsProcess = "";
     private String resultFromTicketSave;
     private int syncs_qty;
-    private boolean nextTicketsFlow=false;
+    private boolean nextTicketsFlow = false;
     private ArrayList<HMAux> wsResult = new ArrayList<>();
     private RadioGroup tabs;
     private RadioButton tab_serial_search;
@@ -90,6 +91,7 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //
         iniSetup();
         //
@@ -98,22 +100,24 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         iniUIFooter();
         //
         initAction();
+
+        deleteSerialSiteInventoryFile();
     }
 
     private void iniSetup() {
         //
         mResource_Code = ToolBox_Inf.getResourceCode(
-            context,
-            mModule_Code,
-            Constant.ACT068
+                context,
+                mModule_Code,
+                Constant.ACT068
         );
         //
         loadTranslation();
         //
         mResource_CodeSS = ToolBox_Inf.getResourceCode(
-            context,
-            mModule_Code,
-            Constant.FRG_SERIAL_SEARCH
+                context,
+                mModule_Code,
+                Constant.FRG_SERIAL_SEARCH
         );
         //
         loadTranslationFrg_Serial_Search();
@@ -182,25 +186,27 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         transList.add("alert_serial_pendencies_ttl");
         transList.add("alert_serial_pendencies_msg");
         //
-         transList.add("progress_unfocus_ticket_download_ttl");
+        transList.add("progress_unfocus_ticket_download_ttl");
         transList.add("progress_unfocus_ticket_download_msg");
         //
+        transList.add("spinner_title_lbl");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
-            context,
-            mModule_Code,
-            mResource_Code,
-            ToolBox_Con.getPreference_Translate_Code(context),
-            transList
+                context,
+                mModule_Code,
+                mResource_Code,
+                ToolBox_Con.getPreference_Translate_Code(context),
+                transList
         );
     }
 
     private void loadTranslationFrg_Serial_Search() {
         hmAux_Trans_frg_serial_search = ToolBox_Inf.setLanguage(
-            context,
-            mModule_Code,
-            mResource_CodeSS,
-            ToolBox_Con.getPreference_Translate_Code(context),
-            mFrgSerialSearch.getFragTranslationsVars()
+                context,
+                mModule_Code,
+                mResource_CodeSS,
+                ToolBox_Con.getPreference_Translate_Code(context),
+                mFrgSerialSearch.getFragTranslationsVars()
         );
     }
 
@@ -210,7 +216,7 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         fm = getSupportFragmentManager();
         //
         mPresenter = new Act068_Main_Presenter(
-            context,this,hmAux_Trans
+                context, this, hmAux_Trans
         );
         //
         initFragment();
@@ -304,13 +310,13 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         if (!fragProduct_ID.isEmpty()) {
             mFrgSerialSearch.setProductIdText(fragProduct_ID, fragProduct_ID);
 
-            if (fragIsOnlyOne){
+            if (fragIsOnlyOne) {
                 mFrgSerialSearch.setShowTree(false);
                 mFrgSerialSearch.setShowAll(false);
             } else {
                 mFrgSerialSearch.setShowTree(true);
             }
-        }else{
+        } else {
             mFrgSerialSearch.setShowTree(true);
         }
         //
@@ -332,16 +338,16 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
 //            if(isFragSerialSearch) {
 //                processSerialSearch(optionsInfo);
 //            }else{
-                processTicketSearch(optionsInfo);
+        processTicketSearch(optionsInfo);
 //            }
 //        }
     }
 
     private void processTicketSearch(HMAux optionsInfo) {
 
-        if ((   optionsInfo.hasConsistentValue(Frg_Ticket_Search.CLIENT_ID) && optionsInfo.get(Frg_Ticket_Search.CLIENT_ID).trim().length() > 0 )
-                || (   optionsInfo.hasConsistentValue(Frg_Ticket_Search.CONTRACT_ID) && optionsInfo.get(Frg_Ticket_Search.CONTRACT_ID).trim().length() > 0)
-                || (   optionsInfo.hasConsistentValue(Frg_Ticket_Search.TICKET_ID) && optionsInfo.get(Frg_Ticket_Search.TICKET_ID).trim().length() > 0)
+        if ((optionsInfo.hasConsistentValue(Frg_Ticket_Search.CLIENT_ID) && optionsInfo.get(Frg_Ticket_Search.CLIENT_ID).trim().length() > 0)
+                || (optionsInfo.hasConsistentValue(Frg_Ticket_Search.CONTRACT_ID) && optionsInfo.get(Frg_Ticket_Search.CONTRACT_ID).trim().length() > 0)
+                || (optionsInfo.hasConsistentValue(Frg_Ticket_Search.TICKET_ID) && optionsInfo.get(Frg_Ticket_Search.TICKET_ID).trim().length() > 0)
         ) {
             mPresenter.executeTicketSearch(
                     optionsInfo.get(Frg_Ticket_Search.CONTRACT_ID),
@@ -358,19 +364,19 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
 
     private void processSerialSearch(@NonNull HMAux optionsInfo) {
         if (optionsInfo.get(PRODUCT_ID).trim().length() > 0
-            || optionsInfo.get(Frg_Serial_Search.SERIAL).trim().length() > 0
-            || optionsInfo.get(Frg_Serial_Search.TRACKING).trim().length() > 0
+                || optionsInfo.get(Frg_Serial_Search.SERIAL).trim().length() > 0
+                || optionsInfo.get(Frg_Serial_Search.TRACKING).trim().length() > 0
         ) {
             mPresenter.executeSerialSearch(
-                optionsInfo.get(PRODUCT_ID),
-                optionsInfo.get(Frg_Serial_Search.SERIAL),
-                optionsInfo.get(Frg_Serial_Search.TRACKING),
-                mFrgSerialSearch.isForceExactSearch()
+                    optionsInfo.get(PRODUCT_ID),
+                    optionsInfo.get(Frg_Serial_Search.SERIAL),
+                    optionsInfo.get(Frg_Serial_Search.TRACKING),
+                    mFrgSerialSearch.isForceExactSearch()
             );
         } else {
-          showMsg(
-                hmAux_Trans.get("alert_no_value_filled_ttl"),
-                hmAux_Trans.get("alert_no_value_filled_msg")
+            showMsg(
+                    hmAux_Trans.get("alert_no_value_filled_ttl"),
+                    hmAux_Trans.get("alert_no_value_filled_msg")
             );
         }
     }
@@ -396,8 +402,8 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     @Override
     public void setPendenciesQty(int qty) {
         pendencies_qty = qty;
-        String btn_dependency_qty_text= hmAux_Trans.get("btn_my_tickets");
-        if(pendencies_qty > 0){
+        String btn_dependency_qty_text = hmAux_Trans.get("btn_my_tickets");
+        if (pendencies_qty > 0) {
             btn_dependency_qty_text += " (" + pendencies_qty + ")";
         }
         //
@@ -427,43 +433,44 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     @Override
     public void showMsg(String title, String msg) {
         ToolBox.alertMSG(
-            context,
-            title,
-            msg,
-            null,
-            0
+                context,
+                title,
+                msg,
+                null,
+                0
         );
     }
+
     /**
      * LUCHE - 16/01/2020
-     *
+     * <p>
      * Alterado metodo para verificar se o progressDialog ja esta instanciado e, caso esteja, atualiza
      * title, msg e exibe o dialog ao inves de criar uma nova instancia.
-     *
+     * <p>
      * Teste feito para tentar resolver problemas que acontecem em algumas telas que tem chamadas de
      * ws encadeadas. Como cada chamada do enableProgressDialog, gera uma nova instancia do progressDialog,
      * era possivel empilhar dialogs e não conseguir fechar los ja que o se houvessem 2 aberto,
      * não existe mais referencia do primeiro tornando impossivel fechar o dialog.     *
-     *
+     * <p>
      * O teste mostrou ser efetivo e talvez fosse interessando aplicar esse conceito direto na BaseACt
      *
      * @param title - Titulo
-     * @param msg - Msg
+     * @param msg   - Msg
      */
     @Override
     public void showPD(String title, String msg) {
-        if(progressDialog == null) {
+        if (progressDialog == null) {
             enableProgressDialog(
-                title,
-                msg,
-                hmAux_Trans.get("sys_alert_btn_cancel"),
-                hmAux_Trans.get("sys_alert_btn_ok")
+                    title,
+                    msg,
+                    hmAux_Trans.get("sys_alert_btn_cancel"),
+                    hmAux_Trans.get("sys_alert_btn_ok")
             );
-        }else{
+        } else {
             progressDialog.setTitle(title);
             progressDialog.setMessage(msg);
             //
-            if(!progressDialog.isShowing()) {
+            if (!progressDialog.isShowing()) {
                 progressDialog.show();
             }
         }
@@ -489,7 +496,7 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     }
 
     private void setActBarTitle() {
-        getSupportActionBar().setTitle(ToolBox_Inf.getActTitleByOrigin(context, ConstantBaseApp.ACT068,hmAux_Trans,mAct_Title));
+        getSupportActionBar().setTitle(ToolBox_Inf.getActTitleByOrigin(context, ConstantBaseApp.ACT068, hmAux_Trans, mAct_Title));
     }
 
     @Override
@@ -503,7 +510,7 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
 
 
     @Override
-    public void callAct076(){
+    public void callAct076() {
         Intent intent = new Intent(context, Act076_Main.class);
         Bundle bundle = new Bundle();
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT068);
@@ -514,11 +521,11 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     }
 
     @Override
-    public void  showResult(boolean ticketResult) {
-        if(wsResult != null && wsResult.isEmpty() && ticketResult){
-            Toast.makeText(context,  hmAux_Trans.get("alert_ticket_results_ok"), Toast.LENGTH_SHORT).show();
+    public void showResult(boolean ticketResult) {
+        if (wsResult != null && wsResult.isEmpty() && ticketResult) {
+            Toast.makeText(context, hmAux_Trans.get("alert_ticket_results_ok"), Toast.LENGTH_SHORT).show();
             handleWSReturnFlow();
-        }else {
+        } else {
             final AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -562,11 +569,11 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         if (nextTicketsFlow) {
             callAct074();
         } else {
-             checkFlow(
-                 isFragSerialSearch
-                     ? mFrgSerialSearch.getHMAuxValues()
-                     : mFrgTicketSearch.getHMAuxValues()
-             );
+            checkFlow(
+                    isFragSerialSearch
+                            ? mFrgSerialSearch.getHMAuxValues()
+                            : mFrgTicketSearch.getHMAuxValues()
+            );
         }
     }
 
@@ -596,13 +603,13 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
 
         if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Search_Not_Focus.class.getName())) {
             progressDialog.dismiss();
-            if(ToolBox_Inf.hasFormProductOutdate(context)){
+            if (ToolBox_Inf.hasFormProductOutdate(context)) {
                 mPresenter.executeWSProductSync(mFrgTicketSearch.getHMAuxValues());
-            }else {
+            } else {
                 mPresenter.searchOffline(
                         Objects.requireNonNull(mFrgTicketSearch.getHMAuxValues().get(Frg_Ticket_Search.CONTRACT_ID)),
-                        Objects.requireNonNull(mFrgTicketSearch.getHMAuxValues().get(Frg_Ticket_Search.CLIENT_ID )),
-                        Objects.requireNonNull(mFrgTicketSearch.getHMAuxValues().get(Frg_Ticket_Search.TICKET_ID ))
+                        Objects.requireNonNull(mFrgTicketSearch.getHMAuxValues().get(Frg_Ticket_Search.CLIENT_ID)),
+                        Objects.requireNonNull(mFrgTicketSearch.getHMAuxValues().get(Frg_Ticket_Search.TICKET_ID))
                 );
             }
         } else if (wsProcess.equalsIgnoreCase(WS_Sync.class.getName())) {
@@ -612,7 +619,10 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
                     Objects.requireNonNull(mFrgTicketSearch.getHMAuxValues().get(Frg_Ticket_Search.CLIENT_ID)),
                     Objects.requireNonNull(mFrgTicketSearch.getHMAuxValues().get(Frg_Ticket_Search.TICKET_ID))
             );
-        } else{
+        } else if (wsProcess.equalsIgnoreCase(WsSerialSerialInventory.class.getName())) {
+            progressDialog.dismiss();
+            Toast.makeText(context, "AAAAAAAAAAAAAAAAAAA", Toast.LENGTH_SHORT).show();
+        } else {
             //
             progressDialog.dismiss();
         }
@@ -629,7 +639,7 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
             } else {
                 mFrgSerialSearch.setBtn_Option_02_Visibility(View.GONE);
             }
-        }else{
+        } else {
             mFrgTicketSearch.setSyncsQty(syncs_qty);
         }
     }
@@ -651,16 +661,16 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         if (wsProcess.equalsIgnoreCase(WS_Sync.class.getName())) {
             progressDialog.dismiss();
             mPresenter.processSaveReturn(resultFromTicketSave);
-        }else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getName())) {
+        } else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getName())) {
             //caso haja algo no extrato referente ao formulario forca a execucao do extrato.
-            if(!wsResult.isEmpty()) {
+            if (!wsResult.isEmpty()) {
                 showResult(false);
-            }else {
+            } else {
                 if (nextTicketsFlow) {
                     callAct074();
                 }
             }
-        }else{
+        } else {
             wsResult.clear();
         }
 
@@ -674,16 +684,16 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         if (wsProcess.equalsIgnoreCase(WS_Sync.class.getName())) {
             progressDialog.dismiss();
             mPresenter.processSaveReturn(resultFromTicketSave);
-        }else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getName())) {
+        } else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getName())) {
             //caso haja algo no extrato referente ao formulario forca a execucao do extrato.
-            if(!wsResult.isEmpty()) {
+            if (!wsResult.isEmpty()) {
                 showResult(false);
-            }else {
+            } else {
                 if (nextTicketsFlow) {
                     callAct074();
                 }
             }
-        }else{
+        } else {
             wsResult.clear();
         }
         //
@@ -706,7 +716,7 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     @Override
     protected void processUpdateSoftware(String mLink, String mRequired) {
         super.processUpdateSoftware(mLink, mRequired);
-        if(progressDialog != null) {
+        if (progressDialog != null) {
             progressDialog.dismiss();
         }
         //
@@ -744,11 +754,11 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
             }
 
             ToolBox.alertMSG(
-                context,
-                "Erro:",
-                value[0],
-                null,
-                0
+                    context,
+                    "Erro:",
+                    value[0],
+                    null,
+                    0
             );
 
         } else {
@@ -765,11 +775,11 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
                         mPresenter.executeSerialSearch(product_id, "", "", false);
                     } else {
                         ToolBox.alertMSG(
-                            context,
-                            hmAux_Trans.get("alert_local_product_not_found_ttl"),
-                            hmAux_Trans.get("alert_local_product_not_found_msg"),
-                            null,
-                            0
+                                context,
+                                hmAux_Trans.get("alert_local_product_not_found_ttl"),
+                                hmAux_Trans.get("alert_local_product_not_found_msg"),
+                                null,
+                                0
                         );
                     }
                     break;
@@ -788,11 +798,11 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
                         mPresenter.executeSerialSearch(hmAux.get(PRODUCT_ID), value[3], "", true);
                     } else {
                         ToolBox.alertMSG(
-                            context,
-                            hmAux_Trans.get("alert_local_product_not_found_ttl"),
-                            hmAux_Trans.get("alert_local_product_not_found_msg"),
-                            null,
-                            0
+                                context,
+                                hmAux_Trans.get("alert_local_product_not_found_ttl"),
+                                hmAux_Trans.get("alert_local_product_not_found_msg"),
+                                null,
+                                0
                         );
                     }
                     break;
@@ -803,15 +813,6 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         }
     }
 
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
-
-        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
-        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
-
-        return true;
-    }
     /*
        BARRIONUEVO 17-04-2020
             Atualiza info do footer e info da lista
@@ -825,11 +826,11 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     private void initFragment() {
         FragmentTransaction transaction = fm.beginTransaction();
 
-        if(mFrgTicketSearch == null) {
+        if (mFrgTicketSearch == null) {
             mFrgTicketSearch = Frg_Ticket_Search.newInstance(hmAux_Trans);
         }
         //
-        mFrgTicketSearch.setOnSearchClickListener((Act068_Main)context);
+        mFrgTicketSearch.setOnSearchClickListener((Act068_Main) context);
 
 //        mFrgSerialSearch.setLoad_delegate(new Frg_Serial_Search.I_Frg_Serial_Search_Load() {
 //            @Override
@@ -848,13 +849,13 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
 
     private <T extends Fragment> void setFrag(T type, String sTag) {
 //        if (fm.findFragmentByTag(sTag) == null) {
-            //LUCHE - 26/10/2020 - atualzia preferencia de qual tab deve vir carregada.
+        //LUCHE - 26/10/2020 - atualzia preferencia de qual tab deve vir carregada.
 //            mPresenter.updateTabPreference(sTag);
-            //
-            FragmentTransaction ft = fm.beginTransaction();
-            ft.replace(R.id.act068_frg_placeholder, type, sTag);
-            ft.addToBackStack(null);
-            ft.commit();
+        //
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.act068_frg_placeholder, type, sTag);
+        ft.addToBackStack(null);
+        ft.commit();
 //        } else {
 //            //type.loadDataToScreen();
 //        }
@@ -864,7 +865,14 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     public void onSearchClick(String btn_Action, HMAux optionsInfo) {
         switch (btn_Action) {
             case Frg_Serial_Search.BTN_OPTION_01:
-                checkFlow(optionsInfo);
+                if (optionsInfo.hasConsistentValue(Frg_Ticket_Search.SITE_CODE) && !optionsInfo.get(Frg_Ticket_Search.SITE_CODE).isEmpty()) {
+                    mPresenter.saveSiteInventory(
+                            Integer.parseInt(optionsInfo.get(Frg_Ticket_Search.SITE_CODE)),
+                            optionsInfo.get(Frg_Ticket_Search.SITE_DESC)
+                    );
+                } else {
+                    checkFlow(optionsInfo);
+                }
                 break;
 //            case Frg_Serial_Search.BTN_OPTION_02:
 //                mPresenter.executeWSTicketDownload();
@@ -895,8 +903,29 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onNavigateUp() {
+        onBackPressed();
+        return super.onNavigateUp();
+    }
+
+    @Override
     public void onControlStaListReady(ArrayList<MKEditTextNM> fragCtrlSta) {
         controls_sta.clear();
         controls_sta.addAll(fragCtrlSta);
     }
+
+    private void deleteSerialSiteInventoryFile() {
+        mPresenter.deleteSerialSiteInventoryFile();
+    }
+
 }

@@ -153,4 +153,6 @@ public interface Act005_Main_Presenter {
     void checkUpdateInProgress(AppUpdateManager updateManager);
 
     void executeWSSoSync();
+
+    void deleteSerialSiteInventoryFile();
 }

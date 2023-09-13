@@ -42,6 +42,7 @@ interface Act083_Main_Contract {
         fun setPlaceholderTextAndVisibility(currentTabCounter: Int)
         fun resetActionPosition()
         fun callAct092(bundle: Bundle)
+        fun changeTitleTopBar(siteDesc: String)
     }
 
     interface I_Presenter {
@@ -85,6 +86,10 @@ interface Act083_Main_Contract {
             justify_item_code: Int,
             reschedule_date: String
         )
+
+        fun processSerialSite()
+        fun existsSerialSiteInvFile(): Boolean
+        fun checkSerialSiteInv()
     }
 
 }

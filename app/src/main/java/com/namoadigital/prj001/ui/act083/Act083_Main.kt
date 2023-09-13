@@ -25,6 +25,7 @@ import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.Base_Activity
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.adapter.MyActionsAdapter
+import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.SerialSiteInventoryUseCase.Companion.SiteInventoryUseCaseFactory
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.dao.MdJustifyItemDao.Companion.RESCHEDULE
 import com.namoadigital.prj001.databinding.Act083MainBinding
@@ -34,6 +35,7 @@ import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.model.MyActionsFormButton
 import com.namoadigital.prj001.service.WS_Product_Serial_Structure
 import com.namoadigital.prj001.service.WS_Serial_Search
+import com.namoadigital.prj001.service.WsSerialSerialInventory
 import com.namoadigital.prj001.service.WS_Sync
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download
 import com.namoadigital.prj001.service.WsScheduleNotExecuted
@@ -133,7 +135,8 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 Constant.DB_VERSION_CUSTOM
             ), MyActionsFilterParamPreferences(
                 getSharedPreferences("act083_filter", MODE_PRIVATE)
-            ), mModule_Code, mResource_Code
+            ), mModule_Code, mResource_Code,
+            SiteInventoryUseCaseFactory(context).checkAndExecUseCase()
         )
     }
 
@@ -143,6 +146,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         setContentView(binding.root)
         //
         setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         //
         initBundle(savedInstanceState)
         iniSetup()
@@ -150,10 +154,20 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         initVars()
         iniUIFooter()
         initActions()
+        checkSerialSiteInventory()
     }
 
     private fun initBundle(savedInstanceState: Bundle?) {
         bundle = (savedInstanceState ?: intent.extras) as Bundle
+
+    }
+
+    private fun checkSerialSiteInventory() {
+        mPresenter.checkSerialSiteInv()
+    }
+
+    override fun changeTitleTopBar(siteDesc: String) {
+        supportActionBar?.title = siteDesc
     }
 
     private fun iniTrans() {
@@ -662,6 +676,13 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     override fun processCloseACT(mLink: String?, mRequired: String?, hmAux: HMAux) {
         super.processCloseACT(mLink, mRequired, hmAux)
         when (wsProcess) {
+
+            WsSerialSerialInventory::class.java.name -> {
+                wsProcess = ""
+                progressDialog.dismiss()
+
+                Toast.makeText(context, "$mLink", Toast.LENGTH_LONG).show()
+            }
 
             WsScheduleNotExecuted::class.java.name -> {
                 wsProcess = ""
@@ -1224,6 +1245,11 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         mIntent.putExtras(bundle)
         startActivity(mIntent)
         finish()
+    }
+
+    override fun onNavigateUp(): Boolean {
+        onBackPressed()
+        return super.onNavigateUp()
     }
 
 }

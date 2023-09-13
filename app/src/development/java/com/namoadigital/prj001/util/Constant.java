@@ -113,6 +113,7 @@ public class Constant extends ConstantBaseApp {
     public static String WS_WORKGROUP_MEMBER_EDIT = "https://" + WS_PREFIX + ".namoadigital.com//ws/prj001/wg/server_workgroup_member_set.ws";
     //
     public static String WS_SCHEDULE_NOT_EXECUTED = "https://" + WS_PREFIX + ".namoadigital.com/ws/prj001/server_not_executed_schedule.ws";
+    public static String WS_SERIAL_SITE_INV = "https://" + WS_PREFIX + ".namoadigital.com/ws/prj001/server_site_serial_inv.ws";
     // Connection Test
     public static String WS_HOST = WS_PREFIX + ".namoadigital.com";
     public static int WS_PORT = 443;
@@ -201,5 +202,6 @@ public class Constant extends ConstantBaseApp {
         WS_WORKGROUP_MEMBER_LIST = "https://" + WS_PREFIX + ".namoadigital.com/ws/prj001/wg/server_workgroup_member_list.ws";
         WS_WORKGROUP_MEMBER_EDIT = "https://" + WS_PREFIX + ".namoadigital.com//ws/prj001/wg/server_workgroup_member_set.ws";
         WS_SCHEDULE_NOT_EXECUTED = "https://" + WS_PREFIX + ".namoadigital.com/ws/prj001/server_not_executed_schedule.ws";
+        WS_SERIAL_SITE_INV = "https://" + WS_PREFIX + ".namoadigital.com/ws/prj001/server_site_serial_inv.ws";
     }
 }
