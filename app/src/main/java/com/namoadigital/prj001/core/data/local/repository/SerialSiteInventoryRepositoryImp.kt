@@ -13,7 +13,6 @@ import com.namoadigital.prj001.ui.base.NamoaFactory
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.io.File
-import java.lang.Exception
 
 class SerialSiteInventoryRepositoryImp constructor(
     private val context: Context,
@@ -52,7 +51,7 @@ class SerialSiteInventoryRepositoryImp constructor(
 
     override fun cleanPreference() {
         saveSiteInvetoryPreference(
-            SiteInventory(-1, "")
+            SiteInventory(-1, "", false)
         )
     }
 

@@ -14,6 +14,7 @@ class SiteInventoryPref constructor(
             edit()
                 .putInt(SITE_CODE, model.site_code)
                 .putString(SITE_DESC, model.site_desc)
+                .putBoolean(REFRESH, model.refresh)
                 .apply()
         }
     }
@@ -22,7 +23,8 @@ class SiteInventoryPref constructor(
         with(pref) {
             return SiteInventory(
                 site_code = getInt(SITE_CODE, -1),
-                site_desc = getString(SITE_DESC, "") ?: ""
+                site_desc = getString(SITE_DESC, "") ?: "",
+                refresh = getBoolean(REFRESH, false)
             )
         }
     }
@@ -32,6 +34,7 @@ class SiteInventoryPref constructor(
 
         const val SITE_CODE = "site_code"
         const val SITE_DESC = "site_desc"
+        const val REFRESH = "refresh"
 
         fun instance(context: Context): SiteInventoryPref {
             return SiteInventoryPref(

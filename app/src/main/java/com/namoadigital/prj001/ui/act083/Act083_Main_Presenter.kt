@@ -18,10 +18,10 @@ import com.namoadigital.prj001.receiver.WBR_Sync
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download
 import com.namoadigital.prj001.service.WS_Product_Serial_Structure
 import com.namoadigital.prj001.service.WS_Serial_Search
-import com.namoadigital.prj001.service.WsSerialSerialInventory
 import com.namoadigital.prj001.service.WS_Sync
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download
 import com.namoadigital.prj001.service.WsScheduleNotExecuted
+import com.namoadigital.prj001.service.WsSerialSerialInventory
 import com.namoadigital.prj001.sql.*
 import com.namoadigital.prj001.ui.act070.Act070_Main
 import com.namoadigital.prj001.ui.act083.data.local.preferences.MyActionsFilterParamPreferences
@@ -206,6 +206,8 @@ class Act083_Main_Presenter constructor(
         //
         transList.add("progress_site_search_ttl")
         transList.add("progress_site_search_msg")
+        //
+        transList.add("tab_serial_site_lbl")
         //
         transList.add(Act092Translate.HINT_FILTER)
         transList.add(Act092Translate.PLACEHOLDER_FILTER)
@@ -1712,11 +1714,11 @@ class Act083_Main_Presenter constructor(
     }
 
 
-    private fun generateMyActionList(tabUserFocusFilter: Int) {
+    private fun generateMyActionList(tabUserFocusFilter: Int, serialSiteSize: Int = 0) {
         _myActionsList.clear()
         //Cancela a coroutine em execução caso ainda exista.
         launch?.let {
-            if(it.isActive){
+            if (it.isActive) {
                 it.cancel()
             }
         }
@@ -2029,13 +2031,15 @@ class Act083_Main_Presenter constructor(
 
     override fun processSerialSite() {
         if (ToolBox_Con.isOnline(context)) {
-            mView.setProcess(WsSerialSerialInventory::class.java.name)
-            mView.showPD(
-                hmAux_Trans!!["progress_site_search_ttl"],
-                hmAux_Trans!!["progress_site_seach_msg"]
-            )
+            if (useCase.getPreference!!().refresh) {
+                mView.setProcess(WsSerialSerialInventory::class.java.name)
+                mView.showPD(
+                    hmAux_Trans!!["progress_site_search_ttl"],
+                    hmAux_Trans!!["progress_site_seach_msg"]
+                )
 
-            useCase.service!!()
+                useCase.service!!()
+            }
         }
     }
 

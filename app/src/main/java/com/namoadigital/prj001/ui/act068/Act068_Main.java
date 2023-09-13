@@ -33,10 +33,10 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.receiver.WBR_Logout;
-import com.namoadigital.prj001.service.WsSerialSerialInventory;
 import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Search_Not_Focus;
+import com.namoadigital.prj001.service.WsSerialSerialInventory;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.ui.act072.Act072_Main;
@@ -913,9 +913,9 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     }
 
     @Override
-    public boolean onNavigateUp() {
+    public boolean onSupportNavigateUp() {
         onBackPressed();
-        return super.onNavigateUp();
+        return super.onSupportNavigateUp();
     }
 
     @Override

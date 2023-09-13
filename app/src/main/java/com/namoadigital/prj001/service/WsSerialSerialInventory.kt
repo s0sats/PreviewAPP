@@ -7,7 +7,6 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.model.SerialSiteEnv
-import com.namoadigital.prj001.model.SerialSiteInventory
 import com.namoadigital.prj001.model.SiteSerialInvRec
 import com.namoadigital.prj001.receiver.WBR_Serial_Site_Inv
 import com.namoadigital.prj001.util.Constant
@@ -102,7 +101,13 @@ class WsSerialSerialInventory : IntentService("WS_Serial_Site_Inv") {
             Constant.SERIAL_SITE_INV_JSON_PATH
         )
 
-        ToolBox.sendBCStatus(applicationContext, "CLOSE_ACT", MSG_CHECKING_END_PROCESS, result, "0")
+        ToolBox.sendBCStatus(
+            applicationContext,
+            "CLOSE_ACT",
+            MSG_CHECKING_END_PROCESS,
+            "${rec.serialSiteInventory.size}",
+            "0"
+        )
 
     }
 

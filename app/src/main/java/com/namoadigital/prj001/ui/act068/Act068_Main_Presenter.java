@@ -1,6 +1,6 @@
 package com.namoadigital.prj001.ui.act068;
 
-import static com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.SerialSiteInventoryUseCase.Companion.*;
+import static com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.SerialSiteInventoryUseCase.Companion.SiteInventoryUseCaseFactory;
 import static com.namoadigital.prj001.util.ConstantBaseApp.GC_STATUS_JUMP;
 
 import android.content.Context;
@@ -643,7 +643,7 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
 
     @Override
     public void saveSiteInventory(Integer siteCode, String siteName) {
-        serialSiteInventoryUseCase.getSavePreference().invoke(new SiteInventory(siteCode, siteName));
+        serialSiteInventoryUseCase.getSavePreference().invoke(new SiteInventory(siteCode, siteName, false));
         mView.callAct083(new Bundle());
     }
 

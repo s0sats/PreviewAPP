@@ -35,10 +35,10 @@ import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.model.MyActionsFormButton
 import com.namoadigital.prj001.service.WS_Product_Serial_Structure
 import com.namoadigital.prj001.service.WS_Serial_Search
-import com.namoadigital.prj001.service.WsSerialSerialInventory
 import com.namoadigital.prj001.service.WS_Sync
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download
 import com.namoadigital.prj001.service.WsScheduleNotExecuted
+import com.namoadigital.prj001.service.WsSerialSerialInventory
 import com.namoadigital.prj001.ui.act005.Act005_Main
 import com.namoadigital.prj001.ui.act006.Act006_Main
 import com.namoadigital.prj001.ui.act009.Act009_Main
@@ -166,8 +166,25 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         mPresenter.checkSerialSiteInv()
     }
 
+
     override fun changeTitleTopBar(siteDesc: String) {
         supportActionBar?.title = siteDesc
+        visibleTabSerialSiteInventory()
+    }
+
+    private fun visibleTabSerialSiteInventory(
+        serialSiteSize: String = "0",
+        showSize: Boolean = false
+    ) {
+        with(binding.act083MainContent) {
+            act083TabSerial.visibility = View.VISIBLE
+            act083TabSerial.text = hmAux_Trans["tab_serial_site_lbl"].plus(
+                if (showSize) " ($serialSiteSize)"
+                else ""
+            )
+            act083TabSerial.performClick()
+        }
+
     }
 
     private fun iniTrans() {
@@ -226,6 +243,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                     act083TabOtherActions.text =
                         hmAux_Trans["tab_other_actions_lbl"].plus(" ($selectedTabCounter)")
                 }
+
             }
         }
     }
@@ -680,8 +698,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
             WsSerialSerialInventory::class.java.name -> {
                 wsProcess = ""
                 progressDialog.dismiss()
-
-                Toast.makeText(context, "$mLink", Toast.LENGTH_LONG).show()
+                visibleTabSerialSiteInventory(mLink!!, true)
             }
 
             WsScheduleNotExecuted::class.java.name -> {
@@ -1247,9 +1264,9 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         finish()
     }
 
-    override fun onNavigateUp(): Boolean {
+    override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
-        return super.onNavigateUp()
+        return super.onSupportNavigateUp()
     }
 
 }
