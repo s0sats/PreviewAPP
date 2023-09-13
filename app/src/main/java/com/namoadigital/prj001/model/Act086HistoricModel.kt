@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model
 
+import java.io.Serializable
+
 data class Act086HistoricModel(
     val icon: Pair<Int, Int>,
     var titleLbl: String,
@@ -16,4 +18,4 @@ data class Act086HistoricModel(
     val photo2: String?,
     val photo3: String?,
     val photo4: String?,
-)
+) : Serializable
