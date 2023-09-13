@@ -20,10 +20,8 @@ import com.namoadigital.prj001.databinding.Act086HistoricFrgBinding
 import com.namoadigital.prj001.model.Act086HistoricModel
 import com.namoadigital.prj001.model.GeOsDeviceItem
 import com.namoadigital.prj001.model.GeOsDeviceItemHist
-import com.namoadigital.prj001.ui.act093.ui.ItemCheckListFragmentInteraction
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
-import com.namoadigital.prj001.util.ConstantBaseApp.FRG_HISTORIC_ITEM_CHECK
 import com.namoadigital.prj001.util.ToolBox_Inf
 
 /**
