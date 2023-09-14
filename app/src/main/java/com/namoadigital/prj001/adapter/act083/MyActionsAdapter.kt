@@ -27,7 +27,6 @@ import com.namoadigital.prj001.model.MyActionsFormButton
 import com.namoadigital.prj001.model.SerialSiteInventory
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
-import java.text.SimpleDateFormat
 
 class MyActionsAdapter constructor(
     private val myActions: List<MyActionsBase>,
@@ -135,15 +134,18 @@ class MyActionsAdapter constructor(
                 serialSiteItemTvTrackings.checkVisible(item.addInf1)
 
 
-                val simpleDateFormat = SimpleDateFormat(ToolBox_Inf.nlsDateFormat(context))
-
                 if (!item.measureDate.isNullOrEmpty()) {
                     val measureDate = ToolBox_Inf.millisecondsToString(
                         ToolBox_Inf.dateToMilliseconds(item.measureDate),
                         ToolBox_Inf.nlsDateFormat(context)
                     )
-                    serialSiteItemTvLastMeasureVal.checkVisible("${item.measureValue} ${item.valueSufix} ($measureDate)")
-                    serialSiteItemTvLastMeasureLbl.text = "Measure LBL"
+                    serialSiteItemTvLastMeasureVal.showMeasureSuffixAndDate(
+                        item.measureValue,
+                        item.valueSufix,
+                        measureDate
+                    )
+                    serialSiteItemTvLastMeasureLbl.text = hmAuxTrans["measure_lbl"]
+                    serialSiteItemTvLastMeasureLbl.visibility = View.VISIBLE
                 } else {
                     serialSiteItemTvLastMeasureVal.visibility = View.GONE
                     serialSiteItemTvLastMeasureLbl.visibility = View.GONE
@@ -154,8 +156,13 @@ class MyActionsAdapter constructor(
                         ToolBox_Inf.dateToMilliseconds(item.preventiveDate),
                         ToolBox_Inf.nlsDateFormat(context)
                     )
-                    serialSiteItemTvLastCycleVal.checkVisible("${item.preventiveCycle} ${item.valueSufix} ($lastCycle)")
-                    serialSiteItemTvLastCycleLbl.text = "Preventive Cycle"
+                    serialSiteItemTvLastCycleVal.showMeasureSuffixAndDate(
+                        item.preventiveCycle,
+                        item.valueSufix,
+                        lastCycle
+                    )
+                    serialSiteItemTvLastCycleLbl.text = hmAuxTrans["preventive_cycle_lbl"]
+                    serialSiteItemTvLastCycleLbl.visibility = View.VISIBLE
                 } else {
                     serialSiteItemTvLastCycleVal.visibility = View.GONE
                     serialSiteItemTvLastCycleLbl.visibility = View.GONE
@@ -166,8 +173,13 @@ class MyActionsAdapter constructor(
                         ToolBox_Inf.dateToMilliseconds(item.suggestedDate),
                         ToolBox_Inf.nlsDateFormat(context)
                     )
-                    serialSiteItemTvNextCycleVal.checkVisible("${item.suggestedCycle} ${item.valueSufix} ($nextCycle)")
-                    serialSiteItemTvNextCycleLbl.text = "Next Cycle"
+                    serialSiteItemTvNextCycleVal.showMeasureSuffixAndDate(
+                        item.suggestedCycle,
+                        item.valueSufix,
+                        nextCycle
+                    )
+                    serialSiteItemTvNextCycleLbl.text = hmAuxTrans["next_cycle_lbl"]
+                    serialSiteItemTvNextCycleLbl.visibility = View.VISIBLE
                 } else {
                     serialSiteItemTvNextCycleVal.visibility = View.GONE
                     serialSiteItemTvNextCycleLbl.visibility = View.GONE
@@ -178,8 +190,8 @@ class MyActionsAdapter constructor(
                 tvItemAlertVal.checkVisible(text = "${item.totAlert ?: 0}")
                 tvItemCriticalVal.checkVisible("${item.totExpCritical ?: 0}")
 
-                act083SerialInfo.text = "Status"
-                myActionSelectSerial.text = "Select Serial"
+                act083SerialInfo.text = hmAuxTrans["btn_status_lbl"]
+                myActionSelectSerial.text = hmAuxTrans["btn_select_serial_lbl"]
 
             }
         }
@@ -193,6 +205,19 @@ class MyActionsAdapter constructor(
             }
         }
 
+        fun TextView.showMeasureSuffixAndDate(text: String?, suffix: String?, date: String?) {
+            listOf(
+                text ?: "",
+                if (text.isNullOrEmpty()) "" else suffix ?: "",
+                if (text.isNullOrEmpty()) date ?: "" else "($date)"
+            ).filter { it.isNotEmpty() }.let {
+                if (it.isEmpty()) this.visibility = View.GONE
+                else {
+                    this.visibility = View.VISIBLE
+                    this.text = it.joinToString(" ")
+                }
+            }
+        }
 
         fun String?.formatString() =
             this?.let { if (this.length!! > 8) "${this.take(8)}..." else this } ?: ""
