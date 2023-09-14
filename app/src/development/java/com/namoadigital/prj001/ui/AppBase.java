@@ -26,6 +26,7 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.GENERIC_CHANNEL_ID;
 import static com.namoadigital.prj001.util.ConstantBaseApp.IMG_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.OTHER_ACTIONS_JSON_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PENDENCY_CHANNEL_ID;
+import static com.namoadigital.prj001.util.ConstantBaseApp.SERIAL_SITE_INV_JSON_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SO_EXPRESS_JSON_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME_FULL;
@@ -74,6 +75,7 @@ public class AppBase extends Application {
     public static final String UNSENT_IMGS_DIR = "/unsentImgs";
     public static final String TICKET_DIR = "/ticket";
     public static final String SO_EXPRESS_DIR = "/expressSO";
+    public static final String SERIAL_SITE_INV = "/siteInventory";
     public static final String OTHER_ACTIONS_DIR = "/otherActions";
     public static final String CUSTOMER_SITE_LICENSE_JSON_DIR = "/customerSiteLicense";
     public static final String NAMOA_PEND_INFO = "Namoa Pend. Info.";
@@ -109,6 +111,7 @@ public class AppBase extends Application {
         UNSENT_IMG_PATH = IMG_PATH + UNSENT_IMGS_DIR;
         TICKET_JSON_PATH = DB_PATH + TICKET_DIR;
         SO_EXPRESS_JSON_PATH = DB_PATH + SO_EXPRESS_DIR;
+        SERIAL_SITE_INV_JSON_PATH = DB_PATH + SERIAL_SITE_INV;
         OTHER_ACTIONS_JSON_PATH = DB_PATH + OTHER_ACTIONS_DIR;
         CUSTOMER_SITE_LICENSE_JSON_PATH = DB_PATH + CUSTOMER_SITE_LICENSE_JSON_DIR;
 

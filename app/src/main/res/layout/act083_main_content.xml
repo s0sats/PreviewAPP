@@ -155,6 +155,7 @@
                         android:gravity="center"
                         android:textColor="@color/my_action_radio"
                         tools:text="Serial"
+                        android:visibility="gone"
                         android:textStyle="bold"
                         />
 

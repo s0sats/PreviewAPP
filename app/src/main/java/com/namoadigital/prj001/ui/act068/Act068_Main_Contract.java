@@ -39,12 +39,14 @@ public interface Act068_Main_Contract {
        void callAct083(Bundle bundle);
    }
 
-   interface I_Presenter{
+   interface I_Presenter {
        void getSync();
 
        void getPendencies();
 
        void getMD_Products();
+
+       void saveSiteInventory(Integer siteCode, String siteName);
 
        void onBackPressedClicked();
 
@@ -69,5 +71,8 @@ public interface Act068_Main_Contract {
        void executeTicketSearch(String contract_id, String client_id, String ticket_id);
 
        void setFragTicketSearchParamsIntoBundle(Bundle bundle, HMAux hmAuxValues);
+
+       void deleteSerialSiteInventoryFile();
+
    }
 }

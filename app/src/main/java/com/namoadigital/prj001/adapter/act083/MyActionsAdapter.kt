@@ -1,4 +1,4 @@
-package com.namoadigital.prj001.adapter
+package com.namoadigital.prj001.adapter.act083
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.namoa_digital.namoa_library.util.HMAux
@@ -17,13 +18,16 @@ import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.MyActionsFormButtonItemBinding
 import com.namoadigital.prj001.databinding.MyActionsItemBinding
+import com.namoadigital.prj001.databinding.MySerialSiteItemBinding
 import com.namoadigital.prj001.extensions.applyVisibilityIfSourceExists
 import com.namoadigital.prj001.extensions.applyVisibilityIfTextExists
 import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.model.MyActionsBase
 import com.namoadigital.prj001.model.MyActionsFormButton
+import com.namoadigital.prj001.model.SerialSiteInventory
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
+import java.text.SimpleDateFormat
 
 class MyActionsAdapter constructor(
     private val myActions: List<MyActionsBase>,
@@ -37,6 +41,7 @@ class MyActionsAdapter constructor(
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
     private val VIEW_TYPE_MY_ACTION = 0
     private val VIEW_TYPE_MY_ACTION_FORM_BUTTON = 1
+    private val VIEW_TYPE_MY_ACTION_SERIAL_SITE_INVENTORY = 2
     private var myFilteredAction: MutableList<MyActionsBase>
     private val mFilter = MyActionFilter()
     var userMainFilterOn: Boolean = false
@@ -55,6 +60,17 @@ class MyActionsAdapter constructor(
                 )
             )
 
+            VIEW_TYPE_MY_ACTION_SERIAL_SITE_INVENTORY -> {
+                SerialSiteInventoryVh(
+                    parent.context.applicationContext,
+                    MySerialSiteItemBinding.inflate(
+                        LayoutInflater.from(
+                            parent.context
+                        ), parent, false
+                    ),
+                )
+            }
+
             else -> MyActionFormButtonVh(
                 MyActionsFormButtonItemBinding.inflate(
                     LayoutInflater.from(
@@ -67,11 +83,15 @@ class MyActionsAdapter constructor(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (getItemViewType(position)) {
-            VIEW_TYPE_MY_ACTION -> with(holder as MyActionsAdapter.MyActionVh) {
+            VIEW_TYPE_MY_ACTION -> with(holder as MyActionVh) {
                 onBinding(myFilteredAction[position] as MyActions, position)
             }
 
-            else -> with(holder as MyActionsAdapter.MyActionFormButtonVh) {
+            VIEW_TYPE_MY_ACTION_SERIAL_SITE_INVENTORY -> with(holder as SerialSiteInventoryVh) {
+                onBinding(myFilteredAction[position] as SerialSiteInventory, position)
+            }
+
+            else -> with(holder as MyActionFormButtonVh) {
                 onBinding(myFilteredAction[position] as MyActionsFormButton)
             }
         }
@@ -82,11 +102,11 @@ class MyActionsAdapter constructor(
     }
 
     override fun getItemViewType(position: Int): Int {
-        val baseAction = myFilteredAction[position]
-        if (baseAction is MyActions) {
-            return VIEW_TYPE_MY_ACTION
+        return when (myFilteredAction[position]) {
+            is MyActions -> VIEW_TYPE_MY_ACTION
+            is SerialSiteInventory -> VIEW_TYPE_MY_ACTION_SERIAL_SITE_INVENTORY
+            else -> VIEW_TYPE_MY_ACTION_FORM_BUTTON
         }
-        return VIEW_TYPE_MY_ACTION_FORM_BUTTON
     }
 
     fun getMyActionByPosition(position: Int): MyActions? {
@@ -94,6 +114,88 @@ class MyActionsAdapter constructor(
             return myFilteredAction[position] as MyActions
         }
         return null
+    }
+
+
+    inner class SerialSiteInventoryVh(
+        private val context: Context,
+        private val binding: MySerialSiteItemBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
+
+        @SuppressLint("SetTextI18n")
+        fun onBinding(item: SerialSiteInventory, position: Int) {
+            with(binding) {
+
+                serialSiteItemTvSerialId.text = item.serialId
+                serialSiteItemTvBrandModelColor.text = listOf(
+                    item.brandDesc,
+                    item.modelDesc,
+                    item.classColor
+                ).filterNotNull().joinToString(" | ") { text -> text.formatString() }
+                serialSiteItemTvTrackings.checkVisible(item.addInf1)
+
+
+                val simpleDateFormat = SimpleDateFormat(ToolBox_Inf.nlsDateFormat(context))
+
+                if (!item.measureDate.isNullOrEmpty()) {
+                    val measureDate = ToolBox_Inf.millisecondsToString(
+                        ToolBox_Inf.dateToMilliseconds(item.measureDate),
+                        ToolBox_Inf.nlsDateFormat(context)
+                    )
+                    serialSiteItemTvLastMeasureVal.checkVisible("${item.measureValue} ${item.valueSufix} ($measureDate)")
+                    serialSiteItemTvLastMeasureLbl.text = "Measure LBL"
+                } else {
+                    serialSiteItemTvLastMeasureVal.visibility = View.GONE
+                    serialSiteItemTvLastMeasureLbl.visibility = View.GONE
+                }
+
+                if (!item.preventiveCycle.isNullOrEmpty()) {
+                    val lastCycle = ToolBox_Inf.millisecondsToString(
+                        ToolBox_Inf.dateToMilliseconds(item.preventiveDate),
+                        ToolBox_Inf.nlsDateFormat(context)
+                    )
+                    serialSiteItemTvLastCycleVal.checkVisible("${item.preventiveCycle} ${item.valueSufix} ($lastCycle)")
+                    serialSiteItemTvLastCycleLbl.text = "Preventive Cycle"
+                } else {
+                    serialSiteItemTvLastCycleVal.visibility = View.GONE
+                    serialSiteItemTvLastCycleLbl.visibility = View.GONE
+                }
+
+                if (!item.suggestedDate.isNullOrEmpty()) {
+                    val nextCycle = ToolBox_Inf.millisecondsToString(
+                        ToolBox_Inf.dateToMilliseconds(item.suggestedDate),
+                        ToolBox_Inf.nlsDateFormat(context)
+                    )
+                    serialSiteItemTvNextCycleVal.checkVisible("${item.suggestedCycle} ${item.valueSufix} ($nextCycle)")
+                    serialSiteItemTvNextCycleLbl.text = "Next Cycle"
+                } else {
+                    serialSiteItemTvNextCycleVal.visibility = View.GONE
+                    serialSiteItemTvNextCycleLbl.visibility = View.GONE
+                }
+
+
+                tvTagVal.checkVisible("${item.cntTkt ?: 0}")
+                tvItemAlertVal.checkVisible(text = "${item.totAlert ?: 0}")
+                tvItemCriticalVal.checkVisible("${item.totExpCritical ?: 0}")
+
+                act083SerialInfo.text = "Status"
+                myActionSelectSerial.text = "Select Serial"
+
+            }
+        }
+
+
+        fun TextView.checkVisible(text: String?) {
+            if (text.isNullOrEmpty()) this.visibility = View.GONE
+            else {
+                this.visibility = View.VISIBLE
+                this.text = text
+            }
+        }
+
+
+        fun String?.formatString() =
+            this?.let { if (this.length!! > 8) "${this.take(8)}..." else this } ?: ""
     }
 
     inner class MyActionVh(private val binding: MyActionsItemBinding) :

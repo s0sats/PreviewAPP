@@ -24,19 +24,22 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.Base_Activity
 import com.namoadigital.prj001.R
-import com.namoadigital.prj001.adapter.MyActionsAdapter
+import com.namoadigital.prj001.adapter.act083.MyActionsAdapter
+import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.SerialSiteInventoryUseCase.Companion.SiteInventoryUseCaseFactory
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.dao.MdJustifyItemDao.Companion.RESCHEDULE
 import com.namoadigital.prj001.databinding.Act083MainBinding
 import com.namoadigital.prj001.databinding.TicketNotExecutedDialogBinding
 import com.namoadigital.prj001.model.MD_Product_Serial
 import com.namoadigital.prj001.model.MyActions
+import com.namoadigital.prj001.model.MyActionsBase
 import com.namoadigital.prj001.model.MyActionsFormButton
 import com.namoadigital.prj001.service.WS_Product_Serial_Structure
 import com.namoadigital.prj001.service.WS_Serial_Search
 import com.namoadigital.prj001.service.WS_Sync
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download
 import com.namoadigital.prj001.service.WsScheduleNotExecuted
+import com.namoadigital.prj001.service.WsSerialSiteInventory
 import com.namoadigital.prj001.ui.act005.Act005_Main
 import com.namoadigital.prj001.ui.act006.Act006_Main
 import com.namoadigital.prj001.ui.act009.Act009_Main
@@ -133,7 +136,8 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 Constant.DB_VERSION_CUSTOM
             ), MyActionsFilterParamPreferences(
                 getSharedPreferences("act083_filter", MODE_PRIVATE)
-            ), mModule_Code, mResource_Code
+            ), mModule_Code, mResource_Code,
+            SiteInventoryUseCaseFactory(context).getAndcheckAndExecUseCase()
         )
     }
 
@@ -143,6 +147,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         setContentView(binding.root)
         //
         setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         //
         initBundle(savedInstanceState)
         iniSetup()
@@ -150,10 +155,40 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         initVars()
         iniUIFooter()
         initActions()
+        checkSerialSiteInventory()
     }
 
     private fun initBundle(savedInstanceState: Bundle?) {
         bundle = (savedInstanceState ?: intent.extras) as Bundle
+
+    }
+
+    private fun checkSerialSiteInventory() {
+        mPresenter.checkSerialSiteInv()
+    }
+
+
+    override fun changeTitleTopBar(siteDesc: String) {
+        supportActionBar?.title = siteDesc
+        visibleTabSerialSiteInventory()
+    }
+
+
+    private var serialSiteSizeInt = 0
+    private fun visibleTabSerialSiteInventory(
+        serialSiteSize: String = "0",
+        showSize: Boolean = false
+    ) {
+        serialSiteSizeInt = serialSiteSize.toInt()
+        with(binding.act083MainContent) {
+            act083TabSerial.visibility = View.VISIBLE
+            act083TabSerial.text = hmAux_Trans["tab_serial_site_lbl"].plus(
+                if (showSize) " ($serialSiteSize)"
+                else ""
+            )
+            act083TabSerial.performClick()
+        }
+
     }
 
     private fun iniTrans() {
@@ -204,20 +239,40 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                         hmAux_Trans["tab_my_actions_lbl"].plus(" ($selectedTabCounter)")
                     act083TabOtherActions.text =
                         hmAux_Trans["tab_other_actions_lbl"].plus(" ($otherTabCounter)")
+
+                    if (act083TabSerial.isVisible) {
+                        act083TabSerial.text =
+                            hmAux_Trans["tab_serial_site_lbl"].plus(" ($serialSiteSizeInt)")
+                    }
                 }
+
+
+                act083TabSerial.id -> {
+                    act083TabMyActions.text =
+                        hmAux_Trans["tab_my_actions_lbl"].plus(" ($selectedTabCounter)")
+                    act083TabOtherActions.text =
+                        hmAux_Trans["tab_other_actions_lbl"].plus(" ($otherTabCounter)")
+                    act083TabSerial.text =
+                        hmAux_Trans["tab_serial_site_lbl"].plus(" ($serialSiteSizeInt)")
+                }
+
 
                 else -> {
                     act083TabMyActions.text =
                         hmAux_Trans["tab_my_actions_lbl"].plus(" ($otherTabCounter)")
                     act083TabOtherActions.text =
                         hmAux_Trans["tab_other_actions_lbl"].plus(" ($selectedTabCounter)")
+                    if (act083TabSerial.isVisible) {
+                        act083TabSerial.text =
+                            hmAux_Trans["tab_serial_site_lbl"].plus(" ($serialSiteSizeInt)")
+                    }
                 }
+
             }
         }
     }
 
-    override fun iniRecycler() {
-        val myActionsList = mPresenter.myActionsList
+    override fun iniRecycler(myActionsList: MutableList<MyActionsBase>) {
         changeProgressBarVisility(false)
         if (myActionsList.size > 0) {
             binding.act083MainContent.act083TvNoResult.visibility = View.GONE
@@ -594,6 +649,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         with(binding.act083MainContent) {
             return when (act083Tabs.checkedRadioButtonId) {
                 act083TabMyActions.id -> 1
+                act083TabSerial.id -> 2
                 else -> 0
             }
         }
@@ -662,6 +718,13 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     override fun processCloseACT(mLink: String?, mRequired: String?, hmAux: HMAux) {
         super.processCloseACT(mLink, mRequired, hmAux)
         when (wsProcess) {
+
+            WsSerialSiteInventory::class.java.name -> {
+                wsProcess = ""
+                progressDialog.dismiss()
+                visibleTabSerialSiteInventory(mLink!!, true)
+                mPresenter.getSerialSiteInventoryList(userFocusFilter)
+            }
 
             WsScheduleNotExecuted::class.java.name -> {
                 wsProcess = ""
@@ -790,13 +853,20 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 when (checkedId) {
                     act083TabMyActions.id -> {
                         userFocusFilter = 1
+                        updateMyActionList(userFocusFilter)
+                    }
+
+                    act083TabSerial.id -> {
+                        changeProgressBarVisility(true)
+                        mPresenter.getSerialSiteInventoryList(userFocusFilter)
+
                     }
 
                     else -> {
                         userFocusFilter = 0
+                        updateMyActionList(userFocusFilter)
                     }
                 }
-                updateMyActionList(userFocusFilter)
             }
         }
 
@@ -1224,6 +1294,11 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         mIntent.putExtras(bundle)
         startActivity(mIntent)
         finish()
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return super.onSupportNavigateUp()
     }
 
 }

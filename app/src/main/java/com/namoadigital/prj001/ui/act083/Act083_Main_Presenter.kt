@@ -7,6 +7,7 @@ import com.google.gson.GsonBuilder
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
+import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.SerialSiteInventoryUseCase
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.model.MyActionFilterParam.Companion.toActionFilter
@@ -20,6 +21,7 @@ import com.namoadigital.prj001.service.WS_Serial_Search
 import com.namoadigital.prj001.service.WS_Sync
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download
 import com.namoadigital.prj001.service.WsScheduleNotExecuted
+import com.namoadigital.prj001.service.WsSerialSiteInventory
 import com.namoadigital.prj001.sql.*
 import com.namoadigital.prj001.ui.act070.Act070_Main
 import com.namoadigital.prj001.ui.act083.data.local.preferences.MyActionsFilterParamPreferences
@@ -50,7 +52,8 @@ class Act083_Main_Presenter constructor(
     private val mdJustifyItemDao: MdJustifyItemDao,
     private val sharedPreferences: MyActionsFilterParamPreferences,
     private val mModule_Code: String,
-    private val mResource_Code: String
+    private val mResource_Code: String,
+    private val useCase: SerialSiteInventoryUseCase
 ) : Act083_Main_Contract.I_Presenter{
 
     private lateinit var myActionFilterParam : MyActionFilterParam
@@ -93,7 +96,7 @@ class Act083_Main_Presenter constructor(
         recoverIntentsInfo()
         loadFilters()
         setViewFiltersParam()
-        generateMyActionList(initialTabToLoad)
+        //generateMyActionList(initialTabToLoad)
     }
 
     private fun setViewFiltersParam() {
@@ -199,6 +202,11 @@ class Act083_Main_Presenter constructor(
         transList.add("cell_justify_lbl")
         transList.add("progress_n_form_sync_ttl")
         transList.add("progress_n_form_sync_msg")
+        //
+        transList.add("progress_site_search_ttl")
+        transList.add("progress_site_search_msg")
+        //
+        transList.add("tab_serial_site_lbl")
         //
         transList.add(Act092Translate.HINT_FILTER)
         transList.add(Act092Translate.PLACEHOLDER_FILTER)
@@ -1709,7 +1717,7 @@ class Act083_Main_Presenter constructor(
         _myActionsList.clear()
         //Cancela a coroutine em execução caso ainda exista.
         launch?.let {
-            if(it.isActive){
+            if (it.isActive) {
                 it.cancel()
             }
         }
@@ -1784,7 +1792,7 @@ class Act083_Main_Presenter constructor(
             //
             withContext(Dispatchers.Main) {
                 mView.changeProgressBarVisility(false)
-                mView.iniRecycler()
+                mView.iniRecycler(myActionsList)
                 //LUCHE - 11/06/2021
                 //Chama fun que insere a qtd concatenado ao label da aba
                 mView.setTabsCounters(currentTabCounter, otherCounter)
@@ -2019,5 +2027,35 @@ class Act083_Main_Presenter constructor(
 
     }
 
+
+    override fun processSerialSite(tabUserFocusFilter: Int) {
+        if (ToolBox_Con.isOnline(context)) {
+            if (useCase.getPreference!!().refresh) {
+                mView.setProcess(WsSerialSiteInventory::class.java.name)
+                mView.showPD(
+                    hmAux_Trans!!["progress_site_search_ttl"],
+                    hmAux_Trans!!["progress_site_seach_msg"]
+                )
+                useCase.service!!()
+            }
+        } else {
+            /*            mView.iniRecycler(useCase.getSiteInventory!!().toMutableList())
+                        mView.changeProgressBarVisility(false)
+                        mView.setTabsCounters(_myActionsList.size, getOtherTabCounter(tabUserFocusFilter))*/
+        }
+    }
+
+    override fun checkSerialSiteInv() {
+        if (useCase.check!!()) {
+            processSerialSite(1)
+            mView.changeTitleTopBar(useCase.getPreference!!().site_desc)
+        }
+    }
+
+    override fun getSerialSiteInventoryList(tabUserFocusFilter: Int) {
+        mView.iniRecycler(useCase.getSiteInventory!!().toMutableList())
+        mView.changeProgressBarVisility(false)
+        mView.setTabsCounters(_myActionsList.size, getOtherTabCounter(tabUserFocusFilter))
+    }
 
 }

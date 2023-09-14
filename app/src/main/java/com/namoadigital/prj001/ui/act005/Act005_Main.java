@@ -321,6 +321,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             call_Act089_Main();
         }
 
+        mPresenter.deleteSerialSiteInventoryFile();
     }
 
     private void requestNotificationPermission() {

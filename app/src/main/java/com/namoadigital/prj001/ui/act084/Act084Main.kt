@@ -9,7 +9,7 @@ import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.Base_Activity
 import com.namoadigital.prj001.R
-import com.namoadigital.prj001.adapter.MyActionsAdapter
+import com.namoadigital.prj001.adapter.act083.MyActionsAdapter
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao

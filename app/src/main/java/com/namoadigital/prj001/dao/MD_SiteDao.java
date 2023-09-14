@@ -8,6 +8,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.MD_Site;
+import com.namoadigital.prj001.sql.MD_Site_Sql_004;
 import com.namoadigital.prj001.sql.MD_Site_Sql_Footer;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -33,7 +34,7 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
     public static final String REASON_CODE = "reason_code";
     public static final String INBOUND_AUTO_CREATE = "inbound_auto_create";
     public static final String IN_ALLOW_NEW_ITEM = "in_allow_new_item";
-    public static final String IN_PUT_AWAY_PROCESS = "in_put_away_process" ;
+    public static final String IN_PUT_AWAY_PROCESS = "in_put_away_process";
     public static final String IN_ZONE_CODE_CONF = "in_zone_code_conf";
     public static final String IN_LOCAL_CODE_CONF = "in_local_code_conf";
     public static final String IN_DONE_AUTOMATIC = "in_done_automatic";
@@ -73,6 +74,14 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
                 new MD_Site_Sql_Footer(
                         ToolBox_Con.getPreference_Customer_Code(context),
                         ToolBox_Con.getPreference_Site_Code(context)
+                ).toSqlQuery()
+        );
+    }
+
+    public List<MD_Site> getAllSite() {
+        return query(
+                new MD_Site_Sql_004(
+                        ToolBox_Con.getPreference_Customer_Code(context)
                 ).toSqlQuery()
         );
     }
@@ -124,7 +133,7 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
 
             db.setTransactionSuccessful();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
             db.endTransaction();
         }
@@ -179,7 +188,7 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -203,7 +212,7 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -229,7 +238,7 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -253,7 +262,7 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -262,7 +271,7 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
         return md_sites;
     }
 
-    private class CursorMD_SiteMapper implements Mapper<Cursor,MD_Site> {
+    private class CursorMD_SiteMapper implements Mapper<Cursor, MD_Site> {
         @Override
         public MD_Site map(Cursor cursor) {
             MD_Site md_site = new MD_Site();
@@ -272,53 +281,53 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
             md_site.setSite_id(cursor.getString(cursor.getColumnIndex(SITE_ID)));
             md_site.setSite_desc(cursor.getString(cursor.getColumnIndex(SITE_DESC)));
             md_site.setIo_control(cursor.getInt(cursor.getColumnIndex(IO_CONTROL)));
-            if(cursor.isNull(cursor.getColumnIndex(REASON_CODE))) {
+            if (cursor.isNull(cursor.getColumnIndex(REASON_CODE))) {
                 md_site.setReason_code(null);
-            }else{
+            } else {
                 md_site.setReason_code(cursor.getInt(cursor.getColumnIndex(REASON_CODE)));
             }
             md_site.setInbound_auto_create(cursor.getInt(cursor.getColumnIndex(INBOUND_AUTO_CREATE)));
 
             md_site.setIn_allow_new_item(cursor.getInt(cursor.getColumnIndex(IN_ALLOW_NEW_ITEM)));
             md_site.setIn_put_away_process(cursor.getInt(cursor.getColumnIndex(IN_PUT_AWAY_PROCESS)));
-            if(cursor.isNull(cursor.getColumnIndex(IN_ZONE_CODE_CONF))) {
+            if (cursor.isNull(cursor.getColumnIndex(IN_ZONE_CODE_CONF))) {
                 md_site.setIn_zone_code_conf(null);
-            }else{
+            } else {
                 md_site.setIn_zone_code_conf(cursor.getInt(cursor.getColumnIndex(IN_ZONE_CODE_CONF)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(IN_LOCAL_CODE_CONF))) {
+            if (cursor.isNull(cursor.getColumnIndex(IN_LOCAL_CODE_CONF))) {
                 md_site.setIn_local_code_conf(null);
-            }else{
+            } else {
                 md_site.setIn_local_code_conf(cursor.getInt(cursor.getColumnIndex(IN_LOCAL_CODE_CONF)));
             }
             md_site.setIn_done_automatic(cursor.getInt(cursor.getColumnIndex(IN_DONE_AUTOMATIC)));
             md_site.setOut_allow_new_item(cursor.getInt(cursor.getColumnIndex(OUT_ALLOW_NEW_ITEM)));
             md_site.setOut_picking_process(cursor.getInt(cursor.getColumnIndex(OUT_PICKING_PROCESS)));
-            if(cursor.isNull(cursor.getColumnIndex(OUT_ZONE_CODE_PICKING))) {
+            if (cursor.isNull(cursor.getColumnIndex(OUT_ZONE_CODE_PICKING))) {
                 md_site.setOut_zone_code_picking(null);
-            }else{
+            } else {
                 md_site.setOut_zone_code_picking(cursor.getInt(cursor.getColumnIndex(OUT_ZONE_CODE_PICKING)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(OUT_LOCAL_CODE_PICKING))) {
+            if (cursor.isNull(cursor.getColumnIndex(OUT_LOCAL_CODE_PICKING))) {
                 md_site.setOut_local_code_picking(null);
-            }else{
+            } else {
                 md_site.setOut_local_code_picking(cursor.getInt(cursor.getColumnIndex(OUT_LOCAL_CODE_PICKING)));
             }
             md_site.setOut_done_automatic(cursor.getInt(cursor.getColumnIndex(OUT_DONE_AUTOMATIC)));
             //
-            if(cursor.isNull(cursor.getColumnIndex(LICENSE_ENABLED))){
+            if (cursor.isNull(cursor.getColumnIndex(LICENSE_ENABLED))) {
                 md_site.setLicense_enabled(null);
-            }else{
+            } else {
                 md_site.setLicense_enabled(cursor.getInt(cursor.getColumnIndex(LICENSE_ENABLED)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(FREE_EXECUTIONS_MAX))){
+            if (cursor.isNull(cursor.getColumnIndex(FREE_EXECUTIONS_MAX))) {
                 md_site.setFree_executions_max(null);
-            }else{
+            } else {
                 md_site.setFree_executions_max(cursor.getInt(cursor.getColumnIndex(FREE_EXECUTIONS_MAX)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(FREE_EXECUTIONS_COUNT))){
+            if (cursor.isNull(cursor.getColumnIndex(FREE_EXECUTIONS_COUNT))) {
                 md_site.setFree_executions_count(null);
-            }else{
+            } else {
                 md_site.setFree_executions_count(cursor.getInt(cursor.getColumnIndex(FREE_EXECUTIONS_COUNT)));
             }
             md_site.setApp_executions_count(cursor.getInt(cursor.getColumnIndex(APP_EXECUTIONS_COUNT)));
@@ -333,7 +342,7 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
 
     }
 
-    private class MD_SiteToContentValuesMapper implements Mapper<MD_Site,ContentValues> {
+    private class MD_SiteToContentValuesMapper implements Mapper<MD_Site, ContentValues> {
         @Override
         public ContentValues map(MD_Site md_site) {
             ContentValues contentValues = new ContentValues();
@@ -359,36 +368,36 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
             if (md_site.getInbound_auto_create() > -1) {
                 contentValues.put(INBOUND_AUTO_CREATE, md_site.getInbound_auto_create());
             }
-            if(md_site.getIn_allow_new_item() > -1){
-                contentValues.put(IN_ALLOW_NEW_ITEM,md_site.getIn_allow_new_item());
+            if (md_site.getIn_allow_new_item() > -1) {
+                contentValues.put(IN_ALLOW_NEW_ITEM, md_site.getIn_allow_new_item());
             }
-            if(md_site.getIn_put_away_process() > -1){
-                contentValues.put(IN_PUT_AWAY_PROCESS,md_site.getIn_put_away_process());
+            if (md_site.getIn_put_away_process() > -1) {
+                contentValues.put(IN_PUT_AWAY_PROCESS, md_site.getIn_put_away_process());
             }
-            contentValues.put(IN_ZONE_CODE_CONF,md_site.getIn_zone_code_conf());
-            contentValues.put(IN_LOCAL_CODE_CONF,md_site.getIn_local_code_conf());
-            if(md_site.getIn_done_automatic() > -1){
-                contentValues.put(IN_DONE_AUTOMATIC,md_site.getIn_done_automatic());
+            contentValues.put(IN_ZONE_CODE_CONF, md_site.getIn_zone_code_conf());
+            contentValues.put(IN_LOCAL_CODE_CONF, md_site.getIn_local_code_conf());
+            if (md_site.getIn_done_automatic() > -1) {
+                contentValues.put(IN_DONE_AUTOMATIC, md_site.getIn_done_automatic());
             }
-            if(md_site.getOut_allow_new_item() > -1){
-                contentValues.put(OUT_ALLOW_NEW_ITEM,md_site.getOut_allow_new_item());
+            if (md_site.getOut_allow_new_item() > -1) {
+                contentValues.put(OUT_ALLOW_NEW_ITEM, md_site.getOut_allow_new_item());
             }
-            if(md_site.getOut_picking_process() > -1){
-                contentValues.put(OUT_PICKING_PROCESS,md_site.getOut_picking_process());
+            if (md_site.getOut_picking_process() > -1) {
+                contentValues.put(OUT_PICKING_PROCESS, md_site.getOut_picking_process());
             }
-            contentValues.put(OUT_ZONE_CODE_PICKING,md_site.getOut_zone_code_picking());
-            contentValues.put(OUT_LOCAL_CODE_PICKING,md_site.getOut_local_code_picking());
-            if(md_site.getOut_done_automatic() > -1){
-                contentValues.put(OUT_DONE_AUTOMATIC,md_site.getOut_done_automatic());
+            contentValues.put(OUT_ZONE_CODE_PICKING, md_site.getOut_zone_code_picking());
+            contentValues.put(OUT_LOCAL_CODE_PICKING, md_site.getOut_local_code_picking());
+            if (md_site.getOut_done_automatic() > -1) {
+                contentValues.put(OUT_DONE_AUTOMATIC, md_site.getOut_done_automatic());
             }
-            contentValues.put(LICENSE_ENABLED,md_site.getLicense_enabled());
-            contentValues.put(FREE_EXECUTIONS_MAX,md_site.getFree_executions_max());
-            contentValues.put(FREE_EXECUTIONS_COUNT,md_site.getFree_executions_count());
-            if(md_site.getApp_executions_count() > -1){
-                contentValues.put(APP_EXECUTIONS_COUNT,md_site.getApp_executions_count());
+            contentValues.put(LICENSE_ENABLED, md_site.getLicense_enabled());
+            contentValues.put(FREE_EXECUTIONS_MAX, md_site.getFree_executions_max());
+            contentValues.put(FREE_EXECUTIONS_COUNT, md_site.getFree_executions_count());
+            if (md_site.getApp_executions_count() > -1) {
+                contentValues.put(APP_EXECUTIONS_COUNT, md_site.getApp_executions_count());
             }
-            if(md_site.getLicense_blocked() > -1){
-                contentValues.put(LICENSE_BLOCKED,md_site.getLicense_blocked());
+            if (md_site.getLicense_blocked() > -1) {
+                contentValues.put(LICENSE_BLOCKED, md_site.getLicense_blocked());
             }
             contentValues.put(EMAIL_NC,md_site.getEmail_nc());
             return contentValues;
