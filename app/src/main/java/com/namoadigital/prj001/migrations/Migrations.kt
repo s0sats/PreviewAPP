@@ -230,6 +230,7 @@ val MigrationV8 = object : MigrationSQLite(7, 8) {
         //
         if (!isFieldExist(db, MD_Product_Serial_Tp_Device_Item_HistDao.TABLE, MD_Product_Serial_Tp_Device_Item_HistDao.EXEC_PHOTO4)) {
             db.execSQL(""" ALTER TABLE [${MD_Product_Serial_Tp_Device_Item_HistDao.TABLE}] ADD [${MD_Product_Serial_Tp_Device_Item_HistDao.EXEC_PHOTO4}]  text collate nocase;""".trimIndent())
+            db.execSQL(""" UPDATE [${MD_Product_SerialDao.TABLE}] SET [${MD_Product_SerialDao.SCN_ITEM_CHECK}] = 0 WHERE has_item_check = 1;""".trimIndent())
         }
         //
         if (!isFieldExist(db, GE_Custom_FormDao.TABLE, GE_Custom_FormDao.NC_RECOGNIZE_EMAIL_IN_COMMENT)) {

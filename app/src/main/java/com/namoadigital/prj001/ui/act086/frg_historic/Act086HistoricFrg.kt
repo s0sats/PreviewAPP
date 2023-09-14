@@ -20,10 +20,8 @@ import com.namoadigital.prj001.databinding.Act086HistoricFrgBinding
 import com.namoadigital.prj001.model.Act086HistoricModel
 import com.namoadigital.prj001.model.GeOsDeviceItem
 import com.namoadigital.prj001.model.GeOsDeviceItemHist
-import com.namoadigital.prj001.ui.act093.ui.ItemCheckListFragmentInteraction
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
-import com.namoadigital.prj001.util.ConstantBaseApp.FRG_HISTORIC_ITEM_CHECK
 import com.namoadigital.prj001.util.ToolBox_Inf
 
 /**
@@ -93,6 +91,7 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
         super.onViewCreated(view, savedInstanceState)
         initVars()
         initRecycle()
+        binding.act086HistoricFrgClAlertType.scrollTo(0,0)
     }
 
     private fun initVars() {
@@ -377,6 +376,8 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
                 "still_with_problem_lbl",
                 "change_lbl",
                 "fixed_lbl",
+                "adjust_lbl",
+                "with_problem_lbl",
 
         )
     }

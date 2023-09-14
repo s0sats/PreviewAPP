@@ -111,7 +111,7 @@ class MD_Product_Serial_Tp_Device_Item_Hist(
             hmAux["fixed_lbl"]
         }
 
-        GeOsDeviceItem.EXEC_TYPE_ALERT -> hmAux["still_with_problem_lbl"]
+        GeOsDeviceItem.EXEC_TYPE_ALERT -> hmAux["with_problem_lbl"]
 
         GeOsDeviceItem.EXEC_TYPE_ADJUST -> hmAux["adjust_lbl"]
 

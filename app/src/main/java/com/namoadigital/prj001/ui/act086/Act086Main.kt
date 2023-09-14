@@ -46,7 +46,6 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
             mModule_Code,
             mResource_Code,
             GeOsDeviceItemDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
-            GeOsDeviceItemHistDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), DB_VERSION_CUSTOM),
             MD_Product_Serial_Tp_Device_Item_HistDao(context,ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), DB_VERSION_CUSTOM),
             MdProductSerialTpDeviceItemHistMatDao.DatabaseFactory(context).build()
         )
