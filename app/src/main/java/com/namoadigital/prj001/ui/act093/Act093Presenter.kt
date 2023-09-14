@@ -146,7 +146,7 @@ class Act093Presenter constructor(
                         titleLbl = hist.getTitleFormated(hmAuxTrans) ?: "",
                         date = hist.getDate(context),
                         measureLbl = hmAuxTrans["last_measure_lbl"]!!,
-                        measure = ToolBox_Inf.getFormattedLastMeasureInfo(serialInfo.last_measure_value?.toFloat(), serialInfo.value_suffix, null),
+                        measure = ToolBox_Inf.getFormattedLastMeasureInfo(hist.exec_value, serialInfo.value_suffix, null),
                         materialRequestLbl =  hmAuxTrans["material_requested_lbl"] ?: "",
                         materialAppliedLbl =  hmAuxTrans["material_applied_lbl"] ?: "",
                         comment = hist.exec_comment,

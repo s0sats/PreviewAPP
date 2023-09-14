@@ -62,7 +62,7 @@ class Act093_Main : BaseActivityFragMvp<Act093Presenter, Act093MainBinding>(), C
 
     override fun onBackPressed() {
         if(binding.llSerialItemCheckInfo.root.visibility ==  View.VISIBLE ){
-            binding.act093NvMain.smoothScrollTo(0,0)
+
             if(binding.clImageZoom.visibility == View.VISIBLE){
                 binding.showHistPhoto(false)
             } else {
@@ -354,6 +354,7 @@ class Act093_Main : BaseActivityFragMvp<Act093Presenter, Act093MainBinding>(), C
                 setTextColor(getAlertDateTextColor(deviceItemDaysInAlert))
             }
         }
+        binding.act093NvMain.smoothScrollTo(0,0)
         setFrag(
             type = historicFrg,
             sTag = ITEM_CHECK_INFO_FRG_TAG,

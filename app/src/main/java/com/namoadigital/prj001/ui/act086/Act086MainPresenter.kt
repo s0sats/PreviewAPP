@@ -10,11 +10,7 @@ import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.model.Act086HistoricModel
 import com.namoadigital.prj001.model.GeOsDeviceItem
-import com.namoadigital.prj001.model.MaterialHistItemModel
-import com.namoadigital.prj001.sql.GeOsDeviceItemHistSql_002
-import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_001
-import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_005
-import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_Device_Item_Hist_Sql_001
+import com.namoadigital.prj001.sql.*
 import com.namoadigital.prj001.ui.act086.frg_historic.Act086HistoricFrg
 import com.namoadigital.prj001.ui.act086.frg_verification.Act086VerificationFrg
 import com.namoadigital.prj001.util.ConstantBaseApp
@@ -29,7 +25,6 @@ class Act086MainPresenter(
     private val mModule_Code: String,
     private val mResource_Code: String,
     private val geOsDeviceItemDao: GeOsDeviceItemDao,
-    private val geOsDeviceItemHistDao: GeOsDeviceItemHistDao,
     private val mdProductSerialTpDeviceItemHistDao: MD_Product_Serial_Tp_Device_Item_HistDao,
     private val mdProductSerialTpDeviceItemHistMatDao: MdProductSerialTpDeviceItemHistMatDao
 ) : Act086MainContract.I_Presenter {
@@ -293,13 +288,9 @@ class Act086MainPresenter(
             deviceItemRawPk?.let {
                 try {
                     val splitedPK = it.split(".")
-                    val geOsDeviceItemHists = geOsDeviceItemHistDao.query(
-                        GeOsDeviceItemHistSql_002(
+                    val histItemList = mdProductSerialTpDeviceItemHistDao.query(
+                        MD_Product_Serial_Tp_Device_Item_Hist_Sql_003(
                             splitedPK[0],
-                            splitedPK[1],
-                            splitedPK[2],
-                            splitedPK[3],
-                            splitedPK[4],
                             splitedPK[5],
                             splitedPK[6],
                             splitedPK[7],
@@ -308,49 +299,50 @@ class Act086MainPresenter(
                         ).toSqlQuery()
                     ) as ArrayList
 
-                    return geOsDeviceItemHists.map { hist ->
+                    return histItemList.map { hist ->
                         //
                         val itemHistMat = mdProductSerialTpDeviceItemHistMatDao.getInputs(
                                 hist.customer_code,
-                                hist.serial_code,
-                                hist.product_code,
+                                hist.serial_code.toInt(),
+                                hist.product_code.toInt(),
                                 hist.device_tp_code,
                                 hist.item_check_seq,
                                 hist.item_check_code,
                                 hist.seq,
                             )
                         //
-                        val itemHist = mdProductSerialTpDeviceItemHistDao.getByString(
-                                MD_Product_Serial_Tp_Device_Item_Hist_Sql_001(
-                                    hist.customer_code,
-                                    hist.product_code.toLong(),
-                                    hist.serial_code.toLong(),
-                                    hist.device_tp_code,
-                                    hist.item_check_code,
-                                    hist.item_check_seq,
-                                    hist.seq,
-                                ).toSqlQuery()
-                            )
+//                        val itemHist = mdProductSerialTpDeviceItemHistDao.getByString(
+//                                MD_Product_Serial_Tp_Device_Item_Hist_Sql_001(
+//                                    hist.customer_code,
+//                                    hist.product_code.toLong(),
+//                                    hist.serial_code.toLong(),
+//                                    hist.device_tp_code,
+//                                    hist.item_check_code,
+//                                    hist.item_check_seq,
+//                                    hist.seq,
+//                                ).toSqlQuery()
+//                            )
                         //
                         val deviceItem = getDeviceItem(false)
                         //
+                        val loadHistoricFrgTranslation = loadHistoricFrgTranslation()
                         //Convert para lista do adapter
                         Act086HistoricModel(
                             icon = hist.getIcon(),
-                            titleLbl = hist.getTitleFormated(hmAuxTrans) ?: "",
+                            titleLbl = hist.getTitleFormated(loadHistoricFrgTranslation) ?: "",
                             date = hist.getDate(context),
-                            measureLbl = hmAuxTrans["last_measure_lbl"]!!,
+                            measureLbl = loadHistoricFrgTranslation["last_measure_lbl"]!!,
                             measure = ToolBox_Inf.getFormattedLastMeasureInfo(hist.exec_value, deviceItem?.value_sufix, deviceItem?.restriction_decimal),
-                            materialRequestLbl =  hmAuxTrans["material_requested_lbl"] ?: "",
-                            materialAppliedLbl =  hmAuxTrans["material_applied_lbl"] ?: "",
+                            materialRequestLbl =  loadHistoricFrgTranslation["material_requested_lbl"] ?: "",
+                            materialAppliedLbl =  loadHistoricFrgTranslation["material_applied_lbl"] ?: "",
                             comment = hist.exec_comment,
                             exec_type = hist.exec_type,
                             manualInstruction = deviceItem?.manual_desc,
                             materialList = itemHistMat,
-                            photo1 = itemHist?.exec_photo1,
-                            photo2 = itemHist?.exec_photo2,
-                            photo3 = itemHist?.exec_photo3,
-                            photo4 = itemHist?.exec_photo4,
+                            photo1 = hist.exec_photo1,
+                            photo2 = hist.exec_photo2,
+                            photo3 = hist.exec_photo3,
+                            photo4 = hist.exec_photo4,
                         )
                     } as ArrayList
                 } catch (e: Exception) {

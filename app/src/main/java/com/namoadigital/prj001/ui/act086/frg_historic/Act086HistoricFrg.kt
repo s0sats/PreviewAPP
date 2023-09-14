@@ -91,6 +91,7 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
         super.onViewCreated(view, savedInstanceState)
         initVars()
         initRecycle()
+        binding.act086HistoricFrgClAlertType.scrollTo(0,0)
     }
 
     private fun initVars() {
@@ -375,6 +376,8 @@ class Act086HistoricFrg : BaseFragment(), Act086HistoricFrgContract.IView {
                 "still_with_problem_lbl",
                 "change_lbl",
                 "fixed_lbl",
+                "adjust_lbl",
+                "with_problem_lbl",
 
         )
     }
