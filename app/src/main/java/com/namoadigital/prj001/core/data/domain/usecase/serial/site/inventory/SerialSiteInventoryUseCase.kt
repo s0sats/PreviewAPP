@@ -4,7 +4,7 @@ import android.content.Context
 import com.namoadigital.prj001.core.data.local.repository.SerialSiteInventoryRepositoryImp
 
 data class SerialSiteInventoryUseCase(
-    val siteInventory: GetSiteInventoryUseCase? = null,
+    val getSiteInventory: GetSiteInventoryUseCase? = null,
     val service: ExecServiceSiteInventoryUseCase? = null,
     val savePreference: SavePreferenceSiteInvUseCase? = null,
     val getPreference: GetPreferenceSiteInvUseCase? = null,
@@ -22,11 +22,12 @@ data class SerialSiteInventoryUseCase(
             val repository =
                 SerialSiteInventoryRepositoryImp.Companion.RepositoryFactory(context).build()
 
-            fun checkAndExecUseCase(): SerialSiteInventoryUseCase {
+            fun getAndcheckAndExecUseCase(): SerialSiteInventoryUseCase {
                 return SerialSiteInventoryUseCase(
                     check = CheckSiteInventoryUseCase(repository),
                     service = ExecServiceSiteInventoryUseCase(repository),
-                    getPreference = GetPreferenceSiteInvUseCase(repository)
+                    getPreference = GetPreferenceSiteInvUseCase(repository),
+                    getSiteInventory = GetSiteInventoryUseCase(repository)
                 )
             }
 

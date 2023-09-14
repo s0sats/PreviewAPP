@@ -21,7 +21,7 @@ import com.namoadigital.prj001.service.WS_Serial_Search
 import com.namoadigital.prj001.service.WS_Sync
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download
 import com.namoadigital.prj001.service.WsScheduleNotExecuted
-import com.namoadigital.prj001.service.WsSerialSerialInventory
+import com.namoadigital.prj001.service.WsSerialSiteInventory
 import com.namoadigital.prj001.sql.*
 import com.namoadigital.prj001.ui.act070.Act070_Main
 import com.namoadigital.prj001.ui.act083.data.local.preferences.MyActionsFilterParamPreferences
@@ -32,7 +32,6 @@ import com.namoadigital.prj001.util.*
 import com.namoadigital.prj001.view.dialog.ScheduleRequestSerialDialog2
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
-import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -97,7 +96,7 @@ class Act083_Main_Presenter constructor(
         recoverIntentsInfo()
         loadFilters()
         setViewFiltersParam()
-        generateMyActionList(initialTabToLoad)
+        //generateMyActionList(initialTabToLoad)
     }
 
     private fun setViewFiltersParam() {
@@ -1714,7 +1713,7 @@ class Act083_Main_Presenter constructor(
     }
 
 
-    private fun generateMyActionList(tabUserFocusFilter: Int, serialSiteSize: Int = 0) {
+    private fun generateMyActionList(tabUserFocusFilter: Int) {
         _myActionsList.clear()
         //Cancela a coroutine em execução caso ainda exista.
         launch?.let {
@@ -1793,7 +1792,7 @@ class Act083_Main_Presenter constructor(
             //
             withContext(Dispatchers.Main) {
                 mView.changeProgressBarVisility(false)
-                mView.iniRecycler()
+                mView.iniRecycler(myActionsList)
                 //LUCHE - 11/06/2021
                 //Chama fun que insere a qtd concatenado ao label da aba
                 mView.setTabsCounters(currentTabCounter, otherCounter)
@@ -2029,30 +2028,34 @@ class Act083_Main_Presenter constructor(
     }
 
 
-    override fun processSerialSite() {
+    override fun processSerialSite(tabUserFocusFilter: Int) {
         if (ToolBox_Con.isOnline(context)) {
             if (useCase.getPreference!!().refresh) {
-                mView.setProcess(WsSerialSerialInventory::class.java.name)
+                mView.setProcess(WsSerialSiteInventory::class.java.name)
                 mView.showPD(
                     hmAux_Trans!!["progress_site_search_ttl"],
                     hmAux_Trans!!["progress_site_seach_msg"]
                 )
-
                 useCase.service!!()
             }
+        } else {
+            /*            mView.iniRecycler(useCase.getSiteInventory!!().toMutableList())
+                        mView.changeProgressBarVisility(false)
+                        mView.setTabsCounters(_myActionsList.size, getOtherTabCounter(tabUserFocusFilter))*/
         }
     }
 
     override fun checkSerialSiteInv() {
         if (useCase.check!!()) {
-            processSerialSite()
+            processSerialSite(1)
             mView.changeTitleTopBar(useCase.getPreference!!().site_desc)
         }
     }
 
-    override fun existsSerialSiteInvFile(): Boolean {
-        val file = "${Constant.SERIAL_SITE_INV_JSON_PATH}/${WsSerialSerialInventory.FILE_NAME}.json"
-        return File(file).exists()
+    override fun getSerialSiteInventoryList(tabUserFocusFilter: Int) {
+        mView.iniRecycler(useCase.getSiteInventory!!().toMutableList())
+        mView.changeProgressBarVisility(false)
+        mView.setTabsCounters(_myActionsList.size, getOtherTabCounter(tabUserFocusFilter))
     }
 
 }

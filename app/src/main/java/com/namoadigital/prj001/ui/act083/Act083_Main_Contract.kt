@@ -5,6 +5,7 @@ import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.model.MD_Product_Serial
 import com.namoadigital.prj001.model.MyActions
+import com.namoadigital.prj001.model.MyActionsBase
 import com.namoadigital.prj001.model.MyActionsFormButton
 
 interface Act083_Main_Contract {
@@ -23,7 +24,7 @@ interface Act083_Main_Contract {
         fun removeControlFromActivity(mketSerial: MKEditTextNM)
         fun callAct020(bundle: Bundle)
         fun changeProgressBarVisility(show: Boolean)
-        fun iniRecycler()
+        fun iniRecycler(list: MutableList<MyActionsBase>)
         fun callAct009(bundle: Bundle)
         fun callAct005()
         fun callAct006(bundle: Bundle)
@@ -87,8 +88,8 @@ interface Act083_Main_Contract {
             reschedule_date: String
         )
 
-        fun processSerialSite()
-        fun existsSerialSiteInvFile(): Boolean
+        fun processSerialSite(tabUserFocusFilter: Int)
+        fun getSerialSiteInventoryList(tabUserFocusFilter: Int)
         fun checkSerialSiteInv()
     }
 

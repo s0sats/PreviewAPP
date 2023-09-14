@@ -8,6 +8,6 @@ class SavePreferenceSiteInvUseCase constructor(
 ) {
 
     operator fun invoke(model: SiteInventory) {
-        repository.saveSiteInvetoryPreference(model)
+        repository.saveSerialSiteInvetoryPreference(model)
     }
 }

@@ -15,7 +15,7 @@ import com.namoadigital.prj001.util.ConstantBaseApp.GC_STATUS_JUMP
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 
-class WsSerialSerialInventory : IntentService("WS_Serial_Site_Inv") {
+class WsSerialSiteInventory : IntentService("WS_Serial_Site_Inv") {
 
 
     private var hmAux_Trans = HMAux()
@@ -96,7 +96,7 @@ class WsSerialSerialInventory : IntentService("WS_Serial_Site_Inv") {
         )
 
         ToolBox_Inf.createJsonFile(
-            "$FILE_NAME.json",
+            FILE_NAME,
             gson.toJson(rec),
             Constant.SERIAL_SITE_INV_JSON_PATH
         )
@@ -141,7 +141,7 @@ class WsSerialSerialInventory : IntentService("WS_Serial_Site_Inv") {
         val moduleCode = Constant.APP_MODULE
         const val SITE_CODE = "SITE_CODE1"
 
-        const val FILE_NAME = "serial_site_inventory"
+        const val FILE_NAME = "serial_site_inventory.json"
 
         const val MSG_CHECKING_SITE = "msg_checking_site"
         const val MSG_CHECKING_OK = "msg_checking_ok"

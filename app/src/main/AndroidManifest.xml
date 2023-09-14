@@ -1008,7 +1008,7 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
         <service android:name=".service.WsScheduleNotExecuted" />
         <service android:name=".service.WSSoStatusChange" />
         <service android:name=".service.WSSoPriorityChange" />
-        <service android:name=".service.WsSerialSerialInventory" />
+        <service android:name=".service.WsSerialSiteInventory" />
     </application>
 
 </manifest>

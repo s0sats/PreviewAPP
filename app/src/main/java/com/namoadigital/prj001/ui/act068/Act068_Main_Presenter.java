@@ -643,7 +643,7 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
 
     @Override
     public void saveSiteInventory(Integer siteCode, String siteName) {
-        serialSiteInventoryUseCase.getSavePreference().invoke(new SiteInventory(siteCode, siteName, false));
+        serialSiteInventoryUseCase.getSavePreference().invoke(new SiteInventory(siteCode, siteName, true));
         mView.callAct083(new Bundle());
     }
 

@@ -6,9 +6,9 @@ import com.namoadigital.prj001.model.SerialSiteInventory
 
 interface SerialSiteInventoryRepository {
 
-    fun getSiteInventory(): SerialSiteInventory?
+    fun getSiteInventory(): List<SerialSiteInventory>
     fun execServiceSiteInventory(bundle: Bundle)
-    fun saveSiteInvetoryPreference(siteInventory: SiteInventory)
+    fun saveSerialSiteInvetoryPreference(siteInventory: SiteInventory)
 
     fun getPreference(): SiteInventory
 

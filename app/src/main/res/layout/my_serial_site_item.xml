@@ -9,14 +9,14 @@
     android:layout_width="match_parent"
     android:minHeight="80dp"
     app:cardBackgroundColor="@color/m3_namoa_neutral95"
-    app:cardCornerRadius="12dp">
+    app:cardCornerRadius="12dp"
+    android:layout_marginVertical="8dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingVertical="16dp"
-        android:paddingStart="20dp"
-        >
+        android:paddingStart="20dp">
 
         <TextView
             android:id="@+id/serial_site_item_tv_serial_id"

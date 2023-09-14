@@ -36,7 +36,7 @@ import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Search_Not_Focus;
-import com.namoadigital.prj001.service.WsSerialSerialInventory;
+import com.namoadigital.prj001.service.WsSerialSiteInventory;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.ui.act072.Act072_Main;
@@ -619,7 +619,7 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
                     Objects.requireNonNull(mFrgTicketSearch.getHMAuxValues().get(Frg_Ticket_Search.CLIENT_ID)),
                     Objects.requireNonNull(mFrgTicketSearch.getHMAuxValues().get(Frg_Ticket_Search.TICKET_ID))
             );
-        } else if (wsProcess.equalsIgnoreCase(WsSerialSerialInventory.class.getName())) {
+        } else if (wsProcess.equalsIgnoreCase(WsSerialSiteInventory.class.getName())) {
             progressDialog.dismiss();
             Toast.makeText(context, "AAAAAAAAAAAAAAAAAAA", Toast.LENGTH_SHORT).show();
         } else {
