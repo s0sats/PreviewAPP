@@ -34,4 +34,19 @@ data class SerialSiteInventory(
     @SerializedName("cnt_tkt") var cntTkt: Int?,
     @SerializedName("value_sufix") var valueSufix: String?
 
-) : MyActionsBase()
+) : MyActionsBase() {
+
+    companion object {
+
+        sealed class OnClickType {
+
+            data class OnSerialClick(val model: SerialSiteInventory, val position: Int) :
+                OnClickType()
+
+            data class OnStatusClick(val model: SerialSiteInventory, val position: Int) :
+                OnClickType()
+
+        }
+
+    }
+}

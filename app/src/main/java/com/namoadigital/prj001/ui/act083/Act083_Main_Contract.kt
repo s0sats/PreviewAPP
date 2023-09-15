@@ -64,7 +64,14 @@ interface Act083_Main_Contract {
         fun getCacheTicketBundle(hmAuxTicketDownloaded: HMAux): Bundle
         fun processActionClick(myAction: MyActions)
         fun checkFormFlow(action: MyActions)
-        fun extractSearchResult(result: String?, myActionSelected: MyActions?)
+        fun extractSearchResult(
+            result: String?,
+            productCode: Int?,
+            serialId: String?,
+            actionType: String? = null,
+            processPk: String? = null
+        )
+
         fun processActionFormButtonClick(myActionsFormButton: MyActionsFormButton)
         fun onBackPressedClicked()
         fun processWsSyncReturn(hmAuxTicketDownload: HMAux)
@@ -77,11 +84,19 @@ interface Act083_Main_Contract {
         )
 
         fun processLocalSearchForSerialAction(
-            selectedActionForSerialFLow: MyActions,
-            mdProductSerial: MD_Product_Serial?
+            productCode: Int?,
+            serialId: String?,
+            mdProductSerial: MD_Product_Serial?,
+            actionType: String? = null,
+            processPk: String? = null
         )
 
-        fun extractStructureResult(serial: MD_Product_Serial, myAction: MyActions?)
+        fun extractStructureResult(
+            serial: MD_Product_Serial,
+            actionType: String? = null,
+            processPk: String? = null
+        )
+
         fun updateSharedPrefs()
 
         fun getJustifyItems(justifyGroupCode: Int): ArrayList<HMAux>

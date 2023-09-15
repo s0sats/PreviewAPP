@@ -58,7 +58,7 @@ class WsSerialSiteInventory : IntentService("WS_Serial_Site_Inv") {
         ToolBox.sendBCStatus(
             applicationContext,
             "STATUS",
-            MSG_CHECKING_SITE,
+            hmAux_Trans[MSG_CHECKING_SITE_START],
             "",
             "0"
         )
@@ -90,7 +90,7 @@ class WsSerialSiteInventory : IntentService("WS_Serial_Site_Inv") {
         ToolBox.sendBCStatus(
             applicationContext,
             "STATUS",
-            MSG_CHECKING_OK,
+            hmAux_Trans[MSG_SITE_OK],
             "",
             "0"
         )
@@ -104,7 +104,7 @@ class WsSerialSiteInventory : IntentService("WS_Serial_Site_Inv") {
         ToolBox.sendBCStatus(
             applicationContext,
             "CLOSE_ACT",
-            MSG_CHECKING_END_PROCESS,
+            hmAux_Trans[MSG_SITE_END_PROCESS],
             "${rec.serialSiteInventory.size}",
             "0"
         )
@@ -114,8 +114,8 @@ class WsSerialSiteInventory : IntentService("WS_Serial_Site_Inv") {
 
     private fun loadTranslation() {
         listOf(
-            MSG_CHECKING_SITE,
-            MSG_CHECKING_OK,
+            MSG_CHECKING_SITE_START,
+            MSG_SITE_OK,
             MSG_CHECKING_ERROR,
         ).let { list ->
             resourceCode = ToolBox_Inf.getResourceCode(
@@ -143,9 +143,9 @@ class WsSerialSiteInventory : IntentService("WS_Serial_Site_Inv") {
 
         const val FILE_NAME = "serial_site_inventory.json"
 
-        const val MSG_CHECKING_SITE = "msg_checking_site"
-        const val MSG_CHECKING_OK = "msg_checking_ok"
-        const val MSG_CHECKING_END_PROCESS = "msg_checking_end_process"
+        const val MSG_CHECKING_SITE_START = "msg_checking_site"
+        const val MSG_SITE_OK = "msg_checking_ok"
+        const val MSG_SITE_END_PROCESS = "msg_checking_end_process"
         const val MSG_CHECKING_ERROR = "msg_checking_error"
 
     }

@@ -53,6 +53,7 @@ import com.namoadigital.prj001.ui.act068.Act068_Main
 import com.namoadigital.prj001.ui.act070.Act070_Main
 import com.namoadigital.prj001.ui.act071.Act071_Main
 import com.namoadigital.prj001.ui.act083.data.local.preferences.MyActionsFilterParamPreferences
+import com.namoadigital.prj001.ui.act083.model.TypeSerial
 import com.namoadigital.prj001.ui.act092.ui.Act092_Main
 import com.namoadigital.prj001.ui.act092.utils.Act092Translate
 import com.namoadigital.prj001.util.Constant
@@ -286,7 +287,8 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 null,
                 this::onSerialButtonClick,
                 this::onAdapterFilterApplied,
-                this::createNotExecuteDialog
+                this::createNotExecuteDialog,
+                this::onSerialButtonFromSerialSite
 
             )
             //
@@ -564,22 +566,39 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     }
 
 
+    var typeSerial = TypeSerial.NULL
     private fun onSerialButtonClick(myAction: MyActions, position: Int) {
         serialActionSelected = position
+        typeSerial = TypeSerial.MY_ACTIONS
         mPresenter.processSerialClick(
             serialId = myAction.serialId ?: "",
             productCode = myAction.productCode,
-            productId = myAction.processId ?: "",
+            productId = myAction.productId ?: "",
             myAction = myAction
         )
     }
 
-    private fun onSerialButtonFromSerialSite(model: SerialSiteInventory, position: Int) {
-        serialActionSelected = position
-        mPresenter.processSerialClick(
-            serialId = model.serialId,
-            productCode = model.productCode
-        )
+    private fun onSerialButtonFromSerialSite(clickType: SerialSiteInventory.Companion.OnClickType) {
+        typeSerial = TypeSerial.SERIAL_SITE
+        when (clickType) {
+
+            is SerialSiteInventory.Companion.OnClickType.OnSerialClick -> {
+                serialActionSelected = clickType.position
+
+                mPresenter.processSerialClick(
+                    serialId = clickType.model.serialId,
+                    productCode = clickType.model.productCode
+                )
+            }
+
+            is SerialSiteInventory.Companion.OnClickType.OnStatusClick -> {
+                serialActionSelected = clickType.position
+            }
+
+
+        }
+
+
     }
 
     private fun onFormButtonClick(myActionsFormButton: MyActionsFormButton) {
@@ -782,9 +801,30 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
             WS_Serial_Search::class.java.name -> {
                 wsProcess = ""
                 progressDialog.dismiss()
-                mPresenter.extractSearchResult(
-                    mLink, mAdapter.getMyActionByPosition(serialActionSelected)
-                )
+                when (typeSerial) {
+                    TypeSerial.MY_ACTIONS -> {
+                        val myAction = mAdapter.getMyActionByPosition(serialActionSelected)
+                        mPresenter.extractSearchResult(
+                            mLink,
+                            myAction?.productCode,
+                            myAction?.serialId,
+                            myAction?.actionType,
+                            myAction?.processPk
+                        )
+                    }
+
+                    TypeSerial.SERIAL_SITE -> {
+                        val serialSite = mAdapter.getMySerialSiteInvByPosition(serialActionSelected)
+                        mPresenter.extractSearchResult(
+                            mLink,
+                            serialSite?.productCode,
+                            serialSite?.serialId
+                        )
+                    }
+
+                    else -> {}
+                }
+
             }
 
             WS_Product_Serial_Structure::class.java.name -> {
@@ -796,9 +836,22 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                     mLink, MD_Product_Serial::class.java
                 )
                 //
-                mPresenter.extractStructureResult(
-                    serial, mAdapter.getMyActionByPosition(serialActionSelected)
-                )
+                when (typeSerial) {
+                    TypeSerial.MY_ACTIONS -> {
+                        val myAction = mAdapter.getMyActionByPosition(serialActionSelected)
+                        mPresenter.extractStructureResult(
+                            serial,
+                            myAction?.actionType,
+                            myAction?.processPk
+                        )
+                    }
+
+                    TypeSerial.SERIAL_SITE -> {
+                        mPresenter.extractStructureResult(serial)
+                    }
+
+                    else -> {}
+                }
                 resetActionPosition()
             }
 
@@ -1288,7 +1341,13 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         progressDialog.dismiss()
         if (serialActionSelected > -1) {
             mAdapter.getMyActionByPosition(serialActionSelected)?.let {
-                mPresenter.processLocalSearchForSerialAction(it, null)
+                mPresenter.processLocalSearchForSerialAction(
+                    productCode = it.productCode,
+                    serialId = it.serialId,
+                    mdProductSerial = null,
+                    actionType = it.actionType,
+                    processPk = it.processPk
+                )
             }
             //
             resetActionPosition()

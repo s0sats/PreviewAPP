@@ -25,6 +25,7 @@ import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.model.MyActionsBase
 import com.namoadigital.prj001.model.MyActionsFormButton
 import com.namoadigital.prj001.model.SerialSiteInventory
+import com.namoadigital.prj001.model.SerialSiteInventory.Companion
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
 
@@ -36,7 +37,8 @@ class MyActionsAdapter constructor(
     private val myActionFormButtonClickListener: ((myActionFormButton: MyActionsFormButton) -> Unit)? = null,
     private val mySerialClickListener: ((myAction: MyActions, Int) -> Unit)? = null,
     private val notifyFilterApplied: (qtyItensFiltered: Int) -> Unit,
-    private val cancelSerialSchedule: ((myActions: MyActions) -> Unit)? = null
+    private val cancelSerialSchedule: ((myActions: MyActions) -> Unit)? = null,
+    private val onClickFromSerialSite: ((typeClick: Companion.OnClickType) -> Unit)? = null
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
     private val VIEW_TYPE_MY_ACTION = 0
     private val VIEW_TYPE_MY_ACTION_FORM_BUTTON = 1
@@ -111,6 +113,13 @@ class MyActionsAdapter constructor(
     fun getMyActionByPosition(position: Int): MyActions? {
         if (position >= 0) {
             return myFilteredAction[position] as MyActions
+        }
+        return null
+    }
+
+    fun getMySerialSiteInvByPosition(position: Int): SerialSiteInventory? {
+        if (position >= 0) {
+            return myFilteredAction[position] as SerialSiteInventory
         }
         return null
     }
@@ -191,8 +200,29 @@ class MyActionsAdapter constructor(
                 tvItemAlertVal.checkVisible(text = "${item.totAlert ?: 0}")
                 tvItemCriticalVal.checkVisible("${item.totExpCritical ?: 0}")
 
-                act083SerialInfo.text = hmAuxTrans["btn_serial_site_status_lbl"]
-                myActionSelectSerial.text = hmAuxTrans["btn_serial_site_select_serial_lbl"]
+                myActionSelectSerial.apply {
+                    text = hmAuxTrans["btn_serial_site_status_lbl"]
+                    setOnClickListener { _ ->
+                        onClickFromSerialSite?.invoke(
+                            Companion.OnClickType.OnSerialClick(
+                                item,
+                                position
+                            )
+                        )
+                    }
+                }
+                act083SerialInfo.apply {
+                    text = hmAuxTrans["btn_serial_site_select_serial_lbl"]
+                    setOnClickListener { _ ->
+                        onClickFromSerialSite?.invoke(
+                            Companion.OnClickType.OnStatusClick(
+                                item,
+                                position
+                            )
+                        )
+                    }
+                }
+
 
             }
         }
