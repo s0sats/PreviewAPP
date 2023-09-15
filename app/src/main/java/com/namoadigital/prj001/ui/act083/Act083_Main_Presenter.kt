@@ -207,6 +207,11 @@ class Act083_Main_Presenter constructor(
         transList.add("progress_site_search_msg")
         //
         transList.add("tab_serial_site_lbl")
+        transList.add("serial_site_measure_lbl")
+        transList.add("serial_site_preventive_cycle_lbl")
+        transList.add("serial_site_next_cycle_lbl")
+        transList.add("btn_serial_site_status_lbl")
+        transList.add("btn_serial_site_select_serial_lbl")
         //
         transList.add(Act092Translate.HINT_FILTER)
         transList.add(Act092Translate.PLACEHOLDER_FILTER)
@@ -424,7 +429,7 @@ class Act083_Main_Presenter constructor(
     }
 
     override fun processActionClick(myAction: MyActions) {
-        when(myAction.actionType){
+        when (myAction.actionType) {
             MyActions.MY_ACTION_TYPE_TICKET -> processLocalTicketClick(myAction)
             MyActions.MY_ACTION_TYPE_TICKET_CACHE -> processCachedTicketClick(myAction)
             MyActions.MY_ACTION_TYPE_SCHEDULE -> checkScheduleFlow(myAction)
@@ -433,17 +438,19 @@ class Act083_Main_Presenter constructor(
         }
     }
 
-    override fun processSerialClick(myAction: MyActions) {
-        //
-        myAction.serialId?.let {
-            executeSerialSearch(
-                myAction.productCode,
-                myAction.productId?: "",
-                it,
-                true,
-                myAction
-            )
-        }
+    override fun processSerialClick(
+        serialId: String,
+        productCode: Int?,
+        productId: String,
+        myAction: MyActions?
+    ) {
+        executeSerialSearch(
+            productCode,
+            productId,
+            serialId,
+            true,
+            myAction
+        )
     }
 
     override fun processLocalSearchForSerialAction(

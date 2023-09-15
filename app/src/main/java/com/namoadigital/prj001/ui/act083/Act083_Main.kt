@@ -34,6 +34,7 @@ import com.namoadigital.prj001.model.MD_Product_Serial
 import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.model.MyActionsBase
 import com.namoadigital.prj001.model.MyActionsFormButton
+import com.namoadigital.prj001.model.SerialSiteInventory
 import com.namoadigital.prj001.service.WS_Product_Serial_Structure
 import com.namoadigital.prj001.service.WS_Serial_Search
 import com.namoadigital.prj001.service.WS_Sync
@@ -565,7 +566,20 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
 
     private fun onSerialButtonClick(myAction: MyActions, position: Int) {
         serialActionSelected = position
-        mPresenter.processSerialClick(myAction)
+        mPresenter.processSerialClick(
+            serialId = myAction.serialId ?: "",
+            productCode = myAction.productCode,
+            productId = myAction.processId ?: "",
+            myAction = myAction
+        )
+    }
+
+    private fun onSerialButtonFromSerialSite(model: SerialSiteInventory, position: Int) {
+        serialActionSelected = position
+        mPresenter.processSerialClick(
+            serialId = model.serialId,
+            productCode = model.productCode
+        )
     }
 
     private fun onFormButtonClick(myActionsFormButton: MyActionsFormButton) {
