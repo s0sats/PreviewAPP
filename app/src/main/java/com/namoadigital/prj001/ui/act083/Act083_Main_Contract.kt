@@ -69,7 +69,13 @@ interface Act083_Main_Contract {
         fun onBackPressedClicked()
         fun processWsSyncReturn(hmAuxTicketDownload: HMAux)
         fun getMainUserFiltersParam(): Boolean
-        fun processSerialClick(myAction: MyActions)
+        fun processSerialClick(
+            serialId: String,
+            productCode: Int?,
+            productId: String = "",
+            myAction: MyActions? = null
+        )
+
         fun processLocalSearchForSerialAction(
             selectedActionForSerialFLow: MyActions,
             mdProductSerial: MD_Product_Serial?

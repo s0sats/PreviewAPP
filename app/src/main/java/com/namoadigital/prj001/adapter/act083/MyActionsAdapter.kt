@@ -126,11 +126,11 @@ class MyActionsAdapter constructor(
             with(binding) {
 
                 serialSiteItemTvSerialId.text = item.serialId
-                serialSiteItemTvBrandModelColor.text = listOf(
+                serialSiteItemTvBrandModelColor.text = listOfNotNull(
                     item.brandDesc,
                     item.modelDesc,
                     item.classColor
-                ).filterNotNull().joinToString(" | ") { text -> text.formatString() }
+                ).joinToString(" | ") { text -> text.formatString() }
                 serialSiteItemTvTrackings.checkVisible(item.addInf1)
 
 
@@ -144,7 +144,7 @@ class MyActionsAdapter constructor(
                         item.valueSufix,
                         measureDate
                     )
-                    serialSiteItemTvLastMeasureLbl.text = hmAuxTrans["measure_lbl"]
+                    serialSiteItemTvLastMeasureLbl.text = hmAuxTrans["serial_site_measure_lbl"]
                     serialSiteItemTvLastMeasureLbl.visibility = View.VISIBLE
                 } else {
                     serialSiteItemTvLastMeasureVal.visibility = View.GONE
@@ -161,7 +161,8 @@ class MyActionsAdapter constructor(
                         item.valueSufix,
                         lastCycle
                     )
-                    serialSiteItemTvLastCycleLbl.text = hmAuxTrans["preventive_cycle_lbl"]
+                    serialSiteItemTvLastCycleLbl.text =
+                        hmAuxTrans["serial_site_preventive_cycle_lbl"]
                     serialSiteItemTvLastCycleLbl.visibility = View.VISIBLE
                 } else {
                     serialSiteItemTvLastCycleVal.visibility = View.GONE
@@ -178,7 +179,7 @@ class MyActionsAdapter constructor(
                         item.valueSufix,
                         nextCycle
                     )
-                    serialSiteItemTvNextCycleLbl.text = hmAuxTrans["next_cycle_lbl"]
+                    serialSiteItemTvNextCycleLbl.text = hmAuxTrans["serial_site_next_cycle_lbl"]
                     serialSiteItemTvNextCycleLbl.visibility = View.VISIBLE
                 } else {
                     serialSiteItemTvNextCycleVal.visibility = View.GONE
@@ -190,8 +191,8 @@ class MyActionsAdapter constructor(
                 tvItemAlertVal.checkVisible(text = "${item.totAlert ?: 0}")
                 tvItemCriticalVal.checkVisible("${item.totExpCritical ?: 0}")
 
-                act083SerialInfo.text = hmAuxTrans["btn_status_lbl"]
-                myActionSelectSerial.text = hmAuxTrans["btn_select_serial_lbl"]
+                act083SerialInfo.text = hmAuxTrans["btn_serial_site_status_lbl"]
+                myActionSelectSerial.text = hmAuxTrans["btn_serial_site_select_serial_lbl"]
 
             }
         }
