@@ -1851,13 +1851,15 @@ class Act083_Main_Presenter constructor(
 
     private fun getLocalTickets(userFocus: Int): MutableList<HMAux> {
         //
+        var qSiteCode: Int? = getSiteCodeForSelection()
+
         return ticketDao.query_HM(
                 SqlAct083_002(
                     context,
                     myActionFilterParam.originFlow,
                     ToolBox_Con.getPreference_Customer_Code(context).toInt(),
                     tagFilter,
-                    siteCode,
+                    qSiteCode?.toString(),
                     productCode,
                     serialId,
                     clientId,
@@ -1870,14 +1872,24 @@ class Act083_Main_Presenter constructor(
         )
     }
 
+    private fun getSiteCodeForSelection(): Int? {
+        var qSiteCode: Int? = useCase.getPreference?.invoke()?.site_code
+
+        if (qSiteCode == null) {
+            qSiteCode = siteCode?.toInt()
+        }
+        return qSiteCode
+    }
+
     private fun getCachedTickets(userFocus: Int): MutableList<TkTicketCache> {
+        val qSiteCode: Int? = getSiteCodeForSelection()
         return ticketCacheDao.query(
                 SqlAct083_001(
                     context,
                     myActionFilterParam.originFlow,
                     ToolBox_Con.getPreference_Customer_Code(context).toInt(),
                     tagFilter,
-                    siteCode,
+                    qSiteCode?.toString(),
                     productCode,
                     serialId,
                     clientId,
@@ -1891,6 +1903,7 @@ class Act083_Main_Presenter constructor(
     }
 
     fun getSchedules(userFocus: Int): MutableList<MD_Schedule_Exec> {
+        val qSiteCode: Int? = getSiteCodeForSelection()
         return scheduleDao.query(
                 SqlAct083_005(
                     context,
@@ -1899,7 +1912,7 @@ class Act083_Main_Presenter constructor(
                     tagFilter,
                     productCode,
                     serialId,
-                    siteCode,
+                    qSiteCode?.toString(),
                     calendarDate,
                     userFocus
                 ).toSqlQuery()
@@ -2062,7 +2075,7 @@ class Act083_Main_Presenter constructor(
     override fun getSerialSiteInventoryList(tabUserFocusFilter: Int) {
         mView.iniRecycler(useCase.getSiteInventory!!().toMutableList())
         mView.changeProgressBarVisility(false)
-        mView.setTabsCounters(_myActionsList.size, getOtherTabCounter(tabUserFocusFilter))
+        mView.setTabsCounters(getOtherTabCounter(0), getOtherTabCounter(1))
     }
 
 }
