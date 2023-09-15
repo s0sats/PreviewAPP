@@ -138,7 +138,7 @@ class MyActionsAdapter constructor(
                 serialSiteItemTvBrandModelColor.text = listOfNotNull(
                     item.brandDesc,
                     item.modelDesc,
-                    item.classColor
+                    item.colorDesc
                 ).joinToString(" | ") { text -> text.formatString() }
                 serialSiteItemTvTrackings.checkVisible(item.addInf1)
 
