@@ -69,14 +69,15 @@
         <TextView
             android:id="@+id/serial_site_item_tv_last_measure_val"
             style="@style/TextAppearance.Material3.BodyLarge"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            tools:text="TextView"
+            android:layout_marginEnd="8dp"
             android:textColor="@color/m3_namoa_onSurface"
             app:layout_constraintEnd_toStartOf="@+id/guideline8"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/serial_site_item_tv_last_measure_lbl" />
+            app:layout_constraintTop_toBottomOf="@+id/serial_site_item_tv_last_measure_lbl"
+            tools:text="TextView" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline8"
@@ -169,14 +170,14 @@
         <TextView
             android:id="@+id/serial_site_item_tv_last_cycle_val"
             style="@style/TextAppearance.Material3.BodyLarge"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            tools:text="TextView"
             android:textColor="@color/m3_namoa_onSurface"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/guideline8"
-            app:layout_constraintTop_toBottomOf="@+id/serial_site_item_tv_last_cycle_lbl" />
+            app:layout_constraintTop_toBottomOf="@+id/serial_site_item_tv_last_cycle_lbl"
+            tools:text="TextView" />
 
         <TextView
             android:id="@+id/serial_site_item_tv_next_cycle_lbl"
@@ -194,7 +195,7 @@
         <TextView
             android:id="@+id/serial_site_item_tv_next_cycle_val"
             style="@style/TextAppearance.Material3.BodyLarge"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textColor="@color/m3_namoa_onSurface"
             app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
