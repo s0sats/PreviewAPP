@@ -7,6 +7,7 @@ import com.namoadigital.prj001.model.MD_Product_Serial
 import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.model.MyActionsBase
 import com.namoadigital.prj001.model.MyActionsFormButton
+import com.namoadigital.prj001.model.SerialSiteInventory
 
 interface Act083_Main_Contract {
     interface I_View {
@@ -44,6 +45,7 @@ interface Act083_Main_Contract {
         fun resetActionPosition()
         fun callAct092(bundle: Bundle)
         fun changeTitleTopBar(siteDesc: String)
+        fun callAct093(bundle: Bundle)
     }
 
     interface I_Presenter {
@@ -112,6 +114,7 @@ interface Act083_Main_Contract {
         fun processSerialSite(tabUserFocusFilter: Int)
         fun getSerialSiteInventoryList(tabUserFocusFilter: Int)
         fun checkSerialSiteInv()
+        fun callAct093(model: SerialSiteInventory)
     }
 
 }

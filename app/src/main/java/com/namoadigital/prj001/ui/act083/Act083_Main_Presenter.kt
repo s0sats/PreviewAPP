@@ -27,6 +27,8 @@ import com.namoadigital.prj001.ui.act070.Act070_Main
 import com.namoadigital.prj001.ui.act083.data.local.preferences.MyActionsFilterParamPreferences
 import com.namoadigital.prj001.ui.act083.model.SaveActionFilterModel
 import com.namoadigital.prj001.ui.act083.model.SaveActionFilterModel.Companion.toMyActionFilter
+import com.namoadigital.prj001.ui.act092.model.SerialModel
+import com.namoadigital.prj001.ui.act092.usecases.ActionPreferenceUseCases
 import com.namoadigital.prj001.ui.act092.utils.Act092Translate
 import com.namoadigital.prj001.util.*
 import com.namoadigital.prj001.view.dialog.ScheduleRequestSerialDialog2
@@ -2318,6 +2320,36 @@ class Act083_Main_Presenter constructor(
         mView.iniRecycler(useCase.getSiteInventory!!().toMutableList())
         mView.changeProgressBarVisility(false)
         mView.setTabsCounters(_myActionsList.size, getOtherTabCounter(tabUserFocusFilter))
+    }
+
+    override fun callAct093(model: SerialSiteInventory) {
+        setSerialModel(model)
+        mView.callAct093(Bundle().apply {
+            putSerializable(
+                MyActionFilterParam.MY_ACTION_FILTER_PARAM,
+                myActionFilterParam
+            )
+        })
+    }
+
+    private fun setSerialModel(model: SerialSiteInventory) {
+        val actionUseCase = ActionPreferenceUseCases.ActionUseCasesFactory(context).build()
+
+        actionUseCase.setPreferences(
+            SerialModel(
+                originFlow = originFlow,
+                siteCodeBack = ToolBox_Con.getPreference_Site_Code(context),
+                zoneCodeBack = ToolBox_Con.getPreference_Zone_Code(context),
+                classColor = model.classColor ?: "",
+                productCode = model.productCode,
+                productId = "",
+                productDesc = "",
+                serialId = model.serialId,
+                serialCode = model.serialCode.toLong(),
+                ticketId = "",
+                calendarDate = myActionFilterParam.calendarDate
+            )
+        )
     }
 
 }

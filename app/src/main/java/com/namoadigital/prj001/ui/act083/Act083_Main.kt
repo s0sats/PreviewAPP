@@ -56,6 +56,7 @@ import com.namoadigital.prj001.ui.act083.data.local.preferences.MyActionsFilterP
 import com.namoadigital.prj001.ui.act083.model.TypeSerial
 import com.namoadigital.prj001.ui.act092.ui.Act092_Main
 import com.namoadigital.prj001.ui.act092.utils.Act092Translate
+import com.namoadigital.prj001.ui.act093.ui.Act093_Main
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -579,12 +580,11 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     }
 
     private fun onSerialButtonFromSerialSite(clickType: SerialSiteInventory.Companion.OnClickType) {
-        typeSerial = TypeSerial.SERIAL_SITE
         when (clickType) {
 
             is SerialSiteInventory.Companion.OnClickType.OnSerialClick -> {
+                typeSerial = TypeSerial.SERIAL_SITE
                 serialActionSelected = clickType.position
-
                 mPresenter.processSerialClick(
                     serialId = clickType.model.serialId,
                     productCode = clickType.model.productCode
@@ -593,6 +593,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
 
             is SerialSiteInventory.Companion.OnClickType.OnStatusClick -> {
                 serialActionSelected = clickType.position
+                mPresenter.callAct093(clickType.model)
             }
 
 
@@ -1367,6 +1368,15 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         mIntent.putExtras(bundle)
         startActivity(mIntent)
         finish()
+    }
+
+    override fun callAct093(bundle: Bundle) {
+        Intent(context, Act093_Main::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            putExtras(bundle)
+            startActivity(this)
+            finish()
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {

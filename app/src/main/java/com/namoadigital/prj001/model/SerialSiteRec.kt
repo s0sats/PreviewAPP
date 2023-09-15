@@ -20,6 +20,8 @@ data class SerialSiteInventory(
     @SerializedName("brand_desc") var brandDesc: String?,
     @SerializedName("model_code") var modelCode: String?,
     @SerializedName("model_desc") var modelDesc: String?,
+    @SerializedName("color_code") var colorCode: String?,
+    @SerializedName("color_desc") var colorDesc: String?,
     @SerializedName("zone_code") var zoneCode: Int,
     @SerializedName("zone_desc") var zoneDesc: String,
     @SerializedName("measure_value") var measureValue: String?,
