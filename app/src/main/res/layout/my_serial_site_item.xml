@@ -221,30 +221,37 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/act083_serial_info"
                 style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                app:layout_constraintWidth_max="wrap"
                 android:layout_marginEnd="8dp"
                 android:paddingHorizontal="12dp"
                 android:textColor="@color/m3_namoa_primary"
                 app:icon="@drawable/ic_outline_info_24"
-                tools:text="Status"
                 app:layout_constrainedWidth="true"
                 app:layout_constraintEnd_toStartOf="@+id/my_action_select_serial"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:strokeColor="@color/m3_namoa_outline" />
+                app:strokeColor="@color/m3_namoa_outline"
+                tools:text="Status" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/my_action_select_serial"
                 style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                app:layout_constraintWidth_max="wrap"
                 android:textColor="@color/m3_namoa_primary"
-                tools:text="Ver Ações"
                 app:icon="@drawable/ic_tag_black_24dp"
                 app:layout_constrainedWidth="true"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/act083_serial_info"
                 app:layout_constraintTop_toTopOf="parent"
-                app:strokeColor="@color/m3_namoa_outline" />
+                app:strokeColor="@color/m3_namoa_outline"
+                tools:text="Ver Ações" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
