@@ -7,9 +7,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.media.ExifInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -51,6 +54,7 @@ import com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -575,7 +579,17 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
             binding.act079LlOpenPhoto.setVisibility(View.GONE);
         } else {
             try {
-                Bitmap bitmap = BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath);
+                String path = ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath;
+                ExifInterface exifReader = new ExifInterface(path);
+                Bitmap source = BitmapFactory.decodeFile(path);
+                Bitmap bitmap = null;
+                Log.d("ExifInterface", "orientation: " + exifReader.getAttributeInt(ExifInterface.TAG_ORIENTATION, -1));
+                if(exifReader.getAttributeInt(ExifInterface.TAG_ORIENTATION, -1) == ExifInterface.ORIENTATION_ROTATE_180){
+                    Matrix matrix = new Matrix();
+                    matrix.postRotate(180);
+                    bitmap = Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
+                }
+                //
                 if (bitmap == null) {
                     setImagePlaceholder(binding.act079IvOpenPhoto);
                 } else {
@@ -591,6 +605,8 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
                 setImagePlaceholder(binding.act079IvOpenPhoto);
                 ToolBox_Inf.registerException(getClass().getName(), e);
                 e.printStackTrace();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         }
     }
