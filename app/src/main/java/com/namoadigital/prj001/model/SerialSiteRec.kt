@@ -38,7 +38,24 @@ data class SerialSiteInventory(
 
 ) : MyActionsBase() {
 
+
+    fun getAllFieldForFilter(): String {
+        return listOf(
+            serialId,
+            brandDesc,
+            modelDesc,
+            colorDesc,
+            addInf1,
+            measureValue,
+            preventiveCycle,
+            preventiveDate,
+            suggestedCycle,
+            suggestedDate,
+        ).joinToString("|")
+    }
+
     companion object {
+
 
         sealed class OnClickType {
 

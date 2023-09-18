@@ -639,6 +639,12 @@ class MyActionsAdapter constructor(
                                     allFields.contains(charFilter)
                                 }
                             }
+
+                            is SerialSiteInventory -> {
+                                ToolBox.AccentMapper(
+                                    it.getAllFieldForFilter().toLowerCase()
+                                ).contains(charFilter)
+                            }
                             //se for o botão, sempre exibe
                             else -> true
                         }
