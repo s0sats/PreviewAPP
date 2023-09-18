@@ -27,6 +27,8 @@ import com.namoadigital.prj001.ui.act070.Act070_Main
 import com.namoadigital.prj001.ui.act083.data.local.preferences.MyActionsFilterParamPreferences
 import com.namoadigital.prj001.ui.act083.model.SaveActionFilterModel
 import com.namoadigital.prj001.ui.act083.model.SaveActionFilterModel.Companion.toMyActionFilter
+import com.namoadigital.prj001.ui.act092.model.SerialModel
+import com.namoadigital.prj001.ui.act092.usecases.ActionPreferenceUseCases
 import com.namoadigital.prj001.ui.act092.utils.Act092Translate
 import com.namoadigital.prj001.util.*
 import com.namoadigital.prj001.view.dialog.ScheduleRequestSerialDialog2
@@ -54,9 +56,9 @@ class Act083_Main_Presenter constructor(
     private val mModule_Code: String,
     private val mResource_Code: String,
     private val useCase: SerialSiteInventoryUseCase
-) : Act083_Main_Contract.I_Presenter{
+) : Act083_Main_Contract.I_Presenter {
 
-    private lateinit var myActionFilterParam : MyActionFilterParam
+    private lateinit var myActionFilterParam: MyActionFilterParam
     private var tagFilter: Int? = null
     private var productCode: Int? = null
     private var serialId: String? = null
@@ -77,9 +79,9 @@ class Act083_Main_Presenter constructor(
     }
     var siteCodeBack: String? = null
     var zoneCodeBack = 0
-    var actionSelected : MyActions? = null
-    private var serialDialog : ScheduleRequestSerialDialog2? = null
-    private var launch : Job? = null
+    var actionSelected: MyActions? = null
+    private var serialDialog: ScheduleRequestSerialDialog2? = null
+    private var launch: Job? = null
     private var initialTabToLoad: Int = 1
     private var initialTextFilter: String? = null
     private var _lastSelectedActionPk: String? = null
@@ -101,9 +103,9 @@ class Act083_Main_Presenter constructor(
 
     private fun setViewFiltersParam() {
         mView.setViewFiltersParam(
-                initialTextFilter,
-                initialTabToLoad,
-                mainUserFilterState
+            initialTextFilter,
+            initialTabToLoad,
+            mainUserFilterState
         )
     }
 
@@ -227,9 +229,9 @@ class Act083_Main_Presenter constructor(
     override fun getChipList(): List<String> {
         val chipList = mutableListOf<String>()
         chipList.addAll(
-                myActionFilterParam.getFilledFilters(context)
+            myActionFilterParam.getFilledFilters(context)
         )
-        if(!ToolBox_Inf.hasSoOrIOProfile(context)) {
+        if (!ToolBox_Inf.hasSoOrIOProfile(context)) {
             when (myActionFilterParam.originFlow) {
                 ConstantBaseApp.ACT005 -> setPreferenceChips(chipList)
             }
@@ -242,11 +244,18 @@ class Act083_Main_Presenter constructor(
         if (ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION != timePrefence) {
             hmAux_Trans?.get(timePrefence)?.let { chipList.add(it) }
         }
-        val sitePrefence = ToolBox_Con.getStringPreferencesByKey(context, ConstantBaseApp.PREFERENCE_HOME_SITES_FILTER, ConstantBaseApp.PREFERENCE_HOME_ALL_SITE_OPTION)
+        val sitePrefence = ToolBox_Con.getStringPreferencesByKey(
+            context,
+            ConstantBaseApp.PREFERENCE_HOME_SITES_FILTER,
+            ConstantBaseApp.PREFERENCE_HOME_ALL_SITE_OPTION
+        )
         if (ConstantBaseApp.PREFERENCE_HOME_ALL_SITE_OPTION != sitePrefence) {
-            val siteObjInfo = ToolBox_Inf.getSiteObjInfo(context, ToolBox_Con.getPreference_Site_Code(context))
-            chipList.add(siteObjInfo?.site_desc ?: hmAux_Trans?.get("site_desc_not_found_lbl")
-            ?: "SITE_DESC_NOT_FOUND")
+            val siteObjInfo =
+                ToolBox_Inf.getSiteObjInfo(context, ToolBox_Con.getPreference_Site_Code(context))
+            chipList.add(
+                siteObjInfo?.site_desc ?: hmAux_Trans?.get("site_desc_not_found_lbl")
+                ?: "SITE_DESC_NOT_FOUND"
+            )
         }
     }
 
@@ -254,11 +263,13 @@ class Act083_Main_Presenter constructor(
         return when (myActionFilterParam.originFlow) {
             ConstantBaseApp.ACT005 -> myActionFilterParam.tagFilterDesc
                 ?: hmAux_Trans!!["act083_title"]!!
+
             ConstantBaseApp.ACT006 -> hmAux_Trans!!["sys_main_menu_assets_local_lbl"]!!
             ConstantBaseApp.ACT016 -> hmAux_Trans!!["sys_main_menu_calendar_lbl"]!!
             ConstantBaseApp.ACT068 -> hmAux_Trans!!["sys_main_menu_search_lbl"]!!
             ConstantBaseApp.ACT083 -> myActionFilterParam.tagFilterDesc
                 ?: hmAux_Trans!!["act083_title"]!!
+
             else -> hmAux_Trans!!["act083_title"]!!
         }
     }
@@ -268,29 +279,30 @@ class Act083_Main_Presenter constructor(
     }
 
     override fun processActionFormButtonClick(myActionsFormButton: MyActionsFormButton) {
-        if(ToolBox_Inf.isSiteBlockedOrLimitExecutionReached(context)){
+        if (ToolBox_Inf.isSiteBlockedOrLimitExecutionReached(context)) {
             mView.showAlertMsg(
-                    hmAux_Trans!!["alert_free_execution_blocked_ttl"]!!,
-                    hmAux_Trans!!["alert_free_execution_blocked_msg"]!!
+                hmAux_Trans!!["alert_free_execution_blocked_ttl"]!!,
+                hmAux_Trans!!["alert_free_execution_blocked_msg"]!!
             )
-        }else{
+        } else {
             checkFormCreationFlow(myActionsFormButton)
         }
     }
 
     private fun checkFormCreationFlow(myActionsFormButton: MyActionsFormButton) {
-        if(checkSyncChecklistV2(myActionsFormButton.productCode)){
+        if (checkSyncChecklistV2(myActionsFormButton.productCode)) {
             validadeCreateNewForm(myActionsFormButton)
-        }else{
-            if(ToolBox_Con.isOnline(context)
+        } else {
+            if (ToolBox_Con.isOnline(context)
                 && !ToolBox_Con.getBooleanPreferencesByKey(
                     context,
                     ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW,
                     false
-                )){
+                )
+            ) {
                 formButtonData = myActionsFormButton
                 prepareWsFormSync(myActionsFormButton.productCode.toLong())
-            }else{
+            } else {
                 validadeCreateNewForm(myActionsFormButton)
             }
         }
@@ -298,32 +310,44 @@ class Act083_Main_Presenter constructor(
 
     private fun checkSyncChecklistV2(productCode: Int): Boolean {
         val hmAuxList: List<HMAux> = syncChecklistDao.query_HM(
-                Sync_Checklist_Sql_002(
-                        ToolBox_Con.getPreference_Customer_Code(context),
-                        productCode.toLong()
-                ).toSqlQuery()
+            Sync_Checklist_Sql_002(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                productCode.toLong()
+            ).toSqlQuery()
         )
         //
         return hmAuxList.isNotEmpty()
     }
 
     private fun validadeCreateNewForm(myActionsFormButton: MyActionsFormButton) {
-        val mdProductSerial : MD_Product_Serial? = getSerial(myActionsFormButton.productCode, myActionsFormButton.serialId)
-        val mdProduct : MD_Product? = getProductInfo(myActionsFormButton.productCode)
+        val mdProductSerial: MD_Product_Serial? =
+            getSerial(myActionsFormButton.productCode, myActionsFormButton.serialId)
+        val mdProduct: MD_Product? = getProductInfo(myActionsFormButton.productCode)
         //
-        if(mdProductSerial != null && mdProduct != null){
+        if (mdProductSerial != null && mdProduct != null) {
             //
-            val formXProductExist = ToolBox_Inf.checkFormXProductExists(context, ToolBox_Con.getPreference_Customer_Code(context), myActionsFormButton.productCode.toLong())
-            val formXOperationExists = ToolBox_Inf.checkFormXOperationExists(context, ToolBox_Con.getPreference_Customer_Code(context), ToolBox_Con.getPreference_Operation_Code(context))
+            val formXProductExist = ToolBox_Inf.checkFormXProductExists(
+                context,
+                ToolBox_Con.getPreference_Customer_Code(context),
+                myActionsFormButton.productCode.toLong()
+            )
+            val formXOperationExists = ToolBox_Inf.checkFormXOperationExists(
+                context,
+                ToolBox_Con.getPreference_Customer_Code(context),
+                ToolBox_Con.getPreference_Operation_Code(context)
+            )
             val formXSiteExists = ToolBox_Inf.checkFormXSiteExists(
-                    context,
-                    ToolBox_Con.getPreference_Customer_Code(context),
-                    if (mdProductSerial.site_code != null) mdProductSerial.site_code.toString() else ToolBox_Con.getPreference_Site_Code(context)
+                context,
+                ToolBox_Con.getPreference_Customer_Code(context),
+                if (mdProductSerial.site_code != null) mdProductSerial.site_code.toString() else ToolBox_Con.getPreference_Site_Code(
+                    context
+                )
             )
             var producSiteRestXSite = false
             if (mdProduct.site_restriction == 1) {
                 if (mdProductSerial.site_code != null
-                        && ToolBox_Con.getPreference_Site_Code(context) == mdProductSerial.site_code.toString()) {
+                    && ToolBox_Con.getPreference_Site_Code(context) == mdProductSerial.site_code.toString()
+                ) {
                     producSiteRestXSite = true
                 }
             } else {
@@ -334,11 +358,22 @@ class Act083_Main_Presenter constructor(
             //Se existir form para o produto,site e operação e a regra de restrição de site respeitada,
             //avança para o form
             if (formXProductExist && formXOperationExists && formXSiteExists && producSiteRestXSite) {
-                bundle.putString(MD_ProductDao.PRODUCT_CODE, mdProductSerial.product_code.toString())
-                bundle.putString(MD_Product_SerialDao.SERIAL_ID, ToolBox_Inf.removeAllLineBreaks(mdProductSerial.serial_id))
+                bundle.putString(
+                    MD_ProductDao.PRODUCT_CODE,
+                    mdProductSerial.product_code.toString()
+                )
+                bundle.putString(
+                    MD_Product_SerialDao.SERIAL_ID,
+                    ToolBox_Inf.removeAllLineBreaks(mdProductSerial.serial_id)
+                )
                 bundle.putString(MD_ProductDao.PRODUCT_DESC, mdProductSerial.product_desc.trim())
                 bundle.putString(MD_ProductDao.PRODUCT_ID, mdProductSerial.product_id.trim())
-                bundle.putString(MD_SiteDao.SITE_CODE, if (mdProductSerial.site_code != null) mdProductSerial.site_code.toString() else ToolBox_Con.getPreference_Site_Code(context))
+                bundle.putString(
+                    MD_SiteDao.SITE_CODE,
+                    if (mdProductSerial.site_code != null) mdProductSerial.site_code.toString() else ToolBox_Con.getPreference_Site_Code(
+                        context
+                    )
+                )
 //            bundle.putAll(act081Bundle)
                 myActionFilterParam.paramTextFilter = mView.getMketFilter()
                 myActionFilterParam.mainUserFilterState = mView.getMainUserFilter()
@@ -350,20 +385,24 @@ class Act083_Main_Presenter constructor(
             } else {
                 var msg = hmAux_Trans!!["alert_no_form_lbl"]
                 msg += "\n"
-                msg = if (!formXProductExist) "$msg${hmAux_Trans!!["alert_no_form_for_product_msg"]}\n" else msg
-                msg = if (!formXOperationExists) "$msg${hmAux_Trans!!["alert_no_form_for_operation_msg"]}\n" else msg
-                msg = if (!formXSiteExists) "$msg${hmAux_Trans!!["alert_no_form_for_site_msg"]}\n" else msg
-                msg = if (!producSiteRestXSite) "$msg${hmAux_Trans!!["alert_site_restriction_violation_msg"]}\n" else msg
+                msg =
+                    if (!formXProductExist) "$msg${hmAux_Trans!!["alert_no_form_for_product_msg"]}\n" else msg
+                msg =
+                    if (!formXOperationExists) "$msg${hmAux_Trans!!["alert_no_form_for_operation_msg"]}\n" else msg
+                msg =
+                    if (!formXSiteExists) "$msg${hmAux_Trans!!["alert_no_form_for_site_msg"]}\n" else msg
+                msg =
+                    if (!producSiteRestXSite) "$msg${hmAux_Trans!!["alert_site_restriction_violation_msg"]}\n" else msg
                 //
                 mView.showAlertMsg(
-                        hmAux_Trans!!["alert_no_form_ttl"]!!,
-                        msg ?: ""
+                    hmAux_Trans!!["alert_no_form_ttl"]!!,
+                    msg ?: ""
                 )
             }
-        }else{
+        } else {
             mView.showAlertMsg(
-                    hmAux_Trans!!["alert_product_or_serial_not_found_ttl"]!!,
-                    hmAux_Trans!!["alert_product_or_serial_not_found_msg"]!!
+                hmAux_Trans!!["alert_product_or_serial_not_found_ttl"]!!,
+                hmAux_Trans!!["alert_product_or_serial_not_found_msg"]!!
             )
         }
 
@@ -380,12 +419,12 @@ class Act083_Main_Presenter constructor(
      * navegar para act070
      */
     override fun processWsSyncReturn(hmAuxTicketDownload: HMAux) {
-        if(formButtonData != null){
+        if (formButtonData != null) {
             updateSyncChecklist(formButtonData!!)
             validadeCreateNewForm(formButtonData!!)
-        }else {
+        } else {
             mView.callAct070(
-                    getCacheTicketBundle(hmAuxTicketDownload)
+                getCacheTicketBundle(hmAuxTicketDownload)
             )
         }
     }
@@ -411,20 +450,20 @@ class Act083_Main_Presenter constructor(
 
     private fun getProductInfo(productCode: Int): MD_Product? {
         return productDao.getByString(
-                MD_Product_Sql_001(
-                        ToolBox_Con.getPreference_Customer_Code(context),
-                        productCode.toLong()
-                ).toSqlQuery()
+            MD_Product_Sql_001(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                productCode.toLong()
+            ).toSqlQuery()
         );
     }
 
     private fun getSerial(productCode: Int, serialId: String): MD_Product_Serial? {
         return serialDao.getByString(
-                MD_Product_Serial_Sql_002(
-                        ToolBox_Con.getPreference_Customer_Code(context),
-                        productCode.toLong(),
-                        serialId
-                ).toSqlQuery()
+            MD_Product_Serial_Sql_002(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                productCode.toLong(),
+                serialId
+            ).toSqlQuery()
         )
     }
 
@@ -454,50 +493,61 @@ class Act083_Main_Presenter constructor(
     }
 
     override fun processLocalSearchForSerialAction(
-        selectedActionForSerialFLow: MyActions,
-        mdProductSerial: MD_Product_Serial?
+        productCode: Int?,
+        serialId: String?,
+        mdProductSerial: MD_Product_Serial?,
+        actionType: String?,
+        processPk: String?
     ) {
-        selectedActionForSerialFLow.let {
+
+
+        val serial = mdProductSerial
+            ?: if (productCode != null && serialId != null) {
+                getSerial(productCode!!, serialId)
+            } else {
+                null
+            }
+        if (serial != null) {
             //
-            val serial = mdProductSerial
-                ?: if (it.productCode != null && it.serialId != null) {
-                    getSerial(it.productCode!!, it.serialId)
-                } else {
-                    null
-                }
-            if (serial != null) {
+            if (mdProductSerial != null) {
+                insertSerial(mdProductSerial)
                 //
-                if(mdProductSerial != null){
-                    insertSerial(mdProductSerial)
+                if (serial.has_item_check == 1
+                    && !ToolBox_Con.getBooleanPreferencesByKey(
+                        context,
+                        ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW,
+                        false
+                    )
+                    && ToolBox_Con.isOnline(context)
+                ) {
+                    callWSSerialStructure(serial)
+                } else {
                     //
-                    if(serial.has_item_check == 1
-                        && !ToolBox_Con.getBooleanPreferencesByKey(context, ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false)
-                        && ToolBox_Con.isOnline(context)) {
-                        callWSSerialStructure(serial)
-                    }else{
-                        //
-                        extractStructureResult(serial, selectedActionForSerialFLow)
-                    }
-                }else{
-                    hmAux_Trans?.let{ hmAux ->
-                        mView.showAlertMsg(
-                            hmAux["alert_no_serial_found_ttl"]!!,
-                            hmAux["alert_no_serial_found_msg"]!!
-                        )
-                    }
+                    extractStructureResult(serial, actionType, processPk)
                 }
-            }else{
-                hmAux_Trans?.let{ hmAux ->
+            } else {
+                hmAux_Trans?.let { hmAux ->
                     mView.showAlertMsg(
                         hmAux["alert_no_serial_found_ttl"]!!,
                         hmAux["alert_no_serial_found_msg"]!!
                     )
                 }
             }
+        } else {
+            hmAux_Trans?.let { hmAux ->
+                mView.showAlertMsg(
+                    hmAux["alert_no_serial_found_ttl"]!!,
+                    hmAux["alert_no_serial_found_msg"]!!
+                )
+            }
         }
     }
 
-    override fun extractStructureResult(serial: MD_Product_Serial, myAction: MyActions?){
+    override fun extractStructureResult(
+        serial: MD_Product_Serial,
+        actionType: String?,
+        processPk: String?
+    ) {
         //
         insertSerial(serial)
         //
@@ -510,7 +560,7 @@ class Act083_Main_Presenter constructor(
         myActionFilterParam.serialCode = serial.serial_code
         myActionFilterParam.originFlow = ConstantBaseApp.ACT083
 
-        setSeletedActionInfosIntoFilterParam(myAction!!.actionType, myAction.processPk)
+        setSeletedActionInfosIntoFilterParam(actionType, processPk)
 
         bundle.putSerializable(
             MyActionFilterParam.MY_ACTION_FILTER_PARAM,
@@ -553,22 +603,22 @@ class Act083_Main_Presenter constructor(
 
     private fun processLocalTicketClick(myAction: MyActions) {
         mView.callAct070(
-                getLocalTicket(
-                        myAction
-                )
+            getLocalTicket(
+                myAction
+            )
         )
     }
 
     private fun processCachedTicketClick(myAction: MyActions) {
-        if(ToolBox_Con.isOnline(context)){
+        if (ToolBox_Con.isOnline(context)) {
             mView.setProcess(WS_TK_Ticket_Download::class.java.name)
             mView.showPD(
-                    hmAux_Trans?.get("dialog_download_ticket_ttl"),
-                    hmAux_Trans?.get("dialog_download_ticket_start")
+                hmAux_Trans?.get("dialog_download_ticket_ttl"),
+                hmAux_Trans?.get("dialog_download_ticket_start")
             )
             //
             prepareWsTicketDownload(myAction)
-        }else{
+        } else {
             ToolBox_Inf.showNoConnectionDialog(context)
         }
     }
@@ -586,7 +636,7 @@ class Act083_Main_Presenter constructor(
         //
         val scheduleExec = getScheduleFromMyAction(myAction)
         //
-        if(scheduleExec != null) {
+        if (scheduleExec != null) {
             when (scheduleExec.schedule_type) {
                 ConstantBaseApp.MD_SCHEDULE_TYPE_FORM -> processFormFlow(myAction, scheduleExec)
                 else -> iniProcessTicketFlow(myAction)
@@ -599,8 +649,8 @@ class Act083_Main_Presenter constructor(
             processTicketFlow(actions)
         } else {
             mView.showMsg(
-                    Act083_Main.PROFILE_MENU_TICKET_NOT_FOUND,
-                    actions
+                Act083_Main.PROFILE_MENU_TICKET_NOT_FOUND,
+                actions
             )
         }
     }
@@ -626,8 +676,8 @@ class Act083_Main_Presenter constructor(
                 prepareOpenForm(actions, scheduleExec)
             } else {
                 mView.showMsg(
-                        Act083_Main.MODULE_SCHEDULE_STATUS_PREVENTS_TO_OPEN,
-                        actions
+                    Act083_Main.MODULE_SCHEDULE_STATUS_PREVENTS_TO_OPEN,
+                    actions
                 )
             }
         }
@@ -656,14 +706,29 @@ class Act083_Main_Presenter constructor(
         bundle.putString(MD_ProductDao.PRODUCT_DESC, scheduleExec.product_desc.toString())
         bundle.putString(MD_ProductDao.PRODUCT_ID, scheduleExec.product_id.toString())
         bundle.putString(MD_Product_SerialDao.SERIAL_ID, scheduleExec.serial_id.toString())
-        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, scheduleExec.custom_form_type.toString())
+        bundle.putString(
+            GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE,
+            scheduleExec.custom_form_type.toString()
+        )
 
-        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, scheduleExec.custom_form_code.toString())
-        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, scheduleExec.custom_form_version.toString())
-        bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, scheduleExec.custom_form_desc.toString())
+        bundle.putString(
+            GE_Custom_FormDao.CUSTOM_FORM_CODE,
+            scheduleExec.custom_form_code.toString()
+        )
+        bundle.putString(
+            GE_Custom_FormDao.CUSTOM_FORM_VERSION,
+            scheduleExec.custom_form_version.toString()
+        )
+        bundle.putString(
+            Constant.ACT010_CUSTOM_FORM_CODE_DESC,
+            scheduleExec.custom_form_desc.toString()
+        )
         //
-        myAction.scheduleCustomFormData?.let{
-            bundle.putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, myAction.scheduleCustomFormData)
+        myAction.scheduleCustomFormData?.let {
+            bundle.putString(
+                GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA,
+                myAction.scheduleCustomFormData
+            )
         }
         bundle.putString(Constant.ACT017_SCHEDULED_SITE, scheduleExec.site_code.toString())
         //Seta dados da action selecionado no filterParam
@@ -682,76 +747,81 @@ class Act083_Main_Presenter constructor(
                 prepareOpenForm(action, it)
             } else if (hasSerialDefined(it)) {
                 buildRequestSerialDialog(
-                        it,
-                        action,
-                        false
+                    it,
+                    action,
+                    false
                 )
                 executeSerialSearch(
-                        action.productCode,
-                        action.productId,
-                        action.serialId ?: "",
-                        true
+                    action.productCode,
+                    action.productId,
+                    action.serialId ?: "",
+                    true
                 )
             } else {
                 //Cria e exibe dialog que requer serial.
                 buildRequestSerialDialog(
-                        it,
-                        action,
-                        true
+                    it,
+                    action,
+                    true
                 )
             }
         }
     }
 
-    private fun buildRequestSerialDialog(scheduleExec: MD_Schedule_Exec, action: MyActions, showDialog: Boolean) {
+    private fun buildRequestSerialDialog(
+        scheduleExec: MD_Schedule_Exec,
+        action: MyActions,
+        showDialog: Boolean
+    ) {
         //
         serialDialog = ScheduleRequestSerialDialog2(
-                context,
-                scheduleExec,
-                object : ScheduleRequestSerialDialog2.OnScheduleRequestSerialDialogListeners {
-                    override fun processToForm() {
-                        val bundle = Bundle()
-                        //LUCHE - 09/06/2021
-                        //Como esse metodo só é chamado quando o usr prosegue SEM SERIAL,serial id
-                        //será mudado de null para ""
-                        if(scheduleExec.is_so == 0) {
-                            scheduleExec.serial_id = scheduleExec.serial_id ?: ""
-                            if (createFormLocalForSchedule(action, scheduleExec)) {
-                                //Atualiza fomr_data no item
-                                action.scheduleCustomFormData =
-                                    bundle.getString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, "0")
-                                //
-                                prepareOpenForm(action, scheduleExec)
-                            } else {
-                                mView.showMsg(
-                                    Act083_Main.MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR,
-                                    action
-                                )
-                            }
-                        }else{
-                            mView.showAlertMsg(
-                                hmAux_Trans?.get("alert_form_os_requires_serial_ttl")!!,
-                                hmAux_Trans?.get("alert_form_os_requires_serial_msg")!!
+            context,
+            scheduleExec,
+            object : ScheduleRequestSerialDialog2.OnScheduleRequestSerialDialogListeners {
+                override fun processToForm() {
+                    val bundle = Bundle()
+                    //LUCHE - 09/06/2021
+                    //Como esse metodo só é chamado quando o usr prosegue SEM SERIAL,serial id
+                    //será mudado de null para ""
+                    if (scheduleExec.is_so == 0) {
+                        scheduleExec.serial_id = scheduleExec.serial_id ?: ""
+                        if (createFormLocalForSchedule(action, scheduleExec)) {
+                            //Atualiza fomr_data no item
+                            action.scheduleCustomFormData =
+                                bundle.getString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, "0")
+                            //
+                            prepareOpenForm(action, scheduleExec)
+                        } else {
+                            mView.showMsg(
+                                Act083_Main.MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR,
+                                action
                             )
                         }
-                    }
-
-                    override fun processToSearchSerial(serialID: String) {
-                        executeSerialSearch(
-                                action.productCode,
-                                action.productId,
-                                serialID,
-                                false)
-                    }
-
-                    override fun addMketControl(mketSerial: MKEditTextNM) {
-                        mView.addControlToActivity(mketSerial)
-                    }
-
-                    override fun removeMketControl(mketSerial: MKEditTextNM) {
-                        mView.removeControlFromActivity(mketSerial)
+                    } else {
+                        mView.showAlertMsg(
+                            hmAux_Trans?.get("alert_form_os_requires_serial_ttl")!!,
+                            hmAux_Trans?.get("alert_form_os_requires_serial_msg")!!
+                        )
                     }
                 }
+
+                override fun processToSearchSerial(serialID: String) {
+                    executeSerialSearch(
+                        action.productCode,
+                        action.productId,
+                        serialID,
+                        false
+                    )
+                }
+
+                override fun addMketControl(mketSerial: MKEditTextNM) {
+                    mView.addControlToActivity(mketSerial)
+                }
+
+                override fun removeMketControl(mketSerial: MKEditTextNM) {
+                    mView.removeControlFromActivity(mketSerial)
+                }
+            }
         )
         //
         if (showDialog) {
@@ -759,11 +829,30 @@ class Act083_Main_Presenter constructor(
         }
     }
 
-    private fun createFormLocalForSchedule(action: MyActions, scheduleExec: MD_Schedule_Exec): Boolean {
-        val custom_formDao = GE_Custom_FormDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
-        val custom_form_field_LocalDao = GE_Custom_Form_Field_LocalDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
-        val custom_form_fieldDao = GE_Custom_Form_FieldDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
-        val custom_form_blob_localDao = GE_Custom_Form_Blob_LocalDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
+    private fun createFormLocalForSchedule(
+        action: MyActions,
+        scheduleExec: MD_Schedule_Exec
+    ): Boolean {
+        val custom_formDao = GE_Custom_FormDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        )
+        val custom_form_field_LocalDao = GE_Custom_Form_Field_LocalDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        )
+        val custom_form_fieldDao = GE_Custom_Form_FieldDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        )
+        val custom_form_blob_localDao = GE_Custom_Form_Blob_LocalDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        )
         var creationOk = false
         //
         if (scheduleFormLocalExists(scheduleExec, action)) {
@@ -795,14 +884,17 @@ class Act083_Main_Presenter constructor(
      * @param actions - Bundle a ser enviado e que tera o custom_form_data setado se existir.
      * @return - Verdadeiro se o form_locla ja existir
      */
-    private fun scheduleFormLocalExists(scheduleExec: MD_Schedule_Exec, action: MyActions): Boolean {
+    private fun scheduleFormLocalExists(
+        scheduleExec: MD_Schedule_Exec,
+        action: MyActions
+    ): Boolean {
         val customFormLocal = formLocalDao.getByString(
-                MD_Schedule_Exec_Sql_006(
-                        scheduleExec.customer_code.toString(),
-                        scheduleExec.schedule_prefix.toString(),
-                        scheduleExec.schedule_code.toString(),
-                        scheduleExec.schedule_exec.toString()
-                ).toSqlQuery()
+            MD_Schedule_Exec_Sql_006(
+                scheduleExec.customer_code.toString(),
+                scheduleExec.schedule_prefix.toString(),
+                scheduleExec.schedule_code.toString(),
+                scheduleExec.schedule_exec.toString()
+            ).toSqlQuery()
         )
         //
         if (customFormLocal != null) {
@@ -818,22 +910,26 @@ class Act083_Main_Presenter constructor(
      * @return
      */
     private fun getProductIconLocalPath(productIconName: String?): String? {
-         if (productIconName != null && ToolBox_Inf.verifyDownloadFileInf(productIconName, Constant.CACHE_PATH)) {
-                return  productIconName
-            }
+        if (productIconName != null && ToolBox_Inf.verifyDownloadFileInf(
+                productIconName,
+                Constant.CACHE_PATH
+            )
+        ) {
+            return productIconName
+        }
         return null
     }
 
     private fun processTicketFlow(myAction: MyActions) {
         val scheduleExec = getScheduleFromMyAction(myAction)
-        if(scheduleExec != null) {
+        if (scheduleExec != null) {
             if (ConstantBaseApp.SYS_STATUS_SCHEDULE != scheduleExec.status) {
                 if (isScheduleStatusPossibleToOpen(scheduleExec!!)) {
                     prepareOpenTicket(myAction, scheduleExec)
                 } else {
                     mView.showMsg(
-                            Act083_Main.MODULE_SCHEDULE_STATUS_PREVENTS_TO_OPEN,
-                            myAction
+                        Act083_Main.MODULE_SCHEDULE_STATUS_PREVENTS_TO_OPEN,
+                        myAction
                     )
                 }
             } else {
@@ -847,8 +943,8 @@ class Act083_Main_Presenter constructor(
                         mView.showMsg(Act083_Main.FREE_EXECUTION_BLOCKED, myAction)
                     } else {
                         mView.showMsg(
-                                Act083_Main.MODULE_TICKET_EXEC_CONFIRM,
-                                myAction
+                            Act083_Main.MODULE_TICKET_EXEC_CONFIRM,
+                            myAction
                         )
                     }
                 }
@@ -862,34 +958,52 @@ class Act083_Main_Presenter constructor(
         var result: Boolean = false
 
         val splippedPk = item.getSplippedPk()
-        val scheduleTicket = getTicketBySchedule(splippedPk.get(0).toInt(), splippedPk.get(1).toInt(), splippedPk.get(2).toInt())
+        val scheduleTicket = getTicketBySchedule(
+            splippedPk.get(0).toInt(),
+            splippedPk.get(1).toInt(),
+            splippedPk.get(2).toInt()
+        )
         val scheduleExec = getScheduleFromMyAction(item)
 
         if (scheduleTicket != null && TK_Ticket.isValidTkTicket(scheduleTicket)) {
-           result = true
-        }else{
+            result = true
+        } else {
             val createTicketForSchedule = createTicketForSchedule(item, scheduleExec)
-            if(createTicketForSchedule != null){
+            if (createTicketForSchedule != null) {
                 ticket_prefix = createTicketForSchedule.ticket_prefix
                 ticket_code = createTicketForSchedule.ticket_code
                 result = true
-            }else{
+            } else {
                 result = false
             }
         }
 
         if (result) {
-            mView.callAct071(getTicketActionFlowBundle(item, scheduleExec!!, ticket_prefix, ticket_code, 1)!!)
+            mView.callAct071(
+                getTicketActionFlowBundle(
+                    item,
+                    scheduleExec!!,
+                    ticket_prefix,
+                    ticket_code,
+                    1
+                )!!
+            )
         } else {
             mView.showMsg(
-                    Act083_Main.MODULE_SCHEDULE_TICKET_CREATION_ERROR,
-                    item
+                Act083_Main.MODULE_SCHEDULE_TICKET_CREATION_ERROR,
+                item
             )
         }
 
     }
 
-    private fun getTicketActionFlowBundle(myAction: MyActions, scheduleExec: MD_Schedule_Exec, ticket_prefix: Int, ticket_code: Int, ticket_seq: Int): Bundle {
+    private fun getTicketActionFlowBundle(
+        myAction: MyActions,
+        scheduleExec: MD_Schedule_Exec,
+        ticket_prefix: Int,
+        ticket_code: Int,
+        ticket_seq: Int
+    ): Bundle {
         val bundle = Bundle()
         //Seta dados da action selecionado no filterParam
         setSeletedActionInfosIntoFilterParam(myAction.actionType, myAction.processPk)
@@ -904,11 +1018,12 @@ class Act083_Main_Presenter constructor(
         bundle.putInt(TK_TicketDao.TICKET_CODE, ticket_code)
         //16/03/2020 - foi convencionado que durante a criação da execução do ticket, o ticket id,
         //será o igual ao do exibido nas celulas do agendamento.
-        bundle.putString(TK_TicketDao.TICKET_ID, ToolBox_Inf.getFormattedTicketSeqExec(
+        bundle.putString(
+            TK_TicketDao.TICKET_ID, ToolBox_Inf.getFormattedTicketSeqExec(
                 myAction.processPk,
                 ticket_prefix.toString(),
                 ticket_code.toString()
-        )
+            )
         )
         //bundle.putString(TK_TicketDao.TYPE_PATH, item.get(TK_TicketDao.TYPE_PATH));
         bundle.putString(TK_TicketDao.TYPE_DESC, scheduleExec.ticket_type_desc)
@@ -936,16 +1051,20 @@ class Act083_Main_Presenter constructor(
         return bundle
     }
 
-    private fun getScheduleCtrlIfExists(item: MD_Schedule_Exec, ticket_prefix: Int, ticket_code: Int): TK_Ticket_Ctrl? {
+    private fun getScheduleCtrlIfExists(
+        item: MD_Schedule_Exec,
+        ticket_prefix: Int,
+        ticket_code: Int
+    ): TK_Ticket_Ctrl? {
         return ticketCtrlDao.getByString(
-                Sql_Act017_005(
-                        ToolBox_Con.getPreference_Customer_Code(context),
-                        item.schedule_prefix.toString(),
-                        item.schedule_code.toString(),
-                        item.schedule_exec.toString(),
-                        ticket_prefix.toString(),
-                        ticket_code.toString()
-                ).toSqlQuery()
+            Sql_Act017_005(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                item.schedule_prefix.toString(),
+                item.schedule_code.toString(),
+                item.schedule_exec.toString(),
+                ticket_prefix.toString(),
+                ticket_code.toString()
+            ).toSqlQuery()
         )
     }
 
@@ -956,15 +1075,15 @@ class Act083_Main_Presenter constructor(
         return false
     }
 
-    fun setSeletedActionInfosIntoFilterParam(myActionType: String, myActionPk: String){
-        if(::myActionFilterParam.isInitialized){
+    fun setSeletedActionInfosIntoFilterParam(myActionType: String?, myActionPk: String?) {
+        if (::myActionFilterParam.isInitialized) {
             myActionFilterParam.setSelectedItemParams(
-                    mView.getMketFilter(),
-                    mView.getCurrentTab(),
-                    myActionType,
-                    myActionPk,
+                mView.getMketFilter(),
+                mView.getCurrentTab(),
+                myActionType ?: "",
+                myActionPk ?: "",
                 null,
-                    mView.getMainUserFilter()
+                mView.getMainUserFilter()
             )
             updateSharedPrefs()
         }
@@ -988,7 +1107,10 @@ class Act083_Main_Presenter constructor(
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
         bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, myActionFilterParam.originFlow)
         //
-        bundle.putString(GE_Custom_Form_ApDao.CUSTOMER_CODE, ToolBox_Con.getPreference_Customer_Code(context).toString())
+        bundle.putString(
+            GE_Custom_Form_ApDao.CUSTOMER_CODE,
+            ToolBox_Con.getPreference_Customer_Code(context).toString()
+        )
         bundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE, splippedPk[0])
         bundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE, splippedPk[1])
         bundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION, splippedPk[2])
@@ -1024,8 +1146,13 @@ class Act083_Main_Presenter constructor(
         val mIntent = Intent(context, WBR_TK_Ticket_Download::class.java)
         val bundle = Bundle()
         bundle.putString(
-                TK_TicketDao.TICKET_PREFIX,
-                "${ToolBox_Con.getPreference_Customer_Code(context)}|${myAction.processPk.replace(".", "|")}"
+            TK_TicketDao.TICKET_PREFIX,
+            "${ToolBox_Con.getPreference_Customer_Code(context)}|${
+                myAction.processPk.replace(
+                    ".",
+                    "|"
+                )
+            }"
         )
         mIntent.putExtras(bundle)
         //
@@ -1034,19 +1161,36 @@ class Act083_Main_Presenter constructor(
 
     private fun prepareOpenTicket(item: MyActions, scheduleExec: MD_Schedule_Exec) {
         val splippedPk = item.getSplippedPk()
-        val scheduleTicket = getTicketBySchedule(splippedPk.get(0).toInt(), splippedPk.get(1).toInt(), splippedPk.get(2).toInt())
-        val ticketPrefix = scheduleTicket?.ticket_prefix?:0
-        val ticketCode = scheduleTicket?.ticket_code?:0
-        if (scheduleTicket!= null
-                && ticketPrefix > 0
-                && ticketCode > 0) {
+        val scheduleTicket = getTicketBySchedule(
+            splippedPk.get(0).toInt(),
+            splippedPk.get(1).toInt(),
+            splippedPk.get(2).toInt()
+        )
+        val ticketPrefix = scheduleTicket?.ticket_prefix ?: 0
+        val ticketCode = scheduleTicket?.ticket_code ?: 0
+        if (scheduleTicket != null
+            && ticketPrefix > 0
+            && ticketCode > 0
+        ) {
             mView.callAct070(getTicketFlowBundle(item, ticketPrefix, ticketCode))
         } else {
-            mView.callAct071(getTicketActionFlowBundle(item, scheduleExec!!, ticketPrefix, ticketCode, 1))
+            mView.callAct071(
+                getTicketActionFlowBundle(
+                    item,
+                    scheduleExec!!,
+                    ticketPrefix,
+                    ticketCode,
+                    1
+                )
+            )
         }
     }
 
-    private fun getTicketFlowBundle(myAction: MyActions, ticketPrefix: Int, ticketCode: Int): Bundle {
+    private fun getTicketFlowBundle(
+        myAction: MyActions,
+        ticketPrefix: Int,
+        ticketCode: Int
+    ): Bundle {
         val bundle = Bundle()
         //Seta dados da action selecionado no filterParam
         setSeletedActionInfosIntoFilterParam(myAction.actionType, myAction.processPk)
@@ -1069,33 +1213,34 @@ class Act083_Main_Presenter constructor(
         //sobre a restrição.
         if (hasScheduleSiteAccess(item.siteCode)) {
             ToolBox.alertMSG_YES_NO(
-                    context,
-                    hmAux_Trans!!["alert_form_site_restriction_ttl"],
-                    hmAux_Trans!!["alert_form_site_restriction_confirm"],
-                    { dialog, which ->
-                        if (!ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null)
-                                && !ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_OI, null)) {
-                            ToolBox_Con.setPreference_Site_Code(context, item.siteCode.toString())
-                            ToolBox_Con.setPreference_Zone_Code(context, -1)
-                            //
-                            mView.updateFooterInfos();
-                            //
-                            checkScheduleFlow(item)
-                        } else {
-                            ToolBox_Con.setPreference_Site_Code(context, item.siteCode.toString())
-                            ToolBox_Con.setPreference_Zone_Code(context, -1)
-                            mView.callAct033()
-                        }
-                    },
-                    1
+                context,
+                hmAux_Trans!!["alert_form_site_restriction_ttl"],
+                hmAux_Trans!!["alert_form_site_restriction_confirm"],
+                { dialog, which ->
+                    if (!ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null)
+                        && !ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_OI, null)
+                    ) {
+                        ToolBox_Con.setPreference_Site_Code(context, item.siteCode.toString())
+                        ToolBox_Con.setPreference_Zone_Code(context, -1)
+                        //
+                        mView.updateFooterInfos();
+                        //
+                        checkScheduleFlow(item)
+                    } else {
+                        ToolBox_Con.setPreference_Site_Code(context, item.siteCode.toString())
+                        ToolBox_Con.setPreference_Zone_Code(context, -1)
+                        mView.callAct033()
+                    }
+                },
+                1
             )
         } else {
             ToolBox.alertMSG(
-                    context,
-                    hmAux_Trans!!["alert_form_site_restriction_ttl"],
-                    hmAux_Trans!!["alert_form_site_restriction_no_access_msg"],
-                    null,
-                    0
+                context,
+                hmAux_Trans!!["alert_form_site_restriction_ttl"],
+                hmAux_Trans!!["alert_form_site_restriction_no_access_msg"],
+                null,
+                0
             )
         }
     }
@@ -1113,12 +1258,12 @@ class Act083_Main_Presenter constructor(
         val schedule_exec = splippedPk.get(2).toInt()
         //
         val scheduleExec: MD_Schedule_Exec? = scheduleDao.getByString(
-                MD_Schedule_Exec_Sql_001(
-                        ToolBox_Con.getPreference_Customer_Code(context),
-                        schedule_prefix,
-                        schedule_code,
-                        schedule_exec
-                ).toSqlQuery()
+            MD_Schedule_Exec_Sql_001(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                schedule_prefix,
+                schedule_code,
+                schedule_exec
+            ).toSqlQuery()
         )
         //
         return scheduleExec
@@ -1140,28 +1285,32 @@ class Act083_Main_Presenter constructor(
 
     private fun isAnyFormInProcessing(scheduleExec: MD_Schedule_Exec): Boolean {
         val customFormLocal = formLocalDao.getByString(
-                GE_Custom_Form_Local_Sql_003(
-                        scheduleExec.customer_code.toString(),
-                        scheduleExec.custom_form_type.toString(),
-                        scheduleExec.custom_form_code.toString(),
-                        scheduleExec.custom_form_version.toString(),
-                        "0",
-                        scheduleExec.product_code.toString(),
-                        scheduleExec.serial_id
-                ).toSqlQuery()
+            GE_Custom_Form_Local_Sql_003(
+                scheduleExec.customer_code.toString(),
+                scheduleExec.custom_form_type.toString(),
+                scheduleExec.custom_form_code.toString(),
+                scheduleExec.custom_form_version.toString(),
+                "0",
+                scheduleExec.product_code.toString(),
+                scheduleExec.serial_id
+            ).toSqlQuery()
         )
         return customFormLocal != null
     }
 
 
-    private fun createTicketForSchedule(item: MyActions, scheduleExec: MD_Schedule_Exec?): TK_Ticket? {
+    private fun createTicketForSchedule(
+        item: MyActions,
+        scheduleExec: MD_Schedule_Exec?
+    ): TK_Ticket? {
         val nextTicketCode: Int = getNextScheduleTicketCode()
         val md_site = getSiteObj(ToolBox_Con.getPreference_Site_Code(context))
         val mdOperation = getOperationObj(ToolBox_Con.getPreference_Operation_Code(context))
         //
         if (nextTicketCode > 0 && MD_Site.isValid(md_site) && MD_Operation.isValid(mdOperation)) {
             //Cria ticket
-            val tkTicket = createTicket(item, scheduleExec!!, nextTicketCode, md_site!!, mdOperation!!)
+            val tkTicket =
+                createTicket(item, scheduleExec!!, nextTicketCode, md_site!!, mdOperation!!)
             //Add ctrl e action ao ticket
             //TODO REVE COMO FAZER AGORA QUE CTRL É DO STEP
             tkTicket?.let {
@@ -1188,7 +1337,12 @@ class Act083_Main_Presenter constructor(
                         //
                         return tkTicket
                     } else {
-                        updateScheduleStatus(it.schedule_prefix!!, it.schedule_code!!, it.schedule_exec!!, ConstantBaseApp.SYS_STATUS_SCHEDULE)
+                        updateScheduleStatus(
+                            it.schedule_prefix!!,
+                            it.schedule_code!!,
+                            it.schedule_exec!!,
+                            ConstantBaseApp.SYS_STATUS_SCHEDULE
+                        )
                     }
                 }
             }
@@ -1197,7 +1351,13 @@ class Act083_Main_Presenter constructor(
         return null
     }
 
-    private fun createTicket(item: MyActions, scheduleExec: MD_Schedule_Exec, nextTicketCode: Int, md_site: MD_Site, mdOperation: MD_Operation): TK_Ticket? {
+    private fun createTicket(
+        item: MyActions,
+        scheduleExec: MD_Schedule_Exec,
+        nextTicketCode: Int,
+        md_site: MD_Site,
+        mdOperation: MD_Operation
+    ): TK_Ticket? {
         val tkTicket = TK_Ticket()
         //
         tkTicket.customer_code = ToolBox_Con.getPreference_Customer_Code(context)
@@ -1209,10 +1369,11 @@ class Act083_Main_Presenter constructor(
         tkTicket.type_id = scheduleExec.ticket_type_id!!
         tkTicket.type_desc = scheduleExec.ticket_type_desc!!
         tkTicket.open_date = ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")
-        tkTicket.open_user = ToolBox_Inf.convertStringToInt(ToolBox_Con.getPreference_User_Code(context))
+        tkTicket.open_user =
+            ToolBox_Inf.convertStringToInt(ToolBox_Con.getPreference_User_Code(context))
         tkTicket.open_user_name = ToolBox_Inf.getFullNick(
-                ToolBox_Con.getPreference_User_Code_Nick(context),
-                ToolBox_Con.getPreference_User_Code(context)
+            ToolBox_Con.getPreference_User_Code_Nick(context),
+            ToolBox_Con.getPreference_User_Code(context)
         )
         tkTicket.open_site_code = ToolBox_Inf.convertStringToInt(md_site.site_code)
         tkTicket.open_site_id = md_site.site_id
@@ -1240,6 +1401,7 @@ class Act083_Main_Presenter constructor(
         //
         return tkTicket
     }
+
     private fun createStep(tkTicket: TK_Ticket): TK_Ticket_Step? {
         val ticketStep = TK_Ticket_Step()
         ticketStep.step_code = 0
@@ -1249,10 +1411,11 @@ class Act083_Main_Presenter constructor(
         ticketStep.allow_new_obj = 0
         ticketStep.move_next_step = 1
         ticketStep.step_start_date = ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")
-        ticketStep.step_start_user = ToolBox_Inf.convertStringToInt(ToolBox_Con.getPreference_User_Code(context))
+        ticketStep.step_start_user =
+            ToolBox_Inf.convertStringToInt(ToolBox_Con.getPreference_User_Code(context))
         ticketStep.step_start_user_nick = ToolBox_Inf.getFullNick(
-                ToolBox_Con.getPreference_User_Code_Nick(context),
-                ToolBox_Con.getPreference_User_Code(context)
+            ToolBox_Con.getPreference_User_Code_Nick(context),
+            ToolBox_Con.getPreference_User_Code(context)
         )
         ticketStep.step_status = ConstantBaseApp.SYS_STATUS_PENDING
         ticketStep.user_focus = 1
@@ -1281,14 +1444,19 @@ class Act083_Main_Presenter constructor(
      * @param status
      * @return
      */
-    private fun updateScheduleStatus(schedule_prefix: Int, schedule_code: Int, schedule_exec: Int, status: String): Boolean {
+    private fun updateScheduleStatus(
+        schedule_prefix: Int,
+        schedule_code: Int,
+        schedule_exec: Int,
+        status: String
+    ): Boolean {
         val scheduleExec: MD_Schedule_Exec = scheduleDao.getByString(
-                MD_Schedule_Exec_Sql_001(
-                        ToolBox_Con.getPreference_Customer_Code(context),
-                        schedule_prefix,
-                        schedule_code,
-                        schedule_exec
-                ).toSqlQuery()
+            MD_Schedule_Exec_Sql_001(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                schedule_prefix,
+                schedule_code,
+                schedule_exec
+            ).toSqlQuery()
         )
         //
         if (MD_Schedule_Exec.isValidScheduleExec(scheduleExec)) {
@@ -1313,26 +1481,26 @@ class Act083_Main_Presenter constructor(
 
     private fun getSiteObj(site_code: String): MD_Site? {
         return siteDao.getByString(
-                MD_Site_Sql_003(
-                        ToolBox_Con.getPreference_Customer_Code(context),
-                        site_code
-                ).toSqlQuery()
+            MD_Site_Sql_003(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                site_code
+            ).toSqlQuery()
         )
     }
 
 
     private fun getOperationObj(operationCode: Long): MD_Operation? {
-        val operationDao =  MD_OperationDao(
-                context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                Constant.DB_VERSION_CUSTOM
+        val operationDao = MD_OperationDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
         )
         //
         return operationDao.getByString(
-                MD_Operation_Sql_004(
-                        ToolBox_Con.getPreference_Customer_Code(context),
-                        operationCode
-                ).toSqlQuery()
+            MD_Operation_Sql_004(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                operationCode
+            ).toSqlQuery()
         )
     }
 
@@ -1346,9 +1514,9 @@ class Act083_Main_Presenter constructor(
      */
     private fun getNextScheduleTicketCode(): Int {
         val auxCode = ticketDao.getByStringHM(
-                TK_Ticket_Sql_010(
-                        ToolBox_Con.getPreference_Customer_Code(context)
-                ).toSqlQuery()
+            TK_Ticket_Sql_010(
+                ToolBox_Con.getPreference_Customer_Code(context)
+            ).toSqlQuery()
         )
         //
         if (auxCode != null && auxCode.size > 0 && auxCode.hasConsistentValue(TK_Ticket_Sql_010.NEXT_SCHEDULE_TICKET_CODE)) {
@@ -1367,7 +1535,12 @@ class Act083_Main_Presenter constructor(
                 && !scheduleExec.serial_id.isNullOrEmpty()
     }
 
-    private fun executeSerialSearch(productCode: Int?, productId: String?, serialId: String, searchExact: Boolean) {
+    private fun executeSerialSearch(
+        productCode: Int?,
+        productId: String?,
+        serialId: String,
+        searchExact: Boolean
+    ) {
         executeSerialSearch(
             productCode,
             productId,
@@ -1377,14 +1550,25 @@ class Act083_Main_Presenter constructor(
         )
     }
 
-    private fun executeSerialSearch(productCode: Int?, productId: String?, serialId: String, searchExact: Boolean, myAction: MyActions?) {
+    private fun executeSerialSearch(
+        productCode: Int?,
+        productId: String?,
+        serialId: String,
+        searchExact: Boolean,
+        myAction: MyActions?
+    ) {
         if (ToolBox_Con.isOnline(context)
-            && !ToolBox_Con.getBooleanPreferencesByKey(context, ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, false)) {
+            && !ToolBox_Con.getBooleanPreferencesByKey(
+                context,
+                ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW,
+                false
+            )
+        ) {
             mView.setProcess(WS_Serial_Search::class.java.name)
             //
             mView.showPD(
-                    hmAux_Trans!!["dialog_serial_search_ttl"],
-                    hmAux_Trans!!["dialog_serial_search_start"]
+                hmAux_Trans!!["dialog_serial_search_ttl"],
+                hmAux_Trans!!["dialog_serial_search_start"]
             )
             //
             val mIntent = Intent(context, WBR_Serial_Search::class.java)
@@ -1402,27 +1586,46 @@ class Act083_Main_Presenter constructor(
             context.sendBroadcast(mIntent)
         } else {
             myAction?.let {
-                processLocalSearchForSerialAction(it, getSerial(it.productCode?:0, it.serialId?:""))
-            }?:offlineSerialSearch()
+                processLocalSearchForSerialAction(
+                    it.productCode,
+                    it.serialId,
+                    getSerial(it.productCode ?: 0, it.serialId ?: ""),
+                    it.actionType,
+                    it.processPk
+                )
+            } ?: offlineSerialSearch()
         }
     }
 
-    override fun extractSearchResult(result: String?, myActionSelected: MyActions?) {
+    override fun extractSearchResult(
+        result: String?,
+        productCode: Int?,
+        serialId: String?,
+        actionType: String?,
+        processPk: String?
+    ) {
         val gson = GsonBuilder().serializeNulls().create()
         val rec = gson.fromJson(
-                result,
-                TSerial_Search_Rec::class.java)
+            result,
+            TSerial_Search_Rec::class.java
+        )
         //
         val serialList = rec.record
         //
-        if(serialList.size > 0 ) {
-            myActionSelected?.let {
-                if(serialList[0] != null){
+        if (serialList.size > 0) {
+            if (productCode != null && serialId != null) {
+                if (serialList[0] != null) {
                     serialList[0].log_date = ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")
                 }
-                processLocalSearchForSerialAction(it, serialList[0])
-            }?:defineSearchResultFlow(serialList, rec.record_count, rec.record_page)
-        }else{
+                processLocalSearchForSerialAction(
+                    productCode,
+                    serialId,
+                    serialList[0],
+                    actionType,
+                    processPk
+                )
+            } else defineSearchResultFlow(serialList, rec.record_count, rec.record_page)
+        } else {
             mView.showAlertMsg(
                 hmAux_Trans!!["alert_no_serial_found_ttl"]!!,
                 hmAux_Trans!!["alert_no_serial_found_msg"]!!
@@ -1437,50 +1640,58 @@ class Act083_Main_Presenter constructor(
      */
     fun offlineSerialSearch() {
         val item: MD_Schedule_Exec = serialDialog!!.auxSchedule
-        val serialToUse = if (!item.serial_id.isNullOrEmpty()){
-                                item.serial_id
-                            } else{
-                                serialDialog?.serialId ?: ""
-                            }
+        val serialToUse = if (!item.serial_id.isNullOrEmpty()) {
+            item.serial_id
+        } else {
+            serialDialog?.serialId ?: ""
+        }
         val serialList: ArrayList<MD_Product_Serial> = hasLocalSerial(
-                item.product_id,
-                serialToUse!!
+            item.product_id,
+            serialToUse!!
         )
         //
         //
         if (serialList.size > 0) {
             defineSearchResultFlow(serialList, serialList.size.toLong(), serialList.size.toLong())
         } else {
-            if (item.allow_new_serial_cl == 0 && item.require_serial == 1){
+            if (item.allow_new_serial_cl == 0 && item.require_serial == 1) {
                 ToolBox_Inf.showNoConnectionDialog(context)
             } else {
-                defineSearchResultFlow(serialList, serialList.size.toLong(), serialList.size.toLong())
+                defineSearchResultFlow(
+                    serialList,
+                    serialList.size.toLong(),
+                    serialList.size.toLong()
+                )
             }
         }
     }
 
-    private fun defineSearchResultFlow(serialList: ArrayList<MD_Product_Serial>, record_count: Long, record_page: Long) {
+    private fun defineSearchResultFlow(
+        serialList: ArrayList<MD_Product_Serial>,
+        record_count: Long,
+        record_page: Long
+    ) {
         val scheduleExec: MD_Schedule_Exec = serialDialog!!.auxSchedule
         //
         if (ToolBox_Inf.productConfigPreventToProceed(scheduleExec) && (serialList == null || serialList.size == 0)) {
             //Se serial não definido, significa que não avançou para proxima tela pois o produto não permite criação de serial.
             mView.showMsg(
-                    if (!scheduleExec.serial_id.isNullOrEmpty()) Act083_Main.EMPTY_SERIAL_SEARCH else Act083_Main.SERIAL_CREATION_DENIED,
-                    actionSelected!!
+                if (!scheduleExec.serial_id.isNullOrEmpty()) Act083_Main.EMPTY_SERIAL_SEARCH else Act083_Main.SERIAL_CREATION_DENIED,
+                actionSelected!!
             )
         } else {
             val serialId =
-                    if (!scheduleExec.serial_id.isNullOrEmpty()){
-                        scheduleExec.serial_id?:""
-                    } else{
-                        serialDialog?.let{
-                            it.serialId?:""
-                        }?:""
-                    }
+                if (!scheduleExec.serial_id.isNullOrEmpty()) {
+                    scheduleExec.serial_id ?: ""
+                } else {
+                    serialDialog?.let {
+                        it.serialId ?: ""
+                    } ?: ""
+                }
             val idx: Int = getIdxIfEquals(
-                    serialList,
-                    scheduleExec.product_code,
-                    serialId
+                serialList,
+                scheduleExec.product_code,
+                serialId
             )
             //
             val bundle = Bundle()
@@ -1506,21 +1717,40 @@ class Act083_Main_Presenter constructor(
             bundle.putLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_PAGE, record_page)
             //bundle.putString(ConstantBaseApp.ACT_SELECTED_DATE, item[Act017_Main.ACT017_ADAPTER_DATE_REF])
             bundle.putString(ConstantBaseApp.ACT_SELECTED_DATE, calendarDate)
-            bundle.putString(Constant.ACT009_CUSTOM_FORM_TYPE, scheduleExec.custom_form_type.toString())
-            bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE, scheduleExec.custom_form_code.toString())
-            bundle.putString(Constant.ACT010_CUSTOM_FORM_VERSION, scheduleExec.custom_form_version.toString())
+            bundle.putString(
+                Constant.ACT009_CUSTOM_FORM_TYPE,
+                scheduleExec.custom_form_type.toString()
+            )
+            bundle.putString(
+                Constant.ACT010_CUSTOM_FORM_CODE,
+                scheduleExec.custom_form_code.toString()
+            )
+            bundle.putString(
+                Constant.ACT010_CUSTOM_FORM_VERSION,
+                scheduleExec.custom_form_version.toString()
+            )
             bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, scheduleExec.custom_form_desc)
-            bundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK, ToolBox_Inf.formatSchedulePk(scheduleExec.schedule_prefix, scheduleExec.schedule_code, scheduleExec.schedule_exec))
+            bundle.putString(
+                MD_Schedule_ExecDao.SCHEDULE_PK,
+                ToolBox_Inf.formatSchedulePk(
+                    scheduleExec.schedule_prefix,
+                    scheduleExec.schedule_code,
+                    scheduleExec.schedule_exec
+                )
+            )
             bundle.putString(Constant.ACT017_SCHEDULED_SITE, scheduleExec.site_code.toString())
             //
-            if(scheduleExec.is_so == 0){
+            if (scheduleExec.is_so == 0) {
                 if (createFormLocalForSchedule(actionSelected!!, scheduleExec)) {
-                    prepareAct020(bundle,scheduleExec)
+                    prepareAct020(bundle, scheduleExec)
                 } else {
-                    mView.showMsg(Act083_Main.MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR, actionSelected!!)
+                    mView.showMsg(
+                        Act083_Main.MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR,
+                        actionSelected!!
+                    )
                 }
-            }else{
-                prepareAct020(bundle,scheduleExec)
+            } else {
+                prepareAct020(bundle, scheduleExec)
             }
 
         }
@@ -1537,7 +1767,7 @@ class Act083_Main_Presenter constructor(
             actionSelected!!.scheduleCustomFormData.toString()
         )
         bundle.putBoolean(ConstantBaseApp.SCHEDULED_PROFILE_CHECK, false)
-        bundle.putInt(GE_Custom_FormDao.IS_SO,scheduleExec.is_so)
+        bundle.putInt(GE_Custom_FormDao.IS_SO, scheduleExec.is_so)
         //
         setSeletedActionInfosIntoFilterParam(
             MyActions.MY_ACTION_TYPE_SCHEDULE,
@@ -1563,10 +1793,18 @@ class Act083_Main_Presenter constructor(
      * @param serialId - Id do serial buscado
      * @return - Retorna indice do serial buscado ou -1 se serial não encontrado.
      */
-    private fun getIdxIfEquals(serialList: ArrayList<MD_Product_Serial>, productCode: Int, serialId: String): Int {
+    private fun getIdxIfEquals(
+        serialList: ArrayList<MD_Product_Serial>,
+        productCode: Int,
+        serialId: String
+    ): Int {
         for (i in serialList.indices) {
             val serial: MD_Product_Serial = serialList.get(i)
-            if (serial.product_code == productCode.toLong() && serial.serial_id.equals(serialId, true)) {
+            if (serial.product_code == productCode.toLong() && serial.serial_id.equals(
+                    serialId,
+                    true
+                )
+            ) {
                 return i
             }
         }
@@ -1574,20 +1812,23 @@ class Act083_Main_Presenter constructor(
         return -1
     }
 
-    private fun hasLocalSerial(product_id: String, serial_id: String): ArrayList<MD_Product_Serial> {
+    private fun hasLocalSerial(
+        product_id: String,
+        serial_id: String
+    ): ArrayList<MD_Product_Serial> {
         val serialDao = MD_Product_SerialDao(
-                context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                Constant.DB_VERSION_CUSTOM
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
         )
         return serialDao.query(
-                Sql_Act020_002(
-                        ToolBox_Con.getPreference_Customer_Code(context),
-                        ToolBox_Con.getPreference_Site_Code(context),
-                        product_id,
-                        serial_id,
-                        ""
-                ).toSqlQuery()
+            Sql_Act020_002(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                ToolBox_Con.getPreference_Site_Code(context),
+                product_id,
+                serial_id,
+                ""
+            ).toSqlQuery()
         ) as ArrayList<MD_Product_Serial>
     }
 
@@ -1604,8 +1845,10 @@ class Act083_Main_Presenter constructor(
     }
 
     override fun verifyProductOutdateForForm(hmAuxTicketDownloaded: HMAux): Boolean {
-        val ticketPrefix = hmAuxTicketDownloaded[TK_TicketDao.TICKET_PREFIX]?.let { Integer.valueOf(it) } ?: -1
-        val ticketCode = hmAuxTicketDownloaded[TK_TicketDao.TICKET_CODE]?.let { Integer.valueOf(it) } ?: -1
+        val ticketPrefix =
+            hmAuxTicketDownloaded[TK_TicketDao.TICKET_PREFIX]?.let { Integer.valueOf(it) } ?: -1
+        val ticketCode =
+            hmAuxTicketDownloaded[TK_TicketDao.TICKET_CODE]?.let { Integer.valueOf(it) } ?: -1
         //
         return ToolBox_Inf.hasFormProductOutdate(context, ticketPrefix, ticketCode)
     }
@@ -1614,8 +1857,8 @@ class Act083_Main_Presenter constructor(
         mView.setProcess(WS_Sync::class.java.name)
         //
         mView.showPD(
-                hmAux_Trans!!["progress_sync_ttl"],
-                hmAux_Trans!!["progress_sync_msg"]
+            hmAux_Trans!!["progress_sync_ttl"],
+            hmAux_Trans!!["progress_sync_msg"]
         )
         val data_package = arrayListOf(DataPackage.DATA_PACKAGE_CHECKLIST)
         val mIntent = Intent(context, WBR_Sync::class.java)
@@ -1635,10 +1878,15 @@ class Act083_Main_Presenter constructor(
     }
 
     override fun getCacheTicketBundle(hmAuxTicketDownloaded: HMAux): Bundle {
-        val ticketPrefix = hmAuxTicketDownloaded[TK_TicketDao.TICKET_PREFIX]?.let { Integer.valueOf(it) } ?: -1
-        val ticketCode = hmAuxTicketDownloaded[TK_TicketDao.TICKET_CODE]?.let { Integer.valueOf(it) } ?: -1
+        val ticketPrefix =
+            hmAuxTicketDownloaded[TK_TicketDao.TICKET_PREFIX]?.let { Integer.valueOf(it) } ?: -1
+        val ticketCode =
+            hmAuxTicketDownloaded[TK_TicketDao.TICKET_CODE]?.let { Integer.valueOf(it) } ?: -1
         //Seta dados da action selecionado no filterParam
-        setSeletedActionInfosIntoFilterParam(MyActions.MY_ACTION_TYPE_TICKET, "$ticketPrefix.$ticketCode")
+        setSeletedActionInfosIntoFilterParam(
+            MyActions.MY_ACTION_TYPE_TICKET,
+            "$ticketPrefix.$ticketCode"
+        )
         //
         return ticketBundle(ticketPrefix, ticketCode)
     }
@@ -1716,7 +1964,11 @@ class Act083_Main_Presenter constructor(
     }
 
     private fun setSiteFilter(): Boolean {
-        return  ConstantBaseApp.PREFERENCE_HOME_CURRENT_SITE_OPTION == ToolBox_Con.getStringPreferencesByKey(context, ConstantBaseApp.PREFERENCE_HOME_SITES_FILTER, ConstantBaseApp.PREFERENCE_HOME_ALL_SITE_OPTION)
+        return ConstantBaseApp.PREFERENCE_HOME_CURRENT_SITE_OPTION == ToolBox_Con.getStringPreferencesByKey(
+            context,
+            ConstantBaseApp.PREFERENCE_HOME_SITES_FILTER,
+            ConstantBaseApp.PREFERENCE_HOME_ALL_SITE_OPTION
+        )
                 && !ToolBox_Inf.hasSoOrIOProfile(context)
     }
 
@@ -1732,20 +1984,21 @@ class Act083_Main_Presenter constructor(
         //
         launch = CoroutineScope(Dispatchers.IO).launch {
             //Antes de gerar lista exibida, calcula o contador da outra aba o.O
-            val otherCounter :Int = getOtherTabCounter(tabUserFocusFilter)
+            val otherCounter: Int = getOtherTabCounter(tabUserFocusFilter)
             //
             _myActionsList.addAll(
-                    getLocalTickets(tabUserFocusFilter).map {
-                        val lastTicketSelected = getLastSelectedPk(MyActions.MY_ACTION_TYPE_TICKET)
-                        TK_Ticket.toMyActionsObj(context, it, lastTicketSelected)
-                    }
+                getLocalTickets(tabUserFocusFilter).map {
+                    val lastTicketSelected = getLastSelectedPk(MyActions.MY_ACTION_TYPE_TICKET)
+                    TK_Ticket.toMyActionsObj(context, it, lastTicketSelected)
+                }
             )
             //
             _myActionsList.addAll(
-                    getCachedTickets(tabUserFocusFilter).map {
-                        val lastTicketCacheSelected = getLastSelectedPk(MyActions.MY_ACTION_TYPE_TICKET_CACHE)
-                        it.toMyActionsObj(context, lastTicketCacheSelected)
-                    }
+                getCachedTickets(tabUserFocusFilter).map {
+                    val lastTicketCacheSelected =
+                        getLastSelectedPk(MyActions.MY_ACTION_TYPE_TICKET_CACHE)
+                    it.toMyActionsObj(context, lastTicketCacheSelected)
+                }
             )
             //
             if (!ConstantBaseApp.ACT068.equals(myActionFilterParam.originFlow, true)) {
@@ -1814,7 +2067,7 @@ class Act083_Main_Presenter constructor(
      * retornada
      */
     private fun getOtherTabCounter(tabUserFocusFilter: Int): Int {
-        val otherTab = if(tabUserFocusFilter == 1) 0 else 1
+        val otherTab = if (tabUserFocusFilter == 1) 0 else 1
         var counter = 0
         //
         counter += getLocalTickets(otherTab).size
@@ -1835,90 +2088,90 @@ class Act083_Main_Presenter constructor(
      * Usado para passar a pk somente para a lista de acton do memso tipo da navegada
      */
     private fun getLastSelectedPk(myActionType: String) =
-            if (_lastSelectedActionType == myActionType) {
-                _lastSelectedActionPk
-            } else {
-                null
-            }
+        if (_lastSelectedActionType == myActionType) {
+            _lastSelectedActionPk
+        } else {
+            null
+        }
 
     private fun createMyActionFormCreation(): MyActionsFormButton {
-            return MyActionsFormButton(
-                    productCode!!,
-                    myActionFilterParam.productDesc!!,
-                    serialId!!,
-                    hmAux_Trans!!["new_form_lbl"]!!
-            )
+        return MyActionsFormButton(
+            productCode!!,
+            myActionFilterParam.productDesc!!,
+            serialId!!,
+            hmAux_Trans!!["new_form_lbl"]!!
+        )
     }
 
     private fun getLocalTickets(userFocus: Int): MutableList<HMAux> {
         //
         return ticketDao.query_HM(
-                SqlAct083_002(
-                    context,
-                    myActionFilterParam.originFlow,
-                    ToolBox_Con.getPreference_Customer_Code(context).toInt(),
-                    tagFilter,
-                    siteCode,
-                    productCode,
-                    serialId,
-                    clientId,
-                    contractId,
-                    ticketId,
-                    calendarDate,
-                    userFocus,
-                        hmAux_Trans?.get("other_steps_available_lbl")
-                ).toSqlQuery()
+            SqlAct083_002(
+                context,
+                myActionFilterParam.originFlow,
+                ToolBox_Con.getPreference_Customer_Code(context).toInt(),
+                tagFilter,
+                siteCode,
+                productCode,
+                serialId,
+                clientId,
+                contractId,
+                ticketId,
+                calendarDate,
+                userFocus,
+                hmAux_Trans?.get("other_steps_available_lbl")
+            ).toSqlQuery()
         )
     }
 
     private fun getCachedTickets(userFocus: Int): MutableList<TkTicketCache> {
         return ticketCacheDao.query(
-                SqlAct083_001(
-                    context,
-                    myActionFilterParam.originFlow,
-                    ToolBox_Con.getPreference_Customer_Code(context).toInt(),
-                    tagFilter,
-                    siteCode,
-                    productCode,
-                    serialId,
-                    clientId,
-                    contractId,
-                    ticketId,
-                    calendarDate,
-                    userFocus,
-                        hmAux_Trans?.get("other_steps_available_lbl")
-                ).toSqlQuery()
+            SqlAct083_001(
+                context,
+                myActionFilterParam.originFlow,
+                ToolBox_Con.getPreference_Customer_Code(context).toInt(),
+                tagFilter,
+                siteCode,
+                productCode,
+                serialId,
+                clientId,
+                contractId,
+                ticketId,
+                calendarDate,
+                userFocus,
+                hmAux_Trans?.get("other_steps_available_lbl")
+            ).toSqlQuery()
         )
     }
 
     fun getSchedules(userFocus: Int): MutableList<MD_Schedule_Exec> {
         return scheduleDao.query(
-                SqlAct083_005(
-                    context,
-                    myActionFilterParam.originFlow,
-                    ToolBox_Con.getPreference_Customer_Code(context).toInt(),
-                    tagFilter,
-                    productCode,
-                    serialId,
-                    siteCode,
-                    calendarDate,
-                    userFocus
-                ).toSqlQuery()
+            SqlAct083_005(
+                context,
+                myActionFilterParam.originFlow,
+                ToolBox_Con.getPreference_Customer_Code(context).toInt(),
+                tagFilter,
+                productCode,
+                serialId,
+                siteCode,
+                calendarDate,
+                userFocus
+            ).toSqlQuery()
         )
     }
 
     private fun getFormAp(userFocus: Int): MutableList<GE_Custom_Form_Ap> {
         return formApDao.query(
-                SqlAct083_003(
-                    context,
-                    myActionFilterParam.originFlow,
-                    ToolBox_Con.getPreference_Customer_Code(context).toInt(),
-                    tagFilter,
-                    productCode,
-                    serialId,
-                    calendarDate,
-                    userFocus
-                ).toSqlQuery()
+            SqlAct083_003(
+                context,
+                myActionFilterParam.originFlow,
+                ToolBox_Con.getPreference_Customer_Code(context).toInt(),
+                tagFilter,
+                productCode,
+                serialId,
+                calendarDate,
+                userFocus
+            ).toSqlQuery()
         )
     }
 
@@ -1926,26 +2179,30 @@ class Act083_Main_Presenter constructor(
 //        val lbl = hmAux_Trans?.get("form_lbl") ?: "FORMULARIO"
 
         return formLocalDao.query_HM(
-                SqlAct083_004(
-                    myActionFilterParam.originFlow,
-                    ToolBox_Con.getPreference_Customer_Code(context).toInt(),
-                    tagFilter,
-                    productCode,
-                    serialId,
-                    calendarDate,
-                    userFocus
-                ).toSqlQuery()
+            SqlAct083_004(
+                myActionFilterParam.originFlow,
+                ToolBox_Con.getPreference_Customer_Code(context).toInt(),
+                tagFilter,
+                productCode,
+                serialId,
+                calendarDate,
+                userFocus
+            ).toSqlQuery()
         )
     }
 
-    private fun getTicketBySchedule(schedule_prefix: Int, schedule_code: Int, schedule_exec: Int): TK_Ticket? {
+    private fun getTicketBySchedule(
+        schedule_prefix: Int,
+        schedule_code: Int,
+        schedule_exec: Int
+    ): TK_Ticket? {
         return ticketDao.getByString(
-                TK_Ticket_Sql_009(
-                        ToolBox_Con.getPreference_Customer_Code(context),
-                        schedule_prefix,
-                        schedule_code,
-                        schedule_exec
-                ).toSqlQuery()
+            TK_Ticket_Sql_009(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                schedule_prefix,
+                schedule_code,
+                schedule_exec
+            ).toSqlQuery()
         )
     }
 
@@ -2069,6 +2326,37 @@ class Act083_Main_Presenter constructor(
         }
 
         mView.setTabsCounters(getOtherTabCounter(0), getOtherTabCounter(1))
+    }
+
+    override fun callAct093(model: SerialSiteInventory) {
+        setSerialModel(model)
+        mView.callAct093(Bundle().apply {
+            myActionFilterParam.originFlow = ConstantBaseApp.ACT083
+            putSerializable(
+                MyActionFilterParam.MY_ACTION_FILTER_PARAM,
+                myActionFilterParam
+            )
+        })
+    }
+
+    private fun setSerialModel(model: SerialSiteInventory) {
+        val actionUseCase = ActionPreferenceUseCases.ActionUseCasesFactory(context).build()
+
+        actionUseCase.setPreferences(
+            SerialModel(
+                originFlow = originFlow.ifEmpty { ConstantBaseApp.ACT083 },
+                siteCodeBack = ToolBox_Con.getPreference_Site_Code(context),
+                zoneCodeBack = ToolBox_Con.getPreference_Zone_Code(context),
+                classColor = model.classColor ?: "",
+                productCode = model.productCode,
+                productId = "",
+                productDesc = "",
+                serialId = model.serialId,
+                serialCode = model.serialCode.toLong(),
+                ticketId = "",
+                calendarDate = myActionFilterParam.calendarDate
+            )
+        )
     }
 
 }

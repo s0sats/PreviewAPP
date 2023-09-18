@@ -78,6 +78,7 @@ class Act093Presenter constructor(
 
                     _state.value = _state.value.copy(
                         serialInfo = Act093State.SerialInfo(
+                            originFlow = serial.originFlow,
                             iconColor = serial.iconColor,
                             serialId = serial.serialId,
                             product = serial.productDesc,

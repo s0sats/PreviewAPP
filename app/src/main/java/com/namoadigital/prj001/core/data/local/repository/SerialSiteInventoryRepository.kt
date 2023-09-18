@@ -10,6 +10,8 @@ interface SerialSiteInventoryRepository {
     fun execServiceSiteInventory(bundle: Bundle)
     fun saveSerialSiteInvetoryPreference(siteInventory: SiteInventory)
 
+    fun editPreference(map: HashMap<String, Any>)
+
     fun getPreference(): SiteInventory
 
     fun cleanPreference()

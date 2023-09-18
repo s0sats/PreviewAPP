@@ -15,6 +15,7 @@ import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.SerialSiteInventoryUseCase;
 import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
@@ -63,6 +64,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class WS_TK_Ticket_Save extends IntentService {
@@ -246,6 +248,13 @@ public class WS_TK_Ticket_Save extends IntentService {
         }
     }
 
+    private void updateSerialSiteInventoryPrefs() {
+        SerialSiteInventoryUseCase useCase = new SerialSiteInventoryUseCase.Companion.SiteInventoryUseCaseFactory(getApplicationContext()).editPrefrenceFileUseCase();
+        HashMap<String, Object> editPref = new HashMap<>();
+        editPref.put("refresh", true);
+        useCase.getEditPreference().invoke(editPref);
+    }
+
     private ArrayList<TK_Ticket> getTicketsToSend() {
         return keepOnlyUpdateRequiredData(getTicketsDB());
     }
@@ -254,7 +263,7 @@ public class WS_TK_Ticket_Save extends IntentService {
         for (TK_Ticket tk_ticket : ticketList) {
             if (tk_ticket.getUpdate_required_product() != 1) {
                 tk_ticket.setProduct(new ArrayList<TK_Ticket_Product>());
-            }else{
+            } else {
                 //LUCHE - 22/03/2021
                 //Com advento no produto planajeado, agora temos produtos comstatus cancelled no ticket
                 //porem o server não esta preparado para receber objs com ess status, entãoa ntes do
@@ -359,6 +368,7 @@ public class WS_TK_Ticket_Save extends IntentService {
             return;
         }
         //
+        updateSerialSiteInventoryPrefs();
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_processing_data"), "", "0");
         //
         processTicketSaveReturn(rec);

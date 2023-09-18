@@ -7,6 +7,7 @@ import com.namoadigital.prj001.model.MD_Product_Serial
 import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.model.MyActionsBase
 import com.namoadigital.prj001.model.MyActionsFormButton
+import com.namoadigital.prj001.model.SerialSiteInventory
 
 interface Act083_Main_Contract {
     interface I_View {
@@ -44,6 +45,7 @@ interface Act083_Main_Contract {
         fun resetActionPosition()
         fun callAct092(bundle: Bundle)
         fun changeTitleTopBar(siteDesc: String)
+        fun callAct093(bundle: Bundle)
     }
 
     interface I_Presenter {
@@ -64,7 +66,14 @@ interface Act083_Main_Contract {
         fun getCacheTicketBundle(hmAuxTicketDownloaded: HMAux): Bundle
         fun processActionClick(myAction: MyActions)
         fun checkFormFlow(action: MyActions)
-        fun extractSearchResult(result: String?, myActionSelected: MyActions?)
+        fun extractSearchResult(
+            result: String?,
+            productCode: Int?,
+            serialId: String?,
+            actionType: String? = null,
+            processPk: String? = null
+        )
+
         fun processActionFormButtonClick(myActionsFormButton: MyActionsFormButton)
         fun onBackPressedClicked()
         fun processWsSyncReturn(hmAuxTicketDownload: HMAux)
@@ -77,11 +86,19 @@ interface Act083_Main_Contract {
         )
 
         fun processLocalSearchForSerialAction(
-            selectedActionForSerialFLow: MyActions,
-            mdProductSerial: MD_Product_Serial?
+            productCode: Int?,
+            serialId: String?,
+            mdProductSerial: MD_Product_Serial?,
+            actionType: String? = null,
+            processPk: String? = null
         )
 
-        fun extractStructureResult(serial: MD_Product_Serial, myAction: MyActions?)
+        fun extractStructureResult(
+            serial: MD_Product_Serial,
+            actionType: String? = null,
+            processPk: String? = null
+        )
+
         fun updateSharedPrefs()
 
         fun getJustifyItems(justifyGroupCode: Int): ArrayList<HMAux>
@@ -97,6 +114,7 @@ interface Act083_Main_Contract {
         fun processSerialSite(tabUserFocusFilter: Int)
         fun getSerialSiteInventoryList(tabUserFocusFilter: Int)
         fun checkSerialSiteInv()
+        fun callAct093(model: SerialSiteInventory)
     }
 
 }

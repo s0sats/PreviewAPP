@@ -8,6 +8,7 @@ import com.namoa_digital.namoa_library.util.ConstantBase
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.R
+import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.SerialSiteInventoryUseCase.Companion.SiteInventoryUseCaseFactory
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao
 import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.receiver.WBR_Workgroup_Member_List
@@ -139,6 +140,7 @@ class WsScheduleNotExecuted :
             return
         }
         //
+        updateSerialSiteInventoryPrefs()
         ToolBox.sendBCStatus(
             applicationContext,
             "STATUS",
@@ -175,6 +177,13 @@ class WsScheduleNotExecuted :
             errorMsg,
             "0"
         )
+    }
+
+    private fun updateSerialSiteInventoryPrefs() {
+        val useCase = SiteInventoryUseCaseFactory(applicationContext).editPrefrenceFileUseCase()
+        val editPref = HashMap<String, Any>()
+        editPref["refresh"] = true
+        useCase.editPreference!!(editPref)
     }
 
     private fun loadTranslation(): HMAux {

@@ -18,6 +18,8 @@ import com.namoadigital.prj001.databinding.Act093MainBinding
 import com.namoadigital.prj001.databinding.Act093SerialInfoBinding
 import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_MANUAL_ALERT
 import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_NORMAL
+import com.namoadigital.prj001.model.MyActionFilterParam
+import com.namoadigital.prj001.ui.act083.Act083_Main
 import com.namoadigital.prj001.ui.act086.frg_historic.Act086HistoricFrg
 import com.namoadigital.prj001.ui.act086.frg_historic.PhotoSelection
 import com.namoadigital.prj001.ui.act092.ui.Act092_Main
@@ -43,11 +45,14 @@ class Act093_Main : BaseActivityFragMvp<Act093Presenter, Act093MainBinding>(), C
             hmAux_Trans
         )
     }
+
+    private lateinit var bundle: Bundle
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         setSupportActionBar(binding.topAppBar)
         initView {
+            bundle = (savedInstanceState ?: intent.extras) as Bundle
             presenter.setView(this)
         }
     }
@@ -68,10 +73,23 @@ class Act093_Main : BaseActivityFragMvp<Act093Presenter, Act093MainBinding>(), C
             } else {
                 setSerialInfoFrag()
             }
-        }else {
-            Intent(applicationContext, Act092_Main::class.java).also {
-                startActivity(it)
-                finish()
+        } else {
+            val state = presenter.state.value.serialInfo
+            val myActionFilter =
+                bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM) as MyActionFilterParam?
+            when (state.originFlow ?: myActionFilter?.originFlow) {
+                ConstantBaseApp.ACT083 -> {
+                    Intent(applicationContext, Act083_Main::class.java).also {
+                        it.putExtras(bundle)
+                        startActivity(it)
+                        finish()
+                    }
+                }
+
+                else -> Intent(applicationContext, Act092_Main::class.java).also {
+                    startActivity(it)
+                    finish()
+                }
             }
         }
     }

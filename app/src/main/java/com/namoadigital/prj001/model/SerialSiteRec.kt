@@ -20,6 +20,8 @@ data class SerialSiteInventory(
     @SerializedName("brand_desc") var brandDesc: String?,
     @SerializedName("model_code") var modelCode: String?,
     @SerializedName("model_desc") var modelDesc: String?,
+    @SerializedName("color_code") var colorCode: String?,
+    @SerializedName("color_desc") var colorDesc: String?,
     @SerializedName("zone_code") var zoneCode: Int,
     @SerializedName("zone_desc") var zoneDesc: String,
     @SerializedName("measure_value") var measureValue: String?,
@@ -34,4 +36,36 @@ data class SerialSiteInventory(
     @SerializedName("cnt_tkt") var cntTkt: Int?,
     @SerializedName("value_sufix") var valueSufix: String?
 
-) : MyActionsBase()
+) : MyActionsBase() {
+
+
+    fun getAllFieldForFilter(): String {
+        return listOf(
+            serialId,
+            brandDesc,
+            modelDesc,
+            colorDesc,
+            addInf1,
+            measureValue,
+            preventiveCycle,
+            preventiveDate,
+            suggestedCycle,
+            suggestedDate,
+        ).joinToString("|")
+    }
+
+    companion object {
+
+
+        sealed class OnClickType {
+
+            data class OnSerialClick(val model: SerialSiteInventory, val position: Int) :
+                OnClickType()
+
+            data class OnStatusClick(val model: SerialSiteInventory, val position: Int) :
+                OnClickType()
+
+        }
+
+    }
+}

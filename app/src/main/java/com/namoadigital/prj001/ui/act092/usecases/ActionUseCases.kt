@@ -5,6 +5,25 @@ import com.namoadigital.prj001.core.data.remote.sync.ISyncRepository.Companion.S
 import com.namoadigital.prj001.ui.act092.data.repository.IActionSerialRepository.Companion.ActionSerialRepositoryFactoryRepository
 import com.namoadigital.prj001.ui.base.NamoaFactory
 
+
+data class ActionPreferenceUseCases(
+    val setPreferences: SetModelPreferencesUseCase,
+) {
+    class ActionUseCasesFactory constructor(
+        private val context: Context
+    ) : NamoaFactory<ActionPreferenceUseCases>() {
+        override fun build(): ActionPreferenceUseCases {
+            val repository = ActionSerialRepositoryFactoryRepository(context).build()
+
+            return ActionPreferenceUseCases(
+                setPreferences = SetModelPreferencesUseCase(repository)
+            )
+        }
+
+    }
+
+}
+
 data class ActionUseCases(
     val listMyActionUseCases: ListMyActionUseCases,
     val syncFiles: SyncFilesUseCase,
@@ -29,11 +48,12 @@ data class ActionUseCases(
 
     companion object {
 
+
         class ActionUseCasesFactory constructor(
             private val context: Context
         ) : NamoaFactory<ActionUseCases>() {
-            override fun build(): ActionUseCases {
 
+            override fun build(): ActionUseCases {
                 val repository = ActionSerialRepositoryFactoryRepository(context).build()
                 val syncRepository = SyncRepositoryFactory(context).build()
 

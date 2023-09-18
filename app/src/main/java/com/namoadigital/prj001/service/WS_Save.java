@@ -9,6 +9,7 @@ import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.SerialSiteInventoryUseCase;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Data_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
@@ -41,6 +42,7 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -226,12 +228,20 @@ public class WS_Save extends IntentService {
                         getApplicationContext(),
                         getResources().getString(R.string.generic_error_lbl),
                         rec.getError_msg())
-            ) {
+        ) {
             return;
         }
+        updateSerialSiteInventoryPrefs();
         //Apos processar validation, processa o retorno do SAve
-        checkSaveReturn(gson,rec.getSave(),rec.getError_msg(),rec.getError_process(), jumpValidation, jumpOD);
+        checkSaveReturn(gson, rec.getSave(), rec.getError_msg(), rec.getError_process(), jumpValidation, jumpOD);
 
+    }
+
+    private void updateSerialSiteInventoryPrefs() {
+        SerialSiteInventoryUseCase useCase = new SerialSiteInventoryUseCase.Companion.SiteInventoryUseCaseFactory(getApplicationContext()).editPrefrenceFileUseCase();
+        HashMap<String, Object> editPref = new HashMap<>();
+        editPref.put("refresh", true);
+        useCase.getEditPreference().invoke(editPref);
     }
 
     private void loadTranslation() {
