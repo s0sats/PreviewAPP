@@ -174,22 +174,21 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     override fun changeTitleTopBar(siteDesc: String) {
         supportActionBar?.title = siteDesc
         visibleTabSerialSiteInventory()
+
     }
 
 
     private var serialSiteSizeInt = 0
-    private fun visibleTabSerialSiteInventory(
-        serialSiteSize: String = "0",
-        showSize: Boolean = false
+    override fun visibleTabSerialSiteInventory(
+        serialSiteSize: String,
+        showSize: Boolean
     ) {
-        serialSiteSizeInt = serialSiteSize.toInt()
         with(binding.act083MainContent) {
             act083TabSerial.visibility = View.VISIBLE
             act083TabSerial.text = hmAux_Trans["tab_serial_site_lbl"].plus(
                 if (showSize) " ($serialSiteSize)"
                 else ""
             )
-            act083TabSerial.performClick()
         }
 
     }
@@ -756,8 +755,9 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
             WsSerialSiteInventory::class.java.name -> {
                 wsProcess = ""
                 progressDialog.dismiss()
-                visibleTabSerialSiteInventory(mLink!!, true)
+                serialSiteSizeInt = mLink!!.toInt()
                 mPresenter.getSerialSiteInventoryList(userFocusFilter)
+
             }
 
             WsScheduleNotExecuted::class.java.name -> {

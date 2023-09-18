@@ -103,6 +103,7 @@ public class AppBase extends Application {
         SO_EXPRESS_JSON_PATH = DB_PATH + "/expressSO";
         OTHER_ACTIONS_JSON_PATH = DB_PATH +  "/otherActions";
         CUSTOMER_SITE_LICENSE_JSON_PATH = DB_PATH + "/customerSiteLicense";
+        SERIAL_SITE_INV_JSON_PATH = DB_PATH + "/siteInventory";
 
         ZIP_NAME = "namoa_sms.zip";
         ZIP_NAME_FULL = ZIP_PATH + "/" + ZIP_NAME;

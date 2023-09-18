@@ -46,6 +46,7 @@ interface Act083_Main_Contract {
         fun callAct092(bundle: Bundle)
         fun changeTitleTopBar(siteDesc: String)
         fun callAct093(bundle: Bundle)
+        fun visibleTabSerialSiteInventory(serialSiteSize: String = "0", showSize: Boolean = false)
     }
 
     interface I_Presenter {

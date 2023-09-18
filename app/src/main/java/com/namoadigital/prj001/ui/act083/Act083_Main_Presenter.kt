@@ -2302,19 +2302,23 @@ class Act083_Main_Presenter constructor(
                     hmAux_Trans!!["progress_site_seach_msg"]
                 )
                 useCase.service!!()
+            } else {
+                mView.iniRecycler(useCase.getSiteInventory!!().toMutableList())
+                mView.changeProgressBarVisility(false)
+                mView.setTabsCounters(_myActionsList.size, getOtherTabCounter(tabUserFocusFilter))
             }
         } else {
-            /*            mView.iniRecycler(useCase.getSiteInventory!!().toMutableList())
-                        mView.changeProgressBarVisility(false)
-                        mView.setTabsCounters(_myActionsList.size, getOtherTabCounter(tabUserFocusFilter))*/
+            mView.iniRecycler(useCase.getSiteInventory!!().toMutableList())
+            mView.changeProgressBarVisility(false)
+            mView.setTabsCounters(_myActionsList.size, getOtherTabCounter(tabUserFocusFilter))
         }
     }
 
     override fun checkSerialSiteInv() {
         if (useCase.check!!()) {
             mView.changeProgressBarVisility(true)
+            mView.visibleTabSerialSiteInventory(showSize = true)
             processSerialSite(1)
-            mView.changeTitleTopBar(useCase.getPreference!!().site_desc)
         }else{
             generateMyActionList(initialTabToLoad)
         }
@@ -2323,6 +2327,7 @@ class Act083_Main_Presenter constructor(
     override fun getSerialSiteInventoryList(tabUserFocusFilter: Int) {
         useCase.getSiteInventory!!().let{
             mView.iniRecycler(it.toMutableList())
+            mView.changeTitleTopBar(useCase.getPreference!!().site_desc)
         }
 
         mView.setTabsCounters(getOtherTabCounter(0), getOtherTabCounter(1))
