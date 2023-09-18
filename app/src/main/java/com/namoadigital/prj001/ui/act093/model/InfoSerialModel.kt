@@ -7,6 +7,7 @@ import com.namoadigital.prj001.ui.act093.model.InfoSerialModel.Companion.SEPARAT
 import com.namoadigital.prj001.util.ToolBox_Inf
 
 data class InfoSerialModel(
+    val originFlow: String? = null,
     val iconColor: String? = null,
     val serialId: String? = null,
     val productDesc: String? = null,

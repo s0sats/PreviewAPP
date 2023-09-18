@@ -53,6 +53,7 @@ class GetInfoSerialUseCase constructor(
                             }
 
                         val infoModel = serial.toInfoSerialModel(context).copy(
+                            originFlow = serialModel?.originFlow,
                             iconColor = serialModel?.classColor,
                             value_suffix = value_suffix,
                             last_measure_date = ToolBox_Inf.millisecondsToString(
@@ -72,6 +73,7 @@ class GetInfoSerialUseCase constructor(
                         success(
                             serial.toInfoSerialModel(context)
                                 .copy(
+                                    originFlow = serialModel?.originFlow,
                                     iconColor = serialModel?.classColor,
                                     infoAdd = infoAdd.formatInfoAdd()
                                 )

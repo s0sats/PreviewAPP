@@ -9,6 +9,7 @@ data class Act093State(
     val serialInfo: SerialInfo = SerialInfo()
 ) {
     data class SerialInfo(
+        val originFlow: String? = null,
         val serialId: String? = null,
         val iconColor: String? = null,
         val product: String? = null,

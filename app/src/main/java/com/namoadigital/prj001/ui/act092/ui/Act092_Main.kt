@@ -127,7 +127,7 @@ class Act092_Main : BaseActivityMvp
 
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
-        return super.onSupportNavigateUp()
+        return true
     }
 
     private fun getBundle() {

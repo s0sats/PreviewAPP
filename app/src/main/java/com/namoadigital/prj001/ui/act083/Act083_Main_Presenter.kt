@@ -2325,6 +2325,7 @@ class Act083_Main_Presenter constructor(
     override fun callAct093(model: SerialSiteInventory) {
         setSerialModel(model)
         mView.callAct093(Bundle().apply {
+            myActionFilterParam.originFlow = ConstantBaseApp.ACT083
             putSerializable(
                 MyActionFilterParam.MY_ACTION_FILTER_PARAM,
                 myActionFilterParam
@@ -2337,7 +2338,7 @@ class Act083_Main_Presenter constructor(
 
         actionUseCase.setPreferences(
             SerialModel(
-                originFlow = originFlow,
+                originFlow = originFlow.ifEmpty { ConstantBaseApp.ACT083 },
                 siteCodeBack = ToolBox_Con.getPreference_Site_Code(context),
                 zoneCodeBack = ToolBox_Con.getPreference_Zone_Code(context),
                 classColor = model.classColor ?: "",
