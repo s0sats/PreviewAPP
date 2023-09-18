@@ -566,7 +566,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     }
 
 
-    var typeSerial = TypeSerial.NULL
+    lateinit var typeSerial: TypeSerial
     private fun onSerialButtonClick(myAction: MyActions, position: Int) {
         serialActionSelected = position
         typeSerial = TypeSerial.MY_ACTIONS
@@ -591,8 +591,12 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
             }
 
             is SerialSiteInventory.Companion.OnClickType.OnStatusClick -> {
+                typeSerial = TypeSerial.INFO_SERIAL(clickType.model)
                 serialActionSelected = clickType.position
-                mPresenter.callAct093(clickType.model)
+                mPresenter.processSerialClick(
+                    serialId = clickType.model.serialId,
+                    productCode = clickType.model.productCode
+                )
             }
 
 
@@ -757,7 +761,9 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 progressDialog.dismiss()
                 serialSiteSizeInt = mLink!!.toInt()
                 mPresenter.getSerialSiteInventoryList(userFocusFilter)
-
+                with(binding.act083MainContent) {
+                    act083TabSerial.performClick()
+                }
             }
 
             WsScheduleNotExecuted::class.java.name -> {
@@ -803,7 +809,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 wsProcess = ""
                 progressDialog.dismiss()
                 when (typeSerial) {
-                    TypeSerial.MY_ACTIONS -> {
+                    is TypeSerial.MY_ACTIONS -> {
                         val myAction = mAdapter.getMyActionByPosition(serialActionSelected)
                         mPresenter.extractSearchResult(
                             mLink,
@@ -814,7 +820,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                         )
                     }
 
-                    TypeSerial.SERIAL_SITE -> {
+                    is TypeSerial.SERIAL_SITE -> {
                         val serialSite = mAdapter.getMySerialSiteInvByPosition(serialActionSelected)
                         mPresenter.extractSearchResult(
                             mLink,
@@ -823,7 +829,21 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                         )
                     }
 
-                    else -> {}
+                    is TypeSerial.INFO_SERIAL -> {
+                        val serialSite = mAdapter.getMySerialSiteInvByPosition(serialActionSelected)
+                        mPresenter.extractSearchResult(
+                            mLink,
+                            serialSite?.productCode,
+                            serialSite?.serialId
+                        )
+                    }
+
+                    else -> {
+                        ToolBox_Inf.registerException(
+                            javaClass.name,
+                            Exception("$typeSerial not found")
+                        )
+                    }
                 }
 
             }
@@ -838,20 +858,31 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 )
                 //
                 when (typeSerial) {
-                    TypeSerial.MY_ACTIONS -> {
+                    is TypeSerial.MY_ACTIONS -> {
                         val myAction = mAdapter.getMyActionByPosition(serialActionSelected)
                         mPresenter.extractStructureResult(
                             serial,
                             myAction?.actionType,
-                            myAction?.processPk
+                            myAction?.processPk,
+                            typeSerial
                         )
                     }
 
-                    TypeSerial.SERIAL_SITE -> {
-                        mPresenter.extractStructureResult(serial)
+                    is TypeSerial.SERIAL_SITE -> {
+                        mPresenter.extractStructureResult(serial, typeSerial = typeSerial)
                     }
 
-                    else -> {}
+                    is TypeSerial.INFO_SERIAL -> {
+                        mPresenter.extractStructureResult(serial, typeSerial = typeSerial)
+
+                    }
+
+                    else -> {
+                        ToolBox_Inf.registerException(
+                            javaClass.name,
+                            Exception("$typeSerial not found")
+                        )
+                    }
                 }
                 resetActionPosition()
             }
