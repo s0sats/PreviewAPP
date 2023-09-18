@@ -27,7 +27,8 @@ class SerialSiteInventoryRepositoryImp constructor(
                     WsSerialSiteInventory.FILE_NAME
                 )
             ).let {
-                return Gson().fromJson(it, SiteSerialInvRec::class.java).serialSiteInventory
+                val fromJson = Gson().fromJson(it, SiteSerialInvRec::class.java)
+                return  fromJson?.serialSiteInventory ?: emptyList()
             }
         } catch (e: Exception) {
             ToolBox_Inf.registerException(javaClass.name, e)

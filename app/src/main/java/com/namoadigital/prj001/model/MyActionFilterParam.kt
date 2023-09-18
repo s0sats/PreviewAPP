@@ -17,7 +17,8 @@ class MyActionFilterParam(
         var serialCode: Long? = null,
         var serialId: String? = null,
         var ticketId: String? = null,
-        var calendarDate: String? = null
+        var calendarDate: String? = null,
+        var siteCode: String? = null
 ) : Serializable{
     companion object {
         const val MY_ACTION_FILTER_PARAM = "MY_ACTION_FILTER_PARAM"
@@ -46,7 +47,8 @@ class MyActionFilterParam(
             serialId = serialId,
             serialCode = serialCode,
             ticketId = ticketId,
-            calendarDate = calendarDate
+            calendarDate = calendarDate,
+            siteCode = siteCode
         )
     }
 

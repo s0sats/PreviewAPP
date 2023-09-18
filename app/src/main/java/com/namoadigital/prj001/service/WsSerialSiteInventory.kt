@@ -100,14 +100,22 @@ class WsSerialSiteInventory : IntentService("WS_Serial_Site_Inv") {
             gson.toJson(rec),
             Constant.SERIAL_SITE_INV_JSON_PATH
         )
-
-        ToolBox.sendBCStatus(
+        rec.serialSiteInventory?.let{
+            ToolBox.sendBCStatus(
+                applicationContext,
+                "CLOSE_ACT",
+                MSG_CHECKING_END_PROCESS,
+                "${rec.serialSiteInventory?.size}",
+                "0"
+            )
+        }?: ToolBox.sendBCStatus(
             applicationContext,
             "CLOSE_ACT",
             MSG_CHECKING_END_PROCESS,
-            "${rec.serialSiteInventory.size}",
+            "0",
             "0"
         )
+
 
     }
 

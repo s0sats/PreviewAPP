@@ -35,7 +35,8 @@ data class SaveActionFilterModel(
             serialCode = serialCode,
             serialId = serialId,
             ticketId = ticketId,
-            calendarDate = calendarDate
+            calendarDate = calendarDate,
+            siteCode = siteCode
         ).apply {
             mainUserFilterState = this@toMyActionFilter.mainUserFilterState
             paramItemSelectedPk = this@toMyActionFilter.lastSelectActionPk

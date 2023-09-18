@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class SiteSerialInvRec(
     @SerializedName("site_serial_inv")
-    var serialSiteInventory: List<SerialSiteInventory>,
+    var serialSiteInventory: List<SerialSiteInventory>?,
 ) : Main_Header_Rec()
 
 data class SerialSiteInventory(

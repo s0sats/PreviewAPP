@@ -260,7 +260,8 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
                 null,
             mSerial_id,
             null,
-            null);
+            null,
+                null);
         //
         myActionFilterParam.setOriginFlow(ConstantBaseApp.ACT006);
         //

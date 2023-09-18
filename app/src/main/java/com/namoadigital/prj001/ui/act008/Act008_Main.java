@@ -1139,7 +1139,9 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                     serialCode,
                     serialId,
                     null,
-                    null);
+                    null,
+                    null
+                    );
         } else {
             myActionFilterParam = getMyActionFilterParam(bundle);
             //
@@ -1192,7 +1194,9 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                         serialCode,
                         serialId,
                         null,
-                        null);
+                        null,
+                        null
+                        );
             } else {
                 myActionFilterParam = getMyActionFilterParam(bundle);
                 //

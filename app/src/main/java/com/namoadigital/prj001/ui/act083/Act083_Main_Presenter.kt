@@ -1680,7 +1680,9 @@ class Act083_Main_Presenter constructor(
                 siteCodeBack = ToolBox_Con.getPreference_Site_Code(context),
                 zoneCodeBack = ToolBox_Con.getPreference_Zone_Code(context),
                 siteCode =
-                if (setSiteFilter()) {
+                if (useCase.check!!()) {
+                    useCase.getPreference?.invoke()?.site_code.toString()
+                }else if (setSiteFilter()) {
                     ToolBox_Con.getPreference_Site_Code(context)
                 } else {
                     null
@@ -1693,7 +1695,6 @@ class Act083_Main_Presenter constructor(
             _actionModel.value = sharedPreferences.read()
             myActionFilterParam = _actionModel.value.toMyActionFilter()
         }
-
         siteCodeBack = _actionModel.value.siteCodeBack
         zoneCodeBack = _actionModel.value.zoneCodeBack ?: 0
         initialTextFilter = myActionFilterParam.paramTextFilter
@@ -1711,7 +1712,7 @@ class Act083_Main_Presenter constructor(
         serialId = myActionFilterParam.serialId
         ticketId = myActionFilterParam.ticketId
         calendarDate = myActionFilterParam.calendarDate
-        siteCode = _actionModel.value.siteCode
+        siteCode = myActionFilterParam.siteCode
     }
 
     private fun setSiteFilter(): Boolean {
@@ -1851,15 +1852,13 @@ class Act083_Main_Presenter constructor(
 
     private fun getLocalTickets(userFocus: Int): MutableList<HMAux> {
         //
-        var qSiteCode: Int? = getSiteCodeForSelection()
-
         return ticketDao.query_HM(
                 SqlAct083_002(
                     context,
                     myActionFilterParam.originFlow,
                     ToolBox_Con.getPreference_Customer_Code(context).toInt(),
                     tagFilter,
-                    qSiteCode?.toString(),
+                    siteCode,
                     productCode,
                     serialId,
                     clientId,
@@ -1872,24 +1871,14 @@ class Act083_Main_Presenter constructor(
         )
     }
 
-    private fun getSiteCodeForSelection(): Int? {
-        var qSiteCode: Int? = useCase.getPreference?.invoke()?.site_code
-
-        if (qSiteCode == null) {
-            qSiteCode = siteCode?.toInt()
-        }
-        return qSiteCode
-    }
-
     private fun getCachedTickets(userFocus: Int): MutableList<TkTicketCache> {
-        val qSiteCode: Int? = getSiteCodeForSelection()
         return ticketCacheDao.query(
                 SqlAct083_001(
                     context,
                     myActionFilterParam.originFlow,
                     ToolBox_Con.getPreference_Customer_Code(context).toInt(),
                     tagFilter,
-                    qSiteCode?.toString(),
+                    siteCode,
                     productCode,
                     serialId,
                     clientId,
@@ -1903,7 +1892,6 @@ class Act083_Main_Presenter constructor(
     }
 
     fun getSchedules(userFocus: Int): MutableList<MD_Schedule_Exec> {
-        val qSiteCode: Int? = getSiteCodeForSelection()
         return scheduleDao.query(
                 SqlAct083_005(
                     context,
@@ -1912,7 +1900,7 @@ class Act083_Main_Presenter constructor(
                     tagFilter,
                     productCode,
                     serialId,
-                    qSiteCode?.toString(),
+                    siteCode,
                     calendarDate,
                     userFocus
                 ).toSqlQuery()
@@ -2067,14 +2055,19 @@ class Act083_Main_Presenter constructor(
 
     override fun checkSerialSiteInv() {
         if (useCase.check!!()) {
+            mView.changeProgressBarVisility(true)
             processSerialSite(1)
             mView.changeTitleTopBar(useCase.getPreference!!().site_desc)
+        }else{
+            generateMyActionList(initialTabToLoad)
         }
     }
 
     override fun getSerialSiteInventoryList(tabUserFocusFilter: Int) {
-        mView.iniRecycler(useCase.getSiteInventory!!().toMutableList())
-        mView.changeProgressBarVisility(false)
+        useCase.getSiteInventory!!().let{
+            mView.iniRecycler(it.toMutableList())
+        }
+
         mView.setTabsCounters(getOtherTabCounter(0), getOtherTabCounter(1))
     }
 
