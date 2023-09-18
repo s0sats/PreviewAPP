@@ -34,7 +34,7 @@ class SiteInventoryPref constructor(
         with(pref) {
             hashMap.map { map ->
                 try {
-                        when (map.key) {
+                        when (map.key.lowercase()) {
                             SITE_CODE -> edit().putInt(SITE_CODE, map.value as Int).apply()
                             SITE_DESC -> edit().putString(SITE_DESC, map.value as String).apply()
                             REFRESH -> edit().putBoolean(REFRESH, map.value as Boolean).apply()
