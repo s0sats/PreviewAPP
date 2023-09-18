@@ -18,6 +18,8 @@ import com.namoadigital.prj001.databinding.Act093MainBinding
 import com.namoadigital.prj001.databinding.Act093SerialInfoBinding
 import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_MANUAL_ALERT
 import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_NORMAL
+import com.namoadigital.prj001.model.MyActionFilterParam
+import com.namoadigital.prj001.ui.act083.Act083_Main
 import com.namoadigital.prj001.ui.act086.frg_historic.Act086HistoricFrg
 import com.namoadigital.prj001.ui.act086.frg_historic.PhotoSelection
 import com.namoadigital.prj001.ui.act092.ui.Act092_Main
@@ -35,19 +37,23 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
-class Act093_Main : BaseActivityFragMvp<Act093Presenter, Act093MainBinding>(), Contract.View, ItemCheckListFragmentInteraction,
+class Act093_Main : BaseActivityFragMvp<Act093Presenter, Act093MainBinding>(), Contract.View,
+    ItemCheckListFragmentInteraction,
     PhotoSelection {
 
-    private val serialInfoFrg: SerialInfoFrg by lazy{
+    private val serialInfoFrg: SerialInfoFrg by lazy {
         SerialInfoFrg.newInstance(
             hmAux_Trans
         )
     }
+
+    private lateinit var bundle: Bundle
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         setSupportActionBar(binding.topAppBar)
         initView {
+            bundle = (savedInstanceState ?: intent.extras) as Bundle
             presenter.setView(this)
         }
     }
@@ -61,17 +67,30 @@ class Act093_Main : BaseActivityFragMvp<Act093Presenter, Act093MainBinding>(), C
     }
 
     override fun onBackPressed() {
-        if(binding.llSerialItemCheckInfo.root.visibility ==  View.VISIBLE ){
-            binding.act093NvMain.smoothScrollTo(0,0)
-            if(binding.clImageZoom.visibility == View.VISIBLE){
+        if (binding.llSerialItemCheckInfo.root.visibility == View.VISIBLE) {
+            binding.act093NvMain.smoothScrollTo(0, 0)
+            if (binding.clImageZoom.visibility == View.VISIBLE) {
                 binding.showHistPhoto(false)
             } else {
                 setSerialInfoFrag()
             }
-        }else {
-            Intent(applicationContext, Act092_Main::class.java).also {
-                startActivity(it)
-                finish()
+        } else {
+            val state = presenter.state.value.serialInfo
+            val myActionFilter =
+                bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM) as MyActionFilterParam?
+            when (state.originFlow ?: myActionFilter?.originFlow) {
+                ConstantBaseApp.ACT083 -> {
+                    Intent(applicationContext, Act083_Main::class.java).also {
+                        it.putExtras(bundle)
+                        startActivity(it)
+                        finish()
+                    }
+                }
+
+                else -> Intent(applicationContext, Act092_Main::class.java).also {
+                    startActivity(it)
+                    finish()
+                }
             }
         }
     }
@@ -292,24 +311,30 @@ class Act093_Main : BaseActivityFragMvp<Act093Presenter, Act093MainBinding>(), C
     override fun initAction() {
     }
 
-    fun setFrag(type: BaseFragment, sTag: String, @IdRes placeHolderId: Int, replaceEvenCreated: Boolean = false, addToBackStack: Boolean = true){
+    fun setFrag(
+        type: BaseFragment,
+        sTag: String,
+        @IdRes placeHolderId: Int,
+        replaceEvenCreated: Boolean = false,
+        addToBackStack: Boolean = true
+    ) {
         if (replaceEvenCreated || this.supportFragmentManager.findFragmentByTag(sTag) == null) {
             val ft = this.supportFragmentManager.beginTransaction()
             ft.replace(placeHolderId, type as Fragment, sTag)
-            if(addToBackStack) {
+            if (addToBackStack) {
                 ft.addToBackStack(sTag)
             }
             ft.commit()
         }
     }
 
-    companion object{
+    companion object {
         const val SERIAL_INFO_FRG_TAG = "SERIAL_INFO_FRG_TAG"
         const val ITEM_CHECK_INFO_FRG_TAG = "ITEM_CHECK_INFO_FRG_TAG"
     }
 
     override fun itemCheckSelected(position: Int, item: DeviceTpModel) {
-        val hmAuxTransHistoricFrg =  presenter.loadHistoricFrgTranslation()
+        val hmAuxTransHistoricFrg = presenter.loadHistoricFrgTranslation()
         val itemHist = presenter.getDeviceItemHist(context, item, hmAuxTransHistoricFrg)
         val deviceItem = presenter.getDeviceItem(context, item)
         binding.topAppBar.title = hmAuxTransHistoricFrg["frg_historic_item_check_title"]
@@ -337,9 +362,9 @@ class Act093_Main : BaseActivityFragMvp<Act093Presenter, Act093MainBinding>(), C
             llSerialInfo.root.visibility = View.GONE
             llSerialItemCheckInfo.root.visibility = View.VISIBLE
             llSerialItemCheckInfo.ivStatus.apply {
-                if(item.item_check_status == ITEM_CHECK_STATUS_MANUAL_ALERT){
+                if (item.item_check_status == ITEM_CHECK_STATUS_MANUAL_ALERT) {
                     setColorFilter(resources.getColor(R.color.namoa_os_form_problem_red))
-                }else if(item.critical_item == 1 && item.item_check_status != ITEM_CHECK_STATUS_NORMAL){
+                } else if (item.critical_item == 1 && item.item_check_status != ITEM_CHECK_STATUS_NORMAL) {
                     setColorFilter(resources.getColor(R.color.namoa_os_form_critical_forecast_yellow))
                 }
             }
@@ -379,7 +404,7 @@ class Act093_Main : BaseActivityFragMvp<Act093Presenter, Act093MainBinding>(), C
         }
 
     override fun onPhotoSelection(drawable: Drawable) {
-        with(binding){
+        with(binding) {
             showHistPhoto(true)
             ivImageZoom.setImageDrawable(drawable)
             ivImageClose.setOnClickListener {
@@ -389,9 +414,9 @@ class Act093_Main : BaseActivityFragMvp<Act093Presenter, Act093MainBinding>(), C
     }
 
     private fun Act093MainBinding.showHistPhoto(show: Boolean) {
-        clImageZoom.visibility = if(show) View.VISIBLE else  View.GONE
-        act093NvMain.visibility = if(show) View.INVISIBLE else  View.VISIBLE
-        linearLayout4.visibility = if(show) View.INVISIBLE else  View.VISIBLE
+        clImageZoom.visibility = if (show) View.VISIBLE else View.GONE
+        act093NvMain.visibility = if (show) View.INVISIBLE else View.VISIBLE
+        linearLayout4.visibility = if (show) View.INVISIBLE else View.VISIBLE
     }
 
 }

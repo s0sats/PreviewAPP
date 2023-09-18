@@ -7,6 +7,7 @@ data class SerialSiteInventoryUseCase(
     val getSiteInventory: GetSiteInventoryUseCase? = null,
     val service: ExecServiceSiteInventoryUseCase? = null,
     val savePreference: SavePreferenceSiteInvUseCase? = null,
+    val editPreference: EditPreferenceSiteInvUseCase? = null,
     val getPreference: GetPreferenceSiteInvUseCase? = null,
     val check: CheckSiteInventoryUseCase? = null,
     val cleanPref: CleanPrefSiteInventoryUseCase? = null,
@@ -28,6 +29,12 @@ data class SerialSiteInventoryUseCase(
                     service = ExecServiceSiteInventoryUseCase(repository),
                     getPreference = GetPreferenceSiteInvUseCase(repository),
                     getSiteInventory = GetSiteInventoryUseCase(repository)
+                )
+            }
+
+            fun editPrefrenceFileUseCase(): SerialSiteInventoryUseCase {
+                return SerialSiteInventoryUseCase(
+                    editPreference = EditPreferenceSiteInvUseCase(repository)
                 )
             }
 

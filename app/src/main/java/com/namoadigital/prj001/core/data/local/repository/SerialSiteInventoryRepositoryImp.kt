@@ -55,6 +55,10 @@ class SerialSiteInventoryRepositoryImp constructor(
         return preference.read()
     }
 
+    override fun editPreference(map: HashMap<String, Any>) {
+        preference.edit(map)
+    }
+
     override fun cleanPreference() {
         saveSerialSiteInvetoryPreference(
             SiteInventory(-1, "", false)

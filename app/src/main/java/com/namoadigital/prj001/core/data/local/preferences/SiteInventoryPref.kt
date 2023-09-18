@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import com.namoa_digital.namoa_library.view.Base_Activity
 import com.namoadigital.prj001.core.data.domain.model.SiteInventory
 import com.namoadigital.prj001.core.data.domain.preference.ModelPreferences
+import com.namoadigital.prj001.util.ToolBox_Inf
 
 class SiteInventoryPref constructor(
     private val pref: SharedPreferences
@@ -26,6 +27,28 @@ class SiteInventoryPref constructor(
                 site_desc = getString(SITE_DESC, "") ?: "",
                 refresh = getBoolean(REFRESH, false)
             )
+        }
+    }
+
+    fun edit(hashMap: HashMap<String, Any>) {
+        with(pref) {
+            hashMap.map { map ->
+                try {
+                    when (map.key) {
+                        SITE_CODE -> edit().putInt(SITE_CODE, map.value as Int)
+                        SITE_DESC -> edit().putString(SITE_DESC, map.value as String)
+                        REFRESH -> edit().putBoolean(REFRESH, map.value as Boolean)
+                        else -> {
+                            throw NoSuchFieldException(
+                                "${map.key} not found."
+                            )
+                        }
+
+                    }
+                } catch (e: Exception) {
+                    ToolBox_Inf.registerException(javaClass.name, e)
+                }
+            }
         }
     }
 
