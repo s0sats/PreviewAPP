@@ -104,14 +104,14 @@ class WsSerialSiteInventory : IntentService("WS_Serial_Site_Inv") {
             ToolBox.sendBCStatus(
                 applicationContext,
                 "CLOSE_ACT",
-                hmAux_Trans[MSG_CHECKING_END_PROCESS],
+                hmAux_Trans[MSG_SITE_END_PROCESS],
                 "${rec.serialSiteInventory?.size}",
                 "0"
             )
         }?: ToolBox.sendBCStatus(
             applicationContext,
             "CLOSE_ACT",
-            hmAux_Trans[MSG_CHECKING_END_PROCESS],
+            hmAux_Trans[MSG_SITE_END_PROCESS],
             "0",
             "0"
         )
@@ -124,6 +124,7 @@ class WsSerialSiteInventory : IntentService("WS_Serial_Site_Inv") {
         listOf(
             MSG_CHECKING_SITE_START,
             MSG_SITE_OK,
+            MSG_SITE_END_PROCESS,
             MSG_CHECKING_ERROR,
         ).let { list ->
             resourceCode = ToolBox_Inf.getResourceCode(

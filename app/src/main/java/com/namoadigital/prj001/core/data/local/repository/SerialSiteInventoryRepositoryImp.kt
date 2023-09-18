@@ -37,11 +37,9 @@ class SerialSiteInventoryRepositoryImp constructor(
     }
 
     override fun execServiceSiteInventory(bundle: Bundle) {
-        saveSerialSiteInvetoryPreference(
-            getPreference().copy(
-                refresh = false
-            )
-        )
+        val map = hashMapOf<String, Any>()
+        map["refresh"] = true
+        editPreference(map)
         Intent(context, WBR_Serial_Site_Inv::class.java).apply {
             this.putExtras(bundle)
             context.sendBroadcast(this)
