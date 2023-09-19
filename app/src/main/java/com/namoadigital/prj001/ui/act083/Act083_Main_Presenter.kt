@@ -7,6 +7,7 @@ import com.google.gson.GsonBuilder
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
+import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.CheckSiteInventoryUseCase.Companion.CheckType
 import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.SerialSiteInventoryUseCase
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.model.*
@@ -1934,9 +1935,9 @@ class Act083_Main_Presenter constructor(
                 siteCodeBack = ToolBox_Con.getPreference_Site_Code(context),
                 zoneCodeBack = ToolBox_Con.getPreference_Zone_Code(context),
                 siteCode =
-                if (useCase.check!!()) {
+                if (useCase.check!!(CheckType.FILE_EXIST)) {
                     useCase.getPreference?.invoke()?.site_code.toString()
-                }else if (setSiteFilter()) {
+                } else if (setSiteFilter()) {
                     ToolBox_Con.getPreference_Site_Code(context)
                 } else {
                     null
@@ -2058,7 +2059,6 @@ class Act083_Main_Presenter constructor(
             }
             //
             withContext(Dispatchers.Main) {
-                mView.changeProgressBarVisility(false)
                 mView.iniRecycler(myActionsList)
                 //LUCHE - 11/06/2021
                 //Chama fun que insere a qtd concatenado ao label da aba
@@ -2310,30 +2310,40 @@ class Act083_Main_Presenter constructor(
                 useCase.service!!()
             } else {
                 mView.iniRecycler(useCase.getSiteInventory!!().toMutableList())
-                mView.changeProgressBarVisility(false)
                 mView.setTabsCounters(_myActionsList.size, getOtherTabCounter(tabUserFocusFilter))
             }
         } else {
             mView.iniRecycler(useCase.getSiteInventory!!().toMutableList())
-            mView.changeProgressBarVisility(false)
             mView.setTabsCounters(_myActionsList.size, getOtherTabCounter(tabUserFocusFilter))
         }
     }
 
-    override fun checkSerialSiteInv() {
-        if (useCase.check!!()) {
-            mView.changeProgressBarVisility(true)
-            mView.visibleTabSerialSiteInventory(showSize = false)
+    override fun checkSerialSiteInv(currentTab: Int) {
+        val isRefresh = useCase.check!!.invoke(CheckType.REFRESH)
+        val file_exists = useCase.check.invoke(CheckType.FILE_EXIST)
+        if (isRefresh && file_exists) {
+            mView.iniRecycler(emptyList<SerialSiteInventory>().toMutableList())
+            mView.visibleTabSerialSiteInventory(autoClick = true)
             processSerialSite(1)
-        }else{
-            generateMyActionList(initialTabToLoad)
+        } else {
+            if (file_exists) {
+                mView.changeProgressBarVisility(true)
+                getSerialSiteInventoryList(currentTab)
+            } else {
+                generateMyActionList(initialTabToLoad)
+            }
         }
     }
 
-    override fun getSerialSiteInventoryList(tabUserFocusFilter: Int) {
-        useCase.getSiteInventory!!().let{
+    override fun getSerialSiteInventoryList(currentTab: Int) {
+        useCase.getSiteInventory!!().let {
             mView.iniRecycler(it.toMutableList())
             mView.changeTitleTopBar(useCase.getPreference!!().site_desc)
+            mView.visibleTabSerialSiteInventory(
+                showSize = true,
+                serialSiteSize = "${it.size}",
+                autoClick = currentTab != 2
+            )
         }
 
         mView.setTabsCounters(getOtherTabCounter(0), getOtherTabCounter(1))
