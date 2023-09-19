@@ -6,13 +6,9 @@ import static com.namoadigital.prj001.ui.act075.Act075_Main.VIEW_PROFILE;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.media.ExifInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,6 +32,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.databinding.Act079MainBinding;
 import com.namoadigital.prj001.databinding.Act079MainContentBinding;
+import com.namoadigital.prj001.extensions.BitmapHelperKt;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Form;
@@ -579,16 +576,8 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
             binding.act079LlOpenPhoto.setVisibility(View.GONE);
         } else {
             try {
-                String path = ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath;
-                ExifInterface exifReader = new ExifInterface(path);
-                Bitmap source = BitmapFactory.decodeFile(path);
-                Bitmap bitmap = null;
-                Log.d("ExifInterface", "orientation: " + exifReader.getAttributeInt(ExifInterface.TAG_ORIENTATION, -1));
-                if(exifReader.getAttributeInt(ExifInterface.TAG_ORIENTATION, -1) == ExifInterface.ORIENTATION_ROTATE_180){
-                    Matrix matrix = new Matrix();
-                    matrix.postRotate(180);
-                    bitmap = Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
-                }
+                //
+                Bitmap bitmap = BitmapHelperKt.getBitmapWithOrientationFixed(ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath);
                 //
                 if (bitmap == null) {
                     setImagePlaceholder(binding.act079IvOpenPhoto);
@@ -601,12 +590,10 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
                         }
                     });
                 }
-            } catch (NullPointerException e) {
+            } catch (NullPointerException | IOException e) {
                 setImagePlaceholder(binding.act079IvOpenPhoto);
                 ToolBox_Inf.registerException(getClass().getName(), e);
                 e.printStackTrace();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
             }
         }
     }

@@ -33,6 +33,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.databinding.Act078MainBinding;
 import com.namoadigital.prj001.databinding.Act078MainContentBinding;
+import com.namoadigital.prj001.extensions.BitmapHelperKt;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Action;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
@@ -48,6 +49,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -566,13 +568,15 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
                 binding.act078LlOpenPhoto.setVisibility(View.GONE);
             } else {
                 try {
-                    Bitmap bitmap = BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath);
+
+                    Bitmap bitmap = BitmapHelperKt.getBitmapWithOrientationFixed(ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath);
+                    //
                     if (bitmap == null) {
                         setImagePlaceholder(binding.act078IvOpenPhoto);
                     } else {
                         binding.act078IvOpenPhoto.setImageBitmap(bitmap);
                     }
-                } catch (NullPointerException e) {
+                } catch (NullPointerException | IOException e) {
                     setImagePlaceholder(binding.act078IvOpenPhoto);
                     ToolBox_Inf.registerException(getClass().getName(), e);
                     e.printStackTrace();
