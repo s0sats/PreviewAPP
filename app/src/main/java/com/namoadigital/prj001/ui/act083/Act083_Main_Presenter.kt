@@ -27,6 +27,7 @@ import com.namoadigital.prj001.ui.act070.Act070_Main
 import com.namoadigital.prj001.ui.act083.data.local.preferences.MyActionsFilterParamPreferences
 import com.namoadigital.prj001.ui.act083.model.SaveActionFilterModel
 import com.namoadigital.prj001.ui.act083.model.SaveActionFilterModel.Companion.toMyActionFilter
+import com.namoadigital.prj001.ui.act083.model.TypeSerial
 import com.namoadigital.prj001.ui.act092.model.SerialModel
 import com.namoadigital.prj001.ui.act092.usecases.ActionPreferenceUseCases
 import com.namoadigital.prj001.ui.act092.utils.Act092Translate
@@ -546,7 +547,8 @@ class Act083_Main_Presenter constructor(
     override fun extractStructureResult(
         serial: MD_Product_Serial,
         actionType: String?,
-        processPk: String?
+        processPk: String?,
+        typeSerial: TypeSerial
     ) {
         //
         insertSerial(serial)
@@ -572,8 +574,12 @@ class Act083_Main_Presenter constructor(
             bundle.putString(MD_Product_SerialDao.CLASS_COLOR, serial.class_color)
         }
         //
-        mView.callAct092(bundle)
         mView.resetActionPosition()
+        if (typeSerial is TypeSerial.INFO_SERIAL) {
+            callAct093(typeSerial.model)
+        } else {
+            mView.callAct092(bundle)
+        }
     }
 
     private fun callWSSerialStructure(productSerial: MD_Product_Serial) {
@@ -2302,19 +2308,23 @@ class Act083_Main_Presenter constructor(
                     hmAux_Trans!!["progress_site_seach_msg"]
                 )
                 useCase.service!!()
+            } else {
+                mView.iniRecycler(useCase.getSiteInventory!!().toMutableList())
+                mView.changeProgressBarVisility(false)
+                mView.setTabsCounters(_myActionsList.size, getOtherTabCounter(tabUserFocusFilter))
             }
         } else {
-            /*            mView.iniRecycler(useCase.getSiteInventory!!().toMutableList())
-                        mView.changeProgressBarVisility(false)
-                        mView.setTabsCounters(_myActionsList.size, getOtherTabCounter(tabUserFocusFilter))*/
+            mView.iniRecycler(useCase.getSiteInventory!!().toMutableList())
+            mView.changeProgressBarVisility(false)
+            mView.setTabsCounters(_myActionsList.size, getOtherTabCounter(tabUserFocusFilter))
         }
     }
 
     override fun checkSerialSiteInv() {
         if (useCase.check!!()) {
             mView.changeProgressBarVisility(true)
+            mView.visibleTabSerialSiteInventory(showSize = false)
             processSerialSite(1)
-            mView.changeTitleTopBar(useCase.getPreference!!().site_desc)
         }else{
             generateMyActionList(initialTabToLoad)
         }
@@ -2323,6 +2333,7 @@ class Act083_Main_Presenter constructor(
     override fun getSerialSiteInventoryList(tabUserFocusFilter: Int) {
         useCase.getSiteInventory!!().let{
             mView.iniRecycler(it.toMutableList())
+            mView.changeTitleTopBar(useCase.getPreference!!().site_desc)
         }
 
         mView.setTabsCounters(getOtherTabCounter(0), getOtherTabCounter(1))

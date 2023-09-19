@@ -2,7 +2,6 @@ package com.namoadigital.prj001.core.data.local.preferences
 
 import android.content.Context
 import android.content.SharedPreferences
-import androidx.core.content.edit
 import com.namoa_digital.namoa_library.view.Base_Activity
 import com.namoadigital.prj001.core.data.domain.model.SiteInventory
 import com.namoadigital.prj001.core.data.domain.preference.ModelPreferences
@@ -35,11 +34,10 @@ class SiteInventoryPref constructor(
         with(pref) {
             hashMap.map { map ->
                 try {
-                    edit {
-                        when (map.key) {
-                            SITE_CODE -> putInt(SITE_CODE, map.value as Int)
-                            SITE_DESC -> putString(SITE_DESC, map.value as String)
-                            REFRESH -> putBoolean(REFRESH, map.value as Boolean)
+                        when (map.key.lowercase()) {
+                            SITE_CODE -> edit().putInt(SITE_CODE, map.value as Int).apply()
+                            SITE_DESC -> edit().putString(SITE_DESC, map.value as String).apply()
+                            REFRESH -> edit().putBoolean(REFRESH, map.value as Boolean).apply()
                             else -> {
                                 throw NoSuchFieldException(
                                     "${map.key} not found."
@@ -47,7 +45,6 @@ class SiteInventoryPref constructor(
                             }
 
                         }
-                    }
                 } catch (e: Exception) {
                     ToolBox_Inf.registerException(javaClass.name, e)
                 }

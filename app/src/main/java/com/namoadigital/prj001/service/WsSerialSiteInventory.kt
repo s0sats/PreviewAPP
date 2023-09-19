@@ -87,20 +87,21 @@ class WsSerialSiteInventory : IntentService("WS_Serial_Site_Inv") {
         }
 
 
-        ToolBox.sendBCStatus(
-            applicationContext,
-            "STATUS",
-            hmAux_Trans[MSG_SITE_OK],
-            "",
-            "0"
-        )
-
         ToolBox_Inf.createJsonFile(
             FILE_NAME,
             gson.toJson(rec),
             Constant.SERIAL_SITE_INV_JSON_PATH
         )
-        rec.serialSiteInventory?.let{
+
+        /*ToolBox.sendBCStatus(
+            applicationContext,
+            "STATUS",
+            hmAux_Trans[MSG_SITE_OK],
+            "",
+            "0"
+        )*/
+
+        rec.serialSiteInventory?.let {
             ToolBox.sendBCStatus(
                 applicationContext,
                 "CLOSE_ACT",
