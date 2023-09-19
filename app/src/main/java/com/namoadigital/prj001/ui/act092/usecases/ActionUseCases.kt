@@ -9,7 +9,7 @@ import com.namoadigital.prj001.ui.base.NamoaFactory
 data class ActionPreferenceUseCases(
     val setPreferences: SetModelPreferencesUseCase,
 ) {
-    class ActionUseCasesFactory constructor(
+    class ActionUseCasesPreferenceFactory constructor(
         private val context: Context
     ) : NamoaFactory<ActionPreferenceUseCases>() {
         override fun build(): ActionPreferenceUseCases {

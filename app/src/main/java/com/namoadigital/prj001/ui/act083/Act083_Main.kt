@@ -167,30 +167,31 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     }
 
     private fun checkSerialSiteInventory() {
-        mPresenter.checkSerialSiteInv()
+        mPresenter.checkSerialSiteInv(getCurrentTab())
     }
 
 
     override fun changeTitleTopBar(siteDesc: String) {
         supportActionBar?.title = siteDesc
-        visibleTabSerialSiteInventory()
-
+        firstClickSerialTab = false
     }
 
 
     private var serialSiteSizeInt = 0
     override fun visibleTabSerialSiteInventory(
         serialSiteSize: String,
-        showSize: Boolean
+        showSize: Boolean,
+        autoClick: Boolean
     ) {
+        if (autoClick) binding.act083MainContent.act083TabSerial.performClick()
         with(binding.act083MainContent) {
             act083TabSerial.visibility = View.VISIBLE
+            serialSiteSizeInt = serialSiteSize.toInt()
             act083TabSerial.text = hmAux_Trans["tab_serial_site_lbl"].plus(
                 if (showSize) " ($serialSiteSize)"
                 else ""
             )
         }
-
     }
 
     private fun iniTrans() {
@@ -275,7 +276,6 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     }
 
     override fun iniRecycler(myActionsList: MutableList<MyActionsBase>) {
-        changeProgressBarVisility(false)
         if (myActionsList.size > 0) {
             binding.act083MainContent.act083TvNoResult.visibility = View.GONE
             //
@@ -295,7 +295,6 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
             with(binding.act083MainContent.act083RvActionsList) {
                 layoutManager = LinearLayoutManager(context)
                 adapter = mAdapter
-                visibility = View.VISIBLE
             }
             //
 
@@ -306,7 +305,9 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
             } else {
                 applyTextFilter("")
             }
+            changeProgressBarVisility(false)
         } else {
+            changeProgressBarVisility(false)
             with(binding.act083MainContent) {
                 if (applyMainUserFilter) {
                     act083TvNoResult.text = hmAux_Trans["no_record_for_filter_lbl"]
@@ -314,7 +315,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                     act083TvNoResult.text = hmAux_Trans["no_record_lbl"]
                 }
                 act083TvNoResult.visibility = View.VISIBLE
-                act083RvActionsList.visibility = View.INVISIBLE
+                act083RvActionsList.visibility = View.GONE
             }
         }
     }
@@ -761,9 +762,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 progressDialog.dismiss()
                 serialSiteSizeInt = mLink!!.toInt()
                 mPresenter.getSerialSiteInventoryList(userFocusFilter)
-                with(binding.act083MainContent) {
-                    act083TabSerial.performClick()
-                }
+
             }
 
             WsScheduleNotExecuted::class.java.name -> {
@@ -956,9 +955,9 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                     }
 
                     act083TabSerial.id -> {
-                        changeProgressBarVisility(true)
-                        mPresenter.getSerialSiteInventoryList(userFocusFilter)
-
+                        if (!firstClickSerialTab) {
+                            serialClick()
+                        }
                     }
 
                     else -> {
@@ -978,6 +977,17 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
             applyTextFilter(binding.act083MainContent.act083MketFilter.text.toString())
         }
 
+    }
+
+
+    var firstClickSerialTab = true
+    private fun serialClick() {
+        with(binding.act083MainContent) {
+            act083TvNoResult.visibility = View.GONE
+            act083RvActionsList.visibility = View.GONE
+        }
+        changeProgressBarVisility(true)
+        checkSerialSiteInventory()
     }
 
     private fun setIvMainUserSelection() {
@@ -1072,6 +1082,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         with(binding.act083MainContent) {
             act083TabMyActions.isEnabled = enable
             act083TabOtherActions.isEnabled = enable
+            act083TabSerial.isEnabled = enable
         }
     }
 
@@ -1288,11 +1299,11 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 binding.act083MainContent.apply {
                     act083TvNoResult.text = hmAux_Trans["no_record_for_filter_lbl"]
                     act083TvNoResult.visibility = View.VISIBLE
-                    act083RvActionsList.visibility = View.INVISIBLE
+                    act083RvActionsList.visibility = View.GONE
                 }
             } else {
                 binding.act083MainContent.apply {
-                    act083TvNoResult.visibility = View.INVISIBLE
+                    act083TvNoResult.visibility = View.GONE
                     act083RvActionsList.visibility = View.VISIBLE
                 }
             }

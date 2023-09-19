@@ -200,6 +200,16 @@ class MyActionsAdapter constructor(
                 tvItemAlertVal.checkVisible(text = "${item.totAlert ?: 0}")
                 tvItemCriticalVal.checkVisible("${item.totExpCritical ?: 0}")
 
+                serialSiteItemCard.apply {
+                    setOnClickListener { _ ->
+                        onClickFromSerialSite?.invoke(
+                            Companion.OnClickType.OnSerialClick(
+                                item,
+                                position
+                            )
+                        )
+                    }
+                }
                 myActionSelectSerial.apply {
                     text = hmAuxTrans["btn_serial_site_status_lbl"]
                     setOnClickListener { _ ->
