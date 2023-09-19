@@ -577,7 +577,7 @@ class Act083_Main_Presenter constructor(
         //
         mView.resetActionPosition()
         if (typeSerial is TypeSerial.INFO_SERIAL) {
-            callAct093(typeSerial.model)
+                callAct093(typeSerial.model)
         } else {
             mView.callAct092(bundle)
         }
@@ -2299,7 +2299,7 @@ class Act083_Main_Presenter constructor(
     }
 
 
-    override fun processSerialSite(tabUserFocusFilter: Int) {
+    override fun processSerialSite() {
         if (ToolBox_Con.isOnline(context)) {
             if (useCase.getPreference!!().refresh) {
                 mView.setProcess(WsSerialSiteInventory::class.java.name)
@@ -2310,21 +2310,21 @@ class Act083_Main_Presenter constructor(
                 useCase.service!!()
             } else {
                 mView.iniRecycler(useCase.getSiteInventory!!().toMutableList())
-                mView.setTabsCounters(_myActionsList.size, getOtherTabCounter(tabUserFocusFilter))
+                mView.setTabsCounters(_myActionsList.size, getOtherTabCounter(1))
             }
         } else {
             mView.iniRecycler(useCase.getSiteInventory!!().toMutableList())
-            mView.setTabsCounters(_myActionsList.size, getOtherTabCounter(tabUserFocusFilter))
+            mView.setTabsCounters(_myActionsList.size, getOtherTabCounter(1))
         }
     }
 
     override fun checkSerialSiteInv(currentTab: Int) {
         val isRefresh = useCase.check!!.invoke(CheckType.REFRESH)
         val file_exists = useCase.check.invoke(CheckType.FILE_EXIST)
-        if (isRefresh && file_exists) {
+        if (isRefresh) {
             mView.iniRecycler(emptyList<SerialSiteInventory>().toMutableList())
             mView.visibleTabSerialSiteInventory(autoClick = true)
-            processSerialSite(1)
+            processSerialSite()
         } else {
             if (file_exists) {
                 mView.changeProgressBarVisility(true)
@@ -2361,7 +2361,8 @@ class Act083_Main_Presenter constructor(
     }
 
     private fun setSerialModel(model: SerialSiteInventory) {
-        val actionUseCase = ActionPreferenceUseCases.ActionUseCasesFactory(context).build()
+        val actionUseCase =
+            ActionPreferenceUseCases.ActionUseCasesPreferenceFactory(context).build()
 
         actionUseCase.setPreferences(
             SerialModel(
