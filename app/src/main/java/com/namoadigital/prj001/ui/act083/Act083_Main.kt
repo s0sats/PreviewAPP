@@ -583,7 +583,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         when (clickType) {
 
             is SerialSiteInventory.Companion.OnClickType.OnSerialClick -> {
-                typeSerial = TypeSerial.SERIAL_SITE
+                typeSerial = TypeSerial.MORE_ACTIONS(clickType.model)
                 serialActionSelected = clickType.position
                 mPresenter.processSerialClick(
                     serialId = clickType.model.serialId,
@@ -808,18 +808,8 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 wsProcess = ""
                 progressDialog.dismiss()
                 when (typeSerial) {
-                    is TypeSerial.MY_ACTIONS -> {
-                        val myAction = mAdapter.getMyActionByPosition(serialActionSelected)
-                        mPresenter.extractSearchResult(
-                            mLink,
-                            myAction?.productCode,
-                            myAction?.serialId,
-                            myAction?.actionType,
-                            myAction?.processPk
-                        )
-                    }
 
-                    is TypeSerial.SERIAL_SITE -> {
+                    is TypeSerial.MORE_ACTIONS -> {
                         val serialSite = mAdapter.getMySerialSiteInvByPosition(serialActionSelected)
                         mPresenter.extractSearchResult(
                             mLink,
@@ -838,9 +828,13 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                     }
 
                     else -> {
-                        ToolBox_Inf.registerException(
-                            javaClass.name,
-                            Exception("$typeSerial not found")
+                        val myAction = mAdapter.getMyActionByPosition(serialActionSelected)
+                        mPresenter.extractSearchResult(
+                            mLink,
+                            myAction?.productCode,
+                            myAction?.serialId,
+                            myAction?.actionType,
+                            myAction?.processPk
                         )
                     }
                 }
@@ -867,7 +861,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                         )
                     }
 
-                    is TypeSerial.SERIAL_SITE -> {
+                    is TypeSerial.MORE_ACTIONS -> {
                         mPresenter.extractStructureResult(serial, typeSerial = typeSerial)
                     }
 

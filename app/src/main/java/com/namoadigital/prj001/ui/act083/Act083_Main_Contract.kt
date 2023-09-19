@@ -119,7 +119,7 @@ interface Act083_Main_Contract {
             reschedule_date: String
         )
 
-        fun processSerialSite(tabUserFocusFilter: Int)
+        fun processSerialSite()
         fun getSerialSiteInventoryList(tabUserFocusFilter: Int)
         fun checkSerialSiteInv(currentTab: Int)
         fun callAct093(model: SerialSiteInventory)
