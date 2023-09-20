@@ -51,6 +51,7 @@ import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
+import com.namoadigital.prj001.extensions.BitmapHelperKt;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.MyActionFilterParam;
 import com.namoadigital.prj001.model.TK_Ticket_Action;
@@ -655,10 +656,11 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
 
     @Override
     public void restoreActionImage() {
-        try{
-            Bitmap bitmap = BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath);
+        try {
+            Bitmap bitmap = BitmapHelperKt.getBitmapWithOrientationFixed(ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath);
             ivActionPhoto.setImageBitmap(bitmap);
-        } catch (NullPointerException e ){
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
             e.printStackTrace();
         }
     }
