@@ -158,7 +158,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         initVars()
         iniUIFooter()
         initActions()
-        checkSerialSiteInventory()
+//        checkSerialSiteInventory()
     }
 
     private fun initBundle(savedInstanceState: Bundle?) {
@@ -183,7 +183,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         showSize: Boolean,
         autoClick: Boolean
     ) {
-        if (autoClick) binding.act083MainContent.act083TabSerial.performClick()
+//        if (autoClick) binding.act083MainContent.act083TabSerial.performClick()
         with(binding.act083MainContent) {
             act083TabSerial.visibility = View.VISIBLE
             serialSiteSizeInt = serialSiteSize.toInt()
@@ -633,7 +633,8 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         if (firstScroll) {
             firstScroll = false
             val actionPkPosition = mAdapter.getActionPkPosition(
-                mPresenter.lastSelectedActionType, mPresenter.lastSelectedActionPk
+                mPresenter.lastSelectedActionType,
+                mPresenter.lastSelectedActionPk
             )
             if (actionPkPosition >= 0) {
                 //Tenta fazer scroll com offset, se crashar, tenta scroll sem offset
@@ -718,8 +719,23 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         textFilter: String?, initialTabToLoad: Int, mainUserFilterState: Boolean
     ) {
         binding.act083MainContent.act083MketFilter.setText(textFilter)
-        if (initialTabToLoad == 0) {
-            binding.act083MainContent.act083TabOtherActions.performClick()
+        when(initialTabToLoad){
+            0 -> {
+                binding.act083MainContent.act083TabOtherActions.isChecked = true
+                otherActionTabSelection()
+            }
+            1 -> {
+                binding.act083MainContent.act083TabMyActions.isChecked = true
+                myActionTabSelection()
+            }
+            2 -> {
+                binding.act083MainContent.act083TabSerial.isChecked = true
+                serialTabSelection()
+            }
+            else -> {
+                binding.act083MainContent.act083TabOtherActions.isChecked = true
+                otherActionTabSelection()
+            }
         }
         applyMainUserFilter = mainUserFilterState
         setIvMainUserSelection()
@@ -814,7 +830,9 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                         mPresenter.extractSearchResult(
                             mLink,
                             serialSite?.productCode,
-                            serialSite?.serialId
+                            serialSite?.serialId,
+                            TypeSerial.SERIAL_SITE_ACTION_BASE,
+                            processPk = "${serialSite?.productCode}.${serialSite?.serialCode}"
                         )
                     }
 
@@ -823,7 +841,9 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                         mPresenter.extractSearchResult(
                             mLink,
                             serialSite?.productCode,
-                            serialSite?.serialId
+                            serialSite?.serialId,
+                            TypeSerial.SERIAL_SITE_ACTION_BASE,
+                            processPk = "${serialSite?.productCode}.${serialSite?.serialCode}"
                         )
                     }
 
@@ -862,11 +882,13 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                     }
 
                     is TypeSerial.MORE_ACTIONS -> {
-                        mPresenter.extractStructureResult(serial, typeSerial = typeSerial)
+                        mPresenter.extractStructureResult(serial, TypeSerial.SERIAL_SITE_ACTION_BASE, typeSerial = typeSerial,
+                            processPk = "${serial.product_code}.${serial.serial_code}"
+                        )
                     }
 
                     is TypeSerial.INFO_SERIAL -> {
-                        mPresenter.extractStructureResult(serial, typeSerial = typeSerial)
+                        mPresenter.extractStructureResult(serial, TypeSerial.SERIAL_SITE_ACTION_BASE, typeSerial = typeSerial, processPk = "${serial.product_code}.${serial.serial_code}" )
 
                     }
 
@@ -944,19 +966,18 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
             with(binding.act083MainContent) {
                 when (checkedId) {
                     act083TabMyActions.id -> {
-                        userFocusFilter = 1
-                        updateMyActionList(userFocusFilter)
+                        myActionTabSelection()
+                        updateMyActionList(1)
                     }
-
+                    //
                     act083TabSerial.id -> {
-                        if (!firstClickSerialTab) {
-                            serialClick()
-                        }
+                        serialTabSelection()
+                        checkSerialSiteInventory()
                     }
-
+                    //
                     else -> {
-                        userFocusFilter = 0
-                        updateMyActionList(userFocusFilter)
+                        otherActionTabSelection()
+                        updateMyActionList(0)
                     }
                 }
             }
@@ -973,6 +994,22 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
 
     }
 
+    private fun serialTabSelection() {
+        if (!firstClickSerialTab) {
+            serialClick()
+        }
+    }
+
+    private fun otherActionTabSelection() {
+        userFocusFilter = 0
+        updateMyActionList(userFocusFilter)
+    }
+
+    private fun myActionTabSelection() {
+        userFocusFilter = 1
+        updateMyActionList(userFocusFilter)
+    }
+
 
     var firstClickSerialTab = true
     private fun serialClick() {
@@ -981,7 +1018,6 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
             act083RvActionsList.visibility = View.GONE
         }
         changeProgressBarVisility(true)
-        checkSerialSiteInventory()
     }
 
     private fun setIvMainUserSelection() {
@@ -1021,7 +1057,6 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
             act083RvActionsList.visibility = View.GONE
         }
         changeProgressBarVisility(true)
-        mPresenter.updateMyActionList(userFocusFilter)
     }
 
     /**

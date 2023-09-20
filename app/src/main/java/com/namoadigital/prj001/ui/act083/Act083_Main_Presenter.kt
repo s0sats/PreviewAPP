@@ -99,11 +99,33 @@ class Act083_Main_Presenter constructor(
     init {
         recoverIntentsInfo()
         loadFilters()
+        if(useCase.check!!.invoke(CheckType.REFRESH)){
+            mView.visibleTabSerialSiteInventory("0", autoClick = true, showSize = false)
+        }
         setViewFiltersParam()
         //generateMyActionList(initialTabToLoad)
     }
 
     private fun setViewFiltersParam() {
+        if(initialTabToLoad == 2){
+            mView.changeTitleTopBar(useCase.getPreference!!().site_desc)
+        }
+        when(initialTabToLoad){
+            0 -> {
+                updateMyActionList(0)
+            }
+            1 -> {
+                updateMyActionList(1)
+            }
+            2 -> {
+                checkSerialSiteInv(2)
+            }
+            else -> {
+                updateMyActionList(0)
+            }
+        }
+
+
         mView.setViewFiltersParam(
             initialTextFilter,
             initialTabToLoad,
@@ -1912,7 +1934,8 @@ class Act083_Main_Presenter constructor(
         val filterParam = bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM)
         originFlow = bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, "")
         saveAndloadPreferences(filterParam?.let { it as MyActionFilterParam }
-            ?: MyActionFilterParam())
+            ?: MyActionFilterParam()
+        )
     }
 
 
@@ -1930,18 +1953,18 @@ class Act083_Main_Presenter constructor(
             originFlow == ConstantBaseApp.ACT016 ||
             originFlow == ConstantBaseApp.ACT068
         ) {
+
+            val tabSelected = if (useCase.check!!.invoke(CheckType.REFRESH)){
+                2
+            } else {
+                0
+            }
             filterParam.toActionFilter().copy(
                 originFlow = originFlow,
                 siteCodeBack = ToolBox_Con.getPreference_Site_Code(context),
                 zoneCodeBack = ToolBox_Con.getPreference_Zone_Code(context),
-                siteCode =
-                if (useCase.check!!(CheckType.FILE_EXIST)) {
-                    useCase.getPreference?.invoke()?.site_code.toString()
-                } else if (setSiteFilter()) {
-                    ToolBox_Con.getPreference_Site_Code(context)
-                } else {
-                    null
-                }
+                siteCode = getSiteCodeFlow(),
+                initialTabToLoad = tabSelected
             ).also {
                 sharedPreferences.write(it)
                 myActionFilterParam = it.toMyActionFilter()
@@ -1958,6 +1981,14 @@ class Act083_Main_Presenter constructor(
         _lastSelectedActionType = myActionFilterParam.paramItemSelectedType
         mainUserFilterState = myActionFilterParam.mainUserFilterState
 
+    }
+
+    private fun getSiteCodeFlow() = if (useCase.check!!(CheckType.FILE_EXIST)) {
+        useCase.getPreference?.invoke()?.site_code.toString()
+    } else if (setSiteFilter()) {
+        ToolBox_Con.getPreference_Site_Code(context)
+    } else {
+        null
     }
 
     private fun loadFilters() {
@@ -2310,22 +2341,20 @@ class Act083_Main_Presenter constructor(
                 useCase.service!!()
             } else {
                 mView.iniRecycler(useCase.getSiteInventory!!().toMutableList())
-                mView.setTabsCounters(_myActionsList.size, getOtherTabCounter(1))
+                mView.setTabsCounters(getOtherTabCounter(0), getOtherTabCounter(1))
             }
         } else {
             mView.iniRecycler(useCase.getSiteInventory!!().toMutableList())
-            mView.setTabsCounters(_myActionsList.size, getOtherTabCounter(1))
+            mView.setTabsCounters(getOtherTabCounter(0), getOtherTabCounter(1))
         }
     }
 
     override fun checkSerialSiteInv(currentTab: Int) {
         val isRefresh = useCase.check!!.invoke(CheckType.REFRESH)
-        val file_exists = useCase.check.invoke(CheckType.FILE_EXIST)
         if (isRefresh) {
-            mView.iniRecycler(emptyList<SerialSiteInventory>().toMutableList())
-            mView.visibleTabSerialSiteInventory(autoClick = true)
             processSerialSite()
         } else {
+            val file_exists = useCase.check.invoke(CheckType.FILE_EXIST)
             if (file_exists) {
                 mView.changeProgressBarVisility(true)
                 getSerialSiteInventoryList(currentTab)
@@ -2338,7 +2367,6 @@ class Act083_Main_Presenter constructor(
     override fun getSerialSiteInventoryList(currentTab: Int) {
         useCase.getSiteInventory!!().let {
             mView.iniRecycler(it.toMutableList())
-            mView.changeTitleTopBar(useCase.getPreference!!().site_desc)
             mView.visibleTabSerialSiteInventory(
                 showSize = true,
                 serialSiteSize = "${it.size}",

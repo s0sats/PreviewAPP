@@ -10,4 +10,7 @@ sealed class TypeSerial {
     data class INFO_SERIAL(val model: SerialSiteInventory) : TypeSerial()
     object NULL : TypeSerial()
 
+    companion object {
+        const val SERIAL_SITE_ACTION_BASE = "SERIAL_SITE_ACTION_BASE"
+    }
 }

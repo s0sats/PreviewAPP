@@ -26,8 +26,10 @@ import com.namoadigital.prj001.model.MyActionsBase
 import com.namoadigital.prj001.model.MyActionsFormButton
 import com.namoadigital.prj001.model.SerialSiteInventory
 import com.namoadigital.prj001.model.SerialSiteInventory.Companion
+import com.namoadigital.prj001.ui.act083.model.TypeSerial
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
+import java.util.*
 
 class MyActionsAdapter constructor(
     private val myActions: List<MyActionsBase>,
@@ -597,16 +599,32 @@ class MyActionsAdapter constructor(
      * Se dados null ou não encontrar retorna -1
      */
     fun getActionPkPosition(processType: String?, processPk: String?): Int {
-        if (processType.isNullOrEmpty() || processPk.isNullOrEmpty()) {
+        if (processType == TypeSerial.SERIAL_SITE_ACTION_BASE) {
+            myFilteredAction.forEachIndexed { index, myActionsBase ->
+                if (myActionsBase is SerialSiteInventory
+                    && !processPk.isNullOrEmpty()) {
+                    val pk = processPk.split(".")
+                    if ( pk.isNotEmpty()
+                        && myActionsBase.productCode == pk[0].toInt()
+                        && myActionsBase.serialCode == pk[1].toInt()
+                    ) {
+                        return index
+                    }
+                }
+            }
             return -1
-        }
-        //
-        myFilteredAction.forEachIndexed { index, myActionsBase ->
-            if (myActionsBase is MyActions) {
-                if (myActionsBase.actionType == processType
-                    && myActionsBase.processPk == processPk
-                ) {
-                    return index
+        }else {
+            if (processType.isNullOrEmpty() || processPk.isNullOrEmpty()) {
+                return -1
+            }
+            //
+            myFilteredAction.forEachIndexed { index, myActionsBase ->
+                if (myActionsBase is MyActions) {
+                    if (myActionsBase.actionType == processType
+                        && myActionsBase.processPk == processPk
+                    ) {
+                        return index
+                    }
                 }
             }
         }

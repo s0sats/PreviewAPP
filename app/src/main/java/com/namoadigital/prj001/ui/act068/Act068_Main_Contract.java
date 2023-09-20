@@ -74,5 +74,6 @@ public interface Act068_Main_Contract {
 
        void deleteSerialSiteInventoryFile();
 
+       void clearMyActionFilterPreference();
    }
 }

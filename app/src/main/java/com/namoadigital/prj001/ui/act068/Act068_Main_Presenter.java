@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act068;
 
+import static android.content.Context.MODE_PRIVATE;
 import static com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.SerialSiteInventoryUseCase.Companion.SiteInventoryUseCaseFactory;
 import static com.namoadigital.prj001.util.ConstantBaseApp.GC_STATUS_JUMP;
 
@@ -645,12 +646,34 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
     @Override
     public void saveSiteInventory(Integer siteCode, String siteName) {
         serialSiteInventoryUseCase.getSavePreference().invoke(new SiteInventory(siteCode, siteName, true));
-        mView.callAct083(new Bundle());
+        MyActionFilterParam actionFilterParam = new MyActionFilterParam(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                siteCode.toString()
+        );
+        //
+        Bundle bundle = new Bundle();
+        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, Constant.ACT068);
+        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, actionFilterParam);
+        //
+        mView.callAct083(bundle);
     }
 
     @Override
     public void deleteSerialSiteInventoryFile() {
         serialSiteInventoryUseCase.getDeleteFile().invoke();
+    }
+
+    @Override
+    public void clearMyActionFilterPreference() {
+        context.getSharedPreferences("act083_filter", MODE_PRIVATE).edit().clear().apply();
     }
 
     @Override
