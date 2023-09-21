@@ -29,16 +29,27 @@ public class Sql_Act009_001 implements Specification {
     private String s_serial_id;
     private Integer block_spontaneous;
     private String ticketUnion;
+    private String FILTER_NOT_FORM_OS;
 
-    public Sql_Act009_001(long s_customer_code, long s_product_code, String s_translate_code, long s_operation_code, String s_site_code, String s_serial_id, Integer block_spontaneous, boolean has_tk_ticket_is_form_off_hand) {
+    public Sql_Act009_001(
+            long s_customer_code,
+            long s_product_code,
+            String s_translate_code,
+            long s_operation_code,
+            String s_site_code,
+            String s_serial_id,
+            Integer block_spontaneous,
+            boolean has_tk_ticket_is_form_off_hand,
+            boolean filterNotFormOS
+    ) {
         this.s_customer_code = s_customer_code;
         this.s_product_code = s_product_code;
         this.s_translate_code = s_translate_code;
         this.s_operation_code = s_operation_code;
         this.s_site_code = s_site_code;
-        this.s_serial_id = s_serial_id.trim().length() != 0 ? s_serial_id.trim()  : "null";
+        this.s_serial_id = s_serial_id.trim().length() != 0 ? s_serial_id.trim() : "null";
         this.block_spontaneous = block_spontaneous;
-        if(!has_tk_ticket_is_form_off_hand) {
+        if (!has_tk_ticket_is_form_off_hand) {
             this.ticketUnion = " UNION \n" +
                     " " +
                     " SELECT T." + MdTagDao.TAG_CODE + " \n" +
@@ -65,8 +76,14 @@ public class Sql_Act009_001 implements Specification {
                     "   AND (TP.all_operation = 1 OR o.operation_code = '" + s_operation_code + "') \n" +
                     "   AND (TP.all_site = 1 OR s.site_code = '" + s_site_code + "')\n" +
                     "   AND ( '" + s_serial_id + "' IS NOT NULL)\n";
-        }else{
+        } else {
             ticketUnion = "";
+        }
+
+        if (!filterNotFormOS) {
+            FILTER_NOT_FORM_OS = "";
+        } else {
+            FILTER_NOT_FORM_OS = "AND f." + GE_Custom_FormDao.IS_SO + " == 0";
         }
     }
 
@@ -103,20 +120,21 @@ public class Sql_Act009_001 implements Specification {
                         "                               and s.custom_form_code = f.custom_form_code\n" +
                         "                               and s.custom_form_version = f.custom_form_version \n"+
                         "                               and s.site_code = '"+s_site_code+"' \n"+
-                        " WHERE    \n" +
-                        "   t.customer_code = f.customer_code \n" +
-                        "   AND t.tag_code = f.tag_operational_code\n"+
-                        "\n"+
-                        "   AND t.customer_code = '"+s_customer_code+"'\n"+
-                        "   AND ("+block_spontaneous+" is null OR f.block_spontaneous = '"+block_spontaneous+"')\n"+
-                        "   AND (f.all_product = 1 OR p.product_code = '"+s_product_code+"')\n" +
-                        "   AND (f.all_operation = 1 OR o.operation_code = '"+s_operation_code+"') \n" +
-                        "   AND (f.all_site = 1 OR s.site_code = '"+s_site_code+"')\n"+
-                        "   AND ( '"+s_serial_id+"' IS NOT NULL OR f.require_serial_done = 0)\n"+
-                        ticketUnion +
-                            " )" +
-                            " ORDER BY \n" +
-                        "   upper(" + MdTagDao.TAG_DESC+ ") \n"
+                                " WHERE    \n" +
+                                "   t.customer_code = f.customer_code \n" +
+                                "   AND t.tag_code = f.tag_operational_code\n" +
+                                "\n" +
+                                "   AND t.customer_code = '" + s_customer_code + "'\n" +
+                                "   AND (" + block_spontaneous + " is null OR f.block_spontaneous = '" + block_spontaneous + "')\n" +
+                                "   AND (f.all_product = 1 OR p.product_code = '" + s_product_code + "')\n" +
+                                "   AND (f.all_operation = 1 OR o.operation_code = '" + s_operation_code + "') \n" +
+                                "   AND (f.all_site = 1 OR s.site_code = '" + s_site_code + "')\n" +
+                                "   AND ( '" + s_serial_id + "' IS NOT NULL OR f.require_serial_done = 0)\n" +
+                                ticketUnion +
+                                FILTER_NOT_FORM_OS +
+                                " )" +
+                                " ORDER BY \n" +
+                                "   upper(" + MdTagDao.TAG_DESC + ") \n"
                 )
                 .append(";")
                 .toString()

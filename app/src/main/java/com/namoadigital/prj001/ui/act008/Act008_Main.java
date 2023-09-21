@@ -967,6 +967,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             bundle.putString(MD_SiteDao.SITE_CODE, mdProductSerial.getSite_code() != null ? String.valueOf(mdProductSerial.getSite_code()) : ToolBox_Con.getPreference_Site_Code(context));
             //bundle.putString(Constant.ACT008_SITE_CODE, mdProductSerial.getSite_code() != null ? String.valueOf(mdProductSerial.getSite_code()) : ToolBox_Con.getPreference_Site_Code(context));
             //LUCHE - 09/06/2021 - Atualiza serial_id no bundle da act083
+
             updateSerialInfoInAct083Bundle(act083Bundle);
             bundle.putAll(act081Bundle);
             bundle.putAll(act083Bundle);

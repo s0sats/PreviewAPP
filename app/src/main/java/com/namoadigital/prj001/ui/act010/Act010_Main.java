@@ -37,6 +37,7 @@ import com.namoadigital.prj001.dao.MdTagDao;
 import com.namoadigital.prj001.dao.MeMeasureTpDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
+import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.dao.TkTicketTypeDao;
 import com.namoadigital.prj001.databinding.Act010MainBinding;
@@ -84,12 +85,15 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
     private int tagCode;
     private String tagDesc;
     private String originFlow = null;
-    private String wsProcess="";
+    private String wsProcess = "";
     public static final String CUSTOM_DESC = "custom_desc";
     public static final String CUSTOM_PK = "custom_pk";
     public static final String IS_FORM = "IS_FORM";
     private String ticketInternalComments = "";
     private int ticketTypeCode = -1;
+
+    private Integer ticketPrefix;
+    private Integer ticketCode;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -207,10 +211,12 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
         setLabels();
         //
         mPresenter.setAdapterData(
-            product_code,
-            tagCode,
-            ToolBox_Inf.getBlockSpontaneousValueByOrigin(context, originFlow, has_tk_ticket_is_form_off_hand),
-            has_tk_ticket_is_form_off_hand
+                product_code,
+                tagCode,
+                ticketPrefix,
+                ticketCode,
+                ToolBox_Inf.getBlockSpontaneousValueByOrigin(context, originFlow, has_tk_ticket_is_form_off_hand),
+                has_tk_ticket_is_form_off_hand
         );
         //
         if(has_tk_ticket_is_form_off_hand){
@@ -244,9 +250,11 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
             //Novo fluxo N-Form 06/06/2018
             site_code_form_param = bundle.getString(MD_SiteDao.SITE_CODE, ToolBox_Con.getPreference_Site_Code(context));
             has_tk_ticket_is_form_off_hand = bundle.containsKey(ConstantBaseApp.TK_TICKET_IS_FORM_OFF_HAND);
-            if(has_tk_ticket_is_form_off_hand){
-                mTkTicketId  = bundle.getString(TK_TicketDao.TICKET_ID, "");
+            if(has_tk_ticket_is_form_off_hand) {
+                mTkTicketId = bundle.getString(TK_TicketDao.TICKET_ID, "");
                 mStepDesc = bundle.getString(TK_Ticket_StepDao.STEP_DESC, "");
+                ticketPrefix = bundle.containsKey("ticket_prefix") ? bundle.getInt(TK_Ticket_CtrlDao.TICKET_PREFIX) : -1;
+                ticketCode = bundle.containsKey("ticket_code") ? bundle.getInt(TK_Ticket_CtrlDao.TICKET_CODE) : -1;
             }
             //
             tagCode = bundle.getInt(MdTagDao.TAG_CODE,-1);

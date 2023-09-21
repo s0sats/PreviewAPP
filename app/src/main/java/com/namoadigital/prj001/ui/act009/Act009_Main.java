@@ -28,6 +28,7 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.MdTagDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
+import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.databinding.Act009MainBinding;
 import com.namoadigital.prj001.databinding.Act009MainContentBinding;
@@ -62,12 +63,14 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
     private int back_action;
     private Integer mSo_Prefix;
     private Integer mSo_Code;
-    private String actResqueting="";
+    private String actResqueting = "";
     //Revisão novo fluxo n-form 06/06/2018
     private String site_code_form_param;
     private boolean has_tk_ticket_is_form_off_hand;
     private String mTkTicketId;
     private String mStepDesc;
+    private Integer ticketPrefix;
+    private Integer ticketCode;
     private Bundle act083Bundle = new Bundle();
     private Act009MainContentBinding binding;
     private String originFlow = null;
@@ -142,9 +145,11 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
         );
         //
         mPresenter.setAdapterData(
-            product_code,
-            serial_id,
-            ToolBox_Inf.getBlockSpontaneousValueByOrigin(context, originFlow, has_tk_ticket_is_form_off_hand),
+                product_code,
+                serial_id,
+                ticketPrefix,
+                ticketCode,
+                ToolBox_Inf.getBlockSpontaneousValueByOrigin(context, originFlow, has_tk_ticket_is_form_off_hand),
                 has_tk_ticket_is_form_off_hand
         );
         //
@@ -185,9 +190,11 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
 
             has_tk_ticket_is_form_off_hand = bundle.containsKey(ConstantBaseApp.TK_TICKET_IS_FORM_OFF_HAND);
 
-            if(has_tk_ticket_is_form_off_hand){
-                mTkTicketId  = bundle.getString(TK_TicketDao.TICKET_ID, "");
+            if(has_tk_ticket_is_form_off_hand) {
+                mTkTicketId = bundle.getString(TK_TicketDao.TICKET_ID, "");
                 mStepDesc = bundle.getString(TK_Ticket_StepDao.STEP_DESC, "");
+                ticketPrefix = bundle.containsKey(TK_Ticket_CtrlDao.TICKET_PREFIX) ? bundle.getInt(TK_Ticket_CtrlDao.TICKET_PREFIX) : -1;
+                ticketCode = bundle.containsKey(TK_Ticket_CtrlDao.TICKET_CODE) ? bundle.getInt(TK_Ticket_CtrlDao.TICKET_CODE) : -1;
             }
             if(bundle.containsKey(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW)
                 || bundle.containsKey(MyActionFilterParam.MY_ACTION_FILTER_PARAM)){

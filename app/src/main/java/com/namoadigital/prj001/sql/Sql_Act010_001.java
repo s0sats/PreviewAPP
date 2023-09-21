@@ -34,16 +34,35 @@ public class Sql_Act010_001 implements Specification {
     private Integer blockSpontaneous;
     private Integer blockSpontaneousInTicket;
 
-    public Sql_Act010_001(long s_customer_code, int s_tag_code, String s_translate_code, String s_product_code, long s_operation_code, String s_site_code, String s_serial_id, Integer blockSpontaneous, Integer blockSpontaneousInTicket) {
+    private String FILTER_NOT_FORM_OS;
+
+    public Sql_Act010_001(
+            long s_customer_code,
+            int s_tag_code,
+            String s_translate_code,
+            String s_product_code,
+            long s_operation_code,
+            String s_site_code,
+            String s_serial_id,
+            Integer blockSpontaneous,
+            Integer blockSpontaneousInTicket,
+            boolean filterNotFormOS
+    ) {
         this.s_customer_code = s_customer_code;
         this.s_tag_code = s_tag_code;
         this.s_translate_code = s_translate_code;
         this.s_product_code = s_product_code;
         this.s_operation_code = s_operation_code;
         this.s_site_code = s_site_code;
-        this.s_serial_id = s_serial_id.trim().length() != 0 ? s_serial_id.trim()  : "null";
+        this.s_serial_id = s_serial_id.trim().length() != 0 ? s_serial_id.trim() : "null";
         this.blockSpontaneous = blockSpontaneous;
         this.blockSpontaneousInTicket = blockSpontaneousInTicket;
+
+        if (!filterNotFormOS) {
+            FILTER_NOT_FORM_OS = "";
+        } else {
+            FILTER_NOT_FORM_OS = "AND cf." + GE_Custom_FormDao.IS_SO + " == 0";
+        }
     }
 
     @Override
@@ -97,19 +116,20 @@ public class Sql_Act010_001 implements Specification {
                 "                               and s.custom_form_type = cf.custom_form_type\n" +
                 "                               and s.custom_form_code = cf.custom_form_code\n" +
                 "                               and s.custom_form_version = cf.custom_form_version \n " +
-                "                               and s.site_code = '"+s_site_code+"' \n"+
-                "    WHERE\n" +
-                "      cf."+GE_Custom_FormDao.CUSTOMER_CODE+" = '" + s_customer_code + "'\n" +
-                "      AND cf."+GE_Custom_FormDao.TAG_OPERATIONAL_CODE+" = '" + s_tag_code +"'\n" +
-                "      AND (" + blockSpontaneous +" is null OR cf."+GE_Custom_FormDao.BLOCK_SPONTANEOUS+" = '" + blockSpontaneous +"')\n" +
-                "      AND (" + blockSpontaneousInTicket +" is null OR cf."+GE_Custom_FormDao.BLOCK_SPONTANEOUS_IN_TICKET+" = '" + blockSpontaneousInTicket +"')\n" +
-                "      AND (cf.all_product = 1 OR p.product_code = '"+s_product_code+"')\n" +
-                "      AND (cf.all_operation = 1 OR o.operation_code = '"+s_operation_code+"') \n" +
-                "      AND (cf.all_site = 1 OR s.site_code = '"+s_site_code+"')\n"+
-                "      AND ( '"+s_serial_id+"' IS NOT NULL OR cf.require_serial_done = 0)\n"+
-                "    \n" +
-                "    ORDER BY\n" +
-                "      upper(" + CUSTOM_DESC + ") \n;"
+                        "                               and s.site_code = '" + s_site_code + "' \n" +
+                        "    WHERE\n" +
+                        "      cf." + GE_Custom_FormDao.CUSTOMER_CODE + " = '" + s_customer_code + "'\n" +
+                        "      AND cf." + GE_Custom_FormDao.TAG_OPERATIONAL_CODE + " = '" + s_tag_code + "'\n" +
+                        "      AND (" + blockSpontaneous + " is null OR cf." + GE_Custom_FormDao.BLOCK_SPONTANEOUS + " = '" + blockSpontaneous + "')\n" +
+                        "      AND (" + blockSpontaneousInTicket + " is null OR cf." + GE_Custom_FormDao.BLOCK_SPONTANEOUS_IN_TICKET + " = '" + blockSpontaneousInTicket + "')\n" +
+                        "      AND (cf.all_product = 1 OR p.product_code = '" + s_product_code + "')\n" +
+                        "      AND (cf.all_operation = 1 OR o.operation_code = '" + s_operation_code + "') \n" +
+                        "      AND (cf.all_site = 1 OR s.site_code = '" + s_site_code + "')\n" +
+                        "      AND ( '" + s_serial_id + "' IS NOT NULL OR cf.require_serial_done = 0)\n" +
+                        FILTER_NOT_FORM_OS +
+                        "    \n" +
+                        "    ORDER BY\n" +
+                        "      upper(" + CUSTOM_DESC + ") \n;"
             )
                 //GE_Custom_FormDao.CUSTOMER_CODE+"#"+GE_Custom_FormDao.CUSTOM_FORM_TYPE+"#"+GE_Custom_FormDao.CUSTOM_FORM_CODE+"#"+GE_Custom_FormDao.CUSTOM_FORM_VERSION+"#"+GE_Custom_FormDao.CUSTOM_FORM_DESC)
                 .toString()
