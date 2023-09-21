@@ -18,14 +18,12 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_DeviceDao;
 import com.namoadigital.prj001.dao.MdOrderTypeDao;
 import com.namoadigital.prj001.dao.MeMeasureTpDao;
-import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TkTicketTypeDao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GeOs;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device;
 import com.namoadigital.prj001.model.MdOrderType;
-import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Ticket_Creation;
 import com.namoadigital.prj001.service.WSTicketCreation;
@@ -38,7 +36,6 @@ import com.namoadigital.prj001.sql.MdOrderTypeSql_002;
 import com.namoadigital.prj001.sql.MeMeasureTpSql_001;
 import com.namoadigital.prj001.sql.Sql_Act010_001;
 import com.namoadigital.prj001.sql.Sql_Act010_002;
-import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.ui.act087.Act087Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -93,14 +90,7 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
     }
 
     @Override
-    public void setAdapterData(
-            long product_code,
-            int tagCode,
-            Integer ticketPrefix,
-            Integer ticketCode,
-            Integer blockSpontaneous,
-            boolean has_tk_ticket_is_form_off_hand
-    ) {
+    public void setAdapterData(long product_code, int tagCode, Integer blockSpontaneous, boolean has_tk_ticket_is_form_off_hand) {
         List<HMAux> forms =
                 custom_formDao.query_HM(
                         new Sql_Act010_001(
@@ -112,8 +102,7 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
                                 site_code_form_param,
                                 serial_id,
                                 blockSpontaneous,
-                                has_tk_ticket_is_form_off_hand ? 0 : null,
-                                isTicketKanban(ticketPrefix, ticketCode) && has_tk_ticket_is_form_off_hand
+                                has_tk_ticket_is_form_off_hand ? 0 : null
                         ).toSqlQuery()
                 );
 
@@ -151,25 +140,6 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
         }
         //
         mView.loadForms(forms);
-    }
-
-    private boolean isTicketKanban(
-            Integer ticketPrefix,
-            Integer ticketCode
-    ) {
-        TK_TicketDao tkTicketDao = new TK_TicketDao(
-                context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                Constant.DB_VERSION_CUSTOM
-        );
-
-        TK_Ticket tkTicket = tkTicketDao.getByString(new TK_Ticket_Sql_001(
-                ToolBox_Con.getPreference_Customer_Code(context),
-                ticketPrefix,
-                ticketCode
-        ).toSqlQuery());
-
-        return tkTicket.getKanban() == 1;
     }
 
     @Override

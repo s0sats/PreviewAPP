@@ -5,11 +5,7 @@ import android.content.Context;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
-import com.namoadigital.prj001.dao.TK_TicketDao;
-import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.sql.Sql_Act009_001;
-import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
-import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
@@ -19,7 +15,7 @@ import java.util.List;
  * Created by neomatrix on 23/01/17.
  */
 
-public class Act009_Main_Presenter_Impl implements Act009_Main_Presenter {
+public class Act009_Main_Presenter_Impl implements Act009_Main_Presenter{
 
     private Context context;
     private Act009_Main_View mView;
@@ -41,67 +37,39 @@ public class Act009_Main_Presenter_Impl implements Act009_Main_Presenter {
         this.site_code_form_param = site_code_form_param;
     }
 
-
-    private boolean isTicketKanban(
-            Integer ticketPrefix,
-            Integer ticketCode
-    ) {
-        TK_TicketDao tkTicketDao = new TK_TicketDao(
-                context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                Constant.DB_VERSION_CUSTOM
-        );
-
-        TK_Ticket tkTicket = tkTicketDao.getByString(new TK_Ticket_Sql_001(
-                ToolBox_Con.getPreference_Customer_Code(context),
-                ticketPrefix,
-                ticketCode
-        ).toSqlQuery());
-
-        return tkTicket.getKanban() == 1;
-    }
-
     @Override
-    public void setAdapterData(
-            long product_code,
-            String serial_id,
-            Integer ticketPrefix,
-            Integer ticketCode,
-            Integer blockSpontaneous,
-            boolean has_tk_ticket_is_form_off_hand
-    ) {
+    public void setAdapterData(long product_code, String serial_id, Integer blockSpontaneous, boolean has_tk_ticket_is_form_off_hand) {
         //
         List<HMAux> data =
-                custom_form_typeDao.query_HM(
-                        new Sql_Act009_001(
-                                ToolBox_Con.getPreference_Customer_Code(context),
-                                product_code,
-                                ToolBox_Con.getPreference_Translate_Code(context),
-                                ToolBox_Con.getPreference_Operation_Code(context),
-                                site_code_form_param,
-                                serial_id,
-                                blockSpontaneous,
-                                has_tk_ticket_is_form_off_hand,
-                                isTicketKanban(ticketPrefix, ticketCode) && has_tk_ticket_is_form_off_hand
-                        ).toSqlQuery()
-                );
+        custom_form_typeDao.query_HM(
+                new Sql_Act009_001(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        product_code,
+                        ToolBox_Con.getPreference_Translate_Code(context),
+                        ToolBox_Con.getPreference_Operation_Code(context),
+                        site_code_form_param,
+                        serial_id,
+                        blockSpontaneous,
+                        has_tk_ticket_is_form_off_hand
+                ).toSqlQuery()
+        );
         //Se apenas um tipo, auto seleciona
-        if (data != null && data.size() == 1) {
-            if (back_action == 1) {
+        if(data != null && data.size() == 1){
+            if(back_action == 1) {
                 onBackPressedClicked(actResqueting);
-            } else {
+            }else{
                 mView.addFormTypeInfoToBundle(data.get(0));
                 //
                 mView.callAct010(context);
             }
-        } else {
+        }else{
             mView.loadTagList(data);
         }
     }
 
     @Override
     public void onBackPressedClicked(String actResqueting) {
-        switch (actResqueting) {
+        switch (actResqueting){
             case ConstantBaseApp.ACT092:
                 mView.callAct092(context);
                 break;
@@ -121,9 +89,9 @@ public class Act009_Main_Presenter_Impl implements Act009_Main_Presenter {
                 mView.callAct028(context);
                 break;
             default:
-                if (mView.isHas_tk_ticket_is_form_off_hand()) {
+                if(mView.isHas_tk_ticket_is_form_off_hand()){
                     mView.callAct081(context);
-                } else {
+                }else{
                     mView.callAct006(context);
                 }
         }
