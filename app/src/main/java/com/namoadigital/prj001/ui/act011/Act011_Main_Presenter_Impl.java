@@ -20,6 +20,8 @@ import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.CheckType;
+import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.SerialSiteInventoryUseCase;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_BlobDao;
@@ -2282,7 +2284,12 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 switch (origin) {
                     case ConstantBaseApp.ACT092:
                         if (myActionFilterParam.getParamItemSelectedPk() == null || myActionFilterParam.getParamItemSelectedPk().isEmpty()) {
-                            mView.callAct006(context, false);
+                            SerialSiteInventoryUseCase checkAndExecUseCase = new SerialSiteInventoryUseCase.Companion.SiteInventoryUseCaseFactory(context).getAndcheckAndExecUseCase();
+                            if(checkAndExecUseCase.getCheck().invoke(CheckType.FILE_EXIST)){
+                                mView.callAct083();
+                            }else {
+                                mView.callAct006(context, false);
+                            }
                         } else {
                             mView.callAct092();
                         }

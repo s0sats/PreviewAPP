@@ -30,17 +30,8 @@ import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.dao.MdJustifyItemDao.Companion.RESCHEDULE
 import com.namoadigital.prj001.databinding.Act083MainBinding
 import com.namoadigital.prj001.databinding.TicketNotExecutedDialogBinding
-import com.namoadigital.prj001.model.MD_Product_Serial
-import com.namoadigital.prj001.model.MyActions
-import com.namoadigital.prj001.model.MyActionsBase
-import com.namoadigital.prj001.model.MyActionsFormButton
-import com.namoadigital.prj001.model.SerialSiteInventory
-import com.namoadigital.prj001.service.WS_Product_Serial_Structure
-import com.namoadigital.prj001.service.WS_Serial_Search
-import com.namoadigital.prj001.service.WS_Sync
-import com.namoadigital.prj001.service.WS_TK_Ticket_Download
-import com.namoadigital.prj001.service.WsScheduleNotExecuted
-import com.namoadigital.prj001.service.WsSerialSiteInventory
+import com.namoadigital.prj001.model.*
+import com.namoadigital.prj001.service.*
 import com.namoadigital.prj001.ui.act005.Act005_Main
 import com.namoadigital.prj001.ui.act006.Act006_Main
 import com.namoadigital.prj001.ui.act009.Act009_Main
@@ -139,7 +130,8 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 Constant.DB_VERSION_CUSTOM
             ), MyActionsFilterParamPreferences(
                 getSharedPreferences("act083_filter", MODE_PRIVATE)
-            ), mModule_Code, mResource_Code,
+            ),
+            hmAux_Trans,
             SiteInventoryUseCaseFactory(context).getAndcheckAndExecUseCase()
         )
     }
@@ -171,17 +163,10 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     }
 
 
-    override fun changeTitleTopBar(siteDesc: String) {
-        supportActionBar?.title = siteDesc
-        firstClickSerialTab = false
-    }
-
-
     private var serialSiteSizeInt = 0
     override fun visibleTabSerialSiteInventory(
         serialSiteSize: String,
-        showSize: Boolean,
-        autoClick: Boolean
+        showSize: Boolean
     ) {
 //        if (autoClick) binding.act083MainContent.act083TabSerial.performClick()
         with(binding.act083MainContent) {
@@ -195,7 +180,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     }
 
     private fun iniTrans() {
-        hmAux_Trans = mPresenter.hmAux_Trans
+        hmAux_Trans = loadTranslation()
     }
 
     private fun iniSetup() {
@@ -209,6 +194,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     }
 
     private fun initVars() {
+        setLabels()
         supportActionBar?.title = mPresenter.getActTitle()
         binding.act083MainContent.act083TilFilter.apply {
             hint = hmAux_Trans[Act092Translate.HINT_FILTER]
@@ -219,8 +205,8 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         )
         //LUCHE - 21/06/2021
         //Desabilita os cliques nas abas, pois só serão habilitado após corroutine retornar.
-        toggleTabEnableStattus(false)
-        setLabels()
+//        toggleTabEnableStattus(false)
+//        setLabels()
 //        setChips()
     }
 
@@ -270,7 +256,6 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                             hmAux_Trans["tab_serial_site_lbl"].plus(" ($serialSiteSizeInt)")
                     }
                 }
-
             }
         }
     }
@@ -920,6 +905,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
 //            act083MketFilter.hint = hmAux_Trans["filter_hint"]
             act083TabMyActions.text = hmAux_Trans["tab_my_actions_lbl"]
             act083TabOtherActions.text = hmAux_Trans["tab_other_actions_lbl"]
+            act083TabSerial.text = hmAux_Trans["tab_serial_site_lbl"]
             act083TvNoResult.text = hmAux_Trans["no_record_lbl"]
         }
     }
@@ -967,7 +953,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 when (checkedId) {
                     act083TabMyActions.id -> {
                         myActionTabSelection()
-                        updateMyActionList(1)
+                        mPresenter.updateMyActionList(1)
                     }
                     //
                     act083TabSerial.id -> {
@@ -977,7 +963,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                     //
                     else -> {
                         otherActionTabSelection()
-                        updateMyActionList(0)
+                        mPresenter.updateMyActionList(0)
                     }
                 }
             }
@@ -1453,6 +1439,123 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return super.onSupportNavigateUp()
+    }
+
+    fun loadTranslation(): HMAux? {
+        val transList: MutableList<String> = java.util.ArrayList()
+        transList.add("act083_title")
+        transList.add("tab_my_actions_lbl")
+        transList.add("tab_other_actions_lbl")
+        transList.add("filter_hint")
+        transList.add("form_lbl")
+        transList.add("IN_PROCESSING")
+        transList.add("no_record_lbl")
+        transList.add("no_record_for_filter_lbl")
+        transList.add("other_steps_available_lbl")
+        transList.add("cell_step_lbl")
+        transList.add("dialog_download_ticket_ttl")
+        transList.add("dialog_download_ticket_start")
+        transList.add("progress_sync_ttl")
+        transList.add("progress_sync_msg")
+        transList.add("site_desc_not_found_lbl")
+        transList.add("cell_waiting_approval")
+        //
+        transList.add("alert_ttl_exists_in_processing")
+        transList.add("alert_msg_exists_in_processing")
+        transList.add("alert_ttl_start_new_processing")
+        transList.add("alert_msg_start_new_processing")
+        transList.add("alert_error_on_create_form_ttl")
+        transList.add("alert_error_on_create_form_msg")
+        transList.add("alert_no_serial_found_ttl")
+        transList.add("alert_no_serial_found_msg")
+        transList.add("alert_product_no_allow_new_serial_msg")
+        transList.add("alert_ticket_action_start_ttl")
+        transList.add("alert_ticket_action_start_confirm")
+        transList.add("alert_error_on_create_ticket_action_ttl")
+        transList.add("alert_error_on_create_ticket_action_msg")
+        transList.add("alert_schedule_status_prevents_to_open_ttl")
+        transList.add("alert_schedule_status_prevents_to_open_msg")
+        transList.add("alert_menu_app_profile_not_found_ttl")
+        transList.add("alert_form_ap_menu_profile_not_found_msg")
+        transList.add("alert_menu_app_profile_not_found_ttl")
+        transList.add("alert_ticket_menu_profile_not_found_msg")
+        transList.add("alert_free_execution_blocked_ttl")
+        transList.add("alert_free_execution_blocked_msg")
+        //
+        transList.add("alert_form_site_restriction_ttl")
+        transList.add("alert_form_site_restriction_confirm")
+        transList.add("dialog_serial_search_ttl")
+        transList.add("dialog_serial_search_start")
+        //
+        transList.add("sys_main_menu_assets_local_lbl")
+        transList.add("sys_main_menu_calendar_lbl")
+        transList.add("sys_main_menu_search_lbl")
+        //
+        transList.add("new_form_lbl")
+        transList.add("alert_no_form_lbl")
+        transList.add("alert_no_form_for_product_msg")
+        transList.add("alert_no_form_for_operation_msg")
+        transList.add("alert_no_form_for_site_msg")
+        transList.add("alert_no_form_ttl")
+        transList.add("alert_product_or_serial_not_found_ttl")
+        transList.add("alert_product_or_serial_not_found_msg")
+        //
+        transList.add("alert_form_os_requires_serial_ttl")
+        transList.add("alert_form_os_requires_serial_msg")
+        //
+        transList.add("alert_not_execute_ttl")
+        transList.add("alert_not_execute_msg")
+        transList.add("alert_not_execute_justify_date_ttl")
+        transList.add("alert_not_execute_justify_option_lbl")
+        transList.add("alert_not_execute_justify_comment_lbl")
+        transList.add("sys_alert_btn_cancel")
+        transList.add("alert_not_execute_save_btn")
+        transList.add("alert_not_execute_justify_required_ttl")
+        transList.add("alert_not_execute_justify_option_required_msg")
+        transList.add("alert_not_execute_justify_comment_required_msg")
+        transList.add("alert_not_execute_justify_success_ttl")
+        transList.add("alert_not_execute_justify_success_msg")
+        transList.add("btn_cancel_schedule")
+        transList.add("warning_not_execute_justify_required_date_hour")
+        transList.add("warning_not_execute_justify_future_date_hour")
+        transList.add("alert_not_execute_justify_lost_data_ttl")
+        transList.add("alert_not_execute_justify_lost_data_msg")
+        transList.add("warning_not_execute_justify_future_date_hour")
+        transList.add("progress_n_form_sync_ttl")
+        //
+        transList.add("btn_open_action_lbl")
+        transList.add("btn_download_action_lbl")
+        transList.add("btn_continue_action_lbl")
+        transList.add("btn_select_serial_info_lbl")
+        //
+        transList.add("progress_serial_structure_ttl")
+        transList.add("progress_serial_structure_msg")
+        //
+        transList.add("item_in_process_lbl")
+        //
+        transList.add("cell_justify_lbl")
+        transList.add("progress_n_form_sync_ttl")
+        transList.add("progress_n_form_sync_msg")
+        //
+        transList.add("progress_site_search_ttl")
+        transList.add("progress_site_search_msg")
+        //
+        transList.add("tab_serial_site_lbl")
+        transList.add("serial_site_measure_lbl")
+        transList.add("serial_site_preventive_cycle_lbl")
+        transList.add("serial_site_next_cycle_lbl")
+        transList.add("btn_serial_site_status_lbl")
+        transList.add("btn_serial_site_select_serial_lbl")
+        //
+        transList.add(Act092Translate.HINT_FILTER)
+        transList.add(Act092Translate.PLACEHOLDER_FILTER)
+        return ToolBox_Inf.setLanguage(
+            context,
+            mModule_Code,
+            mResource_Code,
+            ToolBox_Con.getPreference_Translate_Code(context),
+            transList
+        )
     }
 
 }

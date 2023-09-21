@@ -7,22 +7,14 @@ import com.google.gson.GsonBuilder
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
-import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.CheckSiteInventoryUseCase.Companion.CheckType
+import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.CheckSiteInventoryUseCase
+import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.CheckType
 import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.SerialSiteInventoryUseCase
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.model.MyActionFilterParam.Companion.toActionFilter
-import com.namoadigital.prj001.receiver.WBR_Product_Serial_Structure
-import com.namoadigital.prj001.receiver.WBR_Schedule_Not_Executed
-import com.namoadigital.prj001.receiver.WBR_Serial_Search
-import com.namoadigital.prj001.receiver.WBR_Sync
-import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download
-import com.namoadigital.prj001.service.WS_Product_Serial_Structure
-import com.namoadigital.prj001.service.WS_Serial_Search
-import com.namoadigital.prj001.service.WS_Sync
-import com.namoadigital.prj001.service.WS_TK_Ticket_Download
-import com.namoadigital.prj001.service.WsScheduleNotExecuted
-import com.namoadigital.prj001.service.WsSerialSiteInventory
+import com.namoadigital.prj001.receiver.*
+import com.namoadigital.prj001.service.*
 import com.namoadigital.prj001.sql.*
 import com.namoadigital.prj001.ui.act070.Act070_Main
 import com.namoadigital.prj001.ui.act083.data.local.preferences.MyActionsFilterParamPreferences
@@ -31,7 +23,6 @@ import com.namoadigital.prj001.ui.act083.model.SaveActionFilterModel.Companion.t
 import com.namoadigital.prj001.ui.act083.model.TypeSerial
 import com.namoadigital.prj001.ui.act092.model.SerialModel
 import com.namoadigital.prj001.ui.act092.usecases.ActionPreferenceUseCases
-import com.namoadigital.prj001.ui.act092.utils.Act092Translate
 import com.namoadigital.prj001.util.*
 import com.namoadigital.prj001.view.dialog.ScheduleRequestSerialDialog2
 import kotlinx.coroutines.*
@@ -55,8 +46,7 @@ class Act083_Main_Presenter constructor(
     private val syncChecklistDao: Sync_ChecklistDao,
     private val mdJustifyItemDao: MdJustifyItemDao,
     private val sharedPreferences: MyActionsFilterParamPreferences,
-    private val mModule_Code: String,
-    private val mResource_Code: String,
+    private val hmAux_Trans: HMAux?,
     private val useCase: SerialSiteInventoryUseCase
 ) : Act083_Main_Contract.I_Presenter {
 
@@ -76,9 +66,6 @@ class Act083_Main_Presenter constructor(
         get() {
             return _myActionsList
         }
-    val hmAux_Trans: HMAux? by lazy {
-        loadTranslation()
-    }
     var siteCodeBack: String? = null
     var zoneCodeBack = 0
     var actionSelected: MyActions? = null
@@ -99,17 +86,18 @@ class Act083_Main_Presenter constructor(
     init {
         recoverIntentsInfo()
         loadFilters()
-        if(useCase.check!!.invoke(CheckType.REFRESH)){
-            mView.visibleTabSerialSiteInventory("0", autoClick = true, showSize = false)
+        if(isSerialSiteMode(useCase.check!!)){
+            mView.visibleTabSerialSiteInventory("0", showSize = false)
         }
         setViewFiltersParam()
         //generateMyActionList(initialTabToLoad)
     }
 
+    private fun isSerialSiteMode(check: CheckSiteInventoryUseCase) =
+        (check.invoke(CheckType.REFRESH)
+                || check.invoke(CheckType.FILE_EXIST))
+
     private fun setViewFiltersParam() {
-        if(initialTabToLoad == 2){
-            mView.changeTitleTopBar(useCase.getPreference!!().site_desc)
-        }
         when(initialTabToLoad){
             0 -> {
                 updateMyActionList(0)
@@ -133,122 +121,6 @@ class Act083_Main_Presenter constructor(
         )
     }
 
-    override fun loadTranslation(): HMAux? {
-        val transList: MutableList<String> = java.util.ArrayList()
-        transList.add("act083_title")
-        transList.add("tab_my_actions_lbl")
-        transList.add("tab_other_actions_lbl")
-        transList.add("filter_hint")
-        transList.add("form_lbl")
-        transList.add("IN_PROCESSING")
-        transList.add("no_record_lbl")
-        transList.add("no_record_for_filter_lbl")
-        transList.add("other_steps_available_lbl")
-        transList.add("cell_step_lbl")
-        transList.add("dialog_download_ticket_ttl")
-        transList.add("dialog_download_ticket_start")
-        transList.add("progress_sync_ttl")
-        transList.add("progress_sync_msg")
-        transList.add("site_desc_not_found_lbl")
-        transList.add("cell_waiting_approval")
-        //
-        transList.add("alert_ttl_exists_in_processing")
-        transList.add("alert_msg_exists_in_processing")
-        transList.add("alert_ttl_start_new_processing")
-        transList.add("alert_msg_start_new_processing")
-        transList.add("alert_error_on_create_form_ttl")
-        transList.add("alert_error_on_create_form_msg")
-        transList.add("alert_no_serial_found_ttl")
-        transList.add("alert_no_serial_found_msg")
-        transList.add("alert_product_no_allow_new_serial_msg")
-        transList.add("alert_ticket_action_start_ttl")
-        transList.add("alert_ticket_action_start_confirm")
-        transList.add("alert_error_on_create_ticket_action_ttl")
-        transList.add("alert_error_on_create_ticket_action_msg")
-        transList.add("alert_schedule_status_prevents_to_open_ttl")
-        transList.add("alert_schedule_status_prevents_to_open_msg")
-        transList.add("alert_menu_app_profile_not_found_ttl")
-        transList.add("alert_form_ap_menu_profile_not_found_msg")
-        transList.add("alert_menu_app_profile_not_found_ttl")
-        transList.add("alert_ticket_menu_profile_not_found_msg")
-        transList.add("alert_free_execution_blocked_ttl")
-        transList.add("alert_free_execution_blocked_msg")
-        //
-        transList.add("alert_form_site_restriction_ttl")
-        transList.add("alert_form_site_restriction_confirm")
-        transList.add("dialog_serial_search_ttl")
-        transList.add("dialog_serial_search_start")
-        //
-        transList.add("sys_main_menu_assets_local_lbl")
-        transList.add("sys_main_menu_calendar_lbl")
-        transList.add("sys_main_menu_search_lbl")
-        //
-        transList.add("new_form_lbl")
-        transList.add("alert_no_form_lbl")
-        transList.add("alert_no_form_for_product_msg")
-        transList.add("alert_no_form_for_operation_msg")
-        transList.add("alert_no_form_for_site_msg")
-        transList.add("alert_no_form_ttl")
-        transList.add("alert_product_or_serial_not_found_ttl")
-        transList.add("alert_product_or_serial_not_found_msg")
-        //
-        transList.add("alert_form_os_requires_serial_ttl")
-        transList.add("alert_form_os_requires_serial_msg")
-        //
-        transList.add("alert_not_execute_ttl")
-        transList.add("alert_not_execute_msg")
-        transList.add("alert_not_execute_justify_date_ttl")
-        transList.add("alert_not_execute_justify_option_lbl")
-        transList.add("alert_not_execute_justify_comment_lbl")
-        transList.add("sys_alert_btn_cancel")
-        transList.add("alert_not_execute_save_btn")
-        transList.add("alert_not_execute_justify_required_ttl")
-        transList.add("alert_not_execute_justify_option_required_msg")
-        transList.add("alert_not_execute_justify_comment_required_msg")
-        transList.add("alert_not_execute_justify_success_ttl")
-        transList.add("alert_not_execute_justify_success_msg")
-        transList.add("btn_cancel_schedule")
-        transList.add("warning_not_execute_justify_required_date_hour")
-        transList.add("warning_not_execute_justify_future_date_hour")
-        transList.add("alert_not_execute_justify_lost_data_ttl")
-        transList.add("alert_not_execute_justify_lost_data_msg")
-        transList.add("warning_not_execute_justify_future_date_hour")
-        transList.add("progress_n_form_sync_ttl")
-        //
-        transList.add("btn_open_action_lbl")
-        transList.add("btn_download_action_lbl")
-        transList.add("btn_continue_action_lbl")
-        transList.add("btn_select_serial_info_lbl")
-        //
-        transList.add("progress_serial_structure_ttl")
-        transList.add("progress_serial_structure_msg")
-        //
-        transList.add("item_in_process_lbl")
-        //
-        transList.add("cell_justify_lbl")
-        transList.add("progress_n_form_sync_ttl")
-        transList.add("progress_n_form_sync_msg")
-        //
-        transList.add("progress_site_search_ttl")
-        transList.add("progress_site_search_msg")
-        //
-        transList.add("tab_serial_site_lbl")
-        transList.add("serial_site_measure_lbl")
-        transList.add("serial_site_preventive_cycle_lbl")
-        transList.add("serial_site_next_cycle_lbl")
-        transList.add("btn_serial_site_status_lbl")
-        transList.add("btn_serial_site_select_serial_lbl")
-        //
-        transList.add(Act092Translate.HINT_FILTER)
-        transList.add(Act092Translate.PLACEHOLDER_FILTER)
-        return ToolBox_Inf.setLanguage(
-            context,
-            mModule_Code,
-            mResource_Code,
-            ToolBox_Con.getPreference_Translate_Code(context),
-            transList
-        )
-    }
 
     override fun getChipList(): List<String> {
         val chipList = mutableListOf<String>()
@@ -290,7 +162,11 @@ class Act083_Main_Presenter constructor(
 
             ConstantBaseApp.ACT006 -> hmAux_Trans!!["sys_main_menu_assets_local_lbl"]!!
             ConstantBaseApp.ACT016 -> hmAux_Trans!!["sys_main_menu_calendar_lbl"]!!
-            ConstantBaseApp.ACT068 -> hmAux_Trans!!["sys_main_menu_search_lbl"]!!
+            ConstantBaseApp.ACT068 -> if (isSerialSiteMode(useCase.check!!)){
+                                        useCase.getPreference!!().site_desc
+                                      } else {
+                                        hmAux_Trans!!["sys_main_menu_search_lbl"]!!
+                                      }
             ConstantBaseApp.ACT083 -> myActionFilterParam.tagFilterDesc
                 ?: hmAux_Trans!!["act083_title"]!!
 
@@ -1954,20 +1830,27 @@ class Act083_Main_Presenter constructor(
             originFlow == ConstantBaseApp.ACT068
         ) {
 
-            val tabSelected = if (useCase.check!!.invoke(CheckType.REFRESH)){
-                2
+            if (useCase.check!!.invoke(CheckType.REFRESH)){
+                filterParam.toActionFilter().copy(
+                    originFlow = originFlow,
+                    siteCodeBack = ToolBox_Con.getPreference_Site_Code(context),
+                    zoneCodeBack = ToolBox_Con.getPreference_Zone_Code(context),
+                    siteCode = getSiteCodeFlow(),
+                    initialTabToLoad = 2
+                ).also {
+                    sharedPreferences.write(it)
+                    myActionFilterParam = it.toMyActionFilter()
+                }
             } else {
-                0
-            }
-            filterParam.toActionFilter().copy(
-                originFlow = originFlow,
-                siteCodeBack = ToolBox_Con.getPreference_Site_Code(context),
-                zoneCodeBack = ToolBox_Con.getPreference_Zone_Code(context),
-                siteCode = getSiteCodeFlow(),
-                initialTabToLoad = tabSelected
-            ).also {
-                sharedPreferences.write(it)
-                myActionFilterParam = it.toMyActionFilter()
+                filterParam.toActionFilter().copy(
+                    originFlow = originFlow,
+                    siteCodeBack = ToolBox_Con.getPreference_Site_Code(context),
+                    zoneCodeBack = ToolBox_Con.getPreference_Zone_Code(context),
+                    siteCode = getSiteCodeFlow()
+                ).also {
+                    sharedPreferences.write(it)
+                    myActionFilterParam = it.toMyActionFilter()
+                }
             }
         } else {
             _actionModel.value = sharedPreferences.read()
@@ -2021,6 +1904,15 @@ class Act083_Main_Presenter constructor(
         }
         //
         launch = CoroutineScope(Dispatchers.IO).launch {
+            if(isSerialSiteMode(useCase.check!!)){
+                useCase.getSiteInventory!!().let {
+                    mView.visibleTabSerialSiteInventory(
+                        showSize = true,
+                        serialSiteSize = "${it.size}"
+                    )
+                }
+            }
+
             //Antes de gerar lista exibida, calcula o contador da outra aba o.O
             val otherCounter: Int = getOtherTabCounter(tabUserFocusFilter)
             //
@@ -2039,7 +1931,7 @@ class Act083_Main_Presenter constructor(
                 }
             )
             //
-            if (!ConstantBaseApp.ACT068.equals(myActionFilterParam.originFlow, true)) {
+            if (getScheduleFormApAndFormItens()) {
                 _myActionsList.addAll(
                     getSchedules(tabUserFocusFilter).map {
                         val lastScheduleSelected =
@@ -2049,7 +1941,7 @@ class Act083_Main_Presenter constructor(
                 )
             }
             //
-            if (!ConstantBaseApp.ACT068.equals(myActionFilterParam.originFlow, true)) {
+            if (getScheduleFormApAndFormItens()) {
                 _myActionsList.addAll(
                     getFormAp(tabUserFocusFilter).map {
                         val lastFormApSelected = getLastSelectedPk(MyActions.MY_ACTION_TYPE_FORM_AP)
@@ -2058,7 +1950,7 @@ class Act083_Main_Presenter constructor(
                 )
             }
             //
-            if (!ConstantBaseApp.ACT068.equals(myActionFilterParam.originFlow, true)) {
+            if (getScheduleFormApAndFormItens()) {
                 myActionsList.addAll(
                     getLocalForms(tabUserFocusFilter).map {
                         val lastFormSelected = getLastSelectedPk(MyActions.MY_ACTION_TYPE_FORM)
@@ -2110,7 +2002,7 @@ class Act083_Main_Presenter constructor(
         counter += getLocalTickets(otherTab).size
         counter += getCachedTickets(otherTab).size
         //Se o fluxo de origem for o da pesquisa, só devem ser contabilizados os tickets.
-        if (!ConstantBaseApp.ACT068.equals(myActionFilterParam.originFlow, true)) {
+        if (getScheduleFormApAndFormItens()) {
             counter += getSchedules(otherTab).size
             counter += getFormAp(otherTab).size
             counter += getLocalForms(otherTab).size
@@ -2118,6 +2010,10 @@ class Act083_Main_Presenter constructor(
         //
         return counter
     }
+
+    private fun getScheduleFormApAndFormItens() =
+        (!ConstantBaseApp.ACT068.equals(myActionFilterParam.originFlow, true)
+                || isSerialSiteMode(useCase.check!!))
 
     /**
      * Fun que retrona pk do item navegado caso seja do mesmo tipo da action
@@ -2192,7 +2088,8 @@ class Act083_Main_Presenter constructor(
                 serialId,
                 siteCode,
                 calendarDate,
-                userFocus
+                userFocus,
+                isSerialSiteMode = if (isSerialSiteMode(useCase.check!!)) 1 else 0
             ).toSqlQuery()
         )
     }
@@ -2207,7 +2104,8 @@ class Act083_Main_Presenter constructor(
                 productCode,
                 serialId,
                 calendarDate,
-                userFocus
+                userFocus,
+                isSerialSiteMode = if (isSerialSiteMode(useCase.check!!)) 1 else 0
             ).toSqlQuery()
         )
     }
@@ -2223,7 +2121,9 @@ class Act083_Main_Presenter constructor(
                 productCode,
                 serialId,
                 calendarDate,
-                userFocus
+                userFocus,
+                isSerialSiteMode = if (isSerialSiteMode(useCase.check!!)) 1 else 0,
+                siteCode = siteCode
             ).toSqlQuery()
         )
     }
@@ -2358,6 +2258,7 @@ class Act083_Main_Presenter constructor(
             if (file_exists) {
                 mView.changeProgressBarVisility(true)
                 getSerialSiteInventoryList(currentTab)
+                mView.changeProgressBarVisility(false)
             } else {
                 generateMyActionList(initialTabToLoad)
             }
@@ -2369,12 +2270,10 @@ class Act083_Main_Presenter constructor(
             mView.iniRecycler(it.toMutableList())
             mView.visibleTabSerialSiteInventory(
                 showSize = true,
-                serialSiteSize = "${it.size}",
-                autoClick = currentTab != 2
+                serialSiteSize = "${it.size}"
             )
+            mView.setTabsCounters(getOtherTabCounter(0), getOtherTabCounter(1))
         }
-
-        mView.setTabsCounters(getOtherTabCounter(0), getOtherTabCounter(1))
     }
 
     override fun callAct093(model: SerialSiteInventory) {

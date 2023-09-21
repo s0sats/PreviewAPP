@@ -3,11 +3,7 @@ package com.namoadigital.prj001.ui.act083
 import android.os.Bundle
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.HMAux
-import com.namoadigital.prj001.model.MD_Product_Serial
-import com.namoadigital.prj001.model.MyActions
-import com.namoadigital.prj001.model.MyActionsBase
-import com.namoadigital.prj001.model.MyActionsFormButton
-import com.namoadigital.prj001.model.SerialSiteInventory
+import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.ui.act083.model.TypeSerial
 
 interface Act083_Main_Contract {
@@ -46,17 +42,14 @@ interface Act083_Main_Contract {
         fun setPlaceholderTextAndVisibility(currentTabCounter: Int)
         fun resetActionPosition()
         fun callAct092(bundle: Bundle)
-        fun changeTitleTopBar(siteDesc: String)
         fun callAct093(bundle: Bundle)
         fun visibleTabSerialSiteInventory(
             serialSiteSize: String = "0",
-            showSize: Boolean = false,
-            autoClick: Boolean = false
+            showSize: Boolean = false
         )
     }
 
     interface I_Presenter {
-        fun loadTranslation(): HMAux?
         fun getChipList() : List<String>
         fun getActTitle(): String
         fun updateMyActionList(userFocusFilter: Int)

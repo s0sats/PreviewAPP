@@ -13,14 +13,8 @@ class CheckSiteInventoryUseCase constructor(
         }
     }
 
-
-    companion object {
-
-        enum class CheckType {
-            REFRESH,
-            FILE_EXIST
-        }
-
-    }
-
+}
+enum class CheckType {
+    REFRESH,
+    FILE_EXIST
 }
