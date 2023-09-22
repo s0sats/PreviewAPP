@@ -972,10 +972,12 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         binding.act083MainContent.act083IbMainUserSelection.setOnClickListener {
             applyMainUserFilter = !applyMainUserFilter
             setIvMainUserSelection()
-            if (::mAdapter.isInitialized) {
-                mAdapter.userMainFilterOn = applyMainUserFilter
+            if(getCurrentTab() < 2) {
+                if (::mAdapter.isInitialized) {
+                    mAdapter.userMainFilterOn = applyMainUserFilter
+                }
+                applyTextFilter(binding.act083MainContent.act083MketFilter.text.toString())
             }
-            applyTextFilter(binding.act083MainContent.act083MketFilter.text.toString())
         }
 
     }
