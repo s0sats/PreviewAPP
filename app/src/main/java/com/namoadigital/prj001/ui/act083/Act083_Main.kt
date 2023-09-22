@@ -30,17 +30,8 @@ import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.dao.MdJustifyItemDao.Companion.RESCHEDULE
 import com.namoadigital.prj001.databinding.Act083MainBinding
 import com.namoadigital.prj001.databinding.TicketNotExecutedDialogBinding
-import com.namoadigital.prj001.model.MD_Product_Serial
-import com.namoadigital.prj001.model.MyActions
-import com.namoadigital.prj001.model.MyActionsBase
-import com.namoadigital.prj001.model.MyActionsFormButton
-import com.namoadigital.prj001.model.SerialSiteInventory
-import com.namoadigital.prj001.service.WS_Product_Serial_Structure
-import com.namoadigital.prj001.service.WS_Serial_Search
-import com.namoadigital.prj001.service.WS_Sync
-import com.namoadigital.prj001.service.WS_TK_Ticket_Download
-import com.namoadigital.prj001.service.WsScheduleNotExecuted
-import com.namoadigital.prj001.service.WsSerialSiteInventory
+import com.namoadigital.prj001.model.*
+import com.namoadigital.prj001.service.*
 import com.namoadigital.prj001.ui.act005.Act005_Main
 import com.namoadigital.prj001.ui.act006.Act006_Main
 import com.namoadigital.prj001.ui.act009.Act009_Main
@@ -139,7 +130,8 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 Constant.DB_VERSION_CUSTOM
             ), MyActionsFilterParamPreferences(
                 getSharedPreferences("act083_filter", MODE_PRIVATE)
-            ), mModule_Code, mResource_Code,
+            ),
+            hmAux_Trans,
             SiteInventoryUseCaseFactory(context).getAndcheckAndExecUseCase()
         )
     }
@@ -158,7 +150,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         initVars()
         iniUIFooter()
         initActions()
-        checkSerialSiteInventory()
+//        checkSerialSiteInventory()
     }
 
     private fun initBundle(savedInstanceState: Bundle?) {
@@ -167,14 +159,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     }
 
     private fun checkSerialSiteInventory() {
-        mPresenter.checkSerialSiteInv()
-    }
-
-
-    override fun changeTitleTopBar(siteDesc: String) {
-        supportActionBar?.title = siteDesc
-        visibleTabSerialSiteInventory()
-
+        mPresenter.checkSerialSiteInv(getCurrentTab())
     }
 
 
@@ -183,18 +168,19 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         serialSiteSize: String,
         showSize: Boolean
     ) {
+//        if (autoClick) binding.act083MainContent.act083TabSerial.performClick()
         with(binding.act083MainContent) {
             act083TabSerial.visibility = View.VISIBLE
+            serialSiteSizeInt = serialSiteSize.toInt()
             act083TabSerial.text = hmAux_Trans["tab_serial_site_lbl"].plus(
                 if (showSize) " ($serialSiteSize)"
                 else ""
             )
         }
-
     }
 
     private fun iniTrans() {
-        hmAux_Trans = mPresenter.hmAux_Trans
+        hmAux_Trans = loadTranslation()
     }
 
     private fun iniSetup() {
@@ -208,6 +194,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     }
 
     private fun initVars() {
+        setLabels()
         supportActionBar?.title = mPresenter.getActTitle()
         binding.act083MainContent.act083TilFilter.apply {
             hint = hmAux_Trans[Act092Translate.HINT_FILTER]
@@ -218,8 +205,8 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         )
         //LUCHE - 21/06/2021
         //Desabilita os cliques nas abas, pois só serão habilitado após corroutine retornar.
-        toggleTabEnableStattus(false)
-        setLabels()
+//        toggleTabEnableStattus(false)
+//        setLabels()
 //        setChips()
     }
 
@@ -269,13 +256,11 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                             hmAux_Trans["tab_serial_site_lbl"].plus(" ($serialSiteSizeInt)")
                     }
                 }
-
             }
         }
     }
 
     override fun iniRecycler(myActionsList: MutableList<MyActionsBase>) {
-        changeProgressBarVisility(false)
         if (myActionsList.size > 0) {
             binding.act083MainContent.act083TvNoResult.visibility = View.GONE
             //
@@ -295,7 +280,6 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
             with(binding.act083MainContent.act083RvActionsList) {
                 layoutManager = LinearLayoutManager(context)
                 adapter = mAdapter
-                visibility = View.VISIBLE
             }
             //
 
@@ -306,7 +290,9 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
             } else {
                 applyTextFilter("")
             }
+            changeProgressBarVisility(false)
         } else {
+            changeProgressBarVisility(false)
             with(binding.act083MainContent) {
                 if (applyMainUserFilter) {
                     act083TvNoResult.text = hmAux_Trans["no_record_for_filter_lbl"]
@@ -314,7 +300,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                     act083TvNoResult.text = hmAux_Trans["no_record_lbl"]
                 }
                 act083TvNoResult.visibility = View.VISIBLE
-                act083RvActionsList.visibility = View.INVISIBLE
+                act083RvActionsList.visibility = View.GONE
             }
         }
     }
@@ -582,7 +568,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         when (clickType) {
 
             is SerialSiteInventory.Companion.OnClickType.OnSerialClick -> {
-                typeSerial = TypeSerial.SERIAL_SITE
+                typeSerial = TypeSerial.MORE_ACTIONS(clickType.model)
                 serialActionSelected = clickType.position
                 mPresenter.processSerialClick(
                     serialId = clickType.model.serialId,
@@ -632,7 +618,8 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         if (firstScroll) {
             firstScroll = false
             val actionPkPosition = mAdapter.getActionPkPosition(
-                mPresenter.lastSelectedActionType, mPresenter.lastSelectedActionPk
+                mPresenter.lastSelectedActionType,
+                mPresenter.lastSelectedActionPk
             )
             if (actionPkPosition >= 0) {
                 //Tenta fazer scroll com offset, se crashar, tenta scroll sem offset
@@ -717,8 +704,23 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         textFilter: String?, initialTabToLoad: Int, mainUserFilterState: Boolean
     ) {
         binding.act083MainContent.act083MketFilter.setText(textFilter)
-        if (initialTabToLoad == 0) {
-            binding.act083MainContent.act083TabOtherActions.performClick()
+        when(initialTabToLoad){
+            0 -> {
+                binding.act083MainContent.act083TabOtherActions.isChecked = true
+                otherActionTabSelection()
+            }
+            1 -> {
+                binding.act083MainContent.act083TabMyActions.isChecked = true
+                myActionTabSelection()
+            }
+            2 -> {
+                binding.act083MainContent.act083TabSerial.isChecked = true
+                serialTabSelection()
+            }
+            else -> {
+                binding.act083MainContent.act083TabOtherActions.isChecked = true
+                otherActionTabSelection()
+            }
         }
         applyMainUserFilter = mainUserFilterState
         setIvMainUserSelection()
@@ -760,10 +762,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 wsProcess = ""
                 progressDialog.dismiss()
                 serialSiteSizeInt = mLink!!.toInt()
-                mPresenter.getSerialSiteInventoryList(userFocusFilter)
-                with(binding.act083MainContent) {
-                    act083TabSerial.performClick()
-                }
+                mPresenter.getSerialSiteInventoryList(getCurrentTab())
             }
 
             WsScheduleNotExecuted::class.java.name -> {
@@ -809,23 +808,15 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 wsProcess = ""
                 progressDialog.dismiss()
                 when (typeSerial) {
-                    is TypeSerial.MY_ACTIONS -> {
-                        val myAction = mAdapter.getMyActionByPosition(serialActionSelected)
-                        mPresenter.extractSearchResult(
-                            mLink,
-                            myAction?.productCode,
-                            myAction?.serialId,
-                            myAction?.actionType,
-                            myAction?.processPk
-                        )
-                    }
 
-                    is TypeSerial.SERIAL_SITE -> {
+                    is TypeSerial.MORE_ACTIONS -> {
                         val serialSite = mAdapter.getMySerialSiteInvByPosition(serialActionSelected)
                         mPresenter.extractSearchResult(
                             mLink,
                             serialSite?.productCode,
-                            serialSite?.serialId
+                            serialSite?.serialId,
+                            TypeSerial.SERIAL_SITE_ACTION_BASE,
+                            processPk = "${serialSite?.productCode}.${serialSite?.serialCode}"
                         )
                     }
 
@@ -834,14 +825,20 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                         mPresenter.extractSearchResult(
                             mLink,
                             serialSite?.productCode,
-                            serialSite?.serialId
+                            serialSite?.serialId,
+                            TypeSerial.SERIAL_SITE_ACTION_BASE,
+                            processPk = "${serialSite?.productCode}.${serialSite?.serialCode}"
                         )
                     }
 
                     else -> {
-                        ToolBox_Inf.registerException(
-                            javaClass.name,
-                            Exception("$typeSerial not found")
+                        val myAction = mAdapter.getMyActionByPosition(serialActionSelected)
+                        mPresenter.extractSearchResult(
+                            mLink,
+                            myAction?.productCode,
+                            myAction?.serialId,
+                            myAction?.actionType,
+                            myAction?.processPk
                         )
                     }
                 }
@@ -868,12 +865,14 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                         )
                     }
 
-                    is TypeSerial.SERIAL_SITE -> {
-                        mPresenter.extractStructureResult(serial, typeSerial = typeSerial)
+                    is TypeSerial.MORE_ACTIONS -> {
+                        mPresenter.extractStructureResult(serial, TypeSerial.SERIAL_SITE_ACTION_BASE, typeSerial = typeSerial,
+                            processPk = "${serial.product_code}.${serial.serial_code}"
+                        )
                     }
 
                     is TypeSerial.INFO_SERIAL -> {
-                        mPresenter.extractStructureResult(serial, typeSerial = typeSerial)
+                        mPresenter.extractStructureResult(serial, TypeSerial.SERIAL_SITE_ACTION_BASE, typeSerial = typeSerial, processPk = "${serial.product_code}.${serial.serial_code}" )
 
                     }
 
@@ -905,6 +904,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
 //            act083MketFilter.hint = hmAux_Trans["filter_hint"]
             act083TabMyActions.text = hmAux_Trans["tab_my_actions_lbl"]
             act083TabOtherActions.text = hmAux_Trans["tab_other_actions_lbl"]
+            act083TabSerial.text = hmAux_Trans["tab_serial_site_lbl"]
             act083TvNoResult.text = hmAux_Trans["no_record_lbl"]
         }
     }
@@ -951,19 +951,18 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
             with(binding.act083MainContent) {
                 when (checkedId) {
                     act083TabMyActions.id -> {
-                        userFocusFilter = 1
-                        updateMyActionList(userFocusFilter)
+                        myActionTabSelection()
+                        mPresenter.updateMyActionList(1)
                     }
-
+                    //
                     act083TabSerial.id -> {
-                        changeProgressBarVisility(true)
-                        mPresenter.getSerialSiteInventoryList(userFocusFilter)
-
+                        serialTabSelection()
+                        checkSerialSiteInventory()
                     }
-
+                    //
                     else -> {
-                        userFocusFilter = 0
-                        updateMyActionList(userFocusFilter)
+                        otherActionTabSelection()
+                        mPresenter.updateMyActionList(0)
                     }
                 }
             }
@@ -972,12 +971,40 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         binding.act083MainContent.act083IbMainUserSelection.setOnClickListener {
             applyMainUserFilter = !applyMainUserFilter
             setIvMainUserSelection()
-            if (::mAdapter.isInitialized) {
-                mAdapter.userMainFilterOn = applyMainUserFilter
+            if(getCurrentTab() < 2) {
+                if (::mAdapter.isInitialized) {
+                    mAdapter.userMainFilterOn = applyMainUserFilter
+                }
+                applyTextFilter(binding.act083MainContent.act083MketFilter.text.toString())
             }
-            applyTextFilter(binding.act083MainContent.act083MketFilter.text.toString())
         }
 
+    }
+
+    private fun serialTabSelection() {
+        if (!firstClickSerialTab) {
+            serialClick()
+        }
+    }
+
+    private fun otherActionTabSelection() {
+        userFocusFilter = 0
+        updateMyActionList(userFocusFilter)
+    }
+
+    private fun myActionTabSelection() {
+        userFocusFilter = 1
+        updateMyActionList(userFocusFilter)
+    }
+
+
+    var firstClickSerialTab = true
+    private fun serialClick() {
+        with(binding.act083MainContent) {
+            act083TvNoResult.visibility = View.GONE
+            act083RvActionsList.visibility = View.GONE
+        }
+        changeProgressBarVisility(true)
     }
 
     private fun setIvMainUserSelection() {
@@ -1017,7 +1044,6 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
             act083RvActionsList.visibility = View.GONE
         }
         changeProgressBarVisility(true)
-        mPresenter.updateMyActionList(userFocusFilter)
     }
 
     /**
@@ -1072,6 +1098,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         with(binding.act083MainContent) {
             act083TabMyActions.isEnabled = enable
             act083TabOtherActions.isEnabled = enable
+            act083TabSerial.isEnabled = enable
         }
     }
 
@@ -1288,11 +1315,11 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 binding.act083MainContent.apply {
                     act083TvNoResult.text = hmAux_Trans["no_record_for_filter_lbl"]
                     act083TvNoResult.visibility = View.VISIBLE
-                    act083RvActionsList.visibility = View.INVISIBLE
+                    act083RvActionsList.visibility = View.GONE
                 }
             } else {
                 binding.act083MainContent.apply {
-                    act083TvNoResult.visibility = View.INVISIBLE
+                    act083TvNoResult.visibility = View.GONE
                     act083RvActionsList.visibility = View.VISIBLE
                 }
             }
@@ -1348,19 +1375,31 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
 
     override fun processError_1(mLink: String?, mRequired: String?) {
         super.processError_1(mLink, mRequired)
-        mPresenter.formButtonData = null
-        progressDialog.dismiss()
-        if (serialActionSelected > -1) {
-            resetActionPosition()
+        if(wsProcess == WsSerialSiteInventory::class.java.name) {
+            wsProcess = ""
+            progressDialog.dismiss()
+            mPresenter.updateRefreshSerialSiteFile(true)
+        }else{
+            mPresenter.formButtonData = null
+            progressDialog.dismiss()
+            if (serialActionSelected > -1) {
+                resetActionPosition()
+            }
         }
     }
 
     override fun processCustom_error(mLink: String?, mRequired: String?) {
         super.processCustom_error(mLink, mRequired)
-        mPresenter.formButtonData = null
-        progressDialog.dismiss()
-        if (serialActionSelected > -1) {
-            resetActionPosition()
+        if(wsProcess == WsSerialSiteInventory::class.java.name) {
+            wsProcess = ""
+            progressDialog.dismiss()
+            mPresenter.updateRefreshSerialSiteFile(true)
+        }else {
+            mPresenter.formButtonData = null
+            progressDialog.dismiss()
+            if (serialActionSelected > -1) {
+                resetActionPosition()
+            }
         }
     }
 
@@ -1413,6 +1452,123 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return super.onSupportNavigateUp()
+    }
+
+    fun loadTranslation(): HMAux? {
+        val transList: MutableList<String> = java.util.ArrayList()
+        transList.add("act083_title")
+        transList.add("tab_my_actions_lbl")
+        transList.add("tab_other_actions_lbl")
+        transList.add("filter_hint")
+        transList.add("form_lbl")
+        transList.add("IN_PROCESSING")
+        transList.add("no_record_lbl")
+        transList.add("no_record_for_filter_lbl")
+        transList.add("other_steps_available_lbl")
+        transList.add("cell_step_lbl")
+        transList.add("dialog_download_ticket_ttl")
+        transList.add("dialog_download_ticket_start")
+        transList.add("progress_sync_ttl")
+        transList.add("progress_sync_msg")
+        transList.add("site_desc_not_found_lbl")
+        transList.add("cell_waiting_approval")
+        //
+        transList.add("alert_ttl_exists_in_processing")
+        transList.add("alert_msg_exists_in_processing")
+        transList.add("alert_ttl_start_new_processing")
+        transList.add("alert_msg_start_new_processing")
+        transList.add("alert_error_on_create_form_ttl")
+        transList.add("alert_error_on_create_form_msg")
+        transList.add("alert_no_serial_found_ttl")
+        transList.add("alert_no_serial_found_msg")
+        transList.add("alert_product_no_allow_new_serial_msg")
+        transList.add("alert_ticket_action_start_ttl")
+        transList.add("alert_ticket_action_start_confirm")
+        transList.add("alert_error_on_create_ticket_action_ttl")
+        transList.add("alert_error_on_create_ticket_action_msg")
+        transList.add("alert_schedule_status_prevents_to_open_ttl")
+        transList.add("alert_schedule_status_prevents_to_open_msg")
+        transList.add("alert_menu_app_profile_not_found_ttl")
+        transList.add("alert_form_ap_menu_profile_not_found_msg")
+        transList.add("alert_menu_app_profile_not_found_ttl")
+        transList.add("alert_ticket_menu_profile_not_found_msg")
+        transList.add("alert_free_execution_blocked_ttl")
+        transList.add("alert_free_execution_blocked_msg")
+        //
+        transList.add("alert_form_site_restriction_ttl")
+        transList.add("alert_form_site_restriction_confirm")
+        transList.add("dialog_serial_search_ttl")
+        transList.add("dialog_serial_search_start")
+        //
+        transList.add("sys_main_menu_assets_local_lbl")
+        transList.add("sys_main_menu_calendar_lbl")
+        transList.add("sys_main_menu_search_lbl")
+        //
+        transList.add("new_form_lbl")
+        transList.add("alert_no_form_lbl")
+        transList.add("alert_no_form_for_product_msg")
+        transList.add("alert_no_form_for_operation_msg")
+        transList.add("alert_no_form_for_site_msg")
+        transList.add("alert_no_form_ttl")
+        transList.add("alert_product_or_serial_not_found_ttl")
+        transList.add("alert_product_or_serial_not_found_msg")
+        //
+        transList.add("alert_form_os_requires_serial_ttl")
+        transList.add("alert_form_os_requires_serial_msg")
+        //
+        transList.add("alert_not_execute_ttl")
+        transList.add("alert_not_execute_msg")
+        transList.add("alert_not_execute_justify_date_ttl")
+        transList.add("alert_not_execute_justify_option_lbl")
+        transList.add("alert_not_execute_justify_comment_lbl")
+        transList.add("sys_alert_btn_cancel")
+        transList.add("alert_not_execute_save_btn")
+        transList.add("alert_not_execute_justify_required_ttl")
+        transList.add("alert_not_execute_justify_option_required_msg")
+        transList.add("alert_not_execute_justify_comment_required_msg")
+        transList.add("alert_not_execute_justify_success_ttl")
+        transList.add("alert_not_execute_justify_success_msg")
+        transList.add("btn_cancel_schedule")
+        transList.add("warning_not_execute_justify_required_date_hour")
+        transList.add("warning_not_execute_justify_future_date_hour")
+        transList.add("alert_not_execute_justify_lost_data_ttl")
+        transList.add("alert_not_execute_justify_lost_data_msg")
+        transList.add("warning_not_execute_justify_future_date_hour")
+        transList.add("progress_n_form_sync_ttl")
+        //
+        transList.add("btn_open_action_lbl")
+        transList.add("btn_download_action_lbl")
+        transList.add("btn_continue_action_lbl")
+        transList.add("btn_select_serial_info_lbl")
+        //
+        transList.add("progress_serial_structure_ttl")
+        transList.add("progress_serial_structure_msg")
+        //
+        transList.add("item_in_process_lbl")
+        //
+        transList.add("cell_justify_lbl")
+        transList.add("progress_n_form_sync_ttl")
+        transList.add("progress_n_form_sync_msg")
+        //
+        transList.add("progress_site_search_ttl")
+        transList.add("progress_site_search_msg")
+        //
+        transList.add("tab_serial_site_lbl")
+        transList.add("serial_site_measure_lbl")
+        transList.add("serial_site_preventive_cycle_lbl")
+        transList.add("serial_site_next_cycle_lbl")
+        transList.add("btn_serial_site_status_lbl")
+        transList.add("btn_serial_site_select_serial_lbl")
+        //
+        transList.add(Act092Translate.HINT_FILTER)
+        transList.add(Act092Translate.PLACEHOLDER_FILTER)
+        return ToolBox_Inf.setLanguage(
+            context,
+            mModule_Code,
+            mResource_Code,
+            ToolBox_Con.getPreference_Translate_Code(context),
+            transList
+        )
     }
 
 }

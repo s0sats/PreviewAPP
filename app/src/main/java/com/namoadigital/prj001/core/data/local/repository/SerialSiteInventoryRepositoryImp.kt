@@ -59,9 +59,7 @@ class SerialSiteInventoryRepositoryImp constructor(
     }
 
     override fun cleanPreference() {
-        saveSerialSiteInvetoryPreference(
-            SiteInventory(-1, "", false)
-        )
+        preference.clear()
     }
 
     override fun deleteFile() {

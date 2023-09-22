@@ -24,7 +24,7 @@ class MyActionsFilterParamPreferences constructor(
             .putString(ACTION_FILTER_SITE_CODE, model.siteCode)
             .putLong(ACTION_FILTER_SERIAL_CODE, model.serialCode ?: -1L)
             .putInt(ACTION_FILTER_ZONE_CODE_BACK, model.zoneCodeBack ?: 0)
-            .putInt(ACTION_FILTER_INITIAL_TAB_LOAD, model.initialTabToLoad)
+            .putInt(ACTION_FILTER_INITIAL_TAB_LOAD, model.initialTabToLoad?: -1)
             .putInt(ACTION_FILTER_TAG_FILTER, model.tagFilter ?: -1)
             .putInt(ACTION_FILTER_PRODUCT_CODE, model.productCode ?: -1)
             .putBoolean(ACTION_FILTER_MAIN_USER_FILTER_STATE, model.mainUserFilterState)
@@ -62,7 +62,7 @@ class MyActionsFilterParamPreferences constructor(
                 calendarDate = getString(ACTION_FILTER_CALENDAR_DATE, null),
                 siteCodeBack = getString(ACTION_FILTER_SITE_CODE_BACK, null),
                 zoneCodeBack = getInt(ACTION_FILTER_ZONE_CODE_BACK, 0),
-                initialTabToLoad = getInt(ACTION_FILTER_INITIAL_TAB_LOAD, 1),
+                initialTabToLoad = getInt(ACTION_FILTER_INITIAL_TAB_LOAD, -1),
                 tagFilter = tagFilter,
                 productCode = productCode,
             )

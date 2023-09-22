@@ -100,8 +100,14 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         iniUIFooter();
         //
         initAction();
-
+        //
         deleteSerialSiteInventoryFile();
+        //
+        clearMyACtionFilterPreference();
+    }
+
+    private void clearMyACtionFilterPreference() {
+        mPresenter.clearMyActionFilterPreference();
     }
 
     private void iniSetup() {

@@ -6,8 +6,15 @@ class CheckSiteInventoryUseCase constructor(
     private val repository: SerialSiteInventoryRepository
 ) {
 
-    operator fun invoke(): Boolean {
-        return repository.getPreference().site_code != -1
+    operator fun invoke(type: CheckType): Boolean {
+        return when (type) {
+            CheckType.REFRESH -> repository.getPreference().refresh
+            CheckType.FILE_EXIST -> repository.getPreference().site_code != -1
+        }
     }
 
+}
+enum class CheckType {
+    REFRESH,
+    FILE_EXIST
 }

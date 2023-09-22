@@ -15,7 +15,9 @@ class SqlAct083_003(
         private var productCode: Int?,
         private var serialId: String?,
         private var calendarDate: String?,
-        val userFocus: Int
+        private val userFocus: Int,
+        private val isSerialSiteMode: Int = 0,
+
 ) : Specification {
     private val deviceGMT = ToolBox.getDeviceGMT(false)
     private var periodDateFilter: String = ""
@@ -30,9 +32,13 @@ class SqlAct083_003(
             ConstantBaseApp.ACT005 -> setHomeFilterConfg()
             ConstantBaseApp.ACT006 -> setSerialFilterConfg()
             ConstantBaseApp.ACT016 -> setCalendarFilterConfg()
+            ConstantBaseApp.ACT068 -> if(isSerialSiteMode == 1){setSerialSiteFilterConfg()}
         }
     }
 
+    private fun setSerialSiteFilterConfg() {
+        getStatusFilter()
+    }
     private fun setHomeFilterConfg() {
         periodDateFilter = getPeriodFilter()
         productCode = null

@@ -17,7 +17,8 @@ class SqlAct083_005(
         private var serialId: String?,
         private var siteCode: String?,
         private var calendarDate: String?,
-        private var userFocus: Int
+        private var userFocus: Int,
+        private val isSerialSiteMode: Int = 0,
 ) : Specification {
     private val deviceGMT = ToolBox.getDeviceGMT(false)
     private val customerGMT = ToolBox_Con.getPreference_Customer_TMZ(context)
@@ -35,7 +36,12 @@ class SqlAct083_005(
             ConstantBaseApp.ACT005 -> setHomeFilterConfg()
             ConstantBaseApp.ACT006 -> setSerialFilterConfg()
             ConstantBaseApp.ACT016 -> setCalendarFilterConfg()
+            ConstantBaseApp.ACT068 -> if(isSerialSiteMode == 1){setSerialSiteFilterConfg()}
         }
+    }
+
+    private fun setSerialSiteFilterConfg() {
+        getStatusFilter()
     }
 
     private fun setHomeFilterConfg() {

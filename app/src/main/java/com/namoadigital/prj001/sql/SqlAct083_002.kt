@@ -9,19 +9,20 @@ import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
 
 class SqlAct083_002(
-        private val context: Context,
-        private val originFlow: String,
-        private val customerCode: Int,
-        private var tagOperCode: Int?,
-        private var siteCode: String?,
-        private var productCode: Int?,
-        private var serialId: String?,
-        private var clientId: String?,
-        private var contractId: String?,
-        private var ticketId: String?,
-        private var calendarDate: String?,
-        private var userFocus: Int?,
-        private val multStepsLbl: String?
+    private val context: Context,
+    private val originFlow: String,
+    private val customerCode: Int,
+    private var tagOperCode: Int?,
+    private var siteCode: String?,
+    private var productCode: Int?,
+    private var serialId: String?,
+    private var clientId: String?,
+    private var contractId: String?,
+    private var ticketId: String?,
+    private var calendarDate: String?,
+    private var userFocus: Int?,
+    private var isSerialSiteMode: Int = 0,
+    private val multStepsLbl: String?,
 ) : Specification {
 
     private val INNER_UPDATE_REQUIRED = "INNER_UPDATE_REQUIRED"
@@ -105,7 +106,9 @@ class SqlAct083_002(
     private fun setMenuSearchFilterConfig() {
         tagOperCode = null
         periodDateFilter = ""
-        siteCode = null
+        if(isSerialSiteMode == 0) {
+            siteCode = null
+        }
         productCode = null
         serialId = null
         calendarDate = null
