@@ -213,7 +213,7 @@ class MyActionsAdapter constructor(
                     }
                 }
                 myActionSelectSerial.apply {
-                    text = hmAuxTrans["btn_serial_site_status_lbl"]
+                    text = hmAuxTrans["btn_serial_site_select_serial_lbl"]
                     setOnClickListener { _ ->
                         onClickFromSerialSite?.invoke(
                             Companion.OnClickType.OnSerialClick(
@@ -224,7 +224,7 @@ class MyActionsAdapter constructor(
                     }
                 }
                 act083SerialInfo.apply {
-                    text = hmAuxTrans["btn_serial_site_select_serial_lbl"]
+                    text = hmAuxTrans["btn_serial_site_status_lbl"]
                     setOnClickListener { _ ->
                         onClickFromSerialSite?.invoke(
                             Companion.OnClickType.OnStatusClick(

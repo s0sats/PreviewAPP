@@ -78,6 +78,7 @@ class Act093_Main : BaseActivityFragMvp<Act093Presenter, Act093MainBinding>(), C
             val myActionFilter =
                 bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM) as MyActionFilterParam?
             when (state.originFlow ?: myActionFilter?.originFlow) {
+                ConstantBaseApp.ACT068,
                 ConstantBaseApp.ACT083 -> {
                     Intent(applicationContext, Act083_Main::class.java).also {
                         it.putExtras(bundle)
