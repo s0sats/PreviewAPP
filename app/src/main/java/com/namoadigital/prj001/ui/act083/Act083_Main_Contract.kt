@@ -116,6 +116,8 @@ interface Act083_Main_Contract {
         fun getSerialSiteInventoryList(tabUserFocusFilter: Int)
         fun checkSerialSiteInv(currentTab: Int)
         fun callAct093(model: SerialSiteInventory)
+
+        fun updateRefreshSerialSiteFile(refresh: Boolean)
     }
 
 }

@@ -30,6 +30,10 @@ class SiteInventoryPref constructor(
         }
     }
 
+    fun clear(){
+        pref.edit().clear().apply()
+    }
+
     fun edit(hashMap: HashMap<String, Any>) {
         with(pref) {
             hashMap.map { map ->

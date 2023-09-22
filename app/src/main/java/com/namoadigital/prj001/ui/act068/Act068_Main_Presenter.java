@@ -659,6 +659,8 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
                 siteCode.toString()
         );
         //
+        clearMyActionFilterPreference();
+        //
         Bundle bundle = new Bundle();
         bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, Constant.ACT068);
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, actionFilterParam);

@@ -762,8 +762,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 wsProcess = ""
                 progressDialog.dismiss()
                 serialSiteSizeInt = mLink!!.toInt()
-                mPresenter.getSerialSiteInventoryList(userFocusFilter)
-
+                mPresenter.getSerialSiteInventoryList(getCurrentTab())
             }
 
             WsScheduleNotExecuted::class.java.name -> {
@@ -1376,19 +1375,31 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
 
     override fun processError_1(mLink: String?, mRequired: String?) {
         super.processError_1(mLink, mRequired)
-        mPresenter.formButtonData = null
-        progressDialog.dismiss()
-        if (serialActionSelected > -1) {
-            resetActionPosition()
+        if(wsProcess == WsSerialSiteInventory::class.java.name) {
+            wsProcess = ""
+            progressDialog.dismiss()
+            mPresenter.updateRefreshSerialSiteFile(true)
+        }else{
+            mPresenter.formButtonData = null
+            progressDialog.dismiss()
+            if (serialActionSelected > -1) {
+                resetActionPosition()
+            }
         }
     }
 
     override fun processCustom_error(mLink: String?, mRequired: String?) {
         super.processCustom_error(mLink, mRequired)
-        mPresenter.formButtonData = null
-        progressDialog.dismiss()
-        if (serialActionSelected > -1) {
-            resetActionPosition()
+        if(wsProcess == WsSerialSiteInventory::class.java.name) {
+            wsProcess = ""
+            progressDialog.dismiss()
+            mPresenter.updateRefreshSerialSiteFile(true)
+        }else {
+            mPresenter.formButtonData = null
+            progressDialog.dismiss()
+            if (serialActionSelected > -1) {
+                resetActionPosition()
+            }
         }
     }
 

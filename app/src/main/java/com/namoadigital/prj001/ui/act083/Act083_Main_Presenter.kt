@@ -11,6 +11,7 @@ import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.Ch
 import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.CheckType
 import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.SerialSiteInventoryUseCase
 import com.namoadigital.prj001.dao.*
+import com.namoadigital.prj001.extensions.updateSerialSiteInventoryPrefs
 import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.model.MyActionFilterParam.Companion.toActionFilter
 import com.namoadigital.prj001.receiver.*
@@ -100,15 +101,27 @@ class Act083_Main_Presenter constructor(
     private fun setViewFiltersParam() {
         when(initialTabToLoad){
             0 -> {
+                if (useCase.check!!.invoke(CheckType.REFRESH)
+                    && ToolBox_Con.isOnline(context)){
+                    callSerialSiteServce()
+                }
                 updateMyActionList(0)
             }
             1 -> {
+                if (useCase.check!!.invoke(CheckType.REFRESH)
+                    && ToolBox_Con.isOnline(context)){
+                    callSerialSiteServce()
+                }
                 updateMyActionList(1)
             }
             2 -> {
                 checkSerialSiteInv(2)
             }
             else -> {
+                if (useCase.check!!.invoke(CheckType.REFRESH)
+                    && ToolBox_Con.isOnline(context)){
+                    callSerialSiteServce()
+                }
                 updateMyActionList(0)
             }
         }
@@ -1836,7 +1849,7 @@ class Act083_Main_Presenter constructor(
                     siteCodeBack = ToolBox_Con.getPreference_Site_Code(context),
                     zoneCodeBack = ToolBox_Con.getPreference_Zone_Code(context),
                     siteCode = getSiteCodeFlow(),
-                    initialTabToLoad = 2
+                    initialTabToLoad = if(sharedPreferences.read().initialTabToLoad == -1) 2 else sharedPreferences.read().initialTabToLoad
                 ).also {
                     sharedPreferences.write(it)
                     myActionFilterParam = it.toMyActionFilter()
@@ -1846,7 +1859,8 @@ class Act083_Main_Presenter constructor(
                     originFlow = originFlow,
                     siteCodeBack = ToolBox_Con.getPreference_Site_Code(context),
                     zoneCodeBack = ToolBox_Con.getPreference_Zone_Code(context),
-                    siteCode = getSiteCodeFlow()
+                    siteCode = getSiteCodeFlow(),
+                    initialTabToLoad = if(sharedPreferences.read().initialTabToLoad == -1) 1 else sharedPreferences.read().initialTabToLoad
                 ).also {
                     sharedPreferences.write(it)
                     myActionFilterParam = it.toMyActionFilter()
@@ -2235,20 +2249,25 @@ class Act083_Main_Presenter constructor(
     override fun processSerialSite() {
         if (ToolBox_Con.isOnline(context)) {
             if (useCase.getPreference!!().refresh) {
-                mView.setProcess(WsSerialSiteInventory::class.java.name)
-                mView.showPD(
-                    hmAux_Trans!!["progress_site_search_ttl"],
-                    hmAux_Trans!!["progress_site_seach_msg"]
-                )
-                useCase.service!!()
+                callSerialSiteServce()
             } else {
                 mView.iniRecycler(useCase.getSiteInventory!!().toMutableList())
                 mView.setTabsCounters(getOtherTabCounter(0), getOtherTabCounter(1))
             }
         } else {
+            updateRefreshSerialSiteFile(true)
             mView.iniRecycler(useCase.getSiteInventory!!().toMutableList())
             mView.setTabsCounters(getOtherTabCounter(0), getOtherTabCounter(1))
         }
+    }
+
+    private fun callSerialSiteServce() {
+        mView.setProcess(WsSerialSiteInventory::class.java.name)
+        mView.showPD(
+            hmAux_Trans!!["progress_site_search_ttl"],
+            hmAux_Trans!!["progress_site_seach_msg"]
+        )
+        useCase.service!!()
     }
 
     override fun checkSerialSiteInv(currentTab: Int) {
@@ -2268,13 +2287,15 @@ class Act083_Main_Presenter constructor(
     }
 
     override fun getSerialSiteInventoryList(currentTab: Int) {
-        useCase.getSiteInventory!!().let {
-            mView.iniRecycler(it.toMutableList())
-            mView.visibleTabSerialSiteInventory(
-                showSize = true,
-                serialSiteSize = "${it.size}"
-            )
-            mView.setTabsCounters(getOtherTabCounter(0), getOtherTabCounter(1))
+        if(currentTab == 2) {
+            useCase.getSiteInventory!!().let {
+                mView.iniRecycler(it.toMutableList())
+                mView.visibleTabSerialSiteInventory(
+                    showSize = true,
+                    serialSiteSize = "${it.size}"
+                )
+                mView.setTabsCounters(getOtherTabCounter(0), getOtherTabCounter(1))
+            }
         }
     }
 
@@ -2287,6 +2308,10 @@ class Act083_Main_Presenter constructor(
                 myActionFilterParam
             )
         })
+    }
+
+    override fun updateRefreshSerialSiteFile(refresh: Boolean) {
+        useCase.updateSerialSiteInventoryPrefs(refresh)
     }
 
     private fun setSerialModel(model: SerialSiteInventory) {

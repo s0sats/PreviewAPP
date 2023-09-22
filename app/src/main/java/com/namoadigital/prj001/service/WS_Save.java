@@ -18,6 +18,7 @@ import com.namoadigital.prj001.dao.GeOsDeviceItemDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
+import com.namoadigital.prj001.extensions.SerialSiteInventoryUseCaseHelperKt;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data_Field;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
@@ -239,9 +240,7 @@ public class WS_Save extends IntentService {
 
     private void updateSerialSiteInventoryPrefs() {
         SerialSiteInventoryUseCase useCase = new SerialSiteInventoryUseCase.Companion.SiteInventoryUseCaseFactory(getApplicationContext()).editPrefrenceFileUseCase();
-        HashMap<String, Object> editPref = new HashMap<>();
-        editPref.put("refresh", true);
-        useCase.getEditPreference().invoke(editPref);
+        SerialSiteInventoryUseCaseHelperKt.updateSerialSiteInventoryPrefs(useCase, true);
     }
 
     private void loadTranslation() {

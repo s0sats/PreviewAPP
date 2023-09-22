@@ -18,7 +18,7 @@ data class SaveActionFilterModel(
     val calendarDate: String? = null,
     val siteCode: String? = null,
     val zoneCodeBack: Int? = null,
-    val initialTabToLoad: Int = 1,
+    val initialTabToLoad: Int? = null,
     val tagFilter: Int? = null,
     val productCode: Int? = null,
     val mainUserFilterState: Boolean = false
