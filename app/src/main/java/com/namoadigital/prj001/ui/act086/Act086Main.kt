@@ -472,10 +472,14 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
     }
 
     override fun onBackPressed() {
-        if(binding.clImageZoom.visibility == View.VISIBLE){
+        handleBackPressed()
+    }
+
+    private fun handleBackPressed() {
+        if (binding.clImageZoom.visibility == View.VISIBLE) {
             binding.showHistPhoto(false)
         } else {
-            mPresenter.onBackPressedClicked(supportFragmentManager,deviceItem)
+            mPresenter.onBackPressedClicked(supportFragmentManager, deviceItem)
         }
     }
 
@@ -502,7 +506,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if(item.itemId == android.R.id.home){
-            mPresenter.onBackPressedClicked(supportFragmentManager, deviceItem)
+            handleBackPressed()
         }
         return super.onOptionsItemSelected(item)
     }
