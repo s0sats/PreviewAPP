@@ -21,6 +21,7 @@ class SqlAct083_001(
         private var ticketId: String?,
         private var calendarDate: String?,
         private val userFocus: Int,
+        private var isSerialSiteMode: Int = 0,
         private val multStepsLbl: String?
 ) : Specification {
     private val deviceGMT = ToolBox.getDeviceGMT(false)
@@ -88,7 +89,9 @@ class SqlAct083_001(
     private fun setMenuSearchFilterConfig() {
         tagOperCode = null
         periodDateFilter = ""
-        siteCode = null
+        if(isSerialSiteMode == 0) {
+            siteCode = null
+        }
         productCode = null
         serialId = null
         calendarDate = null

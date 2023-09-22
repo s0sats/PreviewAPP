@@ -2052,6 +2052,7 @@ class Act083_Main_Presenter constructor(
                 ticketId,
                 calendarDate,
                 userFocus,
+                isSerialSiteMode = if (isSerialSiteMode(useCase.check!!)) 1 else 0,
                 hmAux_Trans?.get("other_steps_available_lbl")
             ).toSqlQuery()
         )
@@ -2072,6 +2073,7 @@ class Act083_Main_Presenter constructor(
                 ticketId,
                 calendarDate,
                 userFocus,
+                isSerialSiteMode = if (isSerialSiteMode(useCase.check!!)) 1 else 0,
                 hmAux_Trans?.get("other_steps_available_lbl")
             ).toSqlQuery()
         )

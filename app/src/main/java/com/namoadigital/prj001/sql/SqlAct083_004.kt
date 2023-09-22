@@ -3,9 +3,7 @@ package com.namoadigital.prj001.sql
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
-import com.namoadigital.prj001.dao.TK_TicketDao
 import com.namoadigital.prj001.database.Specification
-import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.util.ConstantBaseApp
 
 class SqlAct083_004(
@@ -15,10 +13,13 @@ class SqlAct083_004(
         private var productCode: Int?,
         private var serialId: String?,
         private var calendarDate: String?,
-        private var userFocus: Int
+        private var userFocus: Int,
+        private var siteCode: String?,
+        private val isSerialSiteMode: Int = 0,
 ) : Specification {
     private val deviceGMT = ToolBox.getDeviceGMT(false)
     private var statusFilter = ""
+    private var siteFilter = ""
 
     init {
         setFiltersByOriginAndFocus()
@@ -29,7 +30,13 @@ class SqlAct083_004(
             ConstantBaseApp.ACT005 -> setHomeFilterConfg()
             ConstantBaseApp.ACT006 -> setSerialFilterConfg()
             ConstantBaseApp.ACT016 -> setCalendarFilterConfg()
+            ConstantBaseApp.ACT068 -> if(isSerialSiteMode == 1){setSerialSiteFilterConfg()}
         }
+    }
+
+    private fun setSerialSiteFilterConfg() {
+        getStatusFilter()
+        siteFilter = "\nand ($siteCode is null or l.${GE_Custom_Form_LocalDao.SITE_CODE} = $siteCode)"
     }
 
     private fun setHomeFilterConfg() {
@@ -100,6 +107,7 @@ class SqlAct083_004(
                      and l.${GE_Custom_Form_LocalDao.TICKET_SEQ_TMP} is null		
                      and l.${GE_Custom_Form_LocalDao.STEP_CODE} is null	
                      $statusFilter
+                     $siteFilter
                      and ($tagOperCode is null or l.${GE_Custom_Form_LocalDao.TAG_OPERATIONAL_CODE} = $tagOperCode) 
                      and ($productCode is null or l.${GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE} = $productCode )
                      and ('$serialId' is null or l.${GE_Custom_Form_LocalDao.SERIAL_ID} = '$serialId')                    
