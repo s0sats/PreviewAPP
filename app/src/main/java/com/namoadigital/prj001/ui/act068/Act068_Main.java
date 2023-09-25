@@ -195,7 +195,7 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         transList.add("progress_unfocus_ticket_download_ttl");
         transList.add("progress_unfocus_ticket_download_msg");
         //
-        transList.add("spinner_title_lbl");
+        transList.add("search_site_hint");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
