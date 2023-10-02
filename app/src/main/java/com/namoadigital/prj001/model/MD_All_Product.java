@@ -28,6 +28,7 @@ public class MD_All_Product {
     @SerializedName("serial_min_length") private Integer serial_min_length;
     @SerializedName("serial_max_length") private Integer serial_max_length;
     @SerializedName("spare_part") private int spare_part;
+    @SerializedName("has_group") private int has_group;
 
     public long getCustomer_code() {
         return customer_code;
@@ -187,5 +188,13 @@ public class MD_All_Product {
 
     public void setSpare_part(int spare_part) {
         this.spare_part = spare_part;
+    }
+
+    public int getHas_group() {
+        return has_group;
+    }
+
+    public void setHas_group(int has_group) {
+        this.has_group = has_group;
     }
 }

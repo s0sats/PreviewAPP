@@ -36,6 +36,7 @@ public class MD_Product implements Serializable {
     @SerializedName("product_icon_url") private String product_icon_url;
     @SerializedName("product_icon_url_local") private String product_icon_url_local;
     @SerializedName("spare_part") private int spare_part;
+    @SerializedName("has_group") private int has_group;
 
     public long getCustomer_code() {
         return customer_code;
@@ -227,6 +228,14 @@ public class MD_Product implements Serializable {
 
     public void setSpare_part(int spare_part) {
         this.spare_part = spare_part;
+    }
+
+    public int getHas_group() {
+        return has_group;
+    }
+
+    public void setHas_group(int has_group) {
+        this.has_group = has_group;
     }
 
     public MD_Product_Serial createNewSerialForThisProduct(String serial_id){

@@ -309,6 +309,7 @@ import java.security.NoSuchAlgorithmException;
 import java.text.Collator;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.Normalizer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -9546,12 +9547,13 @@ public class ToolBox_Inf {
         return noAccentText.toString();
     }
 
-    public static void sortResults(ArrayList<HMAux> itemsForSort, String hmAuxKey) {
+    public static void sortResults(ArrayList<HMAux> itemsForSort) {
         Comparator<HMAux> comparator = new Comparator<HMAux>() {
             @Override
             public int compare(HMAux product, HMAux productAux) {
-                String description = product.get(hmAuxKey) != null ? Objects.requireNonNull(product.get(hmAuxKey)).trim().toLowerCase() : "";
-                String descriptionAux = productAux.get(hmAuxKey) != null ? Objects.requireNonNull(productAux.get(hmAuxKey)).trim().toLowerCase() : "";
+
+                String description = Normalizer.normalize(product.get("desc")!= null ? Objects.requireNonNull(product.get("desc")).trim().toLowerCase() : "", Normalizer.Form.NFD);
+                String descriptionAux = Normalizer.normalize(productAux.get("desc")!= null ? Objects.requireNonNull(productAux.get("desc")).trim().toLowerCase() : "", Normalizer.Form.NFD);
 
                 return Collator.getInstance().compare(description, descriptionAux);
             }

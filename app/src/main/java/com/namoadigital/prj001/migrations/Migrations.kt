@@ -5,6 +5,8 @@ import android.database.sqlite.SQLiteDatabase
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.database.MigrationSQLite
 
+
+
 val MigrationV1 = object : MigrationSQLite(1, 2){
     override fun migrate(db: SQLiteDatabase) {
         //
@@ -184,7 +186,7 @@ val MigrationV7 = object : MigrationSQLite(7, 8) {
 }
 
 
-val MigrationV8 = object : MigrationSQLite(7, 8) {
+val MigrationV8 = object : MigrationSQLite(8, 9) {
     override fun migrate(db: SQLiteDatabase) {
         db.execSQL(
             """
@@ -247,6 +249,44 @@ val MigrationV8 = object : MigrationSQLite(7, 8) {
         //
     }
 
+}
+
+val migrationV9: MigrationSQLite = object : MigrationSQLite(9, 10) {
+    override fun migrate(db: SQLiteDatabase) {
+        //
+        if (!isFieldExist(db, MD_All_ProductDao.TABLE, MD_All_ProductDao.HAS_GROUP)) {
+            db.execSQL(""" ALTER TABLE [${MD_All_ProductDao.TABLE}] ADD [${MD_All_ProductDao.HAS_GROUP}]   int not null default 0;""".trimIndent())
+        }
+        //
+        if (!isFieldExist(db, MD_ProductDao.TABLE, MD_ProductDao.HAS_GROUP)) {
+            db.execSQL(""" ALTER TABLE [${MD_ProductDao.TABLE}] ADD [${MD_ProductDao.HAS_GROUP}]   int not null default 0;""".trimIndent())
+        }
+        //
+        db.execSQL(""" 
+            update ${MD_All_ProductDao.TABLE} 
+            set ${MD_All_ProductDao.HAS_GROUP}  =  ( select 
+                                     case when count(1) = 0 
+                                          then 0 
+                                          else 1 
+                                     end
+                                from  ${MD_All_Product_Group_ProductDao.TABLE} gp
+                               where ${MD_All_ProductDao.TABLE}.${MD_All_ProductDao.PRODUCT_CODE} = gp.${MD_All_Product_Group_ProductDao.PRODUCT_CODE} 
+            )
+        """.trimIndent())
+        //
+        db.execSQL(""" 
+            update ${MD_ProductDao.TABLE} 
+            set ${MD_ProductDao.HAS_GROUP}  =  ( select 
+                                     case when count(1) = 0 
+                                          then 0 
+                                          else 1 
+                                     end
+                                from  ${MD_Product_Group_ProductDao.TABLE} gp
+                               where ${MD_ProductDao.TABLE}.${MD_ProductDao.PRODUCT_CODE} = gp.${MD_Product_Group_ProductDao.PRODUCT_CODE} 
+            )
+        """.trimIndent())
+        //
+    }
 }
 
 fun isFieldExist(db: SQLiteDatabase, tableName: String, fieldName: String): Boolean {

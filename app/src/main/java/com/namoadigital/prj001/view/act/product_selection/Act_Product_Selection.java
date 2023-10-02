@@ -2,6 +2,8 @@ package com.namoadigital.prj001.view.act.product_selection;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.WindowManager;
@@ -42,6 +44,7 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
     public static final String INDEX_GROUP_DESC = "index_group_desc";
     public static final String IS_ADD_PRODUCT_LIST = "IS_ADD_PRODUCT_LIST";
     public static final String PRODUCT_LIST = "PRODUCT_LIST";
+    public static final int DELAY_MILLIS = 200;
 
     private Act_Product_Selection_Contract.I_Presenter mPresenter;
     private MKEditTextNM mket_product_search;
@@ -62,6 +65,17 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
     private ArrayList<Integer> receivedProducts = new ArrayList<>();
 
     private String titleAppBar;
+    private long lastTextChangeMillis = -1;
+    private Handler filterHandler;
+    private Runnable filterMaterialRunner =  new Runnable() {
+        @Override
+        public void run() {
+            long currentTimeMillis = System.currentTimeMillis();
+            if( currentTimeMillis - lastTextChangeMillis >= DELAY_MILLIS){
+                callSetAdapterData(mket_product_search.getText().toString());
+            }
+        }
+    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -196,7 +210,6 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
     }
 
     private void callSetAdapterData(String search) {
-
         if(isProductAddProcess){
             mPresenter.setAdapterDataForProductInsert(
                     Long.parseLong(currentIndex.get(INDEX_GROUP_CODE)),
@@ -284,13 +297,15 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
 
 
     private void initActions() {
-
+        filterHandler = new Handler();
         mket_product_search.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
             @Override
             public void reportTextChange(String s) {
 
                 if (mkUpdate) {
-                    callSetAdapterData(s);
+                    lastTextChangeMillis = System.currentTimeMillis();
+                    filterHandler.removeCallbacksAndMessages(filterMaterialRunner);
+                    filterHandler.postDelayed(filterMaterialRunner, DELAY_MILLIS);
                 }
             }
 
@@ -453,6 +468,7 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
 
     @Override
     public void loadGroups_Products(List<HMAux> groups_products) {
+
         if (groups_products.isEmpty()) {
             tv_empty_list.setVisibility(View.VISIBLE);
             lv_groups_products.setVisibility(View.GONE);
@@ -480,6 +496,7 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
                         hmAux_Trans
                 )
         );
+
     }
 
     @Override

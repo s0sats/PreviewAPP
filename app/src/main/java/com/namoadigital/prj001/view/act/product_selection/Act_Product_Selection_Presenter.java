@@ -3,8 +3,10 @@ package com.namoadigital.prj001.view.act.product_selection;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DESC_FOR_SORT;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.MD_All_ProductDao;
 import com.namoadigital.prj001.dao.MD_All_Product_GroupDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
@@ -41,14 +43,17 @@ public class Act_Product_Selection_Presenter implements Act_Product_Selection_Co
 
     @Override
     public void setAdapterData(long group_code, Long recursive_code, String filter) {
-        ArrayList<HMAux> groups = (ArrayList<HMAux>) product_groupDao.query_HM(
-                new Sql_Act007_001(
-                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
-                        String.valueOf(recursive_code),
-                        (filter.trim().equals("") ? "null" : filter)
-                ).toSqlQuery()
-        );
-
+        ArrayList<HMAux> groups = new ArrayList<>();
+        if(filter.trim().isEmpty()) {
+            groups.addAll(product_groupDao.query_HM(
+                    new Sql_Act007_001(
+                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                            String.valueOf(recursive_code),
+                            (filter.trim().equals("") ? "null" : filter)
+                    ).toSqlQuery()
+                )
+            );
+        }
         ArrayList<HMAux> products = (ArrayList<HMAux>) productDao.query_HM(
                 new Sql_Act007_002(
                         String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
@@ -62,46 +67,19 @@ public class Act_Product_Selection_Presenter implements Act_Product_Selection_Co
         );
 
         ArrayList<HMAux> data = new ArrayList<>();
-        ArrayList<HMAux> sortedProducts = new ArrayList<>();
-        for (HMAux aux : groups) {
-            HMAux item = new HMAux();
-            item.put("code", aux.get("group_code"));
-            item.put("desc", aux.get("group_desc"));
-            item.put("id", aux.get("group_id"));
-            // para grupos apenas a descricao sera exibida.
-            item.put("full_desc", aux.get("group_desc"));
-            item.put("type", aux.get("type"));
-            String group_desc = Normalizer.normalize(aux.get("group_desc"), Normalizer.Form.NFD);
-            item.put(DESC_FOR_SORT, group_desc);
-            // Hugo
-            item.put("recursive", aux.get("recursive_code"));
-            //
-            data.add(item);
+
+        if(groups.size() > 1) {
+            ToolBox_Inf.sortResults(groups);
         }
-        if(data.size() > 1) {
-            ToolBox_Inf.sortResults(data, DESC_FOR_SORT);
+        //
+        data.addAll(groups);
+        //
+
+        if(products.size() > 1) {
+            ToolBox_Inf.sortResults(products);
         }
 
-        for (HMAux aux : products) {
-            HMAux item = new HMAux();
-            item.put("code", aux.get("product_code"));
-            item.put("desc", aux.get("product_desc"));
-            item.put("id", aux.get("product_id"));
-            // para produtos(nao insumos) apenas a descricao sera exibida.
-            item.put("full_desc", aux.get("product_desc"));
-            item.put("type", aux.get("type"));
-            item.put("recursive", aux.get(""));
-            String product_desc = Normalizer.normalize(aux.get("product_desc"), Normalizer.Form.NFD);
-            item.put(DESC_FOR_SORT, product_desc);
-            //
-            sortedProducts.add(item);
-        }
-        if(sortedProducts.size() > 1) {
-            ToolBox_Inf.sortResults(sortedProducts,DESC_FOR_SORT);
-        }
-
-        data.addAll(sortedProducts);
-        sortedProducts.clear();
+        data.addAll(products);
 
         if (data.size() == 1 && returnOnFound) {
             mView.sendResult(
@@ -139,15 +117,19 @@ public class Act_Product_Selection_Presenter implements Act_Product_Selection_Co
         MD_All_ProductDao allProductDao = new MD_All_ProductDao(context);
         MD_All_Product_GroupDao allProductGroupDao  = new MD_All_Product_GroupDao(context);
         //
-        ArrayList<HMAux> groups = (ArrayList<HMAux>) allProductGroupDao.query_HM(
-                new Sql_Act027_Product_Selection_001(
-                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
-                        String.valueOf(recursive_code),
-                        (filter.trim().equals("") ? "null" : filter)
-                ).toSqlQuery()
-        );
+        ArrayList<HMAux> groups = new ArrayList<>();
+        if(filter.trim().isEmpty()) {
+            groups.addAll(allProductGroupDao.query_HM(
+                            new Sql_Act027_Product_Selection_001(
+                                    String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                                    String.valueOf(recursive_code)
+                            ).toSqlQuery()
+                    )
+            );
+        }
         //
-        ArrayList<HMAux> products = (ArrayList<HMAux>) allProductDao.query_HM(
+        ArrayList<HMAux> products = new ArrayList<>();
+        products = (ArrayList<HMAux>) allProductDao.query_HM(
                 new Sql_Act027_Product_Selection_002(
                         String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
                         String.valueOf(group_code),
@@ -157,48 +139,18 @@ public class Act_Product_Selection_Presenter implements Act_Product_Selection_Co
         );
         //
         ArrayList<HMAux> data = new ArrayList<>();
-        ArrayList<HMAux> sortedProducts = new ArrayList<>();
         //
-        for (HMAux aux : groups) {
-            HMAux item = new HMAux();
-            item.put("code", aux.get("group_code"));
-            item.put("desc", aux.get("group_desc"));
-            item.put("id", aux.get("group_id"));
-            // para grupos apenas a descricao sera exibida.
-            item.put("full_desc", aux.get("group_desc"));
-            item.put("type", aux.get("type"));
-            String group_desc = Normalizer.normalize(aux.get("group_desc"), Normalizer.Form.NFD);
-            item.put(DESC_FOR_SORT, group_desc);
-            // Hugo
-            item.put("recursive", aux.get("recursive_code"));
-            //
-            data.add(item);
+        if(groups.size() > 1) {
+            ToolBox_Inf.sortResults(groups);
         }
-        if(data.size() > 1) {
-            ToolBox_Inf.sortResults(data,DESC_FOR_SORT);
-        }
-
-        for (HMAux aux : products) {
-            HMAux item = new HMAux();
-            item.put("code", aux.get("product_code"));
-            item.put("desc", aux.get("product_desc"));
-            item.put("id", aux.get("product_id"));
-            item.put("full_desc", aux.get("full_product_desc"));
-            item.put("type", aux.get("type"));
-            item.put("recursive", aux.get(""));
-            String product_desc = Normalizer.normalize(aux.get("product_desc"), Normalizer.Form.NFD);
-            item.put(DESC_FOR_SORT, product_desc);
-            //
-            sortedProducts.add(item);
+        data.addAll(groups);
+        //
+        if(products.size() > 1) {
+            ToolBox_Inf.sortResults(products);
         }
         //
-        if(sortedProducts.size() > 1) {
-            ToolBox_Inf.sortResults(sortedProducts,DESC_FOR_SORT);
-        }
+        data.addAll(products);
         //
-        data.addAll(sortedProducts);
-        sortedProducts.clear();
-
         if (data.size() == 1 && returnOnFound) {
             mView.sendResult(
                     productDao.getByString(new MD_Product_Sql_001(
