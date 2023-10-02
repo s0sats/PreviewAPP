@@ -1,6 +1,8 @@
 package com.namoadigital.prj001.sql;
 
 
+import com.namoadigital.prj001.dao.MD_All_Product_Group_ProductDao;
+import com.namoadigital.prj001.dao.MD_Product_Group_ProductDao;
 import com.namoadigital.prj001.database.Specification;
 
 /**
@@ -35,20 +37,19 @@ public class Sql_Act007_002 implements Specification {
 
             return sb
                     .append(" SELECT\n" +
-                            "  DISTINCT " +
-                            "    p.product_code,\n" +
-                            "    p.product_id,\n" +
-                            "    p.product_desc,\n" +
-                            "    p.product_id || ' - ' || p.product_desc full_product_desc ,\n" +
+                            "    p.product_code code,\n" +
+                            "    p.product_id id,\n" +
+                            "    p.product_desc desc,\n" +
+                            "    p.product_desc full_desc,\n" +
                             "    'product' type \n" +
                             " FROM\n" +
                             "    md_products p\n" +
-                            " LEFT JOIN\n" +
-                            "    md_product_group_products as pgp on p.customer_code = pgp.customer_code and p.product_code = pgp.product_code\n" +
-                            " WHERE\n" +
-                            "    p.customer_code= " + s_customer_code + " \n" +
-                            "    and pgp.product_code is null and '" + s_filter + "' IS NULL  \n" +
-                            "    or ( '" + s_filter + "' IS NOT NULL and ( lower(p.product_id) GLOB lower('*" + s_filter + "*') OR lower(p.product_desc) GLOB lower('*" + s_filter + "*' )) )" +
+                            " WHERE p.customer_code= " + s_customer_code + " \n" +
+                            "   AND ( '" + s_filter + "' IS NULL\n" +
+                            "             OR (lower(p.product_id) GLOB lower('*" + s_filter + "*') " +
+                            "             OR lower(p.product_desc) GLOB lower('*" + s_filter + "*'))" +
+                            "          ) \n" +
+                            "      AND p.has_group = 0" +
                             "  ORDER BY \n" +
                             "     trim(p.product_desc);")
                     //.append("product_code#product_id#product_desc#full_product_desc#type")
@@ -59,24 +60,31 @@ public class Sql_Act007_002 implements Specification {
         } else {
             return sb
                     .append("     SELECT\n" +
-                            "       DISTINCT" +
-                            "        p.product_code,\n" +
-                            "        p.product_id,\n" +
-                            "        p.product_desc,\n" +
-                            "        p.product_id || ' - ' || p.product_desc full_product_desc ,\n" +
-                            "                               'product' type                          \n" +
-                            "     FROM\n" +
-                            "        md_products p\n" +
-                            "     LEFT JOIN\n" +
-                            "        md_product_group_products as pgp on p.customer_code = pgp.customer_code and p.product_code = pgp.product_code\n" +
-                            "     WHERE   \n" +
-                            "        pgp.customer_code= " + s_customer_code + "   \n" +
-                            "        and pgp.group_code = " + s_group_code + " AND pgp.product_code IS NOT NULL AND '" + s_filter + "' IS NULL \n" +
-                            "        OR( '" + s_filter + "' IS NOT NULL\n" +
-                            "              AND (lower(p.product_id) GLOB lower('*" + s_filter + "*') OR lower(p.product_desc) GLOB lower('*" + s_filter + "*'))" +
-                            "           ) \n" +
+                            "        p.product_code code,\n" +
+                            "        p.product_id id,\n" +
+                            "        p.product_desc desc,\n" +
+                            "        p.product_desc full_desc,\n" +
+                            "        'product' type \n" +
+                            "     FROM\n " +
+                            "        md_products p \n" +
+                            "     WHERE\n " +
+                            "            p.customer_code= " + s_customer_code + "   \n" +
+                            "   AND ( '" + s_filter + "' IS NULL\n" +
+                            "             OR (lower(p.product_id) GLOB lower('*" + s_filter + "*') " +
+                            "             OR lower(p.product_desc) GLOB lower('*" + s_filter + "*'))" +
+                            "          ) \n" +
+                            "      AND p.has_group = 1" +
+                            "   AND exists "+
+                            "   (\n" +
+                            "    select 1 \n" +
+                            "      from " +
+                            "     " + MD_Product_Group_ProductDao.TABLE + " as pgp \n" +
+                            "     where p.customer_code = pgp.customer_code \n" +
+                            "       and p.product_code = pgp.product_code\n" +
+                            "       and pgp.group_code =" + s_group_code  + "\n" +
+                            " )" +
                             "     ORDER BY\n" +
-                            "        trim(P.product_desc);")
+                            "        trim(p.product_desc);")
                     //.append("product_code#product_id#product_desc#full_product_desc#type")
                     .toString()
                     .replace("'%null%'","null")

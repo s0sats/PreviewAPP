@@ -1,9 +1,8 @@
 package com.namoadigital.prj001.ui.act027;
 
-import static com.namoadigital.prj001.util.ConstantBaseApp.DESC_FOR_SORT;
-
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +30,6 @@ import com.namoadigital.prj001.sql.Sql_Act027_Product_Selection_002;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
-import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -46,7 +44,7 @@ public class Act027_Product_Selection extends BaseFragment {
     public static final String INDEX_RECURSIVE_CODE = "index_recursive_code";
 
     public static final String INDEX_GROUP_DESC = "index_group_desc";
-
+    public static final int DELAY_MILLIS = 200;
 
     private boolean bStatus = false;
     private Context context;
@@ -64,6 +62,17 @@ public class Act027_Product_Selection extends BaseFragment {
     private HMAux currentIndex = new HMAux();
     private boolean loadAdapter = true;//old stopPropagation
     private boolean mkUpdate = true;
+    private long lastTextChangeMillis = -1;
+    private Handler filterHandler;
+    private Runnable filterMaterialRunner =  new Runnable() {
+        @Override
+        public void run() {
+            long currentTimeMillis = System.currentTimeMillis();
+            if( currentTimeMillis - lastTextChangeMillis >= DELAY_MILLIS){
+                callSetAdapterData(mket_product_search.getText().toString());
+            }
+        }
+    };
     private MD_All_ProductDao allProductDao;
     private MD_All_Product_GroupDao allProductGroupDao;
     private onProductClickListner onProductClickListner;
@@ -155,13 +164,26 @@ public class Act027_Product_Selection extends BaseFragment {
     }
 
     private void iniAction() {
-
+        filterHandler = new Handler();
         mket_product_search.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
             @Override
             public void reportTextChange(String s) {
 
                 if (mkUpdate) {
-                    callSetAdapterData(s);
+                    new Handler().postDelayed(
+                            new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (mkUpdate) {
+                                        lastTextChangeMillis = System.currentTimeMillis();
+                                        filterHandler.removeCallbacksAndMessages(filterMaterialRunner);
+                                        filterHandler.postDelayed(filterMaterialRunner, DELAY_MILLIS);
+                                    }
+                                }
+                            },
+                            DELAY_MILLIS
+                    );
+
                 }
             }
 
@@ -288,15 +310,17 @@ public class Act027_Product_Selection extends BaseFragment {
             //defineForwardFlow(String.valueOf(listProducts.get(0).getProduct_code()));
             onProductClickListner.onProductClick((int) listProducts.get(0).getProduct_code());
         } else {
-
-            ArrayList<HMAux> groups = (ArrayList<HMAux>) allProductGroupDao.query_HM(
-                    new Sql_Act027_Product_Selection_001(
-                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
-                            String.valueOf(recursive_code),
-                            (filter.trim().equals("") ? "null" : filter)
-                    ).toSqlQuery()
-            );
-
+            ArrayList<HMAux> groups = new ArrayList<>();
+            if(filter.trim().isEmpty()) {
+                groups.addAll(allProductGroupDao.query_HM(
+                            new Sql_Act027_Product_Selection_001(
+                                    String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                                    String.valueOf(recursive_code)
+                        ).toSqlQuery()
+                    )
+                );
+            }
+            //
             ArrayList<HMAux> products = (ArrayList<HMAux>) allProductDao.query_HM(
                     new Sql_Act027_Product_Selection_002(
                             String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
@@ -305,51 +329,19 @@ public class Act027_Product_Selection extends BaseFragment {
                             (int) group_code
                     ).toSqlQuery()
             );
-
+            //
             ArrayList<HMAux> data = new ArrayList<>();
-            ArrayList<HMAux> sortedProducts = new ArrayList<>();
-            for (HMAux aux : groups) {
-                HMAux item = new HMAux();
-                item.put("code", aux.get("group_code"));
-                item.put("desc", aux.get("group_desc"));
-                item.put("id", aux.get("group_id"));
-                // para grupos apenas a descricao sera exibida.
-                item.put("full_desc", aux.get("group_desc"));
-                item.put("type", aux.get("type"));
-                // Hugo
-                item.put("recursive", aux.get("recursive_code"));
-                //
-                String product_desc = Normalizer.normalize(aux.get("group_desc"), Normalizer.Form.NFD);
-                item.put(DESC_FOR_SORT, product_desc);
-                //
-                data.add(item);
+            //
+            if(groups.size() > 1) {
+                ToolBox_Inf.sortResults(groups);
+            }
+            data.addAll(groups);
+            //
+            if(products.size() > 1) {
+                ToolBox_Inf.sortResults(products);
             }
             //
-            if(data.size() > 1) {
-                ToolBox_Inf.sortResults(data,DESC_FOR_SORT);
-            }
-            //
-            for (HMAux aux : products) {
-                HMAux item = new HMAux();
-                item.put("code", aux.get("product_code"));
-                item.put("desc", aux.get("product_desc"));
-                item.put("id", aux.get("product_id"));
-                item.put("full_desc", aux.get("full_product_desc"));
-                item.put("type", aux.get("type"));
-                item.put("recursive", aux.get(""));
-                //
-                String product_desc = Normalizer.normalize(aux.get("product_desc"), Normalizer.Form.NFD);
-                item.put(DESC_FOR_SORT, product_desc);
-                //
-                sortedProducts.add(item);
-            }
-            //
-            if(sortedProducts.size() > 1) {
-                ToolBox_Inf.sortResults(sortedProducts,DESC_FOR_SORT);
-            }
-            //
-            data.addAll(sortedProducts);
-            sortedProducts.clear();
+            data.addAll(products);
             //
             loadGroups_Products(data);
         }
@@ -383,7 +375,6 @@ public class Act027_Product_Selection extends BaseFragment {
     }
 
     private void callSetAdapterData(String search) {
-
         setAdapterData(
                 Long.parseLong(currentIndex.get(INDEX_GROUP_CODE)),
                 Long.parseLong(currentIndex.get(INDEX_RECURSIVE_CODE)),
@@ -413,7 +404,6 @@ public class Act027_Product_Selection extends BaseFragment {
                         setAdapterData(0, 0L, mket_product_search.getText().toString().trim());
                     }else{
                         btn_back.setVisibility(View.VISIBLE);
-
                         setAdapterData(
                                 Long.parseLong(currentIndex.get(INDEX_GROUP_CODE)),
                                 Long.parseLong(currentIndex.get(INDEX_RECURSIVE_CODE)),
