@@ -137,14 +137,19 @@ class MyActionsAdapter constructor(
             with(binding) {
 
                 serialSiteItemTvSerialId.text = item.serialId
-                serialSiteItemTvBrandModelColor.text = listOfNotNull(
+                serialSiteItemTvBrandModelColor.visibility = View.GONE
+                val brandModelColorVal: String = listOfNotNull(
                     item.brandDesc,
                     item.modelDesc,
                     item.colorDesc
                 ).joinToString(" | ") { text -> text.formatString() }
+                if(brandModelColorVal.isNotBlank()) {
+                    serialSiteItemTvBrandModelColor.text = brandModelColorVal
+                    serialSiteItemTvBrandModelColor.visibility = View.GONE
+                }
+                //
                 serialSiteItemTvTrackings.checkVisible(item.addInf1)
-
-
+                //
                 if (!item.measureDate.isNullOrEmpty()) {
                     val measureDate = ToolBox_Inf.millisecondsToString(
                         ToolBox_Inf.dateToMilliseconds(item.measureDate),

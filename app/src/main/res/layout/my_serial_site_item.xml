@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:layout_marginEnd="8dp"
-            android:paddingBottom="8dp"
+            android:layout_marginBottom="8dp"
             android:textColor="@color/m3_namoa_onSurfaceVariant"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -49,7 +49,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:layout_marginEnd="8dp"
-            android:paddingBottom="8dp"
             android:textColor="@color/m3_namoa_onSurfaceVariant"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -62,6 +61,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="TextView"
+            android:layout_marginTop="8dp"
             android:textColor="@color/m3_namoa_onSurface"
             app:layout_constraintEnd_toEndOf="@+id/serial_site_item_tv_last_measure_val"
             app:layout_constraintHorizontal_bias="0.0"
@@ -105,13 +105,14 @@
 
             <ImageView
                 android:id="@+id/iv_tag"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
                 android:src="@drawable/ic_tag_black_24dp"
                 app:layout_constraintEnd_toStartOf="@+id/tv_tag_val"
-                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toStartOf="parent"
-                app:tint="@color/text_black" />
+                app:tint="@color/m3_namoa_onSurfaceVariant" />
 
             <TextView
                 android:id="@+id/tv_tag_val"
@@ -128,8 +129,8 @@
 
             <ImageView
                 android:id="@+id/iv_item_alert"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
                 android:layout_marginStart="6dp"
                 android:src="@drawable/circle_item"
                 app:layout_constraintEnd_toStartOf="@+id/tv_item_alert_val"
@@ -154,8 +155,8 @@
 
             <ImageView
                 android:id="@+id/iv_item_critical"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
                 android:layout_marginStart="8dp"
                 android:src="@drawable/circle_item"
                 app:layout_constraintEnd_toStartOf="@+id/tv_item_critical_val"
@@ -185,12 +186,12 @@
             style="@style/TextAppearance.Material3.BodySmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="TextView"
             android:textColor="@color/m3_namoa_onSurface"
             app:layout_constraintEnd_toEndOf="@+id/serial_site_item_tv_last_cycle_val"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/guideline8"
-            app:layout_constraintTop_toBottomOf="@+id/serial_site_item_tv_trackings" />
+            app:layout_constraintTop_toTopOf="@+id/serial_site_item_tv_last_measure_lbl"
+            tools:text="TextView" />
 
         <TextView
             android:id="@+id/serial_site_item_tv_last_cycle_val"
