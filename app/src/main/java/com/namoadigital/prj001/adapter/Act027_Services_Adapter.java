@@ -26,6 +26,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by neomatrix on 11/07/17.
@@ -506,7 +507,9 @@ public class Act027_Services_Adapter extends BaseAdapter {
         boolean p = false;
 
         for (int i = 0; i < listPartners.size(); i++) {
-            if (item.get(SM_SO_ServiceDao.PARTNER_DESC).isEmpty() || listPartners.get(i).containsValue(item.get(SM_SO_ServiceDao.PARTNER_DESC))) {
+            if (!item.hasConsistentValue(SM_SO_ServiceDao.PARTNER_CODE)
+                || Objects.requireNonNull(item.get(SM_SO_ServiceDao.PARTNER_CODE)).isEmpty()
+                || listPartners.get(i).containsValue(item.get(SM_SO_ServiceDao.PARTNER_CODE))) {
                 p = true;
             }
         }
