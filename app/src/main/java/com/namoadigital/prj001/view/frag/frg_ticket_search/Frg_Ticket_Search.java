@@ -197,12 +197,15 @@ public class Frg_Ticket_Search extends Fragment {
     private void changeStateMket() {
         boolean showEditText = ss_select_site.getmValue().isEmpty();
 
+        mket_client.setmBARCODE(showEditText);
         ll_client.setEnabled(showEditText);
         //mket_client.setmBARCODE(showEditText);
 
+        mket_contract.setmBARCODE(showEditText);
         ll_contract.setEnabled(showEditText);
         //mket_contract.setmBARCODE(showEditText);
 
+        mket_ticket.setmBARCODE(showEditText);
         ll_ticket.setEnabled(showEditText);
         //mket_ticket.setmBARCODE(showEditText);
     }

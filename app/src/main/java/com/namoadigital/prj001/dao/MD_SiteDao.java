@@ -78,10 +78,11 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
         );
     }
 
-    public List<MD_Site> getAllSite() {
+    public List<MD_Site> getAllSite(Boolean allowOrderByDesc) {
         return query(
                 new MD_Site_Sql_004(
-                        ToolBox_Con.getPreference_Customer_Code(context)
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        allowOrderByDesc
                 ).toSqlQuery()
         );
     }

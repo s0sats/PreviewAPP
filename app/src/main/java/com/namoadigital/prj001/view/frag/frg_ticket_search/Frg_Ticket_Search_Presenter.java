@@ -34,7 +34,7 @@ public class Frg_Ticket_Search_Presenter implements Frg_Ticket_Search_Contract.P
     @Override
     public ArrayList<HMAux> getSitesAvaibles() {
         ArrayList<HMAux> siteList = new ArrayList<>();
-        List<MD_Site> allSite = new MD_SiteDao(context).getAllSite();
+        List<MD_Site> allSite = new MD_SiteDao(context).getAllSite(true);
 
         for (MD_Site mdSite : allSite) {
             HMAux hmSite = new HMAux();
