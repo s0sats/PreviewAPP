@@ -10,8 +10,6 @@ import com.namoadigital.prj001.model.SerialSiteEnv
 import com.namoadigital.prj001.model.SiteSerialInvRec
 import com.namoadigital.prj001.receiver.WBR_Serial_Site_Inv
 import com.namoadigital.prj001.util.Constant
-import com.namoadigital.prj001.util.ConstantBaseApp.GC_STATUS
-import com.namoadigital.prj001.util.ConstantBaseApp.GC_STATUS_JUMP
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 
@@ -23,7 +21,7 @@ class WsSerialSiteInventory : IntentService("WS_Serial_Site_Inv") {
     override fun onHandleIntent(intent: Intent?) {
         intent?.extras?.let {
             try {
-                process(it.getInt(SITE_CODE), it.getInt(GC_STATUS_JUMP), it.getInt(GC_STATUS))
+                process(it.getInt(SITE_CODE))
             } catch (e: Exception) {
                 ToolBox_Inf.wsExceptionTreatment(applicationContext, e).let { string ->
                     ToolBox_Inf.registerException(javaClass.name, e)
@@ -42,7 +40,7 @@ class WsSerialSiteInventory : IntentService("WS_Serial_Site_Inv") {
         }
     }
 
-    private fun process(siteCode: Int, statusJump: Int, status: Int) {
+    private fun process(siteCode: Int) {
 
         loadTranslation()
 
@@ -75,8 +73,8 @@ class WsSerialSiteInventory : IntentService("WS_Serial_Site_Inv") {
                 rec.validation,
                 rec.error_msg,
                 rec.link_url,
-                statusJump,
-                status
+                1,
+                1
             ) || !ToolBox_Inf.processoOthersError(
                 applicationContext,
                 resources.getString(R.string.generic_error_lbl),
@@ -92,14 +90,6 @@ class WsSerialSiteInventory : IntentService("WS_Serial_Site_Inv") {
             gson.toJson(rec),
             Constant.SERIAL_SITE_INV_JSON_PATH
         )
-
-        /*ToolBox.sendBCStatus(
-            applicationContext,
-            "STATUS",
-            hmAux_Trans[MSG_SITE_OK],
-            "",
-            "0"
-        )*/
 
         rec.serialSiteInventory?.let {
             ToolBox.sendBCStatus(

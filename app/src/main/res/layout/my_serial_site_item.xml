@@ -18,15 +18,32 @@
         android:paddingVertical="16dp"
         android:paddingStart="20dp">
 
+        <ImageView
+            android:id="@+id/iconSerialColor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="null"
+            android:src="@drawable/ic_baseline_arrow_right_24"
+            app:layout_constraintBottom_toTopOf="@+id/serial_site_item_tv_brand_model_color"
+            app:layout_constraintEnd_toStartOf="@+id/serial_site_item_tv_serial_id"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="@+id/serial_site_item_tv_serial_id"
+            app:tint="@color/text_black" />
+
         <TextView
             android:id="@+id/serial_site_item_tv_serial_id"
             style="@style/TextAppearance.Material3.TitleLarge"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
             android:textColor="@color/m3_namoa_onSurface"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/iconSerialColor"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="SERIAL NAME" />
 
@@ -60,13 +77,13 @@
             style="@style/TextAppearance.Material3.BodySmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="TextView"
             android:layout_marginTop="8dp"
             android:textColor="@color/m3_namoa_onSurface"
             app:layout_constraintEnd_toEndOf="@+id/serial_site_item_tv_last_measure_val"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/serial_site_item_tv_trackings" />
+            app:layout_constraintTop_toBottomOf="@+id/serial_site_item_tv_trackings"
+            tools:text="TextView" />
 
         <TextView
             android:id="@+id/serial_site_item_tv_last_measure_val"
@@ -86,9 +103,9 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:orientation="vertical"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintGuide_percent="0.5" />
+            app:layout_constraintGuide_percent="0.5"
+            app:layout_constraintStart_toStartOf="parent" />
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -210,13 +227,13 @@
             style="@style/TextAppearance.Material3.BodySmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="TextView"
-            android:textColor="@color/m3_namoa_onSurface"
             android:layout_marginTop="12dp"
+            android:textColor="@color/m3_namoa_onSurface"
             app:layout_constraintEnd_toEndOf="@+id/serial_site_item_tv_next_cycle_val"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/guideline8"
-            app:layout_constraintTop_toBottomOf="@+id/serial_site_item_tv_last_cycle_val" />
+            app:layout_constraintTop_toBottomOf="@+id/serial_site_item_tv_last_cycle_val"
+            tools:text="TextView" />
 
         <TextView
             android:id="@+id/serial_site_item_tv_next_cycle_val"
@@ -229,7 +246,7 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/guideline8"
             app:layout_constraintTop_toBottomOf="@+id/serial_site_item_tv_next_cycle_lbl"
-            app:layout_constraintVertical_bias="0.0"
+            app:layout_constraintVertical_bias="1.0"
             tools:text="TextView" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -241,7 +258,8 @@
             android:paddingTop="20dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/serial_site_item_tv_next_cycle_val">
 
 
             <com.google.android.material.button.MaterialButton
@@ -249,7 +267,6 @@
                 style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintWidth_default="wrap"
                 android:layout_marginEnd="8dp"
                 android:paddingHorizontal="12dp"
                 android:textColor="@color/m3_namoa_primary"
@@ -260,6 +277,7 @@
                 app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_default="wrap"
                 app:strokeColor="@color/m3_namoa_outline"
                 tools:text="Status" />
 
@@ -268,7 +286,6 @@
                 style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintWidth_default="wrap"
                 android:textColor="@color/m3_namoa_primary"
                 app:icon="@drawable/ic_tag_black_24dp"
                 app:layout_constrainedWidth="true"
@@ -276,6 +293,7 @@
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/act083_serial_info"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_default="wrap"
                 app:strokeColor="@color/m3_namoa_outline"
                 tools:text="Ver Ações" />
 

@@ -30,6 +30,7 @@ data class SerialSiteInventory(
     @SerializedName("preventive_date") var preventiveDate: String?,
     @SerializedName("suggested_date") var suggestedDate: String?,
     @SerializedName("suggested_cycle") var suggestedCycle: String?,
+    @SerializedName("has_item_check") var hasItemCheck: Int?,
     @SerializedName("tot_alert") var totAlert: Int?,
     @SerializedName("tot_exp_critical") var totExpCritical: Int?,
     @SerializedName("tot_exp") var totExp: Int?,

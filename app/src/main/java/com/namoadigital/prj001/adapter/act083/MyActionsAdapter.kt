@@ -136,6 +136,12 @@ class MyActionsAdapter constructor(
         fun onBinding(item: SerialSiteInventory, position: Int) {
             with(binding) {
 
+                if (item.classColor.isNullOrEmpty()) iconSerialColor.visibility = View.GONE
+                else iconSerialColor.apply {
+                    visibility = View.VISIBLE
+                    imageTintList = ColorStateList.valueOf(Color.parseColor(item.classColor))
+                }
+
                 serialSiteItemTvSerialId.text = item.serialId
                 serialSiteItemTvBrandModelColor.visibility = View.GONE
                 val brandModelColorVal: String = listOfNotNull(
@@ -143,7 +149,7 @@ class MyActionsAdapter constructor(
                     item.modelDesc,
                     item.colorDesc
                 ).joinToString(" | ") { text -> text.formatString() }
-                if(brandModelColorVal.isNotBlank()) {
+                if (brandModelColorVal.isNotBlank()) {
                     serialSiteItemTvBrandModelColor.text = brandModelColorVal
                     serialSiteItemTvBrandModelColor.visibility = View.GONE
                 }
@@ -202,6 +208,9 @@ class MyActionsAdapter constructor(
                     serialSiteItemTvNextCycleLbl.visibility = View.GONE
                 }
 
+
+                serialSiteItemLlItemsStatus.visibility =
+                    if (item.hasItemCheck == 1) View.VISIBLE else View.GONE
 
                 tvTagVal.checkVisible("${item.cntTkt ?: 0}")
                 tvItemAlertVal.checkVisible(text = "${item.totAlert ?: 0}")
