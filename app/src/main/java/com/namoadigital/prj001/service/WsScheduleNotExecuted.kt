@@ -8,6 +8,7 @@ import com.namoa_digital.namoa_library.util.ConstantBase
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.R
+import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.CheckType
 import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.SerialSiteInventoryUseCase.Companion.SiteInventoryUseCaseFactory
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao
 import com.namoadigital.prj001.model.*
@@ -181,9 +182,11 @@ class WsScheduleNotExecuted :
 
     private fun updateSerialSiteInventoryPrefs() {
         val useCase = SiteInventoryUseCaseFactory(applicationContext).editPrefrenceFileUseCase()
-        val editPref = HashMap<String, Any>()
-        editPref["refresh"] = true
-        useCase.editPreference!!(editPref)
+        if (useCase.check?.invoke(CheckType.FILE_EXIST) == true) {
+            val editPref = HashMap<String, Any>()
+            editPref["refresh"] = true
+            useCase.editPreference!!(editPref)
+        }
     }
 
     private fun loadTranslation(): HMAux {

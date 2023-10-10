@@ -34,6 +34,7 @@ data class SerialSiteInventoryUseCase(
 
             fun editPrefrenceFileUseCase(): SerialSiteInventoryUseCase {
                 return SerialSiteInventoryUseCase(
+                    check = CheckSiteInventoryUseCase(repository),
                     editPreference = EditPreferenceSiteInvUseCase(repository)
                 )
             }

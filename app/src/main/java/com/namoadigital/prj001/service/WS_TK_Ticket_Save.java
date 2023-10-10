@@ -15,6 +15,7 @@ import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.CheckType;
 import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.SerialSiteInventoryUseCase;
 import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
@@ -250,9 +251,11 @@ public class WS_TK_Ticket_Save extends IntentService {
 
     private void updateSerialSiteInventoryPrefs() {
         SerialSiteInventoryUseCase useCase = new SerialSiteInventoryUseCase.Companion.SiteInventoryUseCaseFactory(getApplicationContext()).editPrefrenceFileUseCase();
-        HashMap<String, Object> editPref = new HashMap<>();
-        editPref.put("refresh", true);
-        useCase.getEditPreference().invoke(editPref);
+        if (useCase.getCheck().invoke(CheckType.FILE_EXIST)) {
+            HashMap<String, Object> editPref = new HashMap<>();
+            editPref.put("refresh", true);
+            useCase.getEditPreference().invoke(editPref);
+        }
     }
 
     private ArrayList<TK_Ticket> getTicketsToSend() {

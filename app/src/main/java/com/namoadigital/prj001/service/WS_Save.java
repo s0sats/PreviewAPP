@@ -9,6 +9,7 @@ import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.CheckType;
 import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.SerialSiteInventoryUseCase;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Data_FieldDao;
@@ -43,7 +44,6 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -240,7 +240,9 @@ public class WS_Save extends IntentService {
 
     private void updateSerialSiteInventoryPrefs() {
         SerialSiteInventoryUseCase useCase = new SerialSiteInventoryUseCase.Companion.SiteInventoryUseCaseFactory(getApplicationContext()).editPrefrenceFileUseCase();
-        SerialSiteInventoryUseCaseHelperKt.updateSerialSiteInventoryPrefs(useCase, true);
+        if (useCase.getCheck().invoke(CheckType.FILE_EXIST)) {
+            SerialSiteInventoryUseCaseHelperKt.updateSerialSiteInventoryPrefs(useCase, true);
+        }
     }
 
     private void loadTranslation() {
