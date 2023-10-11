@@ -2297,11 +2297,11 @@ public class Act011_Main extends Base_Activity
             measureValidateListener = new MeasureFF.OnValidationListener() {
                 @NonNull
                 @Override
-                public MeasureFF.MeasureValidationReturn isMeasureValid(float measure) {
+                public MeasureFF.MeasureValidationReturn isMeasureValid(double measure) {
                     //Trata lastMeasure null.
-                    Float lastMeasureValue =
+                    Double lastMeasureValue =
                             serialInfo.getLast_measure_value() != null
-                                    ? serialInfo.getLast_measure_value().floatValue()
+                                    ? serialInfo.getLast_measure_value()
                                     : null;
                     //
                     MeasureFF.MeasureValidationReturn validationReturn = measureTp.validateMeasureRestriction(
