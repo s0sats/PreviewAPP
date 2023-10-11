@@ -371,9 +371,9 @@ public class WS_TK_Ticket_Save extends IntentService {
             return;
         }
         //
-        updateSerialSiteInventoryPrefs();
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_processing_data"), "", "0");
         //
+        updateSerialSiteInventoryPrefs();
         processTicketSaveReturn(rec);
     }
 

@@ -17,8 +17,11 @@ import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.CheckType;
+import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.SerialSiteInventoryUseCase;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
+import com.namoadigital.prj001.extensions.SerialSiteInventoryUseCaseHelperKt;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.TK_Ticket;
@@ -204,7 +207,8 @@ public class WS_TK_Ticket_Download extends IntentService {
         //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_processing_data"), "", "0");
         //
-        processTicketReturn(rec.getTicket(),isLoginSync);
+        updateSerialSiteInventoryPrefs();
+        processTicketReturn(rec.getTicket(), isLoginSync);
 
     }
 
@@ -289,22 +293,29 @@ public class WS_TK_Ticket_Download extends IntentService {
             //LUCHE - 30/06/2021
             //No caso do sincronismo, o servidor só devolverá os ticket desatualziados, então nesse
             //caso, se 0 tickets retornados, CLOSE ACT
-            if(isLoginSync == 1){
-                ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"), new HMAux() , "", "0");
-            }else {
+            if (isLoginSync == 1) {
+                ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"), new HMAux(), "", "0");
+            } else {
                 ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_data_returned"), new HMAux(), "", "0");
             }
         }
     }
 
-    private TK_Ticket getDbTicket(TK_Ticket tkTicket){
+    private void updateSerialSiteInventoryPrefs() {
+        SerialSiteInventoryUseCase useCase = new SerialSiteInventoryUseCase.Companion.SiteInventoryUseCaseFactory(getApplicationContext()).editPrefrenceFileUseCase();
+        if (useCase.getCheck().invoke(CheckType.FILE_EXIST)) {
+            SerialSiteInventoryUseCaseHelperKt.updateSerialSiteInventoryRefresh(useCase, true);
+        }
+    }
+
+    private TK_Ticket getDbTicket(TK_Ticket tkTicket) {
         return ticketDao.getByString(
                 new TK_Ticket_Sql_001(
-                    tkTicket.getCustomer_code(),
-                    tkTicket.getTicket_prefix(),
-                    tkTicket.getTicket_code()
+                        tkTicket.getCustomer_code(),
+                        tkTicket.getTicket_prefix(),
+                        tkTicket.getTicket_code()
                 ).toSqlQuery()
-            );
+        );
     }
     /**
      * LUCHE - 30/06/2020
