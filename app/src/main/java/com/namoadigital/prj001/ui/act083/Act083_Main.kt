@@ -596,6 +596,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     }
 
     private fun onMyActionClick(myAction: MyActions) {
+        typeSerial = TypeSerial.MY_ACTIONS
         mPresenter.processActionClick(myAction)
     }
 

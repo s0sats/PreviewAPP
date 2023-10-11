@@ -41,7 +41,9 @@ class SqlAct083_005(
     }
 
     private fun setSerialSiteFilterConfg() {
+        lateFilter = """        and (strftime('%s',s.${MD_Schedule_ExecDao.DATE_START} || ' $customerGMT','$deviceGMT') * 1000) < (strftime('%s','now','$deviceGMT')*1000)  """
         getStatusFilter()
+        getNextEventJoin()
     }
 
     private fun setHomeFilterConfg() {
