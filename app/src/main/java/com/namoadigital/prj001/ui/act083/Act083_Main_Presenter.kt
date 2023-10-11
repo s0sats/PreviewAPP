@@ -11,7 +11,7 @@ import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.Ch
 import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.CheckType
 import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.SerialSiteInventoryUseCase
 import com.namoadigital.prj001.dao.*
-import com.namoadigital.prj001.extensions.updateSerialSiteInventoryPrefs
+import com.namoadigital.prj001.extensions.updateSerialSiteInventoryRefresh
 import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.model.MyActionFilterParam.Companion.toActionFilter
 import com.namoadigital.prj001.receiver.*
@@ -2311,7 +2311,7 @@ class Act083_Main_Presenter constructor(
     }
 
     override fun updateRefreshSerialSiteFile(refresh: Boolean) {
-        useCase.updateSerialSiteInventoryPrefs(refresh)
+        useCase.updateSerialSiteInventoryRefresh(refresh)
     }
 
     private fun setSerialModel(model: SerialSiteInventory) {

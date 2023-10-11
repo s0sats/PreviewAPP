@@ -241,7 +241,7 @@ public class WS_Save extends IntentService {
     private void updateSerialSiteInventoryPrefs() {
         SerialSiteInventoryUseCase useCase = new SerialSiteInventoryUseCase.Companion.SiteInventoryUseCaseFactory(getApplicationContext()).editPrefrenceFileUseCase();
         if (useCase.getCheck().invoke(CheckType.FILE_EXIST)) {
-            SerialSiteInventoryUseCaseHelperKt.updateSerialSiteInventoryPrefs(useCase, true);
+            SerialSiteInventoryUseCaseHelperKt.updateSerialSiteInventoryRefresh(useCase, true);
         }
     }
 
