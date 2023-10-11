@@ -24,12 +24,12 @@
             android:layout_height="wrap_content"
             android:contentDescription="null"
             android:src="@drawable/ic_baseline_arrow_right_24"
-            app:layout_constraintBottom_toTopOf="@+id/serial_site_item_tv_brand_model_color"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/serial_site_item_tv_serial_id"
             app:layout_constraintEnd_toStartOf="@+id/serial_site_item_tv_serial_id"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintStart_toStartOf="parent"
-            android:visibility="gone"
             app:layout_constraintTop_toTopOf="@+id/serial_site_item_tv_serial_id"
             app:tint="@color/text_black" />
 
@@ -48,7 +48,7 @@
             tools:text="SERIAL NAME" />
 
         <TextView
-            android:id="@+id/serial_site_item_tv_brand_model_color"
+            android:id="@+id/product_desc"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
@@ -58,6 +58,19 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/serial_site_item_tv_serial_id"
+            tools:text="TextView" />
+
+        <TextView
+            android:id="@+id/serial_site_item_tv_brand_model_color"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:textColor="@color/m3_namoa_onSurfaceVariant"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/product_desc"
             tools:text="TextView" />
 
         <TextView
@@ -129,6 +142,7 @@
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 app:tint="@color/m3_namoa_onSurfaceVariant" />
 
             <TextView

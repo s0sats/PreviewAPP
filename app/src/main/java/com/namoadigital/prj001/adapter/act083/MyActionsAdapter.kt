@@ -143,15 +143,17 @@ class MyActionsAdapter constructor(
                 }
 
                 serialSiteItemTvSerialId.text = item.serialId
+                productDesc.applyVisibilityIfTextExists(item.productDesc)
+
                 serialSiteItemTvBrandModelColor.visibility = View.GONE
-                val brandModelColorVal: String = listOfNotNull(
+                listOfNotNull(
                     item.brandDesc,
                     item.modelDesc,
                     item.colorDesc
-                ).joinToString(" | ") { text -> text.formatString() }
-                if (brandModelColorVal.isNotBlank()) {
-                    serialSiteItemTvBrandModelColor.text = brandModelColorVal
-                    serialSiteItemTvBrandModelColor.visibility = View.GONE
+                ).filter {
+                    it.isNotEmpty()
+                }.joinToString(" | ") { text -> text.formatString() }.let {
+                    serialSiteItemTvBrandModelColor.applyVisibilityIfTextExists(it)
                 }
                 //
                 serialSiteItemTvTrackings.checkVisible(item.addInf1)

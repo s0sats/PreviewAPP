@@ -10,6 +10,7 @@ data class SiteSerialInvRec(
 data class SerialSiteInventory(
 
     @SerializedName("product_code") var productCode: Int,
+    @SerializedName("product_desc") var productDesc: String,
     @SerializedName("serial_code") var serialCode: Int,
     @SerializedName("serial_id") var serialId: String,
     @SerializedName("class_code") var classCode: Int?,
