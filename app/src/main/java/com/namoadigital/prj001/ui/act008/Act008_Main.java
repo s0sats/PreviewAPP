@@ -1272,6 +1272,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             disableProgressDialog();
             mPresenter.checkFlow();
         } else if (ws_process.equals(WS_Serial_Save.class.getName())) {
+            disableProgressDialog();
             frgSerialEdit.setNew_serial(false);
             //frgSerialEdit.refreshUi();
             if (hmAux.size() > 0) {
@@ -1284,6 +1285,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                 );
             }
         } else if (ws_process.equals(WS_Serial_Tracking_Search.class.getName())) {
+            disableProgressDialog();
             frgSerialEdit.processTrackingResult(hmAux);
         }
         //
@@ -1295,7 +1297,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     protected void processCloseACT(String result, String mRequired) {
         super.processCloseACT(result, mRequired);
         //
-        disableProgressDialog();
+
         if (ws_process.equalsIgnoreCase(WS_Serial_Search.class.getName())) {
             mPresenter.extractSearchResult(result);
             //
@@ -1304,8 +1306,10 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             disableProgressDialog();
             mPresenter.checkFlow();
         } else {
+            disableProgressDialog();
             //Atualiza data na tabela de produtos loca
             mPresenter.updateSyncChecklist();
+            mPresenter.checkFlow();
             // mPresenter.proceedToSerialProcess(ToolBox_Inf.removeAllLineBreaks(mket_serial_id.getText().toString().trim()) , serial_required);
         }
 
