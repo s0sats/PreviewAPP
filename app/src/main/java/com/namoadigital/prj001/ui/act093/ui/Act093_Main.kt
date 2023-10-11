@@ -86,7 +86,9 @@ class Act093_Main : BaseActivityFragMvp<Act093Presenter, Act093MainBinding>(), C
                     }
                 }
 
+
                 else -> Intent(applicationContext, Act092_Main::class.java).also {
+                    it.putExtras(bundle)
                     startActivity(it)
                     finish()
                 }

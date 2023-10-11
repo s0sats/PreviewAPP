@@ -87,7 +87,7 @@ class Act083_Main_Presenter constructor(
     init {
         recoverIntentsInfo()
         loadFilters()
-        if(isSerialSiteMode(useCase.check!!)){
+        if (isSerialSiteMode(useCase.check!!)) {
             mView.visibleTabSerialSiteInventory("0", showSize = false)
         }
         setViewFiltersParam()
@@ -99,27 +99,33 @@ class Act083_Main_Presenter constructor(
                 || check.invoke(CheckType.FILE_EXIST))
 
     private fun setViewFiltersParam() {
-        when(initialTabToLoad){
+        when (initialTabToLoad) {
             0 -> {
                 if (useCase.check!!.invoke(CheckType.REFRESH)
-                    && ToolBox_Con.isOnline(context)){
+                    && ToolBox_Con.isOnline(context)
+                ) {
                     callSerialSiteServce()
                 }
                 updateMyActionList(0)
             }
+
             1 -> {
                 if (useCase.check!!.invoke(CheckType.REFRESH)
-                    && ToolBox_Con.isOnline(context)){
+                    && ToolBox_Con.isOnline(context)
+                ) {
                     callSerialSiteServce()
                 }
                 updateMyActionList(1)
             }
+
             2 -> {
                 checkSerialSiteInv(2)
             }
+
             else -> {
                 if (useCase.check!!.invoke(CheckType.REFRESH)
-                    && ToolBox_Con.isOnline(context)){
+                    && ToolBox_Con.isOnline(context)
+                ) {
                     callSerialSiteServce()
                 }
                 updateMyActionList(0)
@@ -175,11 +181,12 @@ class Act083_Main_Presenter constructor(
 
             ConstantBaseApp.ACT006 -> hmAux_Trans!!["sys_main_menu_assets_local_lbl"]!!
             ConstantBaseApp.ACT016 -> hmAux_Trans!!["sys_main_menu_calendar_lbl"]!!
-            ConstantBaseApp.ACT068 -> if (isSerialSiteMode(useCase.check!!)){
-                                        useCase.getPreference!!().site_desc
-                                      } else {
-                                        hmAux_Trans!!["sys_main_menu_search_lbl"]!!
-                                      }
+            ConstantBaseApp.ACT068 -> if (isSerialSiteMode(useCase.check!!)) {
+                useCase.getPreference!!().site_desc
+            } else {
+                hmAux_Trans!!["sys_main_menu_search_lbl"]!!
+            }
+
             ConstantBaseApp.ACT083 -> myActionFilterParam.tagFilterDesc
                 ?: hmAux_Trans!!["act083_title"]!!
 
@@ -480,7 +487,6 @@ class Act083_Main_Presenter constructor(
             MyActionFilterParam.MY_ACTION_FILTER_PARAM,
             myActionFilterParam
         )
-        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT083)
         bundle.putLong(MD_Product_SerialDao.SERIAL_CODE, serial.serial_code)
         if (serial.class_color != null) {
             bundle.putString(MD_Product_SerialDao.CLASS_COLOR, serial.class_color)
@@ -488,8 +494,10 @@ class Act083_Main_Presenter constructor(
         //
         mView.resetActionPosition()
         if (typeSerial is TypeSerial.INFO_SERIAL) {
-                callAct093(typeSerial.model)
+            bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, originFlow)
+            callAct093(typeSerial.model)
         } else {
+            bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT083)
             mView.callAct092(bundle)
         }
     }
@@ -1843,13 +1851,13 @@ class Act083_Main_Presenter constructor(
             originFlow == ConstantBaseApp.ACT068
         ) {
 
-            if (useCase.check!!.invoke(CheckType.REFRESH)){
+            if (useCase.check!!.invoke(CheckType.REFRESH)) {
                 filterParam.toActionFilter().copy(
                     originFlow = originFlow,
                     siteCodeBack = ToolBox_Con.getPreference_Site_Code(context),
                     zoneCodeBack = ToolBox_Con.getPreference_Zone_Code(context),
                     siteCode = getSiteCodeFlow(),
-                    initialTabToLoad = if(sharedPreferences.read().initialTabToLoad == -1) 2 else sharedPreferences.read().initialTabToLoad
+                    initialTabToLoad = if (sharedPreferences.read().initialTabToLoad == -1) 2 else sharedPreferences.read().initialTabToLoad
                 ).also {
                     sharedPreferences.write(it)
                     myActionFilterParam = it.toMyActionFilter()
@@ -1860,7 +1868,7 @@ class Act083_Main_Presenter constructor(
                     siteCodeBack = ToolBox_Con.getPreference_Site_Code(context),
                     zoneCodeBack = ToolBox_Con.getPreference_Zone_Code(context),
                     siteCode = getSiteCodeFlow(),
-                    initialTabToLoad = if(sharedPreferences.read().initialTabToLoad == -1) 1 else sharedPreferences.read().initialTabToLoad
+                    initialTabToLoad = if (sharedPreferences.read().initialTabToLoad == -1) 1 else sharedPreferences.read().initialTabToLoad
                 ).also {
                     sharedPreferences.write(it)
                     myActionFilterParam = it.toMyActionFilter()
@@ -1918,7 +1926,7 @@ class Act083_Main_Presenter constructor(
         }
         //
         launch = CoroutineScope(Dispatchers.IO).launch {
-            if(isSerialSiteMode(useCase.check!!)){
+            if (isSerialSiteMode(useCase.check!!)) {
                 useCase.getSiteInventory!!().let {
                     mView.visibleTabSerialSiteInventory(
                         showSize = true,
@@ -2287,7 +2295,7 @@ class Act083_Main_Presenter constructor(
     }
 
     override fun getSerialSiteInventoryList(currentTab: Int) {
-        if(currentTab == 2) {
+        if (currentTab == 2) {
             useCase.getSiteInventory!!().let {
                 mView.iniRecycler(it.toMutableList())
                 mView.visibleTabSerialSiteInventory(
@@ -2301,8 +2309,8 @@ class Act083_Main_Presenter constructor(
 
     override fun callAct093(model: SerialSiteInventory) {
         setSerialModel(model)
-        mView.callAct093(Bundle().apply {
-            myActionFilterParam.originFlow = ConstantBaseApp.ACT083
+        mView.callAct093(bundle.apply {
+            myActionFilterParam.originFlow = originFlow
             putSerializable(
                 MyActionFilterParam.MY_ACTION_FILTER_PARAM,
                 myActionFilterParam
@@ -2320,7 +2328,7 @@ class Act083_Main_Presenter constructor(
 
         actionUseCase.setPreferences(
             SerialModel(
-                originFlow = originFlow.ifEmpty { ConstantBaseApp.ACT083 },
+                originFlow = if(originFlow.isEmpty() || originFlow == ConstantBaseApp.ACT083) ConstantBaseApp.ACT068 else originFlow,
                 siteCodeBack = ToolBox_Con.getPreference_Site_Code(context),
                 zoneCodeBack = ToolBox_Con.getPreference_Zone_Code(context),
                 classColor = model.classColor ?: "",
