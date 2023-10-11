@@ -28,7 +28,8 @@ data class SerialSiteInventoryUseCase(
                     check = CheckSiteInventoryUseCase(repository),
                     service = ExecServiceSiteInventoryUseCase(repository),
                     getPreference = GetPreferenceSiteInvUseCase(repository),
-                    getSiteInventory = GetSiteInventoryUseCase(repository)
+                    getSiteInventory = GetSiteInventoryUseCase(repository),
+                    editPreference = EditPreferenceSiteInvUseCase(repository)
                 )
             }
 

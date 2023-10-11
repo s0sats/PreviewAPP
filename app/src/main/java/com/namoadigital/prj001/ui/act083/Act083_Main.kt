@@ -52,6 +52,7 @@ import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
+import java.util.*
 
 
 class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
@@ -72,6 +73,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         const val WS_SCHEDULE_NOT_EXECUTED = "WS_SCHEDULE_NOT_EXECUTED"
     }
 
+    private var hasConnectionFail: Boolean = false
     private var serialActionSelected: Int = -1
     private lateinit var binding: Act083MainBinding
     private lateinit var mAdapter: MyActionsAdapter
@@ -294,10 +296,15 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         } else {
             changeProgressBarVisility(false)
             with(binding.act083MainContent) {
-                if (applyMainUserFilter) {
-                    act083TvNoResult.text = hmAux_Trans["no_record_for_filter_lbl"]
+                if(getCurrentTab() == 2&&
+                    (ToolBox_Con.isOnline(context) || hasConnectionFail)){
+                    act083TvNoResult.text = hmAux_Trans["no_connection_try_again_lbl"]
                 } else {
-                    act083TvNoResult.text = hmAux_Trans["no_record_lbl"]
+                    if (applyMainUserFilter) {
+                        act083TvNoResult.text = hmAux_Trans["no_record_for_filter_lbl"]
+                    } else {
+                        act083TvNoResult.text = hmAux_Trans["no_record_lbl"]
+                    }
                 }
                 act083TvNoResult.visibility = View.VISIBLE
                 act083RvActionsList.visibility = View.GONE
@@ -762,6 +769,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
             WsSerialSiteInventory::class.java.name -> {
                 wsProcess = ""
                 progressDialog.dismiss()
+                hasConnectionFail = false
                 serialSiteSizeInt = mLink!!.toInt()
                 mPresenter.getSerialSiteInventoryList(getCurrentTab())
             }
@@ -1377,9 +1385,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     override fun processError_1(mLink: String?, mRequired: String?) {
         super.processError_1(mLink, mRequired)
         if(wsProcess == WsSerialSiteInventory::class.java.name) {
-            wsProcess = ""
-            progressDialog.dismiss()
-            mPresenter.updateRefreshSerialSiteFile(true)
+            handleConnectionProblemsForSiteInvetoryService()
         }else{
             mPresenter.formButtonData = null
             progressDialog.dismiss()
@@ -1389,12 +1395,18 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         }
     }
 
+    private fun handleConnectionProblemsForSiteInvetoryService() {
+        wsProcess = ""
+        progressDialog.dismiss()
+        hasConnectionFail = true
+        mPresenter.updateRefreshSerialSiteFile(true)
+        iniRecycler(emptyArray<MyActionsBase>().toMutableList())
+    }
+
     override fun processCustom_error(mLink: String?, mRequired: String?) {
         super.processCustom_error(mLink, mRequired)
         if(wsProcess == WsSerialSiteInventory::class.java.name) {
-            wsProcess = ""
-            progressDialog.dismiss()
-            mPresenter.updateRefreshSerialSiteFile(true)
+            handleConnectionProblemsForSiteInvetoryService()
         }else {
             mPresenter.formButtonData = null
             progressDialog.dismiss()
@@ -1465,6 +1477,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         transList.add("IN_PROCESSING")
         transList.add("no_record_lbl")
         transList.add("no_record_for_filter_lbl")
+        transList.add("no_connection_try_again_lbl")
         transList.add("other_steps_available_lbl")
         transList.add("cell_step_lbl")
         transList.add("dialog_download_ticket_ttl")
