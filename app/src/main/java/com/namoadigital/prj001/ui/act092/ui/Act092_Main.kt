@@ -352,7 +352,7 @@ class Act092_Main : BaseActivityMvp
         with(binding) {
 
             infoSerial.setOnClickListener {
-                presenter.goToInfoSerial()
+                presenter.goToInfoSerial(bundle)
             }
 
             mainUserSelection.setOnClickListener {

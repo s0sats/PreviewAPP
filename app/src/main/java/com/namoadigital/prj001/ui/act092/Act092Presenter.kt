@@ -174,8 +174,8 @@ class Act092Presenter(
     }
 
 
-    override fun goToInfoSerial() {
-        view.onState(Act092UiEvent.CallAct(Act093_Main::class.java, Bundle().apply {
+    override fun goToInfoSerial(bundle: Bundle) {
+        view.onState(Act092UiEvent.CallAct(Act093_Main::class.java, bundle.apply {
             putSerializable(
                 MyActionFilterParam.MY_ACTION_FILTER_PARAM,
                 myActionFilterParam
