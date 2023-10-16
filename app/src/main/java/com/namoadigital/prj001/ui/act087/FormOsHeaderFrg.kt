@@ -544,8 +544,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             }
             val measureInvalid = mainMeasureTp?.let {
                 if(!binding.mketOsMainMeasureVal.text.isNullOrEmpty() && isMeasureValNumeric()) {
-                    val typedMeasure = binding.mketOsMainMeasureVal.text.toString().toFloat()
-                    it.isMeasureRestrictionInvalid(bypassMinValidation(), typedMeasure, formOsHeader.last_measure_value, formOsHeader.last_measure_date, binding.mkdtStartDate.getmValue())
+                    val typedMeasure = binding.mketOsMainMeasureVal.text.toString().toDouble()
+                    it.isMeasureRestrictionInvalid(bypassMinValidation(), typedMeasure, formOsHeader.last_measure_value?.toDouble(), formOsHeader.last_measure_date, binding.mkdtStartDate.getmValue())
                 }else{
                     true
                 }

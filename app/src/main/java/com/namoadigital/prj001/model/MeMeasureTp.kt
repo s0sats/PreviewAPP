@@ -27,8 +27,8 @@ class MeMeasureTp(
 
     fun isMeasureRestrictionInvalid(
         bypassMinValidation: Boolean,
-        measureValue: Float,
-        lastMeasureValue: Float?,
+        measureValue: Double,
+        lastMeasureValue: Double?,
         lastMeasureDate: String?,
         measureDate: String?
     ): Boolean{
@@ -44,8 +44,8 @@ class MeMeasureTp(
 
     fun validateMeasureRestriction(
         bypassMinValidation: Boolean,
-        measureValue: Float,
-        lastMeasureValue: Float?,
+        measureValue: Double,
+        lastMeasureValue: Double?,
         lastMeasureDate: String?,
         measureDate: String?
     ): MeasureFF.MeasureValidationReturn {
@@ -71,8 +71,8 @@ class MeMeasureTp(
     }
 
     private fun isMeasureRestrictionValueValid(
-        typedMeasure: Float,
-        lastMeasureValue: Float?
+        typedMeasure: Double,
+        lastMeasureValue: Double?
     ): MeasureFF.MeasureValidationReturn {
         lastMeasureValue?.let { lastMeasure ->
             val minConsider: Double? = if (restrictionMin != null) {
@@ -105,8 +105,8 @@ class MeMeasureTp(
     }
 
     private fun isMeasureRestrictionValueByDayValid(
-        typedMeasure: Float,
-        lastMeasureValue: Float?,
+        typedMeasure: Double,
+        lastMeasureValue: Double?,
         lastMeasureDate: String?,
         measureDate: String?
     ): MeasureFF.MeasureValidationReturn {
@@ -120,12 +120,12 @@ class MeMeasureTp(
                 //Se o valor for menor do que 0, considerar 0
                 val minConsider: Double? = restrictionMin?.let { min ->
                     val minToConsider = lastMeasureValue - (min * valPerDay)
-                    if (minToConsider >= 0f) {
+                    if (minToConsider >= 0.0) {
                         minToConsider
                     } else {
-                        0
+                        0.0
                     }
-                } as Double?
+                }
                 val maxConsider: Double? = restrictionMax?.let { max ->
                     lastMeasureValue + (max * valPerDay)
                 }
@@ -153,7 +153,7 @@ class MeMeasureTp(
 
     private fun validateValues(
         minConsider: Double?,
-        typedMeasure: Float,
+        typedMeasure: Double,
         maxConsider: Double?
     ): MeasureFF.MeasureValidationReturn {
 
@@ -194,7 +194,7 @@ class MeMeasureTp(
     }
 
     private fun isMeasureRestrictionMinMaxValid(
-        typedMeasure: Float
+        typedMeasure: Double
     ): MeasureFF.MeasureValidationReturn {
 
         if (restrictionMin != null){
