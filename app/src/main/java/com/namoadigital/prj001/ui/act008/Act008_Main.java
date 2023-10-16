@@ -1289,7 +1289,6 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             frgSerialEdit.processTrackingResult(hmAux);
         }
         //
-        disableProgressDialog();
     }
 
     //Trata retorno do Serial
