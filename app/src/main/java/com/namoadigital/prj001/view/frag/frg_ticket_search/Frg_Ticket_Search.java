@@ -173,7 +173,7 @@ public class Frg_Ticket_Search extends Fragment {
         ss_select_site.setmCanClean(true);
         ss_select_site.setmShowBarcode(false);
         ss_select_site.setmShowLabel(true);
-        ss_select_site.setmLabel(hmAux_Trans.get("spinner_title_lbl"));
+        ss_select_site.setmLabel(hmAux_Trans.get("search_site_hint"));
         ss_select_site.setmOption(mPresenter.getSitesAvaibles());
 
         //
