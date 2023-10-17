@@ -661,6 +661,7 @@ class Act083_Main_Presenter constructor(
         setSeletedActionInfosIntoFilterParam(myAction.actionType, myAction.processPk)
         //
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT083)
+        myActionFilterParam.originFlow = ConstantBaseApp.ACT083
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
         bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, myActionFilterParam.originFlow)
         return bundle
@@ -1052,6 +1053,7 @@ class Act083_Main_Presenter constructor(
         setSeletedActionInfosIntoFilterParam(myAction.actionType, myAction.processPk)
         //
         bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT083)
+        myActionFilterParam.originFlow = ConstantBaseApp.ACT083
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
         bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, myActionFilterParam.originFlow)
         //
@@ -1699,6 +1701,7 @@ class Act083_Main_Presenter constructor(
             MyActions.MY_ACTION_TYPE_SCHEDULE,
             actionSelected!!.processPk
         )
+        myActionFilterParam.originFlow = ConstantBaseApp.ACT083
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
         bundle.putSerializable(
             ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
