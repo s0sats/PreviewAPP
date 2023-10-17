@@ -1408,6 +1408,7 @@ public class Act011_Main extends Base_Activity
                         bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT005)
                 );
                 act083Bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, ToolBox_Inf.getMyActionFilterParam(bundle));
+                act083Bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT005));
             }
             //
             if (bundle.containsKey(DEVICE_BUNDLE)) {

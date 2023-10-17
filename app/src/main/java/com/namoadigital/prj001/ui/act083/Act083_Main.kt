@@ -83,6 +83,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     private val CHANGE_ZONE_RESULT_CODE = 10
     private var firstScroll = true
     private var applyMainUserFilter = false
+    var typeSerial: TypeSerial? = null
 
     private val mPresenter by lazy {
         Act083_Main_Presenter(
@@ -296,8 +297,8 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         } else {
             changeProgressBarVisility(false)
             with(binding.act083MainContent) {
-                if(getCurrentTab() == 2&&
-                    (ToolBox_Con.isOnline(context) || hasConnectionFail)){
+                if(getCurrentTab() == 2 &&
+                    (!ToolBox_Con.isOnline(context) || hasConnectionFail)){
                     act083TvNoResult.text = hmAux_Trans["no_connection_try_again_lbl"]
                 } else {
                     if (applyMainUserFilter) {
@@ -559,7 +560,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     }
 
 
-    lateinit var typeSerial: TypeSerial
+
     private fun onSerialButtonClick(myAction: MyActions, position: Int) {
         serialActionSelected = position
         typeSerial = TypeSerial.MY_ACTIONS
@@ -579,7 +580,10 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 serialActionSelected = clickType.position
                 mPresenter.processSerialClick(
                     serialId = clickType.model.serialId,
-                    productCode = clickType.model.productCode
+                    productCode = clickType.model.productCode,
+                    productId = "",
+                    myAction = null,
+                    typeSerial = typeSerial
                 )
             }
 
@@ -588,7 +592,10 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 serialActionSelected = clickType.position
                 mPresenter.processSerialClick(
                     serialId = clickType.model.serialId,
-                    productCode = clickType.model.productCode
+                    productCode = clickType.model.productCode,
+                    productId = "",
+                    myAction = null,
+                    typeSerial = typeSerial
                 )
             }
 
@@ -816,41 +823,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
             WS_Serial_Search::class.java.name -> {
                 wsProcess = ""
                 progressDialog.dismiss()
-                when (typeSerial) {
-
-                    is TypeSerial.MORE_ACTIONS -> {
-                        val serialSite = mAdapter.getMySerialSiteInvByPosition(serialActionSelected)
-                        mPresenter.extractSearchResult(
-                            mLink,
-                            serialSite?.productCode,
-                            serialSite?.serialId,
-                            TypeSerial.SERIAL_SITE_ACTION_BASE,
-                            processPk = "${serialSite?.productCode}.${serialSite?.serialCode}"
-                        )
-                    }
-
-                    is TypeSerial.INFO_SERIAL -> {
-                        val serialSite = mAdapter.getMySerialSiteInvByPosition(serialActionSelected)
-                        mPresenter.extractSearchResult(
-                            mLink,
-                            serialSite?.productCode,
-                            serialSite?.serialId,
-                            TypeSerial.SERIAL_SITE_ACTION_BASE,
-                            processPk = "${serialSite?.productCode}.${serialSite?.serialCode}"
-                        )
-                    }
-
-                    else -> {
-                        val myAction = mAdapter.getMyActionByPosition(serialActionSelected)
-                        mPresenter.extractSearchResult(
-                            mLink,
-                            myAction?.productCode,
-                            myAction?.serialId,
-                            myAction?.actionType,
-                            myAction?.processPk
-                        )
-                    }
-                }
+                handleSerialSearchReturn(mLink)
 
             }
 
@@ -863,39 +836,87 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                     mLink, MD_Product_Serial::class.java
                 )
                 //
-                when (typeSerial) {
-                    is TypeSerial.MY_ACTIONS -> {
-                        val myAction = mAdapter.getMyActionByPosition(serialActionSelected)
-                        mPresenter.extractStructureResult(
-                            serial,
-                            myAction?.actionType,
-                            myAction?.processPk,
-                            typeSerial
-                        )
-                    }
-
-                    is TypeSerial.MORE_ACTIONS -> {
-                        mPresenter.extractStructureResult(serial, TypeSerial.SERIAL_SITE_ACTION_BASE, typeSerial = typeSerial,
-                            processPk = "${serial.product_code}.${serial.serial_code}"
-                        )
-                    }
-
-                    is TypeSerial.INFO_SERIAL -> {
-                        mPresenter.extractStructureResult(serial, TypeSerial.SERIAL_SITE_ACTION_BASE, typeSerial = typeSerial, processPk = "${serial.product_code}.${serial.serial_code}" )
-
-                    }
-
-                    else -> {
-                        ToolBox_Inf.registerException(
-                            javaClass.name,
-                            Exception("$typeSerial not found")
-                        )
-                    }
-                }
-                resetActionPosition()
+                handleStructureReturn(serial)
             }
 
             else -> progressDialog?.dismiss()
+        }
+    }
+
+    private fun handleStructureReturn(serial: MD_Product_Serial) {
+        when (typeSerial) {
+            is TypeSerial.MY_ACTIONS -> {
+                val myAction = mAdapter.getMyActionByPosition(serialActionSelected)
+                mPresenter.extractStructureResult(
+                    serial,
+                    myAction?.actionType,
+                    myAction?.processPk,
+                    typeSerial as TypeSerial.MY_ACTIONS
+                )
+            }
+
+            is TypeSerial.MORE_ACTIONS -> {
+                mPresenter.extractStructureResult(
+                    serial, TypeSerial.SERIAL_SITE_ACTION_BASE, typeSerial = typeSerial as TypeSerial.MORE_ACTIONS,
+                    processPk = "${serial.product_code}.${serial.serial_code}"
+                )
+            }
+
+            is TypeSerial.INFO_SERIAL -> {
+                mPresenter.extractStructureResult(
+                    serial,
+                    TypeSerial.SERIAL_SITE_ACTION_BASE,
+                    typeSerial = typeSerial as TypeSerial.INFO_SERIAL,
+                    processPk = "${serial.product_code}.${serial.serial_code}"
+                )
+
+            }
+
+            else -> {
+                ToolBox_Inf.registerException(
+                    javaClass.name,
+                    Exception("$typeSerial not found")
+                )
+            }
+        }
+        resetActionPosition()
+    }
+
+    private fun handleSerialSearchReturn(mLink: String?) {
+        when (typeSerial) {
+
+            is TypeSerial.MORE_ACTIONS -> {
+                val serialSite = mAdapter.getMySerialSiteInvByPosition(serialActionSelected)
+                mPresenter.extractSearchResult(
+                    mLink,
+                    serialSite?.productCode,
+                    serialSite?.serialId,
+                    TypeSerial.SERIAL_SITE_ACTION_BASE,
+                    processPk = "${serialSite?.productCode}.${serialSite?.serialCode}"
+                )
+            }
+
+            is TypeSerial.INFO_SERIAL -> {
+                val serialSite = mAdapter.getMySerialSiteInvByPosition(serialActionSelected)
+                mPresenter.extractSearchResult(
+                    mLink,
+                    serialSite?.productCode,
+                    serialSite?.serialId,
+                    TypeSerial.SERIAL_SITE_ACTION_BASE,
+                    processPk = "${serialSite?.productCode}.${serialSite?.serialCode}"
+                )
+            }
+
+            else -> {
+                val myAction = mAdapter.getMyActionByPosition(serialActionSelected)
+                mPresenter.extractSearchResult(
+                    mLink,
+                    myAction?.productCode,
+                    myAction?.serialId,
+                    myAction?.actionType,
+                    myAction?.processPk
+                )
+            }
         }
     }
 
@@ -1419,19 +1440,39 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     override fun processError_http() {
         //Super realiza o mesmo comportamento do error_1
 //        super.processError_http();
-        ToolBox_Con.setBooleanPreference(
-            applicationContext, ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, true
-        )
         progressDialog.dismiss()
+
+        if(binding.act083MainContent.act083TabSerial.visibility != View.VISIBLE) {
+            ToolBox_Con.setBooleanPreference(
+                applicationContext, ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, true
+            )
+        }
+
         if (serialActionSelected > -1) {
-            mAdapter.getMyActionByPosition(serialActionSelected)?.let {
-                mPresenter.processLocalSearchForSerialAction(
-                    productCode = it.productCode,
-                    serialId = it.serialId,
-                    mdProductSerial = null,
-                    actionType = it.actionType,
-                    processPk = it.processPk
-                )
+
+            when (typeSerial) {
+
+                is TypeSerial.MORE_ACTIONS -> {
+                        ToolBox_Inf.showNoConnectionDialog(context)
+                }
+
+                is TypeSerial.INFO_SERIAL -> {
+                        ToolBox_Inf.showNoConnectionDialog(context)
+                }
+
+                else -> {
+
+                    //
+                    mAdapter.getMyActionByPosition(serialActionSelected)?.let {
+                        mPresenter.processLocalSearchForSerialAction(
+                            productCode = it.productCode,
+                            serialId = it.serialId,
+                            mdProductSerial = null,
+                            actionType = it.actionType,
+                            processPk = it.processPk
+                        )
+                    }
+                }
             }
             //
             resetActionPosition()

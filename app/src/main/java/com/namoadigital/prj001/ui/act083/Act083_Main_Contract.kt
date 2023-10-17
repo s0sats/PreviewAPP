@@ -82,7 +82,8 @@ interface Act083_Main_Contract {
             serialId: String,
             productCode: Int?,
             productId: String = "",
-            myAction: MyActions? = null
+            myAction: MyActions? = null,
+            typeSerial: TypeSerial? = null
         )
 
         fun processLocalSearchForSerialAction(

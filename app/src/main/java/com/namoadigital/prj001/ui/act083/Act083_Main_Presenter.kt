@@ -99,6 +99,13 @@ class Act083_Main_Presenter constructor(
                 || check.invoke(CheckType.FILE_EXIST))
 
     private fun setViewFiltersParam() {
+
+        mView.setViewFiltersParam(
+            initialTextFilter,
+            initialTabToLoad,
+            mainUserFilterState
+        )
+
         when (initialTabToLoad) {
             0 -> {
                 if (useCase.check!!.invoke(CheckType.REFRESH)
@@ -132,12 +139,6 @@ class Act083_Main_Presenter constructor(
             }
         }
 
-
-        mView.setViewFiltersParam(
-            initialTextFilter,
-            initialTabToLoad,
-            mainUserFilterState
-        )
     }
 
 
@@ -401,14 +402,16 @@ class Act083_Main_Presenter constructor(
         serialId: String,
         productCode: Int?,
         productId: String,
-        myAction: MyActions?
+        myAction: MyActions?,
+        typeSerial: TypeSerial?
     ) {
         executeSerialSearch(
             productCode,
             productId,
             serialId,
             true,
-            myAction
+            myAction,
+            typeSerial
         )
     }
 
@@ -661,6 +664,7 @@ class Act083_Main_Presenter constructor(
         setSeletedActionInfosIntoFilterParam(myAction.actionType, myAction.processPk)
         //
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT083)
+        myActionFilterParam.originFlow = ConstantBaseApp.ACT083
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
         bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, myActionFilterParam.originFlow)
         return bundle
@@ -1052,6 +1056,7 @@ class Act083_Main_Presenter constructor(
         setSeletedActionInfosIntoFilterParam(myAction.actionType, myAction.processPk)
         //
         bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT083)
+        myActionFilterParam.originFlow = ConstantBaseApp.ACT083
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
         bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, myActionFilterParam.originFlow)
         //
@@ -1472,6 +1477,7 @@ class Act083_Main_Presenter constructor(
             productId,
             serialId,
             searchExact,
+            null,
             null
         )
     }
@@ -1481,7 +1487,8 @@ class Act083_Main_Presenter constructor(
         productId: String?,
         serialId: String,
         searchExact: Boolean,
-        myAction: MyActions?
+        myAction: MyActions?,
+        typeSerial: TypeSerial?
     ) {
         if (ToolBox_Con.isOnline(context)
             && !ToolBox_Con.getBooleanPreferencesByKey(
@@ -1519,6 +1526,14 @@ class Act083_Main_Presenter constructor(
                     it.actionType,
                     it.processPk
                 )
+            } ?: typeSerial?.let {
+                val serial = getSerial(productCode!!, serialId)
+                serial?.let{
+                    extractStructureResult(
+                        serial,
+                        typeSerial= typeSerial
+                    )
+                }?: ToolBox_Inf.showNoConnectionDialog(context)
             } ?: offlineSerialSearch()
         }
     }
@@ -1699,6 +1714,7 @@ class Act083_Main_Presenter constructor(
             MyActions.MY_ACTION_TYPE_SCHEDULE,
             actionSelected!!.processPk
         )
+        myActionFilterParam.originFlow = ConstantBaseApp.ACT083
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
         bundle.putSerializable(
             ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
