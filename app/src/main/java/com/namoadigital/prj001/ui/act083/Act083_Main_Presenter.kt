@@ -99,6 +99,13 @@ class Act083_Main_Presenter constructor(
                 || check.invoke(CheckType.FILE_EXIST))
 
     private fun setViewFiltersParam() {
+
+        mView.setViewFiltersParam(
+            initialTextFilter,
+            initialTabToLoad,
+            mainUserFilterState
+        )
+
         when (initialTabToLoad) {
             0 -> {
                 if (useCase.check!!.invoke(CheckType.REFRESH)
@@ -132,12 +139,6 @@ class Act083_Main_Presenter constructor(
             }
         }
 
-
-        mView.setViewFiltersParam(
-            initialTextFilter,
-            initialTabToLoad,
-            mainUserFilterState
-        )
     }
 
 
@@ -401,14 +402,16 @@ class Act083_Main_Presenter constructor(
         serialId: String,
         productCode: Int?,
         productId: String,
-        myAction: MyActions?
+        myAction: MyActions?,
+        typeSerial: TypeSerial?
     ) {
         executeSerialSearch(
             productCode,
             productId,
             serialId,
             true,
-            myAction
+            myAction,
+            typeSerial
         )
     }
 
@@ -1474,6 +1477,7 @@ class Act083_Main_Presenter constructor(
             productId,
             serialId,
             searchExact,
+            null,
             null
         )
     }
@@ -1483,7 +1487,8 @@ class Act083_Main_Presenter constructor(
         productId: String?,
         serialId: String,
         searchExact: Boolean,
-        myAction: MyActions?
+        myAction: MyActions?,
+        typeSerial: TypeSerial?
     ) {
         if (ToolBox_Con.isOnline(context)
             && !ToolBox_Con.getBooleanPreferencesByKey(
@@ -1521,6 +1526,14 @@ class Act083_Main_Presenter constructor(
                     it.actionType,
                     it.processPk
                 )
+            } ?: typeSerial?.let {
+                val serial = getSerial(productCode!!, serialId)
+                serial?.let{
+                    extractStructureResult(
+                        serial,
+                        typeSerial= typeSerial
+                    )
+                }?: ToolBox_Inf.showNoConnectionDialog(context)
             } ?: offlineSerialSearch()
         }
     }
