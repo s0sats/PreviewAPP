@@ -2279,31 +2279,36 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         } else {
             //FLUXO DO TICKET ESTA EM OUTRO LUGAR.
             String origin = act083Bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, "");
+//            String requestingAct = act083Bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT, "");
+
             MyActionFilterParam myActionFilterParam = (MyActionFilterParam) act083Bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM);
             if (bAgendado || !ConstantBaseApp.ACT006.equals(origin)) {
                 switch (origin) {
                     case ConstantBaseApp.ACT092:
-                        if (myActionFilterParam.getParamItemSelectedPk() == null || myActionFilterParam.getParamItemSelectedPk().isEmpty()) {
-                            SerialSiteInventoryUseCase checkAndExecUseCase = new SerialSiteInventoryUseCase.Companion.SiteInventoryUseCaseFactory(context).getAndcheckAndExecUseCase();
-                            if(checkAndExecUseCase.getCheck().invoke(CheckType.FILE_EXIST)){
-                                mView.callAct083();
-                            }else {
-                                mView.callAct006(context, false);
-                            }
-                        } else {
-                            mView.callAct092();
-                        }
+                        mView.callAct092();
                         break;
-
                     case ConstantBaseApp.ACT083:
-                        mView.callAct083();
+                        if(ConstantBaseApp.ACT092.equalsIgnoreCase(origin)){
+                            mView.callAct092();
+                        }else {
+                            mView.callAct083();
+                        }
                         break;
                     default:
                         mView.callAct005(context);
                         break;
                 }
             } else {
-                mView.callAct006(context, false);
+                try {
+                    SerialSiteInventoryUseCase checkAndExecUseCase = new SerialSiteInventoryUseCase.Companion.SiteInventoryUseCaseFactory(context).getAndcheckAndExecUseCase();
+                    if (checkAndExecUseCase.getCheck().invoke(CheckType.FILE_EXIST)) {
+                        mView.callAct083();
+                    } else {
+                        mView.callAct006(context, false);
+                    }
+                }catch(Exception e){
+                    mView.callAct006(context, false);
+                }
             }
         }
     }

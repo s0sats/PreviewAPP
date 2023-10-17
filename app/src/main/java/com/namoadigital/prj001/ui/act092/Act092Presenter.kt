@@ -77,6 +77,7 @@ import com.namoadigital.prj001.ui.act092.utils.Act092UiEvent.OpenDialog.DialogTy
 import com.namoadigital.prj001.ui.act093.ui.Act093_Main
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
+import com.namoadigital.prj001.util.ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 import com.namoadigital.prj001.util.ValidateNewFormUseCaseException
@@ -379,7 +380,7 @@ class Act092Presenter(
         //
         bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT092)
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
-        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, Constant.ACT092)
+        bundle.putString(MY_ACTIONS_ORIGIN_FLOW, Constant.ACT092)
         //
         bundle.putString(MD_ProductDao.PRODUCT_CODE, myAction.productCode.toString())
         bundle.putString(MD_ProductDao.PRODUCT_ID, myAction.productId.toString())
@@ -837,7 +838,7 @@ class Act092Presenter(
                 Constant.ACT092
             )
             view.bundle.putString(
-                ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
+                MY_ACTIONS_ORIGIN_FLOW,
                 Constant.ACT092
             )
             bundle.putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, action.scheduleCustomFormData)
@@ -892,10 +893,23 @@ class Act092Presenter(
                                     ConstantBaseApp.MAIN_REQUESTING_ACT,
                                     Constant.ACT092
                                 )
-                                view.bundle.putString(
-                                    ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
+                                /*
+                                    Mantem act006 como origem para navegacao de forms avulsos.
+                                 */
+                                view.bundle.getString(
+                                    MY_ACTIONS_ORIGIN_FLOW
+                                )?.let {
+                                    if(!it.equals(ConstantBaseApp.ACT006)){
+                                        view.bundle.putString(
+                                            MY_ACTIONS_ORIGIN_FLOW,
+                                            Constant.ACT092
+                                        )
+                                    }
+                                }?: view.bundle.putString(
+                                    MY_ACTIONS_ORIGIN_FLOW,
                                     Constant.ACT092
                                 )
+
                                 putAll(view.bundle)
                                 putAll(
                                     Act087Main.getBundleInstance(
@@ -937,7 +951,7 @@ class Act092Presenter(
             Constant.ACT092
         )
         bundle.putString(
-            ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
+            MY_ACTIONS_ORIGIN_FLOW,
             Constant.ACT092
         )
         bundle.putInt(MD_Schedule_ExecDao.SCHEDULE_PREFIX, scheduleExec.schedule_prefix)
@@ -1072,6 +1086,13 @@ class Act092Presenter(
                     myActionFilterParam.paramItemSelectedPk = null
                     myActionFilterParam.paramItemSelectedType = null
 
+                    if(ConstantBaseApp.ACT006 == originFlow) {
+                        myActionFilterParam.originFlow = originFlow
+                        bundle.putString(
+                            MY_ACTIONS_ORIGIN_FLOW,
+                            originFlow
+                        )
+                    }
                     view.onState(
                         Act092UiEvent.CallAct(
                             Act009_Main::class.java,
@@ -1140,7 +1161,7 @@ class Act092Presenter(
         bundle.putInt(TK_TicketDao.TICKET_PREFIX, ticketPrefix)
         bundle.putInt(TK_TicketDao.TICKET_CODE, ticketCode)
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
-        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT092)
+        bundle.putString(MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT092)
         return bundle
     }
 
