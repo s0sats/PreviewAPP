@@ -540,9 +540,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     @Override
     public boolean hasSoSyncRequiredCloudRule() {
         //
-        List<SM_SO> sm_sos = soDao.getSoSyncList(ToolBox_Con.getPreference_Customer_Code(context));
+        return soDao.getSoSyncNeeded(ToolBox_Con.getPreference_Customer_Code(context));
         //
-        return sm_sos.size() > 0;
     }
 
 

@@ -379,7 +379,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
     @Override
     protected void processSync() {
         //super.processSync();
-        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null)) {
+        if (mPresenter.checkSoSyncNeed()) {
             callSODownload();
         }else {
             callTicketDownload();

@@ -17,6 +17,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.LicenseSiteAdapter;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.EV_User_Customer;
@@ -530,6 +531,13 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
+    }
+
+    @Override
+    public boolean checkSoSyncNeed() {
+        SM_SODao dao = new SM_SODao(context);
+        return ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null)
+            && dao.getSoSyncNeeded(ToolBox_Con.getPreference_Customer_Code(context));
     }
 
     private String getTicketConcatList(TK_TicketDao tk_ticketDao) {

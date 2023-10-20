@@ -76,6 +76,13 @@ class WS_SO_Sync: IntentService("WS_SO_Sync") {
             soDao.getSoSyncList(customerCode).size
         //
         processedSoSize = 0
+        ToolBox.sendBCStatus(
+            applicationContext,
+            "STATUS",
+            """${hmAuxTrans["generic_sending_data_msg"]}""",
+            "",
+            "0"
+        )
         if (!sendSoToSync(
                 productCode,
                 serialId,
@@ -127,11 +134,10 @@ class WS_SO_Sync: IntentService("WS_SO_Sync") {
         env.so_mult = formatSyncSoList(soList)
         env.setProfile_check(profileCheck)
         env.app_type = Constant.PKG_APP_TYPE_DEFAULT
-        //
         ToolBox.sendBCStatus(
             applicationContext,
             "STATUS",
-            """${hmAuxTrans["generic_processing_data"]} ($processedSoSize/${soSyncListSize})""",
+            """${hmAuxTrans["generic_sending_data_msg"]} ($processedSoSize/${soSyncListSize})""",
             "",
             "0"
         )
@@ -193,17 +199,17 @@ class WS_SO_Sync: IntentService("WS_SO_Sync") {
             //
             sm_so.setPK()
             //
-            soDao.addUpdate(sm_so)
             processedSoSize++
-
-            ToolBox.sendBCStatus(
-                applicationContext,
-                "STATUS",
-                """${hmAuxTrans["generic_processing_data"]} ($processedSoSize/${soSyncListSize})""",
-                "",
-                "0"
-            )
         }
+        soDao.addUpdate(rec.so, false)
+        //
+        ToolBox.sendBCStatus(
+            applicationContext,
+            "STATUS",
+            """${hmAuxTrans["generic_processing_data"]} ($processedSoSize/${soSyncListSize})""",
+            "",
+            "0"
+        )
         //
     }
 
@@ -232,7 +238,7 @@ class WS_SO_Sync: IntentService("WS_SO_Sync") {
     }
 
     companion object{
-        const val WS_SO_SYNC_PAGE = 5
+        const val WS_SO_SYNC_PAGE = 10
         const val WS_BUNDLE_PRODUCT_CODE = "PRODUCT_CODE"
         const val WS_BUNDLE_SERIAL_CODE = "SERIAL_CODE"
         const val WS_BUNDLE_PROFILE_CHECK = "PROFILE_CHECK"

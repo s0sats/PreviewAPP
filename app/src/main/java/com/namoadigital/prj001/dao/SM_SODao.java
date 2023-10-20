@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.dao;
 
+import static com.namoadigital.prj001.sql.SMSOHasSyncRequiredList.NEED_SYNC;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -12,6 +14,7 @@ import com.namoadigital.prj001.model.SM_SO_File;
 import com.namoadigital.prj001.model.SM_SO_Pack;
 import com.namoadigital.prj001.model.SM_SO_Product_Event;
 import com.namoadigital.prj001.sql.SMSOGetSyncRequiredList;
+import com.namoadigital.prj001.sql.SMSOHasSyncRequiredList;
 import com.namoadigital.prj001.sql.SM_SO_File_Sql_002;
 import com.namoadigital.prj001.sql.SM_SO_Pack_Sql_002;
 import com.namoadigital.prj001.sql.SM_SO_Product_Event_Sql_001;
@@ -1422,5 +1425,13 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
     }
 
 
+    public boolean getSoSyncNeeded(long customerCode) {
+        HMAux exists = getByStringHM(
+                new SMSOHasSyncRequiredList(
+                        customerCode
+                ).toSqlQuery()
+        );
+        return exists != null && exists.hasConsistentValue(NEED_SYNC) && exists.get(NEED_SYNC).equalsIgnoreCase("1");
+    }
 
 }

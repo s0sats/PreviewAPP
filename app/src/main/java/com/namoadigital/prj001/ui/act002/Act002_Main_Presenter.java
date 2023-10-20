@@ -39,4 +39,6 @@ public interface Act002_Main_Presenter {
     void setPeriodFilterPreference();
 
     void executeWSSoDownload();
+
+    boolean checkSoSyncNeed();
 }
