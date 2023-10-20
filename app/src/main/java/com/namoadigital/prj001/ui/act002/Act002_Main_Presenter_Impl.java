@@ -24,9 +24,11 @@ import com.namoadigital.prj001.model.SiteLicense;
 import com.namoadigital.prj001.receiver.WBR_GetCustomer;
 import com.namoadigital.prj001.receiver.WBR_Get_Customer_Site_License;
 import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.receiver.WBR_SO_Sync;
 import com.namoadigital.prj001.receiver.WBR_Session;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
+import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_001;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_002;
@@ -512,6 +514,22 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
         }else {
             ToolBox_Con.setStringPreference(context, PREFERENCE_HOME_PERIOD_FILTER, PREFERENCE_HOME_ALL_TIME_OPTION);
         }
+    }
+
+    @Override
+    public void executeWSSoDownload() {
+        mView.setWsProcess(WS_SO_Search.class.getName());
+        //
+        ToolBox.sendBCStatus(context, "STATUS", context.getString(R.string.act002_ws_ticket_download_msg), "", "0");
+        //
+        Intent mIntent = new Intent(context, WBR_SO_Sync.class);
+        //
+        Bundle bundle = new Bundle();
+        bundle.putInt(Constant.WS_SO_SEARCH_PROFILE_CHECK,0);
+        bundle.putBoolean(Constant.WS_SO_SEARCH_SO_SYNC, true);
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
     }
 
     private String getTicketConcatList(TK_TicketDao tk_ticketDao) {

@@ -11,6 +11,7 @@ import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.SM_SO_File;
 import com.namoadigital.prj001.model.SM_SO_Pack;
 import com.namoadigital.prj001.model.SM_SO_Product_Event;
+import com.namoadigital.prj001.sql.SMSOGetSyncRequiredList;
 import com.namoadigital.prj001.sql.SM_SO_File_Sql_002;
 import com.namoadigital.prj001.sql.SM_SO_Pack_Sql_002;
 import com.namoadigital.prj001.sql.SM_SO_Product_Event_Sql_001;
@@ -1406,4 +1407,20 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
                 && hmAux.hasConsistentValue(SM_SODao.SO_PREFIX) && hmAux.hasConsistentValue(SM_SODao.SO_CODE)
                 && hmAux.hasConsistentValue(SM_SODao.SYNC_REQUIRED) && hmAux.get(SM_SODao.SYNC_REQUIRED).equals("1");
     }
+
+    public List<SM_SO> getSoSyncList(long customerCode) {
+        return getSoSyncList(customerCode, null);
+    }
+
+    public List<SM_SO> getSoSyncList(long customerCode, Integer pageSize) {
+        return query(
+                new SMSOGetSyncRequiredList(
+                        customerCode,
+                        pageSize
+                ).toSqlQuery()
+        );
+    }
+
+
+
 }

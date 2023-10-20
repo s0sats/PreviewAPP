@@ -362,6 +362,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String WS_SO_SEARCH_PRODUCT_CODE = "sosearchproductcode";
     public static final String WS_SO_SEARCH_SERIAL_ID = "sosearchserialid";
     public static final String WS_SO_SEARCH_SO_MULT = "sosearchmult";
+
+    public static final String WS_SO_SEARCH_SO_SYNC = "WS_SO_SEARCH_SO_SYNC";
     public static final String WS_SO_SEARCH_SAVE_SERIAL = "so_search_save_serial";
     public static final String WS_SO_SEARCH_CREATE_SERIAL = "so_search_create_serial";
     public static final String WS_SO_SEARCH_PROFILE_CHECK = "so_search_profile_check";
@@ -506,6 +508,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final int NOTIFICATION_CHAT_ROOM = 669;
     public static final int NOTIFICATION_CHAT_FOREGROUND_SERVICE = 670;
     public static final int NOTIFICATION_SYNC_ID = 671;
+    public static final int NOTIFICATION_SO_ID = 676;
     public static final int NOTIFICATION_TICKET_DOWNLOAD = 672;
     public static final int NOTIFICATION_CUSTOMER_SITE_LICENSE = 673;
     public static final int NOTIFICATION_CUSTOMER = 674;

@@ -988,6 +988,7 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
         <receiver android:name=".receiver.WBR_Schedule_Not_Executed" />
         <receiver android:name=".receiver.WBR_So_Status_Change" />
         <receiver android:name=".receiver.WBR_So_Priority_Change" />
+        <receiver android:name=".receiver.WBR_SO_Sync" />
 
         <service android:name=".service.WS_SO_Create_Room" />
         <service android:name=".service.WS_TK_Next_Ticket" />
@@ -1007,6 +1008,7 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
         <service android:name=".service.WsScheduleNotExecuted" />
         <service android:name=".service.WSSoStatusChange" />
         <service android:name=".service.WSSoPriorityChange" />
+        <service android:name=".service.WS_SO_Sync" />
     </application>
 
 </manifest>
