@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act002;
 
+import static com.namoadigital.prj001.service.WS_SO_Sync.WS_BUNDLE_PROFILE_CHECK;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_PERIOD_FILTER;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION;
@@ -29,7 +30,7 @@ import com.namoadigital.prj001.receiver.WBR_SO_Sync;
 import com.namoadigital.prj001.receiver.WBR_Session;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
-import com.namoadigital.prj001.service.WS_SO_Search;
+import com.namoadigital.prj001.service.WS_SO_Sync;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_001;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_002;
@@ -519,15 +520,14 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
 
     @Override
     public void executeWSSoDownload() {
-        mView.setWsProcess(WS_SO_Search.class.getName());
+        mView.setWsProcess(WS_SO_Sync.class.getName());
         //
         ToolBox.sendBCStatus(context, "STATUS", context.getString(R.string.act002_ws_ticket_download_msg), "", "0");
         //
         Intent mIntent = new Intent(context, WBR_SO_Sync.class);
         //
         Bundle bundle = new Bundle();
-        bundle.putInt(Constant.WS_SO_SEARCH_PROFILE_CHECK,0);
-        bundle.putBoolean(Constant.WS_SO_SEARCH_SO_SYNC, true);
+        bundle.putInt(WS_BUNDLE_PROFILE_CHECK,0);
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);

@@ -11,6 +11,7 @@ import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.dao.SM_SODao
 import com.namoadigital.prj001.extensions.formatSyncSoList
+import com.namoadigital.prj001.model.SM_SO
 import com.namoadigital.prj001.model.TSO_Search_Env
 import com.namoadigital.prj001.model.TSO_Search_Rec
 import com.namoadigital.prj001.receiver.WBR_SO_Sync
@@ -32,6 +33,8 @@ class WS_SO_Sync: IntentService("WS_SO_Sync") {
     private val soDao by lazy {
         SM_SODao(applicationContext)
     }
+    val soList: MutableList<SM_SO> = java.util.ArrayList()
+    var pageNumber=0
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         //
         val nm = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -57,7 +60,7 @@ class WS_SO_Sync: IntentService("WS_SO_Sync") {
             val serial_id = bundle.getString(WS_BUNDLE_SERIAL_CODE, "")
             val profile_check = bundle.getInt(
                 WS_BUNDLE_PROFILE_CHECK,
-                1
+                0
             ) //
             //
             processSO_Sync(ToolBox_Con.getPreference_Customer_Code(applicationContext), product_code, serial_id, profile_check)
@@ -72,8 +75,7 @@ class WS_SO_Sync: IntentService("WS_SO_Sync") {
 
     private fun processSO_Sync(customerCode: Long,productCode: Long, serialId: String?, profileCheck: Int) {
         val soDao = SM_SODao(applicationContext)
-        val soSyncListSize =
-            soDao.getSoSyncList(customerCode).size
+        soList.addAll(soDao.getSoSyncList(customerCode))
         //
         processedSoSize = 0
         ToolBox.sendBCStatus(
@@ -83,13 +85,15 @@ class WS_SO_Sync: IntentService("WS_SO_Sync") {
             "",
             "0"
         )
+
         if (!sendSoToSync(
                 productCode,
                 serialId,
                 soDao,
                 customerCode,
                 profileCheck,
-                soSyncListSize
+                soList.size,
+                getNextSoPage()
             )
         ){
             return
@@ -122,69 +126,70 @@ class WS_SO_Sync: IntentService("WS_SO_Sync") {
         soDao: SM_SODao,
         customerCode: Long,
         profileCheck: Int,
-        soSyncListSize: Int
+        soSyncListSize: Int,
+        processList: List<SM_SO>
     ): Boolean {
-        val soList = soDao.getSoSyncList(customerCode, WS_SO_SYNC_PAGE)
         //
-        env.app_code = Constant.PRJ001_CODE
-        env.app_version = Constant.PRJ001_VERSION
-        env.session_app = ToolBox_Con.getPreference_Session_App(applicationContext)
-        env.product_code = productCode
-        env.serial_id = serialId
-        env.so_mult = formatSyncSoList(soList)
-        env.setProfile_check(profileCheck)
-        env.app_type = Constant.PKG_APP_TYPE_DEFAULT
-        ToolBox.sendBCStatus(
-            applicationContext,
-            "STATUS",
-            """${hmAuxTrans["generic_sending_data_msg"]} ($processedSoSize/${soSyncListSize})""",
-            "",
-            "0"
-        )
-        //
-        val resultado = ToolBox_Con.connWebService(
-            Constant.WS_SO_SEARCH,
-            gson.toJson(env)
-        )
-        //
-        //
-        val rec = gson.fromJson(
-            resultado,
-            TSO_Search_Rec::class.java
-        )
-        //
-        //
-        if (!ToolBox_Inf.processWSCheckValidation(
+        if(processList.isNotEmpty()) {
+            env.app_code = Constant.PRJ001_CODE
+            env.app_version = Constant.PRJ001_VERSION
+            env.session_app = ToolBox_Con.getPreference_Session_App(applicationContext)
+            env.product_code = productCode
+            env.serial_id = serialId
+            env.so_mult = formatSyncSoList(processList)
+            env.setProfile_check(profileCheck)
+            env.app_type = Constant.PKG_APP_TYPE_DEFAULT
+            ToolBox.sendBCStatus(
                 applicationContext,
-                rec.validation,
-                rec.error_msg,
-                rec.link_url,
-                1,
-                1
+                "STATUS",
+                """${hmAuxTrans["generic_sending_data_msg"]} ($processedSoSize/${soSyncListSize})""",
+                "",
+                "0"
             )
-            ||
-            !ToolBox_Inf.processoOthersError(
-                applicationContext,
-                resources.getString(R.string.generic_error_lbl),
-                rec.error_msg
+            //
+            val resultado = ToolBox_Con.connWebService(
+                Constant.WS_SO_SEARCH,
+                gson.toJson(env)
             )
-        ) {
-            return false
-        }
-        //
-        updateLocalSo(rec, soDao, soSyncListSize)
-        //
-        return if(soDao.getSoSyncList(customerCode).size > 0){
-            sendSoToSync(
+            //
+            //
+            val rec = gson.fromJson(
+                resultado,
+                TSO_Search_Rec::class.java
+            )
+            //
+            //
+            if (!ToolBox_Inf.processWSCheckValidation(
+                    applicationContext,
+                    rec.validation,
+                    rec.error_msg,
+                    rec.link_url,
+                    1,
+                    1
+                )
+                ||
+                !ToolBox_Inf.processoOthersError(
+                    applicationContext,
+                    resources.getString(R.string.generic_error_lbl),
+                    rec.error_msg
+                )
+            ) {
+                return false
+            }
+            //
+            updateLocalSo(rec, soDao, soSyncListSize)
+            //
+            return sendSoToSync(
                 productCode,
                 serialId,
                 soDao,
                 customerCode,
                 profileCheck,
-                soSyncListSize
+                soSyncListSize,
+                getNextSoPage()
             )
-        }else{
-            true
+        } else{
+            return true
         }
     }
 
@@ -244,4 +249,14 @@ class WS_SO_Sync: IntentService("WS_SO_Sync") {
         const val WS_BUNDLE_PROFILE_CHECK = "PROFILE_CHECK"
     }
 
+    private fun getNextSoPage():List<SM_SO>{
+        val startIndex = pageNumber * WS_SO_SYNC_PAGE
+        val endIndex = minOf(startIndex + WS_SO_SYNC_PAGE, soList.size)
+        pageNumber+=1
+        return if (startIndex < endIndex) {
+            soList.subList(startIndex, endIndex)
+        } else {
+            emptyList()
+        }
+    }
 }

@@ -24,7 +24,7 @@ import com.namoadigital.prj001.adapter.EV_User_Customer_Adapter;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.model.SiteLicense;
 import com.namoadigital.prj001.receiver.WBR_Logout;
-import com.namoadigital.prj001.service.WS_SO_Search;
+import com.namoadigital.prj001.service.WS_SO_Sync;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -486,7 +486,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
             progressDialog.dismiss();
             mPresenter.processCustomerSiteLicenseListReturn();
             wsProcess = "";
-        } else if(wsProcess.equals(WS_SO_Search.class.getName())){
+        } else if(wsProcess.equals(WS_SO_Sync.class.getName())){
             callTicketDownload();
         } else if(wsProcess.equals(WS_TK_Ticket_Download.class.getName())){
             ToolBox_Inf.hasFormProductOutdate(context);

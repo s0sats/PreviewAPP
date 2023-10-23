@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act005;
 
+import static com.namoadigital.prj001.service.WS_SO_Sync.WS_BUNDLE_PROFILE_CHECK;
 import static com.namoadigital.prj001.sql.Sql_Act005_009.PENDING_QTY;
 import static com.namoadigital.prj001.ui.act005.Act005_Main.WS_PROCESS_SO_SAVE;
 import static com.namoadigital.prj001.ui.act005.Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL;
@@ -621,7 +622,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             //
             Intent mIntent = new Intent(context, WBR_SO_Sync.class);
             Bundle bundle = new Bundle();
-            bundle.putInt(Constant.WS_SO_SEARCH_PROFILE_CHECK,0);
+            bundle.putInt(WS_BUNDLE_PROFILE_CHECK,0);
             //
             mIntent.putExtras(bundle);
             //
