@@ -1502,7 +1502,15 @@ class Act083_Main_Presenter constructor(
         myAction: MyActions?,
         typeSerial: TypeSerial?
     ) {
-        if (ToolBox_Con.isOnline(context)
+
+        val hasUpdateRequired = checkSupdateRequiredSerial(productCode, serialId)
+
+        if(hasUpdateRequired){
+            mView.showAlertMsg(
+                hmAux_Trans?.get("dialog_serial_outdate_ttl")!!,
+                hmAux_Trans?.get("dialog_serial_outdate_msg")!!
+            )
+        }else if (ToolBox_Con.isOnline(context)
             && !ToolBox_Con.getBooleanPreferencesByKey(
                 context,
                 ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW,
@@ -1548,6 +1556,17 @@ class Act083_Main_Presenter constructor(
                 }?: ToolBox_Inf.showNoConnectionDialog(context)
             } ?: offlineSerialSearch()
         }
+    }
+
+    private fun checkSupdateRequiredSerial(
+        productCode: Int?,
+        serialId: String
+    ): Boolean {
+        val serial = productCode?.let { getSerial(it, serialId) }
+        val hasUpdateRequired = serial?.let {
+            it.update_required == 1
+        } ?: false
+        return hasUpdateRequired
     }
 
     override fun extractSearchResult(

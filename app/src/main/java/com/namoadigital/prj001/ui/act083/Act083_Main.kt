@@ -1615,6 +1615,9 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         transList.add("btn_serial_site_status_lbl")
         transList.add("btn_serial_site_select_serial_lbl")
         //
+        transList.add("dialog_serial_outdate_ttl")
+        transList.add("dialog_serial_outdate_msg")
+        //
         transList.add(Act092Translate.HINT_FILTER)
         transList.add(Act092Translate.PLACEHOLDER_FILTER)
         return ToolBox_Inf.setLanguage(
