@@ -110,6 +110,10 @@ class Act083_Main_Presenter constructor(
             0 -> {
                 if (useCase.check!!.invoke(CheckType.REFRESH)
                     && ToolBox_Con.isOnline(context)
+                    && !ToolBox_Con.getBooleanPreferencesByKey(
+                        context,
+                        ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW,
+                        false)
                 ) {
                     callSerialSiteServce()
                 }
@@ -119,6 +123,10 @@ class Act083_Main_Presenter constructor(
             1 -> {
                 if (useCase.check!!.invoke(CheckType.REFRESH)
                     && ToolBox_Con.isOnline(context)
+                    && !ToolBox_Con.getBooleanPreferencesByKey(
+                        context,
+                        ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW,
+                        false)
                 ) {
                     callSerialSiteServce()
                 }
@@ -132,6 +140,10 @@ class Act083_Main_Presenter constructor(
             else -> {
                 if (useCase.check!!.invoke(CheckType.REFRESH)
                     && ToolBox_Con.isOnline(context)
+                    && !ToolBox_Con.getBooleanPreferencesByKey(
+                        context,
+                        ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW,
+                        false)
                 ) {
                     callSerialSiteServce()
                 }
