@@ -618,7 +618,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         }
                     }else{
                         //Status
-                        if (fcmSchedule.getStatus() != null) {
+                        if (fcmSchedule.getStatus() != null &&
+                                !scheduleExec.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_DONE) &&
+                                !scheduleExec.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)
+                        ) {
                             scheduleExec.setFcm_new_status(fcmSchedule.getStatus());
                             scheduleExec.setClose_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
                             dumbDebugger++;
