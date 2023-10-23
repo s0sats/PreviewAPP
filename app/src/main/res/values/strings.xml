@@ -118,6 +118,8 @@
     <string name="act002_ws_site_license_msg">Loading Sites with available licences.</string>
     <string name="act002_ws_ticket_download_ttl">Download</string>
     <string name="act002_ws_ticket_download_msg">Downloading outdated tickets.</string>
+    <string name="act002_ws_so_download_ttl">Download</string>
+    <string name="act002_ws_so_download_msg">Downloading outdated so.</string>
     <string name="license_site_dialog_ttl">Choose Site with licence</string>
     <string name="license_site_dialog_filter_hint">Select the Site of your licence</string>
     <string name="license_site_dialog_close">Cancel</string>
@@ -170,5 +172,6 @@
     <!--Login do Usuário B no device que tem dados pendentes do Usuário A (pendentes de envio ou Form em processo) -->
     <string name="msg_last_user_with_pendency">CAUTION! Data will be LOST if you log in on this device.\n\nThe User below has data that has not yet been sent to the Server and/or Forms that are still being filled out:</string>
     <string name="empty_list_license">No options found to choose from. Please try checking your filter.</string>
+    <string name="msg_download_so_data">Downloading SO data.</string>
 
 </resources>

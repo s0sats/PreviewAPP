@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act005;
 
+import static com.namoadigital.prj001.service.WS_SO_Sync.WS_BUNDLE_PROFILE_CHECK;
 import static com.namoadigital.prj001.sql.Sql_Act005_009.PENDING_QTY;
 import static com.namoadigital.prj001.ui.act005.Act005_Main.WS_PROCESS_SO_SAVE;
 import static com.namoadigital.prj001.ui.act005.Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL;
@@ -79,7 +80,7 @@ import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_SO_Approval;
 import com.namoadigital.prj001.receiver.WBR_SO_Pack_Express_Local;
 import com.namoadigital.prj001.receiver.WBR_SO_Save;
-import com.namoadigital.prj001.receiver.WBR_SO_Search;
+import com.namoadigital.prj001.receiver.WBR_SO_Sync;
 import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Sync;
@@ -108,7 +109,6 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_002;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_001;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Sql_003;
-import com.namoadigital.prj001.sql.SMSOGetSyncRequiredList;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_010;
 import com.namoadigital.prj001.sql.SqlAct005TagList001;
 import com.namoadigital.prj001.sql.Sql_Act005_001;
@@ -556,9 +556,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     @Override
     public boolean hasSoSyncRequiredCloudRule() {
         //
-        List<SM_SO> sm_sos = getSoSyncList();
+        return soDao.getSoSyncNeeded(ToolBox_Con.getPreference_Customer_Code(context));
         //
-        return sm_sos.size() > 0;
     }
 
 
@@ -635,13 +634,9 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             //
             mView.showPD();
             //
-            Intent mIntent = new Intent(context, WBR_SO_Search.class);
+            Intent mIntent = new Intent(context, WBR_SO_Sync.class);
             Bundle bundle = new Bundle();
-            //
-            String serviceSoList = getSoIdSyncList();
-            //
-            bundle.putString(Constant.WS_SO_SEARCH_SO_MULT, serviceSoList);
-            bundle.putInt(Constant.WS_SO_SEARCH_PROFILE_CHECK, 0);
+            bundle.putInt(WS_BUNDLE_PROFILE_CHECK,0);
             //
             mIntent.putExtras(bundle);
             //
@@ -656,23 +651,6 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         serialSiteUseCase.getDeleteFile().invoke();
     }
 
-    private String getSoIdSyncList() {
-        List<SM_SO> soSyncList = getSoSyncList();
-        String serviceSoList = "";
-        for (SM_SO sm_so : soSyncList) {
-            serviceSoList += "|" + sm_so.getSo_prefix() + "." + sm_so.getSo_code();
-        }
-        serviceSoList = serviceSoList.substring(1);
-        return serviceSoList;
-    }
-
-    private List<SM_SO> getSoSyncList() {
-        return soDao.query(
-                new SMSOGetSyncRequiredList(
-                        ToolBox_Con.getPreference_Customer_Code(context)
-                ).toSqlQuery()
-        );
-    }
 
     @Deprecated
     @Override

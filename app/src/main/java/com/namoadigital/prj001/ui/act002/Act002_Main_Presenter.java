@@ -37,4 +37,8 @@ public interface Act002_Main_Presenter {
     void executeWSTicketDownload();
 
     void setPeriodFilterPreference();
+
+    void executeWSSoDownload();
+
+    boolean checkSoSyncNeed();
 }

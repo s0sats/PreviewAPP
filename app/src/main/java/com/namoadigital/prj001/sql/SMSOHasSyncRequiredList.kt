@@ -3,23 +3,23 @@ package com.namoadigital.prj001.sql
 import com.namoadigital.prj001.dao.SM_SODao
 import com.namoadigital.prj001.database.Specification
 
-class SMSOGetSyncRequiredList(
-    private val customerCode: Long,
-    pageSize: Int?
+class SMSOHasSyncRequiredList(
+    private val customerCode: Long
 ): Specification {
-    private val limitFilter by lazy {
-        pageSize?.let{
-            "LIMIT $pageSize"
-        }?:""
-    }
+
     override fun toSqlQuery(): String {
         return """
-            SELECT * 
+            SELECT EXISTS( SELECT 1 
               FROM ${SM_SODao.TABLE}
              WHERE  ${SM_SODao.CUSTOMER_CODE} = $customerCode
                AND  ${SM_SODao.SYNC_REQUIRED} = 1
                AND  ${SM_SODao.UPDATE_REQUIRED} = 0
-             $limitFilter
+               LIMIT 1
+               ) $NEED_SYNC
         """.trimIndent()
+    }
+
+    companion object{
+        const val NEED_SYNC = "NEED_SYNC"
     }
 }

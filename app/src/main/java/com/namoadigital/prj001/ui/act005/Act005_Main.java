@@ -2633,6 +2633,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         if(sendResumeDialog != null) {
             sendResumeDialog.dismiss();
         }
+        if(SYNC_SOS.equalsIgnoreCase(wsProcess)){
+            progressDialog.dismiss();
+        }
         setSyncAfterSave(false);
 //        mPresenter.getMenuItensV2(hmAux_Trans);
         refreshUiData();
