@@ -377,10 +377,11 @@ class Act092Presenter(
     private fun getFormBundle(myAction: MyActions): Bundle {
         val splippedPk = myAction.getSplippedPk()
         val bundle = Bundle()
+        val currentOrigin = view.bundle.getString(MY_ACTIONS_ORIGIN_FLOW, Constant.ACT092)
         //
         bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT092)
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
-        bundle.putString(MY_ACTIONS_ORIGIN_FLOW, Constant.ACT092)
+        bundle.putString(MY_ACTIONS_ORIGIN_FLOW, currentOrigin)
         //
         bundle.putString(MD_ProductDao.PRODUCT_CODE, myAction.productCode.toString())
         bundle.putString(MD_ProductDao.PRODUCT_ID, myAction.productId.toString())
@@ -896,19 +897,10 @@ class Act092Presenter(
                                 /*
                                     Mantem act006 como origem para navegacao de forms avulsos.
                                  */
-                                view.bundle.getString(
-                                    MY_ACTIONS_ORIGIN_FLOW
-                                )?.let {
-                                    if(!it.equals(ConstantBaseApp.ACT006)){
-                                        view.bundle.putString(
-                                            MY_ACTIONS_ORIGIN_FLOW,
-                                            Constant.ACT092
-                                        )
-                                    }
-                                }?: view.bundle.putString(
-                                    MY_ACTIONS_ORIGIN_FLOW,
-                                    Constant.ACT092
-                                )
+                                val originFlow = view.bundle.getString(MY_ACTIONS_ORIGIN_FLOW)
+                                if (originFlow == null || (originFlow == ConstantBaseApp.ACT006 && action.actionType == "SCHEDULE")) {
+                                    view.bundle.putString(MY_ACTIONS_ORIGIN_FLOW, Constant.ACT092)
+                                }
 
                                 putAll(view.bundle)
                                 putAll(

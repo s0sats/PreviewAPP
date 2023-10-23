@@ -693,6 +693,10 @@ class Act087MainPresenter(
                     mView.callAct092()
                 }
 
+                ConstantBaseApp.ACT006 -> {
+                    mView.callAct092()
+                }
+
                 else -> {
                     mView.callAct083()
                 }
