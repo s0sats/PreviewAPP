@@ -8,6 +8,7 @@ import com.namoadigital.prj001.ui.base.NamoaFactory
 
 data class ActionPreferenceUseCases(
     val setPreferences: SetModelPreferencesUseCase,
+    val getPreferences: GetSerialModelPreferencesUseCase,
 ) {
     class ActionUseCasesPreferenceFactory constructor(
         private val context: Context
@@ -16,7 +17,8 @@ data class ActionPreferenceUseCases(
             val repository = ActionSerialRepositoryFactoryRepository(context).build()
 
             return ActionPreferenceUseCases(
-                setPreferences = SetModelPreferencesUseCase(repository)
+                setPreferences = SetModelPreferencesUseCase(repository),
+                getPreferences = GetSerialModelPreferencesUseCase(repository)
             )
         }
 

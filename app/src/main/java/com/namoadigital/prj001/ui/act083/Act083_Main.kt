@@ -46,6 +46,7 @@ import com.namoadigital.prj001.ui.act071.Act071_Main
 import com.namoadigital.prj001.ui.act083.data.local.preferences.MyActionsFilterParamPreferences
 import com.namoadigital.prj001.ui.act083.model.TypeSerial
 import com.namoadigital.prj001.ui.act092.ui.Act092_Main
+import com.namoadigital.prj001.ui.act092.usecases.ActionPreferenceUseCases
 import com.namoadigital.prj001.ui.act092.utils.Act092Translate
 import com.namoadigital.prj001.ui.act093.ui.Act093_Main
 import com.namoadigital.prj001.util.Constant
@@ -135,7 +136,8 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 getSharedPreferences("act083_filter", MODE_PRIVATE)
             ),
             hmAux_Trans,
-            SiteInventoryUseCaseFactory(context).getAndcheckAndExecUseCase()
+            SiteInventoryUseCaseFactory(context).getAndcheckAndExecUseCase(),
+            ActionPreferenceUseCases.ActionUseCasesPreferenceFactory(context).build()
         )
     }
 
@@ -1501,6 +1503,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     }
 
     override fun callAct092(bundle: Bundle) {
+        mPresenter.clear092Preference()
         val mIntent = Intent(context, Act092_Main::class.java)
         mIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         //

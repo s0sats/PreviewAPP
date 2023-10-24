@@ -125,7 +125,7 @@ class Act092Presenter(
 
     private fun firstSave() {
         actionUseCases.setPreferences(
-            SerialModel(
+            actionUseCases.getPreferences().copy(
                 originFlow = originFlow,
                 siteCodeBack = ToolBox_Con.getPreference_Site_Code(translateResource.context),
                 zoneCodeBack = ToolBox_Con.getPreference_Zone_Code(translateResource.context),
@@ -158,6 +158,7 @@ class Act092Presenter(
         _serialModel.value = actionUseCases.getPreferences().copy(hmAux = hmAux_Trans)
         view.focusState.value.userFocus = !_serialModel.value.otherSerialIsFiltered
         view.focusState.value.mainUser = _serialModel.value.mainUserFocus
+        view.filterText.value = _serialModel.value.editFilter ?: ""
 
 
         if (view.focusState.value.mainUser) {
