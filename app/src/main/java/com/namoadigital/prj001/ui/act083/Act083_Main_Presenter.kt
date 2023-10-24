@@ -2302,7 +2302,12 @@ class Act083_Main_Presenter constructor(
 
 
     override fun processSerialSite() {
-        if (ToolBox_Con.isOnline(context)) {
+        if (ToolBox_Con.isOnline(context)
+        && !ToolBox_Con.getBooleanPreferencesByKey(
+            context,
+            ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW,
+            false
+            )) {
             if (useCase.getPreference!!().refresh) {
                 callSerialSiteServce()
             } else {
