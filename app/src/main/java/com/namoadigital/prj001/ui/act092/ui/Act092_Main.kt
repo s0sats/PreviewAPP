@@ -23,6 +23,7 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao
 import com.namoadigital.prj001.dao.MdJustifyItemDao
 import com.namoadigital.prj001.databinding.Act092MainBinding
 import com.namoadigital.prj001.databinding.TicketNotExecutedDialogBinding
+import com.namoadigital.prj001.extensions.logout
 import com.namoadigital.prj001.model.MyActionFilterParam
 import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.model.MyActionsBase
@@ -137,6 +138,11 @@ class Act092_Main : BaseActivityMvp
 
     }
 
+    override fun processLogin() {
+        super.processLogin()
+        //
+        this.logout(false)
+    }
 
     override fun processError_1(mLink: String?, mRequired: String?) {
         super.processError_1(mLink, mRequired)
