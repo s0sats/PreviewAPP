@@ -2279,7 +2279,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         } else {
             //FLUXO DO TICKET ESTA EM OUTRO LUGAR.
             String origin = act083Bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, "");
-//            String requestingAct = act083Bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT, "");
+            String requestingAct = act083Bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT, "");
 
             MyActionFilterParam myActionFilterParam = (MyActionFilterParam) act083Bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM);
             if (bAgendado || !ConstantBaseApp.ACT006.equals(origin)) {
@@ -2288,9 +2288,9 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                         mView.callAct092();
                         break;
                     case ConstantBaseApp.ACT083:
-                        if(ConstantBaseApp.ACT092.equalsIgnoreCase(origin)){
+                        if (ConstantBaseApp.ACT092.equalsIgnoreCase(requestingAct)) {
                             mView.callAct092();
-                        }else {
+                        } else {
                             mView.callAct083();
                         }
                         break;
