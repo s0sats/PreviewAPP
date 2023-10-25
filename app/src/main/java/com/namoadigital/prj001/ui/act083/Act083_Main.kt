@@ -46,6 +46,7 @@ import com.namoadigital.prj001.ui.act071.Act071_Main
 import com.namoadigital.prj001.ui.act083.data.local.preferences.MyActionsFilterParamPreferences
 import com.namoadigital.prj001.ui.act083.model.TypeSerial
 import com.namoadigital.prj001.ui.act092.ui.Act092_Main
+import com.namoadigital.prj001.ui.act092.usecases.ActionPreferenceUseCases
 import com.namoadigital.prj001.ui.act092.utils.Act092Translate
 import com.namoadigital.prj001.ui.act093.ui.Act093_Main
 import com.namoadigital.prj001.util.Constant
@@ -135,7 +136,8 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 getSharedPreferences("act083_filter", MODE_PRIVATE)
             ),
             hmAux_Trans,
-            SiteInventoryUseCaseFactory(context).getAndcheckAndExecUseCase()
+            SiteInventoryUseCaseFactory(context).getAndcheckAndExecUseCase(),
+            ActionPreferenceUseCases.ActionUseCasesPreferenceFactory(context).build()
         )
     }
 
@@ -297,9 +299,24 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         } else {
             changeProgressBarVisility(false)
             with(binding.act083MainContent) {
-                if(getCurrentTab() == 2 &&
-                    (!ToolBox_Con.isOnline(context) || hasConnectionFail)){
+                if((getCurrentTab() == 2) &&
+                    (!ToolBox_Con.isOnline(context)
+                            || hasConnectionFail
+                            || ToolBox_Con.getBooleanPreferencesByKey(
+                                        context,
+                                        ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW,
+                                        false
+                                )
+                    )
+                ){
                     act083TvNoResult.text = hmAux_Trans["no_connection_try_again_lbl"]
+                    if(ToolBox_Con.getBooleanPreferencesByKey(
+                            context,
+                            ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW,
+                            false
+                        )){
+                        act083TvNoResult.text = hmAux_Trans["offline_mode_on_sync_required_lbl"]
+                    }
                 } else {
                     if (applyMainUserFilter) {
                         act083TvNoResult.text = hmAux_Trans["no_record_for_filter_lbl"]
@@ -1486,6 +1503,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     }
 
     override fun callAct092(bundle: Bundle) {
+        mPresenter.clear092Preference()
         val mIntent = Intent(context, Act092_Main::class.java)
         mIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         //
@@ -1519,6 +1537,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         transList.add("no_record_lbl")
         transList.add("no_record_for_filter_lbl")
         transList.add("no_connection_try_again_lbl")
+        transList.add("offline_mode_on_sync_required_lbl")
         transList.add("other_steps_available_lbl")
         transList.add("cell_step_lbl")
         transList.add("dialog_download_ticket_ttl")

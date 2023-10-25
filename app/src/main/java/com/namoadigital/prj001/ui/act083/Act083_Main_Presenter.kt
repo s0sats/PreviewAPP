@@ -48,7 +48,8 @@ class Act083_Main_Presenter constructor(
     private val mdJustifyItemDao: MdJustifyItemDao,
     private val sharedPreferences: MyActionsFilterParamPreferences,
     private val hmAux_Trans: HMAux?,
-    private val useCase: SerialSiteInventoryUseCase
+    private val useCase: SerialSiteInventoryUseCase,
+    private val actionUseCases: ActionPreferenceUseCases,
 ) : Act083_Main_Contract.I_Presenter {
 
     private lateinit var myActionFilterParam: MyActionFilterParam
@@ -2302,7 +2303,12 @@ class Act083_Main_Presenter constructor(
 
 
     override fun processSerialSite() {
-        if (ToolBox_Con.isOnline(context)) {
+        if (ToolBox_Con.isOnline(context)
+        && !ToolBox_Con.getBooleanPreferencesByKey(
+            context,
+            ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW,
+            false
+            )) {
             if (useCase.getPreference!!().refresh) {
                 callSerialSiteServce()
             } else {
@@ -2369,13 +2375,19 @@ class Act083_Main_Presenter constructor(
         useCase.updateSerialSiteInventoryRefresh(refresh)
     }
 
-    private fun setSerialModel(model: SerialSiteInventory) {
-        val actionUseCase =
-            ActionPreferenceUseCases.ActionUseCasesPreferenceFactory(context).build()
+    override fun clear092Preference() {
+        actionUseCases.setPreferences(
+            actionUseCases.getPreferences().copy(
+                editFilter = "",
+                mainUserFocus = false
+            )
+        )
+    }
 
-        actionUseCase.setPreferences(
+    private fun setSerialModel(model: SerialSiteInventory) {
+        actionUseCases.setPreferences(
             SerialModel(
-                originFlow = if(originFlow.isEmpty() || originFlow == ConstantBaseApp.ACT083) ConstantBaseApp.ACT068 else originFlow,
+                originFlow = if (originFlow.isEmpty() || originFlow == ConstantBaseApp.ACT083) ConstantBaseApp.ACT068 else originFlow,
                 siteCodeBack = ToolBox_Con.getPreference_Site_Code(context),
                 zoneCodeBack = ToolBox_Con.getPreference_Zone_Code(context),
                 classColor = model.classColor ?: "",

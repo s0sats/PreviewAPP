@@ -126,6 +126,7 @@ import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.service.SV_LocationTracker;
+import com.namoadigital.prj001.service.WS_Product_Serial_Structure;
 import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_005;
@@ -547,6 +548,9 @@ public class Act011_Main extends Base_Activity
         transList.add("passed_days_title");
         transList.add("passed_days_ten_lbl");
         transList.add("passed_days_fifteen_lbl");
+        //
+        transList.add("alert_update_structure_ttl");
+        transList.add("alert_update_structure_msg");
         //
         transList.addAll(Act011FrgInspection.Companion.getFragTranslationsVars());
         //
@@ -4221,6 +4225,9 @@ public class Act011_Main extends Base_Activity
                     },
                     0
             );
+        } else if (wsSoProcess.equalsIgnoreCase(WS_Product_Serial_Structure.class.getSimpleName())
+        ) {
+            flowControl();
         } else {
             formData.setLocation_type("");
             formData.setLocation_lat("");
@@ -4238,18 +4245,23 @@ public class Act011_Main extends Base_Activity
     protected void processError_1(String mLink, String mRequired) {
         super.processError_1(mLink, mRequired);
         //
-        ToolBox.alertMSG(
-                context,
-                hmAux_Trans.get("alert_data_not_sent_ttl"),
-                hmAux_Trans.get("alert_resend_data_by_menu_msg"),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        flowControl();
-                    }
-                },
-                0
-        );
+        if (wsSoProcess.equalsIgnoreCase(WS_Product_Serial_Structure.class.getSimpleName())
+        ) {
+            flowControl();
+        }else {
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_data_not_sent_ttl"),
+                    hmAux_Trans.get("alert_resend_data_by_menu_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            flowControl();
+                        }
+                    },
+                    0
+            );
+        }
     }
 
     private void executeSerialSave() {
@@ -4330,6 +4342,22 @@ public class Act011_Main extends Base_Activity
         super.processCloseACT(mLink, mRequired);
 
         if (wsSoProcess.equalsIgnoreCase(WS_Save.class.getSimpleName())) {
+            setWsSoProcess("");
+            MD_Product_Serial serialInfo = getSerialInfo();
+            if(serialInfo.getHas_item_check() == 1){
+                progressDialog.dismiss();
+                enableProgressDialog(
+                        hmAux_Trans.get("alert_update_structure_ttl"),
+                        hmAux_Trans.get("alert_update_structure_msg"),
+                        hmAux_Trans.get("sys_alert_btn_cancel"),
+                        hmAux_Trans.get("sys_alert_btn_ok")
+                );
+                setWsSoProcess(WS_Product_Serial_Structure.class.getSimpleName());
+                mPresenter.executeStructureUpdate(serialInfo);
+            }else {
+                mPresenter.processWS_SaveReturn(mLink);
+            }
+        }else if(wsSoProcess.equalsIgnoreCase(WS_Product_Serial_Structure.class.getSimpleName())) {
             setWsSoProcess("");
             mPresenter.processWS_SaveReturn(mLink);
         }

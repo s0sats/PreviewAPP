@@ -193,7 +193,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     //
     private int customFormPendentAmount = 0;
 
-
+    private SerialSiteInventoryUseCase serialSiteInventoryUseCase;
     public Act005_Main_Presenter_Impl(
             Context context,
             Act005_Main_View mView,
@@ -253,8 +253,13 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 Constant.DB_VERSION_CUSTOM
         );
         this.serialSiteUseCase = new SiteInventoryUseCaseFactory(context).deleteSerialSiteInvFile();
-
-
+        /*
+            BARRIONUEVO 24-10-2023
+            Apaga pref e arquivo de fluxo pesquisar inventario do site.
+         */
+        this.serialSiteInventoryUseCase = new SiteInventoryUseCaseFactory(context).savePreferenceAndDeleteFileUseCase();
+        serialSiteInventoryUseCase.getDeleteFile().invoke();
+        //
         buildMenuList();
     }
 

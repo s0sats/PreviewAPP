@@ -19,6 +19,7 @@ class SqlAct092_005(
     private val customerGMT = ToolBox_Con.getPreference_Customer_TMZ(context)
     private var periodDateFilter: String =""
     private var statusFilter = ""
+    private var statusFilterS1 = ""
     private var lateFilter = ""
     private var nextEventFilter = ""
 
@@ -39,6 +40,7 @@ class SqlAct092_005(
                                               FROM
                                                ${MD_Schedule_ExecDao.TABLE} s1
                                               WHERE
+                                              $statusFilterS1
                                                 (  s1.${MD_Schedule_ExecDao.PRODUCT_CODE}||'|'||
                                                    IFNULL(s1.${MD_Schedule_ExecDao.SERIAL_ID},0)||'|'||
                                                    s1.${MD_Schedule_ExecDao.SITE_CODE}||'|'||
@@ -103,7 +105,7 @@ class SqlAct092_005(
 
     private fun getStatusFilter() {
         statusFilter = """    and     s.${MD_Schedule_ExecDao.STATUS} in('${ConstantBaseApp.SYS_STATUS_SCHEDULE}','${ConstantBaseApp.SYS_STATUS_PENDING}','${ConstantBaseApp.SYS_STATUS_PROCESS}','${ConstantBaseApp.SYS_STATUS_IN_PROCESSING}') """
-
+        statusFilterS1 = """ s1.${MD_Schedule_ExecDao.STATUS} in('${ConstantBaseApp.SYS_STATUS_SCHEDULE}','${ConstantBaseApp.SYS_STATUS_PENDING}','${ConstantBaseApp.SYS_STATUS_PROCESS}','${ConstantBaseApp.SYS_STATUS_IN_PROCESSING}')     and    """
     }
 
     private fun setSerialFilterConfg() {
