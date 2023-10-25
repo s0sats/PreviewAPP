@@ -150,4 +150,6 @@ public interface Act011_Main_Presenter {
     int hasPassedDay();
 
     List<String> getSiteEmailList(int site_code);
+
+    void executeStructureUpdate(MD_Product_Serial serialInfo);
 }

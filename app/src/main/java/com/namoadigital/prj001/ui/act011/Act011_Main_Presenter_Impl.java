@@ -5,6 +5,7 @@ import static com.namoa_digital.namoa_library.util.ConstantBase.SYS_STATUS_PROCE
 import static com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device_Item.APPLY_MATERIAL_REQUIRED;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -74,6 +75,7 @@ import com.namoadigital.prj001.model.TK_Ticket_Form;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.model.auxiliar.FormLocalSiteZoneObj;
+import com.namoadigital.prj001.receiver.WBR_Product_Serial_Structure;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Local_Sql_005;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Field_MULTI_SqlSpecification;
@@ -212,6 +214,24 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             return ToolBox.getEmailFromText(site.getEmail_nc());
         }
         return null;
+    }
+
+    @Override
+    public void executeStructureUpdate(MD_Product_Serial serialInfo) {
+        //
+        Intent mIntent = new Intent(context, WBR_Product_Serial_Structure.class);
+        Bundle bundle = new Bundle();
+        bundle.putLong(MD_Product_SerialDao.CUSTOMER_CODE, serialInfo.getCustomer_code());
+        bundle.putLong(MD_Product_SerialDao.PRODUCT_CODE, serialInfo.getProduct_code());
+        bundle.putLong(MD_Product_SerialDao.SERIAL_CODE, serialInfo.getSerial_code());
+        Integer scn_item_check = serialInfo.getScn_item_check();
+        bundle.putInt(MD_Product_SerialDao.SCN_ITEM_CHECK, scn_item_check);
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+        //
+        ToolBox_Inf.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_preparing_to_send_data"), "", "0");
     }
 
     @Override
