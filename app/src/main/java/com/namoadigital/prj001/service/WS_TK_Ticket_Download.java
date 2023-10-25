@@ -29,9 +29,11 @@ import com.namoadigital.prj001.model.T_TK_Ticket_Download_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Download_PK_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Download_Rec;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009;
 import com.namoadigital.prj001.sql.Sql_Act069_002;
 import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Download_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
+import com.namoadigital.prj001.sql.TK_Ticket_Sql_004;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -240,32 +242,46 @@ public class WS_TK_Ticket_Download extends IntentService {
                         tkTicket.updateTicketCtrlFormInProcess(getApplicationContext());
                         //
                         daoObjReturn = ticketDao.removeFullV2(tkTicket);
-                        tickets.add(tkTicket);
+//                        tickets.add(tkTicket);
                         if(daoObjReturn.hasError()) {
                             break;
                         }
                     }
-                }else{
-                    tickets.add(tkTicket);
                 }
+//                else{
+//                    tickets.add(tkTicket);
+//                }
                 //tratativa para serial e sua estrutura.
                 if(!tkTicket.getSerial().isEmpty()){
                     for(MD_Product_Serial serial: tkTicket.getSerial()){
-                        serial.setLog_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
-                        serialDao.addUpdateTmp(serial);
-                        if(!serial.getStructure().isEmpty()) {
-                            serialDao.addFullStructure(serial);
-                        }else{
-                            /**
-                             * BARRIONUEVO 22-11-2021
-                             * VErifica o has_item_check para apagar a structure do serial
-                             */
-                            if(serial.getHas_item_check() == 0) {
-                                serialDao.removeFullStructure(serial);
+                        MD_Product_Serial dbSerial = serialDao.getByString(
+                                new MD_Product_Serial_Sql_009(
+                                        serial.getCustomer_code(),
+                                        serial.getProduct_code(),
+                                        Math.toIntExact(serial.getSerial_code())
+                                ).toSqlQuery()
+                        );
+                        if(dbSerial != null
+                            && dbSerial.getUpdate_required() == 1){
+                            tkTicket.setSync_required(1);
+                        }else {
+                            serial.setLog_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+                            serialDao.addUpdateTmp(serial);
+                            if (!serial.getStructure().isEmpty()) {
+                                serialDao.addFullStructure(serial);
+                            } else {
+                                /**
+                                 * BARRIONUEVO 22-11-2021
+                                 * VErifica o has_item_check para apagar a structure do serial
+                                 */
+                                if (serial.getHas_item_check() == 0) {
+                                    serialDao.removeFullStructure(serial);
+                                }
                             }
                         }
                     }
                 }
+                tickets.add(tkTicket);
                 //
             }
             //
@@ -278,6 +294,18 @@ public class WS_TK_Ticket_Download extends IntentService {
             if(!daoObjReturn.hasError()) {
                 if(tickets != null && !tickets.isEmpty()) {
                     daoObjReturn = ticketDao.addUpdate(tickets, false);
+                    for (TK_Ticket ticket : tickets) {
+                        if(ticket.getSync_required() == 1){
+                            ticketDao.addUpdate(
+                                    new TK_Ticket_Sql_004(
+                                            ticket.getCustomer_code(),
+                                            ticket.getTicket_prefix(),
+                                            ticket.getTicket_code(),
+                                            1
+                                    ).toSqlQuery()
+                            );
+                        }
+                    }
                 }
                 if(!daoObjReturn.hasError()){
                     ToolBox_Inf.startPdfPhotoDownloadWorkers(getApplicationContext());
