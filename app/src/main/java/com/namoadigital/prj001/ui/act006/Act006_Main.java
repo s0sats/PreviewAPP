@@ -95,6 +95,8 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         iniUIFooter();
         //
         initActions();
+        //
+        mPresenter.clear092Preference();
     }
 
 
@@ -120,7 +122,6 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         );
         //
         loadTranslationFrg_Serial_Search();
-
     }
 
     private boolean hasNFormSelected() {

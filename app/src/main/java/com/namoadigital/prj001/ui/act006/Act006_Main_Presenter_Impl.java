@@ -23,6 +23,7 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_009;
 import com.namoadigital.prj001.sql.MD_Product_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act020_002;
+import com.namoadigital.prj001.ui.act092.usecases.ActionPreferenceUseCases;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -43,11 +44,14 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
     private MD_Product_SerialDao serialDao;
     private MD_ProductDao productDao;
 
+    private ActionPreferenceUseCases actionUseCases;
+
     private MD_Product mdProduct;
 
     private String mProduct_id;
     private String mSerial_id;
     private String mTracking;
+
 
     public Act006_Main_Presenter_Impl(Context context, Act006_Main_View mView, GE_Custom_Form_LocalDao customFormLocalDao, MD_ProductDao productDao, HMAux hmAux_Trans) {
         this.context = context;
@@ -56,6 +60,7 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
         this.productDao = productDao;
         this.hmAux_Trans = hmAux_Trans;
         this.serialDao = new MD_Product_SerialDao(context);
+        this.actionUseCases = new ActionPreferenceUseCases.ActionUseCasesPreferenceFactory(context).build();
     }
 
     @Override
@@ -324,7 +329,12 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
         }
     }
 
-//    private ArrayList<MD_Product_Serial> hasLocalSerial(String serial) {
+    @Override
+    public void clear092Preference() {
+        actionUseCases.getReset().invoke();
+    }
+
+    //    private ArrayList<MD_Product_Serial> hasLocalSerial(String serial) {
 //        ArrayList<MD_Product_Serial> serial_list = (ArrayList<MD_Product_Serial>)
 //                serialDao.query(
 //                        new MD_Product_Serial_Sql_014(

@@ -7,20 +7,23 @@ import com.namoadigital.prj001.ui.base.NamoaFactory
 
 
 data class ActionPreferenceUseCases(
-    val setPreferences: SetModelPreferencesUseCase,
-    val getPreferences: GetSerialModelPreferencesUseCase,
+    val setPreferences: SetModelPreferencesUseCase? = null,
+    val getPreferences: GetSerialModelPreferencesUseCase? = null,
+    val reset: ResetSerialModelPreferenceUseCase? = null
 ) {
     class ActionUseCasesPreferenceFactory constructor(
         private val context: Context
     ) : NamoaFactory<ActionPreferenceUseCases>() {
+
         override fun build(): ActionPreferenceUseCases {
             val repository = ActionSerialRepositoryFactoryRepository(context).build()
 
             return ActionPreferenceUseCases(
                 setPreferences = SetModelPreferencesUseCase(repository),
-                getPreferences = GetSerialModelPreferencesUseCase(repository)
+                reset = ResetSerialModelPreferenceUseCase(repository)
             )
         }
+
 
     }
 

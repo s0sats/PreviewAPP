@@ -506,6 +506,8 @@ class Act083_Main_Presenter constructor(
         bundle.putLong(MD_Product_SerialDao.SERIAL_CODE, serial.serial_code)
         if (serial.class_color != null) {
             bundle.putString(MD_Product_SerialDao.CLASS_COLOR, serial.class_color)
+        } else {
+            bundle.remove(MD_Product_SerialDao.CLASS_COLOR)
         }
         //
         mView.resetActionPosition()
@@ -2376,16 +2378,11 @@ class Act083_Main_Presenter constructor(
     }
 
     override fun clear092Preference() {
-        actionUseCases.setPreferences(
-            actionUseCases.getPreferences().copy(
-                editFilter = "",
-                mainUserFocus = false
-            )
-        )
+        actionUseCases.reset?.invoke()
     }
 
     private fun setSerialModel(model: SerialSiteInventory) {
-        actionUseCases.setPreferences(
+        actionUseCases.setPreferences?.invoke(
             SerialModel(
                 originFlow = if (originFlow.isEmpty() || originFlow == ConstantBaseApp.ACT083) ConstantBaseApp.ACT068 else originFlow,
                 siteCodeBack = ToolBox_Con.getPreference_Site_Code(context),
