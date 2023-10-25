@@ -1,9 +1,20 @@
 package com.namoadigital.prj001.ui.act092.data.repository
 
-import android.location.Criteria
 import android.os.Bundle
 import com.namoa_digital.namoa_library.util.HMAux
-import com.namoadigital.prj001.model.*
+import com.namoadigital.prj001.model.GE_Custom_Form_Ap
+import com.namoadigital.prj001.model.GE_Custom_Form_Local
+import com.namoadigital.prj001.model.MD_Operation
+import com.namoadigital.prj001.model.MD_Product
+import com.namoadigital.prj001.model.MD_Product_Serial
+import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device
+import com.namoadigital.prj001.model.MD_Schedule_Exec
+import com.namoadigital.prj001.model.MD_Site
+import com.namoadigital.prj001.model.MyActions
+import com.namoadigital.prj001.model.Sync_Checklist
+import com.namoadigital.prj001.model.TK_Ticket
+import com.namoadigital.prj001.model.TK_Ticket_Ctrl
+import com.namoadigital.prj001.model.TkTicketCache
 import com.namoadigital.prj001.ui.act092.model.SerialModel
 
 interface ActionSerialRepository {
@@ -27,6 +38,7 @@ interface ActionSerialRepository {
     suspend fun getUnfocusAndHistorical(productCode: Int, serialCode: Long, serialId: String,filterCriteria: String?): MutableList<MyActions>
     fun setPreferences(model: SerialModel)
     fun getPreferences(): SerialModel
+    fun clearPreference()
     fun getScheduleFromMyAction(prefix: Int, code: Int, exec: Int): MD_Schedule_Exec?
     fun getSite(site_code: String): MD_Site?
     fun getCustomFormLocal(

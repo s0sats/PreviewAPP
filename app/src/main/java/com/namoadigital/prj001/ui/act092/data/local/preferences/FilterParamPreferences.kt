@@ -66,6 +66,10 @@ class FilterParamPreferences constructor(
         }
     }
 
+    fun clear() {
+        preferences.edit().clear().apply()
+    }
+
     companion object {
         const val SERIAL_MODEL_ORIGIN_FLOW = "act092_serial_model_origin_flow"
         const val SERIAL_MODEL_TAG_OPER_CODE = "act092_serial_model_tag_oper_code"

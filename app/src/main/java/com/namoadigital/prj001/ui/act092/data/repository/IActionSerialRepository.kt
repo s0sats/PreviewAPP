@@ -7,16 +7,66 @@ import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.view.Base_Activity
-import com.namoadigital.prj001.dao.*
-import com.namoadigital.prj001.model.*
+import com.namoadigital.prj001.dao.GE_Custom_FormDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_Blob_LocalDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
+import com.namoadigital.prj001.dao.MD_OperationDao
+import com.namoadigital.prj001.dao.MD_ProductDao
+import com.namoadigital.prj001.dao.MD_Product_SerialDao
+import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_DeviceDao
+import com.namoadigital.prj001.dao.MD_Schedule_ExecDao
+import com.namoadigital.prj001.dao.MD_SiteDao
+import com.namoadigital.prj001.dao.Sync_ChecklistDao
+import com.namoadigital.prj001.dao.TK_TicketDao
+import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao
+import com.namoadigital.prj001.dao.TkTicketCacheDao
+import com.namoadigital.prj001.model.DaoObjReturn
+import com.namoadigital.prj001.model.GE_Custom_Form_Ap
+import com.namoadigital.prj001.model.GE_Custom_Form_Local
+import com.namoadigital.prj001.model.MD_Operation
+import com.namoadigital.prj001.model.MD_Product
+import com.namoadigital.prj001.model.MD_Product_Serial
+import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device
+import com.namoadigital.prj001.model.MD_Schedule_Exec
+import com.namoadigital.prj001.model.MD_Site
+import com.namoadigital.prj001.model.MyActions
+import com.namoadigital.prj001.model.MyActionsCache
+import com.namoadigital.prj001.model.Sync_Checklist
+import com.namoadigital.prj001.model.TK_Ticket
+import com.namoadigital.prj001.model.TK_Ticket_Ctrl
+import com.namoadigital.prj001.model.TkTicketCache
 import com.namoadigital.prj001.receiver.WBR_Serial_Search
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download
 import com.namoadigital.prj001.receiver.WBR_UnfocusAndHistoric
-import com.namoadigital.prj001.sql.*
+import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_003
+import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_001
+import com.namoadigital.prj001.sql.MD_Operation_Sql_004
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002
+import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_Device_Sql_002
+import com.namoadigital.prj001.sql.MD_Product_Sql_001
+import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001
+import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_006
+import com.namoadigital.prj001.sql.MD_Site_Sql_003
+import com.namoadigital.prj001.sql.SqlAct092_001
+import com.namoadigital.prj001.sql.SqlAct092_002
+import com.namoadigital.prj001.sql.SqlAct092_004
+import com.namoadigital.prj001.sql.SqlAct092_005
+import com.namoadigital.prj001.sql.SqlAct092_006
+import com.namoadigital.prj001.sql.SqlAct092_007
+import com.namoadigital.prj001.sql.Sql_Act017_005
+import com.namoadigital.prj001.sql.TK_Ticket_Sql_009
+import com.namoadigital.prj001.sql.TK_Ticket_Sql_010
 import com.namoadigital.prj001.ui.act092.data.local.preferences.FilterParamPreferences
 import com.namoadigital.prj001.ui.act092.model.SerialModel
 import com.namoadigital.prj001.ui.base.NamoaFactory
-import com.namoadigital.prj001.util.*
+import com.namoadigital.prj001.util.Constant
+import com.namoadigital.prj001.util.ConstantBaseApp
+import com.namoadigital.prj001.util.ScheduleFormFatory
+import com.namoadigital.prj001.util.ToolBox_Con
+import com.namoadigital.prj001.util.ToolBox_Inf
 import java.io.File
 
 
@@ -213,6 +263,10 @@ class IActionSerialRepository constructor(
 
     override fun getPreferences(): SerialModel {
         return filterParamPreferences.read()
+    }
+
+    override fun clearPreference() {
+        filterParamPreferences.clear()
     }
 
     override fun getScheduleFromMyAction(

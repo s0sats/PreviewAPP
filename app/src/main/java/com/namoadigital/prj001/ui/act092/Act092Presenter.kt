@@ -92,7 +92,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
-class Act092Presenter(
+class Act092Presenter constructor(
     private var myActionFilterParam: MyActionFilterParam,
     private val originFlow: String?,
     private val iconColor: String,
