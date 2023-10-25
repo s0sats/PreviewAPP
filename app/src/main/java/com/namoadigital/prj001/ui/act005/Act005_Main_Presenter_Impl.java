@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act005;
 
+import static android.content.Context.MODE_PRIVATE;
 import static com.namoadigital.prj001.sql.Sql_Act005_009.PENDING_QTY;
 import static com.namoadigital.prj001.ui.act005.Act005_Main.WS_PROCESS_SO_SAVE;
 import static com.namoadigital.prj001.ui.act005.Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL;
@@ -2436,7 +2437,9 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 null,
                 null
         );
-
+        //
+        context.getSharedPreferences("act083_filter", MODE_PRIVATE).edit().clear().apply();
+        //
         Bundle bundle = new Bundle();
         bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, Constant.ACT005);
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, actionFilterParam);
