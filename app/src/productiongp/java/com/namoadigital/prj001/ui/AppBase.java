@@ -10,6 +10,7 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_NAME_FULL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_PREFIX;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CUSTOMER_SITE_LICENSE_JSON_PATH;
+import static com.namoadigital.prj001.util.ConstantBaseApp.SERIAL_SITE_INV_JSON_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DB_FULL_BASE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DB_FULL_CHAT;
 import static com.namoadigital.prj001.util.ConstantBaseApp.DB_FULL_CUSTOM;
