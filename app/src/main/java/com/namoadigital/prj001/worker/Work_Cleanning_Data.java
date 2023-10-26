@@ -61,6 +61,11 @@ public class Work_Cleanning_Data extends Worker {
 
     private String sFormat_String = "yyyy-MM-dd HH:mm:ss Z";
     private int qtyDaysToSub = 10;
+    /**
+     * BARRIONUEVO - 26-10-2023
+     * Criado exclusivo para forms.
+     */
+    private int formQtyDaysToSub = 30;
     private long customer_code = -1L;
 
     public Work_Cleanning_Data(@NonNull Context context, @NonNull WorkerParameters workerParams) {
@@ -294,7 +299,7 @@ public class Work_Cleanning_Data extends Worker {
 
         ArrayList<HMAux> hmAuxs = (ArrayList<HMAux>) formDataDao.query_HM(
             new WS_Cleaning_Sql_001(
-                sDTFormat_Sub_Days(sFormat_String, qtyDaysToSub)
+                sDTFormat_Sub_Days(sFormat_String, formQtyDaysToSub)
             ).toSqlQuery()
         );
 

@@ -38,7 +38,7 @@ public class WS_Cleaning_Sql_001 implements Specification {
                         "                               '"+ ConstantBase.SYS_STATUS_NOT_EXECUTED + "',\n" +
                         "                               '"+ ConstantBaseApp.SYS_STATUS_IGNORED + "' \n" +
                         "                              )\n" +
-                        " and Date(date_end) < Date('"+s_date+"');")
+                        " and Date("+GE_Custom_Form_DataDao.SYS_DATE_END+") < Date('"+s_date+"');")
                 .toString();
     }
 }
