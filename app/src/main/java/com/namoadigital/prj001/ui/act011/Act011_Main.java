@@ -4359,7 +4359,7 @@ public class Act011_Main extends Base_Activity
             }
         }else if(wsSoProcess.equalsIgnoreCase(WS_Product_Serial_Structure.class.getSimpleName())) {
             setWsSoProcess("");
-            mPresenter.processWS_SaveReturn(mLink);
+            afterSaveFlow();
         }
     }
 
