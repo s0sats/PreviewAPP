@@ -194,6 +194,13 @@ public class GE_Custom_Form_Data {
     @Expose
     @SerializedName("finalized_service")
     private Integer finalized_service;
+    @Expose
+    @SerializedName("custom_form_data_partition")
+    private int custom_form_data_partition;
+    @Expose
+    @SerializedName("kanban_reschedule_date")
+    private String kanban_reschedule_date;
+
 
     public GE_Custom_Form_Data() {
         this.customer_code = -1L;
@@ -637,5 +644,21 @@ public class GE_Custom_Form_Data {
 
     public void setFinalized_service(Integer finalized_service) {
         this.finalized_service = finalized_service;
+    }
+
+    public int getCustom_form_data_partition() {
+        return custom_form_data_partition;
+    }
+
+    public void setCustom_form_data_partition(int custom_form_data_partition) {
+        this.custom_form_data_partition = custom_form_data_partition;
+    }
+
+    public String getKanban_reschedule_date() {
+        return kanban_reschedule_date;
+    }
+
+    public void setKanban_reschedule_date(String kanban_reschedule_date) {
+        this.kanban_reschedule_date = kanban_reschedule_date;
     }
 }
