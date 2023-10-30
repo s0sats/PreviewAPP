@@ -46,6 +46,17 @@ public class TK_Ticket_Form implements Serializable {
     @SerializedName("pdf_url") private String pdf_url;
     @Nullable
     @SerializedName("pdf_url_local") private String pdf_url_local;
+    @SerializedName("custom_form_data_partition") private int custom_form_data_partition;
+    @SerializedName("order_type_code") private Integer order_type_code;
+    @SerializedName("order_type_desc") private String order_type_desc;
+    @SerializedName("process_type") private String process_type;
+    @SerializedName("measure_tp_code") private Integer measure_tp_code;
+    @SerializedName("measure_tp_desc") private String measure_tp_desc;
+    @SerializedName("measure_value") private Double measure_value;
+    @SerializedName("measure_cycle_value") private Float measure_cycle_value;
+    @SerializedName("value_sufix") private String value_sufix;
+    @SerializedName("date_end") private String date_end;
+    @SerializedName("partition_min_date") private String partition_min_date;
 
     public TK_Ticket_Form() {
         this.customer_code = -1;
@@ -240,6 +251,94 @@ public class TK_Ticket_Form implements Serializable {
 
     public void setPdf_url_local(@Nullable String pdf_url_local) {
         this.pdf_url_local = pdf_url_local;
+    }
+
+    public int getCustom_form_data_partition() {
+        return custom_form_data_partition;
+    }
+
+    public void setCustom_form_data_partition(int custom_form_data_partition) {
+        this.custom_form_data_partition = custom_form_data_partition;
+    }
+
+    public Integer getOrder_type_code() {
+        return order_type_code;
+    }
+
+    public void setOrder_type_code(Integer order_type_code) {
+        this.order_type_code = order_type_code;
+    }
+
+    public String getOrder_type_desc() {
+        return order_type_desc;
+    }
+
+    public void setOrder_type_desc(String order_type_desc) {
+        this.order_type_desc = order_type_desc;
+    }
+
+    public String getProcess_type() {
+        return process_type;
+    }
+
+    public void setProcess_type(String process_type) {
+        this.process_type = process_type;
+    }
+
+    public Integer getMeasure_tp_code() {
+        return measure_tp_code;
+    }
+
+    public void setMeasure_tp_code(Integer measure_tp_code) {
+        this.measure_tp_code = measure_tp_code;
+    }
+
+    public String getMeasure_tp_desc() {
+        return measure_tp_desc;
+    }
+
+    public void setMeasure_tp_desc(String measure_tp_desc) {
+        this.measure_tp_desc = measure_tp_desc;
+    }
+
+    public Double getMeasure_value() {
+        return measure_value;
+    }
+
+    public void setMeasure_value(Double measure_value) {
+        this.measure_value = measure_value;
+    }
+
+    public Float getMeasure_cycle_value() {
+        return measure_cycle_value;
+    }
+
+    public void setMeasure_cycle_value(Float measure_cycle_value) {
+        this.measure_cycle_value = measure_cycle_value;
+    }
+
+    public String getValue_sufix() {
+        return value_sufix;
+    }
+
+    public void setValue_sufix(String value_sufix) {
+        this.value_sufix = value_sufix;
+    }
+
+    public String getDate_end() {
+        return date_end;
+    }
+
+    public void setDate_end(String date_end) {
+        this.date_end = date_end;
+    }
+
+    public String getPartition_min_date() {
+        return partition_min_date;
+    }
+
+    public void setPartition_min_date(String partition_min_date) {
+        this.partition_min_date = partition_min_date;
     }
 
     public String getPdfUrlLocalName(boolean withExtension){

@@ -55,6 +55,18 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
     public static final String PDF_URL = "pdf_url";
     public static final String PDF_URL_LOCAL = "pdf_url_local";
 
+    public static final String CUSTOM_FORM_DATA_PARTITION = "custom_form_data_partition";
+    public static final String ORDER_TYPE_CODE = "order_type_code";
+    public static final String ORDER_TYPE_DESC = "order_type_desc";
+    public static final String PROCESS_TYPE = "process_type";
+    public static final String MEASURE_TP_CODE = "measure_tp_code";
+    public static final String MEASURE_TP_DESC = "measure_tp_desc";
+    public static final String MEASURE_VALUE = "measure_value";
+    public static final String MEASURE_CYCLE_VALUE = "measure_cycle_value";
+    public static final String VALUE_SUFIX = "value_sufix";
+    public static final String DATE_END = "date_end";
+    public static final String PARTITION_MIN_DATE = "partition_min_date";
+
     public TK_Ticket_FormDao(Context context, String mDB_NAME, int mDB_VERSION) {
         super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI);
         toContentValuesMapper = new TK_Ticket_FormToContentValuesMapper();
