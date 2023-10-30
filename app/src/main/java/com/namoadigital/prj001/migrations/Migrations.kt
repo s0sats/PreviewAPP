@@ -19,6 +19,7 @@ import com.namoadigital.prj001.dao.SM_SODao
 import com.namoadigital.prj001.dao.SO_Pack_ExpressDao
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao
 import com.namoadigital.prj001.dao.TK_TicketDao
+import com.namoadigital.prj001.dao.TK_Ticket_FormDao
 import com.namoadigital.prj001.database.MigrationSQLite
 import com.namoadigital.prj001.model.GeOsDeviceItem
 
@@ -325,6 +326,106 @@ val migrationV10: MigrationSQLite = object : MigrationSQLite(10, 11) {
         ) {
             db.execSQL(""" ALTER TABLE [${TK_TicketDao.TABLE}] ADD [${TK_TicketDao.HAS_OPEN_SO_PARTITION}] int not null default 0;""".trimIndent())
         }
+        //
+        if (!isFieldExist(
+                db,
+                TK_Ticket_FormDao.TABLE,
+                TK_Ticket_FormDao.CUSTOM_FORM_DATA_PARTITION
+            )
+        ) {
+            db.execSQL(""" ALTER TABLE [${TK_Ticket_FormDao.TABLE}] ADD [${TK_Ticket_FormDao.CUSTOM_FORM_DATA_PARTITION}] int not null default 0;""".trimIndent())
+        }
+        //
+        if (!isFieldExist(
+                db,
+                TK_Ticket_FormDao.TABLE,
+                TK_Ticket_FormDao.ORDER_TYPE_CODE
+            )
+        ) {
+            db.execSQL(""" ALTER TABLE [${TK_Ticket_FormDao.TABLE}] ADD [${TK_Ticket_FormDao.ORDER_TYPE_CODE}] int;""".trimIndent())
+        }
+        //
+        if (!isFieldExist(
+                db,
+                TK_Ticket_FormDao.TABLE,
+                TK_Ticket_FormDao.ORDER_TYPE_DESC
+            )
+        ) {
+            db.execSQL(""" ALTER TABLE [${TK_Ticket_FormDao.TABLE}] ADD [${TK_Ticket_FormDao.ORDER_TYPE_DESC}] text collate nocase;""".trimIndent())
+        }
+        //
+        if (!isFieldExist(
+                db,
+                TK_Ticket_FormDao.TABLE,
+                TK_Ticket_FormDao.PROCESS_TYPE
+            )
+        ) {
+            db.execSQL(""" ALTER TABLE [${TK_Ticket_FormDao.TABLE}] ADD [${TK_Ticket_FormDao.PROCESS_TYPE}] text collate nocase;""".trimIndent())
+        }
+        //
+        if (!isFieldExist(
+                db,
+                TK_Ticket_FormDao.TABLE,
+                TK_Ticket_FormDao.MEASURE_TP_CODE
+            )
+        ) {
+            db.execSQL(""" ALTER TABLE [${TK_Ticket_FormDao.TABLE}] ADD [${TK_Ticket_FormDao.MEASURE_TP_CODE}] int;""".trimIndent())
+        }
+        //
+        if (!isFieldExist(
+                db,
+                TK_Ticket_FormDao.TABLE,
+                TK_Ticket_FormDao.MEASURE_TP_DESC
+            )
+        ) {
+            db.execSQL(""" ALTER TABLE [${TK_Ticket_FormDao.TABLE}] ADD [${TK_Ticket_FormDao.MEASURE_TP_DESC}] text collate nocase;""".trimIndent())
+        }
+        //
+        if (!isFieldExist(
+                db,
+                TK_Ticket_FormDao.TABLE,
+                TK_Ticket_FormDao.MEASURE_VALUE
+            )
+        ) {
+            db.execSQL(""" ALTER TABLE [${TK_Ticket_FormDao.TABLE}] ADD [${TK_Ticket_FormDao.MEASURE_VALUE}] real;""".trimIndent())
+        }
+        //
+        if (!isFieldExist(
+                db,
+                TK_Ticket_FormDao.TABLE,
+                TK_Ticket_FormDao.MEASURE_CYCLE_VALUE
+            )
+        ) {
+            db.execSQL(""" ALTER TABLE [${TK_Ticket_FormDao.TABLE}] ADD [${TK_Ticket_FormDao.MEASURE_CYCLE_VALUE}] real;""".trimIndent())
+        }
+        //
+        if (!isFieldExist(
+                db,
+                TK_Ticket_FormDao.TABLE,
+                TK_Ticket_FormDao.VALUE_SUFIX
+            )
+        ) {
+            db.execSQL(""" ALTER TABLE [${TK_Ticket_FormDao.TABLE}] ADD [${TK_Ticket_FormDao.VALUE_SUFIX}] text collate nocase;""".trimIndent())
+        }
+        //
+        if (!isFieldExist(
+                db,
+                TK_Ticket_FormDao.TABLE,
+                TK_Ticket_FormDao.DATE_END
+            )
+        ) {
+            db.execSQL(""" ALTER TABLE [${TK_Ticket_FormDao.TABLE}] ADD [${TK_Ticket_FormDao.DATE_END}] text collate nocase;""".trimIndent())
+        }
+        //
+        if (!isFieldExist(
+                db,
+                TK_Ticket_FormDao.TABLE,
+                TK_Ticket_FormDao.PARTITION_MIN_DATE
+            )
+        ) {
+            db.execSQL(""" ALTER TABLE [${TK_Ticket_FormDao.TABLE}] ADD [${TK_Ticket_FormDao.PARTITION_MIN_DATE}] text collate nocase;""".trimIndent())
+        }
+        //
 
 
         if (!isFieldExist(
