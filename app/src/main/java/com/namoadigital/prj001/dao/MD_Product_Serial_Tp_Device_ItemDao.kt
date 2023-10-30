@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.dao
 
-import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
@@ -50,6 +49,7 @@ class MD_Product_Serial_Tp_Device_ItemDao(
         const val NEXT_CYCLE_LIMIT_DATE = "next_cycle_limit_date"
         const val ITEM_CHECK_STATUS = "item_check_status"
         const val TARGET_DATE = "target_date"
+        const val PARTITIONED_EXECUTION = "partitioned_execution"
     }
 
     private val toMD_Product_Serial_Tp_Device_ItemMapper: Mapper<Cursor,MD_Product_Serial_Tp_Device_Item>
@@ -480,17 +480,22 @@ class MD_Product_Serial_Tp_Device_ItemDao(
                         item_check_seq = getInt(getColumnIndex(ITEM_CHECK_SEQ)) ,
                         apply_material = getString(getColumnIndex(APPLY_MATERIAL)) ,
                         verification_instruction = getStringOrNull(getColumnIndex(VERIFICATION_INSTRUCTION)),
-                        require_justify_problem = getInt(getColumnIndex(REQUIRE_JUSTIFY_PROBLEM)) ,
+                        require_justify_problem = getInt(getColumnIndex(REQUIRE_JUSTIFY_PROBLEM)),
                         critical_item = getInt(getColumnIndex(CRITICAL_ITEM)),
                         change_adjust = getInt(getColumnIndex(CHANGE_ADJUST)),
                         order_seq = getInt(getColumnIndex(ORDER_SEQ)),
                         structure = getInt(getColumnIndex(STRUCTURE)),
                         manual_desc = getStringOrNull(getColumnIndex(MANUAL_DESC)),
                         next_cycle_measure = getDoubleOrNull(getColumnIndex(NEXT_CYCLE_MEASURE)),
-                        next_cycle_measure_date = getStringOrNull(getColumnIndex(NEXT_CYCLE_MEASURE_DATE)),
+                        next_cycle_measure_date = getStringOrNull(
+                            getColumnIndex(
+                                NEXT_CYCLE_MEASURE_DATE
+                            )
+                        ),
                         next_cycle_limit_date = getStringOrNull(getColumnIndex(NEXT_CYCLE_LIMIT_DATE)),
                         item_check_status = getString(getColumnIndex(ITEM_CHECK_STATUS)),
-                        target_date = getStringOrNull(getColumnIndex(TARGET_DATE))
+                        target_date = getStringOrNull(getColumnIndex(TARGET_DATE)),
+                        partitioned_execution = getStringOrNull(getColumnIndex(PARTITIONED_EXECUTION))
                     )
                 }
             }
@@ -554,7 +559,8 @@ class MD_Product_Serial_Tp_Device_ItemDao(
                     if(mdProductSerialTpDeviceItem.item_check_status != null){
                         put(ITEM_CHECK_STATUS,mdProductSerialTpDeviceItem.item_check_status)
                     }
-                    put(TARGET_DATE,mdProductSerialTpDeviceItem.target_date)
+                    put(TARGET_DATE, mdProductSerialTpDeviceItem.target_date)
+                    put(PARTITIONED_EXECUTION, mdProductSerialTpDeviceItem.partitioned_execution)
                 }
             }
             //

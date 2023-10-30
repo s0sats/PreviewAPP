@@ -9,7 +9,7 @@ class MD_Product_Serial_Tp_Device_Item(
     @SerializedName("verification_instruction") val verification_instruction: String?,
     @SerializedName("require_justify_problem") val require_justify_problem: Int,
     @SerializedName("critical_item") val critical_item: Int,
-    @SerializedName("change_adjust")  val change_adjust: Int,
+    @SerializedName("change_adjust") val change_adjust: Int,
     @SerializedName("order_seq") val order_seq: Int,
     @SerializedName("structure") val structure: Int,
     @SerializedName("manual_desc") val manual_desc: String?,
@@ -17,7 +17,8 @@ class MD_Product_Serial_Tp_Device_Item(
     @SerializedName("next_cycle_measure_date") val next_cycle_measure_date: String?,
     @SerializedName("next_cycle_limit_date") val next_cycle_limit_date: String?,
     @SerializedName("item_check_status") val item_check_status: String,
-    @SerializedName("target_date") val target_date : String?
+    @SerializedName("target_date") val target_date: String?,
+    @SerializedName("partitioned_execution") val partitioned_execution: String?
 ) {
     @SerializedName("customer_code")
     var customer_code: Long = -1
@@ -63,7 +64,8 @@ class MD_Product_Serial_Tp_Device_Item(
         next_cycle_measure_date: String?,
         next_cycle_limit_date: String?,
         item_check_status: String,
-        target_date : String?
+        target_date: String?,
+        partitioned_execution: String?
     ) : this(
         item_check_code,
         item_check_seq,
@@ -79,7 +81,8 @@ class MD_Product_Serial_Tp_Device_Item(
         next_cycle_measure_date,
         next_cycle_limit_date,
         item_check_status,
-        target_date
+        target_date,
+        partitioned_execution
     ) {
         this.customer_code = customer_code
         this.product_code = product_code

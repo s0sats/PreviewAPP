@@ -2,9 +2,23 @@ package com.namoadigital.prj001.migrations
 
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
-import com.namoadigital.prj001.dao.*
+import com.namoadigital.prj001.dao.GE_Custom_FormDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
+import com.namoadigital.prj001.dao.MD_All_ProductDao
+import com.namoadigital.prj001.dao.MD_All_Product_Group_ProductDao
+import com.namoadigital.prj001.dao.MD_ProductDao
+import com.namoadigital.prj001.dao.MD_Product_Group_ProductDao
+import com.namoadigital.prj001.dao.MD_Product_SerialDao
+import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_ItemDao
+import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_Item_HistDao
+import com.namoadigital.prj001.dao.MD_SiteDao
+import com.namoadigital.prj001.dao.MeMeasureTpDao
+import com.namoadigital.prj001.dao.SM_SODao
+import com.namoadigital.prj001.dao.SO_Pack_ExpressDao
+import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao
+import com.namoadigital.prj001.dao.TK_TicketDao
 import com.namoadigital.prj001.database.MigrationSQLite
-
 
 
 val MigrationV1 = object : MigrationSQLite(1, 2){
@@ -284,9 +298,24 @@ val migrationV9: MigrationSQLite = object : MigrationSQLite(9, 10) {
                                 from  ${MD_Product_Group_ProductDao.TABLE} gp
                                where ${MD_ProductDao.TABLE}.${MD_ProductDao.PRODUCT_CODE} = gp.${MD_Product_Group_ProductDao.PRODUCT_CODE} 
             )
-        """.trimIndent())
+        """.trimIndent()
+        )
         //
     }
+}
+
+val migrationV10: MigrationSQLite = object : MigrationSQLite(10, 11) {
+    override fun migrate(db: SQLiteDatabase) {
+        if (!isFieldExist(
+                db,
+                MD_Product_Serial_Tp_Device_ItemDao.TABLE,
+                MD_Product_Serial_Tp_Device_ItemDao.PARTITIONED_EXECUTION
+            )
+        ) {
+            db.execSQL(""" ALTER TABLE [${MD_Product_Serial_Tp_Device_ItemDao.TABLE}] ADD [${MD_Product_Serial_Tp_Device_ItemDao.PARTITIONED_EXECUTION}] int not null default 0;""".trimIndent())
+        }
+    }
+
 }
 
 fun isFieldExist(db: SQLiteDatabase, tableName: String, fieldName: String): Boolean {
