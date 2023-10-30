@@ -18,7 +18,7 @@ class MD_Product_Serial_Tp_Device_Item(
     @SerializedName("next_cycle_limit_date") val next_cycle_limit_date: String?,
     @SerializedName("item_check_status") val item_check_status: String,
     @SerializedName("target_date") val target_date: String?,
-    @SerializedName("partitioned_execution") val partitioned_execution: String?
+    @SerializedName("partitioned_execution") val partitioned_execution: Int
 ) {
     @SerializedName("customer_code")
     var customer_code: Long = -1
@@ -65,7 +65,7 @@ class MD_Product_Serial_Tp_Device_Item(
         next_cycle_limit_date: String?,
         item_check_status: String,
         target_date: String?,
-        partitioned_execution: String?
+        partitioned_execution: Int
     ) : this(
         item_check_code,
         item_check_seq,

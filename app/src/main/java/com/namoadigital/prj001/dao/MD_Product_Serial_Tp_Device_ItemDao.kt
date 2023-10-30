@@ -495,7 +495,7 @@ class MD_Product_Serial_Tp_Device_ItemDao(
                         next_cycle_limit_date = getStringOrNull(getColumnIndex(NEXT_CYCLE_LIMIT_DATE)),
                         item_check_status = getString(getColumnIndex(ITEM_CHECK_STATUS)),
                         target_date = getStringOrNull(getColumnIndex(TARGET_DATE)),
-                        partitioned_execution = getStringOrNull(getColumnIndex(PARTITIONED_EXECUTION))
+                        partitioned_execution = getInt(getColumnIndex(PARTITIONED_EXECUTION))
                     )
                 }
             }

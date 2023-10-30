@@ -97,7 +97,8 @@ class GeOsDeviceItem(
     @SerializedName("hide_days_in_alert") var hide_days_in_alert :Int,
     @Expose
     @SerializedName("material")
-    val materialList: MutableList<GeOsDeviceMaterial>  = mutableListOf()
+    val materialList: MutableList<GeOsDeviceMaterial>  = mutableListOf(),
+    @SerializedName("partitioned_execution") var partitioned_execution: Int
 ):Serializable {
     fun getGeOsDeviceItemCodeAndSeq(): String{
         return "${item_check_code}.${item_check_seq}"
