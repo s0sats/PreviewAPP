@@ -199,6 +199,7 @@ public class TK_Ticket implements Cloneable, Serializable {
     @SerializedName("class_color") private String class_color;
     @SerializedName("class_available") private Integer class_available;
     @SerializedName("kanban") private int kanban;
+    @SerializedName("has_open_so_partition") private int has_open_so_partition;
     @Expose
     @SerializedName("step")
     private ArrayList<TK_Ticket_Step> step = new ArrayList<>();

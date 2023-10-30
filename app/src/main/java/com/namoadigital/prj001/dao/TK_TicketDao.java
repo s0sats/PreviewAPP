@@ -136,6 +136,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
     public static final String CLASS_COLOR = "class_color";
     public static final String CLASS_AVAILABLE = "class_available";
     public static final String KANBAN = "kanban";
+    public static final String HAS_OPEN_SO_PARTITION = "has_open_so_partition";
 
 
     public TK_TicketDao(Context context, String mDB_NAME, int mDB_VERSION) {

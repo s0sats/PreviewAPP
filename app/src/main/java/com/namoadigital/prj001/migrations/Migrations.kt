@@ -314,6 +314,16 @@ val migrationV10: MigrationSQLite = object : MigrationSQLite(10, 11) {
         ) {
             db.execSQL(""" ALTER TABLE [${MD_Product_Serial_Tp_Device_ItemDao.TABLE}] ADD [${MD_Product_Serial_Tp_Device_ItemDao.PARTITIONED_EXECUTION}] int not null default 0;""".trimIndent())
         }
+
+        if (!isFieldExist(
+                db,
+                TK_TicketDao.TABLE,
+                TK_TicketDao.HAS_OPEN_SO_PARTITION
+            )
+        ) {
+            db.execSQL(""" ALTER TABLE [${TK_TicketDao.TABLE}] ADD [${TK_TicketDao.HAS_OPEN_SO_PARTITION}] int not null default 0;""".trimIndent())
+        }
+
     }
 
 }
