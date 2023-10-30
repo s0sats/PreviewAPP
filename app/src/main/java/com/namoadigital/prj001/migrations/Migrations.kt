@@ -309,6 +309,8 @@ val migrationV9: MigrationSQLite = object : MigrationSQLite(9, 10) {
 
 val migrationV10: MigrationSQLite = object : MigrationSQLite(10, 11) {
     override fun migrate(db: SQLiteDatabase) {
+        //
+        //region MD_Product_Serial_Tp_Device_ItemDao
         if (!isFieldExist(
                 db,
                 MD_Product_Serial_Tp_Device_ItemDao.TABLE,
@@ -317,7 +319,9 @@ val migrationV10: MigrationSQLite = object : MigrationSQLite(10, 11) {
         ) {
             db.execSQL(""" ALTER TABLE [${MD_Product_Serial_Tp_Device_ItemDao.TABLE}] ADD [${MD_Product_Serial_Tp_Device_ItemDao.PARTITIONED_EXECUTION}] int not null default 0;""".trimIndent())
         }
-
+        //endregion
+        //
+        //region TK_TicketDao
         if (!isFieldExist(
                 db,
                 TK_TicketDao.TABLE,
@@ -326,7 +330,9 @@ val migrationV10: MigrationSQLite = object : MigrationSQLite(10, 11) {
         ) {
             db.execSQL(""" ALTER TABLE [${TK_TicketDao.TABLE}] ADD [${TK_TicketDao.HAS_OPEN_SO_PARTITION}] int not null default 0;""".trimIndent())
         }
+        //endregion
         //
+        //region TK_Ticket_FormDao
         if (!isFieldExist(
                 db,
                 TK_Ticket_FormDao.TABLE,
@@ -426,8 +432,6 @@ val migrationV10: MigrationSQLite = object : MigrationSQLite(10, 11) {
             db.execSQL(""" ALTER TABLE [${TK_Ticket_FormDao.TABLE}] ADD [${TK_Ticket_FormDao.PARTITION_MIN_DATE}] text collate nocase;""".trimIndent())
         }
         //
-
-
         if (!isFieldExist(
                 db,
                 GeOsDeviceItemDao.TABLE,
@@ -436,6 +440,9 @@ val migrationV10: MigrationSQLite = object : MigrationSQLite(10, 11) {
         ) {
             db.execSQL(""" ALTER TABLE [${GeOsDeviceItemDao.TABLE}] ADD [${GeOsDeviceItemDao.PARTITIONED_EXECUTION}] int not null default 0;""".trimIndent())
         }
+        //endregion
+        //
+
     }
 
 }
