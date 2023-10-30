@@ -684,6 +684,60 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
             }else{
                 tk_ticket_form.setPdf_url_local(cursor.getString(cursor.getColumnIndex(PDF_URL_LOCAL)));
             }
+            //
+            tk_ticket_form.setCustom_form_data_partition(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_DATA_PARTITION)));
+            //
+            if(cursor.isNull(cursor.getColumnIndex(ORDER_TYPE_CODE))){
+                tk_ticket_form.setOrder_type_code(null);
+            }else{
+                tk_ticket_form.setOrder_type_code(cursor.getInt(cursor.getColumnIndex(ORDER_TYPE_CODE)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(ORDER_TYPE_DESC))){
+                tk_ticket_form.setOrder_type_desc(null);
+            }else{
+                tk_ticket_form.setOrder_type_desc(cursor.getString(cursor.getColumnIndex(ORDER_TYPE_DESC)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(PROCESS_TYPE))){
+                tk_ticket_form.setProcess_type(null);
+            }else{
+                tk_ticket_form.setProcess_type(cursor.getString(cursor.getColumnIndex(PROCESS_TYPE)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(MEASURE_TP_CODE))){
+                tk_ticket_form.setMeasure_tp_code(null);
+            }else{
+                tk_ticket_form.setMeasure_tp_code(cursor.getInt(cursor.getColumnIndex(MEASURE_TP_CODE)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(MEASURE_TP_DESC))){
+                tk_ticket_form.setMeasure_tp_desc(null);
+            }else{
+                tk_ticket_form.setMeasure_tp_desc(cursor.getString(cursor.getColumnIndex(MEASURE_TP_DESC)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(MEASURE_VALUE))){
+                tk_ticket_form.setMeasure_value(null);
+            }else{
+                tk_ticket_form.setMeasure_value(cursor.getDouble(cursor.getColumnIndex(MEASURE_VALUE)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(MEASURE_CYCLE_VALUE))){
+                tk_ticket_form.setMeasure_cycle_value(null);
+            }else{
+                tk_ticket_form.setMeasure_cycle_value(cursor.getFloat(cursor.getColumnIndex(MEASURE_CYCLE_VALUE)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(VALUE_SUFIX))){
+                tk_ticket_form.setValue_sufix(null);
+            }else{
+                tk_ticket_form.setValue_sufix(cursor.getString(cursor.getColumnIndex(VALUE_SUFIX)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(DATE_END))){
+                tk_ticket_form.setDate_end(null);
+            }else{
+                tk_ticket_form.setDate_end(cursor.getString(cursor.getColumnIndex(DATE_END)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(PARTITION_MIN_DATE))){
+                tk_ticket_form.setPartition_min_date(null);
+            }else{
+                tk_ticket_form.setPartition_min_date(cursor.getString(cursor.getColumnIndex(PARTITION_MIN_DATE)));
+            }
+
             return tk_ticket_form;
         }
     }
@@ -742,6 +796,19 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
             contentValues.put(PDF_NAME,tk_ticket_form.getPdf_name());
             contentValues.put(PDF_URL,tk_ticket_form.getPdf_url());
             contentValues.put(PDF_URL_LOCAL,tk_ticket_form.getPdf_url_local());
+            if (tk_ticket_form.getCustom_form_data_partition() > -1) {
+                contentValues.put(CUSTOM_FORM_DATA_PARTITION, tk_ticket_form.getCustom_form_data_partition());
+            }
+            contentValues.put(ORDER_TYPE_CODE,tk_ticket_form.getOrder_type_code());
+            contentValues.put(ORDER_TYPE_DESC,tk_ticket_form.getOrder_type_desc());
+            contentValues.put(PROCESS_TYPE,tk_ticket_form.getProcess_type());
+            contentValues.put(MEASURE_TP_CODE,tk_ticket_form.getMeasure_tp_code());
+            contentValues.put(MEASURE_TP_DESC,tk_ticket_form.getMeasure_tp_desc());
+            contentValues.put(MEASURE_VALUE,tk_ticket_form.getMeasure_value());
+            contentValues.put(MEASURE_CYCLE_VALUE,tk_ticket_form.getMeasure_cycle_value());
+            contentValues.put(VALUE_SUFIX,tk_ticket_form.getValue_sufix());
+            contentValues.put(DATE_END,tk_ticket_form.getDate_end());
+            contentValues.put(PARTITION_MIN_DATE,tk_ticket_form.getPartition_min_date());
             //
             return contentValues;
         }
