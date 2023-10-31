@@ -185,6 +185,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
                     ivIcon.apply {
                         setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_camera_check_circle, null))
                         imageTintList = ColorStateList.valueOf(ResourcesCompat.getColor(resources, R.color.namoa_color_light_green5, null))
+                        visibility = View.VISIBLE
                     }
 
                     this.root.apply {

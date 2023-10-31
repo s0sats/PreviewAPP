@@ -44,74 +44,18 @@
                 android:id="@+id/act011_dialog_check_cl_missing_answers"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:paddingBottom="10dp"
                 app:layout_constraintEnd_toStartOf="@+id/act011_gdl_end"
                 app:layout_constraintStart_toStartOf="@+id/act011_gdl_start"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <TextView
-                    android:id="@+id/act011_dialog_check_tv_missing_answer_lbl"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:textColor="@color/text_black"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toStartOf="@+id/act011_dialog_check_tv_missing_answer_val"
-                    app:layout_constraintHorizontal_bias="0.0"
+                <include
+                    android:id="@+id/notification_partial"
+                    layout="@layout/notication_layout"
+                    android:visibility="visible"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:text="Itens não respondidos:" />
-
-                <TextView
-                    android:id="@+id/act011_dialog_check_tv_missing_answer_val"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:textColor="@color/text_black"
-                    android:textSize="16sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:text="10" />
-
-                <TextView
-                    android:id="@+id/act011_dialog_check_tv_justify_missing_answer_lbl"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginEnd="8dp"
-                    android:textColor="@color/text_black"
-                    android:textSize="16sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/act011_dialog_check_tv_missing_answer_lbl"
-                    app:layout_constraintTop_toBottomOf="@+id/act011_dialog_check_tv_missing_answer_lbl"
-                    tools:text="Para finalizar, informe uma justificativa para marcá-los como “Não verificado”*" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/act011_dialog_check_til_justify_missing_answer_val"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    app:counterEnabled="true"
-                    app:counterMaxLength="500"
-                    app:layout_constraintEnd_toEndOf="@+id/act011_dialog_check_tv_justify_missing_answer_lbl"
-                    app:layout_constraintStart_toStartOf="@+id/act011_dialog_check_tv_justify_missing_answer_lbl"
-                    app:layout_constraintTop_toBottomOf="@+id/act011_dialog_check_tv_justify_missing_answer_lbl">
-
-                    <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-                        android:id="@+id/act011_dialog_check_mkedt_justify_missing_answer_val"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:inputType="textMultiLine"
-                        android:maxLength="500"
-                        app:mBARCODE="false"
-                        app:mNFC="false"
-                        app:mOCR="false"
-                        app:mOCRVin="false"
-                        tools:hint="Inserir justificativa..." />
-                </com.google.android.material.textfield.TextInputLayout>
-
+                    app:layout_constraintTop_toTopOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
