@@ -34,7 +34,7 @@ public class WS_Download_PDF_Sql_001 implements Specification {
                         "    f.ticket_seq_tmp,\n" +
                         "    f.step_code,\n" +
                         "    f.pdf_url,\n" +
-                        "    '"+ ConstantBaseApp.N_FORM_PDF_PREFIX +"'||f.customer_code||'_'||f.custom_form_type||'_'||f.custom_form_code||'_'||f.custom_form_version||'_'||f.custom_form_data\n "+FILE_LOCAL_NAME+" " +
+                        "    '"+ ConstantBaseApp.N_FORM_PDF_PREFIX +"'||f.pdf_name\n "+FILE_LOCAL_NAME+" \n" +
                         " FROM\n" +
                         "   " +TK_Ticket_FormDao.TABLE +"  f\n" +
                         " WHERE\n" +

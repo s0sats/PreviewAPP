@@ -18,8 +18,6 @@ import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.T_TK_Ticket_Client_Contract_Search_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Client_Contract_Search_Param;
 import com.namoadigital.prj001.model.T_TK_Ticket_Download_Rec;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Client_Contract_Search;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;

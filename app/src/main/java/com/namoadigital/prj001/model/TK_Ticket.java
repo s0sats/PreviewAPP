@@ -1166,6 +1166,14 @@ public class TK_Ticket implements Cloneable, Serializable {
         this.serial = serial;
     }
 
+    public int getHas_open_so_partition() {
+        return has_open_so_partition;
+    }
+
+    public void setHas_open_so_partition(int has_open_so_partition) {
+        this.has_open_so_partition = has_open_so_partition;
+    }
+
     //TODO - VERIFICAR SE METODO AINDA UTEIS E MOVER PARA STEP QE É QUE TEM LISTA DE CONTROLS AGORA.
 //region NOVO_TICKET_CTRL_NA_STEP
     /**

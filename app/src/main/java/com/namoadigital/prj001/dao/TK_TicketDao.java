@@ -1152,6 +1152,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             }
 
             tk_ticket.setKanban(cursor.getInt(cursor.getColumnIndex(KANBAN)));
+            tk_ticket.setHas_open_so_partition(cursor.getInt(cursor.getColumnIndex(HAS_OPEN_SO_PARTITION)));
 
             return tk_ticket;
         }
@@ -1366,6 +1367,9 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             }
             //
             contentValues.put(KANBAN, tk_ticket.getKanban());
+            if (tk_ticket.getHas_open_so_partition() > -1) {
+                contentValues.put(HAS_OPEN_SO_PARTITION, tk_ticket.getHas_open_so_partition());
+            }
             //
             return contentValues;
         }

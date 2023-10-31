@@ -263,15 +263,15 @@ public class Work_DownLoad_PDF extends Worker {
                             break;
                         }
                         //
-                        if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(WS_Download_PDF_Sql_001.FILE_LOCAL_NAME).toLowerCase() + ".pdf")) {
-                            ToolBox_Inf.deleteDownloadFileInf(hmAux.get(WS_Download_PDF_Sql_001.FILE_LOCAL_NAME).toLowerCase() + ".tmp");
+                        if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(WS_Download_PDF_Sql_001.FILE_LOCAL_NAME).toLowerCase())) {
+                            ToolBox_Inf.deleteDownloadFileInf(hmAux.get(WS_Download_PDF_Sql_001.FILE_LOCAL_NAME).toLowerCase().replace(".pdf", ".tmp"));
                             //
                             ToolBox_Inf.downloadImagePDF(
                                 hmAux.get(TK_Ticket_FormDao.PDF_URL),
-                                Constant.CACHE_PATH + "/" + hmAux.get(WS_Download_PDF_Sql_001.FILE_LOCAL_NAME).toLowerCase() + ".tmp"
+                                Constant.CACHE_PATH + "/" + hmAux.get(WS_Download_PDF_Sql_001.FILE_LOCAL_NAME).toLowerCase().replace(".pdf", ".tmp")
                             );
                             //
-                            ToolBox_Inf.renameDownloadFileInf(hmAux.get(WS_Download_PDF_Sql_001.FILE_LOCAL_NAME).toLowerCase(), ".pdf");
+                            ToolBox_Inf.renameDownloadFileInf(hmAux.get(WS_Download_PDF_Sql_001.FILE_LOCAL_NAME).toLowerCase().replace(".pdf", ""), ".pdf");
                         }
                         //
                         ticketFormDao.addUpdate(
@@ -282,7 +282,7 @@ public class Work_DownLoad_PDF extends Worker {
                                 hmAux.get(TK_Ticket_FormDao.TICKET_SEQ),
                                 hmAux.get(TK_Ticket_FormDao.TICKET_SEQ_TMP),
                                 hmAux.get(TK_Ticket_FormDao.STEP_CODE),
-                                hmAux.get(WS_Download_PDF_Sql_001.FILE_LOCAL_NAME)+ ".pdf"
+                                hmAux.get(WS_Download_PDF_Sql_001.FILE_LOCAL_NAME)
                             ).toSqlQuery().toLowerCase()
                         );
                     } catch (Exception e) {
