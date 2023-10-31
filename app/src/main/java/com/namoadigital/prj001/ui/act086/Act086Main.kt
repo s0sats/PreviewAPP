@@ -9,6 +9,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag
@@ -91,6 +92,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
     private val dateStartUntilLastMinute :String by lazy{
         mPresenter.getDateStartUntilLastMinute()
     }
+    private var partition_execution = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -117,6 +119,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
         trackingNumber = bundleDevice.getString(GeOsDeviceDao.TRACKING_NUMBER)
         isNewVerification = bundleDevice.getBoolean(DEVICE_ITEM_NEW_ACTION)
         readOnly = defineReadOnlyByStatus(bundleDevice.getString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS))
+        partition_execution = bundleDevice.getInt(MD_Product_Serial_Tp_Device_ItemDao.PARTITIONED_EXECUTION, 0)
     }
 
     private fun defineReadOnlyByStatus(formStatus: String?): Boolean {
@@ -174,6 +177,17 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
 
     private fun setHeaderInfo() {
         with(binding) {
+
+            if(partition_execution == 1){
+                notificationPartial.apply {
+                    tvMessage.text = hmAux_Trans["partition_execution_lbl"]
+                    ivIcon.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_camera_check_circle, null))
+                    this.root.visibility = View.VISIBLE
+                }
+            }else{
+                notificationPartial.root.visibility = View.GONE
+            }
+
             act086TvDeviceDesc.text = deviceDesc
             act086TvTrackingNum.apply {
                 text = trackingNumber

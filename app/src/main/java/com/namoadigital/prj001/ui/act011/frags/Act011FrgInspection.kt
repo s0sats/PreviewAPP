@@ -473,10 +473,21 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
 
     }
     //
-    fun onItemSelected(position: Int,
-                       itemPk: String){
+    fun onItemSelected(
+        position: Int,
+        itemPk: String,
+        partitioned_execution: Int
+    ) {
         binding.apply {
-            mFrgListener.onInspectionSelected(acessoryFormView, false, position, edtInspectionFilter.text.toString(), chkNonForecastItem.isChecked, itemPk)
+            mFrgListener.onInspectionSelected(
+                acessoryFormView,
+                false,
+                position,
+                edtInspectionFilter.text.toString(),
+                chkNonForecastItem.isChecked,
+                itemPk,
+                partitioned_execution
+            )
         }
     }
     //

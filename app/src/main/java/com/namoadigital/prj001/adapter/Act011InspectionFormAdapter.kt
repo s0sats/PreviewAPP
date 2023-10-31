@@ -29,7 +29,7 @@ class Act011InspectionFormAdapter(
      */
     private val acessoryFormView: AcessoryFormView,
     private val hmAuxTrans: HMAux,
-    private val onItemSelected: (position: Int, itemPk: String) -> Unit,
+    private val onItemSelected: (position: Int, itemPk: String, partitioned_execution: Int) -> Unit,
     private val onAlreadyOkItemSelected: (position: Int, item: InspectionCell) -> Unit,
     private val onAdapterFilterApplied: (Int) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
@@ -61,6 +61,8 @@ class Act011InspectionFormAdapter(
             val inspectionCell = inspectionsFiltered[position]
             onBinding(inspectionCell)
             //
+
+
             if (highlightedItemPosition >= 0
                 && highlightedItemPosition == position
             ) {
@@ -72,7 +74,8 @@ class Act011InspectionFormAdapter(
             val openItemListener = View.OnClickListener {
                 onItemSelected(
                     position,
-                    inspectionCell.itemCodeAndSeq
+                    inspectionCell.itemCodeAndSeq,
+                    inspectionCell.partitionedExecution
                 )
             }
             binding.root.setOnClickListener(openItemListener)
@@ -192,6 +195,13 @@ class Act011InspectionFormAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun onBinding(inspection: InspectionCell?) {
             inspection?.apply {
+
+                if(partitionedExecution == 1){
+                    binding.ivPartitionExecution.visibility = View.VISIBLE
+                }else{
+                    binding.ivPartitionExecution.visibility = View.GONE
+                }
+
                 val context = binding.root.context
                 binding.btnInspectionOngoingAction.visibility = View.GONE
                 if (isDone) {

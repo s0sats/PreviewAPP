@@ -759,8 +759,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                                 item.getExec_type(),
                                 item.getGeOsDeviceItemCodeAndSeq(),
                                 hmAux_Trans,
-                                item.getChange_adjust()
-                        )
+                                item.getChange_adjust(),
+                                item.getPartitioned_execution())
                 );
             }
             //
@@ -2559,7 +2559,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 deviceItem.getExec_type(),
                 deviceItem.getGeOsDeviceItemCodeAndSeq(),
                 hmAux_Trans,
-                deviceItem.getChange_adjust());
+                deviceItem.getChange_adjust(),
+                deviceItem.getPartitioned_execution());
     }
 
     @Nullable

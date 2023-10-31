@@ -6,10 +6,10 @@ import com.namoadigital.prj001.R
 import com.namoadigital.prj001.util.ConstantBaseApp
 import java.io.Serializable
 
-data class InspectionCell   (
+data class InspectionCell(
     val description: String,
     val dayCount: Int?,
-    val photoCount: Int= 0,
+    val photoCount: Int = 0,
     val materialCount: Int = 0,
     val materialRequired: Boolean,
     var hasComment: Boolean = false,
@@ -22,6 +22,7 @@ data class InspectionCell   (
     val itemCodeAndSeq: String,
     val hmAuxTrans: HMAux,
     val change_adjust: Int,
+    val partitionedExecution: Int,
 ): Serializable {
     var isDone: Boolean = false
     @ColorInt

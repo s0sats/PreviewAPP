@@ -95,6 +95,7 @@ import com.namoadigital.prj001.dao.GeOsDeviceItemDao;
 import com.namoadigital.prj001.dao.MD_ClassDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_ItemDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.MdTagDao;
@@ -2470,7 +2471,14 @@ public class Act011_Main extends Base_Activity
     }
 
     @Override
-    public void onInspectionSelected(@NonNull AcessoryFormView acessoryFormView, boolean isNewItem, int position, @NonNull String searchFilterValue, boolean chkStatus, @NonNull String itemCodeAndSeqPk) {
+    public void onInspectionSelected(
+            @NonNull AcessoryFormView acessoryFormView,
+            boolean isNewItem,
+            int position,
+            @NonNull String searchFilterValue,
+            boolean chkStatus,
+            @NonNull String itemCodeAndSeqPk,
+            Integer partition_execution) {
         String device_item_pk = acessoryFormView.getDevicePkPrefix();
         if (!isNewItem) {
             device_item_pk = acessoryFormView.getDevicePkPrefix() + "." + itemCodeAndSeqPk;
@@ -2488,6 +2496,7 @@ public class Act011_Main extends Base_Activity
         deviceBundle.putBoolean(DEVICE_ITEM_NEW_ACTION, isNewItem);
         deviceBundle.putString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS, formData.getCustom_form_status());
         deviceBundle.putString(GeOsDao.DATE_START, geOs.getDate_start());
+        deviceBundle.putInt(MD_Product_Serial_Tp_Device_ItemDao.PARTITIONED_EXECUTION, partition_execution);
         bundle.putBundle(DEVICE_BUNDLE, deviceBundle);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
