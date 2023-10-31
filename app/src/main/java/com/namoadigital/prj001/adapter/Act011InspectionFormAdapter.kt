@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.adapter
 
+import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -195,13 +196,11 @@ class Act011InspectionFormAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun onBinding(inspection: InspectionCell?) {
             inspection?.apply {
-
                 if(partitionedExecution == 1){
                     binding.ivPartitionExecution.visibility = View.VISIBLE
                 }else{
                     binding.ivPartitionExecution.visibility = View.GONE
                 }
-
                 val context = binding.root.context
                 binding.btnInspectionOngoingAction.visibility = View.GONE
                 if (isDone) {

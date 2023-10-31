@@ -39,7 +39,7 @@
                 android:layout_marginEnd="16dp"
                 android:textColor="@color/text_black"
                 android:textSize="@dimen/font_size_title_dialog"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/iv_partition_execution"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="TextView" />
@@ -49,7 +49,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/my_action_info_margin_top"
-                android:layout_marginEnd="16dp"
                 android:textAlignment="viewStart"
                 android:textAllCaps="true"
                 android:textColor="@color/emoticons_red"
@@ -76,15 +75,15 @@
 
             <ImageView
                 android:id="@+id/iv_partition_execution"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginEnd="32dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/ic_check_circle"
                 android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@+id/tv_inspection_verification_action"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/m3_namoa_onSecondaryContainer"
-                tools:src="@drawable/ic_check_circle" />
+                app:tint="@color/namoa_color_light_green5" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/tv_inspection_verification_action"

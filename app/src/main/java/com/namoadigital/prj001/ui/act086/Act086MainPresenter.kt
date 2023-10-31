@@ -54,6 +54,7 @@ class Act086MainPresenter(
             "fixed_lbl",
             "change_lbl",
             "adjust_lbl",
+            "partition_execution_lbl"
         )
         transList.addAll(
             Act086VerificationFrg.getFragTranslationsVars()

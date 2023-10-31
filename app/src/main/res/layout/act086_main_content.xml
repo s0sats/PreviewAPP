@@ -52,6 +52,7 @@
                 android:id="@+id/act086_cl_header"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 app:layout_constraintEnd_toEndOf="@id/act086_gd_end"
                 app:layout_constraintStart_toStartOf="@id/act086_gd_start"
                 app:layout_constraintTop_toTopOf="parent">
@@ -59,9 +60,10 @@
                 <include
                     android:id="@+id/notification_partial"
                     layout="@layout/notication_layout"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/act086_tv_item_check_desc"

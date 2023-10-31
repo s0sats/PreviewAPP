@@ -6,7 +6,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     app:cardCornerRadius="5dp"
     app:cardElevation="0dp"
-    android:layout_margin="12dp"
     app:cardBackgroundColor="@color/m3_namoa_surface5">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -39,7 +38,7 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/tv_message"
             app:layout_constraintTop_toTopOf="@+id/tv_message"
-            app:tint="@color/m3_namoa_onSecondaryContainer" />
+            app:tint="@color/m3_namoa_onSurfaceVariant" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

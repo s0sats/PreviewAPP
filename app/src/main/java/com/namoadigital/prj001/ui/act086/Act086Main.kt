@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act086
 
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.Menu
@@ -181,8 +182,14 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
             if(partition_execution == 1){
                 notificationPartial.apply {
                     tvMessage.text = hmAux_Trans["partition_execution_lbl"]
-                    ivIcon.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_camera_check_circle, null))
-                    this.root.visibility = View.VISIBLE
+                    ivIcon.apply {
+                        setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_camera_check_circle, null))
+                        imageTintList = ColorStateList.valueOf(ResourcesCompat.getColor(resources, R.color.namoa_color_light_green5, null))
+                    }
+
+                    this.root.apply {
+                        visibility = View.VISIBLE
+                    }
                 }
             }else{
                 notificationPartial.root.visibility = View.GONE
