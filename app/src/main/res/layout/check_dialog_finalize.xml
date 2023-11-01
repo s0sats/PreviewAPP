@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/act011_gdl_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="1dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/act011_gdl_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="0dp" />
+
+
+        <TextView
+            android:id="@+id/act011_dialog_check_tv_elapsed_time_lbl"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/act011_gdl_start"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Esta escolha indica que os serviços a serem realizados neste ativo não foram concluídos.
+Selecione como o retorno será realizado abaixo:" />
+
+        <com.namoa_digital.namoa_library.ctls.MkDateTime
+            android:id="@+id/mkdate_partial_execution"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toStartOf="@+id/act011_gdl_end"
+            app:layout_constraintStart_toStartOf="@+id/act011_gdl_start"
+            app:layout_constraintTop_toBottomOf="@+id/not_finalized_dialog_check_option_rg"
+            app:mConfigType="DATE_HOUR" />
+
+
+        <RadioGroup
+            android:id="@+id/not_finalized_dialog_check_option_rg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="@id/act011_gdl_end"
+            app:layout_constraintStart_toStartOf="@id/act011_gdl_start"
+            app:layout_constraintTop_toBottomOf="@+id/act011_dialog_check_tv_elapsed_time_lbl">
+
+            <!--<android.support.constraint.ConstraintLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent">-->
+
+            <RadioButton
+                android:id="@+id/rg_decide_on_planning"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:checked="true"
+                android:text="RadioButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <RadioButton
+                android:id="@+id/rg_continue_partial_execution"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="RadioButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/act011_dialog_finalize_option_rdo_finalize"
+                tools:layout_marginBottom="8dp" />
+
+
+            <!--</android.support.constraint.ConstraintLayout>-->
+
+        </RadioGroup>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/act011_dialog_check_btn_not_finalized"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:paddingHorizontal="12dp"
+            android:text="Cancelar"
+            android:textColor="@color/m3_namoa_primary"
+            android:visibility="visible"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintEnd_toStartOf="@+id/act011_dialog_check_btn_ok"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:strokeColor="@color/m3_namoa_outline" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/act011_dialog_check_btn_ok"
+            style="@style/Widget.Material3.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/m3_namoa_primary"
+            android:textColor="@color/m3_namoa_onPrimary"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/act011_dialog_check_btn_not_finalized"
+            app:layout_constraintTop_toTopOf="parent"
+            app:strokeColor="@color/m3_namoa_outline"
+            tools:text="Finalizar" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

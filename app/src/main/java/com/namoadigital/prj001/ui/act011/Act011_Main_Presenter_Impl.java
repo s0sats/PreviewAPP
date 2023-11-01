@@ -91,7 +91,6 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_001_TT;
 import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_001;
 import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_002;
 import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_003;
-import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_004;
 import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_006;
 import com.namoadigital.prj001.sql.GeOsDeviceSql_002;
 import com.namoadigital.prj001.sql.GeOsSql_001;
@@ -2420,29 +2419,10 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     }
 
     @Override
-    public void updateGeOsItems(GeOs geOs, int missingJustifyCounter, String comments, String dateStart, String dateEnd) {
+    public void updateGeOsItems(GeOs geOs, int missingJustifyCounter, String dateStart, String dateEnd) {
 
         geOs.setDate_end(dateEnd);
         geOs.setDate_start(dateStart);
-
-        if (missingJustifyCounter > 0) {
-            List<GeOsDevice> devices = getDeviceList(geOs);
-            for (GeOsDevice device : devices) {
-                geOsDeviceItemDao.addUpdate(
-                        new GeOsDeviceItem_Sql_004(
-                                device.getCustomer_code(),
-                                device.getCustom_form_type(),
-                                device.getCustom_form_code(),
-                                device.getCustom_form_version(),
-                                device.getCustom_form_data(),
-                                device.getProduct_code(),
-                                device.getSerial_code(),
-                                comments,
-                                ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")
-                        ).toSqlQuery()
-                );
-            }
-        }
 
         geOsDao.addUpdate(geOs);
     }

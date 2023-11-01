@@ -47,8 +47,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -105,7 +104,7 @@ import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.databinding.Act011CheckDialogBinding;
-import com.namoadigital.prj001.extensions.TextViewKt;
+import com.namoadigital.prj001.databinding.CheckDialogFinalizeBinding;
 import com.namoadigital.prj001.model.AcessoryFormView;
 import com.namoadigital.prj001.model.Act011FfOptionsViewObject;
 import com.namoadigital.prj001.model.Act011FormTab;
@@ -3770,7 +3769,7 @@ public class Act011_Main extends Base_Activity
         //
         setDialogVisibilityAndLabels(binding);
         //
-        builder.setView(binding.getRoot()).setCancelable(false);
+        builder.setView(binding.getRoot()).setCancelable(true);
         //
         final AlertDialog alertDialog = builder.create();
         alertDialog.show();
@@ -3778,51 +3777,34 @@ public class Act011_Main extends Base_Activity
         //
     }
 
-    private void setDialogAction(Act011CheckDialogBinding binding, AlertDialog alertDialog) {
-        if (binding.act011DialogCheckMkedtJustifyMissingAnswerVal != null) {
-            binding.act011DialogCheckMkedtJustifyMissingAnswerVal.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                @Override
-                public void onFocusChange(View v, boolean hasFocus) {
-                    String mText = binding.act011DialogCheckMkedtJustifyMissingAnswerVal.getText().toString();
-                    if (!hasFocus) {
-                        binding.act011DialogCheckMkedtJustifyMissingAnswerVal.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (mText != null && !mText.isEmpty()) {
-                                    DrawableCompat.setTintList(binding.act011DialogCheckMkedtJustifyMissingAnswerVal.getBackground(), ColorStateList.valueOf(ContextCompat.getColor(context, R.color.namoa_color_gray_9)));
-                                } else {
-                                    if (formLocal.getSo_optional_justify_problem() == 0) {
-                                        DrawableCompat.setTintList(binding.act011DialogCheckMkedtJustifyMissingAnswerVal.getBackground(), ColorStateList.valueOf(ContextCompat.getColor(context, R.color.font_required)));
-                                    }
-                                }
-                            }
-                        });
-                    }
-                }
-            });
-        }
+    private void showNotFinalizedDialogOpt() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         //
-        binding.act011DialogCheckMkedtJustifyMissingAnswerVal.setOnReportTextChangeListner(
-                new MKEditTextNM.IMKEditTextChangeText() {
-                    @Override
-                    public void reportTextChange(String s) {
+        CheckDialogFinalizeBinding binding = CheckDialogFinalizeBinding.inflate(getLayoutInflater());
+        //
+        binding.mkdatePartialExecution.setmEnabled(false);
+        binding.rgDecideOnPlanning.setChecked(true);
+        binding.rgDecideOnPlanning.setText("Direcionar para a área de Planejamento decidir");
+        binding.rgContinuePartialExecution.setText("Direcionar para a área de Planejamento decidir");
 
-                    }
+        binding.notFinalizedDialogCheckOptionRg.setOnCheckedChangeListener((radioGroup, index) -> {
+            binding.mkdatePartialExecution.setmEnabled(index == binding.rgContinuePartialExecution.getId());
+        });
 
-                    @Override
-                    public void reportTextChange(String s, boolean b) {
-                        if (formLocal.getSo_optional_justify_problem() == 0) {
-                            binding.act011DialogCheckBtnOk.setEnabled(s != null && !s.isEmpty());
-                        }
-                        if (s != null
-                                && b) {
-                            if (s.isEmpty() && formLocal.getSo_optional_justify_problem() == 0) {
-                                DrawableCompat.setTintList(binding.act011DialogCheckMkedtJustifyMissingAnswerVal.getBackground(), ColorStateList.valueOf(ContextCompat.getColor(context, R.color.font_required)));
-                            }
-                        }
-                    }
-                }
-        );
+        //
+        builder.setView(binding.getRoot()).setCancelable(false);
+        //
+        final AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+        //
+    }
+
+    private void setDialogAction(Act011CheckDialogBinding binding, AlertDialog alertDialog) {
+
+        binding.act011DialogCheckBtnNotFinalized.setOnClickListener(v -> {
+            showNotFinalizedDialogOpt();
+        });
+
         binding.act011DialogCheckBtnOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -3831,7 +3813,6 @@ public class Act011_Main extends Base_Activity
                     String endDate = binding.act011DialogCheckMkdateFormEnd.getmValue();
                     String errorMsg = isFinalizeDialogInputValid(binding, startDate, endDate);
                     if (errorMsg.isEmpty()) {
-                        String missingAnswer = binding.act011DialogCheckTilJustifyMissingAnswerVal.getEditText().getText().toString();
                         //LUCHE - 08/11/2021 - resgata contador antes para ser usado na validação
                         //de refreshCurrentTabRecycle. Se não há mais não respondidos(segunda chama),
                         //então evita loops desnecessarios
@@ -3840,7 +3821,6 @@ public class Act011_Main extends Base_Activity
                         mPresenter.updateGeOsItems(
                                 geOs,
                                 missingAnswersCounter,
-                                missingAnswer,
                                 startDate,
                                 endDate
                         );
@@ -3852,9 +3832,7 @@ public class Act011_Main extends Base_Activity
                                 binding.ssSerialClass
                         );
                         //
-                        formData.setFinalized_service(
-                                binding.rgCompletedServiceYes.isChecked() ? 1 : 0
-                        );
+                        formData.setFinalized_service(1);
                         //
                         formData.setClass_code(ToolBox_Inf.mIntegerParse(binding.ssSerialClass.getmValue().get(SearchableSpinner.CODE)));
                         //Somente chama atualização das listas dos recycles se houver itens precisando
@@ -3889,7 +3867,7 @@ public class Act011_Main extends Base_Activity
             }
         });
         //
-        binding.act011DialogCheckBtnCancel.setOnClickListener(new View.OnClickListener() {
+        binding.closeDialog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 alertDialog.dismiss();
@@ -3899,7 +3877,6 @@ public class Act011_Main extends Base_Activity
         binding.act011DialogCheckMkdateFormEnd.setOnSelectedValue(new MkDateTime.IMKDateTimeValueChange() {
             @Override
             public void onChangeValue(String s) {
-                clearMkEdtJustifyMissingAnswerValFocus(binding.act011DialogCheckMkedtJustifyMissingAnswerVal);
                 String startDate = binding.act011DialogCheckMkdateFormStart.getmValue();
                 if (validEndDate(startDate, s)) {
                     binding.act011DialogCheckTvElapsedTimeVal.setText(getFormElapsedTimeFormatted(binding.act011DialogCheckMkdateFormStart.getmValue(), s));
@@ -3918,7 +3895,6 @@ public class Act011_Main extends Base_Activity
         binding.act011DialogCheckMkdateFormStart.setOnSelectedValue(new MkDateTime.IMKDateTimeValueChange() {
             @Override
             public void onChangeValue(String s) {
-                clearMkEdtJustifyMissingAnswerValFocus(binding.act011DialogCheckMkedtJustifyMissingAnswerVal);
                 String endDate = binding.act011DialogCheckMkdateFormEnd.getmValue();
                 if (validEndDate(s, endDate)) {
                     binding.act011DialogCheckTvElapsedTimeVal.setText(getFormElapsedTimeFormatted(s, endDate));
@@ -3939,7 +3915,6 @@ public class Act011_Main extends Base_Activity
         binding.ssSerialClass.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
             @Override
             public void onItemPreSelected(HMAux hmAux) {
-                clearMkEdtJustifyMissingAnswerValFocus(binding.act011DialogCheckMkedtJustifyMissingAnswerVal);
             }
 
             @Override
@@ -4007,24 +3982,16 @@ public class Act011_Main extends Base_Activity
             binding.act011DialogCheckTtl.setText(hmAux_Trans.get("dialog_finalize_form_so_ttl"));
         }
         binding.clSerialClass.setVisibility(View.GONE);
-        binding.tvCompletedService.setText(hmAux_Trans.get("dialog_finalize_option_finalize_ttl"));
-        binding.rgCompletedServiceYes.setText(hmAux_Trans.get("dialog_finalize_option_yes"));
-        binding.rgCompletedServiceNot.setText(hmAux_Trans.get("dialog_finalize_option_no"));
         //
         if (isFormOs) {
             setFormOsViewVisibility(binding, View.VISIBLE);
             int missingAnswersAmount = missingAnswersCounter();
             if (missingAnswersAmount == 0) {
-                binding.act011DialogCheckClMissingAnswers.setVisibility(View.GONE);
-                binding.act011DialogCheckBtnOk.setEnabled(true);
-            } else {
-                binding.act011DialogCheckBtnOk.setEnabled(false);
-                if (formLocal.getSo_optional_justify_problem() == 1) {
-                    binding.act011DialogCheckBtnOk.setEnabled(true);
-                }
+                binding.notificationPartial.tvMessage.setText("Nenhuma verificação foi reportada.");
+                binding.notificationPartial.getRoot().setVisibility(View.VISIBLE);
+                binding.notificationPartial.getRoot().setCardBackgroundColor(ColorStateList.valueOf(ResourcesCompat.getColor(getResources(), R.color.m3_namoa_errorContainer, null)));
             }
 
-            binding.act011DialogCheckTvMissingAnswerVal.setText(String.valueOf(missingAnswersAmount));
             binding.act011DialogCheckMkdateFormStart.setClickable(false);
             binding.act011DialogCheckMkdateFormStart.setmCanClean(false);
             binding.act011DialogCheckMkdateFormStart.setmEnabled(false);
@@ -4053,13 +4020,8 @@ public class Act011_Main extends Base_Activity
             //
             //
             binding.act011DialogFinalizeLbl.setText(hmAux_Trans.get("dialog_finalize_os_form_lbl"));
-            binding.act011DialogCheckTvMissingAnswerLbl.setText(hmAux_Trans.get("dialog_finalize_os_form_missing_answer_count_lbl"));
             binding.act011DialogCheckTvElapsedTimeLbl.setText(hmAux_Trans.get("dialog_finalize_os_form_elapsed_time_lbl"));
-            binding.act011DialogCheckTvJustifyMissingAnswerLbl.setText(hmAux_Trans.get("dialog_finalize_os_form_justify_missing_answer_lbl"));
-            if (formLocal.getSo_optional_justify_problem() == 0) {
-                TextViewKt.setAsRequired(binding.act011DialogCheckTvJustifyMissingAnswerLbl, true);
-                DrawableCompat.setTintList(binding.act011DialogCheckMkedtJustifyMissingAnswerVal.getBackground(), ColorStateList.valueOf(ContextCompat.getColor(context, R.color.font_required)));
-            }
+
             //
             setSerialClass(binding);
             //
@@ -4068,7 +4030,7 @@ public class Act011_Main extends Base_Activity
             binding.act011DialogFinalizeLbl.setText(hmAux_Trans.get("dialog_finalize_form_lbl"));
         }
         binding.act011DialogCheckBtnOk.setText(hmAux_Trans.get("sys_alert_btn_ok"));
-        binding.act011DialogCheckBtnCancel.setText(hmAux_Trans.get("sys_alert_btn_cancel"));
+        //binding.closeDialog.setText(hmAux_Trans.get("sys_alert_btn_cancel"));
         //
 //        binding.act011DialogCheckOptionRg.setVisibility(View.GONE);
         //
@@ -4083,7 +4045,7 @@ public class Act011_Main extends Base_Activity
         }
 
         if (showQuestionFormOsConcludesTickets()) {
-            binding.layoutCompletedService.setVisibility(View.VISIBLE);
+            binding.act011DialogCheckBtnNotFinalized.setVisibility(View.VISIBLE);
         }
     }
 
@@ -4135,7 +4097,6 @@ public class Act011_Main extends Base_Activity
     }
 
     private void setFormOsViewVisibility(Act011CheckDialogBinding binding, int visibility) {
-        binding.act011DialogCheckClMissingAnswers.setVisibility(visibility);
         binding.act011DialogCheckTvElapsedTimeLbl.setVisibility(visibility);
         binding.act011DialogCheckTvElapsedTimeVal.setVisibility(visibility);
         binding.act011DialogCheckMkdateFormStart.setVisibility(visibility);

@@ -46,8 +46,7 @@ class GeOsDeviceItem_Sql_006 (
                       AND ${GeOsDeviceItemDao.PRODUCT_CODE} = '$productCode'                   
                       AND ${GeOsDeviceItemDao.SERIAL_CODE} = '$serialCode'                                         
                       AND ${GeOsDeviceItemDao.DEVICE_TP_CODE} = '$deviceTpCode'                                         
-                      AND ${GeOsDeviceItemDao.EXEC_TYPE} is null
-                      AND ${GeOsDeviceItemDao.ITEM_CHECK_STATUS} != '${GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL}'                                 
+                      AND ${GeOsDeviceItemDao.EXEC_TYPE} not null                             
                     """.trimIndent()
         return s
     }

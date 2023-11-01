@@ -4,23 +4,59 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="10dp">
 
-    <TextView
-        android:id="@+id/act011_dialog_check_ttl"
-        android:layout_width="wrap_content"
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:textColor="@color/text_black"
-        android:textSize="20sp"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Finalizar OS" />
+        android:paddingBottom="2dp">
+
+        <TextView
+            android:id="@+id/act011_dialog_check_ttl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_black"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toStartOf="@+id/close_dialog"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Finalizar OS" />
+
+        <ImageView
+            android:id="@+id/close_dialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_close_24"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/act011_dialog_check_ttl"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/m3_namoa_onSurface" />
+
+        <include
+            android:id="@+id/notification_partial"
+            layout="@layout/notication_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/act011_dialog_check_ttl" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:paddingVertical="8dp"
+        android:paddingHorizontal="4dp">
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -31,46 +67,26 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_begin="24dp" />
+                app:layout_constraintGuide_begin="1dp" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/act011_gdl_end"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_end="24dp" />
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/act011_dialog_check_cl_missing_answers"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:paddingBottom="10dp"
-                app:layout_constraintEnd_toStartOf="@+id/act011_gdl_end"
-                app:layout_constraintStart_toStartOf="@+id/act011_gdl_start"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <include
-                    android:id="@+id/notification_partial"
-                    layout="@layout/notication_layout"
-                    android:visibility="visible"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                app:layout_constraintGuide_end="0dp" />
 
 
             <TextView
                 android:id="@+id/act011_dialog_check_tv_elapsed_time_lbl"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:textColor="@color/text_black"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@+id/act011_dialog_check_tv_elapsed_time_val"
                 app:layout_constraintStart_toStartOf="@+id/act011_gdl_start"
-                app:layout_constraintTop_toBottomOf="@+id/act011_dialog_check_cl_missing_answers"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:text="Tempo total:" />
 
             <TextView
@@ -148,13 +164,13 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:padding="5dp"
-                    tools:text="Class - Trad"
                     android:textColor="@color/text_black"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Class - Trad" />
 
                 <com.namoa_digital.namoa_library.ctls.SearchableSpinner
                     android:id="@+id/ss_serial_class"
@@ -168,64 +184,6 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <LinearLayout
-                android:id="@+id/layout_completed_service"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:orientation="vertical"
-                android:visibility="gone"
-                app:layout_constraintEnd_toStartOf="@+id/act011_gdl_end"
-                app:layout_constraintStart_toStartOf="@+id/act011_gdl_start"
-                app:layout_constraintTop_toBottomOf="@+id/cl_serial_class">
-
-                <TextView
-                    android:id="@+id/tv_completed_service"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:textColor="@color/text_black"
-                    android:textSize="16sp"
-                    tools:text="O Atendimento foi finalizado com a conclusão desta OS?" />
-
-
-                <RadioGroup
-                    android:id="@+id/rg_completed_service"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp">
-                    <!--<android.support.constraint.ConstraintLayout-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="match_parent">-->
-
-                    <RadioButton
-                        android:id="@+id/rg_completed_service_yes"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginBottom="8dp"
-                        android:checked="true"
-                        android:text="RadioButton"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <RadioButton
-                        android:id="@+id/rg_completed_service_not"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="RadioButton"
-                        tools:layout_marginBottom="8dp" />
-
-
-                    <!--</android.support.constraint.ConstraintLayout>-->
-
-                </RadioGroup>
-            </LinearLayout>
-
             <TextView
                 android:id="@+id/act011_dialog_finalize_lbl"
                 android:layout_width="0dp"
@@ -235,7 +193,7 @@
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="@id/act011_gdl_end"
                 app:layout_constraintStart_toStartOf="@id/act011_gdl_start"
-                app:layout_constraintTop_toBottomOf="@+id/layout_completed_service"
+                app:layout_constraintTop_toBottomOf="@+id/cl_serial_class"
                 tools:text="Para finalizar a OS, confirme abaixo." />
 
             <RadioGroup
@@ -244,8 +202,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:visibility="gone"
                 android:layout_marginEnd="8dp"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="@id/act011_gdl_end"
                 app:layout_constraintStart_toStartOf="@id/act011_gdl_start"
                 app:layout_constraintTop_toBottomOf="@id/act011_dialog_finalize_lbl">
@@ -282,15 +240,6 @@
 
             </RadioGroup>
 
-            <View
-                android:id="@+id/act011_dialog_check_bottom_divider"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="24dp"
-                android:background="@color/namoa_color_gray_6"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/act011_dialog_check_option_rg" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
@@ -298,29 +247,39 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <Button
-            android:id="@+id/act011_dialog_check_btn_cancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAllCaps="true"
-            android:drawableTint="@drawable/namoa_btn_states"
-            android:background="@color/customff_background_error_transparent"
-            android:textColor="@color/os_form_verify_item_label_text_color_states"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/act011_dialog_check_btn_ok"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Cancelar" />
 
-        <Button
-            android:id="@+id/act011_dialog_check_btn_ok"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/act011_dialog_check_btn_not_finalized"
+            style="@style/Widget.Material3.Button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/customff_background_error_transparent"
-            android:textColor="@color/os_form_verify_item_label_text_color_states"
-            android:textAllCaps="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="8dp"
+            android:backgroundTint="@color/m3_namoa_primary"
+            android:paddingHorizontal="12dp"
+            tools:text="Não Finalizado"
+            android:textColor="@color/m3_namoa_onPrimary"
+            android:visibility="gone"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintEnd_toStartOf="@+id/act011_dialog_check_btn_ok"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="OK" />
+            app:strokeColor="@color/m3_namoa_outline" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/act011_dialog_check_btn_ok"
+            style="@style/Widget.Material3.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/m3_namoa_primary"
+            android:textColor="@color/m3_namoa_onPrimary"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/act011_dialog_check_btn_not_finalized"
+            app:layout_constraintTop_toTopOf="parent"
+            app:strokeColor="@color/m3_namoa_outline"
+            tools:text="Finalizar" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

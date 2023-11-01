@@ -48,8 +48,7 @@ class GeOsDeviceItem_Sql_004(
     override fun toSqlQuery(): String {
         val s = """
                      UPDATE ${GeOsDeviceItemDao.TABLE}
-                       SET ${GeOsDeviceItemDao.EXEC_COMMENT} = '${execComment}', 
-                           ${GeOsDeviceItemDao.EXEC_TYPE} = '${GeOsDeviceItem.EXEC_TYPE_NOT_VERIFIED}',
+                       SET ${GeOsDeviceItemDao.EXEC_TYPE} = '${GeOsDeviceItem.EXEC_TYPE_NOT_VERIFIED}',
                            ${GeOsDeviceItemDao.EXEC_DATE} = '${execDate}',
                            ${GeOsDeviceItemDao.STATUS_ANSWER} = '${ConstantBaseApp.SYS_STATUS_DONE}'
                     WHERE
