@@ -8,46 +8,14 @@ import android.graphics.BitmapFactory
 import android.os.Bundle
 import com.google.gson.GsonBuilder
 import com.namoa_digital.namoa_library.util.HMAux
-import com.namoadigital.prj001.dao.GE_Custom_FormDao
-import com.namoadigital.prj001.dao.GE_Custom_Form_Blob_LocalDao
-import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
-import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao
-import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao
-import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
-import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao
-import com.namoadigital.prj001.dao.GeOsDao
-import com.namoadigital.prj001.dao.MD_ProductDao
-import com.namoadigital.prj001.dao.MD_Product_SerialDao
-import com.namoadigital.prj001.dao.MD_Schedule_ExecDao
-import com.namoadigital.prj001.dao.MdOrderTypeDao
-import com.namoadigital.prj001.dao.MeMeasureTpDao
+import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.extensions.roundByRestrictionMeasure
-import com.namoadigital.prj001.model.FormOsHeaderFrgSerialBkpExceededItem
-import com.namoadigital.prj001.model.FormOsHeaderFrgSerialBkpItem
-import com.namoadigital.prj001.model.FormOsHeaderFrgSerialBkpItemAbs
-import com.namoadigital.prj001.model.GE_Custom_Form
-import com.namoadigital.prj001.model.GE_Custom_Form_Local
-import com.namoadigital.prj001.model.GeOs
-import com.namoadigital.prj001.model.MD_Product
-import com.namoadigital.prj001.model.MD_Product_Serial
-import com.namoadigital.prj001.model.MD_Schedule_Exec
-import com.namoadigital.prj001.model.MdOrderType
-import com.namoadigital.prj001.model.MeMeasureTp
-import com.namoadigital.prj001.model.T_MD_Product_Serial_Backup_Rec
-import com.namoadigital.prj001.model.T_MD_Product_Serial_Backup_Record
+import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.receiver.WBR_Product_Serial_Backup
 import com.namoadigital.prj001.service.SO_PRODUCT_CODE
 import com.namoadigital.prj001.service.SO_SERIAL_CODE
 import com.namoadigital.prj001.service.WS_Product_Serial_Backup
-import com.namoadigital.prj001.sql.Act087Sql_001
-import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_002
-import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_001_TT
-import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002
-import com.namoadigital.prj001.sql.MD_Product_Sql_001
-import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001
-import com.namoadigital.prj001.sql.MdOrderTypeSql_001
-import com.namoadigital.prj001.sql.MdOrderTypeSql_002
-import com.namoadigital.prj001.sql.MeMeasureTpSql_001
+import com.namoadigital.prj001.sql.*
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ScheduleFormFatory
@@ -710,6 +678,29 @@ class Act087MainPresenter(
             ToolBox_Con.getPreference_Customer_Code(
                 context
             )
+        )
+    }
+
+    override fun getTkTicketForm(
+        customerCode: Long,
+        ticketPrefix: Int,
+        ticketCode: Int,
+        ticketSeqTmp: Int,
+        stepCode: Int
+    ): TK_Ticket_Form {
+        val tkTicketFormdao = TK_Ticket_FormDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        )
+        return  tkTicketFormdao.getByString(
+            TK_Ticket_Form_Sql_002(
+                customerCode,
+                ticketPrefix,
+                ticketCode,
+                ticketSeqTmp,
+                stepCode
+            ).toSqlQuery()
         )
     }
 }

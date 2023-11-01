@@ -5,6 +5,7 @@ import com.namoadigital.prj001.model.GeOs
 import com.namoadigital.prj001.model.MD_Product
 import com.namoadigital.prj001.model.MdOrderType
 import com.namoadigital.prj001.model.MeMeasureTp
+import com.namoadigital.prj001.model.TK_Ticket_Form
 
 interface FormOsHeaderFrgCreationInteraction {
     fun getOrderTypeList(orderTypeCode: Int = -1) : ArrayList<MdOrderType>
@@ -15,4 +16,6 @@ interface FormOsHeaderFrgCreationInteraction {
     fun delegateControlSta(control_sta: ArrayList<MKEditTextNM>, addAction: Boolean)
     fun getMeasure(measureCode: Int) : MeMeasureTp?
     fun getFormRequiresGPS(): Boolean
+    fun isContinousForm(): Boolean
+    fun getTkTicketForm(): TK_Ticket_Form
 }

@@ -30,6 +30,7 @@ import com.namoadigital.prj001.dao.MdJustifyItemDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_ActionDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
+import com.namoadigital.prj001.dao.TK_Ticket_FormDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.DataPackage;
@@ -2122,6 +2123,10 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
 //        String formVersionTarget = getVersionToUse(customForm,ticketCtrl);
         bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, String.valueOf(customForm.getCustom_form_version()));
         bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, ticketCtrl.getForm().getCustom_form_desc());
+        if(ticketCtrl.getForm().getCustom_form_data_partition() == 1) {
+            bundle.putInt(TK_Ticket_FormDao.CUSTOM_FORM_DATA_PARTITION, ticketCtrl.getForm().getCustom_form_data_partition());
+        }
+        //
         bundle.putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA,
             getCustomFormDataOrNew(ticketCtrl)
         );

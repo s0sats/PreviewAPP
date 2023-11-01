@@ -13,26 +13,11 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag
 import com.namoadigital.prj001.R
-import com.namoadigital.prj001.dao.GE_Custom_FormDao
-import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
-import com.namoadigital.prj001.dao.GeOsDao
-import com.namoadigital.prj001.dao.MD_ProductDao
-import com.namoadigital.prj001.dao.MD_Product_SerialDao
-import com.namoadigital.prj001.dao.MD_Schedule_ExecDao
-import com.namoadigital.prj001.dao.MdOrderTypeDao
-import com.namoadigital.prj001.dao.MeMeasureTpDao
-import com.namoadigital.prj001.dao.TK_TicketDao
+import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.databinding.Act087MainBinding
 import com.namoadigital.prj001.databinding.Act087MainContentBinding
 import com.namoadigital.prj001.extensions.setFrag
-import com.namoadigital.prj001.model.FormOsHeaderFrgSerialBkpItemAbs
-import com.namoadigital.prj001.model.GeOs
-import com.namoadigital.prj001.model.MD_Product
-import com.namoadigital.prj001.model.MD_Product_Serial
-import com.namoadigital.prj001.model.MD_Schedule_Exec
-import com.namoadigital.prj001.model.MdOrderType
-import com.namoadigital.prj001.model.MeMeasureTp
-import com.namoadigital.prj001.model.MyActionFilterParam
+import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.service.WS_Product_Serial_Backup
 import com.namoadigital.prj001.ui.act005.Act005_Main
 import com.namoadigital.prj001.ui.act011.Act011_Main
@@ -362,6 +347,20 @@ class Act087Main : Base_Activity_Frag(),
 
     override fun getFormRequiresGPS(): Boolean {
         return mPresenter.getFormRequiresGPSInfo()
+    }
+
+    override fun isContinousForm(): Boolean {
+        return bundle.getInt(TK_Ticket_FormDao.CUSTOM_FORM_DATA_PARTITION, 0) == 1
+    }
+
+    override fun getTkTicketForm(): TK_Ticket_Form {
+        return mPresenter.getTkTicketForm(
+            ToolBox_Con.getPreference_Customer_Code(context),
+            bundle.getInt(TK_Ticket_CtrlDao.TICKET_PREFIX),
+            bundle.getInt(TK_Ticket_CtrlDao.TICKET_CODE),
+            bundle.getInt(TK_Ticket_CtrlDao.TICKET_SEQ_TMP),
+            bundle.getInt(TK_Ticket_CtrlDao.STEP_CODE)
+        )
     }
 
     override fun showAlert(
