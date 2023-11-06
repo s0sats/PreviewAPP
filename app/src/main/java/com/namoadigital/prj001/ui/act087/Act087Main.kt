@@ -102,7 +102,8 @@ class Act087Main : Base_Activity_Frag(),
             ticketPrefix,
             ticketCode,
             ticketSeqTmp,
-            stepCode
+            stepCode,
+            mCustomFormDataPartition
         )
     }
 
@@ -119,6 +120,7 @@ class Act087Main : Base_Activity_Frag(),
     private var ticketCode: Int? = null
     private var ticketSeqTmp: Int? = null
     private var stepCode: Int? = null
+    private var mCustomFormDataPartition: Int? = null
     private var originFlow: String = ConstantBaseApp.ACT005
     private lateinit var bundle: Bundle
     private var act083Bundle: Bundle? = null
@@ -268,6 +270,10 @@ class Act087Main : Base_Activity_Frag(),
                 ticketCode = bundle.getInt(TK_Ticket_CtrlDao.TICKET_CODE)
                 ticketSeqTmp = bundle.getInt(TK_Ticket_CtrlDao.TICKET_SEQ_TMP)
                 stepCode = bundle.getInt(TK_Ticket_CtrlDao.STEP_CODE)
+                mCustomFormDataPartition =
+                    if (bundle.containsKey(GE_Custom_Form_DataDao.CUSTOM_FORM_DATA_PARTITION)) bundle.getInt(
+                        GE_Custom_Form_DataDao.CUSTOM_FORM_DATA_PARTITION
+                    ) else null
                 originFlow =
                     getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT005)
                 //
@@ -366,7 +372,10 @@ class Act087Main : Base_Activity_Frag(),
     }
 
     override fun getTkTicketForm(): TK_Ticket_Form? {
-        return mPresenter.getTkTicketForm()
+        if(isContinousForm()) {
+            return mPresenter.getTkTicketForm()
+        }
+        return null
     }
 
     override fun showAlert(

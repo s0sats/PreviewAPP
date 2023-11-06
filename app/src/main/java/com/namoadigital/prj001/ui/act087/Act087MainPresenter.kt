@@ -48,7 +48,9 @@ class Act087MainPresenter(
     private var ticketPrefix: Int?,
     private var ticketCode: Int?,
     private var ticketSeqTmp: Int?,
-    private var stepCode: Int?
+    private var stepCode: Int?,
+    private var mCustomFormDataPartition: Int?,
+
 ): Act087MainContract.I_Presenter {
 
     private val hmAuxTrans: HMAux by lazy {
@@ -592,7 +594,8 @@ class Act087MainPresenter(
             val tkTicketForm = getTkTicketForm()
             tkTicketForm?.let{
                 putInt(GE_Custom_Form_DataDao.CUSTOM_FORM_DATA_PARTITION, it.custom_form_data_partition)
-            }
+            }?: putInt(GE_Custom_Form_DataDao.CUSTOM_FORM_DATA_PARTITION, mCustomFormDataPartition?:0)
+
             //Após finalizar a criação da O.S, além de navegar para a act011, o usr deve ser direcionado
             //para a primeira aba depois do cabeçalho. O bundle abaixo tem os parametros para essa navegação.
             putBundle(ConstantBaseApp.DEVICE_BUNDLE,
