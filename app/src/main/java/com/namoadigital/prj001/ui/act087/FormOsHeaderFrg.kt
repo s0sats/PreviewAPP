@@ -25,6 +25,7 @@ import com.namoadigital.prj001.dao.MD_Schedule_ExecDao
 import com.namoadigital.prj001.databinding.FormOsHeaderFrgBackupMachineDialogBinding
 import com.namoadigital.prj001.databinding.FormOsHeaderFrgBinding
 import com.namoadigital.prj001.databinding.FormOsHeaderFrgErrorDialogBinding
+import com.namoadigital.prj001.extensions.formatTo
 import com.namoadigital.prj001.extensions.setAsRequired
 import com.namoadigital.prj001.extensions.setPrefix
 import com.namoadigital.prj001.model.*
@@ -75,8 +76,10 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         mCreationListener?.getFormRequiresGPS()?:false
     }
     private val ticketForm by lazy {
-        mCreationListener!!.getTkTicketForm()
+        mCreationListener?.getTkTicketForm()
+            ?: measureTpListener?.getTkTicketForm()
     }
+
     companion object{
         @JvmStatic
         fun newInstance(
@@ -146,7 +149,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 "alert_form_turn_gps_on_msg",
                 "allow_measure_in_the_past_lbl",
                 "alert_measure_error_ttl",
-                "alert_measure_invalid_value_msg"
+                "alert_measure_invalid_value_msg",
+                "form_os_partition_headline_lbl",
             )
         }
     }
@@ -203,6 +207,14 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             mketOsMainMeasureVal.hint = hmAuxTrans["measure_current_value_hint"]
             tvOsLastMeasureLbl.text = hmAuxTrans["measure_last_value_lbl"]
             swAllowFormSoInThePast.text = hmAuxTrans["allow_measure_in_the_past_lbl"]
+            notificationPartial.root.visibility = ticketForm?.let{
+                notificationPartial.apply {
+                    tvMessage.text = """${hmAuxTrans["form_os_partition_headline_lbl"]} ${it.partition_min_date.formatTo(
+                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                    )}"""
+                }
+                View.VISIBLE
+            }?: View.GONE
             //Lista com os textView que será usado para add colocar contadore nos campos
             labelsView.add(tvOsTypeLbl)
             labelsView.add(tvOsMachineLbl)
@@ -268,11 +280,11 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             if(isContinuosFormPartition()){
                 orderTypeList = arrayListOf(
                     MdOrderType(
-                        ticketForm.customer_code,
-                        ticketForm.order_type_code,
-                        ticketForm.order_type_desc,
-                        ticketForm.order_type_desc,
-                        ticketForm.process_type,
+                        ticketForm!!.customer_code,
+                        ticketForm!!.order_type_code,
+                        ticketForm!!.order_type_desc,
+                        ticketForm!!.order_type_desc,
+                        ticketForm!!.process_type,
                         "",
                         null
                     )
@@ -368,7 +380,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         }
     }
 
-    private fun isContinuosFormPartition() = mCreationListener?.isContinousForm() ?: false
+    private fun isContinuosFormPartition() = ticketForm != null
 
     private fun updateBkpMachineVisibility() {
         with(binding){
@@ -460,23 +472,23 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     private fun iniMainMeasure() {
         with(binding){
             if(isContinuosFormPartition()){
-                clMainMeasure.visibility = if(ticketForm.measure_tp_code != null) View.VISIBLE else View.GONE
-                ticketForm.measure_tp_code?.let{
-                    mainMeasureTp = getMainMeasureTp(it, ticketForm.customer_code)
+                clMainMeasure.visibility = if(ticketForm!!.measure_tp_code != null) View.VISIBLE else View.GONE
+                ticketForm!!.measure_tp_code?.let{
+                    mainMeasureTp = getMainMeasureTp(it, ticketForm!!.customer_code)
                 }
-                ticketForm.measure_tp_desc?.let{
+                ticketForm!!.measure_tp_desc?.let{
                     tvOsMainMeasureLbl.text = it
                 }
                 //todo rever o save do float no obj
-                ticketForm.measure_value?.let {
+                ticketForm!!.measure_value?.let {
                     mketOsMainMeasureVal.setText(
                         ToolBox_Inf.convertFloatToBigDecimalString(
                             it,
                             true
                         )
                     )
-                    mketOsMainMeasureVal.isEnabled = isOsCreation
-                    mketOsMainMeasureVal.setmBARCODE(isOsCreation)
+                    mketOsMainMeasureVal.isEnabled = false
+                    mketOsMainMeasureVal.setmBARCODE(false)
 
                 }?: run {
                     if(mainMeasureTp?.without_measure == 1 ) {
@@ -675,7 +687,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                    (formOsHeader.last_measure_date == null
                     || ToolBox_Inf.dateToMilliseconds(formOsHeader.last_measure_date) <= ToolBox_Inf.dateToMilliseconds(mkdtStartDate.getmValue()))
                ||
-                   (isContinuosFormPartition() && ToolBox_Inf.dateToMilliseconds(ticketForm.partition_min_date) <= ToolBox_Inf.dateToMilliseconds(mkdtStartDate.getmValue()))
+                   (isContinuosFormPartition() && ToolBox_Inf.dateToMilliseconds(ticketForm?.partition_min_date) <= ToolBox_Inf.dateToMilliseconds(mkdtStartDate.getmValue()))
               )
           )
        }

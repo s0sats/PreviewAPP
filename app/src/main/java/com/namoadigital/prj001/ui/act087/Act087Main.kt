@@ -99,6 +99,10 @@ class Act087Main : Base_Activity_Frag(),
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
             ),
+            ticketPrefix,
+            ticketCode,
+            ticketSeqTmp,
+            stepCode
         )
     }
 
@@ -111,6 +115,10 @@ class Act087Main : Base_Activity_Frag(),
     private var schedulePrefix: Int? = null
     private var scheduleCode: Int? = null
     private var scheduleExec: Int? = null
+    private var ticketPrefix: Int? = null
+    private var ticketCode: Int? = null
+    private var ticketSeqTmp: Int? = null
+    private var stepCode: Int? = null
     private var originFlow: String = ConstantBaseApp.ACT005
     private lateinit var bundle: Bundle
     private var act083Bundle: Bundle? = null
@@ -256,6 +264,10 @@ class Act087Main : Base_Activity_Frag(),
                 schedulePrefix = getInt(MD_Schedule_ExecDao.SCHEDULE_PREFIX)
                 scheduleCode = getInt(MD_Schedule_ExecDao.SCHEDULE_CODE)
                 scheduleExec = getInt(MD_Schedule_ExecDao.SCHEDULE_EXEC)
+                ticketPrefix = bundle.getInt(TK_Ticket_CtrlDao.TICKET_PREFIX)
+                ticketCode = bundle.getInt(TK_Ticket_CtrlDao.TICKET_CODE)
+                ticketSeqTmp = bundle.getInt(TK_Ticket_CtrlDao.TICKET_SEQ_TMP)
+                stepCode = bundle.getInt(TK_Ticket_CtrlDao.STEP_CODE)
                 originFlow =
                     getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT005)
                 //
@@ -350,17 +362,11 @@ class Act087Main : Base_Activity_Frag(),
     }
 
     override fun isContinousForm(): Boolean {
-        return bundle.getInt(TK_Ticket_FormDao.CUSTOM_FORM_DATA_PARTITION, 0) == 1
+        return bundle.getInt(TK_Ticket_FormDao.CUSTOM_FORM_DATA_PARTITION, 0) > 0
     }
 
-    override fun getTkTicketForm(): TK_Ticket_Form {
-        return mPresenter.getTkTicketForm(
-            ToolBox_Con.getPreference_Customer_Code(context),
-            bundle.getInt(TK_Ticket_CtrlDao.TICKET_PREFIX),
-            bundle.getInt(TK_Ticket_CtrlDao.TICKET_CODE),
-            bundle.getInt(TK_Ticket_CtrlDao.TICKET_SEQ_TMP),
-            bundle.getInt(TK_Ticket_CtrlDao.STEP_CODE)
-        )
+    override fun getTkTicketForm(): TK_Ticket_Form? {
+        return mPresenter.getTkTicketForm()
     }
 
     override fun showAlert(

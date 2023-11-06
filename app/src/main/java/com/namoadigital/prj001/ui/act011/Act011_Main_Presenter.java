@@ -18,6 +18,7 @@ import com.namoadigital.prj001.model.InspectionCell;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.MeMeasureTp;
+import com.namoadigital.prj001.model.TK_Ticket_Form;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +48,8 @@ public interface Act011_Main_Presenter {
             Integer mTicket_code,
             Integer mTicket_seq,
             Integer mTicket_seq_tmp,
-            Integer mStep_code
+            Integer mStep_code,
+            Integer mCustomFormDataPartition
     );
 
     void saveData(GE_Custom_Form_Data formData, boolean bMsg);
@@ -113,6 +115,10 @@ public interface Act011_Main_Presenter {
 
     MeMeasureTp getMeasureTp(long customerCode, int measureTpCode);
 
+    TK_Ticket_Form getTkTicketForm(int mTicket_prefix,
+                                   int mTicket_code,
+                                   int mTicket_seq_tmp,
+                                   int mStep_code);
     CustomFF checkNumberOrMeasureCtrl(HMAux cf, MD_Product_Serial serialInfo);
 
     @Nullable

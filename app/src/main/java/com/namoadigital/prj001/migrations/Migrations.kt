@@ -2,26 +2,8 @@ package com.namoadigital.prj001.migrations
 
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
-import com.namoadigital.prj001.dao.GE_Custom_FormDao
-import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
-import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
-import com.namoadigital.prj001.dao.GeOsDeviceItemDao
-import com.namoadigital.prj001.dao.MD_All_ProductDao
-import com.namoadigital.prj001.dao.MD_All_Product_Group_ProductDao
-import com.namoadigital.prj001.dao.MD_ProductDao
-import com.namoadigital.prj001.dao.MD_Product_Group_ProductDao
-import com.namoadigital.prj001.dao.MD_Product_SerialDao
-import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_ItemDao
-import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_Item_HistDao
-import com.namoadigital.prj001.dao.MD_SiteDao
-import com.namoadigital.prj001.dao.MeMeasureTpDao
-import com.namoadigital.prj001.dao.SM_SODao
-import com.namoadigital.prj001.dao.SO_Pack_ExpressDao
-import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao
-import com.namoadigital.prj001.dao.TK_TicketDao
-import com.namoadigital.prj001.dao.TK_Ticket_FormDao
+import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.database.MigrationSQLite
-import com.namoadigital.prj001.model.GeOsDeviceItem
 
 
 val MigrationV1 = object : MigrationSQLite(1, 2){
@@ -442,10 +424,29 @@ val migrationV10: MigrationSQLite = object : MigrationSQLite(10, 11) {
         }
         //endregion
         //
-
+        if (!isFieldExist(
+                db,
+                GE_Custom_Form_DataDao.TABLE,
+                GE_Custom_Form_DataDao.CUSTOM_FORM_DATA_PARTITION
+            )
+        ) {
+            db.execSQL(""" ALTER TABLE [${GE_Custom_Form_DataDao.TABLE}] ADD [${GE_Custom_Form_DataDao.CUSTOM_FORM_DATA_PARTITION}] int not null default 0;""".trimIndent())
+        }
+        //
+        if (!isFieldExist(
+                db,
+                GE_Custom_Form_DataDao.TABLE,
+                GE_Custom_Form_DataDao.KANBAN_RESCHEDULE_DATE
+            )
+        ) {
+            db.execSQL(""" ALTER TABLE [${GE_Custom_Form_DataDao.TABLE}] ADD [${GE_Custom_Form_DataDao.KANBAN_RESCHEDULE_DATE}]  text collate nocase;""".trimIndent())
+        }
     }
 
 }
+
+
+
 
 fun isFieldExist(db: SQLiteDatabase, tableName: String, fieldName: String): Boolean {
 

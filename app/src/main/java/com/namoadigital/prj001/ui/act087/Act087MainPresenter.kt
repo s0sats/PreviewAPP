@@ -44,8 +44,11 @@ class Act087MainPresenter(
     private val scheduleExec: Int?,
     private val scheduleDao: MD_Schedule_ExecDao,
     private val originFlow: String = ConstantBaseApp.ACT005,
-    private var custom_form_dataDao: GE_Custom_Form_DataDao
-
+    private var custom_form_dataDao: GE_Custom_Form_DataDao,
+    private var ticketPrefix: Int?,
+    private var ticketCode: Int?,
+    private var ticketSeqTmp: Int?,
+    private var stepCode: Int?
 ): Act087MainContract.I_Presenter {
 
     private val hmAuxTrans: HMAux by lazy {
@@ -585,6 +588,11 @@ class Act087MainPresenter(
             putString(GE_Custom_FormDao.CUSTOM_FORM_CODE,formOsHeader.custom_form_code.toString())
             putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, formOsHeader.custom_form_version.toString())
             putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, formOsHeader.custom_form_data.toString())
+            putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, formOsHeader.custom_form_data.toString())
+            val tkTicketForm = getTkTicketForm()
+            tkTicketForm?.let{
+                putInt(GE_Custom_Form_DataDao.CUSTOM_FORM_DATA_PARTITION, it.custom_form_data_partition)
+            }
             //Após finalizar a criação da O.S, além de navegar para a act011, o usr deve ser direcionado
             //para a primeira aba depois do cabeçalho. O bundle abaixo tem os parametros para essa navegação.
             putBundle(ConstantBaseApp.DEVICE_BUNDLE,
@@ -681,26 +689,28 @@ class Act087MainPresenter(
         )
     }
 
-    override fun getTkTicketForm(
-        customerCode: Long,
-        ticketPrefix: Int,
-        ticketCode: Int,
-        ticketSeqTmp: Int,
-        stepCode: Int
-    ): TK_Ticket_Form {
+    override fun getTkTicketForm(): TK_Ticket_Form? {
         val tkTicketFormdao = TK_Ticket_FormDao(
             context,
             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
             Constant.DB_VERSION_CUSTOM
         )
-        return  tkTicketFormdao.getByString(
-            TK_Ticket_Form_Sql_002(
-                customerCode,
-                ticketPrefix,
-                ticketCode,
-                ticketSeqTmp,
-                stepCode
-            ).toSqlQuery()
-        )
+        if(ticketPrefix != null
+            && ticketCode != null
+            && ticketSeqTmp != null
+            && stepCode != null
+        ) {
+            return tkTicketFormdao.getByString(
+                TK_Ticket_Form_Sql_002(
+                    ToolBox_Con.getPreference_Customer_Code(context),
+                    ticketPrefix!!,
+                    ticketCode!!,
+                    ticketSeqTmp!!,
+                    stepCode!!
+                ).toSqlQuery()
+            )
+        }else{
+            return null
+        }
     }
 }

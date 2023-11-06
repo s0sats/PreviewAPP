@@ -18,13 +18,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+
+            <include
+                android:id="@+id/notification_partial"
+                layout="@layout/notication_layout"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <include
                 android:id="@+id/inc_header"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/notification_partial"
                 layout="@layout/act011_frg_include_header"
                 />
 

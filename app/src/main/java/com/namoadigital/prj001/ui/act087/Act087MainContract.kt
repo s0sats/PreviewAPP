@@ -47,6 +47,6 @@ interface Act087MainContract {
         fun getFormRequiresGPSInfo(): Boolean
         fun checkFormExists(): Boolean
         fun hasPassedDay(): Int
-        fun getTkTicketForm(customerCode: Long, ticketPrefix: Int, ticketCode: Int, ticketSeqTmp: Int, stepCode: Int): TK_Ticket_Form
+        fun getTkTicketForm(): TK_Ticket_Form?
     }
 }

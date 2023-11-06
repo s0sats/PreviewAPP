@@ -1,6 +1,8 @@
 package com.namoadigital.prj001.extensions
 
 import com.namoadigital.prj001.model.SM_SO
+import com.namoadigital.prj001.util.ConstantBaseApp
+import com.namoadigital.prj001.util.ToolBox_Inf
 import java.text.Normalizer
 
 fun String?.formatForDisplay() = if (this.isNullOrBlank()) "" else this
@@ -32,7 +34,6 @@ fun checkIfLastCharContainTabOrEnter(value: String): Boolean {
 fun removeLastCharEnterOrTab(value: String): String {
     return value.replace("""[ \t\n\r]*([\t\n\r])${'$'}""", "")
 }
-
 fun formatSyncSoList(soSyncList: List<SM_SO>): String {
     var serviceSoList = StringBuilder()
     for (sm_so in soSyncList) {
@@ -40,5 +41,15 @@ fun formatSyncSoList(soSyncList: List<SM_SO>): String {
     }
     serviceSoList = StringBuilder(serviceSoList.substring(1))
     return serviceSoList.toString()
+}
+
+fun String.formatTo(format: String): String {
+    return ToolBox_Inf.millisecondsToString(
+        ToolBox_Inf.dateToMilliseconds(
+            this
+        ),
+        format
+    )
+
 }
 

@@ -121,6 +121,7 @@ import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.MeMeasureTp;
 import com.namoadigital.prj001.model.MyActionFilterParam;
 import com.namoadigital.prj001.model.MyActions;
+import com.namoadigital.prj001.model.TK_Ticket_Form;
 import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_Save;
@@ -276,6 +277,7 @@ public class Act011_Main extends Base_Activity
     private Integer mTicket_seq;
     private Integer mTicket_seq_tmp;
     private Integer mStep_code;
+    private Integer mCustomFormDataPartition;
     private String requestingAct;
     private boolean isOffHandForm = false;
     private Bundle act081Bundle;
@@ -887,15 +889,11 @@ public class Act011_Main extends Base_Activity
                 mTicket_code,
                 mTicket_seq,
                 mTicket_seq_tmp,
-                mStep_code
+                mStep_code,
+                mCustomFormDataPartition
         );
     }
 
-    private boolean checkIfBlockFormUser(int hasPassedDays) {
-        if (hasPassedDays >= 10 && hasPassedDays <= 14) return false;
-        if (hasPassedDays >= 15) return true;
-        return false;
-    }
 
     /**
      * Metodo que faz o scroll para o customFF passado.
@@ -1389,6 +1387,7 @@ public class Act011_Main extends Base_Activity
             mTicket_seq = bundle.containsKey(TK_Ticket_CtrlDao.TICKET_SEQ) ? bundle.getInt(TK_Ticket_CtrlDao.TICKET_SEQ) : null;
             mTicket_seq_tmp = bundle.containsKey(TK_Ticket_CtrlDao.TICKET_SEQ_TMP) ? bundle.getInt(TK_Ticket_CtrlDao.TICKET_SEQ_TMP) : null;
             mStep_code = bundle.containsKey(TK_Ticket_CtrlDao.STEP_CODE) ? bundle.getInt(TK_Ticket_CtrlDao.STEP_CODE) : null;
+            mCustomFormDataPartition = bundle.containsKey(GE_Custom_Form_DataDao.CUSTOM_FORM_DATA_PARTITION) ? bundle.getInt(GE_Custom_Form_DataDao.CUSTOM_FORM_DATA_PARTITION) : null;
             requestingAct = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT005);
             isOffHandForm = bundle.containsKey(ConstantBaseApp.TK_TICKET_IS_FORM_OFF_HAND);
 
@@ -2534,6 +2533,20 @@ public class Act011_Main extends Base_Activity
     @Override
     public MeMeasureTp getMeasure(long customerCode, int measureCode) {
         return mPresenter.getMeasureTp(customerCode, measureCode);
+    }
+
+    @Nullable
+    @Override
+    public TK_Ticket_Form getTkTicketForm() {
+        if(mCustomFormDataPartition != null && mCustomFormDataPartition  > 0) {
+            return mPresenter.getTkTicketForm(
+                    mTicket_prefix,
+                    mTicket_code,
+                    mTicket_seq_tmp,
+                    mStep_code
+            );
+        }
+        return null;
     }
 
     //TODO APAGAR APPOS TESTES FINAL
