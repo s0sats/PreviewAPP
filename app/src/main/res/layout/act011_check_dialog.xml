@@ -244,6 +244,13 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="5dp"
+        android:background="@color/m3_namoa_outline" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -251,26 +258,25 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/act011_dialog_check_btn_not_finalized"
             style="@style/Widget.Material3.Button"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:backgroundTint="@color/m3_namoa_primary"
-            android:paddingHorizontal="12dp"
-            tools:text="Não Finalizado"
             android:textColor="@color/m3_namoa_onPrimary"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constrainedWidth="true"
             app:layout_constraintEnd_toStartOf="@+id/act011_dialog_check_btn_ok"
             app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:strokeColor="@color/m3_namoa_outline" />
+            app:strokeColor="@color/m3_namoa_outline"
+            tools:text="Não Finalizado" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/act011_dialog_check_btn_ok"
             style="@style/Widget.Material3.Button"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/m3_namoa_primary"
             android:textColor="@color/m3_namoa_onPrimary"

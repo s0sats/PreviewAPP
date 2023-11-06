@@ -557,13 +557,14 @@ public class Act011_Main extends Base_Activity
         transList.add("alert_update_structure_ttl");
         transList.add("alert_update_structure_msg");
         //
+        transList.add("dialog_finalize_os_empty_verify_lbl");
         transList.add("dialog_finalize_not_finalized_lbl");
         transList.add("dialog_not_finalized_info_lbl");
         transList.add("dialog_not_finalized_decide_planning_lbl");
         transList.add("dialog_not_finalized_partial_execution_lbl");
         transList.add("dialog_not_finalized_ok_lbl");
         transList.add("dialog_not_finalized_cancel_lbl");
-        transList.add("dialog_not_finalized_date_incorrect");
+        transList.add("dialog_not_finalized_date_incorrect_lbl");
         //
         transList.addAll(Act011FrgInspection.Companion.getFragTranslationsVars());
         //
@@ -3816,14 +3817,16 @@ public class Act011_Main extends Base_Activity
         binding.rgContinuePartialExecution.setText(hmAux_Trans.get("dialog_not_finalized_partial_execution_lbl"));
         binding.act011DialogCheckBtnOk.setText(hmAux_Trans.get("dialog_not_finalized_ok_lbl"));
         binding.act011DialogCheckBtnCancel.setText(hmAux_Trans.get("dialog_not_finalized_cancel_lbl"));
-        binding.tvIncorrect.setText(hmAux_Trans.get("dialog_not_finalized_date_incorrect"));
+        binding.tvIncorrect.setText(hmAux_Trans.get("dialog_not_finalized_date_incorrect_lbl"));
+        binding.mkdatePartialExecution.setmLabel("");
+        binding.mkdatePartialExecution.setmCanClean(false);
 
 
         if (kanbanRescheduleDateIsEmpty) {
             binding.rgDecideOnPlanning.setChecked(true);
             binding.rgContinuePartialExecution.setChecked(false);
             binding.mkdatePartialExecution.setmEnabled(false);
-            binding.mkdatePartialExecution.setmValue(getNextDay(), true);
+            binding.mkdatePartialExecution.setmValue("", true);
         } else {
             binding.rgDecideOnPlanning.setChecked(false);
             binding.rgContinuePartialExecution.setChecked(true);
@@ -3836,10 +3839,12 @@ public class Act011_Main extends Base_Activity
 
             if (isPartialExecution) {
                 binding.mkdatePartialExecution.setmEnabled(true);
+                binding.mkdatePartialExecution.setmValue(getNextDay(), true);
                 binding.act011DialogCheckBtnOk.setEnabled(binding.mkdatePartialExecution.isValid());
             } else {
                 binding.mkdatePartialExecution.setmEnabled(false);
                 binding.act011DialogCheckBtnOk.setEnabled(true);
+                binding.mkdatePartialExecution.setmValue("", true);
                 binding.tvIncorrect.setVisibility(View.GONE);
             }
 
@@ -3847,7 +3852,7 @@ public class Act011_Main extends Base_Activity
 
         binding.mkdatePartialExecution.setOnSelectedValue(dateSelected -> {
             String currentDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z").format(new Date());
-            if (ToolBox_Inf.getDateDiferenceInDays(dateSelected, currentDate) <= 0 || ToolBox_Inf.getDateDiferenceInDays(dateSelected, currentDate) > 15) {
+            if (ToolBox_Inf.getDateDiferenceInMilliseconds(dateSelected, currentDate) < 0 || ToolBox_Inf.getDateDiferenceInDays(dateSelected, currentDate) > 14) {
                 binding.tvIncorrect.setVisibility(View.VISIBLE);
                 binding.act011DialogCheckBtnOk.setEnabled(false);
             } else {
@@ -4088,7 +4093,7 @@ public class Act011_Main extends Base_Activity
             setFormOsViewVisibility(binding, View.VISIBLE);
             int missingAnswersAmount = missingAnswersCounter();
             if (missingAnswersAmount == 0) {
-                binding.notificationPartial.tvMessage.setText("Nenhuma verificação foi reportada.");
+                binding.notificationPartial.tvMessage.setText(hmAux_Trans.get("dialog_finalize_os_empty_verify_lbl"));
                 binding.notificationPartial.getRoot().setVisibility(View.VISIBLE);
                 binding.notificationPartial.getRoot().setCardBackgroundColor(ColorStateList.valueOf(ResourcesCompat.getColor(getResources(), R.color.m3_namoa_errorContainer, null)));
             }

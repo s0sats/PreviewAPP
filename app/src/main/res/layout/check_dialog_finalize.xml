@@ -33,7 +33,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textColor="@color/m3_namoa_onSurface"
-            style="@style/TextAppearance.Material3.LabelLarge"
+            style="@style/TextAppearance.Material3.TitleMedium"
             app:layout_constraintStart_toStartOf="@+id/act011_gdl_start"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Esta escolha indica que os serviços a serem realizados neste ativo não foram concluídos.
@@ -45,7 +45,7 @@ Selecione como o retorno será realizado abaixo:" />
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="12dp"
             android:layout_marginEnd="8dp"
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="@id/act011_gdl_end"
@@ -72,7 +72,7 @@ Selecione como o retorno será realizado abaixo:" />
                 android:id="@+id/rg_continue_partial_execution"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="20dp"
                 android:text="RadioButton"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -88,7 +88,7 @@ Selecione como o retorno será realizado abaixo:" />
             android:id="@+id/mkdate_partial_execution"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginStart="32dp"
             app:layout_constraintEnd_toStartOf="@+id/act011_gdl_end"
             app:layout_constraintStart_toStartOf="@+id/act011_gdl_start"
             app:layout_constraintTop_toBottomOf="@+id/not_finalized_dialog_check_option_rg"
@@ -107,10 +107,16 @@ Selecione como o retorno será realizado abaixo:" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="5dp"
+        android:background="@color/m3_namoa_outline" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp">
+        android:layout_height="wrap_content">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/act011_dialog_check_btn_cancel"
