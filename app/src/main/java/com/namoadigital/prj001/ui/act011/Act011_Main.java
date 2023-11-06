@@ -162,7 +162,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -551,6 +554,14 @@ public class Act011_Main extends Base_Activity
         //
         transList.add("alert_update_structure_ttl");
         transList.add("alert_update_structure_msg");
+        //
+        transList.add("dialog_finalize_not_finalized_lbl");
+        transList.add("dialog_not_finalized_info_lbl");
+        transList.add("dialog_not_finalized_decide_planning_lbl");
+        transList.add("dialog_not_finalized_partial_execution_lbl");
+        transList.add("dialog_not_finalized_ok_lbl");
+        transList.add("dialog_not_finalized_cancel_lbl");
+        transList.add("dialog_not_finalized_date_incorrect");
         //
         transList.addAll(Act011FrgInspection.Companion.getFragTranslationsVars());
         //
@@ -3777,84 +3788,112 @@ public class Act011_Main extends Base_Activity
         //
     }
 
-    private void showNotFinalizedDialogOpt() {
+    private void showNotFinalizedDialogOpt(Act011CheckDialogBinding mainBinding, AlertDialog mainDialog) {
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        //
         CheckDialogFinalizeBinding binding = CheckDialogFinalizeBinding.inflate(getLayoutInflater());
+        builder.setView(binding.getRoot()).setCancelable(true);
+        AlertDialog alertDialog = builder.create();
         //
-        binding.mkdatePartialExecution.setmEnabled(false);
-        binding.rgDecideOnPlanning.setChecked(true);
-        binding.rgDecideOnPlanning.setText("Direcionar para a área de Planejamento decidir");
-        binding.rgContinuePartialExecution.setText("Direcionar para a área de Planejamento decidir");
+        boolean kanbanRescheduleDateIsEmpty = formData.getKanban_reschedule_date() == null || formData.getKanban_reschedule_date().isEmpty();
+        String date = formData.getKanban_reschedule_date();
+
+        binding.act011DialogNotFinalizedTvSubTitle.setText(hmAux_Trans.get("dialog_not_finalized_info_lbl"));
+        binding.rgDecideOnPlanning.setText(hmAux_Trans.get("dialog_not_finalized_decide_planning_lbl"));
+        binding.rgContinuePartialExecution.setText(hmAux_Trans.get("dialog_not_finalized_partial_execution_lbl"));
+        binding.act011DialogCheckBtnOk.setText(hmAux_Trans.get("dialog_not_finalized_ok_lbl"));
+        binding.act011DialogCheckBtnCancel.setText(hmAux_Trans.get("dialog_not_finalized_cancel_lbl"));
+        binding.tvIncorrect.setText(hmAux_Trans.get("dialog_not_finalized_date_incorrect"));
+
+
+        if (kanbanRescheduleDateIsEmpty) {
+            binding.rgDecideOnPlanning.setChecked(true);
+            binding.rgContinuePartialExecution.setChecked(false);
+            binding.mkdatePartialExecution.setmEnabled(false);
+            binding.mkdatePartialExecution.setmValue(getNextDay(), true);
+        } else {
+            binding.rgDecideOnPlanning.setChecked(false);
+            binding.rgContinuePartialExecution.setChecked(true);
+            binding.mkdatePartialExecution.setmEnabled(true);
+            binding.mkdatePartialExecution.setmValue(date, true);
+        }
 
         binding.notFinalizedDialogCheckOptionRg.setOnCheckedChangeListener((radioGroup, index) -> {
-            binding.mkdatePartialExecution.setmEnabled(index == binding.rgContinuePartialExecution.getId());
+            boolean isPartialExecution = index == binding.rgContinuePartialExecution.getId();
+
+            if (isPartialExecution) {
+                binding.mkdatePartialExecution.setmEnabled(true);
+                binding.act011DialogCheckBtnOk.setEnabled(binding.mkdatePartialExecution.isValid());
+            } else {
+                binding.mkdatePartialExecution.setmEnabled(false);
+                binding.act011DialogCheckBtnOk.setEnabled(true);
+                binding.tvIncorrect.setVisibility(View.GONE);
+            }
+
+        });
+
+        binding.mkdatePartialExecution.setOnSelectedValue(dateSelected -> {
+            String currentDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z").format(new Date());
+            if (ToolBox_Inf.getDateDiferenceInDays(dateSelected, currentDate) <= 0 || ToolBox_Inf.getDateDiferenceInDays(dateSelected, currentDate) > 15) {
+                binding.tvIncorrect.setVisibility(View.VISIBLE);
+                binding.act011DialogCheckBtnOk.setEnabled(false);
+            } else {
+                binding.act011DialogCheckBtnOk.setEnabled(true);
+                binding.tvIncorrect.setVisibility(View.GONE);
+            }
         });
 
         //
-        builder.setView(binding.getRoot()).setCancelable(false);
+        binding.act011DialogCheckBtnOk.setOnClickListener(v -> {
+            alertDialog.dismiss();
+            if (binding.rgContinuePartialExecution.isChecked()) {
+                String mkDATE = binding.mkdatePartialExecution.getmValue();
+                formData.setKanban_reschedule_date(mkDATE);
+                finalizedAndSendForm(-1, mainBinding, mainDialog);
+            }
+
+            if (binding.rgDecideOnPlanning.isChecked()) {
+                finalizedAndSendForm(0, mainBinding, mainDialog);
+            }
+        });
+
+        binding.act011DialogCheckBtnCancel.setOnClickListener(v -> {
+            if (kanbanRescheduleDateIsEmpty) {
+                formData.setKanban_reschedule_date(null);
+            }
+            alertDialog.dismiss();
+        });
         //
-        final AlertDialog alertDialog = builder.create();
         alertDialog.show();
         //
+    }
+
+    private String getNextDay() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
+
+        // Defina a hora, minuto, segundo e milissegundo para as 08:00:00.000
+        calendar.set(Calendar.HOUR_OF_DAY, 8);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        // Formate a data e hora em uma String
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return format.format(calendar.getTime());
     }
 
     private void setDialogAction(Act011CheckDialogBinding binding, AlertDialog alertDialog) {
 
         binding.act011DialogCheckBtnNotFinalized.setOnClickListener(v -> {
-            showNotFinalizedDialogOpt();
+            showNotFinalizedDialogOpt(binding, alertDialog);
         });
 
         binding.act011DialogCheckBtnOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (isFormOs) {
-                    String startDate = binding.act011DialogCheckMkdateFormStart.getmValue();
-                    String endDate = binding.act011DialogCheckMkdateFormEnd.getmValue();
-                    String errorMsg = isFinalizeDialogInputValid(binding, startDate, endDate);
-                    if (errorMsg.isEmpty()) {
-                        //LUCHE - 08/11/2021 - resgata contador antes para ser usado na validação
-                        //de refreshCurrentTabRecycle. Se não há mais não respondidos(segunda chama),
-                        //então evita loops desnecessarios
-                        int missingAnswersCounter = missingAnswersCounter();
-                        //
-                        mPresenter.updateGeOsItems(
-                                geOs,
-                                missingAnswersCounter,
-                                startDate,
-                                endDate
-                        );
-                        //
-                        mPresenter.saveSerialClass(ToolBox_Con.getPreference_Customer_Code(context),
-                                Integer.parseInt(product_code),
-                                serial_id,
-                                formLocal,
-                                binding.ssSerialClass
-                        );
-                        //
-                        formData.setFinalized_service(1);
-                        //
-                        formData.setClass_code(ToolBox_Inf.mIntegerParse(binding.ssSerialClass.getmValue().get(SearchableSpinner.CODE)));
-                        //Somente chama atualização das listas dos recycles se houver itens precisando
-                        //ser alterados.
-                        if (missingAnswersCounter > 0) {
-                            refreshCurrentTabRecycle();
-                        }
-                        //Seta valor var que controla se fluxo é finaliza ou finaliza mais novo.
-                        finalizeNewFlow = binding.act011DialogCheckOptionRg.getCheckedRadioButtonId() == R.id.act011_dialog_check_option_rdo_finalize_new;
-                        //
-                        startCheckIN();
-                        //
-                        alertDialog.dismiss();
-                    } else {
-                        ToolBox.alertMSG(
-                                context,
-                                hmAux_Trans.get("dialog_finalize_so_form_invalid_ttl"),
-                                errorMsg,
-                                null,
-                                0
-                        );
-                    }
+                    finalizedAndSendForm(1, binding, alertDialog);
                 } else {
                     //Seta valor var que controla se fluxo é finaliza ou finaliza mais novo.
                     finalizeNewFlow = binding.act011DialogCheckOptionRg.getCheckedRadioButtonId() == R.id.act011_dialog_check_option_rdo_finalize_new;
@@ -3922,6 +3961,55 @@ public class Act011_Main extends Base_Activity
                 ToolBox_Inf.setClassIcon(context, hmAux, binding.ssSerialClass);
             }
         });
+    }
+
+    private void finalizedAndSendForm(int finalizedService, Act011CheckDialogBinding binding, AlertDialog alertDialog) {
+        String startDate = binding.act011DialogCheckMkdateFormStart.getmValue();
+        String endDate = binding.act011DialogCheckMkdateFormEnd.getmValue();
+        String errorMsg = isFinalizeDialogInputValid(binding, startDate, endDate);
+        if (errorMsg.isEmpty()) {
+            //LUCHE - 08/11/2021 - resgata contador antes para ser usado na validação
+            //de refreshCurrentTabRecycle. Se não há mais não respondidos(segunda chama),
+            //então evita loops desnecessarios
+            int missingAnswersCounter = missingAnswersCounter();
+            //
+            mPresenter.updateGeOsItems(
+                    geOs,
+                    missingAnswersCounter,
+                    startDate,
+                    endDate
+            );
+            //
+            mPresenter.saveSerialClass(ToolBox_Con.getPreference_Customer_Code(context),
+                    Integer.parseInt(product_code),
+                    serial_id,
+                    formLocal,
+                    binding.ssSerialClass
+            );
+            //
+            formData.setFinalized_service(finalizedService);
+            //
+            formData.setClass_code(ToolBox_Inf.mIntegerParse(binding.ssSerialClass.getmValue().get(SearchableSpinner.CODE)));
+            //Somente chama atualização das listas dos recycles se houver itens precisando
+            //ser alterados.
+            if (missingAnswersCounter > 0) {
+                refreshCurrentTabRecycle();
+            }
+            //Seta valor var que controla se fluxo é finaliza ou finaliza mais novo.
+            finalizeNewFlow = binding.act011DialogCheckOptionRg.getCheckedRadioButtonId() == R.id.act011_dialog_check_option_rdo_finalize_new;
+            //
+            startCheckIN();
+            //
+            alertDialog.dismiss();
+        } else {
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("dialog_finalize_so_form_invalid_ttl"),
+                    errorMsg,
+                    null,
+                    0
+            );
+        }
     }
 
     private void clearMkEdtJustifyMissingAnswerValFocus(MKEditTextNM mkEditTextNM) {
@@ -4046,6 +4134,7 @@ public class Act011_Main extends Base_Activity
 
         if (showQuestionFormOsConcludesTickets()) {
             binding.act011DialogCheckBtnNotFinalized.setVisibility(View.VISIBLE);
+            binding.act011DialogCheckBtnNotFinalized.setText(hmAux_Trans.get("dialog_finalize_not_finalized_lbl"));
         }
     }
 
