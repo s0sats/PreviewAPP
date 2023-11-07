@@ -1205,8 +1205,13 @@ public class Act011_Main extends Base_Activity
         setGeFilesList();
 
         formData.setSignature(mSignature);
-
-        mPresenter.checkSignature(formData, geOs, signature, 0, geFiles, require_serial_done, require_serial_done_ok, formLocal.getRequire_location());
+        int requireSignature = signature;
+        if ( formData.getFinalized_service() != null
+          && formData.getFinalized_service() == -1
+        ){
+            requireSignature = 0;
+        }
+        mPresenter.checkSignature(formData, geOs, requireSignature, 0, geFiles, require_serial_done, require_serial_done_ok, formLocal.getRequire_location());
     }
 
     private void setGeFilesList() {

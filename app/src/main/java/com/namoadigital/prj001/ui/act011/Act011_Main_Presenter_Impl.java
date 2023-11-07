@@ -474,7 +474,6 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 //Remove restrições preenchidas na primeira rodada.
 
                 if( isContinuosForm(mCustomFormDataPartition) ){
-                    customFormLocal.setRequire_signature(0);
                     customFormLocal.setRequire_location(0);
                     customFormLocal.setRequire_serial_done(0);
                 }
@@ -615,6 +614,10 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                         //Seta data de checkin no formData
                         formData.setTicket_checkin_date(ticketStep.getStep_start_date());
                     }
+                    //
+                    if(isContinuosForm(mCustomFormDataPartition)){
+                        formData.setCustom_form_data_partition(mCustomFormDataPartition);
+                    }
                 }
                 //if (bAgendado) {
                 if (isScheduleFirstTime) {
@@ -645,9 +648,6 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
 
                     formData.setSite_code(String.valueOf(customFormLocal.getSite_code()));
                     //
-                    if(isContinuosForm(mCustomFormDataPartition)){
-                        formData.setCustom_form_data_partition(mCustomFormDataPartition);
-                    }
                     custom_form_dataDao.addUpdate(formData);
                     custom_form_data_fieldDao.addUpdate(formData.getDataFields(), false);
                 }
@@ -1660,7 +1660,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     public void checkData(GE_Custom_Form_Data formData, GeOs geOs, ArrayList<GE_File> geFiles, int require_serial_done, String require_serial_done_ok, int require_location, int require_signature) {
 
         if (require_serial_done == 1 && !require_serial_done_ok.equalsIgnoreCase("OK")) {
-            if (require_signature == 1) {
+            if (require_signature == 1
+                    && formData.getFinalized_service() != null && formData.getFinalized_service() > -1) {
                 if (formData.getSignature_name().trim().length() == 0
                         || formData.getSignature_name().equals(Constant.CACHE_PATH_PHOTO + "/" + formData.getSignature())
                 ) {
