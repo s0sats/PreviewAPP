@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act087
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -127,6 +128,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 "measure_current_value_hint",
                 "measure_last_value_lbl",
                 "btn_save",
+                "btn_continue",
                 "erro_dialog_ttl",
                 "alert_invalid_order_type_error_msg",
                 "alert_empty_bkp_machine_error_msg",
@@ -197,6 +199,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun setLabels() {
         with(binding){
             tvOsTypeLbl.text = hmAuxTrans["order_type_lbl"]
@@ -207,14 +210,20 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             mketOsMainMeasureVal.hint = hmAuxTrans["measure_current_value_hint"]
             tvOsLastMeasureLbl.text = hmAuxTrans["measure_last_value_lbl"]
             swAllowFormSoInThePast.text = hmAuxTrans["allow_measure_in_the_past_lbl"]
-            notificationPartial.root.visibility = ticketForm?.let{
+            ticketForm?.let {
                 notificationPartial.apply {
-                    tvMessage.text = """${hmAuxTrans["form_os_partition_headline_lbl"]} ${it.partition_min_date.formatTo(
-                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-                    )}"""
+                    tvMessage.text = "${hmAuxTrans["form_os_partition_headline_lbl"]} ${
+                        it.partition_min_date.formatTo(
+                            ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                        )
+                    }"
+                    root.visibility = View.VISIBLE
                 }
-                View.VISIBLE
-            }?: View.GONE
+
+                btnSave.text = hmAuxTrans["btn_continue"]
+            } ?: run {
+                btnSave.text = hmAuxTrans["btn_save"]
+            }
             //Lista com os textView que será usado para add colocar contadore nos campos
             labelsView.add(tvOsTypeLbl)
             labelsView.add(tvOsMachineLbl)
@@ -584,7 +593,6 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     private fun iniSaveBtn() {
         binding.btnSave.apply {
             visibility = if(isOsCreation) View.VISIBLE else View.GONE
-            text = hmAuxTrans["btn_save"]
             if (isOsCreation) {
                 setOnClickListener {
                     checkSave()
