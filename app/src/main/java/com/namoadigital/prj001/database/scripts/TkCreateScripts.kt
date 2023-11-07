@@ -24,7 +24,7 @@ const val TK_TICKET_FORM_CREATE_SCRIPT =
         [pdf_name] text collate nocase, 
         [pdf_url] text collate nocase, 
         [pdf_url_local] text collate nocase, 
-        [custom_form_data_partition] int not null default 0, 
+        [custom_form_data_partition] int, 
         [order_type_code] int, 
         [order_type_desc] text collate nocase, 
         [process_type] text collate nocase, 

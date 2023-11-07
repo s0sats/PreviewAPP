@@ -800,9 +800,7 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
             contentValues.put(PDF_NAME,tk_ticket_form.getPdf_name());
             contentValues.put(PDF_URL,tk_ticket_form.getPdf_url());
             contentValues.put(PDF_URL_LOCAL,tk_ticket_form.getPdf_url_local());
-            if (tk_ticket_form.getCustom_form_data_partition() > -1) {
-                contentValues.put(CUSTOM_FORM_DATA_PARTITION, tk_ticket_form.getCustom_form_data_partition());
-            }
+            contentValues.put(CUSTOM_FORM_DATA_PARTITION, tk_ticket_form.getCustom_form_data_partition());
             contentValues.put(ORDER_TYPE_CODE,tk_ticket_form.getOrder_type_code());
             contentValues.put(ORDER_TYPE_DESC,tk_ticket_form.getOrder_type_desc());
             contentValues.put(PROCESS_TYPE,tk_ticket_form.getProcess_type());

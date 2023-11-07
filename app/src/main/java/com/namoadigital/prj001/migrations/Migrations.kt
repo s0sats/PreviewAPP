@@ -321,7 +321,7 @@ val migrationV10: MigrationSQLite = object : MigrationSQLite(10, 11) {
                 TK_Ticket_FormDao.CUSTOM_FORM_DATA_PARTITION
             )
         ) {
-            db.execSQL(""" ALTER TABLE [${TK_Ticket_FormDao.TABLE}] ADD [${TK_Ticket_FormDao.CUSTOM_FORM_DATA_PARTITION}] int not null default 0;""".trimIndent())
+            db.execSQL(""" ALTER TABLE [${TK_Ticket_FormDao.TABLE}] ADD [${TK_Ticket_FormDao.CUSTOM_FORM_DATA_PARTITION}] int;""".trimIndent())
         }
         //
         if (!isFieldExist(

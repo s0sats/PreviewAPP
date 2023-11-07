@@ -780,10 +780,7 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             contentValues.put(MEASURE_VALUE, custom_form_data.getMeasure_value());
             contentValues.put(MEASURE_CYCLE_VALUE, custom_form_data.getMeasure_cycle_value());
             contentValues.put(FINALIZED_SERVICE, custom_form_data.getFinalized_service());
-
-            if (custom_form_data.getCustom_form_data_partition() > -1) {
-                contentValues.put(CUSTOM_FORM_DATA_PARTITION, custom_form_data.getCustom_form_data_partition());
-            }
+            contentValues.put(CUSTOM_FORM_DATA_PARTITION, custom_form_data.getCustom_form_data_partition());
             contentValues.put(KANBAN_RESCHEDULE_DATE, custom_form_data.getKanban_reschedule_date());
 
             return contentValues;

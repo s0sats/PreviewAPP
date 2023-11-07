@@ -593,8 +593,13 @@ class Act087MainPresenter(
             putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, formOsHeader.custom_form_data.toString())
             val tkTicketForm = getTkTicketForm()
             tkTicketForm?.let{
-                putInt(GE_Custom_Form_DataDao.CUSTOM_FORM_DATA_PARTITION, it.custom_form_data_partition)
-            }?: putInt(GE_Custom_Form_DataDao.CUSTOM_FORM_DATA_PARTITION, mCustomFormDataPartition?:0)
+                if(it.custom_form_data_partition != null) {
+                    putInt(
+                        GE_Custom_Form_DataDao.CUSTOM_FORM_DATA_PARTITION,
+                        it.custom_form_data_partition
+                    )
+                }
+            }
 
             //Após finalizar a criação da O.S, além de navegar para a act011, o usr deve ser direcionado
             //para a primeira aba depois do cabeçalho. O bundle abaixo tem os parametros para essa navegação.
