@@ -430,7 +430,7 @@ val migrationV10: MigrationSQLite = object : MigrationSQLite(10, 11) {
                 GE_Custom_Form_DataDao.CUSTOM_FORM_DATA_PARTITION
             )
         ) {
-            db.execSQL(""" ALTER TABLE [${GE_Custom_Form_DataDao.TABLE}] ADD [${GE_Custom_Form_DataDao.CUSTOM_FORM_DATA_PARTITION}] int not null default 0;""".trimIndent())
+            db.execSQL(""" ALTER TABLE [${GE_Custom_Form_DataDao.TABLE}] ADD [${GE_Custom_Form_DataDao.CUSTOM_FORM_DATA_PARTITION}] int;""".trimIndent())
         }
         //
         if (!isFieldExist(

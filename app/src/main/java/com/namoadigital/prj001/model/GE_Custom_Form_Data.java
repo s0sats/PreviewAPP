@@ -196,7 +196,7 @@ public class GE_Custom_Form_Data {
     private Integer finalized_service;
     @Expose
     @SerializedName("custom_form_data_partition")
-    private int custom_form_data_partition;
+    private Integer custom_form_data_partition;
     @Expose
     @SerializedName("kanban_reschedule_date")
     private String kanban_reschedule_date;
