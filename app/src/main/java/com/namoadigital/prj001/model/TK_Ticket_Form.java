@@ -46,7 +46,7 @@ public class TK_Ticket_Form implements Serializable {
     @SerializedName("pdf_url") private String pdf_url;
     @Nullable
     @SerializedName("pdf_url_local") private String pdf_url_local;
-    @SerializedName("custom_form_data_partition") private int custom_form_data_partition;
+    @SerializedName("custom_form_data_partition") private Integer custom_form_data_partition;
     @SerializedName("order_type_code") private Integer order_type_code;
     @SerializedName("order_type_desc") private String order_type_desc;
     @SerializedName("process_type") private String process_type;
@@ -253,11 +253,11 @@ public class TK_Ticket_Form implements Serializable {
         this.pdf_url_local = pdf_url_local;
     }
 
-    public int getCustom_form_data_partition() {
+    public Integer getCustom_form_data_partition() {
         return custom_form_data_partition;
     }
 
-    public void setCustom_form_data_partition(int custom_form_data_partition) {
+    public void setCustom_form_data_partition(Integer custom_form_data_partition) {
         this.custom_form_data_partition = custom_form_data_partition;
     }
 

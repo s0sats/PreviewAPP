@@ -646,7 +646,13 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
                 custom_form_data.setFinalized_service(cursor.getInt(cursor.getColumnIndex(FINALIZED_SERVICE)));
             }
 
-            custom_form_data.setCustom_form_data_partition(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_DATA_PARTITION)));
+            if (cursor.isNull(cursor.getColumnIndex(CUSTOM_FORM_DATA_PARTITION))) {
+                custom_form_data.setCustom_form_data_partition(null);
+            } else {
+                custom_form_data.setCustom_form_data_partition(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_DATA_PARTITION)));
+            }
+
+
 
             if (cursor.isNull(cursor.getColumnIndex(KANBAN_RESCHEDULE_DATE))) {
                 custom_form_data.setKanban_reschedule_date(null);

@@ -646,11 +646,11 @@ public class GE_Custom_Form_Data {
         this.finalized_service = finalized_service;
     }
 
-    public int getCustom_form_data_partition() {
+    public Integer getCustom_form_data_partition() {
         return custom_form_data_partition;
     }
 
-    public void setCustom_form_data_partition(int custom_form_data_partition) {
+    public void setCustom_form_data_partition(Integer custom_form_data_partition) {
         this.custom_form_data_partition = custom_form_data_partition;
     }
 
