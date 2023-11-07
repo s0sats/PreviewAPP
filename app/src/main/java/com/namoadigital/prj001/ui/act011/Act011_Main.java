@@ -166,9 +166,9 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -3851,7 +3851,7 @@ public class Act011_Main extends Base_Activity
         });
 
         binding.mkdatePartialExecution.setOnSelectedValue(dateSelected -> {
-            String currentDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z").format(new Date());
+            String currentDate = ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT);
             if (ToolBox_Inf.getDateDiferenceInMilliseconds(dateSelected, currentDate) < 0 || ToolBox_Inf.getDateDiferenceInDays(dateSelected, currentDate) > 14) {
                 binding.tvIncorrect.setVisibility(View.VISIBLE);
                 binding.act011DialogCheckBtnOk.setEnabled(false);
@@ -3888,6 +3888,7 @@ public class Act011_Main extends Base_Activity
 
     private String getNextDay() {
         Calendar calendar = Calendar.getInstance();
+        String deviceGmt = ToolBox.getDeviceGMT(true);
         calendar.add(Calendar.DAY_OF_MONTH, 1);
 
         // Defina a hora, minuto, segundo e milissegundo para as 08:00:00.000
@@ -3895,9 +3896,10 @@ public class Act011_Main extends Base_Activity
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
+        TimeZone.setDefault(TimeZone.getTimeZone(deviceGmt));
 
         // Formate a data e hora em uma String
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss ZZZZZ");
         return format.format(calendar.getTime());
     }
 
