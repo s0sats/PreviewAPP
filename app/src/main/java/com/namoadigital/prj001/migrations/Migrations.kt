@@ -399,10 +399,10 @@ val migrationV10: MigrationSQLite = object : MigrationSQLite(10, 11) {
         if (!isFieldExist(
                 db,
                 TK_Ticket_FormDao.TABLE,
-                TK_Ticket_FormDao.DATE_END
+                TK_Ticket_FormDao.START_DATE
             )
         ) {
-            db.execSQL(""" ALTER TABLE [${TK_Ticket_FormDao.TABLE}] ADD [${TK_Ticket_FormDao.DATE_END}] text collate nocase;""".trimIndent())
+            db.execSQL(""" ALTER TABLE [${TK_Ticket_FormDao.TABLE}] ADD [${TK_Ticket_FormDao.START_DATE}] text collate nocase;""".trimIndent())
         }
         //
         if (!isFieldExist(

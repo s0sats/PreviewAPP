@@ -55,7 +55,7 @@ public class TK_Ticket_Form implements Serializable {
     @SerializedName("measure_value") private Double measure_value;
     @SerializedName("measure_cycle_value") private Float measure_cycle_value;
     @SerializedName("value_sufix") private String value_sufix;
-    @SerializedName("date_end") private String date_end;
+    @SerializedName("date_start") private String start_date;
     @SerializedName("partition_min_date") private String partition_min_date;
 
     public TK_Ticket_Form() {
@@ -325,12 +325,12 @@ public class TK_Ticket_Form implements Serializable {
         this.value_sufix = value_sufix;
     }
 
-    public String getDate_end() {
-        return date_end;
+    public String getStart_date() {
+        return start_date;
     }
 
-    public void setDate_end(String date_end) {
-        this.date_end = date_end;
+    public void setStart_date(String start_date) {
+        this.start_date = start_date;
     }
 
     public String getPartition_min_date() {

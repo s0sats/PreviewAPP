@@ -33,7 +33,7 @@ const val TK_TICKET_FORM_CREATE_SCRIPT =
         [measure_value] real, 
         [measure_cycle_value] real, 
         [value_sufix] text collate nocase, 
-        [date_end] text collate nocase, 
+        [start_date] text collate nocase, 
         [partition_min_date] text collate nocase, 
         CONSTRAINT [pk_tk_ticket_form] 
         PRIMARY KEY([customer_code], [ticket_prefix], [ticket_code], [step_code], [ticket_seq_tmp])

@@ -2,7 +2,6 @@ package com.namoadigital.prj001.ui.act087
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -40,7 +39,6 @@ import com.namoadigital.prj001.view.act.product_selection.Act_Product_Selection
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.math.ceil
 
 class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrgInfr {
@@ -52,12 +50,12 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     private var measureTpListener: FormOsHeaderFrgMeasureInteraction? = null
     private var mCreationListener: FormOsHeaderFrgCreationInteraction? = null
     private var orderTypeList: ArrayList<MdOrderType> = arrayListOf()
-    private val spinnerAdapter: ArrayAdapter<String> by lazy{
-            ArrayAdapter(
-                requireContext(),
-                R.layout.form_os_header_frg_spinner_item,
-                getSpinnerOrderStringList()
-            )
+    private val spinnerAdapter: ArrayAdapter<String> by lazy {
+        ArrayAdapter(
+            requireContext(),
+            R.layout.form_os_header_frg_spinner_item,
+            getSpinnerOrderStringList()
+        )
     }
 
     private val labelsView = mutableListOf<TextView>()
@@ -72,16 +70,17 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     private var calculatedExecCycle: Float = -1f
     private var bkpMachineDialog: AlertDialog? = null
     private var isBarcodeRead: Boolean = false
+
     //Var usada somente na criação, se isso mudar, deve ser revisto sua inicialização.
-    private val formRequiresGPS: Boolean by lazy{
-        mCreationListener?.getFormRequiresGPS()?:false
+    private val formRequiresGPS: Boolean by lazy {
+        mCreationListener?.getFormRequiresGPS() ?: false
     }
     private val ticketForm by lazy {
         mCreationListener?.getTkTicketForm()
             ?: measureTpListener?.getTkTicketForm()
     }
 
-    companion object{
+    companion object {
         @JvmStatic
         fun newInstance(
             hmAuxTrans: HMAux,
@@ -93,7 +92,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             formOsHeader: GeOs,
             isOsCreation: Boolean = false
         ) = FormOsHeaderFrg()
-            .apply{
+            .apply {
                 this.hmAuxTrans = hmAuxTrans
                 this.formStatus = formStatus
                 this.tabIndex = tabIndex
@@ -105,20 +104,20 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 this.isFormOs = true
                 //
                 arguments = Bundle().apply {
-                    putString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS,formStatus)
-                    putInt(GE_Custom_Form_Field_LocalDao.PAGE,tabIndex)
-                    putInt(PARAM_LAST_INDEX,tabLastIndex)
-                    putString(MD_Schedule_ExecDao.SCHEDULE_DESC,scheduleDesc)
-                    putString(GE_Custom_Form_Field_LocalDao.COMMENT,scheduleComments)
+                    putString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS, formStatus)
+                    putInt(GE_Custom_Form_Field_LocalDao.PAGE, tabIndex)
+                    putInt(PARAM_LAST_INDEX, tabLastIndex)
+                    putString(MD_Schedule_ExecDao.SCHEDULE_DESC, scheduleDesc)
+                    putString(GE_Custom_Form_Field_LocalDao.COMMENT, scheduleComments)
                     putSerializable(GeOs::javaClass.name, formOsHeader)
-                    putBoolean(PARAM_IS_CREATION_OS,isOsCreation)
-                    putBoolean(GE_Custom_Form_LocalDao.IS_SO,isFormOs)
+                    putBoolean(PARAM_IS_CREATION_OS, isOsCreation)
+                    putBoolean(GE_Custom_Form_LocalDao.IS_SO, isFormOs)
                 }
             }
 
         val mResource_Name = "form_os_header"
 
-        fun getFragTranslationsVars() : List<String>{
+        fun getFragTranslationsVars(): List<String> {
             return listOf(
                 "order_type_lbl",
                 "use_backup_lbl",
@@ -153,21 +152,22 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 "alert_measure_error_ttl",
                 "alert_measure_invalid_value_msg",
                 "form_os_partition_headline_lbl",
+                "alert_invalid_start_date_partition_error_msg"
             )
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let{
+        arguments?.let {
             tabIndex = it.getInt(GE_Custom_Form_Field_LocalDao.PAGE)
             tabLastIndex = it.getInt(PARAM_LAST_INDEX)
-            formStatus = it.getString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS,"")
+            formStatus = it.getString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS, "")
             scheduleDesc = it.getString(MD_Schedule_ExecDao.SCHEDULE_DESC)
             scheduleComments = it.getString(GE_Custom_Form_Field_LocalDao.COMMENT)
             isOsCreation = it.getBoolean(PARAM_IS_CREATION_OS)
             formOsHeader = it.getSerializable(GeOs::javaClass.name) as GeOs
-            isFormOs = it.getBoolean(GE_Custom_Form_LocalDao.IS_SO,false)
+            isFormOs = it.getBoolean(GE_Custom_Form_LocalDao.IS_SO, false)
         }
     }
 
@@ -185,11 +185,11 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     }
 
     private fun setCtrlsStaList() {
-        if(isOsCreation) {
+        if (isOsCreation) {
             controlsSta.clear()
             controlsSta.add(binding.mketMachineSerialEdit)
             controlsSta.add(binding.mketOsMainMeasureVal)
-            mCreationListener?.delegateControlSta(controlsSta,true)
+            mCreationListener?.delegateControlSta(controlsSta, true)
         }
     }
 
@@ -201,7 +201,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
 
     @SuppressLint("SetTextI18n")
     private fun setLabels() {
-        with(binding){
+        with(binding) {
             tvOsTypeLbl.text = hmAuxTrans["order_type_lbl"]
             tvOsMachineLbl.text = hmAuxTrans["use_backup_lbl"]
             tvOsStartDateLbl.text = hmAuxTrans["start_date_lbl"]
@@ -212,14 +212,12 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             swAllowFormSoInThePast.text = hmAuxTrans["allow_measure_in_the_past_lbl"]
             ticketForm?.let {
                 notificationPartial.apply {
-                    tvMessage.text = "${hmAuxTrans["form_os_partition_headline_lbl"]} ${
-                        it.partition_min_date.formatTo(
-                            ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-                        )
-                    }"
+                    val date = it.start_date.formatTo(
+                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                    )
+                    tvMessage.text = "${hmAuxTrans["form_os_partition_headline_lbl"]} $date"
                     root.visibility = View.VISIBLE
                 }
-
                 btnSave.text = hmAuxTrans["btn_continue"]
             } ?: run {
                 btnSave.text = hmAuxTrans["btn_save"]
@@ -244,17 +242,17 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     }
 
     private fun iniSwAllowInThePast() {
-        with(binding){
-            swAllowFormSoInThePast.visibility = if(ToolBox_Inf.profileExists(
-                requireContext(),
-                ConstantBaseApp.PROFILE_PRJ001_CHECKLIST,
-                ConstantBaseApp.PROFILE_PRJ001_CHECKLIST_PARAM_ALLOW_FORM_SO_IN_THE_PAST
-            )
+        with(binding) {
+            swAllowFormSoInThePast.visibility = if (ToolBox_Inf.profileExists(
+                    requireContext(),
+                    ConstantBaseApp.PROFILE_PRJ001_CHECKLIST,
+                    ConstantBaseApp.PROFILE_PRJ001_CHECKLIST_PARAM_ALLOW_FORM_SO_IN_THE_PAST
+                )
                 && isOsCreation
                 && !isContinuosFormPartition()
-            ){
+            ) {
                 View.VISIBLE
-            }else{
+            } else {
                 View.GONE
             }
         }
@@ -264,8 +262,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
      * Fun que transforma a lista de MdOrderType em lista de string.
      * Se não houver order type default, add item em branco
      */
-    private fun getSpinnerOrderStringList() : List<String>{
-        if(formOsHeader.so_order_type_code_default == null && isOsCreation) {
+    private fun getSpinnerOrderStringList(): List<String> {
+        if (formOsHeader.so_order_type_code_default == null && isOsCreation) {
             orderTypeList.add(
                 0,
                 MdOrderType(
@@ -285,8 +283,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     }
 
     private fun iniOrderTypeSpinner() {
-        if(isOsCreation) {
-            if(isContinuosFormPartition()){
+        if (isOsCreation) {
+            if (isContinuosFormPartition()) {
                 orderTypeList = arrayListOf(
                     MdOrderType(
                         ticketForm!!.customer_code,
@@ -298,12 +296,12 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                         null
                     )
                 )
-            }else {
+            } else {
                 mCreationListener?.let {
                     orderTypeList = it.getOrderTypeList()
                 }
             }
-        }else{
+        } else {
             orderTypeList = arrayListOf(
                 MdOrderType(
                     formOsHeader.customer_code,
@@ -320,25 +318,27 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         binding.spOsType.apply {
             adapter = spinnerAdapter
             //Se existe order default seta
-            if(isOsCreation
-            && !isContinuosFormPartition()) {
+            if (isOsCreation
+                && !isContinuosFormPartition()
+            ) {
                 formOsHeader.so_order_type_code_default?.let {
                     val orderTypeDefaultIdx = getOrderTypeIdx(it)
                     if (orderTypeDefaultIdx > -1) {
                         setSelection(orderTypeDefaultIdx)
                     }
                 }
-            }else{
+            } else {
                 setSelection(0)
             }
             //Se order permite alterar e é um criação , libera edição
-            isEnabled = formOsHeader.so_allow_change_order_type == 1 && isOsCreation && !isContinuosFormPartition()
+            isEnabled =
+                formOsHeader.so_allow_change_order_type == 1 && isOsCreation && !isContinuosFormPartition()
         }
     }
 
     private fun getOrderTypeIdx(orderTypeCode: Int): Int {
         var orderTypeDefaultIdx = -1
-        if(orderTypeCode != -1) {
+        if (orderTypeCode != -1) {
             orderTypeList.forEachIndexed { idx, obj ->
                 if (orderTypeCode == obj.orderTypeCode) {
                     orderTypeDefaultIdx = idx
@@ -352,7 +352,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     private fun iniBkpMachine() {
         with(binding) {
             //Se permite maquina reserva exibe, caso contrario some tudo.
-            if(formOsHeader.so_allow_backup == 1
+            if (formOsHeader.so_allow_backup == 1
                 && !isContinuosFormPartition()
             ) {
                 swMachine.isChecked = (formOsHeader.backup_product_code != null)
@@ -378,10 +378,12 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                     mketMachineSerialEdit.isEnabled = false
                     mketMachineSerialEdit.setmBARCODE(false)
                     tilMketSerial.isHelperTextEnabled = false
-                    ivSwapMachine.visibility = if(formOsHeader.backup_serial_code != null) View.INVISIBLE else View.GONE
-                    ivSerialSearch.visibility = if(formOsHeader.backup_serial_code != null) View.INVISIBLE else View.GONE
+                    ivSwapMachine.visibility =
+                        if (formOsHeader.backup_serial_code != null) View.INVISIBLE else View.GONE
+                    ivSerialSearch.visibility =
+                        if (formOsHeader.backup_serial_code != null) View.INVISIBLE else View.GONE
                 }
-            }else{
+            } else {
                 clMachineEdit.visibility = View.GONE
                 tvOsMachineLbl.visibility = View.GONE
                 swMachine.isEnabled = false
@@ -392,7 +394,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     private fun isContinuosFormPartition() = ticketForm != null
 
     private fun updateBkpMachineVisibility() {
-        with(binding){
+        with(binding) {
             gpBkpMachineVal.visibility = if (swMachine.isChecked) View.VISIBLE else View.GONE
         }
     }
@@ -401,23 +403,30 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         serialBkpMachineList: List<FormOsHeaderFrgSerialBkpItemAbs>,
         onlineSearch: Boolean
     ) {
-        if(serialBkpMachineList.size == 1){
+        if (serialBkpMachineList.size == 1) {
             val serialBkp = serialBkpMachineList[0] as FormOsHeaderFrgSerialBkpItem
-            if(serialBkp.serialId.equals(binding.mketMachineSerialEdit.text.toString(),true)){
+            if (serialBkp.serialId.equals(binding.mketMachineSerialEdit.text.toString(), true)) {
                 setSelectedBkpMachineSerial(serialBkp, autoSelection = true)
-            }else{
-                showBkpMachineDialog(serialBkpMachineList,onlineSearch)
+            } else {
+                showBkpMachineDialog(serialBkpMachineList, onlineSearch)
             }
-        }else{
-            if(isBarcodeRead){
-                val idx = hasBarcodeSerialMatch(serialBkpMachineList, selectedBkpMachineProduct!!.product_code.toInt(),binding.mketMachineSerialEdit.text.toString().trim())
-                if(idx >- 1){
-                    setSelectedBkpMachineSerial(serialBkpMachineList[idx] as FormOsHeaderFrgSerialBkpItem,autoSelection = true)
-                }else{
-                    showBkpMachineDialog(serialBkpMachineList,onlineSearch)
+        } else {
+            if (isBarcodeRead) {
+                val idx = hasBarcodeSerialMatch(
+                    serialBkpMachineList,
+                    selectedBkpMachineProduct!!.product_code.toInt(),
+                    binding.mketMachineSerialEdit.text.toString().trim()
+                )
+                if (idx > -1) {
+                    setSelectedBkpMachineSerial(
+                        serialBkpMachineList[idx] as FormOsHeaderFrgSerialBkpItem,
+                        autoSelection = true
+                    )
+                } else {
+                    showBkpMachineDialog(serialBkpMachineList, onlineSearch)
                 }
-            }else{
-                showBkpMachineDialog(serialBkpMachineList,onlineSearch)
+            } else {
+                showBkpMachineDialog(serialBkpMachineList, onlineSearch)
             }
         }
         //reseta var
@@ -433,9 +442,9 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         productCode: Int,
         serialIdSearched: String
     ): Int {
-        serialBkpMachineList.forEachIndexed{ idx, obj ->
-            if(obj is FormOsHeaderFrgSerialBkpItem){
-                if(obj.productCode == productCode && obj.serialId.equals(serialIdSearched,true)){
+        serialBkpMachineList.forEachIndexed { idx, obj ->
+            if (obj is FormOsHeaderFrgSerialBkpItem) {
+                if (obj.productCode == productCode && obj.serialId.equals(serialIdSearched, true)) {
                     return idx
                 }
             }
@@ -443,10 +452,14 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         return -1
     }
 
-    private fun setSelectedBkpMachineSerial(serialBkp: FormOsHeaderFrgSerialBkpItem,autoSelection: Boolean = false) {
-        with(binding){
+    private fun setSelectedBkpMachineSerial(
+        serialBkp: FormOsHeaderFrgSerialBkpItem,
+        autoSelection: Boolean = false
+    ) {
+        with(binding) {
             mketMachineSerialEdit.setText(serialBkp.serialId)
-            clMachineEdit.background = ContextCompat.getDrawable(requireContext(), R.drawable.shape_ok)
+            clMachineEdit.background =
+                ContextCompat.getDrawable(requireContext(), R.drawable.shape_ok)
             tilMketSerial.isHelperTextEnabled = false
             selectedBkpMachineSerialCode = serialBkp.serialCode
             selectedBkpMachineSerialId = serialBkp.serialId
@@ -454,23 +467,23 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         //
         bkpMachineDialog?.dismiss()
         //Se auto selecao, exibe toast
-        if(autoSelection){
-             Toast.makeText(
-                 requireContext(),
-                 hmAuxTrans["toast_serial_auto_selected_msg"],
-                 Toast.LENGTH_LONG
-             ).show()
+        if (autoSelection) {
+            Toast.makeText(
+                requireContext(),
+                hmAuxTrans["toast_serial_auto_selected_msg"],
+                Toast.LENGTH_LONG
+            ).show()
         }
     }
 
     private fun iniStartDate() {
-        with(binding){
+        with(binding) {
             mkdtStartDate.apply {
                 setmLabel(null)
                 setmCanClean(false)
-                if(isOsCreation){
+                if (isOsCreation) {
                     setmValue(ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT))
-                }else{
+                } else {
                     setmValue(formOsHeader.date_start)
                 }
                 setmEnabled(formOsHeader.so_edit_start_end == 1 && isOsCreation)
@@ -479,17 +492,18 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     }
 
     private fun iniMainMeasure() {
-        with(binding){
-            if(isContinuosFormPartition()){
-                clMainMeasure.visibility = if(ticketForm!!.measure_tp_code != null) View.VISIBLE else View.GONE
-                ticketForm!!.measure_tp_code?.let{
+        with(binding) {
+            if (isContinuosFormPartition()) {
+                clMainMeasure.visibility =
+                    if (ticketForm!!.measure_tp_code != null) View.VISIBLE else View.GONE
+                ticketForm!!.measure_tp_code?.let {
                     mainMeasureTp = getMainMeasureTp(it, ticketForm!!.customer_code)
                 }
-                ticketForm!!.measure_tp_desc?.let{
+                ticketForm!!.measure_tp_desc?.let {
                     tvOsMainMeasureLbl.text = it
                 }
                 //todo rever o save do float no obj
-                ticketForm!!.measure_value?.let {
+                ticketForm?.measure_value?.let {
                     mketOsMainMeasureVal.setText(
                         ToolBox_Inf.convertFloatToBigDecimalString(
                             it,
@@ -499,8 +513,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                     mketOsMainMeasureVal.isEnabled = false
                     mketOsMainMeasureVal.setmBARCODE(false)
 
-                }?: run {
-                    if(mainMeasureTp?.without_measure == 1 ) {
+                } ?: run {
+                    if (mainMeasureTp?.without_measure == 1) {
                         mketOsMainMeasureVal.setText(
                             formOsHeader.last_cycle_value?.let {
                                 ToolBox_Inf.convertFloatToBigDecimalString(
@@ -515,17 +529,21 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                     }
                 }
 
-                mainMeasureTp?.let { measure->
+                mainMeasureTp?.let { measure ->
                     checkWithoutMeasure(measure)
-                    mketOsMainMeasureVal.setmDecimal(measure.restrictionDecimal?:ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT)
+                    mketOsMainMeasureVal.setmDecimal(
+                        measure.restrictionDecimal
+                            ?: ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT
+                    )
                 }
 
-            }else{
-                clMainMeasure.visibility = if(formOsHeader.measure_tp_code != null) View.VISIBLE else View.GONE
-                formOsHeader.measure_tp_code?.let{
+            } else {
+                clMainMeasure.visibility =
+                    if (formOsHeader.measure_tp_code != null) View.VISIBLE else View.GONE
+                formOsHeader.measure_tp_code?.let {
                     mainMeasureTp = getMainMeasureTp(it, formOsHeader.customer_code)
                 }
-                formOsHeader.measure_tp_desc?.let{
+                formOsHeader.measure_tp_desc?.let {
                     tvOsMainMeasureLbl.text = it
                 }
                 //todo rever o save do float no obj
@@ -539,24 +557,27 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                     mketOsMainMeasureVal.isEnabled = isOsCreation
                     mketOsMainMeasureVal.setmBARCODE(isOsCreation)
 
-                }?: run {
-                    if(mainMeasureTp?.without_measure == 1 ) {
+                } ?: run {
+                    if (mainMeasureTp?.without_measure == 1) {
                         mketOsMainMeasureVal.setText(
                             formOsHeader.last_cycle_value?.let {
                                 ToolBox_Inf.convertFloatToBigDecimalString(
                                     it,
                                     true
                                 )
-                            }?:ToolBox_Inf.convertFloatToBigDecimalString(
+                            } ?: ToolBox_Inf.convertFloatToBigDecimalString(
                                 0f,
                                 true
                             )
                         )
                     }
                 }
-                mainMeasureTp?.let { measure->
+                mainMeasureTp?.let { measure ->
                     checkWithoutMeasure(measure)
-                    mketOsMainMeasureVal.setmDecimal(measure.restrictionDecimal?:ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT)
+                    mketOsMainMeasureVal.setmDecimal(
+                        measure.restrictionDecimal
+                            ?: ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT
+                    )
                 }
             }
         }
@@ -579,20 +600,26 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     }
 
     private fun iniLastMeasureInfo() {
-        with(binding){
-            tvOsLastMeasureVal.text = ToolBox_Inf.formatLastMeaseureInfo(
-                context,
-                formOsHeader.value_sufix,
-                formOsHeader.last_measure_value,
-                formOsHeader.last_measure_date
-            )
-            clLastMeasure.visibility = if(!tvOsLastMeasureVal.text.toString().isNullOrEmpty() && mainMeasureTp != null && mainMeasureTp?.without_measure == 0) View.VISIBLE else View.GONE
+        with(binding) {
+            if(!isContinuosFormPartition()) {
+                tvOsLastMeasureVal.text = ToolBox_Inf.formatLastMeaseureInfo(
+                    context,
+                    formOsHeader.value_sufix,
+                    formOsHeader.last_measure_value,
+                    formOsHeader.last_measure_date
+                )
+                clLastMeasure.visibility = if (!tvOsLastMeasureVal.text.toString()
+                        .isNullOrEmpty() && mainMeasureTp != null && mainMeasureTp?.without_measure == 0
+                ) View.VISIBLE else View.GONE
+            }else{
+                clLastMeasure.visibility = View.GONE
+            }
         }
     }
 
     private fun iniSaveBtn() {
         binding.btnSave.apply {
-            visibility = if(isOsCreation) View.VISIBLE else View.GONE
+            visibility = if (isOsCreation) View.VISIBLE else View.GONE
             if (isOsCreation) {
                 setOnClickListener {
                     checkSave()
@@ -602,11 +629,12 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     }
 
     private fun checkSave() {
-        with(binding){
+        with(binding) {
             val measure = mketOsMainMeasureVal.text
 
-            if(!isMeasureValNumeric()
-                || measure.toString().toFloat() < 0){
+            if (!isMeasureValNumeric()
+                || measure.toString().toFloat() < 0
+            ) {
                 ToolBox.alertMSG(
                     requireContext(),
                     hmAuxTrans["alert_measure_error_ttl"],
@@ -622,58 +650,81 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             validateSave()
         }
     }
-
     private fun validateSave() {
-        with(binding){
-            val isOrderTypeInvalid = (spOsType.selectedItemPosition > orderTypeList.lastIndex || orderTypeList[spOsType.selectedItemPosition].orderTypeCode <= 0)
-            val isMachineEmpty =  swMachine.isChecked && (selectedBkpMachineProduct == null || selectedBkpMachineSerialCode == null)
-            val isMachineTheSame = (swMachine.isChecked && !isMachineEmpty && defaultBkpMachineProduct?.product_code == selectedBkpMachineProduct?.product_code && selectedBkpMachineSerialId == formSerialId)
-            val isStartDateInvalid = if(!bypassMinValidation()) isValidStartDate().not() else false
+        with(binding) {
+            val isOrderTypeInvalid =
+                (spOsType.selectedItemPosition > orderTypeList.lastIndex || orderTypeList[spOsType.selectedItemPosition].orderTypeCode <= 0)
+            val isMachineEmpty =
+                swMachine.isChecked && (selectedBkpMachineProduct == null || selectedBkpMachineSerialCode == null)
+            val isMachineTheSame =
+                (swMachine.isChecked && !isMachineEmpty && defaultBkpMachineProduct?.product_code == selectedBkpMachineProduct?.product_code && selectedBkpMachineSerialId == formSerialId)
+            val isStartDateInvalid = if (!bypassMinValidation()) isValidStartDate().not() else false
             clMachineEdit.background = if (isMachineEmpty || isMachineTheSame) {
                 ContextCompat.getDrawable(requireContext(), R.drawable.shape_error)
             } else {
                 ContextCompat.getDrawable(requireContext(), R.drawable.shape_ok)
             }
             val measureInvalid = mainMeasureTp?.let {
-                if(!binding.mketOsMainMeasureVal.text.isNullOrEmpty() && isMeasureValNumeric()) {
+                if (!binding.mketOsMainMeasureVal.text.isNullOrEmpty() && isMeasureValNumeric()) {
                     val typedMeasure = binding.mketOsMainMeasureVal.text.toString().toDouble()
-                    it.isMeasureRestrictionInvalid(bypassMinValidation(), typedMeasure, formOsHeader.last_measure_value?.toDouble(), formOsHeader.last_measure_date, binding.mkdtStartDate.getmValue())
-                }else{
+                    it.isMeasureRestrictionInvalid(
+                        bypassMinValidation(),
+                        typedMeasure,
+                        formOsHeader.last_measure_value?.toDouble(),
+                        formOsHeader.last_measure_date,
+                        binding.mkdtStartDate.getmValue()
+                    )
+                } else {
                     true
                 }
-            }?: false
+            } ?: false
             //
             val preventiveCycleInvalid = isPreventiveCycleValid(isOrderTypeInvalid).not()
             //
-            if(isOrderTypeInvalid || isMachineEmpty || isMachineTheSame || isStartDateInvalid || measureInvalid || preventiveCycleInvalid ){
-                showSaveErroDialog(
-                    osTypeInvalid = isOrderTypeInvalid,
-                    bkpMachineEmpty= isMachineEmpty,
-                    bkpMachineEquals = isMachineTheSame,
-                    startDateInvalid = isStartDateInvalid,
-                    measureInvalid = measureInvalid,
-                    lastCycleInvalid = preventiveCycleInvalid,
-                    calculatedCycle = if(calculatedExecCycle >= 0) calculatedExecCycle else 0.0f,
-                    lastCycleVal = formOsHeader.last_cycle_value?:0f,
-                    measureSufix = mainMeasureTp?.valueSufix?:""
-                )
+            //Verifica se a OS é uma continuação e se for ele continua para a próxima tela
+            //Se for continuação da OS e a data estiver invalida ele mostra um dialog pro user
+            if(isContinuosFormPartition()){
+                if(isStartDateInvalid){
+                    showSaveErroDialog(startDateInvalid = isStartDateInvalid)
+                    return
+                }
+                createOs()
             }else{
-                if(isLocationRequiredAndEnabled()) {
-                    ToolBox.alertMSG_YES_NO(
-                        requireContext(),
-                        hmAuxTrans["alert_form_os_creation_ttl"],
-                        hmAuxTrans["alert_form_os_creation_confirm"],
-                        DialogInterface.OnClickListener { _, _ ->
-                            setDataIntoFormOsObj()
-                            mCreationListener?.createOsHeader(formOsHeader)
-                        },
-                        1
+                val isInvalid = isOrderTypeInvalid || isMachineEmpty || isMachineTheSame || isStartDateInvalid || measureInvalid || preventiveCycleInvalid
+                if(isInvalid){
+                    showSaveErroDialog(
+                        osTypeInvalid = isOrderTypeInvalid,
+                        bkpMachineEmpty = isMachineEmpty,
+                        bkpMachineEquals = isMachineTheSame,
+                        startDateInvalid = isStartDateInvalid,
+                        measureInvalid = measureInvalid,
+                        lastCycleInvalid = preventiveCycleInvalid,
+                        calculatedCycle = if (calculatedExecCycle >= 0) calculatedExecCycle else 0.0f,
+                        lastCycleVal = formOsHeader.last_cycle_value ?: 0f,
+                        measureSufix = mainMeasureTp?.valueSufix ?: ""
                     )
-                }else{
-                    showActiveGPSAlert()
+                } else {
+                    if (isLocationRequiredAndEnabled()) {
+                        ToolBox.alertMSG_YES_NO(
+                            requireContext(),
+                            hmAuxTrans["alert_form_os_creation_ttl"],
+                            hmAuxTrans["alert_form_os_creation_confirm"],
+                            { _, _ ->
+                                createOs()
+                            },
+                            1
+                        )
+                    } else {
+                        showActiveGPSAlert()
+                    }
                 }
             }
         }
+    }
+
+    private fun createOs() {
+        setDataIntoFormOsObj()
+        mCreationListener?.createOsHeader(formOsHeader)
     }
 
     private fun bypassMinValidation(): Boolean {
@@ -687,18 +738,22 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     /**
      * Valida se data iniicio informada é valida, não é no futuro e é maior que a data da ultima medição.
      */
-    private fun isValidStartDate() :Boolean {
-       return with(binding){
-           (mkdtStartDate.isValid
-           && !ToolBox_Inf.isFutureDate(mkdtStartDate.getmValue())
-           && (
-                   (formOsHeader.last_measure_date == null
-                    || ToolBox_Inf.dateToMilliseconds(formOsHeader.last_measure_date) <= ToolBox_Inf.dateToMilliseconds(mkdtStartDate.getmValue()))
-               ||
-                   (isContinuosFormPartition() && ToolBox_Inf.dateToMilliseconds(ticketForm?.partition_min_date) <= ToolBox_Inf.dateToMilliseconds(mkdtStartDate.getmValue()))
-              )
-          )
-       }
+    private fun isValidStartDate(): Boolean {
+        return with(binding) {
+            (mkdtStartDate.isValid
+                    && !ToolBox_Inf.isFutureDate(mkdtStartDate.getmValue())
+                    && (
+                    (formOsHeader.last_measure_date == null
+                            || ToolBox_Inf.dateToMilliseconds(formOsHeader.last_measure_date) <= ToolBox_Inf.dateToMilliseconds(
+                        mkdtStartDate.getmValue()
+                    ))
+                            ||
+                            (isContinuosFormPartition() && ToolBox_Inf.dateToMilliseconds(ticketForm?.partition_min_date) <= ToolBox_Inf.dateToMilliseconds(
+                                mkdtStartDate.getmValue()
+                            ))
+                    )
+                    )
+        }
     }
 
     private fun showActiveGPSAlert() {
@@ -715,7 +770,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
      * Fun que verifica se gps é requerido e se esta ligado.
      */
     private fun isLocationRequiredAndEnabled(): Boolean {
-        return  !formRequiresGPS
+        return !formRequiresGPS
                 || (formRequiresGPS && ToolBox_Con.hasGPSResourceActive(context))
 
     }
@@ -728,15 +783,15 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             order_type_desc = orderType.orderTypeDesc
             process_type = orderType.processType
             display_option = orderType.displayOption
-            item_check_group_code  = orderType.itemCheckGroupCode
-            selectedBkpMachineProduct?.let{ product ->
+            item_check_group_code = orderType.itemCheckGroupCode
+            selectedBkpMachineProduct?.let { product ->
                 backup_product_code = product.product_code.toInt()
                 backup_product_id = product.product_id
                 backup_product_desc = product.product_desc
             }
             backup_serial_code = selectedBkpMachineSerialCode
             backup_serial_id = selectedBkpMachineSerialId
-            mainMeasureTp?.let{ measure ->
+            mainMeasureTp?.let { measure ->
                 measure_tp_code = measure.measureTpCode
                 measure_tp_id = measure.measureTpId
                 measure_tp_desc = measure.measureTpDesc
@@ -748,7 +803,10 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     }
 
     private fun getFormattedMeasureValue(): Float {
-        return BigDecimal(binding.mketOsMainMeasureVal.text.toString()).setScale( mainMeasureTp?.restrictionDecimal?:ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT,RoundingMode.HALF_DOWN).toFloat()
+        return BigDecimal(binding.mketOsMainMeasureVal.text.toString()).setScale(
+            mainMeasureTp?.restrictionDecimal ?: ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT,
+            RoundingMode.HALF_DOWN
+        ).toFloat()
     }
 
     /**
@@ -758,10 +816,10 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
      * É importante retornar o valor de measure_value no else, pois essa var calculatedExecCycle
      * é usada nas varreduras na criação das tabelas de geOs.
      */
-    private fun getMeasureCycleValue(orderType: MdOrderType): Float{
-        return if(isPreventiveCycledOs(orderType)){
+    private fun getMeasureCycleValue(orderType: MdOrderType): Float {
+        return if (isPreventiveCycledOs(orderType)) {
             calculatedExecCycle
-        }else{
+        } else {
             getFormattedMeasureValue()
         }
     }
@@ -778,15 +836,15 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
 
     private fun isPreventiveCycleValid(isOrderTypeInvalid: Boolean): Boolean {
         //Se orderType invalida, não tem como validar
-        if(isOrderTypeInvalid){
+        if (isOrderTypeInvalid) {
             return true
         }
         val mdOrderType = orderTypeList[binding.spOsType.selectedItemPosition]
-        if( isPreventiveCycledOs(mdOrderType)) {
+        if (isPreventiveCycledOs(mdOrderType)) {
             if (binding.mketOsMainMeasureVal.text.isNullOrEmpty() || !isMeasureValNumeric()) {
                 return false
-            }else{
-                var lastCycle = formOsHeader.last_cycle_value?:0f
+            } else {
+                var lastCycle = formOsHeader.last_cycle_value ?: 0f
                 //Valor inserido
                 calculatedExecMeasureValue = binding.mketOsMainMeasureVal.text.toString().toFloat()
                 //divide valor atual pelo tam do ciclo e arredonda pra cima, pra identificar o fator
@@ -802,11 +860,11 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 //Calcula valor com a tolerancia (proximo ciclo - tolerancia)
                 var valWithTolerance = calculatedExecCycle - realTolerance
                 //Se o valor digitado for
-                if(calculatedExecMeasureValue.compareTo(valWithTolerance) < 0){
+                if (calculatedExecMeasureValue.compareTo(valWithTolerance) < 0) {
                     calculatedExecCycle -= tamDoCiclo
                 }
                 //
-                return if(!bypassMinValidation()) calculatedExecCycle > lastCycle else true
+                return if (!bypassMinValidation()) calculatedExecCycle > lastCycle else true
             }
         }
         //
@@ -834,10 +892,10 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
      * Valida se medição digita é um float ou não
      */
     private fun isMeasureValNumeric(): Boolean {
-        return try{
+        return try {
             binding.mketOsMainMeasureVal.text.toString().toFloat()
             true
-        }catch (e: Exception){
+        } catch (e: Exception) {
             false
         }
     }
@@ -846,31 +904,36 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         typedMeasure: Float,
         measureTp: MeMeasureTp
     ): Boolean {
-        if(formOsHeader.last_measure_value != null && formOsHeader.last_measure_date != null) {
+        if (formOsHeader.last_measure_value != null && formOsHeader.last_measure_date != null) {
             //Como considera a data e inicio para calculo, se ela for invalida, o value by day tb será, pois não há como calcular.
-            if(!isValidStartDate()){
+            if (!isValidStartDate()) {
                 return false
             }
-            val valPerDay = getDiffBetweenDatesInFloatDays(formOsHeader.last_measure_date!!, binding.mkdtStartDate.getmValue())
+            val valPerDay = getDiffBetweenDatesInFloatDays(
+                formOsHeader.last_measure_date!!,
+                binding.mkdtStartDate.getmValue()
+            )
             //Se o valor for menor do que 0, considerar 0
-            val minConsider : Double? = measureTp.restrictionMin?.let { min->
-                    val minToConsider = formOsHeader.last_measure_value!! - (min * valPerDay)
-                    if(minToConsider >= 0f){
-                        minToConsider
-                    } else {
-                        0f
-                    }
+            val minConsider: Double? = measureTp.restrictionMin?.let { min ->
+                val minToConsider = formOsHeader.last_measure_value!! - (min * valPerDay)
+                if (minToConsider >= 0f) {
+                    minToConsider
+                } else {
+                    0f
+                }
             } as Double?
-            val maxConsider : Double? = measureTp.restrictionMax?.let { max->
+            val maxConsider: Double? = measureTp.restrictionMax?.let { max ->
                 formOsHeader.last_measure_value!! + (max * valPerDay)
             }
             //
-            if(minConsider != null && maxConsider != null){
-                return minConsider.compareTo(typedMeasure) <= 0 && maxConsider.compareTo(typedMeasure) >= 0
-            }else if (minConsider != null || maxConsider != null ){
-                return if(minConsider != null){
+            if (minConsider != null && maxConsider != null) {
+                return minConsider.compareTo(typedMeasure) <= 0 && maxConsider.compareTo(
+                    typedMeasure
+                ) >= 0
+            } else if (minConsider != null || maxConsider != null) {
+                return if (minConsider != null) {
                     minConsider.compareTo(typedMeasure) <= 0
-                }else{
+                } else {
                     maxConsider!!.compareTo(typedMeasure) >= 0
                 }
             }
@@ -891,15 +954,19 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         //Calc dias inteiros
         val calcDay = diffInMs / ONE_DAY_IN_MILLISECOND
         //Calc perc de dias...
-        val modDay = (diffInMs % ONE_DAY_IN_MILLISECOND.toDouble()) / ONE_DAY_IN_MILLISECOND.toDouble()
+        val modDay =
+            (diffInMs % ONE_DAY_IN_MILLISECOND.toDouble()) / ONE_DAY_IN_MILLISECOND.toDouble()
         //Soma e devolve float com 4 casas.
-        return BigDecimal(calcDay + modDay).setScale( ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT,RoundingMode.HALF_DOWN).toFloat()
+        return BigDecimal(calcDay + modDay).setScale(
+            ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT,
+            RoundingMode.HALF_DOWN
+        ).toFloat()
     }
 
     private fun addIdxToVisibleLabels() {
         var lblIdx = 1
-        labelsView.forEach{ obj->
-            if(obj.visibility == View.VISIBLE){
+        labelsView.forEach { obj ->
+            if (obj.visibility == View.VISIBLE) {
                 obj.text = "$lblIdx. ${obj.text}"
                 obj.setAsRequired()
                 lblIdx++
@@ -908,32 +975,35 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     }
 
     private fun iniActions() {
-        with(binding){
+        with(binding) {
             swMachine.setOnCheckedChangeListener { _, _ ->
                 updateBkpMachineVisibility()
                 resetBkpMachineProductSerial()
             }
             //
-            if(isOsCreation
-                && !isContinuosFormPartition()){
+            if (isOsCreation
+                && !isContinuosFormPartition()
+            ) {
                 ivSwapMachine.setOnClickListener {
                     callProductSelection()
                 }
                 //
-                mketMachineSerialEdit.setOnReportTextChangeListner(object : MKEditTextNM.IMKEditTextChangeText{
+                mketMachineSerialEdit.setOnReportTextChangeListner(object :
+                    MKEditTextNM.IMKEditTextChangeText {
                     override fun reportTextChange(text: String?) {
                     }
 
                     override fun reportTextChange(text: String?, textNotEmpty: Boolean) {
-                        with(binding){
+                        with(binding) {
                             //Se existe um serial ja escolhido, reseta vars.
-                            if(selectedBkpMachineSerialCode != null || selectedBkpMachineSerialId != null){
+                            if (selectedBkpMachineSerialCode != null || selectedBkpMachineSerialId != null) {
                                 selectedBkpMachineSerialCode = null
                                 selectedBkpMachineSerialId = null
                             }
                             tilMketSerial.isHelperTextEnabled = true
                             tilMketSerial.helperText = hmAuxTrans["backup_serial_help_lbl"]
-                            clMachineEdit.background =  ContextCompat.getDrawable(requireContext(),R.drawable.shape_error)
+                            clMachineEdit.background =
+                                ContextCompat.getDrawable(requireContext(), R.drawable.shape_error)
                         }
                         ivSerialSearch.isEnabled = textNotEmpty
                     }
@@ -944,13 +1014,15 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                     ivSerialSearch.performClick()
                 }
                 mketOsMainMeasureVal.setDelegateTextBySpecialist {
-                    if(!mketOsMainMeasureVal.isValid){
+                    if (!mketOsMainMeasureVal.isValid) {
                         mketOsMainMeasureVal.text = null
                     }
                 }
                 //
                 ivSerialSearch.setOnClickListener {
-                    if(selectedBkpMachineProduct != null && mketMachineSerialEdit.text.toString().isNotEmpty()) {
+                    if (selectedBkpMachineProduct != null && mketMachineSerialEdit.text.toString()
+                            .isNotEmpty()
+                    ) {
                         mCreationListener?.searchSerialClick(
                             bkpProductCode = selectedBkpMachineProduct!!.product_code,
                             bkpSerialId = mketMachineSerialEdit.text.toString()
@@ -972,14 +1044,14 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     }
 
     private fun resetBkpMachineProductSerial() {
-        with(binding){
+        with(binding) {
             tvMachineProdEditLbl.text = defaultBkpMachineProduct?.product_desc
             mketMachineSerialEdit.text = null
             selectedBkpMachineProduct = if (swMachine.isChecked) defaultBkpMachineProduct else null
-            clMachineEdit.background = if(swMachine.isChecked){
-                ContextCompat.getDrawable(requireContext(),R.drawable.shape_error)
-            }else{
-                ContextCompat.getDrawable(requireContext(),R.drawable.shape_ok)
+            clMachineEdit.background = if (swMachine.isChecked) {
+                ContextCompat.getDrawable(requireContext(), R.drawable.shape_error)
+            } else {
+                ContextCompat.getDrawable(requireContext(), R.drawable.shape_ok)
             }
         }
     }
@@ -1003,7 +1075,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             forecastCount = null,
             criticalForecastCount = null,
             nonForecastCount = null,
-            status = if(skipFieldValidation) Act011FormTabStatus.PENDING else getTabStatus()
+            status = if (skipFieldValidation) Act011FormTabStatus.PENDING else getTabStatus()
         )
 
     }
@@ -1013,7 +1085,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     }
 
     override fun getTabName(): String {
-        return hmAuxTrans["form_os_header_lbl"]?:"form_os_header - trad"
+        return hmAuxTrans["form_os_header_lbl"] ?: "form_os_header - trad"
     }
 
     override fun applyAutoAnswer(): Int {
@@ -1022,11 +1094,11 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if(context is FormOsHeaderFrgMeasureInteraction){
+        if (context is FormOsHeaderFrgMeasureInteraction) {
             measureTpListener = context
-        }else if(context is FormOsHeaderFrgCreationInteraction){
+        } else if (context is FormOsHeaderFrgCreationInteraction) {
             mCreationListener = context
-        } else if (isOsCreation){
+        } else if (isOsCreation) {
             //Se criação e interface não definida, solta exception
             throw RuntimeException("$context must implement FormOsHeaderFrgCreationInteraction")
         }
@@ -1034,18 +1106,19 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
 
     override fun onDetach() {
         super.onDetach()
-        mCreationListener?.delegateControlSta(controlsSta,false)
+        mCreationListener?.delegateControlSta(controlsSta, false)
         mCreationListener = null
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         //
-        if(requestCode == ConstantBaseApp.ACT_PRODUCT_SELECTION_REQUEST_CODE
+        if (requestCode == ConstantBaseApp.ACT_PRODUCT_SELECTION_REQUEST_CODE
             && resultCode == Base_Activity_Frag.RESULT_OK
-        ){
+        ) {
             data?.let {
-                selectedBkpMachineProduct = it.getSerializableExtra(MD_Product::class.java.name) as MD_Product?
+                selectedBkpMachineProduct =
+                    it.getSerializableExtra(MD_Product::class.java.name) as MD_Product?
                 binding.tvMachineProdEditLbl.text = selectedBkpMachineProduct?.product_desc
                 resetBkpSerialInfo()
             }
@@ -1068,59 +1141,68 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         calculatedCycle: Float = 0f,
         lastCycleVal: Float = 0f,
         measureSufix: String = ""
-    ){
+    ) {
         val builder = AlertDialog.Builder(requireContext())
         val dialogBinding = FormOsHeaderFrgErrorDialogBinding.inflate(layoutInflater)
-        with(dialogBinding){
+        with(dialogBinding) {
             tvOsTypeInvalidMsg.apply {
-                visibility = if(osTypeInvalid) View.VISIBLE else View.GONE
+                visibility = if (osTypeInvalid) View.VISIBLE else View.GONE
                 text = hmAuxTrans["alert_invalid_order_type_error_msg"]
                 setPrefix(getString(R.string.unicode_bullet).plus(" "))
             }
             tvBkpMachineEmptyMsg.apply {
-              visibility = if(bkpMachineEmpty) View.VISIBLE else View.GONE
-              text = hmAuxTrans["alert_empty_bkp_machine_error_msg"]
-              setPrefix(getString(R.string.unicode_bullet).plus(" "))
+                visibility = if (bkpMachineEmpty) View.VISIBLE else View.GONE
+                text = hmAuxTrans["alert_empty_bkp_machine_error_msg"]
+                setPrefix(getString(R.string.unicode_bullet).plus(" "))
             }
             tvBkpMachineEqualMsg.apply {
-                visibility = if(bkpMachineEquals) View.VISIBLE else View.GONE
+                visibility = if (bkpMachineEquals) View.VISIBLE else View.GONE
                 text = hmAuxTrans["alert_same_serial_bkp_machine_error_msg"]
                 setPrefix(getString(R.string.unicode_bullet).plus(" "))
             }
             tvStarDateInvalidMsg.apply {
-                visibility = if(startDateInvalid) View.VISIBLE else View.GONE
-                text = hmAuxTrans["alert_invalid_star_date_error_msg"]
+                visibility = if (startDateInvalid) View.VISIBLE else View.GONE
+                val min_date = ticketForm?.partition_min_date?.formatTo(
+                    ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                )
+                text = if(isContinuosFormPartition()) "${hmAuxTrans["alert_invalid_start_date_partition_error_msg"]} $min_date" else hmAuxTrans["alert_invalid_star_date_error_msg"]
                 setPrefix(getString(R.string.unicode_bullet).plus(" "))
             }
             tvMeasureInvalidValMsg.apply {
-                visibility = if(measureInvalid) View.VISIBLE else View.GONE
+                visibility = if (measureInvalid) View.VISIBLE else View.GONE
                 text = hmAuxTrans["alert_invalid_measure_value_error_msg"]
                 setPrefix(getString(R.string.unicode_bullet).plus(" "))
             }
             tvMeasureInvalidZeroCycleMsg.apply {
-                visibility = if(lastCycleInvalid && calculatedCycle == 0f ) View.VISIBLE else View.GONE
+                visibility =
+                    if (lastCycleInvalid && calculatedCycle == 0f) View.VISIBLE else View.GONE
                 text = hmAuxTrans["alert_invalid_measure_zero_cycle_error_msg"]
                 setPrefix(getString(R.string.unicode_bullet).plus(" "))
             }
             tvMeasureInvalidCycleMsg.apply {
-                visibility = if(lastCycleInvalid && calculatedCycle.compareTo(0) > 0) View.VISIBLE else View.GONE
+                visibility =
+                    if (lastCycleInvalid && calculatedCycle.compareTo(0) > 0) View.VISIBLE else View.GONE
                 text = hmAuxTrans["alert_invalid_measure_cycle_error_msg"]
                 setPrefix(getString(R.string.unicode_bullet).plus(" "))
             }
             tvLastCycleLbl.apply {
-                visibility = if(lastCycleInvalid && calculatedCycle.compareTo(0) > 0) View.VISIBLE else View.GONE
+                visibility =
+                    if (lastCycleInvalid && calculatedCycle.compareTo(0) > 0) View.VISIBLE else View.GONE
                 text = hmAuxTrans["alert_last_cycle_lbl"].plus(" :")
             }
             tvLastCycleVal.apply {
-                visibility = if(lastCycleInvalid && calculatedCycle.compareTo(0) > 0) View.VISIBLE else View.GONE
+                visibility =
+                    if (lastCycleInvalid && calculatedCycle.compareTo(0) > 0) View.VISIBLE else View.GONE
                 text = "$lastCycleVal $measureSufix"
             }
             tvCurrentCycleLb.apply {
-                visibility = if(lastCycleInvalid && calculatedCycle.compareTo(0) > 0) View.VISIBLE else View.GONE
+                visibility =
+                    if (lastCycleInvalid && calculatedCycle.compareTo(0) > 0) View.VISIBLE else View.GONE
                 text = hmAuxTrans["alert_current_cycle_lbl"].plus(" :")
             }
             tvCurrentCycleVal.apply {
-                visibility = if(lastCycleInvalid && calculatedCycle.compareTo(0) > 0) View.VISIBLE else View.GONE
+                visibility =
+                    if (lastCycleInvalid && calculatedCycle.compareTo(0) > 0) View.VISIBLE else View.GONE
                 text = "$calculatedCycle $measureSufix"
             }
         }
@@ -1139,24 +1221,30 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         //
         dialog.show()
         //LUCHE - 01/12/2021 - Ajuste necessario para Android 6 ¬¬
-        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
     }
 
-    fun showBkpMachineDialog(serialBkpMachineList: List<FormOsHeaderFrgSerialBkpItemAbs>, onlineSearch: Boolean) {
+    fun showBkpMachineDialog(
+        serialBkpMachineList: List<FormOsHeaderFrgSerialBkpItemAbs>,
+        onlineSearch: Boolean
+    ) {
         val builder = AlertDialog.Builder(requireContext())
         val dialogBinding = FormOsHeaderFrgBackupMachineDialogBinding.inflate(layoutInflater)
-        with(dialogBinding){
+        with(dialogBinding) {
             tvDialogTtl.text = hmAuxTrans["alert_bkp_serial_ttl"]
             //
-            ivOffilineIcon.visibility = if(onlineSearch){
+            ivOffilineIcon.visibility = if (onlineSearch) {
                 View.INVISIBLE
-            }else{
+            } else {
                 View.VISIBLE
             }
             //
             tvBkpProductInfo.apply {
                 text = selectedBkpMachineProduct?.let {
-                    ToolBox_Inf.getFormattedGenericIdDesc(it.product_id,it.product_desc)
+                    ToolBox_Inf.getFormattedGenericIdDesc(it.product_id, it.product_desc)
                 }
             }
             //

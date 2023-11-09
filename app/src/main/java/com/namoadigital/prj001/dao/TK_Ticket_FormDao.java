@@ -64,7 +64,7 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
     public static final String MEASURE_VALUE = "measure_value";
     public static final String MEASURE_CYCLE_VALUE = "measure_cycle_value";
     public static final String VALUE_SUFIX = "value_sufix";
-    public static final String DATE_END = "date_end";
+    public static final String START_DATE = "start_date";
     public static final String PARTITION_MIN_DATE = "partition_min_date";
 
     public TK_Ticket_FormDao(Context context, String mDB_NAME, int mDB_VERSION) {
@@ -731,10 +731,10 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
             }else{
                 tk_ticket_form.setValue_sufix(cursor.getString(cursor.getColumnIndex(VALUE_SUFIX)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(DATE_END))){
-                tk_ticket_form.setDate_end(null);
+            if(cursor.isNull(cursor.getColumnIndex(START_DATE))){
+                tk_ticket_form.setStart_date(null);
             }else{
-                tk_ticket_form.setDate_end(cursor.getString(cursor.getColumnIndex(DATE_END)));
+                tk_ticket_form.setStart_date(cursor.getString(cursor.getColumnIndex(START_DATE)));
             }
             if(cursor.isNull(cursor.getColumnIndex(PARTITION_MIN_DATE))){
                 tk_ticket_form.setPartition_min_date(null);
@@ -809,7 +809,7 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
             contentValues.put(MEASURE_VALUE,tk_ticket_form.getMeasure_value());
             contentValues.put(MEASURE_CYCLE_VALUE,tk_ticket_form.getMeasure_cycle_value());
             contentValues.put(VALUE_SUFIX,tk_ticket_form.getValue_sufix());
-            contentValues.put(DATE_END,tk_ticket_form.getDate_end());
+            contentValues.put(START_DATE,tk_ticket_form.getStart_date());
             contentValues.put(PARTITION_MIN_DATE,tk_ticket_form.getPartition_min_date());
             //
             return contentValues;

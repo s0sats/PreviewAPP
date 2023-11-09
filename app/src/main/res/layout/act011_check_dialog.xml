@@ -263,7 +263,7 @@
             android:layout_marginEnd="8dp"
             android:backgroundTint="@color/m3_namoa_primary"
             android:textColor="@color/m3_namoa_onPrimary"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constrainedWidth="true"
             app:layout_constraintEnd_toStartOf="@+id/act011_dialog_check_btn_ok"
             app:layout_constraintHorizontal_bias="1.0"
