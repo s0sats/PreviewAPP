@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.adapter
 
-import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +19,7 @@ import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.EXEC_TYPE_ALREADY_
 import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.EXEC_TYPE_FIXED
 import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.EXEC_TYPE_NOT_VERIFIED
 import com.namoadigital.prj001.model.InspectionCell
-import java.util.*
+import java.util.Objects
 import kotlin.math.abs
 
 class Act011InspectionFormAdapter(
@@ -382,6 +381,10 @@ class Act011InspectionFormAdapter(
                 }
                 binding.tvPhotoCount.text = photoCount.toString()
                 //
+                if (read_only) {
+                    binding.tvAutoAlreadyOk.visibility = View.GONE
+                    binding.tvInspectionVerificationAction.visibility = View.GONE
+                }
             }
         }
 

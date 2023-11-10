@@ -4073,7 +4073,6 @@ public class Act011_Main extends Base_Activity
         for (Act011BaseFrg fragment : screens) {
             if (fragment instanceof Act011FrgInspection) {
                 Act011FrgInspection frgInspection = (Act011FrgInspection) fragment;
-                frgInspection.notifyAdapterDataSetMayChanged();
                 //Após atualizar lista da tab, precisa atualizar lista do drawer
                 updateTabStatusIntoDrawer(
                         frgInspection.getTabObj(false)

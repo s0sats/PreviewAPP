@@ -23,6 +23,7 @@ data class InspectionCell(
     val hmAuxTrans: HMAux,
     val change_adjust: Int,
     val partitionedExecution: Int,
+    val read_only: Boolean = false
 ): Serializable {
     var isDone: Boolean = false
     @ColorInt
