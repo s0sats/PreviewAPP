@@ -206,6 +206,49 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
         closeDB();
     }
 
+    public boolean addUpdateListWithReturn(Iterable<GE_Custom_Form_Data> custom_form_datas, boolean status) {
+        boolean resultSuccess = true;
+
+        openDB();
+
+        try {
+
+            db.beginTransaction();
+
+            if (status) {
+                db.delete(TABLE, null, null);
+            }
+
+            for (GE_Custom_Form_Data custom_form_data : custom_form_datas) {
+                if (db.insert(TABLE, null, toContentValuesMapper.map(custom_form_data)) == -1) {
+                    StringBuilder sbWhere = new StringBuilder();
+                    sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(custom_form_data.getCustomer_code())).append("'");
+                    sbWhere.append(" and ");
+                    sbWhere.append(CUSTOM_FORM_TYPE).append(" = '").append(String.valueOf(custom_form_data.getCustom_form_type())).append("'");
+                    sbWhere.append(" and ");
+                    sbWhere.append(CUSTOM_FORM_CODE).append(" = '").append(String.valueOf(custom_form_data.getCustom_form_code())).append("'");
+                    sbWhere.append(" and ");
+                    sbWhere.append(CUSTOM_FORM_VERSION).append(" = '").append(String.valueOf(custom_form_data.getCustom_form_version())).append("'");
+                    sbWhere.append(" and ");
+                    sbWhere.append(CUSTOM_FORM_DATA).append(" = '").append(String.valueOf(custom_form_data.getCustom_form_data())).append("'");
+
+                    db.update(TABLE, toContentValuesMapper.map(custom_form_data), sbWhere.toString(), null);
+                }
+            }
+
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            resultSuccess = false;
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        } finally {
+            db.endTransaction();
+        }
+
+        closeDB();
+
+        return resultSuccess;
+    }
+
     @Override
     public void addUpdate(String s_query) {
         openDB();

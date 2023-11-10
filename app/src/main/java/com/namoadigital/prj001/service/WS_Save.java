@@ -31,11 +31,11 @@ import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.model.TSave_Env;
 import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.receiver.WBR_Save;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Field_Sql_001;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Field_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_003;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
-import com.namoadigital.prj001.sql.Sql_WS_Save_Device_Item_001;
+import com.namoadigital.prj001.sql.Sql_WS_Save_Device_Item_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Step_Sql_001;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -173,6 +173,11 @@ public class WS_Save extends IntentService {
 
         if(processPendingToken(1) == 0){
             processNewToken(0);
+            boolean result = formDataDao.addUpdateListWithReturn(form_datas,false);
+            if(!result){
+                ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_update_token_form_error"), "", "0");
+                return;
+            }
             mResend =false;
         }else{
             mResend =true;
@@ -250,6 +255,7 @@ public class WS_Save extends IntentService {
 
         translist.add("msg_getting_finalized_forms");
         translist.add("msg_no_finalized_forms_found");
+        translist.add("msg_update_token_form_error");
         translist.add("msg_sending_forms");
         translist.add("msg_forms_sent");
         translist.add("msg_error_token_excep");
@@ -281,19 +287,33 @@ public class WS_Save extends IntentService {
                     );
 
         if(form_datas.size() > 0){
+            form_data_fields.clear();
+            form_items.clear();
+            for ( GE_Custom_Form_Data form_data : form_datas ) {
+                form_data_fields.addAll(
+                        formDataFieldDao.query(
+                                new GE_Custom_Form_Data_Field_Sql_003(
+                                        form_data.getCustomer_code(),
+                                        form_data.getCustom_form_type(),
+                                        form_data.getCustom_form_code(),
+                                        form_data.getCustom_form_version(),
+                                        form_data.getCustom_form_data()
+                                ).toSqlQuery()
+                        )
+                );
 
-            form_data_fields =
-                    formDataFieldDao.query(
-                            new GE_Custom_Form_Data_Field_Sql_001(
-                                    ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
-                            ).toSqlQuery()
-                    );
-            //LUCHE - 08/10/2021 ADD ITEMS DA O.S
-            form_items = deviceItemDao.query(
-                    new Sql_WS_Save_Device_Item_001(
-                        ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
-                    ).toSqlQuery()
-            );
+                form_items.addAll(
+                        deviceItemDao.query(
+                                new Sql_WS_Save_Device_Item_002(
+                                        form_data.getCustomer_code(),
+                                        form_data.getCustom_form_type(),
+                                        form_data.getCustom_form_code(),
+                                        form_data.getCustom_form_version(),
+                                        form_data.getCustom_form_data()
+                                ).toSqlQuery()
+                        )
+                );
+            }
             //Atualiza token para o que esta pendente de envio
             token = form_datas.get(0).getToken();
         }
@@ -311,26 +331,38 @@ public class WS_Save extends IntentService {
                 );
         token = ToolBox_Inf.getToken(getApplicationContext());
         if(form_datas.size() > 0){
+            form_data_fields.clear();
+            form_items.clear();
             //Atualiza valor do token em todos os cabeçalhos
-            for ( GE_Custom_Form_Data form_data:form_datas ) {
-                 form_data.setToken(token);
-            }
+            for ( GE_Custom_Form_Data form_data : form_datas ) {
 
-            formDataDao.addUpdate(form_datas,false);
+                form_data.setToken(token);
 
-            form_data_fields =
-                    formDataFieldDao.query(
-                            new GE_Custom_Form_Data_Field_Sql_001(
-                                    ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                form_data_fields.addAll(
+                        formDataFieldDao.query(
+                                new GE_Custom_Form_Data_Field_Sql_003(
+                                        form_data.getCustomer_code(),
+                                        form_data.getCustom_form_type(),
+                                        form_data.getCustom_form_code(),
+                                        form_data.getCustom_form_version(),
+                                        form_data.getCustom_form_data()
+                                ).toSqlQuery()
+                        )
+                );
+
+                //LUCHE - 08/10/2021 ADD ITEMS DA O.S
+                form_items.addAll(
+                        deviceItemDao.query(
+                            new Sql_WS_Save_Device_Item_002(
+                                    form_data.getCustomer_code(),
+                                    form_data.getCustom_form_type(),
+                                    form_data.getCustom_form_code(),
+                                    form_data.getCustom_form_version(),
+                                    form_data.getCustom_form_data()
                             ).toSqlQuery()
-                    );
-
-            //LUCHE - 08/10/2021 ADD ITEMS DA O.S
-            form_items = deviceItemDao.query(
-                new Sql_WS_Save_Device_Item_001(
-                    ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
-                ).toSqlQuery()
-            );
+                        )
+                );
+            }
         }
         //
         return form_datas.size();
