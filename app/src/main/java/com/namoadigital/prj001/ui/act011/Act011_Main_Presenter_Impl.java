@@ -2441,23 +2441,6 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
 
         geOs.setDate_end(dateEnd);
         geOs.setDate_start(dateStart);
-/*        if (missingJustifyCounter > 0) {
-            List<GeOsDevice> devices = getDeviceList(geOs);
-            for (GeOsDevice device : devices) {
-                geOsDeviceItemDao.addUpdate(
-                        new GeOsDeviceItem_Sql_004(
-                                device.getCustomer_code(),
-                                device.getCustom_form_type(),
-                                device.getCustom_form_code(),
-                                device.getCustom_form_version(),
-                                device.getCustom_form_data(),
-                                device.getProduct_code(),
-                                device.getSerial_code(),
-                                ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")
-                        ).toSqlQuery()
-                );
-            }
-        }*/
         geOsDao.addUpdate(geOs);
     }
 
