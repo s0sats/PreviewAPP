@@ -748,7 +748,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                         mkdtStartDate.getmValue()
                     ))
                             ||
-                            (isContinuosFormPartition() && ToolBox_Inf.dateToMilliseconds(ticketForm?.partition_min_date) <= ToolBox_Inf.dateToMilliseconds(
+                            (isContinuosFormPartition() && ToolBox_Inf.dateToMilliseconds(ticketForm?.partition_min_date) < ToolBox_Inf.dateToMilliseconds(
                                 mkdtStartDate.getmValue()
                             ))
                     )
