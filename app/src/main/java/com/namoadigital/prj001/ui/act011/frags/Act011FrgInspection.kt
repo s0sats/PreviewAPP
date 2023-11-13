@@ -105,7 +105,9 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
 
         }else{
             binding.chkNonForecastItem.setCheckedJumpingAnimation(false)
-            binding.chkNonForecastItem.isEnabled = false
+            /*
+             binding.chkNonForecastItem.isEnabled = false
+            */
             mAdapter.applyNonForecastFilter(binding.chkNonForecastItem.isChecked)
             handleAddNewProcessVisibility()
         }
@@ -211,8 +213,8 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
         binding.apply {
             if (acessoryFormView.isReadOnly) {
                 clAddNewItemBtn.visibility = View.GONE
-                chkNonForecastItem.visibility = View.GONE
-                tvNonForecastCount.visibility = View.GONE
+                //chkNonForecastItem.visibility = View.GONE
+                //tvNonForecastCount.visibility = View.GONE
             } else {
                 handleAddNewProcessVisibility()
             }
