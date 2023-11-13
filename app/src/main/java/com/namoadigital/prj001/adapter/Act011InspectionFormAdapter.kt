@@ -100,7 +100,7 @@ class Act011InspectionFormAdapter(
         inspectionsFiltered.clear()
         if (this.filterApplied) {
             inspectionsFiltered.addAll(inspections.filter {
-                it.status != InspectionCell.NORMAL || it.isDone
+                it.status != InspectionCell.NORMAL || it.isDone || it.partitionedExecution == 1
             })
         } else {
             inspectionsFiltered.addAll(inspections)
@@ -384,6 +384,10 @@ class Act011InspectionFormAdapter(
                 if (read_only) {
                     binding.tvAutoAlreadyOk.visibility = View.GONE
                     binding.tvInspectionVerificationAction.visibility = View.GONE
+                }
+
+                if(partitionedExecution == 1){
+                    binding.tvAutoAlreadyOk.isEnabled = false
                 }
             }
         }

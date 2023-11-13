@@ -300,7 +300,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
             binding.tvTrackingVal.visibility = View.VISIBLE
         }
         binding.tvNonForecastCount.text =  acessoryFormView.inspections.count {
-            it.status == NORMAL && !ConstantBaseApp.SYS_STATUS_DONE.equals(it.answerStatus)
+            it.status == NORMAL && !ConstantBaseApp.SYS_STATUS_DONE.equals(it.answerStatus) && it.partitionedExecution != 1
         }.toString()
         binding.tvAddNewItemVal.text = hmAuxTrans.get("inspection_add_new_process_btn")
         binding.chkNonForecastItem.text = hmAuxTrans.get("inspection_hide_non_forecast_item_chk")

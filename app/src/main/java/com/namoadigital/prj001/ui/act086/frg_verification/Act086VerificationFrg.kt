@@ -59,6 +59,7 @@ import java.util.concurrent.TimeUnit
  */
 class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_View {
     private val IN_READONLY = "IN_READONLY"
+    private var isOsPartial = false
     private var dateStartUntilLastMinute: String? = null
 
     private val binding: Act086VerificationFrgBinding by lazy {
@@ -133,6 +134,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             geOsDeviceItem = it.getSerializable(GeOsDeviceItem::javaClass.name) as GeOsDeviceItem
             inReadOnly = it.getBoolean(IN_READONLY, true)
             dateStartUntilLastMinute = it.getString(GeOsDao.DATE_START)
+            isOsPartial = it.getBoolean(IS_OS_PARTIAL, false)
         }
     }
 
@@ -430,9 +432,15 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         //
         with(binding) {
             act086VerificationFrgRdoAnswerFixed.visibility = rdoAdjustDone
-            act086VerificationFrgRdoAnswerAlreadyDone.visibility = rdoAdjustAlreadyOk
+            act086VerificationFrgRdoAnswerAlreadyDone.apply {
+                visibility = rdoAdjustAlreadyOk
+                isEnabled = !isOsPartial
+            }
             act086VerificationFrgRdoAnswerAlert.visibility = rdoAdjustHasProblem
-            act086VerificationFrgRdoAnswerNotVerified.visibility = rdoAdjustNotVerified
+            act086VerificationFrgRdoAnswerNotVerified.apply {
+                visibility = rdoAdjustNotVerified
+                isEnabled = !isOsPartial
+            }
         }
     }
 
@@ -1532,6 +1540,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             deviceItem: GeOsDeviceItem,
             dateStartUntilLastMinute: String,
             readOnly: Boolean,
+            isOsPartial: Boolean,
         ) =
             Act086VerificationFrg().apply {
                 arguments = Bundle().apply {
@@ -1541,8 +1550,11 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                     putSerializable(GeOsDeviceItem::javaClass.name, deviceItem)
                     putBoolean(IN_READONLY, readOnly)
                     putString(GeOsDao.DATE_START, dateStartUntilLastMinute)
+                    putBoolean(IS_OS_PARTIAL, isOsPartial)
                 }
             }
+
+        private const val IS_OS_PARTIAL = "IS_OS_PARTIAL"
 
         fun getFragTranslationsVars() : List<String>{
             return listOf(

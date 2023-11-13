@@ -57,6 +57,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
             deviceItem
         )
     }
+
     private val verificationFrg: Act086VerificationFrg by lazy{
         Act086VerificationFrg.newInstance(
             hmAux_Trans,
@@ -64,7 +65,8 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
             isNewOrCreatedByApp(),
             deviceItem,
             dateStartUntilLastMinute,
-            readOnly
+            readOnly,
+            partition_execution == 1
         )
     }
 
