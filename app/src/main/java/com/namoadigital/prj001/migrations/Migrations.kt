@@ -311,6 +311,7 @@ val migrationV10: MigrationSQLite = object : MigrationSQLite(10, 11) {
             )
         ) {
             db.execSQL(""" ALTER TABLE [${TK_TicketDao.TABLE}] ADD [${TK_TicketDao.HAS_OPEN_SO_PARTITION}] int not null default 0;""".trimIndent())
+            db.execSQL(""" UPDATE [${TK_TicketDao.TABLE}] SET [${TK_TicketDao.SYNC_REQUIRED}] = 1;""".trimIndent())
         }
         //endregion
         //
