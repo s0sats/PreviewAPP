@@ -48,6 +48,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.core.text.StringKt;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -105,6 +106,7 @@ import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.databinding.Act011CheckDialogBinding;
 import com.namoadigital.prj001.databinding.CheckDialogFinalizeBinding;
+import com.namoadigital.prj001.extensions.StringHelperKt;
 import com.namoadigital.prj001.model.AcessoryFormView;
 import com.namoadigital.prj001.model.Act011FfOptionsViewObject;
 import com.namoadigital.prj001.model.Act011FormTab;
@@ -4052,7 +4054,11 @@ public class Act011_Main extends Base_Activity
         //
         TK_Ticket_Form tkTicketForm = getTkTicketForm();
         if(tkTicketForm != null && ToolBox_Inf.getDateDiferenceInMilliseconds(startDate, tkTicketForm.getPartition_min_date()) <= 0){
-            errorMsg = getString(R.string.unicode_bullet) + " " + hmAux_Trans.get("dialog_finalize_os_form_invalid_start_date_msg") + "\n";
+            errorMsg = getString(R.string.unicode_bullet) + " " + hmAux_Trans.get("dialog_finalize_os_form_invalid_start_date_msg") + ": "
+                    + StringHelperKt.formatTo(
+                            tkTicketForm.getPartition_min_date(),
+                            ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                    ) +"\n";
         }
         if (!validEndDate(startDate, endDate)) {
             errorMsg = getString(R.string.unicode_bullet) + " " + hmAux_Trans.get("dialog_finalize_os_form_invalid_end_date_end") + "\n";
