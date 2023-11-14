@@ -47,6 +47,7 @@ public class TK_Ticket_Form implements Serializable {
     @Nullable
     @SerializedName("pdf_url_local") private String pdf_url_local;
     @SerializedName("custom_form_data_partition") private Integer custom_form_data_partition;
+    @SerializedName("custom_form_version_partition") private Integer custom_form_version_partition;
     @SerializedName("order_type_code") private Integer order_type_code;
     @SerializedName("order_type_desc") private String order_type_desc;
     @SerializedName("process_type") private String process_type;
@@ -339,6 +340,14 @@ public class TK_Ticket_Form implements Serializable {
 
     public void setPartition_min_date(String partition_min_date) {
         this.partition_min_date = partition_min_date;
+    }
+
+    public Integer getCustom_form_version_partition(){
+        return this.custom_form_version_partition;
+    }
+
+    public void setCustom_form_version_partition(Integer custom_form_version_partition){
+        this.custom_form_version_partition = custom_form_version_partition;
     }
 
     public String getPdfUrlLocalName(boolean withExtension){

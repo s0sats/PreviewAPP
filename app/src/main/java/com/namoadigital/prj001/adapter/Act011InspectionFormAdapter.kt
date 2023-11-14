@@ -386,9 +386,7 @@ class Act011InspectionFormAdapter(
                     binding.tvInspectionVerificationAction.visibility = View.GONE
                 }
 
-                if(partitionedExecution == 1){
-                    binding.tvAutoAlreadyOk.isEnabled = false
-                }
+                binding.tvAutoAlreadyOk.isEnabled = partitionedExecution != 1
             }
         }
 

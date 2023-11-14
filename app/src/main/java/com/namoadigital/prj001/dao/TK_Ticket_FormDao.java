@@ -56,6 +56,7 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
     public static final String PDF_URL_LOCAL = "pdf_url_local";
 
     public static final String CUSTOM_FORM_DATA_PARTITION = "custom_form_data_partition";
+    public static final String CUSTOM_FORM_VERSION_PARTITION = "custom_form_version_partition";
     public static final String ORDER_TYPE_CODE = "order_type_code";
     public static final String ORDER_TYPE_DESC = "order_type_desc";
     public static final String PROCESS_TYPE = "process_type";
@@ -691,6 +692,12 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
                 tk_ticket_form.setCustom_form_data_partition(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_DATA_PARTITION)));
             }
             //
+            if(cursor.isNull(cursor.getColumnIndex(CUSTOM_FORM_VERSION_PARTITION))){
+                tk_ticket_form.setCustom_form_version_partition(null);
+            }else{
+                tk_ticket_form.setCustom_form_version_partition(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_VERSION_PARTITION)));
+            }
+            //
             if(cursor.isNull(cursor.getColumnIndex(ORDER_TYPE_CODE))){
                 tk_ticket_form.setOrder_type_code(null);
             }else{
@@ -801,6 +808,7 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
             contentValues.put(PDF_URL,tk_ticket_form.getPdf_url());
             contentValues.put(PDF_URL_LOCAL,tk_ticket_form.getPdf_url_local());
             contentValues.put(CUSTOM_FORM_DATA_PARTITION, tk_ticket_form.getCustom_form_data_partition());
+            contentValues.put(CUSTOM_FORM_VERSION_PARTITION, tk_ticket_form.getCustom_form_version_partition());
             contentValues.put(ORDER_TYPE_CODE,tk_ticket_form.getOrder_type_code());
             contentValues.put(ORDER_TYPE_DESC,tk_ticket_form.getOrder_type_desc());
             contentValues.put(PROCESS_TYPE,tk_ticket_form.getProcess_type());

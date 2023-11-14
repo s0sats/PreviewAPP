@@ -271,7 +271,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     }
 
     @Override
-    public void setData(String customer_code, String formtype_code, String form_code, String formversion_code, String product_code, String s_form_data, String product_desc, String product_id, String formcode_desc, String serial_id, Integer so_prefix, Integer so_code, String so_site_code, Integer so_operation_code, Integer mTicket_prefix, Integer mTicket_code, Integer mTicket_seq, Integer mTicket_seq_tmp, Integer mStep_code, Integer mCustomFormDataPartition) {
+    public void setData(String customer_code, String formtype_code, String form_code, String formversion_code, String product_code, String s_form_data, String product_desc, String product_id, String formcode_desc, String serial_id, Integer so_prefix, Integer so_code, String so_site_code, Integer so_operation_code, Integer mTicket_prefix, Integer mTicket_code, Integer mTicket_seq, Integer mTicket_seq_tmp, Integer mStep_code, Integer mCustomFormDataPartition, Integer mCustomFormDataVersion) {
         boolean hasNformPending = false;
         boolean bNew = false;
         boolean bAbortSchedule = false;
@@ -617,6 +617,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                     //
                     if(isContinuosForm(mCustomFormDataPartition)){
                         formData.setCustom_form_data_partition(mCustomFormDataPartition);
+                        formData.setCustom_form_version_partition(mCustomFormDataVersion);
                     }
                 }
                 //if (bAgendado) {

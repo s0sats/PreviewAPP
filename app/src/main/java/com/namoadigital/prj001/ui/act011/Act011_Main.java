@@ -278,6 +278,7 @@ public class Act011_Main extends Base_Activity
     private Integer mTicket_seq_tmp;
     private Integer mStep_code;
     private Integer mCustomFormDataPartition;
+    private Integer mCustomFormVersionPartition;
     private String requestingAct;
     private boolean isOffHandForm = false;
     private Bundle act081Bundle;
@@ -891,7 +892,8 @@ public class Act011_Main extends Base_Activity
                 mTicket_seq,
                 mTicket_seq_tmp,
                 mStep_code,
-                mCustomFormDataPartition
+                mCustomFormDataPartition,
+                mCustomFormVersionPartition
         );
     }
 
@@ -1394,6 +1396,7 @@ public class Act011_Main extends Base_Activity
             mTicket_seq_tmp = bundle.containsKey(TK_Ticket_CtrlDao.TICKET_SEQ_TMP) ? bundle.getInt(TK_Ticket_CtrlDao.TICKET_SEQ_TMP) : null;
             mStep_code = bundle.containsKey(TK_Ticket_CtrlDao.STEP_CODE) ? bundle.getInt(TK_Ticket_CtrlDao.STEP_CODE) : null;
             mCustomFormDataPartition = bundle.containsKey(GE_Custom_Form_DataDao.CUSTOM_FORM_DATA_PARTITION) ? bundle.getInt(GE_Custom_Form_DataDao.CUSTOM_FORM_DATA_PARTITION) : null;
+            mCustomFormVersionPartition = bundle.containsKey(GE_Custom_Form_DataDao.CUSTOM_FORM_VERSION_PARTITION) ? bundle.getInt(GE_Custom_Form_DataDao.CUSTOM_FORM_VERSION_PARTITION) : null;
             requestingAct = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT005);
             isOffHandForm = bundle.containsKey(ConstantBaseApp.TK_TICKET_IS_FORM_OFF_HAND);
 

@@ -49,7 +49,8 @@ public interface Act011_Main_Presenter {
             Integer mTicket_seq,
             Integer mTicket_seq_tmp,
             Integer mStep_code,
-            Integer mCustomFormDataPartition
+            Integer mCustomFormDataPartition,
+            Integer mCustomFormDataVersion
     );
 
     void saveData(GE_Custom_Form_Data formData, boolean bMsg);

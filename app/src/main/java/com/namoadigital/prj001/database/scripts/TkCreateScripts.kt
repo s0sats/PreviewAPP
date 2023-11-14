@@ -13,6 +13,7 @@ const val TK_TICKET_FORM_CREATE_SCRIPT =
         [custom_form_type] int not null, 
         [custom_form_code] int not null, 
         [custom_form_version] int not null, 
+        [custom_form_version_partition] int, 
         [custom_form_desc] text not null collate nocase, 
         [custom_form_data] int, 
         [score_status] text collate nocase, 

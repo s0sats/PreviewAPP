@@ -79,6 +79,7 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
     public static final String MEASURE_CYCLE_VALUE = "measure_cycle_value";
     public static final String FINALIZED_SERVICE = "finalized_service";
     public static final String CUSTOM_FORM_DATA_PARTITION = "custom_form_data_partition";
+    public static final String CUSTOM_FORM_VERSION_PARTITION = "custom_form_version_partition";
     public static final String KANBAN_RESCHEDULE_DATE = "kanban_reschedule_date";
 
     //private String[] columns = {CUSTOMER_CODE, CUSTOM_FORM_TYPE, CUSTOM_FORM_CODE, CUSTOM_FORM_VERSION, CUSTOM_FORM_DATA, CUSTOM_FORM_STATUS, PRODUCT_CODE, SERIAL_ID, DATE_START, DATE_END, USER_CODE, SITE_CODE , OPERATION_CODE , SIGNAURE, TOKEN};
@@ -652,7 +653,11 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
                 custom_form_data.setCustom_form_data_partition(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_DATA_PARTITION)));
             }
 
-
+            if (cursor.isNull(cursor.getColumnIndex(CUSTOM_FORM_VERSION_PARTITION))) {
+                custom_form_data.setCustom_form_version_partition(null);
+            } else {
+                custom_form_data.setCustom_form_version_partition(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_VERSION_PARTITION)));
+            }
 
             if (cursor.isNull(cursor.getColumnIndex(KANBAN_RESCHEDULE_DATE))) {
                 custom_form_data.setKanban_reschedule_date(null);
@@ -781,6 +786,7 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             contentValues.put(MEASURE_CYCLE_VALUE, custom_form_data.getMeasure_cycle_value());
             contentValues.put(FINALIZED_SERVICE, custom_form_data.getFinalized_service());
             contentValues.put(CUSTOM_FORM_DATA_PARTITION, custom_form_data.getCustom_form_data_partition());
+            contentValues.put(CUSTOM_FORM_VERSION_PARTITION, custom_form_data.getCustom_form_version_partition());
             contentValues.put(KANBAN_RESCHEDULE_DATE, custom_form_data.getKanban_reschedule_date());
 
             return contentValues;

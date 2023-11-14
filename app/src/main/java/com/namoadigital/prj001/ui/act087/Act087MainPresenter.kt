@@ -598,6 +598,11 @@ class Act087MainPresenter(
                         GE_Custom_Form_DataDao.CUSTOM_FORM_DATA_PARTITION,
                         it.custom_form_data_partition
                     )
+
+                    putInt(
+                        GE_Custom_Form_DataDao.CUSTOM_FORM_VERSION_PARTITION,
+                        it.custom_form_version_partition
+                    )
                 }
             }
 

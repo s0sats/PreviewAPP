@@ -324,6 +324,14 @@ val migrationV10: MigrationSQLite = object : MigrationSQLite(10, 11) {
         ) {
             db.execSQL(""" ALTER TABLE [${TK_Ticket_FormDao.TABLE}] ADD [${TK_Ticket_FormDao.CUSTOM_FORM_DATA_PARTITION}] int;""".trimIndent())
         }
+        if (!isFieldExist(
+                db,
+                TK_Ticket_FormDao.TABLE,
+                TK_Ticket_FormDao.CUSTOM_FORM_VERSION_PARTITION
+            )
+        ) {
+            db.execSQL(""" ALTER TABLE [${TK_Ticket_FormDao.TABLE}] ADD [${TK_Ticket_FormDao.CUSTOM_FORM_VERSION_PARTITION}] int;""".trimIndent())
+        }
         //
         if (!isFieldExist(
                 db,
@@ -432,6 +440,14 @@ val migrationV10: MigrationSQLite = object : MigrationSQLite(10, 11) {
             )
         ) {
             db.execSQL(""" ALTER TABLE [${GE_Custom_Form_DataDao.TABLE}] ADD [${GE_Custom_Form_DataDao.CUSTOM_FORM_DATA_PARTITION}] int;""".trimIndent())
+        }
+        if (!isFieldExist(
+                db,
+                GE_Custom_Form_DataDao.TABLE,
+                GE_Custom_Form_DataDao.CUSTOM_FORM_VERSION_PARTITION
+            )
+        ) {
+            db.execSQL(""" ALTER TABLE [${GE_Custom_Form_DataDao.TABLE}] ADD [${GE_Custom_Form_DataDao.CUSTOM_FORM_VERSION_PARTITION}] int;""".trimIndent())
         }
         //
         if (!isFieldExist(

@@ -197,6 +197,10 @@ public class GE_Custom_Form_Data {
     @Expose
     @SerializedName("custom_form_data_partition")
     private Integer custom_form_data_partition;
+
+    @Expose
+    @SerializedName("custom_form_version_partition")
+    private Integer custom_form_version_partition;
     @Expose
     @SerializedName("kanban_reschedule_date")
     private String kanban_reschedule_date;
@@ -652,6 +656,14 @@ public class GE_Custom_Form_Data {
 
     public void setCustom_form_data_partition(Integer custom_form_data_partition) {
         this.custom_form_data_partition = custom_form_data_partition;
+    }
+
+    public Integer getCustom_form_version_partition() {
+        return custom_form_version_partition;
+    }
+
+    public void setCustom_form_version_partition(Integer custom_form_version_partition) {
+        this.custom_form_version_partition = custom_form_version_partition;
     }
 
     public String getKanban_reschedule_date() {
