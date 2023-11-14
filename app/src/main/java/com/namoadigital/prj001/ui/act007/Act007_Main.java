@@ -245,7 +245,11 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
                         //
                         if(logObj.getFile_url() != null && !logObj.getFile_url().isEmpty()){
                             if(logObj.isLog_downloaded()){
-                                mPresenter.openPDF(logObj.getSplitedPk());
+                                if(logObj.getFile_name() !=null && !logObj.getFile_name().isEmpty() ){
+                                    mPresenter.openPDF(logObj.getFile_name());
+                                }else{
+                                    mPresenter.openPDF(logObj.getSplitedPk());
+                                }
                             }else{
                                 showNFormPDFOptions(logObj);
                             }

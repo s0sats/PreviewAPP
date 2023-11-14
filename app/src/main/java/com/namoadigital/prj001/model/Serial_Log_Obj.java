@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import androidx.annotation.Nullable;
+
 import com.google.gson.annotations.SerializedName;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -19,6 +21,8 @@ public class Serial_Log_Obj {
     @SerializedName("sys_process") private String sys_process;
     @SerializedName("sys_pk") private String sys_pk;
     @SerializedName("file_url") private String file_url;
+    @Nullable
+    @SerializedName("file_name") private String file_name;
     @SerializedName("log_downloaded") private boolean log_downloaded;
 
     public String getProcess() {
@@ -91,6 +95,15 @@ public class Serial_Log_Obj {
 
     public void setFile_url(String file_url) {
         this.file_url = file_url;
+    }
+
+    @Nullable
+    public String getFile_name() {
+        return file_name;
+    }
+
+    public void setFile_name(@Nullable String file_name) {
+        this.file_name = file_name;
     }
 
     public boolean isLog_downloaded() {

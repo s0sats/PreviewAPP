@@ -113,8 +113,9 @@ public class Act007_Main_Presenter_Impl implements Act007_Main_Presenter {
                                 aux.setLog_downloaded(checkSoExists(aux.getSplitedPk()));
                                 break;
                             case Serial_Log_Adapter.SYS_PROCESS_N_FORM:
-                                if(aux.getFile_url() != null && !aux.getFile_url().isEmpty()) {
-                                    aux.setLog_downloaded(checkPDFExists(aux.getSplitedPk()));
+                                if(aux.getFile_url() != null && !aux.getFile_url().isEmpty()
+                                || aux.getFile_name() != null && !aux.getFile_name().isEmpty()) {
+                                    aux.setLog_downloaded(checkPDFExists(aux.getSplitedPk(), aux.getFile_name()));
                                 }
                                 break;
                             default:
@@ -182,14 +183,13 @@ public class Act007_Main_Presenter_Impl implements Act007_Main_Presenter {
         return false;
     }
     //Verifica se SO ja existe localmente.
-    private boolean checkPDFExists(String[] pk) {
+    private boolean checkPDFExists(String[] pk, String server_file_name) {
         String file_name = generateFileName(pk,true);
         //form_1_31_34_1_31.pdf
         if(ToolBox_Inf.verifyDownloadFileInf(file_name, ConstantBase.CACHE_PATH)){
             return true;
         }
-
-        return false;
+        return ToolBox_Inf.verifyDownloadFileInf(server_file_name, ConstantBase.CACHE_PATH);
     }
     //Verifice se serial esta salvo localmente.
     //Se não estiver, salva

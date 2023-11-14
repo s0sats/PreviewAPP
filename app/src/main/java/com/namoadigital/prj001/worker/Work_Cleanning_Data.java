@@ -27,6 +27,7 @@ import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
+import com.namoadigital.prj001.model.TK_Ticket_Form;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.sql.FCMMessage_Sql_006;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_010;
@@ -146,6 +147,18 @@ public class Work_Cleanning_Data extends Worker {
                         for (TK_Ticket_Ctrl ctrl : tk_ticket_step.getCtrl()) {
                             if(ctrl.getAction().getAction_photo_local() != null && !ctrl.getAction().getAction_photo_local() .isEmpty()){
                                 filesToDeleteList.add(new File(Constant.CACHE_PATH_PHOTO + "/" + ctrl.getAction().getAction_photo_local()));
+                            }
+                            if(ctrl.getForm() != null){
+                                TK_Ticket_Form form = ctrl.getForm();
+                                String filePrefix = "form_"
+                                        + form.getCustomer_code() + "_"
+                                        + form.getCustom_form_type() + "_"
+                                        + form.getCustom_form_code() + "_"
+                                        + form.getCustom_form_version() + "_"
+                                        + form.getCustom_form_data() + "_";
+
+                                File[] ticketFormPdfFileList = ToolBox_Inf.getListOfFiles_v5(Constant.CACHE_PATH, filePrefix);
+                                Collections.addAll(filesToDeleteList, ticketFormPdfFileList);
                             }
                         }
                     }

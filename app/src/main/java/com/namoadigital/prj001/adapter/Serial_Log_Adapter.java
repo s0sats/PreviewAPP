@@ -170,7 +170,8 @@ public class Serial_Log_Adapter extends BaseAdapter {
             //Verde: Se PDF ja existe localmente
             //Azul: Ainda nã baixado.
             //Se não existe PDF gerado, icone ficará azul também
-            if (logObj.getFile_url() != null && !logObj.getFile_url().isEmpty()) {
+            if (checkStringValue(logObj.getFile_url())
+            || checkStringValue(logObj.getFile_name())) {
                 if (logObj.isLog_downloaded()) {
                     drawable = context.getDrawable(R.drawable.ic_file_download_black_24dp);
                     drawable.setTint(context.getResources().getColor(R.color.namoa_status_done));
@@ -209,6 +210,10 @@ public class Serial_Log_Adapter extends BaseAdapter {
             iv_download.setVisibility(View.GONE);
             iv_download.setOnClickListener(null);
         }
+    }
+
+    private boolean checkStringValue(String value) {
+        return value != null && !value.isEmpty();
     }
 
     private void processSOView(ImageView iv_download, final Serial_Log_Obj logObj, final int position) {
