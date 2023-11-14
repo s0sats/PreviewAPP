@@ -536,6 +536,7 @@ public class Act011_Main extends Base_Activity
         transList.add("dialog_finalize_so_form_invalid_ttl");
         transList.add("dialog_finalize_os_form_invalid_end_date_ttl");
         transList.add("dialog_finalize_os_form_invalid_end_date_end");
+        transList.add("dialog_finalize_os_form_invalid_start_date_msg");
         transList.add("dialog_finalize_so_form_serial_empty_class_error");
         transList.add("dialog_finalize_serial_class_lbl");
         transList.add("dialog_finalize_more_information_lbl");
@@ -4048,6 +4049,14 @@ public class Act011_Main extends Base_Activity
 
     private String isFinalizeDialogInputValid(Act011CheckDialogBinding binding, String startDate, String endDate) {
         String errorMsg = "";
+        //
+        TK_Ticket_Form tkTicketForm = getTkTicketForm();
+        if(tkTicketForm != null && ToolBox_Inf.getDateDiferenceInMilliseconds(startDate, tkTicketForm.getPartition_min_date()) <= 0){
+            errorMsg = getString(R.string.unicode_bullet) + " " + hmAux_Trans.get("dialog_finalize_os_form_invalid_start_date_msg") + "\n";
+        }
+        if (!validEndDate(startDate, endDate)) {
+            errorMsg = getString(R.string.unicode_bullet) + " " + hmAux_Trans.get("dialog_finalize_os_form_invalid_end_date_end") + "\n";
+        }
         //
         if (!validEndDate(startDate, endDate)) {
             errorMsg = getString(R.string.unicode_bullet) + " " + hmAux_Trans.get("dialog_finalize_os_form_invalid_end_date_end") + "\n";
