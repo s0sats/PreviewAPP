@@ -741,18 +741,18 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     private fun isValidStartDate(): Boolean {
         return with(binding) {
             (mkdtStartDate.isValid
-                    && !ToolBox_Inf.isFutureDate(mkdtStartDate.getmValue())
-                    && (
-                    (formOsHeader.last_measure_date == null
-                            || ToolBox_Inf.dateToMilliseconds(formOsHeader.last_measure_date) <= ToolBox_Inf.dateToMilliseconds(
-                        mkdtStartDate.getmValue()
-                    ))
-                            ||
-                            (isContinuosFormPartition() && ToolBox_Inf.dateToMilliseconds(ticketForm?.partition_min_date) < ToolBox_Inf.dateToMilliseconds(
-                                mkdtStartDate.getmValue()
-                            ))
+                && !ToolBox_Inf.isFutureDate(mkdtStartDate.getmValue())
+                && (
+                    (!isContinuosFormPartition()
+                    && (formOsHeader.last_measure_date == null
+                        || ToolBox_Inf.dateToMilliseconds(formOsHeader.last_measure_date) <= ToolBox_Inf.dateToMilliseconds(mkdtStartDate.getmValue()))
                     )
+                    ||
+                    (isContinuosFormPartition()
+                        && ToolBox_Inf.dateToMilliseconds(ticketForm?.partition_min_date) < ToolBox_Inf.dateToMilliseconds(mkdtStartDate.getmValue())
                     )
+                )
+            )
         }
     }
 
