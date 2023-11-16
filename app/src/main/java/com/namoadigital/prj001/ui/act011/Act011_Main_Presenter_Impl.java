@@ -602,6 +602,11 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                                 customFormLocal.getCustom_form_data(),
                                 SYS_STATUS_PROCESS,
                                 formData.getLocation_pendency());
+                        //
+                        if(isContinuosForm(mCustomFormDataPartition)){
+                            formData.setCustom_form_data_partition(mCustomFormDataPartition);
+                            formData.setCustom_form_version_partition(mCustomFormDataVersion);
+                        }
                     }
 
                     if (formData.getTicket_checkin_date() == null || formData.getTicket_checkin_date().isEmpty()) {
@@ -613,11 +618,6 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                         );
                         //Seta data de checkin no formData
                         formData.setTicket_checkin_date(ticketStep.getStep_start_date());
-                    }
-                    //
-                    if(isContinuosForm(mCustomFormDataPartition)){
-                        formData.setCustom_form_data_partition(mCustomFormDataPartition);
-                        formData.setCustom_form_version_partition(mCustomFormDataVersion);
                     }
                 }
                 //if (bAgendado) {

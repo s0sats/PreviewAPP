@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 
 import com.google.gson.annotations.SerializedName;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
@@ -100,6 +101,15 @@ public class Serial_Log_Obj {
     @Nullable
     public String getFile_name() {
         return file_name;
+    }
+    @Nullable
+    public String getFormFile_name(boolean removeExtension) {
+        String formattedFileName = file_name;
+        if( removeExtension && file_name != null){
+            int dotIndex = file_name.lastIndexOf (".");
+            formattedFileName = file_name.substring(0, dotIndex);
+        }
+        return ConstantBaseApp.N_FORM_PDF_PREFIX+ formattedFileName;
     }
 
     public void setFile_name(@Nullable String file_name) {

@@ -12,6 +12,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_Form_BlobDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.TK_Ticket_FormDao;
 import com.namoadigital.prj001.model.MyActions;
 import com.namoadigital.prj001.model.TNForm_PDF_Env;
 import com.namoadigital.prj001.model.TNForm_PDF_Rec;
@@ -119,6 +120,7 @@ public class WS_Generate_NForm_PDF extends IntentService {
             HMAux aux  = new HMAux();
             aux.put(NFORM_PK_KEY,sys_pk);
             aux.put(GE_Custom_Form_BlobDao.BLOB_URL,rec.getUrl());
+            aux.put(TK_Ticket_FormDao.PDF_URL_LOCAL,rec.getFile_name());
             //
             ToolBox.sendBCStatus(
                     getApplicationContext(),

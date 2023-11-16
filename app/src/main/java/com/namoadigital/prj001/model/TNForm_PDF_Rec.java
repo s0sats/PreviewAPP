@@ -8,6 +8,7 @@ public class TNForm_PDF_Rec {
     @SerializedName("link_url") private String link_url;
     @SerializedName("error_msg") private String error_msg;
     @SerializedName("url") private String url;
+    @SerializedName("file_name") private String file_name;
 
     public String getApp() {
         return app;
@@ -47,5 +48,13 @@ public class TNForm_PDF_Rec {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getFile_name() {
+        return file_name;
+    }
+
+    public void setFile_name(String file_name) {
+        this.file_name = file_name;
     }
 }

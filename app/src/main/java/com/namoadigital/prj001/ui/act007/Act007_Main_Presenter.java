@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act007;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.model.Serial_Log_Obj;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -21,11 +22,11 @@ public interface Act007_Main_Presenter {
 
     void processDownloadClick(String process, String[] pk, boolean alreadyDownloaded);
 
-    void executeNFormPDFDownload(String[] pk, String url);
-
     void executeNFormPDFGeneration(String pk);
 
     void openPDF(String file_name);
 
     void openPDF(String[] pk);
+
+    void executeNFormPDFDownload(Serial_Log_Obj logObj);
 }

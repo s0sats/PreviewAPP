@@ -2550,7 +2550,7 @@ public class Act011_Main extends Base_Activity
     @Nullable
     @Override
     public TK_Ticket_Form getTkTicketForm() {
-        if(mCustomFormDataPartition != null && mCustomFormDataPartition  > 0) {
+        if(formData.getCustom_form_data_partition() != null && formData.getCustom_form_version_partition() !=null) {
             return mPresenter.getTkTicketForm(
                     mTicket_prefix,
                     mTicket_code,

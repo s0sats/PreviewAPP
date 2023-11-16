@@ -115,7 +115,7 @@ public class Act007_Main_Presenter_Impl implements Act007_Main_Presenter {
                             case Serial_Log_Adapter.SYS_PROCESS_N_FORM:
                                 if(aux.getFile_url() != null && !aux.getFile_url().isEmpty()
                                 || aux.getFile_name() != null && !aux.getFile_name().isEmpty()) {
-                                    aux.setLog_downloaded(checkPDFExists(aux.getSplitedPk(), aux.getFile_name()));
+                                    aux.setLog_downloaded(checkPDFExists(aux.getSplitedPk(), aux.getFormFile_name(false)));
                                 }
                                 break;
                             default:
@@ -189,6 +189,7 @@ public class Act007_Main_Presenter_Impl implements Act007_Main_Presenter {
         if(ToolBox_Inf.verifyDownloadFileInf(file_name, ConstantBase.CACHE_PATH)){
             return true;
         }
+        //
         return ToolBox_Inf.verifyDownloadFileInf(server_file_name, ConstantBase.CACHE_PATH);
     }
     //Verifice se serial esta salvo localmente.
@@ -276,27 +277,6 @@ public class Act007_Main_Presenter_Impl implements Act007_Main_Presenter {
     @Override
     public void deleteLogFile() {
         ToolBox_Inf.deleteFileListExceptionSafe(Constant.TOKEN_PATH, Constant.PREFIX_LOG_FILE_SERIAL);
-    }
-
-    @Override
-    public void executeNFormPDFDownload(String[] pk, String url) {
-        if(ToolBox_Con.isOnline(context)) {
-            String file_name = generateFileName(pk, false);
-            //
-            if (!file_name.isEmpty()) {
-                new NformPDFDownload().execute(url, file_name);
-            } else {
-                ToolBox.alertMSG(
-                        context,
-                        hmAux_trans.get("alert_form_pdf_name_error_ttl"),
-                        hmAux_trans.get("alert_form_pdf_name_error_msg"),
-                        null,
-                        0
-                );
-            }
-        }else{
-            ToolBox_Inf.showNoConnectionDialog(context);
-        }
     }
 
     @Override
@@ -399,6 +379,31 @@ public class Act007_Main_Presenter_Impl implements Act007_Main_Presenter {
         String file_name = generateFileName(pk,true);
         //
         openPDF(file_name);
+    }
+
+    @Override
+    public void executeNFormPDFDownload(Serial_Log_Obj logObj) {
+        if(ToolBox_Con.isOnline(context)) {
+            String file_name = generateFileName(logObj.getSplitedPk(), false);
+            if(logObj.getFile_name() != null
+            && !logObj.getFile_name().isEmpty()){
+                file_name = logObj.getFormFile_name(true);
+            }
+            //
+            if (!file_name.isEmpty()) {
+                new NformPDFDownload().execute(logObj.getFile_url(), file_name);
+            } else {
+                ToolBox.alertMSG(
+                        context,
+                        hmAux_trans.get("alert_form_pdf_name_error_ttl"),
+                        hmAux_trans.get("alert_form_pdf_name_error_msg"),
+                        null,
+                        0
+                );
+            }
+        }else{
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
     }
 
     @Override

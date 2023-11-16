@@ -27,8 +27,5 @@ public interface Act007_Main_View {
     void sendResult(Intent intent);
 
     void disablePD();
-
-    void setItemGeneratedUrl(String url);
-
     void setItemAsDownloaded();
 }

@@ -19,6 +19,7 @@ import com.namoadigital.prj001.adapter.Serial_Log_Adapter;
 import com.namoadigital.prj001.dao.GE_Custom_Form_BlobDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.dao.TK_Ticket_FormDao;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.Serial_Log_Obj;
 import com.namoadigital.prj001.receiver.WBR_Logout;
@@ -200,13 +201,17 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
         disableProgressDialog();
     }
 
-    @Override
-    public void setItemGeneratedUrl(String url) {
+    public Serial_Log_Obj setItemGeneratedUrl(String url, String file_name) {
         if(mAdapter != null && itemPosition != -1) {
             Serial_Log_Obj logObj = (Serial_Log_Obj) mAdapter.getItem(itemPosition);
             logObj.setFile_url(url);
+            if(file_name != null) {
+                logObj.setFile_name(file_name);
+            }
             mAdapter.updateItemData(logObj, itemPosition);
+            return logObj;
         }
+        return null;
     }
 
     @Override
@@ -246,7 +251,7 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
                         if(logObj.getFile_url() != null && !logObj.getFile_url().isEmpty()){
                             if(logObj.isLog_downloaded()){
                                 if(logObj.getFile_name() !=null && !logObj.getFile_name().isEmpty() ){
-                                    mPresenter.openPDF(logObj.getFile_name());
+                                    mPresenter.openPDF(logObj.getFormFile_name(false));
                                 }else{
                                     mPresenter.openPDF(logObj.getSplitedPk());
                                 }
@@ -277,7 +282,7 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
             listener = new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    mPresenter.executeNFormPDFDownload(logObj.getSplitedPk(),logObj.getFile_url());
+                    mPresenter.executeNFormPDFDownload(logObj);
                 }
             };
         }else{
@@ -435,12 +440,22 @@ public class Act007_Main extends Base_Activity implements Act007_Main_View {
                 && hmAux.hasConsistentValue(WS_Generate_NForm_PDF.NFORM_PK_KEY)
                 && hmAux.hasConsistentValue(GE_Custom_Form_BlobDao.BLOB_URL)
             ) {
-                setItemGeneratedUrl(hmAux.get(GE_Custom_Form_BlobDao.BLOB_URL));
-                //
-                mPresenter.executeNFormPDFDownload(
-                        hmAux.get(WS_Generate_NForm_PDF.NFORM_PK_KEY).replace("|","@@@").split("@@@"),
-                        hmAux.get(GE_Custom_Form_BlobDao.BLOB_URL)
+                Serial_Log_Obj serial_log_obj = setItemGeneratedUrl(
+                        hmAux.get(GE_Custom_Form_BlobDao.BLOB_URL),
+                        hmAux.get(TK_Ticket_FormDao.PDF_URL_LOCAL)
                 );
+                //
+                if(serial_log_obj != null) {
+                    mPresenter.executeNFormPDFDownload(serial_log_obj);
+                }else{
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_generate_form_pdf_error_ttl"),
+                            hmAux_Trans.get("alert_generate_form_pdf_error_msg"),
+                            null,
+                            0
+                    );
+                }
             }else{
                 ToolBox.alertMSG(
                         context,
