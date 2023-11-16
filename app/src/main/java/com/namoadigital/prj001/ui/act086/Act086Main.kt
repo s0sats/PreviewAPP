@@ -15,7 +15,12 @@ import androidx.fragment.app.Fragment
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag
 import com.namoadigital.prj001.R
-import com.namoadigital.prj001.dao.*
+import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
+import com.namoadigital.prj001.dao.GeOsDeviceDao
+import com.namoadigital.prj001.dao.GeOsDeviceItemDao
+import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_ItemDao
+import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_Item_HistDao
+import com.namoadigital.prj001.dao.MdProductSerialTpDeviceItemHistMatDao
 import com.namoadigital.prj001.databinding.Act086MainBinding
 import com.namoadigital.prj001.databinding.Act086MainContentBinding
 import com.namoadigital.prj001.extensions.setFrag
@@ -28,11 +33,14 @@ import com.namoadigital.prj001.ui.act086.frg_verification.Act086VerificationFrg
 import com.namoadigital.prj001.ui.act090.Act090Main
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
-import com.namoadigital.prj001.util.ConstantBaseApp.*
+import com.namoadigital.prj001.util.ConstantBaseApp.DB_VERSION_CUSTOM
+import com.namoadigital.prj001.util.ConstantBaseApp.DEVICE_BUNDLE
+import com.namoadigital.prj001.util.ConstantBaseApp.DEVICE_ITEM_NEW_ACTION
+import com.namoadigital.prj001.util.ConstantBaseApp.ONE_DAY_IN_MILLISECOND
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 
@@ -181,12 +189,24 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View, PhotoSelecti
     private fun setHeaderInfo() {
         with(binding) {
 
-            if(partition_execution == 1){
+            if (partition_execution == 1 && !readOnly) {
                 notificationPartial.apply {
                     tvMessage.text = hmAux_Trans["partition_execution_lbl"]
                     ivIcon.apply {
-                        setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_camera_check_circle, null))
-                        imageTintList = ColorStateList.valueOf(ResourcesCompat.getColor(resources, R.color.namoa_color_light_green5, null))
+                        setImageDrawable(
+                            ResourcesCompat.getDrawable(
+                                resources,
+                                R.drawable.ic_camera_check_circle,
+                                null
+                            )
+                        )
+                        imageTintList = ColorStateList.valueOf(
+                            ResourcesCompat.getColor(
+                                resources,
+                                R.color.namoa_color_light_green5,
+                                null
+                            )
+                        )
                         visibility = View.VISIBLE
                     }
 
