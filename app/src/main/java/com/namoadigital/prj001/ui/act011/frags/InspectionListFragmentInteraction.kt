@@ -11,7 +11,7 @@ interface InspectionListFragmentInteraction {
         searchFilterValue: String,
         chkStatus: Boolean,
         itemCodeAndSeqPk: String,
-        partition_execution: Int? = null
+        partition_execution: Int = 0
     )
     //
     fun onAlreadyOkAction(itemPk: String): InspectionCell
