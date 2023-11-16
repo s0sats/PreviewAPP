@@ -33,6 +33,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -385,12 +386,18 @@ public class Act007_Main_Presenter_Impl implements Act007_Main_Presenter {
     public void executeNFormPDFDownload(Serial_Log_Obj logObj) {
         if(ToolBox_Con.isOnline(context)) {
             String file_name = generateFileName(logObj.getSplitedPk(), false);
+            File[] formPdfFileList = ToolBox_Inf.getListOfFiles_v5(Constant.CACHE_PATH, file_name);
             if(logObj.getFile_name() != null
             && !logObj.getFile_name().isEmpty()){
                 file_name = logObj.getFormFile_name(true);
             }
             //
             if (!file_name.isEmpty()) {
+                if(formPdfFileList.length >0) {
+                    ArrayList<File> filesToDeleteList = new ArrayList<>();
+                    Collections.addAll(filesToDeleteList, formPdfFileList);
+                    ToolBox_Inf.deleteFileListExceptionSafe(filesToDeleteList);
+                }
                 new NformPDFDownload().execute(logObj.getFile_url(), file_name);
             } else {
                 ToolBox.alertMSG(

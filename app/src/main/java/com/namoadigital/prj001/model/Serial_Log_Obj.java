@@ -106,8 +106,10 @@ public class Serial_Log_Obj {
     public String getFormFile_name(boolean removeExtension) {
         String formattedFileName = file_name;
         if( removeExtension && file_name != null){
-            int dotIndex = file_name.lastIndexOf (".");
-            formattedFileName = file_name.substring(0, dotIndex);
+            int dotIndex = file_name.lastIndexOf(".");
+            if(dotIndex >0) {
+                formattedFileName = file_name.substring(0, dotIndex);
+            }
         }
         return ConstantBaseApp.N_FORM_PDF_PREFIX+ formattedFileName;
     }

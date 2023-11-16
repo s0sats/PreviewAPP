@@ -1,7 +1,6 @@
 package com.namoadigital.prj001.worker;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.work.Data;
@@ -30,7 +29,9 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Work_DownLoad_PDF extends Worker {
     public static final String WORKER_TAG = "Work_DownLoad_PDF";
@@ -264,6 +265,7 @@ public class Work_DownLoad_PDF extends Worker {
                         }
                         //
                         if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(WS_Download_PDF_Sql_001.FILE_LOCAL_NAME).toLowerCase())) {
+                            deleteOutdatedPDF(hmAux.get(WS_Download_PDF_Sql_001.FILE_LOCAL_NAME));
                             ToolBox_Inf.deleteDownloadFileInf(hmAux.get(WS_Download_PDF_Sql_001.FILE_LOCAL_NAME).toLowerCase().replace(".pdf", ".tmp"));
                             //
                             ToolBox_Inf.downloadImagePDF(
@@ -310,6 +312,19 @@ public class Work_DownLoad_PDF extends Worker {
             IS_RUNNING = false;
             if (!ToolBox_Inf.isDownloadRunning()) {
                 ToolBox_Inf.cancelNotification(getApplicationContext(), Constant.NOTIFICATION_DOWNLOAD);
+            }
+        }
+    }
+
+    private void deleteOutdatedPDF(String fullFileName) {
+        int index = fullFileName.lastIndexOf("_");
+        if(index > 0) {
+            String fileNamePrefix = fullFileName.substring(0, index);
+            File[] formPdfFileList = ToolBox_Inf.getListOfFiles_v5(Constant.CACHE_PATH, fileNamePrefix);
+            if (formPdfFileList.length > 0) {
+                ArrayList<File> filesToDeleteList = new ArrayList<>();
+                Collections.addAll(filesToDeleteList, formPdfFileList);
+                ToolBox_Inf.deleteFileListExceptionSafe(filesToDeleteList);
             }
         }
     }
