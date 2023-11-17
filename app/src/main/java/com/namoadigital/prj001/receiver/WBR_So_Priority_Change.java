@@ -2,6 +2,7 @@ package com.namoadigital.prj001.receiver;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.legacy.content.WakefulBroadcastReceiver;
@@ -20,6 +21,11 @@ public class WBR_So_Priority_Change extends WakefulBroadcastReceiver {
         } else {
             mService.putExtras(new Bundle());
         }
-        startWakefulService(context, mService);
+        //
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(mService);
+        }else {
+            startWakefulService(context, mService);
+        }
     }
 }
