@@ -195,11 +195,7 @@ class Act011InspectionFormAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun onBinding(inspection: InspectionCell?) {
             inspection?.apply {
-                if(partitionedExecution == 1){
-                    binding.ivPartitionExecution.visibility = View.VISIBLE
-                }else{
-                    binding.ivPartitionExecution.visibility = View.GONE
-                }
+
                 val context = binding.root.context
                 binding.btnInspectionOngoingAction.visibility = View.GONE
                 if (isDone) {
@@ -208,6 +204,7 @@ class Act011InspectionFormAdapter(
                     binding.btnInspectionOngoingAction.visibility = View.GONE
                     binding.tvInspectionVerificationAction.visibility = View.GONE
                     binding.tvAutoAlreadyOk.visibility = View.GONE
+                    binding.ivPartitionExecution.visibility = View.GONE
                 } else {
                     binding.llAnswerInfo.visibility = View.GONE
                     binding.btnInspectAnswered.visibility = View.GONE
@@ -216,6 +213,11 @@ class Act011InspectionFormAdapter(
                         binding.tvAutoAlreadyOk.visibility = View.VISIBLE
                     } else {
                         binding.tvAutoAlreadyOk.visibility = View.GONE
+                    }
+                    if (partitionedExecution == 1 && !read_only) {
+                        binding.ivPartitionExecution.visibility = View.VISIBLE
+                    } else {
+                        binding.ivPartitionExecution.visibility = View.GONE
                     }
                 }
                 //
