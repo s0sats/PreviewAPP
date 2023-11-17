@@ -1960,7 +1960,9 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         TK_Ticket_Form form = ticketCtrl.getForm();
 
         bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, form.getCustom_form_desc());
-        if(form != null) {
+        if(form != null
+        && form.getCustom_form_data_partition() != null
+        && form.getCustom_form_version_partition() != null) {
             bundle.putInt(GE_Custom_Form_DataDao.CUSTOM_FORM_DATA_PARTITION, form.getCustom_form_data_partition());
             bundle.putInt(GE_Custom_Form_DataDao.CUSTOM_FORM_VERSION_PARTITION, form.getCustom_form_version_partition());
         }
