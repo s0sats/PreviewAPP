@@ -48,7 +48,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.res.ResourcesCompat;
-import androidx.core.text.StringKt;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -1147,9 +1146,10 @@ public class Act011_Main extends Base_Activity
      * - O N-Form não pode ter sido gerado pelo Agendamento
      * - 0 Serial deve ser informdo
      * LUCHE - 28/08/2020
-     *  Modificado metodo, adicionando condição de form NÃO TER SIDO ORIDINADO por um ticket
+     * Modificado metodo, adicionando condição de form NÃO TER SIDO ORIDINADO por um ticket
      * BARRIONUEVO - 28/08/2020
-     *  Modificado metodo, Permitindo para forms espontaneos do ticket.
+     * Modificado metodo, Permitindo para forms espontaneos do ticket.
+     *
      * @return
      */
     @Override
@@ -1211,9 +1211,9 @@ public class Act011_Main extends Base_Activity
 
         formData.setSignature(mSignature);
         int requireSignature = signature;
-        if ( formData.getFinalized_service() != null
-          && formData.getFinalized_service() == -1
-        ){
+        if (formData.getFinalized_service() != null
+                && formData.getFinalized_service() == -1
+        ) {
             requireSignature = 0;
         }
         mPresenter.checkSignature(formData, geOs, requireSignature, 0, geFiles, require_serial_done, require_serial_done_ok, formLocal.getRequire_location());
@@ -1631,9 +1631,10 @@ public class Act011_Main extends Base_Activity
                 //Se != de null, seta o listener e insere nas listas customFFs e controls_dyn
                 if (customField != null) {
                     customField.setNcRecognizeEmailInComment(formLocal.getNc_recognize_email_in_comment());
-                    if(formLocal.getNc_recognize_email_in_comment() == 1) {
+                    if (formLocal.getNc_recognize_email_in_comment() == 1) {
                         customField.setOnSiteEmailList(() -> mPresenter.getSiteEmailList(formLocal.getSite_code()));
-                    };
+                    }
+                    ;
                     //Implments da interface que faz o scroll ao rodar o dismiss do dialog dos dots
                     customField.setOnDotsDialogDismiss(onBackFocusEvent);
                     //Add na lista de customFF
@@ -2550,7 +2551,7 @@ public class Act011_Main extends Base_Activity
     @Nullable
     @Override
     public TK_Ticket_Form getTkTicketForm() {
-        if(formData.getCustom_form_data_partition() != null && formData.getCustom_form_version_partition() !=null) {
+        if (formData.getCustom_form_data_partition() != null && formData.getCustom_form_version_partition() != null) {
             return mPresenter.getTkTicketForm(
                     mTicket_prefix,
                     mTicket_code,
@@ -2935,7 +2936,7 @@ public class Act011_Main extends Base_Activity
          */
         canSave = false;
         //LUCHE - 31/08/2020
-        if(mPresenter.isaTicketFlowForm() && !finalizeNewFlow){
+        if (mPresenter.isaTicketFlowForm() && !finalizeNewFlow) {
             callAct070();
             return;
         }
@@ -2946,9 +2947,9 @@ public class Act011_Main extends Base_Activity
         }
         if (finalizeNewFlow) {
             if (mPresenter.checkNFormExists(formLocal)) {
-                if(isOffHandForm && !mPresenter.isFormTicketKanban(mTicket_prefix, mTicket_code)){
+                if (isOffHandForm && !mPresenter.isFormTicketKanban(mTicket_prefix, mTicket_code)) {
                     callAct081();
-                }else {
+                } else {
                     callAct006(context, finalizeNewFlow);
                 }
             } else {
@@ -3137,8 +3138,8 @@ public class Act011_Main extends Base_Activity
             bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT070);
         }
         //
-        if(mPresenter.setForceSentByForm(formData.getCustomer_code(),formData.getCustom_form_type(),formData.getCustom_form_code(),formData.getCustom_form_version(), (int) formData.getCustom_form_data())){
-            bundle.putBoolean(Act070_Main.PARAM_FORCE_SEND_BY_FORM_EXEC,true);
+        if (mPresenter.setForceSentByForm(formData.getCustomer_code(), formData.getCustom_form_type(), formData.getCustom_form_code(), formData.getCustom_form_version(), (int) formData.getCustom_form_data())) {
+            bundle.putBoolean(Act070_Main.PARAM_FORCE_SEND_BY_FORM_EXEC, true);
         }
         //
         bundle.putString(
@@ -3826,7 +3827,7 @@ public class Act011_Main extends Base_Activity
         binding.act011DialogNotFinalizedTvSubTitle.setText(hmAux_Trans.get("dialog_not_finalized_info_lbl"));
         binding.rgDecideOnPlanning.setText(hmAux_Trans.get("dialog_not_finalized_decide_planning_lbl"));
         binding.rgContinuePartialExecution.setText(hmAux_Trans.get("dialog_not_finalized_partial_execution_lbl"));
-        binding.act011DialogCheckBtnOk.setText(hmAux_Trans.get("dialog_not_finalized_ok_lbl"));
+        binding.dialogNotFinalizedCheckBtnOk.setText(hmAux_Trans.get("dialog_not_finalized_ok_lbl"));
         binding.act011DialogCheckBtnCancel.setText(hmAux_Trans.get("dialog_not_finalized_cancel_lbl"));
         binding.tvIncorrect.setText(hmAux_Trans.get("dialog_not_finalized_date_incorrect_lbl"));
         binding.mkdatePartialExecution.setmLabel("");
@@ -3851,10 +3852,10 @@ public class Act011_Main extends Base_Activity
             if (isPartialExecution) {
                 binding.mkdatePartialExecution.setmEnabled(true);
                 binding.mkdatePartialExecution.setmValue(getNextDay(), true);
-                binding.act011DialogCheckBtnOk.setEnabled(binding.mkdatePartialExecution.isValid());
+                binding.dialogNotFinalizedCheckBtnOk.setEnabled(binding.mkdatePartialExecution.isValid());
             } else {
                 binding.mkdatePartialExecution.setmEnabled(false);
-                binding.act011DialogCheckBtnOk.setEnabled(true);
+                binding.dialogNotFinalizedCheckBtnOk.setEnabled(true);
                 binding.mkdatePartialExecution.setmValue("", true);
                 binding.tvIncorrect.setVisibility(View.GONE);
             }
@@ -3865,15 +3866,15 @@ public class Act011_Main extends Base_Activity
             String currentDate = ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT);
             if (ToolBox_Inf.getDateDiferenceInMilliseconds(dateSelected, currentDate) < 0 || ToolBox_Inf.getDateDiferenceInDays(dateSelected, currentDate) > 14) {
                 binding.tvIncorrect.setVisibility(View.VISIBLE);
-                binding.act011DialogCheckBtnOk.setEnabled(false);
+                binding.dialogNotFinalizedCheckBtnOk.setEnabled(false);
             } else {
-                binding.act011DialogCheckBtnOk.setEnabled(true);
+                binding.dialogNotFinalizedCheckBtnOk.setEnabled(true);
                 binding.tvIncorrect.setVisibility(View.GONE);
             }
         });
 
         //
-        binding.act011DialogCheckBtnOk.setOnClickListener(v -> {
+        binding.dialogNotFinalizedCheckBtnOk.setOnClickListener(v -> {
             alertDialog.dismiss();
             if (binding.rgContinuePartialExecution.isChecked()) {
                 String mkDATE = binding.mkdatePartialExecution.getmValue();
@@ -3966,6 +3967,28 @@ public class Act011_Main extends Base_Activity
             @Override
             public void onChangeValue(String s) {
                 String endDate = binding.act011DialogCheckMkdateFormEnd.getmValue();
+                String errorMsg = isFinalizeDialogInputValid(binding, s, endDate);
+                TK_Ticket_Form tkTicketForm = getTkTicketForm();
+                if (tkTicketForm.getPartition_min_date() != null) {
+                    if (errorMsg.isEmpty()) {
+                        binding.act011DialogCheckTvElapsedTimeVal.setText(getFormElapsedTimeFormatted(s, endDate));
+                        binding.act011DialogCheckBtnNotFinalized.setEnabled(true);
+                        binding.act011DialogCheckBtnOk.setEnabled(true);
+                    } else {
+                        binding.act011DialogCheckBtnNotFinalized.setEnabled(false);
+                        binding.act011DialogCheckBtnOk.setEnabled(false);
+                        ToolBox.alertMSG(
+                                context,
+                                hmAux_Trans.get("dialog_finalize_os_form_invalid_end_date_ttl"),
+                                errorMsg,
+                                null,
+                                0
+                        );
+                        binding.act011DialogCheckTvElapsedTimeVal.setText("--:--");
+                    }
+                    return;
+                }
+
                 if (validEndDate(s, endDate)) {
                     binding.act011DialogCheckTvElapsedTimeVal.setText(getFormElapsedTimeFormatted(s, endDate));
                 } else {
@@ -4053,12 +4076,12 @@ public class Act011_Main extends Base_Activity
         String errorMsg = "";
         //
         TK_Ticket_Form tkTicketForm = getTkTicketForm();
-        if(tkTicketForm != null && ToolBox_Inf.getDateDiferenceInMilliseconds(startDate, tkTicketForm.getPartition_min_date()) <= 0){
+        if (tkTicketForm != null && ToolBox_Inf.getDateDiferenceInMilliseconds(startDate, tkTicketForm.getPartition_min_date()) <= 0) {
             errorMsg = getString(R.string.unicode_bullet) + " " + hmAux_Trans.get("dialog_finalize_os_form_invalid_start_date_msg") + ": "
                     + StringHelperKt.formatTo(
-                            tkTicketForm.getPartition_min_date(),
-                            ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-                    ) +"\n";
+                    tkTicketForm.getPartition_min_date(),
+                    ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+            ) + "\n";
         }
         if (!validEndDate(startDate, endDate)) {
             errorMsg = getString(R.string.unicode_bullet) + " " + hmAux_Trans.get("dialog_finalize_os_form_invalid_end_date_end") + "\n";
@@ -4349,7 +4372,7 @@ public class Act011_Main extends Base_Activity
         if (wsSoProcess.equalsIgnoreCase(WS_Product_Serial_Structure.class.getSimpleName())
         ) {
             flowControl();
-        }else {
+        } else {
             ToolBox.alertMSG(
                     context,
                     hmAux_Trans.get("alert_data_not_sent_ttl"),
@@ -4445,7 +4468,7 @@ public class Act011_Main extends Base_Activity
         if (wsSoProcess.equalsIgnoreCase(WS_Save.class.getSimpleName())) {
             setWsSoProcess("");
             MD_Product_Serial serialInfo = getSerialInfo();
-            if(serialInfo.getHas_item_check() == 1){
+            if (serialInfo.getHas_item_check() == 1) {
                 progressDialog.dismiss();
                 enableProgressDialog(
                         hmAux_Trans.get("alert_update_structure_ttl"),
@@ -4455,10 +4478,10 @@ public class Act011_Main extends Base_Activity
                 );
                 setWsSoProcess(WS_Product_Serial_Structure.class.getSimpleName());
                 mPresenter.executeStructureUpdate(serialInfo);
-            }else {
+            } else {
                 mPresenter.processWS_SaveReturn(mLink);
             }
-        }else if(wsSoProcess.equalsIgnoreCase(WS_Product_Serial_Structure.class.getSimpleName())) {
+        } else if (wsSoProcess.equalsIgnoreCase(WS_Product_Serial_Structure.class.getSimpleName())) {
             setWsSoProcess("");
             afterSaveFlow();
         }
