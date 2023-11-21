@@ -129,7 +129,7 @@ Selecione como o retorno será realizado abaixo:" />
             android:textColor="@color/m3_namoa_primary"
             android:visibility="visible"
             app:layout_constrainedWidth="true"
-            app:layout_constraintEnd_toStartOf="@+id/act011_dialog_check_btn_ok"
+            app:layout_constraintEnd_toStartOf="@+id/dialog_not_finalized_check_btn_ok"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintStart_toStartOf="parent"
@@ -137,7 +137,7 @@ Selecione como o retorno será realizado abaixo:" />
             app:strokeColor="@color/m3_namoa_outline" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/act011_dialog_check_btn_ok"
+            android:id="@+id/dialog_not_finalized_check_btn_ok"
             style="@style/Widget.Material3.Button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
