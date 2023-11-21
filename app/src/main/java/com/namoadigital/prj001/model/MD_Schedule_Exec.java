@@ -701,7 +701,7 @@ public class MD_Schedule_Exec {
         Integer hasJustifyGroup = null;
 
         if (geCustomForm != null) {
-            boolean profileExist = ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_TICKET, ConstantBaseApp.PROFILE_MENU_TICKET_PARAM_NOT_EXECUTED);
+            boolean profileExist = ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_SCHEDULE_CHECKLIST, ConstantBaseApp.PROFILE_MENU_TICKET_PARAM_NOT_EXECUTED);
             if (profileExist && geCustomForm.getJustifyGroupCode() != null) {
                 hasJustifyGroup = geCustomForm.getJustifyGroupCode();
             }
