@@ -17,5 +17,5 @@ interface FormOsHeaderFrgCreationInteraction {
     fun getMeasure(measureCode: Int) : MeMeasureTp?
     fun getFormRequiresGPS(): Boolean
     fun isContinousForm(): Boolean
-    fun getTkTicketForm(): TK_Ticket_Form?
+    fun getTkTicketContinousForm(): TK_Ticket_Form?
 }

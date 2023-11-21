@@ -371,7 +371,7 @@ class Act087Main : Base_Activity_Frag(),
         return bundle.getInt(TK_Ticket_FormDao.CUSTOM_FORM_DATA_PARTITION, 0) > 0
     }
 
-    override fun getTkTicketForm(): TK_Ticket_Form? {
+    override fun getTkTicketContinousForm(): TK_Ticket_Form? {
         if(isContinousForm()) {
             return mPresenter.getTkTicketForm()
         }

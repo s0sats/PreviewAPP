@@ -76,7 +76,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         mCreationListener?.getFormRequiresGPS() ?: false
     }
     private val ticketForm by lazy {
-        mCreationListener?.getTkTicketForm()
+        mCreationListener?.getTkTicketContinousForm()
             ?: measureTpListener?.getTkTicketForm()
     }
 
@@ -140,6 +140,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 "alert_current_cycle_lbl",
                 "alert_form_os_creation_ttl",
                 "alert_form_os_creation_confirm",
+                "alert_form_os_continues_ttl",
+                "alert_form_os_continues_confirm",
                 "alert_bkp_serial_ttl",
                 "toast_serial_auto_selected_msg",
                 "alert_qty_records_exceeded_msg",
@@ -502,7 +504,6 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 ticketForm!!.measure_tp_desc?.let {
                     tvOsMainMeasureLbl.text = it
                 }
-                //todo rever o save do float no obj
                 ticketForm?.measure_value?.let {
                     mketOsMainMeasureVal.setText(
                         ToolBox_Inf.convertFloatToBigDecimalString(
@@ -659,6 +660,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             val isMachineTheSame =
                 (swMachine.isChecked && !isMachineEmpty && defaultBkpMachineProduct?.product_code == selectedBkpMachineProduct?.product_code && selectedBkpMachineSerialId == formSerialId)
             val isStartDateInvalid = if (!bypassMinValidation()) isValidStartDate().not() else false
+            val isContinuousFormStartDateInvalid = if(isContinuosFormPartition()) isValidContinuosFormStartDate().not() else false
             clMachineEdit.background = if (isMachineEmpty || isMachineTheSame) {
                 ContextCompat.getDrawable(requireContext(), R.drawable.shape_error)
             } else {
@@ -685,10 +687,22 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             //Se for continuação da OS e a data estiver invalida ele mostra um dialog pro user
             if(isContinuosFormPartition()){
                 if(isStartDateInvalid){
-                    showSaveErroDialog(startDateInvalid = isStartDateInvalid)
+                    showSaveErroDialog(
+                        startDateInvalid = isStartDateInvalid,
+                        continuousFormStartDateInvalid = isContinuousFormStartDateInvalid
+                    )
                     return
                 }
-                createOs()
+                //
+                ToolBox.alertMSG_YES_NO(
+                    requireContext(),
+                    hmAuxTrans["alert_form_os_continues_ttl"],
+                    hmAuxTrans["alert_form_os_continues_confirm"],
+                    { _, _ ->
+                        createOs()
+                    },
+                    1
+                )
             }else{
                 val isInvalid = isOrderTypeInvalid || isMachineEmpty || isMachineTheSame || isStartDateInvalid || measureInvalid || preventiveCycleInvalid
                 if(isInvalid){
@@ -738,21 +752,20 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     /**
      * Valida se data iniicio informada é valida, não é no futuro e é maior que a data da ultima medição.
      */
-    private fun isValidStartDate(): Boolean {
-        return with(binding) {
-            (mkdtStartDate.isValid
-                && !ToolBox_Inf.isFutureDate(mkdtStartDate.getmValue())
-                && (
-                    (!isContinuosFormPartition()
-                    && (formOsHeader.last_measure_date == null
-                        || ToolBox_Inf.dateToMilliseconds(formOsHeader.last_measure_date) <= ToolBox_Inf.dateToMilliseconds(mkdtStartDate.getmValue()))
-                    )
-                    ||
-                    (isContinuosFormPartition()
-                        && ToolBox_Inf.dateToMilliseconds(ticketForm?.partition_min_date) < ToolBox_Inf.dateToMilliseconds(mkdtStartDate.getmValue())
-                    )
-                )
-            )
+    private fun isValidStartDate() :Boolean {
+       return with(binding){
+           (mkdtStartDate.isValid
+           && !ToolBox_Inf.isFutureDate(mkdtStartDate.getmValue())
+           && (formOsHeader.last_measure_date == null
+               || ToolBox_Inf.dateToMilliseconds(formOsHeader.last_measure_date) <= ToolBox_Inf.dateToMilliseconds(mkdtStartDate.getmValue())
+              )
+          )
+       }
+    }
+
+    private fun isValidContinuosFormStartDate():Boolean{
+        return with(binding){
+            ToolBox_Inf.dateToMilliseconds(mkdtStartDate.getmValue()) > ToolBox_Inf.dateToMilliseconds(ticketForm?.partition_min_date)
         }
     }
 
@@ -1136,6 +1149,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
         bkpMachineEmpty: Boolean = false,
         bkpMachineEquals: Boolean = false,
         startDateInvalid: Boolean = false,
+        continuousFormStartDateInvalid: Boolean = false,
         measureInvalid: Boolean = false,
         lastCycleInvalid: Boolean = false,
         calculatedCycle: Float = 0f,
@@ -1161,11 +1175,17 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                 setPrefix(getString(R.string.unicode_bullet).plus(" "))
             }
             tvStarDateInvalidMsg.apply {
-                visibility = if (startDateInvalid) View.VISIBLE else View.GONE
+                visibility = if(startDateInvalid) View.VISIBLE else View.GONE
+                text = hmAuxTrans["alert_invalid_star_date_error_msg"]
+                setPrefix(getString(R.string.unicode_bullet).plus(" "))
+            }
+            tvContinuosFormStarDateInvalidMsg.apply {
+                visibility = if (continuousFormStartDateInvalid) View.VISIBLE else View.GONE
                 val min_date = ticketForm?.partition_min_date?.formatTo(
                     ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
                 )
-                text = if(isContinuosFormPartition()) "${hmAuxTrans["alert_invalid_start_date_partition_error_msg"]} $min_date" else hmAuxTrans["alert_invalid_star_date_error_msg"]
+                //
+                text = "${hmAuxTrans["alert_invalid_start_date_partition_error_msg"]} $min_date"
                 setPrefix(getString(R.string.unicode_bullet).plus(" "))
             }
             tvMeasureInvalidValMsg.apply {

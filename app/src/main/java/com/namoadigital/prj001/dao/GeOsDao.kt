@@ -419,7 +419,7 @@ class GeOsDao(
         }
     }
 
-    fun createGeOsStructure(geOs: GeOs, mdSerial: MD_Product_Serial): DaoObjReturn {
+    fun createGeOsStructure(geOs: GeOs, mdSerial: MD_Product_Serial, isContinuousForm: Boolean): DaoObjReturn {
         var daoObjReturn = DaoObjReturn()
         var addUpdateRet: Long = 0
         var curAction = DaoObjReturn.INSERT_OR_UPDATE
@@ -478,9 +478,9 @@ class GeOsDao(
         )
         try {
             //Chama fun que fará a primeira e segunda varredura.
-            checkScan(geOs, geOsDeviceItens)
-        }catch (e: Exception){
-            ToolBox_Inf.registerException(javaClass.name,e)
+            checkScan(geOs, geOsDeviceItens, isContinuousForm)
+        } catch (e: Exception) {
+            ToolBox_Inf.registerException(javaClass.name, e)
             return daoObjReturn.apply {
                 setError(true)
                 rawMessage = "Erro ao aplicar varreduras:\n ${e.message}"
@@ -542,11 +542,14 @@ class GeOsDao(
     @Throws(java.lang.Exception::class)
     private fun checkScan(
         geOs: GeOs,
-        geOsDeviceItens: MutableList<GeOsDeviceItem>
+        geOsDeviceItens: MutableList<GeOsDeviceItem>,
+        isContinuousForm: Boolean
     ) {
-        //Chama primeira varredura que modifica o status baseado nas configuração do proximo ciclo
-        //programado.
-        firstScan(geOs, geOsDeviceItens)
+        if(!isContinuousForm) {
+            //Chama primeira varredura que modifica o status baseado nas configuração do proximo ciclo
+            //programado.
+            firstScan(geOs, geOsDeviceItens)
+        }
         //Chama segunda varredura que modifica o status baseado na propriedade display_option do
         // tipo de O.S selecionada
         secondScan(geOs, geOsDeviceItens)

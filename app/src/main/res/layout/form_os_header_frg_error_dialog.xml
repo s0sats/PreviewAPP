@@ -59,6 +59,19 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_bkp_machine_equal_msg" />
 
     <TextView
+        android:id="@+id/tv_continuos_form_star_date_invalid_msg"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        tools:text="Invalid continuos Form date start"
+        android:textColor="@color/namoa_font_color_black222"
+        android:textSize="@dimen/font_size_font_16"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.666"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_star_date_invalid_msg" />
+
+    <TextView
         android:id="@+id/tv_measure_invalid_val_msg"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -68,7 +81,7 @@
         android:textSize="@dimen/font_size_font_16"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_star_date_invalid_msg" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_continuos_form_star_date_invalid_msg" />
 
     <TextView
         android:id="@+id/tv_measure_invalid_zero_cycle_msg"

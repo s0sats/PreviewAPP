@@ -484,7 +484,11 @@ class Act087MainPresenter(
      */
     override fun createOsHeader(formOsHeader: GeOs) {
         formOsHeader.custom_form_data = getNextFormData(formOsHeader)
-        val daoObjReturn = geOsDao.createGeOsStructure(formOsHeader, serialObj)
+        val tkTicketForm = getTkTicketForm()
+        val isContinuousForm = tkTicketForm?.let {
+            it.custom_form_data_partition != null && it.custom_form_data_partition >0
+        }?: false
+        val daoObjReturn = geOsDao.createGeOsStructure(formOsHeader, serialObj, isContinuousForm)
         if(!daoObjReturn.hasError()){
             if(!isSchedule()){
                 mView.callAct011(
