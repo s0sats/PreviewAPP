@@ -2131,8 +2131,10 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
 //        String formVersionTarget = getVersionToUse(customForm,ticketCtrl);
         bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, String.valueOf(customForm.getCustom_form_version()));
         bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, ticketCtrl.getForm().getCustom_form_desc());
-        if(ticketCtrl.getForm().getCustom_form_data_partition() != null) {
+        if(ticketCtrl.getForm().getCustom_form_data_partition() != null
+        && ticketCtrl.getForm().getCustom_form_version_partition() != null ) {
             bundle.putInt(TK_Ticket_FormDao.CUSTOM_FORM_DATA_PARTITION, ticketCtrl.getForm().getCustom_form_data_partition());
+            bundle.putInt(GE_Custom_Form_DataDao.CUSTOM_FORM_VERSION_PARTITION, ticketCtrl.getForm().getCustom_form_version_partition());
         }
         //
         bundle.putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA,

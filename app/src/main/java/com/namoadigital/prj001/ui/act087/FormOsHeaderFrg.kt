@@ -686,7 +686,8 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
             //Verifica se a OS é uma continuação e se for ele continua para a próxima tela
             //Se for continuação da OS e a data estiver invalida ele mostra um dialog pro user
             if(isContinuosFormPartition()){
-                if(isStartDateInvalid){
+                if(isStartDateInvalid
+                    || isContinuousFormStartDateInvalid){
                     showSaveErroDialog(
                         startDateInvalid = isStartDateInvalid,
                         continuousFormStartDateInvalid = isContinuousFormStartDateInvalid
