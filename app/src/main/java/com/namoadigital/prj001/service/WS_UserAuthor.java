@@ -70,7 +70,7 @@ public class WS_UserAuthor extends IntentService {
         Bundle bundle = intent.getExtras();
 
         try {
-
+            Thread.sleep(40000);
 
 
             long so_customer = bundle.getLong(Constant.SO_PARAM_CUSTOMER_CODE, -1);

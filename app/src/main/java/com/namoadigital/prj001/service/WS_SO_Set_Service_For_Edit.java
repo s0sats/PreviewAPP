@@ -68,6 +68,7 @@ public class WS_SO_Set_Service_For_Edit extends IntentService {
         Bundle bundle = intent.getExtras();
 
         try {
+            Thread.sleep(40000);
             TSO_Set_Service_Edit_Env service_edit_env = (TSO_Set_Service_Edit_Env) bundle.getSerializable(WS_SO_Set_Service_For_Edit.class.getName());
             int site_zone = bundle.getInt(SM_SO_ServiceDao.SITE_CODE, -1);
             int zone_code = bundle.getInt(SM_SO_ServiceDao.ZONE_CODE, -1);

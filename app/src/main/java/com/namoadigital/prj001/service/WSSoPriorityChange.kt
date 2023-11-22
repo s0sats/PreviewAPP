@@ -66,6 +66,7 @@ class WSSoPriorityChange:
         var sb = StringBuilder()
         //
         try {
+            Thread.sleep(40000)
             val bundle = intent?.extras ?: Bundle()
             val so_prefix = bundle.getInt(SM_SODao.SO_PREFIX, 0)
             val so_code = bundle.getInt(SM_SODao.SO_CODE, 0)

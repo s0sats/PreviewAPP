@@ -67,6 +67,7 @@ public class WS_SO_Creation_Save extends IntentService {
         Bundle bundle = intent.getExtras();
 
         try {
+            Thread.sleep(40000);
             SO_Creation_Obj soCreationJson = (SO_Creation_Obj) bundle.getSerializable(SO_CREATION_OBJ_KEY);
 
             processWSSOCreation(soCreationJson);

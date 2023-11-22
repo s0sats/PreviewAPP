@@ -71,6 +71,7 @@ class WSTicketCreation:
         var sb = StringBuilder()
         //
         try {
+            Thread.sleep(40000)
             val bundle = intent?.extras ?: Bundle()
             val customer_code = bundle.getLong(WS_BUNDLE_CUSTOMER_CODE,-1)
             val type_code = bundle.getInt(WS_BUNDLE_TYPE_CODE,-1)
