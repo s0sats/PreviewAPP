@@ -77,7 +77,7 @@ public class Act049_Main extends Base_Activity_Frag implements Act049_Main_Contr
         //
         initActions();
         //
-        if(ToolBox_Inf.hasForceNotShowSerialInfo(context)){
+        if (!bundle_new_serial && ToolBox_Inf.hasForceNotShowSerialInfo(context)) {
             callAct040(context);
         }
     }
