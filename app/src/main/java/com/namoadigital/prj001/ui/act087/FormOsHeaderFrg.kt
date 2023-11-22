@@ -77,7 +77,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     }
     private val ticketForm by lazy {
         mCreationListener?.getTkTicketContinousForm()
-            ?: measureTpListener?.getTkTicketForm()
+            ?: measureTpListener?.getTkTicketFormContinuous()
     }
 
     companion object {

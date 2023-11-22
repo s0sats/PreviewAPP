@@ -2550,7 +2550,7 @@ public class Act011_Main extends Base_Activity
 
     @Nullable
     @Override
-    public TK_Ticket_Form getTkTicketForm() {
+    public TK_Ticket_Form getTkTicketFormContinuous() {
         if (formData.getCustom_form_data_partition() != null && formData.getCustom_form_version_partition() != null) {
             return mPresenter.getTkTicketForm(
                     mTicket_prefix,
@@ -3967,9 +3967,10 @@ public class Act011_Main extends Base_Activity
             @Override
             public void onChangeValue(String s) {
                 String endDate = binding.act011DialogCheckMkdateFormEnd.getmValue();
-                String errorMsg = isFinalizeDialogInputValid(binding, s, endDate);
-                TK_Ticket_Form tkTicketForm = getTkTicketForm();
-                if (tkTicketForm.getPartition_min_date() != null) {
+                TK_Ticket_Form tkTicketForm = getTkTicketFormContinuous();
+                if (tkTicketForm != null
+                && tkTicketForm.getPartition_min_date() != null) {
+                    String errorMsg = isFinalizeDialogInputValid(binding, s, endDate);
                     if (errorMsg.isEmpty()) {
                         binding.act011DialogCheckTvElapsedTimeVal.setText(getFormElapsedTimeFormatted(s, endDate));
                         binding.act011DialogCheckBtnNotFinalized.setEnabled(true);
@@ -4075,7 +4076,7 @@ public class Act011_Main extends Base_Activity
     private String isFinalizeDialogInputValid(Act011CheckDialogBinding binding, String startDate, String endDate) {
         String errorMsg = "";
         //
-        TK_Ticket_Form tkTicketForm = getTkTicketForm();
+        TK_Ticket_Form tkTicketForm = getTkTicketFormContinuous();
         if (tkTicketForm != null && ToolBox_Inf.getDateDiferenceInMilliseconds(startDate, tkTicketForm.getPartition_min_date()) <= 0) {
             errorMsg = getString(R.string.unicode_bullet) + " " + hmAux_Trans.get("dialog_finalize_os_form_invalid_start_date_msg") + ": "
                     + StringHelperKt.formatTo(
