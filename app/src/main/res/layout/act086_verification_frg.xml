@@ -88,7 +88,7 @@
                 android:minHeight="48dp"
                 android:paddingStart="8dp"
                 android:text="Já estava ok"
-                app:drawableTint="@color/namoa_os_form_verified_green" />
+                tools:drawableTint="@color/namoa_os_form_verified_green" />
 
             <RadioButton
                 android:id="@+id/act086_verification_frg_rdo_answer_alert"

@@ -435,11 +435,25 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             act086VerificationFrgRdoAnswerAlreadyDone.apply {
                 visibility = rdoAdjustAlreadyOk
                 isEnabled = !isOsPartial
+                if (isOsPartial) {
+
+
+                    applyDrawableStartColor(
+                        this,
+                        R.color.namoa_pipeline_header_icon
+                    )
+                }
             }
             act086VerificationFrgRdoAnswerAlert.visibility = rdoAdjustHasProblem
             act086VerificationFrgRdoAnswerNotVerified.apply {
                 visibility = rdoAdjustNotVerified
                 isEnabled = !isOsPartial
+                if (isOsPartial) {
+                    applyDrawableStartColor(
+                        this,
+                        R.color.namoa_pipeline_header_icon
+                    )
+                }
             }
         }
     }
