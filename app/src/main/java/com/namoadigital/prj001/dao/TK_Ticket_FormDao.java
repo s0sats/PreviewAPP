@@ -58,6 +58,9 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
     public static final String CUSTOM_FORM_DATA_PARTITION = "custom_form_data_partition";
     public static final String CUSTOM_FORM_VERSION_PARTITION = "custom_form_version_partition";
     public static final String ORDER_TYPE_CODE = "order_type_code";
+    public static final String ORDER_TYPE_ID = "order_type_id";
+    public static final String DISPLAY_OPTION = "display_option";
+    public static final String ITEM_CHECK_GROUP_CODE = "item_check_group_code";
     public static final String ORDER_TYPE_DESC = "order_type_desc";
     public static final String PROCESS_TYPE = "process_type";
     public static final String MEASURE_TP_CODE = "measure_tp_code";
@@ -703,6 +706,13 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
             }else{
                 tk_ticket_form.setOrder_type_code(cursor.getInt(cursor.getColumnIndex(ORDER_TYPE_CODE)));
             }
+            //
+            if(cursor.isNull(cursor.getColumnIndex(ORDER_TYPE_ID))){
+                tk_ticket_form.setOrder_type_id(null);
+            }else{
+                tk_ticket_form.setOrder_type_id(cursor.getString(cursor.getColumnIndex(ORDER_TYPE_ID)));
+            }
+            //
             if(cursor.isNull(cursor.getColumnIndex(ORDER_TYPE_DESC))){
                 tk_ticket_form.setOrder_type_desc(null);
             }else{
@@ -713,6 +723,19 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
             }else{
                 tk_ticket_form.setProcess_type(cursor.getString(cursor.getColumnIndex(PROCESS_TYPE)));
             }
+            //
+            if(cursor.isNull(cursor.getColumnIndex(DISPLAY_OPTION))){
+                tk_ticket_form.setDisplay_option(null);
+            }else{
+                tk_ticket_form.setDisplay_option(cursor.getString(cursor.getColumnIndex(DISPLAY_OPTION)));
+            }
+            //
+            if(cursor.isNull(cursor.getColumnIndex(ITEM_CHECK_GROUP_CODE))){
+                tk_ticket_form.setItem_check_group_code(null);
+            }else{
+                tk_ticket_form.setItem_check_group_code(cursor.getInt(cursor.getColumnIndex(ITEM_CHECK_GROUP_CODE)));
+            }
+            //
             if(cursor.isNull(cursor.getColumnIndex(MEASURE_TP_CODE))){
                 tk_ticket_form.setMeasure_tp_code(null);
             }else{
@@ -810,8 +833,11 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
             contentValues.put(CUSTOM_FORM_DATA_PARTITION, tk_ticket_form.getCustom_form_data_partition());
             contentValues.put(CUSTOM_FORM_VERSION_PARTITION, tk_ticket_form.getCustom_form_version_partition());
             contentValues.put(ORDER_TYPE_CODE,tk_ticket_form.getOrder_type_code());
+            contentValues.put(ORDER_TYPE_ID,tk_ticket_form.getOrder_type_id());
             contentValues.put(ORDER_TYPE_DESC,tk_ticket_form.getOrder_type_desc());
             contentValues.put(PROCESS_TYPE,tk_ticket_form.getProcess_type());
+            contentValues.put(DISPLAY_OPTION,tk_ticket_form.getDisplay_option());
+            contentValues.put(ITEM_CHECK_GROUP_CODE,tk_ticket_form.getItem_check_group_code());
             contentValues.put(MEASURE_TP_CODE,tk_ticket_form.getMeasure_tp_code());
             contentValues.put(MEASURE_TP_DESC,tk_ticket_form.getMeasure_tp_desc());
             contentValues.put(MEASURE_VALUE,tk_ticket_form.getMeasure_value());

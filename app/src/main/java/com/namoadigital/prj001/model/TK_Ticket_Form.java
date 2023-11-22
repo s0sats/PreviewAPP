@@ -49,8 +49,11 @@ public class TK_Ticket_Form implements Serializable {
     @SerializedName("custom_form_data_partition") private Integer custom_form_data_partition;
     @SerializedName("custom_form_version_partition") private Integer custom_form_version_partition;
     @SerializedName("order_type_code") private Integer order_type_code;
+    @SerializedName("order_type_id") private String order_type_id;
     @SerializedName("order_type_desc") private String order_type_desc;
     @SerializedName("process_type") private String process_type;
+    @SerializedName("display_option") private String display_option;
+    @SerializedName("item_check_group_code") private Integer item_check_group_code;
     @SerializedName("measure_tp_code") private Integer measure_tp_code;
     @SerializedName("measure_tp_desc") private String measure_tp_desc;
     @SerializedName("measure_value") private Double measure_value;
@@ -348,6 +351,30 @@ public class TK_Ticket_Form implements Serializable {
 
     public void setCustom_form_version_partition(Integer custom_form_version_partition){
         this.custom_form_version_partition = custom_form_version_partition;
+    }
+
+    public String getOrder_type_id() {
+        return order_type_id;
+    }
+
+    public void setOrder_type_id(String order_type_id) {
+        this.order_type_id = order_type_id;
+    }
+
+    public String getDisplay_option() {
+        return display_option;
+    }
+
+    public void setDisplay_option(String display_option) {
+        this.display_option = display_option;
+    }
+
+    public Integer getItem_check_group_code() {
+        return item_check_group_code;
+    }
+
+    public void setItem_check_group_code(Integer item_check_group_code) {
+        this.item_check_group_code = item_check_group_code;
     }
 
     public String getPdfUrlLocalName(boolean withExtension){

@@ -5,5 +5,5 @@ import com.namoadigital.prj001.model.TK_Ticket_Form
 
 interface FormOsHeaderFrgMeasureInteraction {
     fun getMeasure(customerCode: Long, measureCode: Int) : MeMeasureTp?
-    fun getTkTicketForm(): TK_Ticket_Form?
+    fun getTkTicketFormContinuous(): TK_Ticket_Form?
 }

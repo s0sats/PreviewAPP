@@ -341,6 +341,14 @@ val migrationV10: MigrationSQLite = object : MigrationSQLite(10, 11) {
         ) {
             db.execSQL(""" ALTER TABLE [${TK_Ticket_FormDao.TABLE}] ADD [${TK_Ticket_FormDao.ORDER_TYPE_CODE}] int;""".trimIndent())
         }
+        if (!isFieldExist(
+                db,
+                TK_Ticket_FormDao.TABLE,
+                TK_Ticket_FormDao.ORDER_TYPE_ID
+            )
+        ) {
+            db.execSQL(""" ALTER TABLE [${TK_Ticket_FormDao.TABLE}] ADD [${TK_Ticket_FormDao.ORDER_TYPE_ID}] text collate nocase;""".trimIndent())
+        }
         //
         if (!isFieldExist(
                 db,
@@ -358,6 +366,24 @@ val migrationV10: MigrationSQLite = object : MigrationSQLite(10, 11) {
             )
         ) {
             db.execSQL(""" ALTER TABLE [${TK_Ticket_FormDao.TABLE}] ADD [${TK_Ticket_FormDao.PROCESS_TYPE}] text collate nocase;""".trimIndent())
+        }
+        //
+        if (!isFieldExist(
+                db,
+                TK_Ticket_FormDao.TABLE,
+                TK_Ticket_FormDao.DISPLAY_OPTION
+            )
+        ) {
+            db.execSQL(""" ALTER TABLE [${TK_Ticket_FormDao.TABLE}] ADD [${TK_Ticket_FormDao.DISPLAY_OPTION}] text collate nocase;""".trimIndent())
+        }
+        //
+        if (!isFieldExist(
+                db,
+                TK_Ticket_FormDao.TABLE,
+                TK_Ticket_FormDao.ITEM_CHECK_GROUP_CODE
+            )
+        ) {
+            db.execSQL(""" ALTER TABLE [${TK_Ticket_FormDao.TABLE}] ADD [${TK_Ticket_FormDao.ITEM_CHECK_GROUP_CODE}] int;""".trimIndent())
         }
         //
         if (!isFieldExist(

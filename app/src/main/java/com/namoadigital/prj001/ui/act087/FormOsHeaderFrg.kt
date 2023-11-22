@@ -77,7 +77,7 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
     }
     private val ticketForm by lazy {
         mCreationListener?.getTkTicketContinousForm()
-            ?: measureTpListener?.getTkTicketForm()
+            ?: measureTpListener?.getTkTicketFormContinuous()
     }
 
     companion object {
@@ -291,11 +291,11 @@ class FormOsHeaderFrg : Act011BaseFrg<FormOsHeaderFrgBinding>(), FormOsHeaderFrg
                     MdOrderType(
                         ticketForm!!.customer_code,
                         ticketForm!!.order_type_code,
-                        ticketForm!!.order_type_desc,
+                        ticketForm!!.order_type_id,
                         ticketForm!!.order_type_desc,
                         ticketForm!!.process_type,
-                        "",
-                        null
+                        ticketForm!!.display_option,
+                        ticketForm!!.item_check_group_code
                     )
                 )
             } else {
