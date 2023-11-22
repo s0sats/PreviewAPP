@@ -763,28 +763,6 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         processCloseACT(mLink, mRequired, HMAux())
     }
 
-    private fun updateList() {
-
-        with(binding) {
-            val filterText = act083MainContent.act083MketFilter.text.toString()
-
-
-            showAlert(
-                ttl = hmAux_Trans["alert_not_execute_justify_success_ttl"],
-                msg = hmAux_Trans["alert_not_execute_justify_success_msg"],
-                clickListner = { dialog, _ ->
-                    dialog.dismiss()
-                    updateMyActionList(userFocusFilter)
-                    if (filterText.isNotEmpty()) {
-                        applyTextFilter(filterText)
-                    }
-                }
-            )
-
-
-        }
-
-    }
 
     override fun processCloseACT(mLink: String?, mRequired: String?, hmAux: HMAux) {
         super.processCloseACT(mLink, mRequired, hmAux)
@@ -803,7 +781,15 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
 
                 progressDialog.dismiss()
 
-                updateList()
+                showAlert(
+                    ttl = hmAux_Trans["alert_not_execute_justify_success_ttl"],
+                    msg = hmAux_Trans["alert_not_execute_justify_success_msg"],
+                    clickListner = { dialog, _ ->
+                        dialog.dismiss()
+                        updateMyActionList(userFocusFilter)
+                        mPresenter.updateMyActionList(userFocusFilter)
+                    }
+                )
 
             }
 
