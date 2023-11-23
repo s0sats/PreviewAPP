@@ -102,6 +102,7 @@ public class WS_GetCustomer extends IntentService {
         Bundle bundle = intent.getExtras();
 
         try {
+
             String user = bundle.getString(Constant.GC_USER_CODE);
             String password = bundle.getString(Constant.GC_PWD);
             String nfc = bundle.getString(Constant.GC_NFC);

@@ -78,7 +78,7 @@ public class WS_SO_Approval extends IntentService {
 
         try {
 
-            Thread.sleep(40000);
+
 
             soDao = new SM_SODao(
                     getApplicationContext(),

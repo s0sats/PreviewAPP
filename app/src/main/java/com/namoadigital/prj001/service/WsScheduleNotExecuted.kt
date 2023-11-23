@@ -56,7 +56,6 @@ class WsScheduleNotExecuted :
         var sb = StringBuilder()
         //
         try {
-            Thread.sleep(40000)
             val bundle = intent?.extras ?: Bundle()
             val schedule_prefix = bundle.getInt(WS_BUNDLE_SCHEDULE_PREFIX, -1)
             val schedule_code = bundle.getInt(WS_BUNDLE_SCHEDULE_CODE, -1)

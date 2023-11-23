@@ -1,9 +1,7 @@
 package com.namoadigital.prj001.service
 
 import android.app.IntentService
-import android.app.NotificationManager
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import com.google.gson.GsonBuilder
 import com.namoa_digital.namoa_library.util.ConstantBase
@@ -29,31 +27,11 @@ class WS_Workgroup_Member_Edit :
     private val hmAuxTrans:HMAux by lazy {
         loadTranslation()
     }
-
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        //
-        val nm = applicationContext.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        val builder = ToolBox_Inf.getLowImportanceBuilder(
-            applicationContext, nm
-        )
-        builder.setOngoing(true)
-        builder.setContentTitle(applicationContext.getString(R.string.title_notification_generic))
-        builder.setContentText(applicationContext.getString(R.string.generic_sending_data_msg))
-        builder.setSmallIcon(R.drawable.upload_animation)
-        val notification = builder.build()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-            && notification != null
-        ) {
-            startForeground(ConstantBaseApp.NOTIFICATION_SYNC_ID, notification)
-        }
-        return super.onStartCommand(intent, flags, startId)
-    }
     
     override fun onHandleIntent(intent: Intent?) {
         var sb = StringBuilder()
         //
         try {
-            Thread.sleep(40000)
             val bundle = intent?.extras ?: Bundle()
             val userCode = bundle.getInt(T_Workgroup_Member_Edit_Env.WorkgroupSetData.USER_CODE,-1)
             val action = bundle.getInt(T_Workgroup_Member_Edit_Env.WorkgroupSetData.ACTIVE,0)

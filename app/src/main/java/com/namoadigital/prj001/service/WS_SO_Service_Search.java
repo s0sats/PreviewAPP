@@ -1,16 +1,10 @@
 package com.namoadigital.prj001.service;
 
-import static com.namoadigital.prj001.util.ConstantBaseApp.NOTIFICATION_SYNC_ID;
-
 import android.app.IntentService;
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -44,27 +38,6 @@ public class WS_SO_Service_Search extends IntentService {
 
     public WS_SO_Service_Search() {
         super("WS_SO_Service_Search");
-    }
-
-    @Override
-    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
-        //
-        NotificationManager nm = (NotificationManager)
-                getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
-
-        NotificationCompat.Builder builder = ToolBox_Inf.getLowImportanceBuilder(getApplicationContext(), nm);
-
-        builder.setOngoing(true);
-        builder.setContentTitle(getApplicationContext().getString(R.string.title_notification_generic));
-        builder.setContentText(getApplicationContext().getString(R.string.generic_receiving_data_msg));
-        builder.setSmallIcon(R.drawable.download_animation);
-
-        Notification notification = builder.build();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-                && notification != null) {
-            startForeground(NOTIFICATION_SYNC_ID, notification);
-        }
-        return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
