@@ -28,7 +28,7 @@ class WS_Workgroup_Member_List :
     private val hmAuxTrans:HMAux by lazy {
         loadTranslation()
     }
-    
+
     override fun onHandleIntent(intent: Intent?) {
         var sb = StringBuilder()
         //
