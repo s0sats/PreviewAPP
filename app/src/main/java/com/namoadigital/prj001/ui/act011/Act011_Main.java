@@ -167,6 +167,7 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -297,6 +298,7 @@ public class Act011_Main extends Base_Activity
     //LUCHE - 29/10/2021 - Var que indica que a abertura da act011 foi feita pela navegação de volta
     //da act086
     private boolean isNavegationFromGeOsFlow = false;
+    private boolean firstDateSelection =false;
 
     private MeasureFF.OnValidationListener measureValidateListener = null;
 
@@ -1178,7 +1180,7 @@ public class Act011_Main extends Base_Activity
                                 //OU FORM-AGENDADO
                                 || ToolBox_Inf.isScheduleForm(formLocal)
                                 //OU FORM-TICKET KANBAN
-                                || mPresenter.isFormTicketKanban(mTicket_prefix, mTicket_code)
+                                || mPresenter.isFormTicketKanban(formData.getTicket_prefix(), formData.getTicket_code())
                 );
 
     }
@@ -2551,12 +2553,19 @@ public class Act011_Main extends Base_Activity
     @Nullable
     @Override
     public TK_Ticket_Form getTkTicketFormContinuous() {
-        if (formData.getCustom_form_data_partition() != null && formData.getCustom_form_version_partition() != null) {
+        if (formData.getCustom_form_data_partition() != null
+                && formData.getCustom_form_version_partition() != null
+                && formData.getTicket_prefix() != null
+                && formData.getTicket_code() != null
+                && formData.getTicket_seq_tmp()  != null
+                && formData.getStep_code() != null
+
+        ) {
             return mPresenter.getTkTicketForm(
-                    mTicket_prefix,
-                    mTicket_code,
-                    mTicket_seq_tmp,
-                    mStep_code
+                    formData.getTicket_prefix(),
+                    formData.getTicket_code(),
+                    formData.getTicket_seq_tmp(),
+                    formData.getStep_code()
             );
         }
         return null;
@@ -3852,6 +3861,7 @@ public class Act011_Main extends Base_Activity
             if (isPartialExecution) {
                 binding.mkdatePartialExecution.setmEnabled(true);
                 binding.mkdatePartialExecution.setmValue(getNextDay(), true);
+                firstDateSelection = true;
                 binding.dialogNotFinalizedCheckBtnOk.setEnabled(binding.mkdatePartialExecution.isValid());
             } else {
                 binding.mkdatePartialExecution.setmEnabled(false);
@@ -3864,10 +3874,17 @@ public class Act011_Main extends Base_Activity
 
         binding.mkdatePartialExecution.setOnSelectedValue(dateSelected -> {
             String currentDate = ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT);
+            if(isChangeDefaultHour(dateSelected, currentDate)
+            && firstDateSelection){
+                dateSelected = StringHelperKt.addHourToDateLimited();
+                firstDateSelection = false;
+            }
+            //
             if (ToolBox_Inf.getDateDiferenceInMilliseconds(dateSelected, currentDate) < 0 || ToolBox_Inf.getDateDiferenceInDays(dateSelected, currentDate) > 14) {
                 binding.tvIncorrect.setVisibility(View.VISIBLE);
                 binding.dialogNotFinalizedCheckBtnOk.setEnabled(false);
             } else {
+                binding.mkdatePartialExecution.setmValue(dateSelected, true);
                 binding.dialogNotFinalizedCheckBtnOk.setEnabled(true);
                 binding.tvIncorrect.setVisibility(View.GONE);
             }
@@ -3896,6 +3913,21 @@ public class Act011_Main extends Base_Activity
         //
         alertDialog.show();
         //
+    }
+
+    private boolean isChangeDefaultHour(String dateSelected, String currentDate) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        //
+        try {
+            Date selected = format.parse(dateSelected);
+            Date current = format.parse(currentDate);
+
+            return (selected != null ? selected.compareTo(current) : 0) == 0;
+        } catch (Exception e) {
+            ToolBox.registerException(getClass().getName(), e);
+        }
+
+        return false;
     }
 
     private String getNextDay() {

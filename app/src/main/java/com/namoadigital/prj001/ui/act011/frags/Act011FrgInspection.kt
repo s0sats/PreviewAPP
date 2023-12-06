@@ -161,7 +161,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
 
     private fun Act011InspectionListFragmentBinding.handleForecastEmptyList() {
         val forecastItens = acessoryFormView.inspections.count {
-            it.status != NORMAL || ConstantBaseApp.SYS_STATUS_DONE.equals(it.answerStatus)
+            it.status != NORMAL || ConstantBaseApp.SYS_STATUS_DONE.equals(it.answerStatus) || it.partitionedExecution == 1
         }
         if (acessoryFormView.nonForecastFilter) {
             if (forecastItens == 0) {
@@ -193,6 +193,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
                 chkNonForecastItem.setCheckedJumpingAnimation(true)
                 mAdapter.applyNonForecastFilter(chkNonForecastItem.isChecked)
                 handleAddNewProcessVisibility()
+                updateNonForecastCounter()
             }
         }
     }
@@ -301,9 +302,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
             binding.tvTrackingVal.text = acessoryFormView.acessoryTracking
             binding.tvTrackingVal.visibility = View.VISIBLE
         }
-        binding.tvNonForecastCount.text =  acessoryFormView.inspections.count {
-            it.status == NORMAL && !ConstantBaseApp.SYS_STATUS_DONE.equals(it.answerStatus) && it.partitionedExecution != 1
-        }.toString()
+        updateNonForecastCounter()
         binding.tvAddNewItemVal.text = hmAuxTrans.get("inspection_add_new_process_btn")
         binding.chkNonForecastItem.text = hmAuxTrans.get("inspection_hide_non_forecast_item_chk")
 
@@ -315,8 +314,14 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
         }
     }
 
+    private fun updateNonForecastCounter() {
+        binding.tvNonForecastCount.text = acessoryFormView.inspections.count {
+            it.status == NORMAL && !ConstantBaseApp.SYS_STATUS_DONE.equals(it.answerStatus) && it.partitionedExecution == 0
+        }.toString()
+    }
+
     private fun hasNoneNonForecastItem() = acessoryFormView.inspections.count {
-        it.status == NORMAL && !it.isDone
+        it.status == NORMAL && !it.isDone && it.partitionedExecution == 0
     } <=0
 
     companion object {
@@ -474,6 +479,7 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
         if(isAdded){
             if(isVisibleToUser) {
                 binding.edtInspectionFilter.text.clear()
+                resetTextFilter()
             }else{
                 mAdapter.highlightedItemPosition = -1
                 binding.nsvMain.fullScroll(View.FOCUS_UP)
@@ -508,14 +514,15 @@ class Act011FrgInspection : Act011BaseFrg<Act011InspectionListFragmentBinding>()
         val onAlreadyOkActionItem = mFrgListener.onAlreadyOkAction(
             acessoryFormView.devicePkPrefix + "." + item.itemCodeAndSeq
         )
-
+        //
         for(i in 0..acessoryFormView.inspections.size -1 ){
             if(acessoryFormView.inspections[i].itemCodeAndSeq.equals(item.itemCodeAndSeq)){
                 acessoryFormView.inspections.set(i, onAlreadyOkActionItem)
                 break
             }
         }
-
+        //
+        updateNonForecastCounter()
         mAdapter.refreshList(position, onAlreadyOkActionItem)
         mFrgListener.onRefreshTabCounter(acessoryFormView.tabIndex)
     }

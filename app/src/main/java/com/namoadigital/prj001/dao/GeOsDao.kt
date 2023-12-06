@@ -698,13 +698,17 @@ class GeOsDao(
                 MdOrderType.DISPLAY_OPTION_SHOW_ALL ->{
                     geOs.item_check_group_code?.let {
                         if(item.item_check_status.equals(GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL ,true)
-                            && it.equals(item.item_check_group_code)){
+                            && it.equals(item.item_check_group_code)
+                            && item.partitioned_execution == 0
+                        ){
                             item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_FORCED
                         }
                     } ?:
-                        if(item.item_check_status.equals(GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL ,true)){
+                        if(
+                            item.item_check_status.equals(GeOsDeviceItem.ITEM_CHECK_STATUS_NORMAL ,true)
+                            && item.partitioned_execution == 0
+                        ){
                             item.item_check_status = GeOsDeviceItem.ITEM_CHECK_STATUS_FORCED
-
                         }
 
                 }

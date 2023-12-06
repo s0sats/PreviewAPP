@@ -1,9 +1,11 @@
 package com.namoadigital.prj001.extensions
 
+import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.model.SM_SO
-import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.text.Normalizer
+import java.text.SimpleDateFormat
+import java.util.*
 
 fun String?.formatForDisplay() = if (this.isNullOrBlank()) "" else this
 
@@ -53,3 +55,23 @@ fun String.formatTo(format: String): String {
 
 }
 
+fun addHourToDateLimited(): String {
+    var currentDateTime = Calendar.getInstance()
+    val endOfDay = currentDateTime.clone() as Calendar
+
+    currentDateTime.add(Calendar.HOUR_OF_DAY, 1)
+    endOfDay[Calendar.HOUR_OF_DAY] = 23
+    endOfDay[Calendar.MINUTE] = 59
+    endOfDay[Calendar.SECOND] = 59
+    endOfDay[Calendar.MILLISECOND] = 0
+    TimeZone.setDefault(TimeZone.getTimeZone(ToolBox.getDeviceGMT(true)))
+
+    if (currentDateTime.after(endOfDay)) {
+        currentDateTime = endOfDay
+    }
+
+    val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z")
+
+    return formatter.format(currentDateTime.time)
+
+}
