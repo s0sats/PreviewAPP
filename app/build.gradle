@@ -9,8 +9,8 @@ android {
         applicationId "com.namoadigital.prj001"
         minSdkVersion 21
         targetSdkVersion 33
-        versionCode 241
-        versionName "5.8.4"
+        versionCode 244
+        versionName "5.8.6"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
         multiDexEnabled true
@@ -141,6 +141,8 @@ dependencies {
     }
 
     compileOnly files('json-20160212.jar')
+
+    implementation "androidx.concurrent:concurrent-futures:1.1.0"
 
 }
 

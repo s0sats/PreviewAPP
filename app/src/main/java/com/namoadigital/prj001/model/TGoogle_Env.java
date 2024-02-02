@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by neomatrix on 17/04/17.
  *
@@ -11,7 +13,7 @@ package com.namoadigital.prj001.model;
 
 public class TGoogle_Env extends Main_Header_Env {
 
-    private String gcm_id;
+    @SerializedName("gcm_id") private String gcm_id;
 
     public String getGcm_id() {
         return gcm_id;
