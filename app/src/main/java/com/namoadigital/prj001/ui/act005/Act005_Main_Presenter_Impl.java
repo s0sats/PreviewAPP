@@ -51,6 +51,7 @@ import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
 import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.IO_Outbound_ItemDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.SM_SODao;
@@ -62,11 +63,11 @@ import com.namoadigital.prj001.model.EV_User;
 import com.namoadigital.prj001.model.EV_User_Customer;
 import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.MainTagMenu;
 import com.namoadigital.prj001.model.MenuMainNamoa;
 import com.namoadigital.prj001.model.MyActionFilterParam;
-import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.SupportDialogFields;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TSave_Rec;
@@ -78,6 +79,7 @@ import com.namoadigital.prj001.receiver.WBR_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.receiver.WBR_IO_Move_Save;
 import com.namoadigital.prj001.receiver.WBR_IO_Outbound_Item_Save;
 import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.receiver.WBR_Product_Serial_Structure;
 import com.namoadigital.prj001.receiver.WBR_SO_Approval;
 import com.namoadigital.prj001.receiver.WBR_SO_Pack_Express_Local;
 import com.namoadigital.prj001.receiver.WBR_SO_Save;
@@ -94,6 +96,7 @@ import com.namoadigital.prj001.service.WS_IO_Blind_Move_Save;
 import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.service.WS_IO_Move_Save;
 import com.namoadigital.prj001.service.WS_IO_Outbound_Item_Save;
+import com.namoadigital.prj001.service.WS_Product_Serial_Structure;
 import com.namoadigital.prj001.service.WS_SO_Pack_Express_Local;
 import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Save;
@@ -108,6 +111,7 @@ import com.namoadigital.prj001.sql.FCMMessage_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_002;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_001;
+import com.namoadigital.prj001.sql.MDProductSerialSql018;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Sql_003;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_010;
@@ -162,6 +166,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     public static final String SYNC_FOR_TICKETS_FORM = "SYNC_FOR_TICKETS_FORM";
     public static final String SYNC_TICKETS = "SYNC_TICKETS";
     public static final String SYNC_SOS = "SYNC_SOS";
+    public static final String SYNC_SERIAL_STRUCTURE = "SYNC_SERIAL_STRUCTURE";
 
     private Context context;
     private Act005_Main_View mView;
@@ -655,6 +660,35 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     @Override
     public void deleteSerialSiteInventoryFile() {
         serialSiteUseCase.getDeleteFile().invoke();
+    }
+
+    @Override
+    public void executeSerialStructureUpdate() {
+        mView.setWsSoProcess(SYNC_SERIAL_STRUCTURE);
+        mView.setWsProcess(SYNC_SERIAL_STRUCTURE);
+        mView.showPD();
+        Intent mIntent = new Intent(context, WBR_Product_Serial_Structure.class);
+        Bundle bundle = new Bundle();
+        bundle.putLong(MD_Product_SerialDao.CUSTOMER_CODE,-1);
+        bundle.putLong(MD_Product_SerialDao.PRODUCT_CODE, -1);
+        bundle.putLong(MD_Product_SerialDao.SERIAL_CODE, -1);
+        bundle.putInt(MD_Product_SerialDao.SCN_ITEM_CHECK, 0);
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    @Override
+    public boolean hasSerialStructureSyncRequiredCloudRule() {
+        MD_Product_SerialDao serialDao = new MD_Product_SerialDao(context);
+        List<MD_Product_Serial> serial = serialDao.query(
+                new MDProductSerialSql018(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        );
+        //
+        return serial.size() > 0 ;
     }
 
 

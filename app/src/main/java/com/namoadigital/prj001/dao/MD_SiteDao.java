@@ -3,10 +3,12 @@ package com.namoadigital.prj001.dao;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
+import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.sql.MD_Site_Sql_004;
 import com.namoadigital.prj001.sql.MD_Site_Sql_Footer;
@@ -107,6 +109,60 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
         }
 
         closeDB();
+    }
+
+    public DaoObjReturn addUpdateWithReturnAndSharedDbInstance(Iterable<MD_Site> md_sites, SQLiteDatabase dbInstance) {
+        DaoObjReturn daoObjReturn = new DaoObjReturn();
+        long addUpdateRet = 0;
+        String curAction = DaoObjReturn.INSERT_OR_UPDATE;
+        //
+        if (dbInstance == null) {
+            openDB();
+        } else {
+            this.db = dbInstance;
+        }
+
+        try {
+            if (dbInstance == null) {
+                db.beginTransaction();
+            }
+
+            for (MD_Site md_site : md_sites) {
+                if (db.insert(TABLE, null, toContentValuesMapper.map(md_site)) == -1) {
+                    StringBuilder sbWhere = new StringBuilder();
+                    sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(md_site.getCustomer_code())).append("'");
+                    sbWhere.append(" and ");
+                    sbWhere.append(SITE_CODE).append(" = '").append(String.valueOf(md_site.getSite_code())).append("'");
+
+                    db.update(TABLE, toContentValuesMapper.map(md_site), sbWhere.toString(), null);
+                }
+            }
+
+            if (dbInstance == null) {
+                db.setTransactionSuccessful();
+            }
+        } catch (Exception e) {
+            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
+            //Gera arquivo de exception usando dados da exception e do obj de retorno
+            ToolBox_Inf.registerException(
+                    getClass().getName(),
+                    new Exception(
+                            e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
+                    )
+            );
+        } finally {
+            daoObjReturn.setAction(curAction);
+            daoObjReturn.setActionReturn(addUpdateRet);
+            if (dbInstance == null) {
+                db.endTransaction();
+            }
+        }
+        //
+        if (dbInstance == null) {
+            closeDB();
+        }
+        return daoObjReturn;
+
     }
 
     @Override

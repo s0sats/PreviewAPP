@@ -1,16 +1,7 @@
 package com.namoadigital.prj001.service;
 
-import static com.namoadigital.prj001.util.ConstantBaseApp.NOTIFICATION_SYNC_ID;
-
-import android.app.IntentService;
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -24,6 +15,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_Data_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GeOsDao;
 import com.namoadigital.prj001.dao.GeOsDeviceItemDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
@@ -39,12 +31,14 @@ import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.model.TSave_Env;
 import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.receiver.WBR_Save;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Field_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_003;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
 import com.namoadigital.prj001.sql.Sql_WS_Save_Device_Item_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Step_Sql_001;
+import com.namoadigital.prj001.sql.transaction.TransactionWsSave;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -58,12 +52,13 @@ import java.util.List;
  * Created by DANIEL.LUCHE on 10/02/2017.
  */
 
-public class WS_Save extends IntentService {
+public class WS_Save extends BaseWsIntentService {
 
     private GE_Custom_Form_DataDao formDataDao;
     private GE_Custom_Form_Data_FieldDao formDataFieldDao;
     private GE_Custom_Form_LocalDao formLocalDao;
     private MD_Schedule_ExecDao scheduleExecDao;
+    private MD_Product_SerialDao serialDao;
     private TK_Ticket_StepDao ticketStepDao;
     private MD_SiteDao siteDao;
     private GeOsDeviceItemDao deviceItemDao;
@@ -82,32 +77,9 @@ public class WS_Save extends IntentService {
     private boolean mResend = false;
     private ArrayList<TSave_Rec.Error_Process> errorProcessList = new ArrayList<>();
 
-
     public WS_Save() {
-        super("WS_Save");
+        super("WS_Save", new IntentServiceMode.UPLOAD_DATA());
     }
-
-    @Override
-    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
-        //
-        NotificationManager nm = (NotificationManager)
-                getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
-
-        NotificationCompat.Builder builder = ToolBox_Inf.getLowImportanceBuilder(getApplicationContext(), nm);
-
-        builder.setOngoing(true);
-        builder.setContentTitle(getApplicationContext().getString(R.string.title_notification_generic));
-        builder.setContentText(getApplicationContext().getString(R.string.generic_sending_data_msg));
-        builder.setSmallIcon(R.drawable.upload_animation);
-
-        Notification notification = builder.build();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-                && notification != null) {
-            startForeground(NOTIFICATION_SYNC_ID, notification);
-        }
-        return super.onStartCommand(intent, flags, startId);
-    }
-
 
     @Override
     protected void onHandleIntent(Intent intent) {
@@ -136,6 +108,12 @@ public class WS_Save extends IntentService {
                 );
             //
             scheduleExecDao = new MD_Schedule_ExecDao(
+                getApplicationContext(),
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                Constant.DB_VERSION_CUSTOM
+            );
+            //
+            serialDao = new MD_Product_SerialDao(
                 getApplicationContext(),
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
                 Constant.DB_VERSION_CUSTOM
@@ -290,6 +268,7 @@ public class WS_Save extends IntentService {
         translist.add("msg_forms_sent");
         translist.add("msg_error_token_excep");
         translist.add("msg_error_save");
+        translist.add("msg_error_database_save");
 
 
         mResource_Code = ToolBox_Inf.getResourceCode(
@@ -524,31 +503,51 @@ public class WS_Save extends IntentService {
                     }
                 }
                 //Atualiza dados na tabela.
-                formLocalDao.addUpdate(formLocals,false);
-                scheduleExecDao.addUpdate(formSchedules,false);
-                formDataDao.addUpdate(form_datas,false);
-                if(siteExecution.size() > 0){
-                    siteDao.addUpdate(siteExecution,false);
-                }
+                TransactionWsSave transactionWsSave = new TransactionWsSave(
+                        getApplicationContext(),
+                        formDataDao,
+                        formLocalDao,
+                        scheduleExecDao,
+                        siteDao,
+                        serialDao,
+                        ToolBox_Con.customDBPath(
+                                ToolBox_Con.getPreference_Customer_Code(
+                                        getApplicationContext()
+                                )
+                        ),
+                        Constant.DB_VERSION_CUSTOM
+                );
+                //
+                boolean dbSaveSuccess = transactionWsSave.saveForms(
+                        formLocals,
+                        formSchedules,
+                        form_datas,
+                        siteExecution
+                );
+                //
+                if(dbSaveSuccess) {
                 /*27-08-2019 BARRIONUEVO
                    Controle de reprocessamento de n-form ao enviar registros com tokens
                  */
-                if(mResend){
-                    mResend = false;
-                    processWS_Save(jumpValidation, jumpOD);
-                    return  true;
-                }else {
-                    ToolBox_Inf.sendBCStatus(
-                        getApplicationContext(),
-                        "CLOSE_ACT", hmAux_Trans.get("msg_forms_sent"),
-                        errorProcessList.size() > 0 ? gson.toJson(errorProcessList) : "",
-                        "0"
-                    );
-                    //hmAuxRet.put(Constant.WS_SEND_RETURN,"OK");
-                    //ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_forms_sent"),hmAuxRet, "", "0");
-                    return true;
+                    if (mResend) {
+                        mResend = false;
+                        processWS_Save(jumpValidation, jumpOD);
+                        return true;
+                    } else {
+                        ToolBox_Inf.sendBCStatus(
+                                getApplicationContext(),
+                                "CLOSE_ACT", hmAux_Trans.get("msg_forms_sent"),
+                                errorProcessList.size() > 0 ? gson.toJson(errorProcessList) : "",
+                                "0"
+                        );
+                        //hmAuxRet.put(Constant.WS_SEND_RETURN,"OK");
+                        //ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_forms_sent"),hmAuxRet, "", "0");
+                        return true;
+                    }
+                }else{
+                    ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_error_database_save"),"" , "0");
+                    return false;
                 }
-
             case "ERROR_TOKEN_EXCEPTION":
                 ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1",  hmAux_Trans.get("msg_error_token_excep"), "", "0");
                 //hmAuxRet.put(Constant.WS_SEND_RETURN, hmAux_Trans.get("msg_error_token_excep"));

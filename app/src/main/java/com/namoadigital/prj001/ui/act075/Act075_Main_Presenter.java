@@ -19,6 +19,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_ApprovalDao;
 import com.namoadigital.prj001.dao.TK_Ticket_Approval_RejectionDao;
@@ -28,6 +29,7 @@ import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Approval;
 import com.namoadigital.prj001.model.TK_Ticket_Approval_Rejection;
@@ -35,14 +37,17 @@ import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Product;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.model.TSave_Rec;
+import com.namoadigital.prj001.receiver.WBR_Product_Serial_Structure;
 import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
+import com.namoadigital.prj001.service.WS_Product_Serial_Structure;
 import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
+import com.namoadigital.prj001.sql.MDProductSerialSql018;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.Sql_Act075_001;
 import com.namoadigital.prj001.sql.Sql_Act075_002;
@@ -75,6 +80,7 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
     private TK_Ticket_CtrlDao tkTicketCtrlDao;
     private TK_Ticket_ApprovalDao ticketApprovalDao;
     private TK_Ticket_Approval_RejectionDao ticketApprovalRejectionDao;
+    private MD_Product_SerialDao mdProductSerialDao;
     private String ctrlStartDate = "";
     private Integer ctrlStartUser = -1;
     private String ctrlStartUserName= "" ;
@@ -113,7 +119,14 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
         );
+        //
         this.tkTicketCtrlDao = new TK_Ticket_CtrlDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        //
+        this.mdProductSerialDao = new MD_Product_SerialDao(
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
@@ -956,5 +969,42 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
             productCodeList.add(tkTicketProduct.getProduct_code());
         }
         return productCodeList;
+    }
+
+    @Override
+    public boolean hasSerialStructureOutdate() {
+        List<MD_Product_Serial> serial = mdProductSerialDao.query(
+                new MDProductSerialSql018(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        );
+        //
+        return serial.size() > 0 ;
+    }
+
+    @Override
+    public void updateSerialStrucutreAfterWsSave() {
+        if (ToolBox_Con.isOnline(context)) {
+            //
+            mView.setWsProcess(WS_Product_Serial_Structure.class.getName());
+            //
+            mView.showPD(
+                    hmAux_Trans.get("progress_serial_structure_ttl"),
+                    hmAux_Trans.get("progress_serial_structure_msg")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_Product_Serial_Structure.class);
+            Bundle bundle = new Bundle();
+            bundle.putLong(MD_Product_SerialDao.CUSTOMER_CODE, -1);
+            bundle.putLong(MD_Product_SerialDao.PRODUCT_CODE, -1);
+            bundle.putLong(MD_Product_SerialDao.SERIAL_CODE, -1);
+            bundle.putInt(MD_Product_SerialDao.SCN_ITEM_CHECK, 0);
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
     }
 }

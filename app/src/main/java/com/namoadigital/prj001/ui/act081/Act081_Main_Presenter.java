@@ -14,14 +14,17 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
+import com.namoadigital.prj001.receiver.WBR_Product_Serial_Structure;
 import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
+import com.namoadigital.prj001.service.WS_Product_Serial_Structure;
 import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
+import com.namoadigital.prj001.sql.MDProductSerialSql018;
 import com.namoadigital.prj001.sql.MD_Product_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act020_002;
@@ -32,6 +35,7 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Act081_Main_Presenter implements Act081_Main_Contract.I_Presenter{
 
@@ -321,6 +325,43 @@ public class Act081_Main_Presenter implements Act081_Main_Contract.I_Presenter{
             //
             Intent mIntent = new Intent(context, WBR_TK_Ticket_Save.class);
             Bundle bundle = new Bundle();
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
+    }
+
+    @Override
+    public boolean hasSerialStructureOutdate() {
+        List<MD_Product_Serial> serial = serialDao.query(
+                new MDProductSerialSql018(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        );
+        //
+        return serial.size() > 0 ;
+    }
+
+    @Override
+    public void updateSerialStrucutreAfterWsSave() {
+        if (ToolBox_Con.isOnline(context)) {
+            //
+            mView.setWsProcess(WS_Product_Serial_Structure.class.getName());
+            //
+            mView.showPD(
+                    hmAux_Trans.get("progress_serial_structure_ttl"),
+                    hmAux_Trans.get("progress_serial_structure_msg")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_Product_Serial_Structure.class);
+            Bundle bundle = new Bundle();
+            bundle.putLong(MD_Product_SerialDao.CUSTOMER_CODE, -1);
+            bundle.putLong(MD_Product_SerialDao.PRODUCT_CODE, -1);
+            bundle.putLong(MD_Product_SerialDao.SERIAL_CODE, -1);
+            bundle.putInt(MD_Product_SerialDao.SCN_ITEM_CHECK, 0);
+            //
             mIntent.putExtras(bundle);
             //
             context.sendBroadcast(mIntent);

@@ -20,6 +20,7 @@ import com.namoadigital.prj001.model.SO_Save_Return;
 import com.namoadigital.prj001.model.TSO_Approval_Env;
 import com.namoadigital.prj001.model.TSO_Approval_Rec;
 import com.namoadigital.prj001.receiver.WBR_SO_Approval;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.sql.SM_SO_Sql_009;
 import com.namoadigital.prj001.sql.SM_SO_Sql_013;
 import com.namoadigital.prj001.util.Constant;
@@ -38,7 +39,7 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.NOTIFICATION_SYNC_ID;
  * Created by d.luche on 27/07/2017.
  */
 
-public class WS_SO_Approval extends IntentService {
+public class WS_SO_Approval extends BaseWsIntentService {
 
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
@@ -47,28 +48,7 @@ public class WS_SO_Approval extends IntentService {
     private SM_SODao soDao;
 
     public WS_SO_Approval() {
-        super("WS_SO_Approval");
-    }
-
-    @Override
-    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
-        //
-        NotificationManager nm = (NotificationManager)
-                getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
-
-        NotificationCompat.Builder builder = ToolBox_Inf.getLowImportanceBuilder(getApplicationContext(), nm);
-
-        builder.setOngoing(true);
-        builder.setContentTitle(getApplicationContext().getString(R.string.title_notification_generic));
-        builder.setContentText(getApplicationContext().getString(R.string.generic_sending_data_msg));
-        builder.setSmallIcon(R.drawable.upload_animation);
-
-        Notification notification = builder.build();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-                && notification != null) {
-            startForeground(NOTIFICATION_SYNC_ID, notification);
-        }
-        return super.onStartCommand(intent, flags, startId);
+        super("WS_SO_Approval", new BaseWsIntentService.IntentServiceMode.UPLOAD_DATA());
     }
 
     @Override

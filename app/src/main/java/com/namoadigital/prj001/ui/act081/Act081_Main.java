@@ -29,6 +29,7 @@ import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MyActionFilterParam;
+import com.namoadigital.prj001.service.WS_Product_Serial_Structure;
 import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
@@ -378,6 +379,10 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements
         transList.add("progress_serial_save_msg");
         transList.add("alert_offline_save_ttl");
         transList.add("alert_offline_save_msg");
+        transList.add("progress_serial_structure_ttl");
+        transList.add("progress_serial_structure_msg");
+        transList.add("alert_serial_structure_error_ttl");
+        transList.add("alert_serial_structure_error_msg");
         //
         transList.add("alert_ticket_results_ok");
         //
@@ -420,6 +425,14 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements
             progressDialog.dismiss();
             mPresenter.callWsSave();
         }else if (wsProcess.equalsIgnoreCase(WS_Save.class.getName())) {
+            wsProcess = "";
+            progressDialog.dismiss();
+            if(mPresenter.hasSerialStructureOutdate()){
+                mPresenter.updateSerialStrucutreAfterWsSave();
+            }else {
+                mPresenter.executeTicketSaveProcess();
+            }
+        }else if (wsProcess.equalsIgnoreCase(WS_Product_Serial_Structure.class.getName())) {
             wsProcess = "";
             progressDialog.dismiss();
             mPresenter.executeTicketSaveProcess();
@@ -690,8 +703,18 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements
     protected void processError_http() {
 //        super.processError_http();
         progressDialog.dismiss();
-        ToolBox_Con.setBooleanPreference(getApplicationContext(), ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, true);
-        mPresenter.offlineSerialSearch();
+        if (wsProcess.equalsIgnoreCase(WS_Product_Serial_Structure.class.getName())) {
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_serial_structure_error_ttl"),
+                    hmAux_Trans.get("alert_serial_structure_error_msg"),
+                    null,
+                    0
+            );
+        }else{
+            ToolBox_Con.setBooleanPreference(getApplicationContext(), ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, true);
+            mPresenter.offlineSerialSearch();
+        }
     }
 
     @Override

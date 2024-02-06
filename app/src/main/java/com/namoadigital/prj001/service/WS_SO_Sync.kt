@@ -15,12 +15,13 @@ import com.namoadigital.prj001.model.SM_SO
 import com.namoadigital.prj001.model.TSO_Search_Env
 import com.namoadigital.prj001.model.TSO_Search_Rec
 import com.namoadigital.prj001.receiver.WBR_SO_Sync
+import com.namoadigital.prj001.service.base.BaseWsIntentService
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 
-class WS_SO_Sync: IntentService("WS_SO_Sync") {
+class WS_SO_Sync: BaseWsIntentService("WS_SO_Sync", IntentServiceMode.SYNC_SO_DATA()) {
 
     private var processedSoSize = 0
     private val mModuleCode = Constant.APP_MODULE
@@ -35,22 +36,6 @@ class WS_SO_Sync: IntentService("WS_SO_Sync") {
     }
     val soList: MutableList<SM_SO> = java.util.ArrayList()
     var pageNumber=0
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        //
-        val nm = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val builder = ToolBox_Inf.getLowImportanceBuilder(applicationContext, nm)
-        builder.setOngoing(true)
-        builder.setContentTitle(applicationContext.getString(R.string.title_notification_generic))
-        builder.setContentText(applicationContext.getString(R.string.msg_download_so_data))
-        builder.setSmallIcon(R.drawable.download_animation)
-        val notification = builder.build()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-            && notification != null
-        ) {
-            startForeground(ConstantBaseApp.NOTIFICATION_SO_ID, notification)
-        }
-        return super.onStartCommand(intent, flags, startId)
-    }
 
     override fun onHandleIntent(intent: Intent?) {
         var sb = StringBuilder()

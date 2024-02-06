@@ -23,6 +23,7 @@ import com.namoadigital.prj001.model.SO_Save_Return;
 import com.namoadigital.prj001.model.TSO_SO_Service_Rec;
 import com.namoadigital.prj001.model.TSO_Set_Service_Edit_Env;
 import com.namoadigital.prj001.receiver.WBR_SO_Set_Service_For_Edit;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -30,7 +31,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WS_SO_Set_Service_For_Edit extends IntentService {
+public class WS_SO_Set_Service_For_Edit extends BaseWsIntentService {
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";
@@ -38,28 +39,7 @@ public class WS_SO_Set_Service_For_Edit extends IntentService {
     private Gson gson;
 
     public WS_SO_Set_Service_For_Edit() {
-        super("WS_SO_Set_Service_For_Edit");
-    }
-
-    @Override
-    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
-        //
-        NotificationManager nm = (NotificationManager)
-                getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
-
-        NotificationCompat.Builder builder = ToolBox_Inf.getLowImportanceBuilder(getApplicationContext(), nm);
-
-        builder.setOngoing(true);
-        builder.setContentTitle(getApplicationContext().getString(R.string.title_notification_generic));
-        builder.setContentText(getApplicationContext().getString(R.string.generic_sending_data_msg));
-        builder.setSmallIcon(R.drawable.upload_animation);
-
-        Notification notification = builder.build();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-                && notification != null) {
-            startForeground(NOTIFICATION_SYNC_ID, notification);
-        }
-        return super.onStartCommand(intent, flags, startId);
+        super("WS_SO_Set_Service_For_Edit", new BaseWsIntentService.IntentServiceMode.UPLOAD_DATA());
     }
 
     @Override

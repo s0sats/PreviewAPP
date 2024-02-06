@@ -28,16 +28,19 @@ import com.namoadigital.prj001.model.MyActionFilterParam
 import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.model.TSerial_Search_Rec
 import com.namoadigital.prj001.receiver.WBR_Generate_NForm_PDF
+import com.namoadigital.prj001.receiver.WBR_Product_Serial_Structure
 import com.namoadigital.prj001.receiver.WBR_Save
 import com.namoadigital.prj001.receiver.WBR_Schedule_Not_Executed
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save
 import com.namoadigital.prj001.service.WS_Generate_NForm_PDF
+import com.namoadigital.prj001.service.WS_Product_Serial_Structure
 import com.namoadigital.prj001.service.WS_Save
 import com.namoadigital.prj001.service.WS_Sync
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save
 import com.namoadigital.prj001.service.WS_UnfocusAndHistoric
 import com.namoadigital.prj001.service.WsScheduleNotExecuted
+import com.namoadigital.prj001.sql.MDProductSerialSql018
 import com.namoadigital.prj001.sql.Sql_Act005_002
 import com.namoadigital.prj001.ui.act005.Act005_Main
 import com.namoadigital.prj001.ui.act006.Act006_Main
@@ -538,9 +541,12 @@ class Act092Presenter constructor(
     private fun getFileOnline(context: Context) {
         if (ToolBox_Con.isOnline(context)) {
             val hasFormPendency = getFormPendency(context)
+            val hasSerialStructurePendency = getSerialStructurePendency(context)
             val hasTicketPendency = getTicketPendency(context)
             if (hasFormPendency) {
                 callFormSave(context)
+            } else if (hasSerialStructurePendency) {
+                updateSerialStrucutreAfterWsSave(context)
             } else if (hasTicketPendency) {
                 callTicketSave(context)
             } else {
@@ -554,6 +560,18 @@ class Act092Presenter constructor(
 
     private fun getTicketPendency(context: Context): Boolean {
         return ToolBox_Inf.handleTicketUpdateRequired(context, ToolBox_Con.getPreference_Customer_Code(context)).toInt() > 0
+    }
+
+    private fun getSerialStructurePendency(context: Context): Boolean {
+        val mdProductSerialDao = MD_Product_SerialDao(context)
+        val serial: List<MD_Product_Serial> = mdProductSerialDao.query(
+            MDProductSerialSql018(
+                ToolBox_Con.getPreference_Customer_Code(context)
+            ).toSqlQuery()
+        )
+        //
+        //
+        return serial.size > 0
     }
 
     private fun getFormPendency(context: Context): Boolean {
@@ -1307,6 +1325,8 @@ class Act092Presenter constructor(
             "progress_ticket_save_msg",
             "progress_form_save_ttl",
             "progress_form_save_msg",
+            "progress_serial_structure_ttl",
+            "progress_serial_structure_msg",
             "msg_preparing_to_send_data",
             "cell_step_lbl",
             "cell_open_action_lbl",
@@ -1347,6 +1367,8 @@ class Act092Presenter constructor(
             "alert_not_execute_justify_lost_data_ttl",
             "alert_not_execute_justify_lost_data_msg",
             "progress_n_form_sync_ttl",
+            "alert_serial_structure_error_ttl",
+            "alert_serial_structure_error_msg",
         ).let {
             return ToolBox_Inf.setLanguage(
                 translateResource.context,
@@ -1526,6 +1548,44 @@ class Act092Presenter constructor(
 
         }
 
+    }
+
+    override fun hasSerialStructureOutdate(context: Context): Boolean {
+        val serialDao = MD_Product_SerialDao(
+            context
+        )
+        val serial: List<MD_Product_Serial> = serialDao.query(
+            MDProductSerialSql018(
+                ToolBox_Con.getPreference_Customer_Code(context)
+            ).toSqlQuery()
+        )
+        //
+        return serial.size > 0
+    }
+
+    override fun updateSerialStrucutreAfterWsSave(context: Context) {
+        if (ToolBox_Con.isOnline(context)) {
+            //
+            view.wsProcess.value = WS_Product_Serial_Structure::class.java.simpleName
+            //
+            view.showPD(
+                hmAux_Trans["progress_serial_structure_ttl"],
+                hmAux_Trans["progress_serial_structure_msg"]
+            )
+            //
+            val mIntent = Intent(context, WBR_Product_Serial_Structure::class.java)
+            val bundle = Bundle()
+            bundle.putLong(MD_Product_SerialDao.CUSTOMER_CODE, -1)
+            bundle.putLong(MD_Product_SerialDao.PRODUCT_CODE, -1)
+            bundle.putLong(MD_Product_SerialDao.SERIAL_CODE, -1)
+            bundle.putInt(MD_Product_SerialDao.SCN_ITEM_CHECK, 0)
+            //
+            mIntent.putExtras(bundle)
+            //
+            context.sendBroadcast(mIntent)
+        } else {
+            ToolBox_Inf.showNoConnectionDialog(context)
+        }
     }
 
 

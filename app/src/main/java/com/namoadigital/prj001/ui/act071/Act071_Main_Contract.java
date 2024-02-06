@@ -148,6 +148,10 @@ public interface Act071_Main_Contract {
         void executeSerialSave();
 
         void proceedOffHandSaveFlow(Context context, int mActionPrefix, int mActionCode);
+
+        boolean hasSerialStructureOutdate();
+
+        void updateSerialStrucutreAfterWsSave();
     }
 
 }

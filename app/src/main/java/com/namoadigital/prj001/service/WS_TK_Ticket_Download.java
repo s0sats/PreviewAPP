@@ -29,6 +29,7 @@ import com.namoadigital.prj001.model.T_TK_Ticket_Download_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Download_PK_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Download_Rec;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009;
 import com.namoadigital.prj001.sql.Sql_Act069_002;
 import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Download_001;
@@ -42,7 +43,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WS_TK_Ticket_Download extends IntentService {
+public class WS_TK_Ticket_Download extends BaseWsIntentService {
 
     public static final String IS_LOGIN_PROCESS = "IS_LOGIN_PROCESS";
 
@@ -54,28 +55,8 @@ public class WS_TK_Ticket_Download extends IntentService {
     private TK_TicketDao ticketDao;
     private MD_Product_SerialDao serialDao;
 
-    public WS_TK_Ticket_Download() { super("WS_TK_Ticket_Download");}
+    public WS_TK_Ticket_Download() { super("WS_TK_Ticket_Download", new IntentServiceMode.TICKET_DOWNLOAD_DATA());}
 
-    @Override
-    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
-
-        NotificationManager nm = (NotificationManager)
-                getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
-
-        NotificationCompat.Builder builder = ToolBox_Inf.getLowImportanceBuilder(getApplicationContext(), nm);
-
-        builder.setOngoing(true);
-        builder.setContentTitle(getApplicationContext().getString(R.string.title_notification_generic));
-        builder.setContentText(getApplicationContext().getString(R.string.msg_synchronizing_data));
-        builder.setSmallIcon(R.drawable.download_animation);
-
-
-        Notification notification = builder.build();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForeground(NOTIFICATION_TICKET_DOWNLOAD, notification);
-        }
-        return super.onStartCommand(intent, flags, startId);
-    }
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {

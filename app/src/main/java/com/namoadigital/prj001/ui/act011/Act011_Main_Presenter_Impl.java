@@ -94,6 +94,7 @@ import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_003;
 import com.namoadigital.prj001.sql.GeOsDeviceItem_Sql_006;
 import com.namoadigital.prj001.sql.GeOsDeviceSql_002;
 import com.namoadigital.prj001.sql.GeOsSql_001;
+import com.namoadigital.prj001.sql.MDProductSerialSql018;
 import com.namoadigital.prj001.sql.MD_Class_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_016;
@@ -216,21 +217,30 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     }
 
     @Override
-    public void executeStructureUpdate(MD_Product_Serial serialInfo) {
+    public void executeStructureUpdate() {
         //
         Intent mIntent = new Intent(context, WBR_Product_Serial_Structure.class);
         Bundle bundle = new Bundle();
-        bundle.putLong(MD_Product_SerialDao.CUSTOMER_CODE, serialInfo.getCustomer_code());
-        bundle.putLong(MD_Product_SerialDao.PRODUCT_CODE, serialInfo.getProduct_code());
-        bundle.putLong(MD_Product_SerialDao.SERIAL_CODE, serialInfo.getSerial_code());
-        Integer scn_item_check = serialInfo.getScn_item_check();
-        bundle.putInt(MD_Product_SerialDao.SCN_ITEM_CHECK, scn_item_check);
+        bundle.putLong(MD_Product_SerialDao.CUSTOMER_CODE, -1);
+        bundle.putLong(MD_Product_SerialDao.PRODUCT_CODE, -1);
+        bundle.putLong(MD_Product_SerialDao.SERIAL_CODE, -1);
+        bundle.putInt(MD_Product_SerialDao.SCN_ITEM_CHECK, 0);
         //
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
         //
         ToolBox_Inf.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_preparing_to_send_data"), "", "0");
+    }
+
+    @Override
+    public boolean hasSerialStructurePending() {
+        List<MD_Product_Serial> serial = md_product_serialDao.query(
+                new MDProductSerialSql018(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        );
+        return serial.size() > 0 ;
     }
 
     @Override

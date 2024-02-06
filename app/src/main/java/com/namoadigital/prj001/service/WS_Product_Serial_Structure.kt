@@ -8,15 +8,21 @@ import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.dao.MD_Product_SerialDao
 import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_DeviceDao
-import com.namoadigital.prj001.model.*
+import com.namoadigital.prj001.model.MD_Product_Serial
+import com.namoadigital.prj001.model.MD_Product_Serial_Structure
+import com.namoadigital.prj001.model.T_MD_Product_Serial_Structure
+import com.namoadigital.prj001.model.T_MD_Product_Serial_Structure_Env
+import com.namoadigital.prj001.model.T_MD_Product_Serial_Structure_Rec
 import com.namoadigital.prj001.receiver.WBR_Product_Serial_Structure
+import com.namoadigital.prj001.service.base.BaseWsIntentService
+import com.namoadigital.prj001.sql.MDProductSerialSql018
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 
-class WS_Product_Serial_Structure : IntentService("WS_Product_Serial_Structure") {
+class WS_Product_Serial_Structure : BaseWsIntentService("WS_Product_Serial_Structure", IntentServiceMode.UPLOAD_DATA()) {
 
     private val hmAux_Trans by lazy {
 
@@ -46,21 +52,19 @@ class WS_Product_Serial_Structure : IntentService("WS_Product_Serial_Structure")
     //
     private val serialDao: MD_Product_SerialDao by lazy {
         MD_Product_SerialDao(
-            getApplicationContext(),
-            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+            applicationContext,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(applicationContext)),
             ConstantBaseApp.DB_VERSION_CUSTOM
         )
     }
     //
     private val tpDeviceDao: MD_Product_Serial_Tp_DeviceDao by lazy {
         MD_Product_Serial_Tp_DeviceDao(
-            getApplicationContext(),
-            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+            applicationContext,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(applicationContext)),
             Constant.DB_VERSION_CUSTOM
         )
     }
-
-
 
     private val mModule_Code: String = Constant.APP_MODULE
     private var mResource_Code = "0"
@@ -72,10 +76,10 @@ class WS_Product_Serial_Structure : IntentService("WS_Product_Serial_Structure")
         val bundle = intent!!.extras
         //
         try {
-            val customerCode = bundle!!.getLong(MD_Product_SerialDao.CUSTOMER_CODE)
-            val productCode = bundle.getLong(MD_Product_SerialDao.PRODUCT_CODE)
-            val serialCode = bundle.getLong(MD_Product_SerialDao.SERIAL_CODE)
-            val scnItemCheck = bundle.getInt(MD_Product_SerialDao.SCN_ITEM_CHECK)
+            val customerCode = bundle!!.getLong(MD_Product_SerialDao.CUSTOMER_CODE, -1)
+            val productCode = bundle.getLong(MD_Product_SerialDao.PRODUCT_CODE, -1)
+            val serialCode = bundle.getLong(MD_Product_SerialDao.SERIAL_CODE, -1)
+            val scnItemCheck = bundle.getInt(MD_Product_SerialDao.SCN_ITEM_CHECK, -1)
 
             processSerialStructure(customerCode, productCode, serialCode, scnItemCheck)
         } catch (e: Exception) {
@@ -121,18 +125,26 @@ class WS_Product_Serial_Structure : IntentService("WS_Product_Serial_Structure")
         )
         //
         val env = T_MD_Product_Serial_Structure()
+        //
+        if (customerCode == -1L) {
+            env.setSearch(
+                getSerialStructureOutdated()
+            )
+        } else {
+            env.getSearch().add(
+                T_MD_Product_Serial_Structure_Env(
+                    customerCode,
+                    productCode,
+                    serialCode,
+                    scnItemCheck
+                )
+            )
+        }
+        //
         env.app_code = Constant.PRJ001_CODE
         env.app_version = Constant.PRJ001_VERSION
         env.session_app = ToolBox_Con.getPreference_Session_App(applicationContext)
         env.app_type = Constant.PKG_APP_TYPE_DEFAULT
-        env.getSearch().add(
-            T_MD_Product_Serial_Structure_Env(
-                customerCode,
-                productCode,
-                serialCode,
-                scnItemCheck
-            )
-        )
         //
         val resultado = ToolBox_Con.connWebService(
             Constant.WS_PRODUCT_SERIAL_STRUCTURE_SEARCH,
@@ -182,23 +194,112 @@ class WS_Product_Serial_Structure : IntentService("WS_Product_Serial_Structure")
         //
         //
         if (rec.structure != null) {
-            processSerialStructureReturn(rec.structure!!)
-        }else{
-            ToolBox.sendBCStatus(applicationContext, "ERROR_1", hmAux_Trans["msg_no_data_returned"], "", "0")
+            processSerialStructureReturn(rec.structure, customerCode)
+        } else {
+            ToolBox.sendBCStatus(
+                applicationContext,
+                "ERROR_1",
+                hmAux_Trans["msg_no_data_returned"],
+                "",
+                "0"
+            )
         }
     }
 
-    private fun processSerialStructureReturn(structures: List<MD_Product_Serial_Structure>) {
-        //Apesar de ser retornado uma lista, HOJE 26/10/2021, é retornado somente uma estrutura por vez
-        //Caso isso mude, é necessario rever a logica abaixo, para garantir que tudo ou nada seja inserido.
-        for (serialStructure in structures) {
+    private fun getSerialStructureOutdated(): java.util.ArrayList<T_MD_Product_Serial_Structure_Env> {
+        val search = mutableListOf<T_MD_Product_Serial_Structure_Env>()
+        val query = serialDao.query(
+            MDProductSerialSql018(
+                ToolBox_Con.getPreference_Customer_Code(applicationContext)
+            ).toSqlQuery()
+        )
+        query.forEach {
+            search.add(
+                T_MD_Product_Serial_Structure_Env(
+                    it.customer_code,
+                    it.product_code,
+                    it.serial_code,
+                    0
+                )
+            )
+        }
+        return search as java.util.ArrayList<T_MD_Product_Serial_Structure_Env>
+    }
+
+
+//    private fun getSerialStructureOutdated(serialSyncList: String): java.util.ArrayList<T_MD_Product_Serial_Structure_Env> {
+//        val search = mutableListOf<T_MD_Product_Serial_Structure_Env>()
+//        val pkList = serialSyncList.split("|")
+//        pkList.forEach {
+//            search.add(
+//                T_MD_Product_Serial_Structure_Env(
+//                    it[0].code.toLong(),
+//                    it[1].code.toLong(),
+//                    it[2].code.toLong(),
+//                    0
+//                )
+//            )
+//        }
+//        return search as java.util.ArrayList<T_MD_Product_Serial_Structure_Env>
+//    }
+
+    private fun processSerialStructureReturn(
+        structures: List<MD_Product_Serial_Structure>,
+        customerCode: Long
+    ) {
+
+        /**
+         * REGRA
+         * customerCode == -1 define se eh sync ou atualizadcao especifica de estrutura.
+         */
+        if(customerCode == (-1).toLong()){
+            //
+            var dbResult: Boolean = true
+            for(structure in structures){
+               val serial = serialUpdateInfo(structure)
+                if(serial != null){
+                    structure.device_tp.forEach {
+                        it.setPk(serial)
+                    }
+                    var daoObjReturn = serialDao.removeFullStructure(serial)
+                    //Se não houve erro atualiza
+                    if (!daoObjReturn.hasError()) {
+                        daoObjReturn = tpDeviceDao.addUpdate(structure.device_tp, false)
+                    }
+                    if (daoObjReturn.hasError()) {
+                        dbResult = false
+                    }
+                }
+            }
+            //
+            if (dbResult) {
+                ToolBox.sendBCStatus(
+                    applicationContext,
+                    "CLOSE_ACT",
+                    hmAux_Trans["generic_process_finalized_msg"],
+                    "",
+                    "0"
+                )
+            } else {
+                ToolBox.sendBCStatus(
+                    applicationContext,
+                    "ERROR_1",
+                    hmAux_Trans["msg_error_on_serial_structure"],
+                    "",
+                    "0"
+                )
+            }
+
+        }else{
+            val serialStructure = structures[0]
+
             val serialUpdateInfo = serialUpdateInfo(serialStructure)
             if(serialUpdateInfo != null) {
                 serialStructure.device_tp.forEach {
                     it.setPk(serialUpdateInfo)
                 }
                 //apaga a estrutura atual
-                var daoObjReturn = serialDao.removeFullStructure(serialUpdateInfo!!)
+                var daoObjReturn = serialDao.removeFullStructure(serialUpdateInfo)
                 //Se não houve erro atualiza
                 if (!daoObjReturn.hasError()) {
                     daoObjReturn = tpDeviceDao.addUpdate(serialStructure.device_tp, false)
@@ -259,5 +360,9 @@ class WS_Product_Serial_Structure : IntentService("WS_Product_Serial_Structure")
         }
         //
         return serial
+    }
+
+    companion object {
+        const val SERIAL_SYNC_LIST_BUNDLE = "SERIAL_SYNC_LIST_BUNDLE"
     }
 }

@@ -59,5 +59,7 @@ interface Act092_Contract {
         )
 
         fun getJustifyItems(justifyGroupCode: Int, context: Context): ArrayList<HMAux>
+        fun hasSerialStructureOutdate(context: Context): Boolean
+        fun updateSerialStrucutreAfterWsSave(context: Context)
     }
 }

@@ -39,6 +39,7 @@ import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
@@ -68,6 +69,7 @@ import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_020;
 import com.namoadigital.prj001.sql.MDProductSerialSql017;
+import com.namoadigital.prj001.sql.MDProductSerialSql018;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_Device_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MdJustifyItemSqlSS;
@@ -542,6 +544,17 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         startFormOS(ticketCtrl, customForm);
     }
 
+    @Override
+    public boolean hasSerialStructureOutdate() {
+        List<MD_Product_Serial> serial = mdProductSerialDao.query(
+                new MDProductSerialSql018(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        );
+        //
+        return serial.size() > 0 ;
+    }
+
     private boolean isOfflineFinished(int ticket_prefix, int ticket_code) {
         TK_Ticket dbTicket = getTicketObj(ticket_prefix,ticket_code);
         if(dbTicket != null) {
@@ -712,6 +725,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     public void defineWsToCall(TK_Ticket mTicket, boolean formAllowOfflineSave, boolean ticketSaveAllowOffline){
         if(ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())){
             defineFormWaitingSyncFlow(mTicket.getTicket_prefix(), mTicket.getTicket_code(), formAllowOfflineSave);
+        }else if(hasSerialStructureOutdate()){
+            updateSerialStrucutreAfterWsSave();
         }else {
             executeTicketSaveProcess(ticketSaveAllowOffline);
         }
@@ -1688,6 +1703,32 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             ToolBox_Inf.showNoConnectionDialog(context);
         }
     }
+    @Override
+    public void updateSerialStrucutreAfterWsSave() {
+        if (ToolBox_Con.isOnline(context)) {
+            //
+            mView.setWsProcess(Act070_Main.UPDATE_SERIAL_AFTER_FORM_SAVE);
+            //
+            mView.showPD(
+                hmAux_Trans.get("progress_serial_structure_ttl"),
+                hmAux_Trans.get("progress_serial_structure_msg")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_Product_Serial_Structure.class);
+            Bundle bundle = new Bundle();
+            bundle.putLong(MD_Product_SerialDao.CUSTOMER_CODE, -1);
+            bundle.putLong(MD_Product_SerialDao.PRODUCT_CODE, -1);
+            bundle.putLong(MD_Product_SerialDao.SERIAL_CODE, -1);
+            bundle.putInt(MD_Product_SerialDao.SCN_ITEM_CHECK, 0);
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
+    }
+
     //BARRIONUEVO -23/04/2021 - Metodo nãoé mais chamado e a chamada via WBR foi descontinuada.
 //    private void startDownloadServices() {
 //        Intent mIntentPDF = new Intent(context, WBR_DownLoad_PDF.class);

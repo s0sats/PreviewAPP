@@ -14,6 +14,7 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao
 import com.namoadigital.prj001.dao.SM_SODao
 import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.receiver.WBR_So_Status_Change
+import com.namoadigital.prj001.service.base.BaseWsIntentService
 import com.namoadigital.prj001.sql.SM_SO_Sql_001
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
@@ -22,7 +23,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf
 import java.io.IOException
 
 class WSSoStatusChange :
-    IntentService("WS_So_Status_Change") {
+    BaseWsIntentService("WS_So_Status_Change", IntentServiceMode.UPLOAD_DATA()) {
     //
     private val soDao by lazy {
         SM_SODao(
@@ -47,25 +48,6 @@ class WSSoStatusChange :
     private val gson = GsonBuilder().serializeNulls().create()
     private val hmAuxTrans: HMAux by lazy {
         loadTranslation()
-    }
-
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        //
-        val nm = applicationContext.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        val builder = ToolBox_Inf.getLowImportanceBuilder(
-            applicationContext, nm
-        )
-        builder.setOngoing(true)
-        builder.setContentTitle(applicationContext.getString(R.string.title_notification_generic))
-        builder.setContentText(applicationContext.getString(R.string.generic_sending_data_msg))
-        builder.setSmallIcon(R.drawable.upload_animation)
-        val notification = builder.build()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-            && notification != null
-        ) {
-            startForeground(ConstantBaseApp.NOTIFICATION_SYNC_ID, notification)
-        }
-        return super.onStartCommand(intent, flags, startId)
     }
 
     override fun onHandleIntent(intent: Intent?) {

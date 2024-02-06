@@ -46,6 +46,7 @@ import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Approval;
 import com.namoadigital.prj001.model.TK_Ticket_Product;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
+import com.namoadigital.prj001.service.WS_Product_Serial_Structure;
 import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Sync;
@@ -103,6 +104,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
     private boolean sync_ticket_form=false;
     private boolean hasPendency = false;
     private String save_return;
+    private String wsSaveResult="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -767,10 +769,29 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         } else if (wsProcess.equalsIgnoreCase(WS_Save.class.getName())) {
             progressDialog.dismiss();
             wsProcess = "";
-            mPresenter.processWS_SaveReturn(mLink);
+            //
+            if(mPresenter.hasSerialStructureOutdate()){
+                wsSaveResult = mLink;
+                mPresenter.updateSerialStrucutreAfterWsSave();
+            }else {
+                mPresenter.processWS_SaveReturn(mLink);
+                //
+                if (act_profile == 1) {
+                    mPresenter.executeTicketSaveProcess();
+                } else {
+                    if (mPresenter.hasApproveProfile(mTkPrefix, mTkCode, mTkSeq, mStepCode)) {
+                        mPresenter.executeTicketSaveProcess();
+                    }
+                }
+            }
+            //
+        } else if (wsProcess.equalsIgnoreCase(WS_Product_Serial_Structure.class.getName())) {
+            progressDialog.dismiss();
+            wsProcess = "";
+            mPresenter.processWS_SaveReturn(wsSaveResult);
             //
             if (act_profile == 1) {
-                    mPresenter.executeTicketSaveProcess();
+                mPresenter.executeTicketSaveProcess();
             } else {
                 if (mPresenter.hasApproveProfile(mTkPrefix, mTkCode, mTkSeq, mStepCode)) {
                     mPresenter.executeTicketSaveProcess();
@@ -931,6 +952,8 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         transList.add("alert_ticket_has_off_hand_form_in_process_msg");
         transList.add("progress_serial_save_ttl");
         transList.add("progress_serial_save_msg");
+        transList.add("alert_serial_structure_error_ttl");
+        transList.add("alert_serial_structure_error_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -985,6 +1008,14 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         }else if (wsProcess.equalsIgnoreCase(WS_Sync.class.getName())) {
             progressDialog.dismiss();
             mPresenter.processSaveReturn(tkTicket.getTicket_prefix(), tkTicket.getTicket_code(), save_return);
+        } else if (wsProcess.equalsIgnoreCase(WS_Product_Serial_Structure.class.getName())) {
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_serial_structure_error_ttl"),
+                    hmAux_Trans.get("alert_serial_structure_error_msg"),
+                    null,
+                    0
+            );
         } else {
             wsResult.clear();
         }

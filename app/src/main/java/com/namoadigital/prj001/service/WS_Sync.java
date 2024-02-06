@@ -145,6 +145,7 @@ import com.namoadigital.prj001.model.TkTicketTypeOperation;
 import com.namoadigital.prj001.model.TkTicketTypeProduct;
 import com.namoadigital.prj001.model.TkTicketTypeSite;
 import com.namoadigital.prj001.receiver.WBR_Sync;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.sql.EV_Profile_Sql_Truncate;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_004;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Sql_Truncate;
@@ -213,7 +214,7 @@ import java.util.List;
  * Created by neomatrix on 16/01/17.
  */
 
-public class WS_Sync extends IntentService {
+public class WS_Sync extends BaseWsIntentService {
 
     private EV_UserDao userDao;
     private EV_User_CustomerDao ev_user_customerDao;
@@ -224,42 +225,42 @@ public class WS_Sync extends IntentService {
     private String mResource_Name = "ws_sync";
 
     public WS_Sync() {
-        super("WS_Sync");
+        super("WS_Sync", new BaseWsIntentService.IntentServiceMode.DOWNLOAD_DATA());
     }
 
-    /**
-     * BARRIONUEVO 07-01-2022
-     *     Aplicação de foreground service para WS de sincronismo.
-     *     Foi feito desse jeito pela urgencia da correção.
-     *     CAUSA: Foi detectado que o WakefullBroadcast jah nao eh mais o mesmo, quando o celular
-     *     entra em hibernacao por inatividade o servicao estava quebrando por java.net.SocketException: Software caused connection abort
-     *     Na analise feita o servico quebrava depois de 1:50 minutos
-     *     SOLUCAO: Foreground service para toda e qualquer chamada do sincronismo por ser um
-     * @param intent
-     * @param flags
-     * @param startId
-     * @return
-     */
-    @Override
-    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
-        //
-        NotificationManager nm = (NotificationManager)
-                getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
-
-        NotificationCompat.Builder builder = ToolBox_Inf.getLowImportanceBuilder(getApplicationContext(), nm);
-
-        builder.setOngoing(true);
-        builder.setContentTitle(getApplicationContext().getString(R.string.title_notification_generic));
-        builder.setContentText(getApplicationContext().getString(R.string.msg_synchronizing_data));
-        builder.setSmallIcon(R.drawable.download_animation);
-
-        Notification notification = builder.build();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-                && notification != null) {
-            startForeground(NOTIFICATION_SYNC_ID, notification);
-        }
-        return super.onStartCommand(intent, flags, startId);
-    }
+//    /**
+//     * BARRIONUEVO 07-01-2022
+//     *     Aplicação de foreground service para WS de sincronismo.
+//     *     Foi feito desse jeito pela urgencia da correção.
+//     *     CAUSA: Foi detectado que o WakefullBroadcast jah nao eh mais o mesmo, quando o celular
+//     *     entra em hibernacao por inatividade o servicao estava quebrando por java.net.SocketException: Software caused connection abort
+//     *     Na analise feita o servico quebrava depois de 1:50 minutos
+//     *     SOLUCAO: Foreground service para toda e qualquer chamada do sincronismo por ser um
+//     * @param intent
+//     * @param flags
+//     * @param startId
+//     * @return
+//     */
+//    @Override
+//    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
+//        //
+//        NotificationManager nm = (NotificationManager)
+//                getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
+//
+//        NotificationCompat.Builder builder = ToolBox_Inf.getLowImportanceBuilder(getApplicationContext(), nm);
+//
+//        builder.setOngoing(true);
+//        builder.setContentTitle(getApplicationContext().getString(R.string.title_notification_generic));
+//        builder.setContentText(getApplicationContext().getString(R.string.msg_synchronizing_data));
+//        builder.setSmallIcon(R.drawable.download_animation);
+//
+//        Notification notification = builder.build();
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+//                && notification != null) {
+//            startForeground(NOTIFICATION_SYNC_ID, notification);
+//        }
+//        return super.onStartCommand(intent, flags, startId);
+//    }
 
     @Override
     protected void onHandleIntent(Intent intent) {

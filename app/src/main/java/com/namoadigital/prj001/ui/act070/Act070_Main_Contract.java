@@ -135,6 +135,8 @@ public interface Act070_Main_Contract {
 
         void defineFormFlow(TK_Ticket mTicket, StepForm stepForm);
 
+        void updateSerialStrucutreAfterWsSave();
+
         void processWS_SaveReturn(String mLink);
 
         void executeSerialSave(boolean allowOfflineSave);
@@ -184,5 +186,7 @@ public interface Act070_Main_Contract {
         String hasNonExecutionRestriction(TK_Ticket mTicket);
 
         void createFormOS(TK_Ticket mTicket, StepForm stepForm);
+
+        boolean hasSerialStructureOutdate();
     }
 }

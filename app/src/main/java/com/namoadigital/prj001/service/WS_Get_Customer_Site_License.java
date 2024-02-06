@@ -22,6 +22,7 @@ import com.namoadigital.prj001.model.SiteLicense;
 import com.namoadigital.prj001.model.T_EV_Get_Customer_Site_License_Env;
 import com.namoadigital.prj001.model.T_EV_Get_Customer_Site_License_Rec;
 import com.namoadigital.prj001.receiver.WBR_Get_Customer_Site_License;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -31,34 +32,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class WS_Get_Customer_Site_License  extends IntentService {
+public class WS_Get_Customer_Site_License  extends BaseWsIntentService {
     private Gson gson = new GsonBuilder().serializeNulls().create();
 
     public WS_Get_Customer_Site_License() {
-        super("WS_Get_Customer_Site_License");
+        super("WS_Get_Customer_Site_License", new BaseWsIntentService.IntentServiceMode.CUSTOMER_SITE_LICENSE_DATA());
     }
 
-
-    @Override
-    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
-
-        NotificationManager nm = (NotificationManager)
-                getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
-
-        NotificationCompat.Builder builder = ToolBox_Inf.getLowImportanceBuilder(getApplicationContext(), nm);
-
-        builder.setOngoing(true);
-        builder.setContentTitle(getApplicationContext().getString(R.string.title_notification_generic));
-        builder.setContentText(getApplicationContext().getString(R.string.msg_synchronizing_data));
-        builder.setSmallIcon(R.drawable.download_animation);
-
-        Notification notification = builder.build();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForeground(NOTIFICATION_CUSTOMER_SITE_LICENSE, notification);
-        }
-
-        return super.onStartCommand(intent, flags, startId);
-    }
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {

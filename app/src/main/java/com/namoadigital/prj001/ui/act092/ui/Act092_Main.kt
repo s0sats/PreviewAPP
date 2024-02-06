@@ -146,6 +146,15 @@ class Act092_Main : BaseActivityMvp
 
     override fun processError_1(mLink: String?, mRequired: String?) {
         super.processError_1(mLink, mRequired)
+        if (wsProcess.value == WS_Product_Serial_Structure::class.java.name) {
+            ToolBox.alertMSG(
+                context,
+                hmAux_Trans["alert_serial_structure_error_ttl"],
+                hmAux_Trans["alert_serial_structure_error_msg"],
+                null,
+                0
+            )
+        }
         presenter.newActionClick = false
         presenter.actionSelectedPosition = -1
         progressDialog.dismiss()
@@ -195,6 +204,17 @@ class Act092_Main : BaseActivityMvp
             }
 
             WS_Save::class.java.simpleName -> {
+                wsProcess.value = ""
+                progressDialog.dismiss()
+                //
+                if (presenter.hasSerialStructureOutdate(context)) {
+                    presenter.updateSerialStrucutreAfterWsSave(context)
+                } else {
+                    presenter.otherActionFlow(context)
+                }
+            }
+
+             WS_Product_Serial_Structure::class.java.simpleName -> {
                 wsProcess.value = ""
                 progressDialog.dismiss()
                 //

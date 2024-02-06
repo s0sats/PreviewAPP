@@ -155,4 +155,8 @@ public interface Act005_Main_Presenter {
     void executeWSSoSync();
 
     void deleteSerialSiteInventoryFile();
+
+    void executeSerialStructureUpdate();
+
+    boolean hasSerialStructureSyncRequiredCloudRule();
 }

@@ -33,6 +33,7 @@ import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MD_Partner;
 import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.TK_Ticket;
@@ -40,14 +41,17 @@ import com.namoadigital.prj001.model.TK_Ticket_Action;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.model.TSave_Rec;
+import com.namoadigital.prj001.receiver.WBR_Product_Serial_Structure;
 import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
+import com.namoadigital.prj001.service.WS_Product_Serial_Structure;
 import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
+import com.namoadigital.prj001.sql.MDProductSerialSql018;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
@@ -64,6 +68,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
@@ -76,6 +81,7 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
     private TK_Ticket_CtrlDao ticketCtrlDao;
     private MD_PartnerDao mdPartnerDao;
     private MD_Schedule_ExecDao scheduleExecDao;
+    private MD_Product_SerialDao mdProductSerialDao;
 
     public Act071_Main_Presenter(Context context, Act071_Main_Contract.I_View mView, HMAux hmAux_Trans) {
         this.context = context;
@@ -107,6 +113,12 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
         );
         //
         this.scheduleExecDao = new MD_Schedule_ExecDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //
+        this.mdProductSerialDao = new MD_Product_SerialDao(
             context,
             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
             Constant.DB_VERSION_CUSTOM
@@ -895,6 +907,43 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
     }
 
     @Override
+    public boolean hasSerialStructureOutdate() {
+        List<MD_Product_Serial> serial = mdProductSerialDao.query(
+                new MDProductSerialSql018(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        );
+        //
+        return serial.size() > 0 ;
+    }
+
+    @Override
+    public void updateSerialStrucutreAfterWsSave() {
+        if (ToolBox_Con.isOnline(context)) {
+            //
+            mView.setWsProcess(WS_Product_Serial_Structure.class.getName());
+            //
+            mView.showPD(
+                hmAux_Trans.get("progress_serial_structure_ttl"),
+                hmAux_Trans.get("progress_serial_structure_msg")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_Product_Serial_Structure.class);
+            Bundle bundle = new Bundle();
+            bundle.putLong(MD_Product_SerialDao.CUSTOMER_CODE, -1);
+            bundle.putLong(MD_Product_SerialDao.PRODUCT_CODE, -1);
+            bundle.putLong(MD_Product_SerialDao.SERIAL_CODE, -1);
+            bundle.putInt(MD_Product_SerialDao.SCN_ITEM_CHECK, 0);
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
+    }
+
+    @Override
     public void execTicketSave(boolean forceOfflineProcess) {
         if (!forceOfflineProcess && ToolBox_Con.isOnline(context)) {
             mView.setWsProcess(WS_TK_Ticket_Save.class.getName());
@@ -1047,6 +1096,8 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
         }else {
             if(ToolBox_Inf.hasOffHandFormInProcess(context,mActionPrefix,mActionCode)){
                 execTicketSave(true);
+            }else if(hasSerialStructureOutdate()){
+                updateSerialStrucutreAfterWsSave();
             }else {
                 execTicketSave(false);
             }

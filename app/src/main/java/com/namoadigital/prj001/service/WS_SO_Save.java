@@ -36,6 +36,7 @@ import com.namoadigital.prj001.model.SO_Save_Return;
 import com.namoadigital.prj001.model.TSO_Save_Env;
 import com.namoadigital.prj001.model.TSO_Save_Rec;
 import com.namoadigital.prj001.receiver.WBR_SO_Save;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.sql.GE_File_Sql_006;
 import com.namoadigital.prj001.sql.GE_File_Sql_007;
 import com.namoadigital.prj001.sql.SM_SO_Product_Event_File_Sql_003;
@@ -60,7 +61,7 @@ import java.util.List;
  * Created by d.luche on 27/06/2017.
  */
 
-public class WS_SO_Save extends IntentService {
+public class WS_SO_Save extends BaseWsIntentService {
 
     public static final String SO_ORIGIN_CHANGE_APP = "APP";
     public static final String SO_RETURN_LIST = "SO_RETURN_LIST";
@@ -83,29 +84,9 @@ public class WS_SO_Save extends IntentService {
     private String file_to_del = "";
 
     public WS_SO_Save() {
-        super("WS_SO_Save");
+        super("WS_SO_Save", new BaseWsIntentService.IntentServiceMode.UPLOAD_DATA());
     }
 
-    @Override
-    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
-        //
-        NotificationManager nm = (NotificationManager)
-                getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
-
-        NotificationCompat.Builder builder = ToolBox_Inf.getLowImportanceBuilder(getApplicationContext(), nm);
-
-        builder.setOngoing(true);
-        builder.setContentTitle(getApplicationContext().getString(R.string.title_notification_generic));
-        builder.setContentText(getApplicationContext().getString(R.string.generic_sending_data_msg));
-        builder.setSmallIcon(R.drawable.upload_animation);
-
-        Notification notification = builder.build();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-                && notification != null) {
-            startForeground(NOTIFICATION_SYNC_ID, notification);
-        }
-        return super.onStartCommand(intent, flags, startId);
-    }
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
 

@@ -571,12 +571,12 @@ class MyActionsAdapter constructor(
         private fun configTvOriginView(myAction: MyActions) {
             binding.myActionsItemTvOrigin.apply {
                 applyVisibilityIfTextExists(myAction.originDescriptor)
-//                Log.d("TESTE_ORIGEM", """isTicketOriginManulOrBarcode: ${isTicketOriginManulOrBarcode(myAction)}""" )
-//                Log.d("TESTE_ORIGEM", """originDescriptor: ${myAction.originDescriptor}""" )
-                ellipsize = if (isTicketOriginManulOrBarcode(myAction)) {
-                    TextUtils.TruncateAt.START
+                 if (isTicketOriginManulOrBarcode(myAction)) {
+                     isSingleLine = true
+                     ellipsize = TextUtils.TruncateAt.START
                 } else {
-                    null
+                     isSingleLine = false
+                     ellipsize = null
                 }
             }
         }

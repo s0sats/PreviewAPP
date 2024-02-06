@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act005;
 
 import static com.namoadigital.prj001.ui.act005.Act005_Main_Presenter_Impl.SYNC_FOR_TICKETS_FORM;
+import static com.namoadigital.prj001.ui.act005.Act005_Main_Presenter_Impl.SYNC_SERIAL_STRUCTURE;
 import static com.namoadigital.prj001.ui.act005.Act005_Main_Presenter_Impl.SYNC_SOS;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FCM_ACTION_SM_SO_UPDATE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FCM_ACTION_TK_TICKET_UPDATE;
@@ -76,6 +77,7 @@ import com.namoadigital.prj001.service.WS_IO_Blind_Move_Save;
 import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.service.WS_IO_Move_Save;
 import com.namoadigital.prj001.service.WS_IO_Outbound_Item_Save;
+import com.namoadigital.prj001.service.WS_Product_Serial_Structure;
 import com.namoadigital.prj001.service.WS_SO_Pack_Express_Local;
 import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.service.WS_Save;
@@ -690,6 +692,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         //Ws_Sync do ticket
         transList.add("progress_download_ticket_ttl");
         transList.add("progress_download_ticket_start");
+        //Ws_Sync da estrutura de serial.
+        transList.add("progress_download_serial_structure_ttl");
+        transList.add("progress_download_serial_structure_start");
         //
         //Ws_Sync do N-Services
         transList.add("progress_sync_so_ttl");
@@ -1124,8 +1129,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             boolean hasUpdateRequired = mPresenter.hasUpdateRequired();
             boolean hasTicketSyncRequired = mPresenter.hasTicketSyncRequired();
             boolean hasSoSyncRequiredCloudRule = mPresenter.hasSoSyncRequiredCloudRule();
+            boolean hasSerialStructureSyncRequiredCloudRule = mPresenter.hasSerialStructureSyncRequiredCloudRule();
 
-            sendsendUpdateRequiredData(hasUpdateRequired, hasTicketSyncRequired, hasSoSyncRequiredCloudRule);
+            sendUpdateRequiredData(hasUpdateRequired, hasTicketSyncRequired, hasSoSyncRequiredCloudRule, hasSerialStructureSyncRequiredCloudRule);
 
         }
 
@@ -1571,6 +1577,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 alertTitle =  hmAux_Trans.get("progress_sync_so_ttl");
                 alertMsg = hmAux_Trans.get("progress_sync_so_start");
                 break;
+            case SYNC_SERIAL_STRUCTURE:
+                alertTitle =  hmAux_Trans.get("progress_download_serial_structure_ttl");
+                alertMsg = hmAux_Trans.get("progress_download_serial_structure_start");
+                break;
             default:
                 break;
 
@@ -1973,6 +1983,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 }
             } else {
                 if (!wsSoProcess.equalsIgnoreCase(WS_Save.class.getSimpleName())
+                && !wsSoProcess.equalsIgnoreCase(SYNC_SERIAL_STRUCTURE)
                 && !wsSoProcess.equalsIgnoreCase(SYNC_FOR_TICKETS_FORM)
                 && !wsSoProcess.equalsIgnoreCase(SYNC_SOS)
                 ) {
@@ -2050,6 +2061,22 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             mPresenter.processWS_SaveReturn(mLink);
 
             mPresenter.executeApSave(); // 3
+        }else if (wsSoProcess.equalsIgnoreCase(SYNC_SERIAL_STRUCTURE)) {
+            progressDialog.dismiss();
+            setWsSoProcess("");
+            setWsProcess("");
+            //
+            if(mPresenter.hasSoSyncRequiredCloudRule()){
+                mPresenter.executeWSSoSync();
+            } else if(mPresenter.hasTicketSyncRequired()){
+                mPresenter.executeWSTicketDownload();
+            }else{
+                if(masterDataSyncFlow){
+                    mPresenter.syncFlow(mPresenter.hasUpdateRequired());
+                }else{
+                    refreshUiData();
+                }
+            }
 
         } else if (wsSoProcess.equalsIgnoreCase(WS_AP_Save.class.getSimpleName())) {
             setWsSoProcess("");
@@ -2584,7 +2611,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                     //
                 }
                 //
-                if(mPresenter.hasSoSyncRequiredCloudRule()) {
+                if(mPresenter.hasSerialStructureSyncRequiredCloudRule() && !masterDataSyncFlow) {
+                    mPresenter.executeSerialStructureUpdate();
+                } else if(mPresenter.hasSoSyncRequiredCloudRule()) {
                     mPresenter.executeWSSoSync();
                 } else if(mPresenter.hasTicketSyncRequired()) {
                     mPresenter.executeWSTicketDownload();
@@ -2883,7 +2912,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                         ToolBox_Inf.hasFormProductOutdate(context);
                         executeSync();
                     }else {
-                        if(mPresenter.hasSoSyncRequiredCloudRule()) {
+                        if(mPresenter.hasSerialStructureSyncRequiredCloudRule()) {
+                            mPresenter.executeSerialStructureUpdate();
+                        } else if(mPresenter.hasSoSyncRequiredCloudRule()) {
                             mPresenter.executeWSSoSync();
                         } else if(mPresenter.hasTicketSyncRequired()) {
                             mPresenter.executeWSTicketDownload();
@@ -2948,8 +2979,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         boolean hasUpdateRequired = mPresenter.hasUpdateRequired();
         boolean hasTicketSyncRequiredCloudRule = mPresenter.hasTicketSyncRequiredCloudRule();
         boolean hasSoSyncRequiredCloudRule = mPresenter.hasSoSyncRequiredCloudRule();
+        boolean hasSerialStructureSyncRequiredCloudRule = mPresenter.hasSerialStructureSyncRequiredCloudRule();
         //
-        Drawable wrappedDrawable = setSyncIcon(iconColor, hasUpdateRequired, hasTicketSyncRequiredCloudRule, hasSoSyncRequiredCloudRule);
+        Drawable wrappedDrawable = setSyncIcon(iconColor, hasUpdateRequired, hasTicketSyncRequiredCloudRule, hasSoSyncRequiredCloudRule, hasSerialStructureSyncRequiredCloudRule);
         //
         menu.add(0, TOOLBAR_SYNC_DATA_STATUS, Menu.FIRST + 0, hmAux_Trans.get("lbl_sync_data"));
         menu.findItem(TOOLBAR_SYNC_DATA_STATUS).setIcon(wrappedDrawable);
@@ -2975,14 +3007,16 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     }
 
     @NotNull
-    private Drawable setSyncIcon(int iconColor, boolean hasUpdateRequired, boolean hasTicketSyncRequired, boolean hasSoSyncRequired) {
+    private Drawable setSyncIcon(int iconColor, boolean hasUpdateRequired, boolean hasTicketSyncRequired, boolean hasSoSyncRequired, boolean hasSerialStructureSyncRequiredCloudRule) {
         int icon;
-        if(hasUpdateRequired && (hasTicketSyncRequired || hasSoSyncRequired) ){
+        if(hasUpdateRequired && (hasTicketSyncRequired || hasSoSyncRequired || hasSerialStructureSyncRequiredCloudRule) ){
             icon = R.drawable.ic_sync_main_menu_data;
         }else if(hasUpdateRequired){
             icon = R.drawable.ic_cloud_upload;
             iconColor = R.color.namoa_cancel_red;
-        }else if(hasTicketSyncRequired || hasSoSyncRequired){
+        }else if(hasTicketSyncRequired
+                || hasSoSyncRequired
+                || hasSerialStructureSyncRequiredCloudRule){
             icon = R.drawable.ic_baseline_cloud_download_24;
             iconColor = R.color.custom_yellow_sync;
         }else{
@@ -3012,6 +3046,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         boolean hasUpdateRequired = mPresenter.hasUpdateRequired();
         boolean hasTicketSyncRequired = mPresenter.hasTicketSyncRequired();
         boolean hasSoSyncRequiredCloudRule = mPresenter.hasSoSyncRequiredCloudRule();
+        boolean hasSerialStructureSyncRequiredCloudRule = mPresenter.hasSerialStructureSyncRequiredCloudRule();
         switch (id) {
             //TODO REVISAR AQUI, POIS FOI MODIFICADO APENAS PARA SYNC GAMBIS
             case TOOLBAR_NAMOA_LOGO:
@@ -3027,7 +3062,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 //mPresenter.accessMenuItem(MENU_ID_SYNC_DATA, 0);
                                 masterDataSyncFlow = true;
-                                if (hasSoSyncRequiredCloudRule){
+                                if (hasSerialStructureSyncRequiredCloudRule){
+                                    mPresenter.executeSerialStructureUpdate();
+                                } else if (hasSoSyncRequiredCloudRule){
                                     mPresenter.executeWSSoSync();
                                 } else if(hasTicketSyncRequired){
                                     mPresenter.executeWSTicketDownload();
@@ -3040,7 +3077,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 );
                 break;
             case TOOLBAR_SYNC_DATA_STATUS:
-                sendsendUpdateRequiredData(hasUpdateRequired, hasTicketSyncRequired, hasSoSyncRequiredCloudRule);
+                sendUpdateRequiredData(hasUpdateRequired, hasTicketSyncRequired, hasSoSyncRequiredCloudRule, hasSerialStructureSyncRequiredCloudRule);
                 break;
             default:
                 return true;
@@ -3059,10 +3096,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         return true;
     }
 
-    private void sendsendUpdateRequiredData(boolean hasUpdateRequired, boolean hasTicketSyncRequired, boolean hasSoSyncRequiredCloudRule) {
+    private void sendUpdateRequiredData(boolean hasUpdateRequired, boolean hasTicketSyncRequired, boolean hasSoSyncRequiredCloudRule, boolean hasSerialStructureSyncRequiredCloudRule) {
         masterDataSyncFlow = false;
-        if (!hasUpdateRequired && (hasSoSyncRequiredCloudRule || hasTicketSyncRequired)) {
-            if (hasSoSyncRequiredCloudRule) {
+        if (!hasUpdateRequired && (hasSoSyncRequiredCloudRule || hasTicketSyncRequired || hasSerialStructureSyncRequiredCloudRule)) {
+            if (hasSerialStructureSyncRequiredCloudRule) {
+                mPresenter.executeSerialStructureUpdate();
+            } else if (hasSoSyncRequiredCloudRule) {
                 mPresenter.executeWSSoSync();
             } else {
                 mPresenter.executeWSTicketDownload();

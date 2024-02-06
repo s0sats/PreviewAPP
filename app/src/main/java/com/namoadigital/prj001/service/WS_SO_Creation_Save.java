@@ -22,6 +22,7 @@ import com.namoadigital.prj001.model.SO_Creation_Env;
 import com.namoadigital.prj001.model.SO_Creation_Obj;
 import com.namoadigital.prj001.model.SO_Creation_Rec;
 import com.namoadigital.prj001.receiver.WBR_SO_Creation_Save;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -29,7 +30,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WS_SO_Creation_Save extends IntentService {
+public class WS_SO_Creation_Save extends BaseWsIntentService {
     public static final String SO_CREATION_OBJ_KEY ="SO_CREATION_OBJ_KEY";
     public static final String SO_CREATION_MSG_KEY ="SO_CREATION_MSG_KEY";
 
@@ -38,27 +39,8 @@ public class WS_SO_Creation_Save extends IntentService {
     private String mResource_Code = "0";
     private String mResource_Name = "ws_so_creation_save";
 
-    public WS_SO_Creation_Save() { super("WS_SO_Creation_Save");}
-
-    @Override
-    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
-        //
-        NotificationManager nm = (NotificationManager)
-                getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
-
-        NotificationCompat.Builder builder = ToolBox_Inf.getLowImportanceBuilder(getApplicationContext(), nm);
-
-        builder.setOngoing(true);
-        builder.setContentTitle(getApplicationContext().getString(R.string.title_notification_generic));
-        builder.setContentText(getApplicationContext().getString(R.string.generic_sending_data_msg));
-        builder.setSmallIcon(R.drawable.upload_animation);
-
-        Notification notification = builder.build();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-                && notification != null) {
-            startForeground(NOTIFICATION_SYNC_ID, notification);
-        }
-        return super.onStartCommand(intent, flags, startId);
+    public WS_SO_Creation_Save() {
+        super("WS_SO_Creation_Save", new BaseWsIntentService.IntentServiceMode.UPLOAD_DATA());
     }
 
     @Override

@@ -158,5 +158,7 @@ public interface Act011_Main_Presenter {
 
     List<String> getSiteEmailList(int site_code);
 
-    void executeStructureUpdate(MD_Product_Serial serialInfo);
+    void executeStructureUpdate();
+
+    boolean hasSerialStructurePending();
 }

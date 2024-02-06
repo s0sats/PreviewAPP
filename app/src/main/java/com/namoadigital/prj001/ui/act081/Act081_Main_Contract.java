@@ -40,5 +40,9 @@ public interface Act081_Main_Contract {
         void callWsSave();
 
         void executeTicketSaveProcess();
+
+        boolean hasSerialStructureOutdate();
+
+        void updateSerialStrucutreAfterWsSave();
     }
 }

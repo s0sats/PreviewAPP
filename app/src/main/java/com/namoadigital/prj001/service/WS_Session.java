@@ -22,6 +22,7 @@ import com.namoadigital.prj001.model.SiteLicense;
 import com.namoadigital.prj001.model.TSession_Env;
 import com.namoadigital.prj001.model.TSession_Rec;
 import com.namoadigital.prj001.receiver.WBR_Session;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -31,34 +32,13 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
  * Created by neomatrix on 16/01/17.
  */
 
-public class WS_Session extends IntentService {
+public class WS_Session extends BaseWsIntentService {
 
     private EV_UserDao userDao;
     private EV_User_CustomerDao ev_user_customerDao;
 
     public WS_Session() {
-        super("WS_Session");
-    }
-
-    @Override
-    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
-
-        NotificationManager nm = (NotificationManager)
-                getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
-
-        NotificationCompat.Builder builder = ToolBox_Inf.getLowImportanceBuilder(getApplicationContext(), nm);
-
-        builder.setOngoing(true);
-        builder.setContentTitle(getApplicationContext().getString(R.string.title_notification_generic));
-        builder.setContentText(getApplicationContext().getString(R.string.msg_synchronizing_data));
-        builder.setSmallIcon(R.drawable.download_animation);
-
-        Notification notification = builder.build();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForeground(NOTIFICATION_CUSTOMER, notification);
-        }
-
-        return super.onStartCommand(intent, flags, startId);
+        super("WS_Session", new IntentServiceMode.CUSTOMER_DATA());
     }
 
     @Override

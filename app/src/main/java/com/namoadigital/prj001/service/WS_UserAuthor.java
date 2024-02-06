@@ -1,16 +1,7 @@
 package com.namoadigital.prj001.service;
 
-import static com.namoadigital.prj001.util.ConstantBaseApp.NOTIFICATION_SYNC_ID;
-
-import android.app.IntentService;
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -20,6 +11,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.TUser_Author_Env;
 import com.namoadigital.prj001.model.TUser_Author_Rec;
 import com.namoadigital.prj001.receiver.WBR_UserAuthor;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -31,7 +23,7 @@ import java.util.List;
  * Created by neomatrix on 16/01/17.
  */
 
-public class WS_UserAuthor extends IntentService {
+public class WS_UserAuthor extends BaseWsIntentService {
 
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
@@ -39,28 +31,7 @@ public class WS_UserAuthor extends IntentService {
     private String mResource_Name = "ws_user_author";
 
     public WS_UserAuthor() {
-        super("WS_UserAuthor");
-    }
-
-    @Override
-    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
-        //
-        NotificationManager nm = (NotificationManager)
-                getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
-
-        NotificationCompat.Builder builder = ToolBox_Inf.getLowImportanceBuilder(getApplicationContext(), nm);
-
-        builder.setOngoing(true);
-        builder.setContentTitle(getApplicationContext().getString(R.string.title_notification_generic));
-        builder.setContentText(getApplicationContext().getString(R.string.generic_sending_data_msg));
-        builder.setSmallIcon(R.drawable.upload_animation);
-
-        Notification notification = builder.build();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-                && notification != null) {
-            startForeground(NOTIFICATION_SYNC_ID, notification);
-        }
-        return super.onStartCommand(intent, flags, startId);
+        super("WS_UserAuthor", new IntentServiceMode.UPLOAD_DATA());
     }
 
     @Override

@@ -1164,6 +1164,7 @@ public class Act011_Main extends Base_Activity
                 && !serial_id.isEmpty()
                 //LUCHE - 28/08/2020
                 && (!mPresenter.isFormCreateByTicket(formLocal) || isOffHandForm)
+                && !mPresenter.isFormTicketKanban(formLocal.getTicket_prefix(), formLocal.getTicket_code())
         ) {
             return true;
         }
@@ -2956,7 +2957,7 @@ public class Act011_Main extends Base_Activity
         }
         if (finalizeNewFlow) {
             if (mPresenter.checkNFormExists(formLocal)) {
-                if (isOffHandForm && !mPresenter.isFormTicketKanban(mTicket_prefix, mTicket_code)) {
+                if (isOffHandForm && !mPresenter.isFormTicketKanban(formLocal.getTicket_prefix(), formLocal.getTicket_code())) {
                     callAct081();
                 } else {
                     callAct006(context, finalizeNewFlow);
@@ -4500,8 +4501,9 @@ public class Act011_Main extends Base_Activity
 
         if (wsSoProcess.equalsIgnoreCase(WS_Save.class.getSimpleName())) {
             setWsSoProcess("");
-            MD_Product_Serial serialInfo = getSerialInfo();
-            if (serialInfo.getHas_item_check() == 1) {
+
+            if(mPresenter.hasSerialStructurePending()){
+
                 progressDialog.dismiss();
                 enableProgressDialog(
                         hmAux_Trans.get("alert_update_structure_ttl"),
@@ -4510,8 +4512,8 @@ public class Act011_Main extends Base_Activity
                         hmAux_Trans.get("sys_alert_btn_ok")
                 );
                 setWsSoProcess(WS_Product_Serial_Structure.class.getSimpleName());
-                mPresenter.executeStructureUpdate(serialInfo);
-            } else {
+                mPresenter.executeStructureUpdate();
+            }else{
                 mPresenter.processWS_SaveReturn(mLink);
             }
         } else if (wsSoProcess.equalsIgnoreCase(WS_Product_Serial_Structure.class.getSimpleName())) {

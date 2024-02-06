@@ -35,6 +35,7 @@ import com.namoadigital.prj001.model.Ev_User_Customer_Parameter;
 import com.namoadigital.prj001.model.TGC_Env;
 import com.namoadigital.prj001.model.TGC_Rec;
 import com.namoadigital.prj001.receiver.WBR_GetCustomer;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_001;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_Truncate;
 import com.namoadigital.prj001.sql.EV_User_Sql_Truncate;
@@ -59,7 +60,7 @@ import java.util.Collections;
  * Created by neomatrix on 16/01/17.
  */
 
-public class WS_GetCustomer extends IntentService {
+public class WS_GetCustomer extends BaseWsIntentService {
 
     private EV_UserDao ev_userDao;
     private EV_User_CustomerDao ev_user_customerDao;
@@ -70,30 +71,8 @@ public class WS_GetCustomer extends IntentService {
     public static final String GC_USER_VALIDATION_BUNDLE_PARAM = "GC_USER_VALIDATION_BUNDLE_PARAM";
 
     public WS_GetCustomer() {
-        super("WS_GetCustomer");
+        super("WS_GetCustomer", new BaseWsIntentService.IntentServiceMode.CUSTOMER_DATA());
     }
-
-    @Override
-    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
-
-        NotificationManager nm = (NotificationManager)
-                getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
-
-        NotificationCompat.Builder builder = ToolBox_Inf.getLowImportanceBuilder(getApplicationContext(), nm);
-
-        builder.setOngoing(true);
-        builder.setContentTitle(getApplicationContext().getString(R.string.title_notification_generic));
-        builder.setContentText(getApplicationContext().getString(R.string.msg_synchronizing_data));
-        builder.setSmallIcon(R.drawable.download_animation);
-
-        Notification notification = builder.build();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForeground(NOTIFICATION_CUSTOMER, notification);
-        }
-
-        return super.onStartCommand(intent, flags, startId);
-    }
-
 
     @Override
     protected void onHandleIntent(Intent intent) {

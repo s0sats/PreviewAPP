@@ -493,6 +493,125 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
     public void updateStatusOffLine(MD_Product_Serial item) {
 
     }
+    /**
+     * METODO MODIFICADO PARA TRABALHAR COM INSTANCIA DO DB COMPARTILHADA
+     * E NO METODO DE TRANSACTION DE INSERT DO SERIAL NO SYNCRONISMO
+     *
+     * @param dbInstance
+     */
+    public DaoObjReturn addUpdateWithDaoObjReturn(MD_Product_Serial md_product_serial, SQLiteDatabase dbInstance) {
+        DaoObjReturn daoObjReturn = new DaoObjReturn(TABLE);
+        //
+        if (dbInstance == null) {
+            openDB();
+        } else {
+            this.db = dbInstance;
+        }
+        //
+        if (dbInstance == null) {
+            db.beginTransaction();
+        }
+        //
+        try {
+
+            if (db.insert(TABLE, null, toContentValuesMapper.map(md_product_serial)) == -1) {
+                StringBuilder sbWhere = new StringBuilder();
+                sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(md_product_serial.getCustomer_code())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(PRODUCT_CODE).append(" = '").append(String.valueOf(md_product_serial.getProduct_code())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(SERIAL_CODE).append(" = '").append(String.valueOf(md_product_serial.getSerial_code())).append("'");
+
+                db.update(TABLE, toContentValuesMapper.map(md_product_serial), sbWhere.toString(), null);
+            }
+            //
+            MD_Product_Serial_TrackingDao md_product_serial_trackingDao =
+                    new MD_Product_Serial_TrackingDao(
+                            context,
+                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                            Constant.DB_VERSION_CUSTOM
+                    );
+            //Apaga Trackings antesde chamar addUpdate
+            md_product_serial_trackingDao.remove(
+                    new MD_Product_Serial_Tracking_Sql_002(
+                            md_product_serial.getCustomer_code(),
+                            md_product_serial.getProduct_code(),
+                            md_product_serial.getSerial_tmp()
+                    ).toSqlQuery(),
+                    db
+
+            );
+
+            //Seta a pk nos tracking
+            if (md_product_serial.getTracking_list() != null) {
+
+                for (int i = 0; i < md_product_serial.getTracking_list().size(); i++) {
+                    md_product_serial.getTracking_list().get(i).setPk(md_product_serial);
+                }
+            }
+            //Verifica se existe tracking, caso não exista, nem tenta fazer o add update
+            if (md_product_serial.getTracking_list() != null && md_product_serial.getTracking_list().size() > 0) {
+                md_product_serial_trackingDao.addUpdate(md_product_serial.getTracking_list(), false, db);
+            }
+            if (dbInstance == null) {
+                db.setTransactionSuccessful();
+            }
+        } catch (Exception e) {
+            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
+            //Gera arquivo de exception usando dados da exception e do obj de retorno
+            ToolBox_Inf.registerException(
+                    getClass().getName(),
+                    new Exception(
+                            e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
+                    )
+            );
+        } finally {
+            if (dbInstance == null) {
+                db.endTransaction();
+            }
+        }
+        //
+        if (dbInstance == null) {
+            closeDB();
+        }
+        return daoObjReturn;
+    }
+
+    public DaoObjReturn addUpdateWithDaoObjReturn(String sQuery, SQLiteDatabase dbInstance) {
+        DaoObjReturn daoObjReturn = new DaoObjReturn(TABLE);
+        if (dbInstance == null) {
+            openDB();
+        } else {
+            this.db = dbInstance;
+        }
+
+        if (dbInstance == null) {
+            db.beginTransaction();
+        }
+        try {
+            db.execSQL(sQuery);
+            if (dbInstance == null) {
+                db.setTransactionSuccessful();
+            }
+        } catch (Exception e) {
+            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
+            //Gera arquivo de exception usando dados da exception e do obj de retorno
+            ToolBox_Inf.registerException(
+                    getClass().getName(),
+                    new Exception(
+                            e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
+                    )
+            );
+        } finally {
+            if (dbInstance == null) {
+                db.endTransaction();
+            }
+        }
+        if (dbInstance == null) {
+            closeDB();
+        }
+        return daoObjReturn;
+    }
 
     @Override
     public void addUpdate(String sQuery) {

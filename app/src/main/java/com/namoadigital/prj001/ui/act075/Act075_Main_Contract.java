@@ -95,5 +95,9 @@ public interface Act075_Main_Contract {
         boolean isEditable(String status);
 
         ArrayList<Integer> getProductCodeList(List<TK_Ticket_Product> tkTicketProducts);
+
+        boolean hasSerialStructureOutdate();
+
+        void updateSerialStrucutreAfterWsSave();
     }
 }

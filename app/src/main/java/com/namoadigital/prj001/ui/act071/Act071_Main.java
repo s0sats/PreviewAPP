@@ -57,6 +57,7 @@ import com.namoadigital.prj001.model.MyActionFilterParam;
 import com.namoadigital.prj001.model.TK_Ticket_Action;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
+import com.namoadigital.prj001.service.WS_Product_Serial_Structure;
 import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Sync;
@@ -153,6 +154,8 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     private int mNavTicketSeqTmp;
     private CtrlFromToReceiver ctrlFromToReceiver;
     private Bundle act083Bundle;
+    private String wsSaveResult="";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -247,6 +250,11 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         //
         transList.add("alert_offline_save_by_open_form_ttl");
         transList.add("alert_offline_save_by_open_form_msg");
+        //
+        transList.add("progress_serial_structure_ttl");
+        transList.add("progress_serial_structure_msg");
+        transList.add("alert_serial_structure_error_ttl");
+        transList.add("alert_serial_structure_error_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -1334,7 +1342,17 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         }else if (wsProcess.equalsIgnoreCase(WS_Save.class.getName())) {
             progressDialog.dismiss();
             wsProcess = "";
-            mPresenter.processWS_SaveReturn(mLink);
+            if(mPresenter.hasSerialStructureOutdate()){
+                wsSaveResult = mLink;
+                mPresenter.updateSerialStrucutreAfterWsSave();
+            }else {
+                mPresenter.processWS_SaveReturn(mLink);
+                mPresenter.execTicketSave(false);
+            }
+        }else if (wsProcess.equalsIgnoreCase(WS_Product_Serial_Structure.class.getName())) {
+            progressDialog.dismiss();
+            wsProcess = "";
+            mPresenter.processWS_SaveReturn(wsSaveResult);
             mPresenter.execTicketSave(false);
         } else if(wsProcess.equals(WS_Serial_Save.class.getName())){
             wsProcess = "";
@@ -1380,7 +1398,15 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             if(!wsResult.isEmpty()) {
                 showResult(false);
             }
-        }else{
+        } else if (wsProcess.equalsIgnoreCase(WS_Product_Serial_Structure.class.getName())) {
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_serial_structure_error_ttl"),
+                    hmAux_Trans.get("alert_serial_structure_error_msg"),
+                    null,
+                    0
+            );
+        } else{
             wsResult.clear();
         }
         //Atualiza UI

@@ -112,6 +112,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     public static final String PARAM_WORKGROUP_EDIT_MODE = "PARAM_WORKGROUP_EDIT_MODE";
     public static final String PARAM_FORCE_WORKGROUP_EDIT_MODE = "PARAM_FORCE_WORKGROUP_EDIT_MODE";
     private static final String TEMP_SUFIX_FILE = "temp_";
+    protected static final String UPDATE_SERIAL_AFTER_FORM_SAVE = "UPDATE_SERIAL_AFTER_FORM_SAVE";
     private FragmentManager fm;
     private Frg_Pipeline_Header mFrgPipelineHeader;
     private Act070_Main_Presenter mPresenter;
@@ -156,6 +157,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private boolean fromCamera = false;
     private boolean assertSingleTouch = true;
     private boolean isCheckinFlow = false;
+    private String wsSaveResult="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -369,6 +371,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("alert_update_ticket_to_not_execute_msg");
         transList.add("alert_form_in_process_to_not_execute_msg");
         transList.add("alert_sync_to_not_execute_msg");
+        transList.add("alert_serial_structure_error_ttl");
+        transList.add("alert_serial_structure_error_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -856,8 +860,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private void syncPipelineFlow(boolean skipSyncConfirm) {
         if (ToolBox_Inf.hasOffHandFormInProcess(context, mTkPrefix, mTkCode)) {
             showAlert(
-                    hmAux_Trans.get("alert_ticket_has_off_hand_form_in_process_ttl"),
-                    hmAux_Trans.get("alert_ticket_has_off_hand_form_in_process_msg")
+                hmAux_Trans.get("alert_ticket_has_off_hand_form_in_process_ttl"),
+                hmAux_Trans.get("alert_ticket_has_off_hand_form_in_process_msg")
             );
         } else {
             if (skipSyncConfirm) {
@@ -2038,8 +2042,18 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         } else if (wsProcess.equalsIgnoreCase(WS_Save.class.getName())) {
             wsProcess = "";
             progressDialog.dismiss();
-            mPresenter.processWS_SaveReturn(mLink);
-            //mPresenter.prepareSyncProcess(mTicket, false);
+            if(mPresenter.hasSerialStructureOutdate()){
+                wsSaveResult = mLink;
+                mPresenter.updateSerialStrucutreAfterWsSave();
+            }else {
+                mPresenter.processWS_SaveReturn(mLink);
+                //mPresenter.prepareSyncProcess(mTicket, false);
+                mPresenter.defineWsToCall(mTicket, true, true);
+            }
+        } else if (wsProcess.equalsIgnoreCase(UPDATE_SERIAL_AFTER_FORM_SAVE)) {
+            wsProcess = "";
+            progressDialog.dismiss();
+            mPresenter.processWS_SaveReturn(wsSaveResult);
             mPresenter.defineWsToCall(mTicket, true, true);
         } else if (wsProcess.equals(WS_Serial_Save.class.getName())) {
             //LUCHE - 03/11/2020
@@ -2142,6 +2156,14 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             inWgEditMode = false;
         } else if (wsProcess.equals(WS_Product_Serial_Structure.class.getName())) {
             resetLastPositionClicked();
+        }else if (wsProcess.equals(UPDATE_SERIAL_AFTER_FORM_SAVE)){
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_serial_structure_error_ttl"),
+                    hmAux_Trans.get("alert_serial_structure_error_msg"),
+                    null,
+                    0
+            );
         } else {
             wsResult.clear();
         }
@@ -2161,6 +2183,14 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         if (wsProcess.equals(WS_Product_Serial_Structure.class.getName())) {
             ToolBox_Con.setBooleanPreference(getApplicationContext(), ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, true);
             processSerialStructure();
+        } else if (wsProcess.equals(UPDATE_SERIAL_AFTER_FORM_SAVE)){
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_serial_structure_error_ttl"),
+                    hmAux_Trans.get("alert_serial_structure_error_msg"),
+                    null,
+                    0
+            );
         }
     }
 

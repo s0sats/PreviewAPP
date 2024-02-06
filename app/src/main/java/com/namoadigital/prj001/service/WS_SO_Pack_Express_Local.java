@@ -21,6 +21,7 @@ import com.namoadigital.prj001.model.SO_Pack_Express_Local;
 import com.namoadigital.prj001.model.TSO_Pack_Express_Env;
 import com.namoadigital.prj001.model.TSO_Pack_Express_Rec;
 import com.namoadigital.prj001.receiver.WBR_SO_Pack_Express_Local;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_007;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_008;
 import com.namoadigital.prj001.util.Constant;
@@ -34,7 +35,7 @@ import java.util.List;
  * Created by d.luche on 27/06/2017.
  */
 
-public class WS_SO_Pack_Express_Local extends IntentService {
+public class WS_SO_Pack_Express_Local extends BaseWsIntentService {
 
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
@@ -54,28 +55,7 @@ public class WS_SO_Pack_Express_Local extends IntentService {
     private Gson gsonRec;
 
     public WS_SO_Pack_Express_Local() {
-        super("WS_SO_Pack_Express_Local");
-    }
-
-    @Override
-    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
-        //
-        NotificationManager nm = (NotificationManager)
-                getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
-
-        NotificationCompat.Builder builder = ToolBox_Inf.getLowImportanceBuilder(getApplicationContext(), nm);
-
-        builder.setOngoing(true);
-        builder.setContentTitle(getApplicationContext().getString(R.string.title_notification_generic));
-        builder.setContentText(getApplicationContext().getString(R.string.generic_sending_data_msg));
-        builder.setSmallIcon(R.drawable.upload_animation);
-
-        Notification notification = builder.build();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-                && notification != null) {
-            startForeground(NOTIFICATION_SYNC_ID, notification);
-        }
-        return super.onStartCommand(intent, flags, startId);
+        super("WS_SO_Pack_Express_Local", new BaseWsIntentService.IntentServiceMode.UPLOAD_DATA());
     }
 
     @Override

@@ -49,6 +49,7 @@ import com.namoadigital.prj001.model.T_TK_Ticket_Save_Rec_From_To;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Rec_Result;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Rec_Result_Step;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
+import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.sql.GE_File_Sql_006;
 import com.namoadigital.prj001.sql.GE_File_Sql_007;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
@@ -74,7 +75,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class WS_TK_Ticket_Save extends IntentService {
+public class WS_TK_Ticket_Save extends BaseWsIntentService {
 
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = ConstantBaseApp.APP_MODULE;
@@ -100,29 +101,9 @@ public class WS_TK_Ticket_Save extends IntentService {
     private MD_Product_SerialDao serialDao;
 
     public WS_TK_Ticket_Save() {
-        super("WS_TK_Ticket_Save");
+        super("WS_TK_Ticket_Save", new BaseWsIntentService.IntentServiceMode.UPLOAD_DATA());
     }
 
-    @Override
-    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
-        //
-        NotificationManager nm = (NotificationManager)
-                getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
-
-        NotificationCompat.Builder builder = ToolBox_Inf.getLowImportanceBuilder(getApplicationContext(), nm);
-
-        builder.setOngoing(true);
-        builder.setContentTitle(getApplicationContext().getString(R.string.title_notification_generic));
-        builder.setContentText(getApplicationContext().getString(R.string.generic_sending_data_msg));
-        builder.setSmallIcon(R.drawable.upload_animation);
-
-        Notification notification = builder.build();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-                && notification != null) {
-            startForeground(NOTIFICATION_SYNC_ID, notification);
-        }
-        return super.onStartCommand(intent, flags, startId);
-    }
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
 
