@@ -71,6 +71,7 @@ import com.namoadigital.prj001.sql.MD_Site_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Local_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_SS;
 import com.namoadigital.prj001.sql.MeMeasureTpSql_001;
+import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act007.Act007_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.ui.act032.Act032_Main;
@@ -83,6 +84,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class Frg_Serial_Edit extends BaseFragment {
     //ESSA CONSTANTE É USADA PELO SERVER NO SAVE
@@ -533,14 +535,18 @@ public class Frg_Serial_Edit extends BaseFragment {
         this.forceSaveAgain = forceSaveAgain;
     }
 
-    private String getMeasureValueSuffix() {
+    private MeMeasureTp getMeasureValueSuffix() {
 
-        MeMeasureTp meMeasureTp = measureTpDao.getByString(new MeMeasureTpSql_001(
+        return measureTpDao.getByString(new MeMeasureTpSql_001(
                 mdProductSerial.getCustomer_code(),
                 mdProductSerial.getMeasure_tp_code() != null ? mdProductSerial.getMeasure_tp_code() : -1
         ).toSqlQuery());
 
-        return StringHelperKt.formatForDisplay(meMeasureTp.getValueSufix());
+//        if(meMeasureTp != null) {
+//            return StringHelperKt.formatForDisplay(meMeasureTp.getValueSufix());
+//        }else{
+//            return null;
+//        }
     }
 
     private double getMeasureValueRounded(Double lastMeasure) {
@@ -552,7 +558,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         int restrictionDecimal = ConstantBaseApp.FORM_OS_MEASURE_DECIMAL_DEFAULT;
         //
         if(meMeasureTp != null
-        && meMeasureTp.getRestrictionDecimal() != null){
+                && meMeasureTp.getRestrictionDecimal() != null){
             restrictionDecimal = meMeasureTp.getRestrictionDecimal();
         }
         //
@@ -780,7 +786,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         //LUCHE - 03/12/2021
         //Se customer usa tracking, seta o campos de addinfo na lista de validação de falso tracking
         if(useTracking){
-           addInfoTrackingList.clear();
+            addInfoTrackingList.clear();
             addInfoTrackingList.add(mket_info1);
             addInfoTrackingList.add(mket_info2);
             addInfoTrackingList.add(mket_info3);
@@ -926,11 +932,11 @@ public class Frg_Serial_Edit extends BaseFragment {
         //Agora o parametro ocr padrão é o leitor OCR da mosolf e esta sendo utlizado
         //com a var mOCR
         mket_serial_id.setmOCR(
-            ToolBox_Inf.profileExists(
-                context,
-                Constant.PROFILE_MENU_PROFILE,
-                Constant.PROFILE_MENU_PROFILE_SERIAL_OCR_MOSOLF
-            )
+                ToolBox_Inf.profileExists(
+                        context,
+                        Constant.PROFILE_MENU_PROFILE,
+                        Constant.PROFILE_MENU_PROFILE_SERIAL_OCR_MOSOLF
+                )
         );
         mket_serial_id.setmNFC(false);
         mket_serial_id.setmBARCODE(
@@ -1020,7 +1026,27 @@ public class Frg_Serial_Edit extends BaseFragment {
                 //
                 if (mdProductSerial != null) {
                     initDao();
-                    setSerialData();
+                    if(mdProductSerial.getHas_item_check() == 1){
+                        MeMeasureTp measureValueSuffix = getMeasureValueSuffix();
+                        if(measureValueSuffix != null) {
+                            setSerialData(measureValueSuffix.getValueSufix());
+                        }else{
+                            ToolBox.alertMSG(
+                                    context,
+                                    hmAux_Trans.get("alert_measure_type_not_found_ttl"),
+                                    hmAux_Trans.get("alert_measure_type_not_found_msg"),
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            callAct005();
+                                        }
+                                    },
+                                    0
+                            );
+                        }
+                    }else{
+                        setSerialData(null);
+                    }
                     //
                     //
                     //sqlInitializer();
@@ -1049,6 +1075,13 @@ public class Frg_Serial_Edit extends BaseFragment {
                 );
             }
         }
+    }
+
+    private void callAct005() {
+        Intent mIntent = new Intent(context, Act005_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        Objects.requireNonNull(getActivity()).finish();
     }
 
     private void initDao() {
@@ -1122,7 +1155,7 @@ public class Frg_Serial_Edit extends BaseFragment {
         else return String.join(SEPARATOR, list);
     }
 
-    private void setSerialData() {
+    private void setSerialData(String measureValueSuffix) {
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         mket_serial_id.setTag(mdProductSerial.getSerial_id());
         mket_serial_id.setText(mdProductSerial.getSerial_id());
@@ -1161,12 +1194,12 @@ public class Frg_Serial_Edit extends BaseFragment {
 
         if (last_measure != null) {
             if (last_measure_date != null && !last_measure_date.isEmpty()) {
-                measureFormatted = InfoSerialModel.Companion.formatMeasureValue(last_measure, getMeasureValueSuffix()) + " (" + ToolBox_Inf.millisecondsToString(
+                measureFormatted = InfoSerialModel.Companion.formatMeasureValue(last_measure, displayMeasureValueSuffix(measureValueSuffix)) + " (" + ToolBox_Inf.millisecondsToString(
                         ToolBox_Inf.dateToMilliseconds(last_measure_date),
                         ToolBox_Inf.nlsDateFormat(context)
                 ) + ")";
             } else {
-                measureFormatted = InfoSerialModel.Companion.formatMeasureValue(last_measure, getMeasureValueSuffix());
+                measureFormatted = InfoSerialModel.Companion.formatMeasureValue(last_measure, displayMeasureValueSuffix(measureValueSuffix));
             }
             measure_layout.setVisibility(View.VISIBLE);
             tv_last_measure_lbl.setText(measureFormatted);
@@ -1184,12 +1217,12 @@ public class Frg_Serial_Edit extends BaseFragment {
         if (mdProductSerial.getLast_cycle_value() != null) {
             String lastCycleFormatted = ToolBox_Inf.convertDoubleToBigDecimalString(mdProductSerial.getLast_cycle_value(), true);
             if (last_cycle_date != null && !last_cycle_date.isEmpty()) {
-                cycleFormatted = InfoSerialModel.Companion.formatMeasureValue(lastCycleFormatted, getMeasureValueSuffix()) + " (" + ToolBox_Inf.millisecondsToString(
+                cycleFormatted = InfoSerialModel.Companion.formatMeasureValue(lastCycleFormatted, displayMeasureValueSuffix(measureValueSuffix)) + " (" + ToolBox_Inf.millisecondsToString(
                         ToolBox_Inf.dateToMilliseconds(last_cycle_date),
                         ToolBox_Inf.nlsDateFormat(context)
                 ) + ")";
             } else {
-                cycleFormatted = InfoSerialModel.Companion.formatMeasureValue(lastCycleFormatted, getMeasureValueSuffix());
+                cycleFormatted = InfoSerialModel.Companion.formatMeasureValue(lastCycleFormatted, displayMeasureValueSuffix(measureValueSuffix));
             }
             cycle_layout.setVisibility(View.VISIBLE);
             tv_last_cycle_lbl.setText(cycleFormatted);
@@ -1432,6 +1465,10 @@ public class Frg_Serial_Edit extends BaseFragment {
         }
     }
 
+    private String displayMeasureValueSuffix(String measureValueSuffix) {
+        return StringHelperKt.formatForDisplay(measureValueSuffix);
+    }
+
     private void checkIfSerialIsValid(String value) {
         boolean isInvalidChar = StringHelperKt.checkIfHasCharInvalid(value);
         if (isInvalidChar) {
@@ -1637,8 +1674,8 @@ public class Frg_Serial_Edit extends BaseFragment {
                                 } else {
                                     if (btnId == R.id.frg_serial_edit_btn_action) {
                                         delegate.onSaveNoChangesClick(
-                                            mdProductSerial,
-                                            !mket_serial_id.getText().toString().equals(mket_serial_id.getTag())
+                                                mdProductSerial,
+                                                !mket_serial_id.getText().toString().equals(mket_serial_id.getTag())
                                         );
                                     }
                                     resetSaveCtrlVar();
@@ -1647,11 +1684,11 @@ public class Frg_Serial_Edit extends BaseFragment {
                                 //Concatena msg informando que existe add info duplicada
                                 String msg =
                                         hmAux_Trans.get("alert_tracking_add_info_duplicated_msg")
-                                        + "\n" + hmAux_Trans.get("serial_add_info_ttl");
+                                                + "\n" + hmAux_Trans.get("serial_add_info_ttl");
                                 //
                                 showAlertDialog(
-                                    hmAux_Trans.get("alert_tracking_add_info_validation_ttl"),
-                                    msg
+                                        hmAux_Trans.get("alert_tracking_add_info_validation_ttl"),
+                                        msg
                                 );
                             }
 
@@ -1824,8 +1861,8 @@ public class Frg_Serial_Edit extends BaseFragment {
                     //
                     if(requiresSuggetion(hmAux)){
                         callSuggestionDelegate(
-                            hmAux.get(SearchableSpinner.CODE),
-                            mdProductSerial.getProduct_code()
+                                hmAux.get(SearchableSpinner.CODE),
+                                mdProductSerial.getProduct_code()
                         );
                     }else{
                         //Se trocou de site não caiu na regra de sugestão , esconde sugestão
@@ -1834,36 +1871,36 @@ public class Frg_Serial_Edit extends BaseFragment {
                         //
                         if (hmAux.size() == 0 && oldSite.size() > 0 && mdProductSerial.getTracking_list().size() > 0) {
                             ToolBox.alertMSG(
-                                context,
-                                hmAux_Trans.get("alert_clear_tracking_list_ttl"),
-                                hmAux_Trans.get("alert_clear_tracking_list_msg"),
-                                dialogClearTrackingListner,
-                                2,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        siteChanged = false;
-                                        ss_site.setmValue(oldSite);
-                                        ss_site_zone.setmValue(oldZone);
-                                        ss_site_zone_local.setmValue(oldLocal);
-                                        //
-                                        loadZoneSS(false);
-                                        //
-                                        loadLocalSS(false);
+                                    context,
+                                    hmAux_Trans.get("alert_clear_tracking_list_ttl"),
+                                    hmAux_Trans.get("alert_clear_tracking_list_msg"),
+                                    dialogClearTrackingListner,
+                                    2,
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            siteChanged = false;
+                                            ss_site.setmValue(oldSite);
+                                            ss_site_zone.setmValue(oldZone);
+                                            ss_site_zone_local.setmValue(oldLocal);
+                                            //
+                                            loadZoneSS(false);
+                                            //
+                                            loadLocalSS(false);
+                                        }
                                     }
-                                }
 
                             );
                         } else {
                             if (ss_site.hasChanged() && mdProductSerial.getTracking_list().size() > 0) {
                                 //if (!hmAux.get(SearchableSpinner.ID).equals(oldSite.get(SearchableSpinner.ID)) && tracking_list.size() > 0) {
                                 ToolBox.alertMSG_YES_NO(
-                                    context,
-                                    hmAux_Trans.get("alert_keep_tracking_list_ttl"),
-                                    hmAux_Trans.get("alert_keep_tracking_list_msg"),
-                                    null,
-                                    2,
-                                    dialogClearTrackingListner
+                                        context,
+                                        hmAux_Trans.get("alert_keep_tracking_list_ttl"),
+                                        hmAux_Trans.get("alert_keep_tracking_list_msg"),
+                                        null,
+                                        2,
+                                        dialogClearTrackingListner
                                 );
                             }
                         }
@@ -2015,9 +2052,9 @@ public class Frg_Serial_Edit extends BaseFragment {
                             showTrackingDialog();
                         } else {
                             showAlertDialog(
-                                hmAux_Trans.get("alert_no_site_selected_ttl"),
-                                hmAux_Trans.get("alert_no_site_selected_msg"),
-                                null);
+                                    hmAux_Trans.get("alert_no_site_selected_ttl"),
+                                    hmAux_Trans.get("alert_no_site_selected_msg"),
+                                    null);
                         }
                     }
                 }
@@ -2051,8 +2088,8 @@ public class Frg_Serial_Edit extends BaseFragment {
     private void callSuggestionDelegate(String site_code, long product_code) {
         if(delegate != null){
             delegate.onAddressSuggestionRequired(
-                site_code,
-                product_code
+                    site_code,
+                    product_code
             );
         }
     }
@@ -2100,7 +2137,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                 && hmAux.get(MD_SiteDao.IO_CONTROL).equals("1")
                 && hmAux.get(MD_SiteDao.INBOUND_AUTO_CREATE).equals("1")
                 && !isIOProcess
-            ;
+                ;
     }
 
     /**
@@ -2127,13 +2164,13 @@ public class Frg_Serial_Edit extends BaseFragment {
      */
     private boolean hasLocationChanged() {
         return ss_site.getmValueBD().hasConsistentValue(SearchableSpinner.CODE)
-        && ss_site_zone.getmValueBD().hasConsistentValue(SearchableSpinner.CODE)
-        && ss_site_zone_local.getmValueBD().hasConsistentValue(SearchableSpinner.CODE)
-        && ss_site_zone_local.getmValue().hasConsistentValue(SearchableSpinner.CODE)
-        && (!ss_site_zone_local.getmValue().get(MD_Site_Zone_LocalDao.SITE_CODE).equals(ss_site.getmValueBD().get(SearchableSpinner.CODE))
-             || !ss_site_zone_local.getmValue().get(MD_Site_Zone_LocalDao.ZONE_CODE).equals(ss_site_zone.getmValueBD().get(SearchableSpinner.CODE))
-             || !ss_site_zone_local.getmValue().get(SearchableSpinner.CODE).equals(ss_site_zone_local.getmValueBD().get(SearchableSpinner.CODE))
-            );
+                && ss_site_zone.getmValueBD().hasConsistentValue(SearchableSpinner.CODE)
+                && ss_site_zone_local.getmValueBD().hasConsistentValue(SearchableSpinner.CODE)
+                && ss_site_zone_local.getmValue().hasConsistentValue(SearchableSpinner.CODE)
+                && (!ss_site_zone_local.getmValue().get(MD_Site_Zone_LocalDao.SITE_CODE).equals(ss_site.getmValueBD().get(SearchableSpinner.CODE))
+                || !ss_site_zone_local.getmValue().get(MD_Site_Zone_LocalDao.ZONE_CODE).equals(ss_site_zone.getmValueBD().get(SearchableSpinner.CODE))
+                || !ss_site_zone_local.getmValue().get(SearchableSpinner.CODE).equals(ss_site_zone_local.getmValueBD().get(SearchableSpinner.CODE))
+        );
     }
 
     /**
@@ -2148,8 +2185,8 @@ public class Frg_Serial_Edit extends BaseFragment {
     private void setMoveReasonSS() {
 
         if( mdProduct.getIo_control() == 1
-            && mdProductSerial.getSite_io_control() != null
-            && mdProductSerial.getSite_io_control() == 1
+                && mdProductSerial.getSite_io_control() != null
+                && mdProductSerial.getSite_io_control() == 1
         ) {
             if(ss_site_reason.getVisibility() == View.GONE) {
                 getMoveReasonList();
@@ -2413,8 +2450,8 @@ public class Frg_Serial_Edit extends BaseFragment {
             if (mdProductSerial.getInbound_conf_date() != null) {
                 tv_inbound_date_conf_lbl.setText(hmAux_Trans.get("dialog_serial_inbound_date_lbl"));
                 tv_inbound_date_conf_val.setText(ToolBox_Inf.millisecondsToString(
-                        ToolBox_Inf.dateToMilliseconds(mdProductSerial.getInbound_conf_date()),
-                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                                ToolBox_Inf.dateToMilliseconds(mdProductSerial.getInbound_conf_date()),
+                                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
                         )
                 );
             } else {
@@ -2772,8 +2809,8 @@ public class Frg_Serial_Edit extends BaseFragment {
         //Ao após verificar existencia, e o serial di digitado for novo, os dados da tela são setados no obj. Por isso,
         //é necessario validá-la aqui.
         if (mdProductSerial.getSite_code() != null
-            && siteSelected.hasConsistentValue(SearchableSpinner.CODE)
-            && siteSelected.get(SearchableSpinner.CODE).equalsIgnoreCase(String.valueOf(mdProductSerial.getSite_code()))
+                && siteSelected.hasConsistentValue(SearchableSpinner.CODE)
+                && siteSelected.get(SearchableSpinner.CODE).equalsIgnoreCase(String.valueOf(mdProductSerial.getSite_code()))
         ) {
             Log.d("SITE_CHANGE", "true");
             return true;
@@ -3312,19 +3349,19 @@ public class Frg_Serial_Edit extends BaseFragment {
             //if (mdProduct.getSite_restriction() == 1) {
             if (mdProduct.getSite_restriction() == 1 || forceLoggedSiteRestriction) {
                 if (ss_site.getmOption() == null
-                    || ss_site.getmOption().size() == 0
+                        || ss_site.getmOption().size() == 0
                 ) {
                     abortReported = true;
                     //
                     showAlertDialog(
-                        hmAux_Trans.get("alert_no_site_option_ttl"),
-                        hmAux_Trans.get("alert_no_site_option_msg"),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                informFragAbort();
+                            hmAux_Trans.get("alert_no_site_option_ttl"),
+                            hmAux_Trans.get("alert_no_site_option_msg"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    informFragAbort();
+                                }
                             }
-                        }
                     );
                 } else {
                     if (new_serial) {
@@ -3380,9 +3417,9 @@ public class Frg_Serial_Edit extends BaseFragment {
 //            )
 //        );
         return !(md_site != null
-                    && md_site.getIo_control() == 0
-                    && mdProduct.getSite_restriction() == 0
-                    && !forceLoggedSiteRestriction);
+                && md_site.getIo_control() == 0
+                && mdProduct.getSite_restriction() == 0
+                && !forceLoggedSiteRestriction);
     }
 
     private void loadZoneSS(boolean reset_val) {
@@ -3621,6 +3658,9 @@ public class Frg_Serial_Edit extends BaseFragment {
         //
         transListFrag.add("alert_serial_forbidden_char_ttl");
         transListFrag.add("alert_serial_forbidden_char_msg");
+        //
+        transListFrag.add("alert_measure_type_not_found_ttl");
+        transListFrag.add("alert_measure_type_not_found_msg");
         //
         return transListFrag;
     }

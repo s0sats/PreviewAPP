@@ -18,6 +18,7 @@ import com.namoadigital.prj001.databinding.Act093SerialInfoBinding
 import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_MANUAL_ALERT
 import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_NORMAL
 import com.namoadigital.prj001.model.MyActionFilterParam
+import com.namoadigital.prj001.ui.act005.Act005_Main
 import com.namoadigital.prj001.ui.act083.Act083_Main
 import com.namoadigital.prj001.ui.act086.frg_historic.Act086HistoricFrg
 import com.namoadigital.prj001.ui.act086.frg_historic.PhotoSelection
@@ -124,6 +125,16 @@ class Act093_Main : BaseActivityFragMvp<Act093Presenter, Act093MainBinding>(), C
                     onUpdateHeader()
                 }
 
+                is Act093Event.OnMeasureNotFound -> {
+                    ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans["alert_measure_type_not_found_ttl"],
+                        hmAux_Trans["alert_measure_type_not_found_msg"],
+                        { dialogInterface, i -> callAct005() },
+                        0
+                    )
+                }
+
                 is Act093Event.OnUpdateList -> {
                     //
                     serialInfoFrg.serialInfo = presenter.state.value.serialInfo
@@ -147,6 +158,13 @@ class Act093_Main : BaseActivityFragMvp<Act093Presenter, Act093MainBinding>(), C
 
             }
         }
+    }
+
+    private fun callAct005() {
+        val mIntent = Intent(context, Act005_Main::class.java)
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(mIntent)
+        finish()
     }
 
     private fun openDialog(

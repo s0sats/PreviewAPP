@@ -56,6 +56,7 @@ class GetInfoSerialUseCase constructor(
                             originFlow = serialModel?.originFlow,
                             iconColor = serialModel?.classColor,
                             value_suffix = value_suffix,
+                            hasItemCheck = serial.has_item_check == 1,
                             last_measure_date = ToolBox_Inf.millisecondsToString(
                                 ToolBox_Inf.dateToMilliseconds(serial.last_measure_date),
                                 ToolBox_Inf.nlsDateFormat(context)

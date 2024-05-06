@@ -86,6 +86,7 @@ class Act093Presenter constructor(
                             trackings = serial.tracklist,
                             infoAdd = serial.infoAdd,
                             value_suffix = serial.value_suffix,
+                            hasItemCheck = serial.hasItemCheck,
                             last_measure_value = serial.last_measure_value,
                             last_measure_date = serial.last_measure_date,
                             last_cycle_value = serial.last_cycle_value,
@@ -95,7 +96,11 @@ class Act093Presenter constructor(
                     )
 
                     state = _state
-                    view.onState(Act093Event.OnUpdateScreen)
+                    if(serial.hasItemCheck && serial.value_suffix.isNullOrBlank()){
+                        view.onState(Act093Event.OnMeasureNotFound)
+                    }else {
+                        view.onState(Act093Event.OnUpdateScreen)
+                    }
                 }
 
             it.isFailed { exception ->
@@ -261,6 +266,8 @@ class Act093Presenter constructor(
             "material_applied_lbl",
             "inspection_alert_days_lbl",
             "inspection_missing_lbl",
+            "alert_measure_type_not_found_ttl",
+            "alert_measure_type_not_found_msg",
         ).let {
             return ToolBox_Inf.setLanguage(
                 translateResource.context,

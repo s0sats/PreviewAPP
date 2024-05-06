@@ -5,6 +5,7 @@ import android.content.DialogInterface
 sealed class Act093Event {
 
     object OnUpdateScreen : Act093Event()
+    object OnMeasureNotFound : Act093Event()
     object OnUpdateList : Act093Event()
     object OnLoading : Act093Event()
 
