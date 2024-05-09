@@ -16,7 +16,7 @@ data class Act093State(
         val model: String? = null,
         val trackings: String? = null,
         val infoAdd: String? = null,
-        val hasItemCheck: Boolean = false,
+        val hasMeasureTp: Boolean = false,
         val value_suffix: String? = null,
         val last_measure_value: Double? = null,
         val last_measure_date: String? = null,

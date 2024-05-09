@@ -16,7 +16,7 @@ data class InfoSerialModel(
     val color: String? = null,
     val tracklist: String? = null,
     val infoAdd: String? = null,
-    val hasItemCheck: Boolean = false,
+    val hasMeasureTp: Boolean = false,
     val last_measure_value: Double? = null,
     val last_measure_date: String? = null,
     val last_cycle_value: Float? = null,

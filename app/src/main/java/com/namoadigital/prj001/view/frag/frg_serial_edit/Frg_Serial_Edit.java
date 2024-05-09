@@ -1026,7 +1026,7 @@ public class Frg_Serial_Edit extends BaseFragment {
                 //
                 if (mdProductSerial != null) {
                     initDao();
-                    if(mdProductSerial.getHas_item_check() == 1){
+                    if(mdProductSerial.getMeasure_tp_code() != null){
                         MeMeasureTp measureValueSuffix = getMeasureValueSuffix();
                         if(measureValueSuffix != null) {
                             setSerialData(measureValueSuffix.getValueSufix());
