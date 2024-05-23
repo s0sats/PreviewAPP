@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="5dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="10dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="24dp">
+
+        <TextView
+            android:id="@+id/tvTitle"
+            style="@style/TextAppearance.Material3.HeadlineSmall"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/m3_namoa_onSurface"
+            app:layout_constraintEnd_toStartOf="@+id/ivClose"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="TITLE" />
+
+        <ImageView
+            android:id="@+id/ivClose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_close_24"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tvTitle"
+            app:tint="@color/text_black"
+            android:contentDescription="TODO" />
+
+        <TextView
+            android:id="@+id/tvSite"
+            style="@style/TextAppearance.Material3.TitleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:textColor="@color/m3_namoa_onSurface"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvTitle"
+            tools:text="SITE" />
+
+
+        <LinearLayout
+            android:id="@+id/layout_address"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="24dp"
+            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@+id/tvSite">
+
+            <TextView
+                android:id="@+id/tv_address"
+                style="@style/TextAppearance.Material3.LabelSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/m3_namoa_onSurface"
+                tools:text="Address" />
+
+            <TextView
+                android:id="@+id/tv_address_name"
+                style="@style/TextAppearance.Material3.BodyMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/m3_namoa_onSurfaceVariant"
+                tools:text="Av. Alguma coisa" />
+
+            <TextView
+                android:id="@+id/tv_complement"
+                style="@style/TextAppearance.Material3.BodyMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/m3_namoa_onSurfaceVariant"
+                tools:text="Km 20" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_district"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@+id/layout_address">
+
+            <TextView
+                android:id="@+id/tv_district"
+                style="@style/TextAppearance.Material3.LabelSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/m3_namoa_onSurface"
+                tools:text="District" />
+
+            <TextView
+                android:id="@+id/tv_district_name"
+                style="@style/TextAppearance.Material3.BodyMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/m3_namoa_onSurfaceVariant"
+                tools:text="Sãum Paulo" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_city"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@+id/layout_district">
+
+            <TextView
+                android:id="@+id/tv_city"
+                style="@style/TextAppearance.Material3.LabelSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/m3_namoa_onSurface"
+                tools:text="City" />
+
+            <TextView
+                android:id="@+id/tv_city_name"
+                style="@style/TextAppearance.Material3.BodyMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/m3_namoa_onSurfaceVariant"
+                tools:text="Ferrazópolis" />
+
+            <TextView
+                android:id="@+id/tv_zipcode"
+                style="@style/TextAppearance.Material3.BodyMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/m3_namoa_onSurfaceVariant"
+                tools:text="098365-010" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/layout_contact"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginTop="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layout_city"
+            app:layout_constraintVertical_bias="0.0">
+
+            <TextView
+                android:id="@+id/tv_contact"
+                style="@style/TextAppearance.Material3.LabelSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/m3_namoa_onSurface"
+                tools:text="Contact" />
+
+            <TextView
+                android:id="@+id/tv_contact_name"
+                style="@style/TextAppearance.Material3.BodyMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/m3_namoa_onSurfaceVariant"
+                tools:text="Seu Zé" />
+
+            <TextView
+                android:id="@+id/tv_phone_contact"
+                style="@style/TextAppearance.Material3.BodyMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/m3_namoa_onSurfaceVariant"
+                tools:text="098365-010" />
+
+        </LinearLayout>
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/call_contact"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:textColor="@color/m3_namoa_primary"
+            app:icon="@drawable/baseline_call_24"
+            app:iconSize="20dp"
+            app:iconTint="@color/m3_namoa_primary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/open_maps"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layout_contact"
+            app:layout_constraintWidth_default="wrap"
+            app:strokeColor="@color/m3_namoa_outline"
+            tools:text="Call" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/open_maps"
+            style="@style/NamoaTheme3.ButtonIcon"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="@color/m3_namoa_primary"
+            android:textColor="@color/m3_namoa_onPrimary"
+            app:icon="@drawable/outline_directions_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/call_contact"
+            app:layout_constraintTop_toBottomOf="@+id/layout_contact"
+            app:layout_constraintWidth_default="wrap"
+            app:strokeColor="@color/m3_namoa_outline"
+            tools:text="Mapas" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

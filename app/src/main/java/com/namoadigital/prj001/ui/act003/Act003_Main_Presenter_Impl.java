@@ -6,7 +6,9 @@ import android.util.Log;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.CH_MessageDao;
+import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.model.EV_User_Customer;
 import com.namoadigital.prj001.service.AppBackgroundService;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Message_Sql_004;
@@ -167,8 +169,18 @@ public class Act003_Main_Presenter_Impl implements Act003_Main_Presenter {
     }
 
     @Override
-    public void setSiteCode(HMAux item) {
-        ToolBox_Con.setPreference_Site_Code(context, item.get(MD_SiteDao.SITE_CODE));
+    public Integer getAutomaticSite() {
+        EV_User_CustomerDao ev_user_customerDao = new EV_User_CustomerDao(context, Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
+        EV_User_Customer userInfo = ev_user_customerDao.getLoggedUserCustomer();
+        if(userInfo!= null) {
+            return userInfo.getAutomatic_site_code();
+        }
+        return null;
+    }
+
+    @Override
+    public void setSiteCode(String siteCode) {
+        ToolBox_Con.setPreference_Site_Code(context,siteCode);
         //mView.callAct004(context);
         mView.callAct033(context);
     }

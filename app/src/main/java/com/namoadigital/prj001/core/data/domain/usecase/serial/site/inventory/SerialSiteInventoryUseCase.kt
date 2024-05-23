@@ -1,7 +1,7 @@
 package com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory
 
 import android.content.Context
-import com.namoadigital.prj001.core.data.local.repository.SerialSiteInventoryRepositoryImp
+import com.namoadigital.prj001.core.data.local.repository.siteInventory.SerialSiteInventoryRepositoryImp
 
 data class SerialSiteInventoryUseCase(
     val getSiteInventory: GetSiteInventoryUseCase? = null,

@@ -1,22 +1,31 @@
 package com.namoadigital.prj001.view.frag.frg_main_home
 
 import android.content.Context
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.view.BaseFragment
+import com.namoadigital.prj001.R
 import com.namoadigital.prj001.adapter.Act005MainMenuTagAdapter
 import com.namoadigital.prj001.databinding.FrgMainHomeBinding
+import com.namoadigital.prj001.extensions.getColorStateListId
+import com.namoadigital.prj001.model.EV_User_Customer
 import com.namoadigital.prj001.model.MainTagMenu
+import com.namoadigital.prj001.ui.act005.OnResfreshUI
+import com.namoadigital.prj001.ui.act005.trip.fragment.base.OnFrgMainHomeInteract
 import com.namoadigital.prj001.util.ConstantBaseApp.*
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 import com.namoadigital.prj001.view.dialog.ActionByTagFilterDialog
+import com.namoadigital.prj001.view.frag.frg_main_home_alt.FrgMainHomeAltPresenter
 
 
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -27,28 +36,26 @@ private const val ARG_PARAM_MODULE_CODE = "ARG_PARAM_MODULE_CODE"
  * Use the [FrgMainHome.newInstance] factory method to
  * create an instance of this fragment.
  */
-class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilterDialog.OnApplyFilterListener {
+class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilterDialog.OnApplyFilterListener, OnResfreshUI {
 
-    private var mListener: FrgMainHome.OnFrgMainHomeIteract? = null
-    private var mModule_Code: String? = null
-
+    private var mListener: OnFrgMainHomeInteract? = null
+    private var mModule_Code = APP_MODULE
+    private lateinit var mPresenter: Frg_Main_Home_Presenter
     private lateinit var hmAux_Trans_Frag: HMAux
 
     private var _binding: FrgMainHomeBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: Act005MainMenuTagAdapter
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        arguments?.let {
-            mModule_Code = it.getSerializable(ARG_PARAM_MODULE_CODE) as String?
-        }
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         _binding = FrgMainHomeBinding.inflate(inflater, container, false)
+        //
+        mPresenter = Frg_Main_Home_Presenter(
+            requireContext(),
+            this
+        )
         //
         loadTranslation()
         //
@@ -67,6 +74,9 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
             var transListFrag = ArrayList<String>()
             //
             transListFrag.add("sys_main_menu_calendar_lbl")
+            transListFrag.add("sys_main_menu_home_lbl")
+            transListFrag.add("sys_main_menu_trip_lbl")
+            transListFrag.add("sys_main_menu_extract_lbl")
             transListFrag.add("empty_list_lbl")
             transListFrag.add("messenger_lbl")
             transListFrag.add("sys_main_menu_search_lbl")
@@ -120,63 +130,78 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
         if(mListener != null){
             refreshChatBadge(mListener!!.getChatBadgeQty())
         }
+
     }
     /**
      *  BARRIONUEVO 23-05-2021
      *  Metodo que verifica o aviso de horario errado.
      */
     fun setDatetimeVisibility() {
-        if (!ToolBox_Inf.isLocalDatetimeOk(context)) {
-            binding.cvInvalidDatetimeCard.setVisibility(View.VISIBLE)
-        } else {
-            binding.cvInvalidDatetimeCard.setVisibility(View.GONE)
+        binding.llHeader.apply {
+            if (!ToolBox_Inf.isLocalDatetimeOk(context)) {
+                cvInvalidDatetimeCard.visibility = View.VISIBLE
+            } else {
+                cvInvalidDatetimeCard.visibility = View.GONE
+            }
         }
     }
 
     private fun setLabels() {
-        binding.tvCalendar.text = hmAux_Trans_Frag.get("sys_main_menu_calendar_lbl")
-        binding.tvListPlaceholder.text = hmAux_Trans_Frag.get("empty_list_lbl")
-        binding.tvMessenger.text = hmAux_Trans_Frag.get("messenger_lbl")
-        binding.tvSearch.text = hmAux_Trans_Frag.get("sys_main_menu_search_lbl")
-        binding.tvListTagLbl.text = hmAux_Trans_Frag.get("tag_list_lbl")
+        binding.tvListPlaceholder.text = hmAux_Trans_Frag["empty_list_lbl"]
+        binding.tvListTagLbl.text = hmAux_Trans_Frag["tag_list_lbl"]
 
-        binding.tvDatetimeWarning.text = mListener?.getDatetimeWarning()
+        binding.llHeader.apply {
+            tvDatetimeWarning.text = mListener?.getDatetimeWarning()
+            tvHome.text = hmAux_Trans_Frag["sys_main_menu_home_lbl"]
+            ivHome.background = AppCompatResources.getDrawable(requireContext(), R.drawable.frg_header_menu_btn)
+            ivHome.imageTintList = requireContext().getColorStateListId(R.color.m3_namoa_shadow)
+            //
+            if(mPresenter.hasFieldServiceEnable()) {
+                llTrip.visibility = View.VISIBLE
+                tvTrip.text = hmAux_Trans_Frag["sys_main_menu_trip_lbl"]
+                ivTrip.background = null
+                ivTrip.imageTintList = requireContext().getColorStateListId(R.color.m3_namoa_surface)
+            }else{
+                llTrip.visibility = View.GONE
+            }
+            //
+            tvCalendar.text = hmAux_Trans_Frag["sys_main_menu_calendar_lbl"]
+            tvMessenger.text = hmAux_Trans_Frag["messenger_lbl"]
+            tvSearch.text = hmAux_Trans_Frag["sys_main_menu_search_lbl"]
+        }
     }
 
     private fun setActions() {
-        binding.llCalendar.setOnClickListener {
-            mListener?.let {
-                it.onSelectCalendar()
+        binding.llHeader.apply {
+            llTrip.setOnClickListener{
+                mListener?.onSelectTrip()
             }
-        }
-        //
-        binding.llSearch.setOnClickListener {
-            mListener?.let {
-                it.onSelectSearch()
+            llCalendar.setOnClickListener {
+                mListener?.onSelectCalendar()
             }
-        }
-        //
-        binding.llMessenger.setOnClickListener {
-            mListener?.let {
-                it.onSelectMessenger()
+            //
+            llSearch.setOnClickListener {
+                mListener?.onSelectSearch()
+            }
+            //
+            llMessenger.setOnClickListener {
+                mListener?.onSelectMessenger()
             }
         }
         //
         binding.fabSearchBySerial.setOnClickListener {
-            mListener?.let {
-                it.onSelectFABAssetLocal()
-            }
+            mListener?.onSelectFABAssetLocal()
         }
         //
         binding.ivFilter.setOnClickListener {
-            val actionByTagFilterDialog = ActionByTagFilterDialog(this.context!!, this)
+            val actionByTagFilterDialog = ActionByTagFilterDialog(requireContext(), this)
             actionByTagFilterDialog.show()
         }
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is OnFrgMainHomeIteract) {
+        if (context is OnFrgMainHomeInteract) {
             mListener = context
         } else {
             throw RuntimeException(context.toString()
@@ -204,33 +229,10 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
          */
         //
         @JvmStatic
-        fun newInstance(mModule_Code: String?) =
+        fun newInstance() =
                 FrgMainHome().apply {
-                    arguments = Bundle().apply {
-                        putString(ARG_PARAM_MODULE_CODE, mModule_Code)
-                    }
+
                 }
-    }
-
-    interface OnFrgMainHomeIteract {
-        fun onSelectMenuTagItem(item: MainTagMenu)
-
-        //
-        fun onSelectFABAssetLocal()
-
-        //
-        fun onSelectCalendar()
-
-        //
-        fun onSelectSearch()
-
-        //
-        fun onSelectMessenger()
-
-        //
-        fun getTagList(periodFilter: String, sitesFilter: String, focusFilter: String): MutableList<MainTagMenu>
-        fun getDatetimeWarning(): String
-        fun getChatBadgeQty(): Int
     }
 
     override fun onApply(periodFilter: String, siteFilter: String, focusFilter: String) {
@@ -239,6 +241,7 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
                 refreshList(it.getTagList(periodFilter, siteFilter, focusFilter))
             }
         }
+
     }
 
     fun refreshList(tagList: MutableList<MainTagMenu>) {
@@ -271,11 +274,11 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
         }
     }
 
-    fun refreshChatBadge(chatBadgeQty: Int) {
-        binding.tvMessengerBadge.visibility = View.GONE
+    override fun refreshChatBadge(chatBadgeQty: Int) {
+        binding.llHeader.tvMessengerBadge.visibility = View.GONE
         if(chatBadgeQty >0) {
-            binding.tvMessengerBadge.text = chatBadgeQty.toString()
-            binding.tvMessengerBadge.visibility = View.VISIBLE
+            binding.llHeader.tvMessengerBadge.text = chatBadgeQty.toString()
+            binding.llHeader.tvMessengerBadge.visibility = View.VISIBLE
         }
     }
 

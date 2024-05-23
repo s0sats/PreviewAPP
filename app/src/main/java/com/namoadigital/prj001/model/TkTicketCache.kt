@@ -54,6 +54,12 @@ class TkTicketCache(
         @SerializedName("class_id") var class_id: String? = null,
         @SerializedName("class_color")  var class_color: String? = null,
         @SerializedName("class_available")  var class_available: Int? = null,
+        @SerializedName("kanban") var kanban: Int,
+        @SerializedName("kanban_stage") var kanban_stage: String? = null,
+        @SerializedName("able_to_done") var able_to_done: Int,
+        @SerializedName("preventive") var preventive: Int? = null,
+        @SerializedName("is_priority") var is_priority: Int? = null,
+        @SerializedName("address") var address: Int? = null,
 ){
     fun toMyActionsObj(context: Context, lastSelectedActionPk: String?): MyActions{
         val statusTrad = ConstantBaseApp.HMAUX_TRANS_LIB?.get(ticket_status) ?: ticket_status

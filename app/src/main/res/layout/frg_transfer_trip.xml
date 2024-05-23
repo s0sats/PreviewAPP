@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <include
+        android:id="@+id/ll_header"
+        layout="@layout/frg_main_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <include
+        android:id="@+id/card_position_alert"
+        layout="@layout/trip_card_warning"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ll_header" />
+
+    <ScrollView
+        android:id="@+id/sv_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/ll_footer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/card_position_alert"
+        android:fillViewport="true">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="8dp">
+
+            <LinearLayout
+                android:id="@+id/layout_cards"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <include
+                    android:id="@+id/card_event"
+                    layout="@layout/trip_card_notification"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <include
+                    android:id="@+id/card_odometer"
+                    layout="@layout/trip_card_notification"
+                    android:visibility="gone"
+                    app:layout_constraintTop_toTopOf="@+id/card_event" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_trip_lbl"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="12dp"
+                android:textColor="@color/text_black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/btn_report"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layout_cards"
+                app:layout_constraintWidth_max="wrap"
+                tools:text="Viagem 2023.5896" />
+
+            <TextView
+                android:id="@+id/tv_trip_status_val"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+                android:textColor="@color/m3_namoa_titleLarge"
+                app:layout_constraintEnd_toStartOf="@+id/btn_report"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_trip_lbl"
+                app:layout_constraintWidth_max="wrap"
+                tools:text="Em trânsito livre" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_report"
+                style="@style/NamoaTheme3.Button.Outlined"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginEnd="12dp"
+                android:visibility="visible"
+                app:icon="@drawable/ic_add_plus"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_trip_status_val"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tv_trip_lbl"
+                app:layout_constraintVertical_bias="0.0"
+                tools:text="Reportar" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_placeholder"
+                layout="@layout/placeholder_trip"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:backgroundTint="@color/m3_namoa_primary_light"
+                android:padding="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                android:layout_margin="16dp"
+                app:layout_constraintHeight_default="spread"
+                app:layout_constraintHeight_min="250dp"
+                app:layout_constraintBottom_toTopOf="@+id/btn_add_destination"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_trip_status_val">
+
+                <include
+                    android:id="@+id/ll_placeholder"
+                    layout="@layout/placeholder_trip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="16dp" />
+
+            </androidx.cardview.widget.CardView>
+
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_add_destination"
+                style="@style/NamoaTheme3.ButtonIcon"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="12dp"
+                android:layout_marginTop="24dp"
+                android:padding="2dp"
+                android:textColor="@color/m3_namoa_surface"
+                app:icon="@drawable/ic_location_on_24"
+                app:iconGravity="textStart"
+                app:iconTint="@color/m3_namoa_surface"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+
+                tools:text="Informar Primeiro Destino"
+                tools:visibility="visible" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+    <include
+        android:id="@+id/ll_footer"
+        layout="@layout/frg_main_footer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

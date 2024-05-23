@@ -68,7 +68,12 @@ class SqlAct092_001 (
                      c.step_count,
                      c.step_order_seq,
                      c.class_id,
-                     c.class_color
+                     c.class_color,
+                     c.kanban,
+                     c.kanban_stage,
+                     c.able_to_done,
+                     c.preventive,
+                     c.is_priority
                     FROM
                      ${TkTicketCacheDao.TABLE} c 
                     WHERE

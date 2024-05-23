@@ -130,6 +130,8 @@ public class TK_Ticket implements Cloneable, Serializable {
     @Nullable
     @SerializedName("client_name") private String client_name;
     @Nullable
+    @SerializedName("address") private TkTicketAddress address;
+    @Nullable
     @SerializedName("address_country") private String address_country;
     @Nullable
     @SerializedName("address_state") private String address_state;
@@ -199,7 +201,16 @@ public class TK_Ticket implements Cloneable, Serializable {
     @SerializedName("class_color") private String class_color;
     @SerializedName("class_available") private Integer class_available;
     @SerializedName("kanban") private int kanban;
+    @SerializedName("kanban_stage") private String kanban_stage;
+    @SerializedName("kanban_date") private String kanban_date;
+    @SerializedName("kanban_custom_form_type") private Integer kanban_custom_form_type;
+    @SerializedName("kanban_custom_form_code") private Integer kanban_custom_form_code;
+    @SerializedName("kanban_open_continue") private Integer kanban_open_continue;
+    @SerializedName("able_to_done") private int able_to_done;
+    @SerializedName("preventive") private Integer preventive;
+    @SerializedName("is_priority") private Integer is_priority;
     @SerializedName("has_open_so_partition") private int has_open_so_partition;
+    private int has_address;
     @Expose
     @SerializedName("step")
     private ArrayList<TK_Ticket_Step> step = new ArrayList<>();
@@ -214,6 +225,22 @@ public class TK_Ticket implements Cloneable, Serializable {
     private ArrayList<MD_Product_Serial> serial = new ArrayList<>();
 
     public void setPK() {
+
+        if(address != null){
+            has_address = 1;
+            address_country = address.getCountry();
+//            address_country_id = address.getCountryId();
+            address_state = address.getState();
+            address_city = address.getCity();
+            address_district = address.getDistrict();
+            address_street = address.getStreet();
+            address_num = address.getStreetnumber();
+            address_complement = address.getComplement();
+            address_zipcode = address.getZipcode();
+//            address_plus_code = address.getPlus_code();
+        }else{
+            has_address = 0;
+        }
         for (int i = 0; i < step.size(); i++) {
             step.get(i).setPK(this);
         }
@@ -841,6 +868,15 @@ public class TK_Ticket implements Cloneable, Serializable {
     }
 
     @Nullable
+    public TkTicketAddress getAddress() {
+        return address;
+    }
+
+    public void setAddress(@Nullable TkTicketAddress address) {
+        this.address = address;
+    }
+
+    @Nullable
     public String getAddress_country() {
         return address_country;
     }
@@ -1134,6 +1170,70 @@ public class TK_Ticket implements Cloneable, Serializable {
         this.kanban = kanban;
     }
 
+    public String getKanban_stage() {
+        return kanban_stage;
+    }
+
+    public void setKanban_stage(String kanban_stage) {
+        this.kanban_stage = kanban_stage;
+    }
+
+    public String getKanban_date() {
+        return kanban_date;
+    }
+
+    public void setKanban_date(String kanban_date) {
+        this.kanban_date = kanban_date;
+    }
+
+    public Integer getKanban_custom_form_type() {
+        return kanban_custom_form_type;
+    }
+
+    public void setKanban_custom_form_type(Integer kanban_custom_form_type) {
+        this.kanban_custom_form_type = kanban_custom_form_type;
+    }
+
+    public Integer getKanban_custom_form_code() {
+        return kanban_custom_form_code;
+    }
+
+    public void setKanban_custom_form_code(Integer kanban_custom_form_code) {
+        this.kanban_custom_form_code = kanban_custom_form_code;
+    }
+
+    public Integer getKanban_open_continue() {
+        return kanban_open_continue;
+    }
+
+    public void setKanban_open_continue(Integer kanban_open_continue) {
+        this.kanban_open_continue = kanban_open_continue;
+    }
+
+    public int getAble_to_done() {
+        return able_to_done;
+    }
+
+    public void setAble_to_done(int able_to_done) {
+        this.able_to_done = able_to_done;
+    }
+
+    public Integer getPreventive() {
+        return preventive;
+    }
+
+    public void setPreventive(Integer preventive) {
+        this.preventive = preventive;
+    }
+
+    public Integer getIs_priority() {
+        return is_priority;
+    }
+
+    public void setIs_priority(Integer is_priority) {
+        this.is_priority = is_priority;
+    }
+
     public ArrayList<TK_Ticket_Step> getStep() {
         return step;
     }
@@ -1172,6 +1272,14 @@ public class TK_Ticket implements Cloneable, Serializable {
 
     public void setHas_open_so_partition(int has_open_so_partition) {
         this.has_open_so_partition = has_open_so_partition;
+    }
+
+    public int getHas_address() {
+        return has_address;
+    }
+
+    public void setHas_address(int has_address) {
+        this.has_address = has_address;
     }
 
     //TODO - VERIFICAR SE METODO AINDA UTEIS E MOVER PARA STEP QE É QUE TEM LISTA DE CONTROLS AGORA.

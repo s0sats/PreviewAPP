@@ -2,10 +2,10 @@ package com.namoadigital.prj001.ui.base
 
 //P = Presenter
 //B = Binding
-//S = State
-interface BaseView<S> {
+//E = Event
+interface BaseView<E> {
 
-    fun onState(state: S)
+    fun onEvent(event: E)
 
     fun initView(
         block: (() -> Unit)? = null

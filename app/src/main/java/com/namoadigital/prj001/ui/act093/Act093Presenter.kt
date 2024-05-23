@@ -12,10 +12,10 @@ import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_Device_Item_HistDao
 import com.namoadigital.prj001.dao.MdProductSerialTpDeviceItemHistMatDao
 import com.namoadigital.prj001.model.Act086HistoricModel
 import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device_Item
+import com.namoadigital.prj001.model.TranslateResource
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_Device_Item_Hist_Sql_003
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_Device_Item_Sql_001
 import com.namoadigital.prj001.ui.act086.frg_historic.Act086HistoricFrg
-import com.namoadigital.prj001.ui.act091.mvp.model.TranslateResource
 import com.namoadigital.prj001.ui.act093.model.DeviceTpModel
 import com.namoadigital.prj001.ui.act093.usecases.InfoSerialUseCase
 import com.namoadigital.prj001.ui.act093.usecases.InfoSerialUseCase.Companion.InfoSerialUseCasesFactory
@@ -46,23 +46,23 @@ class Act093Presenter constructor(
     private suspend fun getDeviceList() {
         infoUseCase.getDeviceList(Unit)
             .catch { e ->
-                view.onState(Act093Event.Toast(e.message ?: ""))
+                view.onEvent(Act093Event.Toast(e.message ?: ""))
             }
             .collect {
                 it.isLoading { isLoading, message ->
                     _state.value = _state.value.copy(isLoading = isLoading)
                     state = _state
-                    view.onState(Act093Event.OnLoading)
+                    view.onEvent(Act093Event.OnLoading)
                 }
 
                 it.isSuccess { response ->
                     _state.value = _state.value.copy(list = response)
                     state = _state
-                    view.onState(Act093Event.OnUpdateList)
+                    view.onEvent(Act093Event.OnUpdateList)
                 }
 
                 it.isFailed { exception ->
-                    view.onState(Act093Event.Toast(exception.message ?: ""))
+                    view.onEvent(Act093Event.Toast(exception.message ?: ""))
                 }
             }
     }
@@ -71,7 +71,7 @@ class Act093Presenter constructor(
     private suspend fun getInfoSerial() {
         infoUseCase.getInfoSerial(Unit)
             .catch { e ->
-                view.onState(Act093Event.Toast(e.message ?: ""))
+                view.onEvent(Act093Event.Toast(e.message ?: ""))
             }.collect {
 
                 it.isSuccess { serial ->
@@ -97,14 +97,14 @@ class Act093Presenter constructor(
 
                     state = _state
                     if(serial.hasMeasureTp && serial.value_suffix.isNullOrBlank()){
-                        view.onState(Act093Event.OnMeasureNotFound)
+                        view.onEvent(Act093Event.OnMeasureNotFound)
                     }else {
-                        view.onState(Act093Event.OnUpdateScreen)
+                        view.onEvent(Act093Event.OnUpdateScreen)
                     }
                 }
 
             it.isFailed { exception ->
-                view.onState(Act093Event.Toast(exception.message ?: ""))
+                view.onEvent(Act093Event.Toast(exception.message ?: ""))
             }
         }
     }
@@ -236,7 +236,7 @@ class Act093Presenter constructor(
                 _state.value.serialInfo.infoAdd.isNullOrEmpty() &&
                 _state.value.serialInfo.trackings == null
             ) {
-                view.onState(Act093Event.OpenDialog(
+                view.onEvent(Act093Event.OpenDialog(
                     Act093Event.OpenDialog.DialogType.ACTION(
                         "alert_no_data_warning_title",
                         "alert_no_data_warning_msg",

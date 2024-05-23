@@ -2,6 +2,11 @@ package com.namoadigital.prj001.ui.act092.usecases
 
 import android.content.Context
 import com.namoadigital.prj001.core.data.remote.sync.ISyncRepository.Companion.SyncRepositoryFactory
+import com.namoadigital.prj001.core.data.local.repository.ticket.TicketRepositoryImp
+import com.namoadigital.prj001.core.trip.data.trip.TripRepositoryImp
+import com.namoadigital.prj001.core.trip.domain.usecase.GetTicketActionUseCase
+import com.namoadigital.prj001.dao.TK_TicketDao
+import com.namoadigital.prj001.dao.trip.FSTripDao
 import com.namoadigital.prj001.ui.act092.data.repository.IActionSerialRepository.Companion.ActionSerialRepositoryFactoryRepository
 import com.namoadigital.prj001.ui.base.NamoaFactory
 
@@ -65,7 +70,12 @@ data class ActionUseCases(
                 val scheduleFormLocalExistsUseCase = ScheduleFormLocalExistsUseCase(repository)
                 val getScheduleFromMyActionUseCase = GetScheduleFromMyActionUseCase(repository)
                 return ActionUseCases(
-                    listMyActionUseCases = ListMyActionUseCases(context, repository),
+                    listMyActionUseCases = ListMyActionUseCases(
+                        context,
+                        repository,
+                        TripRepositoryImp(context, FSTripDao(context)),
+                        GetTicketActionUseCase(TicketRepositoryImp(context, TK_TicketDao(context)))
+                    ),
                     syncFiles = SyncFilesUseCase(context, syncRepository),
                     unfocusHistoricalAction = UnfocusHistoricalActionUseCases(repository),
                     syncFilesForm = SyncFilesFormUseCase(syncRepository),

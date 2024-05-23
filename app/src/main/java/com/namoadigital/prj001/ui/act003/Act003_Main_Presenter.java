@@ -10,7 +10,7 @@ public interface Act003_Main_Presenter {
 
     void getSites(HMAux hmAux_Trans);
 
-    void setSiteCode(HMAux item);
+    void setSiteCode(String siteCode);
 
     /**
      * Metodo que verifica se as preferencias dessa activity ja estão setadas
@@ -22,4 +22,5 @@ public interface Act003_Main_Presenter {
 
     void onBackPressedClicked();
 
+    Integer getAutomaticSite();
 }

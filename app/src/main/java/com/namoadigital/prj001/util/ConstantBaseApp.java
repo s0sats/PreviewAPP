@@ -129,6 +129,9 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String ACT091 = "act091";
     public static final String ACT092 = "act092";
     public static final String ACT093 = "act093";
+    public static final String ACT094 = "act094";
+    public static final String ACT095 = "act095";
+
     public static final String FRG_PACKAGE_SERVICE_SO_EXPESS = "frg_package_service_so_expess";
 
     public static final String title_lbl = "_title";
@@ -567,6 +570,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String MAIN_RESULT_UPDATE_REQUIRED_WARNING = "UPDATE_REQUIRED_WARNING";
     public static final String CONST_NONCONFORMITY_INSTR_SEARCH = "\",\"AP\":1,\"";
     public static final String FULL_TIMESTAMP_TZ_FORMAT = "yyyy-MM-dd HH:mm:ss Z";
+    public static final String FULL_TIMESTAMP_TZ_FORMAT_GMT = "yyyy-MM-dd HH:mm:ss ZZZZZ";
     public static final long ONE_DAY_IN_MILLISECOND = 86400000;
 
     //Parametros de Permissões - EV_USER_CUSTOMER_PARAMETERS
@@ -695,6 +699,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String FCM_MODULE_IO = "IO_";
     public static final String FCM_MODULE_SO = "SM_";
     public static final String FCM_MODULE_TICKET = "TK_";
+    public static final String FCM_MODULE_FIELD_SERVICE = "FS_";
     public static final String FCM_MODULE_SCHEDULE = "SCHEDULE";
     public static final String FCM_MODULE_CHECKLIST = "CHECKLIST";
     public static final String FCM_MODULE_FORM_AP = "FORM_AP";

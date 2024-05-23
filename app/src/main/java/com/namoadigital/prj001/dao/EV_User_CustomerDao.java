@@ -11,6 +11,7 @@ import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.EV_User_Customer;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_002;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
@@ -51,8 +52,11 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
     public static final String LICENSE_CONTROL_TYPE_CONCURRENT_GLOBAL = "CONCURRENT_GLOBAL";
     public static final String LICENSE_CONTROL_TYPE_CONCURRENT_GLOBAL_LEVEL = "CONCURRENT_GLOBAL_LEVEL";
     public static final String LICENSE_CONTROL_TYPE_CONCURRENT_BY_SITE = "CONCURRENT_BY_SITE";
+    public static final String AUTOMATIC_SITE_CODE = "automatic_site_code";
+    public static final String FIELD_SERVICE = "field_service";
+    public static final String FIELD_SERVICE_MODE_ONLY = "field_service_mode_only";
 
-    public static String[] columns = {USER_CODE, CUSTOMER_CODE, CUSTOMER_NAME, TRANSLATE_CODE, LANGUAGE_CODE, TRANSLATE_DESC, NLS_DATE_FORMAT, KEYUSER, BLOCKED, SESSION_APP, PENDING, LOGO_URL, TRACKING, SYNC_REQUIRED,TIMEZONE, LICENSE_CONTROL_TYPE};
+    public static String[] columns = {USER_CODE, CUSTOMER_CODE, CUSTOMER_NAME, TRANSLATE_CODE, LANGUAGE_CODE, TRANSLATE_DESC, NLS_DATE_FORMAT, KEYUSER, BLOCKED, SESSION_APP, PENDING, LOGO_URL, TRACKING, SYNC_REQUIRED,TIMEZONE, LICENSE_CONTROL_TYPE, AUTOMATIC_SITE_CODE, FIELD_SERVICE, FIELD_SERVICE_MODE_ONLY};
 
     public EV_User_CustomerDao(Context context) {
         super(context, Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE, Constant.DB_MODE_SINGLE);
@@ -260,6 +264,18 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
         this.addUpdate(userCustomer);
     }
 
+    public EV_User_Customer getLoggedUserCustomer() {
+        return getByString(
+                new EV_User_Customer_Sql_002(
+//                                    ToolBox_Con.getPreference_User_Code(getApplicationContext()),
+//                                    String.valueOf(ToolBox_Con.getPreference_Customer_Code(getApplicationContext()))
+                        ToolBox_Con.getPreference_User_Code(context),
+                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                ).toSqlQuery()
+        );
+
+    }
+
     private class EV_CustomerToContentValuesMapper implements Mapper<EV_User_Customer, ContentValues> {
         @Override
         public ContentValues map(EV_User_Customer ev_user_customer) {
@@ -320,6 +336,14 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
             contentValues.put(LICENSE_USER_LEVEL_ID, ev_user_customer.getLicense_user_level_id());
             contentValues.put(LICENSE_USER_LEVEL_VALUE, ev_user_customer.getLicense_user_level_value());
             contentValues.put(LICENSE_USER_LEVEL_CHANGED, ev_user_customer.getLicense_user_level_changed());
+            contentValues.put(AUTOMATIC_SITE_CODE, ev_user_customer.getAutomatic_site_code());
+            //
+            if (ev_user_customer.getField_service() > -1) {
+                contentValues.put(FIELD_SERVICE, ev_user_customer.getField_service());
+            }
+            if (ev_user_customer.getField_service_mode_only() > -1) {
+                contentValues.put(FIELD_SERVICE_MODE_ONLY, ev_user_customer.getField_service_mode_only());
+            }
             //
             return contentValues;
         }
@@ -377,6 +401,15 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
             }else{
                 ev_user_customer.setLicense_user_level_changed(cursor.getInt(cursor.getColumnIndex(LICENSE_USER_LEVEL_CHANGED)));
             }
+            //
+            if (cursor.isNull(cursor.getColumnIndex(AUTOMATIC_SITE_CODE))) {
+                ev_user_customer.setAutomatic_site_code(null);
+            }else{
+                ev_user_customer.setAutomatic_site_code(cursor.getInt(cursor.getColumnIndex(AUTOMATIC_SITE_CODE)));
+            }
+            //
+            ev_user_customer.setField_service(cursor.getInt(cursor.getColumnIndex(FIELD_SERVICE)));
+            ev_user_customer.setField_service_mode_only(cursor.getInt(cursor.getColumnIndex(FIELD_SERVICE_MODE_ONLY)));
             //
             return ev_user_customer;
         }

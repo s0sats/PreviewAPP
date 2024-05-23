@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="16dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/user_name"
+            style="@style/TextAppearance.Material3.HeadlineSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/m3_namoa_onSurface"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="José Carlos" />
+
+        <TextView
+            android:id="@+id/tv_participant_since"
+            style="@style/TextAppearance.Material3.LabelMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:textColor="@color/m3_namoa_onSurface"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/user_name"
+            tools:text="Partipante da viagem desde" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/et_layout_start_date"
+            style="@style/NamoaTheme3.TextInputLayout.Outlined"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toStartOf="@+id/et_layout_start_hour"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_participant_since"
+            app:placeholderTextColor="@color/m3_namoa_onSurface"
+            app:startIconDrawable="@drawable/ic_baseline_date_range_24"
+            app:startIconTint="@color/m3_namoa_onSurfaceVariant"
+            tools:hint="Data">
+
+            <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                android:id="@+id/et_start_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@drawable/edittext_theme_text"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:mBARCODE="false"
+                app:mInputType="DATE"
+                app:mNFC="false"
+                app:mOCR="false" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/et_layout_start_hour"
+            style="@style/NamoaTheme3.TextInputLayout.Outlined"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingStart="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/et_layout_start_date"
+            app:layout_constraintTop_toBottomOf="@+id/tv_participant_since"
+            app:placeholderTextColor="@color/m3_namoa_onSurface"
+            app:startIconDrawable="@drawable/ic_clock_chat"
+            app:startIconTint="@color/m3_namoa_onSurfaceVariant"
+            tools:hint="Horário">
+
+            <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                android:id="@+id/et_start_hour"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@drawable/edittext_theme_text"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:mBARCODE="false"
+                app:mInputType="HOUR"
+                app:mNFC="false"
+                app:mOCR="false" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/tv_partipant_until"
+            style="@style/TextAppearance.Material3.LabelMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:textColor="@color/m3_namoa_onSurface"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_layout_start_date"
+            tools:text="Partipante da viagem até" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/et_layout_end_date"
+            style="@style/NamoaTheme3.TextInputLayout.Outlined"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toStartOf="@+id/et_layout_end_hour"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_partipant_until"
+            app:placeholderTextColor="@color/m3_namoa_onSurface"
+            app:startIconDrawable="@drawable/ic_baseline_date_range_24"
+            app:startIconTint="@color/m3_namoa_onSurfaceVariant"
+            tools:hint="Data">
+
+            <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                android:id="@+id/et_end_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@drawable/edittext_theme_text"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:mBARCODE="false"
+                app:mInputType="DATE"
+                app:mNFC="false"
+                app:mOCR="false" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/et_layout_end_hour"
+            style="@style/NamoaTheme3.TextInputLayout.Outlined"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingStart="8dp"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/et_layout_end_date"
+            app:layout_constraintTop_toBottomOf="@+id/tv_partipant_until"
+            app:placeholderTextColor="@color/m3_namoa_onSurface"
+            app:startIconDrawable="@drawable/ic_clock_chat"
+            app:startIconTint="@color/m3_namoa_onSurfaceVariant"
+            tools:hint="Horário">
+
+            <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                android:id="@+id/et_end_hour"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@drawable/edittext_theme_text"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:mBARCODE="false"
+                app:mInputType="HOUR"
+                app:mNFC="false"
+                app:mOCR="false" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_save"
+            style="@style/Widget.Material3.Button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginStart="20dp"
+            android:backgroundTint="@color/m3_namoa_primary"
+            android:textColor="@color/m3_namoa_onPrimary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/btn_cancel"
+            app:layout_constraintTop_toBottomOf="@+id/et_layout_end_hour"
+            app:strokeColor="@color/m3_namoa_outline"
+            tools:text="Salvar" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_cancel"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="20dp"
+            android:textColor="@color/m3_namoa_primary"
+            app:layout_constraintEnd_toStartOf="@+id/btn_save"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_layout_end_date"
+            app:strokeColor="@color/m3_namoa_outline"
+            tools:text="Cancelar" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

@@ -19,6 +19,7 @@ import com.namoadigital.prj001.dao.MD_Product_Serial_Tp_DeviceDao;
 import com.namoadigital.prj001.dao.MdOrderTypeDao;
 import com.namoadigital.prj001.dao.MeMeasureTpDao;
 import com.namoadigital.prj001.dao.TkTicketTypeDao;
+import com.namoadigital.prj001.dao.trip.FSTripDao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GeOs;
 import com.namoadigital.prj001.model.MD_Product_Serial;
@@ -91,6 +92,9 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
 
     @Override
     public void setAdapterData(long product_code, int tagCode, Integer blockSpontaneous, boolean has_tk_ticket_is_form_off_hand) {
+        FSTripDao tripDao = new FSTripDao(context);
+        boolean isTripMode = tripDao.getTrip() != null;
+
         List<HMAux> forms =
                 custom_formDao.query_HM(
                         new Sql_Act010_001(
@@ -102,11 +106,12 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
                                 site_code_form_param,
                                 serial_id,
                                 blockSpontaneous,
-                                has_tk_ticket_is_form_off_hand ? 0 : null
+                                has_tk_ticket_is_form_off_hand ? 0 : null,
+                                isTripMode
                         ).toSqlQuery()
                 );
 
-        if(!has_tk_ticket_is_form_off_hand) {
+        if(!has_tk_ticket_is_form_off_hand && !isTripMode) {
             List<HMAux> tickets =
                     tkTicketTypeDao.query_HM(
                             new Sql_Act010_002(

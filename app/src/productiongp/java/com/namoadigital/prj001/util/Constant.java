@@ -99,6 +99,20 @@ public class Constant extends ConstantBaseApp {
     public static final String WS_CHAT_LEAVE_ROOM = "https://nchat.namoadigital.com/leaveRoom";
     public static final String WS_CHAT_ROOM_AP = "https://nchat.namoadigital.com/joinFormAp";
     public static final String WS_CHAT_ADD_USER_FORM_AP = "https://nchat.namoadigital.com/addUserFormAp";
+    //trip
+    public static String WS_DESTINATION_AVAILABLE = "https://portal.namoadigital.com/ws/prj001/trip/trip_available_destinations.ws";
+    public static String WS_SELECT_DESTINATION = "https://portal.namoadigital.com/ws/prj001/trip/trip_destination_add.ws";
+    public static String WS_DESTINATION_CHANGE_STATUS = "https://portal.namoadigital.com/ws/prj001/trip/trip_destination_status.ws";
+    public static String WS_TRIP_AVAILABLE_USERS = "https://portal.namoadigital.com/ws/prj001/trip/trip_available_users.ws";
+    public static String WS_TRIP_SAVE_USER = "https://portal.namoadigital.com/ws/prj001/trip/trip_user_action.ws";
+    public static String WS_TRIP_USER_POSITION = "https://portal.namoadigital.com/ws/prj001/trip/user_position.ws";
+    public static String WS_TRIP = "https://portal.namoadigital.com/ws/prj001/trip/trip.ws";
+    public static String WS_TRIP_NEW = "https://portal.namoadigital.com/ws/prj001/trip/trip_new.ws";
+    public static String WS_TRIP_FLEET_SET = "https://portal.namoadigital.com/ws/prj001/trip/trip_fleet_set.ws";
+    public static String WS_TRIP_CHANGE_STATUS = "https://portal.namoadigital.com/ws/prj001/trip/trip_status.ws";
+    public static String WS_TRIP_ORIGIN_SET = "https://portal.namoadigital.com/ws/prj001/trip/trip_origin_set.ws";
+    public static String WS_TRIP_DESTINATION_EDIT = "https://portal.namoadigital.com/ws/prj001/trip/trip_destination_edit.ws";
+    public static String WS_TRIP_EVENT = "https://portal.namoadigital.com/ws/prj001/trip/trip_event_set.ws";
 
     // Connection Test
     public static final String WS_HOST = "portal.namoadigital.com";

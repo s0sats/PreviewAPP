@@ -1,6 +1,9 @@
 package com.namoadigital.prj001.worker;
 
+import static com.namoadigital.prj001.extensions.PdfHelperKt.isValidPDF;
+
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.work.Data;
@@ -14,6 +17,10 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_BlobDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Blob_LocalDao;
 import com.namoadigital.prj001.dao.SM_SO_FileDao;
 import com.namoadigital.prj001.dao.TK_Ticket_FormDao;
+import com.namoadigital.prj001.dao.trip.FSTripDao;
+import com.namoadigital.prj001.dao.trip.FsTripDestinationActionDao;
+import com.namoadigital.prj001.model.trip.FSTrip;
+import com.namoadigital.prj001.model.trip.FsTripActionDownload;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_007;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_008;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Local_Sql_002;
@@ -22,6 +29,7 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_File_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_File_Sql_004;
+import com.namoadigital.prj001.sql.TripDownloadPDFSql002;
 import com.namoadigital.prj001.sql.WS_Download_PDF_Sql_001;
 import com.namoadigital.prj001.sql.WS_Download_PDF_Sql_002;
 import com.namoadigital.prj001.util.Constant;
@@ -32,6 +40,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class Work_DownLoad_PDF extends Worker {
     public static final String WORKER_TAG = "Work_DownLoad_PDF";
@@ -45,6 +54,7 @@ public class Work_DownLoad_PDF extends Worker {
     private ArrayList<HMAux> formAplist = new ArrayList<>();
     private ArrayList<HMAux> so_file_list = new ArrayList<>();
     private ArrayList<HMAux> ticket_form_list = new ArrayList<>();
+    private List<FsTripActionDownload> trip_form_list = new ArrayList<>();
     /*
     * Daos
     */
@@ -53,6 +63,8 @@ public class Work_DownLoad_PDF extends Worker {
     private GE_Custom_Form_ApDao formApDao;
     private SM_SO_FileDao soFileDao;
     private TK_Ticket_FormDao ticketFormDao;
+    private FSTripDao fsTripDao;
+    private FsTripDestinationActionDao fsTripDestinationActionDao;
     private boolean hasSoProfile = false;
     private boolean hasTicketProfile = false;
 
@@ -293,6 +305,68 @@ public class Work_DownLoad_PDF extends Worker {
                 }
 
             }
+            FSTrip trip = fsTripDao.getTrip();
+            if(trip != null){
+                for (FsTripActionDownload actionDownload : trip_form_list) {
+                    try{
+                        if(isStopped()){
+                            break;
+                        }
+                        //
+                        Log.d("TRIP_FILE", "---------------Work_DownLoad_PDF--------------");
+                        if(checkParamNull(actionDownload)) {
+                            if (!actionDownload.getFileNameTmp().equals(actionDownload.getFileNameLocal())) {
+                                if (actionDownload.getFileNameLocal() != null
+                                     && !actionDownload.getFileNameLocal().isEmpty()
+                                     && ToolBox_Inf.verifyDownloadFileInf(actionDownload.getFileNameLocal().toLowerCase())
+                                ) {
+                                    renameLocalFile(actionDownload);
+                                } else {
+                                    Log.d("TRIP_FILE", "actionDownload.getFileNameTmp().toLowerCase(): " + actionDownload.getFileNameTmp().toLowerCase());
+                                    //
+                                    if (!ToolBox_Inf.verifyDownloadFileInf(actionDownload.getFileNameTmp().toLowerCase())) {
+                                        deleteOutdatedPDF(actionDownload.getFileNameTmp().toLowerCase());
+                                        ToolBox_Inf.deleteDownloadFileInf(actionDownload.getFileNameTmp().toLowerCase().replace(".pdf", ".tmp"));
+                                        //
+                                        ToolBox_Inf.downloadImagePDF(
+                                                actionDownload.getFileUrl(),
+                                                Constant.CACHE_PATH + "/" + actionDownload.getFileNameTmp().toLowerCase().replace(".pdf", ".tmp")
+                                        );
+                                        //
+                                        ToolBox_Inf.renameDownloadFileInf(actionDownload.getFileNameTmp().toLowerCase().replace(".pdf", ""), ".pdf");
+                                        actionDownload.setFileNameLocal(actionDownload.getFileNameTmp().toLowerCase());
+                                    }else{
+                                        actionDownload.setFileNameLocal(actionDownload.getFileNameTmp().toLowerCase());
+                                    }
+                                }
+                            }
+                            //
+                            Log.d("TRIP_FILE", "actionDownload.getFileNameLocal().toLowerCase(): " + actionDownload.getFileNameLocal().toLowerCase());
+                            File pdf = new File(Constant.CACHE_PATH + "/" +actionDownload.getFileNameLocal().toLowerCase());
+                            //
+                            if(isValidPDF(pdf)) {
+                                fsTripDestinationActionDao.addUpdate(
+                                        new TripDownloadPDFSql002(
+                                                actionDownload.getCustomerCode(),
+                                                actionDownload.getTripPrefix(),
+                                                actionDownload.getTripCode(),
+                                                actionDownload.getDestinationSeq(),
+                                                actionDownload.getActionSeq(),
+                                                actionDownload.getFileNameLocal().toLowerCase()
+                                        ).toSqlQuery().toLowerCase()
+                                );
+                            }else{
+                                ToolBox_Inf.deleteFileListExceptionSafe(
+                                        Constant.CACHE_PATH,
+                                        actionDownload.getFileNameLocal().toLowerCase()
+                                );
+                            }
+                        }
+                    }catch (Exception exception){
+                        ToolBox_Inf.registerException(getClass().getName(), exception);
+                    }
+                }
+            }
             //endregion
 
             //Verifica se ainda existens itens para serem baixados, se tiver, envia retry ao inves de success
@@ -314,6 +388,21 @@ public class Work_DownLoad_PDF extends Worker {
                 ToolBox_Inf.cancelNotification(getApplicationContext(), Constant.NOTIFICATION_DOWNLOAD);
             }
         }
+    }
+
+    private static void renameLocalFile(FsTripActionDownload actionDownload) {
+        File pdfLocal = new File(Constant.CACHE_PATH + "/" + actionDownload.getFileNameLocal());
+        File pdfRemote = new File(Constant.CACHE_PATH + "/" + actionDownload.getFileNameTmp());
+        pdfLocal.renameTo(pdfRemote);
+    }
+
+
+    private boolean checkParamNull(FsTripActionDownload actionDownload) {
+        return actionDownload.getCustomerCode() != null
+            && actionDownload.getTripPrefix() != null
+            && actionDownload.getTripCode() != null
+            && actionDownload.getDestinationSeq() != null
+            && actionDownload.getActionSeq() != null;
     }
 
     private void deleteOutdatedPDF(String fullFileName) {
@@ -339,7 +428,8 @@ public class Work_DownLoad_PDF extends Worker {
         return dados_geral.size() == 0
             && formAplist.size() == 0
             && so_file_list.size() == 0
-            && ticket_form_list.size() == 0;
+            && ticket_form_list.size() == 0
+            && trip_form_list.size() == 0;
     }
 
     private void initDaos() {
@@ -370,6 +460,17 @@ public class Work_DownLoad_PDF extends Worker {
             );
         //
         ticketFormDao = new TK_Ticket_FormDao(
+            getApplicationContext(),
+            ToolBox_Con.customDBPath(customer_code),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //
+        fsTripDao = new FSTripDao(
+            getApplicationContext(),
+            ToolBox_Con.customDBPath(customer_code),
+            Constant.DB_VERSION_CUSTOM
+        );
+        fsTripDestinationActionDao = new FsTripDestinationActionDao(
             getApplicationContext(),
             ToolBox_Con.customDBPath(customer_code),
             Constant.DB_VERSION_CUSTOM
@@ -420,6 +521,18 @@ public class Work_DownLoad_PDF extends Worker {
                 )
             );
         }
+        //
+        FSTrip trip = fsTripDao.getTrip();
+        if(trip!= null) {
+            trip_form_list.addAll(
+                    fsTripDestinationActionDao.getPdfDownloadList(
+                            customer_code,
+                            trip.getTripPrefix(),
+                            trip.getTripCode()
+                    )
+            );
+        }
+
         //endregion
     }
 

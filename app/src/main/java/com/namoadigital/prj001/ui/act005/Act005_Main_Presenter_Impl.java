@@ -5,6 +5,7 @@ import static com.namoadigital.prj001.service.WS_SO_Sync.WS_BUNDLE_PROFILE_CHECK
 import static com.namoadigital.prj001.sql.Sql_Act005_009.PENDING_QTY;
 import static com.namoadigital.prj001.ui.act005.Act005_Main.WS_PROCESS_SO_SAVE;
 import static com.namoadigital.prj001.ui.act005.Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL;
+import static com.namoadigital.prj001.ui.act005.trip.fragment.base.TripBaseFragment.WS_TRIP_DOWNLOAD;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_CURRENT_SITE_OPTION;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_FOCUS_FILTER;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_PERIOD_FILTER;
@@ -41,6 +42,8 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Logout_Adapter;
 import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.SerialSiteInventoryUseCase;
 import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.SerialSiteInventoryUseCase.Companion.SiteInventoryUseCaseFactory;
+import com.namoadigital.prj001.core.trip.data.trip.TripRepositoryImp;
+import com.namoadigital.prj001.core.trip.domain.usecase.SyncTripUseCase;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
@@ -58,6 +61,9 @@ import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TkTicketCacheDao;
+import com.namoadigital.prj001.dao.trip.FSTripDao;
+import com.namoadigital.prj001.dao.trip.FsTripPositionDao;
+import com.namoadigital.prj001.extensions.ContextKt;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.EV_User;
 import com.namoadigital.prj001.model.EV_User_Customer;
@@ -71,6 +77,8 @@ import com.namoadigital.prj001.model.MyActionFilterParam;
 import com.namoadigital.prj001.model.SupportDialogFields;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TSave_Rec;
+import com.namoadigital.prj001.model.trip.FSTrip;
+import com.namoadigital.prj001.model.trip.TripStatus;
 import com.namoadigital.prj001.receiver.WBR_AP_Save;
 import com.namoadigital.prj001.receiver.WBR_Cancel_NFC;
 import com.namoadigital.prj001.receiver.WBR_Enable_NFC;
@@ -90,17 +98,19 @@ import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
 import com.namoadigital.prj001.receiver.WBR_Upload_Support;
+import com.namoadigital.prj001.receiver.trip.WBR_UserPosition;
 import com.namoadigital.prj001.service.AppBackgroundService;
 import com.namoadigital.prj001.service.WS_AP_Save;
 import com.namoadigital.prj001.service.WS_IO_Blind_Move_Save;
 import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.service.WS_IO_Move_Save;
 import com.namoadigital.prj001.service.WS_IO_Outbound_Item_Save;
-import com.namoadigital.prj001.service.WS_Product_Serial_Structure;
 import com.namoadigital.prj001.service.WS_SO_Pack_Express_Local;
 import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
+import com.namoadigital.prj001.service.location.util.LocationServiceConstants;
+import com.namoadigital.prj001.service.trip.WsUserPosition;
 import com.namoadigital.prj001.sql.CH_Message_Sql_025;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_001;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_002;
@@ -442,6 +452,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         String qtySO_Express = null;
         String qtyAP;
         String qtySerial;
+        String qtyPosition = null;
         try {
             qty = customFormLocalDao.getByStringHM(
                     new Sql_Act005_002(
@@ -495,6 +506,18 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         } catch (Exception e) {
             qtySerial = "0";
         }
+
+
+        try {
+            FsTripPositionDao positionDao = new FsTripPositionDao(context);
+            FSTrip trip = getTrip();
+            if(!hasTripInProgress() || isOverNightTrip(trip)){
+                qtyPosition = String.valueOf(positionDao.getAllUpdateRequired().size());
+            }
+        }catch (Exception e){
+            qtyPosition = "0";
+        }
+
         qtySerial = String.valueOf(Integer.valueOf(qtySerial) + ToolBox_Inf.isSerialWithinTokenFile(ToolBox_Con.getPreference_Customer_Code(context)));
 
         String qtyAssets = ToolBox_Inf.handleAssetsWaitingSync(context, ToolBox_Con.getPreference_Customer_Code(context));
@@ -507,7 +530,39 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         totalPendency += ToolBox_Inf.convertStringToInt(qtySO);
         totalPendency += ToolBox_Inf.convertStringToInt(qtySO_Express);
         totalPendency += ToolBox_Inf.convertStringToInt(qtyTicket);
+        totalPendency += ToolBox_Inf.convertStringToInt(qtyPosition);
         return totalPendency > 0;
+    }
+
+    private boolean isOverNightTrip(FSTrip trip) {
+        return trip != null && TripStatus.valueOf(trip.getTripStatus()).equals(TripStatus.OVER_NIGHT);
+    }
+
+    @Override
+    public boolean hasPositionUpdateRequired() {
+        FsTripPositionDao dao = new FsTripPositionDao(context);
+        FSTripDao tripDao = new FSTripDao(context);
+        FSTrip trip = tripDao.getTrip();
+        boolean isOverNight = isOverNightTrip(trip);
+        int qtyPosition = dao.getAllUpdateRequired().size();
+        
+        if(!hasTripInProgress() || isOverNight) return qtyPosition > 0;
+        else return false;
+    }
+
+
+    @Override
+    public boolean hasTripUpdateRequired() {
+        FSTrip trip = new FSTripDao(context).getTrip();
+        if(trip == null) return false;
+        return trip.getHasSyncRequired();
+    }
+
+    @Override
+    public void executeTripDownload() {
+        mView.setWsProcess(WS_TRIP_DOWNLOAD);
+        mView.showPD();
+        new SyncTripUseCase(new TripRepositoryImp(context)).invoke("");
     }
 
     /**
@@ -1872,6 +1927,12 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         btn_logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (hasTripInProgress()) {
+                    ContextKt.sendCommandToServiceTripLocation(
+                            context,
+                            LocationServiceConstants.STOP_LOCATION
+                    );
+                }
                 for (HMAux aux : customer_list) {
                     if (aux.get(EV_User_Customer_Sql_004.KEY_LOGOUT).equals("1")) {
                         logoutList += aux.get(EV_User_CustomerDao.CUSTOMER_CODE) + "|";
@@ -2486,6 +2547,40 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         return userCustomer != null && userCustomer.getSync_required() == 1;
     }
 
+    @Override
+    public boolean isFieldServiceModeOnly() {
+        EV_User_Customer userCustomer = getEvUserCustomer();
+        return userCustomer != null && userCustomer.getField_service_mode_only() == 1;
+    }
+
+    @Override
+    public boolean isFieldServiceModeAble() {
+        EV_User_Customer userCustomer = getEvUserCustomer();
+        return userCustomer != null && userCustomer.getField_service() == 1;
+    }
+
+    @Override
+    public boolean hasTripInProgress() {
+        if(ToolBox_Con.getPreference_Customer_Code(context) != -1) {
+            FSTripDao dao = new FSTripDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM);
+            FSTrip trip = dao.getTrip();
+            return trip != null;
+        }else{
+            return false;
+        }
+    }
+
+    private FSTrip getTrip(){
+        if(hasTripInProgress()) {
+            FSTripDao dao = new FSTripDao(context);
+            return dao.getTrip();
+        }
+        return null;
+    }
+
     private String getTicketConcatList() {
         ArrayList<HMAux> auxTickets = getTicketToSync();
         String ticketPKList = "";
@@ -2510,5 +2605,13 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         return auxTickets;
     }
 
-
+    @Override
+    public void executePositionSave() {
+        mView.setWsSoProcess(WsUserPosition.class.getName());
+        Intent intent = new Intent(context, WBR_UserPosition.class);
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(WsUserPosition.Companion.getCLOUD_FLOW(), true);
+        intent.putExtras(bundle);
+        context.sendBroadcast(intent);
+    }
 }

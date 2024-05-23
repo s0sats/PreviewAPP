@@ -16,11 +16,14 @@ import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.model.TkTicketOriginNc;
 import com.namoadigital.prj001.sql.Sql_Act068_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Product_Sql_002;
+import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Step_Sql_002;
 import com.namoadigital.prj001.sql.TkTicketOriginNcSql002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -136,8 +139,19 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
     public static final String CLASS_COLOR = "class_color";
     public static final String CLASS_AVAILABLE = "class_available";
     public static final String KANBAN = "kanban";
+    public static final String KANBAN_STAGE = "kanban_stage";
+    public static final String KANBAN_DATE = "kanban_date";
+    public static final String KANBAN_CUSTOM_FORM_TYPE = "kanban_custom_form_type";
+    public static final String KANBAN_CUSTOM_FORM_CODE = "kanban_custom_form_code";
+    public static final String KANBAN_OPEN_CONTINUE = "kanban_open_continue";
+    public static final String ABLE_TO_DONE = "able_to_done";
+    public static final String PREVENTIVE = "preventive";
+    public static final String IS_PRIORITY = "is_priority";
     public static final String HAS_OPEN_SO_PARTITION = "has_open_so_partition";
+    public static final String HAS_ADDRESS = "has_address";
 
+    public static final String KANBAN_STAGE_EXECUTION = "EXECUTION";
+    public static final String KANBAN_STAGE_RELEASE_FOR_EXECUTION = "RELEASE_FOR_EXECUTION";
 
     public TK_TicketDao(Context context, String mDB_NAME, int mDB_VERSION) {
         super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI);
@@ -145,6 +159,18 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
         this.toContentValuesMapper = new TK_TicketToContentValuesMapper();
         this.toTK_TicketMapper = new CursorToTK_TicketMapper();
     }
+
+    public TK_TicketDao(Context context) {
+        super(context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM,
+                Constant.DB_MODE_MULTI
+        );
+
+        this.toContentValuesMapper = new TK_TicketToContentValuesMapper();
+        this.toTK_TicketMapper = new CursorToTK_TicketMapper();
+    }
+
 
     @Override
     public DaoObjReturn addUpdate(TK_Ticket tk_ticket) {
@@ -478,6 +504,22 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
         closeDB();
     }
 
+
+    public DaoObjReturn addUpdate(String sQuery, SQLiteDatabase db) {
+        DaoObjReturn daoObjReturn = new DaoObjReturn();
+        String curAction = DaoObjReturn.INSERT_OR_UPDATE;
+        try {
+            db.execSQL(sQuery);
+        } catch (Exception e) {
+            daoObjReturn.setError(true);
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        } finally {
+            daoObjReturn.setAction(curAction);
+            daoObjReturn.setTable(TABLE);
+        }
+        return daoObjReturn;
+    }
+
     @Override
     public void remove(String sQuery) {
         openDB();
@@ -804,6 +846,19 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
         }
         closeDB();
         return tk_tickets;
+    }
+
+    @Nullable
+    public TK_Ticket getTicket(
+            long customerCode,
+            int prefix,
+            int code
+    ) {
+        return getByString(new TK_Ticket_Sql_001(
+                customerCode,
+                prefix,
+                code
+        ).toSqlQuery());
     }
 
     private class CursorToTK_TicketMapper implements Mapper<Cursor, TK_Ticket> {
@@ -1150,9 +1205,43 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             } else {
                 tk_ticket.setNot_executed_date(cursor.getString(cursor.getColumnIndex(NOT_EXECUTED_DATE)));
             }
-
+            if (cursor.isNull(cursor.getColumnIndex(KANBAN_DATE))) {
+                tk_ticket.setKanban_date(null);
+            }else{
+                tk_ticket.setKanban_date(cursor.getString(cursor.getColumnIndex(KANBAN_DATE)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(KANBAN_CUSTOM_FORM_TYPE))) {
+                tk_ticket.setKanban_custom_form_type(null);
+            }else{
+                tk_ticket.setKanban_custom_form_type(cursor.getInt(cursor.getColumnIndex(KANBAN_CUSTOM_FORM_TYPE)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(KANBAN_CUSTOM_FORM_CODE))) {
+                tk_ticket.setKanban_custom_form_code(null);
+            }else{
+                tk_ticket.setKanban_custom_form_code(cursor.getInt(cursor.getColumnIndex(KANBAN_CUSTOM_FORM_CODE)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(KANBAN_OPEN_CONTINUE))) {
+                tk_ticket.setKanban_open_continue(null);
+            }else{
+                tk_ticket.setKanban_open_continue(cursor.getInt(cursor.getColumnIndex(KANBAN_OPEN_CONTINUE)));
+            }
             tk_ticket.setKanban(cursor.getInt(cursor.getColumnIndex(KANBAN)));
+            tk_ticket.setKanban_stage(cursor.getString(cursor.getColumnIndex(KANBAN_STAGE)));
+            tk_ticket.setAble_to_done(cursor.getInt(cursor.getColumnIndex(ABLE_TO_DONE)));
+            if (cursor.isNull(cursor.getColumnIndex(PREVENTIVE))) {
+                tk_ticket.setPreventive(null);
+            } else {
+                tk_ticket.setPreventive(cursor.getInt(cursor.getColumnIndex(PREVENTIVE)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(IS_PRIORITY))) {
+                tk_ticket.setIs_priority(null);
+            } else {
+                tk_ticket.setIs_priority(cursor.getInt(cursor.getColumnIndex(IS_PRIORITY)));
+            }
+
             tk_ticket.setHas_open_so_partition(cursor.getInt(cursor.getColumnIndex(HAS_OPEN_SO_PARTITION)));
+            tk_ticket.setHas_address(cursor.getInt(cursor.getColumnIndex(HAS_ADDRESS)));
 
             return tk_ticket;
         }
@@ -1366,9 +1455,25 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
                 contentValues.put(TAG_OPERATIONAL_DESC, tk_ticket.getTag_operational_desc());
             }
             //
-            contentValues.put(KANBAN, tk_ticket.getKanban());
+            if (tk_ticket.getKanban() > -1) {
+                contentValues.put(KANBAN, tk_ticket.getKanban());
+            }
+            contentValues.put(KANBAN_STAGE, tk_ticket.getKanban_stage());
+            if (tk_ticket.getAble_to_done() > -1) {
+                contentValues.put(ABLE_TO_DONE, tk_ticket.getAble_to_done());
+            }
+            contentValues.put(KANBAN_DATE, tk_ticket.getKanban_date());
+            contentValues.put(KANBAN_CUSTOM_FORM_TYPE, tk_ticket.getKanban_custom_form_type());
+            contentValues.put(KANBAN_CUSTOM_FORM_CODE, tk_ticket.getKanban_custom_form_code());
+            contentValues.put(KANBAN_OPEN_CONTINUE, tk_ticket.getKanban_open_continue());
+            contentValues.put(IS_PRIORITY, tk_ticket.getIs_priority());
+            contentValues.put(PREVENTIVE, tk_ticket.getPreventive());
+
             if (tk_ticket.getHas_open_so_partition() > -1) {
                 contentValues.put(HAS_OPEN_SO_PARTITION, tk_ticket.getHas_open_so_partition());
+            }
+            if (tk_ticket.getHas_address() > -1) {
+                contentValues.put(HAS_ADDRESS, tk_ticket.getHas_address());
             }
             //
             return contentValues;

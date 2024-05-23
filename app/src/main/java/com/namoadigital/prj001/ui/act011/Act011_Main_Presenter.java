@@ -159,6 +159,8 @@ public interface Act011_Main_Presenter {
     List<String> getSiteEmailList(int site_code);
 
     void executeStructureUpdate();
+    void executeTripUpdate();
+    boolean isUserOnSyncRequiredTrip();
 
     boolean hasSerialStructurePending();
 }

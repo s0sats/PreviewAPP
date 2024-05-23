@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import androidx.annotation.Nullable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -204,7 +206,15 @@ public class GE_Custom_Form_Data {
     @Expose
     @SerializedName("kanban_reschedule_date")
     private String kanban_reschedule_date;
-
+    @Expose
+    @Nullable
+    @SerializedName("trip_prefix") private Integer trip_prefix;
+    @Expose
+    @Nullable
+    @SerializedName("trip_code") private Integer trip_code;
+    @Expose
+    @Nullable
+    @SerializedName("destination_seq") private Integer destination_seq;
 
     public GE_Custom_Form_Data() {
         this.customer_code = -1L;
@@ -672,5 +682,32 @@ public class GE_Custom_Form_Data {
 
     public void setKanban_reschedule_date(String kanban_reschedule_date) {
         this.kanban_reschedule_date = kanban_reschedule_date;
+    }
+
+    @Nullable
+    public Integer getTrip_prefix() {
+        return trip_prefix;
+    }
+
+    public void setTrip_prefix(@Nullable Integer trip_prefix) {
+        this.trip_prefix = trip_prefix;
+    }
+
+    @Nullable
+    public Integer getTrip_code() {
+        return trip_code;
+    }
+
+    public void setTrip_code(@Nullable Integer trip_code) {
+        this.trip_code = trip_code;
+    }
+
+    @Nullable
+    public Integer getDestination_seq() {
+        return destination_seq;
+    }
+
+    public void setDestination_seq(@Nullable Integer destination_seq) {
+        this.destination_seq = destination_seq;
     }
 }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="m3_namoa_primary">#006783</color>
+    <color name="m3_namoa_primary_light">#14006783</color>
     <color name="m3_namoa_onPrimary">#FFFFFF</color>
     <color name="m3_namoa_primaryContainer">#BCE9FF</color>
     <color name="m3_namoa_onPrimaryContainer">#001F29</color>
@@ -23,6 +24,7 @@
     <color name="m3_namoa_onSurface">#191C1E</color>
     <color name="m3_namoa_surfaceVariant">#DCE4E9</color>
     <color name="m3_namoa_onSurfaceVariant">#40484C</color>
+    <color name="m3_namoa_neutralVariant90">#DCE4E8</color>
     <color name="m3_namoa_outline">#70787D</color>
     <color name="m3_namoa_outlineVariant">#C0C8CC</color>
     <color name="m3_namoa_inverseOnSurface">#D7F6FF</color>
@@ -42,6 +44,11 @@
     <color name="m3_namoa_extended_verdeDone_seed">#808D0A</color>
 
     <color name="m3_namoa_extended_LaranjaObrigatorio_color">#855400</color>
+    <color name="m3_namoa_titleLarge">#4350C3</color>
 
+    <color name="namoa_destination_tag_future">#D1CAE5</color>
+    <color name="namoa_destination_label_future">#7E69B4</color>
+    <color name="namoa_destination_tag_today">#2962FF</color>
+    <color name="namoa_destination_tag_late">#39257C</color>
 
 </resources>

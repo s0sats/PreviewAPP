@@ -4,6 +4,13 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.database.MigrationSQLite
+import com.namoadigital.prj001.database.scripts.FS_TRIP_CREATE_SCRIPT
+import com.namoadigital.prj001.database.scripts.FS_TRIP_DESTINATION_ACTION_CREATE_SCRIPT
+import com.namoadigital.prj001.database.scripts.FS_TRIP_DESTINATION_CREATE_SCRIPT
+import com.namoadigital.prj001.database.scripts.FS_TRIP_EVENT_CREATE_SCRIPT
+import com.namoadigital.prj001.database.scripts.FS_TRIP_EVENT_TYPE_CREATE_SCRIPT
+import com.namoadigital.prj001.database.scripts.FS_TRIP_POSITION_CREATE_SCRIPT
+import com.namoadigital.prj001.database.scripts.FS_TRIP_USER_CREATE_SCRIPT
 
 
 val MigrationV1 = object : MigrationSQLite(1, 2){
@@ -488,8 +495,176 @@ val migrationV10: MigrationSQLite = object : MigrationSQLite(10, 11) {
 
 }
 
+val migrationV11: MigrationSQLite = object : MigrationSQLite(11, 12) {
+    override fun migrate(db: SQLiteDatabase) {
+        db.execSQL(FS_TRIP_CREATE_SCRIPT)
+        db.execSQL(FS_TRIP_EVENT_TYPE_CREATE_SCRIPT)
+        db.execSQL(FS_TRIP_USER_CREATE_SCRIPT)
+        db.execSQL(FS_TRIP_EVENT_CREATE_SCRIPT)
+        db.execSQL(FS_TRIP_POSITION_CREATE_SCRIPT)
+        db.execSQL(FS_TRIP_DESTINATION_CREATE_SCRIPT)
+        db.execSQL(FS_TRIP_DESTINATION_ACTION_CREATE_SCRIPT)
+        if (!isFieldExist(
+                db,
+                GE_Custom_Form_DataDao.TABLE,
+                GE_Custom_Form_DataDao.TRIP_PREFIX
+            )
+        ) {
+            db.execSQL(""" ALTER TABLE [${GE_Custom_Form_DataDao.TABLE}] ADD [${GE_Custom_Form_DataDao.TRIP_PREFIX}]  int;""".trimIndent())
+        }
+        if (!isFieldExist(
+                db,
+                GE_Custom_Form_DataDao.TABLE,
+                GE_Custom_Form_DataDao.TRIP_CODE
+            )
+        ) {
+            db.execSQL(""" ALTER TABLE [${GE_Custom_Form_DataDao.TABLE}] ADD [${GE_Custom_Form_DataDao.TRIP_CODE}]  int;""".trimIndent())
+        }
+        if (!isFieldExist(
+                db,
+                GE_Custom_Form_DataDao.TABLE,
+                GE_Custom_Form_DataDao.DESTINATION_SEQ
+            )
+        ) {
+            db.execSQL(""" ALTER TABLE [${GE_Custom_Form_DataDao.TABLE}] ADD [${GE_Custom_Form_DataDao.DESTINATION_SEQ}]  int;""".trimIndent())
+        }
+        if (!isFieldExist(
+                db,
+                TK_Ticket_CtrlDao.TABLE,
+                TK_Ticket_CtrlDao.TRIP_PREFIX
+            )
+        ) {
+            db.execSQL(""" ALTER TABLE [${TK_Ticket_CtrlDao.TABLE}] ADD [${TK_Ticket_CtrlDao.TRIP_PREFIX}]  int;""".trimIndent())
+        }
+        if (!isFieldExist(
+                db,
+                TK_Ticket_CtrlDao.TABLE,
+                TK_Ticket_CtrlDao.TRIP_CODE
+            )
+        ) {
+            db.execSQL(""" ALTER TABLE [${TK_Ticket_CtrlDao.TABLE}] ADD [${TK_Ticket_CtrlDao.TRIP_CODE}]  int;""".trimIndent())
+        }
+        if (!isFieldExist(
+                db,
+                TK_Ticket_CtrlDao.TABLE,
+                TK_Ticket_CtrlDao.DESTINATION_SEQ
+            )
+        ) {
+            db.execSQL(""" ALTER TABLE [${TK_Ticket_CtrlDao.TABLE}] ADD [${TK_Ticket_CtrlDao.DESTINATION_SEQ}]  int;""".trimIndent())
+        }
 
+        if (!isFieldExist(
+                db,
+                TkTicketCacheDao.TABLE,
+                TkTicketCacheDao.KANBAN)) {
+            db.execSQL(""" ALTER TABLE [${TkTicketCacheDao.TABLE}] ADD [${TkTicketCacheDao.KANBAN}]  int not null default 0;""".trimIndent())
+        }
 
+        if (!isFieldExist(
+                db,
+                TkTicketCacheDao.TABLE,
+                TkTicketCacheDao.KANBAN_STAGE)) {
+            db.execSQL(""" ALTER TABLE [${TkTicketCacheDao.TABLE}] ADD [${TkTicketCacheDao.KANBAN_STAGE}]  text;""".trimIndent())
+        }
+
+        if (!isFieldExist(
+                db,
+                TkTicketCacheDao.TABLE,
+                TkTicketCacheDao.ABLE_TO_DONE)) {
+            db.execSQL(""" ALTER TABLE [${TkTicketCacheDao.TABLE}] ADD [${TkTicketCacheDao.ABLE_TO_DONE}]  text;""".trimIndent())
+        }
+        if (!isFieldExist(
+                db,
+                TkTicketCacheDao.TABLE,
+                TkTicketCacheDao.PREVENTIVE)) {
+            db.execSQL(""" ALTER TABLE [${TkTicketCacheDao.TABLE}] ADD [${TkTicketCacheDao.PREVENTIVE}]  int;""".trimIndent())
+        }
+        if (!isFieldExist(
+                db,
+                TkTicketCacheDao.TABLE,
+                TkTicketCacheDao.IS_PRIORITY)) {
+            db.execSQL(""" ALTER TABLE [${TkTicketCacheDao.TABLE}] ADD [${TkTicketCacheDao.IS_PRIORITY}]  int;""".trimIndent())
+        }
+        if (!isFieldExist(
+                db,
+                TkTicketCacheDao.TABLE,
+                TkTicketCacheDao.ADDRESS)) {
+            db.execSQL(""" ALTER TABLE [${TkTicketCacheDao.TABLE}] ADD [${TkTicketCacheDao.ADDRESS}]  int;""".trimIndent())
+        }
+        //Tk_Ticket
+        var ticketChange = false
+        if (!isFieldExist(
+                db,
+                TK_TicketDao.TABLE,
+                TK_TicketDao.KANBAN_DATE)) {
+            db.execSQL(""" ALTER TABLE [${TK_TicketDao.TABLE}] ADD [${TK_TicketDao.KANBAN_DATE}]  text;""".trimIndent())
+            ticketChange = true
+        }
+        //
+        if (!isFieldExist(
+                db,
+                TK_TicketDao.TABLE,
+                TK_TicketDao.KANBAN_CUSTOM_FORM_TYPE)) {
+            db.execSQL(""" ALTER TABLE [${TK_TicketDao.TABLE}] ADD [${TK_TicketDao.KANBAN_CUSTOM_FORM_TYPE}]  text;""".trimIndent())
+            ticketChange = true
+        }
+
+        if (!isFieldExist(
+                db,
+                TK_TicketDao.TABLE,
+                TK_TicketDao.KANBAN_CUSTOM_FORM_CODE)) {
+            db.execSQL(""" ALTER TABLE [${TK_TicketDao.TABLE}] ADD [${TK_TicketDao.KANBAN_CUSTOM_FORM_CODE}]  text;""".trimIndent())
+            ticketChange = true
+        }
+        if (!isFieldExist(
+                db,
+                TK_TicketDao.TABLE,
+                TK_TicketDao.KANBAN_OPEN_CONTINUE)) {
+            db.execSQL(""" ALTER TABLE [${TK_TicketDao.TABLE}] ADD [${TK_TicketDao.KANBAN_OPEN_CONTINUE}]  text;""".trimIndent())
+            ticketChange = true
+        }
+        if (!isFieldExist(
+                db,
+                TK_TicketDao.TABLE,
+                TK_TicketDao.KANBAN_STAGE)) {
+            db.execSQL(""" ALTER TABLE [${TK_TicketDao.TABLE}] ADD [${TK_TicketDao.KANBAN_STAGE}]  text;""".trimIndent())
+            ticketChange = true
+        }
+        if (!isFieldExist(
+                db,
+                TK_TicketDao.TABLE,
+                TK_TicketDao.ABLE_TO_DONE)) {
+            db.execSQL(""" ALTER TABLE [${TK_TicketDao.TABLE}] ADD [${TK_TicketDao.ABLE_TO_DONE}]  int not null default 0;""".trimIndent())
+            ticketChange = true
+        }
+        if (!isFieldExist(
+                db,
+                TK_TicketDao.TABLE,
+                TK_TicketDao.PREVENTIVE)) {
+            db.execSQL(""" ALTER TABLE [${TK_TicketDao.TABLE}] ADD [${TK_TicketDao.PREVENTIVE}]  int;""".trimIndent())
+            ticketChange = true
+        }
+        if (!isFieldExist(
+                db,
+                TK_TicketDao.TABLE,
+                TK_TicketDao.IS_PRIORITY)) {
+            db.execSQL(""" ALTER TABLE [${TK_TicketDao.TABLE}] ADD [${TK_TicketDao.IS_PRIORITY}]  int;""".trimIndent())
+            ticketChange = true
+        }
+        if (!isFieldExist(
+                db,
+                TK_TicketDao.TABLE,
+                TK_TicketDao.HAS_ADDRESS
+            )
+        ) {
+            db.execSQL(""" ALTER TABLE [${TK_TicketDao.TABLE}] ADD [${TK_TicketDao.HAS_ADDRESS}]  int not null default 0;""".trimIndent())
+            ticketChange = true
+        }
+        if(ticketChange){
+            db.execSQL(""" UPDATE [${TK_TicketDao.TABLE}] SET [${TK_TicketDao.SYNC_REQUIRED}] = 1;""".trimIndent())
+        }
+    }
+}
 
 fun isFieldExist(db: SQLiteDatabase, tableName: String, fieldName: String): Boolean {
 

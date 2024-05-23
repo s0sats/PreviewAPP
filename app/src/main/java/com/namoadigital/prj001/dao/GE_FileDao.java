@@ -9,6 +9,7 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
@@ -29,6 +30,15 @@ public class GE_FileDao extends BaseDao implements Dao<GE_File> {
     public static final String FILE_STATUS = "file_status";
     public static final String FILE_DATE = "file_date";
 
+
+    public GE_FileDao(Context context) {
+        super(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM,
+                Constant.DB_MODE_MULTI);
+
+        this.toContentValuesMapper = new GE_FileToContentValuesMapper();
+        this.toGE_FileMapper = new CursorGE_FileMapper();
+    }
 
     public GE_FileDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -84,7 +94,7 @@ public class GE_FileDao extends BaseDao implements Dao<GE_File> {
 
             //db.setTransactionSuccessful();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
             //db.endTransaction();
         }
@@ -139,7 +149,7 @@ public class GE_FileDao extends BaseDao implements Dao<GE_File> {
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -163,7 +173,7 @@ public class GE_FileDao extends BaseDao implements Dao<GE_File> {
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -189,7 +199,7 @@ public class GE_FileDao extends BaseDao implements Dao<GE_File> {
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -213,7 +223,7 @@ public class GE_FileDao extends BaseDao implements Dao<GE_File> {
 
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
 
@@ -222,16 +232,16 @@ public class GE_FileDao extends BaseDao implements Dao<GE_File> {
         return ge_files;
     }
 
-    private class CursorGE_FileMapper implements Mapper<Cursor,GE_File> {
+    private class CursorGE_FileMapper implements Mapper<Cursor, GE_File> {
         @Override
         public GE_File map(Cursor cursor) {
             GE_File ge_file = new GE_File();
 
             ge_file.setFile_code(cursor.getString(cursor.getColumnIndex(FILE_CODE)));
             ge_file.setFile_path(cursor.getString(cursor.getColumnIndex(FILE_PATH)));
-            if(cursor.isNull(cursor.getColumnIndex(FILE_PATH_NEW))){
+            if (cursor.isNull(cursor.getColumnIndex(FILE_PATH_NEW))) {
                 ge_file.setFile_path_new(null);
-            }else{
+            } else {
                 ge_file.setFile_path_new(cursor.getString(cursor.getColumnIndex(FILE_PATH_NEW)));
             }
 
@@ -243,7 +253,7 @@ public class GE_FileDao extends BaseDao implements Dao<GE_File> {
 
     }
 
-    private class GE_FileToContentValuesMapper implements Mapper<GE_File,ContentValues> {
+    private class GE_FileToContentValuesMapper implements Mapper<GE_File, ContentValues> {
         @Override
         public ContentValues map(GE_File ge_file) {
             ContentValues contentValues = new ContentValues();

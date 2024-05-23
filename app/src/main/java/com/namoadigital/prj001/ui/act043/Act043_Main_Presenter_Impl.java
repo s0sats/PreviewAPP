@@ -218,7 +218,7 @@ public class Act043_Main_Presenter_Impl implements Act043_Main_Presenter {
     }
 
     /**
-     * Metodo que gera lista de sites formatada para o Option do spinner de detalhes do serviço.
+     * Metodo que gera lista de sites formatada para o OriginOption do spinner de detalhes do serviço.
      * @param rawSiteZone - Lista de Site Zone no formato enviado pelo server
      * @return - Lista de site com code, desc e partner default
      */
@@ -261,7 +261,7 @@ public class Act043_Main_Presenter_Impl implements Act043_Main_Presenter {
     }
 
     /**
-     * Metodo que gera lista de zone formatada para o Option do spinner de detalhes do serviço.
+     * Metodo que gera lista de zone formatada para o OriginOption do spinner de detalhes do serviço.
      * @param rawSiteZone - Lista de Site Zone no formato enviado pelo server
      * @return - Lista de zonas com code, desc e site code
      */

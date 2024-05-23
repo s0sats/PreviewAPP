@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui;
 
 import static com.namoa_digital.namoa_library.util.ConstantBase.DEVELOPMENT_TYPE;
+import static com.namoadigital.prj001.util.Constant.refreshUrl;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CACHE_CHAT_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CACHE_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CACHE_PATH_PHOTO;
@@ -53,18 +54,21 @@ import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoadigital.prj001.BuildConfig;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.core.data.domain.model.EnvironmentType;
-import com.namoadigital.prj001.core.data.local.preferences.EnvironmentDevelopementPref;
+import com.namoadigital.prj001.core.data.local.preferences.environment.EnvironmentDevelopementPref;
 import com.namoadigital.prj001.receiver.WBR_Connections_Change;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import dagger.hilt.android.HiltAndroidApp;
 
 
 /**
  * Created by neomatrix on 09/01/17.
  */
-
+@HiltAndroidApp
 public class AppBase extends Application {
 
+    public static final String CUTUCA_H = "/namoa";
     public static final String NAMOA_DIR = "/namoa";
     public static final String ZIPS_DIR = "/zips";
     public static final String IMGS_DIR = "/imgs";
@@ -142,12 +146,12 @@ public class AppBase extends Application {
 
         DB_PREFIX_BASE = "namoa_sms";
         DB_NAME_BASE = DB_PREFIX_BASE + DB_SUFIX;
-        DB_VERSION_BASE = 12;
+        DB_VERSION_BASE = 13;
         DB_FULL_BASE = DB_PATH + "/" + DB_NAME_BASE;
 
         DB_NAME_CUSTOM = "cc" + DB_SUFIX ;
         DB_PREFIX_CUSTOM = "namoa_app_";
-        DB_VERSION_CUSTOM = 11;
+        DB_VERSION_CUSTOM = 12;
         DB_FULL_CUSTOM = DB_PATH + "/" + DB_NAME_CUSTOM;
 
         //DB_NAME_CHAT = "namoa_chat.db3";
@@ -173,6 +177,7 @@ public class AppBase extends Application {
             WS_PREFIX = pref.read().getEnvironment().getString();
             DEVELOPMENT_TYPE = pref.read().getEnvironment().getString();
         }
+        refreshUrl();
 
         ConstantBaseApp.HM_ICON_NAMOA = R.mipmap.ic_namoa;
         ConstantBaseApp.HM_ICON_NAMOA_GO_ACT021 = "com.namoadigital.prj001.ui.act021.Act021_Main";

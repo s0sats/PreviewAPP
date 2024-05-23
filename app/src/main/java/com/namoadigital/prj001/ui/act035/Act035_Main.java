@@ -639,7 +639,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                         context,
                         Constant.PROFILE_MENU_TICKET,
                         null
-                )
+                ) && !mPresenter.hasTripInProgress(context)
         );
 
         act035_adapter_messages.setOnshowInfoListener(new Act035_Adapter_Messages.IAct035_Adapter_Messages() {

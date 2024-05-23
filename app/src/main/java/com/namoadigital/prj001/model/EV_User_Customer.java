@@ -30,6 +30,9 @@ public class EV_User_Customer {
     @SerializedName("license_user_level_id") private String license_user_level_id;
     @SerializedName("license_user_level_value") private Integer license_user_level_value;
     @SerializedName("license_user_level_changed") private Integer license_user_level_changed;
+    @SerializedName("automatic_site_code") private Integer automatic_site_code;
+    @SerializedName("field_service") private int field_service;
+    @SerializedName("field_service_mode_only") private int field_service_mode_only;
 
     public long getUser_code() {
         return user_code;
@@ -205,5 +208,29 @@ public class EV_User_Customer {
 
     public void setLicense_user_level_changed(Integer license_user_level_changed) {
         this.license_user_level_changed = license_user_level_changed;
+    }
+
+    public Integer getAutomatic_site_code() {
+        return automatic_site_code;
+    }
+
+    public void setAutomatic_site_code(Integer automatic_site_code) {
+        this.automatic_site_code = automatic_site_code;
+    }
+
+    public int getField_service() {
+        return field_service;
+    }
+
+    public void setField_service(int field_service) {
+        this.field_service = field_service;
+    }
+
+    public int getField_service_mode_only() {
+        return field_service_mode_only;
+    }
+
+    public void setField_service_mode_only(int field_service_mode_only) {
+        this.field_service_mode_only = field_service_mode_only;
     }
 }

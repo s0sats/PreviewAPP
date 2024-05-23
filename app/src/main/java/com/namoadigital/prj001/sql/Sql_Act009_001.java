@@ -29,16 +29,27 @@ public class Sql_Act009_001 implements Specification {
     private String s_serial_id;
     private Integer block_spontaneous;
     private String ticketUnion;
+    private String isTripModeQuery = "";
 
-    public Sql_Act009_001(long s_customer_code, long s_product_code, String s_translate_code, long s_operation_code, String s_site_code, String s_serial_id, Integer block_spontaneous, boolean has_tk_ticket_is_form_off_hand) {
+    public Sql_Act009_001(
+            long s_customer_code,
+            long s_product_code,
+            String s_translate_code,
+            long s_operation_code,
+            String s_site_code,
+            String s_serial_id,
+            Integer block_spontaneous,
+            boolean has_tk_ticket_is_form_off_hand,
+            boolean isTripMode
+    ) {
         this.s_customer_code = s_customer_code;
         this.s_product_code = s_product_code;
         this.s_translate_code = s_translate_code;
         this.s_operation_code = s_operation_code;
         this.s_site_code = s_site_code;
-        this.s_serial_id = s_serial_id.trim().length() != 0 ? s_serial_id.trim()  : "null";
+        this.s_serial_id = s_serial_id.trim().length() != 0 ? s_serial_id.trim() : "null";
         this.block_spontaneous = block_spontaneous;
-        if(!has_tk_ticket_is_form_off_hand) {
+        if (!has_tk_ticket_is_form_off_hand) {
             this.ticketUnion = " UNION \n" +
                     " " +
                     " SELECT T." + MdTagDao.TAG_CODE + " \n" +
@@ -65,8 +76,11 @@ public class Sql_Act009_001 implements Specification {
                     "   AND (TP.all_operation = 1 OR o.operation_code = '" + s_operation_code + "') \n" +
                     "   AND (TP.all_site = 1 OR s.site_code = '" + s_site_code + "')\n" +
                     "   AND ( '" + s_serial_id + "' IS NOT NULL)\n";
-        }else{
+        } else {
             ticketUnion = "";
+        }
+        if(isTripMode){
+            isTripModeQuery = "   AND f.is_so = 1\n";
         }
     }
 
@@ -75,52 +89,54 @@ public class Sql_Act009_001 implements Specification {
 
         StringBuilder sb = new StringBuilder();
 
+
         return sb
                 .append(
-                        " SELECT "+MdTagDao.TAG_CODE+", \n" +
-                        "       "+MdTagDao.TAG_DESC+" \n" +
-                        " FROM " +MdTagDao.TABLE + "\n" +
-                        " WHERE " +MdTagDao.TAG_CODE + " IN ( \n" +
-                         " SELECT T."+MdTagDao.TAG_CODE+" \n" +
-                        " FROM \n" +
-                        "       "+ MdTagDao.TABLE + " t, \n" +
-                        "       "+ GE_Custom_FormDao.TABLE + " f \n" +
-                        " LEFT JOIN\n" +
-                        "       "+ GE_Custom_Form_ProductDao.TABLE +" p on p.customer_code = f.customer_code\n" +
-                        "                             and p.custom_form_type = f.custom_form_type\n" +
-                        "                             and p.custom_form_code = f.custom_form_code\n" +
-                        "                             and p.custom_form_version = f.custom_form_version\n" +
-                        "                             and p.product_code = '"+s_product_code+"'\n" +
-                        " LEFT JOIN\n" +
-                        "       "+ GE_Custom_Form_OperationDao.TABLE +" o on o.customer_code = f.customer_code\n" +
-                        "                               and o.custom_form_type = f.custom_form_type\n" +
-                        "                               and o.custom_form_code = f.custom_form_code\n" +
-                        "                               and o.custom_form_version = f.custom_form_version \n "+
-                        "                               and o.operation_code = '"+s_operation_code+"' \n "+
-                        " LEFT JOIN\n" +
-                        "    "+ GE_Custom_Form_SiteDao.TABLE +" s on s.customer_code = f.customer_code\n" +
-                        "                               and s.custom_form_type = f.custom_form_type\n" +
-                        "                               and s.custom_form_code = f.custom_form_code\n" +
-                        "                               and s.custom_form_version = f.custom_form_version \n"+
-                        "                               and s.site_code = '"+s_site_code+"' \n"+
-                        " WHERE    \n" +
-                        "   t.customer_code = f.customer_code \n" +
-                        "   AND t.tag_code = f.tag_operational_code\n"+
-                        "\n"+
-                        "   AND t.customer_code = '"+s_customer_code+"'\n"+
-                        "   AND ("+block_spontaneous+" is null OR f.block_spontaneous = '"+block_spontaneous+"')\n"+
-                        "   AND (f.all_product = 1 OR p.product_code = '"+s_product_code+"')\n" +
-                        "   AND (f.all_operation = 1 OR o.operation_code = '"+s_operation_code+"') \n" +
-                        "   AND (f.all_site = 1 OR s.site_code = '"+s_site_code+"')\n"+
-                        "   AND ( '"+s_serial_id+"' IS NOT NULL OR f.require_serial_done = 0)\n"+
-                        ticketUnion +
-                            " )" +
-                            " ORDER BY \n" +
-                        "   upper(" + MdTagDao.TAG_DESC+ ") \n"
+                        " SELECT " + MdTagDao.TAG_CODE + ", \n" +
+                                "       " + MdTagDao.TAG_DESC + " \n" +
+                                " FROM " + MdTagDao.TABLE + "\n" +
+                                " WHERE " + MdTagDao.TAG_CODE + " IN ( \n" +
+                                " SELECT T." + MdTagDao.TAG_CODE + " \n" +
+                                " FROM \n" +
+                                "       " + MdTagDao.TABLE + " t, \n" +
+                                "       " + GE_Custom_FormDao.TABLE + " f \n" +
+                                " LEFT JOIN\n" +
+                                "       " + GE_Custom_Form_ProductDao.TABLE + " p on p.customer_code = f.customer_code\n" +
+                                "                             and p.custom_form_type = f.custom_form_type\n" +
+                                "                             and p.custom_form_code = f.custom_form_code\n" +
+                                "                             and p.custom_form_version = f.custom_form_version\n" +
+                                "                             and p.product_code = '" + s_product_code + "'\n" +
+                                " LEFT JOIN\n" +
+                                "       " + GE_Custom_Form_OperationDao.TABLE + " o on o.customer_code = f.customer_code\n" +
+                                "                               and o.custom_form_type = f.custom_form_type\n" +
+                                "                               and o.custom_form_code = f.custom_form_code\n" +
+                                "                               and o.custom_form_version = f.custom_form_version \n " +
+                                "                               and o.operation_code = '" + s_operation_code + "' \n " +
+                                " LEFT JOIN\n" +
+                                "    " + GE_Custom_Form_SiteDao.TABLE + " s on s.customer_code = f.customer_code\n" +
+                                "                               and s.custom_form_type = f.custom_form_type\n" +
+                                "                               and s.custom_form_code = f.custom_form_code\n" +
+                                "                               and s.custom_form_version = f.custom_form_version \n" +
+                                "                               and s.site_code = '" + s_site_code + "' \n" +
+                                " WHERE    \n" +
+                                "   t.customer_code = f.customer_code \n" +
+                                "   AND t.tag_code = f.tag_operational_code\n" +
+                                "\n" +
+                                "   AND t.customer_code = '" + s_customer_code + "'\n" +
+                                "   AND (" + block_spontaneous + " is null OR f.block_spontaneous = '" + block_spontaneous + "')\n" +
+                                "   AND (f.all_product = 1 OR p.product_code = '" + s_product_code + "')\n" +
+                                "   AND (f.all_operation = 1 OR o.operation_code = '" + s_operation_code + "') \n" +
+                                "   AND (f.all_site = 1 OR s.site_code = '" + s_site_code + "')\n" +
+                                "   AND ( '" + s_serial_id + "' IS NOT NULL OR f.require_serial_done = 0)\n" +
+                                isTripModeQuery +
+                                ticketUnion +
+                                " )" +
+                                " ORDER BY \n" +
+                                "   upper(" + MdTagDao.TAG_DESC + ") \n"
                 )
                 .append(";")
                 .toString()
-                .replace("'null'","null");
+                .replace("'null'", "null");
 
     }
 }

@@ -35,6 +35,7 @@ class MyActionsAdapter constructor(
     private val myActions: List<MyActionsBase>,
     private val hmAuxTrans: HMAux,
     val tagDesc: String?,
+    val isReadOnly: Boolean = false,
     private val myActionClickListener: (myAction: MyActions) -> Unit,
     private val myActionFormButtonClickListener: ((myActionFormButton: MyActionsFormButton) -> Unit)? = null,
     private val mySerialClickListener: ((myAction: MyActions, Int) -> Unit)? = null,
@@ -206,8 +207,8 @@ class MyActionsAdapter constructor(
                     serialSiteItemTvNextCycleLbl.text = hmAuxTrans["serial_site_next_cycle_lbl"]
                     serialSiteItemTvNextCycleLbl.visibility = View.VISIBLE
                 } else {
-                    serialSiteItemTvNextCycleVal.visibility = View.GONE
-                    serialSiteItemTvNextCycleLbl.visibility = View.GONE
+                    serialSiteItemTvNextCycleVal.visibility = View.INVISIBLE
+                    serialSiteItemTvNextCycleLbl.visibility = View.INVISIBLE
                 }
 
 
@@ -218,14 +219,16 @@ class MyActionsAdapter constructor(
                 tvItemAlertVal.checkVisible(text = "${item.totAlert ?: 0}")
                 tvItemCriticalVal.checkVisible("${item.totExpCritical ?: 0}")
 
-                serialSiteItemCard.apply {
-                    setOnClickListener { _ ->
-                        onClickFromSerialSite?.invoke(
-                            Companion.OnClickType.OnSerialClick(
-                                item,
-                                position
+                if(!isReadOnly) {
+                    serialSiteItemCard.apply {
+                        setOnClickListener { _ ->
+                            onClickFromSerialSite?.invoke(
+                                Companion.OnClickType.OnSerialClick(
+                                    item,
+                                    position
+                                )
                             )
-                        )
+                        }
                     }
                 }
                 myActionSelectSerial.apply {
@@ -249,6 +252,9 @@ class MyActionsAdapter constructor(
                             )
                         )
                     }
+
+                    myActionSelectSerial.visibility = if(isReadOnly) View.GONE else View.VISIBLE
+
                 }
 
 
@@ -297,8 +303,10 @@ class MyActionsAdapter constructor(
                 myActionClickListener(myAction)
             }
 
-            binding.myActionsItemClInfos.setOnClickListener {
-                myActionClickListener(myAction)
+            if(!isReadOnly) {
+                binding.myActionsItemClInfos.setOnClickListener {
+                    myActionClickListener(myAction)
+                }
             }
 
             binding.myActionsItemWaitApprove.apply {
@@ -398,6 +406,8 @@ class MyActionsAdapter constructor(
                 visibility =
                     if (checkIfTitleThemeEqualsLabelCardTheme(myAction.tagOperationDesc).isNullOrEmpty() && myAction.classId.isNullOrEmpty()) View.GONE else View.VISIBLE
             }
+
+            binding.bottomButtonsLayout.visibility = if(isReadOnly) View.GONE else View.VISIBLE
         }
 
         private fun configDoneDate(myAction: MyActions) {
@@ -601,12 +611,14 @@ class MyActionsAdapter constructor(
     inner class MyActionFormButtonVh(private val binding: MyActionsFormButtonItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun onBinding(myActionFormButton: MyActionsFormButton) {
-            binding.root.setOnClickListener {
-                myActionFormButtonClickListener?.let {
-                    it(myActionFormButton)
+            if (!isReadOnly) {
+                binding.root.setOnClickListener {
+                    myActionFormButtonClickListener?.let {
+                        it(myActionFormButton)
+                    }
                 }
+                binding.myActionsFormButtonItemTvLbl.text = myActionFormButton.label
             }
-            binding.myActionsFormButtonItemTvLbl.text = myActionFormButton.label
         }
     }
 

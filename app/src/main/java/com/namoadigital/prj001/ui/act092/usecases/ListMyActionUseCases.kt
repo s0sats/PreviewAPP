@@ -6,6 +6,8 @@ import com.namoadigital.prj001.core.IResult.Companion.failed
 import com.namoadigital.prj001.core.IResult.Companion.loading
 import com.namoadigital.prj001.core.IResult.Companion.success
 import com.namoadigital.prj001.core.UseCases
+import com.namoadigital.prj001.core.trip.data.trip.TripRepository
+import com.namoadigital.prj001.core.trip.domain.usecase.GetTicketActionUseCase
 import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.ui.act092.data.repository.ActionSerialRepository
 import com.namoadigital.prj001.ui.act092.model.SerialModel
@@ -21,6 +23,8 @@ import java.io.IOException
 class ListMyActionUseCases constructor(
     private val context: Context,
     private val repository: ActionSerialRepository,
+    private val tripRepository: TripRepository,
+    private val getTicketUseCase: GetTicketActionUseCase
 ) : UseCases<Pair<SerialModel, Boolean>, MutableList<MyActionsBase>> {
     private val actionBaseList = mutableListOf<MyActionsBase>()
 
@@ -40,9 +44,25 @@ class ListMyActionUseCases constructor(
 
                     emit(loading(true))
                     //
-                    val ticketList : List<MyActionsBase> = setTicketList(localTicket, mainUser, serialModel)
-                    val scheduleList : List<MyActionsBase>  = setScheduleList(localTicket, mainUser, serialModel)
-                    val formList : List<MyActionsBase>  = setFormList(localTicket, mainUser, serialModel)
+                    var ticketList: List<MyActionsBase> = emptyList()
+                    var scheduleList: List<MyActionsBase> = emptyList()
+                    var formList: List<MyActionsBase> = emptyList()
+                    if(tripRepository.getTrip() == null){
+                        ticketList = setTicketList(localTicket, mainUser, serialModel)
+                        scheduleList = setScheduleList(localTicket, mainUser, serialModel)
+                        formList = setFormList(localTicket, mainUser, serialModel)
+                    }else{
+                        ticketList = getTicketUseCase(
+                            GetTicketActionUseCase.Params(
+                                localTicket.siteCode?.toInt() ?: -1,
+                                mainUser, null
+                            )
+                        ).tickets.map {
+                            val lastTicketSelected = getLastSelectedPk(MyActions.MY_ACTION_TYPE_TICKET)
+                            TK_Ticket.toMyActionsObj(context, it, lastTicketSelected)
+                        }
+                        formList = setFormList(localTicket, mainUser, serialModel)
+                    }
                     //
                     val processList = mutableListOf<MyActionsBase>()
                     processList.addAll(ticketList)

@@ -13,11 +13,15 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.trip.FSTripDao;
+import com.namoadigital.prj001.extensions.FsTripHelperKt;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MyActionFilterParam;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
+import com.namoadigital.prj001.model.trip.FSTrip;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
+import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_008;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_009;
 import com.namoadigital.prj001.sql.MD_Product_Sql_002;
@@ -27,6 +31,7 @@ import com.namoadigital.prj001.ui.act092.usecases.ActionPreferenceUseCases;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -136,6 +141,7 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
             bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, serial_id);
             bundle.putString(Constant.WS_SERIAL_SEARCH_TRACKING, tracking);
             bundle.putInt(Constant.WS_SERIAL_SEARCH_EXACT, forceExactSearch ? 1 : 0);
+            bundle.putBoolean(WS_Serial_Search.FORCE_SITE_RESTRICTION, FsTripHelperKt.isCurrentTrip(context));
             //
             mIntent.putExtras(bundle);
             //
@@ -153,7 +159,7 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
      */
     @Override
     public void offlineSerialSearch(boolean forceExactSearch) {
-        ArrayList<MD_Product_Serial> serial_list = hasLocalSerial(mProduct_id, mSerial_id, mTracking,forceExactSearch);
+        ArrayList<MD_Product_Serial> serial_list = hasLocalSerial(mProduct_id, mSerial_id, mTracking, forceExactSearch);
         //
         if (serial_list.size() > 0) {
             defineSearchResultFlow(serial_list, (long) serial_list.size(), (long) serial_list.size(), true);
@@ -180,6 +186,8 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
      * @return
      */
     private ArrayList<MD_Product_Serial> hasLocalSerial(String product_id, String serial_id, String tracking, boolean forceExactSearch) {
+        FSTrip trip = new FSTripDao(context).getTrip();
+        boolean isTripMode = trip != null;
         ArrayList<MD_Product_Serial> serial_list =
                 (ArrayList<MD_Product_Serial>) serialDao.query(
                         new Sql_Act020_002(
@@ -188,7 +196,8 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
                                 product_id,
                                 serial_id,
                                 tracking,
-                                forceExactSearch
+                                forceExactSearch,
+                                isTripMode
                         ).toSqlQuery()
                 );
 

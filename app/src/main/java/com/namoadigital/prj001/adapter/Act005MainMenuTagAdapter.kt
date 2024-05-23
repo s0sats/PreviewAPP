@@ -16,6 +16,7 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.Act005TagCellBinding
 import com.namoadigital.prj001.model.MainTagMenu
+import com.namoadigital.prj001.ui.act005.trip.fragment.base.OnFrgMainHomeInteract
 import com.namoadigital.prj001.util.ConstantBaseApp.*
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.view.frag.frg_main_home.FrgMainHome
@@ -23,7 +24,7 @@ import com.namoadigital.prj001.view.frag.frg_main_home.FrgMainHome
 class Act005MainMenuTagAdapter(
         var mMainTagMenu: MutableList<MainTagMenu>,
         private val hmAux_Trans: HMAux,
-        val mListener: FrgMainHome.OnFrgMainHomeIteract?
+        val mListener: OnFrgMainHomeInteract?
 ): RecyclerView.Adapter<Act005MainMenuTagAdapter.MyTagVh>() {
 
 

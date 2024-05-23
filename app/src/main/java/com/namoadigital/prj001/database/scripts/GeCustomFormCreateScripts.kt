@@ -1,0 +1,71 @@
+package com.namoadigital.prj001.database.scripts
+
+import com.namoadigital.prj001.model.GE_Custom_Form
+
+
+const val GE_CUSTOM_FORM_FORM_CREATE_SCRIPT =
+    """CREATE TABLE IF NOT EXISTS [ge_custom_form_datas]
+    ( 
+        [customer_code] int NOT NULL,                                                      
+        [custom_form_type] int NOT NULL,                                                   
+        [custom_form_code] int NOT NULL,                                                   
+        [custom_form_version] int NOT NULL,                                                
+        [custom_form_version_partition] int,                                               
+        [custom_form_data] int NOT NULL,                                                   
+        [tag_operational_code] int not null,                                               
+        [custom_form_status] text NOT NULL DEFAULT '' COLLATE nocase,                      
+        [product_code] int NOT NULL,                                                       
+        [serial_id] text NOT NULL DEFAULT '' COLLATE nocase,                               
+        [class_code] int,                                                                  
+        [date_start] text NOT NULL DEFAULT '' COLLATE nocase,                              
+        [date_end] text NOT NULL DEFAULT '' COLLATE nocase,                                
+        [user_code] int NOT NULL,                                                          
+        [site_code] int NOT NULL,                                                          
+        [operation_code] int NOT NULL,                                                     
+        [signature] text DEFAULT '' COLLATE NOCASE,                                        
+        [signature_name] text DEFAULT '' COLLATE nocase,                                   
+        [token] text NOT NULL DEFAULT '' COLLATE nocase,                                   
+        [location_type] text DEFAULT '' COLLATE nocase,                                    
+        [location_lat] text DEFAULT '' COLLATE nocase,                                     
+        [location_lng] text DEFAULT '' COLLATE nocase,                                     
+        [so_prefix] int,                                                                   
+        [so_code] int,                                                                     
+        [zone_code] int,                                                                   
+        [local_code] int,                                                                  
+        [schedule_prefix] int ,                                                            
+        [schedule_code] int ,                                                              
+        [schedule_exec] int ,                                                              
+        [error_msg] text COLLATE NOCASE,                                                   
+        [location_pendency] int DEFAULT 0 NOT NULL,                                        
+        [date_gps] text DEFAULT 0 NOT NULL,                                                
+        [ticket_prefix] int,                                                               
+        [ticket_code] int,                                                                 
+        [ticket_seq] int,                                                                  
+        [ticket_seq_tmp] int,                                                              
+        [pipeline_code] int,                                                               
+        [step_code] int,                                                                   
+        [ticket_checkin_date] text COLLATE NOCASE,                                         
+        [trip_prefix] int,                                                                 
+        [trip_code] int,                                                                   
+        [destination_seq] int,                                                             
+        [sys_date_start] text not null collate nocase,                                     
+        [sys_date_end] text not null collate nocase,                                       
+        [order_type_code] int ,                                                            
+        [backup_product_code] int ,                                                        
+        [backup_serial_code] int ,                                                         
+        [device_tp_code] int ,                                                             
+        [measure_tp_code] int ,                                                            
+        [measure_value] real ,                                                             
+        [measure_cycle_value] real,                                                        
+        [finalized_service] int,                                                           
+        [custom_form_data_partition] int,                                                  
+        [kanban_reschedule_date] text collate nocase,                                      
+        CONSTRAINT [pk_form_datas] 
+        PRIMARY KEY(
+            [customer_code], 
+            [custom_form_type], 
+            [custom_form_code], 
+            [custom_form_version], 
+            [custom_form_data]
+        )
+    );"""

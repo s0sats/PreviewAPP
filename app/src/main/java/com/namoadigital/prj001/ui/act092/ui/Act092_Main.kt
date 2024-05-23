@@ -27,10 +27,10 @@ import com.namoadigital.prj001.extensions.logout
 import com.namoadigital.prj001.model.MyActionFilterParam
 import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.model.MyActionsBase
+import com.namoadigital.prj001.model.TranslateResource
 import com.namoadigital.prj001.service.*
 import com.namoadigital.prj001.ui.act005.Act005_Main
 import com.namoadigital.prj001.ui.act070.Act070_Main
-import com.namoadigital.prj001.ui.act091.mvp.model.TranslateResource
 import com.namoadigital.prj001.ui.act092.Act092Presenter
 import com.namoadigital.prj001.ui.act092.Act092_Contract
 import com.namoadigital.prj001.ui.act092.model.SerialModel
@@ -386,7 +386,7 @@ class Act092_Main : BaseActivityMvp
                     _focusState.value = focusState.value.copy(
                         mainUser = !_focusState.value.mainUser
                     )
-                    onState(Act092UiEvent.FilterMainUser)
+                    onEvent(Act092UiEvent.FilterMainUser)
                     presenter.getMyActionList()
                 }
             }
@@ -471,7 +471,7 @@ class Act092_Main : BaseActivityMvp
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
-    override fun onState(state: Act092UiEvent) {
+    override fun onEvent(state: Act092UiEvent) {
         CoroutineScope(Dispatchers.Main).launch {
             when (state) {
                 is Act092UiEvent.UpdateTitleActionSerial -> {
@@ -633,7 +633,7 @@ class Act092_Main : BaseActivityMvp
                     )
                 },
                 {
-                    onState(Act092UiEvent.EmptyOrError(sizeList = it))
+                    onEvent(Act092UiEvent.EmptyOrError(sizeList = it))
                 },
                 cancelSerialSchedule = { item ->
                     createNotExecuteDialog(item)

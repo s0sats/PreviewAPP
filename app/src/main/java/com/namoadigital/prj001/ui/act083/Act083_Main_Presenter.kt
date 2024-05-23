@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui.act083
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.HMAux
@@ -10,12 +11,19 @@ import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.CheckSiteInventoryUseCase
 import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.CheckType
 import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.SerialSiteInventoryUseCase
+import com.namoadigital.prj001.core.trip.domain.usecase.GetTicketActionUseCase
+import com.namoadigital.prj001.core.trip.domain.usecase.GetTicketCacheActionUseCase
+import com.namoadigital.prj001.core.trip.domain.usecase.destination.DestinationUseCase
+import com.namoadigital.prj001.core.trip.domain.usecase.destination.SaveDestinationUseCase
+import com.namoadigital.prj001.core.trip.domain.usecase.destination.SelectDestinationUseCase
 import com.namoadigital.prj001.dao.*
+import com.namoadigital.prj001.dao.trip.FSTripDao
 import com.namoadigital.prj001.extensions.updateSerialSiteInventoryRefresh
 import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.model.MyActionFilterParam.Companion.toActionFilter
 import com.namoadigital.prj001.receiver.*
 import com.namoadigital.prj001.service.*
+import com.namoadigital.prj001.service.trip.WsSelectDestination
 import com.namoadigital.prj001.sql.*
 import com.namoadigital.prj001.ui.act070.Act070_Main
 import com.namoadigital.prj001.ui.act083.data.local.preferences.MyActionsFilterParamPreferences
@@ -24,6 +32,9 @@ import com.namoadigital.prj001.ui.act083.model.SaveActionFilterModel.Companion.t
 import com.namoadigital.prj001.ui.act083.model.TypeSerial
 import com.namoadigital.prj001.ui.act092.model.SerialModel
 import com.namoadigital.prj001.ui.act092.usecases.ActionPreferenceUseCases
+import com.namoadigital.prj001.ui.act094.domain.model.SelectionDestinationAvailable
+import com.namoadigital.prj001.ui.act094.ui.Act094_Main.Companion.SELECT_DESTINATION_MODEL
+import com.namoadigital.prj001.ui.act094.util.Act094Translate
 import com.namoadigital.prj001.util.*
 import com.namoadigital.prj001.view.dialog.ScheduleRequestSerialDialog2
 import kotlinx.coroutines.*
@@ -31,7 +42,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import java.text.SimpleDateFormat
 import java.util.*
 
-class Act083_Main_Presenter constructor(
+class Act083_Main_Presenter(
     private val context: Context,
     private val mView: Act083_Main_Contract.I_View,
     private val bundle: Bundle,
@@ -85,14 +96,15 @@ class Act083_Main_Presenter constructor(
 
     private var _actionModel = MutableStateFlow(SaveActionFilterModel())
 
+    internal var selectionDestinationAvailable: SelectionDestinationAvailable? = null
+
     init {
         recoverIntentsInfo()
         loadFilters()
-        if (isSerialSiteMode(useCase.check!!)) {
-            mView.visibleTabSerialSiteInventory("0", showSize = false)
-        }
+//        if (isSerialSiteMode(useCase.check!!)) {
+//            mView.visibleTabSerialSiteInventory("0", showSize = false)
+//        }
         setViewFiltersParam()
-        //generateMyActionList(initialTabToLoad)
     }
 
     private fun isSerialSiteMode(check: CheckSiteInventoryUseCase) =
@@ -114,7 +126,8 @@ class Act083_Main_Presenter constructor(
                     && !ToolBox_Con.getBooleanPreferencesByKey(
                         context,
                         ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW,
-                        false)
+                        false
+                    )
                 ) {
                     callSerialSiteServce()
                 }
@@ -127,11 +140,13 @@ class Act083_Main_Presenter constructor(
                     && !ToolBox_Con.getBooleanPreferencesByKey(
                         context,
                         ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW,
-                        false)
+                        false
+                    )
                 ) {
                     callSerialSiteServce()
+                }else {
+                    updateMyActionList(1)
                 }
-                updateMyActionList(1)
             }
 
             2 -> {
@@ -144,7 +159,8 @@ class Act083_Main_Presenter constructor(
                     && !ToolBox_Con.getBooleanPreferencesByKey(
                         context,
                         ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW,
-                        false)
+                        false
+                    )
                 ) {
                     callSerialSiteServce()
                 }
@@ -203,6 +219,8 @@ class Act083_Main_Presenter constructor(
 
             ConstantBaseApp.ACT083 -> myActionFilterParam.tagFilterDesc
                 ?: hmAux_Trans!!["act083_title"]!!
+
+            ConstantBaseApp.ACT094 -> useCase.getPreference!!().site_desc
 
             else -> hmAux_Trans!!["act083_title"]!!
         }
@@ -1508,12 +1526,12 @@ class Act083_Main_Presenter constructor(
 
         val hasUpdateRequired = checkSupdateRequiredSerial(productCode, serialId)
 
-        if(hasUpdateRequired){
+        if (hasUpdateRequired) {
             mView.showAlertMsg(
                 hmAux_Trans?.get("dialog_serial_outdate_ttl")!!,
                 hmAux_Trans?.get("dialog_serial_outdate_msg")!!
             )
-        }else if (ToolBox_Con.isOnline(context)
+        } else if (ToolBox_Con.isOnline(context)
             && !ToolBox_Con.getBooleanPreferencesByKey(
                 context,
                 ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW,
@@ -1551,12 +1569,12 @@ class Act083_Main_Presenter constructor(
                 )
             } ?: typeSerial?.let {
                 val serial = getSerial(productCode!!, serialId)
-                serial?.let{
+                serial?.let {
                     extractStructureResult(
                         serial,
-                        typeSerial= typeSerial
+                        typeSerial = typeSerial
                     )
-                }?: ToolBox_Inf.showNoConnectionDialog(context)
+                } ?: ToolBox_Inf.showNoConnectionDialog(context)
             } ?: offlineSerialSearch()
         }
     }
@@ -1883,6 +1901,16 @@ class Act083_Main_Presenter constructor(
         saveAndloadPreferences(filterParam?.let { it as MyActionFilterParam }
             ?: MyActionFilterParam()
         )
+        if (originFlow == ConstantBaseApp.ACT094) {
+            val json = bundle.getString(SELECT_DESTINATION_MODEL, "")
+            if (json.isEmpty()) {
+                onBackPressedClicked()
+                return
+            }
+
+            val model = Gson().fromJson(json, SelectionDestinationAvailable::class.java)
+            selectionDestinationAvailable = model
+        }
     }
 
 
@@ -1898,7 +1926,8 @@ class Act083_Main_Presenter constructor(
 
         if (originFlow == ConstantBaseApp.ACT005 ||
             originFlow == ConstantBaseApp.ACT016 ||
-            originFlow == ConstantBaseApp.ACT068
+            originFlow == ConstantBaseApp.ACT068 ||
+            originFlow == ConstantBaseApp.ACT094
         ) {
 
             if (useCase.check!!.invoke(CheckType.REFRESH)) {
@@ -1976,34 +2005,52 @@ class Act083_Main_Presenter constructor(
         }
         //
         launch = CoroutineScope(Dispatchers.IO).launch {
-            if (isSerialSiteMode(useCase.check!!)) {
-                useCase.getSiteInventory!!().let {
-                    mView.visibleTabSerialSiteInventory(
-                        showSize = true,
-                        serialSiteSize = "${it.size}"
-                    )
-                }
-            }
 
+            var otherCounter: Int = 0
             //Antes de gerar lista exibida, calcula o contador da outra aba o.O
-            val otherCounter: Int = getOtherTabCounter(tabUserFocusFilter)
-            //
-            _myActionsList.addAll(
-                getLocalTickets(tabUserFocusFilter).map {
-                    val lastTicketSelected = getLastSelectedPk(MyActions.MY_ACTION_TYPE_TICKET)
-                    TK_Ticket.toMyActionsObj(context, it, lastTicketSelected)
+            otherCounter = getOtherTabCounter(tabUserFocusFilter)
+
+            if (isCurrentUserOnTrip() && ticketId.isNullOrBlank()) {
+                siteCode?.let {
+                    val tripTickets = getTripTickets(
+                        it.toInt(),
+                        tabUserFocusFilter
+                    )
+                    _myActionsList.addAll(tripTickets.tickets.map {
+                        val lastTicketSelected = getLastSelectedPk(MyActions.MY_ACTION_TYPE_TICKET)
+                        TK_Ticket.toMyActionsObj(context, it, lastTicketSelected)
+                    })
+                    //
+                    val tripTicketCache = getTripTicketCache(
+                        it.toInt(),
+                        tabUserFocusFilter
+                    )
+                    _myActionsList.addAll(tripTicketCache.tickets.map {
+                        val lastTicketCacheSelected =
+                            getLastSelectedPk(MyActions.MY_ACTION_TYPE_TICKET_CACHE)
+                        it.toMyActionsObj(context, lastTicketCacheSelected)
+                    })
+                    //
                 }
-            )
+            } else {
+                //
+                _myActionsList.addAll(
+                    getLocalTickets(tabUserFocusFilter).map {
+                        val lastTicketSelected = getLastSelectedPk(MyActions.MY_ACTION_TYPE_TICKET)
+                        TK_Ticket.toMyActionsObj(context, it, lastTicketSelected)
+                    }
+                )
+                //
+                _myActionsList.addAll(
+                    getCachedTickets(tabUserFocusFilter).map {
+                        val lastTicketCacheSelected =
+                            getLastSelectedPk(MyActions.MY_ACTION_TYPE_TICKET_CACHE)
+                        it.toMyActionsObj(context, lastTicketCacheSelected)
+                    }
+                )
+            }
             //
-            _myActionsList.addAll(
-                getCachedTickets(tabUserFocusFilter).map {
-                    val lastTicketCacheSelected =
-                        getLastSelectedPk(MyActions.MY_ACTION_TYPE_TICKET_CACHE)
-                    it.toMyActionsObj(context, lastTicketCacheSelected)
-                }
-            )
-            //
-            if (getScheduleFormApAndFormItens()) {
+            if (getScheduleFormApAndFormItens() && !isCurrentUserOnTrip()) {
                 _myActionsList.addAll(
                     getSchedules(tabUserFocusFilter).map {
                         val lastScheduleSelected =
@@ -2013,7 +2060,7 @@ class Act083_Main_Presenter constructor(
                 )
             }
             //
-            if (getScheduleFormApAndFormItens()) {
+            if (getScheduleFormApAndFormItens() && !isCurrentUserOnTrip()) {
                 _myActionsList.addAll(
                     getFormAp(tabUserFocusFilter).map {
                         val lastFormApSelected = getLastSelectedPk(MyActions.MY_ACTION_TYPE_FORM_AP)
@@ -2054,6 +2101,14 @@ class Act083_Main_Presenter constructor(
             }
             //
             withContext(Dispatchers.Main) {
+                if (isSerialSiteMode(useCase.check!!)) {
+                    useCase.getSiteInventory!!().let {
+                        mView.visibleTabSerialSiteInventory(
+                            showSize = true,
+                            serialSiteSize = "${it.size}"
+                        )
+                    }
+                }
                 mView.iniRecycler(myActionsList)
                 //LUCHE - 11/06/2021
                 //Chama fun que insere a qtd concatenado ao label da aba
@@ -2071,12 +2126,32 @@ class Act083_Main_Presenter constructor(
         val otherTab = if (tabUserFocusFilter == 1) 0 else 1
         var counter = 0
         //
-        counter += getLocalTickets(otherTab).size
-        counter += getCachedTickets(otherTab).size
+        if (isCurrentUserOnTrip()) {
+            siteCode?.let {
+                val tripTickets = getTripTickets(
+                    it.toInt(),
+                    otherTab
+                )
+                counter += tripTickets.tickets.size
+                //
+                val tripTicketCache = getTripTicketCache(
+                    it.toInt(),
+                    otherTab
+                )
+                //
+                counter += tripTicketCache.tickets.size
+                //
+            }
+        } else {
+            counter += getLocalTickets(otherTab).size
+            counter += getCachedTickets(otherTab).size
+        }
         //Se o fluxo de origem for o da pesquisa, só devem ser contabilizados os tickets.
         if (getScheduleFormApAndFormItens()) {
-            counter += getSchedules(otherTab).size
-            counter += getFormAp(otherTab).size
+            if(!isCurrentUserOnTrip()) {
+                counter += getSchedules(otherTab).size
+                counter += getFormAp(otherTab).size
+            }
             counter += getLocalForms(otherTab).size
         }
         //
@@ -2085,7 +2160,8 @@ class Act083_Main_Presenter constructor(
 
     private fun getScheduleFormApAndFormItens() =
         (!ConstantBaseApp.ACT068.equals(myActionFilterParam.originFlow, true)
-                || isSerialSiteMode(useCase.check!!))
+                || isSerialSiteMode(useCase.check!!)
+                )
 
     /**
      * Fun que retrona pk do item navegado caso seja do mesmo tipo da action
@@ -2222,8 +2298,14 @@ class Act083_Main_Presenter constructor(
             ConstantBaseApp.ACT006 -> mView.callAct006(getBundleToAssetsAndLocalOrigin())
             ConstantBaseApp.ACT016 -> mView.callAct016(getBundleToCalendarOrigin())
             ConstantBaseApp.ACT068 -> mView.callAct068(getBundleToSearchOrigin())
+            ConstantBaseApp.ACT094 -> {
+                useCase.deleteFile?.invoke()
+                mView.callAct094()
+            }
+
             else -> mView.callAct005()
         }
+
 
     }
 
@@ -2306,11 +2388,12 @@ class Act083_Main_Presenter constructor(
 
     override fun processSerialSite() {
         if (ToolBox_Con.isOnline(context)
-        && !ToolBox_Con.getBooleanPreferencesByKey(
-            context,
-            ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW,
-            false
-            )) {
+            && !ToolBox_Con.getBooleanPreferencesByKey(
+                context,
+                ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW,
+                false
+            )
+        ) {
             if (useCase.getPreference!!().refresh) {
                 callSerialSiteServce()
             } else {
@@ -2359,6 +2442,16 @@ class Act083_Main_Presenter constructor(
                 )
                 mView.setTabsCounters(getOtherTabCounter(0), getOtherTabCounter(1))
             }
+        } else {
+            if (isSerialSiteMode(useCase.check!!)) {
+                useCase.getSiteInventory!!().let {
+                    mView.visibleTabSerialSiteInventory(
+                        showSize = true,
+                        serialSiteSize = "${it.size}"
+                    )
+                }
+                updateMyActionList(currentTab)
+            }
         }
     }
 
@@ -2397,6 +2490,99 @@ class Act083_Main_Presenter constructor(
                 calendarDate = myActionFilterParam.calendarDate
             )
         )
+    }
+
+    override fun selectDestination() {
+        val dao = FSTripDao(context)
+        val destinationUseCase = DestinationUseCase.selectDestinationUseCase(context)
+        dao.getTrip()?.let { trip ->
+
+            mView.setProcess(WsSelectDestination.NAME)
+            mView.showPD(
+                hmAux_Trans?.get(Act094Translate.PROCESS_SELECTION_DESTINATION_TITLE) ?: "",
+                hmAux_Trans?.get(Act094Translate.PROCESS_SELECTION_DESTINATION_MSG) ?: ""
+            )
+
+            destinationUseCase.execSelectDestination?.invoke(
+                SelectDestinationUseCase.SelectDestinationParam(
+                    trip.tripPrefix,
+                    trip.tripCode,
+                    trip.scn,
+                    selectionDestinationAvailable!!.destinationType ?: "",
+                    myActionFilterParam.siteCode?.toInt()
+                )
+            )
+        } ?: mView.showAlertMsg(
+            hmAux_Trans?.get(Act094Translate.ALERT_TRIP_NOT_FOUND_TTL) ?: "",
+            hmAux_Trans?.get(Act094Translate.ALERT_TRIP_NOT_FOUND_MSG) ?: ""
+        )
+
+    }
+
+    override fun saveDestination(
+        context: Context,
+        response: String?,
+        destination: SelectionDestinationAvailable
+    ) {
+        val destinationUseCase = DestinationUseCase.selectDestinationUseCase(context)
+        destinationUseCase.saveDestination?.let {
+            val result = it(
+                SaveDestinationUseCase.GetDestinationParams(
+                    ToolBox_Con.getPreference_Customer_Code(context),
+                    response,
+                    destination
+                )
+            )
+            if (result) {
+                mView.callAct005()
+            } else {
+                mView.showAlertMsg(
+                    hmAux_Trans?.get(Act094Translate.ALERT_DESTINATION_SAVE_ERROR_TTL) ?: "",
+                    hmAux_Trans?.get(Act094Translate.ALERT_DESTINATION_SAVE_ERROR_MSG) ?: ""
+                )
+            }
+        } ?: mView.showAlertMsg(
+            hmAux_Trans?.get(Act094Translate.ALERT_DESTINATION_SAVE_ERROR_TTL) ?: "",
+            hmAux_Trans?.get(Act094Translate.ALERT_DESTINATION_SAVE_ERROR_MSG) ?: ""
+        )
+    }
+
+    private fun getTripTickets(
+        siteCode: Int,
+        isFocus: Int
+    ): GetTicketActionUseCase.Results {
+        //
+        val getTicketActionUseCase = GetTicketActionUseCase.Companion.Factory(context).build()
+        //
+        return getTicketActionUseCase.invoke(
+            GetTicketActionUseCase.Params(
+                siteCode,
+                isFocus == 1,
+                hmAux_Trans?.get("other_steps_available_lbl")
+            )
+        )
+    }
+
+    private fun getTripTicketCache(
+        siteCode: Int,
+        isFocus: Int
+    ): GetTicketCacheActionUseCase.Results {
+        //
+        val getTicketActionUseCase = GetTicketCacheActionUseCase.Companion.Factory(context).build()
+        //
+        return getTicketActionUseCase.invoke(
+            GetTicketCacheActionUseCase.Params(
+                siteCode,
+                isFocus == 1
+            )
+        )
+    }
+
+    private fun isCurrentUserOnTrip(): Boolean {
+        //
+        val fsTripDao = FSTripDao(context)
+        //
+        return fsTripDao.getTrip() != null
     }
 
 }

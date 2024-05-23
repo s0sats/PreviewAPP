@@ -69,6 +69,10 @@ class MyActionsFilterParamPreferences constructor(
         }
     }
 
+    fun clear() {
+        preferences.edit().clear().apply()
+    }
+
     companion object {
         const val ACTION_FILTER_ORIGIN_FLOW = "act083_action_filter_origin_flow"
         const val ACTION_FILTER_SITE_CODE_BACK = "act083_action_filter_serial_code_back"

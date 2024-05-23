@@ -30,6 +30,7 @@ import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TkTicketCacheDao;
+import com.namoadigital.prj001.dao.trip.FSTripDao;
 import com.namoadigital.prj001.model.Chat_C_Remove_Room;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.FCMMessage;
@@ -37,6 +38,8 @@ import com.namoadigital.prj001.model.FCM_Schedule;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TkTicketCache;
+import com.namoadigital.prj001.model.trip.FSTrip;
+import com.namoadigital.prj001.model.trip.fcm.FSTripFCM;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Remove_Room;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_007;
@@ -173,7 +176,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             fcmMessage.setDate_create(sDate);
             fcmMessage.setDate_create_ms(ToolBox.dateToMilliseconds(sDate));
             fcmMessage.setCancellable(remoteMessage.getData().get("cancellable"));
-
+            Log.d("TRIP_FCM", "Message data payload: " + sb.toString());
             //Se FCM não é o que esta usr logado, aborta FCM
             if(!fcmMessage.getReceiver().equals(ToolBox_Con.getPreference_User_Code(getApplicationContext()))){
                 return;
@@ -316,6 +319,24 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     }
                     //
                     sendFCMStatus(fcmMessage.getModule());
+                }
+            } else if (fcmMessage.getModule().trim().equalsIgnoreCase(Constant.FCM_MODULE_FIELD_SERVICE)) {
+                Gson gson = new GsonBuilder().serializeNulls().create();
+                FSTripFCM tripLongMsg = gson.fromJson(fcmMessage.getMsg_long(), FSTripFCM.class);
+                FSTripDao dao = new FSTripDao(getApplicationContext());
+                FSTrip trip = dao.getTrip();
+                if(trip != null
+                && trip.getTripPrefix() == tripLongMsg.getTrip().getTripPrefix()
+                && trip.getTripCode() == tripLongMsg.getTrip().getTripCode()
+                ){
+                    Log.d("TRIP_FILE", "--------------FCM-----------------------");
+                    Log.d("TRIP_FILE", "trip.getScn(): " + trip.getScn());
+                    Log.d("TRIP_FILE", "tripLongMsg.getTrip().getScn(): " + tripLongMsg.getTrip().getScn());
+                    if(trip.getScn() == tripLongMsg.getTrip().getScn()){
+                        ToolBox_Inf.scheduleDownloadPdfWork(getApplicationContext());
+                    }else{
+                        dao.setSyncRequired();
+                    }
                 }
             } else {
                 //

@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/namoa_color_dark_blue"
+        android:orientation="horizontal"
+        android:paddingBottom="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:id="@+id/ll_home"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center|bottom"
+            android:orientation="vertical">
+
+
+            <ImageView
+                android:id="@+id/iv_home"
+                android:layout_width="64dp"
+                android:layout_height="32dp"
+                android:layout_marginVertical="4dp"
+                android:background="@drawable/frg_header_menu_btn"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="4dp"
+                android:src="@drawable/ic_home"
+                app:tint="@color/namoa_color_black" />
+
+            <TextView
+                android:id="@+id/tv_home"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/padrao_WHITE"
+                tools:text="Home" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_trip"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center|bottom"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/iv_trip"
+                android:layout_width="64dp"
+                android:layout_height="32dp"
+                android:layout_marginVertical="4dp"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="4dp"
+                android:src="@drawable/ic_baseline_directions_car_24"
+                app:tint="@color/padrao_WHITE" />
+
+            <TextView
+                android:id="@+id/tv_trip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/padrao_WHITE"
+                tools:text="Viagem" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_extract"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center|bottom"
+            android:visibility="gone"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/iv_extract"
+                android:layout_width="64dp"
+                android:layout_height="32dp"
+                android:layout_marginVertical="4dp"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="4dp"
+                android:src="@drawable/car_schedule"
+                app:tint="@color/padrao_WHITE" />
+
+            <TextView
+                android:id="@+id/tv_extract"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/padrao_WHITE"
+                tools:text="Extrato" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_resume"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center|bottom"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/iv_resume"
+                android:layout_width="64dp"
+                android:layout_height="32dp"
+                android:layout_marginVertical="4dp"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="4dp"
+                android:src="@drawable/ic_trip_resume"
+                app:tint="@color/padrao_WHITE" />
+
+            <TextView
+                android:id="@+id/tv_resume"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/padrao_WHITE"
+                tools:text="Extrato" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/ll_calendar"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center|bottom"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/iv_calendar"
+                android:layout_width="64dp"
+                android:layout_height="32dp"
+                android:layout_marginVertical="4dp"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="4dp"
+                android:src="@drawable/ic_baseline_date_range_24" />
+
+            <TextView
+                android:id="@+id/tv_calendar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/padrao_WHITE"
+                tools:text="Calendar" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_search"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center|bottom"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/iv_search"
+                android:layout_width="64dp"
+                android:layout_height="32dp"
+                android:layout_marginVertical="4dp"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="4dp"
+                android:src="@drawable/ic_search_black_24dp"
+                app:tint="@color/padrao_WHITE" />
+
+            <TextView
+                android:id="@+id/tv_search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/padrao_WHITE"
+                tools:text="Buscar" />
+
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/ll_messenger"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_messenger_badge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/main_menu_chat_badge"
+                android:elevation="10dp"
+                android:gravity="center"
+                android:textColor="@color/padrao_WHITE"
+                android:textSize="12dp"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="@+id/iv_messenger"
+                app:layout_constraintHorizontal_bias="0.85"
+                app:layout_constraintStart_toStartOf="@+id/iv_messenger"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="2" />
+
+            <ImageView
+                android:id="@+id/iv_messenger"
+                android:layout_width="64dp"
+                android:layout_height="32dp"
+                android:layout_marginTop="4dp"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="4dp"
+                android:src="@drawable/ic_forum_black_24dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tv_messenger_badge"
+                app:tint="@color/padrao_WHITE" />
+
+            <TextView
+                android:id="@+id/tv_messenger"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/padrao_WHITE"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/iv_messenger"
+                tools:text="Messenger" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_invalid_datetime_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginTop="8dp"
+        android:elevation="5dp"
+        android:paddingBottom="8dp"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="8dp">
+
+            <ImageView
+                android:id="@+id/iv_datetime_warning"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_warning_white_24dp"
+                app:tint="@color/namoa_color_danger_red" />
+
+            <TextView
+                android:id="@+id/tv_datetime_warning"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:maxLines="3"
+                android:textSize="@dimen/font_size_item_md"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>
+

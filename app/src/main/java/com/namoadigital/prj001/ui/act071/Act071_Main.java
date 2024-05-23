@@ -51,12 +51,16 @@ import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
+import com.namoadigital.prj001.dao.trip.FSTripDao;
+import com.namoadigital.prj001.dao.trip.FsTripDestinationDao;
 import com.namoadigital.prj001.extensions.BitmapHelperKt;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.MyActionFilterParam;
 import com.namoadigital.prj001.model.TK_Ticket_Action;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
+import com.namoadigital.prj001.model.trip.FSTrip;
+import com.namoadigital.prj001.model.trip.FsTripDestination;
 import com.namoadigital.prj001.service.WS_Product_Serial_Structure;
 import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Save;
@@ -699,6 +703,13 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         mTicketCtrl.setCtrl_end_date(
             ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")
         );
+        FsTripDestinationDao dao = new FsTripDestinationDao(context);
+        FsTripDestination onSiteDestination = dao.getOnSiteDestination();
+        if(onSiteDestination != null) {
+            mTicketCtrl.setTrip_prefix(onSiteDestination.getTripPrefix());
+            mTicketCtrl.setTrip_code(onSiteDestination.getTripCode());
+            mTicketCtrl.setDestination_seq(onSiteDestination.getDestinationSeq());
+        }
         //
         if (hasImageFileChanged) {
             mTicketCtrl.getAction().setAction_photo_changed(1);

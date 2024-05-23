@@ -19,6 +19,7 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
+import com.namoadigital.prj001.dao.trip.FSTripDao;
 import com.namoadigital.prj001.extensions.SerialSiteInventoryUseCaseHelperKt;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data_Field;
@@ -38,7 +39,7 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_003;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
 import com.namoadigital.prj001.sql.Sql_WS_Save_Device_Item_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Step_Sql_001;
-import com.namoadigital.prj001.sql.transaction.TransactionWsSave;
+import com.namoadigital.prj001.sql.transaction.form.TransactionWsSave;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -59,6 +60,7 @@ public class WS_Save extends BaseWsIntentService {
     private GE_Custom_Form_LocalDao formLocalDao;
     private MD_Schedule_ExecDao scheduleExecDao;
     private MD_Product_SerialDao serialDao;
+    private FSTripDao tripDao;
     private TK_Ticket_StepDao ticketStepDao;
     private MD_SiteDao siteDao;
     private GeOsDeviceItemDao deviceItemDao;
@@ -119,6 +121,8 @@ public class WS_Save extends BaseWsIntentService {
                 Constant.DB_VERSION_CUSTOM
             );
             //
+            tripDao = new FSTripDao(getApplicationContext());
+            //
             ticketStepDao = new TK_Ticket_StepDao(
                 getApplicationContext(),
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
@@ -130,7 +134,7 @@ public class WS_Save extends BaseWsIntentService {
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
                 Constant.DB_VERSION_CUSTOM
             );
-            //todo remover pois nao sera usado
+            //
             geOsDao= new GeOsDao(
                 getApplicationContext(),
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
@@ -510,6 +514,7 @@ public class WS_Save extends BaseWsIntentService {
                         scheduleExecDao,
                         siteDao,
                         serialDao,
+                        tripDao,
                         ToolBox_Con.customDBPath(
                                 ToolBox_Con.getPreference_Customer_Code(
                                         getApplicationContext()

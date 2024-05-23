@@ -17,8 +17,8 @@ import com.namoadigital.prj001.util.ToolBox_Inf
 
 class TkTicketCacheDao(
         val context: Context,
-        val mDB_NAME: String,
-        val mDB_VERSION: Int
+        val mDB_NAME: String = ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+        val mDB_VERSION: Int = Constant.DB_VERSION_CUSTOM
 ) : BaseDao(
         context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI
 ), DaoWithReturn<TkTicketCache> {
@@ -69,6 +69,12 @@ class TkTicketCacheDao(
         const val CLASS_ID = "class_id"
         const val CLASS_COLOR = "class_color"
         const val CLASS_AVAILABLE = "class_available"
+        const val KANBAN = "kanban"
+        const val KANBAN_STAGE = "kanban_stage"
+        const val ABLE_TO_DONE = "able_to_done"
+        const val PREVENTIVE = "preventive"
+        const val IS_PRIORITY = "is_priority"
+        const val ADDRESS = "address"
     }
 
     private val toTkTicketCacheMapper: Mapper<Cursor, TkTicketCache>
@@ -292,6 +298,16 @@ class TkTicketCacheDao(
     }
 
 
+    fun getTicketKanban(prefix: Int, code: Int): TkTicketCache? {
+        return getByString("""
+            SELECT * 
+            FROM $TABLE
+            WHERE $TICKET_PREFIX = $prefix
+            AND $TICKET_CODE = $code
+            AND $KANBAN = 1
+        """.trimIndent())
+    }
+
     private inner class TkTicketCacheToContentValuesMapper : Mapper<TkTicketCache, ContentValues> {
         override fun map(ticketCache: TkTicketCache?): ContentValues {
             val contentValues = ContentValues()
@@ -369,6 +385,13 @@ class TkTicketCacheDao(
                     if(ticketCache.step_order_seq != null){
                         put(STEP_ORDER_SEQ,ticketCache.step_order_seq)
                     }
+
+                    put(KANBAN,ticketCache.kanban)
+                    put(KANBAN_STAGE,ticketCache.kanban_stage)
+                    put(ABLE_TO_DONE,ticketCache.able_to_done)
+                    put(PREVENTIVE,ticketCache.preventive)
+                    put(IS_PRIORITY,ticketCache.is_priority)
+                    put(ADDRESS,ticketCache.address)
                 }
             }
             //
@@ -424,7 +447,13 @@ class TkTicketCacheDao(
                             class_code = getIntOrNull(getColumnIndex(CLASS_CODE)),
                             class_id = getStringOrNull(getColumnIndex(CLASS_ID)),
                             class_color = getStringOrNull(getColumnIndex(CLASS_COLOR)),
-                            class_available = getIntOrNull(getColumnIndex(CLASS_AVAILABLE))
+                            class_available = getIntOrNull(getColumnIndex(CLASS_AVAILABLE)),
+                            kanban = getInt(getColumnIndex(KANBAN)),
+                            kanban_stage = getStringOrNull(getColumnIndex(KANBAN_STAGE)),
+                            able_to_done = getInt(getColumnIndex(ABLE_TO_DONE)),
+                            preventive = getIntOrNull(getColumnIndex(PREVENTIVE)),
+                            is_priority = getIntOrNull(getColumnIndex(IS_PRIORITY)),
+                            address = getIntOrNull(getColumnIndex(ADDRESS)),
                     )
                 }
             }

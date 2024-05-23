@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    app:cardCornerRadius="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingHorizontal="15dp"
+        android:paddingVertical="24dp">
+
+        <TextView
+            android:id="@+id/title"
+            style="@style/TextAppearance.Material3.HeadlineSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="Fleet information" />
+
+        <TextView
+            android:id="@+id/description"
+            style="@style/TextAppearance.Material3.BodyMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            tools:text="Fleet information" />
+
+        <ScrollView
+            android:id="@+id/scrollView3"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="8"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_default="wrap"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_title">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                >
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/edittext_fleet_plate_layout"
+                style="@style/NamoaTheme3.TextInputLayout.Outlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:boxStrokeErrorColor="@color/m3_namoa_error"
+                app:errorEnabled="false"
+                app:placeholderTextColor="@color/m3_namoa_onSurface"
+                app:startIconDrawable="@drawable/ic_baseline_directions_car_24"
+                app:startIconTint="@color/m3_namoa_onSurfaceVariant"
+                tools:hint="Fleet plate">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_fleet_plate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-"
+                    android:inputType="textCapCharacters|text"
+                    android:maxLength="8"
+                    android:singleLine="true"
+                    android:textAllCaps="true"
+                    android:textColor="@drawable/edittext_theme_text" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_fleet_plate_invalid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/et_layout_start_date"
+                tools:ignore="UseCompoundDrawables">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/baseline_error_outline_24"
+                    app:tint="@color/m3_namoa_error" />
+
+
+                <TextView
+                    android:id="@+id/tv_fleet_plate_invalid"
+                    style="@style/TextAppearance.Material3.BodySmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:textColor="@color/m3_namoa_error"
+                    android:visibility="visible"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/et_layout_start_date"
+                    tools:text="Photo required*" />
+
+            </LinearLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/edittext_odometer_layout"
+                style="@style/NamoaTheme3.TextInputLayout.Outlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:boxStrokeErrorColor="@color/m3_namoa_error"
+                app:errorEnabled="false"
+                app:placeholderTextColor="@drawable/edittext_theme_text"
+                app:startIconDrawable="@drawable/baseline_123_24"
+                app:startIconTint="@color/m3_namoa_onSurfaceVariant"
+                tools:hint="Odometer">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_odometer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:maxLength="18"
+                    android:singleLine="true"
+                    android:textColor="@drawable/edittext_theme_text" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_odometer_invalid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/et_layout_start_date"
+                tools:ignore="UseCompoundDrawables">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/baseline_error_outline_24"
+                    app:tint="@color/m3_namoa_error" />
+
+
+                <TextView
+                    android:id="@+id/tv_odometer_invalid"
+                    style="@style/TextAppearance.Material3.BodySmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:textColor="@color/m3_namoa_error"
+                    android:visibility="visible"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/et_layout_start_date"
+                    tools:text="Photo required*" />
+
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonOdometerPhoto"
+                style="@style/NamoaTheme3.Button.Outlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginVertical="14dp"
+                android:visibility="gone"
+                app:icon="@drawable/ic_baseline_photo_camera_24"
+                app:iconGravity="textStart"
+                tools:text="Odometer photo" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonRetryDownloadImage"
+                style="@style/NamoaTheme3.Button.Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginVertical="14dp"
+                android:textColor="@color/m3_namoa_error"
+                android:visibility="gone"
+                app:icon="@drawable/ic_refresh"
+                app:iconTint="@color/m3_namoa_error"
+                tools:text="Retry Again" />
+
+            <ProgressBar
+                android:id="@+id/photoLoading"
+                style="@style/Widget.AppCompat.ProgressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginVertical="14dp"
+                android:indeterminate="true"
+                android:indeterminateTint="@color/m3_namoa_primary"
+                android:indeterminateTintMode="src_atop"
+                android:progress="100"
+                android:visibility="gone" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/iv_photo"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_gravity="center"
+                android:layout_marginVertical="14dp"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                android:src="@color/calendar_delayed"
+                android:visibility="gone"
+                app:shapeAppearance="@style/ShapeAppearanceCard_Rounded" />
+            </LinearLayout>
+        </ScrollView>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_cancel"
+                style="@style/NamoaTheme3.Button.Text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/btn_save"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_chainStyle="spread_inside"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_default="wrap"
+                tools:text="Cancel" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_save"
+                style="@style/NamoaTheme3.ButtonIcon"
+                android:layout_width="0dp"
+                android:layout_gravity="end"
+                android:enabled="false"
+                android:textColor="@color/m3_namoa_surface"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/btn_cancel"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_default="wrap"
+                tools:text="Save" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

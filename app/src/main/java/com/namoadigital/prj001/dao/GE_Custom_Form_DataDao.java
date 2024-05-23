@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.dao;
 
+import static com.namoa_digital.namoa_library.util.ConstantBase.SYS_STATUS_IN_PROCESSING;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -81,12 +83,26 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
     public static final String CUSTOM_FORM_DATA_PARTITION = "custom_form_data_partition";
     public static final String CUSTOM_FORM_VERSION_PARTITION = "custom_form_version_partition";
     public static final String KANBAN_RESCHEDULE_DATE = "kanban_reschedule_date";
+    public static final String TRIP_PREFIX = "trip_prefix";
+    public static final String TRIP_CODE = "trip_code";
+    public static final String DESTINATION_SEQ = "destination_seq";
 
     //private String[] columns = {CUSTOMER_CODE, CUSTOM_FORM_TYPE, CUSTOM_FORM_CODE, CUSTOM_FORM_VERSION, CUSTOM_FORM_DATA, CUSTOM_FORM_STATUS, PRODUCT_CODE, SERIAL_ID, DATE_START, DATE_END, USER_CODE, SITE_CODE , OPERATION_CODE , SIGNAURE, TOKEN};
 
     public GE_Custom_Form_DataDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
         //
+        this.toContentValuesMapper = new GE_Custom_Form_DataToContentValuesMapper();
+        this.toGE_Custom_Form_DataMapper = new GE_Custom_Form_DataMapper();
+    }
+
+    public GE_Custom_Form_DataDao(Context context) {
+        super(context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM,
+                Constant.DB_MODE_MULTI
+        );
+
         this.toContentValuesMapper = new GE_Custom_Form_DataToContentValuesMapper();
         this.toGE_Custom_Form_DataMapper = new GE_Custom_Form_DataMapper();
     }
@@ -664,6 +680,21 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             } else {
                 custom_form_data.setKanban_reschedule_date(cursor.getString(cursor.getColumnIndex(KANBAN_RESCHEDULE_DATE)));
             }
+            if (cursor.isNull(cursor.getColumnIndex(TRIP_PREFIX))) {
+                custom_form_data.setTrip_prefix(null);
+            } else {
+                custom_form_data.setTrip_prefix(cursor.getInt(cursor.getColumnIndex(TRIP_PREFIX)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(TRIP_CODE))) {
+                custom_form_data.setTrip_code(null);
+            } else {
+                custom_form_data.setTrip_code(cursor.getInt(cursor.getColumnIndex(TRIP_CODE)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(DESTINATION_SEQ))) {
+                custom_form_data.setDestination_seq(null);
+            } else {
+                custom_form_data.setDestination_seq(cursor.getInt(cursor.getColumnIndex(DESTINATION_SEQ)));
+            }
             return custom_form_data;
         }
     }
@@ -788,7 +819,9 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             contentValues.put(CUSTOM_FORM_DATA_PARTITION, custom_form_data.getCustom_form_data_partition());
             contentValues.put(CUSTOM_FORM_VERSION_PARTITION, custom_form_data.getCustom_form_version_partition());
             contentValues.put(KANBAN_RESCHEDULE_DATE, custom_form_data.getKanban_reschedule_date());
-
+            contentValues.put(TRIP_PREFIX, custom_form_data.getTrip_prefix());
+            contentValues.put(TRIP_CODE, custom_form_data.getTrip_code());
+            contentValues.put(DESTINATION_SEQ, custom_form_data.getDestination_seq());
             return contentValues;
         }
     }

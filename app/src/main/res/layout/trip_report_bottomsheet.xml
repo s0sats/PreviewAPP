@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:paddingHorizontal="15dp"
+    android:paddingVertical="15dp"
+    android:orientation="vertical">
+
+
+    <View
+        android:layout_width="50dp"
+        android:layout_height="3dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="15dp"
+        android:background="@android:color/darker_gray"
+        android:alpha="0.5"/>
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="5dp"
+        tools:text="O que deseja adicionar?"
+        style="@style/TextAppearance.Material3.ActionBar.Subtitle"
+        android:textColor="@color/m3_namoa_onSurface"
+        android:textAlignment="center"/>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:paddingVertical="10dp"
+        android:orientation="vertical"
+        >
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_event"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="18dp"
+            style="@style/NamoaTheme3.Button.Icon.Center"
+            app:icon="@drawable/outline_sticky_note_2_24"
+            android:gravity="center"
+            tools:text="Evento" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_technical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            style="@style/NamoaTheme3.Button.Icon.Center"
+            app:icon="@drawable/baseline_engineering_24"
+            android:gravity="center"
+            tools:text="Técnico" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

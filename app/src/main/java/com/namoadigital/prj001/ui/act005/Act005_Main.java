@@ -1,8 +1,12 @@
 package com.namoadigital.prj001.ui.act005;
 
+import static com.namoadigital.prj001.extensions.ContextKt.sendCommandToServiceTripLocation;
+import static com.namoadigital.prj001.service.location.util.LocationServiceConstants.STOP_LOCATION;
 import static com.namoadigital.prj001.ui.act005.Act005_Main_Presenter_Impl.SYNC_FOR_TICKETS_FORM;
 import static com.namoadigital.prj001.ui.act005.Act005_Main_Presenter_Impl.SYNC_SERIAL_STRUCTURE;
 import static com.namoadigital.prj001.ui.act005.Act005_Main_Presenter_Impl.SYNC_SOS;
+import static com.namoadigital.prj001.ui.act005.trip.fragment.base.TripBaseFragment.WS_TRIP_DOWNLOAD;
+import static com.namoadigital.prj001.ui.act005.trip.fragment.base.TripBaseFragment.WS_TRIP_PREFIX;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FCM_ACTION_SM_SO_UPDATE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FCM_ACTION_TK_TICKET_UPDATE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FCM_MODULE_SYNC;
@@ -11,7 +15,6 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_S
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_FOCUS_FILTER;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ONLY_MY_ACTIONS_OPTION;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_SITES_FILTER;
-import static com.namoadigital.prj001.view.frag.frg_main_home.FrgMainHome.OnFrgMainHomeIteract;
 
 import android.Manifest;
 import android.app.Activity;
@@ -20,8 +23,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -38,14 +43,15 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.play.core.appupdate.AppUpdateManager;
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
@@ -56,6 +62,9 @@ import com.namoa_digital.namoa_library.view.NamoaPermissionRequest;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Adapter;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
+import com.namoadigital.prj001.core.broadcast.GpsStateReceiver;
+import com.namoadigital.prj001.core.data.domain.model.SiteInventory;
+import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.SerialSiteInventoryUseCase;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.FCMMessageDao;
@@ -65,10 +74,13 @@ import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
+import com.namoadigital.prj001.dao.trip.FSTripDao;
 import com.namoadigital.prj001.extensions.AppCompatActivityKt;
+import com.namoadigital.prj001.extensions.ContextKt;
 import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MainTagMenu;
 import com.namoadigital.prj001.model.MenuMainNamoa;
+import com.namoadigital.prj001.model.MyActionFilterParam;
 import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.SV_LocationTracker;
@@ -77,18 +89,27 @@ import com.namoadigital.prj001.service.WS_IO_Blind_Move_Save;
 import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.service.WS_IO_Move_Save;
 import com.namoadigital.prj001.service.WS_IO_Outbound_Item_Save;
-import com.namoadigital.prj001.service.WS_Product_Serial_Structure;
 import com.namoadigital.prj001.service.WS_SO_Pack_Express_Local;
 import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
+import com.namoadigital.prj001.service.location.FsTripLocationService;
+import com.namoadigital.prj001.service.trip.WsUserPosition;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_015;
 import com.namoadigital.prj001.sql.GE_File_Sql_001;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
 import com.namoadigital.prj001.ui.act004.Act004_Main;
+import com.namoadigital.prj001.ui.act005.trip.fragment.base.OnFrgMainHomeInteract;
+import com.namoadigital.prj001.ui.act005.trip.fragment.base.OnFrgTripInteract;
+import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripBaseFragment;
+import com.namoadigital.prj001.ui.act005.trip.fragment.extract.TripExtractFragment;
+import com.namoadigital.prj001.ui.act005.trip.fragment.home.TripHomeFragment;
+import com.namoadigital.prj001.ui.act005.trip.fragment.overnight.TripOverNightFragment;
+import com.namoadigital.prj001.ui.act005.trip.manager.TripServiceCallbackManager;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
+import com.namoadigital.prj001.ui.act011.Act011_Main;
 import com.namoadigital.prj001.ui.act012.Act012_Main;
 import com.namoadigital.prj001.ui.act014.Act014_Main;
 import com.namoadigital.prj001.ui.act016.Act016_Main;
@@ -105,14 +126,18 @@ import com.namoadigital.prj001.ui.act047.Act047_Main;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act068.Act068_Main;
 import com.namoadigital.prj001.ui.act069.Act069_Main;
+import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.ui.act083.Act083_Main;
+import com.namoadigital.prj001.ui.act083.data.local.preferences.MyActionsFilterParamPreferences;
 import com.namoadigital.prj001.ui.act084.Act084Main;
 import com.namoadigital.prj001.ui.act085.Act085Main;
 import com.namoadigital.prj001.ui.act089.mvp.ui.Act089Main;
+import com.namoadigital.prj001.ui.act094.ui.Act094_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+import com.namoadigital.prj001.util.TripFragmentManager;
 import com.namoadigital.prj001.view.dialog.SendResumeDialog;
 import com.namoadigital.prj001.view.frag.frg_main_home.FrgMainHome;
 import com.namoadigital.prj001.view.frag.frg_main_home_alt.FrgMainHomeAlt;
@@ -127,11 +152,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
 /**
  * Created by neomatrix on 23/01/17.
  */
 
-public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View, Act005Opc.Act005DrawerInteraction,  OnFrgMainHomeIteract, FrgMainHomeAlt.OnFrgMainHomeAltInteract {
+@AndroidEntryPoint
+public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View, Act005Opc.Act005DrawerInteraction, OnFrgMainHomeInteract, FrgMainHomeAlt.OnFrgMainHomeAltInteract, OnFrgTripInteract {
 
     public static final String MENU_ID = "menu_id";
     public static final String MENU_ICON = "menu_icon";
@@ -188,6 +216,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     public static final String WS_RESULT_TYPE_ASSETS_INBOUND_ITEM = "ASSETS_INBOUND_ITEM";
     public static final String WS_RESULT_TYPE_ASSETS_OUTBOUND_ITEM = "ASSETS_OUTBOUND_ITEM";
     public static final String WS_RESULT_TYPE_TICKET = "TICKET";
+    public static final String WS_RESULT_TYPE_POSITION = "FS-POSITION";
     public static final String WS_RESULT_TYPE_GENERAL = "GENERAL";
 
     //toolbar constants
@@ -229,18 +258,20 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     private BR_Chat chatReceiver;
     private boolean syncAfterSave;
     private SendResumeDialog sendResumeDialog;
-    private int sOProcessErrorAmount=0;
-    private int sOProcessAmount=0;
-    private int assetsProcessErrorAmount=0;
+    private int sOProcessErrorAmount = 0;
+    private int sOProcessAmount = 0;
+    private int assetsProcessErrorAmount = 0;
     private String move_planned[];
     private String blinds[];
     ArrayList<HMAux> inbound_items;
-    int inboundItensTotal=0;
-    int outboundItensTotal=0;
+    int inboundItensTotal = 0;
+    int outboundItensTotal = 0;
     ArrayList<HMAux> outbound_items;
     Toolbar toolbar;
     private boolean masterDataSyncFlow = false;
     private AppUpdateManager appUpdateManager;
+    private Fragment fragmentNav;
+    private GpsStateReceiver gpsStateReceiver;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -255,13 +286,13 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         //
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        fragmentNav = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         //
         iniSetup();
         initVars();
         iniUIFooter();
         initActions();
-        requestNotificationPermission();
+
         //LUCHE - 12/02/2021 - substituido IntentService pelo worker
         ToolBox_Inf.scheduleFirebaseRegistrationWork(context);
         //LUCHE - 22/02/2021 - Comentado chamada pois agora não será recorrente será apenas quando FCM de ROom
@@ -301,13 +332,13 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
          * Metodo que chama serviço de localizacao caso usuario esteja logado, o servico parado e
          * pendecias de envio.
          */
-        if (!SV_LocationTracker.status && ToolBox_Inf.isUsrAppLogged(context)) {
-            int pendencies = ToolBox_Inf.getLocationPendencies(context);
-            if(pendencies>0) {
-                retryGetLocation();
+        if (hasFormLOcationPendecy()) {
+            retryGetLocation();
+        }else{
+            if(!mPresenter.hasTripInProgress()) {
+                requestNotificationPermission();
             }
         }
-
         setFragments();
 
         ToolBox_Inf.callPendencyNotification(getApplicationContext(), hmAux_Trans);
@@ -324,6 +355,17 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         }
 
         mPresenter.deleteSerialSiteInventoryFile();
+        invalidateOptionsMenu();
+    }
+
+    private boolean hasFormLOcationPendecy() {
+        if (!SV_LocationTracker.status && ToolBox_Inf.isUsrAppLogged(context)) {
+            int pendencies = ToolBox_Inf.getLocationPendencies(context);
+            if (pendencies > 0) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void requestNotificationPermission() {
@@ -403,94 +445,159 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     }
 
     private void retryGetLocation() {
+        String[] permissions = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissions = new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.POST_NOTIFICATIONS};
+        }
         requestPermissions(
                 Act005_Main.this,
                 NamoaPermissionRequest.GPS_PERMISSION_REQUEST,
-                new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
+                permissions,
                 new NamoaPermissionRequest() {
                     @Override
                     public void accessGranted() {
-                        ToolBox_Inf.call_Location_Tracker_On_Background(context, SV_LocationTracker.LOCATION_BACKGROUND);
+                        if(hasGpsPermission()) {
+                            gpsLocationAccessGranted();
+                        }
                     }
 
                     @Override
                     public void accessDenied(final String[] permissions) {
-                        String alertTtl = hmAux_Trans.get("alert_gps_denied_permission_ttl");
-                        String alertMsg = hmAux_Trans.get("alert_gps_denied_permission_msg");
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
-                            alertTtl = hmAux_Trans.get("alert_gps_denied_exact_permission_ttl");
-                            alertMsg = hmAux_Trans.get("alert_gps_denied_exact_permission_msg");
-                        }
-                        showPermissionRationaleDialog(
-                                Act005_Main.this,
-                                com.namoa_digital.namoa_library.R.drawable.ic_alert_n,
-                                alertTtl,
-                                alertMsg,
-                                (dialogInterface, i) -> callRequestPermission(MULTIIPLE_PERMISSION_REQUEST_WITHOUT_RATIONALE, permissions),
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
 
+
+                        if(!hasGpsPermission()) {
+                            if (mPresenter.isFieldServiceModeAble() && mPresenter.hasTripInProgress()) {
+                                navigateToFragment(true, R.id.action_frgMainHome_to_onGpsFragment);
+                            }
+                            String alertTtl = hmAux_Trans.get("alert_gps_denied_permission_ttl");
+                            String alertMsg = hmAux_Trans.get("alert_gps_denied_permission_msg");
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                alertTtl = hmAux_Trans.get("alert_gps_denied_exact_permission_ttl");
+                                alertMsg = hmAux_Trans.get("alert_gps_denied_exact_permission_msg");
+                            }
+                            if (FsTripLocationService.Companion.isTracking().getValue()) {
+                                sendCommandToServiceTripLocation(context, STOP_LOCATION);
+                            }
+                            showPermissionRationaleDialog(
+                                    Act005_Main.this,
+                                    com.namoa_digital.namoa_library.R.drawable.ic_alert_n,
+                                    alertTtl,
+                                    alertMsg,
+                                    (dialogInterface, i) -> callRequestPermission(MULTIIPLE_PERMISSION_REQUEST_WITHOUT_RATIONALE, permissions),
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                        }
                                     }
-                                }
-                        );
+                            );
+                        }else{
+                            gpsLocationAccessGranted();
+                        }
                     }
 
                     @Override
                     public void requestPermissionRationale(final String[] permissions) {
-                        String alertTtl = hmAux_Trans.get("alert_gps_rationale_permission_ttl");
-                        String alertMsg = hmAux_Trans.get("alert_gps_rationale_permission_msg");
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
-                            alertTtl = hmAux_Trans.get("alert_gps_rationale_exact_permission_ttl");
-                            alertMsg = hmAux_Trans.get("alert_gps_rationale_exact_permission_msg");
-                        }
-                        showPermissionRationaleDialog(
-                                Act005_Main.this,
-                                com.namoa_digital.namoa_library.R.drawable.ic_alert_n,
-                                alertTtl,
-                                alertMsg,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        callRequestPermission(MULTIIPLE_PERMISSION_REQUEST_WITHOUT_RATIONALE,permissions);
-                                    }
-                                },
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
 
-                                    }
+                        if(!hasGpsPermission()) {
+
+                                String alertTtl = hmAux_Trans.get("alert_gps_rationale_permission_ttl");
+                                String alertMsg = hmAux_Trans.get("alert_gps_rationale_permission_msg");
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                    alertTtl = hmAux_Trans.get("alert_gps_rationale_exact_permission_ttl");
+                                    alertMsg = hmAux_Trans.get("alert_gps_rationale_exact_permission_msg");
                                 }
-                        );
+                                showPermissionRationaleDialog(
+                                        Act005_Main.this,
+                                        com.namoa_digital.namoa_library.R.drawable.ic_alert_n,
+                                        alertTtl,
+                                        alertMsg,
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                callRequestPermission(MULTIIPLE_PERMISSION_REQUEST_WITHOUT_RATIONALE, permissions);
+                                            }
+                                        },
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+
+                                            }
+                                        }
+                                );
+
+                        }else{
+                            gpsLocationAccessGranted();
+                        }
                     }
 
                     @Override
                     public void accessDeniedNeverAskAgain(String[] permissions) {
-                        String alertTtl = hmAux_Trans.get("alert_gps_never_ask_again_permission_ttl");
-                        String alertMsg = hmAux_Trans.get("alert_gps_never_ask_again_permission_msg");
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
-                            alertTtl = hmAux_Trans.get("alert_gps_never_ask_again_exact_permission_ttl");
-                            alertMsg = hmAux_Trans.get("alert_gps_never_ask_again_exact_permission_msg");
-                        }
-                        showPermissionNeverAskAgainDialog(
-                                R.drawable.ic_location_on_24,
-                                alertTtl,
-                                alertMsg,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if(!hasGpsPermission()) {
+                            String alertTtl = hmAux_Trans.get("alert_gps_never_ask_again_permission_ttl");
+                            String alertMsg = hmAux_Trans.get("alert_gps_never_ask_again_permission_msg");
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                alertTtl = hmAux_Trans.get("alert_gps_never_ask_again_exact_permission_ttl");
+                                alertMsg = hmAux_Trans.get("alert_gps_never_ask_again_exact_permission_msg");
+                            }
+                            if (FsTripLocationService.Companion.isTracking().getValue()) {
+                                sendCommandToServiceTripLocation(context, STOP_LOCATION);
+                            }
+                            showPermissionNeverAskAgainDialog(
+                                    R.drawable.ic_location_on_24,
+                                    alertTtl,
+                                    alertMsg,
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
 
+                                        }
                                     }
-                                }
-                        );
+                            );
+                        }
                     }
 
                     @Override
                     public void informAppDetailSettingsReturn() {
-                        callRequestPermission(MULTIIPLE_PERMISSION_REQUEST_WITHOUT_RATIONALE,new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION});
+                        String[] permissions = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            permissions = new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.POST_NOTIFICATIONS};
+                        }
+                        callRequestPermission(MULTIIPLE_PERMISSION_REQUEST_WITHOUT_RATIONALE, permissions);
                     }
                 }
         );
+    }
+
+    private boolean hasGpsPermission() {
+        return ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void gpsLocationAccessGranted() {
+        TripHomeFragment tripHomeFragment = getTripHomeFragment();
+        if (tripHomeFragment != null) {
+            tripHomeFragment.handleLatLonNullError(true, null);
+        } else {
+            TripOverNightFragment tripOverNightFragment = getTripOverNightFragment();
+            if(tripOverNightFragment != null){
+                tripOverNightFragment.returnToTrip();
+            }else{
+                TripBaseFragment base = getTripBaseFragment();
+                if (base != null) {
+                    base.handleLocationService();
+                }
+            }
+        }
+        //
+        if (hasFormLOcationPendecy()) {
+            ToolBox_Inf.call_Location_Tracker_On_Background(context, SV_LocationTracker.LOCATION_BACKGROUND);
+        }
     }
 
     private void forceLogoutBySessionNotFound() {
@@ -519,6 +626,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     protected void onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(fcmReceiver);
         //
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(gpsStateReceiver);
         // Hugo Reativou
         LocalBroadcastManager.getInstance(this).unregisterReceiver(chatReceiver);
         super.onDestroy();
@@ -725,6 +833,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         //
         transList.add("alert_notification_denied_permission_ttl");
         transList.add("alert_notification_denied_permission_msg");
+        //
+        transList.add("progress_update_trip_ttl");
+        transList.add("progress_update_trip_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -1130,8 +1241,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             boolean hasTicketSyncRequired = mPresenter.hasTicketSyncRequired();
             boolean hasSoSyncRequiredCloudRule = mPresenter.hasSoSyncRequiredCloudRule();
             boolean hasSerialStructureSyncRequiredCloudRule = mPresenter.hasSerialStructureSyncRequiredCloudRule();
+            boolean hasTripUpdateRequired = mPresenter.hasTripUpdateRequired();
 
-            sendUpdateRequiredData(hasUpdateRequired, hasTicketSyncRequired, hasSoSyncRequiredCloudRule, hasSerialStructureSyncRequiredCloudRule);
+            sendUpdateRequiredData(hasUpdateRequired, hasTicketSyncRequired, hasSoSyncRequiredCloudRule, hasSerialStructureSyncRequiredCloudRule, hasTripUpdateRequired);
 
         }
 
@@ -1144,14 +1256,16 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
      */
     private void initilizeDrawer() {
         fragOpc = (Act005Opc) fm.findFragmentById(R.id.act005_frag_opc);
-        if(fragOpc != null) {
+        if (fragOpc != null) {
             fragOpc.setHmAux_Trans(hmAux_Trans);
         }
     }
 
     @NotNull
     @Override
-    public Bitmap getCustomerLogo() {return mPresenter.getLogoBitmap();}
+    public Bitmap getCustomerLogo() {
+        return mPresenter.getLogoBitmap();
+    }
 
     @Override
     public boolean hasPendencies() {
@@ -1186,9 +1300,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     @Override
     public void onHistoricClick() {
         //callAct014(context);
-        if(mPresenter.hasSOProfile()){
+        if (mPresenter.hasSOProfile()) {
             callAct014(context);
-        }else {
+        } else {
             callAct084();
         }
     }
@@ -1196,14 +1310,14 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     @Override
     public void onEnableNfcClick() {
         showDrawerAlertConfirm(
-            hmAux_Trans.get("alert_enable_nfc_ttl"),
-            hmAux_Trans.get("alert_enable_nfc_msg"),
-            new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    mPresenter.executeEnableNFC();
+                hmAux_Trans.get("alert_enable_nfc_ttl"),
+                hmAux_Trans.get("alert_enable_nfc_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mPresenter.executeEnableNFC();
+                    }
                 }
-            }
         );
 
     }
@@ -1211,14 +1325,14 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     @Override
     public void onDisableNfcClick() {
         showDrawerAlertConfirm(
-            hmAux_Trans.get("alert_cancel_nfc_ttl"),
-            hmAux_Trans.get("alert_cancel_nfc_msg"),
-            new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    mPresenter.executeCancelNFC();
+                hmAux_Trans.get("alert_cancel_nfc_ttl"),
+                hmAux_Trans.get("alert_cancel_nfc_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mPresenter.executeCancelNFC();
+                    }
                 }
-            }
         );
     }
 
@@ -1240,20 +1354,20 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             );
 
         } else {
-            if(!ToolBox_Inf.isLocalDatetimeOk(context)){
+            if (!ToolBox_Inf.isLocalDatetimeOk(context)) {
                 handleInvalidLocalDatetime();
-            }else {
+            } else {
                 ToolBox.alertMSG_YES_NO(
-                    context,
-                    hmAux_Trans.get("drawer_change_customer_alert_ttl"),
-                    hmAux_Trans.get("drawer_change_customer_alert_msg"),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            changeCustomer();
-                        }
-                    },
-                    1
+                        context,
+                        hmAux_Trans.get("drawer_change_customer_alert_ttl"),
+                        hmAux_Trans.get("drawer_change_customer_alert_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                changeCustomer();
+                            }
+                        },
+                        1
                 );
             }
         }
@@ -1291,11 +1405,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
     private void showDrawerAlertConfirm(String ttl, String msg, DialogInterface.OnClickListener clickListener) {
         ToolBox.alertMSG_YES_NO(
-            context,
-            ttl,
-            msg,
-            clickListener,
-            1
+                context,
+                ttl,
+                msg,
+                clickListener,
+                1
         );
     }
 
@@ -1345,7 +1459,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             );
             int qtyPendings = pendingTotals == null ? 0 : ToolBox_Inf.convertStringToInt(pendingTotals.get(GE_Custom_Form_Local_Sql_015.PENDING_QTY));
             //
-            if(qtyPendings > 0){
+            if (qtyPendings > 0) {
                 pendingExists = true;
                 break;
             }
@@ -1427,14 +1541,14 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
     public void loadMenuV2(ArrayList<MenuMainNamoa> menus, int columnsQty) {
 //        gv_menu.setNumColumns(columnsQty);
-        int idxFakeSpaceStart = mPresenter.processFakeMenus(menus,columnsQty);
+        int idxFakeSpaceStart = mPresenter.processFakeMenus(menus, columnsQty);
         //
         mAdapter = new Act005_Adapter(
-            context,
-            R.layout.act005_item_menu_badge,
-            menus,
-            idxFakeSpaceStart,
-            columnsQty
+                context,
+                R.layout.act005_item_menu_badge,
+                menus,
+                idxFakeSpaceStart,
+                columnsQty
         );
         //
 //        gv_menu.setAdapter(mAdapter);
@@ -1459,9 +1573,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         //
         setFooter();
         //TRATATIVA ESPECIFICA DA ACT005
-        if( mFooter.containsKey(Constant.FOOTER_SITE_NOT_FOUND)
-            || mFooter.containsKey(Constant.FOOTER_OPERATION_NOT_FOUND)
-        ){
+        if (mFooter.containsKey(Constant.FOOTER_SITE_NOT_FOUND)
+                || mFooter.containsKey(Constant.FOOTER_OPERATION_NOT_FOUND)
+        ) {
             String msg = hmAux_Trans.get("alert_site_or_operation_not_found_msg");
             //
 //            if( mFooter.containsKey(Constant.FOOTER_SITE_NOT_FOUND)){
@@ -1488,9 +1602,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
     private void setTitleAsCustomerName() {
         ActionBar supportActionBar = getSupportActionBar();
-        if(supportActionBar != null) {
-            supportActionBar.setTitle( ToolBox_Con.getPreference_Customer_Code_NAME(context));
-        }else{
+        if (supportActionBar != null) {
+            supportActionBar.setTitle(ToolBox_Con.getPreference_Customer_Code_NAME(context));
+        } else {
             setTitleLanguage();
         }
     }
@@ -1501,6 +1615,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
         ToolBox_Inf.buildFooterDialog(context, true);
     }
+
     /*
         BARRIONUEVO 17-04-2020
             - Atualiza info do footer
@@ -1521,15 +1636,17 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     }
 
     private void refreshTagList() {
-        FrgMainHome currentFragment = (FrgMainHome) fm.findFragmentById(R.id.act005_frg_placeholder);
-        currentFragment.refreshList(getTagList( ToolBox_Inf.getActionTimeDefaultOption(context),
-                ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_SITES_FILTER, PREFERENCE_HOME_ALL_SITE_OPTION),
-                ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_FOCUS_FILTER, PREFERENCE_HOME_ONLY_MY_ACTIONS_OPTION)));
-        currentFragment.setDatetimeVisibility();
+        if (fragmentNav.getChildFragmentManager().getFragments().get(0) instanceof FrgMainHome) {
+            FrgMainHome currentFragment = (FrgMainHome) fragmentNav.getChildFragmentManager().getFragments().get(0);
+            currentFragment.refreshList(getTagList(ToolBox_Inf.getActionTimeDefaultOption(context),
+                    ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_SITES_FILTER, PREFERENCE_HOME_ALL_SITE_OPTION),
+                    ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_FOCUS_FILTER, PREFERENCE_HOME_ONLY_MY_ACTIONS_OPTION)));
+            currentFragment.setDatetimeVisibility();
+        }
     }
 
     private void refreshModuleList() {
-        FrgMainHomeAlt currentFragment = (FrgMainHomeAlt) fm.findFragmentById(R.id.act005_frg_placeholder);
+        FrgMainHomeAlt currentFragment = (FrgMainHomeAlt) fragmentNav.getChildFragmentManager().getFragments().get(0);
         currentFragment.refreshModuleList();
         currentFragment.setDatetimeVisibility();
     }
@@ -1570,16 +1687,20 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 alertMsg = hmAux_Trans.get("progress_sync_tickets_form_msg");
                 break;
             case Act005_Main_Presenter_Impl.SYNC_TICKETS:
-                alertTitle =  hmAux_Trans.get("progress_download_ticket_ttl");
+                alertTitle = hmAux_Trans.get("progress_download_ticket_ttl");
                 alertMsg = hmAux_Trans.get("progress_download_ticket_start");
                 break;
             case Act005_Main_Presenter_Impl.SYNC_SOS:
-                alertTitle =  hmAux_Trans.get("progress_sync_so_ttl");
+                alertTitle = hmAux_Trans.get("progress_sync_so_ttl");
                 alertMsg = hmAux_Trans.get("progress_sync_so_start");
                 break;
             case SYNC_SERIAL_STRUCTURE:
-                alertTitle =  hmAux_Trans.get("progress_download_serial_structure_ttl");
+                alertTitle = hmAux_Trans.get("progress_download_serial_structure_ttl");
                 alertMsg = hmAux_Trans.get("progress_download_serial_structure_start");
+                break;
+            case WS_TRIP_DOWNLOAD:
+                alertTitle = hmAux_Trans.get("progress_update_trip_ttl");
+                alertMsg = hmAux_Trans.get("progress_update_trip_msg");
                 break;
             default:
                 break;
@@ -1890,8 +2011,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     protected void processGo() {
         super.processGo();
         //
-        if(ToolBox_Con.getPreference_BkpUnsentImg(context)){
-            ToolBox_Con.setPreference_BkpUnsentImg(context,false);
+        if (ToolBox_Con.getPreference_BkpUnsentImg(context)) {
+            ToolBox_Con.setPreference_BkpUnsentImg(context, false);
             //
             ToolBox_Inf.scheduleUploadImgWork(context);
         }
@@ -1913,29 +2034,29 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
          * EM CASO DE ERRO AO COPIAR IMGS, IMPEDE ATUALIZAÇÃO DE SOFTWARE
          *
          */
-        if(ToolBox_Con.getPreference_BkpUnsentImg(context)){
-            if(!ToolBox_Inf.moveUnsentImgs(context)){
+        if (ToolBox_Con.getPreference_BkpUnsentImg(context)) {
+            if (!ToolBox_Inf.moveUnsentImgs(context)) {
                 progressDialog.dismiss();
                 //
                 ToolBox.alertMSG(
-                    context,
-                    hmAux_Trans.get("alert_unsent_img_copy_error_ttl"),
-                    hmAux_Trans.get("alert_unsent_img_copy_error_msg"),
-                    null,
-                    0
+                        context,
+                        hmAux_Trans.get("alert_unsent_img_copy_error_ttl"),
+                        hmAux_Trans.get("alert_unsent_img_copy_error_msg"),
+                        null,
+                        0
                 );
-            }else{
+            } else {
                 //Reseta preferencia
-                ToolBox_Con.setPreference_BkpUnsentImg(context,false);
+                ToolBox_Con.setPreference_BkpUnsentImg(context, false);
                 //
-                if(progressDialog != null) {
+                if (progressDialog != null) {
                     progressDialog.dismiss();
                 }
                 //
                 ToolBox_Inf.executeLogoffAndUpdateSoftware(context);
             }
-        }else{
-            if(progressDialog != null) {
+        } else {
+            if (progressDialog != null) {
                 progressDialog.dismiss();
             }
             //
@@ -1967,7 +2088,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 //                if(fragOpc != null){
 //                    fragOpc.setPendingForms(getPendingForms());
 //                }
-                //
                 if (ToolBox_Con.getPreference_Customer_Code(context) == -1L) {
                     mPresenter.stopChatServices();
                     //
@@ -1983,9 +2103,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 }
             } else {
                 if (!wsSoProcess.equalsIgnoreCase(WS_Save.class.getSimpleName())
-                && !wsSoProcess.equalsIgnoreCase(SYNC_SERIAL_STRUCTURE)
-                && !wsSoProcess.equalsIgnoreCase(SYNC_FOR_TICKETS_FORM)
-                && !wsSoProcess.equalsIgnoreCase(SYNC_SOS)
+                        && !wsSoProcess.equalsIgnoreCase(SYNC_SERIAL_STRUCTURE)
+                        && !wsSoProcess.equalsIgnoreCase(SYNC_FOR_TICKETS_FORM)
+                        && !wsSoProcess.equalsIgnoreCase(SYNC_SOS)
                 ) {
                     progressDialog.dismiss();
                     showSuccessDialog();
@@ -2015,7 +2135,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
 
-        if (wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())) {
+        if (wsProcess.startsWith(WS_TRIP_PREFIX)) {
+            disableProgressDialog();
+            handleTripServices(mLink, false);
+        } else if (wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())) {
             setWsSoProcess("");
             //
             int errorAmount = 0;
@@ -2039,13 +2162,13 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 }
             }
 
-            if(errorAmount > 0){
+            if (errorAmount > 0) {
                 try {
-                    sendResumeDialog.updateResumeStatus(R.id.act005_send_resume_serial, false, errorAmount,hmAux.size());
+                    sendResumeDialog.updateResumeStatus(R.id.act005_send_resume_serial, false, errorAmount, hmAux.size());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }else {
+            } else {
                 try {
                     sendResumeDialog.updateResumeStatus(R.id.act005_send_resume_serial, true, hmAux.size(), hmAux.size());
                 } catch (Exception e) {
@@ -2061,19 +2184,21 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             mPresenter.processWS_SaveReturn(mLink);
 
             mPresenter.executeApSave(); // 3
-        }else if (wsSoProcess.equalsIgnoreCase(SYNC_SERIAL_STRUCTURE)) {
+        } else if (wsSoProcess.equalsIgnoreCase(SYNC_SERIAL_STRUCTURE)) {
             progressDialog.dismiss();
             setWsSoProcess("");
             setWsProcess("");
             //
-            if(mPresenter.hasSoSyncRequiredCloudRule()){
+            if (mPresenter.hasSoSyncRequiredCloudRule()) {
                 mPresenter.executeWSSoSync();
-            } else if(mPresenter.hasTicketSyncRequired()){
+            } else if (mPresenter.hasTicketSyncRequired()) {
                 mPresenter.executeWSTicketDownload();
-            }else{
-                if(masterDataSyncFlow){
+            } else if (mPresenter.hasTripUpdateRequired()) {
+                mPresenter.executeTripDownload();
+            } else {
+                if (masterDataSyncFlow) {
                     mPresenter.syncFlow(mPresenter.hasUpdateRequired());
-                }else{
+                } else {
                     refreshUiData();
                 }
             }
@@ -2096,13 +2221,13 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                     errorAmount++;
                 }
             }
-            if(errorAmount > 0 ){
+            if (errorAmount > 0) {
                 try {
                     sendResumeDialog.updateResumeStatus(R.id.act005_send_resume_form_ap, false, errorAmount, hmAux.size());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }else {
+            } else {
                 try {
                     sendResumeDialog.updateResumeStatus(R.id.act005_send_resume_form_ap, true, hmAux.size(), hmAux.size());
                 } catch (Exception e) {
@@ -2136,15 +2261,15 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 }
             }
 
-            if(errorAmount>0){
+            if (errorAmount > 0) {
                 try {
                     sendResumeDialog.updateResumeStatus(R.id.act005_send_resume_express_so, false, errorAmount, hmAux.size());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }else {
+            } else {
                 try {
-                    sendResumeDialog.updateResumeStatus(R.id.act005_send_resume_express_so, true, hmAux.size(),hmAux.size());
+                    sendResumeDialog.updateResumeStatus(R.id.act005_send_resume_express_so, true, hmAux.size(), hmAux.size());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -2157,7 +2282,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             String approval[] = hmAux.get(WS_SO_Save.SO_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
 
             if (approval.length > 0 && !approval[0].isEmpty()) {
-                sOProcessAmount +=approval.length;
+                sOProcessAmount += approval.length;
                 for (int i = 0; i < approval.length; i++) {
                     String fields[] = approval[i].split(Constant.MAIN_CONCAT_STRING_2);
                     //
@@ -2198,13 +2323,13 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                     }
                 }
             }
-            if(sOProcessErrorAmount>0) {
+            if (sOProcessErrorAmount > 0) {
                 try {
-                    sendResumeDialog.updateResumeStatus(R.id.act005_send_resume_so, false, sOProcessAmount- sOProcessErrorAmount, sOProcessAmount);
+                    sendResumeDialog.updateResumeStatus(R.id.act005_send_resume_so, false, sOProcessAmount - sOProcessErrorAmount, sOProcessAmount);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }else{
+            } else {
                 try {
                     sendResumeDialog.updateResumeStatus(R.id.act005_send_resume_so, true, sOProcessAmount, sOProcessAmount);
                 } catch (Exception e) {
@@ -2214,7 +2339,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             mPresenter.executeMoveSave();  // 6
         } else if (wsSoProcess.equalsIgnoreCase(WS_IO_Move_Save.class.getSimpleName())) {
             setWsSoProcess("");
-            assetsProcessErrorAmount=0;
+            assetsProcessErrorAmount = 0;
             move_planned = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
 
             if (move_planned.length > 0 && !move_planned[0].isEmpty()) {
@@ -2236,7 +2361,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
             mPresenter.executeBlindMoveSave();  // 7
 
-        }  else if (wsSoProcess.equalsIgnoreCase(WS_IO_Blind_Move_Save.class.getSimpleName())) {
+        } else if (wsSoProcess.equalsIgnoreCase(WS_IO_Blind_Move_Save.class.getSimpleName())) {
             setWsSoProcess("");
 
             blinds = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
@@ -2260,51 +2385,51 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
             mPresenter.executeItemInboundSave();  // 8
 
-        }   else if (wsSoProcess.equalsIgnoreCase(WS_IO_Inbound_Item_Save.class.getSimpleName())) {
+        } else if (wsSoProcess.equalsIgnoreCase(WS_IO_Inbound_Item_Save.class.getSimpleName())) {
             setWsSoProcess("");
 
             inbound_items = mPresenter.processInboundItemSaveReturn(mLink, WS_RESULT_TYPE_ASSETS_INBOUND_ITEM);
 //            inboundItensOk = mPresenter.countInboundItemSaveReturnOk(mLink, WS_RESULT_TYPE_ASSETS_INBOUND_ITEM);
-            inboundItensTotal=0;
+            inboundItensTotal = 0;
 
             inboundItensTotal = mPresenter.countInboundItemSaveReturnTotal(mLink, WS_RESULT_TYPE_ASSETS_INBOUND_ITEM);
-            if(inbound_items != null) {
+            if (inbound_items != null) {
                 wsResults.addAll(inbound_items);
-                for (HMAux item :inbound_items) {
-                    if(item != null
-                    && item.hasConsistentValue("status"))
-                    if( "OK".equalsIgnoreCase(item.get("status"))){
+                for (HMAux item : inbound_items) {
+                    if (item != null
+                            && item.hasConsistentValue("status"))
+                        if ("OK".equalsIgnoreCase(item.get("status"))) {
 
-                    }else{
-                        assetsProcessErrorAmount++;
-                    }
+                        } else {
+                            assetsProcessErrorAmount++;
+                        }
                 }
-            }else{
+            } else {
                 inbound_items = new ArrayList<>();
             }
 
             mPresenter.executeItemOutboundSave();  // 9
 
-        }  else if (wsSoProcess.equalsIgnoreCase(WS_IO_Outbound_Item_Save.class.getSimpleName())) {
+        } else if (wsSoProcess.equalsIgnoreCase(WS_IO_Outbound_Item_Save.class.getSimpleName())) {
             setWsSoProcess("");
 
             outbound_items = mPresenter.processOutboundItemSaveReturn(mLink, WS_RESULT_TYPE_ASSETS_OUTBOUND_ITEM);
 //            outboundItensOk = mPresenter.countOutboundItemSaveReturnOk(mLink, WS_RESULT_TYPE_ASSETS_OUTBOUND_ITEM);
-            outboundItensTotal=0;
+            outboundItensTotal = 0;
 
             outboundItensTotal = mPresenter.countOutboundItemSaveReturnTotal(mLink, WS_RESULT_TYPE_ASSETS_OUTBOUND_ITEM);
-            if(outbound_items != null) {
+            if (outbound_items != null) {
                 wsResults.addAll(outbound_items);
-                for (HMAux item :outbound_items) {
-                    if(item != null
+                for (HMAux item : outbound_items) {
+                    if (item != null
                             && item.hasConsistentValue("status"))
-                        if( "OK".equalsIgnoreCase(item.get("status"))){
+                        if ("OK".equalsIgnoreCase(item.get("status"))) {
 
-                        }else{
+                        } else {
                             assetsProcessErrorAmount++;
                         }
                 }
-            }else{
+            } else {
                 outbound_items = new ArrayList<>();
             }
             assetsProcessErrorAmount = assetsProcessErrorAmount + outbound_items.size();
@@ -2342,15 +2467,25 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
             if (ticket_items != null && ticket_items.size() > 0) {
                 wsResults.addAll(ticket_items);
-                for (HMAux item :ticket_items) {
-                    if(item != null
+                for (HMAux item : ticket_items) {
+                    if (item != null
                             && item.hasConsistentValue("status"))
-                        if(!"OK".equalsIgnoreCase(item.get("status"))){
-                            isDone  = false;
+                        if (!"OK".equalsIgnoreCase(item.get("status"))) {
+                            isDone = false;
                             ticket_errors++;
                         }
                 }
 
+            }
+
+            if (mPresenter.hasPositionUpdateRequired()) {
+                try {
+                    sendResumeDialog.updateResumeStatus(R.id.act005_send_resume_ticket, isDone, total_tickets_amount - ticket_errors, total_tickets_amount);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                mPresenter.executePositionSave();
+                return;
             }
 
 //            mPresenter.getMenuItensV2(hmAux_Trans);
@@ -2361,24 +2496,39 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            if(sendResumeDialog != null) {
+            if (sendResumeDialog != null) {
+                sendResumeDialog.setBtnOKEnable(true);
+            }
+        } else if (wsSoProcess.equalsIgnoreCase(WsUserPosition.class.getName())) {
+            boolean mLinkBoolean = mLink.equalsIgnoreCase("OK");
+            refreshUiData();
+            progressDialog.dismiss();
+            try {
+                sendResumeDialog.updateResumeStatusWithPosition(mLinkBoolean);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            if (sendResumeDialog != null) {
                 sendResumeDialog.setBtnOKEnable(true);
             }
         } else if (wsSoProcess.equalsIgnoreCase(Act005_Main_Presenter_Impl.SYNC_TICKETS)) {
             progressDialog.dismiss();
-            wsProcess ="";
+            wsProcess = "";
             boolean productOutdate = false;
 
-            if(masterDataSyncFlow){
+            if (mPresenter.hasTripUpdateRequired()) {
+                mPresenter.executeTripDownload();
+            } else if (masterDataSyncFlow) {
                 mPresenter.syncFlow(mPresenter.hasUpdateRequired());
-            }else {
-                if(ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET ,null)){
+            } else {
+                if (ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET, null)) {
                     productOutdate = ToolBox_Inf.hasFormProductOutdate(context);
                 }
                 //
-                if(productOutdate){
+                if (productOutdate) {
                     mPresenter.callWsSyncForTicketsForm();
-                }else{
+                } else {
                     refreshUiData();
                 }
             }
@@ -2387,22 +2537,24 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             setWsSoProcess("");
             setWsProcess("");
             //
-            if(mPresenter.hasTicketSyncRequired()){
+            if (mPresenter.hasTicketSyncRequired()) {
                 mPresenter.executeWSTicketDownload();
-            }else{
-                if(masterDataSyncFlow){
+            } else if (mPresenter.hasTripUpdateRequired()) {
+                mPresenter.executeTripDownload();
+            } else {
+                if (masterDataSyncFlow) {
                     mPresenter.syncFlow(mPresenter.hasUpdateRequired());
-                }else{
+                } else {
                     refreshUiData();
                 }
             }
-        }  else if (wsSoProcess.equalsIgnoreCase(SYNC_FOR_TICKETS_FORM)) {
+        } else if (wsSoProcess.equalsIgnoreCase(SYNC_FOR_TICKETS_FORM)) {
             progressDialog.dismiss();
             setWsSoProcess("");
             setWsProcess("");
             refreshUiData();
-        }  else {
-            if(sendResumeDialog != null) {
+        } else {
+            if (sendResumeDialog != null) {
                 sendResumeDialog.setBtnOKEnable(true);
             }
             setWsSoProcess("");
@@ -2411,6 +2563,90 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             progressDialog.dismiss();
         }
     }
+
+    private void handleTripServices(String mLink, Boolean isError) {
+        invalidateOptionsMenu();
+        TripServiceCallbackManager manager = new TripServiceCallbackManager(
+                fragmentNav,
+                wsProcess,
+                mLink,
+                () -> {
+                    setTripFragment();
+                    return null;
+                },
+                () -> {
+                    unregisterGpsReceiver();
+                    onSelectTrip();
+                    return null;
+                },
+                () -> {
+                    if (mPresenter.hasSerialStructureSyncRequiredCloudRule() && !masterDataSyncFlow) {
+                        mPresenter.executeSerialStructureUpdate();
+                    } else if (mPresenter.hasSoSyncRequiredCloudRule()) {
+                        mPresenter.executeWSSoSync();
+                    } else if (mPresenter.hasTicketSyncRequired()) {
+                        mPresenter.executeWSTicketDownload();
+                    } else if (mPresenter.hasTripUpdateRequired()) {
+                        mPresenter.executeTripDownload();
+                    } else {
+                        if (masterDataSyncFlow) {
+                            mPresenter.syncFlow(mPresenter.hasUpdateRequired());
+                        } else {
+                            refreshUiData();
+                        }
+                    }
+                    return null;
+                }
+        );
+
+        if (isError) manager.tripServiceFailed();
+        else manager.tripServiceSuccess();
+
+    }
+
+
+    public void registerGpsReceiver() {
+        if (gpsStateReceiver != null) return;
+        gpsStateReceiver = new GpsStateReceiver();
+        IntentFilter filter = new IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION);
+        context.registerReceiver(gpsStateReceiver, filter);
+
+        gpsStateReceiver.setOnGpsState(isGpsEnabled -> {
+            boolean isTripOverNight = (getTripBaseFragment() != null && getTripBaseFragment().isTripOverNightStatus());
+
+            if(ContextKt.hasLocationPermission(context) && !isTripOverNight) {
+                checkGpsStateReceiver(isGpsEnabled, false);
+            }
+            return null;
+        });
+    }
+
+    private void checkGpsStateReceiver(boolean isGpsEnabled, boolean isFirstFragment) {
+        boolean isGpsFragment = (getTripBaseFragment() != null && getTripBaseFragment().isGPSFragment());
+        boolean isTripOverNight = (getTripBaseFragment() != null && getTripBaseFragment().isTripOverNightStatus());
+        if (isGpsEnabled || isTripOverNight) {
+            if (isFirstFragment || isGpsFragment){
+                setTripFragment();
+            }
+        } else {
+            if(getTripBaseFragment() != null) {
+                getTripBaseFragment().dismissDialog(true);
+            }
+            navigateToFragment(true, R.id.action_frgMainHome_to_onGpsFragment);
+        }
+    }
+
+    @Override
+    public boolean isEnabledGps() {
+        return ContextKt.isGpsEnabled(context);
+    }
+
+    @Override
+    public void unregisterGpsReceiver() {
+        unregisterReceiver(gpsStateReceiver);
+        gpsStateReceiver = null;
+    }
+
 
     private void refreshUiData() {
         loadTranslation();
@@ -2424,30 +2660,30 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     }
 
     private void setAssetsResume() {
-        int movePlannedLenght=0;
+        int movePlannedLenght = 0;
         try {
             movePlannedLenght = getVectorStringLength(move_planned);
         } catch (Exception e) {
             e.printStackTrace();
-            movePlannedLenght=0;
+            movePlannedLenght = 0;
         }
 
-        int moveBlindLenght=0;
+        int moveBlindLenght = 0;
         try {
             moveBlindLenght = getVectorStringLength(blinds);
         } catch (Exception e) {
             e.printStackTrace();
-            moveBlindLenght=0;
+            moveBlindLenght = 0;
         }
 
         int totalAmount = movePlannedLenght + moveBlindLenght + inboundItensTotal + outboundItensTotal;
-        if(assetsProcessErrorAmount >0){
+        if (assetsProcessErrorAmount > 0) {
             try {
                 sendResumeDialog.updateResumeStatus(R.id.act005_send_resume_assets, false, totalAmount - assetsProcessErrorAmount, totalAmount);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }else{
+        } else {
             try {
                 sendResumeDialog.updateResumeStatus(R.id.act005_send_resume_assets, true, totalAmount, totalAmount);
             } catch (Exception e) {
@@ -2456,8 +2692,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         }
     }
 
-    private int getVectorStringLength(String[] moves) throws Exception{
-        if(moves.length > 0 && !moves[0].isEmpty() ){
+    private int getVectorStringLength(String[] moves) throws Exception {
+        if (moves.length > 0 && !moves[0].isEmpty()) {
             return moves.length;
         }
         return 0;
@@ -2466,7 +2702,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     @Override
     public void addWsResults(ArrayList<HMAux> auxResults) {
         wsResults.addAll(
-            auxResults
+                auxResults
         );
     }
 
@@ -2545,11 +2781,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                     break;
                 case ConstantBaseApp.SYS_STATUS_SCHEDULE:
                     hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_schedule_data"));
-                    hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, item.get("final_status")+"\n"+item.get("status"));
+                    hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, item.get("final_status") + "\n" + item.get("status"));
                     break;
                 case TSave_Rec.Error_Process.ERROR_TYPE_TICKET:
                     hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_ticket"));
-                    hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, item.get("final_status")+"\n"+item.get("status"));
+                    hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, item.get("final_status") + "\n" + item.get("status"));
                     break;
                 case WS_RESULT_TYPE_AP:
                     hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_form_ap"));
@@ -2575,6 +2811,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                     break;
                 case WS_RESULT_TYPE_TICKET:
                     hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_ticket"));
+                    break;
+                case WS_RESULT_TYPE_POSITION:
+                    hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_fs_position"));
                     break;
                 case WS_RESULT_TYPE_GENERAL:
                     hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("alert_ws_general_error_ttl"));
@@ -2611,14 +2850,16 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                     //
                 }
                 //
-                if(mPresenter.hasSerialStructureSyncRequiredCloudRule() && !masterDataSyncFlow) {
+                if (mPresenter.hasSerialStructureSyncRequiredCloudRule() && !masterDataSyncFlow) {
                     mPresenter.executeSerialStructureUpdate();
-                } else if(mPresenter.hasSoSyncRequiredCloudRule()) {
+                } else if (mPresenter.hasSoSyncRequiredCloudRule()) {
                     mPresenter.executeWSSoSync();
-                } else if(mPresenter.hasTicketSyncRequired()) {
+                } else if (mPresenter.hasTicketSyncRequired()) {
                     mPresenter.executeWSTicketDownload();
-                }else{
-                    if(masterDataSyncFlow){
+                } else if (mPresenter.hasTripUpdateRequired()) {
+                    mPresenter.executeTripDownload();
+                } else {
+                    if (masterDataSyncFlow) {
                         ToolBox_Inf.hasFormProductOutdate(context);
                         executeSync();
                     }
@@ -2630,7 +2871,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     @Override
     protected void processError_http() {
         super.processError_http();
-        if(sendResumeDialog != null) {
+        if (sendResumeDialog != null) {
             sendResumeDialog.dismiss();
         }
     }
@@ -2639,7 +2880,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     @Override
     protected void processError_Resume() {
         super.processError_Resume();
-        if(sendResumeDialog != null) {
+        if (sendResumeDialog != null) {
             sendResumeDialog.dismiss();
         }
     }
@@ -2659,15 +2900,25 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
      */
     @Override
     protected void processError_1(String mLink, String mRequired) {
-        if(sendResumeDialog != null) {
+        if (sendResumeDialog != null) {
             sendResumeDialog.dismiss();
         }
-        if(SYNC_SOS.equalsIgnoreCase(wsProcess)){
+        if (SYNC_SOS.equalsIgnoreCase(wsProcess)) {
             progressDialog.dismiss();
         }
-        setSyncAfterSave(false);
+        if (wsProcess.startsWith(TripBaseFragment.WS_TRIP_PREFIX)) {
+            progressDialog.dismiss();
+            handleTripServices(mLink, true);
+        }
+        if (wsProcess.equals(Act005_Main.WS_PROCESS_LOGOUT)) {
+            progressDialog.dismiss();
+            setFragments();
+        } else {
+
+            setSyncAfterSave(false);
 //        mPresenter.getMenuItensV2(hmAux_Trans);
-        refreshUiData();
+            refreshUiData();
+        }
 //        if (wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())) {
 //            setRes(WS_RESULT_TYPE_SERIAL,hmAux_Trans.get("lbl_serial_data"), hmAux_Trans.get("alert_ws_serial_error_msg"), "");
 //            setSyncAfterSave(false);
@@ -2714,13 +2965,19 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     @Override
     protected void processCustom_error(String mLink, String mRequired) {
         super.processCustom_error(mLink, mRequired);
-        if(sendResumeDialog != null) {
+        if (sendResumeDialog != null) {
             sendResumeDialog.dismiss();
         }
         if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL)) {
             processError_1(mLink, mRequired);
         } else if (wsProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SYNC)) {
             changeCustomer();
+        } else if (wsProcess.contains(WS_TRIP_PREFIX)) {
+            progressDialog.dismiss();
+            handleTripServices(mLink, true);
+        } else if (wsProcess.equals(Act005_Main.WS_PROCESS_LOGOUT)) {
+            progressDialog.dismiss();
+            setFragments();
         } else {
             progressDialog.dismiss();
         }
@@ -2766,6 +3023,27 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 //        } else {
 //            progressDialog.dismiss();
 //        }
+    }
+
+    private TripHomeFragment getTripHomeFragment() {
+        if (fragmentNav.getChildFragmentManager().getFragments().get(0) instanceof TripHomeFragment) {
+            return (TripHomeFragment) fragmentNav.getChildFragmentManager().getFragments().get(0);
+        }
+        return null;
+    }
+    private TripOverNightFragment getTripOverNightFragment() {
+        if (fragmentNav.getChildFragmentManager().getFragments().get(0) instanceof TripOverNightFragment) {
+            return (TripOverNightFragment) fragmentNav.getChildFragmentManager().getFragments().get(0);
+        }
+        return null;
+    }
+
+    private TripBaseFragment getTripBaseFragment() {
+        boolean isEmptyList = fragmentNav.getChildFragmentManager().getFragments().isEmpty();
+        if (!isEmptyList && fragmentNav.getChildFragmentManager().getFragments().get(0) instanceof TripBaseFragment) {
+            return (TripBaseFragment) fragmentNav.getChildFragmentManager().getFragments().get(0);
+        }
+        return null;
     }
 
     private void showSuccessDialog() {
@@ -2837,10 +3115,51 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
     private void setFragments() {
         if (mPresenter.hasSOProfile()) {
-            initAltFragment();
+            NavHostFragment.findNavController(fragmentNav).navigate(R.id.action_frgMainHome_to_frgMainHomeAlt);
         } else {
-            initTagFragment();
+            if (mPresenter.isFieldServiceModeAble()) {
+                clearMyActionSitePref();
+                if (mPresenter.hasTripInProgress()) {
+                    boolean isGpsEnabled = ContextKt.isGpsEnabled(context);
+                    checkGpsStateReceiver(isGpsEnabled && ContextKt.hasLocationPermission(context), true);
+                    registerGpsReceiver();
+                } else {
+                    setTripFragment();
+                }
+            }
         }
+    }
+
+    private void navigateToFragment(boolean popBackStackFrgMainHome, int fragmentId) {
+        if (popBackStackFrgMainHome) {
+            NavHostFragment.findNavController(fragmentNav).popBackStack(R.id.frgMainHome, false);
+        }
+        NavHostFragment.findNavController(fragmentNav).navigate(fragmentId);
+    }
+
+    private void clearMyActionSitePref() {
+        SerialSiteInventoryUseCase serialSiteInventoryUseCase = new SerialSiteInventoryUseCase.Companion.SiteInventoryUseCaseFactory(context).savePreferenceAndDeleteFileUseCase();
+        serialSiteInventoryUseCase.getDeleteFile().invoke();
+    }
+
+    private void setTripFragment() {
+        Integer initialTripFrag = getInitialTripFrag();
+        if (initialTripFrag != null) {
+            ToolBox_Inf.schedule10MinutesLocationAvailabilityNotification(context);
+            NavHostFragment.findNavController(fragmentNav).popBackStack(R.id.frgMainHome, false);
+            NavHostFragment.findNavController(fragmentNav).navigate(initialTripFrag);
+        } else {
+            if (mPresenter.isFieldServiceModeOnly()) {
+                NavHostFragment.findNavController(fragmentNav).navigate(R.id.action_frgMainHome_to_homeTripFragment);
+            }
+        }
+    }
+
+    @Nullable
+    private Integer getInitialTripFrag() {
+        TripFragmentManager tripFragmentManager = new TripFragmentManager(context, new FSTripDao(context));
+        Integer initialTripFrag = tripFragmentManager.getInitialTripFrag();
+        return initialTripFrag;
     }
 
     /**
@@ -2848,7 +3167,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
      * Metodo que chama atualização das opções do drawer
      */
     private void updateDrawerInfo() {
-        if(fragOpc != null){
+        if (fragOpc != null) {
             fragOpc.setHmAux_Trans(hmAux_Trans);
             fragOpc.revalidateOptionSetup();
         }
@@ -2878,9 +3197,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             BARRIONUEVO  13-03-2020
             Instancia Dialog de resumo dos servicos.
          */
-        if( sendResumeDialog ==null) {
+        if (sendResumeDialog == null) {
             sendResumeDialog = getSendResumeDialog();
-        }else{
+        } else {
             sendResumeDialog.cancel();
             sendResumeDialog = getSendResumeDialog();
         }
@@ -2895,10 +3214,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
     @NonNull
     private SendResumeDialog getSendResumeDialog() {
-        return new SendResumeDialog(context, hmAux_Trans, new SendResumeDialog.OnDialogClickListener() {
+        return new SendResumeDialog(context, hmAux_Trans, mPresenter.hasPositionUpdateRequired(), new SendResumeDialog.OnDialogClickListener() {
             @Override
             public void onConfirm() {
-                if(sendResumeDialog != null) {
+                if (sendResumeDialog != null) {
                     sendResumeDialog.dismiss();
                 }
                 progressDialog.dismiss();
@@ -2908,16 +3227,18 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 if (wsResults.size() > 0) {
                     showResults(wsResults);
                 } else {
-                    if(masterDataSyncFlow){
+                    if (masterDataSyncFlow) {
                         ToolBox_Inf.hasFormProductOutdate(context);
                         executeSync();
-                    }else {
-                        if(mPresenter.hasSerialStructureSyncRequiredCloudRule()) {
+                    } else {
+                        if (mPresenter.hasSerialStructureSyncRequiredCloudRule()) {
                             mPresenter.executeSerialStructureUpdate();
-                        } else if(mPresenter.hasSoSyncRequiredCloudRule()) {
+                        } else if (mPresenter.hasSoSyncRequiredCloudRule()) {
                             mPresenter.executeWSSoSync();
-                        } else if(mPresenter.hasTicketSyncRequired()) {
+                        } else if (mPresenter.hasTicketSyncRequired()) {
                             mPresenter.executeWSTicketDownload();
+                        } else if (mPresenter.hasTripUpdateRequired()) {
+                            mPresenter.executeTripDownload();
                         }
                     }
                 }
@@ -2927,25 +3248,25 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     }
 
     /**
-     *       BARRIONUEVO 11-02-2020
-     *
-     *       Correção de verificação de n-forms com localização pendente no
-     *       fluxo de sincronização do app, evitando que o usuario atualize o
-     *       app e perca dados.
+     * BARRIONUEVO 11-02-2020
+     * <p>
+     * Correção de verificação de n-forms com localização pendente no
+     * fluxo de sincronização do app, evitando que o usuario atualize o
+     * app e perca dados.
      */
     private void executeSync() {
 
         boolean productOutdate = false;
-        if(ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET ,null)){
+        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET, null)) {
             productOutdate = ToolBox_Inf.hasFormProductOutdate(context);
         }
 
         if (syncAfterSave) {
             setSyncAfterSave(false);
-            if(ToolBox_Inf.getLocationPendencies(context) == 0) {
+            if (ToolBox_Inf.getLocationPendencies(context) == 0) {
                 //
                 mPresenter.accessMenuItem(Act005_Main.MENU_ID_SYNC_DATA, 0);
-            }else{
+            } else {
                 ToolBox.alertMSG(
                         context,
                         hmAux_Trans.get("alert_unsent_gps_nform_ttl"),
@@ -2954,8 +3275,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                         0
                 );
             }
-        }else{
-            if(productOutdate){
+        } else {
+            if (productOutdate) {
                 mPresenter.callWsSyncForTicketsForm();
             }
         }
@@ -2963,7 +3284,13 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
     @Override
     public void onBackPressed() {
-        closeApp();
+
+        if (mPresenter.hasTripInProgress()
+                && (fragmentNav.getChildFragmentManager().getFragments().get(0) instanceof TripExtractFragment)) {
+            onSelectTrip();
+        } else {
+            closeApp();
+        }
     }
 
     @Override
@@ -2980,8 +3307,16 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         boolean hasTicketSyncRequiredCloudRule = mPresenter.hasTicketSyncRequiredCloudRule();
         boolean hasSoSyncRequiredCloudRule = mPresenter.hasSoSyncRequiredCloudRule();
         boolean hasSerialStructureSyncRequiredCloudRule = mPresenter.hasSerialStructureSyncRequiredCloudRule();
+        boolean hasTripUpdateRequired = mPresenter.hasTripUpdateRequired();
         //
-        Drawable wrappedDrawable = setSyncIcon(iconColor, hasUpdateRequired, hasTicketSyncRequiredCloudRule, hasSoSyncRequiredCloudRule, hasSerialStructureSyncRequiredCloudRule);
+        Drawable wrappedDrawable = setSyncIcon(
+                iconColor,
+                hasUpdateRequired,
+                hasTicketSyncRequiredCloudRule,
+                hasSoSyncRequiredCloudRule,
+                hasSerialStructureSyncRequiredCloudRule,
+                hasTripUpdateRequired
+        );
         //
         menu.add(0, TOOLBAR_SYNC_DATA_STATUS, Menu.FIRST + 0, hmAux_Trans.get("lbl_sync_data"));
         menu.findItem(TOOLBAR_SYNC_DATA_STATUS).setIcon(wrappedDrawable);
@@ -2989,9 +3324,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         //
         Drawable wrappedSyncIcon = DrawableCompat.wrap(context.getDrawable(R.drawable.ic_sync_black_24dp));
         if (wrappedSyncIcon != null) {
-            DrawableCompat.setTint(wrappedSyncIcon.mutate(), ContextCompat.getColor(context,  android.R.color.white));
-            if(mPresenter.hasMasterDataSyncRequired()){
-                DrawableCompat.setTint(wrappedSyncIcon.mutate(), ContextCompat.getColor(context,  android.R.color.holo_red_light));
+            DrawableCompat.setTint(wrappedSyncIcon.mutate(), ContextCompat.getColor(context, android.R.color.white));
+            if (mPresenter.hasMasterDataSyncRequired()) {
+                DrawableCompat.setTint(wrappedSyncIcon.mutate(), ContextCompat.getColor(context, android.R.color.holo_red_light));
             }
         }
 
@@ -3007,25 +3342,33 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     }
 
     @NotNull
-    private Drawable setSyncIcon(int iconColor, boolean hasUpdateRequired, boolean hasTicketSyncRequired, boolean hasSoSyncRequired, boolean hasSerialStructureSyncRequiredCloudRule) {
+    private Drawable setSyncIcon(
+            int iconColor,
+            boolean hasUpdateRequired,
+            boolean hasTicketSyncRequired,
+            boolean hasSoSyncRequired,
+            boolean hasSerialStructureSyncRequiredCloudRule,
+            boolean hasTripSyncRequired
+    ) {
         int icon;
-        if(hasUpdateRequired && (hasTicketSyncRequired || hasSoSyncRequired || hasSerialStructureSyncRequiredCloudRule) ){
+        if (hasUpdateRequired && (hasTripSyncRequired || hasTicketSyncRequired || hasSoSyncRequired || hasSerialStructureSyncRequiredCloudRule)) {
             icon = R.drawable.ic_sync_main_menu_data;
-        }else if(hasUpdateRequired){
+        } else if (hasUpdateRequired) {
             icon = R.drawable.ic_cloud_upload;
             iconColor = R.color.namoa_cancel_red;
-        }else if(hasTicketSyncRequired
+        } else if (hasTicketSyncRequired
                 || hasSoSyncRequired
-                || hasSerialStructureSyncRequiredCloudRule){
+                || hasSerialStructureSyncRequiredCloudRule
+                || hasTripSyncRequired) {
             icon = R.drawable.ic_baseline_cloud_download_24;
             iconColor = R.color.custom_yellow_sync;
-        }else{
+        } else {
             iconColor = R.color.namoa_color_pipeline_origin_icon;
             icon = R.drawable.ic_baseline_cloud_done_24;
         }
         //
         Drawable wrappedDrawable = DrawableCompat.wrap(context.getDrawable(icon));
-        if (wrappedDrawable != null && iconColor>0) {
+        if (wrappedDrawable != null && iconColor > 0) {
             DrawableCompat.setTint(wrappedDrawable.mutate(), ContextCompat.getColor(context, iconColor));
         }
         return wrappedDrawable;
@@ -3047,6 +3390,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         boolean hasTicketSyncRequired = mPresenter.hasTicketSyncRequired();
         boolean hasSoSyncRequiredCloudRule = mPresenter.hasSoSyncRequiredCloudRule();
         boolean hasSerialStructureSyncRequiredCloudRule = mPresenter.hasSerialStructureSyncRequiredCloudRule();
+        boolean hasTripUpdateRequired = mPresenter.hasTripUpdateRequired();
         switch (id) {
             //TODO REVISAR AQUI, POIS FOI MODIFICADO APENAS PARA SYNC GAMBIS
             case TOOLBAR_NAMOA_LOGO:
@@ -3062,11 +3406,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 //mPresenter.accessMenuItem(MENU_ID_SYNC_DATA, 0);
                                 masterDataSyncFlow = true;
-                                if (hasSerialStructureSyncRequiredCloudRule){
+                                if (hasSerialStructureSyncRequiredCloudRule) {
                                     mPresenter.executeSerialStructureUpdate();
-                                } else if (hasSoSyncRequiredCloudRule){
+                                } else if (hasSoSyncRequiredCloudRule) {
                                     mPresenter.executeWSSoSync();
-                                } else if(hasTicketSyncRequired){
+                                } else if (hasTicketSyncRequired) {
                                     mPresenter.executeWSTicketDownload();
                                 } else {
                                     mPresenter.syncFlow(mPresenter.hasUpdateRequired());
@@ -3077,7 +3421,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 );
                 break;
             case TOOLBAR_SYNC_DATA_STATUS:
-                sendUpdateRequiredData(hasUpdateRequired, hasTicketSyncRequired, hasSoSyncRequiredCloudRule, hasSerialStructureSyncRequiredCloudRule);
+                sendUpdateRequiredData(hasUpdateRequired, hasTicketSyncRequired, hasSoSyncRequiredCloudRule, hasSerialStructureSyncRequiredCloudRule, hasTripUpdateRequired);
                 break;
             default:
                 return true;
@@ -3096,15 +3440,17 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         return true;
     }
 
-    private void sendUpdateRequiredData(boolean hasUpdateRequired, boolean hasTicketSyncRequired, boolean hasSoSyncRequiredCloudRule, boolean hasSerialStructureSyncRequiredCloudRule) {
+    private void sendUpdateRequiredData(boolean hasUpdateRequired, boolean hasTicketSyncRequired, boolean hasSoSyncRequiredCloudRule, boolean hasSerialStructureSyncRequiredCloudRule, boolean hasTripUpdateRequired) {
         masterDataSyncFlow = false;
-        if (!hasUpdateRequired && (hasSoSyncRequiredCloudRule || hasTicketSyncRequired || hasSerialStructureSyncRequiredCloudRule)) {
+        if (!hasUpdateRequired && (hasTripUpdateRequired || hasSoSyncRequiredCloudRule || hasTicketSyncRequired || hasSerialStructureSyncRequiredCloudRule)) {
             if (hasSerialStructureSyncRequiredCloudRule) {
                 mPresenter.executeSerialStructureUpdate();
             } else if (hasSoSyncRequiredCloudRule) {
                 mPresenter.executeWSSoSync();
-            } else {
+            } else if (hasTicketSyncRequired) {
                 mPresenter.executeWSTicketDownload();
+            } else {
+                mPresenter.executeTripDownload();
             }
         } else if (hasUpdateRequired) {
             if (ToolBox_Con.isOnline(context)) {
@@ -3132,9 +3478,24 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         //Aparentemente, serve apenas para quando o usuario, estando com a act005,
         //abre uma noticação do app e é enviado para act019
         //Rever isso no momento propicio
-//        mPresenter.getMenuItensV2(hmAux_Trans);
-
+        //--
+        if (mPresenter.isFieldServiceModeAble() && mPresenter.hasTripInProgress()) {
+            boolean isGpsEnabled = ContextKt.isGpsEnabled(context);
+            registerGpsReceiver();
+            checkGpsStateReceiver(isGpsEnabled && ContextKt.hasLocationPermission(context), false);
+        }
     }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        try {
+            unregisterGpsReceiver();
+        } catch (Exception e) {
+        }
+    }
+
 
     @Override
     protected void processCloseAPP(String mLink, String mRequired) {
@@ -3158,7 +3519,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     public void onSelectMenuTagItem(@NotNull MainTagMenu item) {
         if (ToolBox_Inf.isLocalDatetimeOk(context)) {
             callAct083(item);
-        }else{
+        } else {
             handleInvalidLocalDatetime();
         }
     }
@@ -3167,7 +3528,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     public void onSelectCalendar() {
         if (ToolBox_Inf.isLocalDatetimeOk(context)) {
             callAct016(context);
-        }else{
+        } else {
             handleInvalidLocalDatetime();
         }
     }
@@ -3176,7 +3537,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     public void onSelectSearch() {
         if (ToolBox_Inf.isLocalDatetimeOk(context)) {
             callAct068(context);
-        }else{
+        } else {
             handleInvalidLocalDatetime();
         }
     }
@@ -3185,7 +3546,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     public void onSelectMessenger() {
         if (ToolBox_Inf.isLocalDatetimeOk(context)) {
             callAct034(context);
-        }else{
+        } else {
             handleInvalidLocalDatetime();
         }
     }
@@ -3194,7 +3555,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     public void onSelectFABAssetLocal() {
         if (ToolBox_Inf.isLocalDatetimeOk(context)) {
             callAct006(context);
-        }else{
+        } else {
             handleInvalidLocalDatetime();
         }
     }
@@ -3211,30 +3572,30 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         int tagListItemMainUserCount = 0;
         int tagListItemGroupCount = 0;
         int tagListItemOtherCount = 0;
-        for(HMAux aux: queryResult){
+        for (HMAux aux : queryResult) {
             //
-            int updateRequired = aux.hasConsistentValue("update_required")? Integer.parseInt(aux.get("update_required")) : 0;
-            int syncRequired   = aux.hasConsistentValue("sync_required")? Integer.parseInt(aux.get("sync_required")) : 0;
+            int updateRequired = aux.hasConsistentValue("update_required") ? Integer.parseInt(aux.get("update_required")) : 0;
+            int syncRequired = aux.hasConsistentValue("sync_required") ? Integer.parseInt(aux.get("sync_required")) : 0;
             //
-            tagListItemCount += aux.hasConsistentValue("qty")? Integer.parseInt(aux.get("qty")) : 0;
-            tagListItemMainUserCount += aux.hasConsistentValue("qty_main_user")? Integer.parseInt(aux.get("qty_main_user")) : 0;
-            tagListItemGroupCount += aux.hasConsistentValue("qty_group")? Integer.parseInt(aux.get("qty_group")) : 0;
-            tagListItemOtherCount += aux.hasConsistentValue("qty_other")? Integer.parseInt(aux.get("qty_other")) : 0;
-            mainTagMenus.add( new MainTagMenu(
-                            aux.hasConsistentValue("tag_operational_code")? Integer.parseInt(aux.get("tag_operational_code")) : 0,
-                            aux.hasConsistentValue("tag_operational_code")? aux.get("tag_operational_desc") : "null",
-                            aux.hasConsistentValue("qty")? Integer.parseInt(aux.get("qty")) : 0,
-                            aux.hasConsistentValue("qty_main_user")? Integer.parseInt(aux.get("qty_main_user")) : 0,
-                            aux.hasConsistentValue("qty_group")? Integer.parseInt(aux.get("qty_group")) : 0,
-                            aux.hasConsistentValue("qty_other")? Integer.parseInt(aux.get("qty_other")) : 0,
-                            aux.hasConsistentValue("in_processing")? Integer.parseInt(aux.get("in_processing")) : 0,
+            tagListItemCount += aux.hasConsistentValue("qty") ? Integer.parseInt(aux.get("qty")) : 0;
+            tagListItemMainUserCount += aux.hasConsistentValue("qty_main_user") ? Integer.parseInt(aux.get("qty_main_user")) : 0;
+            tagListItemGroupCount += aux.hasConsistentValue("qty_group") ? Integer.parseInt(aux.get("qty_group")) : 0;
+            tagListItemOtherCount += aux.hasConsistentValue("qty_other") ? Integer.parseInt(aux.get("qty_other")) : 0;
+            mainTagMenus.add(new MainTagMenu(
+                            aux.hasConsistentValue("tag_operational_code") ? Integer.parseInt(aux.get("tag_operational_code")) : 0,
+                            aux.hasConsistentValue("tag_operational_code") ? aux.get("tag_operational_desc") : "null",
+                            aux.hasConsistentValue("qty") ? Integer.parseInt(aux.get("qty")) : 0,
+                            aux.hasConsistentValue("qty_main_user") ? Integer.parseInt(aux.get("qty_main_user")) : 0,
+                            aux.hasConsistentValue("qty_group") ? Integer.parseInt(aux.get("qty_group")) : 0,
+                            aux.hasConsistentValue("qty_other") ? Integer.parseInt(aux.get("qty_other")) : 0,
+                            aux.hasConsistentValue("in_processing") ? Integer.parseInt(aux.get("in_processing")) : 0,
                             updateRequired,
                             syncRequired
                     )
             );
         }
         //
-        if(mainTagMenus.size() > 1 ) {
+        if (mainTagMenus.size() > 1) {
             mainTagMenus.add(new MainTagMenu(0,
                     "",
                     tagListItemCount,
@@ -3253,7 +3614,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     public void onSelectAsset() {
         if (ToolBox_Inf.isLocalDatetimeOk(context)) {
             callAct051(context);
-        }else{
+        } else {
             handleInvalidLocalDatetime();
         }
     }
@@ -3271,7 +3632,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                     0,
                     0,
                     0));
-        }else{
+        } else {
             handleInvalidLocalDatetime();
         }
     }
@@ -3280,7 +3641,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     public void onSelectTagsBySerialSearch() {
         if (ToolBox_Inf.isLocalDatetimeOk(context)) {
             callAct006(context);
-        }else{
+        } else {
             handleInvalidLocalDatetime();
         }
     }
@@ -3290,7 +3651,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
         if (ToolBox_Inf.isLocalDatetimeOk(context)) {
             callAct026(context);
-        }else{
+        } else {
             handleInvalidLocalDatetime();
         }
     }
@@ -3299,7 +3660,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     public void onSelectOSVinSearch() {
         if (ToolBox_Inf.isLocalDatetimeOk(context)) {
             callAct021(context);
-        }else{
+        } else {
             handleInvalidLocalDatetime();
         }
     }
@@ -3308,7 +3669,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     public void onSelectOSExpress() {
         if (ToolBox_Inf.isLocalDatetimeOk(context)) {
             callAct040(context);
-        }else{
+        } else {
             handleInvalidLocalDatetime();
         }
 
@@ -3318,7 +3679,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     public void onSelectOSNext() {
         if (ToolBox_Inf.isLocalDatetimeOk(context)) {
             callAct047(context);
-        }else{
+        } else {
             handleInvalidLocalDatetime();
         }
 
@@ -3334,9 +3695,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         startActivity(mIntent);
         finish();
     }
+
     /**
-     *  BARRIONUEVO 23-05-2021
-     *  Metodo que aproveita a variavel de tradução.
+     * BARRIONUEVO 23-05-2021
+     * Metodo que aproveita a variavel de tradução.
      */
     @NotNull
     @Override
@@ -3347,11 +3709,119 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     /**
      * BARRIONUEVO 02-06-2021
      * Metodo que calcula mensagens do chat para fragmento de lista de acoes.
+     *
      * @return
      */
     @Override
     public int getChatBadgeQty() {
         return mPresenter.getChatBadgeQty();
+    }
+
+    @Override
+    public void onSelectTrip() {
+        Integer initialTripFrag = getInitialTripFrag();
+        if (initialTripFrag == null) {
+            NavHostFragment.findNavController(fragmentNav).navigate(R.id.action_frgMainHome_to_homeTripFragment);
+        } else {
+            setTripFragment();
+        }
+    }
+
+    @Override
+    public void onSelectExtract() {
+        onSelectHome();
+        NavHostFragment.findNavController(fragmentNav).navigate(R.id.action_frgMainHome_to_extractFragment);
+    }
+
+    @Override
+    public void onSelectHome() {
+        NavHostFragment.findNavController(fragmentNav).popBackStack();
+    }
+
+    @Override
+    public boolean showHomeBtn() {
+        return !mPresenter.isFieldServiceModeOnly() && !mPresenter.hasTripInProgress();
+    }
+
+    @Override
+    public void callTripWS(@NonNull String wsProcess, String ttl, String msg) {
+        this.wsProcess = wsProcess;
+        enableProgressDialog(
+                ttl,
+                msg,
+                hmAux_Trans.get("sys_alert_btn_cancel"),
+                hmAux_Trans.get("sys_alert_btn_ok")
+        );
+    }
+
+    @Override
+    public void checkGPSPermission() {
+        retryGetLocation();
+    }
+
+    @Override
+    public void addDestination() {
+        callAct094();
+    }
+
+    private void callAct094() {
+        Intent mIntent = new Intent(context, Act094_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callTripActions(MyActionFilterParam actionFilterParam, SiteInventory siteInventory) {
+        //
+        SerialSiteInventoryUseCase serialSiteInventoryUseCase = new SerialSiteInventoryUseCase.Companion.SiteInventoryUseCaseFactory(context).savePreferenceAndDeleteFileUseCase();
+        serialSiteInventoryUseCase.getSavePreference().invoke(siteInventory);
+        //
+        MyActionsFilterParamPreferences sharedPreferences = new MyActionsFilterParamPreferences(
+                getSharedPreferences("act083_filter", MODE_PRIVATE)
+        );
+        sharedPreferences.clear();
+        sharedPreferences.write(MyActionFilterParam.Companion.toActionFilter(actionFilterParam));
+        //
+        Intent mIntent = new Intent(context, Act083_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        Bundle bundle = new Bundle();
+        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, Constant.ACT005);
+        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, actionFilterParam);
+        //
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callSerialSearch() {
+        onSelectTagsBySerialSearch();
+    }
+
+    @Override
+    public void updateFooter() {
+        HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
+        mSite_Value = mFooter.get(Constant.FOOTER_SITE);
+        mOperation_Value = mFooter.get(Constant.FOOTER_OPERATION);
+        setFooter();
+    }
+
+    @Override
+    public void callActivityTicket(@NonNull Bundle bundle) {
+        Intent intent = new Intent(this, Act070_Main.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public void callActivityOs(@NonNull Bundle bundle) {
+        Intent intent = new Intent(this, Act011_Main.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
+        finish();
     }
 
     private class FCMReceiver extends BroadcastReceiver {
@@ -3360,13 +3830,18 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 //            mPresenter.getMenuItensV2(hmAux_Trans);
 
             Bundle bundle = intent.getExtras();
-            if(bundle != null){
+            if (bundle != null) {
                 String fcmTitle = (String) bundle.get(ConstantBaseApp.SW_TYPE);
-                if(fcmTitle != null) {
+                if (fcmTitle != null) {
 //                    Log.d("FCM", "fcmTitle: " + fcmTitle);
                     if (fcmTitle.equals(FCM_MODULE_SYNC)) {
                         invalidateOptionsMenu();
-                    } else if (fcmTitle.equals(FCM_MODULE_TICKET) || fcmTitle.equals(FCM_ACTION_SM_SO_UPDATE) || fcmTitle.equals(ConstantBaseApp.FCM_MODULE_FORM_AP)|| fcmTitle.equals(FCM_ACTION_TK_TICKET_UPDATE)) {
+                    } else if (fcmTitle.equals(FCM_MODULE_TICKET) ||
+                            fcmTitle.equals(FCM_ACTION_SM_SO_UPDATE) ||
+                            fcmTitle.equals(ConstantBaseApp.FCM_MODULE_FORM_AP) ||
+                            fcmTitle.equals(FCM_ACTION_TK_TICKET_UPDATE) ||
+                            fcmTitle.equals(WsUserPosition.Companion.getUPDATE_CLOUD())
+                    ) {
                         invalidateOptionsMenu();
                         refreshUiData();
                     }
@@ -3396,24 +3871,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 case Constant.CHAT_BR_TYPE_MSG:
                 case Constant.CHAT_EVENT_C_MESSAGE_FCM:
                     //Refresh apos receber mensagem de chat.
-                    if(mPresenter.hasSOProfile()){
-                        FrgMainHomeAlt currentFragment = (FrgMainHomeAlt) fm.findFragmentById(R.id.act005_frg_placeholder);
-                        if(currentFragment != null) {
-                            currentFragment.refreshChatBadge();
-                        }
-                    }else{
-                        FrgMainHome currentFragment = (FrgMainHome) fm.findFragmentById(R.id.act005_frg_placeholder);
-                        int chatBadgeQty = mPresenter.getChatBadgeQty();
+                    int chatBadgeQty = mPresenter.getChatBadgeQty();
+                    if (fragmentNav.getChildFragmentManager().getFragments().get(0) instanceof OnResfreshUI) {
+                        OnResfreshUI currentFragment = (OnResfreshUI) fragmentNav.getChildFragmentManager().getFragments().get(0);
                         currentFragment.refreshChatBadge(chatBadgeQty);
                     }
-//                    if (mAdapter != null) {
-//                        mAdapter.updateMenuItemBadge(
-//                                MENU_ID_CHAT,
-//                                1,
-//                                mPresenter.getChatBadgeQty()
-//                        );
-//                    }
-                    //
+
                     break;
 
             }
@@ -3435,39 +3898,39 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     protected void processNotification_close(String mValue, String mActivity) {
     }
 
-    private void initTagFragment() {
-        FragmentTransaction transaction = fm.beginTransaction();
-        Fragment fragment =  fm.findFragmentById(R.id.act005_frg_placeholder);
-        if(fragment == null
-                || !(fragment instanceof FrgMainHome)) {
-            fragment = FrgMainHome.newInstance(mModule_Code);
-        }
-        //act050_favorite_fragment.setHmAux_Trans(hmAux_Trans);
-        transaction.replace(R.id.act005_frg_placeholder, fragment, fragment.getTag());
-        transaction.addToBackStack(null);
-        transaction.commit();
-    }
+//    private void initTagFragment() {
+//        FragmentTransaction transaction = fm.beginTransaction();
+//        Fragment fragment =  fm.findFragmentById(R.id.act005_frg_placeholder);
+//        if(fragment == null
+//                || !(fragment instanceof FrgMainHome)) {
+//            fragment = FrgMainHome.newInstance(mModule_Code);
+//        }
+//        //act050_favorite_fragment.setHmAux_Trans(hmAux_Trans);
+//        transaction.replace(R.id.act005_frg_placeholder, fragment, fragment.getTag());
+//        transaction.addToBackStack(null);
+//        transaction.commit();
+//    }
 
-    private void initAltFragment() {
-        FragmentTransaction transaction = fm.beginTransaction();
-        Fragment fragment =  fm.findFragmentById(R.id.act005_frg_placeholder);
-        if(fragment == null
-        || !(fragment instanceof FrgMainHomeAlt)) {
-            fragment = FrgMainHomeAlt.newInstance();
-        }
-        //act050_favorite_fragment.setHmAux_Trans(hmAux_Trans);
-        transaction.replace(R.id.act005_frg_placeholder, fragment, fragment.getTag());
-        transaction.addToBackStack(null);
-        transaction.commit();
-    }
+//    private void initAltFragment() {
+//        FragmentTransaction transaction = fm.beginTransaction();
+//        Fragment fragment =  fm.findFragmentById(R.id.act005_frg_placeholder);
+//        if(fragment == null
+//        || !(fragment instanceof FrgMainHomeAlt)) {
+//            fragment = FrgMainHomeAlt.newInstance();
+//        }
+//        //act050_favorite_fragment.setHmAux_Trans(hmAux_Trans);
+//        transaction.replace(R.id.act005_frg_placeholder, fragment, fragment.getTag());
+//        transaction.addToBackStack(null);
+//        transaction.commit();
+//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == ConstantBaseApp.PLAYSTORE_UPDATE_REQUEST_CODE){
-            if(resultCode != RESULT_OK){
-                ToolBox.toastMSG(context,getResources().getString(R.string.msg_update_canceled));
+        if (requestCode == ConstantBaseApp.PLAYSTORE_UPDATE_REQUEST_CODE) {
+            if (resultCode != RESULT_OK) {
+                ToolBox.toastMSG(context, getResources().getString(R.string.msg_update_canceled));
             }
         }
     }

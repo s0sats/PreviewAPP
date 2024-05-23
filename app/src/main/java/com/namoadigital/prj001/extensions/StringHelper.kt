@@ -2,6 +2,7 @@ package com.namoadigital.prj001.extensions
 
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.model.SM_SO
+import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.text.Normalizer
 import java.text.SimpleDateFormat
@@ -24,6 +25,50 @@ fun checkIfHasCharInvalid(value: String): Boolean {
     return regexPattern.containsMatchIn(value)
 }
 
+fun String.parseDatePair(): Pair<String, String> {
+    return try {
+        val old = SimpleDateFormat(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT_GMT, Locale.getDefault()).parse(this)
+        val newDate = SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(old!!)
+        val newHour = SimpleDateFormat("HH:mm", Locale.getDefault()).format(old)
+        Pair(newDate, newHour)
+    } catch (e: Exception) {
+        ToolBox_Inf.registerException("StringHelper (parseDatePair)", e)
+        Pair("", "")
+    }
+}
+
+fun String.parseDate(): String {
+    return try {
+        val old = SimpleDateFormat(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT_GMT, Locale.getDefault()).parse(this)
+        val newDate = SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(old!!)
+        val newHour = SimpleDateFormat("HH:mm", Locale.getDefault()).format(old)
+        "$newDate $newHour"
+    } catch (e: Exception) {
+        ToolBox_Inf.registerException("StringHelper (parseDate)", e)
+        ""
+    }
+}
+
+fun String.parseFullDate(withSeconds: Boolean = true): String {
+    return try {
+//        val simpleSeconds = SimpleDateFormat("ss", Locale.getDefault())
+//        val currentSeconds = simpleSeconds.format(Date())
+        val dateFormat = if(withSeconds) "dd/MM/yy HH:mm:ss" else "dd/MM/yy HH:mm"
+        val formatDate = "$this:00"
+        val simpleDate = SimpleDateFormat(dateFormat, Locale.getDefault())
+        val currentSimpleDate =  SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+
+        val old = simpleDate.parse(if(withSeconds) formatDate else this)
+        val gmtDate = currentSimpleDate.format(old!!)
+        val gmtValue = ToolBox.getDeviceGMT(false)
+        "$gmtDate $gmtValue"
+    }catch (e: Exception){
+        ToolBox_Inf.registerException("StringHelper (parseFullDate)", e)
+        ""
+    }
+
+}
+
 fun checkIfLastCharContainTabOrEnter(value: String): Boolean {
     Regex(
         """[ \t\n\r]*([\t\n\r])${'$'}""",
@@ -36,6 +81,7 @@ fun checkIfLastCharContainTabOrEnter(value: String): Boolean {
 fun removeLastCharEnterOrTab(value: String): String {
     return value.replace("""[ \t\n\r]*([\t\n\r])${'$'}""", "")
 }
+
 fun formatSyncSoList(soSyncList: List<SM_SO>): String {
     var serviceSoList = StringBuilder()
     for (sm_so in soSyncList) {
@@ -74,4 +120,10 @@ fun addHourToDateLimited(): String {
 
     return formatter.format(currentDateTime.time)
 
+}
+
+fun getFormattedAddress(address: String):String{
+    return address.trim()
+        .replace("-", "")
+        .replace(" ", "+")
 }

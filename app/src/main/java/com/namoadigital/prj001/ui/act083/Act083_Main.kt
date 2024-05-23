@@ -13,6 +13,7 @@ import android.view.WindowManager
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,14 +25,17 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.Base_Activity
 import com.namoadigital.prj001.R
+import com.namoadigital.prj001.adapter.SelectDestinationAdapter.Companion.BTN_SELECT_DESTINATION
 import com.namoadigital.prj001.adapter.act083.MyActionsAdapter
 import com.namoadigital.prj001.core.data.domain.usecase.serial.site.inventory.SerialSiteInventoryUseCase.Companion.SiteInventoryUseCaseFactory
+import com.namoadigital.prj001.core.trip.domain.usecase.CheckStatusForReadOnlyUseCase
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.dao.MdJustifyItemDao.Companion.RESCHEDULE
 import com.namoadigital.prj001.databinding.Act083MainBinding
 import com.namoadigital.prj001.databinding.TicketNotExecutedDialogBinding
 import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.service.*
+import com.namoadigital.prj001.service.trip.WsSelectDestination
 import com.namoadigital.prj001.ui.act005.Act005_Main
 import com.namoadigital.prj001.ui.act006.Act006_Main
 import com.namoadigital.prj001.ui.act009.Act009_Main
@@ -49,14 +53,22 @@ import com.namoadigital.prj001.ui.act092.ui.Act092_Main
 import com.namoadigital.prj001.ui.act092.usecases.ActionPreferenceUseCases
 import com.namoadigital.prj001.ui.act092.utils.Act092Translate
 import com.namoadigital.prj001.ui.act093.ui.Act093_Main
+import com.namoadigital.prj001.ui.act094.ui.Act094_Main
+import com.namoadigital.prj001.ui.act094.util.Act094Translate
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
+
+    @Inject
+    lateinit var tripCheckStatusReadOnly: CheckStatusForReadOnlyUseCase
+
     companion object {
         const val MODULE_CHECKLIST_FORM_IN_PROCESSING = "checklist_form_in_processing"
         const val MODULE_CHECKLIST_START_FORM = "checklist_start_form"
@@ -79,12 +91,16 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     private lateinit var binding: Act083MainBinding
     private lateinit var mAdapter: MyActionsAdapter
     private lateinit var bundle: Bundle
+    private lateinit var mainRequesting: String
     private var wsProcess = ""
     private var hmAuxTicketDownload: HMAux = HMAux()
     private val CHANGE_ZONE_RESULT_CODE = 10
     private var firstScroll = true
     private var applyMainUserFilter = false
     var typeSerial: TypeSerial? = null
+
+    //
+    private var isReadOnly = false
 
     private val mPresenter by lazy {
         Act083_Main_Presenter(
@@ -200,6 +216,8 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
 
     private fun initVars() {
         setLabels()
+        val originFlow = bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, "")
+        isReadOnly = tripCheckStatusReadOnly(originFlow)
         supportActionBar?.title = mPresenter.getActTitle()
         binding.act083MainContent.act083TilFilter.apply {
             hint = hmAux_Trans[Act092Translate.HINT_FILTER]
@@ -213,6 +231,25 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
 //        toggleTabEnableStattus(false)
 //        setLabels()
 //        setChips()
+
+        if (isReadOnly && originFlow == ConstantBaseApp.ACT094) {
+            binding.act083MainContent.llFooter.apply {
+                footerMain.visibility = View.VISIBLE
+                btnFilledRightAction.apply {
+                    text = hmAux_Trans[BTN_SELECT_DESTINATION]
+                    icon = ResourcesCompat.getDrawable(resources, R.drawable.baseline_add_location_alt_24, null)
+                    iconTint = ResourcesCompat.getColorStateList(resources, R.color.m3_namoa_surface, null)
+                    visibility = View.VISIBLE
+                    setOnClickListener {
+                        mPresenter.selectDestination()
+                    }
+                }
+            }
+            binding.act083MainContent.include.visibility = View.GONE
+        }else{
+            binding.act083MainContent.include.visibility = View.VISIBLE
+            binding.act083MainContent.llFooter.footerMain.visibility = View.GONE
+        }
     }
 
 //    private fun setChips() {
@@ -266,6 +303,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     }
 
     override fun iniRecycler(myActionsList: MutableList<MyActionsBase>) {
+
         if (myActionsList.size > 0) {
             binding.act083MainContent.act083TvNoResult.visibility = View.GONE
             //
@@ -273,6 +311,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 myActionsList,
                 hmAux_Trans,
                 supportActionBar?.title?.toString(),
+                isReadOnly,
                 this::onMyActionClick,
                 null,
                 this::onSerialButtonClick,
@@ -299,22 +338,23 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         } else {
             changeProgressBarVisility(false)
             with(binding.act083MainContent) {
-                if((getCurrentTab() == 2) &&
+                if ((getCurrentTab() == 2) &&
                     (!ToolBox_Con.isOnline(context)
                             || hasConnectionFail
                             || ToolBox_Con.getBooleanPreferencesByKey(
-                                        context,
-                                        ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW,
-                                        false
-                                )
+                        context,
+                        ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW,
+                        false
                     )
-                ){
+                            )
+                ) {
                     act083TvNoResult.text = hmAux_Trans["no_connection_try_again_lbl"]
-                    if(ToolBox_Con.getBooleanPreferencesByKey(
+                    if (ToolBox_Con.getBooleanPreferencesByKey(
                             context,
                             ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW,
                             false
-                        )){
+                        )
+                    ) {
                         act083TvNoResult.text = hmAux_Trans["offline_mode_on_sync_required_lbl"]
                     }
                 } else {
@@ -577,7 +617,6 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     }
 
 
-
     private fun onSerialButtonClick(myAction: MyActions, position: Int) {
         serialActionSelected = position
         typeSerial = TypeSerial.MY_ACTIONS
@@ -617,6 +656,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
             }
 
 
+            else -> {}
         }
 
 
@@ -736,19 +776,22 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         textFilter: String?, initialTabToLoad: Int, mainUserFilterState: Boolean
     ) {
         binding.act083MainContent.act083MketFilter.setText(textFilter)
-        when(initialTabToLoad){
+        when (initialTabToLoad) {
             0 -> {
                 binding.act083MainContent.act083TabOtherActions.isChecked = true
                 otherActionTabSelection()
             }
+
             1 -> {
                 binding.act083MainContent.act083TabMyActions.isChecked = true
                 myActionTabSelection()
             }
+
             2 -> {
                 binding.act083MainContent.act083TabSerial.isChecked = true
                 serialTabSelection()
             }
+
             else -> {
                 binding.act083MainContent.act083TabOtherActions.isChecked = true
                 otherActionTabSelection()
@@ -842,6 +885,15 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 handleStructureReturn(serial)
             }
 
+            WsSelectDestination.NAME -> {
+                wsProcess = ""
+                progressDialog.dismiss()
+                Toast.makeText(context, hmAux_Trans[Act094Translate.ALERT_DESTINATION_SELECTED_MSG] ?: "", Toast.LENGTH_SHORT).show()
+                mPresenter.selectionDestinationAvailable?.let {
+                    mPresenter.saveDestination(context, mLink, it)
+                }
+            }
+
             else -> progressDialog?.dismiss()
         }
     }
@@ -860,7 +912,9 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
 
             is TypeSerial.MORE_ACTIONS -> {
                 mPresenter.extractStructureResult(
-                    serial, TypeSerial.SERIAL_SITE_ACTION_BASE, typeSerial = typeSerial as TypeSerial.MORE_ACTIONS,
+                    serial,
+                    TypeSerial.SERIAL_SITE_ACTION_BASE,
+                    typeSerial = typeSerial as TypeSerial.MORE_ACTIONS,
                     processPk = "${serial.product_code}.${serial.serial_code}"
                 )
             }
@@ -1004,7 +1058,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         binding.act083MainContent.act083IbMainUserSelection.setOnClickListener {
             applyMainUserFilter = !applyMainUserFilter
             setIvMainUserSelection()
-            if(getCurrentTab() < 2) {
+            if (getCurrentTab() < 2) {
                 if (::mAdapter.isInitialized) {
                     mAdapter.userMainFilterOn = applyMainUserFilter
                 }
@@ -1226,6 +1280,13 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         finish()
     }
 
+    override fun callAct094() {
+        val mIntent = Intent(context, Act094_Main::class.java)
+        mIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(mIntent)
+        finish()
+    }
+
 
     override fun onBackPressed() {
         //super.onBackPressed()
@@ -1408,9 +1469,9 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
 
     override fun processError_1(mLink: String?, mRequired: String?) {
         super.processError_1(mLink, mRequired)
-        if(wsProcess == WsSerialSiteInventory::class.java.name) {
+        if (wsProcess == WsSerialSiteInventory::class.java.name) {
             handleConnectionProblemsForSiteInvetoryService()
-        }else{
+        } else {
             mPresenter.formButtonData = null
             progressDialog.dismiss()
             if (serialActionSelected > -1) {
@@ -1429,9 +1490,9 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
 
     override fun processCustom_error(mLink: String?, mRequired: String?) {
         super.processCustom_error(mLink, mRequired)
-        if(wsProcess == WsSerialSiteInventory::class.java.name) {
+        if (wsProcess == WsSerialSiteInventory::class.java.name) {
             handleConnectionProblemsForSiteInvetoryService()
-        }else {
+        } else {
             mPresenter.formButtonData = null
             progressDialog.dismiss()
             if (serialActionSelected > -1) {
@@ -1445,7 +1506,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
 //        super.processError_http();
         progressDialog.dismiss()
 
-        if(binding.act083MainContent.act083TabSerial.visibility != View.VISIBLE) {
+        if (binding.act083MainContent.act083TabSerial.visibility != View.VISIBLE) {
             ToolBox_Con.setBooleanPreference(
                 applicationContext, ConstantBaseApp.PREFERENCE_SERIAL_OFFLINE_FLOW, true
             )
@@ -1623,8 +1684,12 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         transList.add("dialog_serial_outdate_ttl")
         transList.add("dialog_serial_outdate_msg")
         //
-        transList.add(Act092Translate.HINT_FILTER)
-        transList.add(Act092Translate.PLACEHOLDER_FILTER)
+        transList.add(Act094Translate.ALERT_DESTINATION_SELECTED_MSG)
+        transList.add(Act094Translate.PROCESS_SELECTION_DESTINATION_TITLE)
+        transList.add(Act094Translate.PROCESS_SELECTION_DESTINATION_MSG)
+        transList.add(Act094Translate.ALERT_TRIP_NOT_FOUND_TTL)
+        transList.add(Act094Translate.ALERT_TRIP_NOT_FOUND_MSG)
+        transList.add(BTN_SELECT_DESTINATION)
         return ToolBox_Inf.setLanguage(
             context,
             mModule_Code,

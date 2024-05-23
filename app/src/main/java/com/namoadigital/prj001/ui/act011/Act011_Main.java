@@ -131,6 +131,7 @@ import com.namoadigital.prj001.service.SV_LocationTracker;
 import com.namoadigital.prj001.service.WS_Product_Serial_Structure;
 import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Save;
+import com.namoadigital.prj001.service.trip.WsGetTripFull;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_005;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_016;
 import com.namoadigital.prj001.sql.GE_File_Sql_003;
@@ -562,6 +563,9 @@ public class Act011_Main extends Base_Activity
         transList.add("alert_update_structure_ttl");
         transList.add("alert_update_structure_msg");
         //
+        transList.add("alert_update_trip_ttl");
+        transList.add("alert_update_trip_msg");
+        //
         transList.add("dialog_finalize_os_empty_verify_lbl");
         transList.add("dialog_finalize_not_finalized_lbl");
         transList.add("dialog_not_finalized_info_lbl");
@@ -570,6 +574,9 @@ public class Act011_Main extends Base_Activity
         transList.add("dialog_not_finalized_ok_lbl");
         transList.add("dialog_not_finalized_cancel_lbl");
         transList.add("dialog_not_finalized_date_incorrect_lbl");
+        //
+        transList.add("alert_ticket_update_error_ttl");
+        transList.add("alert_ticket_update_error_msg");
         //
         transList.addAll(Act011FrgInspection.Companion.getFragTranslationsVars());
         //
@@ -1362,6 +1369,8 @@ public class Act011_Main extends Base_Activity
                 //
                 if (requestingAct.equals(ConstantBaseApp.ACT092)) {
                     callAct092();
+                } else if (ConstantBaseApp.ACT005.equals(requestingAct)) {
+                    callAct005(context);
                 } else {
                     callAct083();
                 }
@@ -3275,6 +3284,8 @@ public class Act011_Main extends Base_Activity
         } else if (ConstantBaseApp.ACT084.equals(requestingAct)
                 || ConstantBaseApp.SYS_STATUS_DONE.equals(formData.getCustom_form_status())) {
             callAct084();
+        } else if (ConstantBaseApp.ACT005.equals(requestingAct)) {
+            callAct005(context);
         } else {
             callAct083();
         }
@@ -4383,14 +4394,18 @@ public class Act011_Main extends Base_Activity
                     },
                     0
             );
-        } else if (wsSoProcess.equalsIgnoreCase(WS_Product_Serial_Structure.class.getSimpleName())
-        ) {
+        } else if (bypassSendDataErrorAlert()) {
             flowControl();
         } else {
             formData.setLocation_type("");
             formData.setLocation_lat("");
             formData.setLocation_lng("");
         }
+    }
+
+    private boolean bypassSendDataErrorAlert() {
+        return wsSoProcess.equalsIgnoreCase(WS_Product_Serial_Structure.class.getSimpleName())
+                || wsSoProcess.equalsIgnoreCase(WsGetTripFull.class.getSimpleName());
     }
 
     /**
@@ -4403,8 +4418,7 @@ public class Act011_Main extends Base_Activity
     protected void processError_1(String mLink, String mRequired) {
         super.processError_1(mLink, mRequired);
         //
-        if (wsSoProcess.equalsIgnoreCase(WS_Product_Serial_Structure.class.getSimpleName())
-        ) {
+        if (bypassSendDataErrorAlert()) {
             flowControl();
         } else {
             ToolBox.alertMSG(
@@ -4461,6 +4475,9 @@ public class Act011_Main extends Base_Activity
             }
 
             executeSaveProcess();
+        }else if (wsSoProcess.equalsIgnoreCase(WsGetTripFull.class.getSimpleName())) {
+            setWsSoProcess("");
+            afterSaveFlow();
         }
     }
 
@@ -4492,7 +4509,7 @@ public class Act011_Main extends Base_Activity
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
-        ToolBox_Inf.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_preparing_to_send_data"), "", "0");
+      // ToolBox_Inf.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_preparing_to_send_data"), "", "0");
     }
 
     @Override
@@ -4514,10 +4531,32 @@ public class Act011_Main extends Base_Activity
                 setWsSoProcess(WS_Product_Serial_Structure.class.getSimpleName());
                 mPresenter.executeStructureUpdate();
             }else{
-                mPresenter.processWS_SaveReturn(mLink);
+                if (mPresenter.isUserOnSyncRequiredTrip()) {
+                    setWsSoProcess(WsGetTripFull.class.getSimpleName());
+                    mPresenter.executeTripUpdate();
+                }else {
+                    mPresenter.processWS_SaveReturn(mLink);
+                }
             }
         } else if (wsSoProcess.equalsIgnoreCase(WS_Product_Serial_Structure.class.getSimpleName())) {
+
+            if (mPresenter.isUserOnSyncRequiredTrip()) {
+                progressDialog.dismiss();
+                enableProgressDialog(
+                        hmAux_Trans.get("alert_update_trip_ttl"),
+                        hmAux_Trans.get("alert_update_trip_msg"),
+                        hmAux_Trans.get("sys_alert_btn_cancel"),
+                        hmAux_Trans.get("sys_alert_btn_ok")
+                );
+                setWsSoProcess(WsGetTripFull.class.getSimpleName());
+                mPresenter.executeTripUpdate();
+            }else {
+                setWsSoProcess("");
+                afterSaveFlow();
+            }
+        }else if (wsSoProcess.equalsIgnoreCase(WsGetTripFull.class.getSimpleName())) {
             setWsSoProcess("");
+            progressDialog.dismiss();
             afterSaveFlow();
         }
     }

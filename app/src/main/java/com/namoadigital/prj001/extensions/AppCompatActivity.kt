@@ -4,6 +4,8 @@ import android.content.Context
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
+import com.namoadigital.prj001.dao.trip.FSTripDao
+import com.namoadigital.prj001.service.location.util.LocationServiceConstants
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 
@@ -35,6 +37,12 @@ fun AppCompatActivity.logout(){
     logout(false)
 }
 fun AppCompatActivity.logout(forcedByExpiredVersion: Boolean){
+    //
+    val tripDao = FSTripDao(this)
+    if(tripDao.getTrip() != null){
+        sendCommandToServiceTripLocation(LocationServiceConstants.STOP_LOCATION)
+    }
+    //
     ToolBox_Con.cleanPreferences(this)
     //
     ToolBox_Inf.call_Act001_Main(this, forcedByExpiredVersion)

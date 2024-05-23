@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:cardBackgroundColor="@color/m3_namoa_neutral95"
+        app:cardCornerRadius="8dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <View
+                android:id="@+id/v_category"
+                android:layout_width="8dp"
+                android:layout_height="0dp"
+                android:padding="1dp"
+                app:layout_constraintBottom_toBottomOf="@+id/linearLayout8"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/linearLayout8" />
+
+            <LinearLayout
+                android:id="@+id/linearLayout8"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/v_category"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/constraint_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="12dp">
+
+                    <ImageView
+                        android:id="@+id/flag_action_me"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/baseline_star_24"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/date_planned"
+                        style="@style/TextAppearance.Material3.TitleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text=""
+                        android:textColor="@color/m3_namoa_onSurfaceVariant"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <TextView
+                        android:id="@+id/region_name"
+                        style="@style/TextAppearance.Material3.LabelSmall"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textColor="@color/m3_namoa_onSurfaceVariant" />
+
+                    <TextView
+                        android:id="@+id/site_action_name"
+                        style="@style/TextAppearance.Material3.HeadlineSmall"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textColor="@color/m3_namoa_onSurface" />
+
+                </LinearLayout>
+
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="12dp">
+
+                    <TextView
+                        android:id="@+id/tv_address_location"
+                        style="@style/TextAppearance.Material3.BodyMedium"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="16dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text=""
+                        android:textColor="@color/m3_namoa_onSurfaceVariant"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/detail_adress"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+
+                    <ImageView
+                        android:id="@+id/detail_adress"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/outline_directions_24"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_address_location"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/tv_address_location" />
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+
+                    <TextView
+                        android:id="@+id/urgent_value"
+                        style="@style/TextAppearance.Material3.HeadlineSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="center"
+                        android:textColor="@color/m3_namoa_onSurfaceVariant"
+                        app:layout_constraintEnd_toEndOf="@+id/urgent_label"
+                        app:layout_constraintStart_toStartOf="@+id/urgent_label"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="3" />
+
+                    <TextView
+                        android:id="@+id/urgent_label"
+                        style="@style/TextAppearance.Material3.LabelMedium"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:textAlignment="center"
+                        android:textColor="@color/m3_namoa_onSurfaceVariant"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/for_today_label"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/urgent_value"
+                        app:layout_constraintWidth_default="wrap"
+                        tools:text="Urgentes" />
+
+                    <TextView
+                        android:id="@+id/for_today_value"
+                        style="@style/TextAppearance.Material3.HeadlineSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="center"
+                        android:textColor="@color/m3_namoa_onSurfaceVariant"
+                        app:layout_constraintEnd_toEndOf="@+id/for_today_label"
+                        app:layout_constraintStart_toStartOf="@+id/for_today_label"
+                        app:layout_constraintTop_toTopOf="@+id/urgent_value"
+                        tools:text="2" />
+
+                    <TextView
+                        android:id="@+id/for_today_label"
+                        style="@style/TextAppearance.Material3.LabelMedium"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:textAlignment="center"
+                        android:textColor="@color/m3_namoa_onSurfaceVariant"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/late_label"
+                        app:layout_constraintStart_toEndOf="@+id/urgent_label"
+                        app:layout_constraintTop_toBottomOf="@+id/for_today_value"
+                        app:layout_constraintWidth_default="wrap"
+                        tools:text="Para hoje" />
+
+                    <TextView
+                        android:id="@+id/late_value"
+                        style="@style/TextAppearance.Material3.HeadlineSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="center"
+                        android:textColor="@color/m3_namoa_onSurface"
+                        app:layout_constraintEnd_toEndOf="@+id/late_label"
+                        app:layout_constraintStart_toStartOf="@+id/late_label"
+                        app:layout_constraintTop_toTopOf="@+id/urgent_value"
+                        tools:text="5" />
+
+                    <TextView
+                        android:id="@+id/late_label"
+                        style="@style/TextAppearance.Material3.LabelMedium"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:textAlignment="center"
+                        android:textColor="@color/m3_namoa_onSurfaceVariant"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/next_label"
+                        app:layout_constraintStart_toEndOf="@+id/for_today_label"
+                        app:layout_constraintTop_toBottomOf="@+id/late_value"
+                        app:layout_constraintWidth_default="wrap"
+                        tools:text="Atrasados" />
+
+                    <TextView
+                        android:id="@+id/next_value"
+                        style="@style/TextAppearance.Material3.HeadlineSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="center"
+                        android:textColor="@color/m3_namoa_onSurface"
+                        app:layout_constraintEnd_toEndOf="@+id/next_label"
+                        app:layout_constraintStart_toStartOf="@+id/next_label"
+                        app:layout_constraintTop_toTopOf="@+id/urgent_value"
+                        tools:text="1" />
+
+                    <TextView
+                        android:id="@+id/next_label"
+                        style="@style/TextAppearance.Material3.LabelMedium"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:textAlignment="center"
+                        android:textColor="@color/m3_namoa_onSurfaceVariant"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/serials_label"
+                        app:layout_constraintStart_toEndOf="@+id/late_label"
+                        app:layout_constraintTop_toBottomOf="@+id/next_value"
+                        app:layout_constraintWidth_default="wrap"
+                        tools:text="+7 dias" />
+
+                    <TextView
+                        android:id="@+id/serials_value"
+                        style="@style/TextAppearance.Material3.HeadlineSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="center"
+                        android:textColor="@color/m3_namoa_onSurface"
+                        app:layout_constraintEnd_toEndOf="@+id/serials_label"
+                        app:layout_constraintStart_toStartOf="@+id/serials_label"
+                        app:layout_constraintTop_toTopOf="@+id/urgent_value"
+                        tools:text="20" />
+
+                    <TextView
+                        android:id="@+id/serials_label"
+                        style="@style/TextAppearance.Material3.LabelMedium"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:textAlignment="center"
+                        android:textColor="@color/m3_namoa_onSurfaceVariant"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/next_label"
+                        app:layout_constraintTop_toBottomOf="@+id/serials_value"
+                        app:layout_constraintWidth_default="wrap"
+                        tools:text="Seriais" />
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/serial_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="5dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/serialId"
+                        style="@style/TextAppearance.Material3.BodyLarge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/m3_namoa_onSurface"
+                        app:layout_constraintBottom_toTopOf="@+id/serialSiteValue"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/serialSiteValue"
+                        style="@style/TextAppearance.Material3.BodySmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/m3_namoa_onSurfaceVariant"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="@+id/serialId"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:paddingTop="20dp">
+
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/see_tickets_button"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:paddingHorizontal="12dp"
+                        android:textColor="@color/m3_namoa_primary"
+                        app:icon="@drawable/baseline_sell_24"
+                        app:iconTint="@color/m3_namoa_primary"
+                        app:layout_constraintEnd_toStartOf="@+id/select_item_button"
+                        app:layout_constraintHorizontal_bias="1.0"
+                        app:layout_constraintHorizontal_chainStyle="packed"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintWidth_default="wrap"
+                        app:strokeColor="@color/m3_namoa_outline" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/select_item_button"
+                        style="@style/Widget.Material3.Button"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/m3_namoa_primary"
+                        android:textColor="@color/m3_namoa_onPrimary"
+                        app:icon="@drawable/baseline_add_location_alt_24"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/see_tickets_button"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintWidth_default="wrap"
+                        app:strokeColor="@color/m3_namoa_outline" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+</LinearLayout>

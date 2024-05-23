@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/frgMainHome">
+
+
+    <fragment
+        android:id="@+id/frgMainHome"
+        android:name="com.namoadigital.prj001.view.frag.frg_main_home.FrgMainHome"
+        android:label="frg_main_home"
+        tools:layout="@layout/frg_main_home" >
+        <action
+            android:id="@+id/action_frgMainHome_to_frgMainHomeAlt"
+            app:destination="@id/frgMainHomeAlt" />
+        <action
+            android:id="@+id/action_frgMainHome_to_homeTripFragment"
+            app:destination="@id/homeTripFragment" />
+        <action
+            android:id="@+id/action_frgMainHome_to_pendingFragment"
+            app:destination="@id/pendingFragment" />
+        <action
+            android:id="@+id/action_frgMainHome_to_extractFragment"
+            app:destination="@id/extractFragment" />
+        <action
+            android:id="@+id/action_frgMainHome_to_transitFragment"
+            app:destination="@id/transitFragment" />
+        <action
+            android:id="@+id/action_frgMainHome_to_waitingDestinationFragment"
+            app:destination="@id/waitingDestinationFragment" />
+        <action
+            android:id="@+id/action_frgMainHome_to_transferFragment"
+            app:destination="@id/transferFragment" />
+        <action
+            android:id="@+id/action_frgMainHome_to_overNightFragment"
+            app:destination="@id/overNightFragment" />
+        <action
+            android:id="@+id/action_frgMainHome_to_onSiteFragment"
+            app:destination="@id/onSiteFragment" />
+        <action
+            android:id="@+id/action_frgMainHome_to_onGpsFragment"
+            app:destination="@id/onGpsFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/frgMainHomeAlt"
+        android:name="com.namoadigital.prj001.view.frag.frg_main_home_alt.FrgMainHomeAlt"
+        android:label="frg_main_home_alt"
+        tools:layout="@layout/frg_main_home_alt" />
+
+    <fragment
+        android:id="@+id/homeTripFragment"
+        android:name="com.namoadigital.prj001.ui.act005.trip.fragment.home.TripHomeFragment"
+        android:label="frg_main_trip"
+        tools:layout="@layout/frg_main_trip" >
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/extractFragment"
+        android:name="com.namoadigital.prj001.ui.act005.trip.fragment.extract.TripExtractFragment"
+        android:label="frg_main_trip"
+        tools:layout="@layout/frg_extract_trip" >
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/pendingFragment"
+        android:name="com.namoadigital.prj001.ui.act005.trip.fragment.pending.TripPendingFragment"
+        android:label="frg_main_trip"
+        tools:layout="@layout/frg_pending_trip" >
+    </fragment>
+
+    <fragment
+        android:id="@+id/transitFragment"
+        android:name="com.namoadigital.prj001.ui.act005.trip.fragment.transit.TripTransitFragment"
+        android:label="frg_transit_trip"
+        tools:layout="@layout/frg_transit_trip" />
+
+    <fragment
+        android:id="@+id/waitingDestinationFragment"
+        android:name="com.namoadigital.prj001.ui.act005.trip.fragment.waiting_destination.TripWaitingDestinationFragment"
+        android:label="frg_waiting_destination_trip"
+        tools:layout="@layout/frg_waiting_destination_trip" />
+
+    <fragment
+        android:id="@+id/transferFragment"
+        android:name="com.namoadigital.prj001.ui.act005.trip.fragment.transfer.TripTransferFragment"
+        android:label="frg_transfer_trip"
+        tools:layout="@layout/frg_transfer_trip" />
+
+
+    <fragment
+        android:id="@+id/overNightFragment"
+        android:name="com.namoadigital.prj001.ui.act005.trip.fragment.overnight.TripOverNightFragment"
+        android:label="frg_over_night_trip"
+        tools:layout="@layout/frg_over_night_trip" />
+
+    <fragment
+        android:id="@+id/onSiteFragment"
+        android:name="com.namoadigital.prj001.ui.act005.trip.fragment.onsite.TripOnSiteFragment"
+        android:label="frg_on_site_trip"
+        tools:layout="@layout/frg_on_site_trip" />
+
+    <fragment
+        android:id="@+id/onGpsFragment"
+        android:name="com.namoadigital.prj001.ui.act005.trip.fragment.gps.TripGpsFragment"
+        android:label="trip_gps_fragment"
+        tools:layout="@layout/trip_gps_fragment" />
+
+
+</navigation>

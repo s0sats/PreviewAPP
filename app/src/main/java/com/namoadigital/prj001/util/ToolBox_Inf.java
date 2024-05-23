@@ -142,6 +142,7 @@ import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.extensions.AppCompatActivityKt;
+import com.namoadigital.prj001.extensions.FsTripHelperKt;
 import com.namoadigital.prj001.extensions.StringHelperKt;
 import com.namoadigital.prj001.model.CH_Room;
 import com.namoadigital.prj001.model.Chat_Obj;
@@ -264,6 +265,7 @@ import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.ui.act078.Act078_Main;
 import com.namoadigital.prj001.ui.act079.Act079_Main;
 import com.namoadigital.prj001.ui.act088.Act088Main;
+import com.namoadigital.prj001.worker.WorkLocationAvailability;
 import com.namoadigital.prj001.worker.Work_Cleanning_Data;
 import com.namoadigital.prj001.worker.Work_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.worker.Work_DownLoad_PDF;
@@ -1248,7 +1250,6 @@ public class ToolBox_Inf {
         mIntent.putExtra(Constant.SW_VALUE, value);
         mIntent.putExtra(Constant.SW_LINK, link != null ? link : "");
         mIntent.putExtra(Constant.SW_REQUIRED, required != null ? required : 0);
-
 
         LocalBroadcastManager.getInstance(context).sendBroadcast(mIntent);
     }
@@ -2242,7 +2243,7 @@ public class ToolBox_Inf {
         //
         Bitmap customer_img = getCustomerImage(ToolBox_Inf.getCustomerLogoPath(context));
         final Dialog customDialog = new Dialog(context);
-        if(editMode){
+        if(editMode && !FsTripHelperKt.isCurrentTrip(context)){
             ll_site.setVisibility(View.GONE);
             ll_zone.setVisibility(View.GONE);
             ll_operation.setVisibility(View.GONE);
@@ -2390,7 +2391,7 @@ public class ToolBox_Inf {
             //endregion
         }
 
-        if(editMode){
+        if(editMode && !FsTripHelperKt.isCurrentTrip(context)){
             setEnableUserInfo(context, hmDialogInfo, ss_site, ss_zone, ss_operation);
         }else {
             setDisableUserInfo(hmDialogInfo, ll_site, tv_site_lbl, tv_site_value, ll_zone, tv_zone_lbl, tv_zone_value, ll_operation, tv_operation_lbl, tv_operation_value);
@@ -3210,6 +3211,7 @@ public class ToolBox_Inf {
         Constant.HMAUX_TRANS_LIB.put("lib_camera_menu_option_add_line", (!Constant.HMAUX_TRANS_LIB.containsKey("lib_camera_menu_option_add_line") || Constant.HMAUX_TRANS_LIB.get("lib_camera_menu_option_add_line").contains(Constant.APP_MODULE + "/") ? "" : Constant.HMAUX_TRANS_LIB.get("lib_camera_menu_option_add_line")));
         Constant.HMAUX_TRANS_LIB.put("lib_camera_menu_option_add_square", (!Constant.HMAUX_TRANS_LIB.containsKey("lib_camera_menu_option_add_square") || Constant.HMAUX_TRANS_LIB.get("lib_camera_menu_option_add_square").contains(Constant.APP_MODULE + "/") ? "" : Constant.HMAUX_TRANS_LIB.get("lib_camera_menu_option_add_square")));
         Constant.HMAUX_TRANS_LIB.put("lib_camera_menu_option_add_oval", (!Constant.HMAUX_TRANS_LIB.containsKey("lib_camera_menu_option_add_oval") || Constant.HMAUX_TRANS_LIB.get("lib_camera_menu_option_add_oval").contains(Constant.APP_MODULE + "/") ? "" : Constant.HMAUX_TRANS_LIB.get("lib_camera_menu_option_add_oval")));
+        Constant.HMAUX_TRANS_LIB.put("btn_clear", (!Constant.HMAUX_TRANS_LIB.containsKey("btn_clear") || Constant.HMAUX_TRANS_LIB.get("btn_clear").contains(Constant.APP_MODULE + "/") ? "btn_clear" : Constant.HMAUX_TRANS_LIB.get("btn_clear")));
 
 
     }
@@ -8033,6 +8035,33 @@ public class ToolBox_Inf {
             );
     }
 
+    public static void schedule10MinutesLocationAvailabilityNotification(Context context){
+        //Periodicidade
+        //Flexibilidade - "Janela" de permissão para executar mais cedo. Periodicidade - Flexibilidade.(15-5 = 10)A partir de
+
+        Log.d("TRIP_LOCATION", "--------schedule10MinutesLocationAvailabilityNotification-------");
+        PeriodicWorkRequest  work10MinutesLocationAvailabilityNotification =
+                new PeriodicWorkRequest.Builder(
+                        WorkLocationAvailability.class,
+                        10,
+                        TimeUnit.MINUTES,
+                        10,
+                        TimeUnit.SECONDS
+                )
+                .setBackoffCriteria(
+                    BackoffPolicy.LINEAR,
+                    PeriodicWorkRequest.MIN_BACKOFF_MILLIS,
+                    TimeUnit.MILLISECONDS)
+                .build();
+        //
+        WorkManager.getInstance(context)
+                .enqueueUniquePeriodicWork(
+                        WorkLocationAvailability.WORKER_TAG,
+                        ExistingPeriodicWorkPolicy.KEEP,
+                        work10MinutesLocationAvailabilityNotification
+                );
+    }
+
     /**
      * Metodo que faz o agendamento do Work da rotina de limpeza
      * Configuração:
@@ -8642,15 +8671,17 @@ public class ToolBox_Inf {
         int iconColor = context.getResources().getColor(R.color.colorPrimary);
         fabMenuItems.clear();
         //atalho para edicao de cabecalho.
-        fabEditHeader = new FabMenuItem(context);
-        fabEditHeader.setTag(ConstantBaseApp.FAB_TO_HEADER_EDIT_LBL);
-        fabEditHeader.setmLabel(hmAux_Trans.get("to_header_edit_lbl"));
-        fabEditHeader.setmLabel_Back_Color(lblBgColor);
-        fabEditHeader.setmLabel_Text_Color(lblColor);
-        fabEditHeader.setmButton_Back_Color(btnBgColor);
-        fabEditHeader.setmButton_Resource_Color(iconColor);
-        fabEditHeader.setmButton_Resource(R.drawable.ic_baseline_pipeline_header_24);
-        fabMenuItems.add(fabEditHeader);
+        if(ticket.getKanban() != 1) {
+            fabEditHeader = new FabMenuItem(context);
+            fabEditHeader.setTag(ConstantBaseApp.FAB_TO_HEADER_EDIT_LBL);
+            fabEditHeader.setmLabel(hmAux_Trans.get("to_header_edit_lbl"));
+            fabEditHeader.setmLabel_Back_Color(lblBgColor);
+            fabEditHeader.setmLabel_Text_Color(lblColor);
+            fabEditHeader.setmButton_Back_Color(btnBgColor);
+            fabEditHeader.setmButton_Resource_Color(iconColor);
+            fabEditHeader.setmButton_Resource(R.drawable.ic_baseline_pipeline_header_24);
+            fabMenuItems.add(fabEditHeader);
+        }
         //atalho para edicao de grupo de trabalho.
         if(ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_TICKET, ConstantBaseApp.PROFILE_MENU_TICKET_PARAM_CHANGE_WORKGROUP)
         && !ticket.isReadOnly(context)) {

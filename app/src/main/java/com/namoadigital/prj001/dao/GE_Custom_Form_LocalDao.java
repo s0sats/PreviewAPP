@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.dao;
 
+import static com.namoa_digital.namoa_library.util.ConstantBase.SYS_STATUS_IN_PROCESSING;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -10,10 +12,13 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.DaoObjReturn;
+import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -103,6 +108,17 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
     public GE_Custom_Form_LocalDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
         //
+        this.toContentValuesMapper = new GE_Custom_FormToContentValuesMapper();
+        this.toGE_Custom_Form_LocalMapper = new CursorGE_Custom_FormMapper();
+    }
+
+    public GE_Custom_Form_LocalDao(Context context) {
+        super(context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM,
+                Constant.DB_MODE_MULTI
+        );
+
         this.toContentValuesMapper = new GE_Custom_FormToContentValuesMapper();
         this.toGE_Custom_Form_LocalMapper = new CursorGE_Custom_FormMapper();
     }
@@ -645,6 +661,88 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
         closeDB();
 
         return custom_form_locals;
+    }
+
+    public List<HMAux> getFormInProcessFromTrip(long customerCode, int tripPrefix, int tripCode, int destinationSeq) {
+        return query_HM(
+                "SELECT " +
+                        "l."+ CUSTOMER_CODE + "," +
+                        " l."+ CUSTOM_FORM_TYPE + "," +
+                        " l."+ CUSTOM_FORM_CODE + "," +
+                        " l."+ CUSTOM_FORM_VERSION + "," +
+                        " l."+ CUSTOM_FORM_DATA + "," +
+                        " l."+ CUSTOM_FORM_PRE + "," +
+                        " l."+ CUSTOM_FORM_STATUS + "," +
+                        " l."+ REQUIRE_SIGNATURE + "," +
+                        " l."+ REQUIRE_LOCATION + "," +
+                        " l."+ REQUIRE_SERIAL_DONE + "," +
+                        " l."+ AUTOMATIC_FILL + "," +
+                        " l."+ CUSTOM_PRODUCT_CODE + "," +
+                        " l."+ CUSTOM_PRODUCT_DESC + "," +
+                        " l."+ CUSTOM_PRODUCT_ID + "," +
+                        " l."+ CUSTOM_PRODUCT_ICON_NAME+ "," +
+                        " l."+ CUSTOM_PRODUCT_ICON_URL + "," +
+                        " l."+ CUSTOM_PRODUCT_ICON_URL_LOCAL + "," +
+                        " l."+ CUSTOM_FORM_DESC + "," +
+                        " l."+ SERIAL_ID + "," +
+                        " l."+ SCHEDULE_DATE_START_FORMAT + "," +
+                        " l."+ SCHEDULE_DATE_END_FORMAT + "," +
+                        " l."+ SCHEDULE_DATE_START_FORMAT_MS + "," +
+                        " l."+ REQUIRE_SERIAL + "," +
+                        " l."+ ALLOW_NEW_SERIAL_CL + "," +
+                        " l."+ ALL_SITE + "," +
+                        " l."+ ALL_OPERATION + "," +
+                        " l."+ ALL_PRODUCT + "," +
+                        " l."+ SITE_CODE + "," +
+                        " l."+ SITE_ID + "," +
+                        " l."+ SITE_DESC + "," +
+                        " l."+ ZONE_CODE + "," +
+                        " l."+ ZONE_ID + "," +
+                        " l."+ ZONE_DESC + "," +
+                        " l."+ IO_CONTROL + "," +
+                        " l."+ INBOUND_AUTO_CREATE + "," +
+                        " l."+ OPERATION_CODE + "," +
+                        " l."+ OPERATION_ID + "," +
+                        " l."+ OPERATION_DESC + "," +
+                        " l."+ LOCAL_CONTROL + "," +
+                        " l."+ SERIAL_MIN_LENGTH + "," +
+                        " l."+ SERIAL_MAX_LENGTH + "," +
+                        " l."+ SCHEDULE_COMMENTS + "," +
+                        " l."+ SCHEDULE_PREFIX + "," +
+                        " l."+ SCHEDULE_CODE + "," +
+                        " l."+ SCHEDULE_EXEC + "," +
+                        " l."+ TICKET_PREFIX + "," +
+                        " l."+ TICKET_CODE + "," +
+                        " l."+ TICKET_SEQ + "," +
+                        " l."+ TICKET_SEQ_TMP + "," +
+                        " l."+ STEP_CODE + "," +
+                        " l."+ TAG_OPERATIONAL_CODE + "," +
+                        " l."+ TAG_OPERATIONAL_ID + "," +
+                        " l."+ TAG_OPERATIONAL_DESC + "," +
+                        " l."+ IS_SO + "," +
+                        " l."+ SO_EDIT_START_END + "," +
+                        " l."+ SO_ORDER_TYPE_CODE_DEFAULT + "," +
+                        " l."+ SO_ALLOW_CHANGE_ORDER_TYPE + "," +
+                        " l."+ SO_ALLOW_BACKUP + "," +
+                        " l."+ SO_OPTIONAL_JUSTIFY_PROBLEM + "," +
+                        " l."+ NC_RECOGNIZE_EMAIL_IN_COMMENT + "," +
+                        " d."+ GE_Custom_Form_DataDao.DATE_START +
+                        "\n" +
+                        " FROM "+ GE_Custom_Form_DataDao.TABLE +" d\n" +
+                        " INNER JOIN "+ GE_Custom_Form_LocalDao.TABLE +" l\n" +
+                        " ON d."+ GE_Custom_Form_DataDao.CUSTOMER_CODE +" = l."+ GE_Custom_Form_LocalDao.CUSTOMER_CODE+ "\n" +
+                        " AND d."+GE_Custom_Form_DataDao.CUSTOM_FORM_CODE+" = l."+GE_Custom_Form_LocalDao.CUSTOM_FORM_CODE+"\n" +
+                        " AND d."+GE_Custom_Form_DataDao.CUSTOM_FORM_TYPE+" = l."+GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE+"\n" +
+                        " AND d."+GE_Custom_Form_DataDao.CUSTOM_FORM_VERSION+" = l."+GE_Custom_Form_LocalDao.CUSTOM_FORM_VERSION+"\n" +
+                        " AND d."+GE_Custom_Form_DataDao.CUSTOM_FORM_DATA+" = l."+GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA+"\n" +
+                        "\n" +
+                        " WHERE d.customer_code = '"+customerCode+"'\n" +
+                        " AND d.trip_prefix = '"+tripPrefix+"'\n" +
+                        " AND d.trip_code = '"+tripCode+"'\n" +
+                        " AND d.destination_seq = '"+destinationSeq+"'\n" +
+                        " AND d.custom_form_status = '"+SYS_STATUS_IN_PROCESSING+"'"
+
+                );
     }
 
     private class CursorGE_Custom_FormMapper implements Mapper<Cursor, GE_Custom_Form_Local> {

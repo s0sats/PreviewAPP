@@ -659,6 +659,7 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
                 siteCode.toString()
         );
         //
+        actionFilterParam.setParamItemSelectedTab(2);
         clearMyActionFilterPreference();
         //
         Bundle bundle = new Bundle();

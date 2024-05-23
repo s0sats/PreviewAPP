@@ -141,6 +141,7 @@ public interface Act005_Main_Presenter {
     void executeWSTicketDownload();
 
     boolean hasMasterDataSyncRequired();
+    boolean isFieldServiceModeOnly();
 
     boolean hasTicketSyncRequiredCloudRule();
 
@@ -159,4 +160,16 @@ public interface Act005_Main_Presenter {
     void executeSerialStructureUpdate();
 
     boolean hasSerialStructureSyncRequiredCloudRule();
+
+    boolean isFieldServiceModeAble();
+
+    boolean hasTripInProgress();
+
+    boolean hasPositionUpdateRequired();
+
+    void executePositionSave();
+
+    boolean hasTripUpdateRequired();
+
+    void executeTripDownload();
 }

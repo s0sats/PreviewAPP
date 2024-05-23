@@ -66,6 +66,7 @@ import com.namoadigital.prj001.service.WS_TK_Header_N_Group_Save;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Checkin;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
+import com.namoadigital.prj001.service.trip.WsGetTripFull;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
 import com.namoadigital.prj001.ui.act017.Act017_Main;
@@ -373,6 +374,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("alert_sync_to_not_execute_msg");
         transList.add("alert_serial_structure_error_ttl");
         transList.add("alert_serial_structure_error_msg");
+        //
+        transList.add("alert_trip_update_ttl");
+        transList.add("alert_trip_update_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -2037,7 +2041,12 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             if (mPresenter.verifyProductForForm()) {
                 save_return = mLink;
             } else {
-                mPresenter.processSaveReturn(mTicket.getTicket_prefix(), mTicket.getTicket_code(), mLink);
+                if(mPresenter.isUserOnSyncRequiredTrip()){
+                    save_return = mLink;
+                    mPresenter.callTripUpdate();
+                }else {
+                    mPresenter.processSaveReturn(mTicket.getTicket_prefix(), mTicket.getTicket_code(), mLink);
+                }
             }
         } else if (wsProcess.equalsIgnoreCase(WS_Save.class.getName())) {
             wsProcess = "";
@@ -2080,6 +2089,10 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             wsProcess = "";
             progressDialog.dismiss();
             processSerialStructure();
+        } else if (wsProcess.equalsIgnoreCase(WsGetTripFull.class.getName())) {
+            progressDialog.dismiss();
+            mPresenter.processSaveReturn(mTicket.getTicket_prefix(), mTicket.getTicket_code(), save_return);
+            save_return = "";
         } else {
             wsProcess = "";
             progressDialog.dismiss();

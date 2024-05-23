@@ -63,6 +63,15 @@ public class TK_Ticket_Ctrl implements Serializable {
     @SerializedName("from_to_notify") private int from_to_notify;
     @Expose
     @Nullable
+    @SerializedName("trip_prefix") private Integer trip_prefix;
+    @Expose
+    @Nullable
+    @SerializedName("trip_code") private Integer trip_code;
+    @Expose
+    @Nullable
+    @SerializedName("destination_seq") private Integer destination_seq;
+    @Expose
+    @Nullable
     @SerializedName("action") private TK_Ticket_Action action;
     @Expose
     @Nullable
@@ -412,6 +421,30 @@ public class TK_Ticket_Ctrl implements Serializable {
 
     public void setFrom_to_notify(int from_to_notify) {
         this.from_to_notify = from_to_notify;
+    }
+
+    public Integer getTrip_prefix() {
+        return trip_prefix;
+    }
+
+    public void setTrip_prefix(Integer trip_prefix) {
+        this.trip_prefix = trip_prefix;
+    }
+
+    public Integer getTrip_code() {
+        return trip_code;
+    }
+
+    public void setTrip_code(Integer trip_code) {
+        this.trip_code = trip_code;
+    }
+
+    public Integer getDestination_seq() {
+        return destination_seq;
+    }
+
+    public void setDestination_seq(Integer destination_seq) {
+        this.destination_seq = destination_seq;
     }
 
     @Nullable

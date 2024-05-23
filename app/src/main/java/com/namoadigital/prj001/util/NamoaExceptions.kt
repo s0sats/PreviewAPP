@@ -4,3 +4,4 @@ import java.io.IOException
 
 class NetworkConnectionException(message: String?) : IOException(message)
 class ValidateNewFormUseCaseException(message: String?) : IOException(message)
+class RepositoryException(message: String?) : IOException(message)

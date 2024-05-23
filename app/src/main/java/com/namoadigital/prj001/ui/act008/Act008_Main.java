@@ -43,6 +43,7 @@ import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
+import com.namoadigital.prj001.extensions.FsTripHelperKt;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MyActionFilterParam;
@@ -367,7 +368,12 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         //Se for agendamento e o produto controlar local seguir mesma validação do site_restriction 19/06/2018
         //LUCHE - 16/06/2021
         //Modificado regra novamente, não forçando o site restriction caso o serial não esteja armazenado.
-        if(isSchedule && mdProduct.getLocal_control() == 1 && mdProductSerial.getSite_code() != null && mdProductSerial.getSite_code() > 0) {
+        if((isSchedule
+                && mdProduct.getLocal_control() == 1
+                && mdProductSerial.getSite_code() != null
+                && mdProductSerial.getSite_code() > 0)
+                || FsTripHelperKt.isCurrentTrip(context)
+        ) {
             frgSerialEdit.setForceLoggedSiteRestriction(true);
         }
         //

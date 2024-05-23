@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.appcompat.content.res.AppCompatResources;
 import android.view.View;
@@ -35,6 +36,7 @@ public class SendResumeDialog extends AlertDialog {
     private View formApItem;
     private View expressSoItem;
     private View ticketItem;
+    private View positionItem;
     private TextView  tv_module_nform;
     private TextView  tv_module_serial;
     private TextView  tv_module_form_ap;
@@ -45,12 +47,14 @@ public class SendResumeDialog extends AlertDialog {
     private TextView  tvTitle;
     private Button btnOK;
     public OnDialogClickListener listener;
+    private boolean hasPositionUpdateRequired;
 
-    public SendResumeDialog(Context context, HMAux hmAux_trans, OnDialogClickListener listener) {
+    public SendResumeDialog(Context context, HMAux hmAux_trans, boolean hasPositionUpdateRequired, OnDialogClickListener listener) {
         super(context);
         this.hmAux_trans = hmAux_trans;
         this.context = context;
         this.listener = listener;
+        this.hasPositionUpdateRequired = hasPositionUpdateRequired;
     }
 
     @Override
@@ -89,14 +93,23 @@ public class SendResumeDialog extends AlertDialog {
      *      <br>R.id.act005_send_resume_form_ap
      *      <br>R.id.act005_send_resume_express_so
      *      <br>R.id.act005_send_resume_ticket
+     *      <br>R.id.act005_send_resume_position
      */
     public void updateResumeStatus(int layout_id, boolean isDone, int sucessAmount, int totalAmount ) throws Exception{
+        updateStatusResume(layout_id, isDone, sucessAmount, totalAmount, false);
+    }
+
+    private void updateStatusResume(int layout_id, boolean isDone, int sucessAmount, int totalAmount, boolean withPosition) throws Exception {
         try {
             View selectLayout = findViewById(layout_id);
             selectLayout.findViewById(R.id.send_resume_pb).setVisibility(View.INVISIBLE);
             ImageView module_status = selectLayout.findViewById(R.id.send_resume_iv_ready);
             TextView module_amount = selectLayout.findViewById(R.id.send_resume_amount);
-            module_amount.setText(sucessAmount + "/" + totalAmount);
+            if(withPosition){
+                module_amount.setText(R.string.sys_alert_btn_ok);
+            }else{
+                module_amount.setText(sucessAmount + "/" + totalAmount);
+            }
 
             module_status.setVisibility(View.VISIBLE);
             if (isDone) {
@@ -115,6 +128,10 @@ public class SendResumeDialog extends AlertDialog {
         }
     }
 
+    public void updateResumeStatusWithPosition(boolean isDone) throws Exception {
+        updateStatusResume(R.id.act005_send_resume_position, isDone, 0, 0, true);
+    }
+
     private void setViewVisibility() {
         tvTitle.setText(hmAux_trans.get("alert_resume_title"));
         btnOK.setText(R.string.sys_alert_btn_ok);
@@ -129,7 +146,6 @@ public class SendResumeDialog extends AlertDialog {
             serialItem.setVisibility(View.VISIBLE);
             serialItem.findViewById(R.id.send_resume_pb).setVisibility(View.VISIBLE);
             serialItem.findViewById(R.id.send_resume_iv_ready).setVisibility(View.GONE);
-            serialItem.findViewById(R.id.send_resume_tv_module);
             tv_module_serial = serialItem.findViewById(R.id.send_resume_tv_module);
             tv_module_serial.setText(hmAux_trans.get("alert_resume_serial"));
             serialItem.findViewById(R.id.send_resume_amount);
@@ -141,7 +157,6 @@ public class SendResumeDialog extends AlertDialog {
             soItem.setVisibility(View.VISIBLE);
             soItem.findViewById(R.id.send_resume_pb).setVisibility(View.VISIBLE);
             soItem.findViewById(R.id.send_resume_iv_ready).setVisibility(View.GONE);
-            soItem.findViewById(R.id.send_resume_tv_module);
             tv_module_so = soItem.findViewById(R.id.send_resume_tv_module);
             tv_module_so.setText(hmAux_trans.get("alert_resume_so"));
             soItem.findViewById(R.id.send_resume_amount);
@@ -153,7 +168,6 @@ public class SendResumeDialog extends AlertDialog {
             assetsItem.setVisibility(View.VISIBLE);
             assetsItem.findViewById(R.id.send_resume_pb).setVisibility(View.VISIBLE);
             assetsItem.findViewById(R.id.send_resume_iv_ready).setVisibility(View.GONE);
-            assetsItem.findViewById(R.id.send_resume_tv_module);
             tv_module_assets = assetsItem.findViewById(R.id.send_resume_tv_module);
             tv_module_assets.setText(hmAux_trans.get("alert_resume_assets"));
             assetsItem.findViewById(R.id.send_resume_amount);
@@ -165,7 +179,6 @@ public class SendResumeDialog extends AlertDialog {
             formApItem.setVisibility(View.VISIBLE);
             formApItem.findViewById(R.id.send_resume_pb).setVisibility(View.VISIBLE);
             formApItem.findViewById(R.id.send_resume_iv_ready).setVisibility(View.GONE);
-            formApItem.findViewById(R.id.send_resume_tv_module);
             tv_module_form_ap = formApItem.findViewById(R.id.send_resume_tv_module);
             tv_module_form_ap.setText(hmAux_trans.get("alert_resume_form_ap"));
             formApItem.findViewById(R.id.send_resume_amount);
@@ -177,7 +190,6 @@ public class SendResumeDialog extends AlertDialog {
             expressSoItem.setVisibility(View.VISIBLE);
             expressSoItem.findViewById(R.id.send_resume_pb).setVisibility(View.VISIBLE);
             expressSoItem.findViewById(R.id.send_resume_iv_ready).setVisibility(View.GONE);
-            expressSoItem.findViewById(R.id.send_resume_tv_module);
             tv_module_express_so = expressSoItem.findViewById(R.id.send_resume_tv_module);
             tv_module_express_so.setText(hmAux_trans.get("alert_resume_express_so"));
             expressSoItem.findViewById(R.id.send_resume_amount);
@@ -189,12 +201,21 @@ public class SendResumeDialog extends AlertDialog {
             ticketItem.setVisibility(View.VISIBLE);
             ticketItem.findViewById(R.id.send_resume_pb).setVisibility(View.VISIBLE);
             ticketItem.findViewById(R.id.send_resume_iv_ready).setVisibility(View.GONE);
-            ticketItem.findViewById(R.id.send_resume_tv_module);
             tv_module_ticket = ticketItem.findViewById(R.id.send_resume_tv_module);
             tv_module_ticket.setText(hmAux_trans.get("alert_resume_ticket"));
             ticketItem.findViewById(R.id.send_resume_amount);
         } else {
             ticketItem.setVisibility(View.GONE);
+        }
+
+        if(hasPositionUpdateRequired){
+            positionItem.setVisibility(View.VISIBLE);
+            positionItem.findViewById(R.id.send_resume_pb).setVisibility(View.VISIBLE);
+            positionItem.findViewById(R.id.send_resume_iv_ready).setVisibility(View.GONE);
+            TextView tv_module_position = positionItem.findViewById(R.id.send_resume_tv_module);
+            tv_module_position.setText(hmAux_trans.get("alert_resume_position"));
+        }else{
+            positionItem.setVisibility(View.GONE);
         }
 
     }
@@ -216,6 +237,7 @@ public class SendResumeDialog extends AlertDialog {
         formApItem = findViewById(R.id.act005_send_resume_form_ap);
         expressSoItem = findViewById(R.id.act005_send_resume_express_so);
         ticketItem = findViewById(R.id.act005_send_resume_ticket);
+        positionItem = findViewById(R.id.act005_send_resume_position);
         tvTitle = findViewById(R.id.act005_send_resume_tv_title);
         btnOK = findViewById(R.id.act005_send_resume_btn_ok);
     }
@@ -231,6 +253,7 @@ public class SendResumeDialog extends AlertDialog {
         transList.add("alert_resume_form_ap");
         transList.add("alert_resume_express_so");
         transList.add("alert_resume_ticket");
+        transList.add("alert_resume_position");
         //
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getContext(),
@@ -248,6 +271,7 @@ public class SendResumeDialog extends AlertDialog {
     }
 
     public void setBtnOKEnable(boolean isEnable) {
+        btnOK.setTextColor(ResourcesCompat.getColor(context.getResources(), R.color.namoa_color_green_2, null));
         btnOK.setEnabled(isEnable);
     }
 

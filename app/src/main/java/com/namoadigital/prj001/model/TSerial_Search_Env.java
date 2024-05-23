@@ -16,6 +16,7 @@ public class TSerial_Search_Env extends Main_Header_Env  {
     @SerializedName("tracking") private String tracking;
     @SerializedName("site_code") private String site_code;
     @SerializedName("profile_check") private int profile_check;
+    @SerializedName("force_site_restriction") private int force_site_restriction;
 
     public String getProduct_code() {
         return product_code;
@@ -79,5 +80,13 @@ public class TSerial_Search_Env extends Main_Header_Env  {
 
     public void setProfile_check(int profile_check) {
         this.profile_check = profile_check;
+    }
+
+    public int getForce_site_restriction() {
+        return force_site_restriction;
+    }
+
+    public void setForce_site_restriction(int force_site_restriction) {
+        this.force_site_restriction = force_site_restriction;
     }
 }

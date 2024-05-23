@@ -188,5 +188,9 @@ public interface Act070_Main_Contract {
         void createFormOS(TK_Ticket mTicket, StepForm stepForm);
 
         boolean hasSerialStructureOutdate();
+
+        boolean isUserOnSyncRequiredTrip();
+
+        void callTripUpdate();
     }
 }

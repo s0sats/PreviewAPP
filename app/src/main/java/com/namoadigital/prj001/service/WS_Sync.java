@@ -1,18 +1,10 @@
 package com.namoadigital.prj001.service;
 
-import static com.namoadigital.prj001.util.ConstantBaseApp.NOTIFICATION_SYNC_ID;
-
-import android.app.IntentService;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-
-import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -76,6 +68,13 @@ import com.namoadigital.prj001.dao.TkTicketTypeDao;
 import com.namoadigital.prj001.dao.TkTicketTypeOperationDao;
 import com.namoadigital.prj001.dao.TkTicketTypeProductDao;
 import com.namoadigital.prj001.dao.TkTicketTypeSiteDao;
+import com.namoadigital.prj001.dao.trip.FSEventTypeDao;
+import com.namoadigital.prj001.dao.trip.FSTripDao;
+import com.namoadigital.prj001.dao.trip.FSTripEventDao;
+import com.namoadigital.prj001.dao.trip.FSTripUserDao;
+import com.namoadigital.prj001.dao.trip.FsTripDestinationActionDao;
+import com.namoadigital.prj001.dao.trip.FsTripDestinationDao;
+import com.namoadigital.prj001.dao.trip.FsTripPositionDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.EV_Module_Res;
@@ -144,9 +143,18 @@ import com.namoadigital.prj001.model.TkTicketType;
 import com.namoadigital.prj001.model.TkTicketTypeOperation;
 import com.namoadigital.prj001.model.TkTicketTypeProduct;
 import com.namoadigital.prj001.model.TkTicketTypeSite;
+import com.namoadigital.prj001.model.trip.FSEventType;
+import com.namoadigital.prj001.model.trip.FSTrip;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.service.base.BaseWsIntentService;
 import com.namoadigital.prj001.sql.EV_Profile_Sql_Truncate;
+import com.namoadigital.prj001.sql.FsEventTypeSqlTruncate;
+import com.namoadigital.prj001.sql.FsTripDestinationActionSqlTruncate;
+import com.namoadigital.prj001.sql.FsTripDestinationSqlTruncate;
+import com.namoadigital.prj001.sql.FsTripEventSqlTruncate;
+import com.namoadigital.prj001.sql.FsTripPositionSqlTruncate;
+import com.namoadigital.prj001.sql.FsTripSqlTruncate;
+import com.namoadigital.prj001.sql.FsTripUserSqlTruncate;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_004;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Sql_Truncate;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Sql_Truncate;
@@ -687,6 +695,16 @@ public class WS_Sync extends BaseWsIntentService {
             TkTicketTypeSiteDao tkTicketTypeSiteDao = new TkTicketTypeSiteDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             TkTicketTypeOperationDao tkTicketTypeOperationDao = new TkTicketTypeOperationDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             TkTicketTypeProductDao tkTicketTypeProductDao = new TkTicketTypeProductDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            FSTripDao fsTripDao = new FSTripDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            FsTripDestinationActionDao fsTripDestinationActionDao= new FsTripDestinationActionDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            FSTripUserDao fsTripUserDao= new FSTripUserDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            FSTripEventDao fsTripEventDao= new FSTripEventDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            FsTripDestinationDao fsTripDestinationDao= new FsTripDestinationDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            FSEventTypeDao fsEventTypeDao= new FSEventTypeDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            FsTripPositionDao fsTripPositionDao= new FsTripPositionDao(getApplicationContext());
+
+
+
             //
             //Apaga dados das tabelas
             operationDao.remove(new MD_Operation_Sql_Truncate().toSqlQuery());
@@ -723,6 +741,13 @@ public class WS_Sync extends BaseWsIntentService {
             tkTicketTypeSiteDao.remove(new TkTicketTypeSqlTruncate().toSqlQuery());
             tkTicketTypeOperationDao.remove(new TkTicketTypeOperationSqlTruncate().toSqlQuery());
             tkTicketTypeProductDao.remove(new TkTicketTypeProductSqlTruncate().toSqlQuery());
+            fsTripDao.remove(new FsTripSqlTruncate().toSqlQuery());
+            fsTripDestinationActionDao.remove(new FsTripDestinationActionSqlTruncate().toSqlQuery());
+            fsTripUserDao.remove(new FsTripUserSqlTruncate().toSqlQuery());
+            fsTripEventDao.remove(new FsTripEventSqlTruncate().toSqlQuery());
+            fsTripDestinationDao.remove(new FsTripDestinationSqlTruncate().toSqlQuery());
+            fsEventTypeDao.remove(new FsEventTypeSqlTruncate().toSqlQuery());
+
             //
             // Processamento Operation
             //
@@ -1752,6 +1777,42 @@ public class WS_Sync extends BaseWsIntentService {
             //Libera pro GB
             files_tk_ticket_type_product = null;
 
+            /**
+             * Processamento Trip
+             */
+            File[] files_fs_trip_event_type  = ToolBox_Inf.getListOfFiles_v2("fs_event_type-");
+
+            for (File _file : files_fs_trip_event_type) {
+                ArrayList<FSEventType> fsEventTypes = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<FSEventType>>() {
+                        }.getType()
+                );
+                //
+                fsEventTypeDao.addUpdate(fsEventTypes, false);
+            }
+            //Libera pro GB
+            files_fs_trip_event_type = null;
+
+            File[] files_fs_trip  = ToolBox_Inf.getListOfFiles_v2("fs_trip-");
+            if(files_fs_trip == null || files_fs_trip.length ==0){
+                fsTripPositionDao.remove(new FsTripPositionSqlTruncate().toSqlQuery());
+            }
+            for (File _file : files_fs_trip) {
+                FSTrip fsTrips = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                                ToolBox_Inf.getContents(_file)
+                        ),
+                        FSTrip.class
+                );
+                //
+                fsTrips.setPk();
+                fsTripDao.syncTripFull(fsTrips);
+            }
+            //Libera pro GB
+            files_fs_trip = null;
         }
 
         //endregion

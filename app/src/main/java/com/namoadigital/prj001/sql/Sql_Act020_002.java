@@ -27,7 +27,7 @@ public class Sql_Act020_002 implements Specification {
     private String mOption_Site = "";
 
     public Sql_Act020_002(long customer_code, String site_code, String product_id, String serial_id, String tracking) {
-        setupConstructorInfos(customer_code,site_code,product_id,serial_id,tracking,false);
+        setupConstructorInfos(customer_code,site_code,product_id,serial_id,tracking,false, false);
     }
 
     /**
@@ -42,18 +42,18 @@ public class Sql_Act020_002 implements Specification {
      * @param tracking
      * @param forceExactSearch
      */
-    public Sql_Act020_002(long customer_code, String site_code, String product_id, String serial_id, String tracking, boolean forceExactSearch) {
-        setupConstructorInfos(customer_code,site_code,product_id,serial_id,tracking,forceExactSearch);
+    public Sql_Act020_002(long customer_code, String site_code, String product_id, String serial_id, String tracking, boolean forceExactSearch, boolean isTripMode) {
+        setupConstructorInfos(customer_code,site_code,product_id,serial_id,tracking,forceExactSearch, isTripMode);
     }
 
-    private void setupConstructorInfos(long customer_code, String site_code, String product_id, String serial_id, String tracking, boolean forceExactSearch) {
+    private void setupConstructorInfos(long customer_code, String site_code, String product_id, String serial_id, String tracking, boolean forceExactSearch, boolean isTripMode) {
         this.customer_code = customer_code;
         this.site_code = site_code;
         this.product_id = product_id.trim().length() > 0 ? product_id : "null";
         this.serial_id = serial_id.trim().length() > 0 ? serial_id: "null";
         this.tracking = tracking.trim().length() > 0 ? tracking : "null";
         //
-        if (tracking != null && !tracking.isEmpty()) {
+        if ((tracking != null && !tracking.isEmpty()) || isTripMode) {
             mOption_Site = "     and s.site_code = '" + site_code + "'\n";
         } else {
             mOption_Site = "     \n";

@@ -15,6 +15,7 @@ import com.namoa_digital.namoa_library.view.BaseFragment
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.Act093MainBinding
 import com.namoadigital.prj001.databinding.Act093SerialInfoBinding
+import com.namoadigital.prj001.extensions.isCurrentTrip
 import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_MANUAL_ALERT
 import com.namoadigital.prj001.model.GeOsDeviceItem.Companion.ITEM_CHECK_STATUS_NORMAL
 import com.namoadigital.prj001.model.MyActionFilterParam
@@ -74,21 +75,45 @@ class Act093_Main : BaseActivityFragMvp<Act093Presenter, Act093MainBinding>(), C
             val myActionFilter =
                 bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM) as MyActionFilterParam?
             when (state.originFlow ?: myActionFilter?.originFlow) {
-                ConstantBaseApp.ACT068 -> {
+                ConstantBaseApp.ACT068-> {
                     Intent(applicationContext, Act083_Main::class.java).also {
                         it.putExtras(bundle)
                         startActivity(it)
                         finish()
                     }
                 }
-
-
-                else -> Intent(applicationContext, Act092_Main::class.java).also {
-                    it.putExtras(bundle)
-                    startActivity(it)
-                    finish()
+                ConstantBaseApp.ACT005 -> {
+                    if(context.isCurrentTrip()){
+                        Intent(applicationContext, Act083_Main::class.java).also {
+                            it.putExtras(bundle)
+                            startActivity(it)
+                            finish()
+                        }
+                    }else{
+                        callact092()
+                    }
+                }
+                ConstantBaseApp.ACT094 -> {
+//                    if(context.isCurrentTrip()){
+                    Intent(applicationContext, Act083_Main::class.java).also {
+                        it.putExtras(bundle)
+                        startActivity(it)
+                        finish()
+                    }
+//                    }
+                }
+                else -> {
+                    callact092()
                 }
             }
+        }
+    }
+
+    private fun callact092() {
+        Intent(applicationContext, Act092_Main::class.java).also {
+            it.putExtras(bundle)
+            startActivity(it)
+            finish()
         }
     }
 
@@ -117,7 +142,7 @@ class Act093_Main : BaseActivityFragMvp<Act093Presenter, Act093MainBinding>(), C
         onBackPressed()
     }
 
-    override fun onState(state: Act093Event) {
+    override fun onEvent(state: Act093Event) {
         CoroutineScope(Dispatchers.Main).launch {
             when (state) {
 

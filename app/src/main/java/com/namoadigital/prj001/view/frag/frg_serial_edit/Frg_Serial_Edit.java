@@ -52,6 +52,7 @@ import com.namoadigital.prj001.dao.MeMeasureTpDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.extensions.DoubleHelperKt;
 import com.namoadigital.prj001.extensions.FloatHelperKt;
+import com.namoadigital.prj001.extensions.FsTripHelperKt;
 import com.namoadigital.prj001.extensions.StringHelperKt;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
@@ -3270,8 +3271,12 @@ public class Frg_Serial_Edit extends BaseFragment {
             loggedSite.put(MD_SiteDao.REASON_CODE, "null");
         }
         //
-
+        if(FsTripHelperKt.isCurrentTrip(context)) {
+            siteList.clear();
+            siteList.add(loggedSite);
+        }
         ss_site.setmOption(siteList);
+        //
         //Se o site que veio no serial não esta na lista de site dele, adicionado na lista.
         if (ss_site.getmValue() != null && ss_site.getmValue().size() > 0 && !checkDbValInOption(ss_site, String.valueOf(mdProductSerial.getSite_code()))) {
             ArrayList<HMAux> newOption = new ArrayList<>();
@@ -3736,7 +3741,7 @@ public class Frg_Serial_Edit extends BaseFragment {
      * Metodo que limpa o mOptions de todos componentes SS antes de chamar o saveInstance
      *
      * LUCHE - 12/06/2019
-     * Modificado metodo para antes de chamar a limpeza do Option,
+     * Modificado metodo para antes de chamar a limpeza do OriginOption,
      * fechar o dialog. Correção de bug
      *
      * Correção aplicada para evitar o crash no onSaveIntance quando as listas dos spinner

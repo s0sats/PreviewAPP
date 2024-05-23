@@ -27,6 +27,7 @@ import com.namoadigital.prj001.model.MD_Schedule_Exec
 import com.namoadigital.prj001.model.MyActionFilterParam
 import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.model.TSerial_Search_Rec
+import com.namoadigital.prj001.model.TranslateResource
 import com.namoadigital.prj001.receiver.WBR_Generate_NForm_PDF
 import com.namoadigital.prj001.receiver.WBR_Product_Serial_Structure
 import com.namoadigital.prj001.receiver.WBR_Save
@@ -62,7 +63,6 @@ import com.namoadigital.prj001.ui.act083.Act083_Main.Companion.PROFILE_MENU_TICK
 import com.namoadigital.prj001.ui.act083.Act083_Main.Companion.PROFILE_PRJ001_AP_NOT_FOUND
 import com.namoadigital.prj001.ui.act083.Act083_Main.Companion.SERIAL_CREATION_DENIED
 import com.namoadigital.prj001.ui.act087.Act087Main
-import com.namoadigital.prj001.ui.act091.mvp.model.TranslateResource
 import com.namoadigital.prj001.ui.act092.model.SerialModel
 import com.namoadigital.prj001.ui.act092.usecases.ActionUseCases
 import com.namoadigital.prj001.ui.act092.usecases.FlowScheduleFromMyActionUseCase.Companion.MODULE_CHECKLIST_FORM_IN_PROCESSING
@@ -165,13 +165,13 @@ class Act092Presenter constructor(
 
 
         if (view.focusState.value.mainUser) {
-            view.onState(Act092UiEvent.FilterMainUser)
+            view.onEvent(Act092UiEvent.FilterMainUser)
         } else if (_serialModel.value.otherSerialIsFiltered) {
-            view.onState(Act092UiEvent.UpdateOtherAction())
+            view.onEvent(Act092UiEvent.UpdateOtherAction())
         }
 
 
-        view.onState(
+        view.onEvent(
             Act092UiEvent.UpdateTitleActionSerial(
                 _serialModel.value
             )
@@ -180,7 +180,7 @@ class Act092Presenter constructor(
 
 
     override fun goToInfoSerial(bundle: Bundle) {
-        view.onState(Act092UiEvent.CallAct(Act093_Main::class.java, bundle.apply {
+        view.onEvent(Act092UiEvent.CallAct(Act093_Main::class.java, bundle.apply {
             putSerializable(
                 MyActionFilterParam.MY_ACTION_FILTER_PARAM,
                 myActionFilterParam
@@ -219,19 +219,19 @@ class Act092Presenter constructor(
                 )
             ).catch { e ->
                 emit(loading(false))
-                view.onState(Act092UiEvent.ShowSnackbar(e.message ?: "not found"))
+                view.onEvent(Act092UiEvent.ShowSnackbar(e.message ?: "not found"))
             }.collect {
 
                 it.isSuccess { list ->
-                    view.onState(Act092UiEvent.ListingSerialSteels(list))
+                    view.onEvent(Act092UiEvent.ListingSerialSteels(list))
                 }
 
                 it.isFailed { throwable ->
-                    view.onState(Act092UiEvent.ShowSnackbar(throwable.toString()))
+                    view.onEvent(Act092UiEvent.ShowSnackbar(throwable.toString()))
                 }
 
                 it.isLoading { isLoading, message ->
-                        view.onState(Act092UiEvent.IsLoading(isLoading, message))
+                        view.onEvent(Act092UiEvent.IsLoading(isLoading, message))
                     }
 
                 }
@@ -247,7 +247,7 @@ class Act092Presenter constructor(
                         Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER
                     )
 
-                view.onState(Act092UiEvent.CallAct(Act006_Main::class.java, Bundle().apply {
+                view.onEvent(Act092UiEvent.CallAct(Act006_Main::class.java, Bundle().apply {
                     putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, product)
                     putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, "")
                 }
@@ -255,12 +255,12 @@ class Act092Presenter constructor(
                 )
             }
             ConstantBaseApp.ACT016 -> {
-                view.onState(Act092UiEvent.CallAct(Act016_Main::class.java, bundle.apply {
+                view.onEvent(Act092UiEvent.CallAct(Act016_Main::class.java, bundle.apply {
                     putString(ConstantBaseApp.ACT_SELECTED_DATE, _serialModel.value.calendarDate)
                 }))
             }
-            ConstantBaseApp.ACT068 -> view.onState(Act092UiEvent.CallAct(Act068_Main::class.java))
-            ConstantBaseApp.ACT083 -> view.onState(
+            ConstantBaseApp.ACT068 -> view.onEvent(Act092UiEvent.CallAct(Act068_Main::class.java))
+            ConstantBaseApp.ACT083 -> view.onEvent(
                 Act092UiEvent.CallAct(
                     Act083_Main::class.java,
                     bundle.apply {
@@ -277,7 +277,7 @@ class Act092Presenter constructor(
                         )
                     })
             )
-            else -> view.onState(Act092UiEvent.CallAct(Act005_Main::class.java))
+            else -> view.onEvent(Act092UiEvent.CallAct(Act005_Main::class.java))
         }
     }
 
@@ -285,7 +285,7 @@ class Act092Presenter constructor(
     override fun syncFiles(context: Context) {
         if (ToolBox_Con.isOnline(context)) {
             view.wsProcess.value = Act005_Main.WS_PROCESS_SYNC
-            view.onState(
+            view.onEvent(
                 Act092UiEvent.OpenDialog(
                     DialogType.PROCESS(
                         Act092Translate.ALERT_SEND_FINISH_TTL,
@@ -314,7 +314,7 @@ class Act092Presenter constructor(
                     action.isMainUserTicket
                 )
 
-                view.onState(
+                view.onEvent(
                     Act092UiEvent.CallAct(
                         Act070_Main::class.java,
                         ticketBundle(slippedPk[0].toInt(), slippedPk[1].toInt())
@@ -325,7 +325,7 @@ class Act092Presenter constructor(
             MyActions.MY_ACTION_TYPE_TICKET_CACHE -> {
                 if (ToolBox_Con.isOnline(context)) {
                     view.wsProcess.value = WS_TK_Ticket_Download::class.java.name
-                    view.onState(
+                    view.onEvent(
                         Act092UiEvent.OpenDialog(
                             DialogType.PROCESS(
                                 Act092Translate.DIALOG_DOWNLOAD_TICKET_TTL,
@@ -367,7 +367,7 @@ class Act092Presenter constructor(
                         action.actionType,
                         "",
                     )
-                    view.onState(
+                    view.onEvent(
                         Act092UiEvent.CallAct(
                             Act011_Main::class.java,
                             getFormBundle(action)
@@ -427,7 +427,7 @@ class Act092Presenter constructor(
                                 transform.productSerial
                             )
                         }else {
-                            view.onState(
+                            view.onEvent(
                                 Act092UiEvent.OpenDialog(
                                     DialogType.ACTION(
                                         title = Act092Translate.ALERT_TTL_START_NEW_PROCESSING,
@@ -467,7 +467,7 @@ class Act092Presenter constructor(
             view.wsProcess.value = WS_Save::class.java.simpleName
             //
 
-            view.onState(
+            view.onEvent(
                 Act092UiEvent.OpenDialog(
                     DialogType.PROCESS(
                         "progress_form_save_ttl",
@@ -503,7 +503,7 @@ class Act092Presenter constructor(
         if(ToolBox_Con.isOnline(context)) {
             view.wsProcess.value = WS_TK_Ticket_Save::class.java.simpleName
             //
-            view.onState(
+            view.onEvent(
                 Act092UiEvent.OpenDialog(
                     DialogType.PROCESS(
                         "progress_ticket_save_ttl",
@@ -554,7 +554,7 @@ class Act092Presenter constructor(
             }
         } else {
             ToolBox_Inf.showNoConnectionDialog(context)
-            view.onState(Act092UiEvent.UpdateOtherAction(false))
+            view.onEvent(Act092UiEvent.UpdateOtherAction(false))
         }
     }
 
@@ -598,7 +598,7 @@ class Act092Presenter constructor(
             when (type) {
 
                 SITE_RESTRICTION_NO_ACCESS -> {
-                    view.onState(
+                    view.onEvent(
                         Act092UiEvent.OpenDialog(
                             DialogType.ACTION(
                                 title = Act092Translate.ALERT_FORM_SITE_RESTRICTION_TTL,
@@ -612,7 +612,7 @@ class Act092Presenter constructor(
                 }
 
                 MODULE_CHECKLIST_START_FORM -> {
-                    view.onState(
+                    view.onEvent(
                         Act092UiEvent.OpenDialog(
                             DialogType.ACTION(
                                 title = Act092Translate.ALERT_TTL_START_NEW_PROCESSING,
@@ -628,7 +628,7 @@ class Act092Presenter constructor(
                 }
 
                 SITE_RESTRICTION_CONFIRM -> {
-                    view.onState(
+                    view.onEvent(
                         Act092UiEvent.OpenDialog(
                             DialogType.ACTION(
                                 title = Act092Translate.ALERT_FORM_SITE_RESTRICTION_TTL,
@@ -641,7 +641,7 @@ class Act092Presenter constructor(
                     )
                 }
                 MODULE_CHECKLIST_FORM_IN_PROCESSING -> {
-                    view.onState(
+                    view.onEvent(
                         Act092UiEvent.OpenDialog(
                             DialogType.DEFAULT_OK(
                                 Act092Translate.ALERT_TTL_EXISTS_IN_PROCESSING,
@@ -651,7 +651,7 @@ class Act092Presenter constructor(
                     )
                 }
                 MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR -> {
-                    view.onState(
+                    view.onEvent(
                         Act092UiEvent.OpenDialog(
                             DialogType.DEFAULT_OK(
                                 Act092Translate.ALERT_ERROR_ON_CREATE_FORM_TTL,
@@ -661,7 +661,7 @@ class Act092Presenter constructor(
                     )
                 }
                 EMPTY_SERIAL_SEARCH -> {
-                    view.onState(
+                    view.onEvent(
                         Act092UiEvent.OpenDialog(
                             DialogType.DEFAULT_OK(
                                 Act092Translate.ALERT_NO_SERIAL_FOUND_TTL,
@@ -671,7 +671,7 @@ class Act092Presenter constructor(
                     )
                 }
                 SERIAL_CREATION_DENIED -> {
-                    view.onState(
+                    view.onEvent(
                         Act092UiEvent.OpenDialog(
                             DialogType.DEFAULT_OK(
                                 Act092Translate.ALERT_PRODUCT_OR_SERIAL_NOT_FOUND_TTL,
@@ -681,7 +681,7 @@ class Act092Presenter constructor(
                     )
                 }
                 MODULE_TICKET_EXEC_CONFIRM -> {
-                    view.onState(Act092UiEvent.OpenDialog(
+                    view.onEvent(Act092UiEvent.OpenDialog(
                         DialogType.ACTION(
                             title = Act092Translate.ALERT_TICKET_ACTION_START_TTL,
                             message = Act092Translate.ALERT_TICKET_ACTION_START_CONFIRM,
@@ -693,7 +693,7 @@ class Act092Presenter constructor(
                     ))
                 }
                 MODULE_SCHEDULE_TICKET_CREATION_ERROR -> {
-                    view.onState(
+                    view.onEvent(
                         Act092UiEvent.OpenDialog(
                             DialogType.DEFAULT_OK(
                                 Act092Translate.ALERT_ERROR_ON_CREATE_TICKET_ACTION_TTL,
@@ -703,7 +703,7 @@ class Act092Presenter constructor(
                     )
                 }
                 MODULE_SCHEDULE_STATUS_PREVENTS_TO_OPEN -> {
-                    view.onState(
+                    view.onEvent(
                         Act092UiEvent.OpenDialog(
                             DialogType.DEFAULT_OK(
                                 Act092Translate.ALERT_SCHEDULE_STATUS_PREVENTS_TO_OPEN_TTL,
@@ -713,7 +713,7 @@ class Act092Presenter constructor(
                     )
                 }
                 PROFILE_PRJ001_AP_NOT_FOUND -> {
-                    view.onState(
+                    view.onEvent(
                         Act092UiEvent.OpenDialog(
                             DialogType.DEFAULT_OK(
                                 Act092Translate.ALERT_MENU_APP_PROFILE_NOT_FOUND_TTL,
@@ -723,7 +723,7 @@ class Act092Presenter constructor(
                     )
                 }
                 PROFILE_MENU_TICKET_NOT_FOUND -> {
-                    view.onState(
+                    view.onEvent(
                         Act092UiEvent.OpenDialog(
                             DialogType.DEFAULT_OK(
                                 Act092Translate.ALERT_MENU_APP_PROFILE_NOT_FOUND_TTL,
@@ -733,7 +733,7 @@ class Act092Presenter constructor(
                     )
                 }
                 SERIAL_SITE_OUT_OF_LICENSE -> {
-                    view.onState(
+                    view.onEvent(
                         Act092UiEvent.OpenDialog(
                             DialogType.DEFAULT_OK(
                                 Act092Translate.ALERT_FREE_EXECUTION_BLOCKED_TTL,
@@ -743,7 +743,7 @@ class Act092Presenter constructor(
                     )
                 }
                 SERIAL_WITHOUT_STRUCTURE -> {
-                    view.onState(
+                    view.onEvent(
                         Act092UiEvent.OpenDialog(
                             DialogType.DEFAULT_OK(
                                 Act092Translate.ALERT_SERIAL_WITHOUT_STRUCTURE_TTL,
@@ -754,7 +754,7 @@ class Act092Presenter constructor(
                 }
 
                 else -> {
-                    view.onState(
+                    view.onEvent(
                         Act092UiEvent.OpenDialog(
                             DialogType.DEFAULT_OK(
                                 type,
@@ -786,7 +786,7 @@ class Act092Presenter constructor(
             )
             ToolBox_Con.setPreference_Zone_Code(translateResource.context, -1)
             //
-            view.onState(Act092UiEvent.UpdateFooterInfos)
+            view.onEvent(Act092UiEvent.UpdateFooterInfos)
             //
             checkScheduleFlow(item)
         } else {
@@ -795,7 +795,7 @@ class Act092Presenter constructor(
                 item.siteCode.toString()
             )
             ToolBox_Con.setPreference_Zone_Code(translateResource.context, -1)
-            view.onState(
+            view.onEvent(
                 Act092UiEvent.CallActForResult(
                     Act033_Main::class.java,
                     Bundle().apply {
@@ -811,7 +811,7 @@ class Act092Presenter constructor(
         action: MyActions
     ) {
         actionUseCases.checkTicketFlowAndCreate(action)?.let {
-            view.onState(
+            view.onEvent(
                 Act092UiEvent.CallAct(
                     Act071_Main::class.java,
                     getTicketActionFlowBundle(
@@ -881,14 +881,14 @@ class Act092Presenter constructor(
                             action.actionType, action.processPk,
                         )
 
-                        view.onState(
+                        view.onEvent(
                             Act092UiEvent.CallAct(
                                 Act011_Main::class.java,
                                 getScheduleBundle(scheduleExec, serial, action)
                             )
                         )
                     }else{
-                        view.onState(
+                        view.onEvent(
                             Act092UiEvent.OpenDialog(
                                 DialogType.DEFAULT_OK(
                                     hmAux_Trans[""],
@@ -901,7 +901,7 @@ class Act092Presenter constructor(
                 }
 
                 Constant.ACT087 -> {
-                    view.onState(
+                    view.onEvent(
                         Act092UiEvent.CallAct(
                             Act087Main::class.java,
                             Bundle().apply {
@@ -1021,7 +1021,7 @@ class Act092Presenter constructor(
                 ToolBox_Inf.scheduleAllDownloadWorkers(translateResource.context)
                 validateCreateNewForm()
             } else {
-                view.onState(
+                view.onEvent(
                     Act092UiEvent.CallAct(
                         Act070_Main::class.java,
                         getCacheTicketBundle(hmAuxTicketDownload)
@@ -1041,7 +1041,7 @@ class Act092Presenter constructor(
             lastSelectActionType = null
         )
         if (ToolBox_Inf.isSiteBlockedOrLimitExecutionReached(context)) {
-            view.onState(
+            view.onEvent(
                 Act092UiEvent.OpenDialog(
                     DialogType.DEFAULT_OK(
                         Act092Translate.ALERT_FREE_EXECUTION_BLOCKED_TTL,
@@ -1064,7 +1064,7 @@ class Act092Presenter constructor(
                         false
                     )
                 ) {
-                    view.onState(
+                    view.onEvent(
                         Act092UiEvent.OpenDialog(
                             DialogType.PROCESS(
                                 Act092Translate.PROGRESS_SYNC_TTL,
@@ -1104,7 +1104,7 @@ class Act092Presenter constructor(
                             originFlow
                         )
                     }
-                    view.onState(
+                    view.onEvent(
                         Act092UiEvent.CallAct(
                             Act009_Main::class.java,
                             bundle.apply {
@@ -1120,7 +1120,7 @@ class Act092Presenter constructor(
                 when (exception) {
                     is ValidateNewFormUseCaseException -> {
                         if (exception.message != "ALERT_PRODUCT_OR_SERIAL") {
-                            view.onState(
+                            view.onEvent(
                                 Act092UiEvent.OpenDialog(
                                     DialogType.CUSTOM_OK(
                                         title = Act092Translate.ALERT_NO_FORM_TTL,
@@ -1129,7 +1129,7 @@ class Act092Presenter constructor(
                                 )
                             )
                         } else {
-                            view.onState(
+                            view.onEvent(
                                 Act092UiEvent.OpenDialog(
                                     DialogType.DEFAULT_OK(
                                         title = Act092Translate.ALERT_PRODUCT_OR_SERIAL_NOT_FOUND_TTL,
@@ -1180,7 +1180,7 @@ class Act092Presenter constructor(
         if(ToolBox_Con.isOnline(context)) {
             view.wsProcess.value = WS_UnfocusAndHistoric::class.java.simpleName
             //
-            view.onState(
+            view.onEvent(
                 Act092UiEvent.OpenDialog(
                     DialogType.PROCESS(
                         Act092Translate.ALERT_SEND_FINISH_TTL,
@@ -1216,7 +1216,7 @@ class Act092Presenter constructor(
                         ProcessLocalSearchForSerialParam(it, view.bundle, rec.record[0])
                     ).collect { result ->
                         result.isSuccess { bund ->
-                            view.onState(
+                            view.onEvent(
                                 Act092UiEvent.CallAct(
                                     Act020_Main::class.java,
                                     bund
@@ -1225,7 +1225,7 @@ class Act092Presenter constructor(
                         }
 
                         result.isFailed { exception ->
-                            view.onState(
+                            view.onEvent(
                                 Act092UiEvent.OpenDialog(
                                     DialogType.DEFAULT_OK(
                                         "alert_no_serial_found_ttl",

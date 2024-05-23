@@ -30,6 +30,7 @@ class SqlAct083_004(
             ConstantBaseApp.ACT005 -> setHomeFilterConfg()
             ConstantBaseApp.ACT006 -> setSerialFilterConfg()
             ConstantBaseApp.ACT016 -> setCalendarFilterConfg()
+            ConstantBaseApp.ACT094,
             ConstantBaseApp.ACT068 -> if(isSerialSiteMode == 1){setSerialSiteFilterConfg()}
         }
     }

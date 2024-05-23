@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent">
+
+    <TextView
+        android:id="@+id/tv_destination_lbl"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:textColor="@color/text_black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:gravity="center_vertical"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_destination_delete_btn"
+        app:layout_constraintEnd_toStartOf="@+id/iv_destination_delete_btn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/iv_destination_delete_btn"
+        tools:text="Destino" />
+
+    <ImageView
+        android:id="@+id/iv_destination_delete_btn"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@drawable/my_action_toogle_default_inset"
+        android:padding="12dp"
+        android:src="@drawable/ic_trash_bin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_max="wrap" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/mcv_destination"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/m3_namoa_neutral95"
+        app:cardCornerRadius="12dp"
+        android:layout_marginBottom="8dp"
+        app:cardElevation="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_destination_delete_btn">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraint_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="8dp"
+            android:padding="12dp">
+
+            <TextView
+                android:id="@+id/tv_header_destination"
+                style="@style/TextAppearance.Material3.LabelSmall"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/m3_namoa_onSurfaceVariant"
+                app:layout_constraintBottom_toTopOf="@+id/site_action_name"
+                app:layout_constraintEnd_toStartOf="@+id/iv_destination_info_btn"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="ABCD Paulista" />
+
+            <TextView
+                android:id="@+id/site_action_name"
+                style="@style/TextAppearance.Material3.HeadlineSmall"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/m3_namoa_onSurface"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_destination_info_btn"
+                app:layout_constraintEnd_toStartOf="@+id/iv_destination_info_btn"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_header_destination"
+                tools:text="Diadema" />
+
+            <ImageView
+                android:id="@+id/iv_destination_info_btn"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/my_action_toogle_default_inset"
+                android:padding="12dp"
+                android:src="@drawable/outline_directions_24"
+
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_max="wrap" />
+
+            <TextView
+                android:id="@+id/tv_address_location"
+                style="@style/TextAppearance.Material3.BodyMedium"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/m3_namoa_onSurfaceVariant"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/site_action_name"
+                tools:text="Rodovia Dom Pedro I, 5 Pista Norte, Km 140 - CEASA, Campinas - SP, 13082-902" />
+
+            <View
+                android:id="@+id/space_is_ticket"
+                android:layout_width="10dp"
+                android:layout_height="24dp"
+                android:layout_marginVertical="3dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_address_location" />
+
+            <TextView
+                android:id="@+id/urgent_value"
+                style="@style/TextAppearance.Material3.HeadlineSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textColor="@color/m3_namoa_onSurface"
+                app:layout_constraintEnd_toEndOf="@+id/urgent_label"
+                app:layout_constraintStart_toStartOf="@+id/urgent_label"
+                app:layout_constraintTop_toBottomOf="@+id/space_is_ticket"
+                tools:text="3" />
+
+            <TextView
+                android:id="@+id/urgent_label"
+                style="@style/TextAppearance.Material3.LabelMedium"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:textAlignment="center"
+                android:textColor="@color/m3_namoa_onSurface"
+                app:layout_constraintBottom_toTopOf="@+id/serial_layout"
+                app:layout_constraintEnd_toStartOf="@+id/for_today_label"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/urgent_value"
+                app:layout_constraintWidth_default="wrap"
+                tools:text="Urgentes" />
+
+            <TextView
+                android:id="@+id/for_today_value"
+                style="@style/TextAppearance.Material3.HeadlineSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textColor="@color/m3_namoa_primary"
+                app:layout_constraintEnd_toEndOf="@+id/for_today_label"
+                app:layout_constraintStart_toStartOf="@+id/for_today_label"
+                app:layout_constraintTop_toTopOf="@+id/urgent_value"
+                tools:text="2" />
+
+            <TextView
+                android:id="@+id/for_today_label"
+                style="@style/TextAppearance.Material3.LabelMedium"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:textAlignment="center"
+                android:textColor="@color/m3_namoa_primary"
+                app:layout_constraintBottom_toTopOf="@+id/serial_layout"
+                app:layout_constraintEnd_toStartOf="@+id/late_label"
+                app:layout_constraintStart_toEndOf="@+id/urgent_label"
+                app:layout_constraintTop_toBottomOf="@+id/for_today_value"
+                app:layout_constraintWidth_default="wrap"
+                tools:text="Para hoje" />
+
+            <TextView
+                android:id="@+id/late_value"
+                style="@style/TextAppearance.Material3.HeadlineSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textColor="@color/m3_namoa_onSurface"
+                app:layout_constraintEnd_toEndOf="@+id/late_label"
+                app:layout_constraintStart_toStartOf="@+id/late_label"
+                app:layout_constraintTop_toTopOf="@+id/urgent_value"
+                tools:text="5" />
+
+            <TextView
+                android:id="@+id/late_label"
+                style="@style/TextAppearance.Material3.LabelMedium"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:textAlignment="center"
+                android:textColor="@color/m3_namoa_onSurfaceVariant"
+                app:layout_constraintBottom_toTopOf="@+id/serial_layout"
+                app:layout_constraintEnd_toStartOf="@+id/next_label"
+                app:layout_constraintStart_toEndOf="@+id/for_today_label"
+                app:layout_constraintTop_toBottomOf="@+id/late_value"
+                app:layout_constraintWidth_default="wrap"
+                tools:text="Atrasados" />
+
+            <TextView
+                android:id="@+id/next_value"
+                style="@style/TextAppearance.Material3.HeadlineSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textColor="@color/m3_namoa_onSurface"
+                app:layout_constraintEnd_toEndOf="@+id/next_label"
+                app:layout_constraintStart_toStartOf="@+id/next_label"
+                app:layout_constraintTop_toTopOf="@+id/urgent_value"
+                tools:text="1" />
+
+            <TextView
+                android:id="@+id/next_label"
+                style="@style/TextAppearance.Material3.LabelMedium"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:textAlignment="center"
+                android:textColor="@color/m3_namoa_onSurfaceVariant"
+                app:layout_constraintBottom_toTopOf="@+id/serial_layout"
+                app:layout_constraintEnd_toStartOf="@+id/serials_label"
+                app:layout_constraintStart_toEndOf="@+id/late_label"
+                app:layout_constraintTop_toBottomOf="@+id/next_value"
+                app:layout_constraintWidth_default="wrap"
+                tools:text="Preventivas" />
+
+            <TextView
+                android:id="@+id/serials_value"
+                style="@style/TextAppearance.Material3.HeadlineSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textColor="@color/m3_namoa_onSurface"
+                app:layout_constraintEnd_toEndOf="@+id/serials_label"
+                app:layout_constraintStart_toStartOf="@+id/serials_label"
+                app:layout_constraintTop_toTopOf="@+id/urgent_value"
+                tools:text="20" />
+
+            <TextView
+                android:id="@+id/serials_label"
+                style="@style/TextAppearance.Material3.LabelMedium"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:textAlignment="center"
+                android:textColor="@color/m3_namoa_onSurfaceVariant"
+                app:layout_constraintBottom_toTopOf="@+id/serial_layout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/next_label"
+                app:layout_constraintTop_toBottomOf="@+id/serials_value"
+                app:layout_constraintWidth_default="wrap"
+                tools:text="Seriais" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/serial_layout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:paddingVertical="5dp"
+                android:visibility="visible"
+                app:layout_constraintBottom_toTopOf="@+id/guideline9"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <TextView
+                    android:id="@+id/serialId"
+                    style="@style/TextAppearance.Material3.BodyLarge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/m3_namoa_onSurface"
+                    app:layout_constraintBottom_toTopOf="@+id/serialSiteValue"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="SERIAL ID" />
+
+                <TextView
+                    android:id="@+id/serialSiteValue"
+                    style="@style/TextAppearance.Material3.BodySmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/m3_namoa_onSurfaceVariant"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/serialId"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    tools:text="SITE SERIAL" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/gp_on_site_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="visible"
+                app:constraint_referenced_ids="guideline9, btn_destination_ticket" />
+
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/gp_on_site_actions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:constraint_referenced_ids="v_line, tv_trip_destination_actions_lbl, ll_destination_actions" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_search_serial"
+                style="@style/NamoaTheme3.ButtonIcon"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="12dp"
+                android:layout_marginTop="20dp"
+                android:paddingVertical="1dp"
+                android:textColor="@color/m3_namoa_surface"
+                android:visibility="visible"
+                app:icon="@drawable/ic_qrcode_fab"
+                app:iconGravity="textStart"
+                app:iconTint="@color/m3_namoa_surface"
+                app:layout_constraintEnd_toStartOf="@+id/btn_destination_ticket"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintHorizontal_chainStyle="spread_inside"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/guideline9"
+                tools:text="Buscar Ativo" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_destination_ticket"
+                style="@style/NamoaTheme3.ButtonIcon"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:paddingVertical="1dp"
+                android:textColor="@color/m3_namoa_surface"
+                android:visibility="visible"
+                app:icon="@drawable/ic_tag_black_24dp"
+                app:iconGravity="textStart"
+                app:iconTint="@color/m3_namoa_surface"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/btn_search_serial"
+                app:layout_constraintTop_toBottomOf="@+id/guideline9"
+                tools:text="Ver Tickets" />
+
+            <View
+                android:id="@+id/v_line"
+                android:layout_width="match_parent"
+                android:layout_height="1sp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="12dp"
+                android:background="@color/m3_namoa_outlineVariant"
+                app:layout_constraintTop_toBottomOf="@+id/btn_search_serial" />
+
+            <TextView
+                android:id="@+id/tv_trip_destination_actions_lbl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:textColor="@color/text_black"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/v_line"
+                app:layout_constraintTop_toBottomOf="@+id/v_line"
+                tools:text="Execuções:" />
+
+            <LinearLayout
+                android:id="@+id/ll_destination_actions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="12dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/m3_namoa_neutral95"
+                android:orientation="vertical"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/tv_trip_destination_actions_lbl"
+                app:layout_constraintTop_toBottomOf="@+id/tv_trip_destination_actions_lbl">
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

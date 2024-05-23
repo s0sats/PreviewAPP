@@ -12,6 +12,7 @@ import com.namoa_digital.namoa_library.view.BaseFragment
 import com.namoadigital.prj001.adapter.Act005MainMenuModuleAdapter
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.databinding.FrgMainHomeAltBinding
+import com.namoadigital.prj001.ui.act005.OnResfreshUI
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -21,7 +22,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf
  * Use the [FrgMainHomeAlt.newInstance] factory method to
  * create an instance of this fragment.
  */
-class FrgMainHomeAlt : BaseFragment(),  FrgMainHomeAltContract.View{
+class FrgMainHomeAlt : BaseFragment(),  FrgMainHomeAltContract.View, OnResfreshUI {
     private var mListener: OnFrgMainHomeAltInteract? = null
     //
     private lateinit var hmAux_Trans_Frag: HMAux
@@ -200,14 +201,14 @@ class FrgMainHomeAlt : BaseFragment(),  FrgMainHomeAltContract.View{
         //
         setDatetimeVisibility()
         //
-        refreshChatBadge()
+        refreshChatBadge(mListener?.getChatBadgeQty()?:0)
     }
 
-    fun refreshChatBadge() {
-        val messageQty = mListener?.getChatBadgeQty()?:0
+    override fun refreshChatBadge(chatBadgeQty: Int) {
         binding.tvMessengerBadge.visibility = View.GONE
-        if(messageQty > 0) {
-            binding.tvMessengerBadge.text = messageQty.toString()
+
+        if(chatBadgeQty > 0) {
+            binding.tvMessengerBadge.text = chatBadgeQty.toString()
             binding.tvMessengerBadge.visibility = View.VISIBLE
         }
     }

@@ -11,7 +11,7 @@ import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.core.data.domain.model.EnvironmentPrefModel;
 import com.namoadigital.prj001.core.data.domain.model.EnvironmentType;
-import com.namoadigital.prj001.core.data.local.preferences.EnvironmentDevelopementPref;
+import com.namoadigital.prj001.core.data.local.preferences.environment.EnvironmentDevelopementPref;
 import com.namoadigital.prj001.receiver.WBR_GetCustomer;
 import com.namoadigital.prj001.service.WS_GetCustomer;
 import com.namoadigital.prj001.util.Constant;
@@ -102,6 +102,10 @@ public class Act001_Main_Presenter_Impl implements Act001_Main_Presenter {
         String user_code = ToolBox_Con.getPreference_User_Code(context);
         long customer_code = ToolBox_Con.getPreference_Customer_Code(context);
         if (!user_code.equals("")) {
+            if (Constant.DEVELOPMENT_BASE) {
+                EnvironmentType prefEnvironment = pref.read().getEnvironment();
+                setEnvironmentSelected(prefEnvironment.getString());
+            }
             if (customer_code != -1) {
                 mView.call_Act003_Main(context);
             } else {
@@ -152,16 +156,11 @@ public class Act001_Main_Presenter_Impl implements Act001_Main_Presenter {
 
     @Override
     public void processEnvironmentSelected(String environmentSelected) {
-
+        setEnvironmentSelected(environmentSelected);
+        //
         EnvironmentType prefEnvironment = pref.read().getEnvironment();
-
-        if (prefEnvironment == EnvironmentType.NULL) {
-            setEnvironmentSelected(environmentSelected);
-            return;
-        }
-
-        if (!environmentSelected.equals(pref.read().getEnvironment().getString())) {
-            setEnvironmentSelected(environmentSelected);
+        if (!environmentSelected.equals(prefEnvironment.getString())
+        && prefEnvironment != EnvironmentType.NULL) {
             deleteLocalFiles();
         }
     }

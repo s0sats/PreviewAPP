@@ -14,7 +14,7 @@ interface Frg_Main_Home_Contract {
     }
 
     interface Presenter{
-
+        fun hasFieldServiceEnable():Boolean
     }
 
 }

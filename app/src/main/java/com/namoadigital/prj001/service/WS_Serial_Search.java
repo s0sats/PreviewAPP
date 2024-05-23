@@ -29,6 +29,7 @@ import java.util.List;
 public class WS_Serial_Search extends IntentService {
 
 
+    public static final String FORCE_SITE_RESTRICTION = "FORCE_SITE_RESTRICTION";
     public static final String SOCKET_TIMEOUT_EXCEPTION = "SocketTimeoutException";
     public static final String UNKNOWN_HOST_EXCEPTION = "UnknownHostException";
     private HMAux hmAux_Trans = new HMAux();
@@ -57,8 +58,9 @@ public class WS_Serial_Search extends IntentService {
             boolean site_restriction = bundle.getBoolean(Constant.WS_SERIAL_SEARCH_SITE_RESTRICTION, true);
             int serial_exact = bundle.getInt(Constant.WS_SERIAL_SEARCH_EXACT, 1);
             boolean scheduled_profile_check = bundle.getBoolean(ConstantBaseApp.SCHEDULED_PROFILE_CHECK, true);
+            boolean force_site_restriction = bundle.getBoolean(FORCE_SITE_RESTRICTION, false);
 
-            processWSSerialSearch(product_code, product_id, serial_id, tracking, serial_exact, scheduled_profile_check, site_restriction);
+            processWSSerialSearch(product_code, product_id, serial_id, tracking, serial_exact, scheduled_profile_check, site_restriction, force_site_restriction);
 
         } catch (Exception e) {
 
@@ -79,7 +81,7 @@ public class WS_Serial_Search extends IntentService {
 
     }
 
-    private void processWSSerialSearch(String product_code, String product_id, String serial_id, String tracking, int serial_exact, boolean scheduled_profile_check, boolean site_restriction) throws Exception {
+    private void processWSSerialSearch(String product_code, String product_id, String serial_id, String tracking, int serial_exact, boolean scheduled_profile_check, boolean site_restriction, boolean force_site_restriction) throws Exception {
         //Seleciona traduções
         loadTranslation();
 
@@ -104,6 +106,7 @@ public class WS_Serial_Search extends IntentService {
         }else{
             env.setSite_code("");
         }
+        env.setForce_site_restriction(force_site_restriction?1:0);
         //
         env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
 

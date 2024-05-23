@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui.act093.data.repository
 import android.content.Context
 import com.namoa_digital.namoa_library.view.Base_Activity
 import com.namoadigital.prj001.core.IResult
+import com.namoadigital.prj001.core.IResult.Companion.error
 import com.namoadigital.prj001.core.IResult.Companion.failed
 import com.namoadigital.prj001.core.IResult.Companion.isSuccess
 import com.namoadigital.prj001.core.IResult.Companion.loading
@@ -97,6 +98,7 @@ class IInfoSerialRepository constructor(
                 ).toSqlQuery()
             )
             emit(success(suffix?.valueSufix))
+
         }.namoaCatch(IInfoSerialRepository::class.java.simpleName)
     }
 

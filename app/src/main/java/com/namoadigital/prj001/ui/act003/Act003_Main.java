@@ -129,7 +129,14 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
             //callAct004(context);
             callAct033(context);
         } else {
-            mPresenter.getSites(hmAux_Trans);
+            Bundle bundle = getIntent().getExtras();
+            Integer automaticSite = mPresenter.getAutomaticSite();
+            if(automaticSite == null
+            || (bundle != null && bundle.getInt(Constant.BACK_ACTION, 0) == 1)) {
+                mPresenter.getSites(hmAux_Trans);
+            }else{
+                mPresenter.setSiteCode(automaticSite.toString());
+            }
         }
     }
 
@@ -160,7 +167,7 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HMAux item = (HMAux) parent.getItemAtPosition(position);
-                mPresenter.setSiteCode(item);
+                mPresenter.setSiteCode(item.get(MD_SiteDao.SITE_CODE));
                 //
                 ToolBox_Inf.hideSoftKeyboard(Act003_Main.this);
             }
@@ -207,10 +214,10 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
             mk_search_layout.setVisibility(View.VISIBLE);
             Bundle bundle = getIntent().getExtras();
             //Bundle é passado quando o btn voltar da act 004 foi clicado.
-            if (bundle != null && bundle.getInt(Constant.BACK_ACTION) == 1) {
+            if (bundle != null && bundle.getInt(Constant.BACK_ACTION, 0) == 1) {
                 callAct002(context, false);
             } else {
-                mPresenter.setSiteCode(sites.get(0));
+                mPresenter.setSiteCode(sites.get(0).get(MD_SiteDao.SITE_CODE));
             }
         } else {
             mk_search_layout.setVisibility(View.VISIBLE);

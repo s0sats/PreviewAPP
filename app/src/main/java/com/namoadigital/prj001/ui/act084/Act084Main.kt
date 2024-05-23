@@ -143,6 +143,7 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
                 myActionsList,
                 hmAux_Trans,
                 "",
+                false,
                 this::onMyActionClick,
                 this::onFormButtonClick,
                 notifyFilterApplied = this::onAdapterFilterApplied

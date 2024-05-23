@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/ll_header"
+        layout="@layout/frg_main_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#E4EDEF"
+        android:paddingHorizontal="15dp"
+        app:layout_constraintTop_toBottomOf="@+id/ll_header">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/et_layout_filter"
+            style="@style/NamoaTheme3.TextInputLayout.Outlined"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:boxStrokeErrorColor="@color/m3_namoa_error"
+            app:errorEnabled="false"
+            app:placeholderTextColor="@color/m3_namoa_onSurface"
+            app:startIconDrawable="@drawable/baseline_search_24"
+            tools:hint="Busque Técnico, Tp de Evento, Frota ou OS">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_filter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="5"
+                android:singleLine="false"
+                android:textColor="@drawable/edittext_theme_text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:paddingHorizontal="15dp"
+        android:paddingVertical="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/frameLayout">
+
+
+        <TextView
+            android:id="@+id/tripId"
+            style="@style/TextAppearance.Material3.TitleMedium"
+            android:textColor="@color/m3_namoa_onSurface"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Viagem 85345.45" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:visibility="visible"
+            android:layout_height="match_parent"/>
+
+        <TextView
+            android:id="@+id/empty_list"
+            style="@style/TextAppearance.Material3.TitleMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="70dp"
+            android:visibility="gone"
+            android:textAlignment="center"
+            tools:text="Lista vazia" />
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

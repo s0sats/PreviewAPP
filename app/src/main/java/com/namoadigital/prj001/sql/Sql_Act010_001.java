@@ -33,8 +33,21 @@ public class Sql_Act010_001 implements Specification {
     private String s_serial_id;
     private Integer blockSpontaneous;
     private Integer blockSpontaneousInTicket;
+    private String isTripModeQuery = "";
 
-    public Sql_Act010_001(long s_customer_code, int s_tag_code, String s_translate_code, String s_product_code, long s_operation_code, String s_site_code, String s_serial_id, Integer blockSpontaneous, Integer blockSpontaneousInTicket) {
+    public Sql_Act010_001(
+            long s_customer_code,
+            int s_tag_code,
+            String s_translate_code,
+            String s_product_code,
+            long s_operation_code,
+            String s_site_code,
+            String s_serial_id,
+            Integer blockSpontaneous,
+            Integer blockSpontaneousInTicket,
+            boolean isTripMode
+
+    ) {
         this.s_customer_code = s_customer_code;
         this.s_tag_code = s_tag_code;
         this.s_translate_code = s_translate_code;
@@ -44,6 +57,9 @@ public class Sql_Act010_001 implements Specification {
         this.s_serial_id = s_serial_id.trim().length() != 0 ? s_serial_id.trim()  : "null";
         this.blockSpontaneous = blockSpontaneous;
         this.blockSpontaneousInTicket = blockSpontaneousInTicket;
+        if(isTripMode){
+            isTripModeQuery = "   AND cf.is_so = 1\n";
+        }
     }
 
     @Override
@@ -107,6 +123,7 @@ public class Sql_Act010_001 implements Specification {
                 "      AND (cf.all_operation = 1 OR o.operation_code = '"+s_operation_code+"') \n" +
                 "      AND (cf.all_site = 1 OR s.site_code = '"+s_site_code+"')\n"+
                 "      AND ( '"+s_serial_id+"' IS NOT NULL OR cf.require_serial_done = 0)\n"+
+                        isTripModeQuery +
                 "    \n" +
                 "    ORDER BY\n" +
                 "      upper(" + CUSTOM_DESC + ") \n;"

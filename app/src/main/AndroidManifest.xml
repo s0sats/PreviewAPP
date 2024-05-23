@@ -631,8 +631,30 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
             android:exported="false"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".ui.act094.ui.Act094_Main"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden" />
+
+        <activity
+            android:name=".ui.act005.location.LocationTestMain"
+            android:exported="false"
+            android:screenOrientation="fullSensor"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden" />
+
+        <service android:name=".service.location.FsTripLocationService"
+            android:foregroundServiceType="location" />
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
         <!-- Receivers -->
         <receiver android:name=".receiver.WBR_GetCustomer" />
 
@@ -988,8 +1010,21 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
         <receiver android:name=".receiver.WBR_Schedule_Not_Executed" />
         <receiver android:name=".receiver.WBR_So_Status_Change" />
         <receiver android:name=".receiver.WBR_So_Priority_Change" />
+        <receiver android:name=".receiver.trip.WBR_AvailablesDestinations" />
+        <receiver android:name=".receiver.trip.WBR_SelectDestination" />
+        <receiver android:name=".receiver.trip.WBR_GetAvailableUsers" />
         <receiver android:name=".receiver.WBR_SO_Sync" />
         <receiver android:name=".receiver.WBR_Serial_Site_Inv" />
+        <receiver android:name=".receiver.trip.WBR_UserPosition" />
+        <receiver android:name=".receiver.trip.WBR_CreateTrip" />
+        <receiver android:name=".receiver.trip.WBRFleetSet" />
+        <receiver android:name=".receiver.trip.WBRTripStatusChange" />
+        <receiver android:name=".receiver.trip.WBR_OriginSet"/>
+        <receiver android:name=".receiver.trip.WBR_TripDestinationStatusChange" />
+        <receiver android:name=".receiver.trip.WBR_TripSaveUser" />
+        <receiver android:name=".receiver.trip.WBR_Event" />
+        <receiver android:name=".receiver.trip.WBRDestinationEdit" />
+        <receiver android:name=".receiver.trip.WBRGetTripFull" />
 
         <service android:name=".service.WS_SO_Create_Room" />
         <service android:name=".service.WS_TK_Next_Ticket" />
@@ -1009,8 +1044,32 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
         <service android:name=".service.WsScheduleNotExecuted" />
         <service android:name=".service.WSSoStatusChange" />
         <service android:name=".service.WSSoPriorityChange" />
+        <service android:name=".service.trip.WsAvailablesDestinations" />
+        <service android:name=".service.trip.WsSelectDestination" />
+        <service android:name=".service.trip.WsGetUsersAvailable" />
         <service android:name=".service.WS_SO_Sync" />
         <service android:name=".service.WsSerialSiteInventory" />
+        <service android:name=".service.trip.WsUserPosition" />
+        <service android:name=".service.trip.WsCreateTrip" />
+        <service android:name=".service.trip.WSFleetSet" />
+        <service android:name=".service.trip.WSTripStatusChange" />
+        <service android:name=".service.trip.WsOriginSet" />
+        <service android:name=".service.trip.WsTripEditUsers" />
+        <service android:name=".service.trip.WsEvent" />
+        <service android:name=".service.trip.WsTripDestinationStatusChange" />
+        <service android:name=".service.trip.WSDestinationEdit" />
+        <service android:name=".service.trip.WsGetTripFull" />
+
+
+        <!--Broadcast-->
+
+        <receiver android:name=".core.broadcast.GpsStateReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.location.PROVIDERS_CHANGED"/>
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

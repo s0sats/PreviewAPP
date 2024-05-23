@@ -64,6 +64,9 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
     public static final String OBJ_PLANNED = "obj_planned";
     public static final String UPDATE_REQUIRED = "update_required";
     public static final String FROM_TO_NOTIFY = "from_to_notify";
+    public static final String TRIP_PREFIX = "trip_prefix";
+    public static final String TRIP_CODE = "trip_code";
+    public static final String DESTINATION_SEQ = "destination_seq";
 
     public TK_Ticket_CtrlDao(Context context, String mDB_NAME, int mDB_VERSION) {
         super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI);
@@ -952,6 +955,22 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
             }
             tk_ticket_ctrl.setUpdate_required(cursor.getInt(cursor.getColumnIndex(UPDATE_REQUIRED)));
             tk_ticket_ctrl.setFrom_to_notify(cursor.getInt(cursor.getColumnIndex(FROM_TO_NOTIFY)));
+
+            if(cursor.isNull(cursor.getColumnIndex(TRIP_PREFIX))) {
+                tk_ticket_ctrl.setTrip_prefix(null);
+            }else{
+                tk_ticket_ctrl.setTrip_prefix(cursor.getInt(cursor.getColumnIndex(TRIP_PREFIX)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(TRIP_CODE))) {
+                tk_ticket_ctrl.setTrip_code(null);
+            }else{
+                tk_ticket_ctrl.setTrip_code(cursor.getInt(cursor.getColumnIndex(TRIP_CODE)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(DESTINATION_SEQ))) {
+                tk_ticket_ctrl.setDestination_seq(null);
+            }else{
+                tk_ticket_ctrl.setDestination_seq(cursor.getInt(cursor.getColumnIndex(DESTINATION_SEQ)));
+            }
             //
             return tk_ticket_ctrl;
         }
@@ -1013,6 +1032,9 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
             if(tk_ticket_ctrl.getFrom_to_notify() > -1){
                 contentValues.put(FROM_TO_NOTIFY,tk_ticket_ctrl.getFrom_to_notify());
             }
+            contentValues.put(TRIP_PREFIX,tk_ticket_ctrl.getTrip_prefix());
+            contentValues.put(TRIP_CODE,tk_ticket_ctrl.getTrip_code());
+            contentValues.put(DESTINATION_SEQ,tk_ticket_ctrl.getDestination_seq());
             //
             return contentValues;
         }

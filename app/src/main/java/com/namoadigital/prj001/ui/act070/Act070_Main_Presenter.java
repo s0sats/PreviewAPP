@@ -32,6 +32,7 @@ import com.namoadigital.prj001.dao.TK_Ticket_ActionDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.dao.TK_Ticket_FormDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
+import com.namoadigital.prj001.dao.trip.FSTripDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.GE_Custom_Form;
@@ -49,6 +50,7 @@ import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.model.T_MD_Product_Serial_Structure_Env;
 import com.namoadigital.prj001.model.T_TK_Get_Workgroup_List_Rec;
 import com.namoadigital.prj001.model.T_TK_Header_N_Group_Save_WG_Env;
+import com.namoadigital.prj001.model.trip.FSTrip;
 import com.namoadigital.prj001.receiver.WBR_Product_Serial_Structure;
 import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
@@ -57,6 +59,7 @@ import com.namoadigital.prj001.receiver.WBR_TK_Get_Workgroup_List;
 import com.namoadigital.prj001.receiver.WBR_TK_Header_N_Group_Save;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
+import com.namoadigital.prj001.receiver.trip.WBRGetTripFull;
 import com.namoadigital.prj001.service.WS_Product_Serial_Structure;
 import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Save;
@@ -66,6 +69,7 @@ import com.namoadigital.prj001.service.WS_TK_Header_N_Group_Save;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Checkin;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
+import com.namoadigital.prj001.service.trip.WsGetTripFull;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_020;
 import com.namoadigital.prj001.sql.MDProductSerialSql017;
@@ -553,6 +557,33 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         );
         //
         return serial.size() > 0 ;
+    }
+
+    @Override
+    public boolean isUserOnSyncRequiredTrip() {
+        FSTripDao dao = new FSTripDao(context);
+        FSTrip trip = dao.getTrip();
+        return trip != null && trip.getSyncRequired() == 1;
+    }
+
+    @Override
+    public void callTripUpdate() {
+        if(ToolBox_Con.isOnline(context)){
+            mView.setWsProcess(WsGetTripFull.class.getName());
+            //
+            mView.showPD(
+                    hmAux_Trans.get("alert_trip_update_ttl"),
+                    hmAux_Trans.get("alert_trip_update_msg")
+            );
+            //
+            Intent mIntent = new Intent(context, WBRGetTripFull.class);
+            Bundle bundle = new Bundle();
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        }else{
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
     }
 
     private boolean isOfflineFinished(int ticket_prefix, int ticket_code) {

@@ -6,13 +6,17 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.dao.MD_PartnerDao
 import com.namoadigital.prj001.dao.SO_Pack_ExpressDao
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao
-import com.namoadigital.prj001.model.*
+import com.namoadigital.prj001.model.SO_Pack_Express_Local
+import com.namoadigital.prj001.model.SoPackExpressPacksLocal
+import com.namoadigital.prj001.model.SoPackExpressServicesLocal
+import com.namoadigital.prj001.model.TSO_Service_Search_Obj
+import com.namoadigital.prj001.model.TSO_Service_Search_Rec
+import com.namoadigital.prj001.model.TranslateResource
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_005
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_001
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_006
 import com.namoadigital.prj001.ui.act091.mvp.Utils.Act091_Translate
 import com.namoadigital.prj001.ui.act091.mvp.model.Act091State
-import com.namoadigital.prj001.ui.act091.mvp.model.TranslateResource
 import com.namoadigital.prj001.ui.act091.mvp.ui.Act091EventUI
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
@@ -47,9 +51,9 @@ class Act091_Presenter constructor(
     override fun openBottomSheet(service: TSO_Service_Search_Obj) {
         getSO_Pack_Express_Local()?.let { soPackExpressLocal ->
             SoPackExpressPacksLocal(service, soPackExpressLocal, -1).let { local ->
-                view.onState(Act091EventUI.OpenBottomSheet(local, false))
+                view.onEvent(Act091EventUI.OpenBottomSheet(local, false))
             }
-        } ?: view.onState(Act091EventUI.ShowAlertDialogOk(
+        } ?: view.onEvent(Act091EventUI.ShowAlertDialogOk(
             "alert_error_ttl",
             "alert_error_msg"
         ) { dialog -> dialog.dismiss() }

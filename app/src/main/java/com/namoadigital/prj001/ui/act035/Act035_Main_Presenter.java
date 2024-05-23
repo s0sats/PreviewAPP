@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act035;
 
+import android.content.Context;
+
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.Chat_Room_Obj_SO;
 
@@ -47,5 +49,7 @@ public interface Act035_Main_Presenter {
     void onBackPressedClicked(String act_request);
 
     boolean verifyProductForForm(HMAux hmAux);
+
+    boolean hasTripInProgress(Context context);
     //endregion
 }
