@@ -70,6 +70,7 @@ public class Work_Upload_Other_User_Img extends Worker {
                 );
 
                 if (rec.getSave().equalsIgnoreCase("OK")) {
+                    ToolBox_Inf.deleteLocalImage(file.getName());
                     //Não há necessidade de verificar o delete.
                     file.delete();
                 }

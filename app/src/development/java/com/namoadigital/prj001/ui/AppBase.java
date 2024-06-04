@@ -68,7 +68,7 @@ import dagger.hilt.android.HiltAndroidApp;
 @HiltAndroidApp
 public class AppBase extends Application {
 
-    public static final String CUTUCA_H = "/namoa";
+    public static final String CUTUCA_E = "/namoa";
     public static final String NAMOA_DIR = "/namoa";
     public static final String ZIPS_DIR = "/zips";
     public static final String IMGS_DIR = "/imgs";

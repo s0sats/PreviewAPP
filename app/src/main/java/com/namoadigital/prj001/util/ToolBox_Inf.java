@@ -143,7 +143,9 @@ import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.extensions.AppCompatActivityKt;
 import com.namoadigital.prj001.extensions.FsTripHelperKt;
+import com.namoadigital.prj001.extensions.ImageMetadataHelperKt;
 import com.namoadigital.prj001.extensions.StringHelperKt;
+import com.namoadigital.prj001.model.CH_Message;
 import com.namoadigital.prj001.model.CH_Room;
 import com.namoadigital.prj001.model.Chat_Obj;
 import com.namoadigital.prj001.model.EV_Module_Res;
@@ -187,6 +189,7 @@ import com.namoadigital.prj001.receiver.WBR_Upload_Support;
 import com.namoadigital.prj001.service.AppBackgroundService;
 import com.namoadigital.prj001.service.SV_LocationTracker;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
+import com.namoadigital.prj001.sql.CHMessageSql026;
 import com.namoadigital.prj001.sql.CH_Message_Sql_020;
 import com.namoadigital.prj001.sql.CH_Message_Sql_022;
 import com.namoadigital.prj001.sql.CH_Message_Sql_023;
@@ -321,6 +324,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -1686,14 +1690,12 @@ public class ToolBox_Inf {
      * @return
      */
     private static ArrayList<GE_File> getUnsentGeFiles(Context context) {
-        File[] dbList = getListDB("C_", true);
+        File[] dbList = getListDB("namoa_app_", true);
         ArrayList<GE_File> geFiles = new ArrayList<>();
         GE_FileDao geFileDao = null;
         //Gera lista de GeFiles
         for(File dbFile : dbList){
-            String[] db_full_name = dbFile.getName().contains("_") ? dbFile.getName().split("_") : new String[]{};
-            //Valida customer_code,pois o code esta sendo gerado pelo nome do arquivo.
-            Long customer_code = db_full_name.length == 3 && db_full_name[1] != null && mLongParse(db_full_name[1]) != null ? mLongParse(db_full_name[1]) : -1L;
+            Long customer_code = getCustomerCodeFromDBName(dbFile);
             //
             if(customer_code != null && customer_code != -1){
                 geFileDao = new GE_FileDao(
@@ -1712,6 +1714,54 @@ public class ToolBox_Inf {
         return geFiles;
     }
 
+    @NonNull
+    private static Long getCustomerCodeFromDBName(File dbFile) {
+        String[] db_full_name = dbFile.getName().contains("_") ? dbFile.getName().split("_") : new String[]{};
+        //Valida customer_code,pois o code esta sendo gerado pelo nome do arquivo.
+        if (db_full_name.length == 3) {
+            String[] dbname = db_full_name[2].split("\\.");
+            if (dbname.length > 0) {
+                db_full_name[2] = dbname[0];
+            }
+        }
+        Long customer_code = db_full_name.length == 3 && db_full_name[2] != null && mLongParse(db_full_name[2]) != null ? mLongParse(db_full_name[2]) : -1L;
+        return customer_code;
+    }
+
+    public static HashSet<String> getAllGeFiles(Context context) {
+        File[] dbList = getListDB("namoa_app_", true);
+        HashSet<String> fileName = new HashSet<>();
+
+        //Gera lista de GeFiles
+        for(File dbFile : dbList){
+            Long customer_code = getCustomerCodeFromDBName(dbFile);
+            //
+            if(customer_code != null && customer_code != -1){
+                //
+                fileName.addAll(ImageMetadataHelperKt.getGeFilesFilenames(context, customer_code));
+                //
+                fileName.addAll(ImageMetadataHelperKt.getTkTicketsFilenames(context, customer_code));
+                //
+                fileName.addAll(ImageMetadataHelperKt.getTripFileNames(context, customer_code));
+                //
+                fileName.addAll(ImageMetadataHelperKt.getGeOsDeviceItemFileNames(context, customer_code));
+                //
+                fileName.addAll(ImageMetadataHelperKt.getSmSoFilenames(context, customer_code));
+                //
+                fileName.addAll(ImageMetadataHelperKt.getSmSoServiceExecTaskFileFilenames(context, customer_code));
+                //
+                fileName.addAll(ImageMetadataHelperKt.getSmSoProductEventFileFilenames(context, customer_code));
+                //
+                fileName.addAll(ImageMetadataHelperKt.getGeCustomFormDataFilenames(context, customer_code));
+                //
+                fileName.addAll(ImageMetadataHelperKt.getGeCustomFormDataFieldsFilenames(context, customer_code));
+                //
+            }
+        }
+        //
+        return fileName;
+    }
+
     /**
      * LUCHE - 13/05/2019
      * Metodo que move as imagens pendentes de envio para pasta de UnsentImgs.
@@ -1725,22 +1775,7 @@ public class ToolBox_Inf {
         geFiles = getUnsentGeFiles(context);
         //CopiaArquivos
         for(GE_File geFile : geFiles){
-            File fromFile = new File(ConstantBaseApp.CACHE_PATH_PHOTO,geFile.getFile_path());
-            File toFile = new File(ConstantBaseApp.UNSENT_IMG_PATH);
-            try {
-                //Verifica se arquivo EXISTE na pasta origem e NÃO EXISTE na destino
-                if( verifyDownloadFileInf(geFile.getFile_path(),fromFile.getParent())
-                    && !verifyDownloadFileInf(geFile.getFile_path(),toFile.getParent())
-                ) {
-                    copyFile(fromFile, toFile);
-//                    if(!fromFile.renameTo(toFile)){
-//                        errorCount++;
-//                    }
-                }
-            }catch (Exception e){
-                registerException(CLASS_NAME,e);
-                errorCount++;
-            }
+            errorCount = getErrorCount(geFile.getFile_path(), errorCount);
         }
         //Se itens na lista, chama serviço de envio
         if(geFiles.size() > 0){
@@ -1750,6 +1785,26 @@ public class ToolBox_Inf {
         }
         //Se contador de erro 0 , então sucesso.
         return errorCount == 0;
+    }
+
+    public static int getErrorCount(String geFilePath, int errorCount) {
+        File fromFile = new File(ConstantBaseApp.CACHE_PATH_PHOTO, geFilePath);
+        File toFile = new File(ConstantBaseApp.UNSENT_IMG_PATH);
+        try {
+            //Verifica se arquivo EXISTE na pasta origem e NÃO EXISTE na destino
+            if( verifyDownloadFileInf(geFilePath,fromFile.getParent())
+                && !verifyDownloadFileInf(geFilePath,toFile.getParent())
+            ) {
+                copyFile(fromFile, toFile);
+//                    if(!fromFile.renameTo(toFile)){
+//                        errorCount++;
+//                    }
+            }
+        }catch (Exception e){
+            registerException(CLASS_NAME,e);
+            errorCount++;
+        }
+        return errorCount;
     }
 
     public static String BitMapToBase64(Bitmap bm) {
@@ -4184,6 +4239,16 @@ public class ToolBox_Inf {
         }
         //
         ToolBox_Inf.writeIn(json,file);
+    }
+
+    public static HashSet<String> getAllChatFiles(Context applicationContext) {
+        CH_MessageDao chMessageDao = new CH_MessageDao(applicationContext);
+        HashSet<String> fileName = new HashSet<>();
+        List<CH_Message> messages = chMessageDao.query(new CHMessageSql026().toSqlQuery());
+        for (CH_Message message : messages) {
+            fileName.add(message.getMessage_image_local());
+        }
+        return fileName;
     }
 
     //

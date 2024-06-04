@@ -23,7 +23,7 @@ data class FsTripDestination(
     @SerializedName("arrivedFleetOdometer") val arrivedFleetOdometer: Long?,
     @SerializedName("arrivedFleetPhoto") val arrivedFleetPhoto: String?,
     @SerializedName("arrivedFleetPhotoName") val arrivedFleetPhotoName: String?,
-    val arrivedFleetPhotoLocal: String? = "",
+    var arrivedFleetPhotoLocal: String? = "",
     @SerializedName("departedDate") val departedDate: String?,
     @SerializedName("departedLat") val departedLat: Double?,
     @SerializedName("departedLon") val departedLon: Double?,

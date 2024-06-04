@@ -20,6 +20,7 @@ import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
+import com.namoadigital.prj001.extensions.date.DateHelperKt;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.model.GeOs;
@@ -45,6 +46,8 @@ import com.namoadigital.prj001.sql.WS_Cleaning_Sql_007;
 import com.namoadigital.prj001.sql.WS_Cleaning_Sql_008;
 import com.namoadigital.prj001.sql.WS_Cleaning_Sql_009;
 import com.namoadigital.prj001.sql.WS_Cleaning_Sql_010;
+import com.namoadigital.prj001.ui.act005.home.data.repository.RoutineCleaningRepository;
+import com.namoadigital.prj001.ui.act005.home.di.usecase.ChangeDateRoutineCleaningUseCase;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -69,6 +72,10 @@ public class Work_Cleanning_Data extends Worker {
     private int formQtyDaysToSub = 30;
     private long customer_code = -1L;
 
+
+    private final RoutineCleaningRepository routineCleaningRepository = new RoutineCleaningRepository.Companion.RoutineCleaningRepositoryFactory(getApplicationContext()).build();
+    private final ChangeDateRoutineCleaningUseCase changeDateRoutineCleaningUseCase = new ChangeDateRoutineCleaningUseCase(routineCleaningRepository);
+
     public Work_Cleanning_Data(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
     }
@@ -91,6 +98,7 @@ public class Work_Cleanning_Data extends Worker {
             deleteTickets();
             deleteSchedules();
             //
+            changeDateRoutineCleaningUseCase.invoke(DateHelperKt.getCurrentDateApi());
             return Result.success();
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
@@ -145,7 +153,10 @@ public class Work_Cleanning_Data extends Worker {
                     //Modificado para deletar fotos das action dos controles que agora ficam no step
                     for (TK_Ticket_Step tk_ticket_step : ticket.getStep()) {
                         for (TK_Ticket_Ctrl ctrl : tk_ticket_step.getCtrl()) {
-                            if(ctrl.getAction().getAction_photo_local() != null && !ctrl.getAction().getAction_photo_local() .isEmpty()){
+                            if(ctrl.getAction() != null
+                                && ctrl.getAction().getAction_photo_local() != null
+                                && !ctrl.getAction().getAction_photo_local() .isEmpty())
+                            {
                                 filesToDeleteList.add(new File(Constant.CACHE_PATH_PHOTO + "/" + ctrl.getAction().getAction_photo_local()));
                             }
                             if(ctrl.getForm() != null){

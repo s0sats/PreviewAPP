@@ -225,6 +225,8 @@ class FSTripDao @Inject constructor(
             ) {
                 throw Exception("Remove trip error")
             }
+            fsTrip.fleetStartPhotoLocal = checkFileLocalExists(fsTrip.fleetStartPhotoName)
+            //
             daoObjReturn.table = TABLE
             curAction = DaoObjReturn.UPDATE
             //Where para update
@@ -246,10 +248,12 @@ class FSTripDao @Inject constructor(
                 }
                 //FsTripDestinationDao
                 it.destinations?.forEach { destination ->
+                    destination.arrivedFleetPhotoLocal = checkFileLocalExists(destination.arrivedFleetPhotoName)
                     fsTripDestinationDao.addUpdate(destination, db)
                 }
                 //FSTripEventDao
                 it.events?.forEach { event ->
+                    event.photoLocal = checkFileLocalExists(event.photoName)
                     fsTripEventDao.addUpdate(event, db)
                 }
             }
@@ -281,6 +285,18 @@ class FSTripDao @Inject constructor(
         closeDB()
         //
         return daoObjReturn
+    }
+
+    private fun checkFileLocalExists(photoName: String?):String? {
+        if (!photoName.isNullOrBlank()) {
+            val fileLocal = File(ConstantBaseApp.CACHE_PATH_PHOTO, photoName)
+            if (fileLocal.exists()
+                && fileLocal.isFile
+            ) {
+                return photoName
+            }
+        }
+        return null
     }
 
     private fun handlePdfChanges(

@@ -101,6 +101,8 @@ import com.namoadigital.prj001.sql.GE_File_Sql_001;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
 import com.namoadigital.prj001.ui.act004.Act004_Main;
+import com.namoadigital.prj001.ui.act005.home.data.repository.RoutineCleaningRepository;
+import com.namoadigital.prj001.ui.act005.home.di.usecase.CheckRoutineCleaningUseCase;
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.OnFrgMainHomeInteract;
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.OnFrgTripInteract;
 import com.namoadigital.prj001.ui.act005.trip.fragment.base.TripBaseFragment;
@@ -153,6 +155,7 @@ import java.util.List;
 import java.util.Map;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import kotlin.Unit;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -273,6 +276,14 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     private Fragment fragmentNav;
     private GpsStateReceiver gpsStateReceiver;
 
+    private void routineCleaning() {
+        CheckRoutineCleaningUseCase routineCleaningUseCase = new CheckRoutineCleaningUseCase(
+                new RoutineCleaningRepository.Companion.RoutineCleaningRepositoryFactory(getApplicationContext()).build()
+        );
+
+        routineCleaningUseCase.invoke(Unit.INSTANCE);
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -280,7 +291,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         //LUCHE - 24/06/2020 Worker de agendamento
         ToolBox_Inf.scheduleQuarterScheduleNotification(context);
         ToolBox_Inf.schedule4HoursScheduleNotification(context);
-        ToolBox_Inf.scheduleCleanningWork(context);
+        routineCleaning();
         //LUCHE - 06/07/2021 - Add chamada aqui, pois se tem arquivo de outro usr deve ser enviado
         ToolBox_Inf.scheduleUploadOtherUserImgWork(context);
         //
@@ -334,8 +345,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
          */
         if (hasFormLOcationPendecy()) {
             retryGetLocation();
-        }else{
-            if(!mPresenter.hasTripInProgress()) {
+        } else {
+            if (!mPresenter.hasTripInProgress()) {
                 requestNotificationPermission();
             }
         }
@@ -456,7 +467,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 new NamoaPermissionRequest() {
                     @Override
                     public void accessGranted() {
-                        if(hasGpsPermission()) {
+                        if (hasGpsPermission()) {
                             gpsLocationAccessGranted();
                         }
                     }
@@ -465,7 +476,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                     public void accessDenied(final String[] permissions) {
 
 
-                        if(!hasGpsPermission()) {
+                        if (!hasGpsPermission()) {
                             if (mPresenter.isFieldServiceModeAble() && mPresenter.hasTripInProgress()) {
                                 navigateToFragment(true, R.id.action_frgMainHome_to_onGpsFragment);
                             }
@@ -491,7 +502,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                                         }
                                     }
                             );
-                        }else{
+                        } else {
                             gpsLocationAccessGranted();
                         }
                     }
@@ -499,41 +510,41 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                     @Override
                     public void requestPermissionRationale(final String[] permissions) {
 
-                        if(!hasGpsPermission()) {
+                        if (!hasGpsPermission()) {
 
-                                String alertTtl = hmAux_Trans.get("alert_gps_rationale_permission_ttl");
-                                String alertMsg = hmAux_Trans.get("alert_gps_rationale_permission_msg");
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                                    alertTtl = hmAux_Trans.get("alert_gps_rationale_exact_permission_ttl");
-                                    alertMsg = hmAux_Trans.get("alert_gps_rationale_exact_permission_msg");
-                                }
-                                showPermissionRationaleDialog(
-                                        Act005_Main.this,
-                                        com.namoa_digital.namoa_library.R.drawable.ic_alert_n,
-                                        alertTtl,
-                                        alertMsg,
-                                        new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                callRequestPermission(MULTIIPLE_PERMISSION_REQUEST_WITHOUT_RATIONALE, permissions);
-                                            }
-                                        },
-                                        new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-
-                                            }
+                            String alertTtl = hmAux_Trans.get("alert_gps_rationale_permission_ttl");
+                            String alertMsg = hmAux_Trans.get("alert_gps_rationale_permission_msg");
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                alertTtl = hmAux_Trans.get("alert_gps_rationale_exact_permission_ttl");
+                                alertMsg = hmAux_Trans.get("alert_gps_rationale_exact_permission_msg");
+                            }
+                            showPermissionRationaleDialog(
+                                    Act005_Main.this,
+                                    com.namoa_digital.namoa_library.R.drawable.ic_alert_n,
+                                    alertTtl,
+                                    alertMsg,
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            callRequestPermission(MULTIIPLE_PERMISSION_REQUEST_WITHOUT_RATIONALE, permissions);
                                         }
-                                );
+                                    },
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
 
-                        }else{
+                                        }
+                                    }
+                            );
+
+                        } else {
                             gpsLocationAccessGranted();
                         }
                     }
 
                     @Override
                     public void accessDeniedNeverAskAgain(String[] permissions) {
-                        if(!hasGpsPermission()) {
+                        if (!hasGpsPermission()) {
                             String alertTtl = hmAux_Trans.get("alert_gps_never_ask_again_permission_ttl");
                             String alertMsg = hmAux_Trans.get("alert_gps_never_ask_again_permission_msg");
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -585,9 +596,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             tripHomeFragment.handleLatLonNullError(true, null);
         } else {
             TripOverNightFragment tripOverNightFragment = getTripOverNightFragment();
-            if(tripOverNightFragment != null){
+            if (tripOverNightFragment != null) {
                 tripOverNightFragment.returnToTrip();
-            }else{
+            } else {
                 TripBaseFragment base = getTripBaseFragment();
                 if (base != null) {
                     base.handleLocationService();
@@ -2614,7 +2625,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         gpsStateReceiver.setOnGpsState(isGpsEnabled -> {
             boolean isTripOverNight = (getTripBaseFragment() != null && getTripBaseFragment().isTripOverNightStatus());
 
-            if(ContextKt.hasLocationPermission(context) && !isTripOverNight) {
+            if (ContextKt.hasLocationPermission(context) && !isTripOverNight) {
                 checkGpsStateReceiver(isGpsEnabled, false);
             }
             return null;
@@ -2625,11 +2636,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         boolean isGpsFragment = (getTripBaseFragment() != null && getTripBaseFragment().isGPSFragment());
         boolean isTripOverNight = (getTripBaseFragment() != null && getTripBaseFragment().isTripOverNightStatus());
         if (isGpsEnabled || isTripOverNight) {
-            if (isFirstFragment || isGpsFragment){
+            if (isFirstFragment || isGpsFragment) {
                 setTripFragment();
             }
         } else {
-            if(getTripBaseFragment() != null) {
+            if (getTripBaseFragment() != null) {
                 getTripBaseFragment().dismissDialog(true);
             }
             navigateToFragment(true, R.id.action_frgMainHome_to_onGpsFragment);
@@ -3031,6 +3042,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         }
         return null;
     }
+
     private TripOverNightFragment getTripOverNightFragment() {
         if (fragmentNav.getChildFragmentManager().getFragments().get(0) instanceof TripOverNightFragment) {
             return (TripOverNightFragment) fragmentNav.getChildFragmentManager().getFragments().get(0);

@@ -15,6 +15,7 @@ public class TSync_Rec {
     @SerializedName("zip") private String zip;
     @SerializedName("db_version") private Integer db_version;
     @SerializedName("user_code") private Integer user_code;
+    @SerializedName("files_waiting") private Boolean files_waiting;
     @SerializedName("valid_time") private int valid_time = -1 ;
     @SerializedName("tolerance_time") private long tolerance_time = -1;
 
@@ -72,6 +73,14 @@ public class TSync_Rec {
 
     public void setUser_code(Integer user_code) {
         this.user_code = user_code;
+    }
+
+    public Boolean getFiles_waiting() {
+        return files_waiting;
+    }
+
+    public void setFiles_waiting(Boolean files_waiting) {
+        this.files_waiting = files_waiting;
     }
 
     public int getValid_time() {

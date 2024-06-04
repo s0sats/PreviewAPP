@@ -75,6 +75,7 @@ import com.namoadigital.prj001.dao.trip.FSTripUserDao;
 import com.namoadigital.prj001.dao.trip.FsTripDestinationActionDao;
 import com.namoadigital.prj001.dao.trip.FsTripDestinationDao;
 import com.namoadigital.prj001.dao.trip.FsTripPositionDao;
+import com.namoadigital.prj001.extensions.ListHelperKt;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.EV_Module_Res;
@@ -216,7 +217,9 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by neomatrix on 16/01/17.
@@ -1813,6 +1816,13 @@ public class WS_Sync extends BaseWsIntentService {
             }
             //Libera pro GB
             files_fs_trip = null;
+
+            //tratativa de imagens de outros users
+            if(rec.getFiles_waiting() != null
+                && rec.getFiles_waiting()){
+                handleFilesWaiting();
+            }
+
         }
 
         //endregion
@@ -2231,6 +2241,41 @@ public class WS_Sync extends BaseWsIntentService {
             ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", "Ending Processing...", "", "0");
         }
         ToolBox_Inf.deleteAllFOD(Constant.ZIP_PATH);
+    }
+
+    private void handleFilesWaiting() {
+        File fromFile = new File(ConstantBaseApp.CACHE_PATH_PHOTO);
+        File[] files_waiting = fromFile.listFiles();
+        //
+        HashSet<String> files_open = getGeFilesFromAllCustomers();
+        //
+        if(files_waiting != null) {
+            for (File file : files_waiting) {
+//                if (fileIsNotOnGeFile(file, files_open)) {
+                if (!ListHelperKt.containFileName(files_open, file.getName())) {
+                    int errorCount = ToolBox_Inf.getErrorCount(file.getName(), 0);
+                }
+            }
+            ToolBox_Inf.scheduleUploadOtherUserImgWork(getApplicationContext());
+        }
+    }
+
+    private boolean fileIsNotOnGeFile(File file, Set<String> filesPath) {
+        for (String path : filesPath) {
+            if(file.getName().equals(path)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private HashSet<String> getGeFilesFromAllCustomers() {
+        HashSet<String> paths = ToolBox_Inf.getAllChatFiles(getApplicationContext());
+        HashSet<String> pathsAllImages = ToolBox_Inf.getAllGeFiles(getApplicationContext());
+        //
+        paths.addAll(pathsAllImages);
+        //
+        return paths;
     }
 
     private ArrayList<T_DataPackage_SM_SO_Env> getDatapackageSoObjList(SM_SODao soDao) {
