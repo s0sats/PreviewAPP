@@ -461,35 +461,37 @@ public class WS_TK_Ticket_Save extends BaseWsIntentService {
                                     resultCtrl.getTicket_seq_tmp()
                             );
                             //
-                            switch (dbTicketCtrl.getCtrl_type()) {
-                                case ConstantBaseApp.TK_TICKET_CRTL_TYPE_APPROVAL:
-                                    if (handleApprovalObject(dbTicketCtrl.getApproval())) {
-                                        dbTicketCtrl.setCtrl_status(ConstantBaseApp.SYS_STATUS_DONE);
-                                    } else {
-                                        dbTicketCtrl.removeEndInfo();
-                                        resetStepDueToRejection(resultStep);
-                                        dbTicketCtrl.setCtrl_status(ConstantBaseApp.SYS_STATUS_PROCESS);
-                                    }
-                                    //Não ha necessidade de mexer no rejeitdo, pois ele tem o proprio status que sempre é rejeitado.
-                                    break;
-                                case ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION:
-                                case ConstantBaseApp.TK_TICKET_CRTL_TYPE_MEASURE:
-                                case ConstantBaseApp.TK_TICKET_CRTL_TYPE_NONE:
-                                default:
-                                    dbTicketCtrl.setCtrl_status(newStatus);
-                                    dbTicketCtrl.copyCtrlStatusForInnerProcess();
-                                    break;
-                            }
-                            /**LUCHE - 26/11/2020
-                             * Modificado metodologia de insertUpdate dos controles pois quando
-                             * quando haviam controles espontanoes estava gerando exception
-                             * Agora a cada loop será atualizado o item no device usando o metodo
-                             * AddUpdate para ctrl planejados e addUpdateTmp para o espontaneos.
-                             */
-                            if(dbTicketCtrl.getTicket_seq() > 0){
-                                ticketCtrlDao.addUpdate(dbTicketCtrl);
-                            }else{
-                                ticketCtrlDao.addUpdateTmp(dbTicketCtrl,null);
+                            if(dbTicketCtrl != null) {
+                                switch (dbTicketCtrl.getCtrl_type()) {
+                                    case ConstantBaseApp.TK_TICKET_CRTL_TYPE_APPROVAL:
+                                        if (handleApprovalObject(dbTicketCtrl.getApproval())) {
+                                            dbTicketCtrl.setCtrl_status(ConstantBaseApp.SYS_STATUS_DONE);
+                                        } else {
+                                            dbTicketCtrl.removeEndInfo();
+                                            resetStepDueToRejection(resultStep);
+                                            dbTicketCtrl.setCtrl_status(ConstantBaseApp.SYS_STATUS_PROCESS);
+                                        }
+                                        //Não ha necessidade de mexer no rejeitdo, pois ele tem o proprio status que sempre é rejeitado.
+                                        break;
+                                    case ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION:
+                                    case ConstantBaseApp.TK_TICKET_CRTL_TYPE_MEASURE:
+                                    case ConstantBaseApp.TK_TICKET_CRTL_TYPE_NONE:
+                                    default:
+                                        dbTicketCtrl.setCtrl_status(newStatus);
+                                        dbTicketCtrl.copyCtrlStatusForInnerProcess();
+                                        break;
+                                }
+                                /**LUCHE - 26/11/2020
+                                 * Modificado metodologia de insertUpdate dos controles pois quando
+                                 * quando haviam controles espontanoes estava gerando exception
+                                 * Agora a cada loop será atualizado o item no device usando o metodo
+                                 * AddUpdate para ctrl planejados e addUpdateTmp para o espontaneos.
+                                 */
+                                if (dbTicketCtrl.getTicket_seq() > 0) {
+                                    ticketCtrlDao.addUpdate(dbTicketCtrl);
+                                } else {
+                                    ticketCtrlDao.addUpdateTmp(dbTicketCtrl, null);
+                                }
                             }
                         }
                     }
@@ -497,22 +499,24 @@ public class WS_TK_Ticket_Save extends BaseWsIntentService {
                     //Removido condição de ticket_update = 0
                     if (ConstantBaseApp.MAIN_RESULT_OK.equals(resultStep.getRet_status())) {
                         TK_Ticket_Step ticketStepFromDB = getTicketStepFromDB(resultStep);
-                        //Se não tem uma nova atualização, atualiza.
-                        if (ticketStepFromDB.getUpdate_required() == 0) {
-                            //Verifica se é um checkout para setar o Step como Done
-                            if (ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(ticketStepFromDB.getStep_status())
-                                    && stepWithCheckIn(ticketStepFromDB)
-                                    && stepWithCheckout(ticketStepFromDB)
-                            ) {
-                                ticketStepFromDB.setStep_status(ConstantBaseApp.SYS_STATUS_DONE);
-                                ticketStepDao.addUpdate(ticketStepFromDB);
-                            } else {
-                                //Se não é checkout, verifica se é um checkin e muda o status para PROCESS
+                        if(ticketStepFromDB != null) {
+                            //Se não tem uma nova atualização, atualiza.
+                            if (ticketStepFromDB.getUpdate_required() == 0) {
+                                //Verifica se é um checkout para setar o Step como Done
                                 if (ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(ticketStepFromDB.getStep_status())
                                         && stepWithCheckIn(ticketStepFromDB)
+                                        && stepWithCheckout(ticketStepFromDB)
                                 ) {
-                                    ticketStepFromDB.setStep_status(ConstantBaseApp.SYS_STATUS_PROCESS);
+                                    ticketStepFromDB.setStep_status(ConstantBaseApp.SYS_STATUS_DONE);
                                     ticketStepDao.addUpdate(ticketStepFromDB);
+                                } else {
+                                    //Se não é checkout, verifica se é um checkin e muda o status para PROCESS
+                                    if (ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(ticketStepFromDB.getStep_status())
+                                            && stepWithCheckIn(ticketStepFromDB)
+                                    ) {
+                                        ticketStepFromDB.setStep_status(ConstantBaseApp.SYS_STATUS_PROCESS);
+                                        ticketStepDao.addUpdate(ticketStepFromDB);
+                                    }
                                 }
                             }
                         }
@@ -722,10 +726,12 @@ public class WS_TK_Ticket_Save extends BaseWsIntentService {
 
     private void resetStepDueToRejection(T_TK_Ticket_Save_Rec_Result_Step resultStep) {
         TK_Ticket_Step ticketStepFromDB = getTicketStepFromDB(resultStep);
-        ticketStepFromDB.setStep_end_user_nick(null);
-        ticketStepFromDB.setStep_end_user(null);
-        ticketStepFromDB.setStep_end_date(null);
-        ticketStepDao.addUpdate(ticketStepFromDB);
+        if(ticketStepFromDB != null) {
+            ticketStepFromDB.setStep_end_user_nick(null);
+            ticketStepFromDB.setStep_end_user(null);
+            ticketStepFromDB.setStep_end_date(null);
+            ticketStepDao.addUpdate(ticketStepFromDB);
+        }
     }
 
     private boolean handleApprovalObject(TK_Ticket_Approval approval) {

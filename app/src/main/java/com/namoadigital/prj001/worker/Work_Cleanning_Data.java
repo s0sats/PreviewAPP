@@ -1,12 +1,13 @@
 package com.namoadigital.prj001.worker;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.FCMMessageDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
@@ -30,6 +31,7 @@ import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Form;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
+import com.namoadigital.prj001.model.T_TK_Ticket_Save_Env;
 import com.namoadigital.prj001.sql.FCMMessage_Sql_006;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_010;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Field_Sql_002;
@@ -49,6 +51,7 @@ import com.namoadigital.prj001.sql.WS_Cleaning_Sql_010;
 import com.namoadigital.prj001.ui.act005.home.data.repository.RoutineCleaningRepository;
 import com.namoadigital.prj001.ui.act005.home.di.usecase.ChangeDateRoutineCleaningUseCase;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -139,37 +142,45 @@ public class Work_Cleanning_Data extends Worker {
             ).toSqlQuery()
         );
         //
+        Gson gsonRec = new GsonBuilder().serializeNulls().create();
+        File[] tokenToSend = ToolBox_Inf.checkTokenToSend(
+                getApplicationContext(),
+                ConstantBaseApp.TOKEN_PATH,
+                ConstantBaseApp.TOKEN_TICKET_PREFIX
+        );
+        //
         if (tickets != null && tickets.size() > 0) {
             ArrayList<File> filesToDeleteList = new ArrayList<>();
             for (TK_Ticket ticket : tickets) {
                 //
-                DaoObjReturn daoObjReturn = ticketDao.removeFullV2(ticket);
-                //
-                if (!daoObjReturn.hasError()) {
-                    if (ticket.getOpen_photo_local() != null && !ticket.getOpen_photo_local().isEmpty()) {
-                        filesToDeleteList.add(new File(Constant.CACHE_PATH_PHOTO + "/" + ticket.getOpen_photo_local()));
-                    }
-                    //LUCHE - 30/07/2020
-                    //Modificado para deletar fotos das action dos controles que agora ficam no step
-                    for (TK_Ticket_Step tk_ticket_step : ticket.getStep()) {
-                        for (TK_Ticket_Ctrl ctrl : tk_ticket_step.getCtrl()) {
-                            if(ctrl.getAction() != null
-                                && ctrl.getAction().getAction_photo_local() != null
-                                && !ctrl.getAction().getAction_photo_local() .isEmpty())
-                            {
-                                filesToDeleteList.add(new File(Constant.CACHE_PATH_PHOTO + "/" + ctrl.getAction().getAction_photo_local()));
-                            }
-                            if(ctrl.getForm() != null){
-                                TK_Ticket_Form form = ctrl.getForm();
-                                String filePrefix = "form_"
-                                        + form.getCustomer_code() + "_"
-                                        + form.getCustom_form_type() + "_"
-                                        + form.getCustom_form_code() + "_"
-                                        + form.getCustom_form_version() + "_"
-                                        + form.getCustom_form_data() + "_";
+                if(deleteTokenFiles(ticket, gsonRec, tokenToSend)){
+                    DaoObjReturn daoObjReturn = ticketDao.removeFullV2(ticket);
+                    //
+                    if (!daoObjReturn.hasError()) {
+                        if (ticket.getOpen_photo_local() != null && !ticket.getOpen_photo_local().isEmpty()) {
+                            filesToDeleteList.add(new File(Constant.CACHE_PATH_PHOTO + "/" + ticket.getOpen_photo_local()));
+                        }
+                        //LUCHE - 30/07/2020
+                        //Modificado para deletar fotos das action dos controles que agora ficam no step
+                        for (TK_Ticket_Step tk_ticket_step : ticket.getStep()) {
+                            for (TK_Ticket_Ctrl ctrl : tk_ticket_step.getCtrl()) {
+                                if (ctrl.getAction() != null
+                                        && ctrl.getAction().getAction_photo_local() != null
+                                        && !ctrl.getAction().getAction_photo_local().isEmpty()) {
+                                    filesToDeleteList.add(new File(Constant.CACHE_PATH_PHOTO + "/" + ctrl.getAction().getAction_photo_local()));
+                                }
+                                if (ctrl.getForm() != null) {
+                                    TK_Ticket_Form form = ctrl.getForm();
+                                    String filePrefix = "form_"
+                                            + form.getCustomer_code() + "_"
+                                            + form.getCustom_form_type() + "_"
+                                            + form.getCustom_form_code() + "_"
+                                            + form.getCustom_form_version() + "_"
+                                            + form.getCustom_form_data() + "_";
 
-                                File[] ticketFormPdfFileList = ToolBox_Inf.getListOfFiles_v5(Constant.CACHE_PATH, filePrefix);
-                                Collections.addAll(filesToDeleteList, ticketFormPdfFileList);
+                                    File[] ticketFormPdfFileList = ToolBox_Inf.getListOfFiles_v5(Constant.CACHE_PATH, filePrefix);
+                                    Collections.addAll(filesToDeleteList, ticketFormPdfFileList);
+                                }
                             }
                         }
                     }
@@ -178,6 +189,26 @@ public class Work_Cleanning_Data extends Worker {
             //
             ToolBox_Inf.deleteFileListExceptionSafe(filesToDeleteList);
         }
+    }
+
+    private boolean deleteTokenFiles(TK_Ticket ticket, Gson gsonRec, File[] tokenToSend ) {
+        //
+        boolean deleteToken = true;
+        if(tokenToSend != null && tokenToSend.length > 0){
+            T_TK_Ticket_Save_Env env =
+                    gsonRec.fromJson(
+                            ToolBox_Inf.getContents(tokenToSend[0]),
+                            T_TK_Ticket_Save_Env.class
+                    );
+            for (TK_Ticket tokenTicket : env.getTicket()) {
+                if (ticket.getTicket_prefix() == tokenTicket.getTicket_prefix()
+                        && ticket.getTicket_code() == tokenTicket.getTicket_code()) {
+                    deleteToken = false;
+                    break;
+                }
+            }
+        }
+        return deleteToken;
     }
 
     private void deleteFormAP() {
